@@ -94,7 +94,7 @@ public abstract class MatriculaUtils {
 		String strParteNumerica = separado.complemento;
 		if (!StringUtils.isNumeric(strParteNumerica)) {
 			throw new AplicacaoException(
-					"A parte numérica da matrícula é inválida. Matrícula: "
+					"A parte numérica da matrícula é inválida. Usuário: "
 							+ matricula + ". Parte Numérica: "
 							+ strParteNumerica);
 		}
@@ -109,7 +109,7 @@ public abstract class MatriculaUtils {
 		String sigla = separado.sigla;
 		if (StringUtils.isNumeric(sigla)) {
 			throw new AplicacaoException(
-					"A sigla da matrícula é inválida. Matrícula: " + matricula
+					"A sigla da matrícula é inválida. Usuário: " + matricula
 							+ ". Sigla: " + sigla);
 		}
 
@@ -132,7 +132,7 @@ public abstract class MatriculaUtils {
 			throws AplicacaoException {
 		if (StringUtils.isBlank(matricula) || matricula.length() <= 2) {
 			throw new AplicacaoException(
-					"A matrícula informada é nula ou inválida. Matrícula: "
+					"A matrícula informada é nula ou inválida. Usuário: "
 							+ matricula);
 		}
 	}

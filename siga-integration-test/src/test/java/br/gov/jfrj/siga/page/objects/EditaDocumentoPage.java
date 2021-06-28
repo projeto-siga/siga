@@ -87,7 +87,7 @@ public class EditaDocumentoPage {
 
 	public void preencheTipoDestinatario(String tipoDestinatario, String siglaDestinatario) {
 		util.getSelect(driver,destinatario).selectByVisibleText(tipoDestinatario);
-		if(tipoDestinatario.equals("Matrícula")) {
+		if(tipoDestinatario.equals("Usuário")) {
 			util.preencheElemento(driver, driver.findElement(By.id("frm_destinatarioSel_sigla")), siglaDestinatario);
 			descricao.click();
 			new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.id("destinatarioSelSpan")));

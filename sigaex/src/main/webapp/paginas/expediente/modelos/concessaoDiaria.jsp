@@ -154,7 +154,7 @@
 				<td bgcolor="#FFFFFF">${pesBeneficiario.nomePessoa}</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF"><b>Matrícula: </b>
+				<td bgcolor="#FFFFFF"><b>Usuário: </b>
 				${pesBeneficiario.matricula}</td>
 				<td bgcolor="#FFFFFF"><b>E-mail: </b>
 				${pesBeneficiario.emailPessoa}</td>

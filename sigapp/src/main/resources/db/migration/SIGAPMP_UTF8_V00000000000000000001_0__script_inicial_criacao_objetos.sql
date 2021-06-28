@@ -147,7 +147,7 @@ ADD CONSTRAINT CPF_PERITOS01 CHECK
 (CPF_PERITO IS NOT NULL)
 ENABLE
 -- Não é possível renderizar a DLL TABLE para o objeto SIGAPMP.USUARIOFORUM com o DBMS_METADATA tentando um gerador interno.
-COMMENT ON COLUMN SIGAPMP.USUARIOFORUM.MATRICULA_USU IS 'Matrícula numérica do usuário que pode agendar perícias.';
+COMMENT ON COLUMN SIGAPMP.USUARIOFORUM.MATRICULA_USU IS 'Usuário numérico que pode agendar perícias.';
 COMMENT ON COLUMN SIGAPMP.USUARIOFORUM.NOME_USU IS 'Nome do
 usuário que pode agendar perícias.';
 COMMENT ON COLUMN SIGAPMP.USUARIOFORUM.COD_FORUM IS 'Código do

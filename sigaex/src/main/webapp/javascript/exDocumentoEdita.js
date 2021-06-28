@@ -455,7 +455,7 @@ function parte_solicitar_alteracao(id, titular, lotaTitular) {
 	// action="/sigaex/app/expediente/mov/assinar_senha_gravar" >
 	// <input type="hidden" id="sigla" name="sigla" value="${sigla}" />
 	// <fieldset>
-	// <label>Matrícula</label> <br/>
+	// <label>Usuário</label> <br/>
 	// <input id="nomeUsuarioSubscritor" type="text"
 	// name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all"
 	// onblur="javascript:converteUsuario(this)"/><br/><br/>

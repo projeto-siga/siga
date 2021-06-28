@@ -69,7 +69,7 @@
                 v-slot="{ errors }"
               >
                 <label class="control-label" for="matricula" style="width: 100%"
-                  >Matrícula</label
+                  >Usuário</label
                 >
                 <v-autocomplete
                   :items="pessoas"
@@ -201,7 +201,7 @@ export default {
       if (this.tipo === 'matricula') {
         this.lotacao = undefined
         if ((this.matricula || '') === '') {
-          this.errormsg = 'Matrícula deve ser informada.'
+          this.errormsg = 'Usuário deve ser informada.'
           return
         }
       }

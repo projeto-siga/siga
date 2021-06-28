@@ -167,7 +167,7 @@ function cpf_mask(v){
 						<th align="left">Nome</th>
 						<th align="left">CPF</th>
 						<th align="left">Data de Nascimento</th>
-						<th align="left">Matrícula</th>
+						<th align="left">Usuário</th>
 						<th align="left"><fmt:message key="usuario.lotacao"/></th>			
 					</tr>
 				</thead>

@@ -97,7 +97,7 @@ export default {
 
     save: function() {
       if ((this.username || '') === '') {
-        this.errormsg = 'Matrícula deve ser informado.'
+        this.errormsg = 'Usuário deve ser informado.'
         return
       }
 

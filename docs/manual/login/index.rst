@@ -8,9 +8,9 @@ Ao acessar o endereço será exibida a página de login com o texto de boas vind
 
 Para a Identificação do usuário é necessário digitar a composição das letras referentes ao órgão com a matrícula do usuário:
 
-* **Matrícula TRF2**: T2 + a matrícula do usuário: T299999.
-* **Matrícula SJRJ**: RJ + a matrícula do usuário: RJ99999.
-* **Matrícula SJES**: ES + a matrícula do usuário: ES99999.
+* **Usuário TRF2**: T2 + a matrícula do usuário: T299999.
+* **Usuário SJRJ**: RJ + a matrícula do usuário: RJ99999.
+* **Usuário SJES**: ES + a matrícula do usuário: ES99999.
 * **Senha**: preencher com a senha pessoal.
 
 
@@ -24,7 +24,7 @@ Na janela exibida selecionar o Método 1.
 
 Campos:
 
-* **Matrícula**: Preencher com a sigla do órgão + Matrícula. Ex.: T299999, RJ99999, ES99999;
+* **Usuário**: Preencher com a sigla do órgão + Usuário. Ex.: T299999, RJ99999, ES99999;
 * **CPF**: Preencher com o CPF;
   
 Obs: O sistema enviará a senha para o e-mail cadastrado naquela matrícula.

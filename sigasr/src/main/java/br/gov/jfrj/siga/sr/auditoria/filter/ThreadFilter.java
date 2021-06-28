@@ -80,7 +80,7 @@ public abstract class ThreadFilter implements Filter {
 	/**
 	 * 
 	 * @param request
-	 * @return Matrícula do Usuário obtida através do método getName da
+	 * @return Usuário do Usuário obtida através do método getName da
 	 *         implementação da interface Principal
 	 */
 	protected String getUserPrincipalName(HttpServletRequest request) {

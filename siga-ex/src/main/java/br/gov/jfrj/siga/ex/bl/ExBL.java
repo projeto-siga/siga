@@ -1695,7 +1695,7 @@ public class ExBL extends CpBL {
 		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
-			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
+			throw new AplicacaoException("Usuário do Subscritor não foi informada.");
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(matriculaSubscritor, true);
 		// se o usuário não existir
@@ -1945,7 +1945,7 @@ public class ExBL extends CpBL {
 		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
-			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
+			throw new AplicacaoException("Usuário do Subscritor não foi informada.");
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(matriculaSubscritor, true);
 		// se o usuário não existir

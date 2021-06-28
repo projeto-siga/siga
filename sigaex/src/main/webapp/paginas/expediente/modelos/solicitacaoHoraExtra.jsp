@@ -30,7 +30,7 @@ var newwin = null;
 					_____________________________________________________________________________________________________________________________________________________________________</br></br>
 						<b>Dados do ${i}º servidor que prestará hora extra:</b>
 						<mod:grupo>
-							<mod:pessoa titulo="Matrícula" var="servidor${i}" />							
+							<mod:pessoa titulo="Usuário" var="servidor${i}" />							
 						</mod:grupo>
 						<mod:grupo>
 							<mod:selecao
@@ -228,7 +228,7 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 			cellspacing="1" bgcolor="#000000">
 			<tr>
 				<td bgcolor="#FFFFFF" width="20%" align="center"><p style="font-size:11px">Servidor</p></td>
-				<td bgcolor="#FFFFFF" width="07%" align="center"><p style="font-size:11px">Matrícula</p></td>
+				<td bgcolor="#FFFFFF" width="07%" align="center"><p style="font-size:11px">Usuário</p></td>
 				<td bgcolor="#FFFFFF" width="5%" align="center"><p style="font-size:11px">Lotação</p></td>
 				<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:9px">Data do Serviço Extraordinário</p></td>
 				<td bgcolor="#FFFFFF" width="7%"><p style="font-size:11px">Dia da semana</p></td>

@@ -77,7 +77,7 @@ public class SigaJwtBL {
 
 	/**
 	 * 
-	 * @param matricula    - Matrícula do usuário que está se logando
+	 * @param matricula    - Usuário do usuário que está se logando
 	 * @param lotacao      - Lotação do usuário. Utilizada para obter permissões de
 	 *                     usuário em outra lotação.
 	 * @param senha        - Senha do usuário que está se logando

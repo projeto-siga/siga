@@ -16,7 +16,7 @@
 				<div class="row">
 					<div class="col-sm-6">
 						<div class="form-group">
-							<label>Matrícula</label>
+							<label>Usuário</label>
 							<siga:selecao tipo="pessoa" tema="simple" propriedade="pessoa" modulo="siga"/>
 						</div>
 					</div>				

@@ -15434,7 +15434,7 @@ index f03af4edc9..0000000000
 -	 * Retorna o tipo de responsável desigando para a tarefa.
 -	 * 
 -	 * @return retorna 0 para INDEFINIDO (Sem designação), retorna 1 para
--	 *         MATRICULA (Matrícula de uma pessoa [DpPessoa]), retorna 2 para
+-	 *         MATRICULA (Usuário de uma pessoa [DpPessoa]), retorna 2 para
 -	 *         LOTACAO (Sigla de uma lotação) retorna 3 para LOTA_SUP (Lotação
 -	 *         hierarquicamente superior da pessoa designada na tarefa anterior)
 -	 *         retorna 4 para SUP_HIER (Superior hierárquico da pessoa designada
@@ -15448,7 +15448,7 @@ index f03af4edc9..0000000000
 -	 * Informa o tipo de responsável desigando para a tarefa.
 -	 * 
 -	 * @return retorna 0 para INDEFINIDO (Sem designação), retorna 1 para
--	 *         MATRICULA (Matrícula de uma pessoa [DpPessoa]), retorna 2 para
+-	 *         MATRICULA (Usuário de uma pessoa [DpPessoa]), retorna 2 para
 -	 *         LOTACAO (Sigla de uma lotação) retorna 3 para LOTA_SUP (Lotação
 -	 *         hierarquicamente superior da pessoa designada na tarefa anterior)
 -	 *         retorna 4 para SUP_HIER (Superior hierárquico da pessoa designada
@@ -26548,7 +26548,7 @@ index 8893cba360..f0d6d5f06a 100644
 @@ -47,7 +47,7 @@ public class SubstituicaoController extends SigaController {
  	private Map<Integer, String> getListaTipo() {
  		final Map<Integer, String> map = new TreeMap<Integer, String>();
- 		map.put(1, "Matrícula");
+ 		map.put(1, "Usuário");
 -		map.put(2, "Órgão Integrado");
 +		map.put(2, "Lotação");
  		return map;
@@ -29999,7 +29999,7 @@ index d0daf60740..c8128584aa 100644
 @@ -455,7 +455,7 @@ public class ExDocumentoDTO {
  	public Map<Integer, String> getListaTipoDest() {
  		final Map<Integer, String> map = new TreeMap<Integer, String>();
- 		map.put(1, "Matrícula");
+ 		map.put(1, "Usuário");
 -		map.put(2, "Órgão Integrado");
 +		map.put(2, "Lotação");
  		map.put(3, "Externo");
@@ -30012,7 +30012,7 @@ index ed1bb032d3..92df77a64e 100644
 @@ -199,7 +199,7 @@ public class ExEmailNotificacaoController extends SigaController{
  	private Map<Integer, String> getListaTipoDest() {
  		final Map<Integer, String> map = new TreeMap<Integer, String>();
- 		map.put(1, "Matrícula");
+ 		map.put(1, "Usuário");
 -		map.put(2, "Órgão Integrado");
 +		map.put(2, "Lotação");
  		return map;
@@ -30021,7 +30021,7 @@ index ed1bb032d3..92df77a64e 100644
 @@ -207,7 +207,7 @@ public class ExEmailNotificacaoController extends SigaController{
  		final Map<Integer, String> map = new TreeMap<Integer, String>();
  		map.put(1, "Default");
- 		map.put(2, "Matrícula");
+ 		map.put(2, "Usuário");
 -		map.put(3, "Órgão Integrado");		
 +		map.put(3, "Lotação");		
  		map.put(4, "Email");
@@ -36929,7 +36929,7 @@ index 5f46d42bda..0000000000
 -		WfTipoResponsavel tpIndefinido = new WfTipoResponsavel(
 -				TIPO_RESP_INDEFINIDO, "[Indefinido]", "");
 -		WfTipoResponsavel tpMatricula = new WfTipoResponsavel(
--				TIPO_RESP_MATRICULA, "Matrícula", "matricula");
+-				TIPO_RESP_MATRICULA, "Usuário", "matricula");
 -		WfTipoResponsavel tpLotacao = new WfTipoResponsavel(TIPO_RESP_LOTACAO,
 -				"Lotação", "lotacao");
 -
@@ -37356,7 +37356,7 @@ index 024a62480e..0000000000
 -		WfTipoResponsavel tpIndefinido = new WfTipoResponsavel(
 -				TIPO_RESP_INDEFINIDO, "[Indefinido]", "");
 -		WfTipoResponsavel tpMatricula = new WfTipoResponsavel(
--				TIPO_RESP_MATRICULA, "Matrícula", "matricula");
+-				TIPO_RESP_MATRICULA, "Usuário", "matricula");
 -		WfTipoResponsavel tpLotacao = new WfTipoResponsavel(TIPO_RESP_LOTACAO,
 -				"Lotação", "lotacao");
 -		WfTipoResponsavel tpLotaSuperior = new WfTipoResponsavel(
@@ -38671,7 +38671,7 @@ index 0000000000..a6556be7ee
 +		super(request, result, dao, so, util);
 +
 +//		WfTipoResponsavel tpIndefinido = new WfTipoResponsavel(TIPO_RESP_INDEFINIDO, "[Indefinido]", "");
-+//		WfTipoResponsavel tpMatricula = new WfTipoResponsavel(TIPO_RESP_MATRICULA, "Matrícula", "matricula");
++//		WfTipoResponsavel tpMatricula = new WfTipoResponsavel(TIPO_RESP_MATRICULA, "Usuário", "matricula");
 +//		WfTipoResponsavel tpLotacao = new WfTipoResponsavel(TIPO_RESP_LOTACAO, "Lotação", "lotacao");
 +//
 +//		listaTipoResponsavel.add(tpIndefinido);
@@ -43599,7 +43599,7 @@ index 0000000000..6070221cab
 +		//Não Definido
 +		case 0:
 +			break;
-+		//Matrícula
++		//Usuário
 +		case 1:
 +			var tipo = "matricula";
 +			break;

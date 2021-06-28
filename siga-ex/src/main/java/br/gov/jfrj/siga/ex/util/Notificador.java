@@ -448,7 +448,7 @@ public class Notificador {
 			}
 			if (mov.getCadastrante() != null) {
 				conteudo.append("\nRealizada por '"
-						+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
+						+ mov.getCadastrante().getNomePessoa() + " (Usuário: "
 						+ mov.getCadastrante().getMatricula() + ")'.\n\n");
 
 			}
@@ -458,7 +458,7 @@ public class Notificador {
 				if (mov.getResp() != null) {
 					conteudo.append("Destinatário:  <b>"
 							+ mov.getResp().getNomePessoa()
-							+ " (Matrícula: "
+							+ " (Usuário: "
 							+ mov.getResp().getMatricula() + ") do (a) "
 							+ mov.getLotaResp().getNomeLotacao()
 							+ " (sigla: " + mov.getLotaResp().getSigla()
@@ -512,7 +512,7 @@ public class Notificador {
 			}
 			if (mov.getCadastrante() != null) {
 				conteudoHTML.append("Realizada por <b>"
-						+ mov.getCadastrante().getNomePessoa() + " (Matrícula: "
+						+ mov.getCadastrante().getNomePessoa() + " (Usuário: "
 						+ mov.getCadastrante().getMatricula() + ")</b></p>");
 			}
 
@@ -520,7 +520,7 @@ public class Notificador {
 					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
 				if (mov.getResp() != null) {
 					conteudoHTML.append("<p>Destinatário:  <b>"
-							+ mov.getResp().getNomePessoa() + " (Matrícula: "
+							+ mov.getResp().getNomePessoa() + " (Usuário: "
 							+ mov.getResp().getMatricula() + ") do (a) "
 							+ mov.getLotaResp().getNomeLotacao() + " (sigla: "
 							+ mov.getLotaResp().getSigla() + ")" + "</b></p>");

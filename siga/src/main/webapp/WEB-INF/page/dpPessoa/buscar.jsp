@@ -39,7 +39,7 @@ function sbmt(offset) {
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
-							<label for="idOrgaoUsu">Nome ou Matrícula</label>
+							<label for="idOrgaoUsu">Nome ou Usuário</label>
 							<input type="text" name="sigla" value="${sigla}" class="form-control" />
 						</div>
 					</div>
@@ -98,7 +98,7 @@ function sbmt(offset) {
 		<table class="table table-sm table-striped table-responsive">
 			<thead class="${thead_color}">
 				<tr>
-					<th align="center">Matrícula</th>
+					<th align="center">Usuário</th>
 					<th align="left">Nome</th>
 					<th align="center"><fmt:message key="usuario.lotacao"/></th>
 					<th align="center">Função</th>

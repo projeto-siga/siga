@@ -832,7 +832,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
 				texto.append(
-						"Sigla do Órgão;Cargo;Função de Confiança;Sigla da Unidade;Nome;Data de Nascimento;CPF;E-mail;Matrícula;RG;Órgão Expedidor;UF;Data de Expedição;Status"
+						"Sigla do Órgão;Cargo;Função de Confiança;Sigla da Unidade;Nome;Data de Nascimento;CPF;E-mail;Usuário;RG;Órgão Expedidor;UF;Data de Expedição;Status"
 								+ System.lineSeparator());
 
 				for (DpPessoa p : lista) {

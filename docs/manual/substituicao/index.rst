@@ -20,7 +20,7 @@ O Diretor/Coordenador/Supervisor deve realizar o procedimento para conceder a pe
 
 3. No campo Titular selecione a opção Órgão Integrado e em sua caixa de diálogo digite a sigla do órgão e tecle Enter.
 
-4. No campo Substituto: digite na caixa de diálogo a matrícula do usuário e tecle Enter. Obs.: Caso a substituição seja por uma pessoa, selecione no campo Titular a opção Matrícula, digite a matrícula e tecle Enter.
+4. No campo Substituto: digite na caixa de diálogo a matrícula do usuário e tecle Enter. Obs.: Caso a substituição seja por uma pessoa, selecione no campo Titular a opção Usuário, digite a matrícula e tecle Enter.
    Opcionalmente pode ser definido um período restrito para o uso das permissões, preenchendo os campos Data de Início e Data de Fim (DD/MM/AAAA).
    As substituições cadastradas, ainda no período de validade, poderão ser alteradas através da opção "Alterar" ou “Excluír”.
 

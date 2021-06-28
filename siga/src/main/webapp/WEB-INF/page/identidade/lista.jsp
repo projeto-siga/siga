@@ -31,7 +31,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="form-group">
-								<siga:selecao titulo="Matrícula" propriedade="pessoa" modulo="siga" />
+								<siga:selecao titulo="Usuário" propriedade="pessoa" modulo="siga" />
 							</div>
 						</div>
 					</div>
@@ -74,7 +74,7 @@
 							<div class="row">
 								<div class="col-sm-12">
 									<div class="form-group">
-										<label>Matrícula:</label>
+										<label>Usuário:</label>
 										<label>${pessoaSel.sigla}</label>
 									</div>
 								</div>

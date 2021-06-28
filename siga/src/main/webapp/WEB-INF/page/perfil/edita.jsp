@@ -228,7 +228,7 @@
 				//Não Definido
 				case 0:
 					break;
-				//Matrícula
+				//Usuário
 				case 1:
 					var tipo = "matricula";
 					break;
@@ -271,7 +271,7 @@
 					//Não Definido
 					case 0:
 						break;
-					//Matrícula
+					//Usuário
 					case 1:
 						var tipo = "matricula"; 
 						var nodMatricula = document.getElementById('formulario_matricula_' + tarefa + '_pessoaSel_id');

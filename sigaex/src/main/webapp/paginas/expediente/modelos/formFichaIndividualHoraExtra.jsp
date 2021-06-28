@@ -27,7 +27,7 @@ var newwin = null;
    </mod:grupo>
    </br>
         <mod:grupo>
-            <mod:pessoa titulo="Matrícula" var="servidor" obrigatorio="Sim" reler="sim" /> 
+            <mod:pessoa titulo="Usuário" var="servidor" obrigatorio="Sim" reler="sim" /> 
         </mod:grupo>
         <mod:grupo> 
             <mod:lotacao titulo="Unidade Organizacional da prestação do serviço extraordinário/do Plantão Judiciário" var="unidade" />
@@ -261,7 +261,7 @@ var newwin = null;
             cellspacing="1" bgcolor="#000000">
             <tr>
                 <td bgcolor="#BAB9AF" width="45%" align="center">Nome</td>
-                <td bgcolor="#BAB9AF" width="15%" align="center">Matrícula</td>
+                <td bgcolor="#BAB9AF" width="15%" align="center">Usuário</td>
                 <td bgcolor="#BAB9AF" width="40%" align="center">Lotação</td>
             </tr>
             <tr>

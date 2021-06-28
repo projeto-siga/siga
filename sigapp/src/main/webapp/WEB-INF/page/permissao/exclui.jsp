@@ -12,7 +12,7 @@
 	 <table class="ui-tabs"  align="center" style="font-size:100%;">
 	 <tr bgcolor="Silver">
 	  <th>&nbsp; Nome &nbsp; </th>
-	  <th>&nbsp; Matricula &nbsp; </th>
+	  <th>&nbsp; Usuário &nbsp; </th>
 	  <th>&nbsp; Forum &nbsp;</th>
 	  <th>&nbsp; Sesb &nbsp; </th>
 	  <th></th>

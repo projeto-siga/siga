@@ -4223,7 +4223,7 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
-[@selecaoX2 titulo=titulo var=var opcoes="Matrícula;Orgão Integrado" reler=true idAjax=idAjax/]   
+[@selecaoX2 titulo=titulo var=var opcoes="Usuário;Orgão Integrado" reler=true idAjax=idAjax/]   
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]

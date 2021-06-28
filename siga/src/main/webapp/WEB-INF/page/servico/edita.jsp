@@ -16,7 +16,7 @@
 			<div class="card-body">		
 				<table border="0" class="table table-sm table-striped">
 					<thead class="${thead_color}">
-					<th>Matrícula</th>
+					<th>Usuário</th>
 					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">						
 						<th><a href="#" alt="${servico.descricao}"

@@ -40,7 +40,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 		if (StringUtils.isNotEmpty(req.orgao)
 				&& (StringUtils.isNotEmpty(req.lotacao) || StringUtils.isNotEmpty(req.matricula))) {
 			throw new AplicacaoException(
-					"Orgão externo não deve ser fornecido se for tramitar para Lotação e/ou Matrícula");
+					"Orgão externo não deve ser fornecido se for tramitar para Lotação e/ou Usuário");
 		}
 	}
 

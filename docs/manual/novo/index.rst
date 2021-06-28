@@ -140,10 +140,10 @@ Destinatário
 ^^^^^^^^^^^^
 
 Deve ser informado o nome do órgão ou matrícula do destinatário do documento. Por default aparece Órgão Integrado, mas existem 
-as opções: Matrícula, Órgão Externo e Campo Livre; 
+as opções: Usuário, Órgão Externo e Campo Livre; 
 
 * **Órgão Integrado**: para selecionar uma lotação do TRF2, SJRJ ou SJES;
-* **Matrícula**: para selecionar uma matrícula do TRF2, SJRJ ou SJES;
+* **Usuário**: para selecionar uma matrícula do TRF2, SJRJ ou SJES;
 * **Órgão Externo**: para selecionar um órgão cadastrado na tabela de órgãos externos;
 * **Campo Livre**: para preenchimento quando o destinatário não constar de nenhuma das outras opções.
 

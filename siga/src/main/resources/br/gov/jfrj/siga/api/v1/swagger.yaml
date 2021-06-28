@@ -317,7 +317,7 @@ paths:
       description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com os parâmetros informados: 
         <ul>
         <li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
-        <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
+        <li><b>texto=</b> Pesquisa as Pessoas cujo Usuário ou nome contém uma determinada palavra.</li>
         <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li></ul>"
       tags: [cadastro]
       security:

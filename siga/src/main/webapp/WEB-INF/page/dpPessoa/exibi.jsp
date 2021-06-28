@@ -32,7 +32,7 @@
 					</div>
 					<div class="col-sm-3">
 						<div class="form-group">
-							<label >Matrícula</label>
+							<label >Usuário</label>
 							<span>${pessoa.sigla}</span>
 						</div>
 					</div>

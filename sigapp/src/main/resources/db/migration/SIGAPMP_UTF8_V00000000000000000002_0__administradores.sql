@@ -4,7 +4,7 @@
 
  COMMENT ON COLUMN sigapmp.administradores.sesb_pessoa IS 'Exemplo: T2,RJ ou ES';
 
- COMMENT ON COLUMN sigapmp.administradores.matric_adm IS 'Matricula do servidor; funcionario do primeiro atendimento';
+ COMMENT ON COLUMN sigapmp.administradores.matric_adm IS 'Usuário do servidor; funcionario do primeiro atendimento';
 
  COMMENT ON COLUMN sigapmp.administradores.nome_adm IS 'Nome do servidor;funcionario do primeiro atendimento ';
 

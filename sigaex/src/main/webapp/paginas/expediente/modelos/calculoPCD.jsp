@@ -173,7 +173,7 @@
 						<td bgcolor="#FFFFFF">${pesProponente.nomePessoa}</td>
 					</tr>
 					<tr>
-						<td bgcolor="#FFFFFF" width="30%"><b>Matrícula: </b></td>
+						<td bgcolor="#FFFFFF" width="30%"><b>Usuário: </b></td>
 						<td bgcolor="#FFFFFF">${pesProponente.matricula}</td>
 					</tr>
 				</table>
@@ -187,7 +187,7 @@
 						<td bgcolor="#FFFFFF">${pesBeneficiario.nomePessoa}</td>
 					</tr>
 					<tr>
-						<td bgcolor="#FFFFFF" width="30%"><b>Matrícula: </b></td>
+						<td bgcolor="#FFFFFF" width="30%"><b>Usuário: </b></td>
 						<td bgcolor="#FFFFFF">${pesBeneficiario.matricula}</td>
 					</tr>
 					<tr>

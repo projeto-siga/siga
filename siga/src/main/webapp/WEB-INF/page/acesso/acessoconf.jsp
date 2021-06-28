@@ -64,8 +64,8 @@
 									<siga:selecao tema='simple' titulo="Lotação:" propriedade="lotacao" modulo="siga" />
 								</siga:opcao>
 								
-								<siga:opcao id='3' texto="Matrícula">
-									<siga:selecao tema='simple' titulo="Matrícula:" propriedade="pessoa" modulo="siga" />
+								<siga:opcao id='3' texto="Usuário">
+									<siga:selecao tema='simple' titulo="Usuário:" propriedade="pessoa" modulo="siga" />
 								</siga:opcao>
 							</siga:escolha>
 						</div>
@@ -116,7 +116,7 @@
 					</thead>
 	
 					<tr>
-						<td>Matrícula:</td>
+						<td>Usuário:</td>
 						<td>${pessoaSel.sigla}</td>
 					</tr>
 				</c:if>

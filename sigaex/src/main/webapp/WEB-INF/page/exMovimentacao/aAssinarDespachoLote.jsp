@@ -170,7 +170,7 @@
 				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
 				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
  				<div class="form-group">
- 					<label>Matrícula</label>
+ 					<label>Usuário</label>
  					<input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="form-control" onblur="javascript:converteUsuario(this)"/>
  				</div>
     			<div class="form-group">

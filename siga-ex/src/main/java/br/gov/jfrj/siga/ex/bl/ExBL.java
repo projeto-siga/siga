@@ -6004,7 +6004,7 @@ public class ExBL extends CpBL {
 				provSet = new ArrayList<ExModelo>();
 				for (ExModelo mod : modeloSetFinal)
 					if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
-							CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO))
+							ExTipoDeConfiguracao.CRIAR_COMO_NOVO))
 						provSet.add(mod);
 				modeloSetFinal = provSet;
 			}

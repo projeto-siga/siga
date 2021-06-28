@@ -62,7 +62,7 @@
 		SP Sem Papel - ${titulo_pagina}
 	</c:when>
 	<c:otherwise>
-		SIGA - ${titulo_pagina}	
+		PBdoc - ${titulo_pagina}	
 	</c:otherwise>
 </c:choose>
 </title>

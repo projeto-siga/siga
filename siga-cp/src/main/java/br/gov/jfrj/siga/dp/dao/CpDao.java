@@ -41,12 +41,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.persistence.FlushModeType;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -1620,12 +1620,11 @@ public class CpDao extends ModeloDao {
 //			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
 			if (lista.size() == 0) {
-				throw new AplicacaoException("Nao foi possivel localizar a identidade do usuario '" + nmUsuario + "'.");
+				throw new AplicacaoException("Não foi possível localizar o usuario '" + nmUsuario + "'.");
 			}
 			return lista;
-		} catch (Throwable e) {
-			throw new AplicacaoException(
-					"Ocorreu um erro tentando localizar a identidade do usuario '" + nmUsuario + "'.", 0, e);
+		} catch (PersistenceException e) {
+			throw new AplicacaoException("Ocorreu um erro tentando localizar a identidade do usuario '" + nmUsuario + "'.", 0, e);
 		}
 	}
 

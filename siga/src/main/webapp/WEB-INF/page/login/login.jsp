@@ -37,97 +37,114 @@
 		</c:otherwise>
 	</c:choose>
 
-	<div class="container content pt-2">
+	<div class="container content pt-5">
 		<div class="row justify-content-center">
 			<div class="col col-sm-12 col-md-5">
-				<div class="jumbotron d-block mx-auto ${login_box_class}">
+				<div class="card bg-light ${not empty loginMensagem ? 'border-danger' : ''} mb-3 ${login_box_class}" style="max-width: 48rem;">
 
-					<div class="text-center">
-						<img alt="" src="${login_box_logo}" width="${login_box_logo_size}" align="center"/>
+					<div class="card-header">
+						<strong>Acesso ao Sistema <c:if test="${not empty loginMensagem}">- <span class="text-danger">NEGADO</span></c:if></strong>
 					</div>
-					
-					<h2 class="text-center pb-1 pt-2">${login_box_text}</h2>
 
-					<c:if test="${not empty loginMensagem}">
-						<div class="login-invalido ">
-							<div class="login-invalido-titulo ${hide_only_GOVSP}">
-								<p class="alert alert-danger ">${loginMensagem}</p>
-							</div>
-
-							<div class="login-invalido-descricao ">	
-								<p class="alert alert-danger">${loginMensagem}</p>
-							</div>
-						</div>
-					</c:if>
-					
-					<form id="formLogin" role="form" method="post"
-						enctype="application/x-www-form-urlencoded">
-						<div class="form-group">
-							<label for="username"><fmt:message key="usuario.matricula"/></label> 
-					
-						    <div class="input-group">
-						      <div class="input-group-prepend">
-						        <span class="input-group-text" id="icon-user"><i class="fas fa-user"></i></span>
-						      </div>
-						      <input id="username" type="text" name="username" placeholder="<fmt:message key="usuario.digite.usuario"/>" onblur="javascript:converteUsuario(this)" autocorrect="off"
-								autocapitalize="none" class="form-control" aria-label="Usuário" aria-describedby="icon-user">
-						    </div>
-	
-						</div>
-						<div class="form-group">
-							<label for="password">Senha</label>
-							<div class="input-group">
-						      <div class="input-group-prepend">
-						        <span class="input-group-text" id="icon-pass"><i class="fas fa-lock"></i></span>
-						      </div>
-						      <input type="password" name="password" id="password" placeholder="Senha"
-								class="form-control" aria-label="Usuário" aria-describedby="icon-pass">
-						    </div>						
-						</div>						
-						<c:if test="${isSenhaUsuarioExpirada}">			
-							<div class="js-link-trocar-senha  hidden" style="text-align: center; margin: 0; padding: 0;">																							
-								<button type="button" class="btn  btn-link" data-siga-modal-abrir="trocaSenhaUsuario">
-								    Trocar senha
-								</button>																														
-							</div>
+					<div class="card-body">
+						<c:if test="${not empty loginMensagem}">
+							<div class="text-danger text-center">${loginMensagem}</div>
 						</c:if>
-						<div class="row pt-3">
-							<div class="col">
-								<div class="text-center">
-									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>								
-									<div class="mt-4">
-										<c:if test="${siga_cliente != 'GOVSP'}">
-											<a href="/siga/public/app/usuario/incluir_usuario"
-												class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> 
-										</c:if>
-										<a href="/siga/public/app/usuario/esqueci_senha" class="btn btn-link btn-block"><strong>Esqueci minha senha</strong></a>
+
+						<div class="text-center">
+							<img alt="" src="${login_box_logo}" width="${login_box_logo_size}" align="center"/>
+						</div>
+						
+						<h2 class="text-center pb-1 pt-2">${login_box_text}</h2>
+
+						<form id="formLogin" role="form" method="post"
+							enctype="application/x-www-form-urlencoded">
+							<div class="form-group">
+								<label for="username"><fmt:message key="usuario.matricula"/></label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="icon-user"><i class="fas fa-user"></i></span>
 									</div>
-									
-									<c:choose>
-										<c:when test="${siga_cliente_sso}">
-											<hr class="my-2">
-											<p class="text-left font-weight-bold">Ou acesse com: </p>
-							
-											<a href="/siga/public/app/loginSSO"class="btn btn-lg btn-dark btn-block">${siga_cliente_sso_btn_txt}</a>
-										</c:when>
-									</c:choose>
-									
-									<c:if test="${siga_cliente ne 'GOVSP'}">
-										<div class="mt-3">
-										    <div class="d-flex justify-content-between">
-										    	   	<div>
-										    		Versão: ${versao}
-										    	    </div>
-										    	    <div>
-										    		<a class="text-top" href="http://linksiga.trf2.jus.br" target="_blank" class="btn btn-link">Sobre o SIGA</a> 
-										    	    </div>
-										    </div>
-										</div>
+									<input id="username"
+										   type="text"
+										   name="username"
+										   placeholder="<fmt:message key="usuario.digite.usuario"/>"
+										   onblur="javascript:converteUsuario(this)"
+										   autocorrect="off"
+										   autocapitalize="none"
+										   class="form-control ${not empty loginMensagem ? 'is-invalid' : ''}"
+										   aria-label="Usuário"
+										   aria-describedby="icon-user"
+									/>
+									<c:if test="${not empty loginMensagem}">
+										<div class="invalid-feedback">Digite <fmt:message key="usuario.matricula"/> válido.</div>
 									</c:if>
 								</div>
 							</div>
-						</div>
-					</form>
+							<div class="form-group">
+								<label for="password">Senha</label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="icon-pass"><i class="fas fa-lock"></i></span>
+									</div>
+									<input id="password"
+										   type="password"
+										   name="password"
+										   placeholder="Senha"
+										   class="form-control ${not empty loginMensagem ? 'is-invalid' : ''}"
+										   aria-label="Usuário"
+										   aria-describedby="icon-pass"
+									/>
+									<c:if test="${not empty loginMensagem}">
+										<div class="invalid-feedback">Digite uma senha válida para <fmt:message key="usuario.matricula"/>.</div>
+									</c:if>
+								</div>
+							</div>						
+							<c:if test="${isSenhaUsuarioExpirada}">			
+								<div class="js-link-trocar-senha  hidden" style="text-align: center; margin: 0; padding: 0;">																							
+									<button type="button" class="btn  btn-link" data-siga-modal-abrir="trocaSenhaUsuario">
+									    Trocar senha
+									</button>																														
+								</div>
+							</c:if>
+							<div class="row pt-3">
+								<div class="col">
+									<div class="text-center">
+										<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>								
+										<div class="mt-4">
+											<c:if test="${siga_cliente != 'GOVSP'}">
+												<a href="/siga/public/app/usuario/incluir_usuario"
+													class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> 
+											</c:if>
+											<a href="/siga/public/app/usuario/esqueci_senha" class="btn btn-link btn-block"><strong>Esqueci minha senha</strong></a>
+										</div>
+										
+										<c:choose>
+											<c:when test="${siga_cliente_sso}">
+												<hr class="my-2">
+												<p class="text-left font-weight-bold">Ou acesse com: </p>
+								
+												<a href="/siga/public/app/loginSSO"class="btn btn-lg btn-dark btn-block">${siga_cliente_sso_btn_txt}</a>
+											</c:when>
+										</c:choose>
+										
+										<c:if test="${siga_cliente ne 'GOVSP'}">
+											<div class="mt-3">
+											    <div class="d-flex justify-content-between">
+											    	   	<div>
+											    		Versão: ${versao}
+											    	    </div>
+											    	    <div>
+											    		<a class="text-top" href="http://linksiga.trf2.jus.br" target="_blank" class="btn btn-link">Sobre o SIGA</a> 
+											    	    </div>
+											    </div>
+											</div>
+										</c:if>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -27,8 +27,9 @@ public class GcArquivo extends Objeto implements Serializable {
 	public static ActiveRecord<GcArquivo> AR = new ActiveRecord<>(
 			GcArquivo.class);
 	@Id
+	@GeneratedValue
 	@Column(name = "ID_CONTEUDO")
-	private long id;
+	private Long id;
 
 	@Column(name = "TITULO")
 	private String titulo;
@@ -43,7 +44,7 @@ public class GcArquivo extends Objeto implements Serializable {
 	@Column(name = "CONTEUDO_TIPO")
 	private String mimeType;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -172,7 +173,7 @@ public class GcArquivo extends Objeto implements Serializable {
 		return null;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

@@ -1,13 +1,10 @@
--- MySQL dump 10.13  Distrib 8.0.16, for Linux (x86_64)
---
--- Host: localhost    Database: sigagc
--- ------------------------------------------------------
--- Server version	8.0.16-commercial
+CREATE DATABASE  IF NOT EXISTS `sigagc` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `sigagc`;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
- SET NAMES utf8mb4 ;
+/*!50503 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -23,7 +20,7 @@ DROP TABLE IF EXISTS `gc_acesso`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_acesso` (
-  `id_acesso` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_acesso` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome_acesso` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_acesso`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -37,7 +34,7 @@ DROP TABLE IF EXISTS `gc_arquivo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_arquivo` (
-  `id_conteudo` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_conteudo` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `classificacao` varchar(4000) COLLATE utf8_bin DEFAULT NULL,
   `conteudo` longblob,
   `conteudo_tipo` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -54,8 +51,8 @@ DROP TABLE IF EXISTS `gc_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_configuracao` (
-  `id_configuracao_gc` bigint(20) NOT NULL AUTO_INCREMENT,
-  `id_tipo_informacao` bigint(20) DEFAULT NULL,
+  `id_configuracao_gc` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id_tipo_informacao` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id_configuracao_gc`),
   KEY `fk5b6c283297a881ad` (`id_tipo_informacao`),
   CONSTRAINT `fk5b6c283297a881ad` FOREIGN KEY (`id_tipo_informacao`) REFERENCES `gc_tipo_informacao` (`id_tipo_informacao`),
@@ -71,22 +68,22 @@ DROP TABLE IF EXISTS `gc_informacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_informacao` (
-  `id_informacao` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ano` bigint(20) DEFAULT NULL,
+  `id_informacao` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ano` INT UNSIGNED DEFAULT NULL,
   `dt_elaboracao_fim` datetime(6) DEFAULT NULL,
   `his_dt_fim` datetime(6) DEFAULT NULL,
   `his_dt_ini` datetime(6) DEFAULT NULL,
-  `numero` bigint(20) DEFAULT NULL,
-  `id_arquivo` bigint(20) NOT NULL,
-  `id_pessoa_titular` bigint(20) NOT NULL,
-  `id_acesso_edicao` bigint(20) NOT NULL,
-  `his_idc_ini` bigint(20) NOT NULL,
-  `id_informacao_pai` bigint(20) DEFAULT NULL,
-  `id_lotacao_titular` bigint(20) NOT NULL,
-  `id_orgao_usuario` bigint(20) NOT NULL,
-  `id_tipo_informacao` bigint(20) NOT NULL,
-  `id_acesso` bigint(20) NOT NULL,
-  `id_grupo` bigint(20) DEFAULT NULL,
+  `numero` INT UNSIGNED DEFAULT NULL,
+  `id_arquivo` INT UNSIGNED NOT NULL,
+  `id_pessoa_titular` INT UNSIGNED NOT NULL,
+  `id_acesso_edicao` INT UNSIGNED NOT NULL,
+  `his_idc_ini` INT UNSIGNED NOT NULL,
+  `id_informacao_pai` INT UNSIGNED DEFAULT NULL,
+  `id_lotacao_titular` INT UNSIGNED NOT NULL,
+  `id_orgao_usuario` INT UNSIGNED NOT NULL,
+  `id_tipo_informacao` INT UNSIGNED NOT NULL,
+  `id_acesso` INT UNSIGNED NOT NULL,
+  `id_grupo` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id_informacao`),
   KEY `fk8b6611fc97a881ad` (`id_tipo_informacao`),
   KEY `fk8b6611fc8deefe82` (`id_acesso_edicao`),
@@ -119,21 +116,21 @@ DROP TABLE IF EXISTS `gc_movimentacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_movimentacao` (
-  `id_movimentacao` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_movimentacao` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `his_dt_ini` datetime(6) DEFAULT NULL,
-  `id_conteudo` bigint(20) DEFAULT NULL,
-  `his_idc_ini` bigint(20) NOT NULL,
-  `id_informacao` bigint(20) NOT NULL,
-  `id_lotacao_atendente` bigint(20) DEFAULT NULL,
-  `id_lotacao_titular` bigint(20) DEFAULT NULL,
-  `id_movimentacao_canceladora` bigint(20) DEFAULT NULL,
-  `id_movimentacao_ref` bigint(20) DEFAULT NULL,
-  `id_pessoa_atendente` bigint(20) DEFAULT NULL,
-  `id_pessoa_titular` bigint(20) DEFAULT NULL,
-  `id_tipo_movimentacao` bigint(20) NOT NULL,
+  `id_conteudo` INT UNSIGNED DEFAULT NULL,
+  `his_idc_ini` INT UNSIGNED NOT NULL,
+  `id_informacao` INT UNSIGNED NOT NULL,
+  `id_lotacao_atendente` INT UNSIGNED DEFAULT NULL,
+  `id_lotacao_titular` INT UNSIGNED DEFAULT NULL,
+  `id_movimentacao_canceladora` INT UNSIGNED DEFAULT NULL,
+  `id_movimentacao_ref` INT UNSIGNED DEFAULT NULL,
+  `id_pessoa_atendente` INT UNSIGNED DEFAULT NULL,
+  `id_pessoa_titular` INT UNSIGNED DEFAULT NULL,
+  `id_tipo_movimentacao` INT UNSIGNED NOT NULL,
   `descricao` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `id_papel` bigint(20) DEFAULT NULL,
-  `id_grupo` bigint(20) DEFAULT NULL,
+  `id_papel` INT UNSIGNED DEFAULT NULL,
+  `id_grupo` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id_movimentacao`),
   KEY `fk3157f386d38b6636` (`id_informacao`),
   KEY `fk3157f386e56b561e` (`id_movimentacao_ref`),
@@ -170,7 +167,7 @@ DROP TABLE IF EXISTS `gc_papel`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_papel` (
-  `id_papel` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_papel` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `desc_papel` varchar(40) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_papel`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -184,10 +181,10 @@ DROP TABLE IF EXISTS `gc_tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_tag` (
-  `id_tag` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_tag` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `categoria` varchar(20) COLLATE utf8_bin DEFAULT NULL,
   `titulo` varchar(256) COLLATE utf8_bin DEFAULT NULL,
-  `tipo_id_tipo_tag` bigint(20) NOT NULL,
+  `tipo_id_tipo_tag` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id_tag`),
   KEY `fk7d04ad97f23572ce` (`tipo_id_tipo_tag`),
   CONSTRAINT `fk7d04ad97f23572ce` FOREIGN KEY (`tipo_id_tipo_tag`) REFERENCES `gc_tipo_tag` (`id_tipo_tag`)
@@ -202,8 +199,8 @@ DROP TABLE IF EXISTS `gc_tag_x_informacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_tag_x_informacao` (
-  `id_informacao` bigint(20) NOT NULL,
-  `id_tag` bigint(20) NOT NULL,
+  `id_informacao` INT UNSIGNED NOT NULL,
+  `id_tag` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id_informacao`,`id_tag`),
   KEY `fk6dcf9ea8635922f0` (`id_tag`),
   CONSTRAINT `fk6dcf9ea8635922f0` FOREIGN KEY (`id_tag`) REFERENCES `gc_tag` (`id_tag`),
@@ -219,9 +216,9 @@ DROP TABLE IF EXISTS `gc_tipo_informacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_tipo_informacao` (
-  `id_tipo_informacao` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_tipo_informacao` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome_tipo_informacao` varchar(255) COLLATE utf8_bin NOT NULL,
-  `arquivo` bigint(20) DEFAULT NULL,
+  `arquivo` INT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id_tipo_informacao`),
   KEY `tipo_informacao_arquivo_fk` (`arquivo`),
   CONSTRAINT `tipo_informacao_arquivo_fk` FOREIGN KEY (`arquivo`) REFERENCES `gc_arquivo` (`id_conteudo`)
@@ -236,7 +233,7 @@ DROP TABLE IF EXISTS `gc_tipo_movimentacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_tipo_movimentacao` (
-  `id_tipo_movimentacao` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_tipo_movimentacao` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome_tipo_movimentacao` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_tipo_movimentacao`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -250,7 +247,7 @@ DROP TABLE IF EXISTS `gc_tipo_tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `gc_tipo_tag` (
-  `id_tipo_tag` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_tipo_tag` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome_tipo_tag` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_tipo_tag`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -264,7 +261,7 @@ DROP TABLE IF EXISTS `ht_cp_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ht_cp_configuracao` (
-  `id_configuracao` bigint(20) NOT NULL
+  `id_configuracao` INT UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -276,7 +273,7 @@ DROP TABLE IF EXISTS `ht_gc_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ht_gc_configuracao` (
-  `id_configuracao_gc` bigint(20) NOT NULL
+  `id_configuracao_gc` INT UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -288,8 +285,8 @@ DROP TABLE IF EXISTS `ri_atualizacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ri_atualizacao` (
-  `id_atualizacao` bigint(20) NOT NULL AUTO_INCREMENT,
-  `desempate_atualizacao` bigint(20) DEFAULT NULL,
+  `id_atualizacao` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `desempate_atualizacao` INT UNSIGNED DEFAULT NULL,
   `nome_atualizacao` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `sigla_atualizacao` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `dt_ultima_atualizacao` datetime(6) DEFAULT NULL,
@@ -306,7 +303,7 @@ DROP TABLE IF EXISTS `ri_configuracao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ri_configuracao` (
-  `id_configuracao_ri` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_configuracao_ri` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id_configuracao_ri`),
   CONSTRAINT `fk830c72b7f6a4891e` FOREIGN KEY (`id_configuracao_ri`) REFERENCES `corporativo`.`cp_configuracao` (`id_configuracao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -315,40 +312,79 @@ CREATE TABLE `ri_configuracao` (
 --
 -- Dumping routines for database 'sigagc'
 --
-/*!50003 DROP FUNCTION IF EXISTS `remove_acento` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`%` FUNCTION `remove_acento`(acentuado VARCHAR(4000)) RETURNS varchar(4000) CHARSET utf8 COLLATE utf8_bin
-    DETERMINISTIC
-BEGIN
-	
-	SET @textvalue = acentuado ;
+drop function if exists remove_acento;
+delimiter //
+create function remove_acento( textvalue varchar(20000) )
+returns varchar(20000) DETERMINISTIC
+begin
 
-    -- ACCENTS
-    SET @withaccents = 'ŠšŽžÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝŸÞàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿþƒ';
-    SET @withoutaccents = 'SsZzAAAAAAACEEEEIIIINOOOOOOUUUUYYBaaaaaaaceeeeiiiinoooooouuuuyybf';
-    SET @count = LENGTH(@withaccents);
+set @textvalue = textvalue;
 
-	WHILE @count > 0 DO
-        SET @textvalue = REPLACE(@textvalue, SUBSTRING(@withaccents, @count, 1), SUBSTRING(@withoutaccents, @count, 1));
-        SET @count = @count - 1;
-    END WHILE;
-    
-    RETURN UPPER(@textvalue);
+-- ACCENTS
+set @withaccents = 'ŠšŽžÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝŸÞàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿþƒ';
+set @withoutaccents = 'SsZzAAAAAAACEEEEIIIINOOOOOOUUUUYYBaaaaaaaceeeeiiiinoooooouuuuyybf';
+set @count = length(@withaccents);
 
-END ;;
+while @count > 0 do
+    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+    set @count = @count - 1;
+end while;
+
+-- SPECIAL CHARS
+set @special = '!@#$%¨&*()_+=§¹²³£¢¬"`´{[^~}]<,>.:;?/°ºª+*|\\''';
+set @count = length(@special);
+while @count > 0 do
+    set @textvalue = replace(@textvalue, substring(@special, @count, 1), '');
+    set @count = @count - 1;
+end while;
+
+return @textvalue;
+
+end;//
 DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+INSERT INTO `sigagc`.`gc_tipo_informacao` (`id_tipo_informacao`, `nome_tipo_informacao`) VALUES ('1', 'Registro de Conhecimento');
+INSERT INTO `sigagc`.`gc_tipo_informacao` (`id_tipo_informacao`, `nome_tipo_informacao`) VALUES ('2', 'Erro Conhecido');
+INSERT INTO `sigagc`.`gc_tipo_informacao` (`id_tipo_informacao`, `nome_tipo_informacao`) VALUES ('3', 'Procedimento');
+INSERT INTO `sigagc`.`gc_tipo_informacao` (`id_tipo_informacao`, `nome_tipo_informacao`) VALUES ('4', 'Processo de Trabalho');
+
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Criação', 1);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Concluído', 2);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Cancelado', 3);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Solicitação de revisão', 4);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Revisado', 5);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Notificação', 6);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Ciente', 7);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Classificação', 8);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Interesse', 9);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Edição', 10);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Visita', 11);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Cancelamento de movimentação', 12);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Anexação de arquivo', 13);
+insert into sigagc.gc_tipo_movimentacao (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Duplicado', 14);
+insert into sigagc.gc_tipo_movimentacao (ID_TIPO_MOVIMENTACAO, NOME_TIPO_MOVIMENTACAO) values (15, 'Definição de Perfil');
+
+insert into sigagc.gc_tipo_tag (NOME_TIPO_TAG, ID_TIPO_TAG) values ('Classificação', 1);
+insert into sigagc.gc_tipo_tag (NOME_TIPO_TAG, ID_TIPO_TAG) values ('Marcador', 2);
+insert into sigagc.gc_tipo_tag (NOME_TIPO_TAG, ID_TIPO_TAG) values ('Âncora', 3);
+
+insert into sigagc.gc_acesso (NOME_ACESSO, ID_ACESSO) values ('Ostensivo', 0);
+insert into sigagc.gc_acesso (NOME_ACESSO, ID_ACESSO) values ('Público', 1);
+insert into sigagc.gc_acesso (NOME_ACESSO, ID_ACESSO) values ('Restrito ao órgão', 2);
+insert into sigagc.gc_acesso (NOME_ACESSO, ID_ACESSO) values ('Lotação e superiores', 3);
+insert into sigagc.gc_acesso (NOME_ACESSO, ID_ACESSO) values ('Lotação e inferiores', 4);
+insert into sigagc.gc_acesso (NOME_ACESSO, ID_ACESSO) values ('Lotação', 5);
+insert into sigagc.gc_acesso (NOME_ACESSO, ID_ACESSO) values ('Pessoal', 6);
+insert into sigagc.gc_acesso values (7, 'Lotação e Grupo');
+
+insert into sigagc.gc_papel(id_papel, desc_papel) values (2, 'Executor');
+insert into sigagc.gc_papel(id_papel, desc_papel) values (1, 'Interessado');
+
+
+
+--
+-- Dumping routines for database 'corporativo'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

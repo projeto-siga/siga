@@ -2,16 +2,16 @@
 
 <siga:pagina titulo="Informações">
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h3>Estatísticas - ${lotacao.descricaoIniciaisMaiusculas}</h3>
-			<br />
-			<div class="gt-left-col">
+	<div class="container-fluid">
+		<h3>Estatísticas - ${lotacao.descricaoIniciaisMaiusculas}</h3>
+		<br />
+		<div class="row">
+			<div class="col col-md-6">
 				<h2>Conhecimentos Mais Recentes</h2>
 				<c:if test="${not empty listaMaisRecentes}">
-					<div class="gt-content-box gt-for-table">
-						<table border="0" class="gt-table gt-user-table">
-							<thead>
+					<div>
+						<table class="table table-sm">
+							<thead class="thead-dark">
 								<tr>
 									<th width="45%">Título</th>
 									<th width="20%">Data</th>
@@ -22,9 +22,9 @@
 							<tbody>
 								<c:forEach var="i" items="${listaMaisRecentes}">
 									<tr class="gt-td">
-										<td width="45%"><h4 class="gt-categories-link">
-												<a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}
-											</h4> </a></td>
+										<td width="45%"><a
+											href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}
+										</a></td>
 										<td width="20%">${i.dtElaboracaoFim}</td>
 										<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
 										<td width="15%">${i.lotacao.sigla}</td>
@@ -35,16 +35,15 @@
 					</div>
 				</c:if>
 				<c:if test="${empty listaMaisRecentes}">
-					<h6 style="background: #d8d8c0; padding: 3px 10px;">Nenhum
-						conhecimento recente.</h6>
+					<p class="alert alert-warning">Nenhum conhecimento recente.</p>
 				</c:if>
 				<br />
 
 				<h2>Conhecimentos Mais Acessados</h2>
 				<c:if test="${not empty listaMaisVisitados}">
-					<div class="gt-content-box gt-for-table">
-						<table border="0" class="gt-table gt-user-table">
-							<thead>
+					<div>
+						<table class="table table-sm">
+							<thead class="thead-dark">
 								<tr>
 									<th width="45%">Título</th>
 									<th width="20%">Data</th>
@@ -55,9 +54,9 @@
 							<tbody>
 								<c:forEach var="i" items="${listaMaisVisitados}">
 									<tr class="gt-td">
-										<td width="45%"><h4 class="gt-categories-link">
-												<a href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}
-											</h4> </a></td>
+										<td width="45%"><a
+											href="${linkTo[AppController].exibir(i.siglaCompacta)}">${i.arq.titulo}
+										</a></td>
 										<td width="20%">${i.dtElaboracaoFim}</td>
 										<td width="20%">${i.autor.primeiroNomeEIniciais}</td>
 										<td width="15%">${i.lotacao.sigla}</td>
@@ -67,8 +66,7 @@
 					</div>
 				</c:if>
 				<c:if test="${empty listaMaisVisitados}">
-					<h6 style="background: #d8d8c0; padding: 3px 10px;">Nenhum
-						conhecimento visitado.</h6>
+					<p class="alert alert-warning">Nenhum conhecimento visitado.</p>
 				</c:if>
 				<br />
 				<h2>Principais Classificações</h2>
@@ -80,17 +78,16 @@
 					</div>
 				</c:if>
 				<c:if test="${cloud.size() == 0}">
-					<h6 style="background: #d8d8c0; padding: 3px 10px;">Nenhuma
-						classificação cadastrada.</h6>
+					<p class="alert alert-warning">Nenhuma classificação
+						cadastrada.</p>
 				</c:if>
 			</div>
-
-			<div class="gt-right-col">
+			<div class="col col-md-6">
 				<h2>Principais Autores</h2>
 				<c:if test="${not empty listaPrincipaisAutores}">
-					<div class="gt-content-box gt-for-table">
-						<table class="gt-table gt-user-table">
-							<thead>
+					<div>
+						<table class="table table-sm">
+							<thead class="thead-dark">
 								<tr>
 									<th width="60%">Autor</th>
 									<th width="15%">Lotação</th>
@@ -112,15 +109,14 @@
 					</div>
 				</c:if>
 				<c:if test="${empty listaPrincipaisAutores}">
-					<h6 style="background: #d8d8c0; padding: 3px 10px;">Nenhum
-						autor cadastrou conhecimentos nessa lotação.</h6>
+					<p class="alert alert-warning">Nenhum autor cadastrou
+						conhecimentos nessa lotação.</p>
 				</c:if>
 				<br />
 
 				<h2>Evolução</h2>
 				<div id="evolution" class="gt-content-box gt-tag-cloud"></div>
-				<p id="dicaGrafico"
-					style="font-size: 88.5%; text-align: center; color: #365b6d; color: #365b6d; background: #d8d8c0; padding: 3px 10px;">
+				<p id="dicaGrafico" class="alert alert-primary">
 					Clique nas barras <span style="color: #B00000;"> vermelhas</span>
 					para saber quais conhecimentos fazem parte dessa estatística no mês
 					selecionado
@@ -225,6 +221,6 @@
 		var data = new Date(anoCompleto, mes,0);
 		return [data.getDate(),data.getMonth()+1,data.getFullYear()].join("/");
 	}	
-</script>
 
+</script>
 </siga:pagina>

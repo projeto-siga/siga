@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.gc.model.GcAcesso;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcMarca;
@@ -183,6 +184,10 @@ public class GcBL {
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		Date dt = dt();
 
+		if (inf.getEdicao() != null)
+			inf.setEdicao(GcAcesso.AR.findById(inf.getEdicao().getId()));
+		if (inf.getVisualizacao() != null)
+			inf.setVisualizacao(GcAcesso.AR.findById(inf.getVisualizacao().getId()));
 			
 		// Atualiza o campo arq, pois este não pode ser nulo
 		if (inf.getMovs() != null) {
@@ -198,7 +203,7 @@ public class GcBL {
 			inf.setHisIdcIni(idc);
 		if (inf.getMovs() != null) {
 			for (GcMovimentacao mov : inf.getMovs()) {
-				if (mov.getArq() != null && mov.getArq().getId() == 0)
+				if (mov.getArq() != null && mov.getArq().getId() == null)
 					mov.getArq().save();
 				if (mov.getHisIdcIni() == null)
 					mov.setHisIdcIni(idc);
@@ -208,7 +213,7 @@ public class GcBL {
 					mov.setPessoaTitular(titular);
 				if (mov.getLotacaoTitular() == null)
 					mov.setLotacaoTitular(lotaTitular);
-				if (inf.getId() == 0)
+				if (inf.getId() == null)
 					inf.save();
 				mov.setInf(inf);
 				if (mov.getMovCanceladora() != null) {

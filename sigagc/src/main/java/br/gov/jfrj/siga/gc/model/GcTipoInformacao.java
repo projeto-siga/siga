@@ -23,7 +23,7 @@ public class GcTipoInformacao extends Objeto {
 	
 	@Id
 	@Column(name = "ID_TIPO_INFORMACAO")
-	private long id;
+	private Long id;
 
 	@Column(name = "NOME_TIPO_INFORMACAO", nullable = false)
 	private String nome;
@@ -32,7 +32,7 @@ public class GcTipoInformacao extends Objeto {
 	@JoinColumn(name = "ARQUIVO")
 	private GcArquivo arq;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -54,7 +54,7 @@ public class GcTipoInformacao extends Objeto {
 		super();
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

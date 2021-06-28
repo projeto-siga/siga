@@ -42,8 +42,9 @@ public class GcMovimentacao extends Objeto implements
 			GcMovimentacao.class);
 
 	@Id
+	@GeneratedValue
 	@Column(name = "ID_MOVIMENTACAO")
-	private long id;
+	private Long id;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
@@ -100,7 +101,7 @@ public class GcMovimentacao extends Objeto implements
 	@JoinColumn(name = "HIS_IDC_INI")
 	private CpIdentidade hisIdcIni;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -165,12 +166,7 @@ public class GcMovimentacao extends Objeto implements
 	}
 
 	public boolean isCanceladora() {
-		switch ((int) this.tipo.getId()) {
-		case (int) GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE:
-		case (int) GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO:
-			return true;
-		}
-		return false;
+		return this.tipo.getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE || this.tipo.getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO;
 	}
 
 	@Override
@@ -182,11 +178,13 @@ public class GcMovimentacao extends Objeto implements
 		int i = o2.hisDtIni.compareTo(o1.hisDtIni);
 		if (i != 0)
 			return i;
-		if (o2.id > o1.id)
+		if (o2.getId() == null && o1.getId() != null)
 			return 1;
-		if (o2.id < o1.id)
+		else if (o2.getId() != null && o1.getId() == null)
 			return -1;
-		return 0;
+		else if(o2.getId() != null && o1.getId() != null)
+			i = Long.compare((long) o2.getId(), (long) o1.getId());
+		return i;
 	}
 	
 	public static GcInformacao buscarInformacaoPorAnexo(GcArquivo anexo, Long idInformacao) {
@@ -221,7 +219,7 @@ public class GcMovimentacao extends Objeto implements
 		return (count == count2);
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

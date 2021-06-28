@@ -706,18 +706,15 @@ public class AppController extends GcController {
 		DpPessoa titular = getTitular();
 		DpLotacao lotaTitular = getLotaTitular();
 
-		// Edson: esta estranho referenciar o TMPGC-0. Ver solucao melhor.
-		if (sigla != null && !sigla.equals("TMPGC-0")) {
+		if (sigla != null) {
 			//Evita erro de edição de conhecimentos em várias abas do navegador, 
 			//garantindo que seja editado o conhecimento passado na URL.
-			String uri = getRequest().getRequestURI();		
-			String siglaConhecimentoAEditar = uri.substring(uri.lastIndexOf("/")+1);
-			
-			if(siglaConhecimentoAEditar != sigla) {
-				informacao = GcInformacao.findBySigla(siglaConhecimentoAEditar);
-			} 
-			else
-				informacao = GcInformacao.findBySigla(sigla);
+//			String uri = getRequest().getRequestURI();		
+//			String siglaConhecimentoAEditar = uri.substring(uri.lastIndexOf("/")+1);
+//			if(siglaConhecimentoAEditar != sigla) 
+//				informacao = GcInformacao.findBySigla(siglaConhecimentoAEditar);
+//			else
+			informacao = GcInformacao.findBySigla(sigla);
 		}
 		else
 			informacao = new GcInformacao();
@@ -737,7 +734,7 @@ public class AppController extends GcController {
 				conteudo = (informacao.getArq() != null) ? informacao.getArq()
 						.getConteudoTXT() : null;
 
-			if (tipo == null || tipo.getId() == 0)
+			if (tipo == null)
 				tipo = (informacao.getTipo() != null) ? informacao.getTipo()
 						: tiposInformacao.get(0);
 
@@ -1074,7 +1071,7 @@ public class AppController extends GcController {
 			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao,
 			CpPerfil grupo) throws Exception {
 		
-		if (informacao.getId() != 0) {
+		if (informacao.getId() != null) {
 			informacao = em().find(GcInformacao.class, informacao.getId());
 		}
 
@@ -1116,7 +1113,7 @@ public class AppController extends GcController {
 		} else
 			informacao.setGrupo(null);
 
-		if (informacao.getId() != 0)
+		if (informacao.getId() != null)
 			movAserReordenada = bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null, null,
 					null, inftitulo, conteudo, classificacao, null, null, null);

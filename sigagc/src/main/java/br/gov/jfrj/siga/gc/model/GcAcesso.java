@@ -28,12 +28,12 @@ public class GcAcesso extends Objeto {
 	@Id
 	@GeneratedValue
 	@Column(name = "ID_ACESSO", unique = true, nullable = false)
-	private long id;
+	private Long id;
 
 	@Column(name = "NOME_ACESSO", nullable = false)
 	private String nome;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -51,7 +51,7 @@ public class GcAcesso extends Objeto {
 		this.nome = nome;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

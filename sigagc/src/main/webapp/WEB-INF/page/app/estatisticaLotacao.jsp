@@ -115,7 +115,7 @@
 				<br />
 
 				<h2>Evolução</h2>
-				<div id="evolution" class="gt-content-box gt-tag-cloud"></div>
+				<div id="evolution"></div>
 				<p id="dicaGrafico" class="alert alert-primary">
 					Clique nas barras <span style="color: #B00000;"> vermelhas</span>
 					para saber quais conhecimentos fazem parte dessa estatística no mês

@@ -102,20 +102,20 @@
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
-								<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-									<c:set var="podeAssinarComSenha" value="true" />
-									<c:set var="defaultAssinarComSenha" value="true" />
-									
-									<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
-									<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
-									<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
-									
-									<tags:assinatura_botoes assinar="true" 
-										assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
-										assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
-										assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
-										assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"/>
-								</c:if>
+
+								<c:set var="podeAssinarComSenha" value="${(not empty documentosQuePodemSerAssinadosComSenha)}" />
+								<c:set var="defaultAssinarComSenha" value="true" />
+
+								<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+								<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+								<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+								
+								<tags:assinatura_botoes assinar="true" 
+									assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+									assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
+									assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+									assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"/>
+
 							</div>
 						</div>
 					</div>
@@ -128,7 +128,6 @@
 						<thead class="${thead_color} align-middle text-center">
 							<tr>
 								<th width="3%"></th>
-								<th width="3%"></th>
 								<th width="13%" align="left">Número</th>
 								<th width="5%"></th>
 								<th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>
@@ -136,7 +135,6 @@
 								<th width="49%"></th>
 							</tr>
 							<tr>
-								<th width="3%"></th>
 								<th width="3%" align="right"><input type="checkbox"
 									name="checkall" onclick="checkUncheckAll(this)" /></th>
 								<th width="13%"></th>
@@ -156,22 +154,10 @@
 								<c:if test="${param[x] == 'true'}">
 									<c:set var="x_checked" scope="request">checked</c:set>
 								</c:if>
-								<c:set var="podeAssinarComSenha"
-									value="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}" />
-								<c:set var="classAssinarComSenha" value="nao-pode-assinar-senha" />
-								<c:if test="${podeAssinarComSenha}">
-									<c:set var="classAssinarComSenha" value="pode-assinar-senha" />
-								</c:if>
 								<tr class="even">
-									<td width="3%" align="center"><c:if
-											test="${podeAssinarComSenha}">
-											<img src="/siga/css/famfamfam/icons/keyboard.png"
-												alt="Permite assinatura com senha"
-												title="Permite assinatura com senha" />
-										</c:if></td>
-									<td width="3%" align="center"><input type="checkbox"
-										name="${x}" value="true" ${x_checked}
-										class="${classAssinarComSenha}" /></td>
+									<td width="3%" align="center">
+										<input type="checkbox" name="${x}" value="true" ${x_checked} />
+									</td>
 									<td width="13%" align="left"><a
 										href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
 									</td>

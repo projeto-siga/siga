@@ -263,10 +263,5 @@ public class Prop {
 		 * armazenado em session storage no browser do usuário.
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
-		
-<<<<<<< HEAD
-		
-=======
->>>>>>> develop_SigaParaConstrucao
 	}
 }

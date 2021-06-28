@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "gc_movimentacao", schema = "sigagc")
+@Table(name = "sigagc.gc_movimentacao")
 @NamedQueries({
 	@NamedQuery(name = "buscarInformacaoPorAnexo", query = 
 			"select info from GcMovimentacao mov "
@@ -42,8 +42,6 @@ public class GcMovimentacao extends Objeto implements
 			GcMovimentacao.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcMovimentacaoSeq")
-	@GeneratedValue(generator = "gcMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
 	private long id;
 

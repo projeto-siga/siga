@@ -21,14 +21,12 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "gc_arquivo", schema = "sigagc")
+@Table(name = "sigagc.gc_arquivo")
 public class GcArquivo extends Objeto implements Serializable {
 	private static final long serialVersionUID = -1924833226821913592L;
 	public static ActiveRecord<GcArquivo> AR = new ActiveRecord<>(
 			GcArquivo.class);
 	@Id
-	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcArquivoSeq")
-	@GeneratedValue(generator = "gcArquivoSeq")
 	@Column(name = "ID_CONTEUDO")
 	private long id;
 

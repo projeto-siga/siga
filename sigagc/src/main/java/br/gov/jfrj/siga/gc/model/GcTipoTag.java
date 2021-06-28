@@ -9,7 +9,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "gc_tipo_tag", schema = "sigagc")
+@Table(name = "sigagc.gc_tipo_tag")
 public class GcTipoTag extends Objeto {
 	public static final long TIPO_TAG_CLASSIFICACAO = 1;
 	public static final long TIPO_TAG_HASHTAG = 2;

@@ -1,19 +1,20 @@
 package br.gov.jfrj.siga.gc.util;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.util.SigaFlyway;
 
-/**
- * 
- * @author Rodrigo Ramalho hodrigohamalho@gmail.com
- *
- */
+@Startup
+@Singleton
 @ApplicationScoped
 public class GcStarter {
 
@@ -26,5 +27,17 @@ public class GcStarter {
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 
 		emf = Persistence.createEntityManagerFactory("default");
+		new MigrationThread().start();
+	}
+
+	public static class MigrationThread extends Thread {
+		public void run() {
+			try {
+				SigaFlyway.migrate("java:/jboss/datasources/SigaGcDS", "classpath:db/mysql/sigagc", true);
+			} catch (NamingException e) {
+				log.error("Erro na migração do banco", e);
+				SigaFlyway.stopJBoss();
+			}
+		}
 	}
 }

@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "gc_tag", schema = "sigagc")
+@Table(name = "sigagc.gc_tag")
 @NamedQueries({ @NamedQuery(name = "listarTagCategorias", query = "select t.categoria from GcTag t where t.categoria is not null group by t.categoria order by t.categoria") })
 public class GcTag extends Objeto implements Comparable<GcTag>,
 		ObjetoSelecionavel {
@@ -33,8 +33,6 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 			.compile("^([@#^])(?:([\\w-]+?)(?:-(\\d)(?:-(\\d+))?)?:)?([\\w\\d-]+)$");
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
-	@GeneratedValue(generator = "gcTagSeq")
 	@Column(name = "ID_TAG")
 	private long id;
 

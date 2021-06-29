@@ -27,7 +27,7 @@
 				</siga:links>
 
 				<!-- Dados do documento -->
-				
+
 				<div id="knowledgeContent" class="card card-body mb-1 mt-2">
 					<h4>${informacao.arq.titulo}</h4>
 					${conteudo}
@@ -36,9 +36,7 @@
 
 			<div class="col-sm-4">
 				<div class="card-sidebar card border-alert bg-white mb-3">
-					<div class="card-header">
-						${informacao.tipo.nome}
-					</div>
+					<div class="card-header">${informacao.tipo.nome}</div>
 					<div class="card-body">
 						<p>
 							<b>Tipo: </b> ${informacao.tipo.nome}
@@ -63,9 +61,8 @@
 							${informacao.autor.sigla}
 						</p>
 						<p>
-							<b>Lotação:</b>
-							${informacao.lotacao.descricaoIniciaisMaiusculas} -
-							${informacao.lotacao.sigla}
+							<b>Lotação:</b> ${informacao.lotacao.descricaoIniciaisMaiusculas}
+							- ${informacao.lotacao.sigla}
 						</p>
 						<p>
 							<b>Data de criação:</b> ${informacao.dtIniString}
@@ -92,11 +89,15 @@
 								<b>Classificação:</b> ${(not empty informacao.arq.classificacao) ? informacao.arq.classificacao : "Esse conhecimento ainda não possui uma classificação"}
 							</p>
 						</c:if>
-						<c:if test="${informacao.contemArquivos}">
-							<h3>Arquivos Anexos</h3>
+					</div>
+				</div>
+				<c:if test="${informacao.contemArquivos}">
+					<div class="card-sidebar card border-alert bg-white mb-3">
+						<div class="card-header">Arquivos Anexos</div>
+						<div class="card-body">
 							<c:forEach items="${informacao.movs}" var="m">
 								<c:if test="${m.tipo.id == 13 && m.movCanceladora == null}">
-									<p>
+									<p style="word-break: break-all; word-wrap: break-word;">
 										<img style="margin-bottom: -4px;"
 											src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
 											target="_blank"
@@ -104,36 +105,38 @@
 									</p>
 								</c:if>
 							</c:forEach>
-						</c:if>
-	
-						<c:set var="papeis" value="${informacao.papeisVinculados}" />
-						<c:if test="${not empty papeis}">
-							<div class="gt-sidebar-content" style="padding-top: 10px">
-								<h3>Perfis</h3>
-								<c:forEach var="papel" items="${papeis}">
-									<p style="margin-bottom: 3px;">
-										<b>${papel.key.descPapel}:</b>
-									</p>
-									<ul>
-										<c:forEach var="pessoaLotaOuGrupo" items="${papel.value}">
-											<li><c:catch var="exception">${pessoaLotaOuGrupo.nomePessoa}</c:catch>
-												<c:if test="${not empty exception}">
-													<c:catch var="exception">${pessoaLotaOuGrupo.nomeLotacao}</c:catch>
-													<c:if test="${not empty exception}">${pessoaLotaOuGrupo.dscGrupo}</c:if>
-												</c:if></li>
-										</c:forEach>
-									</ul>
-								</c:forEach>
-							</div>
-						</c:if>
+						</div>
 					</div>
-				</div>
+				</c:if>
 
-				<div class="gt-sidebar-content" id="gc"></div>
-
-				<!-- / sidebar -->
+				<c:set var="papeis" value="${informacao.papeisVinculados}" />
+				<c:if test="${not empty papeis}">
+					<div class="card-sidebar card border-alert bg-white mb-3">
+						<div class="card-header">Perfis</div>
+						<div class="card-body">
+							<c:forEach var="papel" items="${papeis}">
+								<p style="margin-bottom: 3px;">
+									<b>${papel.key.descPapel}:</b>
+								</p>
+								<ul>
+									<c:forEach var="pessoaLotaOuGrupo" items="${papel.value}">
+										<li><c:catch var="exception">${pessoaLotaOuGrupo.nomePessoa}</c:catch>
+											<c:if test="${not empty exception}">
+												<c:catch var="exception">${pessoaLotaOuGrupo.nomeLotacao}</c:catch>
+												<c:if test="${not empty exception}">${pessoaLotaOuGrupo.dscGrupo}</c:if>
+											</c:if></li>
+									</c:forEach>
+								</ul>
+							</c:forEach>
+						</div>
+				</c:if>
 			</div>
+
+			<div class="gt-sidebar-content" id="gc"></div>
+
+			<!-- / sidebar -->
 		</div>
+	</div>
 	</div>
 
 	<script type="text/javascript">

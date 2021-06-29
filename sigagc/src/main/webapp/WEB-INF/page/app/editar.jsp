@@ -225,7 +225,7 @@
 						'conteudo',
 						{
 							filebrowserUploadUrl : '${linkTo[AppController].gravarArquivo}?origem=editar'
-									+ '&informacao=' + '${informacao}',
+									+ '&informacao.id=' + '${informacao.id}',
 							toolbar : [
 									{
 										name : 'clipboard',

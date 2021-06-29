@@ -8,7 +8,7 @@
 	<siga:pagina titulo="Siga - Logout" desabilitarbusca="sim"
                  meta="<META HTTP-EQUIV='refresh' CONTENT='1;URL='/siga/'>" >
 
-		<div class="gt-bd clearfix">
+		<div class="container-fluid">
 			<div class="gt-content clearfix">
 
 				<div class="gt-content-box">

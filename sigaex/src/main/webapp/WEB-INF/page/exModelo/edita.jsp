@@ -74,9 +74,10 @@
 						</div>
 						<div class="col-sm-6">
 							<div class="form-group">
-								<label>Descrição</label> <input type="text" name="descricao"
-									value="${descricao}" size="80" maxlength="256"
-									class="form-control" />
+ 
+								<label>Descrição</label>
+								<input type="text" name="descricao" value="${descricao}" size="80" class="form-control" maxlength="256"/>
+ 
 							</div>
 						</div>
 					</div>

@@ -38,7 +38,7 @@ public class SincController extends SigaController {
 
 	@Transacional
 	@Post("public/app/admin/sinc")
-	@UploadSizeLimit(sizeLimit=10 * 1024 * 1024, fileSizeLimit=10 * 1024 * 1024)
+	@UploadSizeLimit(sizeLimit=40 * 1024 * 1024, fileSizeLimit=30 * 1024 * 1024)
 	public void sinc(String sigla, int maxSinc, boolean modoLog, UploadedFile file) throws Exception {
 		try {
 			String pwd = Prop.get("sinc.password");

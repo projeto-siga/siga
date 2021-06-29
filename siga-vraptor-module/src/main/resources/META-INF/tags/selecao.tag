@@ -321,7 +321,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	<c:if test="${ocultardescricao != 'sim'}">
 		<div class="input-group-append ml-2" style="width: 60%;">
 			<span class="form-control" style="overflow: hidden; white-space:nowrap; text-overflow:ellipsis;" id="${spanName}SelSpan"><c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" /></span>
-		</div>
+ 		</div>
 	</c:if>
 </div>
 

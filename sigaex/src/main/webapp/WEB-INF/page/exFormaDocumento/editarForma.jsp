@@ -26,6 +26,11 @@
 						</div>
 						<div class="col-lg-1 col-md-2">
 							<div class="form-group">
+<!-- 
+								<label for="sigla">Sigla</label> <input type="text"
+									value="${sigla}" name="sigla" id="gravar_sigla"
+									class="form-control" <c:if test="${desabilitaSigla}">disabled</c:if> /> <span id="mensagem"></span>
+-->
 								<label for="sigla">Sigla</label> 
 								<input type="text" id="sigla" value="${sigla}" name="sigla" id="gravar_sigla" class="form-control"
 									${temDocumentoVinculado ? 'readonly' : ''} /> <span id="mensagem"></span>

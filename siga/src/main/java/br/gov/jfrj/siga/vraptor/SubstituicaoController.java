@@ -53,8 +53,6 @@ public class SubstituicaoController extends SigaController {
 	private Map<Integer, String> getListaTipo() {
 		return TipoResponsavelEnum.getLista(chaves);
 	}	
-		
-
 
 	/**
 	 * @deprecated CDI eyes only
@@ -321,45 +319,7 @@ public class SubstituicaoController extends SigaController {
 
 			subst = dao().gravar(subst);
 			
-			Set<DpPessoa> pessoasParaEnviarEmail = new HashSet<DpPessoa>();
-			
-			String textoEmail = "Informamos que a matrícula: "  + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
-			        + " - " + getCadastrante().getNomePessoa()  
-					+ " cadastrou uma substituição da ";
-					
-						
-					if (tipoSubstituto == 1) {
-						textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula() + " - " + subst.getSubstituto().getNomePessoa();
-						pessoasParaEnviarEmail.add(subst.getSubstituto());
-						
-					} else {
-						textoEmail = textoEmail + " lotação: " + subst.getLotaSubstituto().getSigla() + " - " + subst.getLotaSubstituto().getNomeLotacao();
-						pessoasParaEnviarEmail.addAll(subst.getLotaSubstituto().getDpPessoaLotadosSet());
-					}
-					
-					textoEmail = textoEmail + " para";
-					
-					if (tipoTitular ==1) {
-						textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula() + " - " + subst.getTitular().getNomePessoa();;
-						pessoasParaEnviarEmail.add(subst.getTitular());
-					} else {
-						textoEmail = textoEmail + " lotação: " + subst.getLotaTitular().getSigla() + " - " + subst.getLotaTitular().getNomeLotacao();
-						pessoasParaEnviarEmail.addAll(subst.getLotaTitular().getDpPessoaLotadosSet());
-					}
-			
-					textoEmail = textoEmail + " com inicio em " + subst.getDtIniSubstDDMMYY().toString() + " e término em " + subst.getDtFimSubstDDMMYY().toString() + "."
-					+ "\n\n Atenção: esta é uma "
-					+ "mensagem automática. Por favor, não responda.";
-					
-			String assunto = "Cadastro de Substituição";
-					
-			List<String> listaDeEmails= new ArrayList<String>();
-			listaDeEmails.add(getCadastrante().getEmailPessoa());
-			for (DpPessoa pessoa : pessoasParaEnviarEmail)	{
-				listaDeEmails.add(pessoa.getEmailPessoa()); 
-			}
-			
-			Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, textoEmail);
+			enviarEmailSubstituicao(tipoTitular, tipoSubstituto, subst);
 			
 			result.redirectTo(this).lista();
 
@@ -375,7 +335,204 @@ public class SubstituicaoController extends SigaController {
 		}
 
 	}
+
+	/**
+	 * Monta a mensagem do Email de informação de substituição enviado de Pessoa para Pessoa
+	 * 
+	 * @param subst
+	 * @return String com a mensagem do Email
+	 */
 	
+	private String getMensagemPessoaParaPessoa(DpSubstituicao subst){
+		
+		String mensagem = "da matrícula:  #nomeSubstituto#(#matriculaSubstituto#), para  #nomeSubstituido#(#matriculaSubstituido#) "
+				+"com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. \n"
+				+"Desta forma, o agente público  #nomeSubstituto#(#matriculaSubstituto#) pode ter acesso, editar, criar e assinar documentos direcionados "
+				+"para  #nomeSubstituido#(#matriculaSubstituido#). Para isso basta acessar o menu, administração e gerenciar possíveis substitutos. "
+				+"O substituto pode recusar o acesso, clicando no X, ao lado do item referente ao acesso lançado pelo cadastrante. "
+				+"O sistema deixará claro que o signatário é  #nomeSubstituto#(#matriculaSubstituto#), em substituição de  #nomeSubstituido#(#matriculaSubstituido#)";
+		
+		mensagem = mensagem.replace("#matriculaSubstituto#", subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula());
+		mensagem = mensagem.replace("#nomeSubstituto#", subst.getSubstituto().getNomePessoa());
+		mensagem = mensagem.replace("#matriculaSubstituido#", subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula());
+		mensagem = mensagem.replace("#nomeSubstituido#", subst.getTitular().getNomePessoa());
+		mensagem = mensagem.replace("#inicioSubstituicao#",  subst.getDtIniSubstDDMMYYYY().toString());
+		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYYYY().toString());
+
+		return mensagem;
+	}
+
+	/**
+	 * Monta a mensagem do Email de informação de substituição enviado de Pessoa para Pessoa
+	 * 
+	 * @param subst
+	 * @return String com a mensagem do Email
+	 */
+	private String getMensagemPessoaParaLotacao(DpSubstituicao subst){
+		
+		String mensagem =" da lotação: #siglaLotacaoSubstituta# - #nomeLotacaoSubstituta#, para o agente público: #nomeSubstituido#(#matriculaSubstituido#),"
+				+ " com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#.\n"
+				+ "Desta forma, todos os agentes públicos lotados em #siglaLotacaoSubstituta# - #nomeLotacaoSubstituta# podem ter acesso,"
+				+ " editar, criar e assinar documentos destinados ao agente público #nomeSubstituido#(#matriculaSubstituido#)."
+				+ " Para isso basta acessar o menu, administração e gerenciar possíveis substitutos. O substituto pode recusar o acesso,"
+				+ " clicando no X, ao lado do item referente ao acesso lançado pelo cadastrante.";
+		
+		mensagem = mensagem.replace("#siglaLotacaoSubstituta#",  subst.getLotaTitular().getSigla());
+		mensagem = mensagem.replace("#nomeLotacaoSubstituta#",subst.getLotaTitular().getNomeLotacao());
+		mensagem = mensagem.replace("#matriculaSubstituido#", subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula());
+		mensagem = mensagem.replace("#nomeSubstituido#", subst.getTitular().getNomePessoa());
+		mensagem = mensagem.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYYYY().toString());
+		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYYYY().toString());
+
+		return mensagem;
+		
+	}
+	
+	/**
+	 * Monta a mensagem do Email de informação de substituição enviado de Lotação para Pessoa
+	 * 
+	 * @param subst
+	 * @return String com a mensagem do Email
+	 */
+	private String getMensagemLotacaoParaPessoa(DpSubstituicao subst){
+		
+		
+		String mensagem = " da matrícula:  #nomeSubstituto#(#matriculaSubstituto#), na lotação: #nomeLotacaoSubstituida#"
+				+ " com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#.\n"
+				+ "Desta forma, o agente público #nomeSubstituto#(#matriculaSubstituto#) pode ter acesso, editar, criar e assinar documentos na "
+				+ " lotação #nomeLotacaoSubstituida#, como se tivesse uma lotação formal na mesma. Para isso basta acessar o menu, administração e"
+				+ " gerenciar possíveis substitutos. O substituto pode recusar o acesso,"
+				+ " clicando no X, ao lado do item referente ao acesso lançado pelo cadastrante.";
+		
+		mensagem = mensagem.replace("#matriculaSubstituto#", subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula());
+		mensagem = mensagem.replace("#nomeSubstituto#", subst.getSubstituto().getNomePessoa());
+		mensagem = mensagem.replace("#siglaLotacaoSubstituida#",  subst.getLotaTitular().getSigla());
+		mensagem = mensagem.replace("#nomeLotacaoSubstituida#",subst.getLotaTitular().getNomeLotacao());
+		mensagem = mensagem.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYYYY().toString());
+		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYYYY().toString());
+
+		return mensagem;
+	}
+
+	/**
+	 * Monta a mensagem do Email de informação de substituição enviado de Lotacao para Lotacao
+	 * 
+	 * @param subst
+	 * @return String com a mensagem do Email
+	 */
+	private String getMensagemLotacaoParaLotacao(DpSubstituicao subst){
+
+		String mensagem = "do setor: #siglaLotacaoSubstituida# - #nomeLotacaoSubstituida# "
+				+ "para o setor: #nomeLotacaoSubstituta#, com inicio em #inicioSubstituicao# e término em #terminoSubstituicao#. \n"
+				+ "Desta forma, todos os agentes públicos lotados em #siglaLotacaoSubstituta# - #nomeLotacaoSubstituta#, "
+				+ "podem acessar, criar e assinar documentos na lotação #siglaLotacaoSubstituida# - #nomeLotacaoSubstituida# "
+				+ "como se tivessem uma lotação formal na mesma. Para isso basta acessar o menu, administração e gerenciar possíveis substitutos. "
+				+ "O substituto pode recusar o acesso, clicando no X, ao lado do item referente ao acesso lançado pelo cadastrante.";
+		
+		mensagem = mensagem.replace("#siglaLotacaoSubstituta#",subst.getLotaSubstituto().getSigla());
+		mensagem = mensagem.replace("#nomeLotacaoSubstituta#", subst.getLotaSubstituto().getNomeLotacao());
+		
+		mensagem = mensagem.replace("#siglaLotacaoSubstituida#",  subst.getLotaTitular().getSigla());
+		mensagem = mensagem.replace("#nomeLotacaoSubstituida#",subst.getLotaTitular().getNomeLotacao());
+		
+		mensagem = mensagem.replace("#inicioSubstituicao#", subst.getDtIniSubstDDMMYYYY().toString());
+		mensagem = mensagem.replace("#terminoSubstituicao#", subst.getDtFimSubstDDMMYYYY().toString());
+
+		return mensagem;
+	}
+	
+	private String getEmailCabecalho(){
+
+		String cabecalho = "Informamos que o agente público: #nomeCadastrante#(#matriculaCadastrante#) cadastrou uma substituição ";
+		cabecalho = cabecalho.replace("#matriculaCadastrante#", getCadastrante().getSesbPessoa() + getCadastrante().getMatricula());
+		cabecalho = cabecalho.replace("#nomeCadastrante#", getCadastrante().getNomePessoa());
+
+		return cabecalho;
+}
+
+	private void enviarEmailSubstituicao(Integer tipoTitular, Integer tipoSubstituto, DpSubstituicao subst)
+			throws Exception {
+		
+		String assunto = "Cadastro de Substituição";
+		
+		StringBuffer sbTextoEmail = new StringBuffer();
+
+		sbTextoEmail.append(this.getEmailCabecalho());
+
+		switch (tipoTitular) {
+			case 1: // DE PESSOA 
+				switch (tipoSubstituto) {
+					case 1: // PARA PESSOA
+						
+						sbTextoEmail.append(getMensagemPessoaParaPessoa(subst));
+					break;
+						
+					case 2: // PARA LOTACAO
+						
+						sbTextoEmail.append(getMensagemPessoaParaLotacao(subst));
+					break;
+				}
+			break;
+	
+			case 2: // DE LOTACAO
+				switch (tipoSubstituto) {
+					case 1: // PARA PESSOA
+						
+						sbTextoEmail.append(getMensagemLotacaoParaPessoa(subst));
+					break;
+						
+					case 2: // PARA LOTACAO
+						
+						sbTextoEmail.append(getMensagemLotacaoParaLotacao(subst));
+					break;
+				}
+			break;
+		}
+
+		sbTextoEmail.append(this.getEmailRodape());
+
+		List<String> listaDeEmails = getDestinatariosEmailSubstituicao(tipoTitular, tipoSubstituto, subst );
+		
+		Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, sbTextoEmail.toString());
+	}
+
+
+	private List<String> getDestinatariosEmailSubstituicao(Integer tipoTitular, Integer tipoSubstituto,
+			DpSubstituicao subst) {
+		
+		Set<DpPessoa> pessoasParaEnviarEmail = new HashSet<DpPessoa>();
+		
+		if (tipoSubstituto == 1){
+			pessoasParaEnviarEmail.add(subst.getSubstituto());
+		}else{
+			pessoasParaEnviarEmail.addAll(subst.getLotaSubstituto().getDpPessoaLotadosSet());
+		}
+
+		if (tipoTitular == 1) {
+			pessoasParaEnviarEmail.add(subst.getTitular());
+		} else {
+			pessoasParaEnviarEmail.addAll(subst.getLotaTitular().getDpPessoaLotadosSet());
+		}
+
+		List<String> listaDeEmails = new ArrayList<>();
+		for (DpPessoa pessoa : pessoasParaEnviarEmail){
+			listaDeEmails.add(pessoa.getEmailPessoa());
+		}
+				
+//				pessoasParaEnviarEmail.stream().map(DpPessoa :: getEmailPessoa).collect(Collectors.toList());
+		listaDeEmails.add(getCadastrante().getEmailPessoa());
+		
+		return listaDeEmails;
+	}
+
+	
+	private String getEmailRodape() {
+
+		String rodape = "\n\n Atenção: Esta é uma mensagem automática. Por favor, não responda.";
+		return rodape;
+	}
+	
+
 	@Transacional
 	@Get("/app/substituicao/finalizar")
 	public void finalizar() throws Exception {

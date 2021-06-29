@@ -228,7 +228,10 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial"
 				+ "					and doc.dtFinalizacao is not null"
 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
-				+ "				order by  doc.dtFinalizacao") })
+				+ "				order by  doc.dtFinalizacao"),
+		@NamedQuery(name = "contarDocumentosPorSigla", query = "select count(doc) "
+				+ "					from ExDocumento doc inner join doc.exFormaDocumento forma "
+				+ "					where forma.siglaFormaDoc = :sigla") })
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 	

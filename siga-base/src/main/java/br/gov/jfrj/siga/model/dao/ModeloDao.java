@@ -112,7 +112,12 @@ public abstract class ModeloDao {
 			em().persist(entidade);
 		return entidade;
 	}
-
+	public <T> T atualizar(final T entidade) {
+		if (em() != null)
+			em().merge(entidade);
+		return entidade;
+	}
+	
 	// Renato: desativei esse método pois ele não informar questões de cache ou
 	// de ordenação. É melhor termos métodos específicos, então.
 	// public <T> List<T> listarTodos(Class<T> clazz) {

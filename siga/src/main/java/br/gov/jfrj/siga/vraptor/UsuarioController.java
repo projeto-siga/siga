@@ -247,11 +247,13 @@ public class UsuarioController extends SigaController {
 		String[] senhaGerada = new String[1];
 		boolean isIntegradoAoAD = isIntegradoAD(usuario.getMatricula());
 		CpIdentidade idNova = null;
+		String urlAplicacao = "http://" + request.getHeader("Host") + "/siga";
+
 		switch (usuario.getMetodo()) {
 		case 1:
 
 			idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
-					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD);
+					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD, urlAplicacao);
 			if (isIntegradoAoAD) {
 				try {
 					IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova, usuario.getSenhaNova());
@@ -345,8 +347,13 @@ public class UsuarioController extends SigaController {
 				}
 			} else {
 				String[] senhaGerada = new String[1];
+				
+				String urlAplicacao = "http://" + request.getHeader("Host") + "/siga";
+				
 				Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(), cpfNumerico,
-						getIdentidadeCadastrante(), senhaGerada);
+						getIdentidadeCadastrante(), senhaGerada, 
+						urlAplicacao
+						);
 			}
 			break;
 		case 2:
@@ -364,8 +371,11 @@ public class UsuarioController extends SigaController {
 			}
 
 			CpIdentidade idAux1 = dao.consultaIdentidadeCadastrante(usuario.getAuxiliar1(), true);
+			
+			String urlAplicacao = "http://" + request.getHeader("Host") + "/siga";
+
 			Cp.getInstance().getBL().definirSenhaDeIdentidade(usuario.getSenhaNova(), usuario.getSenhaConfirma(),
-					usuario.getMatricula(), usuario.getAuxiliar1(), usuario.getAuxiliar2(), idAux1);
+					usuario.getMatricula(), usuario.getAuxiliar1(), usuario.getAuxiliar2(), idAux1, urlAplicacao);
 //			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
 			break;
 

@@ -86,7 +86,8 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 		if (idPapel != null && idPapel != 0) {
 			config.setExPapel(dao.consultar(idPapel, ExPapel.class, false));
 		} else
-			config.setExNivelAcesso(null);
+			config.setExPapel(null);
+			
 
 		if (classificacaoSel != null && classificacaoSel.getId() != null) {
 			config.setExClassificacao(dao.consultar(classificacaoSel.getId(), ExClassificacao.class, false));

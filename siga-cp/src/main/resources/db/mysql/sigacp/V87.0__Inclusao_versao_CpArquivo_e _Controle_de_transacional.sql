@@ -3,5 +3,5 @@
 CREATE TABLE corporativo.cp_arquivo_excluir (
   CAMINHO varchar(255) NOT NULL COMMENT 'Coluna com o caminho do arquivo binário para exclusão',
   PRIMARY KEY (`CAMINHO`),
-  UNIQUE KEY CP_ARQ_EXCLUIR_CAMINHO_PK (CAMINHO)
+  UNIQUE KEY cp_arq_excluir_caminho_pk (CAMINHO)
 );

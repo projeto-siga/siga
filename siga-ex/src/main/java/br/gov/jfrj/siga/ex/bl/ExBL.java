@@ -3434,6 +3434,7 @@ public class ExBL extends CpBL {
 			// Nato: para obter o numero do TMP na primeira gravação
 			boolean primeiraGravacao = false;
 			if (doc.getIdDoc() == null) {
+
 				doc = salvarDocSemSalvarArq(doc);
 				primeiraGravacao = true;
 			}
@@ -3770,6 +3771,7 @@ public class ExBL extends CpBL {
 			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
 		doc = salvarDocSemSalvarArq(doc);
+
 		return nivel;
 	}
 
@@ -4165,7 +4167,7 @@ public class ExBL extends CpBL {
 			atualizarMarcas(false, mob);
 
 			if (idDocEscolha.equals("1")) {
-				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
+				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob , dtMov);
 			}
 
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
@@ -6301,12 +6303,14 @@ public class ExBL extends CpBL {
 		}
 
 	}
-
+	
 	public void encerrarVolumeAutomatico(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov) throws AplicacaoException, Exception {
 
 		if (mob.doc().isEletronico()) {
+			
 			dao().em().refresh(mob);
+						
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
@@ -6563,22 +6567,24 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void tornarDocumentoSemEfeito(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
+ 	public void tornarDocumentoSemEfeito(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
 			String motivo) throws Exception {		
-		
+
+	String msgCancelamento = "Só é admitido o cancelamento de documentos eletrônicos, "
+			+ "não apensados a um outro, e que não possuam outros apensados a eles. "
+			+ "Esta ação cape apenas ao subscritor, do documento produzido, ou ao cadastrante do documento capturado.\n"
+			+ "O Documento não deve estar tramitado para outro local, diverso do demandante do cancelamento.";
+
+	
 		if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
-			throw new RegraNegocioException("Cancelamento não permitido." 
-					+ " Isso pode ocorrer se o documento não estiver apto a ser cancelado ou devido a alguma regra para não permitir esta operação");
+			throw new RegraNegocioException(msgCancelamento);
 
-		// Verifica se o subscritor pode movimentar todos os mobils
-		// E Também se algum documento diferente está apensado ou juntado a este
-		// documento
-
+ 
 		for (ExMobil m : doc.getExMobilSet()) {
 			if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas					
 				
 				if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m)) {
-					throw new RegraNegocioException("Cancelamento não permitido. Você não possui permissão para executar essa operação no documento");
+					throw new RegraNegocioException(msgCancelamento);
 				}
 				
 				if (m.isJuntado()) {

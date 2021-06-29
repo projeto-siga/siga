@@ -66,6 +66,7 @@ public class ExFormaDocumentoController extends ExController {
 		assertAcesso(ACESSO_SIGA_DOC_MOD);
 
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
+ 
 		boolean temDocumentoVinculado = false;
 		
 		if (forma.getIdFormaDoc() != null) {
@@ -155,7 +156,12 @@ public class ExFormaDocumentoController extends ExController {
 		}
 		
 		forma.setDescrFormaDoc(descricao);
-		forma.setSigla(sigla);
+		
+		if ((id == null) || (dao().contarDocumentorPorSigla(forma.getSigla()) == 0)) {
+			
+			forma.setSigla(sigla);
+		}
+		
 		forma.setExTipoFormaDoc(dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class, false));
 
 		if (forma.getExTipoDocumentoSet() == null) {

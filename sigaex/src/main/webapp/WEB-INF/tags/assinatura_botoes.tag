@@ -40,6 +40,7 @@
 					onclick="javascript: AssinarDocumentos(true, ${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;POL')});"
 					class="btn btn-primary mr-2" role="button">	Autenticar <i class="fa fa-stamp"></i> </a>
 			</c:if>
+ 
 		</div>
 		
 		<div class="col-auto my-auto mr-5">

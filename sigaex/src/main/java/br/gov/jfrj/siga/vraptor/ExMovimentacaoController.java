@@ -326,6 +326,7 @@ public class ExMovimentacaoController extends ExController {
 	
 	@Transacional
 	@Post("app/expediente/mov/anexar_gravar")
+	@UploadSizeLimit(sizeLimit=10 * 1024 * 1024, fileSizeLimit=10 * 1024 * 1024)
 	public void anexarGravar(final String sigla,
 			final DpPessoaSelecao subscritorSel,
 			final DpPessoaSelecao titularSel, final boolean substituicao,

@@ -68,6 +68,21 @@ public class DpSubstituicao extends AbstractDpSubstituicao implements
 		return "";
 	}
 
+	public String getDtFimSubstDDMMYYYY() {
+		if (getDtFimSubst() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(getDtFimSubst());
+		}
+		return "";
+	}
+
+	public String getDtIniSubstDDMMYYYY() {
+		if (getDtIniSubst() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(getDtIniSubst());
+		}
+		return "";
+	}
 	public boolean isEmVoga() {
 		Calendar dtFim = Calendar.getInstance();
 		Calendar dtIni = Calendar.getInstance();

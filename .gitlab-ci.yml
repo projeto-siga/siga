@@ -1,0 +1,148 @@
+variables:
+  NAMESPACE: pbdoc
+  APP: app-server
+  SONAR_PROJECT_KEY: pbdoc-appserver
+
+stages:
+  - test
+  - compile
+  - build
+  - deploy
+
+code quality:
+  stage: test
+  image: $MAVEN_IMAGE
+  script:
+    - mvn clean compile --projects '!siga-le' -U
+    - mvn sonar:sonar
+        -Dsonar.projectKey=$SONAR_PROJECT_KEY
+        -Dsonar.host.url=$SONAR_URL
+        -Dsonar.login=$SONAR_TOKEN
+  only:
+    - pbdoc/develop
+
+build artifact:
+  stage: compile
+  image: $MAVEN_IMAGE
+  script:
+    - mvn clean package --projects '!siga-le' -U
+      -Dmaven.test.skip
+      -Dsiga.versao=$CI_COMMIT_TAG
+  artifacts:
+    paths:
+      - target
+  only:
+    - pbdoc/develop
+    - tags
+
+build & deploy develop:
+  stage: build
+  image: $OC_CLI_IMAGE
+  script:
+    - cp -r target/ docker/target/
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-dev start-build $APP --from-dir docker/ --follow --wait
+    - oc $OPENSHIFT_AUTH tag $NAMESPACE-dev/$APP:latest $NAMESPACE-dev/$APP:develop
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-dev set env dc/$APP --overwrite
+        TAG_GIT="develop"
+        DATA_PUBLICACAO=$(date +'%Y-%m-%d')
+        AMBIENTE=DEVELOP
+        SUPORTE_TELEFONE="$DEVELOP_SUPORTE_TELEFONE"
+        SUPORTE_EMAIL="$DEVELOP_SUPORTE_EMAIL"
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-dev rollout status dc/$APP --watch
+  only:
+    - pbdoc/develop
+  dependencies:
+    - build artifact
+
+build image:
+  stage: build
+  image: $OC_CLI_IMAGE
+  script:
+    - cp -r target/ docker/target/
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-dev start-build $APP --from-dir docker/ --follow --wait
+    - oc $OPENSHIFT_AUTH tag $NAMESPACE-dev/$APP:latest $NAMESPACE-dev/$APP:$CI_COMMIT_TAG
+  only:
+    - tags
+  dependencies:
+    - build artifact
+
+deploy homolog:
+  stage: deploy
+  image: $OC_CLI_IMAGE
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc $OPENSHIFT_AUTH tag $NAMESPACE-dev/$APP:$CI_COMMIT_TAG $NAMESPACE-hml/$APP:latest
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-hml set env dc/$APP --overwrite
+        TAG_GIT="$CI_COMMIT_TAG"
+        DATA_PUBLICACAO=$(date +'%Y-%m-%d')
+        AMBIENTE=HOMOLOG
+        SUPORTE_TELEFONE="$HOMOLOG_SUPORTE_TELEFONE"
+        SUPORTE_EMAIL="$HOMOLOG_SUPORTE_EMAIL"
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-hml rollout status dc/$APP --watch
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  dependencies: []
+
+deploy trn:
+  stage: deploy
+  image: $OC_CLI_IMAGE
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc $OPENSHIFT_AUTH tag $NAMESPACE-dev/$APP:$CI_COMMIT_TAG $NAMESPACE-trn/$APP:latest
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-trn set env dc/$APP --overwrite
+        TAG_GIT="$CI_COMMIT_TAG"
+        DATA_PUBLICACAO=$(date +'%Y-%m-%d')
+        AMBIENTE=TRN
+        SUPORTE_TELEFONE="$TRN_SUPORTE_TELEFONE"
+        SUPORTE_EMAIL="$TRN_SUPORTE_EMAIL"
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-trn rollout status dc/$APP --watch
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  dependencies: []
+
+deploy suporte:
+  stage: deploy
+  image: $OC_CLI_IMAGE
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc $OPENSHIFT_AUTH tag $NAMESPACE-dev/$APP:$CI_COMMIT_TAG $NAMESPACE-sup/$APP:latest
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-sup set env dc/$APP --overwrite
+        TAG_GIT="$CI_COMMIT_TAG"
+        DATA_PUBLICACAO=$(date +'%Y-%m-%d')
+        AMBIENTE=SUPORTE
+        SUPORTE_TELEFONE="$SUPORTE_SUPORTE_TELEFONE"
+        SUPORTE_EMAIL="$SUPORTE_SUPORTE_EMAIL"
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE-sup rollout status dc/$APP --watch
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  dependencies: []
+
+deploy prod:
+  stage: deploy
+  image: $OC_CLI_IMAGE
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc $OPENSHIFT_AUTH tag $NAMESPACE-dev/$APP:$CI_COMMIT_TAG $NAMESPACE/$APP:latest
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE set env dc/$APP --overwrite
+        TAG_GIT="$CI_COMMIT_TAG"
+        DATA_PUBLICACAO=$(date +'%Y-%m-%d')
+        AMBIENTE=PROD
+        SUPORTE_TELEFONE="$PROD_SUPORTE_TELEFONE"
+        SUPORTE_EMAIL="$PROD_SUPORTE_EMAIL"
+    - oc $OPENSHIFT_AUTH --namespace $NAMESPACE rollout status dc/$APP --watch
+  only:
+    - tags
+  when: manual
+  allow_failure: false
+  dependencies: []
+

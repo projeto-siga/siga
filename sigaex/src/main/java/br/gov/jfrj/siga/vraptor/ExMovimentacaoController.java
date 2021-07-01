@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.observer.upload.UploadSizeLimit;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
@@ -178,6 +179,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", movimentacaoBuilder.getTitularSel());
 		result.include("request", getRequest());
 		result.include("assinandoAnexosGeral", assinandoAnexosGeral);
+		result.include("tamanhoMaxArquivoAnexadoUpload",Prop.getInt("pdf.tamanho.maximo")/1024/1024);
+		result.include("qtdMaxArquivoAnexadoUpload", Prop.getInt("qtd.max.arquivo.anexado.upload"));
 	}
 
 	@Get("app/expediente/mov/assinarAnexos")
@@ -210,6 +213,118 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Transacional
+	@Post("app/expediente/mov/anexar_gravarmultiplos")
+	public void anexarGravarMultiplos(final String sigla,
+			final DpPessoaSelecao subscritorSel,
+			final DpPessoaSelecao titularSel, final boolean substituicao,
+			final List<UploadedFile> arquivoLista 	,final String dtMovString,
+			final List<String> descrMovLista) throws IOException {
+		
+			validarArquivosAnexados( arquivoLista);
+		 
+			BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			
+			buscarDocumento(documentoBuilder);
+			
+			ExMobil mob = documentoBuilder.getMob();
+	
+			for (int i = 0; i < arquivoLista.size(); i++) {
+				
+				String descrMov =descrMovLista !=null &&  StringUtils.isNotBlank(descrMovLista.get(i)) ? descrMovLista.get(i): arquivoLista.get(i).getFileName();
+				
+				if (mob.isVolumeEncerrado()) {
+					//DpPessoa cadastrante, DpLotacao lotaCadastrante,		ExDocumento doc
+					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaTitular(), mob.doc());
+					
+					mob = mob.doc().getUltimoVolume();
+				}
+				
+				gravarArquivoAnexado( subscritorSel, titularSel,substituicao, arquivoLista.get(i),dtMovString, descrMov,mob);
+			
+			}
+			
+			finalizarArquivoAnexar(mob.isVolumeEncerrado(),  mob.getSigla());
+		
+	}
+	
+
+	private void validarArquivosAnexados( List<UploadedFile> arquivoLista ) throws IOException{
+
+		 if (arquivoLista == null || arquivoLista.isEmpty()){
+				
+			 throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
+		 }
+		 
+		 int qtdMaxArquivoUpload =  Prop.getInt("qtd.max.arquivo.anexado.upload");
+		 
+		 if (arquivoLista.size() > qtdMaxArquivoUpload ){
+			 throw new AplicacaoException(String.format("A quantidade de arquivos selecionados excedeu o permitido (%s).", qtdMaxArquivoUpload ) );
+		 }
+
+		 for (int i = 0; i < arquivoLista.size(); i++) {
+			 
+			 validarArquivoAnexado(arquivoLista.get(i));
+			 
+		 }
+	}
+		
+
+	private void validarArquivoAnexado(UploadedFile arquivo) throws IOException{
+		
+		validarSeArquivoFoiAnexado(arquivo);
+		
+		validarTipoArquivoAnexado(arquivo);
+		
+		validarTamanhoArquivoAnexado(arquivo);
+			
+		validarSeArquivoAnexadoEstaCorrompido(arquivo);
+	}
+	
+	
+	private void validarTamanhoArquivoAnexado(UploadedFile arquivo) throws IOException{
+		
+		byte[] baArquivo = toByteArray(arquivo);
+		
+		if ( baArquivo == null) {
+			throw new AplicacaoException(String.format("O Arquivo %s  vazio não pode ser anexado.",arquivo.getFileName())	);
+		}
+		
+		Integer numBytes =   baArquivo.length;
+
+		//if (numBytes > 10 * 1024 * 1024 ) {
+		if (numBytes > Prop.getInt("pdf.tamanho.maximo") ) {
+			throw new AplicacaoException(String.format("O tamanho do arquivo %s é superior ao permitido (10MB).",arquivo.getFileName()));
+		}
+	}
+	
+	private void validarTipoArquivoAnexado(final UploadedFile arquivo) {
+		
+		if (!arquivo.getContentType().equals("application/pdf")) {
+			throw new AplicacaoException(String.format("O tipo do arquivo %s é inválido. Somente é permitido anexar arquivo PDF.",arquivo.getFileName()));
+		}
+	}
+
+	private void validarSeArquivoFoiAnexado(UploadedFile arquivo) throws IOException {
+		
+		//é realmente necessario fazer ?
+		if (arquivo.getFile() == null) {
+			throw new AplicacaoException(String.format("O arquivo %s a ser anexado não foi selecionado!",arquivo.getFileName()));
+		}
+	}	
+	 
+	private void validarSeArquivoAnexadoEstaCorrompido( UploadedFile arquivo) throws IOException {
+		
+		ExMovimentacao mov = new ExMovimentacao();
+		
+		mov.setConteudoBlobMov2(  toByteArray(arquivo) );
+		mov.setConteudoTpMov(arquivo.getContentType());
+		
+		if (mov.getContarNumeroDePaginas() == null || mov.getArquivoComStamp() == null) {
+			throw new AplicacaoException(MessageFormat.format("O arquivo %s está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
+		}
+	}
+
+	@Transacional
 	@Post("app/expediente/mov/anexar_gravar")
 	public void anexarGravar(final String sigla,
 			final DpPessoaSelecao subscritorSel,
@@ -217,10 +332,12 @@ public class ExMovimentacaoController extends ExController {
 			final UploadedFile arquivo, final String dtMovString,
 			final String descrMov) throws IOException {
 
-		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
+		validarArquivoAnexado(arquivo);
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		buscarDocumento(documentoBuilder);
+		
 		final ExMobil mob = documentoBuilder.getMob();
 		
 		if (!(mob.isGeral() && mob.doc().isFinalizado())) {
@@ -228,9 +345,21 @@ public class ExMovimentacaoController extends ExController {
 				throw new AplicacaoException("Arquivo não pode ser anexado");
 			}
 		}
+		
+		gravarArquivoAnexado(subscritorSel, titularSel,substituicao, arquivo,dtMovString, descrMov, mob );
+		
+		finalizarArquivoAnexar(mob.isVolumeEncerrado(),  mob.getSigla());
+	}
+
+	private void gravarArquivoAnexado(
+			final DpPessoaSelecao subscritorSel,
+			final DpPessoaSelecao titularSel, final boolean substituicao,
+			final UploadedFile arquivo, final String dtMovString,
+			final String descrMov,
+			final ExMobil mob ) throws IOException {
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia().setMob(documentoBuilder.getMob())
+				.novaInstancia().setMob(mob)
 				.setSubstituicao(substituicao).setSubscritorSel(subscritorSel)
 				.setTitularSel(titularSel).setDtMovString(dtMovString)
 				.setDescrMov(descrMov).setContentType(arquivo.getContentType())
@@ -239,55 +368,9 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		mov.setSubscritor(subscritorSel.getObjeto());
 		mov.setTitular(titularSel.getObjeto());
-
-		if (arquivo.getFile() == null) {
-			throw new AplicacaoException(
-					"O arquivo a ser anexado não foi selecionado!");
-		}
 		
-		Integer numBytes = 0;
-		try {
-			final byte[] baArquivo = toByteArray(arquivo);
-			if (baArquivo == null) {
-				throw new AplicacaoException(
-						"Arquivo vazio não pode ser anexado.");
-			}
-			numBytes = baArquivo.length;
-			if (numBytes > 10 * 1024 * 1024) {
-				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
-			}
-			mov.setConteudoBlobMov2(baArquivo);
-		} catch (IOException ex) {
-			throw new AplicacaoException("Falha ao manipular aquivo", 1, ex);
-		}
-
-		Integer numPaginas = mov.getContarNumeroDePaginas();
-		if (mov.getContarNumeroDePaginas() == null
-			|| mov.getArquivoComStamp() == null) {
-			throw new AplicacaoException(
-					MessageFormat
-							.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.",
-									arquivo.getFileName()));
-		}
+		mov.setConteudoBlobMov2(  toByteArray(arquivo) );
 		
-//		if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
-//			throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
-//		}
-		
-		if (mob.isVolumeEncerrado()) {
-			throw new AplicacaoException(
-					"Não é possível anexar arquivo em volume encerrado.");
-		}
-
-		if (!Ex.getInstance().getComp()
-				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException("Arquivo não pode ser anexado");
-		}
-		if (!arquivo.getContentType().equals("application/pdf")) {
-			throw new AplicacaoException(
-					"Somente é permitido anexar arquivo PDF.");
-		}
-
 		// Obtem as pendencias que serÃ£o resolvidas
 		final String aidMov[] = getRequest().getParameterValues(
 				"pendencia_de_anexacao");
@@ -300,16 +383,8 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 
-		// Nato: Precisei usar o código abaixo para adaptar o charset do
-		// nome do arquivo
-		try {
-			final byte[] ab = mov.getNmArqMov().getBytes();
-			for (int i = 0; i < ab.length; i++) {
-				if (ab[i] == -29) {
-					ab[i] = -61;
-				}
-			}
-			final String sNmArqMov = new String(ab, "utf-8");
+		// Nato: Precisei usar o código abaixo para adaptar o charset do nome do arquivo
+	 		final String sNmArqMov = adaptarCharsetNomeArquivo(mov.getNmArqMov());
 
 			Ex.getInstance()
 					.getBL()
@@ -318,18 +393,22 @@ public class ExMovimentacaoController extends ExController {
 							mov.getTitular(), mov.getLotaTitular(),
 							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
 							movimentacaoBuilder.getDescrMov(), pendencias);
-		} catch (UnsupportedEncodingException ex) {
-			LOGGER.error(ex.getMessage(), ex);
-		}
-		
-		if (mob.isVolumeEncerrado()) {
-			result.redirectTo(MessageFormat.format("/app/expediente/doc/exibir?sigla={0}&msg=N%26uacute;mero m%26aacute;ximo de p%26aacute;ginas atingido. Volume fechado automaticamente.", sigla));
+			
+	}
+
+	private void finalizarArquivoAnexar(boolean volumeEncerrado, String sigla) {
+
+		if (volumeEncerrado) {
+			result.redirectTo(MessageFormat.format(
+					"/app/expediente/doc/exibir?sigla={0}&msg=N%26uacute;mero m%26aacute;ximo de p%26aacute;ginas atingido. Volume fechado automaticamente.",
+					sigla));
 			return;
 		}
 
 		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
 	}
 
+	
 	@Get("app/expediente/mov/mostrar_anexos_assinados")
 	public void mostrarAnexosAssinados(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -379,6 +458,7 @@ public class ExMovimentacaoController extends ExController {
 
 		buscarDocumento(documentoBuilder);
 		final ExMobil mobOriginal = documentoBuilder.getMob();
+		
 		ExMobil mob = mobOriginal;
 		if (mob != null && !mob.isGeral())
 			mob = mob.doc().getMobilGeral();
@@ -396,10 +476,7 @@ public class ExMovimentacaoController extends ExController {
 		mov.setSubscritor(getCadastrante());
 		mov.setTitular(getCadastrante());
 
-		if (arquivo.getFile() == null) {
-			throw new AplicacaoException(
-					"O arquivo a ser anexado não foi selecionado!");
-		}
+		validarSeArquivoFoiAnexado(arquivo);
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
@@ -408,42 +485,39 @@ public class ExMovimentacaoController extends ExController {
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
 		
-		Integer numBytes = 0;
+		validarTamanhoArquivoAnexado(arquivo);
+		
+		mov.setConteudoBlobMov2(toByteArray(arquivo));
+ 
+		// Nato: Precisei usar o código abaixo para adaptar o charset do  nome do arquivo
+		final String sNmArqMov = adaptarCharsetNomeArquivo(mov.getNmArqMov());
+		
+		
+		Ex.getInstance().getBL()
+		.anexarArquivoAuxiliar(getCadastrante(), getLotaTitular(), mob,
+				mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
+				mov.getTitular(), mov.getLotaTitular(),
+				mov.getConteudoBlobMov2(), mov.getConteudoTpMov());
+		
+		
+		ExDocumentoController.redirecionarParaExibir(result, mobOriginal.getSigla());
+	}
+	
+	private String adaptarCharsetNomeArquivo(final String nmArqMov) {
 		try {
-			final byte[] baArquivo = toByteArray(arquivo);
-			if (baArquivo == null) {
-				throw new AplicacaoException(
-						"Arquivo vazio não pode ser anexado.");
-			}
-			numBytes = baArquivo.length;
-			if (numBytes > 10 * 1024 * 1024) {
-				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
-			}
-			mov.setConteudoBlobMov2(baArquivo);
-		} catch (IOException ex) {
-			throw new AplicacaoException("Falha ao manipular aquivo", 1, ex);
-		}
-
-		// Nato: Precisei usar o código abaixo para adaptar o charset do
-		// nome do arquivo
-		try {
-			final byte[] ab = mov.getNmArqMov().getBytes();
+			final byte[] ab = nmArqMov.getBytes();
 			for (int i = 0; i < ab.length; i++) {
 				if (ab[i] == -29) {
 					ab[i] = -61;
 				}
 			}
-			final String sNmArqMov = new String(ab, "utf-8");
+			return  new String(ab, "utf-8");
 
-			Ex.getInstance().getBL()
-					.anexarArquivoAuxiliar(getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
-							mov.getTitular(), mov.getLotaTitular(),
-							mov.getConteudoBlobMov2(), mov.getConteudoTpMov());
 		} catch (UnsupportedEncodingException ex) {
 			LOGGER.error(ex.getMessage(), ex);
 		}
-		ExDocumentoController.redirecionarParaExibir(result, mobOriginal.getSigla());
+		
+		return null;
 	}
 
 	@Get("app/expediente/mov/copiar")

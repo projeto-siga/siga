@@ -244,6 +244,10 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		// Siga-Le
 		addPublicProperty("smtp.sugestao.destinatario", getProp("/siga.smtp.usuario.remetente"));
 		addPublicProperty("smtp.sugestao.assunto", "Siga-Le: Sugestão");
+		
+		// anexação de pdf: quantidade de arq. a serem anexados por upload
+		addPublicProperty("qtd.max.arquivo.anexado.upload", "1");
+
 	}
 
 	@Override

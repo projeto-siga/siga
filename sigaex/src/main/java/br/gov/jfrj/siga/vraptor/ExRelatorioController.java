@@ -821,15 +821,18 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
-
+			parametros.put("lotacaoTitular",getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
+			parametros.put("orgao", orgaoSelId.toString());
+			parametros.put("orgaoUsuario", orgaoUsu.toString());
+			
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
 					throw new AplicacaoException(
 							"Não é permitido consultas de outros órgãos.");
 				}
 				consistePeriodo(dataInicial, dataFinal);
-
-				parametros.put("orgao", orgaoSelId.toString());
+	
 				parametros.put("lotacao",
 						getRequest().getParameter("lotacaoSel.id"));
 				parametros.put("usuario",
@@ -1008,6 +1011,9 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			parametros.put("lotacaoTitular",getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
+			parametros.put("orgaoUsuario", orgaoUsu.toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
@@ -1206,6 +1212,12 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			
+			parametros.put("orgao", String.valueOf(orgaoUsu));
+
+			parametros.put("lotacaoTitular",
+					getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
@@ -1214,7 +1226,6 @@ public class ExRelatorioController extends ExController {
 				}
 				consistePeriodo(dataInicial, dataFinal);
 
-				parametros.put("orgao", orgaoSelId.toString());
 				parametros.put("lotacao",
 						getRequest().getParameter("lotacaoSel.id"));
 				parametros.put("usuario",
@@ -1301,6 +1312,11 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			parametros.put("orgao", String.valueOf(orgaoUsu));
+
+			parametros.put("lotacaoTitular",
+					getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
@@ -1381,6 +1397,11 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			parametros.put("orgao", String.valueOf(orgaoUsu));
+
+			parametros.put("lotacaoTitular",
+					getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {

@@ -20,6 +20,8 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
@@ -77,6 +79,18 @@ import net.sf.jasperreports.engine.JRException;
 				queryUsuario = "and mov.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
+			Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+					"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+							+ "and lot.orgaoUsuario = "
+							+ parametros.get("orgaoUsuario")
+							+ " and lot.siglaLotacao = '"
+							+ parametros.get("lotacaoTitular") + "'");
+			DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+			DpPessoa titular = ExDao.getInstance().consultar(
+					new Long((String) parametros.get("idTit")), DpPessoa.class,
+					false);
+			
 			Query query = ContextoPersistencia.em().createQuery(
 							"select "
 									+ "doc.exModelo.nmMod, "
@@ -132,10 +146,16 @@ import net.sf.jasperreports.engine.JRException;
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				String modeloDoc = (String) obj[0];
-				listColunas.add(modeloDoc);
-				listDados.add(obj[1].toString());
-				d.add(modeloDoc);
-				d.add(obj[1].toString());
+				
+				if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+						 titular, lotaTitular ,ExDao.getInstance().consultarModeloPeloNome(modeloDoc)
+								)) {
+				
+					listColunas.add(modeloDoc);
+					listDados.add(obj[1].toString());
+					d.add(modeloDoc);
+					d.add(obj[1].toString());
+				}
 			}
 			if (d.size() == 0) {
 				d.add("Não foram encontrados registros para os dados informados.");

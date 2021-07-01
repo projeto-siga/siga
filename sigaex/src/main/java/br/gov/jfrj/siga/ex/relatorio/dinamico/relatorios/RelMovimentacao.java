@@ -19,8 +19,11 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
@@ -79,6 +82,18 @@ public class RelMovimentacao extends RelatorioTemplate {
 	public Collection processarDados() throws Exception {
 
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
 
 		List<String> d = new ArrayList<String>(); // new LinkedList<String>();
 
@@ -109,37 +124,43 @@ public class RelMovimentacao extends RelatorioTemplate {
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 			ExMovimentacao mov = (ExMovimentacao) obj[0];
+			
+			if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+					mov.getExMobil().getExDocumento(), titular, 
+							lotaTitular)) {
+			
 			//ExMobil mob = (ExMobil) obj[1];
 			//ExDocumento doc = (ExDocumento) obj[2];
-			if (mov.getExMobil().getSigla()  != null) {
-				d.add(mov.getExMobil().getSigla());
-			} else {
-				d.add("");
-			}
-			if (mov.getDtRegMovDDMMYYHHMMSS().toString() != null) {
-				d.add(mov.getDtRegMovDDMMYYHHMMSS().toString());
-			} else {
-				d.add("");
-			}
-			if (mov.getDescrTipoMovimentacao() != null) {
-				d.add(mov.getDescrTipoMovimentacao());
-			} else {
-				d.add("");
-			}
-			if (mov.getLotaCadastrante().getSigla() != null) {
-				d.add(mov.getLotaCadastrante().getSigla());
-			} else {
-				d.add("");
-			}
-			if (mov.getLotaResp().getSigla() != null) {
-				d.add(mov.getLotaResp().getSigla());
-			} else {
-				d.add("");
-			}
-			if (mov.getLotaSubscritor().getSigla() != null) {
-				d.add(mov.getLotaSubscritor().getSigla());
-			} else {
-				d.add("");
+				if (mov.getExMobil().getSigla()  != null) {
+					d.add(mov.getExMobil().getSigla());
+				} else {
+					d.add("");
+				}
+				if (mov.getDtRegMovDDMMYYHHMMSS().toString() != null) {
+					d.add(mov.getDtRegMovDDMMYYHHMMSS().toString());
+				} else {
+					d.add("");
+				}
+				if (mov.getDescrTipoMovimentacao() != null) {
+					d.add(mov.getDescrTipoMovimentacao());
+				} else {
+					d.add("");
+				}
+				if (mov.getLotaCadastrante().getSigla() != null) {
+					d.add(mov.getLotaCadastrante().getSigla());
+				} else {
+					d.add("");
+				}
+				if (mov.getLotaResp().getSigla() != null) {
+					d.add(mov.getLotaResp().getSigla());
+				} else {
+					d.add("");
+				}
+				if (mov.getLotaSubscritor().getSigla() != null) {
+					d.add(mov.getLotaSubscritor().getSigla());
+				} else {
+					d.add("");
+				}
 			}
 		}
 		return d;	}

@@ -36,7 +36,7 @@ public class SrStarter {
 	public static class MigrationThread extends Thread {
 		public void run() {
 			try {
-				SigaFlyway.migrate("java:/jboss/datasources/SigaSrDS", "classpath:db/mysql/sigasr", true);
+				SigaFlyway.migrate("java:/jboss/datasources/SigaServicosDS", "classpath:db/mysql/sigasr", true);
 			} catch (NamingException e) {
 				log.error("Erro na migração do banco", e);
 				SigaFlyway.stopJBoss();

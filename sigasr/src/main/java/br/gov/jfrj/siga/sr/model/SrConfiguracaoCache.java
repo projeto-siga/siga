@@ -41,10 +41,11 @@ import org.hibernate.annotations.Type;
 
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
+import br.gov.jfrj.siga.dp.DpLotacao;
 
 @Entity
 @Table(name = "sigasr.sr_configuracao")
-@PrimaryKeyJoinColumn(name = "CONF_ID")
+@PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracaoCache extends CpConfiguracaoCache {
 
 	@Convert(converter = LongNonNullConverter.class)
@@ -173,5 +174,15 @@ public class SrConfiguracaoCache extends CpConfiguracaoCache {
 
 	public void setAcaoFiltro(SrAcao acaoFiltro) {
 		this.acaoFiltro = acaoFiltro;
+	}
+	
+	public DpLotacao getLotacaoAtendente() {
+		if (this.atendente == 0)
+			return null;
+		return DpLotacao.AR.findById(this.atendente);
+	}
+	
+	public long getIdConfiguracao() {
+		return this.idConfiguracao;
 	}
 }

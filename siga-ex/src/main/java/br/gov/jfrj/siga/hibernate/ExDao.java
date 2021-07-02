@@ -1676,6 +1676,17 @@ public class ExDao extends CpDao {
 		q.setParameter("idOrgaoUsuario", orgaoUsu.getIdOrgaoUsu());
 		return q.getResultList();
 	}	
+	
+	public ExDocumento consultarExDocumentoPorId(
+			Long idDoc) {
+		Query q;
+
+			q = em().createNamedQuery(
+					"consultarExDocumentoId");
+			q.setParameter("idDoc", idDoc);
+	
+		return (ExDocumento) q.getSingleResult();
+	}	
 
 	public List<ExPapel> listarExPapeis() {
 		return findByCriteria(ExPapel.class);
@@ -2303,13 +2314,15 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public ExModelo consultarModeloPeloId(ExModelo exModelo) {
-		final Query query = em().createNamedQuery("consultarModeloPeloId");
+	
+	public ExModelo consultarModeloPeloNome(String nmMod) {
+		final Query query = em().createNamedQuery("consultarModeloPeloNome");
 
-		query.setParameter("idMod", exModelo.getIdMod());
+		query.setParameter("nmMod", nmMod);
 		try {
-			return (ExModelo) query.getSingleResult();
-		} catch (NoResultException ne) {
+			List<ExModelo> modelos = query.getResultList(); 
+			return modelos.get(0);
+		} catch (Exception ne) {
 			return null;
 		}
 	}

@@ -53,7 +53,6 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({ @NamedQuery(name = "consultarModeloAtual", query = "select mod from ExModelo mod where mod.hisIdIni = :hisIdIni and mod.hisDtFim = null"),
-	            @NamedQuery(name = "consultarModeloPeloId", query = "select mod from ExModelo mod where mod.idMod = :idMod"),
 	            @NamedQuery(name = "consultarModeloPeloNome", query = "select mod from ExModelo mod where mod.nmMod = :nmMod")})
 public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		implements Serializable {

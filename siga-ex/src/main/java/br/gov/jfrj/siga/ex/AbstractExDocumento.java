@@ -223,8 +223,6 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			and (doc.lotaTitular.id = :idLotacao)"
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
 				+ "			and doc.dtFinalizacao is not null"),
-		@NamedQuery(name = "consultarExDocumentoId", query = "select doc from ExDocumento doc"
-				+ "		where doc.idDoc = :idDoc"),
 		@NamedQuery(name = "consultarDocumentosFinalizadosEntreDatas", query = "select doc from ExDocumento doc where "
 				+ "					doc.exTipoDocumento.idTpDoc = :idTipoDocumento"
 				+ "					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial"

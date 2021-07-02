@@ -2314,16 +2314,6 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
-	public ExModelo consultarModeloPeloId(ExModelo exModelo) {
-		final Query query = em().createNamedQuery("consultarModeloPeloId");
-
-		query.setParameter("idMod", exModelo.getIdMod());
-		try {
-			return (ExModelo) query.getSingleResult();
-		} catch (NoResultException ne) {
-			return null;
-		}
-	}
 	
 	public ExModelo consultarModeloPeloNome(String nmMod) {
 		final Query query = em().createNamedQuery("consultarModeloPeloNome");

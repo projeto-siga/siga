@@ -115,9 +115,9 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 			String idLotaResp = new BigDecimal(obj[2].toString()).toString();
 			String idMod = new BigDecimal(obj[3].toString()).toString();
 			ExModelo exModelo = new ExModelo();
-			exModelo.setId(Long.valueOf(idMod));
+			exModelo.setIdMod(Long.valueOf(idMod));
 			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
-					 titular, lotaTitular ,ExDao.getInstance().consultarModeloPeloId(exModelo)
+					 titular, lotaTitular ,ExDao.getInstance().consultar(exModelo.getIdMod(),ExModelo.class, false)
 							)) {
 				String modeloDoc = (String) obj[4];
 				String linkModeloDoc = "<a href='#' class='text-primary' onclick=\"javascript:abreDetalhe('" 

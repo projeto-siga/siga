@@ -160,9 +160,9 @@ import net.sf.jasperreports.engine.JRException;
 				if (obj[4].toString() != null)
 					qtdTram = Long.valueOf(obj[4].toString());
 				ExModelo exModelo = new ExModelo();
-				exModelo.setId(Long.valueOf(modelo));
+				exModelo.setIdMod(Long.valueOf(idMod));
 				if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
-							 titular, lotaTitular ,ExDao.getInstance().consultarModeloPeloId(exModelo)
+						 titular, lotaTitular ,ExDao.getInstance().consultar(exModelo.getIdMod(),ExModelo.class, false)
 									)) {
 					List<String> listDados = new ArrayList();
 					listDados.add(obj[1].toString()); 

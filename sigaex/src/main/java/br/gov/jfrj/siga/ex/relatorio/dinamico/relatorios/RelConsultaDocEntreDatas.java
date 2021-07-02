@@ -168,13 +168,18 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 			List<ExDocumento> listaDocumentos = query.getResultList();
 
 			for (ExDocumento documento : listaDocumentos) {
-				dados.add(documento.getCodigo());
-				dados.add(link.concat(documento.getCodigo()));
-				dados.add(Ex
-						.getInstance()
-						.getBL()
-						.descricaoConfidencialDoDocumento(documento.getMobilGeral(), titular,
-								lotaTitular));
+				if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+						documento, titular, 
+								lotaTitular)) {
+					dados.add(documento.getCodigo());
+					dados.add(link.concat(documento.getCodigo()));
+					dados.add(Ex
+							.getInstance()
+							.getBL()
+							.descricaoConfidencialDoDocumento(documento.getMobilGeral(), titular,
+									lotaTitular));
+				}
+
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao gerar o relatorio");

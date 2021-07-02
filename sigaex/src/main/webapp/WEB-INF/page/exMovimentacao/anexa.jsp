@@ -66,7 +66,7 @@
 			var result = true;
 			var arquivo = form.arquivo;
 			if (arquivo == null || arquivo.value == '') {
-				alert("O arquivo a ser anexado não foi selecionado!");
+				alert("Nenhum arquivo foi selecionado!");
 				result = false;
 			}
 			return result;
@@ -81,6 +81,55 @@
 				nomeusuario.value = tmp.toUpperCase();
 			}
 		}
+
+		function doUpload(input ) {
+
+			var inputFiles = [];
+			var descrMovLista =[];
+			var defaultSize = document.getElementById("tamanhoMaxArquivoAnexadoUpload").value * 1024 * 1024;
+			var fsize = 0;
+			var qtdArquivoSelecionado = 0;
+			var filesStr = '';
+			var result = true;
+			var msg ="";
+			var qtdMaxArquivoAnexadoUpload = document.getElementById("qtdMaxArquivoAnexadoUpload").value;
+
+			document.getElementById("liarquivos").innerHTML = '';
+			
+			if (input.files.length == 0) {
+				msg = 'Nenhum arquivo foi selecionado!';
+				result = false;
+			} else if (input.files.length > qtdMaxArquivoAnexadoUpload) {
+				msg = 'Quantidade de arquivos superior a ' + qtdMaxArquivoAnexadoUpload + ' permitido(s)';
+				result = false;
+			} else {
+				qtdArquivoSelecionado = input.files.length;
+
+				for (let i = 0; i < qtdArquivoSelecionado; i++) {
+
+					inputFiles.push(input.files[i]);
+					fsize += input.files[i].size;
+					descrMovLista.push(input.files[i].name.replace(/.pdf/ig, ""));
+					filesStr += "<li><input id='descrMovLista' name='descrMovLista[]' required='true' class='form-control' type='text'  size='80' value='" + descrMovLista[i] +"' ></input> </li>";
+				}
+
+				if (fsize > defaultSize) {
+					msg = 'Tamanho do(s) arquivo(s) excede o permitido ' + document.getElementById("tamanhoMaxArquivoAnexadoUpload").value + 'MB';
+					result = false;
+				}
+			}
+
+			if (result) {
+				document.getElementById("liarquivos").innerHTML += filesStr;
+			} else {
+				input.value = '';
+				document.getElementById("liarquivos").innerHTML = '';
+				alert(msg);
+			}
+
+			return result;
+		}
+		
 	</script>
 
 	<div class="container-fluid">
@@ -91,10 +140,10 @@
 					<h5>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h5>
 				</div>
 				<div class="card-body">
-					<form action="anexar_gravar" method="post"
-						enctype="multipart/form-data" class="form">
-						<input type="hidden" name="postback" value="1" /> <input
-							type="hidden" name="sigla" value="${sigla}" />
+					 <form action="anexar_gravarmultiplos" method="post" enctype="multipart/form-data" class="form">
+						<input type="hidden" name="postback" value="1" />
+						<input type="hidden" name="sigla" value="${sigla}" />
+					 
 						<div class="row">
 							<div class="col-md-2 col-sm-3">
 								<div class="form-group">
@@ -133,20 +182,35 @@
 								</div>
 							</div>
 						</div>
+						<input type="hidden" id="qtdMaxArquivoAnexadoUpload" name="qtdMaxArquivoAnexadoUpload" value="${qtdMaxArquivoAnexadoUpload}"/>
+						<input type="hidden" id="tamanhoMaxArquivoAnexadoUpload" name="tamanhoMaxArquivoAnexadoUpload" value="${tamanhoMaxArquivoAnexadoUpload}"/>
+						
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">
-									<label>Descrição</label> <input class="form-control"
-										type="text" name="descrMov" maxlength="80" size="80" />
+									<label>Atenção</label>
+									<ul id="regras">
+										<li>Arquivo .PDF</li>
+										<li>Máximo de ${qtdMaxArquivoAnexadoUpload} arquivos</li>
+										<li>Tamanho total de ${tamanhoMaxArquivoAnexadoUpload}MB</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label>Arquivo:</label> 
+									<input class="form-control" id="arquivo" name="arquivoLista[]" type="file" multiple accept="application/pdf" onchange="doUpload(this)" />
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">
-									<label>Arquivo:</label> <input class="form-control" type="file"
-										name="arquivo" accept="application/pdf"
-										onchange="testpdf(this.form)" />
+									<label>Descrição:</label>
+									<ul id="liarquivos"></ul>
 								</div>
 							</div>
 						</div>

@@ -21,6 +21,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrConfiguracaoCache;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
@@ -134,7 +135,8 @@ public class SolicitacaoEmailController extends SrController {
 		filtro.setItemConfiguracaoFiltro(itemConfiguracao);
 		filtro.setAcaoFiltro(acao);
 		try {
-			designacao = SrConfiguracao.buscarDesignacao(filtro);
+			SrConfiguracaoCache des = SrConfiguracao.buscarDesignacao(filtro);
+			designacao = des != null ? SrConfiguracao.AR.findById(des.idConfiguracao) : null;
 		} catch(Exception e) {
 			return null;
 		}

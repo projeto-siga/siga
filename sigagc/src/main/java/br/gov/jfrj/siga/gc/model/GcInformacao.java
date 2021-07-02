@@ -55,7 +55,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "gc_informacao", schema = "sigagc")
+@Table(name = "sigagc.gc_informacao")
 @NamedQueries({
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*), (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 28 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as interessado, (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 70 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as executor from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by interessado desc, executor desc, count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "buscarConhecimentoTudoIgual", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
@@ -98,10 +98,9 @@ public class GcInformacao extends Objeto {
 			GcInformacao.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcInformacaoSeq")
-	@GeneratedValue(generator = "gcInformacaoSeq")
+	@GeneratedValue
 	@Column(name = "ID_INFORMACAO")
-	private long id;
+	private Long id;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_TIPO_INFORMACAO")
@@ -138,7 +137,7 @@ public class GcInformacao extends Objeto {
 	@Sort(type = SortType.NATURAL)
 	@ManyToMany
 	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.PERSIST})
-	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
+	@JoinTable(name = "sigagc.gc_tag_x_informacao", joinColumns = @JoinColumn(name = "ID_INFORMACAO"), inverseJoinColumns = @JoinColumn(name = "ID_TAG"))
 	private SortedSet<GcTag> tags;
 
 	@Column(name = "DT_ELABORACAO_FIM")
@@ -173,7 +172,7 @@ public class GcInformacao extends Objeto {
 	@Column(name = "HIS_DT_FIM")
 	private Date hisDtFim;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -813,7 +812,7 @@ public class GcInformacao extends Objeto {
 		return this.tags;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

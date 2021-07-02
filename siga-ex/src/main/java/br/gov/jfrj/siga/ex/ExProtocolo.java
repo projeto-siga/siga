@@ -1,15 +1,11 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -19,7 +15,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 
 /**
@@ -38,7 +33,7 @@ public class ExProtocolo implements Serializable {
 	
 	@Id
 	@SequenceGenerator(name="EX_PROTOCOLO_GENERATOR", sequenceName="EX_PROTOCOLO_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_PROTOCOLO_GENERATOR")
+	@GeneratedValue(generator="EX_PROTOCOLO_GENERATOR")
 	@Column(name="ID_PROTOCOLO")
 	private long idProtocolo;
 

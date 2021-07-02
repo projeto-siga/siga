@@ -12,9 +12,13 @@ function carregar${action}(){
 		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
 		paramsObj[frm[i].name] = frm[i].value;
 	}
-	Siga.ajax(${linkto['+action+']}, paramsObj, "GET", function(response){		
+	/* Siga.ajax(${linkto['+action+']}, paramsObj, "GET", function(response){		
 		carregou${action}(response);
-	});	
+	}); */
+	$.post( ${linkto['+action+']}, paramsObj, function(response){
+		carregou${action}(response);
+	});
+
 	//PassAjaxResponseToFunction('${linkto['+action+']}', 'carregou${action}', null, false, params);
 }
 

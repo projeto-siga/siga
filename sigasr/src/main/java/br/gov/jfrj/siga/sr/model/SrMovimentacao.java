@@ -30,7 +30,6 @@ import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -38,6 +37,7 @@ import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
@@ -481,12 +481,12 @@ public class SrMovimentacao extends Objeto {
         c.setAcaoFiltro(getAcao());
         c.setPrioridade(getPrioridade());
         c.setAtendente(getLotaAtendente());
-        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+        c.setCpTipoConfiguracao(SrTipoDeConfiguracao.ABRANGENCIA_ACORDO);
         
-        List<SrConfiguracao> confs = SrConfiguracao.listar(c);
-        for (SrConfiguracao conf : confs) {
-        	if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
-        		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
+        List<SrConfiguracaoCache> confs = SrConfiguracao.listar(c);
+        for (SrConfiguracaoCache conf : confs) {
+        	if (conf.acordo != 0) {
+        		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.acordo).getAcordoAtual();
         		if (acordoAtual != null && acordoAtual.getHisDtFim() == null && !getAcordos().contains(acordoAtual) 
         			&& acordoAtual.contemParametro(SrParametro.ATENDIMENTO, SrParametro.ATENDIMENTO_GERAL))
         			getAcordos().add(acordoAtual);

@@ -198,7 +198,7 @@ public class ConfiguracaoGIController extends TpController {
                 cpConfiguracaoNova.setConfiguracaoInicial(cpConfiguracaoAnterior.getConfiguracaoInicial());
             }
 
-            if (cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao() == 200) {
+            if (cpConfiguracao.getCpTipoConfiguracao().getId() == 200) {
                 String servicoComplexoAdminstrador = "SIGA-TP-ADMMISSAOCOMPLEXO";
                 cpConfiguracaoNova.setCpServico((CpServico) CpServico.AR.find("siglaServico", servicoComplexoAdminstrador).first());
             }
@@ -239,7 +239,7 @@ public class ConfiguracaoGIController extends TpController {
             cpConfiguracao.setComplexo(null);
         if (cpConfiguracao.getCpSituacaoConfiguracao().getIdSitConfiguracao() == null)
             cpConfiguracao.setCpSituacaoConfiguracao(null);
-        if (cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao() == null)
+        if (cpConfiguracao.getCpTipoConfiguracao().getId() == null)
             cpConfiguracao.setCpTipoConfiguracao(null);
         if (cpConfiguracao.getLotacao().getIdeLotacao() == null)
             cpConfiguracao.setLotacao(null);

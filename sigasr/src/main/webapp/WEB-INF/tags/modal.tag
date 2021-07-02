@@ -12,7 +12,10 @@ function ${nome}(){
 	var url = '${url}';
 	
 	if(url != ""){
-		Siga.ajax(url, null, "GET", function(response){		
+		/* Siga.ajax(url, null, "GET", function(response){		
+			carregouAjax${nome}(response);
+		}); */
+		$.get( url, function(response){
 			carregouAjax${nome}(response);
 		});
 	} else{ 

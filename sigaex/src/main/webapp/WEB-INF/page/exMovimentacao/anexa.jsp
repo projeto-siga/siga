@@ -83,7 +83,6 @@
 			}
 		}
 
-
 		function doUpload(input ) {
 
 			var inputFiles = [];
@@ -131,6 +130,7 @@
 
 			return result;
 		}
+ 
 	</script>
 
 	<div class="container-fluid">
@@ -141,9 +141,11 @@
 					<h5>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h5>
 				</div>
 				<div class="card-body">
-					<form action="anexar_gravarmultiplos" method="post" enctype="multipart/form-data" class="form">
+ 
+					 <form action="anexar_gravarmultiplos" method="post" enctype="multipart/form-data" class="form">
 						<input type="hidden" name="postback" value="1" />
 						<input type="hidden" name="sigla" value="${sigla}" />
+					 
 						<div class="row">
 							<div class="col-md-2 col-sm-3">
 								<div class="form-group">
@@ -177,6 +179,7 @@
 						</div>
 						<input type="hidden" id="qtdMaxArquivoAnexadoUpload" name="qtdMaxArquivoAnexadoUpload" value="${qtdMaxArquivoAnexadoUpload}"/>
 						<input type="hidden" id="tamanhoMaxArquivoAnexadoUpload" name="tamanhoMaxArquivoAnexadoUpload" value="${tamanhoMaxArquivoAnexadoUpload}"/>
+						
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">
@@ -189,6 +192,7 @@
 								</div>
 							</div>
 						</div>
+					
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">
@@ -200,6 +204,7 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group">
+
 									<label>Descrição:</label>
 									<ul id="liarquivos"></ul>
 								</div>

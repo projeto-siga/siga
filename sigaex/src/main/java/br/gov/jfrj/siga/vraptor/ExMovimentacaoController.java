@@ -323,7 +323,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(MessageFormat.format("O arquivo %s está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 		}
 	}
-	
+ 
 	@Transacional
 	@Post("app/expediente/mov/anexar_gravar")
 	@UploadSizeLimit(sizeLimit=10 * 1024 * 1024, fileSizeLimit=10 * 1024 * 1024)
@@ -332,7 +332,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpPessoaSelecao titularSel, final boolean substituicao,
 			final UploadedFile arquivo, final String dtMovString,
 			final String descrMov) throws IOException {
-		
+
 		validarArquivoAnexado(arquivo);
 		
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
@@ -351,7 +351,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		finalizarArquivoAnexar(mob.isVolumeEncerrado(),  mob.getSigla());
 	}
- 
+
 	private void gravarArquivoAnexado(
 			final DpPessoaSelecao subscritorSel,
 			final DpPessoaSelecao titularSel, final boolean substituicao,
@@ -396,7 +396,7 @@ public class ExMovimentacaoController extends ExController {
 							movimentacaoBuilder.getDescrMov(), pendencias);
 			
 	}
-	
+ 
 	private void finalizarArquivoAnexar(boolean volumeEncerrado, String sigla) {
 
 		if (volumeEncerrado) {
@@ -410,6 +410,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 
+	
 	@Get("app/expediente/mov/mostrar_anexos_assinados")
 	public void mostrarAnexosAssinados(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -488,8 +489,11 @@ public class ExMovimentacaoController extends ExController {
 	
 		validarTamanhoArquivoAnexado(arquivo);
 		
+ 
+		validarTamanhoArquivoAnexado(arquivo);
+		
 		mov.setConteudoBlobMov2(toByteArray(arquivo));
-
+ 
 		// Nato: Precisei usar o código abaixo para adaptar o charset do  nome do arquivo
 		final String sNmArqMov = adaptarCharsetNomeArquivo(mov.getNmArqMov());
 		

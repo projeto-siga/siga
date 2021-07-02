@@ -622,6 +622,7 @@
 		sigaSpinner.mostrar();
 		$('.selected-label').append('<span id="select-spinner" class="spinner-border text-secondary" role="status"></span><span class="disabled"> Carregando...</span>');
 		const urlParams = new URLSearchParams(window.location.search);
+		const idMod = document.getElementsByName('exDocumentoDTO.idMod')[0].value;
 		const isEditandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value === "true";
 		const isCriandoSubprocesso = document.getElementsByName('exDocumentoDTO.criandoSubprocesso')[0].value === "true";
 		const isAutuando = document.getElementsByName('exDocumentoDTO.autuando')[0].value === "true";
@@ -641,9 +642,14 @@
 			// Não expirou o timeout e a query será a mesma da 
 			// ultima vez: carrega da session storage se tiver
 			if (listMod != undefined) {
-				carregaModelos(ulMod, JSON.parse(listMod));
-				return;
-			}
+				var listaDeModelos = JSON.parse(listMod);
+				for (var i = 0; i<listaDeModelos.length; i++) {
+					if (listaDeModelos[i].idModelo == idMod) {
+		 				carregaModelos(ulMod, listaDeModelos);
+						return;
+					}
+				}
+ 			}
 		}
 		
 		$.ajax({

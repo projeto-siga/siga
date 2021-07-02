@@ -249,6 +249,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		
 		// anexação de pdf: quantidade de arq. a serem anexados por upload
 		addPublicProperty("qtd.max.arquivo.anexado.upload", "1");
+
 	}
 
 	@Override

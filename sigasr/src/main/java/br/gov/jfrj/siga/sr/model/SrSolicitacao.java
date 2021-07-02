@@ -66,7 +66,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -78,6 +77,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.ListaInclusaoAutomatica;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.sr.notifiers.Destinatario;
@@ -267,7 +267,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public class SrTarefa {
         private SrAcao acao;
-        private SrConfiguracao conf;
+        private SrConfiguracaoCache conf;
 
         public SrTarefa() {
 
@@ -281,11 +281,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             this.acao = acao;
         }
 
-        public SrConfiguracao getConf() {
+        public SrConfiguracaoCache getConf() {
             return conf;
         }
 
-        public void setConf(SrConfiguracao conf) {
+        public void setConf(SrConfiguracaoCache conf) {
             this.conf = conf;
         }
 
@@ -295,7 +295,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             int result = 1;
             result = prime * result + getOuterType().hashCode();
             result = prime * result + ((acao == null) ? 0 : acao.hashCode());
-            result = prime * result + ((conf == null || conf.getAtendente() == null) ? 0 : conf.getAtendente().hashCode());
+            result = prime * result + ((conf == null || conf.atendente == 0) ? 0 : Long.valueOf(conf.atendente).hashCode());
             return result;
         }
 
@@ -318,7 +318,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             if (conf == null) {
                 if (other.conf != null)
                     return false;
-            } else if (conf.getAtendente() != null && !conf.getAtendente().equals(other.conf.getAtendente()))
+            } else if (conf.atendente != 0 && conf.atendente != other.conf.atendente)
                 return false;
             return true;
         }
@@ -856,11 +856,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         for (SrAtributo t : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
             confFiltro.setAtributo(t);
-            SrConfiguracao conf = SrConfiguracao.buscarAssociacao(confFiltro);
+            SrConfiguracaoCache conf = SrConfiguracao.buscarAssociacao(confFiltro);
             if (conf != null) {
                 listaFinal.add(t);
                 if (map != null)
-                    map.put(t.getIdAtributo(), conf.isAtributoObrigatorio());
+                    map.put(t.getIdAtributo(), conf.atributoObrigatorio);
             }
         }
 
@@ -1384,11 +1384,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             for (SrConfiguracao c : listaPessoasAConsiderar) {
                 c.setItemConfiguracaoFiltro(getItemConfiguracao());
                 c.setAcaoFiltro(a);
-                c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+                c.setCpTipoConfiguracao(SrTipoDeConfiguracao.DESIGNACAO);
 
-                List<SrConfiguracao> confs = SrConfiguracao.listar(c, new int[] { SrConfiguracaoBL.ATENDENTE });
+                List<SrConfiguracaoCache> confs = SrConfiguracao.listar(c, new int[] { SrConfiguracaoBL.ATENDENTE });
                 if (!confs.isEmpty())
-                    for (SrConfiguracao conf : confs) {
+                    for (SrConfiguracaoCache conf : confs) {
                         tarefa = this.new SrTarefa();
                         tarefa.acao = a;
                         tarefa.conf = conf;
@@ -1657,12 +1657,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         c.setAtendente(getLotaTitular());
         c.setComplexo(getLocal());
         c.setBuscarPorPerfis(true);
-        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+        c.setCpTipoConfiguracao(SrTipoDeConfiguracao.ABRANGENCIA_ACORDO);
         
-        List<SrConfiguracao> confs = SrConfiguracao.listar(c);
-        for (SrConfiguracao conf : confs) {
-        	if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
-        		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
+        List<SrConfiguracaoCache> confs = SrConfiguracao.listar(c);
+        for (SrConfiguracaoCache conf : confs) {
+        	if (conf.acordo != 0) {
+        		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.acordo).getAcordoAtual();
         		if (acordoAtual != null && acordoAtual.getHisDtFim() == null && !getAcordos().contains(acordoAtual)
         			&& acordoAtual.contemParametro(SrParametro.CADASTRO))
         			getAcordos().add(acordoAtual);
@@ -2067,13 +2067,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         filtro.setPrioridade(getPrioridade());
         filtro.setItemConfiguracaoFiltro(getItemConfiguracao());
         filtro.setAcaoFiltro(getAcaoAtual());
-        filtro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+        filtro.setCpTipoConfiguracao(SrTipoDeConfiguracao.DEFINICAO_INCLUSAO_AUTOMATICA);
 
         List<ListaInclusaoAutomatica> listaFinal = new ArrayList<ListaInclusaoAutomatica>();
-        for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE, SrConfiguracaoBL.LISTA_PRIORIDADE })) {
-            if (conf.getListaPrioridade() != null && conf.getListaPrioridade().getListaAtual().isAtivo()) {
-            	SrLista listaConf = SrLista.AR.findById(conf.getListaPrioridade().getIdLista());
-            	ListaInclusaoAutomatica listaInclusaoAutomatica = new ListaInclusaoAutomatica(listaConf.getListaAtual(), conf.getPrioridadeNaLista());
+        for (SrConfiguracaoCache conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE, SrConfiguracaoBL.LISTA_PRIORIDADE })) {
+            SrLista listaAtual = SrLista.AR.findById(conf.listaPrioridade).getListaAtual();
+			if (conf.listaPrioridade != 0 && listaAtual.isAtivo()) {
+            	SrLista listaConf = listaAtual;
+            	ListaInclusaoAutomatica listaInclusaoAutomatica = new ListaInclusaoAutomatica(listaConf.getListaAtual(), conf.prioridadeNaLista);
 
                 if (!listaFinal.contains(listaInclusaoAutomatica))
                     listaFinal.add(listaInclusaoAutomatica);

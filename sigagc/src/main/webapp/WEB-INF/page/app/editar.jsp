@@ -40,7 +40,7 @@
 					<div class="card-body">
 						<form id="frm" action="${linkTo[AppController].gravar}"
 							method="POST" enctype="multipart/form-data">
-							<c:if test="${informacao.id != 0}">
+							<c:if test="${informacao.id != null}">
 							</c:if>
 							<input type="hidden" id="infoId" name="informacao.id"
 								value="${informacao.id}" /> <input type="hidden" name="origem"
@@ -119,12 +119,11 @@
 								<div class="col-sm-12">
 
 									<input id="btn-save" type="submit" value="Gravar"
-										class="btn btn-primary" style="cursor: pointer;" />
+										class="btn btn-primary"/>
 
-									<p class="gt-cancel">
 										<c:choose>
 											<c:when
-												test="${not empty informacao && not empty informacao.id && informacao.id != 0}">
+												test="${not empty informacao && not empty informacao.id}">
 										ou <a
 													href="${linkTo[AppController].editar(informacao.siglaCompacta)}">cancelar
 													altera&ccedil;&otilde;es</a>
@@ -133,11 +132,10 @@
 													movimenta&ccedil;&otilde;es</a>
 											</c:when>
 											<c:otherwise>
-												<a href="${linkTo[AppController].editar}">cancelar
+												<a href="${linkTo[AppController].editar}" class="btn btn-link">cancelar
 													altera&ccedil;&otilde;es</a>
 											</c:otherwise>
 										</c:choose>
-									</p>
 								</div>
 							</div>
 						</form>
@@ -148,14 +146,14 @@
 			<div class="col-sm-4">
 				<!-- Sidebar Content -->
 				<div class="gt-sidebar-content">
-					<h3>Informa&ccedil;&otilde;es sobre o Preenchimento</h3>
+					<h5>Informa&ccedil;&otilde;es sobre o Preenchimento</h5>
 					<p>O campo "T&iacute;tulo" sempre ser&aacute; acess&iacute;vel,
 						independente do controle de acesso selecionado.</p>
 
 					<div id="ajax_arquivo">
 						<c:if test="${informacao.contemArquivos}">
-							<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no
-								Texto</h3>
+							<h5 style="padding-top: 1em">Incluir Imagens ou Arquivos no
+								Texto</h5>
 							<p>Clique em uma imagem/arquivo abaixo para incluir uma
 								refer&ecirc;ncia no texto.</p>
 							<c:forEach items="${informacao.movs}" var="m">
@@ -177,8 +175,8 @@
 							</c:forEach>
 						</c:if>
 					</div>
-					<h3 style="padding-top: 1em">Inserir
-						classifica&ccedil;&atilde;o no Texto</h3>
+					<h5 style="padding-top: 1em">Inserir
+						classifica&ccedil;&atilde;o no Texto</h5>
 					<p>
 						O conte&uacute;do do campo "Texto" pode receber uma
 						marca&ccedil;&atilde;o especial para classifica&ccedil;&atilde;o.
@@ -198,7 +196,7 @@
 							</tbody>
 						</table>
 						<br />
-						<p>Nco usar caracteres especiais ou espaço</p>
+						<p>Não usar caracteres especiais ou espaço</p>
 					</div>
 				</div>
 			</div>
@@ -227,7 +225,7 @@
 						'conteudo',
 						{
 							filebrowserUploadUrl : '${linkTo[AppController].gravarArquivo}?origem=editar'
-									+ '&informacao=' + '${informacao}',
+									+ '&informacao.id=' + '${informacao.id}',
 							toolbar : [
 									{
 										name : 'clipboard',

@@ -33,14 +33,15 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.AbstractCpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
 @Table(name = "siga.ex_configuracao")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
-@NamedQueries({ @NamedQuery(name = "consultarExConfiguracoes", query = "from ExConfiguracao excfg where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)") })
 public class ExConfiguracao extends CpConfiguracao {
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -201,5 +202,25 @@ public class ExConfiguracao extends CpConfiguracao {
 						.getOrgaoUsuario().getId()
 						.equals(lotacaoTitular.getOrgaoUsuario().getId()));
 	}
-	
+
+	@Override
+	public void atualizarObjeto() {
+		super.atualizarObjeto();
+		setExModelo(atual(getExModelo()));
+		setExClassificacao(atual(getExClassificacao()));
+		setExVia(atual(getExVia()));
+	}
+
+	public void substituirPorObjetoInicial() {
+		super.substituirPorObjetoInicial();
+		setExModelo(inicial(getExModelo()));
+		setExClassificacao(inicial(getExClassificacao()));
+		setExVia(inicial(getExVia()));
+	}
+
+	@Override
+	public CpConfiguracaoCache converterParaCache() {
+		return new ExConfiguracaoCache(this);
+	}
+
 }

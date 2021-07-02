@@ -39,7 +39,7 @@ import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -309,7 +309,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	}
 
 	public List<WfConfiguracao> consultar(final WfConfiguracao exemplo) {
-		CpTipoConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
+		ITipoDeConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
 		CpOrgaoUsuario orgao = exemplo.getOrgaoUsuario();
 
 		StringBuffer sbf = new StringBuffer();
@@ -319,9 +319,9 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 
 		sbf.append("" + "where 1 = 1");
 
-		if (tpConf != null && tpConf.getIdTpConfiguracao() != null && tpConf.getIdTpConfiguracao() != 0) {
+		if (tpConf != null) {
 			sbf.append(" and cp.id_tp_configuracao = ");
-			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+			sbf.append(exemplo.getCpTipoConfiguracao().getId());
 		}
 
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {

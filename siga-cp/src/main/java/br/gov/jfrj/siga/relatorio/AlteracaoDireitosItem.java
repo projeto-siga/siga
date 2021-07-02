@@ -22,7 +22,7 @@ import java.util.Date;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
@@ -37,14 +37,14 @@ public class AlteracaoDireitosItem extends SincronizavelSuporte implements
 	@Desconsiderar
 	CpConfiguracao cfg;
 	@Desconsiderar
-	CpSituacaoConfiguracao situacao;
+	CpSituacaoDeConfiguracaoEnum situacao;
 	long idPessoaIni;
 	long idServico;
 	long idSituacao;
 	/**
 	 * @return the situacao
 	 */
-	public CpSituacaoConfiguracao getSituacao() {
+	public CpSituacaoDeConfiguracaoEnum getSituacao() {
 		return situacao;
 	}
 
@@ -52,9 +52,9 @@ public class AlteracaoDireitosItem extends SincronizavelSuporte implements
 	 * @param situacao
 	 *            the situacao to set
 	 */
-	public void setSituacao(CpSituacaoConfiguracao situacao) {
+	public void setSituacao(CpSituacaoDeConfiguracaoEnum situacao) {
 		this.situacao = situacao;
-		idSituacao = situacao == null ? null: situacao.getIdSitConfiguracao();
+		idSituacao = situacao == null ? null: situacao.getId();
 	}
 
 	/**
@@ -114,8 +114,8 @@ public class AlteracaoDireitosItem extends SincronizavelSuporte implements
 		stb.append(':');
 		if (cfg != null
 				&& cfg.getCpSituacaoConfiguracao() != null
-				&& cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao() != null) {
-			stb.append(cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao());
+				&& cfg.getCpSituacaoConfiguracao().getDescr() != null) {
+			stb.append(cfg.getCpSituacaoConfiguracao().getDescr());
 		}
 		return stb.toString();
 	}

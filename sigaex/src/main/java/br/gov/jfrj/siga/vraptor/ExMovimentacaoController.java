@@ -65,13 +65,15 @@ import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -87,7 +89,6 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -99,6 +100,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -706,9 +708,9 @@ public class ExMovimentacaoController extends ExController {
 					.processarComandosEmTag(doc, "pre_assinatura");
 		}
 		
-		AtivoEFixo afTramite = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+		AtivoEFixo afTramite = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), ExTipoDeConfiguracao.TRAMITE_AUTOMATICO);
 		
-		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA);
+		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
 		
 		// Habilita ou desabilita o trâmite 
 		if (!Ex.getInstance()
@@ -745,28 +747,27 @@ public class ExMovimentacaoController extends ExController {
 		public boolean fixo;
 	}
 
-	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, long tipoConf) {
-		final Long idSit = Ex
+	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, ITipoDeConfiguracao tipoConf) {
+		final CpSituacaoDeConfiguracaoEnum idSit = Ex
 				.getInstance()
 				.getConf()
 				.buscaSituacao(modelo,
 						tipoDocumento,
 						getTitular(), getLotaTitular(),
-						tipoConf)
-				.getIdSitConfiguracao();
+						tipoConf);
 
 		AtivoEFixo af = new AtivoEFixo();
 		
-		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+		if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 			af.ativo = true;
 			af.fixo = true;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO || idSit == ExSituacaoConfiguracao.SITUACAO_NAO_PODE) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.PROIBIDO || idSit == CpSituacaoDeConfiguracaoEnum.NAO_PODE) {
 			af.ativo = false;
 			af.fixo = true;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT || idSit == ExSituacaoConfiguracao.SITUACAO_PODE) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.DEFAULT || idSit == CpSituacaoDeConfiguracaoEnum.PODE) {
 			af.ativo = true;
 			af.fixo = false;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.NAO_DEFAULT) {
 			af.ativo = false;
 			af.fixo = false;
 		}
@@ -2080,7 +2081,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Data de devolução inválida, deve estar entre o ano 2000 e ano 2100");	
 
 		
-		if(!Ex.getInstance().getConf().podePorConfiguracao(builder.getMob().getExDocumento().getExModelo(),CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO)) {
+		if(!Ex.getInstance().getConf().podePorConfiguracao(builder.getMob().getExDocumento().getExModelo(),ExTipoDeConfiguracao.TRAMITAR_SEM_CAPTURADO)) {
 			Boolean podeTramitar = Boolean.FALSE;
 			Set<ExMobil> mobilsJuntados = builder.getMob().getDoc().getMobilDefaultParaReceberJuntada().getJuntados();
 
@@ -2115,7 +2116,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		if(lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && !Cp.getInstance().getConf().podePorConfiguracao(
 				null, lotaResponsavelSel.getObjeto(), 
-				CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS)) {
+				ExTipoDeConfiguracao.TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS)) {
 			DpPessoaDaoFiltro filtro = new DpPessoaDaoFiltro();
 			filtro.setBuscarFechadas(Boolean.FALSE);
 			filtro.setNome("");
@@ -3058,7 +3059,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote() throws Exception {
-		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 		final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
 		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
 
@@ -3086,7 +3087,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/assinar_tudo")
 	public void assina_tudo() throws Exception {
-		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 		List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL()
 				.obterAssinaveis(getTitular(), getLotaTitular(), apenasComSolicitacaoDeAssinatura);
 
@@ -3285,7 +3286,7 @@ public class ExMovimentacaoController extends ExController {
 				.podePorConfiguracao(
 						getTitular(),
 						getLotaTitular(),
-						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO))
+						ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO))
 			throw new AplicacaoException("Operação restrita");
 
 		result.include("itensSolicitados",
@@ -4243,7 +4244,7 @@ public class ExMovimentacaoController extends ExController {
 				.podePorConfiguracao(
 						getTitular(),
 						getLotaTitular(),
-						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)) {
+						ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO)) {
 
 			if (doc.getSubscritor() != null
 					&& doc.getSubscritor().getLotacao() != null) {

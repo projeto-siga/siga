@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -44,24 +45,20 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
@@ -72,6 +69,9 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
@@ -1828,14 +1828,15 @@ public class CpDao extends ModeloDao {
 		return dt; 
 	}
 
-	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
-		CriteriaQuery<CpConfiguracao> q = cb().createQuery(CpConfiguracao.class);
-		Root<CpConfiguracao> c = q.from(CpConfiguracao.class);
+	public List<CpConfiguracaoCache> consultarConfiguracoesDesde(Date desde) {
+		CriteriaQuery<CpConfiguracaoCache> q = cb().createQuery(CpConfiguracaoCache.class);
+		Root<CpConfiguracaoCache> c = q.from(CpConfiguracaoCache.class);
 		q.select(c);
 		if (desde != null) {
 			Predicate confsAtivas = cb().greaterThan(c.<Date>get("hisDtIni"), desde);
-			Predicate confsInativas = cb().greaterThanOrEqualTo(c.<Date>get("hisDtFim"), desde);
-			q.where(cb().or(confsAtivas, confsInativas));
+			Predicate confsInativas = cb().greaterThan(c.<Date>get("hisDtFim"), desde);
+			Predicate tipos = c.get("cpTipoConfiguracao").in(CpTipoDeConfiguracao.getValoresMapeados());
+			q.where(cb().and(tipos, cb().or(confsAtivas, confsInativas)));
 		}
 		return em().createQuery(q).getResultList();
 	}
@@ -1856,36 +1857,27 @@ public class CpDao extends ModeloDao {
 	public List<CpConfiguracao> consultar(final CpConfiguracao exemplo) {
 		Query query = em().createNamedQuery("consultarCpConfiguracoes");
 
-		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao());
 
 
 		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
 
-	public List<CpConfiguracao> consultarConfiguracoesPorTipo(final Long idTipoConfig) {
-		Query query = em().createNamedQuery("consultarCpConfiguracoesPorTipo");
-
-		query.setParameter("idTpConfiguracao", idTipoConfig);
-
-
+	public List<CpConfiguracaoCache> consultarCacheDeConfiguracoesAtivas() {
+		Query query = em().createNamedQuery("consultarCacheDeConfiguracoesAtivas");
+		query.setParameter("tipos", CpTipoDeConfiguracao.getValoresMapeados());
 		return query.getResultList();
 	}
-
-	public List<CpConfiguracao> consultarConfiguracoesAtivas() {
-		Query query = em().createNamedQuery("consultarCpConfiguracoesAtivas");
-
-		return query.getResultList();
-	}
-
+	
 	public List<CpConfiguracao> porLotacaoPessoaServicoTipo(final CpConfiguracao exemplo) {
 		Query query = em().createNamedQuery("consultarCpConfiguracoesPorLotacaoPessoaServicoTipo");
 		query.setParameter("idPessoa", exemplo.getDpPessoa().getIdPessoa());
 		//removido eap72: query.setParameter("idLotacao", exemplo.getLotacao().getIdLotacao());
-		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao());
 		//removido eap72: query.setParameter("idServico", exemplo.getCpServico().getIdServico());
 		query.setParameter("siglaServico", exemplo.getCpServico().getSiglaServico());
-		query.setParameter("idSitConfiguracao", CpSituacaoConfiguracao.SITUACAO_PODE);
+		query.setParameter("idSitConfiguracao", CpSituacaoDeConfiguracaoEnum.PODE);
 		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
 		// errada apos a primeira
 
@@ -2321,13 +2313,13 @@ public class CpDao extends ModeloDao {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpFeriado.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<CpSituacaoConfiguracao> listarSituacoesConfiguracao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpSituacaoConfiguracao.class);
-	}
+//	@SuppressWarnings("unchecked")
+//	public CpSituacaoDeConfiguracaoEnum[] listarSituacoesConfiguracao() {
+//		return CpSituacaoDeConfiguracaoEnum.values();
+//	}
 
-	public List<CpTipoConfiguracao> listarTiposConfiguracao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpTipoConfiguracao.class);
+	public Collection<ITipoDeConfiguracao> listarTiposConfiguracao() {
+		return CpTipoDeConfiguracao.getValoresMapeados();
 	}
 
 	public List<CpUnidadeMedida> listarUnidadesMedida() {
@@ -2376,7 +2368,7 @@ public class CpDao extends ModeloDao {
 		while (it.hasNext()) {
 			CpGrupo cpGrp = it.next();
 			CpConfiguracaoBL bl = Cp.getInstance().getConf();
-			if (!bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO)) {
+			if (!bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoDeConfiguracao.GERENCIAR_GRUPO)) {
 				it.remove();
 			}
 
@@ -2517,6 +2509,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public <T extends Historico> T obterAtual(final T u) {
+		if (u.getHisDtFim() == null)
+			return u;
 //		CriteriaBuilder builder = em().getCriteriaBuilder();
 //		
 //		CriteriaQuery query = builder.createQuery(thisAntigo.getClass());
@@ -2534,9 +2528,26 @@ public class CpDao extends ModeloDao {
 //		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
 		
 		String clazz = u.getClass().getSimpleName();
+		clazz = clazz.split("\\$HibernateProxy\\$")[0];
 		String sql = "from " + clazz + " u where u.hisDtIni = "
 			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
 			+ "		 and u.hisIdIni = :idIni";		
+		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
+		qry.setParameter("idIni", u.getHisIdIni());
+		qry.setFirstResult(0);
+		qry.setMaxResults(1);
+		List<CpAcesso> result = qry.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return (T) result.get(0);
+	}
+
+	public <T extends Historico> T obterInicial(final T u) {
+		if (u.getId() == u.getHisIdIni())
+			return u;
+		String clazz = u.getClass().getSimpleName();
+		clazz = clazz.split("\\$HibernateProxy\\$")[0];
+		String sql = "from " + clazz + " u where u.hisIdIni = :idIni";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
 		qry.setFirstResult(0);

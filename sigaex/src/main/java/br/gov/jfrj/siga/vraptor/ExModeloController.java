@@ -28,7 +28,6 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpModelo;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -38,6 +37,7 @@ import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
@@ -471,7 +471,7 @@ public class ExModeloController extends ExSelecionavelController {
 			List<ExModelo> lExcluir = new ArrayList<>();
 			for (ExModelo mod : (List<ExModelo>)getItens()) {
 				if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), mod,
-				CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL)) {
+				ExTipoDeConfiguracao.DESPACHAVEL)) {
 					lExcluir.add(mod);
 				}
 			}

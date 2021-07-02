@@ -41,7 +41,7 @@ public class Ex extends
 			synchronized (Cp.class) {
 				if (!isInstantiated(Ex.class)) {
 					ExConfiguracaoBL confBL = new ExConfiguracaoBL();
-					ExConfiguracaoComparator comparator = new ExConfiguracaoComparator();
+					ExConfiguracaoCacheComparator comparator = new ExConfiguracaoCacheComparator();
 					ExCompetenciaBL compBL = new ExCompetenciaBL();
 					ExBL exBL = new ExBL();
 					

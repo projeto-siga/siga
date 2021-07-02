@@ -40,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.google.common.base.Optional;
+
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
@@ -48,8 +50,6 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpPerfilJEE;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -60,14 +60,14 @@ import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFormula;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-
-import com.google.common.base.Optional;
 
 public abstract class GrupoController<T extends CpGrupo> extends
 		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> {
@@ -116,7 +116,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	private Long idCpGrupo;
 	private Long orgaoUsu;
 	private String siglaGrupo;
-	private CpTipoConfiguracao tipoConfiguracao;
+	private CpTipoDeConfiguracao tipoConfiguracao;
 	private List<TipoConfiguracaoGrupoEnum> tiposConfiguracaoGrupoParaTipoDeGrupo;
 	// Carga inicial
 	private List<CpTipoGrupo> tiposDeGrupo;
@@ -456,12 +456,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			throw new AplicacaoException("A unidade deve ser definida!");
 		} else {
 			dao().iniciarTransacao();
-			CpTipoConfiguracao tpConf = dao().consultar(
-					CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
-					CpTipoConfiguracao.class, false);
-			CpSituacaoConfiguracao situacao = dao().consultar(
-					CpSituacaoConfiguracao.SITUACAO_PODE,
-					CpSituacaoConfiguracao.class, false);
+			CpTipoDeConfiguracao tpConf = dao().consultar(
+					CpTipoDeConfiguracao.GERENCIAR_GRUPO,
+					CpTipoDeConfiguracao.class, false);
+			CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.PODE;
 
 			CpConfiguracao conf = new CpConfiguracao();
 			conf.setLotacao(lot);
@@ -488,12 +486,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	protected List<CpConfiguracao> getConfGestores(Long idCpGrupo) {
-		CpTipoConfiguracao tpConf = dao().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
-				CpTipoConfiguracao.class, false);
-		CpSituacaoConfiguracao situacao = dao().consultar(
-				CpSituacaoConfiguracao.SITUACAO_PODE,
-				CpSituacaoConfiguracao.class, false);
+		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.GERENCIAR_GRUPO;
+		CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.PODE;
 		CpGrupo grp = daoGrupo(idCpGrupo);
 		if (grp == null) {
 			return null;
@@ -554,7 +548,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				CpGrupo cpGrp = it.next();
 				CpConfiguracaoBL bl = Cp.getInstance().getConf();
 				if (!bl.podePorConfiguracao(getTitular(), getLotaTitular(),
-						cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO)) {
+						cpGrp, CpTipoDeConfiguracao.GERENCIAR_GRUPO)) {
 					it.remove();
 				}
 
@@ -651,7 +645,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	/**
 	 * @return the tipoConfiguracao
 	 */
-	protected CpTipoConfiguracao getTipoConfiguracao() {
+	protected CpTipoDeConfiguracao getTipoConfiguracao() {
 		return tipoConfiguracao;
 	}
 
@@ -736,8 +730,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		grupoPaiSel = new CpGrupoDeEmailSelecao();
 		tiposDeGrupo = obterTiposGrupo();
 		tipoConfiguracao = dao().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_PERTENCER,
-				CpTipoConfiguracao.class, false);
+				CpTipoDeConfiguracao.PERTENCER,
+				CpTipoDeConfiguracao.class, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -839,7 +833,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param tipoConfiguracao
 	 *            the tipoConfiguracao to set
 	 */
-	protected void setTipoConfiguracao(CpTipoConfiguracao tipoConfiguracao) {
+	protected void setTipoConfiguracao(CpTipoDeConfiguracao tipoConfiguracao) {
 		this.tipoConfiguracao = tipoConfiguracao;
 	}
 

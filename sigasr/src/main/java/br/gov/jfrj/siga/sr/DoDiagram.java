@@ -1,11 +1,7 @@
 package br.gov.jfrj.siga.sr;
 
-import javassist.ClassPool;
-import javassist.CtClass;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -36,8 +32,6 @@ public class DoDiagram {
 		
 		 d.addClass(CpComplexo.class, fI, false, false);
 		 d.addClass(CpConfiguracao.class, fI, false, false);
-		 d.addClass(CpSituacaoConfiguracao.class, fI, false, false);
-		 d.addClass(CpTipoConfiguracao.class, fI, false, false);
 		 d.addClass(CpAplicacaoFeriado.class, fI, false, false);
 		 d.addClass(CpFeriado.class, fI, false, false);
 		 d.addClass(CpLocalidade.class, fI, false, false);

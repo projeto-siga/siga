@@ -22,18 +22,19 @@ import javax.persistence.Query;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Par;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.gc.model.GcAcesso;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcMarca;
@@ -64,7 +65,7 @@ public class GcBL {
 		this.so = null;
 
 	}
-	
+
 	@Inject
 	public GcBL(SigaObjects so) {
 		super();
@@ -78,7 +79,7 @@ public class GcBL {
 			return null;
 		return s.trim();
 	}
-	
+
 	private String simplificarHashtag(String s) {
 		if (s == null)
 			return null;
@@ -87,30 +88,23 @@ public class GcBL {
 		return s.trim().toLowerCase();
 	}
 
-	public GcMovimentacao movimentar(GcInformacao inf, GcArquivo arqDuplicado,
-			long id) throws Exception {
+	public GcMovimentacao movimentar(GcInformacao inf, GcArquivo arqDuplicado, long id) throws Exception {
 		GcMovimentacao mov = new GcMovimentacao();
 		mov.setTipo(GcTipoMovimentacao.AR.findById(id));
 		if (mov.getTipo() == null)
-			throw new Exception(
-					"Não foi possível localizar um tipo de movimentacão com id="
-							+ id);
+			throw new Exception("Não foi possível localizar um tipo de movimentacão com id=" + id);
 		mov.setArq(arqDuplicado);
 		return movimentar(inf, mov);
 	}
 
-	public GcMovimentacao movimentar(GcInformacao inf, long idTipo,
-			DpPessoa pessoa, DpLotacao lotacao, String descricao,
-			String titulo, String conteudo, String classificacao,
-			GcMovimentacao movRef, Date hisDtIni, byte[] anexo)
-			throws Exception {
+	public GcMovimentacao movimentar(GcInformacao inf, long idTipo, DpPessoa pessoa, DpLotacao lotacao,
+			String descricao, String titulo, String conteudo, String classificacao, GcMovimentacao movRef,
+			Date hisDtIni, byte[] anexo) throws Exception {
 
 		GcMovimentacao mov = new GcMovimentacao();
 		mov.setTipo(GcTipoMovimentacao.AR.findById(idTipo));
 		if (mov.getTipo() == null)
-			throw new Exception(
-					"Não foi possível localizar um tipo de movimentacão com id="
-							+ idTipo);
+			throw new Exception("Não foi possível localizar um tipo de movimentacão com id=" + idTipo);
 		mov.setPessoaAtendente(pessoa);
 		mov.setLotacaoAtendente(lotacao);
 		mov.setDescricao(descricao);
@@ -121,8 +115,7 @@ public class GcBL {
 		conteudo = simplificarString(conteudo);
 
 		if (conteudo != null && conteudo.startsWith("<")) {
-			String canonicalizado = new ProcessadorHtml().canonicalizarHtml(
-					conteudo, false, true, true, true, true);
+			String canonicalizado = new ProcessadorHtml().canonicalizarHtml(conteudo, false, true, true, true, true);
 			conteudo = canonicalizado;
 		}
 
@@ -142,24 +135,22 @@ public class GcBL {
 				mov.setArq(arq);
 			} else if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO
 					|| idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
-				throw new AplicacaoException(
-						"Não é permitido salvar uma informação com título ou conteúdo vazios.");
+				throw new AplicacaoException("Não é permitido salvar uma informação com título ou conteúdo vazios.");
 			}
 		}
 
 		return movimentar(inf, mov);
 	}
 
-	public GcMovimentacao movimentar(GcInformacao inf, GcMovimentacao mov)
-			throws Exception {
+	public GcMovimentacao movimentar(GcInformacao inf, GcMovimentacao mov) throws Exception {
 		Date dt = dt();
 		if (mov.getHisDtIni() == null) {
 			mov.setHisDtIni(dt);
 		}
 		mov.setInf(inf);
 		/*
-		 * if (mov.isCanceladora()) { for (GcMovimentacao mv : inf.movs) { if
-		 * (mv.id == mov.movRef.id) mv.movCanceladora = mov; } }
+		 * if (mov.isCanceladora()) { for (GcMovimentacao mv : inf.movs) { if (mv.id ==
+		 * mov.movRef.id) mv.movCanceladora = mov; } }
 		 */
 
 		if (inf.getMovs() == null)
@@ -172,18 +163,22 @@ public class GcBL {
 		inf.getMovs().remove(mov);
 		inf.getMovs().add(mov);
 	}
-	
+
 	public Date dt() {
 		if (this.dt == null)
 			this.dt = so.dao().dt();
 		return this.dt;
 	}
 
-	public GcInformacao gravar(GcInformacao inf, CpIdentidade idc,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+	public GcInformacao gravar(GcInformacao inf, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
+			throws Exception {
 		Date dt = dt();
 
-			
+		if (inf.getEdicao() != null)
+			inf.setEdicao(GcAcesso.AR.findById(inf.getEdicao().getId()));
+		if (inf.getVisualizacao() != null)
+			inf.setVisualizacao(GcAcesso.AR.findById(inf.getVisualizacao().getId()));
+
 		// Atualiza o campo arq, pois este não pode ser nulo
 		if (inf.getMovs() != null) {
 			for (GcMovimentacao mov : inf.getMovs()) {
@@ -198,7 +193,7 @@ public class GcBL {
 			inf.setHisIdcIni(idc);
 		if (inf.getMovs() != null) {
 			for (GcMovimentacao mov : inf.getMovs()) {
-				if (mov.getArq() != null && mov.getArq().getId() == 0)
+				if (mov.getArq() != null && mov.getArq().getId() == null)
 					mov.getArq().save();
 				if (mov.getHisIdcIni() == null)
 					mov.setHisIdcIni(idc);
@@ -208,7 +203,7 @@ public class GcBL {
 					mov.setPessoaTitular(titular);
 				if (mov.getLotacaoTitular() == null)
 					mov.setLotacaoTitular(lotaTitular);
-				if (inf.getId() == 0)
+				if (inf.getId() == null)
 					inf.save();
 				mov.setInf(inf);
 				if (mov.getMovCanceladora() != null) {
@@ -219,7 +214,7 @@ public class GcBL {
 				mov.save();
 			}
 		}
-		//atualizarInformacaoPorMovimentacoes(inf);
+		// atualizarInformacaoPorMovimentacoes(inf);
 		atualizarTags(inf);
 		inf.save();
 		atualizarMarcas(inf);
@@ -265,16 +260,11 @@ public class GcBL {
 			}
 			GcTag tag;
 			if (categoria == null)
-				tag = GcTag.AR.find(
-						"tipo.id = ?1 and categoria is null and titulo = ?2",
-						tipo, titulo).first();
+				tag = GcTag.AR.find("tipo.id = ?1 and categoria is null and titulo = ?2", tipo, titulo).first();
 			else
-				tag = GcTag.AR.find(
-						"tipo.id = ?1 and categoria = ?2 and titulo = ?3", tipo,
-						categoria, titulo).first();
+				tag = GcTag.AR.find("tipo.id = ?1 and categoria = ?2 and titulo = ?3", tipo, categoria, titulo).first();
 			if (tag == null && !fValidos) {
-				tag = new GcTag((GcTipoTag) GcTipoTag.AR.findById(tipo),
-						categoria, titulo);
+				tag = new GcTag((GcTipoTag) GcTipoTag.AR.findById(tipo), categoria, titulo);
 			}
 			if (tag != null) {
 				set.add(tag);
@@ -286,15 +276,13 @@ public class GcBL {
 		return set;
 	}
 
-	public void atualizarInformacaoPorMovimentacoes(GcInformacao inf)
-			throws AplicacaoException {
-		
+	public void atualizarInformacaoPorMovimentacoes(GcInformacao inf) throws AplicacaoException {
+
 		if (inf.getMovs() == null)
 			return;
 
-		ArrayList<GcMovimentacao> movs = new ArrayList<GcMovimentacao>(
-				inf.getMovs().size());
-		
+		ArrayList<GcMovimentacao> movs = new ArrayList<GcMovimentacao>(inf.getMovs().size());
+
 		movs.addAll(inf.getMovs());
 
 		Collections.reverse(movs);
@@ -326,9 +314,8 @@ public class GcBL {
 		}
 		if (inf.getElaboracaoFim() != null && inf.getAno() == null) {
 			inf.setAno(dt().getYear() + 1900);
-			Query qry = em()
-					.createQuery(
-							"select max(inf.numero) from GcInformacao inf where ano = :ano and ou.idOrgaoUsu = :ouid");
+			Query qry = em().createQuery(
+					"select max(inf.numero) from GcInformacao inf where ano = :ano and ou.idOrgaoUsu = :ouid");
 			qry.setParameter("ano", inf.getAno());
 			qry.setParameter("ouid", inf.getOu().getIdOrgaoUsu());
 			Integer i = (Integer) qry.getSingleResult();
@@ -339,22 +326,21 @@ public class GcBL {
 	public void atualizarMarcas(GcInformacao inf) throws Exception {
 		SortedSet<GcMarca> setA = new TreeSet<GcMarca>();
 		if (inf.getMarcas() != null) {
-		//	em().getTransaction().begin();
+			// em().getTransaction().begin();
 			// Excluir marcas duplicadas
-		//	try {
-				for (GcMarca m : inf.getMarcas()) {
-					if (setA.contains(m))
-						m.delete();
-					else
-						setA.add(m);
-				}
-		//		em().getTransaction().commit();
-		//		
-		//	} catch (Exception Ex) {
-		//		em().getTransaction().rollback();
-		//		throw Ex;
-		//	}
-
+			// try {
+			for (GcMarca m : inf.getMarcas()) {
+				if (setA.contains(m))
+					m.delete();
+				else
+					setA.add(m);
+			}
+			// em().getTransaction().commit();
+			//
+			// } catch (Exception Ex) {
+			// em().getTransaction().rollback();
+			// throw Ex;
+			// }
 
 		}
 		SortedSet<GcMarca> setB = calcularMarcadores(inf);
@@ -373,23 +359,22 @@ public class GcBL {
 			i.save();
 			i.getInf().getMarcas().add(i);
 		}
-	//	em().getTransaction().begin();
-	//	try {
-	 		for (GcMarca e : excluir) {
-				if (e.getInf().getMarcas() == null) {
-					// e.inf.marcas = new TreeSet<GcMarca>();
-					e.getInf().setMarcas(new ArrayList<GcMarca>());
-				}
-				e.getInf().getMarcas().remove(e);
-				e.delete();
+		// em().getTransaction().begin();
+		// try {
+		for (GcMarca e : excluir) {
+			if (e.getInf().getMarcas() == null) {
+				// e.inf.marcas = new TreeSet<GcMarca>();
+				e.getInf().setMarcas(new ArrayList<GcMarca>());
 			}
-	//		em().getTransaction().commit();
-			
-	//	} catch (Exception Ex) {
-	//		em().getTransaction().rollback();
-	//		throw Ex;
-	//	}
+			e.getInf().getMarcas().remove(e);
+			e.delete();
+		}
+		// em().getTransaction().commit();
 
+		// } catch (Exception Ex) {
+		// em().getTransaction().rollback();
+		// throw Ex;
+		// }
 
 	}
 
@@ -397,8 +382,8 @@ public class GcBL {
 	 * Executa algoritmo de comparação entre dois sets e preenche as listas:
 	 * inserir, excluir e atualizar.
 	 */
-	private void encaixar(SortedSet<GcMarca> setA, SortedSet<GcMarca> setB,
-			Set<GcMarca> incluir, Set<GcMarca> excluir) {
+	private void encaixar(SortedSet<GcMarca> setA, SortedSet<GcMarca> setB, Set<GcMarca> incluir,
+			Set<GcMarca> excluir) {
 		Iterator<GcMarca> ia = setA.iterator();
 		Iterator<GcMarca> ib = setB.iterator();
 
@@ -446,11 +431,9 @@ public class GcBL {
 		ia = null;
 	}
 
-	private void acrescentarMarca(SortedSet<GcMarca> set, GcInformacao inf,
-			Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess,
-			DpLotacao lota) throws Exception {
-		CpTipoMarca tipoMarca = CpTipoMarca.AR
-				.findById(CpTipoMarca.TIPO_MARCA_SIGA_GC);
+	private void acrescentarMarca(SortedSet<GcMarca> set, GcInformacao inf, Long idMarcador, Date dtIni, Date dtFim,
+			DpPessoa pess, DpLotacao lota) throws Exception {
+		CpTipoMarca tipoMarca = CpTipoMarca.AR.findById(CpTipoMarca.TIPO_MARCA_SIGA_GC);
 		GcMarca mar = new GcMarca();
 		mar.setCpTipoMarca(tipoMarca);
 		mar.setInf(inf);
@@ -465,28 +448,26 @@ public class GcBL {
 	}
 
 	/**
-	 * Calcula quais as marcas cada informação terá com base nas movimentações
-	 * que foram feitas na informacao.
+	 * Calcula quais as marcas cada informação terá com base nas movimentações que
+	 * foram feitas na informacao.
 	 * 
 	 * @param inf
 	 */
-	private SortedSet<GcMarca> calcularMarcadores(GcInformacao inf)
-			throws Exception {
+	private SortedSet<GcMarca> calcularMarcadores(GcInformacao inf) throws Exception {
 		SortedSet<GcMarca> set = new TreeSet<GcMarca>();
 
 		if (inf.getHisDtFim() != null) {
-			acrescentarMarca(set, inf, CpMarcadorEnum.CANCELADO.getId(),
-					inf.getHisDtFim(), null, inf.getAutor(), inf.getLotacao());
+			acrescentarMarca(set, inf, CpMarcadorEnum.CANCELADO.getId(), inf.getHisDtFim(), null, inf.getAutor(),
+					inf.getLotacao());
 		} else {
 			if (inf.getElaboracaoFim() == null) {
-				acrescentarMarca(set, inf, CpMarcadorEnum.EM_ELABORACAO.getId(),
-						inf.getHisDtIni(), null, inf.getAutor(), inf.getLotacao());
+				acrescentarMarca(set, inf, CpMarcadorEnum.EM_ELABORACAO.getId(), inf.getHisDtIni(), null,
+						inf.getAutor(), inf.getLotacao());
 			} else {
-				acrescentarMarca(set, inf, CpMarcadorEnum.ATIVO.getId(),
-						inf.getElaboracaoFim(), null, inf.getAutor(), inf.getLotacao());
-				acrescentarMarca(set, inf, CpMarcadorEnum.NOVO.getId(),
-						inf.getElaboracaoFim(), new Date(inf.getHisDtIni().getTime()
-								+ TEMPO_NOVIDADE), inf.getAutor(), inf.getLotacao());
+				acrescentarMarca(set, inf, CpMarcadorEnum.ATIVO.getId(), inf.getElaboracaoFim(), null, inf.getAutor(),
+						inf.getLotacao());
+				acrescentarMarca(set, inf, CpMarcadorEnum.NOVO.getId(), inf.getElaboracaoFim(),
+						new Date(inf.getHisDtIni().getTime() + TEMPO_NOVIDADE), inf.getAutor(), inf.getLotacao());
 			}
 			if (inf.getMovs() != null) {
 				for (GcMovimentacao mov : inf.getMovs()) {
@@ -496,50 +477,50 @@ public class GcBL {
 						continue;
 
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO)
-						acrescentarMarca(set, inf, CpMarcadorEnum.REVISAR.getId(),
-								mov.getHisDtIni(), null, mov.getPessoaAtendente(),
-								mov.getLotacaoAtendente());
+						acrescentarMarca(set, inf, CpMarcadorEnum.REVISAR.getId(), mov.getHisDtIni(), null,
+								mov.getPessoaAtendente(), mov.getLotacaoAtendente());
 
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR
 							&& (mov.getPessoaAtendente() != null || mov.getLotacaoAtendente() != null)) {
-						 
-						acrescentarMarca(set, inf,
-								CpMarcadorEnum.TOMAR_CIENCIA.getId(),
-								mov.getHisDtIni(), null, mov.getPessoaAtendente(),
-								mov.getLotacaoAtendente());
+
+						acrescentarMarca(set, inf, CpMarcadorEnum.TOMAR_CIENCIA.getId(), mov.getHisDtIni(), null,
+								mov.getPessoaAtendente(), mov.getLotacaoAtendente());
 					}
-					
+
 					List<Par<DpPessoa, DpLotacao>> pessoasELotasDoGrupo = new ArrayList<Par<DpPessoa, DpLotacao>>();
-					if (mov.getGrupo() != null){
-						for (CpConfiguracao cfg : Cp.getInstance().getConf()
-								.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
-							if (cfg.getCpGrupo() != null && cfg.getCpGrupo().equivale(mov.getGrupo())
-									&& cfg.getHisDtFim() == null){
-								DpPessoa pess = cfg.getDpPessoa();
-								//Edson: evitar LazyException:
-								if (pess != null)
-									pess = CpDao.getInstance().consultar(pess.getId(), DpPessoa.class, false);
-								DpLotacao lota = cfg.getLotacao();
-								if (lota != null)
-									lota = CpDao.getInstance().consultar(lota.getId(), DpLotacao.class, false);
+					if (mov.getGrupo() != null) {
+						for (CpConfiguracaoCache cfg : Cp.getInstance().getConf()
+								.getListaPorTipo(CpTipoDeConfiguracao.PERTENCER)) {
+							if (cfg.cpGrupo == mov.getGrupo().getIdInicial() && cfg.hisDtFim == null) {
+								DpPessoa pess = null;
+								// Edson: evitar LazyException:
+								if (cfg.dpPessoa != 0)
+									pess = CpDao.getInstance().consultar(cfg.dpPessoa, DpPessoa.class, false);
+								DpLotacao lota = null;
+								if (cfg.lotacao != 0)
+									lota = CpDao.getInstance().consultar(cfg.lotacao, DpLotacao.class, false);
 								else if (pess != null)
 									lota = pess.getLotacao();
 								pessoasELotasDoGrupo.add(new Par<DpPessoa, DpLotacao>(pess, lota));
 							}
 						}
 					}
-					
-					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL){
+
+					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL) {
 						Long marcador = 0L;
-						switch (mov.getPapel().getId().intValue()){
-							case (int)GcPapel.PAPEL_INTERESSADO : marcador = CpMarcadorEnum.COMO_INTERESSADO.getId(); break;
-							case (int)GcPapel.PAPEL_EXECUTOR: marcador = CpMarcadorEnum.COMO_EXECUTOR.getId(); break;
+						switch (mov.getPapel().getId().intValue()) {
+						case (int) GcPapel.PAPEL_INTERESSADO:
+							marcador = CpMarcadorEnum.COMO_INTERESSADO.getId();
+							break;
+						case (int) GcPapel.PAPEL_EXECUTOR:
+							marcador = CpMarcadorEnum.COMO_EXECUTOR.getId();
+							break;
 						}
 						if (mov.getLotacaoAtendente() != null)
-							pessoasELotasDoGrupo.add(new Par<DpPessoa, DpLotacao>(mov.getPessoaAtendente(), mov.getLotacaoAtendente()));
+							pessoasELotasDoGrupo.add(
+									new Par<DpPessoa, DpLotacao>(mov.getPessoaAtendente(), mov.getLotacaoAtendente()));
 						for (Par<DpPessoa, DpLotacao> p : pessoasELotasDoGrupo)
-							acrescentarMarca(set, inf, marcador,
-									mov.getHisDtIni(), null, p.getKey(), p.getValue());
+							acrescentarMarca(set, inf, marcador, mov.getHisDtIni(), null, p.getKey(), p.getValue());
 					}
 				}
 			}
@@ -548,13 +529,11 @@ public class GcBL {
 	}
 
 	private boolean dtMesmoDia(Date dt1, Date dt2) {
-		return dt1.getDate() == dt2.getDate()
-				&& dt1.getMonth() == dt2.getMonth()
-				&& dt1.getYear() == dt2.getYear();
+		return dt1.getDate() == dt2.getDate() && dt1.getMonth() == dt2.getMonth() && dt1.getYear() == dt2.getYear();
 	}
 
-	public void logarVisita(GcInformacao informacao, CpIdentidade idc,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+	public void logarVisita(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
+			throws Exception {
 		Date dt = dt();
 		for (GcMovimentacao mov : informacao.getMovs()) {
 			if (mov.isCancelada())
@@ -565,32 +544,25 @@ public class GcBL {
 					&& dtMesmoDia(dt, mov.getHisDtIni()))
 				return;
 		}
-		GcMovimentacao m = movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, null, null, null,
-				null, null, null, null, null, null);
+		GcMovimentacao m = movimentar(informacao, GcTipoMovimentacao.TIPO_MOVIMENTACAO_VISITA, null, null, null, null,
+				null, null, null, null, null);
 		gravar(informacao, idc, titular, lotaTitular);
 	}
 
-	public void notificado(GcInformacao informacao, CpIdentidade idc,
-			DpPessoa titular, DpLotacao lotaTitular,
+	public void notificado(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
 			GcMovimentacao movNotificacao) throws Exception {
 		for (GcMovimentacao movs : informacao.getMovs()) {
 			if (movs.isCancelada())
 				continue;
 			if (movs.getTipo().getId() == movNotificacao.getTipo().getId()) {
 				if (titular.equivale(movNotificacao.getPessoaAtendente())) {
-					GcMovimentacao m = movimentar(informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE, null,
-							null, null, null, null, null, movNotificacao, null,
-							null);
+					GcMovimentacao m = movimentar(informacao, GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE, null, null,
+							null, null, null, null, movNotificacao, null, null);
 					movNotificacao.setMovCanceladora(m);
 					gravar(informacao, idc, titular, lotaTitular);
-				} else if (lotaTitular
-						.equivale(movNotificacao.getLotacaoAtendente())) {
-					GcMovimentacao m = movimentar(informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE, null,
-							movNotificacao.getLotacaoAtendente(), null, null, null,
-							null, movNotificacao, null, null);
+				} else if (lotaTitular.equivale(movNotificacao.getLotacaoAtendente())) {
+					GcMovimentacao m = movimentar(informacao, GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE, null,
+							movNotificacao.getLotacaoAtendente(), null, null, null, null, movNotificacao, null, null);
 					movNotificacao.setMovCanceladora(m);
 					gravar(informacao, idc, titular, lotaTitular);
 					if (m.todaLotacaoCiente(movNotificacao)) {
@@ -607,13 +579,13 @@ public class GcBL {
 		}
 	}
 
-	public void interessado(GcInformacao informacao, CpIdentidade idc,
-			DpPessoa titular, DpLotacao lotaTitular, boolean fInteresse)
-			throws Exception {
+	public void interessado(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
+			boolean fInteresse) throws Exception {
 		GcMovimentacao movLocalizada = null;
 		for (GcMovimentacao mov : informacao.getMovs()) {
 			if (!mov.isCancelada() && mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL
-					&& titular.equivale(mov.getPessoaAtendente()) && mov.getPapel().getIdPapel() == GcPapel.PAPEL_INTERESSADO) {
+					&& titular.equivale(mov.getPessoaAtendente())
+					&& mov.getPapel().getIdPapel() == GcPapel.PAPEL_INTERESSADO) {
 				movLocalizada = mov;
 				break;
 			}
@@ -622,24 +594,23 @@ public class GcBL {
 			vincularPapel(informacao, idc, titular, lotaTitular, titular, lotaTitular, null,
 					GcPapel.AR.findById(GcPapel.PAPEL_INTERESSADO), null);
 		} else if (movLocalizada != null && !fInteresse) {
-			cancelarMovimentacao(informacao, movLocalizada, idc,
-					titular, lotaTitular);
+			cancelarMovimentacao(informacao, movLocalizada, idc, titular, lotaTitular);
 		}
 	}
-	
-	public void vincularPapel(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular, 
-			DpPessoa pessoa, DpLotacao lotacao, CpGrupo grupo, GcPapel papel, Correio correio) throws Exception{
-		if (informacao == null && pessoa == null && lotacao == null)
+
+	public void vincularPapel(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
+			DpPessoa pessoa, DpLotacao lotacao, CpGrupo grupo, GcPapel papel, Correio correio) throws Exception {
+		if (informacao == null || (pessoa == null && lotacao == null && grupo == null))
 			throw new AplicacaoException("Não foram informados dados para a definição de perfil");
-		
+
 		if (pessoa != null && lotacao == null && grupo == null)
 			lotacao = pessoa.getLotacao();
-		
-		if (!(papel.getIdPapel() == GcPapel.PAPEL_INTERESSADO && titular.equivale(pessoa)) 
-				&& !informacao.podeVincularPapel(titular, lotaTitular)){
+
+		if (!(papel.getIdPapel() == GcPapel.PAPEL_INTERESSADO && titular.equivale(pessoa))
+				&& !informacao.podeVincularPapel(titular, lotaTitular)) {
 			throw new AplicacaoException("Definição de perfil não permitida");
 		}
-		
+
 		String descr = papel.getDescPapel() + ": ";
 		if (pessoa != null)
 			descr += pessoa.getDescricaoCompletaIniciaisMaiusculas();
@@ -647,9 +618,8 @@ public class GcBL {
 			descr += lotacao.getDescricaoIniciaisMaiusculas();
 		else if (grupo != null)
 			descr += grupo.getDscGrupo();
-		
-		GcMovimentacao mov = movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL, pessoa,
+
+		GcMovimentacao mov = movimentar(informacao, GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL, pessoa,
 				lotacao, descr, null, null, null, null, null, null);
 		mov.setPapel(papel);
 		mov.setGrupo(grupo);
@@ -658,8 +628,8 @@ public class GcBL {
 			correio.notificar(informacao, pessoa, lotacao, null);
 	}
 
-	public void cancelar(GcInformacao informacao, CpIdentidade idc,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+	public void cancelar(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
+			throws Exception {
 		Date dt = dt();
 		for (GcMovimentacao mov : informacao.getMovs()) {
 			if (mov.isCancelada())
@@ -667,9 +637,8 @@ public class GcBL {
 			if (mov.getTipo().getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO)
 				return;
 		}
-		GcMovimentacao m = movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, null, null,
-				null, null, null, null, null, null, null);
+		GcMovimentacao m = movimentar(informacao, GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO, null, null, null,
+				null, null, null, null, null, null);
 		gravar(informacao, idc, titular, lotaTitular);
 	}
 
@@ -731,13 +700,10 @@ public class GcBL {
 			return classificacao.concat(", ").concat(hashTag).trim();
 	}
 
-	public void cancelarMovimentacao(GcInformacao info, GcMovimentacao mov,
-			CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
-		GcMovimentacao m = movimentar(
-				info,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-				null, null, null, null, null, null, mov, null, null);
+	public void cancelarMovimentacao(GcInformacao info, GcMovimentacao mov, CpIdentidade idc, DpPessoa titular,
+			DpLotacao lotaTitular) throws Exception {
+		GcMovimentacao m = movimentar(info, GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO, null,
+				null, null, null, null, null, mov, null, null);
 		// gravar(info, idc, titular, lotaTitular);
 		mov.setMovCanceladora(m);
 		gravar(info, idc, titular, lotaTitular);
@@ -748,11 +714,10 @@ public class GcBL {
 	 * conhecimento atraves da movimentacao TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO.
 	 * Chamado pela página anexar.html
 	 */
-	public void gravarArquivoComMovimentacao(GcInformacao info,
-			CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
-			String titulo, byte[] file) throws Exception {
-		movimentar(info, GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-				null, null, null, titulo, null, null, null, null, file);
+	public void gravarArquivoComMovimentacao(GcInformacao info, CpIdentidade idc, DpPessoa titular,
+			DpLotacao lotaTitular, String titulo, byte[] file) throws Exception {
+		movimentar(info, GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO, null, null, null, titulo, null, null,
+				null, null, file);
 		gravar(info, idc, titular, lotaTitular);
 	}
 
@@ -760,8 +725,7 @@ public class GcBL {
 	 * Metodo que grava imagens no GcArquivo sem associa-las a um conhecimento.
 	 * Chamado pela página editar.html
 	 */
-	public long gravarArquivoSemMovimentacao(byte[] file, String titulo,
-			String contentType) {
+	public long gravarArquivoSemMovimentacao(byte[] file, String titulo, String contentType) {
 		GcArquivo arq = new GcArquivo();
 		arq.setTitulo(titulo);
 		arq.setClassificacao(null);
@@ -842,8 +806,7 @@ public class GcBL {
 					continue;
 				String setterName = getterName.replace("get", "set");
 				Object origValue = getter.invoke(orig);
-				dest.getClass().getMethod(setterName, getter.getReturnType())
-						.invoke(dest, origValue);
+				dest.getClass().getMethod(setterName, getter.getReturnType()).invoke(dest, origValue);
 			} catch (NoSuchMethodException nSME) {
 				int a = 0;
 			} catch (IllegalAccessException iae) {
@@ -881,9 +844,8 @@ public class GcBL {
 	// presentes, este mÃ©todo Ã© necessÃ¡rio.
 	public Long nextVal(String sequence) {
 		Long newId;
-		return Long.valueOf(em()
-				.createNativeQuery("select " + sequence + ".nextval from dual")
-				.getSingleResult().toString());
+		return Long.valueOf(
+				em().createNativeQuery("select " + sequence + ".nextval from dual").getSingleResult().toString());
 	}
 
 	private EntityManager em() {
@@ -891,16 +853,15 @@ public class GcBL {
 	}
 
 	/**
-	 * Cria um link referenciando automaticamente um
-	 * documento/serviço/conhecimento quando é acrescentado o seu código no
-	 * campo de conteúdo da informação. Ex: Estou editando um conhecimento, no
-	 * seu campo texto quero referenciar o seguinte documento
-	 * JFRJ-OFI-2013/00003. Quando acrescento esse código do ofício e mando
-	 * salvar as alterações do conhecimento é criado um link que leva direto ao
-	 * documento referenciado.
+	 * Cria um link referenciando automaticamente um documento/serviço/conhecimento
+	 * quando é acrescentado o seu código no campo de conteúdo da informação. Ex:
+	 * Estou editando um conhecimento, no seu campo texto quero referenciar o
+	 * seguinte documento JFRJ-OFI-2013/00003. Quando acrescento esse código do
+	 * ofício e mando salvar as alterações do conhecimento é criado um link que leva
+	 * direto ao documento referenciado.
 	 * 
-	 * Além disso, também identifica e cria links para hashTags. Esses hashTags
-	 * são inseridos no campo de classificação do conhecimento.
+	 * Além disso, também identifica e cria links para hashTags. Esses hashTags são
+	 * inseridos no campo de classificação do conhecimento.
 	 * 
 	 **/
 	public String marcarLinkNoConteudo(GcInformacao informacao, String conteudo) throws Exception {
@@ -909,8 +870,7 @@ public class GcBL {
 
 		if (acronimoOrgao == null) {
 			acronimoOrgao = "";
-			List<String> acronimo = CpOrgaoUsuario.AR.find(
-					"select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
+			List<String> acronimo = CpOrgaoUsuario.AR.find("select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
 			for (String ao : acronimo)
 				acronimoOrgao += (acronimoOrgao.isEmpty() ? "" : "|") + ao;
 		}
@@ -928,11 +888,10 @@ public class GcBL {
 		StringBuffer sb = new StringBuffer();
 
 		Pattern padraoSigla = Pattern.compile(
-		// reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01,
-		// JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01,
-		// TRF2-PRO-2013/00001-V01
-				"(?i)(?:(?:"
-						+ acronimoOrgao
+				// reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01,
+				// JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01,
+				// TRF2-PRO-2013/00001-V01
+				"(?i)(?:(?:" + acronimoOrgao
 						+ ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)");
 
 		Matcher matcherSigla = padraoSigla.matcher(conteudo);
@@ -944,21 +903,18 @@ public class GcBL {
 				// conhecimento
 				if (matcherSigla.group(1).toUpperCase().equals("GC")) {
 					infoReferenciada = GcInformacao.findBySigla(sigla);
-					matcherSigla.appendReplacement(sb, "[[" + URL_SIGA_GC
-							+ URLEncoder.encode(sigla, "UTF-8") + "|" + sigla
-							+ " - " + infoReferenciada.getArq().getTitulo() + "]]");
+					matcherSigla.appendReplacement(sb, "[[" + URL_SIGA_GC + URLEncoder.encode(sigla, "UTF-8") + "|"
+							+ sigla + " - " + infoReferenciada.getArq().getTitulo() + "]]");
 				}
 				// serviço
 				else if (matcherSigla.group(1).toUpperCase().equals("SR")) {
-					matcherSigla.appendReplacement(sb, "[[" + URL_SIGA_SR
-							+ URLEncoder.encode(sigla, "UTF-8") + "|" + sigla
-							+ "]]");
+					matcherSigla.appendReplacement(sb,
+							"[[" + URL_SIGA_SR + URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
 				}
 				// documento
 				else {
-					matcherSigla.appendReplacement(sb, "[[" + URL_SIGA_DOC
-							+ URLEncoder.encode(sigla, "UTF-8") + "|" + sigla
-							+ "]]");
+					matcherSigla.appendReplacement(sb,
+							"[[" + URL_SIGA_DOC + URLEncoder.encode(sigla, "UTF-8") + "|" + sigla + "]]");
 				}
 			}
 		}
@@ -966,21 +922,20 @@ public class GcBL {
 		return sb.toString();
 	}
 
-	private String getSiglaSRouGCCompacta(String sigla){
+	private String getSiglaSRouGCCompacta(String sigla) {
 		return sigla.replace("-", "").replace("/", "");
 	}
-	
+
 	private String findSiglaHTML(String conteudo) throws Exception {
 		String sigla = null;
 		GcInformacao infoReferenciada = null;
 		StringBuffer sb = new StringBuffer();
 
 		Pattern padraoSigla = Pattern.compile(
-		// reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01,
-		// JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01,
-		// TRF2-PRO-2013/00001-V01
-				"(?i)(?:(?:"
-						+ acronimoOrgao
+				// reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01,
+				// JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01,
+				// TRF2-PRO-2013/00001-V01
+				"(?i)(?:(?:" + acronimoOrgao
 						+ ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)");
 
 		Matcher matcherSigla = padraoSigla.matcher(conteudo);
@@ -992,22 +947,20 @@ public class GcBL {
 				// conhecimento
 				if (matcherSigla.group(1).toUpperCase().equals("GC")) {
 					infoReferenciada = GcInformacao.findBySigla(sigla);
-					matcherSigla.appendReplacement(sb, "<a href=\""
-							+ URL_SIGA_GC + URLEncoder.encode(getSiglaSRouGCCompacta(sigla), "UTF-8")
-							+ "\">" + sigla + " - "
-							+ infoReferenciada.getArq().getTitulo() + "</a>");
+					matcherSigla.appendReplacement(sb,
+							"<a href=\"" + URL_SIGA_GC + URLEncoder.encode(getSiglaSRouGCCompacta(sigla), "UTF-8")
+									+ "\">" + sigla + " - " + infoReferenciada.getArq().getTitulo() + "</a>");
 				}
 				// serviço
 				else if (matcherSigla.group(1).toUpperCase().equals("SR")) {
-					matcherSigla.appendReplacement(sb, "<a href=\""
-							+ URL_SIGA_SR + URLEncoder.encode(getSiglaSRouGCCompacta(sigla), "UTF-8")
-							+ "\">" + getSiglaSRouGCCompacta(sigla) + "</a>");
+					matcherSigla.appendReplacement(sb,
+							"<a href=\"" + URL_SIGA_SR + URLEncoder.encode(getSiglaSRouGCCompacta(sigla), "UTF-8")
+									+ "\">" + getSiglaSRouGCCompacta(sigla) + "</a>");
 				}
 				// documento
 				else {
-					matcherSigla.appendReplacement(sb, "<a href=\""
-							+ URL_SIGA_DOC + URLEncoder.encode(sigla, "UTF-8")
-							+ "\">" + sigla + "</a>");
+					matcherSigla.appendReplacement(sb,
+							"<a href=\"" + URL_SIGA_DOC + URLEncoder.encode(sigla, "UTF-8") + "\">" + sigla + "</a>");
 				}
 			}
 		}
@@ -1016,38 +969,32 @@ public class GcBL {
 	}
 
 	/**
-	 * Método que encontra uma hashTag. Quando o parâmetro controle é igual a 1,
-	 * a classificação é atualizada para poder ser gravada. Quando o controle é
-	 * igual a 2, o conteudo é marcado com os links das hashTags encontradas. O
-	 * conteudo não é gravado com os links.
+	 * Método que encontra uma hashTag. Quando o parâmetro controle é igual a 1, a
+	 * classificação é atualizada para poder ser gravada. Quando o controle é igual
+	 * a 2, o conteudo é marcado com os links das hashTags encontradas. O conteudo
+	 * não é gravado com os links.
 	 */
-	public String findHashTag(GcInformacao informacao, String conteudo, String classificacao,
-			int controle) {
+	public String findHashTag(GcInformacao informacao, String conteudo, String classificacao, int controle) {
 		StringBuffer sb = new StringBuffer();
 		String hashTag = new String();
-		Long id= 0L;
-		
+		Long id = 0L;
+
 		Pattern padraoHashTag = Pattern.compile(
-		// reconhece uma hashTag (#)
+				// reconhece uma hashTag (#)
 				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
-		
 
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
 		while (matcherHashTag.find()) {
 			if (controle == 1)
-				hashTag += (hashTag.isEmpty() ? "" : ", ")
-						+ matcherHashTag.group(0);
+				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(0);
 			else if (controle == 2) {
-				for (GcTag t : informacao.getTags()){
-					if(t.getTitulo().equals(matcherHashTag.group(0).substring(1))){
-						id = t.getId(); 
+				for (GcTag t : informacao.getTags()) {
+					if (t.getTitulo().equals(matcherHashTag.group(0).substring(1))) {
+						id = t.getId();
 					}
 				}
-				matcherHashTag.appendReplacement(sb,
-						"[[/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.id="+ id
-								+ "&filtro.tag.sigla="
-								+ matcherHashTag.group(0).substring(1)
-								+ "|$0]]");
+				matcherHashTag.appendReplacement(sb, "[[/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.id=" + id
+						+ "&filtro.tag.sigla=" + matcherHashTag.group(0).substring(1) + "|$0]]");
 			}
 		}
 		if (controle == 1) {
@@ -1056,8 +1003,7 @@ public class GcBL {
 				// Necessário para manter a classificacao
 				// atualizada. Ao final serão inseridas as hashTags que foram
 				// acrescentadas/mantidas no conteudo
-				classificacao = classificacao
-						.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
+				classificacao = classificacao.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
 			else
 				classificacao = "";
 			return atualizarClassificacao(classificacao, hashTag);
@@ -1073,44 +1019,38 @@ public class GcBL {
 		// String hashTag = new String();
 
 		Pattern padraoHashTag = Pattern.compile(
-		// reconhece uma hashTag (#)
+				// reconhece uma hashTag (#)
 				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
 
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
 		while (matcherHashTag.find()) {
-			matcherHashTag.appendReplacement(sb,
-					"{{{" + matcherHashTag.group(0) + "}}}");
+			matcherHashTag.appendReplacement(sb, "{{{" + matcherHashTag.group(0) + "}}}");
 		}
 		matcherHashTag.appendTail(sb);
 		return sb.toString();
 	}
 
-	public String findHashTagHTML(GcInformacao informacao, String conteudo, String classificacao,
-			int controle) {
+	public String findHashTagHTML(GcInformacao informacao, String conteudo, String classificacao, int controle) {
 		StringBuffer sb = new StringBuffer();
 		String hashTag = new String();
-		Long id= 0L;
-		
+		Long id = 0L;
+
 		Pattern padraoHashTag = Pattern.compile(
-		// reconhece uma hashTag (#)
+				// reconhece uma hashTag (#)
 				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
 
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
 		while (matcherHashTag.find()) {
 			if (controle == 1)
-				hashTag += (hashTag.isEmpty() ? "" : ", ")
-						+ matcherHashTag.group(0);
+				hashTag += (hashTag.isEmpty() ? "" : ", ") + matcherHashTag.group(0);
 			else if (controle == 2) {
-				for (GcTag t : informacao.getTags()){
-					if(t.getTitulo().equals(matcherHashTag.group(0).substring(1))){
-						id = t.getId(); 
+				for (GcTag t : informacao.getTags()) {
+					if (t.getTitulo().equals(matcherHashTag.group(0).substring(1))) {
+						id = t.getId();
 					}
 				}
-				matcherHashTag.appendReplacement(sb,
-						"<a href=\"/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.id="+ id
-								+ "&filtro.tag.sigla="
-								+ matcherHashTag.group(0).substring(1)
-								+ "\">$0</a>");
+				matcherHashTag.appendReplacement(sb, "<a href=\"/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.id="
+						+ id + "&filtro.tag.sigla=" + matcherHashTag.group(0).substring(1) + "\">$0</a>");
 			}
 		}
 		if (controle == 1) {
@@ -1119,8 +1059,7 @@ public class GcBL {
 				// Necessário para manter a classificacao
 				// atualizada. Ao final serão inseridas as hashTags que foram
 				// acrescentadas/mantidas no conteudo
-				classificacao = classificacao
-						.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
+				classificacao = classificacao.replaceAll("[,\\s]*#[,\\w-]+", "").trim();
 			else
 				classificacao = "";
 			return atualizarClassificacao(classificacao, hashTag);

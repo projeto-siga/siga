@@ -4,7 +4,7 @@
 	value="${fn:replace(param.propriedade,'.','')}" />
 
 <siga:pagina titulo="Buscar">
-	<div class="gt-bd clearfix">
+	<div class="container-fluid">
 		<div class="gt-content clearfix">
 			<div class="gt-content-box gt-for-table">
 				<form action="${linkTo[AppController].buscarTag}" id="frm">

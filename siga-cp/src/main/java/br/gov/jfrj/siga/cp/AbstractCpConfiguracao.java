@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -41,9 +42,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.cp.converter.ITipoDeConfiguracaoConverter;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -66,12 +70,12 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "from CpConfiguracao cpcfg"),
 		@NamedQuery(name = "consultarCpConfiguracoes", query = "from "
 				+ "CpConfiguracao cpcfg where (:idTpConfiguracao is null or "
-				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
+				+ "cpcfg.cpTipoConfiguracao = :idTpConfiguracao)"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorLotacaoPessoaServicoTipo", query = "from CpConfiguracao cpcfg"
 				+ "	where (cpcfg.dpPessoa.idPessoa = :idPessoa) "
-				+ "	and (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao) "
+				+ "	and (cpcfg.cpTipoConfiguracao = :idTpConfiguracao) "
 				+ "	and (cpcfg.cpServico.siglaServico = :siglaServico)"
-				+ "	and (cpcfg.cpSituacaoConfiguracao.idSitConfiguracao = :idSitConfiguracao)"
+				+ "	and (cpcfg.cpSituacaoConfiguracao = :idSitConfiguracao)"
 				+ "	and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorServico", query = "from CpConfiguracao cpcfg where  (cpcfg.cpServico.idServico = :idServico) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorPessoa", query = "from CpConfiguracao cpcfg where (cpcfg.dpPessoa.idPessoa = :idPessoa) and hisDtFim is null"),
@@ -80,12 +84,9 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "	where (cpcfg.hisDtIni >= :dtInicioVigenciaIni)"
 				+ "	and (cpcfg.hisDtIni <= :dtInicioVigenciaFim) "
 				+ "	order by cpcfg.hisDtIni"),
-		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao.idTpLotacao = :idTpLotacao) and hisDtFim is null"),
-		@NamedQuery(name = "consultarCpConfiguracoesPorTipo", query = " from "
-				+ "CpConfiguracao cpcfg where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"
-				+ "and hisDtFim is null"),
-		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
-				+ "CpConfiguracao cpcfg where hisDtFim is null") })
+		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao = :idTpLotacao) and hisDtFim is null"),
+		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
+				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {
 
@@ -129,15 +130,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private DpPessoa dpPessoa;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
+	@Column(name = "ID_SIT_CONFIGURACAO")
 	@NaoRecursivo
-	private CpSituacaoConfiguracao cpSituacaoConfiguracao;
+	private CpSituacaoDeConfiguracaoEnum cpSituacaoConfiguracao;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_TP_CONFIGURACAO")
+	@Convert(converter = ITipoDeConfiguracaoConverter.class)
+	@Column(name = "ID_TP_CONFIGURACAO")
 	@NaoRecursivo
-	private CpTipoConfiguracao cpTipoConfiguracao;
+	private ITipoDeConfiguracao cpTipoConfiguracao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SERVICO")
@@ -334,20 +334,20 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		this.dpPessoa = dpPessoa;
 	}
 
-	public CpSituacaoConfiguracao getCpSituacaoConfiguracao() {
+	public CpSituacaoDeConfiguracaoEnum getCpSituacaoConfiguracao() {
 		return cpSituacaoConfiguracao;
 	}
 
 	public void setCpSituacaoConfiguracao(
-			CpSituacaoConfiguracao cpSituacaoConfiguracao) {
+			CpSituacaoDeConfiguracaoEnum cpSituacaoConfiguracao) {
 		this.cpSituacaoConfiguracao = cpSituacaoConfiguracao;
 	}
 
-	public CpTipoConfiguracao getCpTipoConfiguracao() {
+	public ITipoDeConfiguracao getCpTipoConfiguracao() {
 		return cpTipoConfiguracao;
 	}
 
-	public void setCpTipoConfiguracao(CpTipoConfiguracao cpTipoConfiguracao) {
+	public void setCpTipoConfiguracao(ITipoDeConfiguracao cpTipoConfiguracao) {
 		this.cpTipoConfiguracao = cpTipoConfiguracao;
 	}
 

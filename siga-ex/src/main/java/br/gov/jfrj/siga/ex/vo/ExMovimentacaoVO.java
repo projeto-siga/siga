@@ -239,7 +239,8 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(getIcon(), mov.getNmArqMov(), "/app/arquivo", "exibir", mov.getNmArqMov() != null, null,
 					"&arquivo=" + mov.getReferencia(), null, null, null);
 			String pwd = getWebdavPassword();
-			if (pwd != null && (isWord() || isExcel() || isPresentation())) {
+			
+			if (pwd != null && (isWord() || isExcel() || isPresentation()) && cadastrante != null) {
 				String sApp = "word";
 				String sNome = "Word";
 				if (isExcel()) {
@@ -250,10 +251,8 @@ public class ExMovimentacaoVO extends ExVO {
 					sApp = "powerpoint";
 					sNome = "PowerPoint";
 				}
-				String token = mov.mob().getReferencia() + "_" + cadastrante.getSiglaCompleta() + "_"
-						+ titular.getSiglaCompleta() + "_" + lotaTitular.getSiglaCompleta();
-
-				token = getWebdavJwtToken(mov, cadastrante, titular, lotaTitular, pwd);
+			
+				String token  =  getWebdavJwtToken(mov, cadastrante, titular, lotaTitular, pwd);
 
 				addAcao(null, "Editar no " + sNome, sApp
 						+ ":ofe|u|__scheme__://__serverName__:__serverPort____contextPath__/webdav/" + token,

@@ -322,7 +322,7 @@ public class ExAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 			
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, doc.getCadastrante(), p, l, true, false, false);
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false);
 
 			docVO.exibe();
 

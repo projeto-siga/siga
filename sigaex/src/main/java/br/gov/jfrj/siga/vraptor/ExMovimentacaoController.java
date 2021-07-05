@@ -4228,7 +4228,7 @@ public class ExMovimentacaoController extends ExController {
 		Boolean podeAtenderPedidoPublicacao = Boolean.FALSE;
 		DpLotacaoSelecao lot = new DpLotacaoSelecao();
 
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 			throw new AplicacaoException(
 					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
 

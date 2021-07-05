@@ -24,7 +24,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
@@ -75,6 +78,18 @@ import net.sf.jasperreports.engine.JRException;
 
 		public void processarModelos() throws Exception {
 			List<String> d = new ArrayList<String>();
+			
+			Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+					"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+							+ "and lot.orgaoUsuario = "
+							+ parametros.get("orgaoUsuario")
+							+ " and lot.siglaLotacao = '"
+							+ parametros.get("lotacaoTitular") + "'");
+			DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+			DpPessoa titular = ExDao.getInstance().consultar(
+					new Long((String) parametros.get("idTit")), DpPessoa.class,
+					false);
 			
 			String queryOrgao = "";
 			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) 
@@ -144,14 +159,19 @@ import net.sf.jasperreports.engine.JRException;
 				qtdDocs = Long.valueOf(obj[3].toString()); 
 				if (obj[4].toString() != null)
 					qtdTram = Long.valueOf(obj[4].toString());
-
-				List<String> listDados = new ArrayList();
-				listDados.add(obj[1].toString()); 
-				listDados.add(modelo); 
-				listDados.add(qtdTram.toString()); 
-				listModelos.add(listDados);
-				totalTramites += qtdTram;
-				totalDocumentos += qtdDocs;
+				ExModelo exModelo = new ExModelo();
+				exModelo.setIdMod(Long.valueOf(idMod));
+				if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+						 titular, lotaTitular ,ExDao.getInstance().consultar(exModelo.getIdMod(),ExModelo.class, false)
+									)) {
+					List<String> listDados = new ArrayList();
+					listDados.add(obj[1].toString()); 
+					listDados.add(modelo); 
+					listDados.add(qtdTram.toString()); 
+					listModelos.add(listDados);
+					totalTramites += qtdTram;
+					totalDocumentos += qtdDocs;
+				}
 			}
 			if (listModelos.size() == 0) {
 				throw new AplicacaoException("Não foram encontrados documentos para os dados informados.");

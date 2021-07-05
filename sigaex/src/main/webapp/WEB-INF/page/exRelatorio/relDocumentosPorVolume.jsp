@@ -51,6 +51,13 @@
 					action="/sigaex/app/expediente/rel/relDocumentosPorVolume"
 					theme="simple" method="get">
 					<input type="hidden" name="postback" value="1" />
+					<input type="hidden" name="lotacaoTitular"
+							value="${lotaTitular.siglaLotacao}" />
+					 <input type="hidden"
+							name="orgao" id="orgao" value="${orgao}" />
+					 <input type="hidden"
+							name="idTit" value="${titular.id}" /> <input type="hidden"
+							name="nomeArquivoRel" value="${nomeArquivoRel}" />
 
 					<div class="form-row">
 						<div class="form-group col-md-2">
@@ -83,11 +90,6 @@
 							value="${lotacaoSel.sigla}" /> <input type="hidden"
 							name="usuarioId" value="${usuarioSel.id}" /> <input
 							type="hidden" name="siglaUsuario" value="${usuarioSel.sigla}" />
-						<input type="hidden" name="lotacaoTitular"
-							value="${lotaTitular.siglaLotacao}" /> <input type="hidden"
-							name="orgao" id="orgao" value="${orgao}" /> <input type="hidden"
-							name="idTit" value="${titular.id}" /> <input type="hidden"
-							name="nomeArquivoRel" value="${nomeArquivoRel}" />
 					</div>
 					<c:if test="${primeiraVez == false}">
 						<c:if test="${not empty tamanho and tamanho > 0}">

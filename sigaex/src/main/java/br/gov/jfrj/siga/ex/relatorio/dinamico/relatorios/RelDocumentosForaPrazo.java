@@ -23,7 +23,10 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
@@ -71,6 +74,18 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 	public Collection processarDados() throws Exception {
 
 		List<String> d = new ArrayList<String>();
+		
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
 
 		String querySelect = " LOTA.SIGLA_LOTACAO,"
 				+ " LOTA.NOME_LOTACAO,"
@@ -99,27 +114,33 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 			String lotaNomeDoc = (String) obj[1];
 			String idLotaResp = new BigDecimal(obj[2].toString()).toString();
 			String idMod = new BigDecimal(obj[3].toString()).toString();
-			String modeloDoc = (String) obj[4];
-			String linkModeloDoc = "<a href='#' class='text-primary' onclick=\"javascript:abreDetalhe('" 
-					+ parametros.get("link_siga") + "','" + modeloDoc + "','" 
-					+ lotaDoc + " / " + lotaNomeDoc + "','"
-					+ formato.format(obj[5]) + "','"
-					+ idMod + "','" + idLotaResp + "');\">" 
-					+ modeloDoc + "</a>";
-			
-			List<String> listDados = new ArrayList();
-			if (!lotaDoc.equals(lotaAnt)) {
-				listDados.add(lotaDoc + " / " + lotaNomeDoc);
-				lotaAnt = lotaDoc;
-			} else {
-				listDados.add("");
+			ExModelo exModelo = new ExModelo();
+			exModelo.setIdMod(Long.valueOf(idMod));
+			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+					 titular, lotaTitular ,ExDao.getInstance().consultar(exModelo.getIdMod(),ExModelo.class, false)
+							)) {
+				String modeloDoc = (String) obj[4];
+				String linkModeloDoc = "<a href='#' class='text-primary' onclick=\"javascript:abreDetalhe('" 
+						+ parametros.get("link_siga") + "','" + modeloDoc + "','" 
+						+ lotaDoc + " / " + lotaNomeDoc + "','"
+						+ formato.format(obj[5]) + "','"
+						+ idMod + "','" + idLotaResp + "');\">" 
+						+ modeloDoc + "</a>";
+				
+				List<String> listDados = new ArrayList();
+				if (!lotaDoc.equals(lotaAnt)) {
+					listDados.add(lotaDoc + " / " + lotaNomeDoc);
+					lotaAnt = lotaDoc;
+				} else {
+					listDados.add("");
+				}
+				listDados.add(linkModeloDoc);
+				listDados.add(formato.format(obj[5]));
+				listDados.add(obj[6].toString());
+				listModelos.add(listDados);
+				Long docs = Long.valueOf(obj[6].toString());
+				totalDocs = totalDocs + docs;
 			}
-			listDados.add(linkModeloDoc);
-			listDados.add(formato.format(obj[5]));
-			listDados.add(obj[6].toString());
-			listModelos.add(listDados);
-			Long docs = Long.valueOf(obj[6].toString());
-			totalDocs = totalDocs + docs;
 
 		}
 		for (List<String> lin : listModelos) {

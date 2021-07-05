@@ -80,6 +80,18 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 	
 	public Collection processarDados() throws Exception {
 
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
+		
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = ContextoPersistencia.em().createQuery(
@@ -191,47 +203,55 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		List<String> listaFinal = new ArrayList<String>();
 		for (Object[] array : lista) {
 			
+				
 			String nomeLotacao = (String)array[0]; 
 			
 			
 			Long idDoc = (Long)array[1];
-			String siglaOrgaoUsu = (String)array[2];
-			String acronimoOrgaoUsu = (String)array[3];
-			String siglaFormaDoc = (String)array[4];
-			Long anoEmissao = (Long)array[5];
-			Long numExpediente = (Long)array[6];
-			Integer docNumSequencia = (Integer)array[7];
-			Long idTipoMobil = (Long)array[8];
-			Integer mobilNumSequencia = (Integer)array[9];
-			Long pai_idDoc = (Long)array[10];
-			String pai_siglaOrgaoUsu = (String)array[11];
-			String pai_acronimoOrgaoUsu = (String)array[12];
-			String pai_siglaFormaDoc = (String)array[13];
-			Long pai_anoEmissao = (Long)array[14];
-			Long pai_numExpediente = (Long)array[15];
-			Integer pai_numSequencia = (Integer)array[16];
-			Long pai_idTipoMobil = (Long)array[17];
-			Integer pai_mobilNumSequencia = (Integer)array[18];
 			
-			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, 
-					pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
-			
-			String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
-			
-			String url = ((String)array[19]).trim() + codigoMobil;
-			
-			String descricao = (String)array[20];
-			
-			String nomePessoa = (String)array[21];
-			
-			String descrMarcador =  (String)array[22];
-			
-			listaFinal.add(nomeLotacao);
-			listaFinal.add(codigoMobil);
-			listaFinal.add(url);
-			listaFinal.add(descricao);
-			listaFinal.add(nomePessoa);
-			listaFinal.add(descrMarcador);
+			ExDocumento documento = ExDao.getInstance().consultarExDocumentoPorId(idDoc);
+			if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+					documento, titular, 
+							lotaTitular)) {
+					
+				String siglaOrgaoUsu = (String)array[2];
+				String acronimoOrgaoUsu = (String)array[3];
+				String siglaFormaDoc = (String)array[4];
+				Long anoEmissao = (Long)array[5];
+				Long numExpediente = (Long)array[6];
+				Integer docNumSequencia = (Integer)array[7];
+				Long idTipoMobil = (Long)array[8];
+				Integer mobilNumSequencia = (Integer)array[9];
+				Long pai_idDoc = (Long)array[10];
+				String pai_siglaOrgaoUsu = (String)array[11];
+				String pai_acronimoOrgaoUsu = (String)array[12];
+				String pai_siglaFormaDoc = (String)array[13];
+				Long pai_anoEmissao = (Long)array[14];
+				Long pai_numExpediente = (Long)array[15];
+				Integer pai_numSequencia = (Integer)array[16];
+				Long pai_idTipoMobil = (Long)array[17];
+				Integer pai_mobilNumSequencia = (Integer)array[18];
+				
+				String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, 
+						pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
+				
+				String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
+				
+				String url = ((String)array[19]).trim() + codigoMobil;
+				
+				String descricao = (String)array[20];
+				
+				String nomePessoa = (String)array[21];
+				
+				String descrMarcador =  (String)array[22];
+				
+				listaFinal.add(nomeLotacao);
+				listaFinal.add(codigoMobil);
+				listaFinal.add(url);
+				listaFinal.add(descricao);
+				listaFinal.add(nomePessoa);
+				listaFinal.add(descrMarcador);
+			}
 		}
 
 		return listaFinal;

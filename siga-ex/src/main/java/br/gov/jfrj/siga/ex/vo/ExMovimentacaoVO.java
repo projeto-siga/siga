@@ -239,7 +239,7 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(getIcon(), mov.getNmArqMov(), "/app/arquivo", "exibir", mov.getNmArqMov() != null, null,
 					"&arquivo=" + mov.getReferencia(), null, null, null);
 			String pwd = getWebdavPassword();
-			if (pwd != null && (isWord() || isExcel() || isPresentation())) {
+			if (cadastrante != null && pwd != null && (isWord() || isExcel() || isPresentation()) ) {
 				String sApp = "word";
 				String sNome = "Word";
 				if (isExcel()) {

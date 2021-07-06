@@ -1,25 +1,12 @@
 variables:
   NAMESPACE: pbdoc
   APP: app-server
-  SONAR_PROJECT_KEY: pbdoc-appserver
 
 stages:
   - test
   - compile
   - build
   - deploy
-
-code quality:
-  stage: test
-  image: $MAVEN_IMAGE
-  script:
-    - mvn clean compile --projects '!siga-le' -U
-    - mvn sonar:sonar
-        -Dsonar.projectKey=$SONAR_PROJECT_KEY
-        -Dsonar.host.url=$SONAR_URL
-        -Dsonar.login=$SONAR_TOKEN
-  only:
-    - pbdoc/develop
 
 build artifact:
   stage: compile

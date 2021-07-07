@@ -111,7 +111,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			throw new AplicacaoException("Documento não encontrado.");
 		}
 		
-		if (doc.getNivelAcesso().equals("10")) {
+		if (Integer.parseInt(doc.getNivelAcesso()) <= Prop.getInt("exibetramitacaoate")) {
 
 			ExMobil mob = null;
 			if (doc.isFinalizado()) {

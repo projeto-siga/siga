@@ -7,8 +7,10 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<c:set var="titulo"><fmt:message key="tela.consultaprocessopublico.tramitacao.titulo" /></c:set>
+
+<c:set var="titulo"><fmt:message key="tela.consultaprocessopublico.tramitacao.titulo"/></c:set>
 
 <siga:pagina titulo="Movimentação" desabilitarmenu="sim"
 	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
@@ -18,7 +20,7 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							${titulo} <b>${sigla}</b> 
+							<b>${titulo} - ${sigla}</b> 
 						</h5>
 					</div>
 				</div>
@@ -36,22 +38,7 @@
 						<div class="card-body">
 						
 						<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-							<c:if test="${f:resource('isWorkflowEnabled')}">
-								<script type="text/javascript">
-									var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
-							        $.ajax({
-							        	url: url,
-							            type: "GET"
-							        }).fail(function(jqXHR, textStatus, errorThrown){
-							            var div = $(".wf_div${m.mob.codigoCompacto}:last");
-										$(div).html(errorThrown);
-							        }).done(function(data, textStatus, jqXHR ){
-							            var div = $(".wf_div${m.mob.codigoCompacto}:last");
-										$(div).html(data);
-							        });
-								</script>
-							</c:if>
-							<li style="margin-top: 10px; margin-bottom: 0px;">
+							 <li style="margin-top: 10px; margin-bottom: 0px;">
 								${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}
 								<c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}">
 									- ${m.tamanhoDeArquivo}
@@ -78,14 +65,11 @@
 											<th colspan="2" align="left">Atendente</th>
 										</tr>
 										<tr>
-											<th align="left">Lotação</th>
-											<th align="left">Pessoa</th>
+											<th colspan="2" align="left">Lotação</th>
 											<c:if test="${ (exibirCompleto == 'true')}">
-												<th align="left">Lotação</th>
-												<th align="left">Pessoa</th>
+												<th colspan="2" align="left">Lotação</th>
 											</c:if>
-											<th align="left">Lotação</th>
-											<th align="left">Pessoa</th>
+											<th colspan="2" align="left">Lotação</th>
 										</tr>
 									</thead>
 									<c:set var="evenorodd" value="odd" />
@@ -106,10 +90,8 @@
 													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado ${mov.exMobil}</span>
 												</c:if>
 											</td>
-											<td align="left">${mov.lotaCadastrante.nomeLotacao}(${mov.lotaCadastrante.sigla})</td>
-											<td align="left">${mov.cadastrante.nomeAbreviado}</td>
-											<td align="left">${mov.lotaResp.nomeLotacao}(${mov.lotaResp.sigla})</td>
-											<td align="left">${mov.resp.nomeAbreviado}</td>
+											<td colspan="2" align="left">${mov.lotaCadastrante.nomeLotacao}(${mov.lotaCadastrante.sigla})</td>
+											<td colspan="2" align="left">${mov.lotaResp.nomeLotacao}(${mov.lotaResp.sigla})</td>
 										</tr>
 										<c:choose>
 											<c:when test='${evenorodd == "even"}'>

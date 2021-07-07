@@ -146,7 +146,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			
 		} else {
 			
-			throw new AplicacaoException("O número informado faz referência a um documento que não é público.");
+			throw new AplicacaoException("O documento possui um nível de sigilo que impede a visualização de sua tramitação.");
 		}
 	}
 

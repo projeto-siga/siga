@@ -23,9 +23,42 @@
 							<b>${titulo} - ${sigla}</b> 
 						</h5>
 					</div>
+					
+					<!-- 
+						<div class="card-body">
+							<div>
+								<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
+								<c:url var='pdf'
+									value='/public/app/arquivoConsultado_stream?jwt=${jwt}' />
+								<iframe id="frameDoc" width="100%" height="600"
+									align="center" style="margin-top: 10px;"> </iframe>
+							</div>
+						</div>
+					 -->
+					
 				</div>
 			</div>
+			<div class="col">
+				<div class="row">
+					<div class="col">
+						<div class="card bg-light mb-3" >
+							<div class="card-header">
+								<h5>
+									<i class="fa fa-file-pdf"></i> Arquivos para Download
+								</h5>
+							</div>
+							<div class="card-body">
+								<i class="fa fa-angle-double-right"></i> <a href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}" id="linkDoc" target="_blank">PDF do documento</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				 
+			</div>
+		 
 		</div>
+		
+		
 		<div class="row">
 			<div class="col-12">
 				<c:if test="${not empty docVO}">
@@ -111,4 +144,10 @@
 		</div>
 	</div>
 	<tags:assinatura_rodape />
+	<script>
+	window.onload = function () { 
+		document.getElementById('frameDoc').src = montarUrlDocPDF('${pdfAssinado }',document.getElementById('visualizador').value); 
+		document.getElementById('linkDoc').href = montarUrlDocPDF('${pdf}', document.getElementById('visualizador').value);
+	} 
+</script>
 </siga:pagina>

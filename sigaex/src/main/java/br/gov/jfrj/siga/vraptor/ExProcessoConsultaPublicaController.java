@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +17,7 @@ import org.json.JSONException;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.lowagie.text.pdf.codec.Base64;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -24,13 +28,23 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.bluc.service.HashRequest;
+import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -100,54 +114,47 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		
 		String n = verifyJwtToken(jwt).get("n").toString();
 
+		final ExDocumentoDTO exDocumentoDTO = consultarDocumento(n);
+		
+		verificarSePodeApresentarDocumento(exDocumentoDTO);
+		
+		ExDocumento doc = exDocumentoDTO.getDoc();
+
+		ExMobil mob = doc.isProcesso() ? doc.getUltimoVolume() : doc.getPrimeiraVia();
+
+		List<ExMobil> lstMobil = dao().consultarMobilPorDocumento(doc);
+		List<ExMovimentacao> lista = dao().consultarMovimentoIncluindoJuntadaPorMobils(lstMobil);
+		DpPessoa p = new DpPessoa();
+		DpLotacao l = new DpLotacao();
+		p = doc.getSubscritor();
+		l = doc.getLotaSubscritor();
+		if (p == null && !lista.isEmpty()) {
+			p = lista.get(0).getSubscritor();
+		}
+
+		if (l == null && !lista.isEmpty()) {
+			l = lista.get(0).getLotaSubscritor();
+		}
+
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
+		
+		docVO.exibe();
+		
+		result.include("movs", lista);
+		result.include("sigla", exDocumentoDTO.getDoc().getSigla());
+		result.include("msg", exDocumentoDTO.getMsg());
+		result.include("docVO", docVO);
+		result.include("mob", exDocumentoDTO.getMob());
+		result.include("jwt", jwt);
+	}
+
+	private ExDocumentoDTO consultarDocumento(String n) {
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		
 		exDocumentoDTO.setSigla(n);
+		
 		buscarDocumento(false, true, exDocumentoDTO);
-		
-		ExDocumento doc;
-		if (exDocumentoDTO.getDoc() != null) {
-			doc = exDocumentoDTO.getDoc();
-		} else {
-			throw new AplicacaoException("Documento não encontrado.");
-		}
-		
-		if (Integer.parseInt(doc.getNivelAcesso()) <= Prop.getInt("exibetramitacaoate")) {
-
-			ExMobil mob = null;
-			if (doc.isFinalizado()) {
-				if (doc.isProcesso()) {
-					mob = doc.getUltimoVolume();
-				} else {
-					mob = doc.getPrimeiraVia();
-				}
-			}
-
-			List<ExMobil> lstMobil = dao().consultarMobilPorDocumento(doc);
-			List<ExMovimentacao> lista = dao().consultarMovimentoIncluindoJuntadaPorMobils(lstMobil);								
-			DpPessoa p = new DpPessoa();
-			DpLotacao l = new DpLotacao();
-			p = doc.getSubscritor();
-			l = doc.getLotaSubscritor();
-			if (p == null && !lista.isEmpty()) {
-				p = lista.get(0).getSubscritor();
-			}
-
-			if (l == null && !lista.isEmpty()) {
-				l = lista.get(0).getLotaSubscritor();
-			}
-
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob,  getCadastrante(), p, l, true, true, false);
-			docVO.exibe();
-			result.include("movs", lista);
-			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
-			result.include("msg", exDocumentoDTO.getMsg());
-			result.include("docVO", docVO);
-			result.include("mob", exDocumentoDTO.getMob());
-			
-		} else {
-			
-			throw new AplicacaoException("O documento possui um nível de sigilo que impede a visualização de sua tramitação.");
-		}
+		return exDocumentoDTO;
 	}
 
 	private static String getJwtPassword() {
@@ -277,5 +284,65 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro obtendo propriedade siga.recaptcha.pwd", 0, e);
 		}
+	}
+	
+	
+	@Get("/public/app/arquivoConsultado_stream")
+	public Download arquivoConsultado_stream(final String jwt) throws Exception {
+		if (jwt == null) {
+			
+			setDefaultResults();
+			
+			result.redirectTo(URL_EXIBIR);
+			
+			return null;
+		}
+		
+		String n = verifyJwtToken(jwt).get("n").toString();
+		
+		final ExDocumentoDTO exDocumentoDTO = consultarDocumento(n);
+		
+		verificarSePodeApresentarDocumento(exDocumentoDTO);
+		
+		ExArquivo arq = exDocumentoDTO.getDoc();
+		
+		String fileName =  arq.getReferenciaPDF();
+		
+		String contentType  = "application/pdf";
+
+		Documento documento = new Documento();
+
+		byte[] bytes = documento.getDocumento(((ExDocumento) arq).getMobilGeral(), null);
+		 
+		if (bytes == null) {
+
+			throw new AplicacaoException(	"Arquivo não encontrado para Download.");
+		}
+		
+		final boolean fB64 = getRequest().getHeader("Accept") != null
+				&& getRequest().getHeader("Accept").startsWith(
+						"text/vnd.siga.b64encoded");
+		
+		return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64),	contentType, fileName);
+	}
+
+	private void verificarSePodeApresentarDocumento(final ExDocumentoDTO exDocumentoDTO) {
+		
+		if (exDocumentoDTO.getDoc() == null || exDocumentoDTO.getDoc().isPendenteDeAssinatura()) {
+			
+			throw new AplicacaoException("Documento não encontrado.");
+		}
+
+		if (Integer.parseInt(exDocumentoDTO.getDoc().getNivelAcesso()) > Prop.getInt("exibetramitacaoate")) {
+
+			throw new AplicacaoException("O documento possui um nível de sigilo que impede a visualização de sua tramitação.");
+		}
+	}
+	
+	private ByteArrayInputStream makeByteArrayInputStream(final byte[] content,	final boolean fB64) {
+		
+		final byte[] conteudo = (fB64 ? Base64.encodeBytes(content).getBytes() 	: content	);
+		
+		return (new ByteArrayInputStream(conteudo));
 	}
 }

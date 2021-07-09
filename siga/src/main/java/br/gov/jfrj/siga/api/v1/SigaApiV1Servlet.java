@@ -1,16 +1,15 @@
 package br.gov.jfrj.siga.api.v1;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.crivano.swaggerservlet.SwaggerContext;
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -18,11 +17,13 @@ import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
+import br.gov.jfrj.siga.base.SigaSwaggerRedirectUtils;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
+
 	private static final long serialVersionUID = 1756711359239182178L;
 
 //	public static ExecutorService executor = null;
@@ -187,6 +188,15 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 	@Override
 	public String getProp(String nome) {
 		return getProperty(nome);
+	}
+
+	@Override
+	public void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+		if (req.getPathInfo() != null && req.getPathInfo().endsWith(SigaSwaggerRedirectUtils.SWAGGER_UI_SUFFIX)) {
+			response.sendRedirect(SigaSwaggerRedirectUtils.getSwaggerYamlSchemaUrl(req));
+		} else {
+			super.doGet(req, response);
+		}
 	}
 
 }

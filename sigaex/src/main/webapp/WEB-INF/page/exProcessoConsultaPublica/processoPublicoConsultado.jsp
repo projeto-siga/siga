@@ -31,17 +31,17 @@
 						</h5>
 					</div>
 					
-					<!-- 
+					 <!-- 
 						<div class="card-body">
 							<div>
 								<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 								<c:url var='pdf'
-									value='/public/app/arquivoConsultado_stream?jwt=${jwt}' />
-								<iframe id="frameDoc" width="100%" height="600"
+									value='/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${sigla}' />
+								<iframe id="frameDoc" width="100%" height="400"
 									align="center" style="margin-top: 10px;"> </iframe>
 							</div>
 						</div>
-					 -->
+					  -->
 					
 				</div>
 			</div>
@@ -130,12 +130,26 @@
 											<td align="left">${mov.descrTipoMovimentacao}
 											
 												<c:if	test="${mov.idTpMov == 12}">
-													<span style="font-size: .8rem; color: #9e9e9e;">|	documento juntado  ${mov.exMobil} </span>
+												
+												
+												<c:choose>
+													<c:when test="${mov.exDocumento.sigla == sigla}">
+														<c:set var="movSigla" value="${mov.exMobilRef}" />
+													</c:when>
+													<c:otherwise>
+														<c:set var="movSigla" value="${mov.exMobil}" />
+													</c:otherwise>
+												</c:choose>
+												
+												<span style="font-size: .8rem; color: #9e9e9e;">|	documento juntado  ${movSigla} </span>
+													
 														<c:if test="${mov.exMobil.exDocumento.exNivelAcesso.grauNivelAcesso == 10}">
-															<a	href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${mov.exMobil}"target="_blank"> 
+															<a	href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${movSigla}"
+															target="_blank"> 
 																<img src="/siga/css/famfamfam/icons/page_white_acrobat.png" />
 															</a>
 														</c:if>
+														
 												</c:if>
 
 

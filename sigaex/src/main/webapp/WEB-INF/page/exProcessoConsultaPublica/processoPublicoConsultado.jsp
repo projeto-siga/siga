@@ -20,7 +20,14 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							<b>${titulo} - ${sigla}</b> 
+						
+							<b>${titulo} - ${sigla}</b>   
+										<a href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${sigla}" id="linkDocPdf" target="_blank" >
+											<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
+										</a>
+									 
+							
+							
 						</h5>
 					</div>
 					
@@ -38,6 +45,7 @@
 					
 				</div>
 			</div>
+			<!-- 
 			<div class="col">
 				<div class="row">
 					<div class="col">
@@ -55,6 +63,7 @@
 				</div>
 				 
 			</div>
+			-->
 		 
 		</div>
 		
@@ -118,10 +127,18 @@
 												</c:otherwise>
 											</c:choose>
 											<td align="left">${dt}</td>
-											<td align="left">${mov.descrTipoMovimentacao} 
-												<c:if test="${mov.idTpMov == 12}">
-													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado ${mov.exMobil}</span>
+											<td align="left">${mov.descrTipoMovimentacao}
+											
+												<c:if	test="${mov.idTpMov == 12}">
+													<span style="font-size: .8rem; color: #9e9e9e;">|	documento juntado  ${mov.exMobil} </span>
+														<c:if test="${mov.exMobil.exDocumento.exNivelAcesso.grauNivelAcesso == 10}">
+															<a	href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${mov.exMobil}"target="_blank"> 
+																<img src="/siga/css/famfamfam/icons/page_white_acrobat.png" />
+															</a>
+														</c:if>
 												</c:if>
+
+
 											</td>
 											<td colspan="2" align="left">${mov.lotaCadastrante.nomeLotacao}(${mov.lotaCadastrante.sigla})</td>
 											<td colspan="2" align="left">${mov.lotaResp.nomeLotacao}(${mov.lotaResp.sigla})</td>

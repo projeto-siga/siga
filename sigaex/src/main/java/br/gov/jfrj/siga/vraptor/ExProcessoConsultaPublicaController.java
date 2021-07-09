@@ -122,6 +122,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 
 		ExMobil mob = doc.isProcesso() ? doc.getUltimoVolume() : doc.getPrimeiraVia();
 
+		
 		List<ExMobil> lstMobil = dao().consultarMobilPorDocumento(doc);
 		List<ExMovimentacao> lista = dao().consultarMovimentoIncluindoJuntadaPorMobils(lstMobil);
 		DpPessoa p = new DpPessoa();
@@ -139,7 +140,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
 		
 		docVO.exibe();
-		
+
 		result.include("movs", lista);
 		result.include("sigla", exDocumentoDTO.getDoc().getSigla());
 		result.include("msg", exDocumentoDTO.getMsg());
@@ -288,7 +289,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 	
 	
 	@Get("/public/app/arquivoConsultado_stream")
-	public Download arquivoConsultado_stream(final String jwt) throws Exception {
+	public Download arquivoConsultado_stream(final String jwt, final String sigla) throws Exception {
 		if (jwt == null) {
 			
 			setDefaultResults();
@@ -300,7 +301,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		
 		String n = verifyJwtToken(jwt).get("n").toString();
 		
-		final ExDocumentoDTO exDocumentoDTO = consultarDocumento(n);
+		final ExDocumentoDTO exDocumentoDTO = consultarDocumento(sigla);
 		
 		verificarSePodeApresentarDocumento(exDocumentoDTO);
 		

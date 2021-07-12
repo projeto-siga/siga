@@ -198,9 +198,9 @@ public class Documento {
 				} else if (movAssinatura.getExDocumento().isExternoCapturado()
 						|| movAssinatura.getExDocumento().isInternoCapturado()) {
 					s.append(" - ");
-					s.append(movAssinatura.getTitular().getFuncaoString());
+					s.append(movAssinatura.getTitular() != null ? movAssinatura.getTitular().getFuncaoString() : movAssinatura.getCadastrante().getFuncaoString());
 					s.append(" / ");
-					s.append(movAssinatura.getTitular().getLotacao().getSigla());
+					s.append(movAssinatura.getTitular() != null ? movAssinatura.getTitular().getLotacao().getSigla() : movAssinatura.getCadastrante().getLotacao().getSigla());
 				}
 				/**** ****/
 				

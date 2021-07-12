@@ -94,7 +94,7 @@ public class TpApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addDependency(new HttpGetDependency("rest", "www.google.com/recaptcha",
 				"https://www.google.com/recaptcha/api/siteverify", false, 0, 10000));
 
-		addDependency(new TestableDependency("database", "sigaservicosds", false, 0, 10000) {
+		addDependency(new TestableDependency("database", "sigatpds", false, 0, 10000) {
 
 			@Override
 			public String getUrl() {
@@ -137,13 +137,13 @@ public class TpApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	}
 
 	private void defineProperties() {
-		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
+		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaTpDS");
 		addPublicProperty("senha.usuario.expiracao.dias", null);
 	}
 
 	@Override
 	public String getService() {
-		return "siga";
+		return "sigatp";
 	}
 
 	@Override

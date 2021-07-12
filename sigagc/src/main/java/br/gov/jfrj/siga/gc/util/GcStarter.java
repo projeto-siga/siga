@@ -23,7 +23,7 @@ public class GcStarter {
 
 	@PostConstruct
 	public void init() {
-		log.info("INICIANDO SIGAWF.WAR");
+		log.info("INICIANDO SIGAGC.WAR");
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 
 		emf = Persistence.createEntityManagerFactory("default");

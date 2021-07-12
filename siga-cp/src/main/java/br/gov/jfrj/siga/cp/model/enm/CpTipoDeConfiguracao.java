@@ -89,6 +89,16 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.DEFAULT,
 					CpSituacaoDeConfiguracaoEnum.OBRIGATORIO },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 
+	
+	
+	UTILIZAR_COMPLEXO(400, "Utilizar Complexo Padrão",
+			"Selecione órgão, lotação, pessoa, cargo ou função comissionada que tem permissão para utilizar determinado complexo como padrão.",
+			new CpParamCfg[] {
+					CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO, CpParamCfg.FUNCAO, CpParamCfg.ORGAO },
+			new CpParamCfg[] { CpParamCfg.SERVICO, CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, false),
 	//
 //	AUTORIZAR_MOVIMENTACAO_POR_WS(?, "Autorizar Movimentação por WS",
 //			"Utilizada para ativar e configurar o uso do Personal Identification Number (PIN) no SIGA como segundo fator de autenticação e seu comportamento com uso na Assinatura com Senha e outras funcionalidades que requerem uma segunda validação de autenticação.\n"
@@ -104,6 +114,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 //			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true)
 	;
 
+
 	public static final long TIPO_CONFIG_SR_DESIGNACAO = 300;
 
 	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 301;
@@ -117,6 +128,10 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 	public static final long TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA = 305;
 
 	public static final long TIPO_CONFIG_SR_ESCALONAMENTO_SOL_FILHA = 306;
+	
+
+	
+	
 
 	private static Map<Integer, ITipoDeConfiguracao> map = new HashMap<>();
 

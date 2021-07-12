@@ -241,6 +241,7 @@ public class ExMovimentacaoVO extends ExVO {
 			String pwd = getWebdavPassword();
 			
 			if (pwd != null && (isWord() || isExcel() || isPresentation()) && cadastrante != null) {
+		 
 				String sApp = "word";
 				String sNome = "Word";
 				if (isExcel()) {

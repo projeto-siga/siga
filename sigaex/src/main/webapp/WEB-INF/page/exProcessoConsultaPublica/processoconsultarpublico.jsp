@@ -8,10 +8,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 
 
+<c:set var="titulo"><fmt:message key="tela.consultaprocessopublico.titulo" /></c:set>
 <c:set var="texto1"><fmt:message key="tela.consultaprocessopublico.texto1" /></c:set>
 <c:set var="texto2"><fmt:message key="tela.consultaprocessopublico.texto2" /></c:set>
-<c:set var="texto3"><fmt:message key="tela.consultaprocessopublico.texto3" /></c:set>
-<c:set var="texto4"><fmt:message key="tela.consultaprocessopublico.texto4" /></c:set>
 
 <siga:pagina titulo="Consulta de Processos Públicos" desabilitarmenu="sim"
 	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
@@ -22,7 +21,7 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							Consulta de Processos Públicos
+							${titulo}
 						</h5>
 					</div>
 					<div class="card-body">
@@ -72,7 +71,4 @@
 			
 		</div>
 	</div>
-	</div>
-	</div>
-
 </siga:pagina>

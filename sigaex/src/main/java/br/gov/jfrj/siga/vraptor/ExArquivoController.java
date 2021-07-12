@@ -492,12 +492,10 @@ public class ExArquivoController extends ExController {
 		try {
 			pwd = Prop.get("/siga.autenticacao.senha");
 			if (pwd == null)
-				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
+				throw new AplicacaoException("Erro obtendo propriedade siga.autenticacao.senha");
 			return pwd;
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
+			throw new AplicacaoException("Erro obtendo propriedade siga.autenticacao.senha", 0, e);
 		}
 	}
 

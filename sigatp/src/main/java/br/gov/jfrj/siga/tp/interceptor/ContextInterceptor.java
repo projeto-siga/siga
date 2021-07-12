@@ -14,8 +14,11 @@ import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.interceptor.InterceptorMethodParametersResolver;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 
@@ -57,8 +60,15 @@ public class ContextInterceptor   {
 		try {
 			ContextoPersistencia.setEntityManager(this.em);
 			MessagesBundle.set(bundle);
-			TpDao.freeInstance();
-			TpDao.getInstance();
+			ModeloDao.freeInstance();
+			CpDao.getInstance();
+			
+			try {
+				Cp.getInstance().getConf().limparCacheSeNecessario();
+			} catch (Exception e1) {
+				throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
+			}
+			
 			stack.next();
 		} catch (Exception e) {
 			throw new InterceptionException(e);

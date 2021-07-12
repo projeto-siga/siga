@@ -25,7 +25,7 @@ public class SrStarter {
 
 	@PostConstruct
 	public void init() {
-		log.info("INICIANDO SIGAWF.WAR");
+		log.info("INICIANDO SIGASR.WAR");
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		CpTipoDeConfiguracao.mapear(SrTipoDeConfiguracao.values());
 

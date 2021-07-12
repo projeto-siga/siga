@@ -729,9 +729,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		lotacaoGestoraSel = new DpLotacaoSelecao();
 		grupoPaiSel = new CpGrupoDeEmailSelecao();
 		tiposDeGrupo = obterTiposGrupo();
-		tipoConfiguracao = dao().consultar(
-				CpTipoDeConfiguracao.PERTENCER,
-				CpTipoDeConfiguracao.class, false);
+		tipoConfiguracao = CpTipoDeConfiguracao.PERTENCER;
 	}
 
 	@SuppressWarnings("unchecked")

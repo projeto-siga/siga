@@ -63,6 +63,7 @@
 				</div>
 			</div>
 			<div class="col">
+ 
 
 				<div class="card mb-3">
 					<div class="card-header">
@@ -72,6 +73,7 @@
 
 
 						<c:if test="${!fn:startsWith(texto1,'???')}">
+ 
 							<p>${texto1}</p>
 						</c:if>
 						<c:if test="${!fn:startsWith(texto2,'???')}">
@@ -90,14 +92,11 @@
 								</c:if>
 							</ul>
 						</c:if>
+ 
 					</div>
+ 
 				</div>
 			</div>
 		</div>
 	</div>
-
-	</div>
-	</div>
-	</div>
-
 </siga:pagina>

@@ -44,8 +44,9 @@ import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -279,7 +280,7 @@ public class SigaLibsEL {
 	}
 
 	public static Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, Long idTpConf) throws Exception {
+			DpLotacao lotaTitular, ITipoDeConfiguracao idTpConf) throws Exception {
 		return Cp.getInstance().getConf()
 				.podePorConfiguracao(titular, lotaTitular, idTpConf);
 	}

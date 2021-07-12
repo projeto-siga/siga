@@ -140,8 +140,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
 		
 		docVO.exibe();
-		
-	 
+
 		result.include("movs", lista);
 		result.include("sigla", exDocumentoDTO.getDoc().getSigla());
 		result.include("msg", exDocumentoDTO.getMsg());

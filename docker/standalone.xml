@@ -37,9 +37,9 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
     <system-properties>
-        <property name="siga.jwt.secret" value="968e9163-49a5-4e7b-8a1d-c200e0ec98a9"/>
-        <property name="siga.sinc.password" value="968e9163-49a5-4e7b-8a1d-c200e0ec98a9"/>
-        <property name="sigaex.webdav.senha" value="968e9163-49a5-4e7b-8a1d-c200e0ec98a9"/>
+        <property name="siga.jwt.secret" value="GUID-HML-968e9163-49a5-4e7b-8a1d-c200e0ec98a9"/>
+        <property name="siga.sinc.password" value="GUID-HML-968e9163-49a5-4e7b-8a1d-c200e0ec98a9"/>
+        <property name="sigaex.webdav.senha" value="GUID-HML-968e9163-49a5-4e7b-8a1d-c200e0ec98a9"/>
         <property name="siga.recaptcha.key" value="6LfVjNEZAAAAAKb0EH7HNaDVwsIevTC53yqy_EFz"/>
         <property name="siga.recaptcha.pwd" value="6LfVjNEZAAAAAKb0EH7HNaDVwsIevTC53yqy_EFz"/>
         <property name="siga.cabecalho.titulo" value="PBdoc"/>
@@ -51,12 +51,6 @@
         <property name="siga.relat.titulo" value="Paraíba"/>
         <property name="siga.relat.subtitulo" value="Governo do Estado da Paraíba"/>
         <property name="sigaex.carimbo.texto.superior" value="Governo do Estado da Paraíba"/>
-        <property name="sigaex.redis.database" value="1"/>
-        <property name="sigaex.redis.master.host" value="redisserver"/>
-        <property name="sigaex.redis.master.port" value="6379"/>
-        <property name="sigaex.redis.password" value="968e9163-49a5-4e7b-8a1d-c200e0ec98a9"/>
-        <property name="sigaex.redis.slave.host" value="redisserver"/>
-        <property name="sigaex.redis.slave.port" value="6379"/>
         <property name="siga.smtp" value="emailserver"/>
         <property name="siga.smtp.porta" value="1025"/>
         <property name="siga.smtp.auth" value="true"/>
@@ -66,7 +60,7 @@
         <property name="siga.smtp.usuario.remetente" value="Administrador do PBdoc&lt;pbdoc@codata.pb.gov.br&gt;"/>
         <property name="siga.armazenamento.arquivo.tipo" value="TABELA"/>
         <property name="sigaex.upload.dir.temp" value="/tmp"/>
-        <property name="siga.flyway.migrate" value="true"/>
+        <property name="siga.flyway.migrate" value="false"/>
         <property name="siga.flyway.db" value="postgresql"/>
         <property name="siga.hibernate.dialect" value="br.gov.jfrj.siga.base.FixedPostgreSQL95Dialect"/>
         <property name="sigaex.assinador.externo.popup.url" value="https://ittrufusion.appspot.com"/>
@@ -74,9 +68,9 @@
         <property name="sigaex.carimbo.url" value="https://ittrufusion.appspot.com/api/v1"/>
         <property name="sigaex.carimbo.public.key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllav1+eJ3w5Idge/vQ1zZSziGiuOUBviZhcw0JZ9Bg90zG7Uz3wFGQeKnG0DNTBKwjC3MHI7AZy4G+ji35J+gp+0aZLDkuwx17JDuJfuJe6gHRlfcm50McuLL0vaU5gQ2InAo7FssjuOuLp9c3FGBGmiDFK1vUhKwdvY14inYzrZaHSVsppSYX9zjnhQiQxRnLzFzkZsZkl/Orz2O9rvmJx048lcmnOiLvm3ge7Jq2KZHIYzdsw5F3VGtlhLFBZ49g6Rmp4ClgPtpwDOGj78oyJVxLW3XXN1VP1JnActFkNlmBNi+8cUZ8IX15j+FDOL9+tQR+FMC7wtHypshR5zVQIDAQAB"/>
         <property name="pdf.tamanho.maximo" value="50000000" />
-        <property name="siga.ambiente" value="desenv" />
-        <property name="siga.base.url" value="http://localhost:8080" />
-        <property name="sigaex.diretorio.armazenamento.arquivos" value="/tmp/.pbdoc" />
+        <property name="siga.ambiente" value="homolog" />
+        <property name="siga.base.url" value="https://homolog.pbdoc10.codata.pb.gov.br" />
+        <property name="sigaex.diretorio.armazenamento.arquivos" value="/data" />
     </system-properties>
     <management>
         <security-realms>
@@ -136,7 +130,7 @@
     <profile>
         <subsystem xmlns="urn:jboss:domain:logging:6.0">
             <console-handler name="CONSOLE">
-                <level name="INFO"/>
+                <level name="DEBUG"/>
                 <formatter>
                     <named-formatter name="COLOR-PATTERN"/>
                 </formatter>
@@ -150,19 +144,22 @@
                 <append value="true"/>
             </periodic-rotating-file-handler>
             <logger category="io.undertow.request">
-                <level name="OFF"/>
+                <level name="INFO"/>
             </logger>
             <logger category="com.arjuna">
-                <level name="WARN"/>
+                <level name="INFO"/>
             </logger>
             <logger category="org.jboss.as.config">
-                <level name="DEBUG"/>
+                <level name="INFO"/>
             </logger>
             <logger category="sun.rmi">
-                <level name="WARN"/>
+                <level name="INFO"/>
             </logger>
             <logger category="jboss.jdbc.spy">
-                <level name="TRACE"/>
+                <level name="ERROR"/>
+            </logger>
+            <logger category="org.apache.cxf">
+                <level name="DEBUG" />
             </logger>
             <root-logger>
                 <level name="INFO"/>
@@ -194,15 +191,15 @@
         <subsystem xmlns="urn:jboss:domain:datasources:5.0">
             <datasources>
                 <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true">
-                    <connection-url>jdbc:postgresql://172.17.0.1:5432/pbdoc</connection-url>
+                    <connection-url>jdbc:postgresql://201.18.100.121:54323/pbdoc_10_hmlg</connection-url>
                     <driver>postgresql</driver>
                     <pool>
                         <min-pool-size>24</min-pool-size>
                         <max-pool-size>64</max-pool-size>
                     </pool>
                     <security>
-                        <user-name>postgres</user-name>
-                        <password>postgres</password>
+                        <user-name>pbdoc_10_hmlg</user-name>
+                        <password>pbdoc_10_hmlg</password>
                     </security>
                     <validation>
                         <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker" />
@@ -215,15 +212,15 @@
                     </timeout>
                 </datasource>
                 <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true">
-                    <connection-url>jdbc:postgresql://172.17.0.1:5432/pbdoc</connection-url>
+                    <connection-url>jdbc:postgresql://201.18.100.121:54323/pbdoc_10_hmlg</connection-url>
                     <driver>postgresql</driver>
                     <pool>
                         <min-pool-size>24</min-pool-size>
                         <max-pool-size>64</max-pool-size>
                     </pool>
                     <security>
-                        <user-name>postgres</user-name>
-                        <password>postgres</password>
+                        <user-name>pbdoc_10_hmlg</user-name>
+                        <password>pbdoc_10_hmlg</password>
                     </security>
                     <validation>
                         <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker" />
@@ -236,15 +233,15 @@
                     </timeout>
                 </datasource>
                 <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true">
-                    <connection-url>jdbc:postgresql://172.17.0.1:5432/pbdoc</connection-url>
+                    <connection-url>jdbc:postgresql://201.18.100.121:54323/pbdoc_10_hmlg</connection-url>
                     <driver>postgresql</driver>
                     <pool>
                         <min-pool-size>24</min-pool-size>
                         <max-pool-size>64</max-pool-size>
                     </pool>
                     <security>
-                        <user-name>postgres</user-name>
-                        <password>postgres</password>
+                        <user-name>pbdoc_10_hmlg</user-name>
+                        <password>pbdoc_10_hmlg</password>
                     </security>
                     <validation>
                         <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker" />
@@ -484,7 +481,7 @@
                     <core-threads count="50"/>
                     <queue-length count="50"/>
                     <max-threads count="50"/>
-                    <keepalive-time time="360" unit="seconds"/>
+                    <keepalive-time time="300" unit="seconds"/>
                 </long-running-threads>
             </default-workmanager>
             <cached-connection-manager/>
@@ -571,17 +568,17 @@
                 <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true" max-post-size="50000000" />
                 <https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>
                 <host name="default-host" alias="localhost">
-                    <location name="/" handler="welcome-content"/>
                     <http-invoker security-realm="ApplicationRealm"/>
+                    <filter-ref name="home" predicate="path('/')"/>
                 </host>
             </server>
+            <filters>
+                <rewrite name="home" target="/siga" redirect="true" />
+            </filters>
             <servlet-container name="default">
                 <jsp-config development="false"/>
                 <websockets/>
             </servlet-container>
-            <handlers>
-                <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
-            </handlers>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:webservices:2.0">
             <wsdl-host>${jboss.bind.address:127.0.0.1}</wsdl-host>

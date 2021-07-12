@@ -4,12 +4,15 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.util.SigaFlyway;
+
 
 /**
  * 
@@ -30,5 +33,17 @@ public class TpStarter {
 		log.info("INICIANDO SIGATP.WAR");
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		emf = Persistence.createEntityManagerFactory("default");
+		new MigrationThread().start();
+	}
+
+	public static class MigrationThread extends Thread {
+		public void run() {
+			try {
+				SigaFlyway.migrate("java:/jboss/datasources/SigaTpDS", "classpath:db/mysql/sigatp", true);
+			} catch (NamingException e) {
+				log.error("Erro na migração do banco", e);
+				SigaFlyway.stopJBoss();
+			}
+		}
 	}
 }

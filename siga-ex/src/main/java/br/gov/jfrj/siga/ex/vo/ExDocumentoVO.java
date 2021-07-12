@@ -173,7 +173,9 @@ public class ExDocumentoVO extends ExVO {
 
 		ExClassificacao classif = doc.getExClassificacaoAtual();
 		if (classif != null) {
-			this.classificacaoDescricaoCompleta = classif.getAtual().getDescricaoCompleta();
+			if (classif.getAtual() != null)
+				   classif = classif.getAtual();
+			this.classificacaoDescricaoCompleta = classif.getDescricaoCompleta();
 			this.classificacaoSigla = classif.getSigla();
 			this.classificacaoNome = classif.getNome();
 		}

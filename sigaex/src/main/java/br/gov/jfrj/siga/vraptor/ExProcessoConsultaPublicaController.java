@@ -334,7 +334,8 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			throw new AplicacaoException("Documento não encontrado.");
 		}
 
-		if (Integer.parseInt(exDocumentoDTO.getDoc().getNivelAcesso()) > Prop.getInt("exibetramitacaoate")) {
+		// consultapublica.maxNivelacesso.tramitacao
+		if (Integer.parseInt(exDocumentoDTO.getDoc().getNivelAcesso()) > Prop.getInt("consultapublica.exibe.tramitacao.ate.nivelacesso")) {
 
 			throw new AplicacaoException("O documento possui um nível de sigilo que impede a visualização de sua tramitação.");
 		}

@@ -16,7 +16,7 @@
 	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col col-12 col-sm-8">
+			<div class="col col-12">
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>

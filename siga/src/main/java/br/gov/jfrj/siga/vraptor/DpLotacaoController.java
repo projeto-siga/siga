@@ -399,7 +399,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
 		} else {// inativar
 			Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE).size();
-			Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+			long qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
 
 			if (qtdePessoa > 0 || qtdeDocumentoCriadosPosse > 0) {
 				throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "

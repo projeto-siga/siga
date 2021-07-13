@@ -28,7 +28,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2676,19 +2675,12 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public Integer consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
-		try {
-			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
-
-			sql.setParameter("idLotacao", idLotacao);
-			List result = sql.getResultList();
-			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
-			return l;
-		} catch (final NullPointerException e) {
-			return null;
-		}
+	public long consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
+		Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
+		sql.setParameter("idLotacao", idLotacao);
+		return ((Number) sql.getSingleResult()).longValue();
 	}
-	
+
 	public CpToken obterCpTokenPorTipoToken(final Long idTpToken, final String token) {
 		
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();

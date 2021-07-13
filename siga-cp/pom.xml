@@ -114,6 +114,14 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
          </dependency>
+        <dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+		</dependency>
 	</dependencies>
 	
 	

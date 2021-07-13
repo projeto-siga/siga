@@ -86,7 +86,7 @@ public class ExMobilVO extends ExVO {
 	}
 
 	public List<ExMarca> getMarcasAtivas() {
-		return marcasAtivas;
+		return this.marcasAtivas;
 	}
 
 	public void setMarcasAtivas(List<ExMarca> marcasAtivas) {
@@ -121,7 +121,7 @@ public class ExMobilVO extends ExVO {
 
 		long tempoIni = System.currentTimeMillis();
 
-		List<ExMarca> marcasAtivas = new ArrayList<>();
+		this.marcasAtivas = new ArrayList<>();
 		marcasAtivas.addAll(mob.getExMarcaSetAtivas());
 
 		marcadoresEmHtml = getMarcadoresEmHtml(marcasAtivas, titular, lotaTitular);

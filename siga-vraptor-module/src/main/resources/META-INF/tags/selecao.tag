@@ -301,7 +301,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		name="${inputNameTipoSel}.buscar"
 		value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>"
 		id="formulario_${inputNameTipoSel}_buscar" /> 
-<div class="input-group"><input type="search"
+<div class="input-group input-group-sm"><input type="search"
 		name="${inputNameTipoSel}.sigla"
 		value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>"
 		id="formulario_${inputNameTipoSel}_sigla"

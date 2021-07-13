@@ -36,9 +36,10 @@
 	}
 </script>
 
-<li class="nav-item dropdown"><a href="javascript:void(0);"
-	class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message
-			key="menu.titulo" /></a>
+<li class="nav-item dropdown">
+	<a href="javascript:void(0);" class="navbar-brand dropdown-toggle" data-toggle="dropdown">
+		<strong><fmt:message key="menu.titulo" /></strong>
+	</a>
 	<ul class="dropdown-menu">
 		<c:if test="${not empty f:resource('/siga.pagina.inicial.url') && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;QUADRO:Quadros Quantitativos')}">
 			<li><a class="dropdown-item"

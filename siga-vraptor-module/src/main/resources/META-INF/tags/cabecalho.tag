@@ -97,7 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.0.18.0PCRJ" />
+<c:set var="siga_version"  scope="request" value="10.0.18.0-PCRJ-1.0.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">

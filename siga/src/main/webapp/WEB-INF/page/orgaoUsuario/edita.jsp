@@ -10,7 +10,9 @@
 	function validar() {
 		var nmOrgaoUsuario = document.getElementsByName('nmOrgaoUsuario')[0].value;
 		var siglaOrgaoUsuario = document.getElementsByName('siglaOrgaoUsuario')[0].value;	
-		var id = document.getElementsByName('id')[0].value;	
+		var siglaOrgaoUsuarioCompleta = document.getElementsByName('siglaOrgaoUsuarioCompleta')[0].value;
+		var id = document.getElementsByName('id')[0].value;
+
 		if (nmOrgaoUsuario==null || nmOrgaoUsuario=="") {			
 			sigaModal.alerta("Preencha o nome do Órgão.");
 			document.getElementById('nmOrgaoUsuario').focus();		
@@ -19,14 +21,23 @@
 				sigaModal.alerta("Preencha a sigla do Órgão.");
 				document.getElementById('siglaOrgaoUsuario').focus();	
 			}else {
-				if(id==null || id=="") {
-					sigaModal.alerta("Preencha ID do Órgão.");
-					document.getElementById('id').focus();
+				if (siglaOrgaoUsuarioCompleta == null || siglaOrgaoUsuarioCompleta == "") {
+					sigaModal.alerta("Preencha a sigla Completa do Órgão.");
+					document.getElementById('siglaOrgaoUsuarioCompleta').focus();
 				} else {
-					frm.submit();
+					if(id==null || id=="") {
+						sigaModal.alerta("Preencha ID do Órgão.");
+						document.getElementById('id').focus();
+					} else {
+						if (siglaOrgaoUsuario.length != 3) {
+							sigaModal.alerta("Preencha sigla abreviada com exatamente 3 letras.");
+							document.getElementById('siglaOrgaoUsuario').focus();
+						} else {
+							frm.submit();
+						}
+					}
 				}
 			}
-								
 		}			
 	}
 
@@ -65,29 +76,39 @@
 								</c:choose>
 							</div>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-3">
 							<div class="form-group">
 								<label>Nome</label>
 								<input type="text" id="nmOrgaoUsuario" name="nmOrgaoUsuario" value="${nmOrgaoUsuario}" maxlength="80" size="80" class="form-control"/>
 							</div>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-2">
+							<div class="form-group">
+								<label>Sigla Oficial</label> <input type="text"
+									id="siglaOrgaoUsuarioCompleta"
+									name="siglaOrgaoUsuarioCompleta"
+									value="${siglaOrgaoUsuarioCompleta}"
+									maxlength="10" size="10"
+									class="form-control" />
+							</div>
+						</div>
+						<div class="col-md-1">
 							<div class="form-group">
 								<label>Sigla</label>
-								<c:choose>
-									<c:when test="${empty siglaOrgaoUsuario || podeAlterarSigla}">
-										<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" maxlength="10" size="10" style="text-transform:uppercase"  onKeypress="return somenteLetras(event);" onkeyup="this.value = this.value.trim()" class="form-control"/>	
-									</c:when>
+								<%-- <c:choose> --%>
+									<%-- <c:when test="${empty siglaOrgaoUsuario || podeAlterarSigla}"> --%>
+										<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" minlength="3" maxlength="3" size="3" style="text-transform:uppercase"  onKeypress="return somenteLetras(event);" onkeyup="this.value = this.value.trim()" class="form-control"/>	
+									<%-- </c:when>
 									<c:otherwise>
-										<label class="form-control">${siglaOrgaoUsuario }</label>
+										<label class="form-control">${siglaOrgaoUsuario}</label>
 										<input type="hidden" name="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}"/>
-									</c:otherwise>
-								</c:choose>
+									</c:otherwise> --%>
+								<%-- </c:choose> --%>
 							</div>
 						</div>
 						<div class="col-md-2">
 							<div class="form-group">
-								<label>Data de Assinatura do Contrato</label>
+								<label>Data do Contrato</label>
 								<input type="text" id="dtContrato" name="dtContrato" value="${dtContrato}" 
 									 onblur="javascript:verifica_data(this,0);" class="form-control"/>
 							</div>

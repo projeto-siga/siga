@@ -45,8 +45,9 @@ function sbmt(offset) {
 					<thead class="${thead_color}">
 						<tr>
 							<th class="text-left w-10">ID</th>
-							<th class="text-left w-60">Nome</th>
+							<th class="text-left w-30">Nome</th>
 							<th class="text-center w-10">Sigla</th>
+							<th class="text-center w-20">Sigla Completa</th>
 							<th class="text-center w-10">Externo</th>
 							<th class="text-left w-10">Data Contrato</th>
 							<th colspan="2" class="text-left w-10">Op&ccedil;&otilde;es</th>					
@@ -55,19 +56,23 @@ function sbmt(offset) {
 					
 					<tbody>
 						<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
-							itens="${itens}" var="orgaoUsuario">
+							itens="${itens}" var="orgaoUsuarioTupla">
+
+							<c:set var="orgaoUsuario" value="${orgaoUsuarioTupla.get(0, Object.class)}" />
+							<c:set var="dtContratoOrgaoUsuario" value="${orgaoUsuarioTupla.get(1, Object.class)}" />
 
 							<tr>
-								<td class="text-left w-10">${orgaoUsuario[0].id}</td>
-								<td class="text-left w-60">${orgaoUsuario[0].descricao}</td>
-								<td class="text-center w-10">${orgaoUsuario[0].sigla}</td>
-								<td class="text-center w-10">${orgaoUsuario[0].isExternoOrgaoUsu  == 1 ? 'SIM' : 'NÃO'}</td>
-								<td class="text-left w-10"><fmt:formatDate value="${orgaoUsuario[1]}" pattern="dd/MM/yyyy" /></td>
+								<td class="text-left w-10">${orgaoUsuario.id}</td>
+								<td class="text-left w-30">${orgaoUsuario.descricao}</td>
+								<td class="text-center w-10">${orgaoUsuario.sigla}</td>
+								<td class="text-center w-20">${orgaoUsuario.siglaOrgaoUsuarioCompleta}</td>
+								<td class="text-center w-10">${orgaoUsuario.isExternoOrgaoUsu  == 1 ? 'SIM' : 'NÃO'}</td>
+								<td class="text-left w-10"><fmt:formatDate value="${dtContratoOrgaoUsuario}" pattern="dd/MM/yyyy" /></td>
 								<td class="text-left w-10">
 									<c:url var="url" value="/app/orgaoUsuario/editar">
-										<c:param name="id" value="${orgaoUsuario[0].id}"></c:param>
+										<c:param name="id" value="${orgaoUsuario.id}"></c:param>
 									</c:url>
-									<c:if test="${empty orgaoUsuarioSiglaLogado || orgaoUsuarioSiglaLogado eq orgaoUsuario[0].sigla}">
+									<c:if test="${empty orgaoUsuarioSiglaLogado || orgaoUsuarioSiglaLogado eq orgaoUsuario.sigla}">
 									<input type="button" value="Alterar"
 										onclick="javascript:window.location.href='${url}'"
 										class="btn btn-primary">

@@ -23,6 +23,8 @@
  */
 package br.gov.jfrj.siga.dp.dao;
 
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,6 +51,12 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.hibernate.annotations.QueryHints;
+
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -96,6 +104,8 @@ import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.DpUnidadeDTO;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
+import br.gov.jfrj.siga.dp.QCpContrato;
+import br.gov.jfrj.siga.dp.QCpOrgaoUsuario;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
@@ -358,48 +368,40 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<CpOrgaoUsuario> consultarPorFiltroComContrato(final CpOrgaoUsuarioDaoFiltro o, final int offset,
-			final int itemPagina) {
-		try {
-			Query query = em()
-					.createQuery("select org, (select dtContrato from CpContrato contrato "
-							+ " where contrato.idOrgaoUsu = org.idOrgaoUsu) from CpOrgaoUsuario org "
-							+ " where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))"
-							+ "	order by org.nmOrgaoUsu");
-			if (offset > 0) {
-				query.setFirstResult(offset);
-			}
-			if (itemPagina > 0) {
-				query.setMaxResults(itemPagina);
-			}
-			String s = o.getNome();
-			if (s != null)
-				s = s.replace(' ', '%');
-			query.setParameter("nome", s);
+	public List<Tuple> consultarPorFiltroComContrato(final CpOrgaoUsuarioDaoFiltro o, final int offset, final int itemPagina) {
 
-			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+		final QCpContrato qCpContrato = QCpContrato.cpContrato;
+		final QCpOrgaoUsuario qCpOrgaoUsuario = QCpOrgaoUsuario.cpOrgaoUsuario;
 
-			final List<CpOrgaoUsuario> l = query.getResultList();
-			return l;
-		} catch (final NullPointerException e) {
-			return null;
+		final JPAQuery<Tuple> query = new JPAQuery<>(em())
+				.select(
+						qCpOrgaoUsuario,
+						JPAExpressions.select(qCpContrato.dtContrato)
+								.from(qCpContrato)
+								.where(qCpContrato.idOrgaoUsu.eq(qCpOrgaoUsuario.idOrgaoUsu))
+				)
+				.from(qCpOrgaoUsuario);
+
+		if (nonNull(o) && isNotEmpty(o.getNome())) {
+			final String nome = "%" + o.getNome().replace(' ', '%') + "%";
+			query.where(qCpOrgaoUsuario.nmOrgaoUsu.likeIgnoreCase(nome));
 		}
+
+		if (offset > 0) {
+			query.offset(offset);
+		}
+		if (itemPagina > 0) {
+			query.limit(itemPagina);
+		}
+
+		return query.orderBy(qCpOrgaoUsuario.nmOrgaoUsu.asc())
+				.setHint(QueryHints.CACHEABLE, true)
+				.setHint(QueryHints.CACHE_REGION, CACHE_QUERY_HOURS)
+				.fetch();
 	}
 
-	@SuppressWarnings("unchecked")
 	public CpOrgaoUsuario consultarPorId(final CpOrgaoUsuario o) {
-		final Query query = em().createNamedQuery("consultarIdOrgaoUsuario");
-		query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
-
-		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
-
-		final List<CpOrgaoUsuario> l = query.getResultList();
-		if (l.size() != 1)
-			return null;
-		return l.get(0);
+		return em().find(CpOrgaoUsuario.class, o.getIdOrgaoUsu());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -436,21 +438,24 @@ public class CpDao extends ModeloDao {
 		return consultarPorSigla(o);
 	}
 
-	public int consultarQuantidade(final CpOrgaoUsuarioDaoFiltro o) {
+	public long consultarQuantidade(final CpOrgaoUsuarioDaoFiltro o) {
 		try {
-			final Query query = em().createNamedQuery("consultarQuantidadeCpOrgaoUsuario");
-			String s = o.getNome();
-			if (s != null)
-				s = s.replace(' ', '%');
-			query.setParameter("nome", s);
+			final QCpOrgaoUsuario qCpOrgaoUsuario = QCpOrgaoUsuario.cpOrgaoUsuario;
+			final JPAQuery<?> query = new JPAQuery<>(em())
+					.from(qCpOrgaoUsuario);
 
-			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+			if (nonNull(o) && isNotEmpty(o.getNome())) {
+				final String nome = "%" + o.getNome().replace(' ', '%') + "%";
+				query.where(qCpOrgaoUsuario.nmOrgaoUsu.likeIgnoreCase(nome)
+						.or(qCpOrgaoUsuario.siglaOrgaoUsu.likeIgnoreCase(nome))
+						.or(qCpOrgaoUsuario.siglaOrgaoUsuCompleta.likeIgnoreCase(nome)));
+			}
 
-			final int l = ((Long) query.getSingleResult()).intValue();
-			return l;
+			return query.setHint(QueryHints.CACHEABLE, true)
+					.setHint(QueryHints.CACHE_REGION, CACHE_QUERY_HOURS)
+					.fetchCount();
 		} catch (final NullPointerException e) {
-			return 0;
+			return 0l;
 		}
 	}
 

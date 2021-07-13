@@ -1,0 +1,5 @@
+ALTER TABLE `sigawf`.`wf_def_procedimento` 
+ADD COLUMN `DEFP_TP_PRINCIPAL` VARCHAR(45) NOT NULL DEFAULT 'DOC' COMMENT 'Tipo de principal aceito pelo diagrama' AFTER `GRUP_ID_EDICAO`;
+
+ALTER TABLE `sigawf`.`wf_def_procedimento` 
+ADD COLUMN `DEFP_TP_VINCULO_PRINCIPAL` VARCHAR(45) NOT NULL DEFAULT 'OBRIGATORIO_E_EXCLUSIVO' COMMENT 'Tipo de vínculo com o principal' AFTER `DEFP_TP_PRINCIPAL`;

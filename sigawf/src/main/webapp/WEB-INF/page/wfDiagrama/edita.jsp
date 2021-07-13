@@ -7,8 +7,8 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <%
-	pageContext.setAttribute("tipoDeVariavel", WfTipoDeVariavel.values());
-	pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
+pageContext.setAttribute("tipoDeVariavel", WfTipoDeVariavel.values());
+pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 %>
 
 
@@ -112,6 +112,27 @@
 								id="responsavel" class="angucomplete-ctrl p-0"
 								template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 						</label>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col col-md-3">
+					<div class="form-group">
+						<label for="tipoDePrincipal">Tipo de Principal</label> <select
+							ng-model="data.workflow.tipoDePrincipal"
+							ng-options="item.id as item.descr for item in tiposDePrincipal"
+							class="form-control"></select>
+					</div>
+				</div>
+				<div class="col col-md-3">
+					<div class="form-group">
+						<label for="principalObrigatorio">Principal é Obrigatório?</label>
+						<select name="principalObrigatorio" class="form-control"required}>
+							<option value="1"
+								${valor eq '1' or valor eq 'true' ? 'selected' : ''}>Sim</option>
+							<option value="0"
+								${valor eq '0' or valor eq 'false' ? 'selected' : ''}>Não</option>
+						</select>
 					</div>
 				</div>
 			</div>
@@ -320,9 +341,10 @@
 										text-no-results="Não encontrei nenhuma Tipologia Documental."
 										match-class="highlight"
 										selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
-										remote-url="/sigaex/app/modelo/buscar-json-para-incluir/" angucomplete-alt
-										name="ref" placeholder="Pesquisar Tipologia Documental"
-										id="ref" class="angucomplete-ctrl"
+										remote-url="/sigaex/app/modelo/buscar-json-para-incluir/"
+										angucomplete-alt name="ref"
+										placeholder="Pesquisar Tipologia Documental" id="ref"
+										class="angucomplete-ctrl"
 										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"

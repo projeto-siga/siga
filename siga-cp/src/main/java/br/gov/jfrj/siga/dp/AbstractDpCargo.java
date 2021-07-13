@@ -50,14 +50,6 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "consultarPorSiglaDpCargo", query = "select cargo from DpCargo cargo where cargo.siglaCargo = :siglaCargo"),
-		@NamedQuery(name = "consultarPorFiltroDpCargo", query = "from DpCargo o "
-				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
-				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "   	and o.dataFimCargo = null" + "   	order by upper(o.nomeCargo)"),
-		@NamedQuery(name = "consultarQuantidadeDpCargo", query = "select count(o) from DpCargo o "
-				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
-				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "   	and o.dataFimCargo = null"),
 		@NamedQuery(name = "consultarPorNomeDpCargoOrgao", query = "select cargo from DpCargo cargo "
 				+ " where upper(REMOVE_ACENTO(cargo.nomeCargo)) = upper(REMOVE_ACENTO(:nome)) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
 public abstract class AbstractDpCargo extends Objeto implements Serializable {

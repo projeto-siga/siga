@@ -95,15 +95,15 @@
 						<div class="col-md-1">
 							<div class="form-group">
 								<label>Sigla</label>
-								<%-- <c:choose> --%>
-									<%-- <c:when test="${empty siglaOrgaoUsuario || podeAlterarSigla}"> --%>
+								<c:choose>
+									<c:when test="${empty siglaOrgaoUsuario || podeAlterarSigla}">
 										<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" minlength="3" maxlength="3" size="3" style="text-transform:uppercase"  onKeypress="return somenteLetras(event);" onkeyup="this.value = this.value.trim()" class="form-control"/>	
-									<%-- </c:when>
+									</c:when>
 									<c:otherwise>
 										<label class="form-control">${siglaOrgaoUsuario}</label>
 										<input type="hidden" name="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}"/>
-									</c:otherwise> --%>
-								<%-- </c:choose> --%>
+									</c:otherwise>
+								</c:choose>
 							</div>
 						</div>
 						<div class="col-md-2">

@@ -457,4 +457,12 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 		this.tipoDePrincipal = tipoDePrincipal;
 	}
 
+	public WfTipoDeVinculoComPrincipal getTipoDeVinculoComPrincipal() {
+		return tipoDeVinculoComPrincipal;
+	}
+
+	public void setTipoDeVinculoComPrincipal(WfTipoDeVinculoComPrincipal tipoDeVinculoComPrincipal) {
+		this.tipoDeVinculoComPrincipal = tipoDeVinculoComPrincipal;
+	}
+
 }

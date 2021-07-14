@@ -50,7 +50,7 @@
 					<div class="card bg-info mb-3 mt-3">
 						<div class="card-header text-white">
 							<c:if
-								test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
+								test="${pi.tipoDePrincipal eq 'DOCUMENTO' and not empty pi.principal}">
 								<a
 									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}"
 									style="color: white; text-decoration: underline;">${pi.principal}</a> -
@@ -152,11 +152,11 @@
 						<c:if test="${not empty pi.principal}">
 							<p>
 								<b>Principal:</b>
-								<c:if test="${pi.tipoDePrincipal eq 'DOC'}">
+								<c:if test="${pi.tipoDePrincipal eq 'DOCUMENTO'}">
 									<a
 										href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
 								</c:if>
-								<c:if test="${pi.tipoDePrincipal != 'DOC'}">
+								<c:if test="${pi.tipoDePrincipal != 'DOCUMENTO'}">
 								${pi.principal}
 								</c:if>
 							</p>

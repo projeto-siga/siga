@@ -297,7 +297,7 @@ public class WfProcedimento extends Objeto
 
 	public WfResp localizarResponsavelOriginal(WfDefinicaoDeTarefa tarefa) {
 		ExService service = null;
-		if (this.getPrincipal() != null && this.getTipoDePrincipal() == WfTipoDePrincipal.DOC)
+		if (this.getPrincipal() != null && this.getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO)
 			service = Service.getExService();
 		try {
 			if (tarefa.getTipoDeTarefa() == WfTipoDeTarefa.AGUARDAR_ASSINATURA_PRINCIPAL)
@@ -624,7 +624,7 @@ public class WfProcedimento extends Objeto
 		if (respWF == null && getEventoLotacao() != null)
 			respWF = "@" + getEventoLotacao().getSiglaCompleta();
 
-		if (!Utils.empty(getPrincipal()) && getTipoDePrincipal() == WfTipoDePrincipal.DOC) {
+		if (!Utils.empty(getPrincipal()) && getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
 			ExService service = Service.getExService();
 			String respEX = service.getAtendente(getPrincipal(), siglaTitular);
 			DpLotacao lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();

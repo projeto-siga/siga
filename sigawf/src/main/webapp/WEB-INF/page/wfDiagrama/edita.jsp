@@ -124,15 +124,14 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 							class="form-control"></select>
 					</div>
 				</div>
-				<div class="col col-md-3">
+				<div class="col col-md-3"
+					ng-show="data.workflow.tipoDePrincipal != 'NENHUM'">
 					<div class="form-group">
-						<label for="principalObrigatorio">Principal é Obrigatório?</label>
-						<select name="principalObrigatorio" class="form-control"required}>
-							<option value="1"
-								${valor eq '1' or valor eq 'true' ? 'selected' : ''}>Sim</option>
-							<option value="0"
-								${valor eq '0' or valor eq 'false' ? 'selected' : ''}>Não</option>
-						</select>
+						<label for="tipoDeVinculoComPrincipal">Vínculo com o
+							Principal</label> <select
+							ng-model="data.workflow.tipoDeVinculoComPrincipal"
+							ng-options="item.id as item.descr for item in tiposDeVinculoComPrincipal"
+							class="form-control"></select>
 					</div>
 				</div>
 			</div>
@@ -199,14 +198,21 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										<option value="DECISAO">Decisão</option>
 										<option value="EMAIL">E-mail</option>
 										<option value="EXECUTAR">Executar</option>
-										<option value="AGUARDAR_ASSINATURA_PRINCIPAL">Principal:
-											Aguardar Assinatura</option>
-										<option value="TRAMITAR_PRINCIPAL">Principal:
-											Tramitar</option>
-										<option value="ARQUIVAR_PRINCIPAL">Principal:
-											Arquivar</option>
-										<option value="INCLUIR_DOCUMENTO">Principal: Incluir
-											Documento</option>
+										<optgroup label="{{getPrincipalNome()}}"
+											ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
+											<option value="AGUARDAR_ASSINATURA_PRINCIPAL"
+												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+												Aguardar Assinatura</option>
+											<option value="TRAMITAR_PRINCIPAL"
+												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+												Tramitar</option>
+											<option value="ARQUIVAR_PRINCIPAL"
+												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+												Arquivar</option>
+											<option value="INCLUIR_DOCUMENTO"
+												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+												Incluir Documento</option>
+										</optgroup>
 								</select></label> <i></i> </section>
 								<section class="col col-12 col-md-2 col-lg-2 form-group">
 								<label for="titulo" title="" class="label">Título<i
@@ -234,52 +240,49 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										<option value="RESPONSAVEL">Tabelado</option>
 										<option value="LOTACAO">Lotação</option>
 										<option value="PESSOA">Pessoa</option>
-										<option value="PROCEDIMENTO_TITULAR">Procedimento:
-											Titular</option>
-										<option value="PROCEDIMENTO_LOTA_TITULAR">Procedimento:
-											Lotação do Titular</option>
-										<option value="PRINCIPAL_CADASTRANTE">Principal:
-											Cadastrante</option>
-										<option value="PRINCIPAL_LOTA_CADASTRANTE">Principal:
-											Lotação do Cadastrante</option>
-										<option value="PRINCIPAL_TITULAR">Principal: Titular</option>
-										<option value="PRINCIPAL_LOTA_TITULAR">Principal:
-											Lotação do Titular</option>
-										<option value="PRINCIPAL_SUBSCRITOR">Principal:
-											Subscritor</option>
-										<option value="PRINCIPAL_LOTA_SUBSCRITOR">Principal:
-											Lotação do Subscritor</option>
-										<option value="PRINCIPAL_DESTINATARIO">Principal:
-											Destinatário</option>
-										<option value="PRINCIPAL_LOTA_DESTINATARIO">Principal:
-											Lotação do Destinatário</option>
-										<option value="PRINCIPAL_GESTOR">Principal: Gestor</option>
-										<option value="PRINCIPAL_LOTA_GESTOR">Principal:
-											Lotação do Gestor</option>
-										<option value="PRINCIPAL_FISCAL_TECNICO">Principal:
-											Fiscal Técnico</option>
-										<option value="PRINCIPAL_LOTA_FISCAL_TECNICO">Principal:
-											Lotação do Fiscal Técnico</option>
-										<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO">Principal:
-											Fiscal Administrativo</option>
-										<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO">Principal:
-											Lotação do Fiscal Administrativo</option>
-										<option value="PRINCIPAL_INTERESSADO">Principal:
-											Interessado</option>
-										<option value="PRINCIPAL_LOTA_INTERESSADO">Principal:
-											Lotação do Interessado</option>
-										<option value="PRINCIPAL_AUTORIZADOR">Principal:
-											Interessado</option>
-										<option value="PRINCIPAL_LOTA_AUTORIZADOR">Principal:
-											Lotação do Autorizador</option>
-										<option value="PRINCIPAL_REVISOR">Principal:
-											Interessado</option>
-										<option value="PRINCIPAL_LOTA_REVISOR">Principal:
-											Lotação do Revisor</option>
-										<option value="PRINCIPAL_LIQUIDANTE">Principal:
-											Interessado</option>
-										<option value="PRINCIPAL_LOTA_LIQUIDANTE">Principal:
-											Lotação do Liquidante</option>
+										<optgroup label="Procedimento">
+											<option value="PROCEDIMENTO_TITULAR">Titular</option>
+											<option value="PROCEDIMENTO_LOTA_TITULAR">Lotação do
+												Titular</option>
+										</optgroup>
+										<optgroup label="{{getPrincipalNome()}}"
+											ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
+											<option value="PRINCIPAL_CADASTRANTE">Cadastrante</option>
+											<option value="PRINCIPAL_LOTA_CADASTRANTE">Lotação
+												do Cadastrante</option>
+											<option value="PRINCIPAL_TITULAR">Titular</option>
+											<option value="PRINCIPAL_LOTA_TITULAR">Lotação do
+												Titular</option>
+											<option value="PRINCIPAL_SUBSCRITOR">Subscritor</option>
+											<option value="PRINCIPAL_LOTA_SUBSCRITOR">Lotação do
+												Subscritor</option>
+											<option value="PRINCIPAL_DESTINATARIO">Destinatário</option>
+											<option value="PRINCIPAL_LOTA_DESTINATARIO">Lotação
+												do Destinatário</option>
+											<option value="PRINCIPAL_GESTOR">Gestor</option>
+											<option value="PRINCIPAL_LOTA_GESTOR">Lotação do
+												Gestor</option>
+											<option value="PRINCIPAL_FISCAL_TECNICO">Fiscal
+												Técnico</option>
+											<option value="PRINCIPAL_LOTA_FISCAL_TECNICO">
+												Lotação do Fiscal Técnico</option>
+											<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO">
+												Fiscal Administrativo</option>
+											<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO">
+												Lotação do Fiscal Administrativo</option>
+											<option value="PRINCIPAL_INTERESSADO">Interessado</option>
+											<option value="PRINCIPAL_LOTA_INTERESSADO">Lotação
+												do Interessado</option>
+											<option value="PRINCIPAL_AUTORIZADOR">Interessado</option>
+											<option value="PRINCIPAL_LOTA_AUTORIZADOR">Lotação
+												do Autorizador</option>
+											<option value="PRINCIPAL_REVISOR">Interessado</option>
+											<option value="PRINCIPAL_LOTA_REVISOR">Lotação do
+												Revisor</option>
+											<option value="PRINCIPAL_LIQUIDANTE">Interessado</option>
+											<option value="PRINCIPAL_LOTA_LIQUIDANTE">Lotação do
+												Liquidante</option>
+										</optgroup>
 								</select>
 								</label> <i></i> </section>
 								<section

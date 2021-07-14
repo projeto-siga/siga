@@ -22,9 +22,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import br.gov.jfrj.siga.cp.converter.CpSituacaoDeConfiguracaoEnumConverter;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -38,6 +40,7 @@ public class AbstractCpTipoServico extends Objeto {
 	@Column(name = "DESC_TP_SERVICO", length = 60)
 	private String dscTpServico;
 
+	@Convert(converter = CpSituacaoDeConfiguracaoEnumConverter.class)
 	@Column(name = "ID_SIT_CONFIGURACAO")
 	private CpSituacaoDeConfiguracaoEnum situacaoDefault;
 

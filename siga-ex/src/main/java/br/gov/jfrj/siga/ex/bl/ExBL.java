@@ -7766,17 +7766,17 @@ public class ExBL extends CpBL {
 		if (personalizacaoAssinatura[0] != null && !"".equals(personalizacaoAssinatura[0])) {
 			funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[0]);
 		} else {
-			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getFuncaoString());
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular() != null ? movimentacao.getTitular().getFuncaoString() : movimentacao.getCadastrante().getFuncaoString());
 		}
 		funcaoCargoPersonalizadoAssinatura.append(" / ");
 		if (personalizacaoAssinatura.length > 1) {
 			if (personalizacaoAssinatura[1] != null && !"".equals(personalizacaoAssinatura[1])) {
 			 funcaoCargoPersonalizadoAssinatura.append(personalizacaoAssinatura[1]);
 			} else {
-				funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getLotacao().getSigla());
+				funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular() != null ? movimentacao.getTitular().getLotacao().getSigla() : movimentacao.getCadastrante().getLotacao().getSigla());
 			}
 		} else {
-			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular().getLotacao().getSigla());
+			funcaoCargoPersonalizadoAssinatura.append(movimentacao.getTitular() != null ? movimentacao.getTitular().getLotacao().getSigla() : movimentacao.getCadastrante().getLotacao().getSigla());
 		}
 		return funcaoCargoPersonalizadoAssinatura.toString();
 

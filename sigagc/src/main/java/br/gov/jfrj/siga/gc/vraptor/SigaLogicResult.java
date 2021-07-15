@@ -70,8 +70,7 @@ public class SigaLogicResult extends DefaultLogicResult {
 				}
 				String url = router.urlFor(type, method, args);
 				String path = request.getContextPath() + url;
-				includeParametersInFlash(type, method, args);
-
+				// includeParametersInFlash(type, method, args);
 
 				//Nato: inseri essas duas linhas para corrigir um problema de codepage no redirecionamento
 				response.setContentType("text/html; charset=UTF-8");

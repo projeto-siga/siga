@@ -132,7 +132,7 @@
 													movimenta&ccedil;&otilde;es</a>
 											</c:when>
 											<c:otherwise>
-												<a href="${linkTo[AppController].editar}" class="btn btn-link">cancelar
+												<a href="${linkTo[AppController].novo}" class="btn btn-link">cancelar
 													altera&ccedil;&otilde;es</a>
 											</c:otherwise>
 										</c:choose>

@@ -129,10 +129,10 @@
 								</ul>
 							</c:forEach>
 						</div>
+					</div>
 				</c:if>
+				<div class="gt-sidebar-content" id="gc"></div>
 			</div>
-
-			<div class="gt-sidebar-content" id="gc"></div>
 
 			<!-- / sidebar -->
 		</div>
@@ -167,9 +167,15 @@
 	</script>
 
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse(
-				"/sigagc/app/knowledgeSidebar?${informacao.gcTags}&id=${informacao.id}&estiloBusca=algumIgualNenhumDiferente&ts=${currentTimeMillis}",
-				document.getElementById('gc'));
+		$
+				.ajax({
+					type : "GET",
+					url : "/sigagc/app/knowledgeSidebar?${informacao.gcTags}&id=${informacao.id}&estiloBusca=algumIgualNenhumDiferente&ts=${currentTimeMillis}",
+					cache : false,
+					success : function(response) {
+						$('#gc').replaceWith(response);
+					}
+				});
 	</script>
 
 	<!-- Movimentações -->

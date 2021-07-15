@@ -1598,8 +1598,12 @@ public class ExBL extends CpBL {
 
 			if (lMatricula == null && lCPF == null)
 				throw new AplicacaoException("não foi possível recuperar nem a matrícula nem o CPF do assinante");
+			if (!lCPF.equals(cadastrante.getCpfPessoa()))
+				throw new AplicacaoException("Usuário não permitido a utilizar o certificado digital de " + sNome);
 			if (fValido == false)
 				throw new AplicacaoException("Assinante não é subscritor nem cossignatario");
+		} catch (final AplicacaoException e) {
+			throw e;
 		} catch (final Exception e) {
 			throw new RuntimeException(
 					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento", e);

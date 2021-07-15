@@ -257,7 +257,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			String hostname = request.getServerName();
 			if (body.getObject().getBoolean("success")) {
 				String retHostname = body.getObject().getString("hostname");
- 				success = retHostname.equals(hostname)  || ("6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI".equals(recaptchaSiteKey) && "testkey.google.com".equals(retHostname));
+				success = retHostname.equals(hostname);
 			}
 		}
 		

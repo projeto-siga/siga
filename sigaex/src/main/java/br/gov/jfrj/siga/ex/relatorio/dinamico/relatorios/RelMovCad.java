@@ -19,10 +19,13 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
@@ -78,6 +81,18 @@ public class RelMovCad extends RelatorioTemplate {
 	public Collection processarDados() throws Exception {
 
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
 
 		List<String> d = new ArrayList<String>(); // new LinkedList<String>();
 
@@ -114,25 +129,29 @@ public class RelMovCad extends RelatorioTemplate {
 			ExMovimentacao mov = (ExMovimentacao) obj[0];
 			ExMobil mob = (ExMobil) obj[1];
 			ExDocumento doc = (ExDocumento) obj[2];
-			if (mov.getCadastrante().getIdPessoa() != null) {
-				d.add(mov.getCadastrante().getNomePessoa().toString());
-			} else {
-				d.add("");
-			}
-			if (mov.getExMobil().getSigla() != null) {
-				d.add(mov.getExMobil().getSigla());
-			} else {
-				d.add("");
-			}
-			if (mov.getDtRegMovDDMMYYHHMMSS().toString() != null) {
-				d.add(mov.getDtRegMovDDMMYYHHMMSS().toString());
-			} else {
-				d.add("");
-			}
-			if (mov.getDescrTipoMovimentacao() != null) {
-				d.add(mov.getDescrTipoMovimentacao());
-			} else {
-				d.add("");
+			if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+					doc, titular, 
+							lotaTitular)) {
+				if (mov.getCadastrante().getIdPessoa() != null) {
+					d.add(mov.getCadastrante().getNomePessoa().toString());
+				} else {
+					d.add("");
+				}
+				if (mov.getExMobil().getSigla() != null) {
+					d.add(mov.getExMobil().getSigla());
+				} else {
+					d.add("");
+				}
+				if (mov.getDtRegMovDDMMYYHHMMSS().toString() != null) {
+					d.add(mov.getDtRegMovDDMMYYHHMMSS().toString());
+				} else {
+					d.add("");
+				}
+				if (mov.getDescrTipoMovimentacao() != null) {
+					d.add(mov.getDescrTipoMovimentacao());
+				} else {
+					d.add("");
+				}
 			}
 		}
 		return d;

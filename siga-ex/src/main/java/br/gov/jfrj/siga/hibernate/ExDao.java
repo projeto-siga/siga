@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -91,6 +92,8 @@ import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
@@ -715,8 +718,21 @@ public class ExDao extends CpDao {
 			l2 = query.getResultList();
 		}
 		long tempoTotal = System.nanoTime() - tempoIni;
+		
+		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
+		
+			Iterator<Object[]> listaObjetos = l2.iterator();
+			while (listaObjetos.hasNext()) {
+				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
+				   ExDocumento doc = ((ExDocumento) objeto[0]);
+				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
+				   		listaObjetos.remove();
+			}
+		
+		}
+
 		// System.out.println("consultarPorFiltroOtimizado: " +
-		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
+		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l)RExRR;
 		return l2;
 	}
 
@@ -1660,6 +1676,17 @@ public class ExDao extends CpDao {
 		q.setParameter("idOrgaoUsuario", orgaoUsu.getIdOrgaoUsu());
 		return q.getResultList();
 	}	
+	
+	public ExDocumento consultarExDocumentoPorId(
+			Long idDoc) {
+		Query q;
+
+			q = em().createNamedQuery(
+					"consultarExDocumentoId");
+			q.setParameter("idDoc", idDoc);
+	
+		return (ExDocumento) q.getSingleResult();
+	}	
 
 	public List<ExPapel> listarExPapeis() {
 		return findByCriteria(ExPapel.class);
@@ -1854,7 +1881,9 @@ public class ExDao extends CpDao {
 		q.select(c);
 		List<Predicate> whereList = new LinkedList<Predicate>();
 		if(flt.getSigla() != null) {
-			whereList.add(cb().like(c.get("nmMod").as(String.class), "%" + flt.getSigla() + "%"));
+			Expression<String> path = c.get("nmMod");
+			path = cb().upper(path);
+			whereList.add(cb().like(path, "%" + flt.getSigla() + "%"));
 			whereList.add(cb().equal(c.get("hisAtivo"), 1));
 		}
 		Predicate[] whereArray = new Predicate[whereList.size()];
@@ -2053,13 +2082,13 @@ public class ExDao extends CpDao {
 						+ "mob, "
 						+ (trazerComposto ? " frm.isComposto, " : "0, ")
 						+ "(select movUltima from ExMovimentacao movUltima "
-						+ " where movUltima.idMov in ("
-						+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
+						+ " where movUltima.dtTimestamp = ("
+						+ " 	select max(movUltima1.dtTimestamp) from ExMovimentacao movUltima1"
 						+ " 		where movUltima1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movUltima1.exMovimentacaoCanceladora.idMov = null ) ), "
 						+ "(select movTramite from ExMovimentacao movTramite"
-						+ " where movTramite.idMov in ("
-						+ " 	select max(movTramite1.idMov) from ExMovimentacao movTramite1"
+						+ " where movTramite.dtTimestamp = ("
+						+ " 	select max(movTramite1.dtTimestamp) from ExMovimentacao movTramite1"
 						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
@@ -2283,6 +2312,19 @@ public class ExDao extends CpDao {
 		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
 		// 			/ 1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
+	}
+
+	
+	public ExModelo consultarModeloPeloNome(String nmMod) {
+		final Query query = em().createNamedQuery("consultarModeloPeloNome");
+
+		query.setParameter("nmMod", nmMod);
+		try {
+			List<ExModelo> modelos = query.getResultList(); 
+			return modelos.get(0);
+		} catch (Exception ne) {
+			return null;
+		}
 	}
 	
 

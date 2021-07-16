@@ -941,8 +941,12 @@ public class ExDocumentoController extends ExController {
 			final boolean exibeNomeAcesso = Prop.getBool("exibe.nome.acesso");
 
 			String s = "";
-			s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
-			s = " (" + s + ")";
+			if (Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc().getExModelo())) {
+				s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
+				s = " (" + s + ")";				
+			} else {
+				s = ".";
+			}
 			s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
 
 			String ERRO_INACESSIVEL_USUARIO;
@@ -1598,7 +1602,15 @@ public class ExDocumentoController extends ExController {
 			final UploadedFile arquivo) {
 		
 		final Ex ex = Ex.getInstance();
-		final ExBL exBL = ex.getBL();		
+		final ExBL exBL = ex.getBL();	
+		
+		if(exDocumentoDTO.getMobilPaiSel() != null && exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null && 
+					!Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto())) {
+			throw new AplicacaoException("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
+				+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
+				+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".");			
+		}
+		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null) {

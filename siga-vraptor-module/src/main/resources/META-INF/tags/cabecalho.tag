@@ -137,7 +137,7 @@ ${meta}
 		
 		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
 		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo')}" />
-		<c:set var="navbar_logo_size" value="38" />
+		<c:set var="navbar_logo_size" value="60" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible expanded" />
 		<c:set var="collapse_NivelAcesso" scope="request" value="collapsible expanded" />

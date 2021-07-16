@@ -198,9 +198,9 @@ public class Documento {
 				} else if (movAssinatura.getExDocumento().isExternoCapturado()
 						|| movAssinatura.getExDocumento().isInternoCapturado()) {
 					s.append(" - ");
-					s.append(movAssinatura.getTitular().getFuncaoString());
+					s.append(movAssinatura.getTitular() != null ? movAssinatura.getTitular().getFuncaoString() : movAssinatura.getCadastrante().getFuncaoString());
 					s.append(" / ");
-					s.append(movAssinatura.getTitular().getLotacao().getSigla());
+					s.append(movAssinatura.getTitular() != null ? movAssinatura.getTitular().getLotacao().getSigla() : movAssinatura.getCadastrante().getLotacao().getSigla());
 				}
 				/**** ****/
 				
@@ -268,6 +268,44 @@ public class Documento {
 		if (als.size() > 0) {
 			for (int i = 0; i < als.size(); i++) {
 				String nome = als.get(i);
+				if (i > 0) {
+					if (i == als.size() - 1) {
+						retorno += " e ";
+					} else {
+						retorno += ", ";
+					}
+				}
+				retorno += nome;
+			}
+		}
+		return retorno;
+	}
+
+	public static String getAssinantesPorString(Set<ExMovimentacao> movsAssinaturaPor, Date dtDoc,
+			Set<ExMovimentacao> movsAssinatura) {
+		ArrayList<String> als = getAssinantesStringListaComMatricula(movsAssinaturaPor,dtDoc);
+		String retorno = "";
+		if (als.size() > 0) {
+			for (int i = 0; i < als.size(); i++) {
+				String nome = als.get(i);
+				for (ExMovimentacao mov : movsAssinatura) {
+					if (mov.getCadastrante().getSigla().equals(nome.split(" - ")[1].split(" ")[0])) {
+						if (mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
+							|| mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
+							nome = "Assinado com senha por " + nome;
+							break;
+						}
+						if (mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+							|| mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
+							nome = "Assinado digitalmente por " + nome;
+							break;
+						}
+					}
+				}
 				if (i > 0) {
 					if (i == als.size() - 1) {
 						retorno += " e ";

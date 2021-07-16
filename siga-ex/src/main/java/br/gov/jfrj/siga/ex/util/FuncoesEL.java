@@ -1016,10 +1016,10 @@ public class FuncoesEL {
 				.podeAssinarComSenha(titular, lotaTitular, mob);
 	}
 
-	public static Boolean podeAssinarPorComSenha(DpPessoa titular,
+	public static Boolean podeAssinarPor(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeAssinarPorComSenha(titular, lotaTitular, mob);
+				.podeAssinarPor(titular, lotaTitular, mob);
 	}
 
 	public static Boolean deveAssinarComSenha(DpPessoa titular,

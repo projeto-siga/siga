@@ -215,6 +215,23 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return ac.podeAcessar(doc,titular,lotaTitular);
 //		return true;
 	}
+	
+	/**
+	 * Retorna se é possível exibir quem tem acesso a um documento limitado.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mod
+	 * @return
+	 */
+	public boolean podeExibirQuemTemAcessoAoDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExModelo mod) {
+
+		return getConf().podePorConfiguracao(null, null, null, null, mod.getExFormaDocumento(),
+				mod, null, null, null, titular.getCargo(), titular.getOrgaoUsuario(),
+				titular.getFuncaoConfianca(), lotaTitular, titular, null, null, 
+				CpTipoConfiguracao.TIPO_CONFIG_EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO,null,lotaTitular,null,null,null,null);
+	}
 
 
 	/**
@@ -1359,10 +1376,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return false; 
 	}
 
-	public boolean podeAssinarPorComSenha(final DpPessoa titular,
+	public boolean podeAssinarPor(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
-		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR,
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
@@ -4922,13 +4939,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) && getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 	}
 	
-	public boolean podeAssinarPorComSenha(final DpPessoa cadastrante,
+	public boolean podeAssinarPor(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante) {
 		return (getConf()
 				.podePorConfiguracao(
 						cadastrante,
 						lotaCadastrante,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
 	}
 

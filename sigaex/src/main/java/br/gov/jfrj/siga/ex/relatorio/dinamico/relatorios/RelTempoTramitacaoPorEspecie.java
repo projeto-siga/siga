@@ -25,8 +25,11 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
@@ -75,6 +78,19 @@ import net.sf.jasperreports.engine.JRException;
 
 		@Override
 		public Collection processarDados() throws Exception {
+			
+			Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+					"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+							+ "and lot.orgaoUsuario = "
+							+ parametros.get("orgaoUsuario")
+							+ " and lot.siglaLotacao = '"
+							+ parametros.get("lotacaoTitular") + "'");
+			DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+			DpPessoa titular = ExDao.getInstance().consultar(
+					new Long((String) parametros.get("idTit")), DpPessoa.class,
+					false);
+			
 
 			List<String> d = new ArrayList<String>();
 			List<List<String>> listDocs = new ArrayList<List<String>>();
@@ -203,54 +219,73 @@ import net.sf.jasperreports.engine.JRException;
 				obj = (Object[]) it.next();
 				ExMobil mob = (ExMobil) obj[0];
 				ExDocumento doc = (ExDocumento) mob.getDoc();
-				Long idDoc1 = doc.getIdDoc();
-				Long idMob1 = mob.getId();
-				ExMovimentacao mov1 = (ExMovimentacao) obj[1];
-				Long qtdDias = 0L;
-				Long qtdTram = 0L;
-				
-				while (it.hasNext()) {
-					idFormaDoc = obj[2].toString(); 
-					especie = obj[3].toString();
-					lotacao = obj[4].toString() + "/" + obj[5].toString(); 
-					modelo = obj[6].toString(); 
-					siglaDoc = doc.getSigla();
-					cadastrante = obj[7].toString() + obj[8].toString(); 
-					if (obj[9] != null) {
-						subscritor = obj[9].toString() + obj[10].toString(); 
-					} else {
-						subscritor = obj[7].toString() + obj[8].toString() + " (Autentic.)"; 
-					}
-
-					obj = (Object[]) it.next();
-					mob = (ExMobil) obj[0];
-					doc = (ExDocumento) mob.getDoc();
-					Long idMob2 = mob.getId();
-					Long idDoc2 = doc.getIdDoc();
-					ExMovimentacao mov2 = (ExMovimentacao) obj[1];
-					dtMov1 = getOnlyDate(mov1.getDtMov());
-					dtMov2 = getOnlyDate(mov2.getDtMov());
-					if (mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
-						dtCancel = getOnlyDate(mov1.getDtMov());
-					}
+				if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+							 doc,titular, lotaTitular)) {
+					Long idDoc1 = doc.getIdDoc();
+					Long idMob1 = mob.getId();
+					ExMovimentacao mov1 = (ExMovimentacao) obj[1];
+					Long qtdDias = 0L;
+					Long qtdTram = 0L;
 					
-					if (idDoc1 == idDoc2) {
-						if (idMob1 == idMob2) {
-							if (!(mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-									&& mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
-									&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
-									&& ((mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
-										|| tramitou)) {
-								if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE) { 
-									qtdTram += 1L;
+					while (it.hasNext()) {
+						idFormaDoc = obj[2].toString(); 
+						especie = obj[3].toString();
+						lotacao = obj[4].toString() + "/" + obj[5].toString(); 
+						modelo = obj[6].toString(); 
+						siglaDoc = doc.getSigla();
+						cadastrante = obj[7].toString() + obj[8].toString(); 
+						if (obj[9] != null) {
+							subscritor = obj[9].toString() + obj[10].toString(); 
+						} else {
+							subscritor = obj[7].toString() + obj[8].toString() + " (Autentic.)"; 
+						}
+	
+						obj = (Object[]) it.next();
+						mob = (ExMobil) obj[0];
+						doc = (ExDocumento) mob.getDoc();
+						Long idMob2 = mob.getId();
+						Long idDoc2 = doc.getIdDoc();
+						ExMovimentacao mov2 = (ExMovimentacao) obj[1];
+						dtMov1 = getOnlyDate(mov1.getDtMov());
+						dtMov2 = getOnlyDate(mov2.getDtMov());
+						if (mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+							dtCancel = getOnlyDate(mov1.getDtMov());
+						}
+						
+						if (idDoc1 == idDoc2) {
+							if (idMob1 == idMob2) {
+								if (!(mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
+										&& mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
+										&& ((mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
+											&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+											|| tramitou)) {
+									if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE) { 
+										qtdTram += 1L;
+									}
+									qtdDias += (dtMov2 - dtMov1);
+									tramitou = true;
 								}
-								qtdDias += (dtMov2 - dtMov1);
-								tramitou = true;
+							} else {
+								if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
+										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+									qtdTram += 1L;
+									if (dtCancel == 0) {
+										qtdDias += (getOnlyDate(new Date()) - dtMov1);
+									} else {
+										qtdDias += (dtCancel - dtMov1);
+									}
+								}
+								if (mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
+									|| mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {									
+									tramitou = false;
+								} else {
+									tramitou = true;
+								}
 							}
 						} else {
 							if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-									&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+								&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
 								qtdTram += 1L;
 								if (dtCancel == 0) {
 									qtdDias += (getOnlyDate(new Date()) - dtMov1);
@@ -258,64 +293,48 @@ import net.sf.jasperreports.engine.JRException;
 									qtdDias += (dtCancel - dtMov1);
 								}
 							}
-							if (mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-								|| mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {									
-								tramitou = false;
-							} else {
-								tramitou = true;
+							if (qtdTram != 0) {
+								addLinha(idFormaDoc, especie, lotacao, modelo, siglaDoc, cadastrante,
+										subscritor, qtdDias, listDocs);
 							}
+							qtdDias = 0L;
+							qtdTram = 0L;
+							dtCancel = 0L;
+							tramitou = false;
 						}
-					} else {
-						if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-							&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
-							qtdTram += 1L;
-							if (dtCancel == 0) {
-								qtdDias += (getOnlyDate(new Date()) - dtMov1);
-							} else {
-								qtdDias += (dtCancel - dtMov1);
-							}
+						if (gcCounter > 200) {
+							gcCounter = 0;
+							System.gc();
+						} else {
+							gcCounter += 1;
 						}
-						if (qtdTram != 0) {
-							addLinha(idFormaDoc, especie, lotacao, modelo, siglaDoc, cadastrante,
-									subscritor, qtdDias, listDocs);
+						mov1 = mov2;
+						idDoc1 = idDoc2;
+						idMob1 = idMob2;
+					}
+					// Grava e totaliza o ultimo documento / especie
+					siglaDoc = doc.getSigla();
+					if (obj[9] != null) {
+						subscritor = obj[9].toString() + obj[10].toString(); 
+					} else {
+						subscritor = obj[7].toString() + obj[8].toString() + " (Autentic.)"; 
+					}
+					ExMovimentacao mov2 = (ExMovimentacao) obj[1];
+					dtMov2 = getOnlyDate(mov2.getDtMov());
+					if (mov2.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {
+						qtdTram += 1L;
+						if (dtCancel == 0) {
+							qtdDias += (getOnlyDate(new Date()) - dtMov2);
+						} else {
+							qtdDias += (dtCancel - dtMov2);
 						}
-						qtdDias = 0L;
-						qtdTram = 0L;
-						dtCancel = 0L;
-						tramitou = false;
 					}
-					if (gcCounter > 200) {
-						gcCounter = 0;
-						System.gc();
-					} else {
-						gcCounter += 1;
+					if (qtdTram != 0) { 
+						addLinha(obj[2].toString(), obj[3].toString(), 
+								obj[4].toString() + "/" + obj[5].toString(), 
+								obj[6].toString(), siglaDoc, obj[7].toString() + obj[8].toString(),
+								subscritor, qtdDias, listDocs);
 					}
-					mov1 = mov2;
-					idDoc1 = idDoc2;
-					idMob1 = idMob2;
-				}
-				// Grava e totaliza o ultimo documento / especie
-				siglaDoc = doc.getSigla();
-				if (obj[9] != null) {
-					subscritor = obj[9].toString() + obj[10].toString(); 
-				} else {
-					subscritor = obj[7].toString() + obj[8].toString() + " (Autentic.)"; 
-				}
-				ExMovimentacao mov2 = (ExMovimentacao) obj[1];
-				dtMov2 = getOnlyDate(mov2.getDtMov());
-				if (mov2.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {
-					qtdTram += 1L;
-					if (dtCancel == 0) {
-						qtdDias += (getOnlyDate(new Date()) - dtMov2);
-					} else {
-						qtdDias += (dtCancel - dtMov2);
-					}
-				}
-				if (qtdTram != 0) { 
-					addLinha(obj[2].toString(), obj[3].toString(), 
-							obj[4].toString() + "/" + obj[5].toString(), 
-							obj[6].toString(), siglaDoc, obj[7].toString() + obj[8].toString(),
-							subscritor, qtdDias, listDocs);
 				}
 			}
 			if (listDocs.size() == 0) {

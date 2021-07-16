@@ -163,6 +163,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	
 	public static final long TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS = 54;
 
+	public static final long TIPO_CONFIG_EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO = 55;
+	
 	// SIGA-WF
 
 	public static final long TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO = 100;

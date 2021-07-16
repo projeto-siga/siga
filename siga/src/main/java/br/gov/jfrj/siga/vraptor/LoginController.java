@@ -169,7 +169,7 @@ public class LoginController extends SigaController {
 			if (usuarioSwap == null)
 				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
 			
-			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getCpfPessoa().toString(), true);
+			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getPessoaAtual().getCpfPessoa().toString(), true);
 			
 			boolean usuarioPermitido = false;
 			for (CpIdentidade identCpf : idsCpf) {

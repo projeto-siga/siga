@@ -677,16 +677,22 @@ public class WfProcedimento extends Objeto
 
 	public List<String> getTags() {
 		ArrayList<String> tags = new ArrayList<String>();
-		if (getProcessDefinition() != null)
-			tags.add("@" + Texto.slugify(getProcessDefinition().getNome(), true, true));
+		if (getProcessDefinition() != null) {
+			tags.add("@" + Texto.slugify(getProcessDefinition().getSiglaCompacta(), true, false));
+			tags.add("@" + Texto.slugify(getProcessDefinition().getNome(), true, false));
+		}
 		if (getCurrentTaskDefinition() != null && getCurrentTaskDefinition().getNome() != null)
-			tags.add("@" + Texto.slugify(getCurrentTaskDefinition().getNome(), true, true));
+			tags.add("@" + Texto.slugify(getCurrentTaskDefinition().getNome(), true, false));
 
+		return tags;
+	}
+
+	public String getAncora() {
 		if (getProcessDefinition().getNome() != null && getCurrentTaskDefinition() != null
 				&& getCurrentTaskDefinition().getNome() != null)
-			tags.add("^wf:" + Texto.slugify(
-					getProcessDefinition().getNome() + "-" + getCurrentTaskDefinition().getNome(), true, true));
-		return tags;
+			return "^wf:" + Texto.slugify(
+					getProcessDefinition().getSiglaCompacta() + "-" + getCurrentTaskDefinition().getNome(), true, false);
+		return null;
 	}
 
 	public Date getEventoData() {

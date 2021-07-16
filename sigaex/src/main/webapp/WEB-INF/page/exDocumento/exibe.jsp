@@ -1359,7 +1359,7 @@
             url: urlGc,
             type: "GET"
         }).fail(function(jqXHR, textStatus, errorThrown){
-        	if (errorThrown !== "Not Fount")
+        	if (errorThrown !== "Not Found")
         		$("#gc").html(errorThrown);
         }).done(function(data, textStatus, jqXHR ){
         	$("#gc").html(data); 

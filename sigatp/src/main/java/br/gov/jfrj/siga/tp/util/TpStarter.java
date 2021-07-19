@@ -30,7 +30,7 @@ public class TpStarter {
 
 	@PostConstruct
 	public void init() {
-		log.info("INICIANDO SIGATP.WAR");
+		log.info("INICIANDO sigatp.WAR");
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		emf = Persistence.createEntityManagerFactory("default");
 		new MigrationThread().start();

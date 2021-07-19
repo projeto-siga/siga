@@ -122,7 +122,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	private List<SrConfiguracao> designacoes;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_ITEM_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") })
+	@JoinTable(name = "sr_configuracao_item", schema = "sigasr", joinColumns = { @JoinColumn(name = "ID_ITEM_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") })
 	private List<SrConfiguracao> designacoesSet;
 
 	public SrItemConfiguracao() {

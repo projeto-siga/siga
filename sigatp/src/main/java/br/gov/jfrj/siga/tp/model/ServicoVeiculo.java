@@ -52,7 +52,7 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 
 	@Id
 	@GeneratedValue(generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="sigatp.hibernate_sequence")
 	private Long id;
 
 	@Sequence(propertieOrgao="cpOrgaoUsuario",siglaDocumento=SiglaDocumentoType.STP)

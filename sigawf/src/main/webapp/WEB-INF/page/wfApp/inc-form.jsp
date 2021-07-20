@@ -1,29 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <div>
-	<div>
-		<c:if
-			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-			<span id="gc-ancora"></span>
-		</c:if>
-
-
-		<c:if
-			test="${false and not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-			<span id="desc_ver"> <c:choose>
-					<c:when test="${not empty task.descricao}">
-						<c:if test="${task.conhecimentoEditavel}">
-							<a style="float: right; margin-left: 15px; margin-bottom: 15px;"
-								title="Editar a descrição"
-								href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';"><img
-								src="/siga/css/famfamfam/icons/pencil.png"> </a>
-						</c:if>${task.descricao}</c:when>
-					<c:otherwise>Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
-							href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';">aqui</a> para contribuir.</c:otherwise>
-				</c:choose>
-			</span>
-		</c:if>
-	</div>
 	<c:set var="msgAviso" value="${pi.getMsgAviso(titular, lotaTitular)}" />
 	<c:if test="${not pi.isDesabilitarFormulario(titular, lotaTitular) and empty msgAviso}">
 		<div class="gt-form-row gt-width-100">

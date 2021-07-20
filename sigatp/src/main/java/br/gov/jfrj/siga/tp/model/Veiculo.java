@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.tp.util.Situacao;
 import br.gov.jfrj.siga.tp.validation.annotation.Chassi;
@@ -54,7 +55,7 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 
 	@NotNull
@@ -323,7 +324,7 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	@SuppressWarnings("unchecked")
 	public static List<Veiculo> listarDisponiveis(String dataSaida, Long idMissao, Long idOrgao) {
 		List<Veiculo> veiculos;
-		String dataFormatadaOracle = "to_date('" + dataSaida + "', 'DD/MM/YYYY HH24:mi')";
+		String dataFormatadaOracle = FormatarDataHora.retorna_DataeHora(dataSaida);
 		String qrl = "SELECT v FROM Veiculo v where " + " v.situacao = '" + Situacao.Ativo.toString() + "' " + " AND v.cpOrgaoUsuario.id in  " + "(SELECT cp.id FROM CpOrgaoUsuario cp"
 				+ " WHERE  cp.id = " + idOrgao + ")" + " AND v.id not in " + "(SELECT s.veiculo.id FROM ServicoVeiculo s" + " WHERE  s.veiculo.id = v.id" + " AND   s.dataHoraInicio <= "
 				+ dataFormatadaOracle + " AND    (s.dataHoraFim = NULL " + " OR    s.dataHoraFim >= " + dataFormatadaOracle + "))" + " AND   v.id not in" + "(SELECT m.veiculo.id FROM Missao m"

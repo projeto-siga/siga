@@ -108,6 +108,14 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		return result;
 	}
 
+	public List<WfProcedimento> consultarProcedimentosAtivosPorPrincipal(String principal) {
+		String sql = "select p from WfProcedimento p where p.hisDtFim is null and p.principal = :principal";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("principal", principal);
+		List<WfProcedimento> result = query.getResultList();
+		return result;
+	}
+
 	public void gravarInstanciaDeProcedimento(WfProcedimento pi) {
 		SortedSet<Sincronizavel> setDepois = new TreeSet<>();
 		SortedSet<Sincronizavel> setAntes = new TreeSet<>();

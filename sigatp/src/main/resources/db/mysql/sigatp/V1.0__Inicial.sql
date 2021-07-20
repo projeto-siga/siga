@@ -1472,7 +1472,7 @@ Insert into sigatp.grupoveiculo (id,caracteristicas,finalidade,letra,nome) value
 
 -- finalidade 'OUTRA'
 
-insert into sigatp.finalidaderequisicao (id, descricao, id_orgao_ori) values (-1, 'OUTRA', 9999999999);
+insert into sigatp.finalidaderequisicao (id, descricao, id_orgao_ori) values (-1, 'OUTRA', 999999999);
 
 -- parametro: mostrar tipo de passageiro 'CARGA'?
 

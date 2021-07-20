@@ -693,7 +693,7 @@
 			var liMod = "<li class='dropdown-item' data-value='" + item.idModelo
 				+ "' data-level='" + item.level + "' data-search='" + item.descr + "' "
 				+ (item.group ? 'data-group ' : '')
-				+ (item.selected ? 'data-default-selected ' : '') + ">";
+				+ (item.idModelo == '${exDocumentoDTO.idMod}' ? 'data-default-selected ' : '') + ">";
 			if (item.group) {
 				liMod = liMod + "<a href='#'>" + item.nome + "</a></li>";
 			} else {

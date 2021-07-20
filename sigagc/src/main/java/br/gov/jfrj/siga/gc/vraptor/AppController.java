@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.gc.vraptor;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -285,7 +286,7 @@ public class AppController extends GcController {
 			for (String s : tags) {
 				if (classificacao.length() > 0)
 					classificacao.append(", ");
-				classificacao.append(s);
+				classificacao.append(URLEncoder.encode(s, "UTF-8"));
 			}
 		}
 		// Necessário para criar um novo conhecimento a partir de um já
@@ -655,9 +656,10 @@ public class AppController extends GcController {
 	 * ); }
 	 */
 
-	@Path({ "/app/novo" })
-	public void novo() throws Exception {
-		result.forwardTo(this).editar(null, null, null, null, null, null);
+	@Path("/app/novo")
+	public void novo(String classificacao, String inftitulo, String origem, String conteudo, GcTipoInformacao tipo)
+			throws Exception {
+		result.forwardTo(this).editar(null, classificacao, inftitulo, origem, conteudo, tipo);
 	}
 
 	@Path({ "/app/editar/{sigla}", "/app/editar/" })
@@ -668,13 +670,6 @@ public class AppController extends GcController {
 		DpLotacao lotaTitular = getLotaTitular();
 
 		if (sigla != null) {
-			// Evita erro de edição de conhecimentos em várias abas do navegador,
-			// garantindo que seja editado o conhecimento passado na URL.
-//			String uri = getRequest().getRequestURI();		
-//			String siglaConhecimentoAEditar = uri.substring(uri.lastIndexOf("/")+1);
-//			if(siglaConhecimentoAEditar != sigla) 
-//				informacao = GcInformacao.findBySigla(siglaConhecimentoAEditar);
-//			else
 			informacao = GcInformacao.findBySigla(sigla);
 		} else
 			informacao = new GcInformacao();
@@ -1354,12 +1349,10 @@ public class AppController extends GcController {
 	@Path("/app/cancelar/{sigla}")
 	public void cancelar(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		bl.cancelar(informacao, getIdentidadeCadastrante(), getTitular(),
-				getLotaTitular());
+		bl.cancelar(informacao, getIdentidadeCadastrante(), getTitular(), getLotaTitular());
 		bl.atualizarInformacaoPorMovimentacoes(informacao);
 		bl.atualizarMarcas(informacao);
-		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null,
-				false, false);
+		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null, false, false);
 	}
 
 	@Path("/app/tag/selecionar")

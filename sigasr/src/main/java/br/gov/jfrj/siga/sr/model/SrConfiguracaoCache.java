@@ -77,20 +77,20 @@ public class SrConfiguracaoCache extends CpConfiguracaoCache {
 	public boolean atributoObrigatorio;
 	
     @ManyToMany(fetch = FetchType.LAZY)
-    public @JoinTable(name = "SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ITEM_CONFIGURACAO") }) List<SrItemConfiguracao> itemConfiguracaoSet;
+    public @JoinTable(name = "sr_configuracao_item", schema = "sigasr", joinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ITEM_CONFIGURACAO") }) List<SrItemConfiguracao> itemConfiguracaoSet;
     
 //    @Transient
 //    private SrAcao acaoFiltro;
     
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "SR_CONFIGURACAO_ACAO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACAO") })
+    @JoinTable(name = "sr_configuracao_acao", schema = "sigasr", joinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACAO") })
     public List<SrAcao> acoesSet;
     
 //    @Enumerated
 //    public SrPrioridade prioridade;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema = "SIGASR") 
+    @JoinTable(name = "sr_configuracao_permissao", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema = "sigasr") 
     public List<SrTipoPermissaoLista> tipoPermissaoSet;
 
     @Enumerated

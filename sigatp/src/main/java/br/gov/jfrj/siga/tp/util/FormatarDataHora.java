@@ -21,4 +21,20 @@ public class FormatarDataHora {
     public static String formatarData(Calendar data)  {
         return String.format("%02d", data.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d", data.get(Calendar.MONTH) + 1) + "/" + String.format("%04d", data.get(Calendar.YEAR));
     }
+    
+	public static String retorna_DataeHora(String dataSaida) {
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL")) {
+			return "STR_TO_DATE('" + dataSaida + "', '%d/%m/%y %H:%i')";
+		}
+		return "to_date('" + dataSaida + "', 'DD/MM/YYYY HH24:MI')";
+	}
+	
+	public static String retorna_DataeHoraeSegundo(String dataSaida) {
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL")) {
+			return "STR_TO_DATE('" + dataSaida + "', '%d/%m/%y %H:%i:%s')";
+		}
+		return "to_date('" + dataSaida + "', 'DD/MM/YYYY HH24:MI:SS')";
+	}
 }

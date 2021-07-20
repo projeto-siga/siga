@@ -36,6 +36,15 @@
 					<div class="card-header">Dados da Definição de Procedimento</div>
 					<div class="card-body">
 						<p>
+							<b>Tipo de Principal:</b> ${pd.tipoDePrincipal.descr}
+						</p>
+						<c:if test="${pd.tipoDePrincipal != 'NENHUM'}">
+							<p>
+								<b>Vínculo com Principal:</b>
+								${pd.tipoDeVinculoComPrincipal.descr}
+							</p>
+						</c:if>
+						<p>
 							<b>Descrição:</b> ${pd.descr}
 						</p>
 						<p>

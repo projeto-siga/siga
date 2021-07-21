@@ -1508,7 +1508,7 @@ public class ExMovimentacaoController extends ExController {
 						.podeReceber(getTitular(), getLotaTitular(), mob)) {
 					Ex.getInstance()
 							.getBL()
-							.receber(getCadastrante(), getLotaTitular(), mob,
+							.receber(getCadastrante(), getTitular(), getLotaTitular(), mob,
 									mov.getDtMov());
 				}
 			}
@@ -1734,7 +1734,7 @@ public class ExMovimentacaoController extends ExController {
 
 		Ex.getInstance()
 				.getBL()
-				.receber(getCadastrante(), getLotaTitular(), builder.getMob(),
+				.receber(getCadastrante(), getTitular(), getLotaTitular(), builder.getMob(),
 						mov.getDtMov());
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
@@ -1978,7 +1978,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final DpPessoaSelecao responsavelSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
-			final String obsOrgao, final String protocolo) throws Exception {
+			final String obsOrgao, final String protocolo, final Long tipoTramite) throws Exception {
 		this.setPostback(postback);
 
 		if(dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
@@ -2149,7 +2149,7 @@ public class ExMovimentacaoController extends ExController {
 						mov.getSubscritor(), mov.getTitular(),
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
 						movimentacaoBuilder.getConteudo(),
-						mov.getNmFuncaoSubscritor(), false, false);
+						mov.getNmFuncaoSubscritor(), false, false, tipoTramite);
 
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()
@@ -2757,7 +2757,7 @@ public class ExMovimentacaoController extends ExController {
 									mov.getSubscritor(), mov.getTitular(), //
 									tpd, false, txt, null, //
 									mov.getNmFuncaoSubscritor(), false, //
-									false);
+									false, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 				}
 			} catch (AplicacaoException e) {
 				MapMensagens.put(nmobil, e);

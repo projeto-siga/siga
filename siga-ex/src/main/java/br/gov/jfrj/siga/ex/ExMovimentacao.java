@@ -832,6 +832,16 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
+	 * verifica se uma movimentação tem referência a alguma outra.
+	 * 
+	 * @return Verdadeiro se a movimentação está cancelada e Falso caso
+	 *         contrário.
+	 */
+	public boolean isReferenciando() {
+		return getExMovimentacaoRef() != null;
+	}
+
+	/**
 	 * verifica se uma movimentação é canceladora, ou seja, se é do tipo
 	 * Cancelamento de Movimentação.
 	 * 

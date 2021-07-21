@@ -211,6 +211,11 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 	
 	final static public long TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO = 79;
 	
+	final static public long TIPO_MOVIMENTACAO_TRAMITE_PARALELO = 80;
+
+	final static public long TIPO_MOVIMENTACAO_NOTIFICACAO = 81;
+
+	
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO

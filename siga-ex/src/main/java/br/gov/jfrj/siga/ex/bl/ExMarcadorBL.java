@@ -26,6 +26,7 @@ import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
 public class ExMarcadorBL {
 	private ExMobil mob;
@@ -253,6 +254,8 @@ public class ExMarcadorBL {
 		if (mob.isVia()) 
 			marcacoes.addAll(mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 
+		Set<PessoaLotacaoParser> atendentes = mob.getAtendente();
+
 		// Marcações gerais
 		for (ExMovimentacao mov : marcacoes) {
 			CpMarcador marcador = mov.getMarcador(); 
@@ -306,18 +309,17 @@ public class ExMarcadorBL {
 			if (marcador.getIdFinalidade().getGrupo() == CpMarcadorFinalidadeGrupoEnum.PASTA) {
 				if (!mob.isAguardandoAndamento())
 					continue;
-				fPasta = true;
+				// fPasta = true;
 			}
 			
 			// Se a finalidade especificar que não é para incluir a marca quando está arquivado
  			if (marcador.getIdFinalidade().isArquivarOcultaAMarca() && mob.isArquivado())
 				continue;
 			
-			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes,	lot, mov);
+			acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes, lot, mov);
 		}
 		
 		if (!fPasta && mob.isAguardandoAndamento()) {
-			DpLotacao lotaAtendente = mob.getAtendente().getLotacao();
 			if (lotaAtendente != null) {
 				CpMarcador mpp = ExDao.getInstance().obterPastaPadraoDaLotacao(lotaAtendente);
 				if (mpp != null) 

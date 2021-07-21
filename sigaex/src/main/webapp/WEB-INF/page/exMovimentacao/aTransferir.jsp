@@ -147,6 +147,18 @@ $(function(){
 							</c:choose></td>
 						</div>
 					</div>
+				</div>	
+				<div class="row">
+					<div class="col col-3">
+						<div class="form-group">
+							<label>Tipo de Tramite</label> 
+							<select name="tipoTramite" class="form-control" >
+								<option value="3">Tramitar para destinatário</option>  
+								<option value="80">Manter comigo e também tramitar para destinatário</option>  
+								<option value="81">Manter comigo e apenas notificar destinatário</option>  
+							</select> 
+						</div>
+					</div>
 				</div>				
 				<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="row">

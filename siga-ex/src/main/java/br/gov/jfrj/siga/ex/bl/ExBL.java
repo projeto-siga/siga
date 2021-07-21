@@ -1681,7 +1681,7 @@ public class ExBL extends CpBL {
 			transferir(doc.getOrgaoExternoDestinatario(), doc.getObsOrgao(), cadastrante, lotaCadastrante,
 					doc.getPrimeiroMobil().getMobilPrincipal(), null, null, null, doc.getLotaDestinatario(),
 					doc.getDestinatario(), null, null, assinante, assinante, null, false, null, null, null, false,
-					false);
+					false, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 		}
 	}
 
@@ -4439,7 +4439,7 @@ public class ExBL extends CpBL {
 
 	// Nato: removi , final DpPessoa subscritor, final DpPessoa responsavel,
 	// pois nao eram utilizados
-	public void receber(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+	public void receber(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,
 			final Date dtMov) throws AplicacaoException {
 
 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
@@ -4464,17 +4464,29 @@ public class ExBL extends CpBL {
 				}
 				
 				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
-						cadastrante, lotaCadastrante, m, dtMov, cadastrante, null, null, null, null);
+						cadastrante, lotaTitular, m, dtMov, titular, null, null, null, null);
 
-				final ExMovimentacao ultMov = m.getUltimaMovimentacao();
-				if (ultMov.getDestinoFinal() != mov.getSubscritor()) {
-					mov.setDestinoFinal(ultMov.getDestinoFinal());
-					mov.setLotaDestinoFinal(ultMov.getLotaDestinoFinal());
+				Set<ExMovimentacao> tramitesPendentes = mob.getTramitesPendentes();
+				
+				// Localiza o tramite que será recebido
+				ExMovimentacao tramite = null;
+				for (ExMovimentacao t : tramitesPendentes) {
+					if ((t.getLotaDestinoFinal() != null && t.getLotaDestinoFinal().equivale(lotaTitular)) 
+							|| (t.getDestinoFinal() != null && t.getDestinoFinal().equivale(titular))) {
+						tramite = t;
+						break;
+					}
 				}
+
+				if (tramite == null)
+					throw new AplicacaoException("Não foi encontrado nenhum trâmite pendente para o usuário correte ou sua lotação");
+				
+				mov.setDestinoFinal(tramite.getDestinoFinal());
+				mov.setLotaDestinoFinal(tramite.getLotaDestinoFinal());
 
 				// Marcação deve ser removida só se a lotação estiver sendo alterada
 				if (movAnterior != null && movAnterior.getMarcador() != null) {
-					if (movAnterior.getMarcador().getDpLotacaoIni() != null	&& movAnterior.getMarcador().getDpLotacaoIni().equivale(ultMov.getLotaResp())) {
+					if (movAnterior.getMarcador().getDpLotacaoIni() != null	&& movAnterior.getMarcador().getDpLotacaoIni().equivale(tramite.getLotaResp())) {
 						movAnterior = null;
 					}
 				}
@@ -4519,7 +4531,7 @@ public class ExBL extends CpBL {
 
 		// Nato: alterei para chamar a receber, pois temos que criar uma
 		// movimentacao para influenciar no calculo dos marcadores
-		receber(null, null, mov.getExMobil(), null);
+		receber(null, null, null, mov.getExMobil(), null);
 
 	}
 
@@ -4671,7 +4683,7 @@ public class ExBL extends CpBL {
 			DpLotacao lotaResp, ExMobil mob) throws Exception {
 
 		transferir(null, null, cadastrante, lotaCadastrante, mob, null, null, null, lotaResp, resp, null, null, null,
-				null, null, false, null, null, null, false, true);
+				null, null, false, null, null, null, false, true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 	}
 
 	/**
@@ -4707,7 +4719,7 @@ public class ExBL extends CpBL {
 			final Date dtFimMov, DpLotacao lotaResponsavel, final DpPessoa responsavel,
 			final DpLotacao lotaDestinoFinal, final DpPessoa destinoFinal, final DpPessoa subscritor,
 			final DpPessoa titular, final ExTipoDespacho tpDespacho, final boolean fInterno, final String descrMov,
-			final String conteudo, String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico) {
+			final String conteudo, String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico, final Long tipoTramite) {
 
 		boolean fDespacho = tpDespacho != null || descrMov != null || conteudo != null;
 
@@ -4819,11 +4831,19 @@ public class ExBL extends CpBL {
 					else
 						idTpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA;
 				}
+				
+				// Aplica o tipo correto de trâmite
+				if (idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
+						&& (tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 
+						|| tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)) 
+					idTpMov = tipoTramite;
 
 				// se não for apensado, pode.
 				// se for apenas tranferência, pode.
 				if (m.equals(mob) || idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
-						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
+						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
+						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO
+						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
 					final ExTipoMovimentacao tpmov = dao().consultar(idTpMov, ExTipoMovimentacao.class, false);
 
 					ExMovimentacao mov = criarNovaMovimentacaoTransferencia(tpmov.getIdTpMov(), cadastrante,

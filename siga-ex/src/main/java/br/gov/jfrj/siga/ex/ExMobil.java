@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -2317,28 +2319,66 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return false;
 	}
 	
-	public PessoaLotacaoParser getAtendente() {
+	public Set<PessoaLotacaoParser> getAtendente() {
+		Set<PessoaLotacaoParser> set = new HashSet<>();
 		DpPessoa resp = doc().getCadastrante();
 		DpLotacao lotaResp = doc().getLotaCadastrante();
 		
-		ExMovimentacao ultimaMovimentacaoNaoCancelada = getUltimaMovimentacaoNaoCancelada();
-		if (doc().isFinalizado() && !isGeral() && ultimaMovimentacaoNaoCancelada != null) {
-			DpPessoa pes = ultimaMovimentacaoNaoCancelada.getResp();
-			DpLotacao lot = ultimaMovimentacaoNaoCancelada.getLotaResp();
-			if (pes != null || lot != null) {
-				resp = pes;
-				lotaResp = lot;
+		Set<ExMovimentacao> movSet = getExMovimentacaoSet();
+		if (doc().isFinalizado() && !isGeral() && movSet != null || movSet.size() > 0) {
+			ExMovimentacao movReturn = null;
+			for (ExMovimentacao mov : movSet) {
+				if (mov.isCancelada() || mov.isCanceladora())
+					continue;
+				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO
+						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
+					DpPessoa pes = mov.getResp();
+					DpLotacao lot = mov.getLotaResp();
+					if (pes != null || lot != null) {
+						set.add(new PessoaLotacaoParser(pes, lot));
+					}
+				}
 			}
 		}
-		return new PessoaLotacaoParser(resp, lotaResp);
+		return set; 
 	}
 	
 	public boolean isAtendente(DpPessoa pessoa, DpLotacao lotacao) {
-		PessoaLotacaoParser pl = getAtendente();
-		if (pl.getPessoa() != null && pl.getPessoa().equivale(pessoa))
-			return true;
-		if (pl.getLotacao() != null && pl.getLotacao().equivale(lotacao))
-			return true;
+		Set<PessoaLotacaoParser> set = getAtendente();
+		for (PessoaLotacaoParser pl : set) {
+			if (pl.getPessoa() != null && pl.getPessoa().equivale(pessoa))
+				return true;
+			if (pl.getLotacao() != null && pl.getLotacao().equivale(lotacao))
+				return true;
+		}
 		return false;
 	}
+
+	public Set<ExMovimentacao> getTramitesPendentes() {
+		Set<ExMovimentacao> set = new HashSet<>();
+		DpPessoa resp = doc().getCadastrante();
+		DpLotacao lotaResp = doc().getLotaCadastrante();
+		
+		Set<ExMovimentacao> movSet = getExMovimentacaoSet();
+		if (doc().isFinalizado() && !isGeral() && movSet != null || movSet.size() > 0) {
+			ExMovimentacao movReturn = null;
+			for (ExMovimentacao mov : movSet) {
+				if (mov.isCancelada() || mov.isCanceladora())
+					continue;
+				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO
+						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
+					if (!mov.isReferenciando())
+						set.add(mov);
+				}
+				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
+					if (!mov.isReferenciando())
+						set.clear();
+				}
+			}
+		}
+		return set; 
+	}
+	
 }

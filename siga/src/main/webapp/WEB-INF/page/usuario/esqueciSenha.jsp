@@ -261,7 +261,7 @@ function refreshWindow(){
 							<div class="row">
 								<div class="col-sm-3">
 									<div class="form-group">
-										<label for="usuario.matricula">Matrícula</label>					
+										<label for="usuario.matricula">Login</label>
 										<input type="text" name="usuario.matricula" id="txtMatricula"
 											onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);javascript:checkEmailValido(this);" 
 											class="form-control" />

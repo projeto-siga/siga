@@ -6,53 +6,77 @@
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <style>
-#passwordStrengthMet1, #passwordStrengthMet2 {
-	height: 10px;
-	display: block;
-	float: left;
-}
-
-.strength0 {
-	width: 250px;
-	background: #cccccc;
-}
-
-.strength1 {
-	width: 50px;
-	background: #ff0000;
-}
-
-.strength2 {
-	width: 100px;
-	background: #ff5f5f;
-}
-
-.strength3 {
-	width: 150px;
-	background: #56e500;
-}
-
-.strength4 {
-	background: #4dcd00;
-	width: 200px;
-}
-
-.strength5 {
-	background: #399800;
-	width: 250px;
-}
-
-.email-invalido {
-	display: block;
-	color: red;
-	font-style: bold;
-}
-
-.oculto {
-	display: none;
-}
-
-
+	#passwordStrengthMet1, #passwordStrengthMet2 {
+		height: 10px;
+		display: block;
+		float: left;
+	}
+	
+	.strength0 {
+		width: 250px;
+		background: #cccccc;
+	}
+	
+	.strength1 {
+		width: 50px;
+		background: #ff0000;
+	}
+	
+	.strength2 {
+		width: 100px;
+		background: #ff5f5f;
+	}
+	
+	.strength3 {
+		width: 150px;
+		background: #56e500;
+	}
+	
+	.strength4 {
+		background: #4dcd00;
+		width: 200px;
+	}
+	
+	.strength5 {
+		background: #399800;
+		width: 250px;
+	}
+	
+	.email-invalido {
+		display: block;
+		color: red;
+		font-style: bold;
+	}
+	
+	.oculto {
+		display: none;
+	}
+	
+	#table-wrapper {
+	  position:relative;
+	}
+	
+	#table-scroll {
+	  height:250px;
+	  overflow:auto;  
+	  margin-top:30px;
+	  border: 1px solid #6bb8d3;
+      padding: 10px;
+	}
+	
+	#table-wrapper table {
+	  width:100%;
+	  font-size:12px;
+	}
+	
+	#table-wrapper table thead th .text {
+	  position:absolute;   
+	  top:-20px;
+	  z-index:2;
+	  height:20px;
+	  width:35%;
+	  border:1px solid red;
+	}
 </style>
 
 <script type="text/javascript" language="Javascript1.1">
@@ -273,6 +297,285 @@ function refreshWindow(){
 										<p><fmt:message key = "usuario.helpnovousuario"/></p>
 									</div>
 								</div>
+								
+								<div class="col-sm-5">
+									<div class="form-group">
+										<div id="table-wrapper">
+											<div id="table-scroll">
+												<table>
+												<tbody>
+												<tr>
+												<td><strong>NOME&nbsp; </strong></td>
+												<td width="53"><strong>SIGLA</strong></td>
+												<td width="57"><strong>&nbsp;&nbsp; FM</strong></td>
+												</tr>
+												<tr>
+												<td>Agência de Fomento do Município do Rio de Janeiro S.A. / FOMENTA RIO</td>
+												<td width="53">FOM</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Centro de Feiras, Exposições e Congressos do Rio de Janeiro / RIO CENTRO S.A.</td>
+												<td width="53">CEN</td>
+												<td width="57">1</td>
+												</tr>
+												<tr>
+												<td>Companhia Carioca de Securitização / RIO SECURITIZAÇÃO</td>
+												<td width="53">RSC</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Companhia de Desenvolvimento Urbano da Região do Porto do Rio de Janeiro / CDURP</td>
+												<td width="53">POR</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Companhia de Engenharia de Tráfego do Rio de Janeiro / CETRIO</td>
+												<td width="53">CET</td>
+												<td width="57">1</td>
+												</tr>
+												<tr>
+												<td>Companhia Municipal de Energia e Iluminação / RIOLUZ</td>
+												<td width="53">LUZ</td>
+												<td width="57">2</td>
+												</tr>
+												<tr>
+												<td>Companhia Municipal de Limpeza Urbana / COMLURB</td>
+												<td width="53">CLB</td>
+												<td width="57">4</td>
+												</tr>
+												<tr>
+												<td>Controladoria Geral do Município do Rio de Janeiro / CGM</td>
+												<td width="53">CGM</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Distribuidora de Filmes S.A. / RIOFILME</td>
+												<td width="53">FIL</td>
+												<td width="57">1</td>
+												</tr>
+												<tr>
+												<td>Empresa de Turismo do Município do Rio de Janeiro / RIOTUR</td>
+												<td width="53">TUR</td>
+												<td width="57">2</td>
+												</tr>
+												<tr>
+												<td>Empresa Municipal de Artes Gráficas S.A. / IMPRENSA DA CIDADE</td>
+												<td width="53">IC</td>
+												<td width="57">4</td>
+												</tr>
+												<tr>
+												<td>Empresa Municipal de Informática S.A. / IPLANRIO</td>
+												<td width="53">IPL</td>
+												<td width="57">2</td>
+												</tr>
+												<tr>
+												<td>Empresa Municipal de Multimeios Ltda. / MULTIRIO</td>
+												<td width="53">MUL</td>
+												<td width="57">1</td>
+												</tr>
+												<tr>
+												<td>Empresa Municipal de Urbanização / RIO-URBE</td>
+												<td width="53">URB</td>
+												<td width="57">3</td>
+												</tr>
+												<tr>
+												<td>Empresa Pública de Saúde do Rio de Janeiro S/A / RIOSAUDE</td>
+												<td width="53">RSU</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Fundação Cidade das Artes / CIDADE DAS ARTES</td>
+												<td width="53">ART</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Fundação Instituto das Águas do Município do Rio de Janeiro / RIOAGUAS</td>
+												<td width="53">AGU</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Fundação Instituto de Geotécnica do Município do Rio de Janeiro / GEORIO</td>
+												<td width="53">GEO</td>
+												<td width="57">1</td>
+												</tr>
+												<tr>
+												<td>Fundação Jardim Zoológico da Cidade do Rio de Janeiro / RIOZOO</td>
+												<td width="53">ZOO</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Fundação Parques e Jardins / FPJ</td>
+												<td width="53">FPJ</td>
+												<td width="57">1</td>
+												</tr>
+												<tr>
+												<td>Fundação Planetário da Cidade do Rio de Janeiro / PLANETÁRIO</td>
+												<td width="53">PLA</td>
+												<td width="57">3</td>
+												</tr>
+												<tr>
+												<td>Gabinete do Prefeito / GBP</td>
+												<td width="53">GAB</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Guarda Municipal do Rio de Janeiro / GMRIO</td>
+												<td width="53">GM</td>
+												<td width="57">2</td>
+												</tr>
+												<tr>
+												<td>Instituto de Previdência e Assistência do Município do Rio de Janeiro / PREVIRIO</td>
+												<td width="53">PVR</td>
+												<td width="57">1</td>
+												</tr>
+												<tr>
+												<td>Instituto Municipal de Urbanismo Pereira Passos / IPP</td>
+												<td width="53">IPP</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Prefeitura da Cidade do Rio de Janeiro / PCRJ</td>
+												<td width="53">RIO</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Procuradoria Geral do Município do Rio de Janeiro / PGM</td>
+												<td width="53">PGM</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Especial da Juventude Carioca / JUV-RIO</td>
+												<td width="53">JUV</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Especial de Ação Comunitária / SEAC-RIO</td>
+												<td width="53">COM</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Especial de Cidadania / SECID</td>
+												<td width="53">CID</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Especial de Políticas e Promoção da Mulher / SPM-RIO</td>
+												<td width="53">LHE</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Mun. de Desenvolvimento Econômico, Inovação e Simplificação / SMDEIS</td>
+												<td width="53">EIS</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal da Pessoa com Deficiência / SMPD</td>
+												<td width="53">DEF</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Assistência Social / SMAS</td>
+												<td width="53">ASS</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Ciência e Tecnologia / SMCT</td>
+												<td width="53">TEC</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Conservação / SECONSERVA</td>
+												<td width="53">CSV</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Cultura / SMC</td>
+												<td width="53">SMC</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Educação / SME</td>
+												<td width="53">SME</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Esportes / SMEL</td>
+												<td width="53">ESL</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Fazenda e Planejamento / SMFP</td>
+												<td width="53">SMF</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Governo e Integridade Pública / SEGOVI</td>
+												<td width="53">GOV</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Habitação / SMH</td>
+												<td width="53">HBT</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Infraestrutura / SMI</td>
+												<td width="53">IFR</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Meio Ambiente da Cidade / SMAC</td>
+												<td width="53">MAB</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Ordem Pública / SEOP</td>
+												<td width="53">EOP</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Planejamento Urbano / SMPU</td>
+												<td width="53">SMU</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Proteção e Defesa dos Animais / SMPDA</td>
+												<td width="53">ANI</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Saúde / SMS</td>
+												<td width="53">SMS</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Trabalho e Renda / SMTE</td>
+												<td width="53">TRA</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal de Transportes / SMTR</td>
+												<td width="53">MTR</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Secretaria Municipal do Envelhecimento Saudável, Qualidade de Vida / SEMESQV</td>
+												<td width="53">QVE</td>
+												<td width="57"></td>
+												</tr>
+												<tr>
+												<td>Vice-Prefeitura</td>
+												<td width="53">VP</td>
+												<td width="57">&nbsp;</td>
+												</tr>
+												</tbody>
+												</table>	
+											</div>
+										</div>
+									</div>
+								</div>
+								
 							</div>
 							<div id="painel-dados-usuario">
 								<div class="row">
@@ -443,5 +746,10 @@ function refreshWindow(){
 				</c:if>				
 			</div>
 		</div>
-	</div>		
+	</div>
+
+
+
+
+
 </siga:pagina>

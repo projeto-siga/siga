@@ -29,7 +29,7 @@ public class ModelosListaHierarquicaGet implements IModelosListaHierarquicaGet {
 		boolean isAutuando = (req.isAutuando != null && req.isAutuando ? true : false);
 
 		if (req.siglaMobPai != null) {
-			mobPai = ctx.buscarEValidarMobil(req.siglaMobPai, req, resp, "Documento Pai");
+			mobPai = ctx.buscarMobil(req.siglaMobPai, req, resp, "Documento Pai");
 		}
 		DpPessoa titular = ctx.getTitular();
 		DpLotacao lotaTitular = ctx.getLotaTitular();

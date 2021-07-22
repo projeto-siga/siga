@@ -69,6 +69,14 @@
 	  font-size:12px;
 	}
 	
+    #table-wrapper tr:nth-child(even) {
+        background: #ccc;
+    }
+    
+    #table-wrapper tr:nth-child(odd) {
+        background: #fff;
+    }
+    
 	#table-wrapper table thead th .text {
 	  position:absolute;   
 	  top:-20px;

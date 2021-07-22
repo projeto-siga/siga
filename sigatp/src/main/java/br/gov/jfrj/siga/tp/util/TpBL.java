@@ -72,7 +72,9 @@ public class TpBL {
 		try {
 			CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(t_cfgConfigExemplo, new int[] {CpConfiguracaoBL.COMPLEXO},
 					null);
-			cpConf = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
+			if (cache != null) {
+				cpConf = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

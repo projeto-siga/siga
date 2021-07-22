@@ -476,7 +476,7 @@ public class RequisicaoController extends TpController {
         result.include("esconderBotoes", true);
     }
 
-    @Path("/buscarPelaSequence/{popUp}/{sequence*}")
+    @Path("/buscarPelaSequence")
     public void buscarPelaSequence(boolean popUp, String sequence) throws Exception  {
         RequisicaoTransporte requisicaoTransporte = recuperarPelaSigla(sequence, popUp);
         carregarTiposDeCarga(requisicaoTransporte);

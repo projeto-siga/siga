@@ -28,6 +28,7 @@ import br.gov.jfrj.siga.tp.model.EscalaDeTrabalho;
 import br.gov.jfrj.siga.tp.model.ItemMenu;
 import br.gov.jfrj.siga.tp.model.Missao;
 import br.gov.jfrj.siga.tp.model.TpDao;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Controller
@@ -41,6 +42,8 @@ public class EscalaDeTrabalhoController extends TpController {
     private static final String MODO = "modo";
 	private static final String LABEL_EDITAR = "views.label.editar";
 	private static final String LABEL_INCLUIR = "views.label.incluir";
+	private static final String PATTERN_DDMMYYYYHHMM = "dd/MM/yyyy HH:mm";
+	private static final String PATTERN_DDMMYYYYHHMM_MYSQL = "yyyy-MM-dd HH:mm";
 
 	private MissaoController missaoController;
 
@@ -331,7 +334,7 @@ public class EscalaDeTrabalhoController extends TpController {
 	private boolean validarMissoesParaNovaEscala(EscalaDeTrabalho escala) throws Exception {
 		missaoController.buscarPorCondutoreseEscala(escala);
 		List<Missao> missoes = (List<Missao>) getRequest().getAttribute("missoesPorCondutoreEscala");
-		SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		SimpleDateFormat formatar = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL));
 		boolean valido = true;
 		StringBuilder listaMissoes = new StringBuilder();
 		String delimitador="";
@@ -339,7 +342,8 @@ public class EscalaDeTrabalhoController extends TpController {
 		if (missoes != null && !missoes.isEmpty()) {
 			for (Missao missao : missoes) {
 				String dataMissao = formatar.format(missao.getDataHoraSaida().getTime());
-				String dataFormatadaOracle = "to_date('" + dataMissao + "', 'DD/MM/YYYY HH24:mi')";
+				String dataFormatadaOracle = dataMissao;
+		//		String dataFormatadaOracle = "to_date('" + dataMissao + "', 'DD/MM/YYYY HH24:mi')";
 				if (! missao.getCondutor().estaEscalado(dataMissao) &&
 					! missao.getCondutor().estaDePlantao(dataFormatadaOracle)	) {
 					listaMissoes.append(delimitador).append(missao.getSequence());

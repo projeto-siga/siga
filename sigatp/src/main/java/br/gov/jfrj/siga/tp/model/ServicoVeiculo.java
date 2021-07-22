@@ -28,8 +28,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.Reflexao;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
 import br.gov.jfrj.siga.tp.validation.annotation.Sequence;
@@ -313,7 +315,7 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 	}
 
 	public static List<ServicoVeiculo> buscarEmAndamento() {
-		return ServicoVeiculo.AR.find("trunc(dataHoraFim) = trunc(CURRENT_TIMESTAMP)").fetch();
+		return ServicoVeiculo.AR.find(FormatarDataHora.recuperaFuncaoTrunc() +"(dataHoraFim) = " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + CpDao.getInstance().consultarDataEHoraDoServidor() + ")").fetch();
 	}
 
 	public static ServicoVeiculo buscar(String sequence) throws Exception {
@@ -369,13 +371,14 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 			filtroVeiculo = "veiculo.id = " + idVeiculo + " AND ";
 		}
 
-		String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+		//String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+		String dataFormatadaOracle = dataHoraInicio;
 		List<ServicoVeiculo> servicosVeiculo;
 
 		String qrl = 	"SELECT s FROM ServicoVeiculo s WHERE " + filtroVeiculo +
 					    "  situacaoServico NOT IN ('" + EstadoServico.CANCELADO + "','" + EstadoServico.REALIZADO + "')" +
-						" AND trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracle + ")" +
-						" AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracle + "))";
+						" AND " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + ")" +
+						" AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + "))";
 
 		Query qry = AR.em().createQuery(qrl);
 		try {

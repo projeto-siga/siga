@@ -454,6 +454,7 @@
 								target="_blank">Manual</a>
 					</c:if>
 				</c:when>
+				
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"
 						href="https://processo.rio/manual-do-usuario-processo-rio/" target="_blank">Manual processo.rio</a>

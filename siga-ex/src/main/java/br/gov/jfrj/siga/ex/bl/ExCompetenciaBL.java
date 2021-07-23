@@ -4919,7 +4919,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						cadastrante,
 						lotaCadastrante,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) ;
+						ExTipoDeConfiguracao.MOVIMENTAR)) ;
 	}
 
 	public boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(final DpPessoa titular, final DpLotacao lotaTitular,

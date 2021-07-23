@@ -5,18 +5,18 @@
 		<h2>Iniciar Procedimento ${pd.sigla}: ${pd.nome}</h2>
 		<form method="POST" action="${linkTo[WfAppController].iniciar(pd.id)}">
 			<fieldset title="Dados Básicos">
-				<div class="row">
+				<input type="hidden" name="tipoDePrincipal"
+					value="${pd.tipoDePrincipal}" />
+				<div class="row"
+					style="display: ${pd.tipoDePrincipal == 'NENHUM' ? 'none' : 'flex'};">
 					<div class="col col-12">
 						<div class="form-group">
-							<label>Documento</label>
-							<siga:escolha id="tipoDePrincipal" var="tipoDePrincipal"
-								singleLine="${true}">
-								<siga:opcao id='DOC' texto="Documento">
-									<siga:selecao tema='simple' titulo="Documento Principal"
-										propriedade="documentoRef" urlAcao="expediente/buscar"
-										urlSelecionar="expediente/selecionar" modulo="sigaex" />
-								</siga:opcao>
-							</siga:escolha>
+							<c:if test="${pd.tipoDePrincipal == 'DOCUMENTO' }">
+								<label>Documento Principal</label>
+								<siga:selecao tema='simple' titulo="Documento Principal"
+									propriedade="documentoRef" urlAcao="expediente/buscar"
+									urlSelecionar="expediente/selecionar" modulo="sigaex" />
+							</c:if>
 						</div>
 					</div>
 				</div>

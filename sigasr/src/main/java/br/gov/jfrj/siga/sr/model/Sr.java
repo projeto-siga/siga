@@ -51,7 +51,7 @@ public class Sr extends Cp /*
 					Sr instance = new Sr();
 					setInstance(instance);
 					instance.setConf(new SrConfiguracaoBL());
-					instance.getConf().setComparator(new SrConfiguracaoComparator());
+					instance.getConf().setComparator(new SrConfiguracaoCacheComparator());
 					instance.setComp(new CpCompetenciaBL());
 					instance.getComp().setConfiguracaoBL(instance.getConf());
 					// instance.setBL(new ExBL());

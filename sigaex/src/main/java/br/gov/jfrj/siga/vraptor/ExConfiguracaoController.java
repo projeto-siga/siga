@@ -27,21 +27,22 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -75,11 +76,11 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@Get("app/configuracao/listar")
-	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
+	public void lista(Integer idTpConfiguracao, Long idOrgaoUsu) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = ExTipoDeConfiguracao.AUTUAVEL.getId();
-		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
@@ -87,7 +88,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@Get("app/configuracao/listar_cadastradas")
-	public void listaCadastradas(Long idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
+	public void listaCadastradas(Integer idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
 			String nmTipoRetorno, boolean campoFixo) throws Exception {
 
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -95,7 +96,7 @@ public class ExConfiguracaoController extends ExController {
 		ExConfiguracao config = new ExConfiguracao();
 
 		if (idTpConfiguracao != null && idTpConfiguracao != 0) {
-			config.setCpTipoConfiguracao(dao().consultar(idTpConfiguracao, CpTipoConfiguracao.class, false));
+			config.setCpTipoConfiguracao(CpTipoDeConfiguracao.getById(idTpConfiguracao));
 		} else {
 			result.include("err", "Tipo de configuração não informado");
 			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");
@@ -126,7 +127,7 @@ public class ExConfiguracaoController extends ExController {
 
 		Collections.sort(listConfig, new ExConfiguracaoComparator());
 
-		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 		CpConfiguracaoHelper.incluirAtributosDeListagem(result, tpconf, (List<CpConfiguracao>) (List) listConfig);
 
 		result.include("idMod", idMod);
@@ -155,7 +156,7 @@ public class ExConfiguracaoController extends ExController {
 
 	@Get("app/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel, DpCargoSelecao cargoObjetoSel,
@@ -180,11 +181,11 @@ public class ExConfiguracaoController extends ExController {
 		}
 		escreverForm(config);
 		if (idTpConfiguracao == null && config != null && config.getCpTipoConfiguracao() != null)
-			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
+			idTpConfiguracao = config.getCpTipoConfiguracao().getId();
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
 
-		ExTipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
+		ITipoDeConfiguracao tpconf = ExTipoDeConfiguracao.getById(idTpConfiguracao);
 		CpConfiguracaoHelper.incluirAtributosDeEdicao(result, tpconf, config);
 
 		result.include("id", id);
@@ -227,7 +228,7 @@ public class ExConfiguracaoController extends ExController {
 	@Transacional
 	@Get("app/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			DpPessoaSelecao pessoaObjeto_pessoaSel, DpLotacaoSelecao lotacaoObjeto_lotacaoSel,
@@ -251,7 +252,7 @@ public class ExConfiguracaoController extends ExController {
 	@Post("app/configuracao/gerenciar_publicacao_boletim_gravar")
 	@Transacional
 	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
-			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Long idSituacao,
+			Integer idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Integer idSituacao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel) throws Exception {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = new ExConfiguracaoBuilder().setIdTpMov(idTpMov)
@@ -315,7 +316,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
+	private void gravarConfiguracao(Integer idTpConfiguracao, Integer idSituacao, final ExConfiguracao config) {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
@@ -391,33 +392,28 @@ public class ExConfiguracaoController extends ExController {
 
 	private Set<ExConfiguracao> gerarPublicadores() {
 		Set<ExConfiguracao> publicadores = new HashSet<ExConfiguracao>();
-		TreeSet<CpConfiguracao> listaConfigs = getListaConfiguracao();
+		TreeSet<CpConfiguracaoCache> listaConfigs = Ex.getInstance().getConf()
+					.getListaPorTipo(ExTipoDeConfiguracao.MOVIMENTAR);
+		if (listaConfigs == null)
+			return new TreeSet<ExConfiguracao>();
 
-		for (CpConfiguracao cfg : listaConfigs) {
-			if (cfg instanceof ExConfiguracao) {
-				ExConfiguracao config = (ExConfiguracao) cfg;
+		for (CpConfiguracaoCache cfg : listaConfigs) {
+			if (cfg instanceof ExConfiguracaoCache) {
+				ExConfiguracaoCache config = (ExConfiguracaoCache) cfg;
 
-				if (config.isAgendamentoPublicacaoBoletim()
+				if (config.exTipoMovimentacao != 0
+						&& config.exTipoMovimentacao == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 						&& config.podeAdicionarComoPublicador(getTitular(), getLotaTitular())) {
-					publicadores.add(config);
+					publicadores.add(dao.consultar(config.idConfiguracao, ExConfiguracao.class, false));
 				}
 			}
 		}
 		return publicadores;
 	}
 
-	private TreeSet<CpConfiguracao> getListaConfiguracao() {
-		TreeSet<CpConfiguracao> listaConfigs = Ex.getInstance().getConf()
-				.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-
-		if (listaConfigs == null)
-			return new TreeSet<CpConfiguracao>();
-		return listaConfigs;
-	}
-
 	private void validarPodeGerenciarBoletim() {
 		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(),
-				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM))
+				ExTipoDeConfiguracao.GERENCIAR_PUBLICACAO_BOLETIM))
 			throw new AplicacaoException("Operação restrita");
 	}
 
@@ -453,10 +449,10 @@ public class ExConfiguracaoController extends ExController {
 		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
-	private Set<ExSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
-		HashSet<ExSituacaoConfiguracao> s = new HashSet<ExSituacaoConfiguracao>();
-		s.add(ExDao.getInstance().consultar(1L, ExSituacaoConfiguracao.class, false));
-		s.add(ExDao.getInstance().consultar(2L, ExSituacaoConfiguracao.class, false));
+	private Set<CpSituacaoDeConfiguracaoEnum> getListaSituacaoPodeNaoPode() throws Exception {
+		HashSet<CpSituacaoDeConfiguracaoEnum> s = new HashSet<>();
+		s.add(CpSituacaoDeConfiguracaoEnum.PODE);
+		s.add(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
 		return s;
 	}
 
@@ -509,17 +505,17 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("all")
-	private Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
-		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(new Comparator() {
+	private Set<CpSituacaoDeConfiguracaoEnum> getListaSituacao() throws Exception {
+		TreeSet<CpSituacaoDeConfiguracaoEnum> s = new TreeSet<>(new Comparator<CpSituacaoDeConfiguracaoEnum>() {
 
-			public int compare(Object o1, Object o2) {
-				return ((CpSituacaoConfiguracao) o1).getDscSitConfiguracao()
-						.compareTo(((CpSituacaoConfiguracao) o2).getDscSitConfiguracao());
+			public int compare(CpSituacaoDeConfiguracaoEnum o1, CpSituacaoDeConfiguracaoEnum o2) {
+				return o1.getDescr().compareTo(o2.getDescr());
 			}
 
 		});
 
-		s.addAll(dao().listarSituacoesConfiguracao());
+		for (CpSituacaoDeConfiguracaoEnum sit : CpSituacaoDeConfiguracaoEnum.values())
+			s.add(sit);
 
 		return s;
 	}

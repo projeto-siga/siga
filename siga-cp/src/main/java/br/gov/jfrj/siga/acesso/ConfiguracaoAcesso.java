@@ -25,11 +25,12 @@ import java.util.TreeSet;
 import org.hibernate.proxy.HibernateProxy;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -49,7 +50,7 @@ public class ConfiguracaoAcesso implements Comparable {
 	private CpPerfil perfil;
 	private DpPessoa pessoa;
 	private CpServico servico;
-	private CpSituacaoConfiguracao situacao;
+	private CpSituacaoDeConfiguracaoEnum situacao;
 	private Date inicio;
 	private DpPessoa cadastrante;
 	private SortedSet<ConfiguracaoAcesso> subitens = new TreeSet<ConfiguracaoAcesso>();
@@ -74,17 +75,15 @@ public class ConfiguracaoAcesso implements Comparable {
 		cfgFiltro.setLotacao(lotacao);
 		cfgFiltro.setOrgaoUsuario(orgao);
 		cfgFiltro.setCpServico(servico);
-		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				CpTipoConfiguracao.class, false);
-		cfgFiltro.setCpTipoConfiguracao(tipo);
-		CpConfiguracao cfg = Cp.getInstance().getConf().buscaConfiguracao(
+		cfgFiltro.setCpTipoConfiguracao(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
+		CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
 				cfgFiltro, new int[0], dtEvn);
 		ConfiguracaoAcesso ac = new ConfiguracaoAcesso();
-		if (cfg == null) {
-			ac.setSituacao(tipo.getSituacaoDefault());
+		if (cache == null) {
+			ac.setSituacao(CpTipoDeConfiguracao.UTILIZAR_SERVICO.getSituacaoDefault());
 			ac.setDefault(true);
 		} else {
+			CpConfiguracao cfg = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
 			ac.setSituacao(cfg.getCpSituacaoConfiguracao());
 			ac.setDefault(!cfg.isEspecifica(cfgFiltro));
 			if (cfg.getCpGrupo() != null) {
@@ -130,7 +129,7 @@ public class ConfiguracaoAcesso implements Comparable {
 		return servico;
 	}
 
-	public CpSituacaoConfiguracao getSituacao() {
+	public CpSituacaoDeConfiguracaoEnum getSituacao() {
 		return situacao;
 	}
 
@@ -166,7 +165,7 @@ public class ConfiguracaoAcesso implements Comparable {
 		this.servico = servico;
 	}
 
-	public void setSituacao(CpSituacaoConfiguracao situacao) {
+	public void setSituacao(CpSituacaoDeConfiguracaoEnum situacao) {
 		this.situacao = situacao;
 	}
 

@@ -35,6 +35,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.tp.validation.annotation.Cnh;
 import br.gov.jfrj.siga.tp.validation.annotation.Unique;
@@ -52,7 +53,7 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 	public static final ActiveRecord<Condutor> AR = new ActiveRecord<>(Condutor.class);
 
 	@Id
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	@GeneratedValue(generator = "hibernate_sequence_generator")
 	private Long id;
 
@@ -161,10 +162,10 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 		if (inicioRapido == null) {
 			inicioRapido = PerguntaSimNao.NAO;
 		}
-		String dataFormatadaOracle = "to_date('" + dataSaida + "', 'DD/MM/YYYY HH24:mi')";
+		String dataFormatadaOracle = FormatarDataHora.retorna_DataeHora(dataSaida);
 
 		StringBuilder qrl = new StringBuilder();
-		qrl.append("SELECT c FROM Condutor c " + " WHERE trunc(c.dataVencimentoCNH) > trunc(" + dataFormatadaOracle + ")" + "  AND c.cpOrgaoUsuario.id in  " + "(SELECT cp.id FROM CpOrgaoUsuario cp"
+		qrl.append("SELECT c FROM Condutor c " + " WHERE " + FormatarDataHora.recuperaFuncaoTrunc() + "(c.dataVencimentoCNH) > " + FormatarDataHora.recuperaFuncaoTrunc() +"(" + dataFormatadaOracle + ")" + "  AND c.cpOrgaoUsuario.id in  " + "(SELECT cp.id FROM CpOrgaoUsuario cp"
 				+ " WHERE  cp.id = " + idOrgao + ")" + " AND c.id not in ");
 		if (!inicioRapido.equals(PerguntaSimNao.SIM)) {
 			qrl.append("(SELECT a.condutor.id FROM Afastamento a" + " WHERE  a.condutor.id = c.id" + " AND   a.dataHoraInicio < " + dataFormatadaOracle + " AND    (a.dataHoraFim = NULL "
@@ -260,7 +261,7 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 		Map<String, Object> parametros = new HashMap<String,Object>();
 		parametros.put("condutor",condutor);
 		EscalaDeTrabalho escalaVigente;
-		String dataFormatadaOracle = "to_date('" + dataMissao + "', 'DD/MM/YYYY HH24:mi')";
+		String dataFormatadaOracle = FormatarDataHora.retorna_DataeHora(dataMissao);
 		StringBuffer hqlVigentes = new StringBuffer();
 		hqlVigentes.append("condutor = :condutor and ");
 		hqlVigentes.append("dataVigenciaInicio < ");

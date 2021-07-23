@@ -55,10 +55,10 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -1032,7 +1032,7 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExConfiguracao> consultar(final ExConfiguracao exemplo) {
-		CpTipoConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
+		ITipoDeConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
 		CpOrgaoUsuario orgao = exemplo.getOrgaoUsuario();
 
 		StringBuffer sbf = new StringBuffer();
@@ -1043,10 +1043,9 @@ public class ExDao extends CpDao {
 
 		sbf.append("" + "where 1 = 1");
 
-		if (tpConf != null && tpConf.getIdTpConfiguracao() != null
-				&& tpConf.getIdTpConfiguracao() != 0) {
+		if (tpConf != null) {
 			sbf.append(" and cp.id_tp_configuracao = ");
-			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+			sbf.append(exemplo.getCpTipoConfiguracao().getId());
 		}
 
 		if (exemplo.getExTipoMovimentacao() != null
@@ -2082,12 +2081,12 @@ public class ExDao extends CpDao {
 						+ "mob, "
 						+ (trazerComposto ? " frm.isComposto, " : "0, ")
 						+ "(select movUltima from ExMovimentacao movUltima "
-						+ " where movUltima.dtTimestamp = ("
+						+ " where movUltima.exMobil.idMobil = mob.idMobil and movUltima.dtTimestamp = ("
 						+ " 	select max(movUltima1.dtTimestamp) from ExMovimentacao movUltima1"
 						+ " 		where movUltima1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movUltima1.exMovimentacaoCanceladora.idMov = null ) ), "
 						+ "(select movTramite from ExMovimentacao movTramite"
-						+ " where movTramite.dtTimestamp = ("
+						+ " where movTramite.exMobil.idMobil = mob.idMobil and movTramite.dtTimestamp = ("
 						+ " 	select max(movTramite1.dtTimestamp) from ExMovimentacao movTramite1"
 						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
@@ -2327,5 +2326,4 @@ public class ExDao extends CpDao {
 		}
 	}
 	
-
 }

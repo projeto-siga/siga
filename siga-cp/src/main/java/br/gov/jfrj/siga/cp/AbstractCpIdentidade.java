@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.util.Date;
 
 import javax.persistence.Column;

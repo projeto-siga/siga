@@ -196,7 +196,7 @@
 										   	    <td>
 										   	    	<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 										   	    				 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-										   	    				 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}"
+										   	    				 comando="${linkTo[RequisicaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${requisicaoTransporte.buscarSequence()}">
 										   	    				 ehEditavel="true">
 										   	    	</tptags:link>
 												</td>
@@ -211,7 +211,7 @@
 																		${requisicaoTransporte.getUltimoEstadoNestaMissao(missao.id).primeiraLetra()}
 																	</span>
 																	
-																	<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,missao.sequence)}');">
+																	<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${missao.sequence}');">
 																		<img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela">
 																	</a>
 																	<br />

@@ -9,7 +9,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "gc_tipo_movimentacao", schema = "sigagc")
+@Table(name = "sigagc.gc_tipo_movimentacao")
 public class GcTipoMovimentacao extends Objeto {
 	private static final long serialVersionUID = -4444112339088302985L;
 
@@ -49,12 +49,12 @@ public class GcTipoMovimentacao extends Objeto {
 
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
-	private long id;
+	private Long id;
 
 	@Column(name = "NOME_TIPO_MOVIMENTACAO", nullable = false)
 	private String nome;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -72,7 +72,7 @@ public class GcTipoMovimentacao extends Objeto {
 		this.nome = nome;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

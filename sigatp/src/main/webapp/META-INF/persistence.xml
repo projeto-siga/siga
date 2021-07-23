@@ -22,13 +22,14 @@
 		<class>br.gov.jfrj.siga.dp.CpPersonalizacao</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoPessoa</class>
 		<class>br.gov.jfrj.siga.cp.CpConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpConfiguracaoCache</class>
 		<class>br.gov.jfrj.siga.cp.CpSituacaoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpServico</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoGrupo</class>
 		<class>br.gov.jfrj.siga.cp.CpGrupo</class>
-		<class>br.gov.jfrj.siga.cp.CpPerfil</class>
 		<class>br.gov.jfrj.siga.cp.CpGrupoDeEmail</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfil</class>
 		<class>br.gov.jfrj.siga.cp.CpPerfilJEE</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoLotacao</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoPapel</class>
@@ -43,7 +44,36 @@
 		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
+		<class>br.gov.jfrj.siga.dp.DpVisualizacao</class>
+		<class>br.gov.jfrj.siga.dp.DpVisualizacaoAcesso</class>
 		<class>br.gov.jfrj.siga.dp.CpContrato</class>
+		<class>br.gov.jfrj.siga.cp.CpToken</class>
+
+		<class>br.gov.jfrj.siga.cp.CpArquivo</class>
+		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>
+
+		<class>br.gov.jfrj.siga.cp.CpMarcadorCorEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorIconeEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoMarcadorEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpSituacaoDeConfiguracaoEnum</class>
+
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorCorEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorIconeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorFinalidadeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoDataEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoInteressadoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoTextoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorGrupoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpTipoMarcadorEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpSituacaoDeConfiguracaoEnumConverter</class>
 
 		<class>br.gov.jfrj.siga.tp.model.Abastecimento</class>
 		<class>br.gov.jfrj.siga.tp.model.Afastamento</class>
@@ -186,4 +216,3 @@
 		</properties>
 	</persistence-unit>
 </persistence>
-

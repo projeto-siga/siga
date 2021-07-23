@@ -1,23 +1,23 @@
 package br.gov.jfrj.siga.ex;
 
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 
 public enum ExConfiguracaoVisibilidade  {
 	
 	PODE {
 		@Override
-		public long obterIdSituacao() {
-			return CpSituacaoConfiguracao.SITUACAO_PODE;
+		public int obterIdSituacao() {
+			return CpSituacaoDeConfiguracaoEnum.PODE.getId();
 		}
 	},
 	NAO_PODE {
 		@Override
-		public long obterIdSituacao() {
-			return CpSituacaoConfiguracao.SITUACAO_NAO_PODE;
+		public int obterIdSituacao() {
+			return CpSituacaoDeConfiguracaoEnum.NAO_PODE.getId();
 		}
 	};
 
-	public abstract long obterIdSituacao();
+	public abstract int obterIdSituacao();
 
 }
 

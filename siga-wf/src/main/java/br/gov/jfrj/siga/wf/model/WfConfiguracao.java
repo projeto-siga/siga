@@ -27,13 +27,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.AbstractCpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 
 @Entity
 @Table(name = "sigawf.wf_configuracao")
 @PrimaryKeyJoinColumn(name = "CONF_ID")
-@NamedQueries({
-		@NamedQuery(name = "consultarWfConfiguracoes", query = "from WfConfiguracao cfg where (:idTpConfiguracao is null or cfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)") })
 public class WfConfiguracao extends CpConfiguracao {
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -47,4 +47,21 @@ public class WfConfiguracao extends CpConfiguracao {
 	public void setDefinicaoDeProcedimento(WfDefinicaoDeProcedimento definicaoDeProcedimento) {
 		this.definicaoDeProcedimento = definicaoDeProcedimento;
 	}
+
+	@Override
+	public void atualizarObjeto() {
+		super.atualizarObjeto();
+		setDefinicaoDeProcedimento(atual(getDefinicaoDeProcedimento()));
+	}
+
+	public void substituirPorObjetoInicial() {
+		super.substituirPorObjetoInicial();
+		setDefinicaoDeProcedimento(inicial(getDefinicaoDeProcedimento()));
+	}
+
+	@Override
+	public CpConfiguracaoCache converterParaCache() {
+		return new WfConfiguracaoCache(this);
+	}
+
 }

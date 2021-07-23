@@ -22,7 +22,7 @@
 							href="${linkTo[WfAppController].procedimento(taskInstance.instanciaDeProcedimento.id)}">${taskInstance.definicaoDeTarefa.nome}</a></td>
 						<td><c:choose>
 								<c:when
-									test="${taskInstance.instanciaDeProcedimento.tipoDePrincipal eq 'DOC' and not empty taskInstance.instanciaDeProcedimento.principal}">
+									test="${taskInstance.instanciaDeProcedimento.tipoDePrincipal eq 'DOCUMENTO' and not empty taskInstance.instanciaDeProcedimento.principal}">
 									<a
 										href="/sigaex/app/expediente/doc/exibir?sigla=${taskInstance.instanciaDeProcedimento.principal}">${taskInstance.instanciaDeProcedimento.principal}</a>
 								</c:when>

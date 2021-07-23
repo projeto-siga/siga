@@ -934,6 +934,15 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 			continue;
 
 		process.push("Copia=" + Copia + ";");
+
+		if (( ($('#podeAssinarPor').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuTitular').val()) )
+				&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) && Copia != 'true') {
+			if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS (" + $('#siglaUsuCossignatarios').val() + " )\"")) {
+				gAssinando = false;
+				$(this).dialog('destroy').remove();				
+			}
+		}
+		
 		if (!o.usePassword && !o.usePin) {
 			if (provider != providerAssijusPopup && provider != providerAssijus) {
 				process
@@ -1043,14 +1052,6 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 				provider.assinar(signable);
 			}
 		} else {
-			if (( ($('#podeAssinarPorComSenha').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuTitular').val()) )
-					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) && Copia != 'true') {
-				if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS (" + $('#siglaUsuCossignatarios').val() + " )\"")) {
-					gAssinando = false;
-					$(this).dialog('destroy').remove();				
-				}
-			}
-			
 			process.push("gNome='" + o.nome + "'; gAutenticar = "
 					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia)
 					 + "; gTramitar = "

@@ -878,6 +878,11 @@ CREATE SEQUENCE corporativo.dp_visualizacao_id_visualizacao_seq
     NO MAXVALUE
     CACHE 1;
 
+CREATE TABLE corporativo.cp_contrato (
+    ID_ORGAO_USU BIGINT not null,
+    DT_CONTRATO timestamp without time zone,
+);
+
 ALTER TABLE ONLY corporativo.cad_sit_funcional ALTER COLUMN id_cad_sit_funcional SET DEFAULT nextval('corporativo.cad_sit_funcional_id_cad_sit_funcional_seq'::regclass);
 
 ALTER TABLE ONLY corporativo.cp_acesso ALTER COLUMN id_acesso SET DEFAULT nextval('corporativo.cp_acesso_id_acesso_seq'::regclass);

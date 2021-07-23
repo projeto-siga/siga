@@ -96,6 +96,8 @@ ALTER TABLE ONLY corporativo.dp_visualizacao_acesso ADD CONSTRAINT dp_visualizac
 
 ALTER TABLE ONLY corporativo.dp_visualizacao ADD CONSTRAINT dp_visualizacao_pkey PRIMARY KEY (id_visualizacao);
 
+ALTER TABLE ONLY corporativo.cp_contrato ADD CONSTRAINT cp_contrato_pkey PRIMARY KEY (id_orgao_usu);
+
 /*
  * FK
  */

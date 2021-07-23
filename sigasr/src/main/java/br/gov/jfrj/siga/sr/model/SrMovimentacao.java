@@ -424,12 +424,9 @@ public class SrMovimentacao extends Objeto {
             setAcao(solicitacao.getAcao());
             setPrioridade(solicitacao.getPrioridade());
         } else {
-            SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
-            
+        	SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
         	
-        	if (getAtendente().getId() == null) {
-        		this.setAtendente(null);
-        	}
+            if (getAtendente() != null && getAtendente().getId() == null)  setAtendente(null);
 
             if (getLotaAtendente() == null) {
             	if (anterior != null && anterior.getLotaAtendente() != null)

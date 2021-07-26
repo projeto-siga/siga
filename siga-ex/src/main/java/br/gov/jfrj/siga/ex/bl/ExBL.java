@@ -5618,10 +5618,8 @@ public class ExBL extends CpBL {
 				mov.setDestinoFinal(ultMov.getDestinoFinal());
 		}
 		if (ultMov == null || idtpmov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
-			if (mov.getLotaResp() == null)
-				mov.setLotaResp(lotaCadastrante);
-			if (mov.getResp() == null)
-				mov.setResp(cadastrante);
+			mov.setLotaResp(lotaCadastrante);
+			mov.setResp(cadastrante);
 		}
 		acrescentarCamposDeAuditoria(mov);
 		return mov;

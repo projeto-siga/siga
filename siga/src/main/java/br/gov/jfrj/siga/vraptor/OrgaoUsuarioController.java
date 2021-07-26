@@ -15,6 +15,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpContrato;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -57,7 +58,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		result.include("itens", getItens());
 		result.include("tamanho", dao().consultarQuantidade(orgaoUsuario));
 		result.include("nome", nome);
-		if(!"ZZ".equalsIgnoreCase(getTitular().getOrgaoUsuario().getSigla())) {
+		if(!CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equalsIgnoreCase(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaoUsuarioSiglaLogado", getTitular().getOrgaoUsuario().getSigla());
 		}
 		setItemPagina(15);

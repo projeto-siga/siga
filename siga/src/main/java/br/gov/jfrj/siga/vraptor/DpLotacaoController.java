@@ -25,24 +25,21 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
-import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
-import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport.RetornoJson;
-import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport.RetornoJsonItem;
 
 @Controller
 public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLotacao, DpLotacaoDaoFiltro> {
@@ -223,7 +220,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get("app/lotacao/listar")
 	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
 
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if (CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
 			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
@@ -297,7 +294,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 			} else {
 
-				if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+				if (CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 					result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 				} else {
 					CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
@@ -354,7 +351,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		}
 		result.include("listaLotacao", listaLotacaoPai);
 
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if (CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
 			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
@@ -477,7 +474,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 	@Get("/app/lotacao/carregarExcel")
 	public void carregarExcel() {
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if (CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
 			result.include("nmOrgaousu", getTitular().getOrgaoUsuario().getNmOrgaoUsu());
@@ -539,7 +536,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("idUf", idUf);
 		result.include("listaUF", dao().consultarUF());
 		
-		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if(CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {

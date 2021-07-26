@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -119,7 +120,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	
 	@Get("app/funcao/listar")
 	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
-		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if(CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
 			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
@@ -173,7 +174,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 				
 			} else {
 				
-				if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+				if(CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 					result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 				} else {
 					CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
@@ -206,7 +207,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			}
 		}
 		
-		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if(CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
 			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
@@ -288,7 +289,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	
 	@Get("/app/funcao/carregarExcel")
 	public void carregarExcel() {
-		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if(CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
 			result.include("nmOrgaousu", getTitular().getOrgaoUsuario().getNmOrgaoUsu());	

@@ -1210,7 +1210,7 @@ public class CpBL {
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		ou = CpDao.getInstance().consultarPorId(ou);
 		
-		if (!"ZZ".equals(identidadeCadastrante.getCpOrgaoUsuario().getSigla())){
+		if (!CpConfiguracaoBL.SIGLA_ORGAO_ROOT.equals(identidadeCadastrante.getCpOrgaoUsuario().getSigla())){
 			if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu())) {
 				throw new AplicacaoException("Usuário não pode cadastrar nesse órgão.");
 			}

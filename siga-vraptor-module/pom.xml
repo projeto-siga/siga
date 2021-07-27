@@ -12,7 +12,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>br.com.caelum</groupId>
+			<groupId>com.jslsolucoes</groupId>
 			<artifactId>vraptor</artifactId>
 			<exclusions>
 				<exclusion>  <!-- declare the exclusion here -->

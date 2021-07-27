@@ -21,12 +21,12 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.3</version>
 		</dependency>
-		
+
 		<dependency>
-    <groupId>br.com.caelum.vraptor</groupId>
-    <artifactId>vraptor-freemarker</artifactId>
-    <version>4.1.0-RC3</version>
-</dependency>
+			<groupId>br.com.caelum.vraptor</groupId>
+			<artifactId>vraptor-freemarker</artifactId>
+			<version>4.1.0-RC3</version>
+		</dependency>
 		<!-- Demais dependencias -->
 		<!-- <dependency>
 			<groupId>ar.com.fdvs</groupId>
@@ -177,15 +177,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.jslsolucoes</groupId>
+			<artifactId>vraptor</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-jpa</artifactId>
-			<version>4.0.5</version>
-			<exclusions>
-				<exclusion>  <!-- declare the exclusion here -->
-					<groupId>org.eclipse.persistence</groupId>
-					<artifactId>javax.persistence</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>

@@ -146,7 +146,8 @@ public class SigaCpSinc {
 		try {
 			OperadorComHistorico o = new OperadorComHistorico() {
 				public Sincronizavel gravar(Sincronizavel s) {
-					Sincronizavel o = CpDao.getInstance().gravar(s);
+					//Sincronizavel o = CpDao.getInstance().gravar(s);
+					Sincronizavel o = CpDao.getInstance().gravarImportacao(s, true);
 					return o;
 				}
 			};

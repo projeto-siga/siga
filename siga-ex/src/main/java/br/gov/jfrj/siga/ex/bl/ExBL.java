@@ -3683,7 +3683,7 @@ public class ExBL extends CpBL {
 		// Inclui em setDepois os papeis que devem estar atribuídos ao documento
 		//
 		Date dt = dao().consultarDataEHoraDoServidor();
-		TreeSet<ExConfiguracao> lista = null;
+		TreeSet<ExConfiguracaoCache> lista = null;
 		ExConfiguracaoBL confBL = Ex.getInstance().getConf();
 		lista = (TreeSet) confBL.getListaPorTipo(ExTipoDeConfiguracao.DEFINICAO_AUTOMATICA_DE_PAPEL);
 		if (lista != null) {
@@ -3694,18 +3694,18 @@ public class ExBL extends CpBL {
 			Set<Integer> atributosDesconsiderados = new HashSet<>();
 			atributosDesconsiderados.add(CpConfiguracaoBL.PESSOA_OBJETO);
 			atributosDesconsiderados.add(CpConfiguracaoBL.LOTACAO_OBJETO);
-			for (ExConfiguracao conf : lista) {
+			for (ExConfiguracaoCache conf : lista) {
 				if (// (!conf.ativaNaData(dt)) ||
-				conf.getExPapel() == null || (conf.getPessoaObjeto() == null && conf.getLotacaoObjeto() == null)
-						|| !confBL.atendeExigencias(confFiltro.converterParaCache(), atributosDesconsiderados, new ExConfiguracaoCache(conf), null))
+				conf.exPapel == 0 || (conf.pessoaObjeto == 0 && conf.lotacaoObjeto == 0)
+						|| !confBL.atendeExigencias(confFiltro.converterParaCache(), atributosDesconsiderados, conf, null))
 					continue;
 				DpPessoa po = null;
 				DpLotacao lo = null;
-				if (conf.getPessoaObjeto() != null)
-					po = dao().obterPessoaAtual(conf.getPessoaObjeto());
-				if (conf.getLotacaoObjeto() != null)
-					lo = dao().obterLotacaoAtual(conf.getLotacaoObjeto());
-				ExPapel p = dao().consultar(conf.getExPapel().getIdPapel(), ExPapel.class, false);
+				if (conf.pessoaObjeto != 0)
+					po = dao().consultar(conf.pessoaObjeto, DpPessoa.class, false);
+				if (conf.lotacaoObjeto != 0)
+					lo = dao().consultar(conf.lotacaoObjeto, DpLotacao.class, false);
+				ExPapel p = dao().consultar(conf.exPapel, ExPapel.class, false);
 				setDepois.add(new MovimentacaoSincronizavel(p, po, lo, null));
 			}
 		}

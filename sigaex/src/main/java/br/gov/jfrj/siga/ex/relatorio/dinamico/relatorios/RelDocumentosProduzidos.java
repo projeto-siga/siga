@@ -162,7 +162,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
 						+ "and lot.orgaoUsuario = "
-						+ parametros.get("orgaoUsuario")
+						+ parametros.get("orgao") 
 						+ " and lot.siglaLotacao = '"
 						+ parametros.get("lotacaoTitular") + "'");
 		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();

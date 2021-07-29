@@ -22,6 +22,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
 import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 
@@ -126,31 +127,34 @@ public class Afastamento extends TpModel implements ConvertableEntity {
     }
 
     public static List<Afastamento> buscarPorCondutores(Long idCondutor, String dataHoraInicio) {
-        String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+     //   String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+        String dataFormatadaOracle = dataHoraInicio;
         String filtroCondutor = "";
 
         if (idCondutor != null) {
             filtroCondutor = "condutor.id = " + idCondutor + " AND ";
         }
 
-        String qrl = "SELECT a FROM Afastamento a " + " WHERE " + filtroCondutor + " trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracle + ")"
-                + " AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracle + "))";
+        String qrl = "SELECT a FROM Afastamento a " + " WHERE " + filtroCondutor + FormatarDataHora.recuperaFuncaoTrunc()+"(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + ")"
+                + " AND (dataHoraFim IS NULL OR "+ FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + "))";
 
         return retornarLista(qrl);
     }
 
     public static List<Afastamento> buscarPorCondutores(Long idCondutor, String dataHoraInicio, String dataHoraFim) {
-        String dataFormatadaOracleInicio = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
-        String dataFormatadaOracleFim = "to_date('" + dataHoraFim + "', 'DD/MM/YYYY')";
+//        String dataFormatadaOracleInicio = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+//        String dataFormatadaOracleFim = "to_date('" + dataHoraFim + "', 'DD/MM/YYYY')";
+    	String dataFormatadaOracleInicio = dataHoraInicio;
+    	String dataFormatadaOracleFim = dataHoraFim;
         String filtroCondutor = "";
 
         if (idCondutor != null) {
             filtroCondutor = "condutor.id = " + idCondutor + " AND ";
         }
 
-        String qrl = "SELECT a FROM Afastamento a " + " WHERE " + filtroCondutor + " ((trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracleInicio + ")"
-                + " AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracleInicio + ")))" + " OR (trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracleFim + ")"
-                + " AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracleFim + "))))";
+        String qrl = "SELECT a FROM Afastamento a " + " WHERE " + filtroCondutor + " ((" + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleInicio + ")"
+                + " AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() +"(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleInicio + ")))" + " OR (" + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleFim + ")"
+                + " AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleFim + "))))";
 
         return retornarLista(qrl);
     }

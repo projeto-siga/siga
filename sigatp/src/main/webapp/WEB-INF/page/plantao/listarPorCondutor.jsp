@@ -29,7 +29,7 @@
 								<c:forEach items="${plantoes}" var="item">
 									<tr>
 							    		<td>
-							    			<sigatp:formatarColuna operacao="editar" href="${linkTo[PlantaoController].editar[item.condutor.id](item.id)}" titulo="plant&atilde;o"/>
+							    			<sigatp:formatarColuna operacao="editar" href="${linkTo[PlantaoController].editar(item.condutor.id,item.id)}" titulo="plant&atilde;o"/>
 							    		</td>
 							    		<td>
 							    			<sigatp:formatarColuna operacao="excluir" href="${linkTo[PlantaoController].excluir(item.id)}" 

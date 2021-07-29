@@ -44,12 +44,12 @@ public class IntegracaoLdap {
 	
 
 	public void atualizarSenhaLdap(CpIdentidade id, String senha) {
-		String orgao = id.getDpPessoa().getOrgaoUsuario().getAcronimoOrgaoUsu().toLowerCase();
+		String sesbPessoa = id.getDpPessoa().getSesbPessoa().toLowerCase();
 		
-		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(orgao);
+		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(sesbPessoa);
 		
 		
-		if (!integrarComLdap(id.getDpPessoa().getOrgaoUsuario())){
+		if (!integrarComLdap(sesbPessoa)){
 			throw new AplicacaoException("Órgão do usuário não configurado para integração com AD");
 		}
 
@@ -74,9 +74,8 @@ public class IntegracaoLdap {
 //		dao.commitTransacao();
 	}
 	
-	public boolean integrarComLdap(CpOrgaoUsuario orgaoUsuario){
-		String localidade = orgaoUsuario.getAcronimoOrgaoUsu().toLowerCase();
-		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(localidade);
+	public boolean integrarComLdap(String sesbPessoa){
+		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(sesbPessoa);
 		
 		return prop.sincronizarSenhaLdap();
 		

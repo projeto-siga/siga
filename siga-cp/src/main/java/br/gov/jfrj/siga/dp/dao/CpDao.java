@@ -2003,15 +2003,6 @@ public class CpDao extends ModeloDao {
 		return entidade;
 	}
  
-	public <T> T gravarImportacao(final T entidade, boolean devoAtualizar) {
-		gravar(entidade);
-		
-		if (devoAtualizar)
-			em().flush();
-		
-		return entidade;
-	}
-	
 	public <T> T gravar(final T entidade) {
 		if (entidade instanceof CarimboDeTempo)
 			((CarimboDeTempo) entidade).setHisDtAlt(this.dt());

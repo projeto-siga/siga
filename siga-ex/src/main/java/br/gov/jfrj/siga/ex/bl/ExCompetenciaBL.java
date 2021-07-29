@@ -49,6 +49,7 @@ import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMobil.Pendencias;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -59,6 +60,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
 
@@ -597,7 +599,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null);
 	
 		if (mob.doc().isFinalizado()) {
-			return !mob.isEmTransito()
+			return !mob.isEmTransito(titular, lotaTitular)
 					&& (!mob.isGeral() || (mob.doc().isExterno() && !mob.doc().jaTransferido()))
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
@@ -641,7 +643,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	
 		Boolean podePorConfModelo = getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, ExTipoDeConfiguracao.MOVIMENTAR);
 		
-		return mob.doc().isFinalizado() && !mob.isEmTransito()
+		return mob.doc().isFinalizado() && !mob.isEmTransito(titular, lotaTitular)
 				&& (!mob.isGeral() || mob.doc().isExterno())
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
@@ -803,13 +805,57 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return mob != null
 				&& !mob.doc().isPendenteDeAssinatura()
 				&& podeMovimentar(titular, lotaTitular, mob)
+				&& !mob.isEmTramiteParalelo()
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 						ExTipoDeConfiguracao.MOVIMENTAR);
+	}
+	
+	public boolean podeConcluir(final DpPessoa titular,
+			final DpLotacao lotaTitular, ExMobil mob) {
+
+		if (!mob.doc().isEletronico())
+			return false;
+		
+		if (!(mob.isVia() || mob.isGeralDeProcesso())
+				|| mob.doc().isSemEfeito())
+			return false;
+
+		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado())
+			mob = mob.doc().getUltimoVolume();
+
+		if (mob.doc().isEletronico()
+				&& (mob.temAnexosNaoAssinados() || mob
+						.temDespachosNaoAssinados() || mob.doc().getMobilGeral().temAnexosNaoAssinados()
+						|| mob.doc().getMobilGeral().temDespachosNaoAssinados()))
+			return false;
+
+		if (mob != null
+				&& !mob.doc().isPendenteDeAssinatura()
+				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
+				&& !mob.isJuntado()
+				&& ((mob.isEmTramiteParalelo() && podeMovimentar(titular, lotaTitular, mob)) || mob.isNotificado(titular, lotaTitular))
+				&& getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO,
+						ExTipoDeConfiguracao.MOVIMENTAR)) {
+			// Verifica se existe recebimento pendente para titular ou lotaTitular
+			Pendencias p = mob.calcularTramitesPendentes();
+			boolean f = false;
+			for (ExMovimentacao tramite : p.recebimentosPendentes) {
+				if (tramite.isResp(titular, lotaTitular))
+					f = true;
+			}
+			if (p.fIncluirCadastrante || f)
+				return getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
+						ExTipoDeConfiguracao.MOVIMENTAR);
+		}
+		return false;
 	}
 	
 	/**
@@ -849,8 +895,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& !mob.isSobrestado()
 				&& !mob.isJuntado()
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& !mob.doc().isSemEfeito()
+				&& !mob.isEmTramiteParalelo()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1104,6 +1151,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivadoIntermediario()
 				&& !mob.isArquivadoPermanente()
 				&& !mob.isEmEditalEliminacao()
+				&& !mob.isEmTramiteParalelo()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1168,6 +1216,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivadoPermanente()
 				&& mob.isDestinacaoGuardaPermanente()
 				&& !mob.isEmEditalEliminacao()
+				&& !mob.isEmTramiteParalelo()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -1784,7 +1833,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().isSemEfeito() || mob.doc().isEliminado())
 			return false;
 
-		if (!mob.isEmTransito() && podeCriarVia(titular, lotaTitular, mob)
+		if (!mob.isEmTransito(titular, lotaTitular) && podeCriarVia(titular, lotaTitular, mob)
 				&& podeMovimentar(titular, lotaTitular, mob))
 			// && (mob.doc().getNumUltimaViaNaoCancelada() == numVia))
 			return true;
@@ -1837,7 +1886,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}	
 		}	  
 
-		if (mob.isEmTransito()
+		if (mob.isEmTransito(titular, lotaTitular)
 				|| mob.isCancelada()
 				|| (!mob.isJuntadoExterno() && !podeMovimentar(titular,
 						lotaTitular, mobPai)) || (!mob.isJuntado()))
@@ -2138,7 +2187,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!mob.isVia() && !mob.isVolume())
 			return false;
 		
-		if (mob.isEmTransito()
+		if (mob.isEmTransito(titular, lotaTitular)
 				|| mob.isCancelada())
 				return false;
 
@@ -2293,7 +2342,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getNumUltimaVia() >= 21)
 			return false;
 
-		if(mob.isEmTransito())
+		if(mob.isEmTransito(titular, lotaTitular))
 			return false;
 		
 		return mob.doc().getNumUltimaViaNaoCancelada() > 0
@@ -2326,7 +2375,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.doc().getUltimoVolume() != null
-				&& (mob.doc().getUltimoVolume().isEmTransito() || mob.doc()
+				&& (mob.doc().getUltimoVolume().isEmTransito(titular, lotaTitular) || mob.doc()
 						.getUltimoVolume().isSobrestado()))
 			return false;
 			
@@ -2382,13 +2431,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isArquivado())
 			return false;
 
-		if (mob.isEmTransito())
+		if (mob.isEmTransito(titular, lotaTitular))
 			return false;
 		
 		if(mob.doc().isPendenteDeAssinatura())
 			return false;
 
 		if (mob.isSobrestado())
+			return false;
+		
+		if (mob.isEmTramiteParalelo())
 			return false;
 
 		return podeMovimentar(titular, lotaTitular, mob)
@@ -2431,7 +2483,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& (mob.isArquivadoCorrente() || mob.isArquivadoIntermediario())
 				&& !mob.isArquivadoPermanente()
 				&& !mob.isEmEditalEliminacao()
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
 						ExTipoDeConfiguracao.MOVIMENTAR);
@@ -2466,7 +2518,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (mob.isArquivadoIntermediario())
 				&& !mob.isArquivadoPermanente()
 				&& !mob.isEmEditalEliminacao()
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -2551,7 +2603,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		return (mob.isVia() || mob.isVolume())
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
@@ -2865,7 +2917,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		
 		return (mob.getExDocumento().isFinalizado())								
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& getConf().podePorConfiguracao(titular, lotaTitular, mob.getDoc().getExTipoDocumento(), mob.getDoc().getExFormaDocumento(), 
 						mob.getDoc().getExModelo(), ExTipoDeConfiguracao.INCLUIR_DOCUMENTO);
@@ -3549,7 +3601,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return !mob.isCancelada()
 				&& !mob.isVolumeEncerrado()
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& podeMovimentar(titular, lotaTitular, mob)
 
 				&& (!mob.doc().isPendenteDeAssinatura() || mob.doc().isInternoCapturado())
@@ -3558,6 +3610,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()
+				&& !mob.isEmTramiteParalelo()
 				&& podePorConfiguracaoParaMovimentacao(titular, lotaTitular, mob, ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);			
 		
 		// return true;
@@ -3587,10 +3640,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!mob.isVia() && !mob.isVolume())
 			return false;
+		
+		if (mob.isEmTramiteParalelo())
+			return false;
 
 		return !mob.isCancelada()
 				&& !mob.doc().isSemEfeito()
-				&& !mob.isEmTransito()
+				&& !mob.isEmTransito(titular, lotaTitular)
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.doc().isPendenteDeAssinatura()
 				&& !mob.isApensado()
@@ -3642,7 +3698,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExMobil mobilAVerificarSePodeMovimentar = mob.isApensadoAVolumeDoMesmoProcesso() 
 				? mob.doc().getUltimoVolume() : mob;
 		
-		if (!mob.isApensado() || mob.isEmTransito() || mob.isCancelada()
+		if (!mob.isApensado() || mob.isEmTransito(titular, lotaTitular) || mob.isCancelada()
 				|| mob.isArquivado()
 				|| mob.isSobrestado()
 				|| !podeMovimentar(titular, lotaTitular, mobilAVerificarSePodeMovimentar)
@@ -3688,23 +3744,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}
 		}
 
-		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
-		if (exMov == null) {
-			return false;
+		boolean fAtendente = false;
+		for (PessoaLotacaoParser atendente : mob.getAtendente()) {
+			if ((atendente.getLotacaoOuLotacaoPrincipalDaPessoa() != null
+					&& atendente.getLotacaoOuLotacaoPrincipalDaPessoa().equivale(lotaTitular))
+					|| (atendente.getPessoa() != null && atendente.getPessoa().equivale(titular))) {
+				fAtendente = true;
+				break;
+			}
 		}
-
-		/*
-		 * Orlando: Inclui a condição "&& !exMov.getResp().equivale(titular))"
-		 * no IF ,abaixo, para permitir que um usuário possa transferir quando
-		 * ele for o atendente do documento, mesmo que ele não esteja na lotação
-
-		 * do documento
-		 */
-
-		if (exMov.getLotaResp() != null
-				&& !exMov.getLotaResp().equivale(lotaTitular)){
+		if (!fAtendente)
 			return false;
-		}
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoDeConfiguracao.MOVIMENTAR);
@@ -3878,7 +3928,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (!mob.doc().isPendenteDeAssinatura()
 				&& (mob.isVia() || mob.isGeralDeProcesso())
-				&& !mob.isCancelada() && !mob.isEmTransito()
+				&& !mob.isCancelada() && !mob.isEmTransito(titular, lotaTitular)
 				&& !mob.isJuntado()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isindicadoGuardaPermanente()
@@ -3965,7 +4015,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (mob.isindicadoGuardaPermanente()
 				&& (mob.isVia() || mob.isGeralDeProcesso()) && !mob.isJuntado()
 				&& !mob.isArquivadoPermanente() && !mob.isCancelada()
-				&& !mob.isEmTransito() && getConf()
+				&& !mob.isEmTransito(titular, lotaTitular) && getConf()
 				.podePorConfiguracao(
 						titular,
 						lotaTitular,
@@ -4069,28 +4119,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeReceber(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
+		if (mob.doc().isEletronico()) 
+			return podeReceberEletronico(titular, lotaTitular, mob);
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
 
 		if (mob.isCancelada() || mob.isApensadoAVolumeDoMesmoProcesso() 
-				|| mob.isSobrestado() || !mob.isEmTransito() )
+				|| mob.isSobrestado())
 			return false;
 		else if (!mob.isEmTransitoExterno()) {
 			if (!exMov.getLotaResp().equivale(lotaTitular))
 				return false;
 		}
-
-
-		// Verifica se o despacho já está assinado, em caso de documentos
-		// eletrônicos
-		if (mob.doc().isEletronico()) {
-			for (CpMarca marca : mob.getExMarcaSet()) {
-				if (marca.getCpMarcador().getIdMarcador() == CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId())
-					return false;
-			}
-		}
-
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
 				ExTipoDeConfiguracao.MOVIMENTAR);
@@ -4130,39 +4171,34 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			DpLotacao lotaCadastrante, final ExMobil mob) {
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
-		ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
-		if (ultMov == null)
+
+		if (!mob.doc().isEletronico())
 			return false;
-		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
-				|| ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-				|| ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO )
-			return false;
+		
 		// Verifica se o despacho já está assinado
 		for (CpMarca marca : mob.getExMarcaSet()) {
 			if (marca.getCpMarcador().getIdMarcador() == CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId())
 				return false;
 		}
-
-		if ((ultMov.getResp() != null && !ultMov.getResp()
-				.equivale(cadastrante))
-				|| (ultMov.getResp() == null && ultMov.getLotaResp() != null && !ultMov
-						.getLotaResp().equivale(lotaCadastrante)))
-			return false;
-		if (!mob.doc().isEletronico() || !mob.isEmTransito())
-			return false;
-		return getConf().podePorConfiguracao(cadastrante, lotaCadastrante,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
-				ExTipoDeConfiguracao.MOVIMENTAR);
+		
+		// Verifica se existe recebimento pendente para titular ou lotaTitular
+		for (ExMovimentacao tramite : mob.calcularTramitesPendentes().tramitesPendentes) {
+			if (tramite.isResp(cadastrante, lotaCadastrante))
+				return getConf().podePorConfiguracao(cadastrante, lotaCadastrante,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
+						ExTipoDeConfiguracao.MOVIMENTAR);
+		}
+		return false;
 	}
 	
 	// Deve receber só se o usuário não acabou de fazer um trâmite para sua própria
 	// lotação
-	public boolean deveReceberEletronico(DpPessoa cadastrante, DpLotacao lotaCadastrante, final ExMobil mob) {
-		if (!podeReceberEletronico(cadastrante, lotaCadastrante, mob))
+	public boolean deveReceberEletronico(DpPessoa titular, DpLotacao lotaTitular, final ExMobil mob) {
+		if (!podeReceberEletronico(titular, lotaTitular, mob))
 			return false;
 		ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-				&& ultMov.getCadastrante().equivale(cadastrante) && ultMov.getLotaResp().equivale(lotaCadastrante))
+				&& ultMov.getCadastrante().equivale(titular) && ultMov.getLotaResp().equivale(lotaTitular))
 			return false;
 		return true;
 	}
@@ -4191,7 +4227,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
 
-		return !mob.isEmTransito()
+		return !mob.isEmTransito(titular, lotaTitular)
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado()
 				&& !mob.isEliminado()
@@ -4441,7 +4477,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return !mob.isCancelada() && !mob.isVolumeEncerrado()
 				&& !mob.isJuntado()
-				&& !mob.isEmTransito() && !mob.isArquivado()
+				&& !mob.isEmTransito(titular, lotaTitular) && !mob.isArquivado()
 				&& podeMovimentar(titular, lotaTitular, mob);
 	}
 
@@ -4482,7 +4518,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(!podeSerTransferido(mob))
 			return false;
 		
-		if (mob.isEmTransito())
+		if (mob.isEmTransito(titular, lotaTitular))
 			return false;
 
 		return podeMovimentar(titular, lotaTitular, mob)
@@ -4578,7 +4614,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
 
-		return !mob.isEmTransito() && podeMovimentar(titular, lotaTitular, mob)
+		return !mob.isEmTransito(titular, lotaTitular) && podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isJuntado();
 
 		// return true;
@@ -4760,7 +4796,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (SigaMessages.isSigaSP()
 					&& !mob.doc().isPendenteDeAssinatura() 
 					&& !mob.isCiente(titular) 
-					&& !mob.isEmTransito() 
+					&& !mob.isEmTransito(titular, lotaTitular) 
 					&& !mob.isEliminado() 
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
@@ -4909,7 +4945,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 
 		return (!mob.isGeral() && mob.doc().isExpediente()
-				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, ExTipoDeConfiguracao.MOVIMENTAR) && getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, ExTipoDeConfiguracao.MOVIMENTAR));
+				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito(titular, lotaTitular) && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, ExTipoDeConfiguracao.MOVIMENTAR) && getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR, ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 	
 	public boolean podeAssinarPorComSenha(final DpPessoa cadastrante,

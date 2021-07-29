@@ -136,6 +136,7 @@ import br.gov.jfrj.siga.ex.ExEditalEliminacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMobil.Pendencias;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -1023,7 +1024,7 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	private void permitirOuNaoMovimentarDestinacao(ExMobil mob) {
+	private void permitirOuNaoMovimentarDestinacao(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob) {
 
 		Set<ExMobil> mobsVerif = new HashSet<ExMobil>();
 
@@ -1059,7 +1060,7 @@ public class ExBL extends CpBL {
 				sobrestados += (sobrestados.length() < 2 ? " Os seguintes volumes ou vias encontram-se sobrestados: "
 						: ", ") + mobVerif.getSigla();
 
-			if (mobVerif.isEmTransito())
+			if (mobVerif.isEmTransito(cadastrante, lotaCadastrante))
 				emTransito += (emTransito.length() < 2 ? " Os seguintes volumes ou vias encontram-se em trânsito: "
 						: ", ") + mobVerif.getSigla();
 
@@ -1101,11 +1102,11 @@ public class ExBL extends CpBL {
 		}
 
 	}
-
+	
 	public void arquivarCorrente(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			Date dtMovIni, DpPessoa subscritor, boolean automatico) {
 
-		permitirOuNaoMovimentarDestinacao(mob);
+		permitirOuNaoMovimentarDestinacao(cadastrante, lotaCadastrante, mob);
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
 		try {
@@ -1137,7 +1138,7 @@ public class ExBL extends CpBL {
 	public void arquivarIntermediario(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			DpPessoa subscritor, String descrMov) throws AplicacaoException {
 
-		permitirOuNaoMovimentarDestinacao(mob);
+		permitirOuNaoMovimentarDestinacao(cadastrante, lotaCadastrante, mob);
 
 		Date dt = dao().dt();
 		try {
@@ -1159,7 +1160,7 @@ public class ExBL extends CpBL {
 	public void arquivarPermanente(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			DpPessoa subscritor) throws AplicacaoException {
 
-		permitirOuNaoMovimentarDestinacao(mob);
+		permitirOuNaoMovimentarDestinacao(cadastrante, lotaCadastrante, mob);
 
 		Date dt = dao().dt();
 		try {
@@ -1179,7 +1180,7 @@ public class ExBL extends CpBL {
 	public void eliminar(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			DpPessoa subscritor, ExMobil termo) throws AplicacaoException {
 
-		permitirOuNaoMovimentarDestinacao(mob);
+		permitirOuNaoMovimentarDestinacao(cadastrante, lotaCadastrante, mob);
 
 		Date dt = dao().dt();
 		try {
@@ -4108,7 +4109,7 @@ public class ExBL extends CpBL {
 			if (mobPai.isJuntado())
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está juntado.");
 
-			if (mobPai.isEmTransito())
+			if (mobPai.isEmTransito(cadastrante, lotaCadastrante))
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está em trânsito.");
 
 			if (mobPai.isArquivado())
@@ -4463,26 +4464,85 @@ public class ExBL extends CpBL {
 					}
 				}
 				
-				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
+				Pendencias p = mob.calcularTramitesPendentes();
+				
+				// Concluir trâmites ou recebimentos de notificação pendentes quando já é atendente.
+				{
+					Set<ExMovimentacao> tramitesERecebimentosPendentes = new HashSet<>();
+					for (ExMovimentacao r : p.tramitesPendentes)
+						if (r.isResp(titular, lotaTitular))
+							tramitesERecebimentosPendentes.add(r);
+					for (ExMovimentacao r : p.recebimentosPendentes)
+						if (r.isResp(titular, lotaTitular))
+							tramitesERecebimentosPendentes.add(r);
+					// Tem mais de um trâmite ou recebimento pendente para o usuário ou a lotação
+					if (tramitesERecebimentosPendentes.size() > 1) {
+						// Seleciona o que será mantido
+						ExMovimentacao selecionado = null;
+						for (ExMovimentacao r : p.tramitesPendentes)
+							if (r.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO
+									|| r.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO)
+								selecionado = r;
+						if (selecionado == null)
+							for (ExMovimentacao r : p.tramitesPendentes)
+								if (r.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)
+									selecionado = r;
+						if (selecionado == null)
+							for (ExMovimentacao r : p.tramitesPendentes) {
+								selecionado = r;
+								break;
+							}
+						// Conclui demais tramites e recebimentos pendentes
+						for (ExMovimentacao pend : tramitesERecebimentosPendentes) {
+							if (selecionado == pend)
+								continue;
+							final ExMovimentacao mov = criarNovaMovimentacao(
+									ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO, cadastrante, lotaTitular, m, dtMov,
+									titular, null, null, null, null);
+							mov.setResp(titular);
+							mov.setLotaResp(lotaTitular);
+							mov.setDestinoFinal(pend.getDestinoFinal());
+							mov.setLotaDestinoFinal(pend.getLotaDestinoFinal());
+							mov.setExMovimentacaoRef(pend);
+							gravarMovimentacao(mov);
+						}
+						p = mob.calcularTramitesPendentes();
+					}
+				}
+			
+				// Se houver outros recebimentos pendentes para o destinatário, em vez de
+				// receber deve concluir direto
+				boolean fConcluirDireto = p.fIncluirCadastrante && (Utils.equivale(mob.doc().getCadastrante(), titular)
+						|| Utils.equivale(mob.doc().getLotaCadastrante(), lotaTitular));
+				if (!fConcluirDireto)
+					for (ExMovimentacao r : p.recebimentosPendentes)
+						// Existe um recebimento pendente e não é apenas de notificação
+						if (r.isResp(titular, lotaTitular) && !p.recebimentosDeNotificacoesPendentes.contains(r))
+							fConcluirDireto = true;
+				
+				final ExMovimentacao mov = criarNovaMovimentacao(fConcluirDireto ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO : ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
 						cadastrante, lotaTitular, m, dtMov, titular, null, null, null, null);
 
-				Set<ExMovimentacao> tramitesPendentes = mob.getTramitesPendentes();
-				
+
 				// Localiza o tramite que será recebido
 				ExMovimentacao tramite = null;
-				for (ExMovimentacao t : tramitesPendentes) {
-					if ((t.getLotaDestinoFinal() != null && t.getLotaDestinoFinal().equivale(lotaTitular)) 
-							|| (t.getDestinoFinal() != null && t.getDestinoFinal().equivale(titular))) {
+				for (ExMovimentacao t : p.tramitesPendentes) {
+					if (t.isResp(titular, lotaTitular)) {
 						tramite = t;
 						break;
 					}
 				}
-
-				if (tramite == null)
-					throw new AplicacaoException("Não foi encontrado nenhum trâmite pendente para o usuário correte ou sua lotação");
 				
+				if (tramite == null)
+					throw new AplicacaoException("Não foi encontrado nenhum trâmite pendente para o usuário corrente ou sua lotação");
+				
+				mov.setResp(titular);
+				mov.setLotaResp(lotaTitular);
 				mov.setDestinoFinal(tramite.getDestinoFinal());
 				mov.setLotaDestinoFinal(tramite.getLotaDestinoFinal());
+				
+				mov.setExMovimentacaoRef(tramite);
+//				tramite.setExMovimentacaoRef(mov);
 
 				// Marcação deve ser removida só se a lotação estiver sendo alterada
 				if (movAnterior != null && movAnterior.getMarcador() != null) {
@@ -4492,7 +4552,6 @@ public class ExBL extends CpBL {
 				}
 
 				if (movAnterior != null) {
-					mov.setExMovimentacaoRef(movAnterior);
 					gravarMovimentacaoCancelamento(mov, movAnterior);
 				} else
 					gravarMovimentacao(mov);
@@ -4512,6 +4571,57 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao receber documento.", e);
 		}
+	}
+	
+	public void concluir(DpPessoa cadastrante, final DpLotacao lotaCadastrante, DpPessoa titular, final DpLotacao lotaTitular, ExMobil mob, Date dtMov,
+			Date dtMovIni, DpPessoa subscritor) {
+
+		try {
+			iniciarAlteracao();
+
+			if (mob.isGeralDeProcesso()) {
+				mob = mob.doc().getUltimoVolume();
+			}
+			
+			Pendencias p = mob.calcularTramitesPendentes();
+			
+			// Localiza o recebimento que será concluído
+			ExMovimentacao recebimento = null;
+			for (ExMovimentacao t : p.recebimentosPendentes) {
+				if (t.isResp(titular, lotaTitular)) {
+					recebimento = t;
+					break;
+				}
+			}
+
+			if (recebimento == null)
+				throw new AplicacaoException("Não foi encontrado nenhum recebimento pendente para o usuário corrente ou sua lotação");
+			
+			final ExMovimentacao mov = gerarMovimentacaoDeConclusao(cadastrante, lotaCadastrante, titular, lotaTitular, mob, dtMov,
+					dtMovIni, subscritor, recebimento);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao concluir documento.", e);
+		}
+	}
+
+	public ExMovimentacao gerarMovimentacaoDeConclusao(DpPessoa cadastrante, final DpLotacao lotaCadastrante, DpPessoa titular,
+			final DpLotacao lotaTitular, ExMobil mob, Date dtMov, Date dtMovIni, DpPessoa subscritor,
+			ExMovimentacao recebimento) {
+		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
+		final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO,
+				cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, null, null, dt);
+		
+		mov.setResp(titular);
+		mov.setLotaResp(lotaTitular);
+		mov.setDestinoFinal(recebimento.getDestinoFinal());
+		mov.setLotaDestinoFinal(recebimento.getLotaDestinoFinal());
+		
+		mov.setExMovimentacaoRef(recebimento);
+		return mov;
 	}
 
 	public void receberEletronico(ExMovimentacao mov) throws AplicacaoException {
@@ -4907,12 +5017,22 @@ public class ExBL extends CpBL {
 					}
 					if (automatico)
 						mov.setDescrMov("Transferência automática.");
-
+					
+					Pendencias p = mob.calcularTramitesPendentes();
+					
+					// Localiza o tramite que será recebido
+					for (ExMovimentacao t : p.recebimentosPendentes) {
+						if (t.isResp(titular, lotaCadastrante)) {
+							mov.setExMovimentacaoRef(t);
+							break;
+						}
+					}
 					
 					// Cancelar trâmite pendente quando é para forçar para outro destino
-					ExMovimentacao movTramitePendente = m.getTramitePendente();
-					if (forcarTransferencia && movTramitePendente != null) {
-						gravarMovimentacaoCancelamento(mov, movTramitePendente);
+					Set<ExMovimentacao> movsTramitePendente = m.calcularTramitesPendentes().tramitesPendentes;
+					if (forcarTransferencia && movsTramitePendente.size() > 0) {
+						for (ExMovimentacao tp : movsTramitePendente)
+						gravarMovimentacaoCancelamento(mov, tp);
 					} else {
 						gravarMovimentacao(mov);
 					}
@@ -6233,7 +6353,7 @@ public class ExBL extends CpBL {
 		if (mobMestre.isJuntado())
 			throw new AplicacaoException("não é possível apensar a um documento juntado");
 
-		if (mobMestre.isEmTransito())
+		if (mobMestre.isEmTransito(cadastrante, lotaCadastrante))
 			throw new AplicacaoException("não é possível apensar a um documento em trânsito");
 
 		if (mobMestre.isCancelada())

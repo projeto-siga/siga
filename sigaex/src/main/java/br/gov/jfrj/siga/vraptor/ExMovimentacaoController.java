@@ -1516,6 +1516,45 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/mov/receber_lote");
 	}
+	
+	@Transacional
+	@Post("/app/expediente/mov/concluir_gravar")
+	public void aConcluirGravar(final String sigla) {
+
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+
+		final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
+		final ExMovimentacao mov = movBuilder.construir(dao());
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+						builder.getMob())) {
+			throw new AplicacaoException(
+					"Acesso permitido a usuários autorizados.");
+		}
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeConcluir(getTitular(), getLotaTitular(),
+						builder.getMob())) {
+			throw new AplicacaoException(
+					"Via ou processo não pode ser concluído(a)");
+		}
+
+		Ex.getInstance()
+				.getBL()
+				.concluir(getCadastrante(), getLotaTitular(), getTitular(), getLotaTitular(),
+						builder.getMob(), mov.getDtMov(), null,
+						mov.getSubscritor());
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+
+
 
 	@Get("/app/expediente/mov/arquivar_corrente_lote")
 	public void aArquivarCorrenteLote() {
@@ -2033,17 +2072,6 @@ public class ExMovimentacaoController extends ExController {
 				.setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao);
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
-		final ExMovimentacao UltMov = builder.getMob()
-				.getUltimaMovimentacaoNaoCancelada();
-		if ((mov.getLotaResp() != null && mov.getResp() == null
-				&& UltMov.getLotaResp() != null && UltMov.getResp() == null && UltMov
-				.getLotaResp().equivale(mov.getLotaResp()))
-				|| (mov.getResp() != null && UltMov.getResp() != null && UltMov
-						.getResp().equivale(mov.getResp()))) {
-			throw new AplicacaoException(
-					"Novo responsável não pode ser igual ao atual");
-		}
 
 		if (!Ex.getInstance().getComp()
 				.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp())) {

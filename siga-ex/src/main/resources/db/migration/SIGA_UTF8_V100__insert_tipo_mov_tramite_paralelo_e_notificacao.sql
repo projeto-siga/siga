@@ -4,3 +4,4 @@
 ALTER SESSION SET CURRENT_SCHEMA=siga;
 insert into siga.ex_tipo_movimentacao (id_tp_mov, DESCR_TIPO_MOVIMENTACAO) values (80, 'Trâmite Paralelo');
 insert into siga.ex_tipo_movimentacao (id_tp_mov, DESCR_TIPO_MOVIMENTACAO) values (81, 'Notificação');
+insert into siga.ex_tipo_movimentacao (id_tp_mov, DESCR_TIPO_MOVIMENTACAO) values (82, 'Conclusão de Trâmite');

@@ -1078,7 +1078,7 @@ public class ExDocumentoController extends ExController {
 											 */
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
-								if(mobUlt.isEmTransito()) { /*  em transito */
+								if(mobUlt.isEmTransito(getTitular(), getLotaTitular())) { /*  em transito */
 									Ex.getInstance()
 									.getBL()
 									.receber(getCadastrante(), getTitular(), getLotaTitular(),

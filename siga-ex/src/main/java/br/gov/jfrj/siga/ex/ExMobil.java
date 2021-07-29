@@ -21,7 +21,6 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -42,6 +41,7 @@ import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -871,14 +871,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return isArquivadoCorrente() || isArquivadoIntermediario() || isArquivadoPermanente();
 	}
 	
-	public boolean isAguardandoAndamento() {
+	public boolean isAguardandoAndamento(DpPessoa titular, DpLotacao lotaTitular) {
 		return doc().isFinalizado()
 			&& (isVia() || isVolume())
 			&& !isArquivado()
 			&& !isApensadoAVolumeDoMesmoProcesso()
 			&& !isSobrestado()
 			&& !isJuntado()
-			&& !isEmTransito()
+			&& !isEmTransito(titular, lotaTitular)
 			&& !doc().isSemEfeito();
 	}
 
@@ -898,24 +898,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * DESPACHO_TRANSFERENCIA, DESPACHO_TRANSFERENCIA_EXTERNA ou
 	 * TRANSFERENCIA_EXTERNA e não possuem movimentação de recebimento.
 	 * 
+	 * Nato: alterei para sinalizar apenas se existe recebimento pendente para a pessoa em questão. Pois agora temos o trâmite paralelo.
+	 * 
 	 * @return Verdadeiro se o Mobil está em trânsito e Falso caso contrário.
 	 * 
 	 */
-	public boolean isEmTransito() {
-		if (isApensadoAVolumeDoMesmoProcesso())
+	public boolean isEmTransito(DpPessoa titular, DpLotacao lotaTitular) {
+		Pendencias p = calcularTramitesPendentes();
+
+		if (isApensadoAVolumeDoMesmoProcesso() || p.tramitesPendentes.size() == 0)
 			return false;
-		return getTramitePendente() != null;
+		return Ex.getInstance().getComp().podeReceber(titular, lotaTitular, this);
 
 	}
 	
-	public ExMovimentacao getTramitePendente() {
-		return getUltimaMovimentacao(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA },new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO },
-				this, false, null);
-	}
-
 	/**
 	 * Verifica se um Mobil recebeu movimentação de inclusão em edital de
 	 * eliminação, não revertida pela de retirada de edital de eliminação.
@@ -2320,65 +2316,131 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 	
 	public Set<PessoaLotacaoParser> getAtendente() {
-		Set<PessoaLotacaoParser> set = new HashSet<>();
-		DpPessoa resp = doc().getCadastrante();
-		DpLotacao lotaResp = doc().getLotaCadastrante();
+		Pendencias p = calcularTramitesPendentes();
 		
-		Set<ExMovimentacao> movSet = getExMovimentacaoSet();
-		if (doc().isFinalizado() && !isGeral() && movSet != null || movSet.size() > 0) {
-			ExMovimentacao movReturn = null;
-			for (ExMovimentacao mov : movSet) {
-				if (mov.isCancelada() || mov.isCanceladora())
-					continue;
-				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
-					DpPessoa pes = mov.getResp();
-					DpLotacao lot = mov.getLotaResp();
-					if (pes != null || lot != null) {
-						set.add(new PessoaLotacaoParser(pes, lot));
-					}
-				}
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.tramitesPendentes);
+		setMov.addAll(p.recebimentosPendentes);
+		setMov.removeAll(p.tramitesDeNotificacoesPendentes);
+		setMov.removeAll(p.recebimentosDeNotificacoesPendentes);
+		
+		return calcularAtendentes(setMov, p.fIncluirCadastrante); 
+	}
+
+	public Set<PessoaLotacaoParser> getNotificados() {
+		Pendencias p = calcularTramitesPendentes();
+		
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.tramitesDeNotificacoesPendentes);
+		setMov.addAll(p.recebimentosDeNotificacoesPendentes);
+		
+		return calcularAtendentes(setMov, p.fIncluirCadastrante); 
+	}
+
+	public Set<PessoaLotacaoParser> calcularAtendentes(Set<ExMovimentacao> setMov, boolean fIncluirCadastrante) {
+		Set<PessoaLotacaoParser> set = new HashSet<>();
+		for (ExMovimentacao mov : setMov) {
+			DpPessoa pes = mov.getResp();
+			DpLotacao lot = mov.getLotaResp();
+			if (pes != null || lot != null) {
+				set.add(new PessoaLotacaoParser(pes, lot));
 			}
 		}
-		return set; 
+		// Cadastrante é o atendente quando o móbil ainda não foi movimentado
+		if (fIncluirCadastrante) {
+			set.add(new PessoaLotacaoParser(doc().getCadastrante(), doc().getLotaCadastrante()));
+		}
+		return set;
+	}
+	
+	public boolean isEmTramiteParalelo() {
+		return getAtendente().size() > 1;
 	}
 	
 	public boolean isAtendente(DpPessoa pessoa, DpLotacao lotacao) {
 		Set<PessoaLotacaoParser> set = getAtendente();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+
+	public boolean isNotificado(DpPessoa pessoa, DpLotacao lotacao) {
+		Set<PessoaLotacaoParser> set = getNotificados();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+	
+	private boolean equivalePessoaOuLotacao(DpPessoa pessoa, DpLotacao lotacao, Set<PessoaLotacaoParser> set) {
 		for (PessoaLotacaoParser pl : set) {
-			if (pl.getPessoa() != null && pl.getPessoa().equivale(pessoa))
+			if (Utils.equivale(pl.getPessoa(), pessoa))
 				return true;
-			if (pl.getLotacao() != null && pl.getLotacao().equivale(lotacao))
+			if (Utils.equivale(pl.getLotacao(), lotacao))
 				return true;
 		}
 		return false;
 	}
 
-	public Set<ExMovimentacao> getTramitesPendentes() {
-		Set<ExMovimentacao> set = new HashSet<>();
-		DpPessoa resp = doc().getCadastrante();
-		DpLotacao lotaResp = doc().getLotaCadastrante();
-		
-		Set<ExMovimentacao> movSet = getExMovimentacaoSet();
-		if (doc().isFinalizado() && !isGeral() && movSet != null || movSet.size() > 0) {
-			ExMovimentacao movReturn = null;
-			for (ExMovimentacao mov : movSet) {
-				if (mov.isCancelada() || mov.isCanceladora())
-					continue;
-				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
-					if (!mov.isReferenciando())
-						set.add(mov);
-				}
-				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
-					if (!mov.isReferenciando())
-						set.clear();
+	public static class Pendencias {
+		// Trâmite serial, paralelo e notificações
+		public Set<ExMovimentacao> tramitesPendentes = new TreeSet<ExMovimentacao>();
+		// Trâmite serial, paralelo e notificações recebidos e ainda não concluídos
+		public Set<ExMovimentacao> recebimentosPendentes = new TreeSet<ExMovimentacao>();
+		// Somente notificações
+		public Set<ExMovimentacao> tramitesDeNotificacoesPendentes = new TreeSet<ExMovimentacao>();
+		// Somente notificações recebidas e ainda não concluídos
+		public Set<ExMovimentacao> recebimentosDeNotificacoesPendentes = new TreeSet<ExMovimentacao>();
+		// Indica se o cadastrante do documento deve ser incluído na lista de atendentes 
+		public boolean fIncluirCadastrante = true;
+	}
+	
+	public Pendencias calcularTramitesPendentes() {
+		Pendencias p = new Pendencias();
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {
+			if (mov.isCancelada())
+				continue;
+			long t = mov.getIdTpMov();
+			if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)) {
+				p.tramitesPendentes.add(mov);
+			}
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
+				// Recebimento sem movRef limpa todos os pendentes até agora
+				if (mov.getExMovimentacaoRef() == null)
+					p.tramitesPendentes.clear();
+				else { 
+					if (mov.getExMovimentacaoRef() != null)
+						p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
+					p.recebimentosPendentes.add(mov);
 				}
 			}
+			if (mov.getExMovimentacaoRef() != null) {
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO) {
+					// Existe a conclusão direta, que cancela um trâmite pendente, ou a conclusão
+					// normal que cancela um recebimento pendente
+					p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
+					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+				} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
+					// Também existe a possibilidade de cancelar um recebimento pendente tramitando
+					// serialmente para outro lugar
+					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+				}
+			}
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
+					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 
+							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante()))) 
+				p.fIncluirCadastrante = false;
 		}
-		return set; 
+		
+		for (ExMovimentacao mov : p.tramitesPendentes) {
+			if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)
+				p.tramitesDeNotificacoesPendentes.add(mov);
+		}
+		for (ExMovimentacao mov : p.recebimentosPendentes) {
+			if (mov.getExMovimentacaoRef() == null)
+				continue;
+			if (mov.getExMovimentacaoRef().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)
+				p.tramitesDeNotificacoesPendentes.add(mov);
+		}
+		return p;
 	}
 	
 }

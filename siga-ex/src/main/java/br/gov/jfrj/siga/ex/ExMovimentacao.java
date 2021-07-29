@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
@@ -1357,5 +1358,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Service.throwExceptionIfError(sCPF);
 
 		return "OK (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
+	}
+	
+	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
+		return Utils.equivale(getLotaResp(), lotaTitular)
+				|| Utils.equivale(getResp(),titular)
+				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
+				|| Utils.equivale(getDestinoFinal(),titular);
 	}
 }

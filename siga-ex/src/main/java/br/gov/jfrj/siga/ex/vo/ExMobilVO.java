@@ -41,6 +41,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnotar;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 
 public class ExMobilVO extends ExVO {
@@ -447,11 +448,20 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance().getComp()
 							.podeCopiar(titular, lotaTitular, mob));
 		}
-
+		
 		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once  siga-btn-arq-corrente");
+
+		addAcao(AcaoVO.builder().nome("Concluir").nameSpace("/app/expediente/mov").icone("tick")
+				.acao("concluir_gravar").params("sigla", mob.getCodigoCompacto())
+				.post(true).pode(Ex.getInstance().getComp().podeConcluir(titular, lotaTitular, mob))
+				.build());
+
+//		addAcao("tick", "Concluir", "/app/expediente/mov",
+//				"concluir_gravar", , null,
+//				null, null, null, "once  siga-btn-arq-corrente");
 
 		addAcao("building_go",
 				"Indicar para Guarda Permanente",

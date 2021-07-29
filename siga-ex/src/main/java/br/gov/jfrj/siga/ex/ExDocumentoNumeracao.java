@@ -34,7 +34,6 @@ import java.math.BigDecimal;
 	@NamedQuery(name="ExDocumentoNumeracao.existeRangeDocumentoNumeracao", query="SELECT e.idDocumentoNumeracao FROM ExDocumentoNumeracao e "
 			+ "where e.idOrgaoUsu = :idOrgaoUsu "
 			+ "and e.idFormaDoc = :idFormaDoc "
-			+ "and rownum = :rownum "
 			+ "Order by e.anoEmissao desc"),
 	@NamedQuery(name="ExDocumentoNumeracao.mantemRangeNumeroDocumento", query="UPDATE ExDocumentoNumeracao e SET e.nrDocumento = e.nrDocumento + :increment, e.anoEmissao = :anoEmissao,  e.flAtivo = :flAtivo WHERE e.idDocumentoNumeracao = :id")
 

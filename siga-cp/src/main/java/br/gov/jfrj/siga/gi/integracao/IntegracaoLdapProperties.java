@@ -24,16 +24,16 @@ import br.gov.jfrj.siga.base.Prop;
 
 public class IntegracaoLdapProperties extends LdapProperties {
 	
-	private String orgao;
+	private String sesbPessoa;
 
-	public IntegracaoLdapProperties(String orgao) {
-		this.orgao = orgao.toLowerCase();
+	public IntegracaoLdapProperties(String sesbPessoa) {
+		this.sesbPessoa = sesbPessoa.toLowerCase();
 	}
 	
 
 	public boolean sincronizarSenhaLdap() {
 		try {
-			return Prop.getBool("/siga.ldap." + orgao + ".integracao");
+			return Prop.getBool("/siga.ldap." + sesbPessoa + ".integracao");
 		} catch (Exception e) {
 			return false;
 		}
@@ -42,7 +42,7 @@ public class IntegracaoLdapProperties extends LdapProperties {
 	
 	public String getEnderecoTrocaSenhaWebServiceLdap() {
 		try {
-			return Prop.get("/siga.ldap." + orgao + ".ws.endereco.troca.senha");
+			return Prop.get("/siga.ldap." + sesbPessoa + ".ws.endereco.troca.senha");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP (trocaSenha)", 9, e);
 		}
@@ -50,7 +50,7 @@ public class IntegracaoLdapProperties extends LdapProperties {
 
 	public String getEnderecoAutenticacaoWebServiceLdap() {
 		try {
-			return Prop.get("/siga.ldap." + orgao + ".ws.endereco.autenticacao");
+			return Prop.get("/siga.ldap." + sesbPessoa + ".ws.endereco.autenticacao");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP (autenticacao)", 9, e);
 		}
@@ -58,7 +58,7 @@ public class IntegracaoLdapProperties extends LdapProperties {
 
 	public String getEnderecoBuscaWebServiceLdap() {
 		try {
-			return Prop.get("/siga.ldap." + orgao + ".ws.endereco.busca");
+			return Prop.get("/siga.ldap." + sesbPessoa + ".ws.endereco.busca");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP (busca)", 9, e);
 		}

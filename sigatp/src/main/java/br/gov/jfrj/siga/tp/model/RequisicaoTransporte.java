@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.Reflexao;
 import br.gov.jfrj.siga.tp.util.SigaTpException;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
@@ -65,6 +66,8 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
 	private static final String IMG_LINKNOVAJANELAICON = "/sigatp/public/images/linknovajanelaicon.png";
     private static final String END_23_59_59 = "23:59:59";
     private static final String START_00_00_00 = "00:00:00";
+	private static final String PATTERN_DDMMYYYYHHMM = "dd/MM/yyyy HH:mm";
+	private static final String PATTERN_DDMMYYYYHHMM_MYSQL = "yyyy-MM-dd HH:mm";
     public static final ActiveRecord<RequisicaoTransporte> AR = new ActiveRecord<>(RequisicaoTransporte.class);
 
     @Id
@@ -122,7 +125,7 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
     private EstadoRequisicao ultimoEstado;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "sigatp.missao_requisTransporte", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"), inverseJoinColumns = @JoinColumn(name = "missao_Id"))
+    @JoinTable(name = "sigatp.missao_requistransporte", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"), inverseJoinColumns = @JoinColumn(name = "missao_Id"))
     private List<Missao> missoes;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
@@ -667,9 +670,21 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
 			return new ArrayList<RequisicaoTransporte>();
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
-		String dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime())  + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+		SimpleDateFormat sdf = new SimpleDateFormat(FormatarDataHora.recuperaFormato("dd/MM/yyyy","yyyy-MM-dd"));
+//		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+//		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+		String dataInicioFormatada;
+		String dataFimFormatada; 
+
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL")) {
+			dataInicioFormatada = dataInicio != null ? "STR_TO_DATE('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', '%Y-%m-%d %H:%i:%s')" : "";
+			dataFimFormatada = dataFim != null ? "STR_TO_DATE('" + sdf.format(dataFim.getTime()) + " " + END_23_59_59 + "', '%Y-%m-%d %H:%i:%s')" : "";
+		} else {
+			dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+			dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime()) + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+		}
+
 
         String qrl = "SELECT req from RequisicaoTransporte req, Andamento an1 ";
         qrl += "WHERE req.id = an1.requisicaoTransporte.id ";

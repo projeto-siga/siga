@@ -3148,7 +3148,7 @@ public class ExMovimentacaoController extends ExController {
 							.assinarDocumento(getCadastrante(),
 									getLotaTitular(), mob.doc(), dt,
 									assinatura, certificado, tpMovAssinatura, juntar, tramitar,
-									exibirNoProtocolo));
+									exibirNoProtocolo, getTitular()));
 			
 		} catch (final Exception e) {
 			httpError(e);

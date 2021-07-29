@@ -281,6 +281,44 @@ public class Documento {
 		return retorno;
 	}
 
+	public static String getAssinantesPorString(Set<ExMovimentacao> movsAssinaturaPor, Date dtDoc,
+			Set<ExMovimentacao> movsAssinatura) {
+		ArrayList<String> als = getAssinantesStringListaComMatricula(movsAssinaturaPor,dtDoc);
+		String retorno = "";
+		if (als.size() > 0) {
+			for (int i = 0; i < als.size(); i++) {
+				String nome = als.get(i);
+				for (ExMovimentacao mov : movsAssinatura) {
+					if (mov.getCadastrante().getSigla().equals(nome.split(" - ")[1].split(" ")[0])) {
+						if (mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
+							|| mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
+							nome = "Assinado com senha por " + nome;
+							break;
+						}
+						if (mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+							|| mov.getExTipoMovimentacao()
+								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
+							nome = "Assinado digitalmente por " + nome;
+							break;
+						}
+					}
+				}
+				if (i > 0) {
+					if (i == als.size() - 1) {
+						retorno += " e ";
+					} else {
+						retorno += ", ";
+					}
+				}
+				retorno += nome;
+			}
+		}
+		return retorno;
+	}
+
 	
 	// private byte[] getPdfOld(byte[] pdf, ExDocumentoVia docvia,
 	// ExMovimentacao mov, Integer paginaInicial, Integer paginaFinal,

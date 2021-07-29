@@ -29,8 +29,10 @@ import org.hibernate.envers.RelationTargetAuditMode;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.tp.util.Reflexao;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
@@ -52,6 +54,8 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	private static final String MISSAO_BUSCAR_SEQUENCE_EXCEPTION = "missao.buscar.sequence.exception";
     private static final String END_23_59_59 = "23:59:59";
     private static final String START_00_00_00 = "00:00:00";
+	private static final String PATTERN_DDMMYYYYHHMM = "dd/MM/yyyy HH:mm";
+	private static final String PATTERN_DDMMYYYYHHMM_MYSQL = "yyyy-MM-dd HH:mm";
     public static final ActiveRecord<Missao> AR = new ActiveRecord<>(Missao.class);
 
 	@Id
@@ -146,7 +150,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 
 	@NotNull
 	@ManyToMany
-	@JoinTable(name = "sigatp.missao_requisTransporte", joinColumns = @JoinColumn(name = "missao_Id"), inverseJoinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
+	@JoinTable(name = "sigatp.missao_requistransporte", joinColumns = @JoinColumn(name = "missao_Id"), inverseJoinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
 	private List<RequisicaoTransporte> requisicoesTransporte;
 
 	@NotNull
@@ -209,11 +213,12 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	@Override
 	public String getSequence() {
 		if (this.numero != 0) {
-			return cpOrgaoUsuario.getAcronimoOrgaoUsu().replace("-","").toString() +  "-" +
-				   Reflexao.recuperaAnotacaoField(this).substring(1) + "-" +
-				   String.format("%04d",this.dataHora.get(Calendar.YEAR)) + "/" +
-				   String.format("%05d", numero) + "-" +
-				   Reflexao.recuperaAnotacaoField(this).substring(0,1);
+			String sequencia = cpOrgaoUsuario.getAcronimoOrgaoUsu().replace("-","").toString() +  "-" +
+					   Reflexao.recuperaAnotacaoField(this).substring(1) + "-" +
+					   String.format("%04d",this.dataHora.get(Calendar.YEAR)) + "/" +
+					   String.format("%05d", numero) + "-" +
+					   Reflexao.recuperaAnotacaoField(this).substring(0,1);
+			return sequencia;
 		} else {
 			return "";
 		}
@@ -240,7 +245,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	}
 
 	public static List<Missao> buscarEmAndamento() {
-		return Missao.AR.find("trunc(dataHoraSaida) = trunc(CURRENT_TIMESTAMP)").fetch();
+		return Missao.AR.find(FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraSaida) = " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + CpDao.getInstance().consultarDataEHoraDoServidor() + ")").fetch();
 	}
 
 	public static Missao buscar(String sequence) throws Exception {
@@ -295,10 +300,14 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			return new ArrayList<Missao>();
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
-		String dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime())  + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+		SimpleDateFormat sdf = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL));
+//		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+//		String dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime())  + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
 
+		String dataInicioFormatada = dataInicio != null ? FormatarDataHora.retorna_DataeHoraeSegundoInvertido(sdf.format(dataInicio.getTime() + " " + START_00_00_00 )) : "";
+		String dataFimFormatada = dataFim != null ? FormatarDataHora.retorna_DataeHoraeSegundoInvertido(sdf.format(dataFim.getTime() + " " + END_23_59_59 )) : "";
+
+		
         String qrl = (condutor != null) ? "condutor.id = " + condutor.getId() : "";
         qrl += (!qrl.equals("") && (dataInicio!= null || dataFim!=null)) ? " AND" : "";
 	    qrl += ((!dataInicioFormatada.equals("") && !dataFimFormatada.equals("")) ? " dataHoraSaida BETWEEN " + dataInicioFormatada + " AND " + dataFimFormatada  : "");
@@ -341,14 +350,15 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			filtroEntidade = entidade + ".id = " + idEntidade + " AND ";
 		}
 
-		String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+	//	String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+		String dataFormatadaOracle = dataHoraInicio;
 		List<Missao> missoes;
 
 		String qrl = "SELECT m FROM Missao m WHERE " + filtroEntidade
 				+
 				// "  estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "','" + EstadoMissao.FINALIZADA + "')" +
-				"  estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "')" + " AND trunc(dataHoraSaida) <= trunc(" + dataFormatadaOracle + ")"
-				+ " AND (dataHoraRetorno IS NULL OR trunc(dataHoraRetorno) >= trunc(" + dataFormatadaOracle + "))";
+				"  estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "')" + " AND " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraSaida) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + ")"
+				+ " AND (dataHoraRetorno IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraRetorno) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + "))";
 
 		Query qry = AR.em().createQuery(qrl);
 		try {
@@ -371,15 +381,18 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 
 		String qrl = "SELECT m FROM Missao m";
 		qrl += " WHERE " + filtroEntidade;
-		SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		String dataInicioFormatadaOracle = "to_date('" + formatar.format(dataHoraInicio.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
-		String dataFimFormatadaOracle = dataHoraFim == null ? "" : "to_date('" + formatar.format(dataHoraFim.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
+	//	SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		SimpleDateFormat formatar = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM, PATTERN_DDMMYYYYHHMM_MYSQL));
+		String dataInicioFormatadaOracle = FormatarDataHora.retorna_DataeHoraInvertido(formatar.format(dataHoraInicio.getTime()));
+		//"to_date('" + formatar.format(dataHoraInicio.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
+		String dataFimFormatadaOracle = dataHoraFim == null ? "" : FormatarDataHora.retorna_DataeHoraInvertido(formatar.format(dataHoraFim.getTime()));
+//		String dataFimFormatadaOracle = dataHoraFim == null ? "" : "to_date('" + formatar.format(dataHoraFim.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
 
 
 		if (!dataFimFormatadaOracle.isEmpty()) {
 			qrl += " AND dataHoraSaida BETWEEN " + dataInicioFormatadaOracle + " AND " + dataFimFormatadaOracle;
 		} else {
-			qrl += " AND trunc(dataHoraSaida) <= trunc(" + dataInicioFormatadaOracle + ")";
+			qrl += " AND " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraSaida) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataInicioFormatadaOracle + ")";
 		}
 
 

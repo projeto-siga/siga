@@ -54,7 +54,7 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	public static final ActiveRecord<Veiculo> AR = new ActiveRecord<>(Veiculo.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+    @GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 

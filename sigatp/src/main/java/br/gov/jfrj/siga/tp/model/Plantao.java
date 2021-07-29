@@ -23,6 +23,7 @@ import org.hibernate.envers.Audited;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
 
 @SuppressWarnings("serial")
@@ -144,22 +145,25 @@ public class Plantao extends TpModel implements ConvertableEntity, Comparable<Pl
 
     public static List<Plantao> buscarPorCondutores(Long idCondutor, String dataHoraInicio) {
         String filtroCondutor = "";
-        String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+       // String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+        String dataFormatadaOracle = dataHoraInicio;
 
         if (idCondutor != null) {
             filtroCondutor = "condutor.id = " + idCondutor + " AND ";
         }
 
         String qrl = "SELECT p FROM Plantao p WHERE " + filtroCondutor + 
-        			 "  trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracle + ")" + 
-        		     " AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracle + "))";
+        		FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + ")" + 
+        		     " AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= "+ FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + "))";
 
         return retornarLista(qrl);
     }
 
     public static List<Plantao> buscarPorCondutores(Long idCondutor, String dataHoraInicio, String dataHoraFim) {
-        String dataFormatadaOracleInicio = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
-        String dataFormatadaOracleFim = "to_date('" + dataHoraFim + "', 'DD/MM/YYYY')";
+    //    String dataFormatadaOracleInicio = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+    //    String dataFormatadaOracleFim = "to_date('" + dataHoraFim + "', 'DD/MM/YYYY')";
+    	String dataFormatadaOracleInicio = dataHoraInicio;
+    	String dataFormatadaOracleFim = dataHoraFim;
         String filtroCondutor = "";					  
 
         if (idCondutor != null) {
@@ -168,17 +172,19 @@ public class Plantao extends TpModel implements ConvertableEntity, Comparable<Pl
 
      	String qrl = 	"SELECT p FROM Plantao p " +
     	                " WHERE " + filtroCondutor + 
-    					" ((trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracleInicio + ")" +  	
-    					" AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracleInicio + ")))" +
-    					" OR (trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracleFim + ")" +  	
-    					" AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracleFim + "))))";
+    					" ((" + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleInicio + ")" +  	
+    					" AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleInicio + ")))" +
+    					" OR (" + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleFim + ")" +  	
+    					" AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleFim + "))))";
     		
     	return retornarLista(qrl); 
     }
 
     public static List<Plantao> buscarPorCondutores(Long idCondutor, String dataHoraInicio, String dataHoraFim, Long idPlantao) {
-		String dataFormatadaOracleInicio = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
-		String dataFormatadaOracleFim = "to_date('" + dataHoraFim + "', 'DD/MM/YYYY')";
+        //    String dataFormatadaOracleInicio = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+        //    String dataFormatadaOracleFim = "to_date('" + dataHoraFim + "', 'DD/MM/YYYY')";
+        String dataFormatadaOracleInicio = dataHoraInicio;
+       	String dataFormatadaOracleFim = dataHoraFim;
 		String filtroCondutor = "";
 		String filtroPlantao = "";
 
@@ -192,10 +198,11 @@ public class Plantao extends TpModel implements ConvertableEntity, Comparable<Pl
 
         String qrl = "SELECT p FROM Plantao p " +
         			 " WHERE " + filtroCondutor + filtroPlantao + 
-        			 " ((trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracleInicio + ")" +
-                     " AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracleInicio + ")))" + 
-        		     " OR (trunc(dataHoraInicio) <= trunc(" + dataFormatadaOracleFim + ")" +
-                     " AND (dataHoraFim IS NULL OR trunc(dataHoraFim) >= trunc(" + dataFormatadaOracleFim + "))))";
+  					" ((" + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleInicio + ")" +  	
+    					" AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleInicio + ")))" +
+    					" OR (" + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleFim + ")" +  	
+    					" AND (dataHoraFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracleFim + "))))";
+    		
 
         return retornarLista(qrl);
     }

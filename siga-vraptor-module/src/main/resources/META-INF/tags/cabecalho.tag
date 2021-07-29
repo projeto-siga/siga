@@ -430,11 +430,11 @@ ${meta}
 							<c:catch>
 								<c:choose>
 									<c:when
-										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
+										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong title="${titular.sigla}">${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
 										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:when
-										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
+										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong title="${lotaTitular.sigla}">${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
 										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:otherwise></c:otherwise>

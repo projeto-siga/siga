@@ -1845,11 +1845,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA);
 	}
 	
-	public Set<ExMovimentacao> getAssinaturasPorComSenha() {
+	public Set<ExMovimentacao> getAssinaturasPor() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral().getMovsNaoCanceladas(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR);
 	}
 
 
@@ -1974,36 +1974,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				.getAssinantesString(getAssinaturasComToken(),getDtDoc());
 		String assinantesSenha = Documento
 				.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
-		String assinantesPorSenha = Documento
-				.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
+		Set<ExMovimentacao> movsAssinatura = getAssinaturasComToken();
+		movsAssinatura.addAll(getAssinaturasComSenha());
+		String assinantesPor = Documento
+				.getAssinantesPorString(getAssinaturasPor(),getDtDoc(),movsAssinatura);
 		
-		if(Prop.isGovSP() && assinantesPorSenha != null && !"".equals(assinantesPorSenha)) {
-			Set<ExMovimentacao> listaAssinantesSenha1 = new TreeSet<ExMovimentacao>();
-			Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
-			
-			listaAssinantesPor.addAll(getAssinaturasPorComSenha());
-			listaAssinantesSenha1.addAll(getAssinaturasComSenha());
-
-			String porAss = "";
-			for (ExMovimentacao por : listaAssinantesPor) {
-				porAss = por.getDescrMov() != null ? por.getDescrMov().substring(por.getDescrMov().lastIndexOf(":"), por.getDescrMov().length()) : "";
-				for (ExMovimentacao ass : listaAssinantesSenha1) {
-					if(!ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) && (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) != -1)) {
-						listaAssinantesSenha1.remove(ass);
-						break;
-					}
-				}
-			}
-			
-			 assinantesSenha = Documento
-						.getAssinantesString(listaAssinantesSenha1,getDtDoc());
+		if(Prop.isGovSP() && assinantesPor != null && !"".equals(assinantesPor)) { 
+			assinantesToken = removeAssinadosPor(getAssinaturasComToken());
+			assinantesSenha = removeAssinadosPor(getAssinaturasComSenha());
 		}
 		
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
 
-		if (assinantesPorSenha.length() > 0) {
-			retorno = retorno + "Assinado com senha por " + assinantesPorSenha +".\n" ;
+		if (assinantesPor.length() > 0) {
+			retorno = retorno + assinantesPor +".\n" ;
 		}
 		
 		if (assinantesSenha.length() > 0)
@@ -2021,6 +2006,24 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 					: "";
 
 		return retorno;
+	}
+
+	private String removeAssinadosPor(Set<ExMovimentacao> listaAssinantes) {
+		// Remove da lista de assinantes (tanto com certificado digital quanto com senha) os que já estão na lista de assinar por 
+		Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
+		listaAssinantesPor.addAll(getAssinaturasPor());
+		String porAss = "";
+
+		for (ExMovimentacao por : listaAssinantesPor) {
+			porAss = por.getDescrMov() != null ? por.getDescrMov().substring(por.getDescrMov().lastIndexOf(":"), por.getDescrMov().length()) : "";
+			for (ExMovimentacao ass : listaAssinantes) {
+				if(!ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) && (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) != -1)) {
+					listaAssinantes.remove(ass);
+					break;
+				}
+			}
+		}
+		return Documento.getAssinantesString(listaAssinantes,getDtDoc());
 	}
 
 	public String getSolicitantesDeAssinaturaCompleto() {
@@ -2085,7 +2088,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	public boolean isAssinadoPelaPessoaComTokenOuSenha(DpPessoa subscritor) {
 		for (ExMovimentacao assinatura : getAssinaturasComTokenOuSenha()) {
-			if (assinatura.getSubscritor().equivale(subscritor))
+			if (assinatura.getSubscritor().equivale(subscritor) 
+					|| (!assinatura.getSubscritor().equivale(assinatura.getCadastrante())
+							&& assinatura.getCadastrante().equivale(subscritor)))
 				return true;
 		}
 		return false;

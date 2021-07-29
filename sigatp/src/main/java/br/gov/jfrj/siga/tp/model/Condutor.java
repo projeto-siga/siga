@@ -165,7 +165,7 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 		String dataFormatadaOracle = FormatarDataHora.retorna_DataeHora(dataSaida);
 
 		StringBuilder qrl = new StringBuilder();
-		qrl.append("SELECT c FROM Condutor c " + " WHERE trunc(c.dataVencimentoCNH) > trunc(" + dataFormatadaOracle + ")" + "  AND c.cpOrgaoUsuario.id in  " + "(SELECT cp.id FROM CpOrgaoUsuario cp"
+		qrl.append("SELECT c FROM Condutor c " + " WHERE " + FormatarDataHora.recuperaFuncaoTrunc() + "(c.dataVencimentoCNH) > " + FormatarDataHora.recuperaFuncaoTrunc() +"(" + dataFormatadaOracle + ")" + "  AND c.cpOrgaoUsuario.id in  " + "(SELECT cp.id FROM CpOrgaoUsuario cp"
 				+ " WHERE  cp.id = " + idOrgao + ")" + " AND c.id not in ");
 		if (!inicioRapido.equals(PerguntaSimNao.SIM)) {
 			qrl.append("(SELECT a.condutor.id FROM Afastamento a" + " WHERE  a.condutor.id = c.id" + " AND   a.dataHoraInicio < " + dataFormatadaOracle + " AND    (a.dataHoraFim = NULL "

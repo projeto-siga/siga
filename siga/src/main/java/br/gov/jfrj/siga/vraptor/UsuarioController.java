@@ -19,7 +19,9 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
@@ -81,8 +83,15 @@ public class UsuarioController extends SigaController {
 				try {
 					IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
 				} catch (Exception e) {
-					throw new Exception("Não foi possível alterar o e-mail. "
-							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Email\"");
+					LOG.error("Não foi possível alterar a senha de rede de " + nomeUsuario  + ". "
+							+ "Tente novamente em alguns instantes", e);
+					result.include("mensagem", "Senha do siga alterada com sucesso. Não foi possível alterar a senha de rede e do email. "
+							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Trocar também a senha...\"");
+					result.include("volta", "troca");
+					result.include("titulo", "Troca de Senha");
+					result.redirectTo(UsuarioController.class).trocaSenha();
+					return;
+					
 				}
 			}
 
@@ -402,18 +411,16 @@ public class UsuarioController extends SigaController {
 
 	private boolean isIntegradoAD(String matricula) throws AplicacaoException {
 		boolean result = false;
-		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
 
 		if (matricula == null || matricula.length() < 2) {
 			LOG.warn("A matrícula informada é nula ou inválida");
 			throw new AplicacaoException("A matrícula informada é nula ou inválida.");
 		}
 
-		orgaoFlt.setSiglaOrgaoUsu(MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula));
-		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
+		String sesbPessoa = MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula);
 
-		if (orgaoUsu != null) {
-			result = IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu);
+		if (sesbPessoa != null) {
+			result = IntegracaoLdap.getInstancia().integrarComLdap(sesbPessoa);
 		}
 
 		return result;

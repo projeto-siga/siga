@@ -250,7 +250,7 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery("ExDocumentoNumeracao.existeRangeDocumentoNumeracao");
 		query.setParameter("idOrgaoUsu", idOrgaoUsu);
 		query.setParameter("idFormaDoc", idFormaDoc);
-		query.setParameter("rownum", 1L);
+		query.setMaxResults(1);
 		
 		try {
 			return (Long) query.getSingleResult();

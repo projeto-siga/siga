@@ -46,22 +46,14 @@
 	</build>
 
 	<dependencies>
-	
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
+			<artifactId>hibernate-core</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -81,42 +73,23 @@
 			<artifactId>siga-vraptor-module</artifactId>
 		</dependency>
 
-
-		<!-- CDI -->
-		
-		<dependency>
-    <groupId>javax.validation</groupId>
-    <artifactId>validation-api</artifactId>
-</dependency>
-
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
 		<dependency>
 			<groupId>net.sf.kxml</groupId>
 			<artifactId>kxml2</artifactId>
-			<version>2.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jtidy</groupId>
 			<artifactId>jtidy</artifactId>
-			<version>r938</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mcavallo</groupId>
 			<artifactId>opencloud</artifactId>
-			<version>0.3</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.6</version>
 		</dependency>
 
 		<dependency>
@@ -143,14 +116,11 @@
             <artifactId>siga-jwt</artifactId>
         </dependency>
 
-		
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
-			<version>10.11.1.1</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<profiles>

@@ -6,10 +6,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.NonUniqueObjectException;
-import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.validator.util.Contracts;
-
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -35,7 +31,7 @@ public class PermissaoController extends PpController {
 		String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);
 		if ((objUsuario !=null) && ((lotacaoSessao.trim().equals("T2COSISA"))) ){ //pode excluir a permissao estando lotado na COSISA
-			List<UsuarioForum> listPermitidos = new ArrayList<UsuarioForum>();
+			List<UsuarioForum> listPermitidos = new ArrayList<>();
 			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty()) && (sesb_proibida!=null) && (!sesb_proibida.isEmpty()) ){ // deleta permissao
 				try{
 					UsuarioForum.AR.delete("from UsuarioForum where matricula_usu='" + matricula_proibida + "' and sesb_pessoa = '" +  sesb_proibida + "'", null);
@@ -48,7 +44,7 @@ public class PermissaoController extends PpController {
 				}
 			 } else{ // lista permitidos
 				try{
-					 listPermitidos = (List) UsuarioForum.AR.all().fetch(); // isso nao da erro no caso de retorno vazio.
+					 listPermitidos = UsuarioForum.AR.all().fetch(); // isso nao da erro no caso de retorno vazio.
 				}catch(Exception e){
 					e.printStackTrace();
 				}

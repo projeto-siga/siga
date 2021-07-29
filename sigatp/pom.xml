@@ -16,22 +16,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-						<version>${hibernate.version}</version>
+			<artifactId>hibernate-core</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.3</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-jpa</artifactId>
@@ -45,11 +37,6 @@
 
 		<!-- DEPENDENCIAS PARA VRAPTORE JSP -->
 		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>jsp-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>jsptags</groupId>
 			<artifactId>pager-taglib</artifactId>
 		</dependency>
@@ -59,47 +46,22 @@
 			<artifactId>standard</artifactId>
 			<version>1.1.2</version>
 		</dependency>
-		<!-- JSTL -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.1.2</version>
-		</dependency>
 
 		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<version>1.2</version>
-		</dependency>
-		
-		      	<dependency>
 			<groupId>com.crivano</groupId>
 			<artifactId>swaggerservlet</artifactId>
 		</dependency>
-		
-	
-		
 		<!-- FIM DEPENDENCIAS PARA VRAPTORE JSP -->
 
-		
-	<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
-<dependency>
-    <groupId>org.codehaus.jackson</groupId>
-    <artifactId>jackson-core-asl</artifactId>
-    <version>1.9.13</version>
-</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-envers</artifactId>
-			<version>${hibernate.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 	</dependencies>

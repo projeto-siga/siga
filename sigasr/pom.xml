@@ -14,46 +14,20 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
+			<artifactId>hibernate-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-freemarker</artifactId>
-			<version>4.1.0-RC3</version>
 		</dependency>
-		<!-- Demais dependencias -->
-		<!-- <dependency>
-			<groupId>ar.com.fdvs</groupId>
-			<artifactId>DynamicJasper</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>bouncycastle</groupId>
-					<artifactId>bcmail-jdk14</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>bouncycastle</groupId>
-					<artifactId>bcprov-jdk14</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>eclipse</groupId>
-					<artifactId>jdtcore</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>siga</groupId>
 			<artifactId>siga-rel</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
@@ -74,11 +48,6 @@
 			<artifactId>freemarker</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.zeroturnaround</groupId>
-			<artifactId>javarebel-sdk</artifactId>
-			<version>2.0.2</version>
-		</dependency>
-		<dependency>
 			<groupId>org.beanshell</groupId>
 			<artifactId>bsh</artifactId>
 			<version>2.0b5</version>			
@@ -86,17 +55,11 @@
 		<dependency>
 			<groupId>backport-util-concurrent</groupId>
 			<artifactId>backport-util-concurrent</artifactId>
-			<version>3.1</version>				
+			<version>3.1</version>
 		</dependency>
 		<!-- fim demais Dependências -->
 
-
 		<!-- DEPENDENCIAS PARA VRAPTORE JSP -->
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>jsp-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>jsptags</groupId>
 			<artifactId>pager-taglib</artifactId>
@@ -107,27 +70,13 @@
 			<artifactId>standard</artifactId>
 			<version>1.1.2</version>
 		</dependency>
-		<!-- JSTL -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.1.2</version>
-		</dependency>		
 		<!-- FIM DEPENDENCIAS PARA VRAPTORE JSP -->
 		
 		<dependency>
-	 		<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
-			<version>10.11.1.1</version>
 			<scope>test</scope>
 		</dependency>
-
 
 		<!-- INICIO POM-PLAY -->
 		<!-- Dependencias obrigatorias caso contrario lançará classnotfound na 
@@ -135,45 +84,14 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jamonapi</groupId>
-			<artifactId>jamon</artifactId>
-			<version>2.75</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.oval</groupId>
-			<artifactId>oval</artifactId>
-			<version>1.84</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.maven-play-plugin.org.apache.commons</groupId>
-			<artifactId>commons-javaflow</artifactId>
-			<version>1590792</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.7</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-email</artifactId>
-			<version>1.3.1</version>
-		</dependency>
-
-		
-		
-			<!-- CDI -->
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -190,13 +108,6 @@
 			<artifactId>Tidy</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api -->
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
 		<dependency>
             <groupId>siga</groupId>
             <artifactId>siga-jwt</artifactId>
@@ -206,72 +117,13 @@
 			<groupId>com.crivano</groupId>
 			<artifactId>swaggerservlet</artifactId>
 		</dependency>
-		
-
 	</dependencies>
+
 	<build>
 		<plugins>
-			<!-- vraptor static scan -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.javassist</groupId>
-						<artifactId>javassist</artifactId>
-						<version>3.15.0-GA</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>static-scanning</id>
-						<phase>package</phase>
-						<configuration>
-							<target>
-								<echo message="Starting static scanning process..." />
-								<path id="build.classpath">
-									<fileset
-										dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib"
-										includes="*.jar" />
-									<fileset
-										dir="${project.build.directory}/../../lib/static_scan_vraptor/"
-										includes="*.jar" />
-								</path>
-								<java classpathref="build.classpath"
-									classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning"
-									fork="true">
-									<arg
-										value="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml" />
-									<classpath refid="build.classpath" />
-									<classpath
-										path="${project.build.directory}/${project.build.finalName}/WEB-INF/classes" />
-								</java>
-								<war destfile="${project.build.directory}/${project.build.finalName}.war"
-									webxml="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml">
-									<fileset
-										dir="${project.build.directory}/${project.build.finalName}" />
-								</war>
-								<echo message="Static scanning process finished!" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- end vraptor static scan -->
-		
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.11</version>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
 				<executions>
 					<execution>
 						<id>copy-artifact</id>

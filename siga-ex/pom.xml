@@ -18,11 +18,30 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-				<!-- <plugin> <groupId>org.hibernate.orm.tooling</groupId> <artifactId>hibernate-enhance-maven-plugin</artifactId> 
-					<executions> <execution> <phase>compile</phase> <goals> <goal>enhance</goal> 
-					</goals> </execution> </executions> <dependencies> <dependency> <groupId>siga</groupId> 
-					<artifactId>siga-ex</artifactId> <version>${project.version}</version> </dependency> 
-					</dependencies> </plugin> -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.hibernate.orm.tooling</groupId>
+										<artifactId>hibernate-enhance-maven-plugin</artifactId>
+										<versionRange>[${hibernate.version},)</versionRange>
+										<goals>
+											<goal>enhance</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
 				
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
@@ -73,7 +92,6 @@
 	 		<plugin>
                <groupId>org.hibernate.orm.tooling</groupId>
                <artifactId>hibernate-enhance-maven-plugin</artifactId>
-               <version>${hibernate.version}</version>
                <executions>
                    <execution>
                     <configuration>
@@ -86,7 +104,6 @@
                </executions>
            </plugin>
 		</plugins>
-	 	
 	</build>
 
 	<dependencies>
@@ -109,10 +126,6 @@
 		<dependency>
 			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
 			<artifactId>Tidy</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -145,7 +158,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8</version>
 		</dependency>
 
 		<dependency>
@@ -167,10 +179,7 @@
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
-			<version>2.3.0</version>
 		</dependency>
-
-
 
 		<!-- Siga -->
 		<dependency>
@@ -182,16 +191,6 @@
 			<artifactId>siga-ext</artifactId>
 		</dependency>
 
-		<!-- CDI -->
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- habilitar para usar ExDaoTest.java <dependency> <groupId>com.oracle</groupId> 
-			<artifactId>ojdbc6</artifactId> <version>11.2.0.3.0</version> <scope>compile</scope> 
-			</dependency> -->
-			
 		<dependency>
 			<groupId>br.jus.trf2.xjus</groupId>
 			<artifactId>x-jus-record-api</artifactId>
@@ -235,16 +234,12 @@
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>
-		    <version>20.0</version>
 		</dependency>
 	</dependencies>
-
-
 
 	<profiles>
 		<profile>
 			<id>docker-flyway</id>
-
 			<build>
 				<plugins>
 					<plugin>

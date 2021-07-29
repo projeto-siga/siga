@@ -12,18 +12,6 @@
 	<artifactId>siga-cp</artifactId>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
 			<artifactId>jettison</artifactId>
@@ -34,17 +22,15 @@
 			<artifactId>jasperreports</artifactId>
 		</dependency>
 
-		
 		<dependency>
 		    <groupId>com.sun.jersey</groupId>
 		    <artifactId>jersey-client</artifactId>
 		    <version>1.9.1</version>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-collections4</artifactId>
-		    <version>4.1</version>
 		</dependency>
 	
 		<dependency>

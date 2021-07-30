@@ -2334,7 +2334,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		setMov.addAll(p.tramitesDeNotificacoesPendentes);
 		setMov.addAll(p.recebimentosDeNotificacoesPendentes);
 		
-		return calcularAtendentes(setMov, p.fIncluirCadastrante); 
+		return calcularAtendentes(setMov, false); 
 	}
 
 	public Set<PessoaLotacaoParser> calcularAtendentes(Set<ExMovimentacao> setMov, boolean fIncluirCadastrante) {

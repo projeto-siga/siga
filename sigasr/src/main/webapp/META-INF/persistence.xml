@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
 
 	<persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<non-jta-data-source>java:/jboss/datasources/SigaServicosDS</non-jta-data-source>
 
 
@@ -91,28 +91,20 @@
 				value="true" />
 			<property name="hibernate.cache.infinispan.cachemanager"
 				value="java:jboss/infinispan/container/hibernate" />
-			<property name="hibernate.transaction.manager_lookup_class"
-				value="org.hibernate.transaction.JBossTransactionManagerLookup" />
 			<property name="hibernate.cache.use_query_cache" value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="false" />
 			<property name="hibernate.max_fetch_depth" value="3" />
 			<property name="hibernate.default_batch_fetch_size" value="1000" />
-			<property name="hibernate.cache.provider_configuration_file_resource_path"
-				value="classpath:ehcache.xml" />
-			<property name="hibernate.cache.region.factory_class"
-				value="org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory" />
 			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
 			
-						<!-- Cache Region QUERY_CACHE_SECONDS -->
-			<property name="hibernate.cache.infinispan.querySeconds.eviction.strategy"
-				value="LRU" />
+			<!-- Cache Region QUERY_CACHE_SECONDS -->
 			<property
 				name="hibernate.cache.infinispan.querySeconds.eviction.wake_up_interval"
 				value="2500" />
 			<property
-				name="hibernate.cache.infinispan.querySeconds.eviction.max_entries"
+				name="hibernate.cache.infinispan.querySeconds.memory.size"
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.querySeconds.expiration.lifespan"
@@ -122,13 +114,11 @@
 				value="5000" />
 
 			<!-- Cache Region CACHE_QUERY_HOURS -->
-			<property name="hibernate.cache.infinispan.queryHours.eviction.strategy"
-				value="LRU" />
 			<property
 				name="hibernate.cache.infinispan.queryHours.eviction.wake_up_interval"
 				value="2500" />
 			<property
-				name="hibernate.cache.infinispan.queryHours.eviction.max_entries"
+				name="hibernate.cache.infinispan.queryHours.memory.size"
 				value="10000" />
 			<property name="hibernate.cache.infinispan.queryHours.expiration.lifespan"
 				value="36000000" />
@@ -137,13 +127,10 @@
 
 			<!-- Cache Region CACHE_QUERY_SUBSTITUICAO -->
 			<property
-				name="hibernate.cache.infinispan.querySubstituicao.eviction.strategy"
-				value="LRU" />
-			<property
 				name="hibernate.cache.infinispan.querySubstituicao.eviction.wake_up_interval"
 				value="2500" />
 			<property
-				name="hibernate.cache.infinispan.querySubstituicao.eviction.max_entries"
+				name="hibernate.cache.infinispan.querySubstituicao.memory.size"
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.querySubstituicao.expiration.lifespan"
@@ -154,13 +141,11 @@
 
 
 			<!-- Cache Region CACHE_HOURS -->
-			<property name="hibernate.cache.infinispan.hours.eviction.strategy"
-				value="LRU" />
 			<property
 				name="hibernate.cache.infinispan.hours.eviction.wake_up_interval"
 				value="2500" />
 			<property
-				name="hibernate.cache.infinispan.hours.eviction.max_entries"
+				name="hibernate.cache.infinispan.hours.memory.size"
 				value="10000" />
 			<property name="hibernate.cache.infinispan.hours.expiration.lifespan"
 				value="36000000" />
@@ -168,12 +153,10 @@
 				value="3600000" />
 
 			<!-- Cache Region CACHE_SECONDS -->
-			<property name="hibernate.cache.infinispan.seconds.eviction.strategy"
-				value="LRU" />
 			<property
 				name="hibernate.cache.infinispan.seconds.eviction.wake_up_interval"
 				value="2500" />
-			<property name="hibernate.cache.infinispan.seconds.eviction.max_entries"
+			<property name="hibernate.cache.infinispan.seconds.memory.size"
 				value="10000" />
 			<property name="hibernate.cache.infinispan.seconds.expiration.lifespan"
 				value="5000" />
@@ -181,13 +164,11 @@
 				value="5000" />
 
 			<!-- Cache Region CACHE_CORPORATIVO -->
-			<property name="hibernate.cache.infinispan.corporativo.eviction.strategy"
-				value="LRU" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.eviction.wake_up_interval"
 				value="2500" />
 			<property
-				name="hibernate.cache.infinispan.corporativo.eviction.max_entries"
+				name="hibernate.cache.infinispan.corporativo.memory.size"
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.lifespan"

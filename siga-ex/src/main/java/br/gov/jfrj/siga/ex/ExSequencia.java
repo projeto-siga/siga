@@ -36,7 +36,6 @@ import javax.persistence.Table;
 	@NamedQuery(name="ExSequencia.incrementaSequencia", query="UPDATE ExSequencia e SET e.numero = e.numero + :increment WHERE e.idSequencia = :id"),
 	@NamedQuery(name="ExSequencia.existeRangeSequencia", query="SELECT e FROM ExSequencia e "
 			+ "where e.tipoSequencia = :tipoSequencia "
-			+ "and rownum = :rownum "
 			+ "Order by e.anoEmissao desc"),
 	@NamedQuery(name="ExSequencia.mantemRangeNumero", query="UPDATE ExSequencia e SET e.numero = e.numero + :increment, e.anoEmissao = :anoEmissao,  e.flAtivo = :flAtivo WHERE e.idSequencia = :id")
 

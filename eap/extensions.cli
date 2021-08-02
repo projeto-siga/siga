@@ -1,0 +1,55 @@
+embed-server --std-out=echo --server-config=standalone-openshift.xml
+
+echo Adding SIGA system properties
+/system-property="siga.jwt.secret":add(value="***REPLACE-WITH-RANDOM-GUID***")
+/system-property="siga.sinc.password":add(value="***REPLACE-WITH-RANDOM-GUID***")
+/system-property="siga.recaptcha.key":add(value="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI")
+/system-property="siga.recaptcha.pwd":add(value="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe")
+/system-property="siga.cabecalho.titulo":add(value="Justiça Federal")
+/system-property="siga.cabecalho.logo":add(value="/siga/imagens/logo-trf2-38px.png")
+/system-property="sigaex.modelos.cabecalho.brasao":add(value="contextpath/imagens/brasaoColoridoTRF2.png")
+/system-property="sigaex.modelos.cabecalho.titulo":add(value="PODER JUDICIÁRIO")
+/system-property="sigaex.modelos.cabecalho.subtitulo":add(value="JUSTIÇA FEDERAL")
+/system-property="siga.relat.brasao":add(value="brasao.png")
+/system-property="siga.relat.titulo":add(value="PODER JUDICIÁRIO")
+/system-property="siga.relat.subtitulo":add(value="JUSTIÇA FEDERAL")
+/system-property="sigaex.carimbo.texto.superior":add(value="Justiça Federal")
+/system-property="sigaex.redis.database":add(value="1")
+/system-property="sigaex.redis.master.host":add(value="${env.REDIS_MASTER_SERVER:redisserver}")
+/system-property="sigaex.redis.master.port":add(value="${env.REDIS_MASTER_PORT:6379}")
+/system-property="sigaex.redis.password":add(value="${env.REDIS_PASSWORD:***REPLACE-WITH-RANDOM-GUID***}")
+/system-property="sigaex.redis.slave.host":add(value="${env.REDIS_SLAVE_SERVER:redisserver}")
+/system-property="sigaex.redis.slave.port":add(value="${env.REDIS_SLAVE_PORT:6379}")
+/system-property="siga.smtp":add(value="${env.EMAIL_SERVER:emailserver}")
+/system-property="siga.smtp.porta":add(value="${env.EMAIL_PORT:1025}")
+/system-property="siga.smtp.auth":add(value="${env.EMAIL_AUTH:true}")
+/system-property="siga.smtp.auth.usuario":add(value="${env.EMAIL_USERNAME:siga}")
+/system-property="siga.smtp.auth.senha":add(value="${env.EMAIL_PASSWORD:siga}")
+/system-property="siga.smtp.debug":add(value="${env.EMAIL_DEBUG:false}")
+/system-property="siga.smtp.usuario.remetente":add(value="${env.EMAIL_FROM:Administrador do Siga&lt;siga@exemplo.com.br>}")
+/system-property="siga.armazenamento.arquivo.tipo":add(value="TABELA")
+/system-property="sigaex.upload.dir.temp":add(value="/tmp")
+/system-property="siga.flyway.mysql.migrate":add(value="true")
+/system-property="siga.hibernate.dialect":add(value="org.hibernate.dialect.MySQL8Dialect")
+/system-property="sigaex.assinador.externo.popup.url":add(value="https://ittrufusion.appspot.com")
+/system-property="sigaex.carimbo.sistema":add(value="siga-docker")
+/system-property="sigaex.carimbo.url":add(value="https://ittrufusion.appspot.com/api/v1")
+/system-property="sigaex.carimbo.public.key":add(value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllav1+eJ3w5Idge/vQ1zZSziGiuOUBviZhcw0JZ9Bg90zG7Uz3wFGQeKnG0DNTBKwjC3MHI7AZy4G+ji35J+gp+0aZLDkuwx17JDuJfuJe6gHRlfcm50McuLL0vaU5gQ2InAo7FssjuOuLp9c3FGBGmiDFK1vUhKwdvY14inYzrZaHSVsppSYX9zjnhQiQxRnLzFzkZsZkl/Orz2O9rvmJx048lcmnOiLvm3ge7Jq2KZHIYzdsw5F3VGtlhLFBZ49g6Rmp4ClgPtpwDOGj78oyJVxLW3XXN1VP1JnActFkNlmBNi+8cUZ8IX15j+FDOL9+tQR+FMC7wtHypshR5zVQIDAQAB")
+/system-property="blucservice.url":add(value="${env.BLUCSERVICE_URL:http://localhost:10080/blucservice/api/v1}")
+/system-property="vizservice.url":add(value="${env.VIZSERVICE_URL:http://localhost:10080/vizservice}")
+
+echo Adding MySQL driver
+/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource)
+
+echo Adding data-source "SigaCpDs"
+data-source add --name=SigaCpDS --jndi-name="java:/jboss/datasources/SigaCpDS" --driver-name=mysql --connection-url="jdbc:mysql://${env.CORPORATIVO_DB_HOST:localhost}:3306/${CORPORATIVO_DB_NAME:corporativo}?noAccessToProcedureBodies=true&amp;useSSL=false" --user-name="${CORPORATIVO_DB_USER:root}" --password="${CORPORATIVO_DB_PASSWORD:siga}" --min-pool-size=5 --max-pool-size=50 --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
+
+echo Adding data-source "SigaExDs"
+data-source add --name=SigaExDS --jndi-name="java:/jboss/datasources/SigaExDS" --driver-name=mysql --connection-url="jdbc:mysql://${env.SIGA_DB_HOST:localhost}:3306/${SIGA_DB_NAME:siga}?noAccessToProcedureBodies=true&amp;useSSL=false" --user-name="${SIGA_DB_USER:root}" --password="${SIGA_DB_PASSWORD:siga}" --min-pool-size=5 --max-pool-size=50 --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
+
+if (result == "TRUE") of :resolve-expression(expression=${ENABLE_SIGA_WF})
+    echo Adding data-source "SigaWfDs"
+    data-source add --name=SigaWfDS --jndi-name="java:/jboss/datasources/SigaWfDS" --driver-name=mysql --connection-url="jdbc:mysql://${env.SIGA_WF_DB_HOST:localhost}:3306/${SIGA_WF_DB_NAME:corporativo}?noAccessToProcedureBodies=true&amp;useSSL=false" --user-name="${SIGA_WF_DB_USER:root}" --password="${SIGA_WF_DB_PASSWORD:siga}" --min-pool-size=5 --max-pool-size=50 --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
+end-if
+
+quit

@@ -72,7 +72,7 @@ public class ExGraph {
 			if (label != null)
 				toString += "[label=\"" + label + "\"]";
 			if (destacar)
-				toString += "[color=\"red\"]";
+				toString += "[color=\"red\", fontcolor=\"red\"]";
 			if (estilo != null)
 				toString += "[style=\"filled," + estilo + "\"]";
 			if (color != null)

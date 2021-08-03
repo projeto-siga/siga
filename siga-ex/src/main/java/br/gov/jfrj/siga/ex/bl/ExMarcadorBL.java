@@ -11,9 +11,7 @@ import java.util.TreeSet;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoExibicaoEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -608,7 +606,7 @@ public class ExMarcadorBL {
 		Pendencias p = mob.calcularTramitesPendentes();
 		for (ExMovimentacao tramite : p.tramitesPendentes) {
 			acrescentarMarcaTransferencia(CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId(), tramite.getDtIniMov(), null,
-					tramite.getCadastrante(), tramite.getLotaCadastrante(), tramite);
+					tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
 			acrescentarMarcaTransferencia(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId(), tramite.getDtIniMov(), null,
 					tramite.getResp(), tramite.getLotaResp(), tramite);
 		}

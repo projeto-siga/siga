@@ -680,11 +680,22 @@ public class CpBL {
 
 	public String buscarModoAutenticacao(String orgao) {
 		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		if (Prop.get("/siga.ldap.orgaos") == null)
+		if (Prop.get("/siga.ldap.orgaos") == null) {
 			return retorno;
-		String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
-		if (modo != null)
-			retorno = modo;
+		}
+		else {
+			for (String sesbPessoa: Prop.get("/siga.ldap.orgaos").split(",")) {
+				if (sesbPessoa.equalsIgnoreCase(orgao)) {
+					String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
+					if (modo != null) {
+						retorno = modo;
+						break;
+					}
+				}
+			}
+			
+		}
+
 		return retorno;
 	}
 

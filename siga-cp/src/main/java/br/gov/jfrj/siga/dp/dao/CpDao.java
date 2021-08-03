@@ -2773,7 +2773,7 @@ public class CpDao extends ModeloDao {
 	private Predicate criaPredicateDataFutura(CriteriaBuilder criteriaBuilder, Root<CpMarcador> cpMarcadorRoot) {
 		// Cria predicate para mostrar os marcadores a serem ativados futuramente (com data de inicio futura) 
 		Predicate predicateNullHisDtIni = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtIni"));
-		Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Date>get("hisDtIni"), criteriaBuilder.currentDate());
+		Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Date>get("hisDtIni"), criteriaBuilder.currentTimestamp());
 		return criteriaBuilder.or(predicateNullHisDtIni, predicateHisDtIniLeToday);
 	}
 	

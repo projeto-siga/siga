@@ -245,7 +245,10 @@ public class ExConfiguracaoController extends ExController {
 				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel)
 				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao);
 
-		gravarConfiguracao(idTpConfiguracao, idSituacao, configuracaoBuilder.construir());
+		
+		ExConfiguracao conf = configuracaoBuilder.construir();
+		conf.substituirPorObjetoInicial();
+		gravarConfiguracao(idTpConfiguracao, idSituacao, conf);
 		escreveFormRetorno(nmTipoRetorno, campoFixo, configuracaoBuilder);
 	}
 

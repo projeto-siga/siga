@@ -250,7 +250,7 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery("ExDocumentoNumeracao.existeRangeDocumentoNumeracao");
 		query.setParameter("idOrgaoUsu", idOrgaoUsu);
 		query.setParameter("idFormaDoc", idFormaDoc);
-		query.setParameter("rownum", 1L);
+		query.setMaxResults(1);
 		
 		try {
 			return (Long) query.getSingleResult();
@@ -328,8 +328,7 @@ public class ExDao extends CpDao {
 	    
 		final Query query = em().createNamedQuery("ExSequencia.existeRangeSequencia");
 		query.setParameter("tipoSequencia", tipoSequencia);
-		query.setParameter("rownum", 1L);
-		
+		query.setMaxResults(1);		
 		try {
 			return (ExSequencia) query.getSingleResult();
 		} catch (NoResultException ne) {
@@ -465,9 +464,6 @@ public class ExDao extends CpDao {
 
 		public ExProtocolo obterProtocoloPorDocumento(ExDocumento doc) throws SQLException {
 
-//			final Query query = em().createNamedQuery("ExProtocolo.obterProtocoloPorDocumento");
-//			query.setParameter("idDoc", idDoc);
-//			query.setParameter("rownum", 1L);
 
 			CriteriaQuery<ExProtocolo> q = cb().createQuery(ExProtocolo.class);
 			Root<ExProtocolo> c = q.from(ExProtocolo.class);
@@ -478,8 +474,6 @@ public class ExDao extends CpDao {
 				return l.get(0);
 			else 
 				return null;
-			
-//			return (ExProtocolo) query.getSingleResult();
 		}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {

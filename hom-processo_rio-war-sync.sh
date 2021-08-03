@@ -67,7 +67,7 @@ echo "                              STARTING SCP"
 echo "###############################################################################"
 echo ""
 echo "COPYING DEPENDENCIES:"
-if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/blucservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+if copy_war_jar=`sshpass -p $1 scp ivan.silverio@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/blucservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
         echo "blucservice.war - OK"
 else
@@ -77,7 +77,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/ckeditor.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+if copy_war_jar=`sshpass -p $1 scp ivan.silverio@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/ckeditor.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
         echo "ckeditor.war - OK"
 else
@@ -87,7 +87,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/vizservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+if copy_war_jar=`sshpass -p $1 scp ivan.silverio@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/vizservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
         echo "vizservice.war - OK"
 else
@@ -100,7 +100,7 @@ echo ""
 echo ""
 echo "COPYING TARGETS:"
 
-if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar /tmp`; then
+if copy_war_jar=`sshpass -p $1 scp ivan.silverio@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar /tmp`; then
         echo $copy_war_jar
         echo "siga-ext.jar - OK"
 else
@@ -110,7 +110,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/sigaex.war /tmp`; then
+if copy_war_jar=`sshpass -p $1 scp ivan.silverio@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/sigaex.war /tmp`; then
         echo $copy_war_jar
         echo "sigaex.war - OK"
 else
@@ -120,7 +120,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga.war /tmp`; then
+if copy_war_jar=`sshpass -p $1 scp ivan.silverio@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga.war /tmp`; then
         echo $copy_war_jar
         echo "siga.war - OK"
 else

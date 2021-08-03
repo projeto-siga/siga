@@ -3,6 +3,13 @@
 #This scripts is part of your deployment process. First step is previously executed a rsync or scp command to copy all war's from developer #environment.  Second step is to check environment requirements and finally execute the deploy operation.
 #
 
+#validate parameters
+if [ $# -lt 1 ]; then
+   echo "ARGS: PASS - NOT FOUND - FAIL "
+   echo "ABORTING..."
+   exit 1
+fi
+
 #set variables
 
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.el7_9.x86_64/
@@ -60,7 +67,7 @@ echo "                              STARTING SCP"
 echo "###############################################################################"
 echo ""
 echo "COPYING DEPENDENCIES:"
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/blucservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/blucservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
         echo "blucservice.war - OK"
 else
@@ -70,7 +77,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/ckeditor.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/ckeditor.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
         echo "ckeditor.war - OK"
 else
@@ -80,7 +87,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/vizservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/vizservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
         echo "vizservice.war - OK"
 else
@@ -93,7 +100,7 @@ echo ""
 echo ""
 echo "COPYING TARGETS:"
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar /tmp`; then
+if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar /tmp`; then
         echo $copy_war_jar
         echo "siga-ext.jar - OK"
 else
@@ -103,7 +110,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/sigaex.war /tmp`; then
+if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/sigaex.war /tmp`; then
         echo $copy_war_jar
         echo "sigaex.war - OK"
 else
@@ -113,7 +120,7 @@ else
         exit 1
 fi
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga.war /tmp`; then
+if copy_war_jar=`sshpass -p $1 scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga.war /tmp`; then
         echo $copy_war_jar
         echo "siga.war - OK"
 else

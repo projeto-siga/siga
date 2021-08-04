@@ -9,7 +9,7 @@ public class DetectorGrupoRel {
 
 	public static enum GrupoEmProcessamento{
 		INICIO, FIM, EM_PROGRESSO,NENHUM
-	};
+	}
 	
 	private String grpInicio;
 	private String grpFim;

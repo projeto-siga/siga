@@ -59,8 +59,8 @@
 										onclick="javascript:return confirm('Tem certeza de que deseja excluir os dados deste servi&ccedil;o?');"/>
 									</c:if>	
 									</td>
-									<td><nobr><a href="${linkTo[ServicoVeiculoController].buscarServico(false,item.sequence)}">${item.sequence}</a> 
-									<a href="#" onclick="javascript:window.open('${linkTo[ServicoVeiculoController].buscarServico(true,item.sequence)}');">
+									<td><nobr><a href="${linkTo[ServicoVeiculoController].buscarServico(popUp,sequence)}?popUp=true&sequence=${item.sequence}">${item.sequence}</a> 
+									<a href="#" onclick="javascript:window.open('${linkTo[ServicoVeiculoController].buscarServico(popUp,sequence)}?popUp=true&sequence=${item.sequence}');">
 									<img src="/sigatp/public/images/linknovajanelaicon.png" 
 									alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr></td>				
 									<td>${item.situacaoServico}</td>

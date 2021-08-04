@@ -123,10 +123,10 @@
 									name="ad_kind_0" value="${doc.descrFormaDoc}" />
 							</div>
 							
-							<c:set var="podeAssinarComSenha" value="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
-							<c:set var="podeAutenticarComSenha" value="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
-							<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
-							<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarComSenha(titular,lotaTitular,doc.mobilGeral) }" />
+							<c:set var="podeAssinarComSenha" value="${assinando and f:podeAssinarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
+							<c:set var="podeAutenticarComSenha" value="${autenticando and f:podeAutenticarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
+							<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
+							<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
 							
 							<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
 							<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
@@ -156,7 +156,7 @@
 					</div>
 				</div>
 				<c:if test="${doc.pdf != null}">
-					<tags:assinatura_rodape podeAssinarPorComSenha="${f:podeAssinarPorComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+					<tags:assinatura_rodape podeAssinarPor="${f:podeAssinarPor(titular,lotaTitular,doc.mobilGeral)}"/>
 				</c:if>
 			</div>
 		</div>

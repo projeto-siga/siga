@@ -77,10 +77,10 @@
 								    	    <td>
 								    	    	<c:choose>
 								    	    		<c:when test="${exibirMenuAdministrar || exibirMenuAdministrarMissao || exibirMenuAdministrarMissaoComplexo || exibirMenuAgente}">
-								    	    			<nobr><a href="${linkTo[MissaoController].buscarPelaSequence(false,missao.sequence)}">${missao.sequence}</a> <a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,missao.sequence)}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
+								    	    			<nobr><a href="${linkTo[MissaoController].buscarPelaSequence(popUp,sequence)}?popUp=false&sequence=${missao.sequence}">${missao.sequence}</a> <a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${missao.sequence}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
 								    	    		</c:when>
 								    	    		<c:otherwise>
-								    	    			<nobr>${missao.sequence}<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,missao.sequence)}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
+								    	    			<nobr>${missao.sequence}<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${missao.sequence}');"><img src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr>
 								    	    		</c:otherwise>
 								    	    	</c:choose>
 							    	    	</td>
@@ -103,7 +103,7 @@
 								    								<td>
 							    										<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 							    											 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-							    											 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
+							    											 comando="${linkTo[RequisicaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${requisicaoTransporte.buscarSequence()}">
 							    										</tptags:link>
 							    									</td>
 							    									</tr>

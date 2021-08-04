@@ -31,7 +31,7 @@ $(function() {
 			<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" urlAcao="buscar" siglaInicial="${cpConfiguracao.dpPessoa}" idInicial="${cpConfiguracao.dpPessoa.id}" descricaoInicial="${cpConfiguracao.dpPessoa.descricao}"/>
 							
 		    <label for= "cpConfiguracao.cpSituacaoConfiguracao" class="obrigatorio">  Situa&ccedil;&atilde;o Configura&ccedil;&atilde;o</label>	
-   			<siga:select id="cpSituacaoConfiguracao" name="cpConfiguracao.cpSituacaoConfiguracao" list="cpSituacoesConfiguracao" listKey="idSitConfiguracao" listValue="dscSitConfiguracao" value="${cpConfiguracao.cpSituacaoConfiguracao.idSitConfiguracao}"/>
+   			<siga:select id="cpSituacaoConfiguracao" name="cpConfiguracao.cpSituacaoConfiguracao" list="cpSituacoesConfiguracao" listKey="id" listValue="dscSitConfiguracao" value="${cpConfiguracao.cpSituacaoConfiguracao.descr}"/>
 			
 			<label for= "cpConfiguracao.cpTipoConfiguracao" class= "obrigatorio"> Tipo de Configura&ccedil;&atilde;o</label>	
    			<siga:select id="cpTipoConfiguracao" name="cpConfiguracao.cpTipoConfiguracao" list="cpTiposConfiguracao" listKey="idTpConfiguracao" listValue="dscTpConfiguracao" value="${cpConfiguracao.cpTipoConfiguracao.idTpConfiguracao}" />

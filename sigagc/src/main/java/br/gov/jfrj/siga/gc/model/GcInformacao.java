@@ -281,6 +281,8 @@ public class GcInformacao extends Objeto {
 			return ou.getAcronimoOrgaoUsu() + "-GC-" + ano + "/"
 					+ Utils.completarComZeros(numero, 5);
 		}
+		if (id == null)
+			return "Novo Conhecimento";
 		return "TMPGC-" + id;
 	}
 
@@ -453,8 +455,7 @@ public class GcInformacao extends Objeto {
 		addAcao(acoes, "eye", "Link externo", null, sb.toString(),
 				podeExibirLinkSemAutenticacao);
 
-		router.getRedirectURL(sb, AppController.class).editar(
-				this.getSiglaCompacta(), null, null, null, null, null);
+		router.getRedirectURL(sb, AppController.class).editar(this.getSiglaCompacta(), null, null, null, null, null);
 		addAcao(acoes, "pencil", "Editar", null, sb.toString(),
 				podeEditar(titular, lotaTitular));
 

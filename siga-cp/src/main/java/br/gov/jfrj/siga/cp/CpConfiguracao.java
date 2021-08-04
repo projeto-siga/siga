@@ -207,15 +207,15 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	}
 
 	public void substituirPorObjetoInicial() {
-		setLotacao(inicial(getLotacao()));
+		setLotacao(getLotacao() != null ? getLotacao().getLotacaoInicial() : null);
 		setCargo(inicial(getCargo()));
 		setFuncaoConfianca(inicial(getFuncaoConfianca()));
-		setDpPessoa(inicial(getDpPessoa()));
+		setDpPessoa(getDpPessoa() != null ? getDpPessoa().getPessoaInicial() : null);
 		setCpIdentidade(inicial(getCpIdentidade()));
-		setLotacaoObjeto(inicial(getLotacaoObjeto()));
+		setLotacaoObjeto(getLotacaoObjeto() != null ? getLotacaoObjeto().getLotacaoInicial() : null);
 		setCargoObjeto(inicial(getCargoObjeto()));
 		setFuncaoConfiancaObjeto(inicial(getFuncaoConfiancaObjeto()));
-		setPessoaObjeto(inicial(getPessoaObjeto()));
+		setPessoaObjeto(getPessoaObjeto() != null ? getPessoaObjeto().getPessoaInicial() : null);
 		setCpGrupo(inicial(getCpGrupo()));
 	}
 
@@ -228,7 +228,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	public <T extends Historico> T inicial(final T antigo) {
 		if (antigo == null)
 			return null;
-		return CpDao.getInstance().obterAtual(antigo);
+		return CpDao.getInstance().obterInicial(antigo);
 	}
 	
 	public CpConfiguracaoCache converterParaCache() {

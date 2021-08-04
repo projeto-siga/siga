@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -169,7 +170,7 @@ public class LoginController extends SigaController {
 			if (usuarioSwap == null)
 				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
 			
-			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getCpfPessoa().toString(), true);
+			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getPessoaAtual().getCpfPessoa().toString(), true);
 			
 			boolean usuarioPermitido = false;
 			for (CpIdentidade identCpf : idsCpf) {
@@ -181,7 +182,7 @@ public class LoginController extends SigaController {
 			if (!usuarioPermitido)
 				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
 				
-			if (!so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
+			if (Prop.isGovSP() && !so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
 				throw new ServletException("Senha do usuário atual não confere com a do usuário da lotação.");
 
 			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());

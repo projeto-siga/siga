@@ -64,10 +64,10 @@ public class AdminController extends SigaController {
 	}
 	
 	@Get("/testar")
-	public void testarLDAP(String localidade) throws Exception {
+	public void testarLDAP(String sesbPessoa) throws Exception {
 
 		IntegracaoLdap integracaoLdap = IntegracaoLdap.getInstancia();
-		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(localidade);
+		IntegracaoLdapProperties prop = new IntegracaoLdapProperties(sesbPessoa);
 		try{
 			integracaoLdap.conectarLDAP(prop);
 			result.include("status", "ok");
@@ -98,10 +98,10 @@ public class AdminController extends SigaController {
 	}
 
 	@Post("/trocarsenha")
-	public void trocarSenhaLDAP(String localidade, String dn, String senha) throws Exception {
+	public void trocarSenhaLDAP(String sesbPessoa, String dn, String senha) throws Exception {
 		try{
 			IntegracaoLdap integracaoLdap = IntegracaoLdap.getInstancia();
-			IntegracaoLdapProperties prop = new IntegracaoLdapProperties(localidade);
+			IntegracaoLdapProperties prop = new IntegracaoLdapProperties(sesbPessoa);
 			ILdapDao ldap = integracaoLdap.conectarLDAP(prop);
 			ldap.definirSenha(dn, senha);
 			result.include("status", "ok");

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
@@ -40,7 +41,6 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -127,10 +127,7 @@ public class ExServiceImpl implements ExService {
 					return false;
 				if (destinoParser.getLotacao() == null)
 					destinoParser.setLotacao(destinoParser.getPessoa().getLotacao());
-				if (mob.getUltimaMovimentacaoNaoCancelada() != null && ((destinoParser.getLotacao() == null
-						|| !destinoParser.getLotacao().equivale(mob.getUltimaMovimentacaoNaoCancelada().getLotaResp()))
-						|| (destinoParser.getPessoa() != null && !destinoParser.getPessoa()
-								.equivale(mob.getUltimaMovimentacaoNaoCancelada().getResp())))) {
+				if (!mob.isAtendente(destinoParser.getPessoa(), destinoParser.getLotacao())) {
 					Ex.getInstance().getBL().transferir(null, null, cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null, null, destinoParser.getLotacao(),
 							destinoParser.getPessoa(), null, null, null, null, null, false, null, null, null,
@@ -289,15 +286,15 @@ public class ExServiceImpl implements ExService {
 				if (mob.getDoc().isProcesso())
 					mob = mob.getDoc().getUltimoVolume();
 
-				DpResponsavel resp = ExCompetenciaBL.getAtendente(mob);
-				if (resp == null)
-					return null;
-
-				if (resp instanceof DpPessoa) {
-					return resp.getSiglaCompleta() + "@" + ((DpPessoa) resp).getLotacao().getSiglaCompleta();
-				} else {
-					return "@" + resp.getSiglaCompleta();
+				Set<PessoaLotacaoParser> l = mob.getAtendente();
+				for (PessoaLotacaoParser pl : l) {
+					if (pl.getPessoa() != null) {
+						return pl.getPessoa().getSiglaCompleta() + "@" + pl.getPessoa().getLotacao().getSiglaCompleta();
+					} else if (pl.getLotacao() != null) {
+						return "@" + pl.getLotacao().getSiglaCompleta();
+					}
 				}
+				return null;
 			} catch (Exception ex) {
 				ctx.rollback(ex);
 				throw ex;

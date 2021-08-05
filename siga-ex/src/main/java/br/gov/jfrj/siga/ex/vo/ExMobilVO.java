@@ -559,8 +559,8 @@ public class ExMobilVO extends ExVO {
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
 		
-		Optional<ExMovimentacao> ultimaMovNaoCancelada = Optional.ofNullable(mob.getUltimaMovimentacaoNaoCancelada());
-		if (mob.getExDocumento().isFinalizado()	&& ultimaMovNaoCancelada.isPresent()) {
+		ExMovimentacao ultimaMovNaoCancelada = mob.getUltimaMovimentacaoNaoCancelada();
+		if (mob.getExDocumento().isFinalizado()	&& ultimaMovNaoCancelada != null) {
 			
 			//Cria lista de Movimentações que não podem ser canceladas
 			List<Long> listaMovimentacoesNaoCancelavel = new ArrayList<Long>();
@@ -573,8 +573,7 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA);
 			
-			
-			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.get().getIdTpMov())) {
+			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getIdTpMov())) {
 				addAcao("arrow_undo",
 						"Desfa_zer "
 								+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),

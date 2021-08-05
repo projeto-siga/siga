@@ -996,38 +996,6 @@ public class ExMovimentacaoController extends ExController {
 
 	}
 
-	private ArrayList<Object> criarListaDocumentos(List<String> itens) {
-		final ArrayList<Object> listarDocumentos = new ArrayList<Object>();
-
-		for (String idMubString : itens) {
-			try {
-				final Long idMob = Long.parseLong(idMubString);
-				final ExMobil mob = dao()
-						.consultar(idMob, ExMobil.class, false);
-				final Object[] ao = { mob.doc(),
-						mob.getUltimaMovimentacaoNaoCancelada() };
-				listarDocumentos.add(ao);
-			} catch (NumberFormatException nfe) {
-				System.out.println(MessageFormat.format(
-						"{0} nao pode ser convertido para Long", idMubString));
-			}
-		}
-		return listarDocumentos;
-	}
-
-	private ExMovimentacao criarMov(String movIdString) {
-		try {
-			Long idMov = Long.parseLong(movIdString);
-			final ExMovimentacao mov = dao.consultar(idMov,
-					ExMovimentacao.class, false);
-			return mov;
-		} catch (NumberFormatException nfe) {
-			System.out.println(MessageFormat.format(
-					"{0} nao pode ser convertido para Long", movIdString));
-		}
-		return null;
-	}
-
 	@Get("app/expediente/mov/protocolo_unitario")
 	public void protocolo(boolean popup, final String sigla, final Long id) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder

@@ -12,7 +12,6 @@ import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 public class ExGraphTramitacao extends ExGraph {
 
 	public ExGraphTramitacao(ExMobil mob) {
-		ExMovimentacao ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
 		int numTransicao = 0;
 
 		List<ExMovimentacao> listMov = new ArrayList<ExMovimentacao>();

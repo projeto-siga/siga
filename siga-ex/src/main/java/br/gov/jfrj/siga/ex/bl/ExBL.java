@@ -171,6 +171,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Item;
@@ -375,6 +376,9 @@ public class ExBL extends CpBL {
 	}
 
 	public void corrigirArquivamentosEmVolume(int primeiro, int ultimo, boolean efetivar) {
+		
+		if (true)
+			throw new AplicacaoException("Funcionalidade desativada por conta do trâmite paralelo");
 		Long ini = System.currentTimeMillis();
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
@@ -1038,23 +1042,16 @@ public class ExBL extends CpBL {
 
 		String sobrestados = "", emTransito = "", foraDaLota = "", apensados = "", msgFinal = "", comApensos = "";
 
-		DpLotacao lotaBase = null, lotaVerif = null;
-
 		for (ExMobil mobVerif : mobsVerif) {
 
 			if (mobVerif.isApensadoAVolumeDoMesmoProcesso())
 				continue;
 
-			lotaVerif = mobVerif.getUltimaMovimentacaoNaoCancelada().getLotaResp();
-
-			if (lotaBase != null && !mobVerif.isApensadoAVolumeDoMesmoProcesso() && !lotaVerif.equivale(lotaBase))
+			if (!mobVerif.isApensadoAVolumeDoMesmoProcesso() && !mobVerif.isAtendente(cadastrante, lotaCadastrante))
 				foraDaLota += (foraDaLota.length() < 2
-						? " Os seguintes volumes ou vias encontram-se em lotação diferente de " + lotaBase.getSigla()
+						? " Os seguintes volumes ou vias encontram-se em lotação diferente de " + lotaCadastrante.getSigla()
 								+ ": "
 						: ", ") + mobVerif.getSigla();
-
-			if (lotaBase == null)
-				lotaBase = lotaVerif;
 
 			if (mobVerif.isSobrestado())
 				sobrestados += (sobrestados.length() < 2 ? " Os seguintes volumes ou vias encontram-se sobrestados: "
@@ -1114,15 +1111,8 @@ public class ExBL extends CpBL {
 
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, null, null, dt);
-
-			if (mob.isGeralDeProcesso()) {
-				ExMobil ultVol = mob.doc().getUltimoVolume();
-				ExMovimentacao ultMovNanCanc = ultVol.getUltimaMovimentacaoNaoCancelada();
-				if (ultMovNanCanc != null) {
-					mov.setLotaResp(ultMovNanCanc.getLotaResp());
-					mov.setResp(ultMovNanCanc.getResp());
-				}
-			}
+			mov.setLotaResp(lotaCadastrante);
+			mov.setResp(cadastrante);
 
 			if (automatico)
 				mov.setDescrMov("Arquivamento automático.");
@@ -2430,17 +2420,17 @@ public class ExBL extends CpBL {
 				if (mobPai.isArquivado())
 					throw new RegraNegocioException("Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
 
-				ExMovimentacao ultMovDoc = null;
-				if (mobPai.isApensado()) {
-					ultMovDoc = (mobPai.getGrandeMestre().getUltimaMovimentacaoNaoCancelada());
-				} else {
-					ultMovDoc = mobPai.getUltimaMovimentacaoNaoCancelada();
-				}
+				ExMobil mobGrandePai = mobPai;
+				if (mobPai.isApensado()) 
+					mobGrandePai = (mobPai.getGrandeMestre());
 
 				mov.setExMobilRef(mobPai);
 
-				mov.setLotaResp(ultMovDoc.getLotaResp());
-				mov.setResp(ultMovDoc.getResp());
+				for (PessoaLotacaoParser resp : mobGrandePai.getAtendente()) {
+					mov.setResp(resp.getPessoa());
+					mov.setLotaResp(resp.getLotacao());
+					break;
+				}
 
 				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica() || SigaMessages.isSigaSP()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil().filtrarArquivosNumerados(null, true);
@@ -2661,36 +2651,9 @@ public class ExBL extends CpBL {
 				}
 
 				if (penultMovNaoCancelada != null) {
-					// if (mov.getLotaResp() == null)
-					mov.setLotaResp(penultMovNaoCancelada.getLotaResp());
-					// if (mov.getResp() == null)
-					mov.setResp(penultMovNaoCancelada.getResp());
-					// if (mov.getLotaDestinoFinal() == null)
-					mov.setLotaDestinoFinal(penultMovNaoCancelada.getLotaDestinoFinal());
-					// if (mov.getDestinoFinal() == null)
-					mov.setDestinoFinal(penultMovNaoCancelada.getDestinoFinal());
 					mov.setExClassificacao(penultMovNaoCancelada.getExClassificacao());
 				} else {
 					mov.setExClassificacao(null);
-					if (ultMovNaoCancelada != null) {
-						// if (mov.getLotaResp() == null)
-						mov.setLotaResp(ultMovNaoCancelada.getLotaResp());
-						// if (mov.getResp() == null)
-						mov.setResp(ultMovNaoCancelada.getResp());
-						// if (mov.getLotaDestinoFinal() == null)
-						mov.setLotaDestinoFinal(ultMovNaoCancelada.getLotaDestinoFinal());
-						// if (mov.getDestinoFinal() == null)
-						mov.setDestinoFinal(ultMovNaoCancelada.getDestinoFinal());
-					} else {
-						// if (mov.getLotaResp() == null)
-						mov.setLotaResp(ultMov.getLotaResp());
-						// if (mov.getResp() == null)
-						mov.setResp(ultMov.getResp());
-						// if (mov.getLotaDestinoFinal() == null)
-						mov.setLotaDestinoFinal(ultMov.getLotaDestinoFinal());
-						// if (mov.getDestinoFinal() == null)
-						mov.setDestinoFinal(ultMov.getDestinoFinal());
-					}
 				}
 
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
@@ -4512,7 +4475,7 @@ public class ExBL extends CpBL {
 			
 				// Se houver outros recebimentos pendentes para o destinatário, em vez de
 				// receber deve concluir direto
-				boolean fConcluirDireto = p.fIncluirCadastrante && (Utils.equivale(mob.doc().getCadastrante(), titular)
+				boolean fConcluirDireto = ! mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.doc().getCadastrante(), titular)
 						|| Utils.equivale(mob.doc().getLotaCadastrante(), lotaTitular));
 				if (!fConcluirDireto)
 					for (ExMovimentacao r : p.recebimentosPendentes)
@@ -4533,19 +4496,20 @@ public class ExBL extends CpBL {
 					}
 				}
 				
-				if (tramite == null)
+				if (tramite == null && !mob.isEmTransitoExterno())
 					throw new AplicacaoException("Não foi encontrado nenhum trâmite pendente para o usuário corrente ou sua lotação");
 				
 				mov.setResp(titular);
 				mov.setLotaResp(lotaTitular);
-				mov.setDestinoFinal(tramite.getDestinoFinal());
-				mov.setLotaDestinoFinal(tramite.getLotaDestinoFinal());
 				
-				mov.setExMovimentacaoRef(tramite);
-//				tramite.setExMovimentacaoRef(mov);
+				if (tramite != null) {
+					mov.setDestinoFinal(tramite.getDestinoFinal());
+					mov.setLotaDestinoFinal(tramite.getLotaDestinoFinal());
+					mov.setExMovimentacaoRef(tramite);
+				}
 
 				// Marcação deve ser removida só se a lotação estiver sendo alterada
-				if (movAnterior != null && movAnterior.getMarcador() != null) {
+				if (movAnterior != null && movAnterior.getMarcador() != null && tramite != null) {
 					if (movAnterior.getMarcador().getDpLotacaoIni() != null	&& movAnterior.getMarcador().getDpLotacaoIni().equivale(tramite.getLotaResp())) {
 						movAnterior = null;
 					}
@@ -5620,11 +5584,10 @@ public class ExBL extends CpBL {
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
 
-			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
-			if (getComp().podeJuntar(ultMov.getCadastrante(), ultMov.getLotaCadastrante(), mob) && getComp()
-					.podeSerJuntado(ultMov.getCadastrante(), ultMov.getLotaCadastrante(), doc.getExMobilPai())) {
-				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(), ultMov.getLotaCadastrante(), null, mob,
-						doc.getExMobilPai(), dtMov, ultMov.getSubscritor(), ultMov.getTitular(), "1");
+			if (getComp().podeJuntar(titular, lotaCadastrante, mob) && getComp()
+					.podeSerJuntado(titular, lotaCadastrante, doc.getExMobilPai())) {
+				juntarDocumento(cadastrante, titular, lotaCadastrante, null, mob,
+						doc.getExMobilPai(), dtMov, null, titular, "1");
 				break;
 			}
 		}
@@ -5637,11 +5600,10 @@ public class ExBL extends CpBL {
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
-			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
-			if (getComp().podeJuntar(ultMov.getCadastrante(), ultMov.getLotaCadastrante(), doc.getExMobilAutuado())
-					& getComp().podeSerJuntado(ultMov.getCadastrante(), ultMov.getLotaCadastrante(), mob)) {
-				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(), ultMov.getLotaCadastrante(), null,
-						doc.getExMobilAutuado(), mob, dtMov, ultMov.getSubscritor(), ultMov.getTitular(), "1");
+			if (getComp().podeJuntar(titular, lotaCadastrante, doc.getExMobilAutuado())
+					& getComp().podeSerJuntado(titular, lotaCadastrante, mob)) {
+				juntarDocumento(cadastrante, titular, lotaCadastrante, null,
+						doc.getExMobilAutuado(), mob, dtMov, null, titular, "1");
 				break;
 			}
 		}
@@ -6421,17 +6383,16 @@ public class ExBL extends CpBL {
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, titular, null, null);
 
-			final ExMovimentacao ultMov = mob.getUltimaMovimentacao();
-
 			ExMovimentacao movRef = mov.getExMobil()
 					.getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO);
 			mov.setExMovimentacaoRef(movRef);
 			mov.setExMobilRef(movRef.getExMobilRef());
 			mov.setDescrMov("Desapensado do documento " + mov.getExMobilRef().getCodigo().toString());
 
-			mov.setLotaResp(mobMestre.getUltimaMovimentacaoNaoCancelada().getLotaResp());
-			mov.setResp(mobMestre.getUltimaMovimentacaoNaoCancelada().getResp());
-
+			for (PessoaLotacaoParser pl : mobMestre.getAtendente()) {
+				mov.setLotaResp(pl.getLotacao());
+				mov.setResp(pl.getPessoa());
+			}
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov);
 		} catch (final Exception e) {

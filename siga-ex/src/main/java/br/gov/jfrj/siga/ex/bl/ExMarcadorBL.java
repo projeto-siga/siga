@@ -31,12 +31,10 @@ public class ExMarcadorBL {
 	private ExMobil mob;
 	private SortedSet<ExMarca> set;
 	private SortedSet<ExMovimentacao> movs;
-	ExMovimentacao ultMovNaoCanc;
 
 	public ExMarcadorBL(SortedSet<ExMarca> set, ExMobil mob) {
 		this.mob = mob;
 		this.set = set;
-		this.ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
 
 		movs = new TreeSet<>();
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
@@ -174,8 +172,9 @@ public class ExMarcadorBL {
 				mAnterior = m;
 			}
 		}
-		
-		if (!apensadoAVolumeDoMesmoProcesso)
+
+		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
+				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado())
 			calcularMarcadoresDeTramite();
 
 		if (!mob.isArquivado())
@@ -183,63 +182,30 @@ public class ExMarcadorBL {
 
 		acrescentarMarcadoresManuais();
 
-		// Quando está na caixa de entrada, substituir por "A Receber", se for
-		// físico
-		if (m == CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()) {
-			if (!mob.doc().isEletronico()) {
-				m = CpMarcadorEnum.A_RECEBER.getId();
-				acrescentarMarca(CpMarcadorEnum.EM_TRANSITO.getId(), dt, ultMovNaoCanc.getCadastrante(),
-						ultMovNaoCanc.getLotaCadastrante());
-			} else {
-				// Nato: isso aqui precisa melhorar, pois a última movimentação
-				// pode não ser o despacho e mesmo assim ele não estar assinado.
-				// Se o despacho ainda não foi assinado, marcar com
-				// "Despacho pendente de assinatura"
-				if (ultMovNaoCanc.getExTipoMovimentacao()
-						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
-					m = CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId();
-				} else {
-					acrescentarMarca(CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId(), dt, ultMovNaoCanc.getCadastrante(),
-							ultMovNaoCanc.getLotaCadastrante());
-				}
-			}
-		}
-
-		if (m == CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()) {
-			// Quando é transferido para um órgão externo, a marca deve ficar
-			// com o cadastrante e sua lotação, em vez do responsável
-			acrescentarMarca(m, dt, ultMovNaoCanc.getCadastrante(), ultMovNaoCanc.getLotaCadastrante());
-		} else if (m == CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId()) {
-			// Se o cadastrante for digerente do subscritor
-			if (ultMovNaoCanc.getCadastrante().getId() != ultMovNaoCanc.getSubscritor().getId()) {
-				// Se a lotação do cadastrante for diferente da lotação do
-				// subscritor
-				if (ultMovNaoCanc.getLotaCadastrante().getIdLotacao() != ultMovNaoCanc.getLotaSubscritor()
-						.getIdLotacao()) {
-					// Acrescenta a marca para o subscritor e na sua lotação
-					acrescentarMarca(m, dt, ultMovNaoCanc.getSubscritor(), ultMovNaoCanc.getLotaSubscritor());
-				} else {
-					// Acrescenta a marca na própria lotação do subscritor
-					acrescentarMarca(m, dt, ultMovNaoCanc.getSubscritor(), null);
-				}
-			}
-			// Acrecenta, também, a marca para o cadastrante e em sua lotação
-			acrescentarMarca(m, dt, ultMovNaoCanc.getCadastrante(), ultMovNaoCanc.getLotaCadastrante());
-		} else if (m == CpMarcadorEnum.JUNTADO.getId() || m == CpMarcadorEnum.APENSADO.getId()) {
+		if (m == CpMarcadorEnum.JUNTADO.getId() || m == CpMarcadorEnum.APENSADO.getId()) {
 			if (!mob.isEliminado())
 				acrescentarMarca(m, dt, null, null);
-		} else if (m != 0L) {
-			// Edson: Os marcadores "Arq Corrente" e
-			// "Aguardando andamento" são mutuamente exclusivos
-			if (m != CpMarcadorEnum.EM_ANDAMENTO.getId()
-					|| !(mob.isArquivado() || mob.doc().getMobilGeral().isArquivado()))
-				acrescentarMarca(m, dt, ultMovNaoCanc.getResp(), ultMovNaoCanc.getLotaResp());
+		} else {
+			for (PessoaLotacaoParser pl : mob.getAtendente()) {
+				if (m == CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()) {
+					// Quando é transferido para um órgão externo, a marca deve ficar
+					// com o cadastrante e sua lotação, em vez do responsável
+					acrescentarMarca(m, dt, pl.getPessoa(), pl.getLotacao());
+				} else if (m != 0L) {
+					// Edson: Os marcadores "Arq Corrente" e
+					// "Aguardando andamento" são mutuamente exclusivos
+					if (m != CpMarcadorEnum.EM_ANDAMENTO.getId()
+							|| !(mob.isArquivado() || mob.doc().getMobilGeral().isArquivado()))
+						acrescentarMarca(m, dt, pl.getPessoa(), pl.getLotacao());
 
-			if (SigaMessages.isSigaSP() && m == CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
-					&& ultMovNaoCanc.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
-				acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(dt);
+					// Nato: acredito que isso não seja mais necessário agora que temos a nova
+					// implementação de marcadores.
+//			if (SigaMessages.isSigaSP() && m == CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
+//					&& ultMovNaoCanc.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
+//				acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(dt);
+//			}
+				}
 			}
-
 		}
 
 		return;
@@ -330,14 +296,8 @@ public class ExMarcadorBL {
 	}
 
 	protected boolean acrescentarMarcadorCancelado() {
-		// Cancelado
-		if (ultMovNaoCanc == null) {
-			ExMovimentacao ultMov = mob.getUltimaMovimentacao();
-			Date dt = null;
-			if (ultMov != null) {
-				dt = ultMov.getDtIniMov();
-			}
-			acrescentarMarca(CpMarcadorEnum.CANCELADO.getId(), dt, mob.doc().getCadastrante(),
+		if (mob.isCancelada()) {
+			acrescentarMarca(CpMarcadorEnum.CANCELADO.getId(), null, mob.doc().getCadastrante(),
 					mob.doc().getLotaCadastrante());
 			return true;
 		}
@@ -547,32 +507,34 @@ public class ExMarcadorBL {
 		}
 	}
 
-	public void acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(Date dt) {
-		ExMobil geral = mob.doc().getMobilGeral();
-		if (geral.getExMovimentacaoSet() != null) {
-			for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
-				if (mov.isCancelada() || mov.getMarcador() == null)
-					continue;
-
-				Long tpMov = mov.getIdTpMov();
-				Long idMarcador = mov.getMarcador().getIdMarcador();
-				boolean temMarcaManual = (tpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO
-						&& (idMarcador == CpMarcadorEnum.URGENTE.getId() || idMarcador == CpMarcadorEnum.IDOSO.getId()
-								|| idMarcador == CpMarcadorEnum.PRIORITARIO.getId()
-								|| idMarcador == CpMarcadorEnum.RESTRICAO_ACESSO.getId()
-								|| idMarcador == CpMarcadorEnum.COVID_19.getId()
-								|| idMarcador == CpMarcadorEnum.NOTA_EMPENHO.getId()
-								|| idMarcador == CpMarcadorEnum.DEMANDA_JUDICIAL_BAIXA.getId()
-								|| idMarcador == CpMarcadorEnum.DEMANDA_JUDICIAL_MEDIA.getId()
-								|| idMarcador == CpMarcadorEnum.DEMANDA_JUDICIAL_ALTA.getId()));
-
-				if (temMarcaManual) {
-					acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(),
-							ultMovNaoCanc.getLotaResp());
-				}
-			}
-		}
-	}
+	// Nato: acredito que isso não seja mais necessário agora que temos a nova
+	// implementação de marcadores.
+//	public void acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(Date dt) {
+//		ExMobil geral = mob.doc().getMobilGeral();
+//		if (geral.getExMovimentacaoSet() != null) {
+//			for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
+//				if (mov.isCancelada() || mov.getMarcador() == null)
+//					continue;
+//
+//				Long tpMov = mov.getIdTpMov();
+//				Long idMarcador = mov.getMarcador().getIdMarcador();
+//				boolean temMarcaManual = (tpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO
+//						&& (idMarcador == CpMarcadorEnum.URGENTE.getId() || idMarcador == CpMarcadorEnum.IDOSO.getId()
+//								|| idMarcador == CpMarcadorEnum.PRIORITARIO.getId()
+//								|| idMarcador == CpMarcadorEnum.RESTRICAO_ACESSO.getId()
+//								|| idMarcador == CpMarcadorEnum.COVID_19.getId()
+//								|| idMarcador == CpMarcadorEnum.NOTA_EMPENHO.getId()
+//								|| idMarcador == CpMarcadorEnum.DEMANDA_JUDICIAL_BAIXA.getId()
+//								|| idMarcador == CpMarcadorEnum.DEMANDA_JUDICIAL_MEDIA.getId()
+//								|| idMarcador == CpMarcadorEnum.DEMANDA_JUDICIAL_ALTA.getId()));
+//
+//				if (temMarcaManual) {
+//					acrescentarMarca(mov.getMarcador().getIdMarcador(), dt, ultMovNaoCanc.getResp(),
+//							ultMovNaoCanc.getLotaResp());
+//				}
+//			}
+//		}
+//	}
 
 	public void acrescentarMarcadoresAssinaturaComSenha() {
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
@@ -605,10 +567,18 @@ public class ExMarcadorBL {
 	public void calcularMarcadoresDeTramite() {
 		Pendencias p = mob.calcularTramitesPendentes();
 		for (ExMovimentacao tramite : p.tramitesPendentes) {
-			acrescentarMarcaTransferencia(CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId(), tramite.getDtIniMov(), null,
-					tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
-			acrescentarMarcaTransferencia(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId(), tramite.getDtIniMov(), null,
-					tramite.getResp(), tramite.getLotaResp(), tramite);
+			acrescentarMarcaTransferencia(
+					mob.doc().isEletronico() ? CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+							: CpMarcadorEnum.EM_TRANSITO.getId(),
+					tramite.getDtIniMov(), null, tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
+			acrescentarMarcaTransferencia(
+					mob.doc().isEletronico() ? CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
+							: CpMarcadorEnum.EM_TRANSITO.getId(),
+					tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), tramite);
+			if (tramite.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+					&& mob.doc().isEletronico() && !tramite.isAssinada())
+				acrescentarMarcaTransferencia(CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId(),
+						tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), tramite);
 		}
 		for (ExMovimentacao recebimento : p.recebimentosPendentes) {
 			acrescentarMarcaTransferencia(

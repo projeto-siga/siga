@@ -35,6 +35,11 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -117,7 +122,6 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -7814,5 +7818,55 @@ public class ExBL extends CpBL {
 		return funcaoCargoPersonalizadoAssinatura.toString();
 
 	}
+
+	public void definirPrazoAssinatura(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final ExDocumento doc, final DpPessoa titular, Date dtPrazo) throws AplicacaoException {
+		if (doc == null)
+			throw new AplicacaoException("Documento não existente.");
+		ExMobil mob = doc.getMobilGeral();
+		
+		DateTimeFormatter fmt = DateTimeFormatter.ofPattern( "dd/MM/yyyy HH:mm" );
+		LocalDateTime localDate = dtPrazo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		String dtPrazoStr = localDate.format(fmt);
+		try {
+			if (localDate.isBefore(LocalDateTime.now())) 
+				throw new AplicacaoException(
+						"Data e hora de devolução não pode ser anterior à agora: " + dtPrazoStr);
+		} catch (DateTimeParseException e) {
+			throw new AplicacaoException("Data ou hora do prazo inválida: " + dtPrazoStr);
+		}
+		
+		if (!Ex.getInstance().getComp()
+				.podeDefinirPrazoAssinatura(cadastrante, lotaCadastrante, mob))
+			throw new AplicacaoException("Definição de prazo para assinatura não permitida.");
+		
+		ExMovimentacao mov = doc.getMovPrazoDeAssinatura();
+		if (mov != null 
+				&& !Ex.getInstance().getComp()
+						.podeCancelarOuAlterarPrazoDeAssinatura(cadastrante, lotaCadastrante, mob, mov))
+			throw new AplicacaoException("Usuário não permitido a alterar o prazo de assinatura. Se o documento "
+					+ "estiver assinado, deve ser o subscritor; senão deve ser quem cadastrou o prazo.");
+		
+		try {						
+			iniciarAlteracao();
+
+			if (mov == null) {
+				mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA, 
+						cadastrante, lotaCadastrante, mob, dao().dt(), null, null, titular, null, dao().dt());
+			} 
+			mov.setDtParam1(dtPrazo);
+			
+			mov.setDescrMov("O prazo de assinatura " + dtPrazoStr + " foi definido para o documento " + mob.doc().getSigla());
+
+			gravarMovimentacao(mov);
+
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro na definição de prazo para assinatura do documento.", 0, e);
+		}
+	}
+	
 }
 

@@ -1074,6 +1074,14 @@
 								 		- ${m.tamanhoDeArquivo}
 									</c:if>
 								</p>
+								<c:if test="${not empty docVO.dtPrazoDeAssinatura}">
+									<div>
+										<span>Prazo de Assinatura: ${docVO.dtPrazoDeAssinatura}</span>
+										<a class="float-right ${marca.exMovimentacao.podeCancelarOuAlterarPrazoDeAssinatura(titular, lotaTitular, m.mob, docVO.doc.movPrazoDeAssinatura)? '' : 'disabled' }" 
+										href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${docVO.doc.movPrazoDeAssinatura.idMov}&sigla=${docVO.doc.movPrazoDeAssinatura.exMobil.sigla}')" 
+											><i class="far fa-trash-alt"></i></a>
+									</div>
+								</c:if>
 							</tags:collapse>
 						</div>
 					</c:if>

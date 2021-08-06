@@ -546,6 +546,9 @@ public class ExMobilVO extends ExVO {
 		addAcao("link_add", "Apensar", "/app/expediente/mov", "apensar", Ex
 				.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
 
+		addAcao("date_previous", "Atribuir Prazo de Assinatura", "/app/expediente/mov", "definir_prazo_assinatura", Ex
+				.getInstance().getComp().podeDefinirPrazoAssinatura(titular, lotaTitular, mob));
+
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
 		

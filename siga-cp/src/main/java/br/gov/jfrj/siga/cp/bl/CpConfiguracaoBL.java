@@ -437,7 +437,7 @@ public class CpConfiguracaoBL {
 				if (cfg.cpGrupo == 0 || cfg.cpPerfil == null || !cfg.ativaNaData(dtEvn))
 					continue;
 
-				Object g = cfg.cpGrupo;
+				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
 
 				if (cfg.dpPessoa != 0 && cfg.dpPessoa != pessoa.getIdInicial())
 					continue;
@@ -445,7 +445,7 @@ public class CpConfiguracaoBL {
 				if (cfg.cargo != 0 && cfg.cargo != pessoa.getCargo().getIdInicial())
 					continue;
 
-				if (cfg.funcaoConfianca != 0 && cfg.funcaoConfianca != pessoa.getFuncaoConfianca().getIdInicial())
+				if (cfg.funcaoConfianca != 0 && (pessoa.getFuncaoConfianca() != null && cfg.funcaoConfianca != pessoa.getFuncaoConfianca().getIdInicial()))
 					continue;
 
 				if (cfg.lotacao != 0 && cfg.lotacao != lotacao.getIdInicial())
@@ -851,6 +851,7 @@ public class CpConfiguracaoBL {
 					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracaoCache c : configs) {
 				DpLotacao lotacaoAtual = CpDao.getInstance().consultarPorIdInicial(DpLotacao.class, c.lotacao);
+				System.out.println("Lotação atual : " + lotacaoAtual);
 				if (c.hisDtFim == null && lotacaoAtual.getDataFim() == null && c.dpPessoa == pes.getIdInicial()) {
 					resultado.add(lotacaoAtual);
 				}

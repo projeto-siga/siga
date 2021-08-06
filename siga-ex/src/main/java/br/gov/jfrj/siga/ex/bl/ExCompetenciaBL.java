@@ -4442,7 +4442,47 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()
 				&& podeSerMovimentado(mob);
-		// return true;
+	}
+	
+	public boolean podeTramitarEmParalelo(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+
+		if(!podeSerTransferido(mob))
+			return false;
+		
+		if (mob.isEmTransito(titular, lotaTitular))
+			return false;
+
+		return podeMovimentar(titular, lotaTitular, mob)
+				&& getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO,
+						ExTipoDeConfiguracao.MOVIMENTAR);
+	}
+	
+	public boolean podeNotificar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		
+		if (!podeAcessarDocumento(titular, lotaTitular, mob))
+			return false;
+
+		if (mob.isPendenteDeAnexacao())
+			return false;
+
+		if (!((mob.isVia() || mob.isVolume())
+				&& !mob.isJuntado()
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
+				&& !mob.isArquivado()
+				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
+						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO) || 
+						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO))
+				&& !mob.isEmEditalEliminacao()
+				&& !mob.isSobrestado()
+				&& !mob.doc().isSemEfeito()))
+			return false;
+		
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO,
+						ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 	
 	/**

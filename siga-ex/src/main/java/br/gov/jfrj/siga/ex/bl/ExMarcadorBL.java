@@ -10,7 +10,10 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoExibicaoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -214,6 +217,10 @@ public class ExMarcadorBL {
 	private void acrescentarMarcadoresManuais() {
 		// Acrescentar marcas manuais (Urgente, Idoso, etc)
 		ExMobil geral = mob.doc().getMobilGeral();
+		
+		// Só produzir marcas no último volume de processos administrativos
+		if (mob.doc().isProcesso() && !mob.isUltimoVolume())
+			return;
 
 		// Conteplar movimentações gerais e também as da via específica
 		List<ExMovimentacao> marcacoes = new ArrayList<>();
@@ -222,6 +229,7 @@ public class ExMarcadorBL {
 			marcacoes.addAll(mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
 
 		Set<PessoaLotacaoParser> atendentes = mob.getAtendente();
+		Set<DpLotacao> lotacoesComMarcaDePasta = new TreeSet<>();
 
 		// Marcações gerais
 		for (ExMovimentacao mov : marcacoes) {
@@ -275,14 +283,19 @@ public class ExMarcadorBL {
 				for (PessoaLotacaoParser atendente : atendentes) {
 					pes = atendente.getPessoa();
 					lot = atendente.getLotacao();
+
+					// Pular se for marcador de outra lotação
+					if (marcador.getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+							&& (atendente.getLotacao() == null || !Utils.equivale(marcador.getDpLotacaoIni(), lot)))
+						continue;
+
+					// Armazenar os atendentes que já tem marcação de pasta para não receberem a
+					// pasta padrão
+					if (marcador.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA
+							|| marcador.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+						lotacoesComMarcaDePasta.add(atendente.getLotacao());
+
 					acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes, lot, mov);
-					if (mob.isAguardandoAndamento(pes, lot)) {
-						if (lot != null) {
-							CpMarcador mpp = ExDao.getInstance().obterPastaPadraoDaLotacao(lot);
-							if (mpp != null)
-								acrescentarMarcaTransferencia(mpp.getId(), null, null, null, lot, null);
-						}
-					}
 				}
 			} else if (marcador.isInteressadoPessoa() && mov.getSubscritor() != null) {
 				pes = mov.getSubscritor();
@@ -291,8 +304,23 @@ public class ExMarcadorBL {
 				lot = mov.getLotaSubscritor();
 				acrescentarMarcaTransferencia(marcador.getIdMarcador(), dtIni, dtFim, pes, lot, mov);
 			}
-
 		}
+
+		// Marcar com a pasta padrão
+		if (!mob.isGeral())
+			for (PessoaLotacaoParser atendente : atendentes) {
+				DpLotacao lot = atendente.getLotacao();
+
+				if (lotacoesComMarcaDePasta.contains(lot))
+					continue;
+
+				if (lot != null) {
+					CpMarcador mpp = ExDao.getInstance().obterPastaPadraoDaLotacao(lot);
+					if (mpp != null)
+						acrescentarMarcaTransferencia(mpp.getId(), null, null, null, lot, null);
+				}
+			}
+
 	}
 
 	protected boolean acrescentarMarcadorCancelado() {
@@ -574,18 +602,18 @@ public class ExMarcadorBL {
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
 							: CpMarcadorEnum.EM_TRANSITO.getId(),
-					tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), tramite);
+					tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
 			if (tramite.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 					&& mob.doc().isEletronico() && !tramite.isAssinada())
 				acrescentarMarcaTransferencia(CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId(),
-						tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), tramite);
+						tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
 		}
 		for (ExMovimentacao recebimento : p.recebimentosPendentes) {
 			acrescentarMarcaTransferencia(
 					mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())
 							? CpMarcadorEnum.EM_ANDAMENTO.getId()
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
-					recebimento.getDtIniMov(), null, recebimento.getResp(), recebimento.getLotaResp(), recebimento);
+					recebimento.getDtIniMov(), null, recebimento.getResp(), recebimento.getLotaResp(), null);
 		}
 		if (p.fIncluirCadastrante)
 			acrescentarMarcaTransferencia(

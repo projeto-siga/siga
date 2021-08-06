@@ -422,6 +422,20 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeTransferir(titular, lotaTitular, mob));
 		
+		addAcao("email_go",
+				"Tramitar em Paralelo",
+				"/app/expediente/mov",
+				"tramitar_paralelo",
+				Ex.getInstance().getComp()
+						.podeTramitarEmParalelo(titular, lotaTitular, mob));
+		
+		addAcao("email_go",
+				"Notificar",
+				"/app/expediente/mov",
+				"notificar",
+				Ex.getInstance().getComp()
+						.podeNotificar(titular, lotaTitular, mob));
+		
 		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		

@@ -4414,19 +4414,6 @@ public class ExBL extends CpBL {
 			for (ExMobil m : set) {
 				final ExMobil geral = mob.doc().getMobilGeral();
 				
-				// Localiza a última movimentação de marcação de lotação, para cancelar ela com o recebimento
-				ExMovimentacao movAnterior = null;
-				List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
-				if (!mob.isGeral())
-					movs.addAll(m.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
-				for (ExMovimentacao mov : movs) {
-					if (mov.getMarcador() != null && (mov.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA 
-							 || mov.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)) {
-						movAnterior = mov;
-						break;
-					}
-				}
-				
 				Pendencias p = mob.calcularTramitesPendentes();
 				
 				// Concluir trâmites ou recebimentos de notificação pendentes quando já é atendente.
@@ -4472,7 +4459,7 @@ public class ExBL extends CpBL {
 						p = mob.calcularTramitesPendentes();
 					}
 				}
-			
+				
 				// Se houver outros recebimentos pendentes para o destinatário, em vez de
 				// receber deve concluir direto
 				boolean fConcluirDireto = ! mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.doc().getCadastrante(), titular)
@@ -4485,7 +4472,6 @@ public class ExBL extends CpBL {
 				
 				final ExMovimentacao mov = criarNovaMovimentacao(fConcluirDireto ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO : ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
 						cadastrante, lotaTitular, m, dtMov, titular, null, null, null, null);
-
 
 				// Localiza o tramite que será recebido
 				ExMovimentacao tramite = null;
@@ -4508,6 +4494,21 @@ public class ExBL extends CpBL {
 					mov.setExMovimentacaoRef(tramite);
 				}
 
+				// Localiza a última movimentação de marcação de lotação, para cancelar ela com o recebimento
+				ExMovimentacao movAnterior = null;
+				List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
+				if (!mob.isGeral())
+					movs.addAll(m.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+				for (ExMovimentacao mv : movs) {
+					if (mv.getMarcador() != null && (mv.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA 
+							 || mv.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+							&& (Utils.equivale(mv.getMarcador().getDpLotacaoIni(), tramite.getLotaCadastrante())
+									|| Utils.equivale(mv.getMarcador().getDpLotacaoIni(), tramite.getLotaTitular()))) {
+						movAnterior = mv;
+						break;
+					}
+				}
+			
 				// Marcação deve ser removida só se a lotação estiver sendo alterada
 				if (movAnterior != null && movAnterior.getMarcador() != null && tramite != null) {
 					if (movAnterior.getMarcador().getDpLotacaoIni() != null	&& movAnterior.getMarcador().getDpLotacaoIni().equivale(tramite.getLotaResp())) {
@@ -4845,9 +4846,12 @@ public class ExBL extends CpBL {
 								throw new AplicacaoException("Trâmite não pode ser realizado (" + m.getSigla()
 										+ " ID_MOBIL: " + m.getId() + ")");
 						} else {
-							if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
+							if (tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
+								if (!Ex.getInstance().getComp().podeNotificar(cadastrante, lotaCadastrante, m)) 
+									throw new AplicacaoException("Não é possível notificar");			
+							} else if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
 								throw new AplicacaoException(
-										"Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+									"Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
 						}
 						if (m.getExDocumento().isPendenteDeAssinatura()
 								&& !lotaResponsavel.equivale(m.getExDocumento().getLotaTitular())

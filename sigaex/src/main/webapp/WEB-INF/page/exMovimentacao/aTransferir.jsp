@@ -98,6 +98,7 @@ $(function(){
 				<input type="hidden" name="sigla" value="${sigla}" id="transferir_gravar_sigla" />
 				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
 				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
+				<input type="hidden" name="tipoTramite" value="3"/>
 
 				<c:if test="${not doc.eletronico}">
 				<div class="row">
@@ -148,18 +149,6 @@ $(function(){
 						</div>
 					</div>
 				</div>	
-				<div class="row">
-					<div class="col col-3">
-						<div class="form-group">
-							<label>Tipo de Tramite</label> 
-							<select name="tipoTramite" class="form-control" >
-								<option value="3">Tramitar para destinatário</option>  
-								<option value="80">Manter comigo e também tramitar para destinatário</option>  
-								<option value="81">Manter comigo e apenas notificar destinatário</option>  
-							</select> 
-						</div>
-					</div>
-				</div>				
 				<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="row">
 						<div class="col col-3">

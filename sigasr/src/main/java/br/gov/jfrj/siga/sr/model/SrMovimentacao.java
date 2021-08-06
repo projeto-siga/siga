@@ -156,7 +156,7 @@ public class SrMovimentacao extends Objeto {
     private String conhecimento;
     
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "SR_MOVIMENTACAO_ACORDO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_MOVIMENTACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
+    @JoinTable(name = "sr_movimentacao_acordo", schema = "sigasr", joinColumns = { @JoinColumn(name = "ID_MOVIMENTACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
     private List<SrAcordo> acordos;
     
     @Column(name = "DNM_TEMPO_DECORRIDO_ATENDMTO")
@@ -424,12 +424,9 @@ public class SrMovimentacao extends Objeto {
             setAcao(solicitacao.getAcao());
             setPrioridade(solicitacao.getPrioridade());
         } else {
-            SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
-            
+        	SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
         	
-        	if (getAtendente().getId() == null) {
-        		this.setAtendente(null);
-        	}
+            if (getAtendente() != null && getAtendente().getId() == null)  setAtendente(null);
 
             if (getLotaAtendente() == null) {
             	if (anterior != null && anterior.getLotaAtendente() != null)

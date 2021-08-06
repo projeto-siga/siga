@@ -148,7 +148,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private SrSolicitacao solicitacaoPai;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "SR_SOLICITACAO_ACORDO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_SOLICITACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
+    @JoinTable(name = "sr_solicitacao_acordo", schema = "sigasr", joinColumns = { @JoinColumn(name = "ID_SOLICITACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
     private List<SrAcordo> acordos;
 
     @Enumerated

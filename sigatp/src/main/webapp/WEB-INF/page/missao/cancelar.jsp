@@ -88,7 +88,7 @@
 											<input type="checkbox" name="chk" id="req_${req.id}"/> 
 											Cancelar tamb&eacute;m a requisi&ccedil;&atilde;o
 											<tptags:link  texto="${req.buscarSequence()}" parteTextoLink="${req.buscarSequence()}" 
-												  comando="${linkTo[RequisicaoController].buscarPelaSequence(true,req.buscarSequence())}"
+												   comando="${linkTo[RequisicaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${req.buscarSequence()}">
 												  ehEditavel="false">
 											</tptags:link> 
 											<br/>

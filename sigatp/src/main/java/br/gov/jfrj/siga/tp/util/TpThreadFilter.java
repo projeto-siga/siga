@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -38,6 +39,7 @@ public class TpThreadFilter implements Filter {
 			ContextoPersistencia.setEntityManager(em);
 			ModeloDao.freeInstance();
 			CpDao.getInstance();
+			Cp.getInstance().getConf().limparCacheSeNecessario();
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 

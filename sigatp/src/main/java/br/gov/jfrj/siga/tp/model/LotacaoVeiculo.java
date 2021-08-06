@@ -32,7 +32,7 @@ public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 
 	@Id
 	@GeneratedValue(generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 
 	@ManyToOne

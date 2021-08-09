@@ -2423,6 +2423,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					// serialmente para outro lugar
 					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
 				}
+			} else {
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO) 
+					p.fIncluirCadastrante = false;
 			}
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
 					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 

@@ -4499,7 +4499,13 @@ public class ExBL extends CpBL {
 							mov.setDestinoFinal(pend.getDestinoFinal());
 							mov.setLotaDestinoFinal(pend.getLotaDestinoFinal());
 							mov.setExMovimentacaoRef(pend);
-							gravarMovimentacao(mov);
+							
+							// Localiza a última movimentação de marcação de lotação, para cancelar ela com a conclusao
+							ExMovimentacao movAnterior = localizaMarcacaoDePasta(mob, pend);
+							if (movAnterior != null)
+								gravarMovimentacaoCancelamento(mov, movAnterior);
+							else
+								gravarMovimentacao(mov);
 						}
 						p = mob.calcularTramitesPendentes();
 					}
@@ -4540,26 +4546,7 @@ public class ExBL extends CpBL {
 				}
 
 				// Localiza a última movimentação de marcação de lotação, para cancelar ela com o recebimento
-				ExMovimentacao movAnterior = null;
-				List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
-				if (!mob.isGeral())
-					movs.addAll(m.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
-				for (ExMovimentacao mv : movs) {
-					if (mv.getMarcador() != null && (mv.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA 
-							 || mv.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
-							&& (Utils.equivale(mv.getMarcador().getDpLotacaoIni(), tramite.getLotaCadastrante())
-									|| Utils.equivale(mv.getMarcador().getDpLotacaoIni(), tramite.getLotaTitular()))) {
-						movAnterior = mv;
-						break;
-					}
-				}
-			
-				// Marcação deve ser removida só se a lotação estiver sendo alterada
-				if (movAnterior != null && movAnterior.getMarcador() != null && tramite != null) {
-					if (movAnterior.getMarcador().getDpLotacaoIni() != null	&& movAnterior.getMarcador().getDpLotacaoIni().equivale(tramite.getLotaResp())) {
-						movAnterior = null;
-					}
-				}
+				ExMovimentacao movAnterior = localizaMarcacaoDePasta(m, tramite);
 
 				if (movAnterior != null) {
 					gravarMovimentacaoCancelamento(mov, movAnterior);
@@ -4582,6 +4569,34 @@ public class ExBL extends CpBL {
 			throw new RuntimeException("Erro ao receber documento.", e);
 		}
 	}
+
+	// Localiza a última movimentação de marcação de lotação, para cancelar ela com o recebimento
+	private ExMovimentacao localizaMarcacaoDePasta(ExMobil mob, ExMovimentacao tramiteOuRecebimento) {
+		ExMovimentacao movMarcacaoDePasta = null;
+		List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true);
+		if (!mob.isGeral())
+			movs.addAll(mob.doc().getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+		for (ExMovimentacao mv : movs) {
+			boolean isRespPorTramiteOuRecebimento = tramiteOuRecebimento != null && (Utils.equivale(mv.getMarcador().getDpLotacaoIni(), tramiteOuRecebimento.getLotaCadastrante())
+					|| Utils.equivale(mv.getMarcador().getDpLotacaoIni(), tramiteOuRecebimento.getLotaTitular()));
+			boolean isCadastrante = tramiteOuRecebimento == null && (Utils.equivale(mv.getMarcador().getDpLotacaoIni(), mob.doc().getLotaCadastrante())
+					|| Utils.equivale(mv.getMarcador().getDpLotacaoIni(), mob.doc().getLotaTitular()));
+			if (mv.getMarcador() != null && (mv.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA 
+					 || mv.getMarcador().getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+					&& (isRespPorTramiteOuRecebimento || isCadastrante)) {
+				movMarcacaoDePasta = mv;
+				break;
+			}
+		}
+
+		// Marcação deve ser removida só se a lotação estiver sendo alterada
+		if (movMarcacaoDePasta != null && tramiteOuRecebimento != null) {
+			if (movMarcacaoDePasta.getMarcador().getDpLotacaoIni() != null	&& movMarcacaoDePasta.getMarcador().getDpLotacaoIni().equivale(tramiteOuRecebimento.getLotaResp())) {
+				movMarcacaoDePasta = null;
+			}
+		}
+		return movMarcacaoDePasta;
+	}
 	
 	public void concluir(DpPessoa cadastrante, final DpLotacao lotaCadastrante, DpPessoa titular, final DpLotacao lotaTitular, ExMobil mob, Date dtMov,
 			Date dtMovIni, DpPessoa subscritor) {
@@ -4595,22 +4610,33 @@ public class ExBL extends CpBL {
 			
 			Pendencias p = mob.calcularTramitesPendentes();
 			
-			// Localiza o recebimento que será concluído
 			ExMovimentacao recebimento = null;
-			for (ExMovimentacao t : p.recebimentosPendentes) {
-				if (t.isResp(titular, lotaTitular)) {
-					recebimento = t;
-					break;
+			if (p.fIncluirCadastrante && (Utils.equivale(mob.doc().getLotaCadastrante(), lotaTitular)
+					|| Utils.equivale(mob.doc().getCadastrante(), titular))) {
+				recebimento = null;
+			} else {
+				// Localiza o recebimento que será concluído
+				for (ExMovimentacao t : p.recebimentosPendentes) {
+					if (t.isResp(titular, lotaTitular)) {
+						recebimento = t;
+						break;
+					}
 				}
+	
+				if (recebimento == null)
+					throw new AplicacaoException("Não foi encontrado nenhum recebimento pendente para o usuário corrente ou sua lotação");
 			}
-
-			if (recebimento == null)
-				throw new AplicacaoException("Não foi encontrado nenhum recebimento pendente para o usuário corrente ou sua lotação");
 			
 			final ExMovimentacao mov = gerarMovimentacaoDeConclusao(cadastrante, lotaCadastrante, titular, lotaTitular, mob, dtMov,
 					dtMovIni, subscritor, recebimento);
 
-			gravarMovimentacao(mov);
+			// Localiza a última movimentação de marcação de lotação, para cancelar ela com a conclusao
+			ExMovimentacao movAnterior = localizaMarcacaoDePasta(mob, recebimento);
+
+			if (movAnterior != null) {
+				gravarMovimentacaoCancelamento(mov, movAnterior);
+			} else
+				gravarMovimentacao(mov);
 			concluirAlteracao(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4627,10 +4653,11 @@ public class ExBL extends CpBL {
 		
 		mov.setResp(titular);
 		mov.setLotaResp(lotaTitular);
-		mov.setDestinoFinal(recebimento.getDestinoFinal());
-		mov.setLotaDestinoFinal(recebimento.getLotaDestinoFinal());
-		
-		mov.setExMovimentacaoRef(recebimento);
+		if (recebimento != null) {
+			mov.setDestinoFinal(recebimento.getDestinoFinal());
+			mov.setLotaDestinoFinal(recebimento.getLotaDestinoFinal());
+			mov.setExMovimentacaoRef(recebimento);
+		}
 		return mov;
 	}
 

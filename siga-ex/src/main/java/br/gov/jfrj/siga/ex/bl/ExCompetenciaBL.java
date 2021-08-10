@@ -1317,7 +1317,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								titular,
 								lotaTitular,
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
-								ExTipoDeConfiguracao.MOVIMENTAR);
+								ExTipoDeConfiguracao.MOVIMENTAR)
+				&& !mob.getDoc().isPrazoDeAssinaturaVencido();
 	}
 	
 	/*
@@ -1337,7 +1338,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
-				ExTipoDeConfiguracao.MOVIMENTAR);
+				ExTipoDeConfiguracao.MOVIMENTAR)
+			&& !mob.getDoc().isPrazoDeAssinaturaVencido();
 	}
 	
 	
@@ -3239,6 +3241,43 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se é possível cancelar ou alterar uma movimentação de definição de prazo de assinatura,
+	 * passada através do parâmetro mov. As regras são as seguintes:
+	 * <ul>
+	 * <li>A movimentação não pode estar cancelada</li>
+	 * <li>Se o documento estiver assinado, só o subscritor pode cancelar. Caso contrário, só o cadastrante.</li>
+	 * <li>Não pode haver configuração impeditiva. Tipo de configuração:
+	 * Cancelar Movimentação</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param subscritor
+	 * @param mob
+	 * @param mov
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeCancelarOuAlterarPrazoDeAssinatura(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob,
+			final ExMovimentacao mov) {
+
+		if (mov.isCancelada())
+			return false;
+		
+		if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
+			if (mob.getDoc().getSubscritor() != null && !mob.getDoc().getSubscritor().equivale(titular))
+				return false;
+		} else {
+			if (mov.getCadastrante() != null && !mov.getCadastrante().equivale(titular))
+				return false;
+		}
+
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+				mov.getIdTpMov(),
+				ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO);
+	}
+
+	/**
 	 * Retorna se é possível excluir anotação realizada no móbil, passada pelo
 	 * parâmetro mov. As seguintes regras incidem sobre a movimentação a ser
 	 * excluída:
@@ -4975,4 +5014,36 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeCapturarPDF(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 		return podeCapturarPDF(titular, lotaTitular, mob, null);
 	}
+	/**
+	 * Retorna se é possível definir um prazo para assinatura do documento, conforme as regras:
+	 * <ul>
+	 * <li>Móbil deve ser geral</li>
+	 * <li>Móbil não pode estar cancelado ou sem efeito ou arquivado</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o móbil/usuário</li>
+	 * <li>Documento tem de estar pendente de assinatura</li>
+	 * <li>Móbil deve estar finalizado</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeDefinirPrazoAssinatura(DpPessoa titular, DpLotacao lotaTitular,
+			ExMobil mob) {
+
+		return mob.isGeral()
+				&& !mob.isCancelada()
+				&& !mob.doc().isSemEfeito()
+				&& !mob.isArquivado()
+				&& !mob.isSobrestado()
+				&& mob.doc().isFinalizado()
+				&& mob.doc().isPendenteDeAssinatura()
+				&& getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), 
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA,
+						ExTipoDeConfiguracao.MOVIMENTAR);
+	}
+
 }

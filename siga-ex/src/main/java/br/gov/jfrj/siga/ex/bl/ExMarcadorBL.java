@@ -143,17 +143,6 @@ public class ExMarcadorBL {
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO) {
-//				if (!mob.doc().isPendenteDeAssinatura() || mob.doc().getExTipoDocumento().getIdTpDoc() == 2
-//						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
-//
-//					if (!apensadoAVolumeDoMesmoProcesso) {
-//						m = CpMarcadorEnum.EM_ANDAMENTO.getId();
-//					} else
-//						m = CpMarcadorEnum.APENSADO.getId();
-//
-//				} else if (mob.isApensado()) {
-//					m = CpMarcadorEnum.APENSADO.getId();
-//				}
 				m = 0L;
 			}
 
@@ -217,7 +206,7 @@ public class ExMarcadorBL {
 	private void acrescentarMarcadoresManuais() {
 		// Acrescentar marcas manuais (Urgente, Idoso, etc)
 		ExMobil geral = mob.doc().getMobilGeral();
-		
+
 		// Só produzir marcas no último volume de processos administrativos
 		if (mob.doc().isProcesso() && !mob.isUltimoVolume())
 			return;
@@ -456,25 +445,33 @@ public class ExMarcadorBL {
 	public void acrescentarMarcadoresPendenciaDeAssinatura() {
 		if (!(SigaMessages.isSigaSP() && !mob.doc().isFinalizado()) && mob.doc().isPendenteDeAssinatura()
 				&& !mob.doc().isCancelado()) {
-
 			/*
 			 * Não estava setando a amrca pendente de assinatura corretamente na
 			 * susbituição. DpPessoa resp = ultMovNaoCanc != null ? ultMovNaoCanc.getResp()
 			 * : mob.doc().getCadastrante(); DpLotacao lotaResp = ultMovNaoCanc != null ?
 			 * ultMovNaoCanc.getLotaResp() : mob.doc().getLotaCadastrante();
 			 */
-			acrescentarMarca(CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(), mob.doc().getDtRegDoc(),
-					mob.doc().getCadastrante(), mob.doc().getLotaCadastrante());
-			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
-					&& !(Prop.getBool("/siga.mesa.nao.revisar.temporarios")
-							&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor())
-							&& !mob.doc().isFinalizado())) {
-				acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mob.doc().getDtRegDoc(),
-						mob.getExDocumento().getSubscritor(), null);
-				ExMovimentacao m = mob.doc().getMovSolicitacaoDeAssinatura();
-				if (m != null) {
-					acrescentarMarca(CpMarcadorEnum.PRONTO_PARA_ASSINAR.getId(), m.getDtIniMov(),
-							mob.getExDocumento().getSubscritor(), null);
+			ExMovimentacao movPrazo = mob.doc().getMovPrazoDeAssinatura();
+			Date dtPrazo = null;
+			if (movPrazo != null) {
+				dtPrazo = movPrazo.getDtParam1();
+				acrescentarMarca(CpMarcadorEnum.PRAZO_DE_ASSINATURA_EXPIRADO.getId(), dtPrazo,
+						mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), null);
+			}
+			if (!mob.getDoc().isPrazoDeAssinaturaVencido()) {
+				acrescentarMarca(CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(), mob.doc().getDtRegDoc(),
+						mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), dtPrazo);
+				if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
+						&& !(Prop.getBool("/siga.mesa.nao.revisar.temporarios")
+								&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor())
+								&& !mob.doc().isFinalizado())) {
+					acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mob.doc().getDtRegDoc(),
+							mob.getExDocumento().getSubscritor(), null, dtPrazo);
+					ExMovimentacao m = mob.doc().getMovSolicitacaoDeAssinatura();
+					if (m != null) {
+						acrescentarMarca(CpMarcadorEnum.PRONTO_PARA_ASSINAR.getId(), m.getDtIniMov(),
+								mob.getExDocumento().getSubscritor(), null, dtPrazo);
+					}
 				}
 			}
 		}
@@ -516,20 +513,26 @@ public class ExMarcadorBL {
 
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)) {
 			if (mob.getDoc().isEletronico()) {
-				if (mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(mov.getSubscritor()))
+				ExMovimentacao movPrazo = mob.doc().getMovPrazoDeAssinatura();
+				Date dtPrazo = null;
+				if (movPrazo != null)
+					dtPrazo = movPrazo.getDtParam1();
+				if (mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(mov.getSubscritor())
+						|| mob.getDoc().isPrazoDeAssinaturaVencido())
 					continue;
-				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
+				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
 					acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mov.getDtIniMov(), mov.getSubscritor(),
-							null);
-				else {
+							null, dtPrazo);
+				} else {
 					if (!(Prop.getBool("/siga.mesa.nao.revisar.temporarios") && !mob.getDoc().isFinalizado()))
-						acrescentarMarca(CpMarcadorEnum.REVISAR.getId(), mov.getDtIniMov(), mov.getSubscritor(), null);
+						acrescentarMarca(CpMarcadorEnum.REVISAR.getId(), mov.getDtIniMov(), mov.getSubscritor(), null,
+								dtPrazo);
 					if (!(Prop.getBool("/siga.mesa.nao.revisar.temporarios") && !mob.getDoc().isFinalizado())
 							&& Ex.getInstance().getConf().podePorConfiguracao(mov.getSubscritor(),
 									mov.getSubscritor().getLotacao(),
 									ExTipoDeConfiguracao.COSIGNATARIO_ASSINAR_ANTES_SUBSCRITOR))
 						acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mov.getDtIniMov(), mov.getSubscritor(),
-								null);
+								null, dtPrazo);
 				}
 			}
 		}
@@ -608,17 +611,20 @@ public class ExMarcadorBL {
 				acrescentarMarcaTransferencia(CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId(),
 						tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
 		}
+
 		for (ExMovimentacao recebimento : p.recebimentosPendentes) {
 			acrescentarMarcaTransferencia(
 					mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())
-							? CpMarcadorEnum.EM_ANDAMENTO.getId()
+							? (mob.doc().jaTransferido() ? CpMarcadorEnum.EM_ANDAMENTO.getId()
+									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
 					recebimento.getDtIniMov(), null, recebimento.getResp(), recebimento.getLotaResp(), null);
 		}
 		if (p.fIncluirCadastrante)
 			acrescentarMarcaTransferencia(
 					mob.isAtendente(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante())
-							? CpMarcadorEnum.EM_ANDAMENTO.getId()
+							? (mob.doc().jaTransferido() ? CpMarcadorEnum.EM_ANDAMENTO.getId()
+									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
 					mob.doc().getDtRegDoc(), null, mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), null);
 	}
@@ -780,6 +786,10 @@ public class ExMarcadorBL {
 	}
 
 	private void acrescentarMarca(Long idMarcador, Date dt, DpPessoa pess, DpLotacao lota) {
+		acrescentarMarca(idMarcador, dt, pess, lota, null);
+	}
+
+	private void acrescentarMarca(Long idMarcador, Date dt, DpPessoa pess, DpLotacao lota, Date dtFim) {
 		ExMarca mar = new ExMarca();
 		mar.setExMobil(mob);
 		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
@@ -791,6 +801,9 @@ public class ExMarcadorBL {
 				mar.setDpLotacaoIni(lota.getLotacaoInicial());
 		}
 		mar.setDtIniMarca(dt);
+
+		if (dtFim != null)
+			mar.setDtFimMarca(dtFim);
 		set.add(mar);
 	}
 

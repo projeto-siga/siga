@@ -9,6 +9,11 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -3885,6 +3890,14 @@ public class ExMovimentacaoController extends ExController {
 						"Não é possível cancelar o documento vinculado.");
 		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
 			ExPodeCancelarMarcacao.afirmar(mov, getTitular(), getLotaTitular());
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarOuAlterarPrazoDeAssinatura(getTitular(), 
+							getLotaTitular(), mob, mov))
+				throw new AplicacaoException(
+						"Usuário não permitido a cancelar ou alterar o prazo de assinatura. Se o documento estiver"
+						+ " assinado, deve ser o subscritor; senão deve ser quem cadastrou o prazo.");
 		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
@@ -5289,4 +5302,74 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 	}
 	
+	@Get("/app/expediente/mov/definir_prazo_assinatura")
+	public void aDefinirPrazoAssinatura(final String sigla) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+//		final ExMovimentacao movimentacao = movimentacaoBuilder
+//				.construir(dao());
+//		
+//		String dtPrazo = movimentacaoBuilder.getDescrMov() == null ? dtPrazo : movimentacaoBuilder.getDescrMov();
+//
+		final ExDocumento doc = buscarDocumento(documentoBuilder);
+		String dtPrazoStr = null;
+		if (doc != null) 
+			dtPrazoStr = doc.getDtPrazoDeAssinaturaDDMMYYYYHHMM();
+		
+		if (!Ex.getInstance()
+				.getComp()
+				.podeDefinirPrazoAssinatura(getTitular(), getLotaTitular(),
+						documentoBuilder.getMob())) {
+			throw new AplicacaoException("Não é permitido definir um prazo para assinatura para o documento.");
+		}	
+		
+		result.include("sigla", sigla);
+		result.include("mob", documentoBuilder.getMob());
+		if (dtPrazoStr != null && dtPrazoStr != "") {
+			result.include("dtPrazoString", dtPrazoStr.split(" ")[0]);
+			result.include("hrPrazoString", dtPrazoStr.split(" ")[1]);
+		}
+	}
+
+	@Transacional
+	@Post("/app/expediente/mov/definir_prazo_assinatura_gravar")
+	public void aDefinirPrazoAssinaturaGravar(final String sigla, String dtPrazoString, String hrPrazoString) {					
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		final ExDocumento documento = buscarDocumento(documentoBuilder);
+
+		Date dthrPrazo;
+		if (dtPrazoString != null) {
+			try {
+				DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+				LocalDateTime localDate = LocalDateTime.parse(dtPrazoString + (hrPrazoString != null ? " " + hrPrazoString : " 00:00"), fmt);
+				if (localDate.isBefore(LocalDateTime.now())) {
+					throw new AplicacaoException(
+							"Data de devolução não pode ser anterior à data de hoje: " + dtPrazoString);
+				}
+				dthrPrazo = Date.from(localDate.atZone(ZoneId.systemDefault()).toInstant()); 
+			} catch (DateTimeParseException e) {
+				throw new AplicacaoException("Data ou hora de Devolução inválida: " + dtPrazoString 
+					+ (hrPrazoString != null ? " " + hrPrazoString : ""));
+			}
+		} else {
+			throw new AplicacaoException("Data do prazo não foi informada.");
+		}
+		
+		try {	
+			Ex.getInstance()
+					.getBL()
+					.definirPrazoAssinatura(getTitular(), getLotaTitular(),
+							documento, getTitular(), dthrPrazo);
+	
+		} catch (RegraNegocioException | AplicacaoException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+//			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		}
+
+		result.include("dtPrazoString", dtPrazoString);
+		result.include("hrPrazoString", hrPrazoString);
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+
 }

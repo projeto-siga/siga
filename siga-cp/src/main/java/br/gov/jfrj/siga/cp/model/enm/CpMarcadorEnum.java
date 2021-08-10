@@ -171,7 +171,11 @@ public enum CpMarcadorEnum {
 	//
 	PORTAL_TRANSPARENCIA(73, "Portal da Transparência", "fas fa-globe", "", CpMarcadorGrupoEnum.NENHUM),
 	//
-	AGUARDANDO_CONCLUSAO(74, "Aguardando Conclusão", "fas fa-clock", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),
+	PRAZO_DE_ASSINATURA_EXPIRADO(74, "Prazo de Assinatura Expirado", "fas fa-user-clock", "", CpMarcadorGrupoEnum.ALERTA),
+	//
+	ASSINADO(75, "Assinado", "fas fa-certificate", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),
+	//
+	AGUARDANDO_CONCLUSAO(76, "Aguardando Conclusão", "fas fa-clock", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),
 	//
 	URGENTE(1000, "Urgente", "fas fa-bomb", "", CpMarcadorGrupoEnum.ALERTA),
 

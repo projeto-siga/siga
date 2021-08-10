@@ -1378,6 +1378,7 @@ public class ExDocumentoController extends ExController {
 			if (Ex.getInstance().getComp().deveReceberEletronico(getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())
 				&& !exDocumentoDto.getMob().isJuntado()) {

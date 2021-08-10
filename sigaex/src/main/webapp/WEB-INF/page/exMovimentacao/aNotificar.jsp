@@ -50,7 +50,7 @@
 					<input type="hidden" name="sigla" value="${sigla}" id="notificar_gravar_sigla" /> 
 					<input type="hidden" name="mobilPaiSel.sigla" value="" id="notificar_gravar_pai" /> 
 					<input type="hidden" name="despachando" value="" id="notificar_gravar_despachando" />
-					<input type="hidden" name="tipoTramite" value="81"/>
+					<input type="hidden" name="tipoTramite" value="83"/>
 
 					<div class="row">
 						<div class="col col-3">

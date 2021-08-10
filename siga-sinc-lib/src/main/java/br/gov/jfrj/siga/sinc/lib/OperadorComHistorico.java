@@ -21,5 +21,6 @@ package br.gov.jfrj.siga.sinc.lib;
 //import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 
 public interface OperadorComHistorico {
-	public Sincronizavel gravar(Sincronizavel s);
+//	public Sincronizavel gravar(Sincronizavel s); 
+	public Sincronizavel gravar(Sincronizavel s, boolean descarregar); 
 }

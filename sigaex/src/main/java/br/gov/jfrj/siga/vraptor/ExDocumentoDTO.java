@@ -228,6 +228,8 @@ public class ExDocumentoDTO {
 
 	private String descrMov;
 	
+	private String dtPrazoAssinaturaString;
+	
 	private List<ExTipoDocumento> tiposDocumento;
 	
 	private List<ExNivelAcesso> listaNivelAcesso;
@@ -1022,6 +1024,14 @@ public class ExDocumentoDTO {
     
     public List<ExNivelAcesso> getListaNivelAcesso() {
 		return listaNivelAcesso;
+	}
+
+	public void setDtPrazoAssinaturaString(final String dtPrazoAssinaturaString) {
+		this.dtPrazoAssinaturaString = dtPrazoAssinaturaString;
+	}
+
+	public String getDtPrazoAssinatura() {
+		return dtPrazoAssinaturaString;
 	}
 
 }

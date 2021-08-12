@@ -207,15 +207,15 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	}
 
 	public void substituirPorObjetoInicial() {
-		setLotacao(getLotacao() != null ? getLotacao().getLotacaoInicial() : null);
+		setLotacao(inicial(getLotacao()));
 		setCargo(inicial(getCargo()));
 		setFuncaoConfianca(inicial(getFuncaoConfianca()));
-		setDpPessoa(getDpPessoa() != null ? getDpPessoa().getPessoaInicial() : null);
+		setDpPessoa(inicial(getDpPessoa()));
 		setCpIdentidade(inicial(getCpIdentidade()));
-		setLotacaoObjeto(getLotacaoObjeto() != null ? getLotacaoObjeto().getLotacaoInicial() : null);
+		setLotacaoObjeto(inicial(getLotacaoObjeto()));
 		setCargoObjeto(inicial(getCargoObjeto()));
 		setFuncaoConfiancaObjeto(inicial(getFuncaoConfiancaObjeto()));
-		setPessoaObjeto(getPessoaObjeto() != null ? getPessoaObjeto().getPessoaInicial() : null);
+		setPessoaObjeto(inicial(getPessoaObjeto()));
 		setCpGrupo(inicial(getCpGrupo()));
 	}
 

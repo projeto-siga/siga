@@ -19,6 +19,11 @@ import javax.persistence.Table;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "siga.ex_tipo_sequencia")
+@NamedQueries({
+	@NamedQuery(name="ExTipoSequencia.findAll", query="SELECT e FROM ExTipoSequencia e"),
+	@NamedQuery(name="ExTipoSequencia.obterTipoSequencia", 
+				query="SELECT e FROM ExTipoSequencia e WHERE e.nome = :nomeTipoSequencia ")
+})
 public class ExTipoSequencia implements Serializable {
 	
 	

@@ -35,7 +35,6 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -133,7 +132,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
-import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
@@ -152,6 +150,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
@@ -190,6 +189,7 @@ public class ExBL extends CpBL {
 	private static final String MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO = "Folha de Rosto - Processo Administrativo Interno";
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
+	private static final String STRING_TRUE = "1";
 	
 	private final ThreadLocal<SortedSet<ExMobil>> threadAlteracaoParcial = new ThreadLocal<SortedSet<ExMobil>>();
 
@@ -3092,6 +3092,9 @@ public class ExBL extends CpBL {
 				if (doc.getNumExpediente() == null)
 					doc.setNumExpediente(obterProximoNumero(doc));
 			}
+			
+			//Esse metodo deve estar acima do doc.setDtFinalizacao(dt), devido a flag de doc.isFinalizado()
+			gerarTipoSequenciaGenerica(doc);
 
 			doc.setDtFinalizacao(dt);
 
@@ -3190,6 +3193,28 @@ public class ExBL extends CpBL {
 		return Long.parseLong(sequencia);
 	}
 	
+	private String obterSequenciaAno(Long ano, ExTipoSequencia tipoSequencia) throws Exception {
+		
+		String sequencia = obterSequencia(ano, 
+				tipoSequencia.getidTipoSequencia().intValue(), 
+				tipoSequencia.getZerarInicioAno()).toString();
+		
+		return tipoSequencia.getZerarInicioAno().equals(STRING_TRUE) ? sequencia + "/" + ano : sequencia;
+	}
+	
+	private void gerarTipoSequenciaGenerica(ExDocumento doc) throws Exception {
+		if (doc != null) {
+			ExTipoSequencia tipoSequencia = obterTipoSequenciaPorNomeModulo(doc.getExModelo().getNmMod());
+			
+			if (!Utils.empty(tipoSequencia) && !doc.isFinalizado()) {
+				doc.setIdSequenciaGenerica(obterSequenciaAno(doc.getAnoEmissao(), tipoSequencia));
+			}
+		}
+	}
+	
+	private ExTipoSequencia obterTipoSequenciaPorNomeModulo(String nomeModulo) {
+		return dao().obterTipoSequencia(nomeModulo);
+	}
 	
 	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante,
 			ExDocumento doc) throws AplicacaoException {
@@ -5497,6 +5522,9 @@ public class ExBL extends CpBL {
 		// Nato: alterei essas linhas para que os modelos possam conhecer o
 		// cadastrante e o titular
 		// attrs.put("lotaTitular", doc.getLotaTitular());
+		if (!Utils.empty(doc.getIdSequenciaGenerica())) {
+			attrs.put("id_sequencia_generica", doc.getIdSequenciaGenerica());
+		}
 		attrs.put("cadastrante", doc.getCadastrante());
 		attrs.put("lotaCadastrante", doc.getLotaCadastrante());
 		attrs.put("titular", doc.getTitular());

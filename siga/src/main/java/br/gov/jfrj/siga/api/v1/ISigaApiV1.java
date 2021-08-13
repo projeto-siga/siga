@@ -249,6 +249,7 @@ public interface ISigaApiV1 {
 	public interface ILotacoesSiglaGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String sigla;
+			public Boolean pesquisarSemOrgao;
 		}
 
 		public static class Response implements ISwaggerResponse {

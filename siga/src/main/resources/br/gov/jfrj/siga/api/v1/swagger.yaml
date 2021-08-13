@@ -284,6 +284,12 @@ parameters:
     description: Sigla do órgão
     required: false
     type: string
+  pesquisarSemOrgao:
+    name: pesquisarSemOrgao
+    in: query
+    description: "<ul><li><b>false ou não informado</b> -  Verifica se na sigla há um prefixo que seja igual à sigla de algum órgão cadastrado. Se houver, retira essa sigla da sigla da unidade e pesquisa somente dentro desse órgão. <P>Ex.: Pesquisa pela unidade PGEADV: <ul><li>Se existir um órgão de sigla PGE: irá pesquisar ADV dentro do órgão PGE.</li><li>Se não existir um órgão de sigla PGE: irá pesquisar pela unidade PGEADV.</li></ul></li><li><b>true</b> - Pesquisa da lotação sem a sigla do órgão como prefixo. </li>"
+    required: false
+    type: boolean
     
 
 ################################################################################
@@ -589,12 +595,13 @@ paths:
   /lotacoes/{sigla}:
     get:
       summary: "Pesquisa de lotacoes por sigla"
-      description: "Retorna a lotacao correspondente a sigla pesquisda" 
+      description: "Retorna a lotacao correspondente à sigla pesquisada. Pode ter a sigla do órgão ou não como prefixo, conforme parâmetro pesquisarSemOrgao." 
       tags: [cadastro]
       security:
         - Bearer: []
       parameters:
         - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/pesquisarSemOrgao"
       responses:
         200:
           description: Successful response

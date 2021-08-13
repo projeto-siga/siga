@@ -189,6 +189,14 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		}
 	}
 
+	public void setSiglaSemOrgao(String sigla) {
+		if (sigla == null) {
+			setSiglaLotacao("");
+			return;
+		}
+		setSiglaLotacao(sigla.toUpperCase());
+	}
+
 	/*
 	 * public String getSiglaLotacao() { if (getOrgaoUsuario() != null) return
 	 * getOrgaoUsuario().getAcronimoOrgaoUsu() + "/" + super.getSiglaLotacao();

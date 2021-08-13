@@ -18,7 +18,13 @@ public class LotacoesSiglaGet implements ILotacoesSiglaGet {
 			throw new SwaggerException("O parâmetro sigla é obrigatório.", 400, null, req, resp, null);
 
 		final DpLotacao flt = new DpLotacao();
-		flt.setSigla(req.sigla.toUpperCase());
+		if (req.pesquisarSemOrgao != null && req.pesquisarSemOrgao)
+			// Se true, assume que não vai ter sigla do orgao como prefixo
+			flt.setSiglaSemOrgao(req.sigla.toUpperCase());
+		else 
+			// Se false, poderá ou não ter sigla do orgao como prefixo
+			flt.setSigla(req.sigla.toUpperCase());
+			
 		DpLotacao lota = CpDao.getInstance().consultarPorSigla(flt);
 		if (lota == null)
 			throw new SwaggerException("Nenhuma lotação foi encontrada contendo a sigla informada.", 404, null, req,

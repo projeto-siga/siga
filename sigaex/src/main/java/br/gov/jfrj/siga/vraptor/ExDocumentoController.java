@@ -1078,10 +1078,10 @@ public class ExDocumentoController extends ExController {
 											 */
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
-								if(mobUlt.isEmTransito()) { /*  em transito */
+								if(mobUlt.isEmTransito(getTitular(), getLotaTitular())) { /*  em transito */
 									Ex.getInstance()
 									.getBL()
-									.receber(getCadastrante(), getLotaTitular(),
+									.receber(getCadastrante(), getTitular(), getLotaTitular(),
 											mobUlt, new Date());
 								}
 								if (mob.doc().isEletronico()
@@ -1152,7 +1152,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDTO.getMob(), new Date());
 		}
 
@@ -1200,7 +1200,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDTO.getMob(), new Date());
 		}
 
@@ -1281,7 +1281,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDto.getMob(), new Date());
 		}
 
@@ -1377,7 +1377,8 @@ public class ExDocumentoController extends ExController {
 		if (recebimentoAutomatico) {				
 			if (Ex.getInstance().getComp().deveReceberEletronico(getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
-				Ex.getInstance().getBL().receber(getCadastrante(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())
 				&& !exDocumentoDto.getMob().isJuntado()) {

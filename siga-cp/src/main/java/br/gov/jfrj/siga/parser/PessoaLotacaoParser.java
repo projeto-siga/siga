@@ -113,4 +113,28 @@ public class PessoaLotacaoParser extends SiglaParser {
 		return null;
 	}
 
+	public String getSigla() {
+		if (getLotacao() != null)
+			return getLotacao().getSigla();
+		if (getPessoa() != null)
+			return getPessoa().getSigla();
+		return null;
+	}
+
+	public String getSiglaCompleta() {
+		if (getLotacao() != null)
+			return getLotacao().getSiglaCompleta();
+		if (getPessoa() != null)
+			return getPessoa().getSiglaCompleta();
+		return null;
+	}
+
+	public String getNome() {
+		if (getLotacao() != null)
+			return getLotacao().getNomeLotacao();
+		if (getPessoa() != null)
+			return getPessoa().getNomePessoa();
+		return null;
+	}
+
 }

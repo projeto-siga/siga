@@ -40,7 +40,7 @@ public class AbstractCpTipoServico extends Objeto {
 	@Column(name = "DESC_TP_SERVICO", length = 60)
 	private String dscTpServico;
 
-	@Convert(converter = CpSituacaoDeConfiguracaoEnumConverter.class)
+//	@Convert(converter = CpSituacaoDeConfiguracaoEnumConverter.class)
 	@Column(name = "ID_SIT_CONFIGURACAO")
 	private CpSituacaoDeConfiguracaoEnum situacaoDefault;
 

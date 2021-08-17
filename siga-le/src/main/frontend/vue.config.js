@@ -1,10 +1,11 @@
 const path = require("path");
 
 const publicPath = (process.env.NODE_ENV === "production" && process.env.VERCEL !== "true") ? "/siga-le/" : "/";
+const outputDir = (process.env.NODE_ENV === "production" && process.env.VERCEL !== "true") ? "dist" : "../webapp";
 
 
 module.exports = {
-  outputDir: path.resolve(__dirname, "../webapp"),
+  outputDir: path.resolve(__dirname, outputDir),
   assetsDir: "static",
   publicPath: publicPath,
   lintOnSave: true,

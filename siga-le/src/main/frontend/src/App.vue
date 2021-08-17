@@ -16,7 +16,7 @@
                 test.properties['siga.ambiente'] === 'prod',
             }"
           >
-            <b-navbar-brand href="#/mesa">
+            <b-navbar-brand href="#/quadro">
               <img
                 id="logo-header"
                 src="./assets/logo-siga-novo-38px.png"
@@ -48,18 +48,18 @@
                   <router-link
                     class="nav-link"
                     active-class="active"
-                    :to="{ name: 'Mesa' }"
+                    :to="{ name: 'Quadro' }"
                     tag="a"
-                    >Mesa</router-link
+                    >Quadro</router-link
                   >
                 </b-nav-item>
                 <b-nav-item v-if="jwt &amp;&amp; jwt.sub">
                   <router-link
                     class="nav-link"
                     active-class="active"
-                    :to="{ name: 'Quadro' }"
+                    :to="{ name: 'Mesa' }"
                     tag="a"
-                    >Quadro</router-link
+                    >Mesa</router-link
                   >
                 </b-nav-item>
                 <b-nav-item>
@@ -227,7 +227,7 @@ export default {
         // $rootScope.updateLogged();
         // $state.go('consulta-processual');
         this.$router.push({
-          name: "Mesa",
+          name: "Quadro",
           params: { exibirAcessoAnterior: true },
         });
       }
@@ -523,6 +523,7 @@ body {
   margin: 0;
   padding-bottom: 6rem;
   min-height: 100%;
+  background-color: #dae9ec !important;
 }
 
 div.dropdown-menu.logout {
@@ -594,6 +595,7 @@ h6::first-letter {
     padding: 0 !important;
     min-width: 768px;
   }
+
   .container {
     width: auto;
     min-width: 750px;

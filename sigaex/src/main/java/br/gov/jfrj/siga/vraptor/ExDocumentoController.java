@@ -611,6 +611,11 @@ public class ExDocumentoController extends ExController {
 				throw new RuntimeException(
 						"Não foi possível carregar um modelo chamado 'Despacho'");
 			exDocumentoDTO.setIdMod(despacho.getId());
+			for (ExTipoDocumento tp : despacho.getExFormaDocumento()
+					.getExTipoDocumentoSet()) {
+				exDocumentoDTO.setIdTpDoc(tp.getId());
+				break;
+			}
 		}
 
 		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)

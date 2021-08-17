@@ -220,9 +220,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				t_cpcConfiguracao = dao().carregar(t_cpcConfiguracao);
 				dao().gravarComHistorico(t_cpcConfiguracao,
 						getIdentidadeCadastrante());
-			}
-			grp.setHisDtFim(dt);
+			}			
 			grp = dao().carregar(grp);
+			grp.setHisDtFim(dt);
 			dao().gravarComHistorico(grp, getIdentidadeCadastrante());
 			ModeloDao.commitTransacao();
 		} catch (Exception e) {
@@ -369,9 +369,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 												+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
 							}
 
-							CpConfiguracao t_cpcConfiguracao = cfgGrpGravada.getCpConfiguracao();
-								t_cpcConfiguracao.setHisDtFim(dt);
+							CpConfiguracao t_cpcConfiguracao = cfgGrpGravada.getCpConfiguracao();								
 							t_cpcConfiguracao = dao().carregar(t_cpcConfiguracao);
+							t_cpcConfiguracao.setHisDtFim(dt);
 							dao().gravarComHistorico(t_cpcConfiguracao,getIdentidadeCadastrante());
 						} else {
 							String cfgConteudo = conteudoConfiguracao.get(i);

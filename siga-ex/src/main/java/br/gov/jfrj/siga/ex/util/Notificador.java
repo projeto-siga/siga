@@ -180,16 +180,19 @@ public class Notificador {
 					&& !m.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR)) {
 				
 				try {
-					if (m.getSubscritor() != null && !m.getSubscritor().isFechada()) {
+					if (m.getSubscritor() != null) {
+						if (!m.getSubscritor().isFechada()) {
+					
 						/*
 						 * Se a movimentação é um cancelamento de uma
 						 * movimentação que pode ser notificada, adiciona o
 						 * e-mail.
 						 */
-						if (mov.getExMovimentacaoRef() != null)
-							adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação */
-						else
-							adicionarDestinatariosEmail(mov, destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação também */				
+							if (mov.getExMovimentacaoRef() != null)
+								adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação */
+							else
+								adicionarDestinatariosEmail(mov, destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação também */
+						}
 					} else {
 						if (m.getLotaSubscritor() != null) {
 							/*

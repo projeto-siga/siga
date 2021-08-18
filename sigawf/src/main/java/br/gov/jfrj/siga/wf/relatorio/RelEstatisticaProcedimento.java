@@ -115,9 +115,9 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio() throws DJBuilderException, JRException {
 
-		this.setTitle(parametros.get("nomeProcedimento") + " [iniciado(s) de " + parametros.get("dataInicialDe")
-				+ " até " + parametros.get("dataInicialAte") + ", finalizado(s) de " + parametros.get("dataFinalDe")
-				+ " até " + parametros.get("dataFinalAte") + "]");
+		this.setTitle(parametros.get("nomeProcedimento") + " [iniciados entre " + parametros.get("dataInicialDe")
+				+ " e " + parametros.get("dataInicialAte") + " e finalizados entre " + parametros.get("dataFinalDe")
+				+ " e " + parametros.get("dataFinalAte") + "]");
 		this.addColuna("Procedimento/Tarefa", 35, RelatorioRapido.CENTRO, false);
 		this.addColuna("Concluídos", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Mín", 15, RelatorioRapido.CENTRO, false);

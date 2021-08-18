@@ -185,9 +185,9 @@
 								<div class="form-group">
 									<label>Atenção</label>
 									<ul id="regras">
-										<li>Arquivo .PDF</li>
+										<li>Arquivo selecionados devem estar em formato .PDF</li>
 										<li>Máximo de ${qtdMaxArquivoAnexadoUpload} arquivos</li>
-										<li>Tamanho total de ${tamanhoMaxArquivoAnexadoUpload}MB</li>
+										<li>O tamanho total dos arquivos selecionados não deve ultrapassar ${tamanhoMaxArquivoAnexadoUpload}MB</li>
 									</ul>
 								</div>
 							</div>

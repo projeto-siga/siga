@@ -9,11 +9,11 @@ public enum CpSituacaoDeConfiguracaoEnum implements IEnumWithId {
 	//
 	OBRIGATORIO(3, "Obrigatório", 7),
 	//
-	OPCIONAL(4, "Opcional", 6),
+	OPCIONAL(4, "Opcional", 4),
 	//
-	DEFAULT(5, "Default", 4),
+	DEFAULT(5, "Default", 5),
 	//
-	NAO_DEFAULT(6, "Não Default", 5),
+	NAO_DEFAULT(6, "Não Default", 6),
 	//
 	PROIBIDO(7, "Proibido", 10),
 	//

@@ -41,23 +41,23 @@ public class MesaGet implements IMesaGet {
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		DpPessoa pes = null;
 		DpLotacao lota = null;
-		DpPessoa cadastrante = ctx.getCadastrante();
-		DpLotacao lotaCadastrante = cadastrante.getLotacao();
+		DpPessoa titular = ctx.getTitular();
+		DpLotacao lotaTitular = ctx.getLotaTitular();
 		if (req.filtroPessoaLotacao != null) {
 			switch (req.filtroPessoaLotacao) {
 			case "Pessoa":
-				pes = cadastrante;
+				pes = titular;
 				break;
 			case "Lotacao":
-				lota = lotaCadastrante;
+				lota = lotaTitular;
 				break;
 			default:
-				pes = cadastrante;
-				lota = lotaCadastrante;
+				pes = titular;
+				lota = lotaTitular;
 			}
 		} else {
-			pes = cadastrante;
-			lota = lotaCadastrante;
+			pes = titular;
+			lota = lotaTitular;
 		}
 
 		List<Object[]> l = ExDao.getInstance().listarDocumentosPorPessoaOuLotacao(pes, lota);
@@ -77,7 +77,7 @@ public class MesaGet implements IMesaGet {
 			map.get(mobil).add(mm);
 		}
 
-		resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, cadastrante, lotaCadastrante,
+		resp.list = listarReferencias(TipoDePainelEnum.UNIDADE, map, titular, lotaTitular,
 				ExDao.getInstance().consultarDataEHoraDoServidor());
 	}
 

@@ -13,9 +13,9 @@ public class DocumentosSiglaAnotarPost implements IDocumentosSiglaAnotarPost {
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		DpPessoa cadastrante = ctx.getCadastrante();
-		DpLotacao lotaCadastrante = cadastrante.getLotacao();
-		DpPessoa titular = cadastrante;
-		DpLotacao lotaTitular = cadastrante.getLotacao();
+		DpLotacao lotaCadastrante = ctx.getLotaCadastrante();
+		DpPessoa titular = ctx.getTitular();
+		DpLotacao lotaTitular = ctx.getLotaTitular();
 
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Anotar");
 

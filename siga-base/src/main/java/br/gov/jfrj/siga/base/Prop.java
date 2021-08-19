@@ -263,6 +263,8 @@ public class Prop {
 		 * armazenado em session storage no browser do usuário.
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
-		
+
+		// CKEditor
+		provider.addPublicProperty("/ckeditor.url", base + "/ckeditor/ckeditor/ckeditor.js");
 	}
 }

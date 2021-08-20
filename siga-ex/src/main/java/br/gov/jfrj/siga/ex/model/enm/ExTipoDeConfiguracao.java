@@ -253,7 +253,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE,CpSituacaoDeConfiguracaoEnum.DEFAULT },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
 	MOVIMENTAR(1, "Movimentar",

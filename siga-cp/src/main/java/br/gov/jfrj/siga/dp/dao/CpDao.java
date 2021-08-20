@@ -719,18 +719,26 @@ public class CpDao extends ModeloDao {
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
 		final Query query = em().createNamedQuery("consultarPorSiglaDpLotacao");
 		query.setParameter("siglaLotacao", o.getSiglaLotacao());
-		if (o.getOrgaoUsuario() != null)
-			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
+		if (o.getOrgaoUsuario() != null) {
+			// O argumento siglaOrgaoLotacao preve a situação onde a sigla pesquisada contem um prefixo coincidente à 
+			// sigla de um orgão existente que o setSigla() do DpLotacao retirou
+			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) {
 				query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
-			else
-				query.setParameter("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());
-		else
+				query.setParameter("siglaOrgaoLotacao", o.getOrgaoUsuario().getSigla() + o.getSigla());
+			} else {
+				CpOrgaoUsuario org = consultarPorSigla(o.getOrgaoUsuario());
+				query.setParameter("idOrgaoUsu", org.getId());
+				query.setParameter("siglaOrgaoLotacao", org.getSigla() + o.getSigla());
+			}
+		} else {
 			query.setParameter("idOrgaoUsu", 0L);
+			query.setParameter("siglaOrgaoLotacao", null);
+		}
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		final List<DpLotacao> l = query.getResultList();
-		if (l.size() != 1)
+		if (l.size() == 0)
 			return null;
 		return l.get(0);
 	}

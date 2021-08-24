@@ -2521,6 +2521,12 @@ public class CpDao extends ModeloDao {
 //		TypedQuery typedQuery = em().createQuery(query);
 //		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
 		
+		if (u instanceof DpPessoa)
+			return (T) ((DpPessoa) u).getPessoaAtual();
+
+		if (u instanceof DpLotacao)
+			return (T) ((DpLotacao) u).getLotacaoAtual();
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
 		String sql = "from " + clazz + " u where u.hisDtIni = "
@@ -2539,6 +2545,13 @@ public class CpDao extends ModeloDao {
 	public <T extends Historico> T obterInicial(final T u) {
 		if (u.getId() == u.getHisIdIni())
 			return u;
+
+		if (u instanceof DpPessoa)
+			return (T) ((DpPessoa) u).getPessoaInicial();
+
+		if (u instanceof DpLotacao)
+			return (T) ((DpLotacao) u).getLotacaoInicial();
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
 		String sql = "from " + clazz + " u where u.hisIdIni = :idIni";		

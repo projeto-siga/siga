@@ -41,15 +41,4 @@ echo Adding SIGA system properties
 echo Adding MySQL driver
 /subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource)
 
-echo Adding data-source "SigaCpDs"
-data-source add --name=SigaCpDS --jndi-name="java:/jboss/datasources/SigaCpDS" --driver-name=mysql --connection-url="jdbc:mysql://${env.CORPORATIVO_DB_HOST:localhost}:3306/${CORPORATIVO_DB_NAME:corporativo}?noAccessToProcedureBodies=true&amp;useSSL=false" --user-name="${CORPORATIVO_DB_USER:root}" --password="${CORPORATIVO_DB_PASSWORD:siga}" --min-pool-size=5 --max-pool-size=50 --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
-
-echo Adding data-source "SigaExDs"
-data-source add --name=SigaExDS --jndi-name="java:/jboss/datasources/SigaExDS" --driver-name=mysql --connection-url="jdbc:mysql://${env.SIGA_DB_HOST:localhost}:3306/${SIGA_DB_NAME:siga}?noAccessToProcedureBodies=true&amp;useSSL=false" --user-name="${SIGA_DB_USER:root}" --password="${SIGA_DB_PASSWORD:siga}" --min-pool-size=5 --max-pool-size=50 --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
-
-if (result == "TRUE") of :resolve-expression(expression=${ENABLE_SIGA_WF})
-    echo Adding data-source "SigaWfDs"
-    data-source add --name=SigaWfDS --jndi-name="java:/jboss/datasources/SigaWfDS" --driver-name=mysql --connection-url="jdbc:mysql://${env.SIGA_WF_DB_HOST:localhost}:3306/${SIGA_WF_DB_NAME:corporativo}?noAccessToProcedureBodies=true&amp;useSSL=false" --user-name="${SIGA_WF_DB_USER:root}" --password="${SIGA_WF_DB_PASSWORD:siga}" --min-pool-size=5 --max-pool-size=50 --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
-end-if
-
 quit

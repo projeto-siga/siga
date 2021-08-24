@@ -5350,6 +5350,14 @@ public class ExBL extends CpBL {
 					.getNmArqMod() != null))
 					|| doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 				if (doc.getConteudoBlobForm() != null) {
+					if (!Utils.empty(doc.getIdSequenciaGenerica())) {
+						Map<String, String> form = new TreeMap<String, String>();
+						Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());
+						//Add Sequencia
+						form.put("idSequenciaGenerica", doc.getIdSequenciaGenerica());
+						doc.setConteudoBlobForm(urlEncodedFormFromMap(form));
+					}
+					
 				}
 				if (gravar && transacao) {
 					iniciarAlteracao();
@@ -5522,9 +5530,6 @@ public class ExBL extends CpBL {
 		// Nato: alterei essas linhas para que os modelos possam conhecer o
 		// cadastrante e o titular
 		// attrs.put("lotaTitular", doc.getLotaTitular());
-		if (!Utils.empty(doc.getIdSequenciaGenerica())) {
-			attrs.put("id_sequencia_generica", doc.getIdSequenciaGenerica());
-		}
 		attrs.put("cadastrante", doc.getCadastrante());
 		attrs.put("lotaCadastrante", doc.getLotaCadastrante());
 		attrs.put("titular", doc.getTitular());

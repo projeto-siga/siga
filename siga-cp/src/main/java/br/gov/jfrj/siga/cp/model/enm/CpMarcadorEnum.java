@@ -175,6 +175,8 @@ public enum CpMarcadorEnum {
 	//
 	ASSINADO(75, "Assinado", "fas fa-certificate", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),
 	//
+	AGUARDANDO_CONCLUSAO(76, "Aguardando Conclusão", "fas fa-clock", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),
+	//
 	URGENTE(1000, "Urgente", "fas fa-bomb", "", CpMarcadorGrupoEnum.ALERTA),
 
 	//

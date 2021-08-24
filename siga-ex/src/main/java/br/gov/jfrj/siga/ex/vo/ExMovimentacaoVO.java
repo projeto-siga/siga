@@ -280,7 +280,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 
 			if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
-				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito() && !mov.mob().isEmTransito()) {
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito() && !mov.mob().isEmTransito(titular, lotaTitular)) {
 					addAcao(null, "Excluir", "/app/expediente/mov", "excluir",
 							Ex.getInstance().getComp().podeExcluirAnexo(titular, lotaTitular, mov.mob(), mov));
 					addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
@@ -324,7 +324,7 @@ public class ExMovimentacaoVO extends ExVO {
 									Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
 									"&popup=true&autenticando=true", null, null, null);
 
-					} else if (!(mov.isAssinada() && mov.mob().isEmTransito())) {
+					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
 						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir", true, null, "&popup=true", null,
 								null, null);
 					}

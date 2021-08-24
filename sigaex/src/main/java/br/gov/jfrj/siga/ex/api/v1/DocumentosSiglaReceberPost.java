@@ -31,7 +31,7 @@ public class DocumentosSiglaReceberPost implements IDocumentosSiglaReceberPost {
 			throw new AplicacaoException("Documento não pode ser recebido");
 		}
 
-		Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, mov.getDtMov());
+		Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, mov.getDtMov());
 
 		resp.status = "OK";
 	}

@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaTramitarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -139,7 +140,8 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 				null, // String conteudo
 				null, // String nmFuncaoSubscritor
 				false, // boolean forcarTransferencia
-				false // boolean automatico
+				false, // boolean automatico,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
 		);
 
 		resp.status = "OK";

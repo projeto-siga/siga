@@ -13,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import br.gov.jfrj.siga.base.GZip;
+import br.gov.jfrj.siga.model.Historico;
 
 public class Utils {
 	/**
@@ -101,5 +102,10 @@ public class Utils {
 		String json = new String(decompressed, StandardCharsets.UTF_8);
 		return json;
 	}
-	
+
+	public static boolean equivale(Historico o1, Historico o2) {
+		if (o1 != null && o2 != null && o1.equivale(o2))
+			return true;
+		return false;
+	}
 }

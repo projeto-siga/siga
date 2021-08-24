@@ -140,6 +140,8 @@ public class ProcessadorHtml {
 			add(myTags, "strong", null, null, true);
 			add(myTags, "i", null, null, true);
 			add(myTags, "u", null, null, true);
+			add(myTags, "s", null, null, true);
+			add(myTags, "sub", null, null, true);
 			add(myTags, "em", null, null, true);
 
 			add(myTags, "blockquote", null, null, true);
@@ -158,8 +160,8 @@ public class ProcessadorHtml {
 					true);
 			add(myTags, "span", "align;class", styleP, true);
 
-			add(myTags, "h1", null, null, true);
-			add(myTags, "h2", null, null, true);
+			add(myTags, "h1", null, styleP, true);
+			add(myTags, "h2", null, styleP, true);
 			add(myTags, "h3", null, null, true);
 			add(myTags, "h4", null, null, true);
 			add(myTags, "h5", null, null, true);

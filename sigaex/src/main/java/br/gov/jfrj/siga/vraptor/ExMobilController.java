@@ -892,11 +892,8 @@ public class ExMobilController extends
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				if (m.isGeral() || m.isEliminado())
 					continue;
-				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
-				if (mov != null && mov.getResp() != null
-						&& mov.getResp().equivale(super.getTitular())) {
+				if (m.isAtendente(super.getTitular(), null) || m.isNotificado(super.getTitular(), null))
 					return m;
-				}
 			}
 
 			// Se nao encontrar, tentar encontrar uma na lotacao do titular
@@ -904,11 +901,8 @@ public class ExMobilController extends
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				if (m.isGeral() || m.isEliminado())
 					continue;
-				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
-				if (mov != null && mov.getLotaResp() != null
-						&& mov.getLotaResp().equivale(super.getLotaTitular())) {
+				if (m.isAtendente(null, super.getLotaTitular()) || m.isNotificado(null, super.getLotaTitular()))
 					return m;
-				}
 			}
 		}
 
@@ -917,19 +911,8 @@ public class ExMobilController extends
 			// retornar o ultimo volume
 			//
 			ExMobil m = mob.doc().getUltimoVolume();
-			if (m != null) {
-				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
-				if (mov == null) {
-					return m;
-				}
-				if (mov.getLotaResp() != null
-						&& mov.getLotaResp().equivale(super.getLotaTitular())) {
-					return m;
-				}
-				if (mov.getResp() != null
-						&& mov.getResp().equivale(super.getTitular())) {
-					return m;
-				}
+			if (m != null && (m.isAtendente(super.getTitular(), super.getLotaTitular()) || m.isNotificado(super.getTitular(), super.getLotaTitular()))) {
+				return m;
 			}
 		}
 

@@ -102,7 +102,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	private Long idDocPrincipal;
 	
 	@Transient
-	private String idSequenciaGenerica;
+	private String numeroSequenciaGenerica;
 
 	/**
 	 * Simple constructor of ExDocumento instances.
@@ -3023,12 +3023,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return "";
 	}
 
-	public String getIdSequenciaGenerica() {
-		return idSequenciaGenerica;
+	public String getNumeroSequenciaGenerica() {
+		return numeroSequenciaGenerica;
 	}
 
-	public void setIdSequenciaGenerica(String idSequenciaGenerica) {
-		this.idSequenciaGenerica = idSequenciaGenerica;
+	public void setNumeroSequenciaGenerica(String numeroSequenciaGenerica) {
+		this.numeroSequenciaGenerica = numeroSequenciaGenerica;
 	}
 	
 	

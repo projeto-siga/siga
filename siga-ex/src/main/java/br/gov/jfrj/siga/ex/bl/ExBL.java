@@ -3163,21 +3163,21 @@ public class ExBL extends CpBL {
 				tipoSequencia.getidTipoSequencia().intValue(), 
 				tipoSequencia.getZerarInicioAno()).toString();
 		
-		return tipoSequencia.getZerarInicioAno().equals(STRING_TRUE) ? sequencia + "/" + ano : sequencia;
+		return  sequencia + "/" + ano;
 	}
 	
 	private void gerarTipoSequenciaGenerica(ExDocumento doc) throws Exception {
 		if (doc != null) {
-			ExTipoSequencia tipoSequencia = obterTipoSequenciaPorNomeModulo(doc.getExModelo().getNmMod());
+			ExTipoSequencia tipoSequencia = obterTipoSequenciaPorNomeModelo(doc.getExModelo().getNmMod());
 			
 			if (!Utils.empty(tipoSequencia) && !doc.isFinalizado()) {
-				doc.setIdSequenciaGenerica(obterSequenciaAno(doc.getAnoEmissao(), tipoSequencia));
+				doc.setNumeroSequenciaGenerica(obterSequenciaAno(doc.getAnoEmissao(), tipoSequencia));
 			}
 		}
 	}
 	
-	private ExTipoSequencia obterTipoSequenciaPorNomeModulo(String nomeModulo) {
-		return dao().obterTipoSequencia(nomeModulo);
+	private ExTipoSequencia obterTipoSequenciaPorNomeModelo(String nomeModelo) {
+		return dao().obterTipoSequencia(nomeModelo);
 	}
 	
 	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante,
@@ -5485,12 +5485,16 @@ public class ExBL extends CpBL {
 					.getNmArqMod() != null))
 					|| doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 				if (doc.getConteudoBlobForm() != null) {
-					if (!Utils.empty(doc.getIdSequenciaGenerica())) {
+					if (!Utils.empty(doc.getNumeroSequenciaGenerica())) {
 						Map<String, String> form = new TreeMap<String, String>();
+						//Get Form atual
 						Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());
-						//Add Sequencia
-						form.put("idSequenciaGenerica", doc.getIdSequenciaGenerica());
+						//gera e adiciona a entrevista o número da sequencia generica
+						form.put("numeroSequenciaGenerica", doc.getNumeroSequenciaGenerica());
+						//Atualiza Form 
 						doc.setConteudoBlobForm(urlEncodedFormFromMap(form));
+						//Reprocessa Descrição para adição de sequencia se implementado no modelo
+						gravaDescrDocumento(doc.getTitular(), doc.getLotaTitular(), doc);
 					}
 					
 				}

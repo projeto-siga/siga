@@ -9,40 +9,36 @@
 <siga:cfg-edita>
 	<script type="text/javascript" language="Javascript1.1">
 		$(document).ready(function() {
-			alteraTipoDaForma();
-			setTimeout("alteraForma()", 5000);
+			alteraTipoDaForma('${idTpFormaDoc}', '${idFormaDoc}', false);
+			alteraForma('${idMod}');
 		});
 
-		function alteraTipoDaForma() {
+		function alteraTipoDaForma(idTpForma, idForma, carregaModelos) {
+			sigaSpinner.mostrar();
 			ReplaceInnerHTMLFromAjaxResponse(
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='
-							+ document.getElementById('tipoForma').value
-							+ '&idFormaDoc=' + '${idFormaDoc}', null, document
+							+ idTpForma + '&idFormaDoc=' + idForma, null, document
 							.getElementById('comboFormaDiv'), function() {
-						transformarEmSelect2(null, '#idFormaDoc',
-								'#idFormaDocGroup');
-						alteraForma()
+						if (carregaModelos) 
+							alteraForma(0);
 					});
 		}
 
-		function alteraForma() {
-			// console.log('altera-forma', document.getElementById('idFormaDoc').value)
-			var especie
+		function alteraForma(idMod) {
+			sigaSpinner.mostrar();
+			var especie = 0
 			var inpEspecie = document.getElementById('idFormaDoc')
 			if (inpEspecie)
-				especie = inpEspecie.value
-			var modelo = '${idMod}'
-			var inpModelo = document.getElementById('idMod')
-			if (inpModelo)
-				modelo = inpModelo.value
-				// if (modelo === undefined)
-				// 	modelo = '';
-
+				especie = inpEspecie.value;
+			var modelo = idMod;
+			if (!idMod)
+				modelo = 0;
 			ReplaceInnerHTMLFromAjaxResponse(
 					'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 							+ especie + '&idMod=' + modelo, null, document
 							.getElementById('comboModeloDiv'), function() {
 						transformarEmSelect2(null, '#idMod', '#idModGroup')
+						sigaSpinner.ocultar();
 					});
 		}
 	</script>
@@ -125,7 +121,7 @@
 								<siga:select name="idTpFormaDoc" list="tiposFormaDoc"
 									listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
 									theme="simple" headerKey="0" headerValue="[Indefinido]"
-									onchange="javascript:alteraTipoDaForma();" id="tipoForma"
+									onchange="javascript:alteraTipoDaForma(this.value,0,true);" id="tipoForma"
 									value="${idTpFormaDoc}" />
 							</c:otherwise>
 						</c:choose>
@@ -160,7 +156,8 @@
 												${config.exFormaDocumento.descrFormaDoc}
 											</c:when>
 							<c:otherwise>
-								<div style="display: inline" id="comboModeloDiv"></div>
+								<div style="display: inline" id="comboModeloDiv"></div><small>
+								Se selecionado um modelo, os parâmetros Tipo da Espécie e Espécie serão ignorados ao salvar.</small> 
 							</c:otherwise>
 						</c:choose>
 					</div>

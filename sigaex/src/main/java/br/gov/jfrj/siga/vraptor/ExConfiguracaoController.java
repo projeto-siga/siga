@@ -475,12 +475,6 @@ public class ExConfiguracaoController extends ExController {
 		ExTipoFormaDoc tipoEspecie = c.getExTipoFormaDoc();
 		ExFormaDocumento especie = c.getExFormaDocumento();
 
-		if (c.getExModelo() != null && especie == null)
-			especie = c.getExModelo().getExFormaDocumento();
-
-		if (especie != null && tipoEspecie == null)
-			tipoEspecie = especie.getExTipoFormaDoc();
-
 		if (tipoEspecie != null)
 			result.include("idTpFormaDoc", tipoEspecie.getIdTipoFormaDoc());
 
@@ -488,7 +482,7 @@ public class ExConfiguracaoController extends ExController {
 			result.include("idFormaDoc", especie.getIdFormaDoc());
 
 		if (c.getExModelo() != null)
-			result.include("idMod", c.getExModelo().getIdMod());
+			result.include("idMod", c.getExModelo().getModeloAtual().getId());
 
 		if (c.getExNivelAcesso() != null)
 			result.include("idNivelAcesso", c.getExNivelAcesso().getIdNivelAcesso());

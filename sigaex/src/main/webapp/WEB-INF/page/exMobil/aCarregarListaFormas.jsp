@@ -7,7 +7,7 @@
 
 <div class="form-group" id="idFormaDocGroup">
 	<label><fmt:message key="documento.label.especie"/> <span id="idFormaDoc-spinner" class="spinner-border text-secondary d-none"></span></label> 
-	<select class="form-control siga-select2" id="idFormaDoc" name="idFormaDoc" onchange="javascript:alteraForma(false);">
+	<select class="form-control siga-select2" id="idFormaDoc" name="idFormaDoc" onchange="javascript:alteraForma(this.value);">
 		<option value="0">[Todos]</option>
 		<c:forEach items="${todasFormasDocPorTipoForma}" var="item">
 			<option value="${item.idFormaDoc}"

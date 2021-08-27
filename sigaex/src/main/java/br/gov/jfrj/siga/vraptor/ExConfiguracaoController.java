@@ -495,7 +495,7 @@ public class ExConfiguracaoController extends ExController {
 			result.include("idFormaDoc", especie.getIdFormaDoc());
 
 		if (c.getExModelo() != null)
-			result.include("idMod", c.getExModelo().getIdMod());
+			result.include("idMod", c.getExModelo().getModeloAtual().getId());
 
 		if (c.getExNivelAcesso() != null)
 			result.include("idNivelAcesso", c.getExNivelAcesso().getIdNivelAcesso());

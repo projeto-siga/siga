@@ -64,7 +64,7 @@ public class ConfiguracaoGrupoLotacao extends ConfiguracaoGrupo {
 		DpLotacao t_lotLotacao =  CpDao.getInstance().consultarPorSigla(t_dplLotacaoExemplo);
 		setDpLotacao(t_lotLotacao); */
 		Long t_lngId = Long.parseLong(p_strConteudo);
-		DpLotacao t_lotLotacao =  CpDao.getInstance().consultar( t_lngId,(new DpLotacao()).getClass(),false);
+		DpLotacao t_lotLotacao =  CpDao.getInstance().consultar( t_lngId,(new DpLotacao()).getClass(),false).getLotacaoInicial();
 		setDpLotacao(t_lotLotacao);
 		conteudoConfiguracao = p_strConteudo;
 	}

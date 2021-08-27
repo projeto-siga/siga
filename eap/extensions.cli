@@ -1,9 +1,15 @@
 embed-server --std-out=echo --server-config=standalone-openshift.xml
 
+echo Setting WSDL properties
+/subsystem=webservices:write-attribute(name=modify-wsdl-address, value=true)
+/subsystem=webservices:write-attribute(name=wsdl-host, value="jbossws.undefined.host")
+
+echo Adding MySQL driver
+/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.cj.jdbc.MysqlXADataSource)
+
 echo Adding SIGA system properties
 /system-property="siga.local":add(value="${env.SIGA_LOCAL}")
 /system-property="siga.ambiente":add(value="${env.SIGA_AMBIENTE}")
-/system-property="siga.base.url":add(value="${env.SIGA_BASE_URL}")
 /system-property="siga.cabecalho.titulo":add(value="${env.SIGA_CABECALHO_TITULO}")
 /system-property="siga.smtp":add(value="${env.SIGA_SMTP}")
 /system-property="siga.smtp.porta":add(value="${env.SIGA_SMTP_PORTA}")
@@ -74,7 +80,8 @@ echo Adding SIGA system properties
 /system-property="sigaex.modelos.cabecalho.brasao":add(value="${env.SIGAEX_MODELOS_CABECALHO_BRASAO}")
 /system-property="sigaex.modelos.cabecalho.subtitulo":add(value="${env.SIGAEX_MODELOS_CABECALHO_SUBTITULO}")
 
-echo Adding MySQL driver
-/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.cj.jdbc.MysqlXADataSource)
+/system-property="siga.base.url":add(value="${env.SIGA_BASE_URL}")
+/system-property="sigaex.base.url":add(value="${env.SIGAEX_BASE_URL}")
+/system-property="sigawf.base.url":add(value="${env.SIGAWF_BASE_URL}")
 
 quit

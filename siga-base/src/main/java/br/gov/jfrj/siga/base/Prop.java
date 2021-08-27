@@ -72,8 +72,8 @@ public class Prop {
 
 		try {
 			if (s == null)
-				return (Date) formatter.parse("31/12/2099");
-			return (Date) formatter.parse(s);
+				return formatter.parse("31/12/2099");
+			return formatter.parse(s);
 		} catch (Exception nfe) {
 			throw new RuntimeException("Erro ao converter propriedade string em data");
 		}
@@ -81,7 +81,16 @@ public class Prop {
 
 	public static void defineGlobalProperties() {
 		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
-		String base = get("/siga.base.url");
+		final String sigaBaseUrl = get("/siga.base.url");
+
+		provider.addPublicProperty("/sigaex.base.url", "http://localhost:8080");
+		final String sigaExBaseUrl = get("/sigaex.base.url");
+
+		provider.addPublicProperty("/sigagc.base.url", "http://localhost:8080");
+		final String sigaGcBaseUrl = get("/sigagc.base.url");
+
+		provider.addPublicProperty("/sigawf.base.url", "http://localhost:8080");
+		final String sigaWfBaseUrl = get("/sigawf.base.url");
 
 		provider.addPublicProperty("/siga.hibernate.dialect");
 		
@@ -112,7 +121,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.integracao.sso.dominio", null);
 		provider.addPrivateProperty("/siga.integracao.sso.cliente.id", null);
 		provider.addPrivateProperty("/siga.integracao.sso.client.secret", null);
-		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", base + "/siga/callBack");
+		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", sigaBaseUrl + "/siga/callBack");
 		provider.addPublicProperty("/siga.integracao.sso.btn.txt", "Entrar com o SSO");
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 
@@ -173,38 +182,38 @@ public class Prop {
 		provider.addPublicProperty("/siga.pagina.inicial.url", null);
 		provider.addPublicProperty("/siga.versao.teste", "true");
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
-		provider.addPublicProperty("/sigaex.autenticidade.url", base + "/sigaex/public/app/autenticar");
-		provider.addPublicProperty("/sigaex.url", base + "/sigaex");
-		provider.addPublicProperty("/sigagc.url", base + "/sigagc");		
-		provider.addPublicProperty("/sigaex.manual.url", base + "/siga/arquivos/apostila_sigaex.pdf");
+		provider.addPublicProperty("/sigaex.autenticidade.url", sigaExBaseUrl + "/sigaex/public/app/autenticar");
+		provider.addPublicProperty("/sigaex.url", sigaExBaseUrl + "/sigaex");
+		provider.addPublicProperty("/sigagc.url", sigaGcBaseUrl + "/sigagc");
+		provider.addPublicProperty("/sigaex.manual.url", sigaExBaseUrl + "/siga/arquivos/apostila_sigaex.pdf");
 
 		provider.addPrivateProperty("/xjus.jwt.secret", null);
 		provider.addPrivateProperty("/xjus.password", null);
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
 
-		provider.addPublicProperty("/siga.service.endpoint", base + "/siga/servicos/GiService?wsdl");
-		provider.addPublicProperty("/siga.service.url", base + "/siga/servicos/GiService");
+		provider.addPublicProperty("/siga.service.endpoint", sigaBaseUrl + "/siga/servicos/GiService?wsdl");
+		provider.addPublicProperty("/siga.service.url", sigaBaseUrl + "/siga/servicos/GiService");
 		provider.addPublicProperty("/siga.service.qname", "http://impl.service.gi.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/siga.service.name", "GiService");
 
-		provider.addPublicProperty("/sigaex.service.endpoint", base + "/sigaex/servicos/ExService?wsdl");
-		provider.addPublicProperty("/sigaex.service.url", base + "/sigaex/servicos/ExService");
+		provider.addPublicProperty("/sigaex.service.endpoint", sigaExBaseUrl + "/sigaex/servicos/ExService?wsdl");
+		provider.addPublicProperty("/sigaex.service.url", sigaExBaseUrl + "/sigaex/servicos/ExService");
 		provider.addPublicProperty("/sigaex.service.qname", "http://impl.service.ex.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigaex.service.name", "ExService");
 
-		provider.addPublicProperty("/sigawf.service.endpoint", base + "/sigawf/servicos/WfService?wsdl");
-		provider.addPublicProperty("/sigawf.service.url", base + "/sigawf/servicos/WfService");
+		provider.addPublicProperty("/sigawf.service.endpoint", sigaWfBaseUrl + "/sigawf/servicos/WfService?wsdl");
+		provider.addPublicProperty("/sigawf.service.url", sigaWfBaseUrl + "/sigawf/servicos/WfService");
 		provider.addPublicProperty("/sigawf.service.qname", "http://impl.service.wf.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigawf.service.name", "WfService");
 
-		provider.addPublicProperty("/sigagc.service.endpoint", base + "/sigagc/servicos/GcService?wsdl");
-		provider.addPublicProperty("/sigagc.service.url", base + "/sigagc/servicos/GcService");
+		provider.addPublicProperty("/sigagc.service.endpoint", sigaGcBaseUrl + "/sigagc/servicos/GcService?wsdl");
+		provider.addPublicProperty("/sigagc.service.url", sigaGcBaseUrl + "/sigagc/servicos/GcService");
 		provider.addPublicProperty("/sigagc.service.qname", "http://impl.service.gc.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigagc.service.name", "GcService");
 
-		provider.addPublicProperty("/blucservice.url", base + "/blucservice/api/v1");
-		provider.addPublicProperty("/vizservice.url", base + "/vizservice");
+		provider.addPublicProperty("/blucservice.url", sigaBaseUrl + "/blucservice/api/v1");
+		provider.addPublicProperty("/vizservice.url", sigaBaseUrl + "/vizservice");
 
 		provider.addPublicProperty("/siga.sgp.bnf.url", "/siga-beneficios");
 		provider.addPublicProperty("/siga.sgp.aq.url", "/sigarhaq");
@@ -265,6 +274,6 @@ public class Prop {
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 
 		// CKEditor
-		provider.addPublicProperty("/ckeditor.url", base + "/ckeditor/ckeditor/ckeditor.js");
+		provider.addPublicProperty("/ckeditor.url", sigaBaseUrl + "/ckeditor/ckeditor/ckeditor.js");
 	}
 }

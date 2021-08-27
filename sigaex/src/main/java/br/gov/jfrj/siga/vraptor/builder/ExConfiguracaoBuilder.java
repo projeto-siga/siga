@@ -52,13 +52,15 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 
 		if (idTpMov != null && idTpMov != 0) {
 			config.setExTipoMovimentacao(dao.consultar(idTpMov, ExTipoMovimentacao.class, false));
-		} else
+		} else {
 			config.setExTipoMovimentacao(null);
+		}
 
 		if (idTpDoc != null && idTpDoc != 0) {
 			config.setExTipoDocumento(dao.consultar(idTpDoc, ExTipoDocumento.class, false));
-		} else
+		} else {
 			config.setExTipoDocumento(null);
+		}
 
 		if (idMod != null && idMod != 0) {
 			config.setExModelo(dao.consultar(idMod, ExModelo.class, false));
@@ -80,30 +82,35 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 
 		if (idNivelAcesso != null && idNivelAcesso != 0) {
 			config.setExNivelAcesso(dao.consultar(idNivelAcesso, ExNivelAcesso.class, false));
-		} else
+		} else {
 			config.setExNivelAcesso(null);
+		}
 
 		if (idPapel != null && idPapel != 0) {
 			config.setExPapel(dao.consultar(idPapel, ExPapel.class, false));
-		} else
-			config.setExNivelAcesso(null);
+		} else {
+			config.setExPapel(null);
+		}
 
 		if (classificacaoSel != null && classificacaoSel.getId() != null) {
 			config.setExClassificacao(dao.consultar(classificacaoSel.getId(), ExClassificacao.class, false));
-		} else
+		} else {
 			config.setExClassificacao(null);
+		}
 
 		if (getPessoaSel() != null && getPessoaSel().getId() != null
 				&& (tipoPublicador == null || ExConfiguracaoBuilder.isTipoMatricula(tipoPublicador))) {
 			config.setDpPessoa(dao.consultar(getPessoaSel().getId(), DpPessoa.class, false));
-		} else
+		} else {
 			config.setDpPessoa(null);
+		}
 
 		if (getLotacaoSel() != null && getLotacaoSel().getId() != null
 				&& (tipoPublicador == null || ExConfiguracaoBuilder.isTipoOrgaoIntegrado(tipoPublicador))) {
 			config.setLotacao(dao.consultar(getLotacaoSel().getId(), DpLotacao.class, false));
-		} else
+		} else {
 			config.setLotacao(null);
+		}
 
 		return config;
 	}

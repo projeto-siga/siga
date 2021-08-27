@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.util;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.spi.CDI;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -17,6 +18,6 @@ public class SrStarter {
 
 	@PostConstruct
 	public void init() {
-		emf = Persistence.createEntityManagerFactory("default");
+		emf = CDI.current().select(EntityManagerFactory.class).get();
 	}
 }

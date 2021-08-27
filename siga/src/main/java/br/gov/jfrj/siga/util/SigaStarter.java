@@ -5,6 +5,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.enterprise.inject.spi.CDI;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -33,7 +34,8 @@ public class SigaStarter {
 			throw new RuntimeException(e);
 		}
 		SigaApiV1Servlet.migrationComplete = true;
-		emf = Persistence.createEntityManagerFactory("default");
+		emf = CDI.current().select(EntityManagerFactory.class).get();
+		assert emf != null;
 		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA);
 	}
 }

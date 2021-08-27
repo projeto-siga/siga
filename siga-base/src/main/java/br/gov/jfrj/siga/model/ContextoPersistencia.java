@@ -6,27 +6,29 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
+import org.jboss.logging.Logger;
 
 public class ContextoPersistencia {
 
-	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
-	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<String>();
-	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<Date>();
-	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<UsuarioDeSistemaEnum>();
-	
+	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<>();
+	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<>();
+	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<>();
+	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<>();
+	private final static Logger LOGGER = Logger.getLogger(ContextoPersistencia.class);
+
 	static public void setEntityManager(EntityManager em) {
 		emByThread.set(em);
 	}
 
 	static public EntityManager getEntityManager() {
-		EntityManager em = emByThread.get();
-		return em;
+		return emByThread.get();
 	}
 	
 	static public EntityManager em() {
 		EntityManager em = emByThread.get();
-		if (em == null)
+		if (em == null) {
 			throw new RuntimeException("EM nulo!");
+		}
 		return em;
 	}
 
@@ -49,7 +51,7 @@ public class ContextoPersistencia {
 		EntityTransaction transaction = em().getTransaction();
 		if (transaction != null && transaction.isActive()) {
 			transaction.commit();
-			System.out.println(transaction.isActive());
+			LOGGER.debugf("Transaction is active? %s", transaction.isActive());
 		}
  	}
 	
@@ -90,8 +92,4 @@ public class ContextoPersistencia {
 		removeUserPrincipal();
 		setDt(null);
 	}
-	
-	
-	
-
 }

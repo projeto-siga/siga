@@ -2,6 +2,6 @@ FROM timon.cloud.prodesp.sp.gov.br/9990197/eap74-openjdk8-openshift-rhel7
 
 ADD --chown=jboss:root ./eap/modules.tar.gz ${JBOSS_HOME}/
 
-COPY --chown=jboss:root target/sigaex.war /deployments/
 COPY --chown=jboss:root eap/postconfigure.sh eap/extensions.cli /opt/eap/extensions/
+COPY --chown=jboss:root target/sigaex.war /deployments/
 COPY --chown=jboss:root eap/datasource.sigaex.cli /opt/eap/extensions/datasource.cli

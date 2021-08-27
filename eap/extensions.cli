@@ -54,17 +54,15 @@ echo Adding SIGA system properties
 /system-property="siga.autenticacao.senha":add(value="${env.SIGA_AUTENTICACAO_SENHA}")
 /system-property="sigaex.assinador.externo.password":add(value="${env.SIGAEX_ASSINADOR_EXTERNO_PASSWORD}")
 /system-property="sigaex.redis.master.host":add(value="${env.SIGAEX_REDIS_MASTER_HOST}")
-/system-property="sigaex.redis.master.port":add(value="${env.SIGAEX_REDIS_MASTER_PORT}")
+/system-property="sigaex.redis.master.port":add(value="${env.SIGAEX_REDIS_MASTER_PORT:6379}")
 /system-property="sigaex.redis.password":add(value="${env.SIGAEX_REDIS_PASSWORD}")
-/system-property="sigaex.redis.slave.host":add(value="${env.SIGAEX_REDIS_SLAVE_HOST}")
-/system-property="sigaex.redis.slave.port":add(value="${env.SIGAEX_REDIS_SLAVE_PORT}")
 /system-property="sigaex.redis.database":add(value="${env.SIGAEX_REDIS_DATABASE}")
 /system-property="sigaex.upload.dir.temp":add(value="${env.SIGAEX_UPLOAD_DIR_TEMP}")
-/system-property="http.proxyHost":add(value="${env.HTTP_PROXYHOST}")
-/system-property="http.proxyPort":add(value="${env.HTTP_PROXYPORT}")
-/system-property="https.proxyHost":add(value="${env.HTTPS_PROXYHOST}")
-/system-property="https.proxyPort":add(value="${env.HTTPS_PROXYPORT}")
-/system-property="http.nonProxyHosts":add(value="${env.HTTP_NONPROXYHOSTS}")
+/system-property="http.proxyHost":add(value="${env.HTTP_PROXY_HOST}")
+/system-property="http.proxyPort":add(value="${env.HTTP_PROXY_PORT}")
+/system-property="https.proxyHost":add(value="${env.HTTP_PROXY_HOST}")
+/system-property="https.proxyPort":add(value="${env.HTTP_PROXY_PORT}")
+/system-property="http.nonProxyHosts":add(value="${env.HTTP_PROXY_NONPROXYHOSTS}")
 /system-property="siga.armazenamento.orgaos":add(value="${env.SIGA_ARMAZENAMENTO_ORGAOS}")
 /system-property="siga.armazenamento.arquivo.usuario":add(value="${env.SIGA_ARMAZENAMENTO_ARQUIVO_USUARIO}")
 /system-property="siga.armazenamento.arquivo.senha":add(value="${env.SIGA_ARMAZENAMENTO_ARQUIVO_SENHA}")
@@ -77,6 +75,6 @@ echo Adding SIGA system properties
 /system-property="sigaex.modelos.cabecalho.subtitulo":add(value="${env.SIGAEX_MODELOS_CABECALHO_SUBTITULO}")
 
 echo Adding MySQL driver
-/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource)
+/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.cj.jdbc.MysqlXADataSource)
 
 quit

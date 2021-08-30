@@ -2527,10 +2527,20 @@ public class CpDao extends ModeloDao {
 		if (u instanceof DpLotacao)
 			return (T) ((DpLotacao) u).getLotacaoAtual();
 		
+		String queryHisDtIni = "hisDtIni";
+		String queryHisIdIni = "hisIdIni";
+		if (u instanceof DpFuncaoConfianca) {
+			queryHisDtIni = "dataFimFuncao";
+			queryHisIdIni = "idFuncaoIni";
+		} else if (u instanceof DpCargo) {
+			queryHisDtIni = "dataFimCargo";
+			queryHisIdIni = "idCargoIni";
+		}
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
-		String sql = "from " + clazz + " u where u.hisDtIni = "
-			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
+		String sql = "from " + clazz + " u where u." + queryHisDtIni + " = "
+			+ "		(select max(p." + queryHisDtIni + ") from " + clazz + " p where p." + queryHisIdIni + " = :idIni)"
 			+ "		 and u.hisIdIni = :idIni";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
@@ -2552,9 +2562,16 @@ public class CpDao extends ModeloDao {
 		if (u instanceof DpLotacao)
 			return (T) ((DpLotacao) u).getLotacaoInicial();
 		
+		String queryHisIdIni = "hisIdIni";
+		if (u instanceof DpFuncaoConfianca) {
+			queryHisIdIni = "idFuncaoIni";
+		} else if (u instanceof DpCargo) {
+			queryHisIdIni = "idCargoIni";
+		}
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
-		String sql = "from " + clazz + " u where u.hisIdIni = :idIni";		
+		String sql = "from " + clazz + " u where u." + queryHisIdIni + " = :idIni";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
 		qry.setFirstResult(0);

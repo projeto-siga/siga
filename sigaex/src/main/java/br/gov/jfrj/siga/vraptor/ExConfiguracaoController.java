@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
@@ -325,8 +326,14 @@ public class ExConfiguracaoController extends ExController {
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
 			throw new AplicacaoException("Tipo de configuracao não informado");
 
-		if (idSituacao == null || idSituacao == 0)
-			throw new AplicacaoException("Situação de Configuracao não informada");
+		if (idSituacao == null || idSituacao == 0) {
+			Enum[] obrigatorios = config.getCpTipoConfiguracao().getObrigatorios();
+			if (obrigatorios != null) {
+				for (Enum obrigatorio : obrigatorios)
+					if (obrigatorio.equals(CpParamCfg.SITUACAO))
+						throw new AplicacaoException("Situação de Configuracao não informada");
+			}
+		}
 
 		try {
 			dao().iniciarTransacao();
@@ -488,7 +495,7 @@ public class ExConfiguracaoController extends ExController {
 			result.include("idFormaDoc", especie.getIdFormaDoc());
 
 		if (c.getExModelo() != null)
-			result.include("idMod", c.getExModelo().getIdMod());
+			result.include("idMod", c.getExModelo().getModeloAtual().getId());
 
 		if (c.getExNivelAcesso() != null)
 			result.include("idNivelAcesso", c.getExNivelAcesso().getIdNivelAcesso());

@@ -546,8 +546,7 @@ public class ExMobilController extends
 					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR_LIMITADA))
 					&& !(flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0
 					&& flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0
-					&& flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0
-					&& flt.getIdMod() != null && flt.getIdMod() != 0) ) {
+					&& flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0)) {
 					result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário autorizado a pesquisar pela Descrição somente após o preenchimento dos campos Órgão, Espécie, Documento e Ano de Emissão."));
 					return dtDocString;
 				}

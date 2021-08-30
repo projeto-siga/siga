@@ -75,6 +75,7 @@ echo Adding SIGA system properties
 /system-property="siga.armazenamento.arquivo.url":add(value="${env.SIGA_ARMAZENAMENTO_ARQUIVO_URL}")
 /system-property="blucservice.url":add(value="${env.BLUCSERVICE_URL}")
 /system-property="vizservice.url":add(value="${env.VIZSERVICE_URL}")
+/system-property="ckeditor.url":add(value="${env.CKEDITOR_URL}")
 /system-property="siga.sinc.password":add(value="${env.SIGA_SINC_PASSWORD}")
 /system-property="siga.cabecalho.logo":add(value="${env.SIGA_CABECALHO_LOGO}")
 /system-property="sigaex.modelos.cabecalho.brasao":add(value="${env.SIGAEX_MODELOS_CABECALHO_BRASAO}")

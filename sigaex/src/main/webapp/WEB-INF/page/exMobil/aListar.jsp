@@ -35,7 +35,6 @@
 
 			if ("${podePesquisarDescricaoLimitada}" === "true") {
 				if ($('#orgaoUsu').val() != 0 && $('#idFormaDoc').find(':selected').val() != "0" 
-						&& $('#idMod').find(':selected').val() != "0" 
 						&& $('#anoEmissaoString').val() != 0) {
 					habilitaDescricao();
 				} else {
@@ -460,7 +459,7 @@
 									</c:if>
 									/>
 									<c:if test="${podePesquisarDescricao && podePesquisarDescricaoLimitada}">
-										<small>Campo "Descrição" habilitado para pesquisa após o preenchimento dos campos "Órgão", "Espécie", "Documento" e "Ano de Emissão"</small>
+										<small>Campo "Descrição" habilitado para pesquisa após o preenchimento dos campos "Órgão", "Espécie" e "Ano de Emissão"</small>
 									</c:if>
 							</div>
 						</div>

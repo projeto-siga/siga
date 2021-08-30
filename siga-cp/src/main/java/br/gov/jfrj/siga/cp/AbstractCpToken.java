@@ -44,7 +44,7 @@ public abstract class AbstractCpToken implements Serializable {
 
 	@Id
 	@SequenceGenerator(name="CP_TOKEN_GENERATOR", sequenceName="CORPORATIVO.CP_TOKEN_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CP_TOKEN_GENERATOR")
+	@GeneratedValue(generator="CP_TOKEN_GENERATOR")
 	@Column(name="ID_TOKEN")
 	private long idToken;
 

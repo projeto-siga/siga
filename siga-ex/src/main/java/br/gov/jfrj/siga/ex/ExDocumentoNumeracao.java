@@ -44,7 +44,7 @@ public class ExDocumentoNumeracao implements Serializable {
 
 	@Id
 	@SequenceGenerator(name="EX_DOCUMENTO_NUMERACAO_IDDOCUMENTONUMERACAO_GENERATOR", sequenceName="EX_DOCUMENTO_NUMERACAO_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_DOCUMENTO_NUMERACAO_IDDOCUMENTONUMERACAO_GENERATOR")
+	@GeneratedValue(generator="EX_DOCUMENTO_NUMERACAO_IDDOCUMENTONUMERACAO_GENERATOR")
 	@Column(name="ID_DOCUMENTO_NUMERACAO")
 	private long idDocumentoNumeracao;
 

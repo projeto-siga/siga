@@ -38,7 +38,7 @@ public class ExProtocolo implements Serializable {
 	
 	@Id
 	@SequenceGenerator(name="EX_PROTOCOLO_GENERATOR", sequenceName="EX_PROTOCOLO_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_PROTOCOLO_GENERATOR")
+	@GeneratedValue(generator="EX_PROTOCOLO_GENERATOR")
 	@Column(name="ID_PROTOCOLO")
 	private long idProtocolo;
 

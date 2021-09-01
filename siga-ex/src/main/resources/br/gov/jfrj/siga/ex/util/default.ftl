@@ -4585,6 +4585,38 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
+[#macro cabecalhoBrasaoEsquerdaEspecial width="65" height="65" exibirOrgao=false titulo1="" titulo2="" org=""]
+<table width="100%" border="0" bgcolor="#FFFFFF">
+    <tr bgcolor="#FFFFFF">
+        <td width="100%">
+        <table width="100%">
+            <tr>
+	        <td align="left" valign="bottom"><img src="${_pathBrasao}" width="65"/></td>
+	        <td width="1%">
+	         <td>&nbsp;</td>
+	        <table align="right" width="100%">
+		        <td  align="left" nowrap >
+		             [#if titulo1 != ""]
+                         ${titulo1}<br />
+        			 [/#if]
+        			  [#if titulo2 != ""]
+                         ${titulo2}<br />
+        			 [/#if]
+					 
+	                 [#if exibirOrgao??]  [#-- tratando null  --] 
+						${org}
+					[/#if]
+				</td>
+	        
+	        </table>
+	        </td>
+   			</tr>
+        </table>
+        </td>
+    </tr>
+</table>
+[/#macro]
+
 [#assign _pathBrasao = "contextpath/imagens/BrasaoPCRJ.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
 [#assign _widthBrasao = "auto" /]

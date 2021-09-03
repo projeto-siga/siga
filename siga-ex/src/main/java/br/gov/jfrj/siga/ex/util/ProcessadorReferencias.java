@@ -68,6 +68,8 @@ public class ProcessadorReferencias {
 		s = s.replace("FIM PRIMEIRO RODAPE -->", "<!-- FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE", "<!-- INICIO RODAPE -->");
 		s = s.replace("FIM RODAPE -->", "<!-- FIM RODAPE -->");
+		s = s.replace("<!-- INICIO ENDERECAMENTO", "<!-- INICIO ENDERECAMENTO -->");
+		s = s.replace("FIM ENDERECAMENTO -->", "<!-- FIM ENDERECAMENTO -->");
 
 		s = marcarReferencias(s);
 
@@ -82,6 +84,8 @@ public class ProcessadorReferencias {
 		s = s.replace("<!-- FIM PRIMEIRO RODAPE -->", "FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE -->", "<!-- INICIO RODAPE");
 		s = s.replace("<!-- FIM RODAPE -->", "FIM RODAPE -->");
+		s = s.replace("<!-- INICIO ENDERECAMENTO -->", "<!-- INICIO ENDERECAMENTO");
+		s = s.replace("<!-- FIM ENDERECAMENTO -->", "FIM ENDERECAMENTO -->");
 		return s;
 	}
 

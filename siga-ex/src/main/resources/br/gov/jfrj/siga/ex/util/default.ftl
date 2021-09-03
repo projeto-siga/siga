@@ -2115,6 +2115,13 @@ Pede deferimento.</span><br/><br/><br/>
     FIM RODAPE -->
 [/#macro]
 
+[#macro enderecamento exibeEnderecamento=true]
+       <!-- INICIO ENDERECAMENTO
+         [#nested/]
+         FIM ENDERECAMENTO -->
+[/#macro]
+
+
 [#macro aberturaBIE]
     <!-- INICIO ABERTURA -->
         [#nested/]
@@ -2401,6 +2408,16 @@ Pede deferimento.</span><br/><br/><br/>
 [/#if]
 [/#macro]
 
+[#macro rodapeEnderecamento align="left" somenteTR=false texto=""]
+[#if texto?? && texto!=""]
+	<tr>
+		<td colspan="2" align="${align}" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:15pt;">
+			${texto} 
+		</td>
+	</tr>
+[/#if]
+[/#macro]
+
 [#macro rodapeNumeracaoADireita texto=""]
 <table width="100%" border="0" cellpadding="0" bgcolor="#FFFFFF">
 	[#if texto?? && texto!=""]
@@ -2660,7 +2677,7 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true exibeEnderecamento=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]

@@ -3,6 +3,17 @@
 #This scripts is part of your deployment process. First step is previously executed a rsync or scp command to copy all war's from developer #environment.  Second step is to check environment requirements and finally execute the deploy operation.
 #
 
+#verify parameters 
+if [ $# -lt 2 ]; then
+   echo "ARGS NOT FOUND:  FAIL"
+   echo "ARGS: USER PASS"
+   echo "ABORTING..."
+   exit 1
+fi
+
+user=$1
+pass=$2
+
 #set variables
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.el7_9.x86_64/
 export JBOSS_HOME=/opt/java/jboss-eap-7.2
@@ -110,7 +121,6 @@ echo "##########################################################################
 echo ""
 
 for t in ${targets[@]}; do
-echo "$t:"
 if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/$t"`; then
         echo "DEPLOY: $t - OK"
 else
@@ -131,4 +141,50 @@ echo ""
 echo "###############################################################################"
 echo "                              SYNCHRONIZING WITH GROUP SERVERS"
 echo "###############################################################################"
+echo ""
+echo "NOT WILL BE VERIFY JAVA AND JBOSS VERSION "
+echo "NOT WILL BE VERIFY IF GRAPHIZ IS INSTALLED "
+echo ""
+echo "###############################################################################"
+echo "                             STARTING DEPLOY DEPENDENCIES"
+echo "###############################################################################"
+echo ""
+echo "SERVER: jhomas135-1.infra.rio.gov.br"
+for t in ${dependencies[@]}; do
+if deploy_siga_dependencies=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jhomas135-1.infra.rio.gov.br:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$user --password=$pass`; then
+        echo "DEPLOY: $t - OK"
+else
+        echo $deploy_siga_dependencies
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+echo ""
+done
+echo ""
+echo "###############################################################################"
+echo "                                        END"
+echo "###############################################################################"
+
+echo "###############################################################################"
+echo "                                 STARTING DEPLOY"
+echo "###############################################################################"
+for t in ${targets[@]}; do
+if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jhomas135-1.infra.rio.gov.br:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$user --password=$pass`; then
+        echo "DEPLOY: $t - OK"
+else
+        echo $deploy_siga
+        echo "FAIL"
+        echo "ABORTING..."
+        exit 1
+fi
+echo ""
+done
+echo "###############################################################################"
+echo "                                        END"
+echo "###############################################################################"
+
+
+
+
 

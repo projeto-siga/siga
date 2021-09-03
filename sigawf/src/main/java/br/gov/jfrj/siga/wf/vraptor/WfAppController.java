@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +29,7 @@ import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.StringQualquer;
 import br.gov.jfrj.siga.vraptor.Transacional;
+import br.gov.jfrj.siga.wf.api.v1.AtivosGet;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -84,11 +84,7 @@ public class WfAppController extends WfController {
 	@Get
 	@Path("/app/inbox")
 	public void inbox() throws Exception {
-		SortedSet<WfTarefa> tis = new TreeSet<>();
-		List<WfProcedimento> pis = dao().consultarProcedimentosPorPessoaOuLotacao(getTitular(), getLotaTitular());
-		for (WfProcedimento pi : pis) {
-			tis.add(new WfTarefa(pi));
-		}
+		SortedSet<WfTarefa> tis = AtivosGet.obterTarefasAtivas(getTitular(), getLotaTitular());
 		result.include("tarefas", tis);
 	}
 

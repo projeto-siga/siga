@@ -29,8 +29,9 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
+	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = null;
 
-	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
+	public static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
 																// de duração
 	public static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova
 																// automaticamente

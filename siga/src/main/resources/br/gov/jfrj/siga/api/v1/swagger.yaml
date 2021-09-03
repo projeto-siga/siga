@@ -916,6 +916,51 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
 
+  /usuario:
+    get:
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters: []
+      description: Enviar sugestões
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              identidadeId:
+                type: string
+              cadastranteId:
+                type: string
+              cadastranteSigla:
+                type: string
+              cadastranteNome:
+                type: string
+              lotaCadastranteId:
+                type: string
+              lotaCadastranteSigla:
+                type: string
+              lotaCadastranteNome:
+                type: string
+              titularId:
+                type: string
+              titularSigla:
+                type: string
+              titularNome:
+                type: string
+              lotaTitularId:
+                type: string
+              lotaTitularSigla:
+                type: string
+              lotaTitularNome:
+                type: string
+              substituicaoId:
+                type: string
+              substituicoesPermitidas:
+                type: array
+                items:
+                  $ref: "#/definitions/SubstituicaoItem"
 
 ################################################################################
 #                                     Definitions                              #
@@ -1136,3 +1181,48 @@ definitions:
         type: boolean
         description: true se notificação não for dispensável. false se notificação for dispensável
         
+            
+  SubstituicaoItem:
+    description: Lista modelos disponíveis.
+    type: object
+    properties:
+      substituicaoId:
+        type: string
+      substituicaoDataFim:
+        type: string
+        format: date-time
+      substituicaoDataInicio:
+        type: string
+        format: date-time
+      registroIdInicial:
+        type: string
+      registroDataFim:
+        type: string
+        format: date-time
+      registroDataInicio:
+        type: string
+        format: date-time
+      substitutoId:
+        type: string
+      substitutoSigla:
+        type: string
+      substitutoNome:
+        type: string
+      lotaSubstitutoId:
+        type: string
+      lotaSubstitutoSigla:
+        type: string
+      lotaSubstitutoNome:
+        type: string
+      titularId:
+        type: string
+      titularSigla:
+        type: string
+      titularNome:
+        type: string
+      lotaTitularId:
+        type: string
+      lotaTitularSigla:
+        type: string
+      lotaTitularNome:
+        type: string

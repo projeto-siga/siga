@@ -23,7 +23,6 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
 	private static final long serialVersionUID = 1756711359239182178L;
 	public static boolean migrationComplete = false;
-
 //	public static ExecutorService executor = null;
 
 	@Override
@@ -151,7 +150,6 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 //					return uuid.equals(uuid2);
 //				}
 //			});
-
 	}
 
 	private void defineProperties() {

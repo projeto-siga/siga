@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
+import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IAutenticarPost;
@@ -20,6 +22,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.service.GiService;
+import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -73,6 +76,9 @@ public class AutenticarPost implements IAutenticarPost {
 					(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
 
 			resp.token = token;
+
+			Cookie cookie = buildCookie(token);
+			SwaggerServlet.getHttpServletResponse().addCookie(cookie);
 		} catch (Exception ex) {
 			throw new PresentableUnloggedException("Erro no login: " + ex.getMessage(), ex);
 		}
@@ -81,6 +87,28 @@ public class AutenticarPost implements IAutenticarPost {
 	@Override
 	public String getContext() {
 		return "autenticar usuário";
+	}
+
+	public static Cookie buildCookie(String tokenNew) {
+		Cookie cookie = new Cookie(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_NAME, tokenNew);
+		cookie.setPath("/");
+		if (AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN != null)
+			cookie.setDomain(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN);
+
+		cookie.setMaxAge(AuthJwtFormFilter.TIME_TO_EXPIRE_IN_S);
+
+		// cookie.setSecure(true);
+		return cookie;
+	}
+
+	public static Cookie buildEraseCookie() {
+		Cookie cookie = new Cookie(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_NAME, "");
+		cookie.setPath("/");
+		if (AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN != null)
+			cookie.setDomain(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN);
+
+		cookie.setMaxAge(0);
+		return cookie;
 	}
 
 }

@@ -41,7 +41,7 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		ExDocumento doc = mob.doc();
 		// Mostra o último volume de um processo ou a primeira via de um
 		// expediente
-		if (mob == null || mob.isGeral()) {
+		if ((req.auditar == null || !req.auditar) && (mob == null || mob.isGeral())) {
 			if (mob.getDoc().isFinalizado()) {
 				if (doc.isProcesso())
 					mob = doc.getUltimoVolume();
@@ -61,7 +61,7 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 			}
 		}
 
-		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false, true);
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, req.auditar != null && req.auditar, true);
 		// TODO: Resolver o problema declares multiple JSON fields named
 		// serialVersionUID
 		// Usado o Expose temporariamente

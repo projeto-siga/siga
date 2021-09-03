@@ -95,6 +95,13 @@ parameters:
     required: false
     default: false
     type: boolean
+  auditar:
+    name: auditar
+    in: query
+    description: Informar true se deseja receber dados para auditoria
+    required: false
+    default: false
+    type: boolean
   estampa:
     name: estampa
     in: query
@@ -973,6 +980,7 @@ paths:
         - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/completo"
       responses:
         200:
           description: Successful response

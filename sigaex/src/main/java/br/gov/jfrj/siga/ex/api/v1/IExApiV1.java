@@ -655,6 +655,7 @@ public interface IExApiV1 {
 	public interface IDocumentosSiglaGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String sigla;
+			public Boolean auditar;
 		}
 
 		public static class Response implements ISwaggerResponse, ISwaggerResponseFile {

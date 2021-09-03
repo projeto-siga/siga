@@ -87,6 +87,26 @@
                   :text="jwt.sub"
                   right
                 >
+                  <template v-if="usuario && usuario.substituicoesPermitidas">
+                    <b-dropdown-group header="Substituir:"></b-dropdown-group>
+                    <b-dropdown-item
+                      v-for="s in usuario.substituicoesPermitidas"
+                      :key="s.substituicaoId"
+                      @click="substituir(subst)"
+                    >
+                      {{
+                        (s.cadastranteId !== s.titularId ? s.titularNome : "") +
+                          (s.cadastranteId !== s.titularId &&
+                          s.lotaCadastranteId !== s.lotaTitularId
+                            ? "/"
+                            : "") +
+                          (s.lotaCadastranteId !== s.lotaTitularId
+                            ? s.lotaTitularNome
+                            : "")
+                      }}
+                    </b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                  </template>
                   <b-dropdown-item @click="logout">Logout</b-dropdown-item>
                 </b-nav-item-dropdown>
 
@@ -224,6 +244,8 @@ export default {
       if (token) {
         AuthBL.setIdToken(token);
         this.jwt = AuthBL.decodeToken(token);
+        this.carregarUsuario();
+
         // $rootScope.updateLogged();
         // $state.go('consulta-processual');
         this.$router.push({
@@ -292,6 +314,7 @@ export default {
     if (this.token) {
       AuthBL.setIdToken(this.token);
       this.jwt = AuthBL.decodeToken(this.token);
+      this.carregarUsuario();
     } else {
       this.$router.push({ name: "Login" });
     }
@@ -350,9 +373,14 @@ export default {
       },
       token: undefined,
       jwt: {},
+      usuario: undefined,
     };
   },
   methods: {
+    async carregarUsuario() {
+      var response = await this.$http.get("siga/api/v1/usuario");
+      this.usuario = response.data;
+    },
     isTokenValid: function() {
       return this.token && !AuthBL.isTokenExpired(this.token);
     },

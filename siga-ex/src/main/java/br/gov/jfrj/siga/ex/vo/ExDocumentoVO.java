@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,10 +31,24 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.dp.CpMarca;
+import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
@@ -114,6 +129,7 @@ public class ExDocumentoVO extends ExVO {
 	String exTipoDocumentoDescricao;
 	boolean podeAnexarArquivoAuxiliar;
 	String dtLimiteDemandaJudicial;
+	private ArrayList<ExMarcaVO> marcas;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel) {
@@ -280,6 +296,8 @@ public class ExDocumentoVO extends ExVO {
 
 		if (!serializavel)
 			addDadosComplementares();
+		
+		calculaSetsDeMarcas();
 
 		tags = new ArrayList<String>();
 		if (doc.getExClassificacao() != null) {
@@ -471,8 +489,6 @@ public class ExDocumentoVO extends ExVO {
 				mobilEspecifico = mobilVO;
 		}
 
-		calculaSetsDeMarcas();
-
 		if (mobilEspecifico != null && mobilGeral != null) {
 			mobilEspecifico.getAcoes().addAll(mobilGeral.getAcoes());
 			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
@@ -495,8 +511,9 @@ public class ExDocumentoVO extends ExVO {
 		this.dotColaboracao = new ExGraphColaboracao(doc);
 
 	}
-
+	
 	public void calculaSetsDeMarcas() {
+		marcas = new ArrayList<ExMarcaVO>();
 		for (ExMobil cadaMobil : doc.getExMobilSet()) {
 			SortedSet<ExMarca> setSistema = new TreeSet<>();
 			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
@@ -505,6 +522,7 @@ public class ExDocumentoVO extends ExVO {
 					setSistema.add(m);
 				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
 					getMarcasDoMobil().add(m);
+				marcas.add(new ExMarcaVO(m, titular, lotaTitular));
 			}
 			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
 			marcasPorMobil.put(cadaMobil, set);

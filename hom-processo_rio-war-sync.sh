@@ -4,7 +4,6 @@
 #
 
 #set variables
-
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.el7_9.x86_64/
 export JBOSS_HOME=/opt/java/jboss-eap-7.2
 
@@ -55,82 +54,65 @@ echo "##########################################################################
 echo "                                   END"
 echo "###############################################################################"
 echo ""
+
+
+## DECLARE DEPENDENCIES ARRAY
+dependencies=(blucservice.war ckeditor.war vizservice.war)
+
+## DECLARE TARGETS ARRAY
+targets=(siga-ext.jar sigaex.war siga.war)
+
+
+
+
+
+
 echo "###############################################################################"
 echo "                              STARTING SCP"
 echo "###############################################################################"
 echo ""
 echo "COPYING DEPENDENCIES:"
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/blucservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
-        echo $copy_war_jar
-        echo "blucservice.war - OK"
-else
-        echo $copy_war_jar
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/ckeditor.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+for t in ${dependencies[@]}; do
+  if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
-        echo "ckeditor.war - OK"
+        echo "$t - OK"
 else
         echo $copy_war_jar
         echo "FAIL"
         echo "ABORTING..."
         exit 1
 fi
+done
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/vizservice.war /opt/java/jboss-eap-7.2/standalone/deployments/`; then
-        echo $copy_war_jar
-        echo "vizservice.war - OK"
-else
-        echo $copy_war_jar
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
 echo ""
 echo ""
 echo "COPYING TARGETS:"
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar /tmp`; then
+for t in ${targets[@]}; do
+if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/$t /tmp`; then
         echo $copy_war_jar
-        echo "siga-ext.jar - OK"
+        echo "$t - OK"
 else
         echo $copy_war_jar
         echo "FAIL"
         echo "ABORTING..."
         exit 1
 fi
+done
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/sigaex.war /tmp`; then
-        echo $copy_war_jar
-        echo "sigaex.war - OK"
-else
-        echo $copy_war_jar
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
 
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/siga.war /tmp`; then
-        echo $copy_war_jar
-        echo "siga.war - OK"
-else
-        echo $copy_war_jar
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
 echo ""
 
 echo "###############################################################################"
 echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
-echo "SIGA:"
-if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/siga.war"`; then
-        echo "DEPLOY: siga.war - OK"
+
+for t in ${targets[@]}; do
+echo "$t:"
+if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/$t"`; then
+        echo "DEPLOY: $t - OK"
 else
         echo $deploy_siga
         echo "FAIL"
@@ -138,26 +120,15 @@ else
         exit 1
 fi
 echo ""
-echo "SIGAEX:"
-if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/sigaex.war"`; then
-        echo "DEPLOY: sigaex.war - OK"
-else
-        echo $deploy_sigaex
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
+done
 echo ""
-echo "SIGA-EXT"
-if deploy_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/siga-ext.jar"`; then
-        echo "DEPLOY: siga-ext.war - OK"
-else
-        echo $deploy_siga_ext
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
-echo ""
+
 echo "###############################################################################"
 echo "                              END"
 echo "###############################################################################"
+
+echo ""
+echo "###############################################################################"
+echo "                              SYNCHRONIZING WITH GROUP SERVERS"
+echo "###############################################################################"
+

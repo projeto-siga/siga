@@ -142,6 +142,8 @@ echo "##########################################################################
 echo "                              SYNCHRONIZING WITH GROUP SERVERS"
 echo "###############################################################################"
 echo ""
+echo "SERVER: jhomas135-1.infra.rio.gov.br"
+echo ""
 echo "NOT WILL BE VERIFY JAVA AND JBOSS VERSION "
 echo "NOT WILL BE VERIFY IF GRAPHIZ IS INSTALLED "
 echo ""
@@ -149,7 +151,6 @@ echo "##########################################################################
 echo "                             STARTING DEPLOY DEPENDENCIES"
 echo "###############################################################################"
 echo ""
-echo "SERVER: jhomas135-1.infra.rio.gov.br"
 for t in ${dependencies[@]}; do
 if deploy_siga_dependencies=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jhomas135-1.infra.rio.gov.br:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$user --password=$pass`; then
         echo "DEPLOY: $t - OK"
@@ -170,7 +171,7 @@ echo "##########################################################################
 echo "                                 STARTING DEPLOY"
 echo "###############################################################################"
 for t in ${targets[@]}; do
-if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jhomas135-1.infra.rio.gov.br:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$user --password=$pass`; then
+if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jhomas135-1.infra.rio.gov.br:9990 --command="deployment deploy-file --replace /tmp/$t" --user=$user --password=$pass`; then
         echo "DEPLOY: $t - OK"
 else
         echo $deploy_siga

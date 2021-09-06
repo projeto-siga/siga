@@ -76,6 +76,7 @@ import br.gov.jfrj.siga.sr.util.SrViewUtil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -621,7 +622,7 @@ public class SolicitacaoController extends SrController {
 				solicitacao.setCadastrante(null);
 			if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
 				solicitacao.setInterlocutor(null);
-			if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
+			if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getSigla() == null)
 				solicitacao.setItemConfiguracao(null);
 		}
 	}
@@ -679,6 +680,7 @@ public class SolicitacaoController extends SrController {
 				try {
 					so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
 					solicitacao.setRascunho(true);
+					SigaTransacionalInterceptor.upgradeParaTransacional();
 					solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
 					solicitacao.setRascunho(false);
 
@@ -695,14 +697,14 @@ public class SolicitacaoController extends SrController {
 					solicitacao.setLotaTitular(getLotaTitular());
 					solicitacao.completarPreenchimento();
 				}
-
+				
 				if (item != null && !item.equals(""))
 					solicitacao.setItemConfiguracao((SrItemConfiguracao) SrItemConfiguracao.AR
 							.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
 				if (acao != null && !acao.equals(""))
 					solicitacao.setAcao((SrAcao) SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 
-				forcarCargaDoItemEDaAcao(solicitacao);
+		//		forcarCargaDoItemEDaAcao(solicitacao);
 
 				if (descricao != null && !descricao.equals(""))
 					solicitacao.setDescricao(descricao);

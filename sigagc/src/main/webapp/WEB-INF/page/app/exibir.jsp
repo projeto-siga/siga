@@ -27,86 +27,93 @@
 				</siga:links>
 
 				<!-- Dados do documento -->
-				
-				<div id="knowledgeContent" class="card card-body mb-1">
+
+				<div id="knowledgeContent" class="card card-body mb-1 mt-2">
 					<h4>${informacao.arq.titulo}</h4>
 					${conteudo}
 				</div>
 			</div>
 
 			<div class="col-sm-4">
-				<div class="gt-sidebar-content">
-					<h3>${informacao.tipo.nome}</h3>
-					<p>
-						<b>Tipo: </b> ${informacao.tipo.nome}
-					</p>
-					<p>
-						<b>Órgão Usuário:</b> ${informacao.ou.acronimoOrgaoUsu}
-					</p>
-					<p>
-						<b>Visualização:</b> ${informacao.visualizacao.nome}
-					</p>
-					<p>
-						<b>Edição:</b> ${informacao.edicao.nome}
-					</p>
-					<c:if test="${not empty informacao.grupo}">
+				<div class="card-sidebar card border-alert bg-white mb-3">
+					<div class="card-header">${informacao.tipo.nome}</div>
+					<div class="card-body">
 						<p>
-							<b>Grupo:</b> ${informacao.grupo.siglaGrupo} -
-							${informacao.grupo.dscGrupo}
+							<b>Tipo: </b> ${informacao.tipo.nome}
 						</p>
-					</c:if>
-					<p>
-						<b>Autor:</b> ${informacao.autor.descricaoIniciaisMaiusculas} -
-						${informacao.autor.sigla}
-					</p>
-					<p>
-						<b>Lotação:</b>
-						${informacao.lotacao.descricaoIniciaisMaiusculas} -
-						${informacao.lotacao.sigla}
-					</p>
-					<p>
-						<b>Data de criação:</b> ${informacao.dtIniString}
-					</p>
-					<p>
-						<b>Finalizado em:</b> ${informacao.elaboracaoFim}
-					</p>
-					<!--  -->
-					<c:set var="cls"
-						value="${informacao.arq.classificacao.split(&quot;,&quot;)}" />
-					<!--  -->
-					<c:if test="${not empty cls}">
 						<p>
-							<b>Classificações:</b>
-						<ul>
-							<c:forEach items="${cls}" var="cl">
-								<li>${cl}</li>
+							<b>Órgão Usuário:</b> ${informacao.ou.acronimoOrgaoUsu}
+						</p>
+						<p>
+							<b>Visualização:</b> ${informacao.visualizacao.nome}
+						</p>
+						<p>
+							<b>Edição:</b> ${informacao.edicao.nome}
+						</p>
+						<c:if test="${not empty informacao.grupo}">
+							<p>
+								<b>Grupo:</b> ${informacao.grupo.siglaGrupo} -
+								${informacao.grupo.dscGrupo}
+							</p>
+						</c:if>
+						<p>
+							<b>Autor:</b> ${informacao.autor.descricaoIniciaisMaiusculas} -
+							${informacao.autor.sigla}
+						</p>
+						<p>
+							<b>Lotação:</b> ${informacao.lotacao.descricaoIniciaisMaiusculas}
+							- ${informacao.lotacao.sigla}
+						</p>
+						<p>
+							<b>Data de criação:</b> ${informacao.dtIniString}
+						</p>
+						<p>
+							<b>Finalizado em:</b> ${informacao.elaboracaoFim}
+						</p>
+						<!--  -->
+						<c:set var="cls"
+							value="${informacao.arq.classificacao.split(&quot;,&quot;)}" />
+						<!--  -->
+						<c:if test="${not empty cls}">
+							<p>
+								<b>Classificações:</b>
+							<ul>
+								<c:forEach items="${cls}" var="cl">
+									<li>${cl}</li>
+								</c:forEach>
+							</ul>
+							</p>
+						</c:if>
+						<c:if test="${empty cls}">
+							<p>
+								<b>Classificação:</b> ${(not empty informacao.arq.classificacao) ? informacao.arq.classificacao : "Esse conhecimento ainda não possui uma classificação"}
+							</p>
+						</c:if>
+					</div>
+				</div>
+				<c:if test="${informacao.contemArquivos}">
+					<div class="card-sidebar card border-alert bg-white mb-3">
+						<div class="card-header">Arquivos Anexos</div>
+						<div class="card-body">
+							<c:forEach items="${informacao.movs}" var="m">
+								<c:if test="${m.tipo.id == 13 && m.movCanceladora == null}">
+									<p style="word-break: break-all; word-wrap: break-word;">
+										<img style="margin-bottom: -4px;"
+											src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
+											target="_blank"
+											href="${linkTo[AppController].baixar(m.arq.id)}">${m.arq.titulo}</a>
+									</p>
+								</c:if>
 							</c:forEach>
-						</ul>
-						</p>
-					</c:if>
-					<c:if test="${empty cls}">
-						<p>
-							<b>Classificação:</b> ${(not empty informacao.arq.classificacao) ? informacao.arq.classificacao : "Esse conhecimento ainda não possui uma classificação"}
-						</p>
-					</c:if>
-					<c:if test="${informacao.contemArquivos}">
-						<h3>Arquivos Anexos</h3>
-						<c:forEach items="${informacao.movs}" var="m">
-							<c:if test="${m.tipo.id == 13 && m.movCanceladora == null}">
-								<p>
-									<img style="margin-bottom: -4px;"
-										src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-										target="_blank"
-										href="${linkTo[AppController].baixar(m.arq.id)}">${m.arq.titulo}</a>
-								</p>
-							</c:if>
-						</c:forEach>
-					</c:if>
+						</div>
+					</div>
+				</c:if>
 
-					<c:set var="papeis" value="${informacao.papeisVinculados}" />
-					<c:if test="${not empty papeis}">
-						<div class="gt-sidebar-content" style="padding-top: 10px">
-							<h3>Perfis</h3>
+				<c:set var="papeis" value="${informacao.papeisVinculados}" />
+				<c:if test="${not empty papeis}">
+					<div class="card-sidebar card border-alert bg-white mb-3">
+						<div class="card-header">Perfis</div>
+						<div class="card-body">
 							<c:forEach var="papel" items="${papeis}">
 								<p style="margin-bottom: 3px;">
 									<b>${papel.key.descPapel}:</b>
@@ -122,16 +129,14 @@
 								</ul>
 							</c:forEach>
 						</div>
-					</c:if>
-
-
-				</div>
-
+					</div>
+				</c:if>
 				<div class="gt-sidebar-content" id="gc"></div>
-
-				<!-- / sidebar -->
 			</div>
+
+			<!-- / sidebar -->
 		</div>
+	</div>
 	</div>
 
 	<script type="text/javascript">
@@ -162,20 +167,26 @@
 	</script>
 
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse(
-				"/sigagc/app/knowledgeSidebar?${informacao.gcTags}&id=${informacao.id}&estiloBusca=algumIgualNenhumDiferente&ts=${currentTimeMillis}",
-				document.getElementById('gc'));
+		$
+				.ajax({
+					type : "GET",
+					url : "/sigagc/app/knowledgeSidebar?${informacao.gcTags}&id=${informacao.id}&estiloBusca=algumIgualNenhumDiferente&ts=${currentTimeMillis}",
+					cache : false,
+					success : function(response) {
+						$('#gc').replaceWith(response);
+					}
+				});
 	</script>
 
 	<!-- Movimentações -->
 	<c:if test="${movimentacoes}">
-		<div class="gt-bd" style="padding-bottom: 0px;">
-			<div class="gt-content">
+		<div class="col col-12" style="padding-bottom: 0px;">
+			<div>
 				<h3 id="ancora_mov">Movimentações</h3>
 			</div>
 
-			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
-				<table class="gt-table mov">
+			<div class="" style="margin-bottom: 25px;">
+				<table class="table table-striped table-sm">
 					<thead>
 						<tr>
 							<th align="left" rowspan="2">Data</th>
@@ -284,13 +295,13 @@
 	</c:if>
 
 	<c:if test="${historico}">
-		<div class="gt-bd" style="padding-bottom: 0px;">
-			<div class="gt-content">
+		<div class="col col-12" style="padding-bottom: 0px;">
+			<div class="">
 				<h3 id="ancora_his">Histórico de alterações</h3>
 			</div>
 
-			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
-				<table class="gt-table mov">
+			<div class="" style="margin-bottom: 25px;">
+				<table class="table table-striped">
 					<thead>
 						<tr>
 							<th align="center" rowspan="2">Data</th>

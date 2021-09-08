@@ -13,8 +13,13 @@ import com.google.common.base.Optional;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.model.RequisicaoTransporte;
+import br.gov.jfrj.siga.tp.util.TpBL;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -32,6 +37,7 @@ public class AutorizacaoGI {
 	private Map<String, Boolean> statusPermissoes = new HashMap<String, Boolean>();
 	private CpComplexo complexoPadrao;
 	private CpComplexo complexoAdministrador;
+	private TpBL tpbl;
 
 	/**
 	 * @deprecated CDI eyes only
@@ -43,8 +49,9 @@ public class AutorizacaoGI {
 	}
 	
 	@Inject
-	public AutorizacaoGI(SigaObjects so) throws Exception {
+	public AutorizacaoGI(SigaObjects so, TpBL tpbl) throws Exception {
 		this.so = so;
+		this.tpbl = tpbl;
 		this.statusPermissoes = new HashMap<String, Boolean>();
         this.setComplexoPadrao(recuperarComplexoPadrao());
         this.setComplexoAdministrador(recuperarComplexoAdministrador());
@@ -61,10 +68,22 @@ public class AutorizacaoGI {
 	public CpComplexo recuperarComplexoAdministrador() throws Exception {
 		String SERVICO_COMPLEXO_ADMINISTRADOR = "SIGA-TP-ADMMISSAOCOMPLEXO";
 		List<CpConfiguracao> configuracoes = null;
+		
+		CpServico cpServico = CpDao.getInstance().consultarPorSiglaCpServico(SERVICO_COMPLEXO_ADMINISTRADOR);
+        if (cpServico == null) {
+        	return null;
+        }
+		
         CpComplexo cpComplexo = null;
+    	
+    	CpConfiguracao cpConf = tpbl.buscaConfiguracaoComplexoAdministrador(so.getTitular(), CpTipoDeConfiguracao.UTILIZAR_SERVICO, cpServico );
+        
+    	if (cpConf != null) {
+    		cpComplexo = cpConf.getComplexo();
+    	}
 
         // Recuperando ComplexoAdministrador para uma lotacao especifica de um orgão
-        
+        /*
     	String qrl = 	"SELECT cp FROM CpConfiguracao cp " +  
     	" WHERE  cp.dpPessoa.idPessoaIni = :idPessoaIni"  	+
     	" AND    cp.orgaoUsuario.idOrgaoUsu = :orgaoUsuarioId"		+
@@ -80,7 +99,7 @@ public class AutorizacaoGI {
         
         if (configuracoes != null && !configuracoes.isEmpty() && configuracoes.size() > 0) {
             cpComplexo = configuracoes.get(0).getComplexo();
-        }
+        } */
 
 		return cpComplexo;
 	}
@@ -171,23 +190,29 @@ public class AutorizacaoGI {
     @SuppressWarnings("unchecked")
 	public CpComplexo recuperarComplexoPadrao(DpPessoa dpPessoa) {
         
-        long TIPO_CONFIG_COMPLEXO_PADRAO = 400;
-        List<CpConfiguracao> configuracoes = null;
         CpComplexo cpComplexo = null;
+    	
+    	CpConfiguracao cpConf = tpbl.buscaConfiguracaoComplexoPadrao(dpPessoa, CpTipoDeConfiguracao.UTILIZAR_COMPLEXO);
+        
+    	cpComplexo = cpConf.getComplexo();
+            	
+    /*	long TIPO_CONFIG_COMPLEXO_PADRAO = 400;
+        List<CpConfiguracao> configuracoes = null;
+
 
         // Recuperando Configuracao Pode para uma lotacao especifica de um orgão
         
     	String qrl = 	"SELECT cp FROM CpConfiguracao cp " +  
     	" WHERE  cp.lotacao.idLotacaoIni = :lotacaoIni"  	+
     	" AND    cp.orgaoUsuario.idOrgaoUsu = :orgaoUsuarioId"		+
-    	" AND    cp.cpTipoConfiguracao.idTpConfiguracao = " + TIPO_CONFIG_COMPLEXO_PADRAO +
-    	" AND    cp.cpSituacaoConfiguracao.idSitConfiguracao = :cpSituacaoConfiguracaoId" +
+    	" AND    cp.cpTipoConfiguracao = " + CpTipoDeConfiguracao.UTILIZAR_COMPLEXO +
+    	" AND    cp.cpSituacaoConfiguracao = :cpSituacaoConfiguracaoId" +
     	" AND    cp.hisIdcFim is null";
 
     	Query qry = RequisicaoTransporte.AR.em().createQuery(qrl);
     	qry.setParameter("lotacaoIni", dpPessoa.getLotacao().getIdLotacaoIni());
     	qry.setParameter("orgaoUsuarioId",dpPessoa.getOrgaoUsuario().getId());
-    	qry.setParameter("cpSituacaoConfiguracaoId", 1L);
+    	qry.setParameter("cpSituacaoConfiguracaoId", CpSituacaoDeConfiguracaoEnum.PODE);
     	configuracoes = (List<CpConfiguracao>) qry.getResultList();
         
         if (configuracoes != null && !configuracoes.isEmpty()) {
@@ -198,18 +223,18 @@ public class AutorizacaoGI {
         	qrl = 	"SELECT cp FROM CpConfiguracao cp" +  
         	    	" WHERE  cp.lotacao is null"  	+
         	    	" AND    cp.orgaoUsuario.idOrgaoUsu = :orgaoUsuarioId"		+
-        	    	" AND    cp.cpTipoConfiguracao.idTpConfiguracao = " + TIPO_CONFIG_COMPLEXO_PADRAO +
-        	    	" AND    cp.cpSituacaoConfiguracao.idSitConfiguracao = :cpSituacaoConfiguracaoId" +
+        	    	" AND    cp.cpTipoConfiguracao = " + CpTipoDeConfiguracao.UTILIZAR_COMPLEXO +
+        	    	" AND    cp.cpSituacaoConfiguracao = :cpSituacaoConfiguracaoId" +
         	    	" AND    cp.hisIdcFim is null";
         	qry = RequisicaoTransporte.AR.em().createQuery(qrl);
         	qry.setParameter("orgaoUsuarioId",dpPessoa.getOrgaoUsuario().getId());
-        	qry.setParameter("cpSituacaoConfiguracaoId", 5L);
+        	qry.setParameter("cpSituacaoConfiguracaoId", CpSituacaoDeConfiguracaoEnum.DEFAULT);
         	configuracoes = (List<CpConfiguracao>) qry.getResultList();
         	
         	if (configuracoes != null && !configuracoes.isEmpty()) {
                 cpComplexo = configuracoes.get(0).getComplexo();
             }
-        }
+        } */
         if (cpComplexo == null) {
             throw new NullPointerException(MessagesBundle.getMessage("cpComplexo.null.exception", ""));
         }

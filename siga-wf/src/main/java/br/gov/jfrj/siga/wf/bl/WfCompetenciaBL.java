@@ -20,14 +20,16 @@ package br.gov.jfrj.siga.wf.bl;
 
 import java.lang.reflect.Method;
 
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
 
 /**
  * Classe que representa as competências da lógica de negócio do sistema de
@@ -50,13 +52,13 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeInstanciarProcedimentoPorConfiguracao(DpPessoa titular, DpLotacao lotaTitular,
 			final WfDefinicaoDeProcedimento definicaoDeProcedimento) {
 		return podePorConfiguracao(titular, lotaTitular, definicaoDeProcedimento,
-				CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO);
+				WfTipoDeConfiguracao.INSTANCIAR_PROCEDIMENTO);
 	}
 
 	public boolean podeEditarProcedimentoPorConfiguracao(DpPessoa titular, DpLotacao lotaTitular,
 			WfDefinicaoDeProcedimento pd) {
 		return podePorConfiguracao(titular, lotaTitular, pd,
-				CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO);
+				WfTipoDeConfiguracao.EDITAR_DEFINICAO_DE_PROCEDIMENTO);
 	}
 
 	/**
@@ -72,8 +74,8 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	private WfConfiguracao preencherFiltroEBuscarConfiguracao(DpPessoa titularIniciador, DpLotacao lotaTitularIniciador,
-			long tipoConfig, final WfDefinicaoDeProcedimento definicaoDeProcedimento) {
+	private CpConfiguracaoCache preencherFiltroEBuscarConfiguracao(DpPessoa titularIniciador,
+			DpLotacao lotaTitularIniciador, ITipoDeConfiguracao tipoConfig, final WfDefinicaoDeProcedimento definicaoDeProcedimento) {
 		WfConfiguracao cfgFiltro = new WfConfiguracao();
 
 		cfgFiltro.setCargo(titularIniciador != null ? titularIniciador.getCargo() : null);
@@ -81,11 +83,11 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setFuncaoConfianca(titularIniciador != null ? titularIniciador.getFuncaoConfianca() : null);
 		cfgFiltro.setLotacao(lotaTitularIniciador);
 		cfgFiltro.setDpPessoa(titularIniciador != null ? titularIniciador : null);
-		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false));
+		cfgFiltro.setCpTipoConfiguracao(tipoConfig);
 
 		cfgFiltro.setDefinicaoDeProcedimento(definicaoDeProcedimento);
 
-		WfConfiguracao cfg = (WfConfiguracao) getConfiguracaoBL().buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
+		CpConfiguracaoCache cfg = getConfiguracaoBL().buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 		return cfg;
 	}
 
@@ -101,20 +103,18 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	private Boolean podePorConfiguracao(DpPessoa titular, DpLotacao lotaTitular,
-			final WfDefinicaoDeProcedimento definicaoDeProcedimento, long tipoConfig) {
-		CpSituacaoConfiguracao situacao;
-		WfConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titular, lotaTitular, tipoConfig,
+			final WfDefinicaoDeProcedimento definicaoDeProcedimento, ITipoDeConfiguracao tipoConfig) {
+		CpConfiguracaoCache cfg = preencherFiltroEBuscarConfiguracao(titular, lotaTitular, tipoConfig,
 				definicaoDeProcedimento);
 
+		CpSituacaoDeConfiguracaoEnum situacao;
 		if (cfg != null) {
-			situacao = cfg.getCpSituacaoConfiguracao();
+			situacao = cfg.situacao;
 		} else {
-			situacao = CpDao.getInstance().consultar(tipoConfig, CpTipoConfiguracao.class, false).getSituacaoDefault();
+			situacao = tipoConfig.getSituacaoDefault();
 		}
 
-		if (situacao != null && situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
-			return true;
-		return false;
+		return situacao != null && situacao == CpSituacaoDeConfiguracaoEnum.PODE;
 	}
 
 	/**
@@ -130,17 +130,17 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public WfConfiguracao designar(DpPessoa titularIniciador, DpLotacao lotaTitularIniciador, DpPessoa titularAnterior,
-			DpLotacao lotaTitularAnterior, final WfDefinicaoDeProcedimento definicaoDeProcedimento, final String raia,
-			final String tarefa) throws Exception {
-
-		WfConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titularIniciador, lotaTitularIniciador,
-				CpTipoConfiguracao.TIPO_CONFIG_DESIGNAR_TAREFA, definicaoDeProcedimento);
-		if (cfg == null)
-			return null;
-
-		return cfg;
-	}
+//	public WfConfiguracao designar(DpPessoa titularIniciador, DpLotacao lotaTitularIniciador, DpPessoa titularAnterior,
+//			DpLotacao lotaTitularAnterior, final WfDefinicaoDeProcedimento definicaoDeProcedimento, final String raia,
+//			final String tarefa) throws Exception {
+//
+//		WfConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titularIniciador, lotaTitularIniciador,
+//				CpTipoDeConfiguracao.DESIGNAR_TAREFA, definicaoDeProcedimento);
+//		if (cfg == null)
+//			return null;
+//
+//		return cfg;
+//	}
 
 	/**
 	 * Verifica se uma pessoa ou lotação tem competência para realizar uma

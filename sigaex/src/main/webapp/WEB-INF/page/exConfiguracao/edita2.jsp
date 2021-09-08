@@ -71,7 +71,7 @@
 											<c:when
 												test="${campoFixo && not empty config.cpTipoConfiguracao}">
 												<input type="hidden" name="idTpConfiguracao"
-													value="${config.cpTipoConfiguracao.idTpConfiguracao}" /> 
+													value="${config.cpTipoConfiguracao.id}" /> 
 												<label class="form-control">${config.cpTipoConfiguracao.dscTpConfiguracao}</label>
 											</c:when>
 											<c:otherwise>
@@ -89,7 +89,7 @@
 										<label>Situação</label>
 										<siga:select name="idSituacao"
 											list="listaSituacao" listKey="idSitConfiguracao"
-											listValue="dscSitConfiguracao" theme="simple"
+											listValue="descr" theme="simple"
 											headerValue="[Indefinido]" headerKey="0" value="${idSituacao}" />
 									</div>
 								</div>

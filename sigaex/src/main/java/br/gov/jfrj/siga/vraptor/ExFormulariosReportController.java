@@ -19,10 +19,10 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -59,7 +59,7 @@ public class ExFormulariosReportController extends ExController {
 			try {
 				if (Ex.getInstance().getConf().podePorConfiguracao(
 						getTitular(), getLotaTitular(), o,
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+						ExTipoDeConfiguracao.CRIAR))
 					ll.add(new ListItem(o));
 			} catch (RuntimeException e) {
 				e.printStackTrace();

@@ -55,10 +55,10 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -250,7 +250,7 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery("ExDocumentoNumeracao.existeRangeDocumentoNumeracao");
 		query.setParameter("idOrgaoUsu", idOrgaoUsu);
 		query.setParameter("idFormaDoc", idFormaDoc);
-		query.setParameter("rownum", 1L);
+		query.setMaxResults(1);
 		
 		try {
 			return (Long) query.getSingleResult();
@@ -328,8 +328,7 @@ public class ExDao extends CpDao {
 	    
 		final Query query = em().createNamedQuery("ExSequencia.existeRangeSequencia");
 		query.setParameter("tipoSequencia", tipoSequencia);
-		query.setParameter("rownum", 1L);
-		
+		query.setMaxResults(1);		
 		try {
 			return (ExSequencia) query.getSingleResult();
 		} catch (NoResultException ne) {
@@ -465,9 +464,6 @@ public class ExDao extends CpDao {
 
 		public ExProtocolo obterProtocoloPorDocumento(ExDocumento doc) throws SQLException {
 
-//			final Query query = em().createNamedQuery("ExProtocolo.obterProtocoloPorDocumento");
-//			query.setParameter("idDoc", idDoc);
-//			query.setParameter("rownum", 1L);
 
 			CriteriaQuery<ExProtocolo> q = cb().createQuery(ExProtocolo.class);
 			Root<ExProtocolo> c = q.from(ExProtocolo.class);
@@ -478,8 +474,6 @@ public class ExDao extends CpDao {
 				return l.get(0);
 			else 
 				return null;
-			
-//			return (ExProtocolo) query.getSingleResult();
 		}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {
@@ -1032,7 +1026,7 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExConfiguracao> consultar(final ExConfiguracao exemplo) {
-		CpTipoConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
+		ITipoDeConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
 		CpOrgaoUsuario orgao = exemplo.getOrgaoUsuario();
 
 		StringBuffer sbf = new StringBuffer();
@@ -1043,10 +1037,9 @@ public class ExDao extends CpDao {
 
 		sbf.append("" + "where 1 = 1");
 
-		if (tpConf != null && tpConf.getIdTpConfiguracao() != null
-				&& tpConf.getIdTpConfiguracao() != 0) {
+		if (tpConf != null) {
 			sbf.append(" and cp.id_tp_configuracao = ");
-			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+			sbf.append(exemplo.getCpTipoConfiguracao().getId());
 		}
 
 		if (exemplo.getExTipoMovimentacao() != null
@@ -2327,5 +2320,4 @@ public class ExDao extends CpDao {
 		}
 	}
 	
-
 }

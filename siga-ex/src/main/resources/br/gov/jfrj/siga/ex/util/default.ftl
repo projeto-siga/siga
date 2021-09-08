@@ -2475,8 +2475,8 @@ Pede deferimento.</span><br/><br/><br/>
                 [#if (doc.mobilGeral.exMovimentacaoSet)??]
         [#list doc.mobilGeral.exMovimentacaoSet as mov]
                     [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
-                        [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         <br/><br/><br/>
+                        [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         [#if mov.nmSubscritor??]
                             ${mov.nmSubscritor}
                         [#else]

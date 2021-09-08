@@ -117,8 +117,8 @@
 							   	    		<td>
 							   	    			<tptags:link texto="${requisicaoTransporte.descricaoCompleta}" 
 							   	    						 parteTextoLink="${requisicaoTransporte.buscarSequence()}" 
-							   	    						 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
-							   	    						</tptags:link>
+							   	    						  comando="${linkTo[RequisicaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${requisicaoTransporte.buscarSequence()}">
+										   	    			</tptags:link>
 											</td>
 											<td class="complexo" valign="middle" colspan="2">
 												<c:if test="${requisicaoTransporte.getUltimoAndamento().estadoRequisicao.toString().equals('AUTORIZADA')}">

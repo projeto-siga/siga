@@ -1,0 +1,1 @@
+update sigawf.wf_configuracao c set c.DEFP_ID = (select o.HIS_ID_INI from sigawf.wf_def_procedimento o where c.DEFP_ID = o.DEFP_ID);

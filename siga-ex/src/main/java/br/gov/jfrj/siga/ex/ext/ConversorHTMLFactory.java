@@ -6,9 +6,9 @@ import br.gov.jfrj.itextpdf.FlyingSaucer;
 import br.gov.jfrj.itextpdf.Nheengatu;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 
 public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 
@@ -24,7 +24,7 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 		ConversorHtml conversor;
 		if (conf.podePorConfiguracao(doc.getCadastrante(),
 				doc.getLotaCadastrante(), doc.getExModelo(),
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML))
+				ExTipoDeConfiguracao.UTILIZAR_EXTENSAO_CONVERSOR_HTML))
 			try {
 			conversor = getExtensaoConversorHTML();
 			} catch (Exception e) {

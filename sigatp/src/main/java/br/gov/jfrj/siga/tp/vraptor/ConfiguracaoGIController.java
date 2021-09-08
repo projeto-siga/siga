@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +22,8 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.tp.exceptions.ConfiguracaoGIControllerException;
 import br.gov.jfrj.siga.tp.model.TpDao;
@@ -74,8 +74,6 @@ public class ConfiguracaoGIController extends TpController {
             List<CpOrgaoUsuario> cpOrgaoUsuarios = CpOrgaoUsuario.AR.findAll();
             String servicoComplexoAdministrador = "SIGA-TP-ADMMISSAOCOMPLEXO";
             CpServico cpServico = CpServico.AR.find("siglaServico", servicoComplexoAdministrador).first();
-            Long tipoConfigComplexoPadrao = 400L;
-            CpTipoConfiguracao tpConf = CpTipoConfiguracao.AR.findById(tipoConfigComplexoPadrao);
     		Map<String, Object> parametros = new HashMap<String,Object>();
     		parametros.put("idOrgaoUsu",idOrgaoUsu);
     		parametros.put("cpServico",cpServico);
@@ -84,7 +82,7 @@ public class ConfiguracaoGIController extends TpController {
             // Recuperando configuracao pode para uma lotacao especifica
     		parametros.clear();
             parametros.put("idOrgaoUsu",idOrgaoUsu);
-    		parametros.put("tpConf",tpConf);
+    		parametros.put("tpConf",CpTipoDeConfiguracao.UTILIZAR_COMPLEXO);
             List<CpConfiguracao> cpConfiguracoesCl = CpConfiguracao.AR.find("((lotacao is not null) and orgaoUsuario.idOrgaoUsu = :idOrgaoUsu  and cpTipoConfiguracao = :tpConf and hisIdcFim is null  )", parametros)
                     .fetch();
             // Recuperando configuracao default para um  orgao especifico
@@ -145,16 +143,13 @@ public class ConfiguracaoGIController extends TpController {
     private void carregarDadosPerifericos(Long idOrgaoUsu) throws ConfiguracaoGIControllerException {
         try {
             CpOrgaoUsuario cpOrgaoUsuario = CpOrgaoUsuario.AR.findById(idOrgaoUsu);
-            long tipoConfigComplexoPadrao = 400;
-            CpTipoConfiguracao tpConf1 = CpTipoConfiguracao.AR.findById(tipoConfigComplexoPadrao);
-            long tipoConfigUtilizarServico = 200;
-            CpTipoConfiguracao tpConf2 = CpTipoConfiguracao.AR.findById(tipoConfigUtilizarServico);
 
-            List<CpTipoConfiguracao> cpTiposConfiguracao = new ArrayList<CpTipoConfiguracao>();
-            cpTiposConfiguracao.add(tpConf2);
-            cpTiposConfiguracao.add(tpConf1);
 
-            List<CpSituacaoConfiguracao> cpSituacoesConfiguracao = CpSituacaoConfiguracao.AR.findAll();
+            List<CpTipoDeConfiguracao> cpTiposConfiguracao = new ArrayList<CpTipoDeConfiguracao>();
+            cpTiposConfiguracao.add(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
+            cpTiposConfiguracao.add(CpTipoDeConfiguracao.UTILIZAR_COMPLEXO);
+
+            List<CpTipoDeConfiguracao> cpSituacoesConfiguracao = Arrays.asList(CpTipoDeConfiguracao.values());
     		Map<String, Object> parametros = new HashMap<String,Object>();
     		parametros.put("idOrgaoUsu",idOrgaoUsu);
             List<CpComplexo> cpComplexos = CpComplexo.AR.find(" orgaoUsuario.idOrgaoUsu = :idOrgaoUsu ", parametros).fetch();
@@ -198,7 +193,7 @@ public class ConfiguracaoGIController extends TpController {
                 cpConfiguracaoNova.setConfiguracaoInicial(cpConfiguracaoAnterior.getConfiguracaoInicial());
             }
 
-            if (cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao() == 200) {
+            if (cpConfiguracao.getCpTipoConfiguracao().getId() == 200) {
                 String servicoComplexoAdminstrador = "SIGA-TP-ADMMISSAOCOMPLEXO";
                 cpConfiguracaoNova.setCpServico((CpServico) CpServico.AR.find("siglaServico", servicoComplexoAdminstrador).first());
             }
@@ -237,10 +232,10 @@ public class ConfiguracaoGIController extends TpController {
     private void validaCamposNulos(CpConfiguracao cpConfiguracao) {
         if (cpConfiguracao.getComplexo().getIdComplexo() == null)
             cpConfiguracao.setComplexo(null);
-        if (cpConfiguracao.getCpSituacaoConfiguracao().getIdSitConfiguracao() == null)
+/*        if (cpConfiguracao.getCpSituacaoConfiguracao().getIdSitConfiguracao() == null)
             cpConfiguracao.setCpSituacaoConfiguracao(null);
-        if (cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao() == null)
-            cpConfiguracao.setCpTipoConfiguracao(null);
+        if (cpConfiguracao.getCpTipoConfiguracao().getId() == null)
+            cpConfiguracao.setCpTipoConfiguracao(null); */
         if (cpConfiguracao.getLotacao().getIdeLotacao() == null)
             cpConfiguracao.setLotacao(null);
         if (cpConfiguracao.getDpPessoa().getIdePessoa() == null)

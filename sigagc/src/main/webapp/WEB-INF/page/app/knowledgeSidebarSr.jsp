@@ -3,7 +3,7 @@
 <div class="card mb-3">
 	<h6 class="card-header">Conhecimentos Relacionados
 		<a title="Registrar um novo conhecimento" style="float: right;"
-			href="${linkTo[AppController].editar}?classificacao=${classificacao}"
+			href="${linkTo[AppController].novo}?classificacao=${classificacao}"
 			${popup?'target="_blank" ':''}> <img
 			src="/siga/css/famfamfam/icons/add.png">
 		</a>
@@ -28,7 +28,7 @@
 				<c:if test="${podeCriar}">
 					<p>
 						Nenhum conhecimento relacionado registrado. Clique <a
-							href="${linkTo[AppController].editar}?classificacao=${classificacao}"
+							href="${linkTo[AppController].novo}?classificacao=${classificacao}"
 							${popup?'target="_blank" ':''}>aqui</a> para registrar um novo
 						conhecimento.
 					</p>

@@ -44,14 +44,15 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpAcesso;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.Mesa2;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -75,7 +76,7 @@ public class ExMesa2Controller extends ExController {
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {
 			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
-					CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO));
+					ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO));
 		} catch (Exception e) {
 			throw e;
 		} 
@@ -145,7 +146,7 @@ public class ExMesa2Controller extends ExController {
 					&& Cp.getInstance().getConf().podePorConfiguracao
 						(getCadastrante(), 
 						 getCadastrante().getLotacao(), 
-						 CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+						 ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
 				lotaTitular = vis.getTitular().getLotacao();
 				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 

@@ -1,6 +1,10 @@
 package br.gov.jfrj.siga.vraptor;
 
-import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.*;
+import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.CARGOS;
+import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.FUNCOES;
+import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.ORGAOS;
+import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.PESSOAS;
+import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.UNIDADES;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,7 +28,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargoDTO;
 import br.gov.jfrj.siga.dp.DpFuncaoDTO;
@@ -174,12 +178,12 @@ public class ExConfiguracao2Controller extends ExController {
 	}
 	
 	@SuppressWarnings("all")
-	private Set<CpTipoConfiguracao> getListaTiposConfiguracao() throws Exception {
-		TreeSet<CpTipoConfiguracao> s = new TreeSet<CpTipoConfiguracao>(new Comparator() {
+	private Set<ITipoDeConfiguracao> getListaTiposConfiguracao() throws Exception {
+		TreeSet<ITipoDeConfiguracao> s = new TreeSet<>(new Comparator<ITipoDeConfiguracao>() {
 
-			public int compare(Object o1, Object o2) {
-				return ((CpTipoConfiguracao) o1).getDscTpConfiguracao()
-						.compareTo(((CpTipoConfiguracao) o2).getDscTpConfiguracao());
+			public int compare(ITipoDeConfiguracao o1, ITipoDeConfiguracao o2) {
+				return o1.getDescr()
+						.compareTo(o2.getDescr());
 			}
 		});
 
@@ -360,7 +364,7 @@ public class ExConfiguracao2Controller extends ExController {
 	}
 	
 	@SuppressWarnings("static-access")
-	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
+	private void gravarConfiguracao(Integer idTpConfiguracao, Integer idSituacao, final ExConfiguracao config) {
 
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
 			throw new RegraNegocioException("Tipo de configuracao não informado");

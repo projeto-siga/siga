@@ -19,13 +19,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 
 @Entity
@@ -160,9 +159,9 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
     }
 
     private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
-        List<SrConfiguracao> permissoesEncontradas = getPermissoes(lotaTitular, pess);
-        for (SrConfiguracao srConfiguracao : permissoesEncontradas) {
-            for (SrTipoPermissaoLista permissao : srConfiguracao.getTipoPermissaoSet()) {
+        List<SrConfiguracaoCache> permissoesEncontradas = getPermissoesDoCache(lotaTitular, pess);
+        for (SrConfiguracaoCache srConfiguracao : permissoesEncontradas) {
+            for (SrTipoPermissaoLista permissao : srConfiguracao.tipoPermissaoSet) {
                 if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
                     return Boolean.TRUE;
                 }
@@ -172,12 +171,16 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
     }
 
     public List<SrConfiguracao> getPermissoes(DpLotacao lotaTitular, DpPessoa pess) {
+    	return SrConfiguracao.inflar(getPermissoesDoCache(lotaTitular, pess));
+    }
+    
+    public List<SrConfiguracaoCache> getPermissoesDoCache(DpLotacao lotaTitular, DpPessoa pess) {
         try {
             SrConfiguracao confFiltro = new SrConfiguracao();
             confFiltro.setLotacao(lotaTitular);
             confFiltro.setDpPessoa(pess);
             confFiltro.setListaPrioridade(this);
-            confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+            confFiltro.setCpTipoConfiguracao(SrTipoDeConfiguracao.PERMISSAO_USO_LISTA);
             return SrConfiguracao.listar(confFiltro);
         } catch (Exception e) {
             throw new RuntimeException(e);

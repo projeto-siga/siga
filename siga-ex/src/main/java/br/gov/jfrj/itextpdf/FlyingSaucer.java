@@ -26,7 +26,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.helper.W3CDom;
@@ -122,6 +126,8 @@ public class FlyingSaucer implements ConversorHtml {
 		sHtml = corrigirEscolhaDeFonts(sHtml);
 
 		sHtml = corrigirNBSP(sHtml);
+		
+		sHtml = corrigirDatas(sHtml);
 
 		sHtml = cleanHtml(sHtml);
 
@@ -250,6 +256,26 @@ public class FlyingSaucer implements ConversorHtml {
 		// Remove &nbsp; pois isso não está sendo corretamente renderizado pelo no
 		// Flying Saucer
 		html = html.replace("&nbsp;", " ");
+		return html;
+	}
+	
+	private String corrigirDatas(String html) {
+		Pattern pattern = Pattern
+				.compile("[0-9]{1,2}+[//]+[0-9]{1,2}+[//]+[0-9]{2,4}");
+
+		Matcher matcher = pattern
+				.matcher(html);
+		
+		Set<String> listaDatas = new HashSet<String>();
+		
+		while (matcher.find()) {
+			listaDatas.add(matcher.group());
+		}
+		
+		for (String data : listaDatas) {
+			html = html.replace(data, "<span style=\'white-space: nowrap;\'>"+data+"</span>");
+		}
+		
 		return html;
 	}
 

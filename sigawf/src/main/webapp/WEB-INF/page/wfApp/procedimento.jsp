@@ -6,30 +6,6 @@
 
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
-				<c:if
-					test="${false and not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-					<div id="desc_editar" style="display: none;">
-						<h3>Descrição da Tarefa</h3>
-						<div class="gt-form gt-content-box">
-							<form method="POST"
-								action="${linkTo[WfAppController].saveKnowledge}">
-								<input name="tiId" type="hidden" value="${tiId}" />
-								<div class="gt-form-row gt-width-100">
-									<label>Descrição</label>
-									<textarea cols="80" rows="15" name="conhecimento"
-										class="gt-form-textarea">${task.conhecimento}</textarea>
-								</div>
-								<div class="gt-form-row gt-width-100">
-									<input name="salvar_conhecimento" type="submit" value="Salvar"
-										class="gt-btn-medium gt-btn-left" /> <a
-										href="javascript: window.location.reload()"
-										class="gt-btn-medium gt-btn-left">Cancelar</a>
-								</div>
-							</form>
-						</div>
-					</div>
-				</c:if>
-
 				<h2 class="mt-3">Procedimento ${pi.sigla}</h2>
 
 				<!-- lista de Ações -->
@@ -50,7 +26,7 @@
 					<div class="card bg-info mb-3 mt-3">
 						<div class="card-header text-white">
 							<c:if
-								test="${pi.tipoDePrincipal eq 'DOC' and not empty pi.principal}">
+								test="${pi.tipoDePrincipal eq 'DOCUMENTO' and not empty pi.principal}">
 								<a
 									href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}"
 									style="color: white; text-decoration: underline;">${pi.principal}</a> -
@@ -60,12 +36,20 @@
 							${pi.definicaoDeTarefaCorrente.nome}
 						</div>
 						<div class="card-body bg-light text-black">
-
 							<form method="POST"
 								action="${linkTo[WfAppController].continuar(piId, null, null, null)}">
 								<%@ include file="inc-form.jsp"%>
 							</form>
 						</div>
+					</div>
+				</c:if>
+
+
+				<!-- Conhecimento -->
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+					<div class="card-deck">
+						<span id="gc-ancora"></span> <span id="gc"></span>
 					</div>
 				</c:if>
 
@@ -152,11 +136,11 @@
 						<c:if test="${not empty pi.principal}">
 							<p>
 								<b>Principal:</b>
-								<c:if test="${pi.tipoDePrincipal eq 'DOC'}">
+								<c:if test="${pi.tipoDePrincipal eq 'DOCUMENTO'}">
 									<a
 										href="/sigaex/app/expediente/doc/exibir?sigla=${pi.principal}">${pi.principal}</a>
 								</c:if>
-								<c:if test="${pi.tipoDePrincipal != 'DOC'}">
+								<c:if test="${pi.tipoDePrincipal != 'DOCUMENTO'}">
 								${pi.principal}
 								</c:if>
 							</p>
@@ -165,7 +149,9 @@
 							</p>
 						</c:if>
 						<p>
-							<b>Procedimento:</b> ${pi.definicaoDeProcedimento.nome}
+							<b>Diagrama:</b> <a
+								href="/sigawf/app/diagrama/exibir?id=${pi.definicaoDeProcedimento.id}">${pi.definicaoDeProcedimento.nome}</a>
+							(${pi.definicaoDeProcedimento.sigla})
 						</p>
 						<p>
 							<b>Prioridade:</b> ${pi.prioridade.descr}
@@ -224,31 +210,42 @@
 				</div>
 
 				<c:if
-					test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 					<c:url var="url" value="/../sigagc/app/knowledgeInplace">
-						<c:param name="tags">${task.ancora}</c:param>
+						<c:param name="tags">${pi.ancora}</c:param>
 						<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
 								href="$1">aqui</a> para contribuir.</c:param>
-						<c:param name="titulo">${task.nomeDoProcedimento} - ${task.nomeDaTarefa}</c:param>
+						<c:param name="titulo">${pi.definicaoDeProcedimento.nome} - ${pi.currentTaskDefinition.nome}</c:param>
 						<c:param name="ts">${currentTimeMillis}</c:param>
 					</c:url>
 					<script type="text/javascript">
-			SetInnerHTMLFromAjaxResponse("${url}", document
-					.getElementById('gc-ancora'));
-		</script>
+					$.ajax({
+		                type: "GET",
+		                url: "${url}",
+		                cache: false,
+		                success: function(response) {
+		                    $('#gc-ancora').replaceWith(response);
+		                }
+		            });
+					</script>
 
 					<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
 						<c:param name="tags">@workflow</c:param>
-						<c:forEach var="tag" items="${task.tags}">
+						<c:forEach var="tag" items="${pi.tags}">
 							<c:param name="tags">${tag}</c:param>
 						</c:forEach>
 						<c:param name="ts">${currentTimeMillis}</c:param>
 					</c:url>
 					<script type="text/javascript">
-			SetInnerHTMLFromAjaxResponse("${url}", document
-					.getElementById('gc'));
-		</script>
+					$.ajax({
+		                type: "GET",
+		                url: "${url}",
+		                cache: false,
+		                success: function(response) {
+		                    $('#gc').replaceWith(response);
+		                }
+		            });
+					</script>
 				</c:if>
 
 				<%@ include file="anotar.jsp"%>

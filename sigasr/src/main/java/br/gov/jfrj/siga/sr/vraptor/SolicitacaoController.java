@@ -622,7 +622,7 @@ public class SolicitacaoController extends SrController {
 				solicitacao.setCadastrante(null);
 			if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
 				solicitacao.setInterlocutor(null);
-			if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getSigla() == null)
+			if (solicitacao.getItemConfiguracao() != null && (solicitacao.getItemConfiguracao().getSigla() == null || solicitacao.getItemConfiguracao().getSigla().isEmpty()))
 				solicitacao.setItemConfiguracao(null);
 		}
 	}
@@ -704,7 +704,7 @@ public class SolicitacaoController extends SrController {
 				if (acao != null && !acao.equals(""))
 					solicitacao.setAcao((SrAcao) SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 
-		//		forcarCargaDoItemEDaAcao(solicitacao);
+		 	//	forcarCargaDoItemEDaAcao(solicitacao);
 
 				if (descricao != null && !descricao.equals(""))
 					solicitacao.setDescricao(descricao);

@@ -1520,12 +1520,10 @@ public class CpBL {
 	public void definirPinIdentidade( List<CpIdentidade> listaIdentidades, String pin, CpIdentidade idCadastrante)
 			throws NoSuchAlgorithmException, AplicacaoException {
 
-
-		boolean podeTrocar = Boolean.TRUE;
-
-
-		if (podeTrocar) {
-			try {
+		try {
+			boolean podeTrocar = Cp.getInstance().getComp().podeSegundoFatorPin(idCadastrante.getPessoaAtual(), idCadastrante.getPessoaAtual().getLotacao());
+			
+			if (podeTrocar) {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				final String pinHash = GeraMessageDigest.calcSha256(pin);
 
@@ -1538,12 +1536,11 @@ public class CpBL {
 					i.setPinIdentidade(pinHash);
 					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
 				}
-
-			} catch (final Exception e) {
-				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
+			} else {
+				throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
 			}
-		} else {
-			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
 		}
 	}
 	
@@ -1638,30 +1635,69 @@ public class CpBL {
 		}
 	}
 	
-	public Boolean isTokenResetPinValido(Long cpf, String token) {
-		Boolean isTokenValido = false;
+	public CpToken gerarTokenResetSenha(Long cpf) {
+		try {
+			final long tipoToken = 3L;
+			
+			/* Invalidar se existir token ativo */
+			invalidarTokenAtivo(tipoToken,cpf);
+
+			CpToken tokenResetSenha = new CpToken();
+			
+			tokenResetSenha.setIdTpToken(tipoToken);
+			tokenResetSenha.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
+			tokenResetSenha.setIdRef(cpf);
+			
+			/* HORA ATUAL */
+			GregorianCalendar gc = new GregorianCalendar();
+			Date dt = dao().consultarDataEHoraDoServidor();
+			gc.setTime(dt);
+
+			
+			/* EXP - Expiração do Token */
+			gc.add(Calendar.HOUR, 1);
+			tokenResetSenha.setDtExp(gc.getTime());	
+
+			try {
+				dao().gravar(tokenResetSenha);
+			} catch (final Exception e) {
+
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		
+			return tokenResetSenha;
+
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+		}
+	}
+	
+	/**** Controle de Validade Token ****/
+	public Boolean isTokenValido(Long tipoToken, Long cpf, String token) {
+		Boolean isValido = false;
 		try {
 			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
 			if (tokenResetPin != null ) {
 				if (cpf.equals(tokenResetPin.getIdRef())) {
 					Date dt = dao().consultarDataEHoraDoServidor();
 					LocalDateTime dtNow = LocalDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
 					LocalDateTime dtExp = LocalDateTime.ofInstant(tokenResetPin.getDtExp().toInstant(), ZoneId.systemDefault());
 					
-					isTokenValido = dtNow.isBefore(dtExp);			
+					isValido = dtNow.isBefore(dtExp);			
 				}
 			}
 
-			return isTokenValido;
+			return isValido;
 			
 		} catch (final Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
 	}
 	
-	public void invalidarTokenAtivo(Long tipo, Long idRef) {
-		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipo,idRef);
+	public void invalidarTokenAtivo(Long tipoToken, Long idRef) {
+		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
 		if (tokenResetPin != null) {
 			tokenResetPin.setDtExp(tokenResetPin.getDtIat());
 			try {
@@ -1672,10 +1708,10 @@ public class CpBL {
 		} 
 	}
 	
-	public void invalidarTokenUtilizado(Long cpf, String token) {
+	public void invalidarTokenUtilizado(Long tipoToken, Long cpf, String token) {
 		try {
 			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
 			if (tokenResetPin != null ) {
 				tokenResetPin.setDtExp(tokenResetPin.getDtIat());
 				try {
@@ -1689,7 +1725,7 @@ public class CpBL {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
 	}
-	
+	/****  ****/
 	
 	private String textoEmailDefinicaoPin(DpPessoa destinatario, String corpo) {		
 		String conteudo = "";

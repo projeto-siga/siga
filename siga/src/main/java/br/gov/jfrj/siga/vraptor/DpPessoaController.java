@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.PathParam;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -906,4 +907,26 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	protected DpPessoa getUsuario() {
 		return so.getCadastrante();
 	}
+	
+	
+	@Consumes("application/json")
+	@Get("/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/{cpf}")
+	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") Long cpf) {								
+		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+		
+		dpPessoa.setBuscarFechadas(false);
+		dpPessoa.setCpf(cpf);	
+		dpPessoa.setNome("");
+
+		List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
+		List<String> emails = new ArrayList<String>();
+	    
+		for(DpPessoa usuario : usuarios) {
+			emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
+	    }
+		
+		result.use(Results.json()).from(emails).serialize();
+	}
+	
+	
 }

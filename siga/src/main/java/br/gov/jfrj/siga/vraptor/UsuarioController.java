@@ -13,6 +13,7 @@ import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -488,6 +489,48 @@ public class UsuarioController extends SigaController {
 		Pattern pattern = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$");   
 	    Matcher matcher = pattern.matcher(email);   
 	    return matcher.find();   
+	}
+	
+	
+	/* Reset Senha */
+	@Get
+	@Path({"/app/usuario/senha/reset", "/public/app/usuario/senha/reset" })
+	public void resetSenha() throws Exception {	
+		String recaptchaSiteKey = getRecaptchaSiteKey();
+		String recaptchaSitePassword = getRecaptchaSitePassword();
+		result.include("recaptchaSiteKey", recaptchaSiteKey);
+		
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
+	}
+	
+	private static String getRecaptchaSiteKey() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.key");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.key");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.key",
+					0, e);
+		}
+	}
+	
+	private static String getRecaptchaSitePassword() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.pwd",
+					0, e);
+		}
 	}
 
 }

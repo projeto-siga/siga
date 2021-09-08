@@ -27,14 +27,14 @@ public class PinResetPost implements IPinResetPost {
 			throw new RegraNegocioException(
 					"PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
 
-		if (Cp.getInstance().getBL().isTokenResetPinValido(cadastrante.getCpfPessoa(), tokenPin)) {
+		if (Cp.getInstance().getBL().isTokenValido(2L, cadastrante.getCpfPessoa(), tokenPin)) {
 			if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {
 
 				List<CpIdentidade> listaIdentidades = new ArrayList<CpIdentidade>();
 				listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());
 
 				Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
-				Cp.getInstance().getBL().invalidarTokenUtilizado(cadastrante.getCpfPessoa(), tokenPin);
+				Cp.getInstance().getBL().invalidarTokenUtilizado(2L,cadastrante.getCpfPessoa(), tokenPin);
 				Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante, "Redefinição de PIN",
 						"Você redefiniu seu PIN.");
 				resp.mensagem = "PIN foi redefinido.";

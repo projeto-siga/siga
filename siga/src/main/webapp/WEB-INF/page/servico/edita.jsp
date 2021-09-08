@@ -39,20 +39,20 @@
 										test="${(config.dpPessoa.matricula == pessoa.matricula) && (config.cpServico.idServico == servico.idServico) }">
 										<td><select name="configuracao_pessoa_servico"
 											id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
-											valorSalvo="${config.cpSituacaoConfiguracao.idSitConfiguracao}"
+											valorSalvo="${config.cpSituacaoConfiguracao.id}"
 											onchange="javascript:alterar(this, ${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
 												<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
 												<c:forEach var="sit"
 													items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
 													<c:if
-														test="${sit.idSitConfiguracao == config.cpSituacaoConfiguracao.idSitConfiguracao }">
-														<option value="${sit.idSitConfiguracao}"
-															selected="selected">${sit.dscSitConfiguracao}</option>
+														test="${sit.id == config.cpSituacaoConfiguracao.id }">
+														<option value="${sit.id}"
+															selected="selected">${sit.descr}</option>
 													</c:if>
 													<c:if
-														test="${sit.idSitConfiguracao != config.cpSituacaoConfiguracao.idSitConfiguracao }">
-															<option value="${sit.idSitConfiguracao}">
-																${sit.dscSitConfiguracao}</option>
+														test="${sit.id != config.cpSituacaoConfiguracao.id }">
+															<option value="${sit.id}">
+																${sit.descr}</option>
 														</c:if>
 													</c:forEach>
 											</select></td>
@@ -87,13 +87,13 @@
 										<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
 										<c:forEach var="sit"
 											items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
-											<c:if test="${sit.idSitConfiguracao == idSitConf }">
-												<option value="${sit.idSitConfiguracao}" selected="selected">
-													${sit.dscSitConfiguracao}</option>
+											<c:if test="${sit.id == idSitConf }">
+												<option value="${sit.id}" selected="selected">
+													${sit.descr}</option>
 											</c:if>
-											<c:if test="${sit.idSitConfiguracao != idSitConf }">
-												<option value="${sit.idSitConfiguracao}">
-													${sit.dscSitConfiguracao}</option>
+											<c:if test="${sit.id != idSitConf }">
+												<option value="${sit.id}">
+													${sit.descr}</option>
 											</c:if>
 										</c:forEach>
 								</select></td>

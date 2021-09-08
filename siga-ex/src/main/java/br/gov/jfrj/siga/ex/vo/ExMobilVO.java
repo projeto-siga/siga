@@ -86,7 +86,7 @@ public class ExMobilVO extends ExVO {
 	}
 
 	public List<ExMarca> getMarcasAtivas() {
-		return marcasAtivas;
+		return this.marcasAtivas;
 	}
 
 	public void setMarcasAtivas(List<ExMarca> marcasAtivas) {
@@ -121,7 +121,7 @@ public class ExMobilVO extends ExVO {
 
 		long tempoIni = System.currentTimeMillis();
 
-		List<ExMarca> marcasAtivas = new ArrayList<>();
+		this.marcasAtivas = new ArrayList<>();
 		marcasAtivas.addAll(mob.getExMarcaSetAtivas());
 
 		marcadoresEmHtml = getMarcadoresEmHtml(marcasAtivas, titular, lotaTitular);
@@ -615,11 +615,8 @@ public class ExMobilVO extends ExVO {
 			//
 			for (ExMarca mar : getMarcasAtivas()) {
 				if (incluirMarcaEmHtml(mar)
-						&& ((mar.getDpLotacaoIni() != null
-								&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
-								|| mar.getDpLotacaoIni() == null)
-						&& (mar.getDpPessoaIni() == null
-								|| pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial()))) {
+						&& marcaNaoTemLotacaoOuEDeDeterminadaLotacao(mar, lota)
+						&& marcaNaoTemPessoaOuEDeDeterminadaPessoa(mar, pess)) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					sb.append(mar.getCpMarcador().getDescrMarcador());
@@ -633,10 +630,8 @@ public class ExMobilVO extends ExVO {
 					if (incluirMarcaEmHtml(mar)) {
 						if (sb.length() > 0)
 							sb.append(", ");
-						if ((mar.getDpLotacaoIni() != null
-								&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
-								&& (mar.getDpPessoaIni() != null
-										&& !pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial()))) {
+						if (marcaEDeDeterminadaLotacao(mar, lota)
+								&& marcaTemPessoaDiferente(mar, pess)) {
 							sb.append(mar.getCpMarcador().getDescrMarcador());
 							sb.append(" [<span title=\"");
 							sb.append(mar.getDpPessoaIni().getNomePessoa());
@@ -653,12 +648,9 @@ public class ExMobilVO extends ExVO {
 		//
 		for (ExMarca mar : getMarcasAtivas()) {
 			if ((sb.length() == 0 && incluirMarcaEmHtml(mar))
-					|| (sb.length() > 0 && incluirMarcaEmHtmlDeOutraPessoaELotacao(mar)
-							&& !((mar.getDpLotacaoIni() != null
-									&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
-									|| mar.getDpLotacaoIni() == null)
-							&& !(mar.getDpPessoaIni() == null
-									|| pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial())))) {
+					|| (incluirMarcaEmHtmlDeOutraPessoaELotacao(mar)
+							&& !(marcaNaoTemLotacaoOuEDeDeterminadaLotacao(mar, lota)
+							&& marcaNaoTemPessoaOuEDeDeterminadaPessoa(mar, pess)))) {
 				if (sb.length() > 0)
 					sb.append(", ");
 				sb.append(mar.getCpMarcador().getDescrMarcador());
@@ -684,6 +676,26 @@ public class ExMobilVO extends ExVO {
 		if (sb.length() == 0)
 			return null;
 		return sb.toString();
+	}
+
+	public boolean marcaTemPessoaDiferente(ExMarca mar, DpPessoa pess) {
+		return mar.getDpPessoaIni() != null
+				&& !pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial());
+	}
+
+	public boolean marcaEDeDeterminadaLotacao(ExMarca mar, DpLotacao lota) {
+		return mar.getDpLotacaoIni() != null
+				&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial());
+	}
+
+	public boolean marcaNaoTemPessoaOuEDeDeterminadaPessoa(ExMarca mar, DpPessoa pess) {
+		return mar.getDpPessoaIni() == null
+				|| pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial());
+	}
+
+	public boolean marcaNaoTemLotacaoOuEDeDeterminadaLotacao(ExMarca mar, DpLotacao lota) {
+		return marcaEDeDeterminadaLotacao(mar, lota)
+				|| mar.getDpLotacaoIni() == null;
 	}
 
 	public boolean incluirMarcaEmHtml(ExMarca mar) {

@@ -40,6 +40,8 @@ public class SigaFlyway {
 					} catch (InterruptedException e) {
 					}
 			}
+			log.info("MIGRANDO " + dataSource);
+
 			Context initContext = new InitialContext();
 			Context envContext = (Context) initContext.lookup("java:");
 			DataSource ds = (DataSource) envContext.lookup(dataSource);

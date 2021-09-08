@@ -304,7 +304,7 @@ public class ServicoVeiculoController extends TpController {
         result.redirectTo(ServicoVeiculoController.class).listar();
     }
 
-    @Path("/buscarServico/{popUp}/{sequence*}")
+    @Path("/buscarServico")
     public void buscarServico(Boolean popUp, String sequence) throws Exception {
         ServicoVeiculo servico = recuperarPelaSigla(sequence, popUp);
         result.include(SERVICO_STR, servico);

@@ -1,0 +1,10 @@
+update corporativo.cp_configuracao c set c.ID_LOTACAO = (select o.ID_LOTACAO_INI from corporativo.dp_lotacao o where c.ID_LOTACAO = o.ID_LOTACAO);
+update corporativo.cp_configuracao c set c.ID_CARGO = (select o.ID_CARGO_INICIAL from corporativo.dp_cargo o where c.ID_CARGO = o.ID_CARGO);
+update corporativo.cp_configuracao c set c.ID_FUNCAO_CONFIANCA = (select o.ID_FUN_CONF_INI from corporativo.dp_funcao_confianca o where c.ID_FUNCAO_CONFIANCA = o.ID_FUNCAO_CONFIANCA);
+update corporativo.cp_configuracao c set c.ID_PESSOA = (select o.ID_PESSOA_INICIAL from corporativo.dp_pessoa o where c.ID_PESSOA = o.ID_PESSOA);
+update corporativo.cp_configuracao c set c.ID_IDENTIDADE = (select o.HIS_ID_INI from corporativo.cp_identidade o where c.ID_IDENTIDADE = o.ID_IDENTIDADE);
+update corporativo.cp_configuracao c set c.ID_LOTACAO_OBJETO = (select o.ID_LOTACAO_INI from corporativo.dp_lotacao o where c.ID_LOTACAO_OBJETO = o.ID_LOTACAO);
+update corporativo.cp_configuracao c set c.ID_CARGO_OBJETO = (select o.ID_CARGO_INICIAL from corporativo.dp_cargo o where c.ID_CARGO_OBJETO = o.ID_CARGO);
+update corporativo.cp_configuracao c set c.ID_FUNCAO_CONFIANCA_OBJETO = (select o.ID_FUN_CONF_INI from corporativo.dp_funcao_confianca o where c.ID_FUNCAO_CONFIANCA_OBJETO = o.ID_FUNCAO_CONFIANCA);
+update corporativo.cp_configuracao c set c.ID_PESSOA_OBJETO = (select o.ID_PESSOA_INICIAL from corporativo.dp_pessoa o where c.ID_PESSOA_OBJETO = o.ID_PESSOA);
+update corporativo.cp_configuracao c set c.ID_GRUPO = (select o.HIS_ID_INI from corporativo.cp_grupo o where c.ID_GRUPO = o.ID_GRUPO);

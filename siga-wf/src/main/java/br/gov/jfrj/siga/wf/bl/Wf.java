@@ -42,7 +42,7 @@ public class Wf extends Cp<WfConfiguracaoBL, WfCompetenciaBL, WfBL> {
 					Wf instance = new Wf();
 					setInstance(instance);
 					instance.setConf(new WfConfiguracaoBL());
-					instance.getConf().setComparator(new WfConfiguracaoComparator());
+					instance.getConf().setComparator(new WfConfiguracaoCacheComparator());
 					instance.setComp(new WfCompetenciaBL());
 					instance.getComp().setConfiguracaoBL(instance.getConf());
 					instance.setBL(new WfBL());

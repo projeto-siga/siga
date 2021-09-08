@@ -96,7 +96,7 @@
 			<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}" itens="${itens}" var="item">
 				<tr class="${evenorodd}">
 					<td width="20%" align="left"><a
-						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.siglaCompletaFormatada}','${item.descricao}');">${item.siglaCompletaFormatada}</a></td>
+						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.siglaCompletaFormatada}','${fn:replace(item.descricao,'\'','&#8217;')}');">${item.siglaCompletaFormatada}</a></td>
 					<td width="60%" align="left">${item.descricao}</td>
 					<td align="left" width="20%">${item.dataFimLotacao}</td>
 				</tr>

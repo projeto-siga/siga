@@ -13,14 +13,12 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.cp.model.enm.CpParamCfg;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -45,7 +43,7 @@ public class ConfiguracaoController extends SigaController {
 	}
 
 	@Get("app/configuracao/listar")
-	public void lista(Long idTpConfiguracao, Long idOrgaoUsu) throws Exception {
+	public void lista(Integer idTpConfiguracao, Long idOrgaoUsu) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST.getId();
@@ -57,21 +55,21 @@ public class ConfiguracaoController extends SigaController {
 	}
 
 	@Get("app/configuracao/listar_cadastradas")
-	public void listaCadastradas(Long idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
+	public void listaCadastradas(Integer idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
 			String nmTipoRetorno, boolean campoFixo) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		CpConfiguracao config = new CpConfiguracao();
 
 		if (idTpConfiguracao != null && idTpConfiguracao != 0) {
-			config.setCpTipoConfiguracao(dao().consultar(idTpConfiguracao, CpTipoConfiguracao.class, false));
+			config.setCpTipoConfiguracao(CpTipoDeConfiguracao.getById(idTpConfiguracao));
 		} else {
 			result.include("err", "Tipo de configuração não informado");
 			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");
 			return;
 		}
 
-		config.setCpTipoConfiguracao(dao().consultar(idTpConfiguracao, CpTipoConfiguracao.class, false));
+		config.setCpTipoConfiguracao(CpTipoDeConfiguracao.getById(idTpConfiguracao));
 
 		if (idOrgaoUsu != null && idOrgaoUsu != 0) {
 			config.setOrgaoUsuario(dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false));
@@ -79,6 +77,10 @@ public class ConfiguracaoController extends SigaController {
 			config.setOrgaoUsuario(null);
 
 		List<CpConfiguracao> listConfig = Cp.getInstance().getConf().buscarConfiguracoesVigentes(config);
+
+		for (CpConfiguracao cfg : listConfig) 
+			cfg.atualizarObjeto();
+
 		Collections.sort(listConfig, new CpConfiguracaoComparator());
 
 		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
@@ -90,7 +92,7 @@ public class ConfiguracaoController extends SigaController {
 
 	@Get("app/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, DpPessoaSelecao pessoaObjetoSel, DpLotacaoSelecao lotacaoObjetoSel,
 			DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto,
@@ -100,6 +102,7 @@ public class ConfiguracaoController extends SigaController {
 
 		if (id != null) {
 			config = dao().consultar(id, CpConfiguracao.class, false);
+			config.atualizarObjeto();
 		} else if (campoFixo) {
 			config = new CpConfiguracaoBuilder(CpConfiguracao.class, dao).setIdSituacao(idSituacao)
 					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
@@ -110,7 +113,7 @@ public class ConfiguracaoController extends SigaController {
 		}
 		CpConfiguracaoHelper.escreverForm(config, result);
 		if (idTpConfiguracao == null && config != null && config.getCpTipoConfiguracao() != null)
-			idTpConfiguracao = config.getCpTipoConfiguracao().getIdTpConfiguracao();
+			idTpConfiguracao = config.getCpTipoConfiguracao().getId();
 		if (idTpConfiguracao == null)
 			throw new RuntimeException("Tipo de configuração deve ser informado");
 		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
@@ -134,7 +137,7 @@ public class ConfiguracaoController extends SigaController {
 			CpConfiguracao config = dao().consultar(id, CpConfiguracao.class, false);
 			config.setHisDtFim(dao().consultarDataEHoraDoServidor());
 			dao().gravarComHistorico(config, getIdentidadeCadastrante());
-			result.redirectTo(this).lista(config.getCpTipoConfiguracao().getIdTpConfiguracao(), null);
+			result.redirectTo(this).lista(config.getCpTipoConfiguracao().getId(), null);
 		} else
 			throw new AplicacaoException("ID não informada");
 
@@ -144,7 +147,7 @@ public class ConfiguracaoController extends SigaController {
 	@Transacional
 	@Get("app/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, DpPessoaSelecao pessoaObjeto_pessoaSel,
 			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel,
@@ -158,6 +161,7 @@ public class ConfiguracaoController extends SigaController {
 				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel)
 				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao).construir();
 
+		config.substituirPorObjetoInicial();
 		CpConfiguracaoHelper.gravarConfiguracao(idTpConfiguracao, idSituacao, config, dao, getIdentidadeCadastrante());
 		result.redirectTo(this).lista(idTpConfiguracao, null);
 	}

@@ -263,7 +263,8 @@
 						</c:catch>
 					</c:otherwise>
 				</c:choose>
-				<c:if test="${f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
+				<!-- f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao) -->
+				<c:if test="${false}">
 					<li><a class="dropdown-item"
 									href="${serverAndPort}/siga/app/visualizacao/listar">Delegar visualização</a></li>
 				</c:if>

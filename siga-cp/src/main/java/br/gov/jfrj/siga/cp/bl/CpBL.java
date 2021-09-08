@@ -26,7 +26,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -34,10 +33,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -56,12 +53,11 @@ import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -69,6 +65,9 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
@@ -174,8 +173,7 @@ public class CpBL {
 
 	public void bloquearIdentidade(CpIdentidade ident, CpIdentidade identidadeCadastrante, boolean fBloquear)
 			throws Exception {
-		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-				CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
 		Date dt = dao().consultarDataEHoraDoServidor();
 
 		CpConfiguracao confOld = null;
@@ -183,7 +181,9 @@ public class CpBL {
 			CpConfiguracao confFiltro = new CpConfiguracao();
 			confFiltro.setCpIdentidade(ident);
 			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			if (confCacheOld != null) 
+				confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			if (confOld.getCpIdentidade() == null)
 				confOld = null;
 		} catch (Exception e) {
@@ -192,10 +192,8 @@ public class CpBL {
 
 		CpConfiguracao conf = new CpConfiguracao();
 		conf.setCpIdentidade(ident);
-		conf.setCpSituacaoConfiguracao(dao().consultar(
-				fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-						: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-				CpSituacaoConfiguracao.class, false));
+		conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
+						: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
 
@@ -211,8 +209,7 @@ public class CpBL {
 		try {
 			dao().iniciarTransacao();
 
-			CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-					CpTipoConfiguracao.class, false);
+			CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
 			Date dt = dao().consultarDataEHoraDoServidor();
 
 			CpConfiguracao confOld = null;
@@ -220,17 +217,17 @@ public class CpBL {
 				CpConfiguracao confFiltro = new CpConfiguracao();
 				confFiltro.setDpPessoa(pes);
 				confFiltro.setCpTipoConfiguracao(tpConf);
-				confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+				CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+				if (confCacheOld != null) 
+					confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 			CpConfiguracao conf = new CpConfiguracao();
 			conf.setDpPessoa(pes);
-			conf.setCpSituacaoConfiguracao(dao().consultar(
-					fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-							: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-					CpSituacaoConfiguracao.class, false));
+			conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
+							: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
 
@@ -250,7 +247,7 @@ public class CpBL {
 	}
 
 	public CpConfiguracao configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao, DpLotacao lotacao, DpPessoa pes,
-			CpServico servico, CpSituacaoConfiguracao situacao, CpTipoConfiguracao tpConf,
+			CpServico servico, CpSituacaoDeConfiguracaoEnum situacao, ITipoDeConfiguracao tpConf,
 			CpIdentidade identidadeCadastrante) throws Exception {
 		Date dt = dao().consultarDataEHoraDoServidor();
 
@@ -263,7 +260,9 @@ public class CpBL {
 			confFiltro.setOrgaoUsuario(orgao);
 			confFiltro.setCpServico(servico);
 			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			if (confCacheOld != null) 
+				confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			if (confOld != null && !confOld.isEspecifica(confFiltro))
 				confOld = null;
 			if (confOld != null) 
@@ -681,11 +680,22 @@ public class CpBL {
 
 	public String buscarModoAutenticacao(String orgao) {
 		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		if (Prop.get("/siga.ldap.orgaos") == null)
+		if (Prop.get("/siga.ldap.orgaos") == null) {
 			return retorno;
-		String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
-		if (modo != null)
-			retorno = modo;
+		}
+		else {
+			for (String sesbPessoa: Prop.get("/siga.ldap.orgaos").split(",")) {
+				if (sesbPessoa.equalsIgnoreCase(orgao)) {
+					String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
+					if (modo != null) {
+						retorno = modo;
+						break;
+					}
+				}
+			}
+			
+		}
+
 		return retorno;
 	}
 

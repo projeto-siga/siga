@@ -189,9 +189,12 @@ self.ajax_${propriedadeClean} = function() {
 	if (executarEventos) {
 		var url = '/${modulo}/app/${tipo}/selecionar?propriedade=${propriedade}'+'${selecaoParams}';
 		url = url + '&sigla=' + sigla;
-		Siga.ajax(url, null, "GET", function(response){		
+		/* Siga.ajax(url, null, "GET", function(response){		
 			resposta_ajax_${propriedadeClean}(response);
-		});	
+		}); */	
+		$.get( url, function(response){
+			resposta_ajax_${propriedadeClean}(response);
+		});
 		//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
 	}
 }

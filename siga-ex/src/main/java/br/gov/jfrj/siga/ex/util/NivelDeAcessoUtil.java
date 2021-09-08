@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class NivelDeAcessoUtil {
@@ -25,7 +27,6 @@ public class NivelDeAcessoUtil {
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 		ExConfiguracao config = new ExConfiguracao();
-		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
 		config.setDpPessoa(titular);
 		config.setLotacao(lotaTitular);
 		config.setExTipoDocumento(exTpDoc);
@@ -33,30 +34,34 @@ public class NivelDeAcessoUtil {
 		config.setExModelo(exMod);
 		config.setExClassificacao(classif);
 
-		ExConfiguracao exConfiguracaoMin;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
+		ExConfiguracaoCache exConfiguracaoMin;
+		config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_ACESSO_MINIMO);
 		try {
-			exConfiguracaoMin = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
+			exConfiguracaoMin = (ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 					new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
 		} catch (Exception e) {
 			exConfiguracaoMin = null;
 		}
 
-		ExConfiguracao exConfiguracaoMax;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
+		ExConfiguracaoCache exConfiguracaoMax;
+		config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_ACESSO_MAXIMO);
 		try {
-			exConfiguracaoMax = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
+			exConfiguracaoMax = (ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 					new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
 		} catch (Exception e) {
 			exConfiguracaoMax = null;
 		}
 
-		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.getExNivelAcesso() != null
-				&& exConfiguracaoMax.getExNivelAcesso() != null) {
-			int nivelMinimo = exConfiguracaoMin.getExNivelAcesso().getGrauNivelAcesso();
-			int nivelMaximo = exConfiguracaoMax.getExNivelAcesso().getGrauNivelAcesso();
+		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.exNivelAcesso != 0
+				&& exConfiguracaoMax.exNivelAcesso != 0) {
+			int nivelMinimo = 0;
+			int nivelMaximo = 0;
+			for (ExNivelAcesso nivelAcesso : listaNiveis) {
+				if (nivelAcesso.getIdNivelAcesso().equals(exConfiguracaoMin.exNivelAcesso))
+					nivelMinimo = nivelAcesso.getGrauNivelAcesso();
+				if (nivelAcesso.getIdNivelAcesso().equals(exConfiguracaoMax.exNivelAcesso))
+					nivelMaximo = nivelAcesso.getGrauNivelAcesso();
+			}
 
 			for (ExNivelAcesso nivelAcesso : listaNiveis) {
 				if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo

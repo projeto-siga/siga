@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 public class ExConfiguracaoDTO {
 	
 	private Long[] modelos, orgaos, unidades, cargos, funcoes, pessoas;
-	private Long tipoConfiguracao;
+	private Integer tipoConfiguracao;
 	private Long movimentacao;
 	private ExConfiguracaoDestinatarios destinatarios;
 	private ExConfiguracaoVisibilidade visibilidade;
@@ -66,11 +66,11 @@ public class ExConfiguracaoDTO {
 		this.pessoas = pessoas;
 	}
 
-	public Long getTipoConfiguracao() {
+	public Integer getTipoConfiguracao() {
 		return tipoConfiguracao;
 	}
 
-	public void setTipoConfiguracao(Long tipoConfiguracao) {
+	public void setTipoConfiguracao(Integer tipoConfiguracao) {
 		this.tipoConfiguracao = tipoConfiguracao;
 	}
 
@@ -140,7 +140,7 @@ public class ExConfiguracaoDTO {
 		return idPessoas;		
 	}
 	
-	public long getIdSituacao() {
+	public int getIdSituacao() {
 		return visibilidade.obterIdSituacao();
 	}
 	

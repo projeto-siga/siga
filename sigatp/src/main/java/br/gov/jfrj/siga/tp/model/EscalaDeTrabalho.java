@@ -24,6 +24,7 @@ import org.hibernate.envers.Audited;
 
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 
 @Entity
 @Audited
@@ -35,7 +36,7 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 
 	@Id
 	@GeneratedValue(generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 
 	@NotNull
@@ -166,11 +167,12 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 			filtroCondutor = "condutor.id = " + idCondutor + " AND ";
 		}
 
-		String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+//		String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+		String dataFormatadaOracle = dataHoraInicio;
 		List<EscalaDeTrabalho> escalas;
 
-		String qrl = "SELECT e FROM EscalaDeTrabalho e WHERE " + filtroCondutor + " trunc(dataVigenciaInicio) <= trunc(" + dataFormatadaOracle + ")"
-				+ " AND (dataVigenciaFim IS NULL OR trunc(dataVigenciaFim) >= trunc(" + dataFormatadaOracle + "))";
+		String qrl = "SELECT e FROM EscalaDeTrabalho e WHERE " + filtroCondutor + FormatarDataHora.recuperaFuncaoTrunc() + "(dataVigenciaInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + ")"
+				+ " AND (dataVigenciaFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataVigenciaFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + "))";
 
 		Query qry = AR.em().createQuery(qrl);
 		try {

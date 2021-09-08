@@ -2173,7 +2173,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false exibeRodapeEnderecamento=false]
 	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
 	    cellspacing="0" bgcolor="#FFFFFF">
 	    <tr bgcolor="#FFFFFF">
@@ -2210,6 +2210,9 @@ Pede deferimento.</span><br/><br/><br/>
 	        </td>
 	    </tr>
 	</table>
+	[#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 [#macro cabecalhoCentralizado orgaoCabecalho=true]
@@ -2318,7 +2321,7 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro cabecalhoDireitaGenerico width="65" height="65" exibirOrgao=false]
+[#macro cabecalhoDireitaGenerico width="65" height="65" exibirOrgao=false exibeRodapeEnderecamento=false]
 <table width="100%" border="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
         <td width="100%">
@@ -2334,6 +2337,9 @@ Pede deferimento.</span><br/><br/><br/>
         </td>
     </tr>
 </table>
+[#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 [#macro cabecalhoDireita]
@@ -2577,7 +2583,7 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- FIM ASSINATURA -->
 [/#macro]
 
-[#macro estiloBrasaoAEsquerda tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto=""]
+[#macro estiloBrasaoAEsquerda tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto="" exibeRodapeEnderecamento=false]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoEsquerdaPrimeiraPagina width=width height=height exibirOrgao=exibirOrgao/]
@@ -2633,9 +2639,12 @@ Pede deferimento.</span><br/><br/><br/>
     [@rodape]
     [@rodapeNumeracaoADireita texto=texto/]
     [/@rodape]
+    [#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
- [#macro estiloBrasaoADireita tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=false texto=""]
+ [#macro estiloBrasaoADireita tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=false texto="" exibeRodapeEnderecamento=false]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoDireitaGenerico width=65 height=65 exibirOrgao=true/]
@@ -2677,6 +2686,9 @@ Pede deferimento.</span><br/><br/><br/>
    	[@rodapeClassificacaoDocumental align="right" texto=texto/]
     [@rodapeNumeracaoADireita texto="" /]
     [/@rodape]
+    [#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 
@@ -2917,7 +2929,7 @@ Pede deferimento.</span><br/><br/><br/>
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=true incluirMioloDJE=true]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=true incluirMioloDJE=true exibeRodapeEnderecamento=false]
             [#if dispoe_sobre != ""]     
               <table style="float:none;" width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
                   <tr>
@@ -2944,6 +2956,9 @@ Pede deferimento.</span><br/><br/><br/>
                 </center></span></p>
             </div>            
      [/@estiloBrasaoCentralizado]
+     [#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 [#macro quebraPagina]

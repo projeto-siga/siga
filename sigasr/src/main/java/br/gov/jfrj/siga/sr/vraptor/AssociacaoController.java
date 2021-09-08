@@ -15,12 +15,15 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
@@ -30,6 +33,7 @@ import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Controller
 @Path("app/associacao")
@@ -53,6 +57,7 @@ public class AssociacaoController extends SrController {
 
 	@Path("/desativar")
 	@AssertAcesso(ADM_ADMINISTRAR)
+	@Transacional
 	public void desativarAssociacao(Long idAssociacao) throws Exception {
 		SrConfiguracao associacao = SrConfiguracao.AR.findById(idAssociacao);
 		associacao.finalizar();
@@ -60,6 +65,7 @@ public class AssociacaoController extends SrController {
 	}
 
 	@Path("/gravar")
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacao, DpPessoaSelecao dpPessoa, DpFuncaoConfiancaSelecao funcaoConfianca, DpCargoSelecao cargo, CpPerfilSelecao cpGrupo, SrPesquisa pesquisaSatisfacao) throws Exception {
@@ -113,6 +119,7 @@ public class AssociacaoController extends SrController {
 
 	@Path("/gravarComoPesquisa")
 	@AssertAcesso(ADM_ADMINISTRAR)
+	@Transacional
 	public void gravarAssociacaoPesquisa(SrConfiguracao associacao, SrPesquisa pesquisa, SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel) throws Exception {
 
@@ -125,15 +132,15 @@ public class AssociacaoController extends SrController {
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel, SrPesquisa pesquisaSatisfacao) throws Exception {
 		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
 		associacao.setAcoesSet(acoesSet);
-		associacao.setAtributo(atributo == null || atributo.getId() == null ? null : SrAtributo.AR.findById(atributo.getId()));
-		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null || pesquisaSatisfacao.getId() == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
+		associacao.setAtributo(atributo == null || atributo.getId() == null ? null : SrAtributo.AR.findById(atributo.getId()).getAtributoInicial());
+		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null || pesquisaSatisfacao.getId() == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()).getPesquisaInicial());
 		associacao.setComplexo(complexo == null || complexo.getIdComplexo() == null ? null : CpComplexo.AR.findById(complexo.getIdComplexo()));
 		associacao.setOrgaoUsuario(orgaoUsuario == null || orgaoUsuario.getIdOrgaoUsu() == null ? null : CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
-		associacao.setDpPessoa(pessoaSel.buscarObjeto());
-		associacao.setLotacao(lotacaoSel.buscarObjeto());
-		associacao.setFuncaoConfianca(funcaoSel.buscarObjeto());
-		associacao.setCargo(cargoSel.buscarObjeto());
-		associacao.setCpGrupo(perfilSel.buscarObjeto());
+		associacao.setDpPessoa(pessoaSel.buscarObjeto() == null ? null : pessoaSel.buscarObjeto().getPessoaInicial());
+		associacao.setLotacao(lotacaoSel.buscarObjeto() == null ? null : lotacaoSel.buscarObjeto().getLotacaoInicial());
+		associacao.setFuncaoConfianca(funcaoSel.buscarObjeto() == null ? null : dao().consultar(funcaoSel.buscarObjeto().getIdFuncaoIni(),DpFuncaoConfianca.class,false));
+		associacao.setCargo(cargoSel.buscarObjeto() == null ? null : dao().consultar(cargoSel.buscarObjeto().getIdCargoIni(),DpCargo.class,false));
+		associacao.setCpGrupo(perfilSel.buscarObjeto() == null ? null : dao().consultar(perfilSel.buscarObjeto().getHisIdIni(),CpPerfil.class,false));
 	}
 	
 	

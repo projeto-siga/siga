@@ -15,7 +15,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
@@ -268,23 +267,53 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
 		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
 
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL")) {
+
+
+		
 		if (getDtIni() != null)
 			try {
-				query.append(" and sol.dtReg >= to_date('"
+				query.append(" and sol.dtReg >= STR_TO_DATE('"
 						+ dfHibernate.format(dfUsuario.parse(getDtIni()))
-						+ "', 'yyyy-MM-dd') ");
+						+ " 00:00:00', '%Y-%m-%d %H:%i:%s') ");
 			} catch (ParseException e) {
 				//
 			}
 
 		if (getDtFim() != null)
 			try {
-				query.append(" and sol.dtReg <= to_date('"
-						+ dfHibernate.format(dfUsuario.parse(getDtFim()))
-						+ " 23:59', 'yyyy-MM-dd HH24:mi') ");
+				query.append(" and sol.dtReg <= STR_TO_DATE('"
+						+ dfHibernate.format(dfUsuario.parse(getDtFim())) 
+						+ " 23:59:59', '%Y-%m-%d %H:%i:%s') ");
 			} catch (ParseException e) {
 				//
 			}
+		
+		
+		
+		} else {
+			
+			
+			if (getDtIni() != null)
+				try {
+					query.append(" and sol.dtReg >= to_date('"
+							+ dfHibernate.format(dfUsuario.parse(getDtIni()))
+							+ "', 'yyyy-MM-dd') ");
+				} catch (ParseException e) {
+					//
+				}
+
+			if (getDtFim() != null)
+				try {
+					query.append(" and sol.dtReg <= to_date('"
+							+ dfHibernate.format(dfUsuario.parse(getDtFim()))
+							+ " 23:59', 'yyyy-MM-dd HH24:mi') ");
+				} catch (ParseException e) {
+					//
+				}
+			
+		}
 		
 		if (Filtros.deveAdicionar(getAcordo()))
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");		

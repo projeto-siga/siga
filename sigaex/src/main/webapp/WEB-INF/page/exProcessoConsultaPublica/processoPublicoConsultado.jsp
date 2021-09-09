@@ -22,10 +22,14 @@
 				<div class="card bg-light mb-3">
 					<div class="card-header">
 						<h5>
-							<b>${titulo} - ${sigla}</b>   
-										<a href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${sigla}" id="linkDocPdf" target="_blank" >
-											<img src="/siga/css/famfamfam/icons/page_white_acrobat.png">
-										</a>
+ 
+
+							<b>${titulo} - ${sigla}</b>
+							<c:if test="${docVO.doc.exNivelAcesso.grauNivelAcesso == 10}">
+								 <a	href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${sigla}"		id="linkDocPdf" target="_blank">
+								 	 <img	src="/siga/css/famfamfam/icons/page_white_acrobat.png"></a>
+							</c:if>
+
  
 						</h5>
 					</div>

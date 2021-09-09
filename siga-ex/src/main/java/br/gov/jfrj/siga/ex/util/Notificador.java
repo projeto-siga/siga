@@ -38,6 +38,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
 public class Notificador {
 
@@ -132,14 +133,16 @@ public class Notificador {
 
 		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
 		
-		DpLotacao lotaAtendente = mov.mob().getAtendente().getLotacaoOuLotacaoPrincipalDaPessoa();
-		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) 
-				&& lotaAtendente != null 
-				&& (mov.getLotaTitular() == null || !mov.getLotaTitular().equivale(lotaAtendente))) {
-			try {
-				adicionarDestinatariosEmail(mov, destinatariosEmail, mov, null, lotaAtendente);
-			} catch (Exception e) {
-				throw new RuntimeException("Erro ao enviar email de notificação de movimentação.", e);
+		for (PessoaLotacaoParser atendente : mov.mob().getAtendente()) {
+			DpLotacao lotaAtendente = atendente.getLotacaoOuLotacaoPrincipalDaPessoa();
+			if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR)
+					&& lotaAtendente != null
+					&& (mov.getLotaTitular() == null || !mov.getLotaTitular().equivale(lotaAtendente))) {
+				try {
+					adicionarDestinatariosEmail(mov, destinatariosEmail, mov, null, lotaAtendente);
+				} catch (Exception e) {
+					throw new RuntimeException("Erro ao enviar email de notificação de movimentação.", e);
+				}
 			}
 		}
 		

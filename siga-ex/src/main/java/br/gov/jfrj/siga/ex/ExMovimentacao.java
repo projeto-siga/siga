@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
@@ -832,6 +833,16 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	/**
+	 * verifica se uma movimentação tem referência a alguma outra.
+	 * 
+	 * @return Verdadeiro se a movimentação está cancelada e Falso caso
+	 *         contrário.
+	 */
+	public boolean isReferenciando() {
+		return getExMovimentacaoRef() != null;
+	}
+
+	/**
 	 * verifica se uma movimentação é canceladora, ou seja, se é do tipo
 	 * Cancelamento de Movimentação.
 	 * 
@@ -1347,5 +1358,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Service.throwExceptionIfError(sCPF);
 
 		return "OK (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
+	}
+	
+	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
+		return Utils.equivale(getLotaResp(), lotaTitular)
+				|| Utils.equivale(getResp(),titular)
+				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
+				|| Utils.equivale(getDestinoFinal(),titular);
 	}
 }

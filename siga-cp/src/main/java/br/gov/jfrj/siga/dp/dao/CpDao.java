@@ -2001,7 +2001,7 @@ public class CpDao extends ModeloDao {
 		}
 		return entidade;
 	}
-
+ 
 	public <T> T gravar(final T entidade) {
 		if (entidade instanceof CarimboDeTempo){
 			((CarimboDeTempo) entidade).setHisDtAlt(this.dt());

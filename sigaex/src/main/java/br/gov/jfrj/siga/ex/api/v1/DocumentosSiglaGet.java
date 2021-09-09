@@ -54,7 +54,7 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		if (Prop.getBool("recebimento.automatico") 
 				&& Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
 			try {
-				Ex.getInstance().getBL().receber(cadastrante, lotaTitular, mob, new Date());
+				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 				throw e;

@@ -6741,8 +6741,7 @@ public class ExBL extends CpBL {
 			String motivo) throws Exception {		
 		
 		if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
-			throw new RegraNegocioException("Cancelamento não permitido." 
-					+ " Isso pode ocorrer se o documento não estiver apto a ser cancelado ou devido a alguma regra para não permitir esta operação");
+			throw new RegraNegocioException(SigaMessages.getMessage("excecao.cancelamento.naopodetornardocumentosemefeito"));
 
 		// Verifica se o subscritor pode movimentar todos os mobils
 		// E Também se algum documento diferente está apensado ou juntado a este
@@ -6752,7 +6751,7 @@ public class ExBL extends CpBL {
 			if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas					
 				
 				if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m)) {
-					throw new RegraNegocioException("Cancelamento não permitido. Você não possui permissão para executar essa operação no documento");
+					throw new RegraNegocioException(SigaMessages.getMessage("excecao.cancelamento.naopodemovimentar"));
 				}
 				
 				if (m.isJuntado()) {

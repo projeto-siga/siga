@@ -82,6 +82,7 @@ public class ProcessadorReferencias {
 		s = s.replace("<!-- FIM PRIMEIRO RODAPE -->", "FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE -->", "<!-- INICIO RODAPE");
 		s = s.replace("<!-- FIM RODAPE -->", "FIM RODAPE -->");
+		
 		return s;
 	}
 

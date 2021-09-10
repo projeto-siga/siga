@@ -719,18 +719,26 @@ public class CpDao extends ModeloDao {
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
 		final Query query = em().createNamedQuery("consultarPorSiglaDpLotacao");
 		query.setParameter("siglaLotacao", o.getSiglaLotacao());
-		if (o.getOrgaoUsuario() != null)
-			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
+		if (o.getOrgaoUsuario() != null) {
+			// O argumento siglaOrgaoLotacao preve a situação onde a sigla pesquisada contem um prefixo coincidente à 
+			// sigla de um orgão existente que o setSigla() do DpLotacao retirou
+			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) {
 				query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
-			else
-				query.setParameter("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());
-		else
+				query.setParameter("siglaOrgaoLotacao", o.getOrgaoUsuario().getSigla() + o.getSigla());
+			} else {
+				CpOrgaoUsuario org = consultarPorSigla(o.getOrgaoUsuario());
+				query.setParameter("idOrgaoUsu", org.getId());
+				query.setParameter("siglaOrgaoLotacao", org.getSigla() + o.getSigla());
+			}
+		} else {
 			query.setParameter("idOrgaoUsu", 0L);
+			query.setParameter("siglaOrgaoLotacao", null);
+		}
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		final List<DpLotacao> l = query.getResultList();
-		if (l.size() != 1)
+		if (l.size() == 0)
 			return null;
 		return l.get(0);
 	}
@@ -2513,10 +2521,26 @@ public class CpDao extends ModeloDao {
 //		TypedQuery typedQuery = em().createQuery(query);
 //		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
 		
+		if (u instanceof DpPessoa)
+			return (T) ((DpPessoa) u).getPessoaAtual();
+
+		if (u instanceof DpLotacao)
+			return (T) ((DpLotacao) u).getLotacaoAtual();
+		
+		String queryHisDtIni = "hisDtIni";
+		String queryHisIdIni = "hisIdIni";
+		if (u instanceof DpFuncaoConfianca) {
+			queryHisDtIni = "dataFimFuncao";
+			queryHisIdIni = "idFuncaoIni";
+		} else if (u instanceof DpCargo) {
+			queryHisDtIni = "dataFimCargo";
+			queryHisIdIni = "idCargoIni";
+		}
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
-		String sql = "from " + clazz + " u where u.hisDtIni = "
-			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
+		String sql = "from " + clazz + " u where u." + queryHisDtIni + " = "
+			+ "		(select max(p." + queryHisDtIni + ") from " + clazz + " p where p." + queryHisIdIni + " = :idIni)"
 			+ "		 and u.hisIdIni = :idIni";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
@@ -2531,9 +2555,23 @@ public class CpDao extends ModeloDao {
 	public <T extends Historico> T obterInicial(final T u) {
 		if (u.getId() == u.getHisIdIni())
 			return u;
+
+		if (u instanceof DpPessoa)
+			return (T) ((DpPessoa) u).getPessoaInicial();
+
+		if (u instanceof DpLotacao)
+			return (T) ((DpLotacao) u).getLotacaoInicial();
+		
+		String queryHisIdIni = "hisIdIni";
+		if (u instanceof DpFuncaoConfianca) {
+			queryHisIdIni = "idFuncaoIni";
+		} else if (u instanceof DpCargo) {
+			queryHisIdIni = "idCargoIni";
+		}
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
-		String sql = "from " + clazz + " u where u.hisIdIni = :idIni";		
+		String sql = "from " + clazz + " u where u." + queryHisIdIni + " = :idIni";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
 		qry.setFirstResult(0);

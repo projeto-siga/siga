@@ -124,6 +124,8 @@ public class SrConfiguracaoCache extends CpConfiguracaoCache {
 		this.atributoObrigatorio = cfg.isAtributoObrigatorio();
 		this.itemConfiguracaoSet = cfg.getItemConfiguracaoSet();
 		this.acoesSet = cfg.getAcoesSet();
+		this.acaoFiltro = cfg.getAcaoFiltro() != null ? cfg.getAcaoFiltro() : null;
+		this.itemConfiguracaoFiltro = cfg.getItemConfiguracaoFiltro() != null ? cfg.getItemConfiguracaoFiltro() : null;
 	}
 	
     public int getNivelItemParaComparar() {
@@ -169,7 +171,7 @@ public class SrConfiguracaoCache extends CpConfiguracaoCache {
 	}
 
 	public SrAcao getAcaoFiltro() {
-		return acaoFiltro;
+		return this.acaoFiltro;
 	}
 
 	public void setAcaoFiltro(SrAcao acaoFiltro) {

@@ -1178,5 +1178,10 @@ public class FuncoesEL {
 		return Ex.getInstance().getComp()
 				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
 	}
-	
+
+	public static String slugify(String string, Boolean lowercase,
+			Boolean underscore) {
+		return Texto.slugify(string, lowercase, underscore);
+	}
+
 }

@@ -91,7 +91,8 @@ function sbmt(offset) {
 		<tr class="${evenorodd}">
 			<td width="10%" align="center"><a
 				href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
-			<td width="90%" align="left">${item.descricao}</td>
+			<td width="90%" align="left"><a
+				href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.descricao}</a></td>
 		</tr>
 	</siga:paginador>
 </table>

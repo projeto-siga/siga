@@ -29,6 +29,7 @@ public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 		Prop.setProvider(this);
 		Prop.defineGlobalProperties();
+		defineProperties();
 
 		class HttpGetDependency extends TestableDependency {
 			String testsite;
@@ -76,17 +77,7 @@ public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	}
 	
 	private void defineProperties() {
-		addRestrictedProperty("datasource.url", null);
-		if (getProperty("datasource.url") != null) {
-			addRestrictedProperty("datasource.username");
-			addPrivateProperty("datasource.password");
-			addRestrictedProperty("datasource.name", null);
-		} else {
-			addRestrictedProperty("datasource.username", null);
-			addPrivateProperty("datasource.password", null);
-			addRestrictedProperty("datasource.name", "java:/jboss/datasources/SigaGcDS");
-		}
-		
+		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaGcDS");
 	}
 
 	@Override

@@ -317,7 +317,7 @@
 											</a>
 										</td>
 										<td style="padding-left: ${arqNumerado.nivel * 5 + 5}pt">
-											<c:if test="${!empty arqNumerado.arquivo.resumo}">
+											<c:if test="${siga_cliente != 'GOVSP' && !empty arqNumerado.arquivo.resumo}">
 												<c:forEach var="itemResumo" items="${arqNumerado.arquivo.resumo}">
 													<c:set var="tooltipResumo" value="${tooltipResumo}${itemResumo.key}:${itemResumo.value}&#13" />
 												</c:forEach>
@@ -340,7 +340,7 @@
 											<td align="center">${arqNumerado.paginaInicial}</td>
 										</c:if>
 									</tr>
-									<c:if test="${!empty arqNumerado.arquivo.resumo}">
+									<c:if test="${siga_cliente != 'GOVSP' && !empty arqNumerado.arquivo.resumo}">
 										<c:set var="possuiResumo" value="sim" />
 									</c:if>
 									<c:set var="arquivo" value="${arqNumerado}" scope="request" />
@@ -541,7 +541,10 @@
 	function exibir(refHTML, refPDF, semMarcas) {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
-
+		if('${excedeuTamanhoMax}' === 'true' && !($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked)) {
+			sigaModal.alerta("Agregação de documentos excedeu o tamanho máximo permitido.");
+			return;
+		}
 		if (ifr.addEventListener)
 			ifr.removeEventListener("load", resize, false);
 		else if (ifr.attachEvent)

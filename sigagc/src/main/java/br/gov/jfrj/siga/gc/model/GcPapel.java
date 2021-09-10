@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_PAPEL", schema = "SIGAGC")
+@Table(name = "gc_papel", schema = "sigagc")
 public class GcPapel extends Objeto {
 
 	public static ActiveRecord<GcPapel> AR = new ActiveRecord<>(

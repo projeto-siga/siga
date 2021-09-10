@@ -26,6 +26,14 @@ import br.gov.jfrj.siga.model.Selecao;
 
 public class DpLotacaoSelecao extends Selecao<DpLotacao> {
 
+	public DpLotacaoSelecao() {
+		super();
+	}
+
+	public DpLotacaoSelecao(DpLotacao titular) {
+		super(titular);
+	}
+
 	@Override
 	public DpLotacao buscarObjeto() throws AplicacaoException {
 		if (getId() == null)

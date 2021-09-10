@@ -19,8 +19,7 @@
 			<a href="${linkTo[AbastecimentoController].listar}">Voltar</a>&nbsp;&nbsp;&nbsp;
 		</span>
 	</c:if>
-	<c:if test="${menuAbastecimentosMostrarAvancado && (fn:length(condutoresEscalados) > 0 && fn:length(veiculosEscalados) > 0 && 
-				  fn:length(fornecedores) > 0 && fn:length(combustivel.values()) > 0)}">
+	<c:if test="${menuAbastecimentosMostrarAvancado && (fn:length(condutoresEscalados) > 0 && fn:length(veiculosEscalados) > 0 && fn:length(fornecedores) > 0 && fn:length(combustivel.values) > 0)}">
 		<span class="filtro">
 			<img src="/sigatp/public/images/filter-icon.png" />
 			<a class="filtro_Avancado" href="#"></a>
@@ -71,8 +70,7 @@
 	</form>
 </div>
 
-<c:if test="${menuAbastecimentosMostrarVoltar && (fn:length(condutoresEscalados) > 0 || fn:length(veiculosEscalados) > 0 || fn:length(fornecedores) > 0 ||
-		     fn:length(combustivel.values()) > 0)}">
+<c:if test="${menuAbastecimentosMostrarVoltar && (fn:length(condutoresEscalados) > 0 || fn:length(veiculosEscalados) > 0 || fn:length(fornecedores) > 0 || fn:length(combustivel.values) > 0)}">
 	<script type="text/javascript">
 		trocaExibicaoCaixaBuscaAvancada();
 	</script>

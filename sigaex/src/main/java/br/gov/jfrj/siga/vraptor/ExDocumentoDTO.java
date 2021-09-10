@@ -16,9 +16,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -50,7 +54,7 @@ public class ExDocumentoDTO {
 
 	private File arquivo;
 
-	private LinkedHashSet<ExPreenchimento> preenchSet = null;
+	private SortedSet<ExPreenchimento> preenchSet = null;
 
 	private String preenchParamRedirect;
 
@@ -453,18 +457,13 @@ public class ExDocumentoDTO {
 	}
 
 	public Map<Integer, String> getListaTipoDest() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
-		map.put(3, "Externo");
-		map.put(4, "Campo Livre");
-		return map;
+		return TipoResponsavelEnum.getLista();
 	}
 
 	public Map<Integer, String> getListaTipoEmitente() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Externo");
-		map.put(2, "Campo Livre");
+		map.put(1, SigaMessages.getMessage("responsavel.externo"));
+		map.put(2, SigaMessages.getMessage("responsavel.campo.livre"));
 		return map;
 	}
 
@@ -996,11 +995,11 @@ public class ExDocumentoDTO {
 		this.formasDoc = formasDoc;
 	}
     
-    public void setPreenchSet(LinkedHashSet<ExPreenchimento> preenchSet) {
+    public void setPreenchSet(SortedSet<ExPreenchimento> preenchSet) {
 		this.preenchSet = preenchSet;
 	}
     
-    public LinkedHashSet<ExPreenchimento> getPreenchimentos() {
+    public SortedSet<ExPreenchimento> getPreenchimentos() {
 		return preenchSet;
 	}
     

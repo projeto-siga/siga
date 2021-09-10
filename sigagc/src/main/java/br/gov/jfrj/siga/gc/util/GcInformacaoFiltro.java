@@ -8,10 +8,10 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
-import br.gov.jfrj.siga.model.Selecionavel;
 
 public class GcInformacaoFiltro {
 	public GcTipoInformacao tipo;
@@ -74,8 +74,8 @@ public class GcInformacaoFiltro {
 			query += " and inf.lotacao.idLotacaoIni = "
 					+ lotacao.getIdInicial();
 
-		if (tipo != null && tipo.id != 0L)
-			query += " and inf.tipo = " + tipo.id;
+		if (tipo != null && tipo.getId() != 0L)
+			query += " and inf.tipo = " + tipo.getId();
 
 		if (ano != null)
 			query += " and inf.ano = " + Integer.parseInt(ano.toString());
@@ -120,11 +120,21 @@ public class GcInformacaoFiltro {
 
 		String subquery = "";
 
+		Boolean parametro = false;
 		if (situacao != null && situacao.getIdMarcador() != null
 				&& situacao.getIdMarcador() > 0)
+		{
+			parametro = true;
 			subquery += " and situacao.cpMarcador.idMarcador = "
 					+ situacao.getIdMarcador()
-					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > sysdate)";
+					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > :dbDatetime)";
+		} 
+		
+		else if (situacao.getIdMarcador() == null) {
+			parametro = true;
+			subquery += " and situacao.cpMarcador.idMarcador <> 10 "
+					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > :dbDatetime)";
+		}
 
 		if (responsavel != null)
 			subquery += " and situacao.dpPessoaIni.idPessoa = "
@@ -150,13 +160,25 @@ public class GcInformacaoFiltro {
 			} catch (ParseException e) {
 				//
 			}
-		if (subquery.length() > 0)
+		
+		if (subquery.length() > 0) {
 			subquery = " and exists (from GcMarca situacao where situacao.inf = inf "
 					+ subquery + " )";
+		}
 
-		List listaRetorno = GcInformacao.AR.em()
-				.createQuery(query + subquery + "order by inf.hisDtIni desc")
+		List listaRetorno = null;
+		if (parametro) {
+		    listaRetorno = GcInformacao.AR.em()
+				.createQuery(query + subquery + " order by inf.hisDtIni desc")
+				.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor())
 				.getResultList();
+		}
+		else {
+			listaRetorno = GcInformacao.AR.em()
+					.createQuery(query + subquery + " order by inf.hisDtIni desc")
+					.getResultList();
+		
+		}
 
 		return listaRetorno;
 	}

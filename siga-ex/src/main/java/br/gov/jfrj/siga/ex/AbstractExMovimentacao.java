@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -42,7 +43,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.annotations.BatchSize;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -50,10 +50,9 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -61,6 +60,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
  * A class that represents a row in the EX_MOVIMENTACAO table. You can customize
  * the behavior of this class by editing the class, {@link ExMovimentacao()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({ @NamedQuery(name = "consultarPorSigla", query = "select mob from ExMobil mob"
 		+ "                inner join fetch mob.exDocumento doc" + "                where ("
@@ -94,42 +94,42 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = "consultarParaArquivarIntermediarioEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < :dbDatetime)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > :dbDatetime)"
 				+ "                order by mob.exDocumento.dtDoc asc"),
 
 		@NamedQuery(name = "consultarQuantidadeParaArquivarIntermediarioEmLote", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < :dbDatetime)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > :dbDatetime)"),
 		// Somente os "a recolher para arquivo permanente"
 		@NamedQuery(name = "consultarParaArquivarPermanenteEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=50      "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < :dbDatetime)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > :dbDatetime)"
 				+ "                order by mob.exDocumento.dtDoc asc"),
 		@NamedQuery(name = "consultarQuantidadeParaArquivarPermanenteEmLote", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=50              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < :dbDatetime)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > :dbDatetime)"),
 		// Somente os "a eliminar"
 		@NamedQuery(name = "consultarAEliminar", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.cpMarcador.idMarcador=7)"
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)"
 				+ "                and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < :dbDatetime)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > :dbDatetime)"),
 		@NamedQuery(name = "consultarQuantidadeAEliminar", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=7              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)"
 				+ "                and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)"
-				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"),
+				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < :dbDatetime)"
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > :dbDatetime)"),
 		// Somente os "em edital de eliminação"
 		@NamedQuery(name = "consultarEmEditalEliminacao", query = "select mob, mar" + "                from ExMobil mob"
 				+ "                join mob.exMarcaSet mar" + "                join mob.exDocumento doc"
@@ -178,8 +178,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
 })
 public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
-
-	private static final long serialVersionUID = -1521008574855565618L;
 
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
 
@@ -479,6 +477,14 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "dt_param1", length = 19)
+	private Date dtParam1;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "dt_param2", length = 19)
+	private Date dtParam2;
 
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
@@ -844,9 +850,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setConteudoTpMov(final String conteudoTp) {
 	    this.conteudoTpMov = conteudoTp;
-	    if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-	        criarCpArquivo();
-	        cpArquivo.setConteudoTpArq(conteudoTp);
+	    if (orgaoPermiteHcp() && this.conteudoBlobMov == null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+	    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
 	    }
 	}
 
@@ -857,8 +862,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 			cacheConteudoBlobMov = conteudoBlobMov;
 		} else {
 			try {
-				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
-				cacheConteudoBlobMov = a.recuperar(getCpArquivo());
+				cacheConteudoBlobMov = getCpArquivo().getConteudo();
 			} catch (Exception e) {
 				throw new AplicacaoException(e.getMessage());
 			}
@@ -868,22 +872,41 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setConteudoBlobMov(byte[] createBlob) {
 		cacheConteudoBlobMov = createBlob;
-		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			conteudoBlobMov = createBlob;
+		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
+			this.conteudoBlobMov = createBlob;
 		} else if(cacheConteudoBlobMov != null){
-			criarCpArquivo();
-			cpArquivo.setTamanho(cacheConteudoBlobMov.length);
-			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobMov));
+			if(orgaoPermiteHcp())
+				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
+			else
+				this.conteudoBlobMov = createBlob;
 		}
 		
 	}
-	
-	private void criarCpArquivo() {
-		if(cpArquivo == null) {
-			cpArquivo = new CpArquivo();
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(getDtMov()!=null?getDtMov():new Date());
-		}
+
+	public Date getDtParam1() {
+		return dtParam1;
 	}
+
+	public void setDtParam1(Date dtParam1) {
+		this.dtParam1 = dtParam1;
+	}
+
+	public Date getDtParam2() {
+		return dtParam2;
+	}
+
+	public void setDtParam2(Date dtParam2) {
+		this.dtParam2 = dtParam2;
+	}
+	
+	private boolean orgaoPermiteHcp() {
+		if(exMobil!=null && exMobil.getDoc()!=null && exMobil.getDoc().getCadastrante()!=null && exMobil.getDoc().getCadastrante().getOrgaoUsuario()!=null) {
+			List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
+			CpOrgaoUsuario orgaoUsuario = exMobil.getDoc().getCadastrante().getOrgaoUsuario();
+			if(orgaos != null && orgaoUsuario!=null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(orgao -> orgao.equals(orgaoUsuario.getSigla()))) )
+				return true;
+		}
+		return false;
+	}
+	
 }

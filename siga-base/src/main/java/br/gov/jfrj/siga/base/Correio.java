@@ -74,9 +74,15 @@ public class Correio {
 		List<String> listaServidoresEmail = new ArrayList<>();
 
 		// lista indisponivel. Tenta ler apenas 1 servidor definido.
+		String servidor = Prop.get("/siga.smtp");
+		
+		// Se não for definido um servidor, simplesmente não enviar nenhum email
+		if (servidor == null)
+			return;
+		
 		if (listaServidoresEmail == null || listaServidoresEmail.size() == 0) {
 			listaServidoresEmail = new ArrayList<String>();
-			listaServidoresEmail.add(Prop.get("/siga.smtp"));
+			listaServidoresEmail.add(servidor);
 		}
 
 		boolean servidorDisponivel = false;
@@ -142,7 +148,7 @@ public class Correio {
 		session.setDebug(debug);
 		// Cria mensagem e seta alguns valores que constituem
 		// os seus headers.
-		final Message msg = new MimeMessage(session);
+		final MimeMessage msg = new MimeMessage(session);
 
 		if (destinatarios.length == 1) {
 			if (!destinatarios[0].equals("null") && !destSet.contains(destinatarios[0]))
@@ -181,16 +187,16 @@ public class Correio {
 		
 		
 		if (isVersionTest) {
-			msg.setSubject(assunto + "AMBIENTE DE TESTE FAVOR DESCONSIDERAR");
+			msg.setSubject(assunto + " - AMBIENTE DE TESTE FAVOR DESCONSIDERAR", "utf-8");
 		}
 		else {
-			msg.setSubject(assunto);
+			msg.setSubject(assunto, "utf-8");
 		}
 		
 
 		if (conteudoHTML == null) {
 			// msg.setText(conteudo);
-			msg.setSubject(assunto);
+			msg.setSubject(assunto, "utf-8");
 			msg.setContent(conteudo, "text/plain;charset=UTF-8");
 		} else {
 			Multipart mp = new MimeMultipart("alternative");

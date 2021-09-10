@@ -50,17 +50,17 @@
 								<tr>
 									<td width="10%">
 									<c:if test="${!item.situacaoServico.equals('REALIZADO') && !item.situacaoServico.equals('CANCELADO')}">
-										<sigatp:formatarColuna operacao="editar" href="${linkTo[ServicoVeiculoController].editar[item.id]}" titulo="servi&ccedil;o" />
+										<sigatp:formatarColuna operacao="editar" href="${linkTo[ServicoVeiculoController].editar(item.id)}" titulo="servi&ccedil;o" />
 									</c:if>	
 									</td>
 									<td width="10%">
 									<c:if test="${item.situacaoServico.equals('AGENDADO')}">
-										<sigatp:formatarColuna operacao="excluir" href="${linkTo[ServicoVeiculoController].excluir[item.id]}" titulo="servi&ccedil;o"
+										<sigatp:formatarColuna operacao="excluir" href="${linkTo[ServicoVeiculoController].excluir(item.id)}" titulo="servi&ccedil;o"
 										onclick="javascript:return confirm('Tem certeza de que deseja excluir os dados deste servi&ccedil;o?');"/>
 									</c:if>	
 									</td>
-									<td><nobr><a href="${linkTo[ServicoVeiculoController].buscarServico[false][item.sequence]}">${item.sequence}</a> 
-									<a href="#" onclick="javascript:window.open('${linkTo[ServicoVeiculoController].buscarServico[true][item.sequence]}');">
+									<td><nobr><a href="${linkTo[ServicoVeiculoController].buscarServico(false,item.sequence)}">${item.sequence}</a> 
+									<a href="#" onclick="javascript:window.open('${linkTo[ServicoVeiculoController].buscarServico(true,item.sequence)}');">
 									<img src="/sigatp/public/images/linknovajanelaicon.png" 
 									alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr></td>				
 									<td>${item.situacaoServico}</td>

@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.sr.util.TestUtil;
 
@@ -166,8 +167,8 @@ public class SrSolicitacaoTest {
 					filha.getItemConfiguracao(), filha.getAcao(),
 					"Fechando para teste", m, null, null);
 			long marcadorEsperado = m.equals(SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO) || m.equals(SrTipoMotivoFechamento.TAREFA_CONCLUÍDA)
-					? CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL
-					: CpMarcador.MARCADOR_SOLICITACAO_NECESSITA_PROVIDENCIA;
+					? CpMarcadorEnum.SOLICITACAO_FECHADO_PARCIAL.getId()
+					: CpMarcadorEnum.SOLICITACAO_NECESSITA_PROVIDENCIA.getId();
 			TestCase.assertTrue(principal.isMarcada(marcadorEsperado));
 			filha.desfazerUltimaMovimentacao(filha.getCadastrante(), filha.getLotaCadastrante(),
 					filha.getTitular(), filha.getLotaTitular());

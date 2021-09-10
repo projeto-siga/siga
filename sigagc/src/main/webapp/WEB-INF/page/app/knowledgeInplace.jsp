@@ -7,7 +7,7 @@
 				<c:choose>
 					<c:when test="${pagina == 'exibir'}">
 						<a style="float: right;" title="Exibir conhecimento"
-							href="${linkTo[AppController].exibir[conhecimento[3]]}"
+							href="${linkTo[AppController].exibir(conhecimento[3])}"
 							${popup?'target="_blank"':''}> <img
 							src="/siga/css/famfamfam/icons/zoom.png">
 						</a>

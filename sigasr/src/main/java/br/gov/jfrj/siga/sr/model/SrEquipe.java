@@ -28,7 +28,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_EQUIPE", schema = "SIGASR")
+@Table(name = "sr_equipe", schema = "sigasr")
 public class SrEquipe extends HistoricoSuporte {
 
     public static final ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);

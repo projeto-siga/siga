@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FileUtils;
 
 import br.com.caelum.vraptor.Controller;
@@ -24,7 +25,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -67,7 +68,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	}
 	
 	@Override
-	public Selecionavel selecionarPorNome(final DpFuncaoConfiancaDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpFuncaoConfiancaDaoFiltro flt)
 			throws AplicacaoException {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
@@ -134,6 +135,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			}
 			dpFuncao.setIdOrgaoUsu(idOrgaoUsu);
 			dpFuncao.setNome(Texto.removeAcento(nome));
+			dpFuncao.setBuscarInativas(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltro(dpFuncao, paramoffset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpFuncao));
@@ -218,71 +220,58 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		result.include("id",id);
 	}
 	
+	@Transacional
 	@Post("/app/funcao/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmFuncao, 
 							 final Long idOrgaoUsu) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
-		
-		if(nmFuncao == null)
-			throw new AplicacaoException("Nome da função não informado");
-		
-		if(idOrgaoUsu == null)
-			throw new AplicacaoException("Órgão não informado");
-		
-		if(nmFuncao != null && !nmFuncao.matches(Texto.FuncaoConfianca.REGEX_CARACTERES_PERMITIDOS)) 
-			throw new AplicacaoException("Nome com caracteres não permitidos");
-		
-		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
-		
-		funcao.setNomeFuncao(Texto.removeAcento(Texto.removerEspacosExtra(nmFuncao).trim()));
-		CpOrgaoUsuario ou = new CpOrgaoUsuario();
-		ou.setIdOrgaoUsu(idOrgaoUsu);
-		funcao.setOrgaoUsuario(ou);
-		
-		funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);
-		
-		if(funcao != null && !funcao.getId().equals(id)) {
-			throw new AplicacaoException("Nome da função já cadastrado!");
-		}
-		
-		funcao = new DpFuncaoConfianca();
-		
-		List<DpPessoa> listPessoa = null;
-		
-		funcao = new DpFuncaoConfianca();	
-		if (id == null) {
-			funcao = new DpFuncaoConfianca();
-			Date data = new Date(System.currentTimeMillis());
-			funcao.setDataInicio(data);
-			
-		} else {
-			funcao = dao().consultar(id, DpFuncaoConfianca.class, false);
-			listPessoa = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
-			
-		}
-		funcao.setNomeFuncao(Texto.removerEspacosExtra(nmFuncao).trim());
-		
-		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
-			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);	
-			funcao.setOrgaoUsuario(orgaoUsuario);
-		}
-		
-		try {
-			dao().iniciarTransacao();
-			dao().gravar(funcao);
-			if(funcao.getIdFuncaoIni() == null && funcao.getId() != null) {
-				funcao.setIdFuncaoIni(funcao.getId());
-				funcao.setIdeFuncao(funcao.getId().toString());
-				dao().gravar(funcao);
-			}
-			dao().commitTransacao();			
-		} catch (final Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
-		}
+		Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, nmFuncao, idOrgaoUsu,null);
 		this.result.redirectTo(this).lista(0, null, "");
+	}
+	
+	@Transacional
+	@Post("/app/funcao/ativarInativar")
+	public void ativarInativar(final Long id) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
+		
+		DpFuncaoConfianca funcaoConfianca = dao().consultar(id, DpFuncaoConfianca.class, false);
+
+		// ativar
+		if (funcaoConfianca.getDataFimFuncao() != null ) {		
+			Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, null, null, Boolean.TRUE);
+		} else {// inativar
+			Cp.getInstance().getBL().gravarFuncaoConfianca(getIdentidadeCadastrante(), id, null, null, Boolean.FALSE);
+		}
+		
+		if (funcaoConfianca.getOrgaoUsuario() != null)
+			this.result.redirectTo(this).lista(0,funcaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(), "");
+		else
+			this.result.redirectTo(this).lista(0,null, "");
+	}
+	
+	@Transacional
+	@Post("/app/funcao/excluir")
+	public void excluir(final Long id) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
+		
+		if (id != null) {
+			try {
+				DpFuncaoConfianca funcaoConfianca = dao().consultar(id, DpFuncaoConfianca.class, false);;	
+				Cp.getInstance().getBL().excluirFuncaoConfianca(funcaoConfianca);	
+				
+				if (funcaoConfianca.getOrgaoUsuario() != null)
+					this.result.redirectTo(this).lista(0,funcaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(), "");
+				else
+					this.result.redirectTo(this).lista(0,null, "");
+			} catch (final AplicacaoException e) {
+				throw new AplicacaoException("<b>Não é possível efetuar a exclusão:</b> " + e.getMessage(),0);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Não é possível efetuar a exclusão. Favor tentar inativar a Função de Confiança.");
+			}
+		} else {
+			throw new AplicacaoException("ID não informado.");
+		}
 	}
 	
 	@Get("/app/funcao/carregarExcel")
@@ -296,6 +285,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpFuncao/cargaFuncao.jsp");
 	}
 	
+	@Transacional
 	@Post("/app/funcao/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;
@@ -316,7 +306,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			}
 			
 			CpBL cpbl = new CpBL();
-			inputStream = cpbl.uploadFuncao(file, orgaoUsuario, extensao);
+			inputStream = cpbl.uploadFuncao(file, orgaoUsuario, extensao, getIdentidadeCadastrante());
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}

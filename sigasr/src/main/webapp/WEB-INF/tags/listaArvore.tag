@@ -17,7 +17,7 @@
 			<b><i>
 		</c:when>
 		<c:otherwise>
-			<a style="color: #365b6d;" href="${linkTo[SolicitacaoController].exibir[solicitacao.siglaCompacta]}"
+			<a style="color: #365b6d;" href="${linkTo[SolicitacaoController].exibir(solicitacao.siglaCompacta)}"
 			style="text-decoration: none">
 		</c:otherwise>
 	</c:choose>

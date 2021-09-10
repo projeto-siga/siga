@@ -42,11 +42,15 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 
 
+@SuppressWarnings("serial")
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_identidade")
 public class CpIdentidade extends AbstractCpIdentidade {
+
+	public static final long pinLength = 8L;
+	
 
 	public DpPessoa getPessoaAtual() {
 		return CpDao.getInstance().consultarPorIdInicial(
@@ -144,5 +148,9 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	public void setHisAtivo(Integer hisAtivo) {
 		super.setHisAtivo(hisAtivo);
 		this.hisAtivo = getHisAtivo();
+	}
+	
+	public boolean isPinCadastrado()  {
+		return this.getPinIdentidade() != null;
 	}
 }

@@ -77,9 +77,7 @@
 			<c:set var="dtUlt" value="" />
 			<c:set var="temmov" value="${false}" />
 			<c:forEach var="mov" items="${m.movs}">
-				<c:if test="${mov.idTpMov != 14 and not mov.cancelada}">
 					<c:set var="temmov" value="${true}" />
-				</c:if>
 			</c:forEach>
 			<c:if test="${temmov}">
 					<table class="table table-sm table-hover table-striped  table-responsive mov mt-2">
@@ -111,10 +109,8 @@
 							</tr>
 						</thead>
 						<c:forEach var="mov" items="${m.movs}">
-							<c:if test="${mov.idTpMov != 14 and not mov.cancelada}">
 								<tr class="${mov.classe} ${mov.disabled}">
 									<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
-									<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
 									<c:choose>
 										<c:when test="${dt == dtUlt}">
 											<c:set var="dt" value="" />
@@ -139,7 +135,7 @@
  											descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" 
  											pessoaParam="${mov.parte.cadastrante.sigla}" /> 
 									</td>
-									<td>
+									<td> 
 										${mov.descricao}
 										<c:if test='${mov.idTpMov != 2}'>
 											${mov.complemento}
@@ -151,7 +147,7 @@
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
 													url="${pageContext.request.contextPath}${acao.url}" test="${true}" popup="${acao.popup}" 
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
-													idAjax="${mov.idMov}" classe="${acao.classe}" />
+													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}"/>
 												<c:if test='${assinadopor and mov.idTpMov == 2}'>
 													${mov.complemento}
 													<c:set var="assinadopor" value="${false}" />
@@ -170,7 +166,6 @@
 										</td>
 									</c:if>
 								</tr>
-							</c:if>
 						</c:forEach>
 					</table>
 			</c:if>

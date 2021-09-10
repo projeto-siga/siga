@@ -40,6 +40,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
@@ -54,13 +56,22 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and o.dataFimCargo = null" + "   	order by upper(o.nomeCargo)"),
+		@NamedQuery(name = "consultarPorFiltroDpCargoInclusiveInativos", query = "from DpCargo cargo"
+				+ "     where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  	and upper(cargo.nomeCargoAI) like upper('%' || :nome || '%')"
+				+ "		and exists (select 1 from DpCargo cAux where cAux.idCargoIni = cargo.idCargoIni"
+				+ "			group by cAux.idCargoIni having max(cAux.dataInicioCargo) = cargo.dataInicioCargo)"
+				+ "   	order by upper(nomeCargo)"),
 		@NamedQuery(name = "consultarQuantidadeDpCargo", query = "select count(o) from DpCargo o "
 				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and o.dataFimCargo = null"),
+		@NamedQuery(name = "consultarQuantidadeDpCargoInclusiveInativos", query = "select count(distinct cargo.idCargoIni) from DpCargo cargo "
+				+ "     where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  	and upper(cargo.nomeCargoAI) like upper('%' || :nome || '%')"),
 		@NamedQuery(name = "consultarPorNomeDpCargoOrgao", query = "select cargo from DpCargo cargo "
-				+ " where upper(REMOVE_ACENTO(cargo.nomeCargo)) = upper(REMOVE_ACENTO(:nome)) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
-public abstract class AbstractDpCargo extends Objeto implements Serializable {
+				+ " where upper(REMOVE_ACENTO(cargo.nomeCargo)) = upper(REMOVE_ACENTO(:nome)) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario and cargo.dataFimCargo = null")})
+public abstract class AbstractDpCargo extends Objeto implements Serializable, HistoricoAuditavel {
 
 	@Id
 	@SequenceGenerator(name = "DP_CARGO_SEQ", sequenceName = "CORPORATIVO.DP_CARGO_SEQ")
@@ -69,34 +80,47 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable {
 	@Desconsiderar
 	private Long idCargo;
 
+	/** Campos que geram versionamento de registro **/
 	@Column(name = "NOME_CARGO", nullable = false, length = 100)
 	private String nomeCargo;
 
-	@Desconsiderar
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FIM_CARGO", length = 19)
 	private Date dataFimCargo;
+	
+	@Column(name = "SIGLA_CARGO", length = 30)
+	private String siglaCargo;
+	
+	@Column(name = "IDE_CARGO", length = 256)
+	private String ideCargo;
+	
+	/******** ********/
 
-	@Desconsiderar
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_INI_CARGO", length = 19)
+	@Desconsiderar
 	private Date dataInicioCargo;
 
 	@Column(name = "ID_CARGO_INICIAL")
 	@Desconsiderar
 	private Long idCargoIni;
 
-	@Column(name = "IDE_CARGO", length = 256)
-	private String ideCargo;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
-	@Column(name = "SIGLA_CARGO", length = 30)
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_INI")
 	@Desconsiderar
-	private String siglaCargo;
+	private CpIdentidade hisIdcIni;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@Desconsiderar
+    @JoinColumn(name="HIS_IDC_FIM")
+	private CpIdentidade hisIdcFim;
+
+
 
 	/**
 	 * @return Retorna o atributo idCargo.
@@ -222,5 +246,35 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable {
 	public void setSiglaCargo(String siglaCargo) {
 		this.siglaCargo = siglaCargo;
 	}
+
+	/**
+	 * @return the hisIdcIni
+	 */
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	/**
+	 * @param hisIdcIni the hisIdcIni to set
+	 */
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
+
+	/**
+	 * @return the hisIdcFim
+	 */
+	public CpIdentidade getHisIdcFim() {
+		return hisIdcFim;
+	}
+
+	/**
+	 * @param hisIdcFim the hisIdcFim to set
+	 */
+	public void setHisIdcFim(CpIdentidade hisIdcFim) {
+		this.hisIdcFim = hisIdcFim;
+	}
+	
+	
 
 }

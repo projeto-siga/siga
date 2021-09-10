@@ -26,20 +26,19 @@ import javax.persistence.Transient;
  * The persistent class for the EX_SEQUENCIA database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
-@Table(name="EX_PROTOCOLO")
+@Table(name = "siga.ex_protocolo")
 @NamedQueries({
-	@NamedQuery(name="ExProtocolo.obterProtocoloPorDocumento", query="SELECT e FROM ExProtocolo e where e.exDocumento.idDoc = :idDoc and rownum = :rownum")
+	@NamedQuery(name="ExProtocolo.obterProtocoloPorDocumento", query="SELECT e FROM ExProtocolo e where e.exDocumento.idDoc = :idDoc ")
 	
 })
 
 public class ExProtocolo implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@SequenceGenerator(name="EX_PROTOCOLO_GENERATOR", sequenceName="EX_PROTOCOLO_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_PROTOCOLO_GENERATOR")
+	@GeneratedValue(generator="EX_PROTOCOLO_GENERATOR")
 	@Column(name="ID_PROTOCOLO")
 	private long idProtocolo;
 

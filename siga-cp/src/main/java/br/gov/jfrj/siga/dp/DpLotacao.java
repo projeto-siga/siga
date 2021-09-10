@@ -42,22 +42,25 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
-@Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
+@Table(name = "corporativo.dp_lotacao")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable<Object>, DpConvertableEntity {
-	private static final long serialVersionUID = 5628179687234082413L;
+	
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(
 			DpLotacao.class);
 
@@ -166,6 +169,8 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		if (sigla == null) {
 			sigla = "";
 		}
+		if (ContextoPersistencia.getEntityManager() == null) 
+			return;
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance().listarOrgaosUsuarios();
 		for (CpOrgaoUsuario ou : lou) {
@@ -450,6 +455,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	@Override
 	public String toString() {
 		return getSiglaCompleta();
+	}
+	
+	@Override
+	public String getSiglaDePessoaEOuLotacao() {
+		return SiglaParser.makeSigla(null, this);
 	}
 
 }

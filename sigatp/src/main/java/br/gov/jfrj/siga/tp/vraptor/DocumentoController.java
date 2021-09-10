@@ -1,17 +1,24 @@
 package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.Calendar;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
 import br.gov.jfrj.siga.tp.exceptions.ApplicationControllerException;
 import br.gov.jfrj.siga.tp.model.RequisicaoTransporte;
@@ -20,19 +27,14 @@ import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.regex.Matcher;
-
-@Resource
+@Controller
 @Path("/app/documento")
 public class DocumentoController extends TpController {
 	
     @SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
 
+    @Inject
     private AutorizacaoGI autorizacaoGI;
 
     private MissaoController missaoController;
@@ -41,10 +43,17 @@ public class DocumentoController extends TpController {
 
     private ServicoVeiculoController servicoVeiculoController;
 	
-    public DocumentoController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em, AutorizacaoGI autorizacaoGI, MissaoController missaoController,
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public DocumentoController() {
+		super();
+	}
+	
+	@Inject
+    public DocumentoController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,   EntityManager em, MissaoController missaoController,
             RequisicaoController requisicaoController, ServicoVeiculoController servicoVeiculoController) {
         super(request, result, TpDao.getInstance(), validator, so, em);
-        this.autorizacaoGI = autorizacaoGI;
         this.missaoController = missaoController;
         this.requisicaoController = requisicaoController;
         this.servicoVeiculoController = servicoVeiculoController;

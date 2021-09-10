@@ -40,6 +40,7 @@ import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.validator.Validator;
@@ -218,11 +219,20 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
-	@Get("/app/assinador-popup/doc/{id}/hash")
+	@Transacional
+	@Post("/app/assinador-popup/doc/{id}/hash")
 	public void assinadorPopupHash(String id) throws Exception {
 		try {
-			JSONObject req = getJsonReq(request);
-
+			String sigla = id2sigla(id) + ".pdf";
+			ExMobil mob = Documento.getMobil(sigla);
+			ExMovimentacao mov = Documento.getMov(mob, sigla);
+			ExDocumento doc = mob.getDoc();
+			
+			if (mov == null && !doc.isFinalizado()) {
+				DpPessoa cadastrante = obterCadastrante(null, mob, mov);
+				Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);
+			}
+			
 			PdfData pdfd = getPdf(id);
 
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
@@ -256,6 +266,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Put("/public/app/assinador-externo/doc/{id}/sign")
 	public void assinadorExternoSave(String id) throws Exception {
 		try {
@@ -268,6 +279,7 @@ public class ExAssinadorExternoController extends ExController {
 		assinadorPopupSave(id);
 	}
 
+	@Transacional
 	@Put("/app/assinador-popup/doc/{id}/sign")
 	public void assinadorPopupSave(String id) throws Exception {
 		try {
@@ -303,24 +315,7 @@ public class ExAssinadorExternoController extends ExController {
 			ExMobil mob = Documento.getMobil(sigla);
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
 
-			DpPessoa cadastrante = getCadastrante();
-			if (cadastrante == null) {
-				List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
-				for (DpPessoa p : pessoas) {
-					if (mov != null && mov.getResp() != null) {
-						if (p.equivale(mov.getResp())) {
-							cadastrante = p;
-							break;
-						}
-					} else if (p.equivale(mob.doc().getSubscritor())) {
-						cadastrante = p;
-					}
-				}
-				if (cadastrante == null && pessoas.size() >= 1)
-					cadastrante = pessoas.get(0);
-				if (cadastrante == null && mov == null)
-					throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
-			}
+			DpPessoa cadastrante = obterCadastrante(cpf, mob, mov);
 
 			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
 			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
@@ -342,7 +337,7 @@ public class ExAssinadorExternoController extends ExController {
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar);
+						null, tpMov, juntar, tramitar == null ? false : tramitar, null, getTitular());
 				if (msg != null)
 					msg = "OK: " + msg;
 				else
@@ -358,6 +353,28 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
+	}
+
+	private DpPessoa obterCadastrante(Long cpf, ExMobil mob, ExMovimentacao mov) throws Exception {
+		DpPessoa cadastrante = getCadastrante();
+		if (cadastrante == null && cpf != null) {
+			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
+			for (DpPessoa p : pessoas) {
+				if (mov != null && mov.getResp() != null) {
+					if (p.equivale(mov.getResp())) {
+						cadastrante = p;
+						break;
+					}
+				} else if (p.equivale(mob.doc().getSubscritor())) {
+					cadastrante = p;
+				}
+			}
+			if (cadastrante == null && pessoas.size() >= 1)
+				cadastrante = pessoas.get(0);
+			if (cadastrante == null && mov == null)
+				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
+		}
+		return cadastrante;
 	}
 
 	private class Signature {
@@ -527,13 +544,15 @@ public class ExAssinadorExternoController extends ExController {
 			detail.put("context", context);
 			detail.put("service", "sigadocsigner");
 			detail.put("stacktrace", errstack);
+			arr.put(detail);
 			json.put("errordetails", arr);
 		} catch (JSONException e1) {
 			throw new RuntimeException(e1);
 		}
 
 		String s = json.toString();
-		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+		response.setStatus(500);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s);
 		response.flushBuffer();
 		throw e;
 	}

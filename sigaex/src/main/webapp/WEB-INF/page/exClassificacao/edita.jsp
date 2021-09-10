@@ -182,7 +182,7 @@
 		</div>
 
 		<c:if test="${acao == 'editar_classificacao'}">
-			<c:if test="${exClassificacao.numVias > 0}">
+			<c:if test="${exClassificacao.numVias gt 0}">
 				<h5>Vias</h5>
 
 				<div id="divVias">

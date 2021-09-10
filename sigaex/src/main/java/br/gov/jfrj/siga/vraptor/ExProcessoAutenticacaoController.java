@@ -1,7 +1,11 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +15,13 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JWTVerifyException;
 import com.lowagie.text.pdf.codec.Base64;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -28,9 +34,12 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
@@ -145,41 +154,70 @@ public class ExProcessoAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
-		result.forwardTo(this).processoArquivoAutenticado(buildJwtToken(n));
+		result.forwardTo(this).processoArquivoAutenticado(buildJwtToken(n), null);
 	}
 
 	@Get("/public/app/processoArquivoAutenticado_stream")
-	public Download processoArquivoAutenticado_stream(final String jwt, final boolean assinado, final Long idMov,
-			final String certificadoB64) throws Exception {
-
+	public Download processoArquivoAutenticado_stream(final boolean assinado, final Long idMov,
+			final String certificadoB64, final String sigla) throws Exception {
+		String jwt = Utils.getCookieValue(request, "jwt-prot");
 		if (jwt == null) {
 			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
 			return null;
 		}
-		String n = verifyJwtToken(jwt).get("n").toString();
-
+		
+		String n = "";
+		try {
+			n = verifyJwtToken(jwt).get("n").toString();
+		} catch (InvalidKeyException | NoSuchAlgorithmException | IllegalStateException 
+				| SignatureException | IOException | JWTVerifyException e) {
+			throw new AplicacaoException("Token inválido ou expirado. Por favor, entre novamente no link do protocolo.");
+		}
+		
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorProtocolo(n);
 
 		byte[] bytes;
+
 		String fileName;
 		String contentType;
-		if (idMov != null && idMov != 0) {
-			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
-
-			fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
-			contentType = mov.getConteudoTpMov();
-
-			bytes = mov.getConteudoBlobMov2();
-
-		} else {
+		if (sigla != null) {
+			Long idDocPai = arq.getIdDoc();
+			ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+			flt.setSigla(sigla);
+			ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
+			if (mob == null) {
+				throw new AplicacaoException("Documento não encontrado: " + sigla);
+			}
+			if (!((idDocPai == mob.getExMobilPai().getDoc().getIdDoc()
+						|| mob.getDoc().isDescricaoEspecieDespacho())
+					&& mob.isExibirNoAcompanhamento())) {
+				throw new AplicacaoException("Documento não permitido para visualização: " + sigla);
+			}
+			arq = mob.doc();
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";
-
-			if (assinado)
-				bytes = Ex.getInstance().getBL().obterPdfPorProtocolo(n);
-			else
-				bytes = arq.getPdf();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null);
+			bytes = baos.toByteArray();
+		} else {			
+			if (idMov != null && idMov != 0) {
+				ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
+	
+				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
+				contentType = mov.getConteudoTpMov();
+	
+				bytes = mov.getConteudoBlobMov2();
+	
+			} else {
+				fileName = arq.getReferenciaPDF();
+				contentType = "application/pdf";
+	
+				if (assinado)
+					bytes = Ex.getInstance().getBL().obterPdfPorProtocolo(n);
+				else
+					bytes = arq.getPdf();
+			}
 		}
 		if (bytes == null) {
 			throw new AplicacaoException("Arquivo não encontrado para Download.");
@@ -217,16 +255,33 @@ public class ExProcessoAutenticacaoController extends ExController {
 
 	// antigo metodo arquivo();
 	@Get("/public/app/processoArquivoAutenticado")
-	public void processoArquivoAutenticado(final String jwt) throws Exception {
+	public void processoArquivoAutenticado(final String tokenJwt, final Long idMovJuntada) throws Exception {
+		String jwt = tokenJwt;
 		if (jwt == null) {
-			setDefaultResults();
-			result.redirectTo(URL_EXIBIR);
-			return;
+			jwt = Utils.getCookieValue(request, "jwt-prot");
+			if (jwt == null) {
+				setDefaultResults();
+				result.redirectTo(URL_EXIBIR);
+				return;
+			}
 		}
 		String n = verifyJwtToken(jwt).get("n").toString();
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorProtocolo(n);
+		if (idMovJuntada != null) {
+			// Se veio o id da mov de juntada do filho, mostra o documento pai
+			final ExMovimentacao movJuntada = dao().consultar(idMovJuntada, ExMovimentacao.class, false);
+			// Confirma que é realmente o documento pai
+			if (movJuntada != null && movJuntada.getExMobilRef() != null
+					&& !movJuntada.isCancelada()
+					&& (((ExDocumento) arq).contemMobil(movJuntada.getExMobil()))) {
+				arq = movJuntada.getExMobilRef().getDoc();
 
+			} else {
+				throw new AplicacaoException("Documento não autorizado para visualização "
+						+ "no acompanhamento do protocolo.");
+			}
+		}
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 
 		/*
@@ -279,13 +334,17 @@ public class ExProcessoAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true);
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
 			docVO.exibe();
+			Cookie cookie = new Cookie("jwt-prot", buildJwtToken(n));
+			cookie.setMaxAge(1 * 60 * 60);
+			this.response.addCookie(cookie);
 			result.include("movs", lista);
 			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
 			result.include("msg", exDocumentoDTO.getMsg());
 			result.include("docVO", docVO);
 			result.include("mob", exDocumentoDTO.getMob());
+			result.include("isProtocoloFilho", (idMovJuntada != null ? true : false));
 
 		}
 	}
@@ -319,14 +378,10 @@ public class ExProcessoAutenticacaoController extends ExController {
 		return token;
 	}
 
-	private static Map<String, Object> verifyJwtToken(String token) {
+	private static Map<String, Object> verifyJwtToken(String token) throws Exception {
 		final JWTVerifier verifier = new JWTVerifier(getJwtPassword());
-		try {
-			Map<String, Object> map = verifier.verify(token);
-			return map;
-		} catch (Exception e) {
-			throw new AplicacaoException("Erro ao verificar token JWT", 0, e);
-		}
+		Map<String, Object> map = verifier.verify(token);
+		return map;
 	}
 
 	/*

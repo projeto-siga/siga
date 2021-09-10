@@ -39,17 +39,14 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * A class that represents a row in the 'EX_TIPO_MOVIMENTACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_TIPO_MOVIMENTACAO", catalog = "SIGA")
+@Table(name = "siga.ex_tipo_movimentacao")
 public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Serializable, Selecionavel {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3690757276252517939L;
 
 	final static public long TIPO_MOVIMENTACAO_CRIACAO = 1;
 
@@ -196,7 +193,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 	
 	final static public long TIPO_MOVIMENTACAO_REFAZER = 71;
 	
-	final static public long TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA = 72;
+	final static public long TIPO_MOVIMENTACAO_ASSINATURA_POR = 72;
 	
 	final static public long TIPO_MOVIMENTACAO_GERAR_PROTOCOLO = 73;
 	
@@ -211,6 +208,8 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 	final static public long TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO = 76;
 
 	final static public long TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA = 77;
+	
+	final static public long TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO = 79;
 	
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

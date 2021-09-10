@@ -34,13 +34,12 @@ import br.gov.jfrj.siga.dp.DpLotacao;
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_PREENCHIMENTO", catalog = "SIGA")
+@Table(name = "siga.ex_preenchimento")
 public class ExPreenchimento extends AbstractExPreenchimento implements
-		Serializable {
-
-	private static final long serialVersionUID = 3256722875116761397L;
+		Serializable, Comparable<ExPreenchimento> {
 
 	/**
 	 * Simple constructor of ExTipoDespacho instances.
@@ -80,6 +79,18 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 	 */
 	public ExPreenchimento(final java.lang.Long idPreenchimento) {
 		super(idPreenchimento);
+	}
+	
+	@Override
+	public int compareTo(ExPreenchimento o) {
+		int i = 0;
+		
+		if (this.getNomePreenchimento() != null) {
+			i = this.getNomePreenchimento().compareTo(o.getNomePreenchimento());
+			if (i != 0)
+				return i;
+		}
+		return this.getIdPreenchimento().compareTo(o.getIdPreenchimento());
 	}
 
 }

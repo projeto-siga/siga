@@ -52,7 +52,7 @@ public class XjusController extends SigaController {
 				+ getTitular().getLotacao().getIdInicial() + ";P"
 				+ getTitular().getIdInicial();
 
-		final JWTSigner signer = new JWTSigner(Prop.get("/jwt.secret"));
+		final JWTSigner signer = new JWTSigner(Prop.get("/xjus.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim

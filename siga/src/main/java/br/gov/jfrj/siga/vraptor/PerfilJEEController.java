@@ -93,6 +93,7 @@ public class PerfilJEEController extends GrupoController {
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 	}
 	
+	@Transacional
 	@SuppressWarnings("unchecked")
 	@Post("/app/gi/perfilJEE/gravar")
 	public void gravar(Long idCpGrupo
@@ -119,6 +120,7 @@ public class PerfilJEEController extends GrupoController {
 		result.redirectTo(MessageFormat.format("/app/gi/perfilJEE/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
 	}	
 
+	@Transacional
 	@Post("/app/gi/perfilJEE/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");

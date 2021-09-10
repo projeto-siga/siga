@@ -10,7 +10,7 @@
 			
 			if($('#imgArquivo').css('display') == 'block') {
 				if ($('#situacaoImagem').val() == "nobanco") {
-						url = "${linkTo[CondutorController].exibirImagem[condutor.id]}";
+						url = "${linkTo[CondutorController].exibirImagem(condutor.id)}";
 				}
 				else if ($('#situacaoImagem').val() == "imagemnova") {
 					url = document.getElementById("imgArquivo").src;
@@ -74,7 +74,7 @@
 	$(window).load(function() {
 		carregarDadosDpPessoa();
 		if(${condutor.id} > 0) {
-			var exibirImgArquivo = "${linkTo[CondutorController].exibirImagem[condutor.id]}";
+			var exibirImgArquivo = "${linkTo[CondutorController].exibirImagem(condutor.id)}";
 		  	    $.get(
 		  	    		exibirImgArquivo, 
 			           function(carregouImagem) {

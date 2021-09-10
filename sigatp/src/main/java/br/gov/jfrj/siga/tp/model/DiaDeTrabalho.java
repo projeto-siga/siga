@@ -22,14 +22,14 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "diadetrabalho", schema = "sigatp")
 public class DiaDeTrabalho extends TpModel implements Comparable<DiaDeTrabalho> {
 
 	private static final long serialVersionUID = 1L;
 	public static ActiveRecord<DiaDeTrabalho> AR = new ActiveRecord<>(DiaDeTrabalho.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
 	private Long id;
 
@@ -38,14 +38,14 @@ public class DiaDeTrabalho extends TpModel implements Comparable<DiaDeTrabalho> 
 
 	@NotNull
 	// @As(binder=HourMinuteBinder.class)
-	public Calendar horaEntrada;
+	private Calendar horaEntrada;
 
 	@Enumerated(EnumType.STRING)
 	private DiaDaSemana diaSaida;
 
 	@NotNull
 	// @As(binder=HourMinuteBinder.class)
-	public Calendar horaSaida;
+	private Calendar horaSaida;
 
 	@NotNull
 	@ManyToOne

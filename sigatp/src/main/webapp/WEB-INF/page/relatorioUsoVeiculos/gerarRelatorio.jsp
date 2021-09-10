@@ -54,7 +54,7 @@
 											<td><center><fmt:formatDate value="${item.dataHoraRetorno.time}" pattern="HH:mm" /></center></td>
 											<td>${item.descricaoFinalidade}</td>
 											<td><fmt:formatNumber minFractionDigits="2" value="${item.distanciaPercorrida}" /> km</td>
-											<td><nobr>${item.sequenceMissao}&nbsp;<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence[true][item.sequenceMissao]}');"><img class="icone" src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr></td>
+											<td><nobr>${item.sequenceMissao}&nbsp;<a href="#" onclick="javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,item.sequenceMissao)}');"><img class="icone" src="/sigatp/public/images/linknovajanelaicon.png" alt="Abrir em uma nova janela" title="Abrir em uma nova janela"></a></nobr></td>
 										</tr>
 									</c:forEach>
 								</c:if>

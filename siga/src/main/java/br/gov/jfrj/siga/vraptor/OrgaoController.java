@@ -11,7 +11,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -54,10 +54,11 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 	
-	public void selecionarPorNome(){
+	protected void selecionarPorNome(){
 		
 	}
 	
+	@Transacional
 	public void excluir(final Long id) throws Exception{
 		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		if (id != null) {
@@ -89,6 +90,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		result.include("orgaosUsu",this.getOrgaosUsu());
 	}
 	
+	@Transacional
 	@Post("/app/orgao/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmOrgao,
@@ -131,7 +133,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		this.result.redirectTo(this).lista(0);
 	}
 	
-	public CpOrgao daoOrgao(long id) {
+	private CpOrgao daoOrgao(long id) {
 		return dao().consultar(id, CpOrgao.class, false);
 	}
 	

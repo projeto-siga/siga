@@ -18,10 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -32,17 +29,13 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
+@SuppressWarnings("serial")
 @Entity
-@Table(name = "CP_SERVICO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_servico")
 @Immutable
-@Cacheable
-@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+//@Cacheable
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpServico extends AbstractCpServico implements Selecionavel {
-
-	/**
-	 * 
-	 */
-	public static final long serialVersionUID = 3624557793773660739L;
 
 	public static ActiveRecord<CpServico> AR = new ActiveRecord<>(
 			CpServico.class);
@@ -64,6 +57,8 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	public boolean equivale(Object other) {
 		if (other == null)
+			return false;
+		if (this.getIdServico() == null || ((CpServico) other).getIdServico() == null)
 			return false;
 		return this.getIdServico().longValue() == ((CpServico) other)
 				.getIdServico().longValue();

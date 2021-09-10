@@ -1,21 +1,22 @@
 package br.gov.jfrj.siga.tp.interceptor;
 
 import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.caelum.vraptor.Accepts;
+import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.ApplicationLogicException;
-import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.resource.ResourceMethod;
-import br.com.caelum.vraptor.util.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -28,23 +29,36 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
  */
 @RequestScoped
 @Intercepts(after = JPATransactionInterceptor.class)
-public class ExceptionHandlerInterceptor implements Interceptor {
+public class ExceptionHandlerInterceptor  {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerInterceptor.class);
 	private SigaObjects so;
-	private Localization localization;
 	private HttpServletRequest request;
-
-	public ExceptionHandlerInterceptor(Localization localization, SigaObjects so, HttpServletRequest request) {
-		this.so = so;
-		this.request = request;
-		this.localization = localization;
+	
+	private ResourceBundle bundle;
+	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExceptionHandlerInterceptor() {
+		super();
+		this.so = null;
+		this.request = null;
+		this.bundle = null;
 	}
 
-	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
+
+	@Inject
+	public ExceptionHandlerInterceptor( SigaObjects so, HttpServletRequest request, ResourceBundle bundle) {
+		this.so = so;
+		this.request = request;
+		this.bundle = bundle;
+	}
+
+	@AroundCall
+	public void intercept(SimpleInterceptorStack stack)  {
 		try {
-			stack.next(method, resourceInstance);
+			stack.next();
 		} catch (InterceptionException ie) {
 			tratarExcecoes(encontrarCausa(ie));
 		} catch (Exception e) {
@@ -73,7 +87,7 @@ public class ExceptionHandlerInterceptor implements Interceptor {
 
 	private Throwable traduzir(Throwable e) {
 		if (e.getMessage() != null) {
-			String message = localization.getMessage(e.getMessage());
+			String message = bundle.getString(e.getMessage());
 			if (message.startsWith("???")) {
 				return e;
 			}
@@ -100,8 +114,8 @@ public class ExceptionHandlerInterceptor implements Interceptor {
 		LOGGER.error(e.getMessage(), e);
 	}
 
-	@Override
-	public boolean accepts(ResourceMethod method) {
+	@Accepts
+	public boolean accepts() {
 		return Boolean.TRUE;
 	}
 }

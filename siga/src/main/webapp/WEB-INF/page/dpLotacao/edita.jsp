@@ -6,24 +6,34 @@
 
 <script type="text/javascript">
 	function validar() {
+		sigaSpinner.mostrar();
+		document.getElementById("btnOk").disabled = true;
 		var nmLotacao = document.getElementsByName('nmLotacao')[0].value;
 		var siglaLotacao = document.getElementsByName('siglaLotacao')[0].value;		
 		var id = document.getElementsByName('id')[0].value;
 		var idLocalidade = document.getElementsByName('idLocalidade')[0].value;	
-		if (nmLotacao==null || nmLotacao=="") {			
+		if (nmLotacao==null || nmLotacao=="") {
+			habilitarBotaoOk();
 			sigaModal.alerta("Preencha o nome da Lotação");
 			document.getElementById('nmLotacao').focus();		
 		}else {
 			if(siglaLotacao==null || siglaLotacao=="") {
+				habilitarBotaoOk();
 				sigaModal.alerta("Preencha a sigla da Lotação");
 			} else {
 				if(idLocalidade == 0) {
+					habilitarBotaoOk();
 					sigaModal.alerta("Preencha a localidade da Lotação");	
 				} else {
 					frm.submit();
 				}
 			}
 		}			
+	}
+	
+	function habilitarBotaoOk() {		
+		sigaSpinner.ocultar();
+		document.getElementById("btnOk").disabled = false;
 	}
 	
 	function carregarExcel() {
@@ -98,7 +108,7 @@
 						<div class="form-group">
 							<label for="lotacaoPai"><fmt:message key="usuario.lotacao" /> Pai</label>
 							<select name="lotacaoPai" id="lotacaoPai" value="${lotacaoPai}" class="form-control  siga-select2">
-								<option value="" selected disabled hidden>Selecione uma <fmt:message key="usuario.lotacao" /></option>
+								<option value="">Selecione uma <fmt:message key="usuario.lotacao" /></option>
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao== lotacaoPai ? 'selected' : ''}>
 										${item.nomeLotacao}
@@ -108,17 +118,29 @@
 						</div>
 					</div>
 					
-					<div class="col-sm-2">
+					<div class="col-sm-1">
 						<div class="form-group">
-							<label for="idLocalidade">Localidade</label>
-							<select name="idLocalidade" value="${idLocalidade}" class="form-control  siga-select2">
-								<option value="0">Selecione</option>
-								<c:forEach items="${listaLocalidades}" var="item">
-									<option value="${item.id}"
-										${item.id == idLocalidade ? 'selected' : ''}>
+							<label for="idUf">UF</label>
+							<select name="idUf" value="${idUf}" class="form-control  siga-select2" onchange="carregarLocalidades(this.value)">
+								<option value="0"></option>
+								<c:forEach items="${listaUF}" var="item">
+									<option value="${item.id}" ${item.id == idUf ? 'selected' : ''}>
 										${item.descricao}</option>
 								</c:forEach>
 							</select>
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Localidade</label>
+							<div style="display: inline" id="localidades">
+								<select name="idLocalidade" class="form-control">
+									<option value="0">Selecione</option>
+									<c:forEach var="item" items="${listaLocalidades}">
+										<option value="${item.idLocalidade}" ${item.id == idLocalidade ? 'selected' : ''}>${item.nmLocalidade}</option>
+									</c:forEach>
+								</select>
+							</div>
 						</div>
 					</div>
 					<div class="col-sm-2">
@@ -161,7 +183,7 @@
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="form-group">
-							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button>
+							<button type="button" id="btnOk" onclick="javascript: validar();" class="btn btn-primary" >Ok</button>
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
 					</div>
@@ -175,6 +197,16 @@
 		frm.action = 'carregarCombos';
 		frm.submit();
 	}
+	function carregarLocalidades(idUf){
+		
+		$.ajax({
+			url: 'listaLocalidades?idUf=' + idUf,
+			success: function(data){
+				$('#localidades').html(data);	
+			} 
+		});
+	}
+
 </script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>

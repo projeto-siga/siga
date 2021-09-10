@@ -41,7 +41,7 @@
 					<c:forEach items="${listas}" var="item">
 						<tr data-json-id="${item.idLista}" data-json='${item.toJson()}'
 							<c:if test="${item.podeConsultar(lotaTitular, titular)}">
- 								onclick="javascript:window.location='${linkTo[SolicitacaoController].exibirLista[item.idLista]}'" style="cursor: pointer;"
+ 								onclick="javascript:window.location='${linkTo[SolicitacaoController].exibirLista(item.idLista)}'" style="cursor: pointer;"
  							</c:if>>
  							
 							<td >${item.nomeLista}</td>

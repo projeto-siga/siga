@@ -1,10 +1,11 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -13,11 +14,19 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 public class TestesController extends SrController {
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public TestesController() {
+		super();
+	}
+	
+	@Inject
 	public TestesController(HttpServletRequest request, Result result,
-			CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+			CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) throws Throwable {
 		super(request, result, dao, so, em, srValidator);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

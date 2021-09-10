@@ -88,7 +88,7 @@
 											<input type="checkbox" name="chk" id="req_${req.id}"/> 
 											Cancelar tamb&eacute;m a requisi&ccedil;&atilde;o
 											<tptags:link  texto="${req.buscarSequence()}" parteTextoLink="${req.buscarSequence()}" 
-												  comando="${linkTo[RequisicaoController].buscarPelaSequence[true][req.buscarSequence()]}"
+												  comando="${linkTo[RequisicaoController].buscarPelaSequence(true,req.buscarSequence())}"
 												  ehEditavel="false">
 											</tptags:link> 
 											<br/>
@@ -106,7 +106,7 @@
 				</span>
 				<div class="gt-table-buttons">
 					<input type="button" id="btnCancelarMissao" value="<fmt:message key="views.botoes.cancelarMissao"  />" class="gt-btn-medium gt-btn-left" />
-					<input type="button" value="<fmt:message key="views.botoes.voltar" />" onclick="javascript:location.href = '${linkTo[MissaoController].buscarPelaSequence[false][missao.sequence]}'" class="gt-btn-medium gt-btn-left"/>
+					<input type="button" value="<fmt:message key="views.botoes.voltar" />" onclick="javascript:location.href = '${linkTo[MissaoController].buscarPelaSequence(false,missao.sequence)}'" class="gt-btn-medium gt-btn-left"/>
 				</div>
 				
 				<input type="hidden" id="action" value="${linkTo[MissaoController].cancelarMissao}"/>

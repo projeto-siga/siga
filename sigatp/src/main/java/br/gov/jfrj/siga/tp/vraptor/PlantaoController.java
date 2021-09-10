@@ -4,20 +4,22 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
-import br.com.caelum.vraptor.validator.ValidationMessage;
+import br.com.caelum.vraptor.validator.SimpleMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissaoComplexo;
@@ -31,14 +33,22 @@ import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.FormatarTextoHtml;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/plantao")
 public class PlantaoController extends TpController {
 
     private static final String CONDUTOR_ID = "condutor.id";
     private static final String PLANTAO = "plantao";
 
-    public PlantaoController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PlantaoController() {
+		super();
+	}
+	
+	@Inject
+    public PlantaoController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,  EntityManager em) {
         super(request, result, TpDao.getInstance(), validator, so, em);
     }
 
@@ -78,6 +88,7 @@ public class PlantaoController extends TpController {
         result.forwardTo(PlantaoController.class).editar(idCondutor, 0L);
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo
@@ -103,7 +114,7 @@ public class PlantaoController extends TpController {
 
         String listaAfastamento = sbAfastamento.toString();
         if (!"".equals(listaAfastamento))
-            validator.add(new ValidationMessage("Condutor afastado " + getMensagemPeriodo(listaAfastamento) + " de: " + listaAfastamento + ".", PLANTAO));
+            validator.add(new SimpleMessage(PLANTAO,"Condutor afastado " + getMensagemPeriodo(listaAfastamento) + " de: " + listaAfastamento + "."));
 
         if (validator.hasErrors()) {
             result.include(PLANTAO, plantao);
@@ -119,7 +130,7 @@ public class PlantaoController extends TpController {
 
             String listaPlantao = sbPlantao.toString();
             if (!"".equals(listaPlantao))
-                validator.add(new ValidationMessage("Condutor em plant&atilde;o " + getMensagemPeriodo(listaPlantao) + " de: " + listaPlantao + ".", PLANTAO));
+                validator.add(new SimpleMessage(PLANTAO,"Condutor em plant&atilde;o " + getMensagemPeriodo(listaPlantao) + " de: " + listaPlantao + "."));
         }
 
         if (validator.hasErrors()) {
@@ -147,6 +158,7 @@ public class PlantaoController extends TpController {
         }
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo
@@ -186,12 +198,12 @@ public class PlantaoController extends TpController {
                 if (FormatarTextoHtml.removerAcentuacao(ex.getCause().getCause().getMessage()).contains("restricao de integridade")) 
                     validator.add(new I18nMessage(PLANTAO, "plantao.excluir.validation"));
                 else
-                    validator.add(new ValidationMessage(ex.getMessage(), PLANTAO));
+                    validator.add(new SimpleMessage(PLANTAO,ex.getMessage()));
 
             } catch (Exception ex) {
                 tx.rollback();
 
-                validator.add(new ValidationMessage(ex.getMessage(), PLANTAO));
+                validator.add(new SimpleMessage(PLANTAO,ex.getMessage()));
             }
 
             validator.onErrorForwardTo(PlantaoController.class).listarPorCondutor(idCondutor);

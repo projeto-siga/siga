@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_ARQUIVO", schema = "SIGAGC")
+@Table(name = "gc_arquivo", schema = "sigagc")
 public class GcArquivo extends Objeto implements Serializable {
 	private static final long serialVersionUID = -1924833226821913592L;
 	public static ActiveRecord<GcArquivo> AR = new ActiveRecord<>(
@@ -30,20 +30,40 @@ public class GcArquivo extends Objeto implements Serializable {
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcArquivoSeq")
 	@GeneratedValue(generator = "gcArquivoSeq")
 	@Column(name = "ID_CONTEUDO")
-	public long id;
+	private long id;
 
 	@Column(name = "TITULO")
-	public String titulo;
+	private String titulo;
 
 	@Column(name = "CLASSIFICACAO")
-	public String classificacao;
+	private String classificacao;
 
 	@Lob
 	@Column(name = "CONTEUDO")
-	public byte[] conteudo;
+	private byte[] conteudo;
 
 	@Column(name = "CONTEUDO_TIPO")
-	public String mimeType;
+	private String mimeType;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public void setConteudo(byte[] conteudo) {
+		this.conteudo = conteudo;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
+	}
 
 	public void setConteudoTXT(String html) {
 		if (html != null && html.startsWith("<")) {
@@ -138,9 +158,9 @@ public class GcArquivo extends Objeto implements Serializable {
 		String extensao = titulo.split("\\.")[1];
 
 		if (extensao != null) {
-			if (extensao.contentEquals("gif") || extensao.contentEquals("jpg")
-					|| extensao.contentEquals("png")
-					|| extensao.contentEquals("tiff"))
+			if (extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("jpg")
+					|| extensao.equalsIgnoreCase("png")
+					|| extensao.equalsIgnoreCase("tiff"))
 				return "image/" + extensao;
 			if (extensao.contains("pdf"))
 				return "application/pdf";

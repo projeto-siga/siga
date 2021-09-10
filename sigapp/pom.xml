@@ -2,15 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 >
+	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<artifactId>siga-doc</artifactId>
 		<groupId>siga</groupId>
 		<version>1.2-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>sigapp</artifactId>
-	<modelVersion>4.0.0</modelVersion>
 	<packaging>war</packaging>
+
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 	</properties>
@@ -97,8 +99,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>ar.com.fdvs</groupId>
@@ -125,11 +126,6 @@
 		
 		<!-- DEPENDENCIAS PARA VRAPTORE JSP -->
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>jsp-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>jsptags</groupId>
             <artifactId>pager-taglib</artifactId>
         </dependency>
@@ -139,22 +135,31 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
-        <!-- JSTL -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.1.2</version>
-        </dependency>
         <dependency>
             <groupId>siga</groupId>
             <artifactId>siga-vraptor-module-old</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.jslsolucoes</groupId>
+					<artifactId>vraptor</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>br.com.caelum.vraptor</groupId>
+					<artifactId>vraptor-jpa</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
+		<dependency>
+			<groupId>br.com.caelum</groupId>
+			<artifactId>vraptor</artifactId>
+			<version>3.5.0</version>
+		</dependency>
         <dependency>
             <groupId>br.com.caelum.vraptor</groupId>
             <artifactId>vraptor-jpa</artifactId>
             <version>1.0.2</version>
             <exclusions>
-                <exclusion>  <!-- declare the exclusion here -->
+                <exclusion>
                     <groupId>org.eclipse.persistence</groupId>
                     <artifactId>javax.persistence</artifactId>
                 </exclusion>

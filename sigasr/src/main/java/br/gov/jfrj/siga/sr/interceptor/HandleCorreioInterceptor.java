@@ -1,36 +1,49 @@
 package br.gov.jfrj.siga.sr.interceptor;
 
-import br.com.caelum.vraptor.InterceptionException;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
+import br.com.caelum.vraptor.Accepts;
+import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.controller.ControllerMethod;
+import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 
 @RequestScoped
 @Intercepts
-public class HandleCorreioInterceptor implements Interceptor {
+public class HandleCorreioInterceptor {
 
 	private Correio correio;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public HandleCorreioInterceptor() {
+		super();
+		correio = null;
+	}
+    
+    @Inject	
 	public HandleCorreioInterceptor(Correio correio) {
 		this.correio = correio;
 	}
 
-	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
+
+    @AroundCall
+	public void  intercept(SimpleInterceptorStack stack) {
 		try {
 			CorreioHolder.set(correio);
-			stack.next(method, resourceInstance);
+			stack.next();
 		} finally {
 			CorreioHolder.unset();
 		}
 	}
 
-	@Override
-	public boolean accepts(ResourceMethod method) {
+
+    @Accepts
+	public boolean accepts(ControllerMethod method) {
 		return Boolean.TRUE;
 	}
 }

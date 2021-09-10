@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "CP_LOCALIDADE", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_localidade")
 @SuppressWarnings("serial")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpLocalidade extends AbstractCpLocalidade implements Serializable,

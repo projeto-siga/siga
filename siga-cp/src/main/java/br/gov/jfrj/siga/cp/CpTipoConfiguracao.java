@@ -29,17 +29,13 @@ import org.hibernate.annotations.Immutable;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
+@SuppressWarnings("serial")
 @Entity
-@Table(name = "CP_TIPO_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_tipo_configuracao")
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
-
-	/**
-	 * 
-	 */
-	public static final long serialVersionUID = 3624557793773660738L;
 	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(
 			CpTipoConfiguracao.class);
 
@@ -159,19 +155,24 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER = 50;
   
-  public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
+	public static final long TIPO_CONFIG_AUTORIZAR_MOVIMENTACAO_POR_WS = 51;
 
 	public static final long TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO = 52;
 	
 	public static final long TIPO_CONFIG_CRIAR_NOVO_EXTERNO = 53;
+	
+	public static final long TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS = 54;
 
-
+	public static final long TIPO_CONFIG_EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO = 55;
+	
 	// SIGA-WF
 
 	public static final long TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO = 100;
 
 	public static final long TIPO_CONFIG_DESIGNAR_TAREFA = 101;
 
+	public static final long TIPO_CONFIG_EDITAR_DEFINICAO_DE_PROCEDIMENTO = 102;
+	
 	// SIGA-GI
 
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO = 200;
@@ -182,8 +183,15 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO = 205;
 	public static final long TIPO_CONFIG_GERENCIAR_GRUPO = 206;
+	
+	//207 - Excluir Anotação Criada
+	
+	public static final long TIPO_CONFIG_SEGUNDO_FATOR_PIN = 208;
 
 	public CpTipoConfiguracao() {
 	}
-
+	
+	public CpTipoConfiguracaoDicionario getDicionario() {		
+		return CpTipoConfiguracaoDicionario.obterDicionario(getIdTpConfiguracao());
+	}
 }

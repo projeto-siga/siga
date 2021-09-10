@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 
 @Entity
-@Table(name = "SR_LISTA", schema = "SIGASR")
+@Table(name = "sr_lista", schema = "sigasr")
 public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
 
     private static final long serialVersionUID = 1L;

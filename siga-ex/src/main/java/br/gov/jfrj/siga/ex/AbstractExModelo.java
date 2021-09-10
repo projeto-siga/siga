@@ -22,7 +22,6 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -38,15 +37,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
-
-import org.apache.commons.codec.digest.DigestUtils;
+import javax.validation.constraints.Size;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -54,10 +50,13 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * A class that represents a row in the EX_MODELO table. You can customize the
  * behavior of this class by editing the class, {@link ExModelo()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
-@NamedQueries({ @NamedQuery(name = "consultarModeloAtual", query = "select mod from ExModelo mod where mod.hisIdIni = :hisIdIni and mod.hisDtFim = null") })
+@NamedQueries({ @NamedQuery(name = "consultarModeloAtual", query = "select mod from ExModelo mod where mod.hisIdIni = :hisIdIni and mod.hisDtFim = null"),
+	            @NamedQuery(name = "consultarModeloPeloNome", query = "select mod from ExModelo mod where mod.nmMod = :nmMod")})
 public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		implements Serializable {
+
 	/** The composite primary key value. */
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MODELO_SEQ", name = "EX_MODELO_SEQ")
@@ -79,6 +78,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	private java.lang.String conteudoTpBlob;
 
 	/** The value of the simple descMod property. */
+	@Size(min=0, max=256, message="A Descrição deve conter no máximo 256 caracteres")
 	@Column(name = "DESC_MOD", length = 256)
 	private java.lang.String descMod;
 
@@ -422,9 +422,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
 		this.conteudoTpBlob = conteudoTpMod;
-		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-	        criarCpArquivo();
-	        cpArquivo.setConteudoTpArq(conteudoTpMod);
+		if (conteudoBlobMod==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod);
 	    }
 	}
 
@@ -435,8 +434,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 			cacheConteudoBlobMod = conteudoBlobMod;
 		} else {
 			try {
-				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
-				cacheConteudoBlobMod = a.recuperar(getCpArquivo());
+				cacheConteudoBlobMod = getCpArquivo().getConteudo();
 			} catch (Exception e) {
 				throw new AplicacaoException(e.getMessage());
 			}
@@ -446,22 +444,11 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoBlobMod(byte[] createBlob) {
 		cacheConteudoBlobMod = createBlob;
-		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			conteudoBlobMod = createBlob;
+		if (this.cpArquivo==null && (this.conteudoBlobMod!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
+			this.conteudoBlobMod = createBlob;
 		} else if(cacheConteudoBlobMod != null){
-			criarCpArquivo();
-			cpArquivo.setTamanho(cacheConteudoBlobMod.length);
-			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobMod));
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMod);
 		}
 	}
 	
-	private void criarCpArquivo() {
-		if(cpArquivo == null) {
-			cpArquivo = new CpArquivo();
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(new Date());
-		}
-	}
-
 }

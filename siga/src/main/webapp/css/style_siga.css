@@ -1,5 +1,9 @@
 /*Identidade Visual do SIGA.doc para todos locais */
 
+.text-size-5 {
+	font-size: 16px;
+	font-weight: 400;
+}
 .text-size-6 {
 	font-size: 14px;
 	font-weight: 400;
@@ -11,6 +15,13 @@
 .text-size-8 {
 	font-size: 10px;
 	font-weight: 400;
+}
+.border-light, .bootstrap-select .btn-outline-secondary {
+	border-color: #bbb !important;
+}
+.btn-light {
+	border-color: #dee2e6 !important;
+	background-color: #eee !important;
 }
 /* Elementos para collapse de cards */  
 
@@ -100,6 +111,16 @@ p.gt-table-action-list a.link-tag {
   color: #fff;
 }
 
+a.doc-sign {
+	color: inherit;
+	text-decoration: none;
+}
+
+a.doc-sign:hover {
+	color: inherit;
+	text-decoration: none;
+}
+
 .spinner-border {
     display: inline-block;
     width: 1rem;
@@ -152,8 +173,8 @@ p.gt-table-action-list a.link-tag {
 }
 .mesa-config {
     position: fixed;
-    right: -220px;
-    width: 250px;
+    right: -320px;
+    width: 350px;
     top: 180px;
     z-index: 100;	
 }
@@ -170,17 +191,17 @@ p.gt-table-action-list a.link-tag {
     position: absolute;
     right: 0;
     top: 0;	
-	width: 220px;
+	width: 320px;
 	background-color: #f1f2f2 ;
 	color: #333;
 }
 .show-config {
-    transition: 1s;
+    transition: 0.3s;
     right: 0;
 }
 .hide-config {
-    transition: 1s;
-    right: -220px;
+    transition: 0.3s;
+    right: -320px;
 }
 .badge-mesa {
 	font-size: 0.8em;
@@ -276,6 +297,16 @@ p.gt-table-action-list a.link-tag {
 
 /*
 ######################
+# SELECT 2
+######################
+*/
+.select2-container--bootstrap .select2-selection--single .select2-selection__placeholder {
+   	color: #555555!important;
+}
+
+
+/*
+######################
 # SIGA MODAL
 ######################
 */
@@ -309,4 +340,82 @@ p.gt-table-action-list a.link-tag {
  
  .siga-modal__btn-close:focus {
  	outline: none; 	
- }				
+ }			
+ 
+ .loader {
+  border: 2px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 2px solid #3498db;
+  width: 1em;
+  height: 1em;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+article p em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+/* RADIO BUTTONS COM CORES OU IMAGENS */
+.radio-image {
+	position: relative;
+	margin: 5px;
+	padding: 12px;
+	cursor: pointer;
+	font-size: 22px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.radio-image input {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.checkmark {
+	position: absolute;
+	height: 35px;
+	width: 35px;
+	float: right;
+	border-radius: 50%;
+}
+
+.radio-image:hover input ~ .checkmark {
+	opacity: 0.5;
+}
+
+.radio-image input:checked ~ .checkmark:after {
+	display: block;
+}
+
+.radio-image .checkmark:after {
+	top: -6px;
+	left: 12px;
+	width: 8px;
+	height: 8px;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;  
+	content: "\f00c"; 
+	position: absolute;
+	display: none;
+	color: #DDD;
+}
+
+.div-width-min0 { 
+    min-width: 0px !important;
+} 

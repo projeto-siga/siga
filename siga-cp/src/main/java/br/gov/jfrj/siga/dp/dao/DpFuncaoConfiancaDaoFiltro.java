@@ -23,12 +23,21 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 public class DpFuncaoConfiancaDaoFiltro extends DaoFiltroSelecionavel {
 	private String nome;	
 	private Long idOrgaoUsu;
+	private boolean buscarInativas;
 	
 	public DpFuncaoConfiancaDaoFiltro() {}
 	
 	public DpFuncaoConfiancaDaoFiltro(String nome, Long idOrgaoUsu) {
 		this.nome = nome;
 		this.idOrgaoUsu = idOrgaoUsu;
+	}
+	
+	public boolean isBuscarInativas() {
+		return buscarInativas;
+	}
+
+	public void setBuscarInativas(boolean buscarInativas) {
+		this.buscarInativas = buscarInativas;
 	}
 
 	public String getNome() {

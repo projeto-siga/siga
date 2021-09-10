@@ -42,7 +42,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 
 import br.gov.jfrj.siga.base.SigaCalendar;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -310,13 +310,13 @@ public class SigaLibsEL {
 	}
 
 	public static String getURLSistema(String nome) {
-		String ambiente = Prop.get("ambiente");
-		String url = System.getProperty(nome + "." + ambiente + ".url");
+		String url = Prop.get(nome +  ".url");
 		if (url == null || url.length() == 0) {
 			url = "#";
 		}
 		return url.trim();
 	}
+	
 
 	public static String urlEncode(String value)
 			throws UnsupportedEncodingException {

@@ -2,13 +2,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import static br.gov.jfrj.siga.ex.ExMobil.adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 import static br.gov.jfrj.siga.ex.ExMobil.removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
-import static com.google.common.base.Predicates.alwaysFalse;
-import static com.google.common.base.Predicates.in;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.base.Predicates.or;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.isEmpty;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,12 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -70,16 +61,22 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -99,6 +96,8 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -167,9 +166,9 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
-				getLotaTitular(), true, null, false);
+				getLotaTitular(), true, null, false, false);
 
 		result.include("mobilCompletoVO", mobilCompletoVO);
 		result.include("mobilVO", mobilVO);
@@ -194,9 +193,9 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
-				getLotaTitular(), true, null, false);
+				getLotaTitular(), true, null, false, false);
 
 		result.include("mobilCompletoVO", mobilCompletoVO);
 		result.include("mobilVO", mobilVO);
@@ -210,6 +209,7 @@ public class ExMovimentacaoController extends ExController {
 				"/WEB-INF/page/exMovimentacao/anexa.jsp");
 	}
 
+	@Transacional
 	@Post("app/expediente/mov/anexar_gravar")
 	public void anexarGravar(final String sigla,
 			final DpPessoaSelecao subscritorSel,
@@ -339,7 +339,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(builder.getMob(), getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true, false);
 
 		result.include("mobilVO", mobilVO);
 	}
@@ -354,6 +354,10 @@ public class ExMovimentacaoController extends ExController {
 		if (mob != null && !mob.isGeral())
 			mob = mob.doc().getMobilGeral();
 
+		if (mob.isArquivado()) {
+			throw new AplicacaoException("Inclusão de arquivo auxiliar não é permitida em documentos arquivados");
+		}
+
 		if(!Ex.getInstance().getComp()
 				.podeAnexarArquivoAuxiliar(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException("Arquivo Auxiliar não pode ser anexado");
@@ -367,6 +371,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("request", getRequest());
 	}
 
+	@Transacional
 	@Post("app/expediente/mov/anexar_arquivo_auxiliar_gravar")
 	public void anexarArquivoAuxiliarGravar(final String sigla, final UploadedFile arquivo) throws IOException {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -398,7 +403,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
-		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") ) {
+		if (Prop.get("arquivosAuxiliares.extensoes.excecao").contains(fileExtension)) {
 			throw new AplicacaoException(
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
@@ -459,9 +464,9 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, false);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
-				getLotaTitular(), true, null, false);
+				getLotaTitular(), true, null, false, false);
 
 		result.include("sigla", sigla);
 		result.include("doc", mob.doc());
@@ -472,6 +477,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("documentoRefSel", new ExDocumentoSelecao());
 	}
 	
+	@Transacional
 	@Post("app/expediente/mov/copiar_gravar")
 	public void copiarGravar(final String sigla,
 			final String dtMovString, final boolean substituicao,
@@ -525,6 +531,7 @@ public class ExMovimentacaoController extends ExController {
 				.getExDocumento().getSigla());
 	}
 
+	@Transacional
 	@Get("app/expediente/mov/desobrestar_gravar")
 	public void aDesobrestarGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -551,6 +558,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("app/expediente/mov/sobrestar_gravar")
 	public void sobrestarGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -583,6 +591,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 		
+	@Transacional
 	@Get("app/expediente/mov/assinar")
 	public void aAssinar(String sigla, Boolean autenticando) throws Exception {
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
@@ -641,13 +650,14 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
 		result.include("assinando", assinando);
+		result.include("voltarAtivo", true);
 		result.include("juntarAtivo", doc.getPai() != null && afJuntada.ativo ? true : null);
 		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
-		result.include("tramitarAtivo", afTramite.ativo);
+		result.include("tramitarAtivo", Prop.isGovSP() ? "" : afTramite.ativo);
 		result.include("tramitarFixo", afTramite.fixo);
 	}
 	
-	public boolean permiteAutenticar(ExDocumento doc) {
+	private boolean permiteAutenticar(ExDocumento doc) {
 		return Ex.getInstance().getComp().podeAutenticarDocumento(getTitular(), getLotaTitular(), doc);
 	}
 	
@@ -656,7 +666,7 @@ public class ExMovimentacaoController extends ExController {
 		public boolean fixo;
 	}
 
-	public AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, long tipoConf) {
+	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, long tipoConf) {
 		final Long idSit = Ex
 				.getInstance()
 				.getConf()
@@ -724,6 +734,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", titularSel);
 	}
 	
+	@Transacional
 	@Get("app/expediente/mov/desfazer_restricao_acesso")
 	public void desfazerRestringirAcesso(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -748,6 +759,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
+	@Transacional
 	@Post("app/expediente/mov/restringir_acesso_gravar")
 	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso) throws Exception {
 		String usuarios[] = usu.split(";");
@@ -798,6 +810,7 @@ public class ExMovimentacaoController extends ExController {
 		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null, null, false);
 	}
 
+	@Transacional
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
 	public void redefinirNivelAcessoGravar(final String sigla,
 			final DpPessoaSelecao subscritorSel,
@@ -840,6 +853,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/cancelarMovimentacao")
 	public void aCancelarUltimaMovimentacao(final String sigla) {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -848,31 +862,15 @@ public class ExMovimentacaoController extends ExController {
 		buscarDocumento(documentoBuilder);
 		final ExMobil mob = documentoBuilder.getMob();
 
-		final ExMovimentacao exUltMovNaoCanc = mob
-				.getUltimaMovimentacaoNaoCancelada();
-		final ExMovimentacao exUltMov = mob.getUltimaMovimentacao();
-
-		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
-				&& exUltMovNaoCanc.getIdMov() == exUltMov.getIdMov()) {
-			if (!Ex.getInstance().getComp()
-					.podeCancelarVia(getTitular(), getLotaTitular(), mob)) {
-				throw new AplicacaoException("Não é possível cancelar via");
-			}
-		} else {
-			if (!Ex.getInstance()
-					.getComp()
-					.podeCancelarMovimentacao(getTitular(), getLotaTitular(),
-							mob)) {
-				throw new AplicacaoException(
-						"Não é possível cancelar movimentação");
-			}
-		}
+		Ex.getInstance().getBL()
+				.validarCancelamentoDeUltimaMovimentacao(getTitular(), getLotaTitular(), mob);
 
 		Ex.getInstance().getBL()
 				.cancelarMovimentacao(getCadastrante(), getLotaTitular(), mob);
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("app/expediente/mov/excluir")
 	public void excluir(final Long id, boolean continuarTela, String redirectURL) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -1112,8 +1110,15 @@ public class ExMovimentacaoController extends ExController {
 		result.include("doc", doc);
 		result.include("subscritorSel", new DpPessoaSelecao());
 		result.include("documentoRefSel", documentoRefSel);
+		if (doc.temAcompanhamentoDeProtocolo()) {
+    		result.include("msgCabecClass", "alert-warning");
+			result.include("mensagemCabec", "Este documento possui acompanhamento do protocolo, portanto "
+					+ "o histórico do documento juntado também será visível no acompanhamento do protocolo.");
+		}
+		
 	}
 
+	@Transacional
 	@Post("app/expediente/mov/juntar_gravar")
 	public void aJuntarGravar(final Integer postback, final String sigla,
 			final String dtMovString, final boolean substituicao,
@@ -1204,6 +1209,7 @@ public class ExMovimentacaoController extends ExController {
 
 	}
 
+	@Transacional
 	@Post("app/expediente/mov/apensar_gravar")
 	public void apensarGravar(final ExMobilSelecao documentoRefSel,
 			final DpPessoaSelecao subscritorSel,
@@ -1273,6 +1279,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("substituicao", false);
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/registrar_assinatura_gravar")
 	public void registrar_assinatura_gravar(final int postback,
 			final String sigla, final String dtMovString,
@@ -1338,6 +1345,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", builder.getMob());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
@@ -1400,6 +1408,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("itens", itens);
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/receber_lote_gravar")
 	public void aReceberLoteGravar(final Integer postback) {
 		this.setPostback(postback);
@@ -1453,6 +1462,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("itens", itens);
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/arquivar_corrente_lote_gravar")
 	public void aArquivarCorrenteLoteGravar(final Integer postback) {
 		this.setPostback(postback);
@@ -1485,6 +1495,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/mov/arquivar_corrente_lote");
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/arquivar_corrente_gravar")
 	public void aArquivarCorrenteGravar(final String sigla) {
 
@@ -1521,6 +1532,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/arquivar_permanente_gravar")
 	public void aArquivarPermanenteGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -1548,6 +1560,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/reabrir_gravar")
 	public void aReabrirGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -1573,6 +1586,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/desarquivar_intermediario_gravar")
 	public void aDesarquivarIntermediarioGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -1627,6 +1641,7 @@ public class ExMovimentacaoController extends ExController {
 				movimentacoesQuePodemSerAssinadasComSenha);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/receber")
 	public void aReceber(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -1650,6 +1665,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 	
+	@Transacional
 	@Get("/app/expediente/mov/solicitar_assinatura")
 	public void aSolicitarAssinatura(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -1749,6 +1765,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/referenciar_gravar")
 	public void aReferenciarGravar(final String sigla,
 			final String dtMovString, final boolean substituicao,
@@ -1873,6 +1890,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("dtDevolucaoMovString", dtDevolucaoMovString);
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/transferir_gravar")
 	public void transferirGravar(final int postback, final String sigla,
 			final String dtMovString, final DpPessoaSelecao subscritorSel,
@@ -1958,6 +1976,21 @@ public class ExMovimentacaoController extends ExController {
 					"Destinatário não pode receber documentos");
 		}
 		
+		if((mov.getLotaResp() != null && mov.getLotaResp().getIsSuspensa() != null && mov.getLotaResp().getIsSuspensa().equals(1)) 
+				|| (mov.getResp() != null && mov.getResp().getLotacao().getIsSuspensa() != null && mov.getResp().getLotacao().getIsSuspensa().equals(1))) {
+			result.include("msgCabecClass", "alert-danger");
+			if(mov.getResp() != null) {
+				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " do Usuário informado está Suspensa para o recebimento de Documentos. Favor inserir outro Usuário ");
+			} else {
+				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa para o recebimento de Documentos. Favor inserir outra " + SigaMessages.getMessage("usuario.lotacao"));
+			}
+			result.forwardTo(this).aTransferir(
+    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);
+			return;
+		}
+		
 		if (!Ex.getInstance().getComp()
 				.podeTramitarPara(getTitular(), getLotaTitular(), responsavelSel.getObjeto(), lotaResponsavelSel.getObjeto())) {
 			throw new AplicacaoException(
@@ -2000,6 +2033,36 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(
 					"Não é possível tramitar");
 		}
+		
+		if(lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && !Cp.getInstance().getConf().podePorConfiguracao(
+				null, lotaResponsavelSel.getObjeto(), 
+				CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS)) {
+			DpPessoaDaoFiltro filtro = new DpPessoaDaoFiltro();
+			filtro.setBuscarFechadas(Boolean.FALSE);
+			filtro.setNome("");
+			filtro.setLotacao(lotaResponsavelSel.getObjeto());
+			Integer qtde = CpDao.getInstance().consultarQuantidade(filtro);
+			
+			if(qtde == 0) {
+				DpSubstituicao subst = new DpSubstituicao();
+				subst.setTitular(new DpPessoa());
+				subst.setLotaTitular(lotaResponsavelSel.getObjeto());
+				
+				qtde += CpDao.getInstance().qtdeSubstituicoesAtivasPorTitular(subst);
+			}
+			
+			if(qtde == 0) {
+				result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") 
+	    			+ " informada não possui Usuário cadastrado ou ativo, para prosseguir com a tramitação informe outra " + SigaMessages.getMessage("usuario.lotacao"));
+	    		result.forwardTo(this).aTransferir(
+	    				sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
+	    				substituicao, titularSel, nmFuncaoSubscritor, idResp, tiposDespacho, descrMov, 
+	    				lotaResponsavelSel, responsavelSel, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo);    		
+	    			return;
+				
+			}
+		}
 
 		Ex.getInstance()
 				.getBL()
@@ -2027,7 +2090,8 @@ public class ExMovimentacaoController extends ExController {
 			
 			
 		} else {
-			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());
+			result.include("origemRedirectTransferirGravar", true);
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
 		}
 	}
 
@@ -2048,6 +2112,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("doc", doc);
 	}
 
+	@Transacional
 	@Get("app/expediente/mov/encerrar_volume")
 	public void encerrarVolumeGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2110,6 +2175,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", movimentacaoBuilder.getTitularSel());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/anotar_gravar")
 	public void anotar_gravar(final Integer postback, final String sigla,
 			final String dtMovString, final DpPessoaSelecao subscritorSel,
@@ -2182,6 +2248,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/anotar_lote_gravar")
 	public void aAnotarLoteGravar(final Integer postback,
 			final String dtMovString, final DpPessoaSelecao subscritorSel,
@@ -2273,6 +2340,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaResponsavelSel", new DpLotacaoSelecao());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/vincularPapel_gravar")
 	public void vincularPapel_gravar(final int postback, final String sigla,
 			final String dtMovString, final int tipoResponsavel,
@@ -2354,20 +2422,24 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/marcar")
 	public void aMarcar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+
 		buscarDocumento(builder);
 
 		ExMobil mob = builder.getMob();
-		if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), mob)) 
-			throw new AplicacaoException("Não é possível fazer marcação");
-
+		
+		ExPodeMarcar.afirmar(mob, getTitular(), getLotaTitular());
+		
 		ExMobil mobilGeral = mob.getDoc().getMobilGeral();
 		result.include("sigla", sigla);
 		result.include("mob", mob);
-		result.include("listaMarcadores", this.getListaMarcadoresGeraisTaxonomiaAdministrada());
+		result.include("listaMarcadores", this.getListaMarcadoresGerais());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(mobilGeral));
+		result.include("listaMarcadoresLotacao", dao
+				.listarCpMarcadoresPorLotacao(getLotaTitular(), true));
 		result.include("dataLimite", this.getDataLimiteDemanda(mobilGeral));
 	}
 	
+	@Transacional
 	@Get("/app/expediente/mov/recalcular_acesso")
 	public void aRecalcularAcesso(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
@@ -2413,8 +2485,8 @@ public class ExMovimentacaoController extends ExController {
 	 *         {@link ExDocumento Documento} devidamente ordenados de acordo com
 	 *         {@link CpMarcador#getOrdem()}
 	 */
-	private List<CpMarcador> getListaMarcadoresGeraisTaxonomiaAdministrada() {
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresGeraisTaxonomiaAdministrada();
+	private List<CpMarcador> getListaMarcadoresGerais() {
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		marcadores.sort(CpMarcador.ORDEM_COMPARATOR);
 
 		return marcadores;
@@ -2423,106 +2495,64 @@ public class ExMovimentacaoController extends ExController {
 	/**
 	 * 
 	 * @param sigla
-	 * @param idMarcador
+	 * @param marcador
 	 * @param ativo
 	 * @throws Exception
-	 * @deprecated remover. Funcionalidade substituída por {@link #salvarMarcas(Integer, String, List, List)}
 	 */
-	@Deprecated
+	@Transacional
 	@Post("/app/expediente/mov/marcar_gravar")
-	public void aMarcarGravar(final String sigla, final Long idMarcador,
-			final Boolean ativo) throws Exception {
+	public void aMarcarGravar(final String sigla, final Long marcador, final String interessado, final DpPessoaSelecao subscritorSel, final DpLotacaoSelecao lotaSubscritorSel,
+			final String planejada, String limite, final String texto) throws Exception {
+		Date dtPlanejada = Data.parse(planejada);
+		Date dtLimite = Data.parse(limite);
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
 
-		if (!Ex.getInstance().getComp()
-				.podeMarcar(getTitular(), getLotaTitular(), builder.getMob()))
-			throw new AplicacaoException("Não é possível fazer marcação");
-
-		if (idMarcador == null)
+		if (marcador == null)
 			throw new AplicacaoException("Marcador deve ser informado.");
 
-		CpMarcador m = dao().consultar(idMarcador, CpMarcador.class, false);
-
-		Set<CpMarcador> lMarcadoresAtivos = this
-				.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral());
-
-		boolean atual = lMarcadoresAtivos.contains(m);
-
-		if (ativo != atual) {
-			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-					.novaInstancia();
-			movimentacaoBuilder.setIdMarcador(idMarcador);
-			final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-			Ex.getInstance()
-					.getBL()
-					.vincularMarcador(getCadastrante(), getLotaTitular(),
-							builder.getMob(), mov.getDtMov(),
-							mov.getLotaResp(), mov.getResp(),
-							mov.getSubscritor(), mov.getTitular(),
-							mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
-							mov.getMarcador(), ativo, null);
-		}
-		resultOK();
-	}
-
-	private void salvarMarca(BuscaDocumentoBuilder builder, ExMovimentacaoBuilder movimentacaoBuilder, Long idMarcador,
-			boolean ativo, String strDataLimite) throws Exception {
-		movimentacaoBuilder.setIdMarcador(idMarcador);
-		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
-		// A data virá da página no formato "yyyy-MM-dd"
-		Date dateLimiteDemanda = (ativo && StringUtils.isNotEmpty(strDataLimite))
-				? DateFormatUtils.ISO_DATE_FORMAT.parse(strDataLimite)
-				: null;
-
-		Ex.getInstance().getBL().vincularMarcador(getCadastrante(), getLotaTitular(), //
-				builder.getMob(), mov.getDtMov(), //
-				mov.getLotaResp(), mov.getResp(), //
-				mov.getSubscritor(), mov.getTitular(), mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
-				mov.getMarcador(), ativo, dateLimiteDemanda);
-	}
-
-	@Post("/app/expediente/mov/salvar_marcas")
-	public void salvarMarcas(final Integer postback, final String sigla, List<Long> marcadoresOriginais,
-			List<Long> marcadoresSelecionados, final String dataLimite, final String dataLimiteOriginal)
-			throws Exception {
-		// Será usado para indicar um {@link CpMarcador Marcador} de demanda judicial
-		// que continua checado mas mudou de data limite.
-		Predicate<Long> mudouDataLimiteDemandaPredicate = Objects.equals(dataLimite, dataLimiteOriginal) ? alwaysFalse()
-				: in(CpMarcador.MARCADORES_DEMANDA_JUDICIAL);
-
-		//if null inicializa lista de marcadores
-		marcadoresOriginais = marcadoresOriginais == null ? Collections.emptyList() : marcadoresOriginais;
-		marcadoresSelecionados = marcadoresSelecionados == null ? Collections.emptyList() : marcadoresSelecionados;
+		CpMarcador m = dao().consultar(marcador, CpMarcador.class, false);
 		
-		List<Long> idMarcasARemover = isEmpty(marcadoresOriginais) ? Collections.emptyList()
-				: newArrayList(filter(marcadoresOriginais,
-						or(not(in(marcadoresSelecionados)), mudouDataLimiteDemandaPredicate)));
-		List<Long> idMarcasAAdicionar = isEmpty(marcadoresSelecionados) ? Collections.emptyList()
-				: newArrayList(filter(marcadoresSelecionados,
-						or(not(in(marcadoresOriginais)), mudouDataLimiteDemandaPredicate)));
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
 
-		if (!idMarcasAAdicionar.isEmpty() || !idMarcasARemover.isEmpty()) {
-			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-			buscarDocumento(builder);
-
-			if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), builder.getMob())) {
-				throw new AplicacaoException("Não é possível fazer marcação");
-			}
-
-			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
-
-			for (Long idMarcaARemover : idMarcasARemover) {
-				salvarMarca(builder, movimentacaoBuilder, idMarcaARemover, false, null);
-			}
-			for (Long idMarcaAAdicionar : idMarcasAAdicionar) {
-				salvarMarca(builder, movimentacaoBuilder, idMarcaAAdicionar, true, dataLimite);
-			}
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA || m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO) {
+			if (Utils.empty(interessado))
+				throw new AplicacaoException("Tipo do interessado deve ser informado.");
+		} 
+		
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA || "pessoa".equals(interessado)) {
+			if (subscritorSel.empty())
+				throw new AplicacaoException("Pessoa deve ser informada.");
+			movimentacaoBuilder.setSubscritorSel(subscritorSel);
 		}
 
-		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO || "lotacao".equals(interessado)) {
+			if (lotaSubscritorSel.empty())
+				throw new AplicacaoException("Lotação deve ser informada.");
+			movimentacaoBuilder.setLotaSubscritorSel(lotaSubscritorSel);
+		}
+
+		if (!Prop.getBool("/siga.marcadores.permite.data.retroativa")) {
+			if (!Utils.empty(planejada) && !DateUtils.isSameDay(new Date(), dtPlanejada) && dtPlanejada.before(new Date())) 
+				throw new AplicacaoException("Data Planejada não pode ser anterior à hoje.");
+			
+			if (!Utils.empty(limite) && !DateUtils.isSameDay(new Date(), dtLimite) && dtLimite.before(new Date())) 
+				throw new AplicacaoException("Data Limite não pode ser anterior à hoje.");
+		} 
+			
+		movimentacaoBuilder.setIdMarcador(marcador);
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		mov.setDescrMov(texto);
+		Ex.getInstance()
+				.getBL()
+				.marcar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),
+						builder.getMob(), mov.getDtMov(),
+						mov.getSubscritor(), mov.getLotaSubscritor(),
+						mov.getDescrMov(), 
+						mov.getMarcador(), dtPlanejada, dtLimite, true);
+		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 
 	@Get("app/expediente/mov/transferir_lote")
@@ -2560,9 +2590,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_TRAMITACAO_LOTE + 1));
 	}
 
+	@Transacional
 	@Post("app/expediente/mov/transferir_lote_gravar")
-	public void aTransferirLoteGravar(final String dtMovString, final DpPessoaSelecao subscritorSel,
-			final boolean substituicao, final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor,
+	public void aTransferirLoteGravar(
 			final DpLotacaoSelecao lotaResponsavelSel, final CpOrgaoSelecao cpOrgaoSel,
 			final String dtDevolucaoMovString, final String obsOrgao, final String protocolo, final Long tpdall,
 			final String txtall, final DpPessoaSelecao responsavelSel, final List<Long> documentosSelecionados, Integer paramoffset)
@@ -2581,10 +2611,18 @@ public class ExMovimentacaoController extends ExController {
 				}
 			}
 		}
+		
+		if((lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && lotaResponsavelSel.getObjeto().getIsSuspensa() != null && lotaResponsavelSel.getObjeto().getIsSuspensa().equals(1)) 
+				|| (responsavelSel != null && responsavelSel.getObjeto() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa().equals(1))) {			
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa.");
+			result.forwardTo(this).aTransferirLote(paramoffset);
+			return;
+		}
 
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
-		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao)
-				.setTitularSel(titularSel).setNmFuncaoSubscritor(nmFuncaoSubscritor)
+		builder//.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao)
+				//.setTitularSel(titularSel).setNmFuncaoSubscritor(nmFuncaoSubscritor)
 				.setLotaResponsavelSel(lotaResponsavelSel).setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao)
 				.setDtDevolucaoMovString(dtDevolucaoMovString).setResponsavelSel(responsavelSel);
 
@@ -2676,13 +2714,13 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("itens", arrays);
 		result.include("lotaTitular", mov.getLotaTitular());
-		result.include("dtMovString", dtMovString);
-		result.include("subscritorSel", subscritorSel);
-		result.include("titularSel", titularSel);
-		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
+//		result.include("dtMovString", dtMovString);
+//		result.include("subscritorSel", subscritorSel);
+//		result.include("titularSel", titularSel);
+//		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
 		result.include("lotaResponsavelSel", lotaResponsavelSel);
 		result.include("cpOrgaoSel", cpOrgaoSel);
-		result.include("substituicao", substituicao);
+//		result.include("substituicao", substituicao);
 		result.include("responsavelSel", responsavelSel);
 //		}
 	}
@@ -2784,6 +2822,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("itens", listaFinal);
 	}
 
+	@Transacional
 	@Get("app/expediente/mov/arquivar_intermediario_lote_gravar")
 	public void aArquivarIntermediarioLoteGravar(final Integer postback,
 			final Integer paramOffset, final String dtMovString,
@@ -2880,6 +2919,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("itens", listaFinal);
 	}
 
+	@Transacional
 	@Get("app/expediente/mov/arquivar_permanente_lote_gravar")
 	public void aArquivarPermanenteLoteGravar(final Integer postback,
 			final Integer paramOffset, final String dtMovString,
@@ -2939,8 +2979,8 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote() throws Exception {
-		final List<ExDocumento> itensComoSubscritor = dao()
-				.listarDocPendenteAssinatura(getTitular(), false);
+		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+		final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
 		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
 
 		for (final ExDocumento doc : itensComoSubscritor) {
@@ -2975,11 +3015,12 @@ public class ExMovimentacaoController extends ExController {
 		result.include("request", getRequest());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia,
 			final String atributoAssinavelDataHora, String assinaturaB64,
-			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws AplicacaoException,
-			ServletException {
+			final String certificadoB64, final Boolean juntar, final Boolean tramitar, 
+			final Boolean exibirNoProtocolo) throws Exception {
 		try {
 
 			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -3026,19 +3067,21 @@ public class ExMovimentacaoController extends ExController {
 							.getBL()
 							.assinarDocumento(getCadastrante(),
 									getLotaTitular(), mob.doc(), dt,
-									assinatura, certificado, tpMovAssinatura, juntar, tramitar));
-
+									assinatura, certificado, tpMovAssinatura, juntar, tramitar,
+									exibirNoProtocolo, getTitular()));
+			
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
 
 		httpOK();
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/assinar_senha_gravar")
-	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor) throws Exception {
+	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, 
+			final Boolean tramitar, final Boolean exibirNoProtocolo, String nomeUsuarioSubscritor,
+			String senhaUsuarioSubscritor,final Boolean senhaIsPin) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		ExDocumento doc = buscarDocumento(builder, true);
@@ -3046,28 +3089,28 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
+		
 		try {
 			Ex.getInstance()
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
-							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
-							mov.getTitular(), copia, juntar, tramitar);
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
+							getTitular(), copia, juntar, tramitar, exibirNoProtocolo);
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
-
-		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
+		
+		httpOK();
 	}
 
+	@Transacional
 	@Get
 	@Post
 	@Path("/app/expediente/mov/assinar_mov_login_senha_gravar")
 	public void aAssinarMovSenhaGravar(Long id, String sigla,
 			String tipoAssinaturaMov, String nomeUsuarioSubscritor,
-			String senhaUsuarioSubscritor, Boolean copia) throws Exception {
+			String senhaUsuarioSubscritor, final Boolean senhaIsPin, Boolean copia) throws Exception {
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
 		
 		try {
@@ -3088,16 +3131,16 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.assinarMovimentacaoComSenha(getCadastrante(),
 						getLotaTitular(), mov, mov.getDtMov(),
-						nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+						nomeUsuarioSubscritor, senhaUsuarioSubscritor, senhaIsPin, true,
 						tpMovAssinatura);
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
 
 		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 	}
 
+	@Transacional
 	@Get({ "/app/expediente/mov/cancelar_pedido_publicacao_boletim",
 			"/expediente/mov/cancelar_pedido_publicacao_boletim.action" })
 	public void aCancelarPedidoPublicacaoBoletim(final String sigla)
@@ -3170,6 +3213,7 @@ public class ExMovimentacaoController extends ExController {
 				dao().listarSolicitados(getTitular().getOrgaoUsuario()));
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/atender_pedido_publicacao_gravar")
 	public void aAtenderPedidoPublicacaoGravar() throws Exception {
 
@@ -3236,6 +3280,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/mov/atender_pedido_publicacao");
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/atender_pedido_publicacao_cancelar")
 	public void aAtenderPedidoPublicacaoCancelar(final String sigla)
 			throws Exception {
@@ -3300,6 +3345,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/mov/atender_pedido_publicacao");
 	}
 
+	@Transacional
 	@Get("app/expediente/mov/cancelar_juntada")
 	public void cancelarJuntada(String sigla) throws Exception {
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
@@ -3331,6 +3377,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/cancelar_anotacao")
 	public void aCancelarAnotacao(final Long id, String redirectURL)
 			throws Exception {
@@ -3366,6 +3413,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
+	@Transacional
 	@Get("/app/expediente/mov/cancelar_ciencia")
 	public void aCancelarCiencia(String sigla)
 			throws Exception {
@@ -3424,6 +3472,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new RegraNegocioException("Não é possível cancelar juntada. Ação não permitida");
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/cancelar_juntada_gravar")
 	public void cancelarJuntadaGravar(Integer postback, String sigla,
 			String dtMovString, String descrMov, DpPessoaSelecao subscritorSel,
@@ -3487,6 +3536,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("request", getRequest());
 	}
 	
+	@Transacional
 	@Get({"/app/expediente/mov/cancelarPerfil"})
 	public void cancelarPerfil(String sigla, Long idPessoa, Long idLotacao) throws Exception {
 		
@@ -3520,6 +3570,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/cancelar_movimentacao_gravar")
 	public void cancelarMovimentacaoGravar(Integer postback, Long id,
 			String sigla, String dtMovString, boolean substituicao,
@@ -3572,6 +3623,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/retirar_de_edital_eliminacao_gravar")
 	public void retirarDeEditalEliminacaoGravar(Integer postback, String sigla,
 			String dtMovString, boolean substituicao, String descrMov,
@@ -3665,6 +3717,8 @@ public class ExMovimentacaoController extends ExController {
 							getLotaTitular(), mob, mov))
 				throw new AplicacaoException(
 						"Não é possível cancelar o documento vinculado.");
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
+			ExPodeCancelarMarcacao.afirmar(mov, getTitular(), getLotaTitular());
 		} else {
 			if (!Ex.getInstance().getComp()
 					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
@@ -3704,6 +3758,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Get
 	@Post
 	@Path("/app/expediente/mov/arquivar_intermediario_gravar")
@@ -3764,6 +3819,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Não é possível desapensar");
 
 		if (doc.isEletronico()) {
+			SigaTransacionalInterceptor.upgradeParaTransacional();
 			aDesapensarGravar(1, sigla, dtMovString, Boolean.FALSE, null, null);
 			return;
 		}
@@ -3775,7 +3831,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 	}
 
-	@Post("/app/expediente/mov/desapensar_gravar")
+	@Transacional
+	@Get
+	@Post
+	@Path("/app/expediente/mov/desapensar_gravar")
 	public void aDesapensarGravar(Integer postback, String sigla,
 			String dtMovString, boolean substituicao,
 			DpPessoaSelecao titularSel, DpPessoaSelecao subscritorSel)
@@ -3841,6 +3900,7 @@ public class ExMovimentacaoController extends ExController {
 
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/reclassificar_gravar")
 	public void aReclassificarGravar(final String sigla, final String descrMov,
 			final String[] campos, final Integer postback,
@@ -3888,6 +3948,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/simular_assinatura")
 	public void aSimularAssinatura(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -3902,6 +3963,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/simular_assinatura_mov")
 	public void aSimularAssinaturaMov(final Long id) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -3923,6 +3985,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + mob.getSigla());
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/simular_anexacao")
 	public void aSimularAnexacao(final String sigla) throws IOException,
 			DocumentException {
@@ -4027,6 +4090,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("classificacaoSel", new ExClassificacaoSelecao());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/avaliar_gravar")
 	public void aAvaliarGravar(final String sigla, final String descrMov,
 			final String obsOrgao, final String[] campos,
@@ -4084,7 +4148,7 @@ public class ExMovimentacaoController extends ExController {
 		Boolean podeAtenderPedidoPublicacao = Boolean.FALSE;
 		DpLotacaoSelecao lot = new DpLotacaoSelecao();
 
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 			throw new AplicacaoException(
 					"O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
 
@@ -4135,6 +4199,7 @@ public class ExMovimentacaoController extends ExController {
 				DatasPublicacaoDJE.consultarProximaDataDisponivelString());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/agendar_publicacao_gravar")
 	public void agendarPublicacaoGravar(Integer postback, String sigla,
 			String tipoMateria, String dtDispon, Long idLotPublicacao,
@@ -4269,23 +4334,33 @@ public class ExMovimentacaoController extends ExController {
 		Long idOrgaoUsuario = doc.getOrgaoUsuario().getId();
 		Long idOrgaoUsuarioCadastrante = getCadastrante().getOrgaoUsuario()
 				.getId();
+		Long idLotDefault = null;
 
 		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(doc);
 		siglaCadastrante = getCadastrante().getLotacao().getSigla();
 		siglaTitular = getLotaTitular().getSigla();
 		lotFiltro = new DpLotacao();
 
-		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());
+		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());		
 		lotFiltro.setSigla(siglaSubscritor);
+	    if (lotFiltro.getSigla().startsWith("-"))
+	    	lotFiltro.setSigla(lotFiltro.getSigla().substring(1));
 		lotSubscritor = dao().consultarPorSigla(lotFiltro);
 
-		lotacoes.add(lotSubscritor);
+		if (lotSubscritor != null) {
+			lotacoes.add(lotSubscritor);
+			idLotDefault = lotSubscritor.getId();
+		}
 
 		if (!siglaSubscritor.equals(siglaCadastrante)
 				&& idOrgaoUsuarioCadastrante.equals(idOrgaoUsuario)) {
 			lotFiltro.setSigla(siglaCadastrante);
 			lotCadastrante = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotCadastrante);
+			if (lotCadastrante != null) {
+				lotacoes.add(lotCadastrante);
+				if (idLotDefault == null)
+					idLotDefault = lotCadastrante.getId();
+			}	
 		}
 
 		if (!siglaSubscritor.equals(siglaTitular)
@@ -4295,11 +4370,16 @@ public class ExMovimentacaoController extends ExController {
 						.getOrgaoUsuario().getId().equals(idOrgaoUsuario))) {
 			lotFiltro.setSigla(siglaTitular);
 			lotTitular = dao().consultarPorSigla(lotFiltro);
-			lotacoes.add(lotTitular);
+			if (lotTitular != null) {
+				lotacoes.add(lotTitular);
+			  	 if (idLotDefault == null)
+					idLotDefault = lotTitular.getId();
+			}	
 		}
-		return new ListaLotPubl(lotacoes, lotSubscritor.getId());
+		
+		return new ListaLotPubl(lotacoes, idLotDefault);
 	}
-
+	
 	private void validarExisteLotacao(ExDocumento doc) {
 		if (doc.getTitular() != null) {
 			if (doc.getLotaTitular() == null) {
@@ -4325,17 +4405,14 @@ public class ExMovimentacaoController extends ExController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Órgão Integrado");
+		map.put(1, SigaMessages.getMessage("usuario.lotacao"));
 		map.put(2, SigaMessages.getMessage("usuario.matricula"));
-		map.put(3, "Externo");
+		map.put(3, SigaMessages.getMessage("responsavel.externo"));
 		return map;
 	}
 
 	private Map<Integer, String> getListaTipoRespPerfil() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Órgão Integrado");
-		return map;
+		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -4434,6 +4511,7 @@ public class ExMovimentacaoController extends ExController {
 		return data;
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/boletim_agendar")
 	public void aBoletimAgendar(final String sigla) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -4486,6 +4564,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("doc", mob.getDoc());
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/boletim_publicar_gravar")
 	public void aBoletimPublicarGravar(final String sigla, final String dtPubl)
 			throws Exception {
@@ -4560,6 +4639,7 @@ public class ExMovimentacaoController extends ExController {
 				DatasPublicacaoDJE.consultarProximaDataDisponivelString());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/pedirPublicacaoGravar")
 	public void pedirPublicacaoGravar(String sigla, Integer postback,
 			String tipoMateria, String dtDispon, Long idLotPublicacao,
@@ -4628,6 +4708,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/indicar_permanente_gravar")
 	public void indicarPermanenteGravar(final String sigla,
 			final String dtMovString, final DpPessoaSelecao subscritorSel,
@@ -4693,6 +4774,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/reverter_indicacao_permanente_gravar")
 	public void reverterIndicacaoPermanenteGravar(final String sigla,
 			final String dtMovString, final DpPessoaSelecao subscritorSel,
@@ -4738,6 +4820,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Transacional
 	@Get
 	@Post
 	@Path("/app/expediente/mov/assinar_mov_gravar")
@@ -4780,7 +4863,6 @@ public class ExMovimentacaoController extends ExController {
 							mov, dt, assinatura, certificado, tpMovAssinatura);
 		} catch (final Exception e) {
 			httpError(e);
-			return;
 		}
 
 		httpOK();
@@ -4790,16 +4872,23 @@ public class ExMovimentacaoController extends ExController {
 		result.use(Results.http()).body("OK").setStatusCode(200);
 	}
 
-	protected void httpError(final Exception e) {
-		result.use(Results.http()).body("ERRO - " + e.getMessage())
-				.setStatusCode(500);
-	}
-
+	protected void httpError(final Exception e) throws Exception {
+ 		result.use(Results.http()).body("ERRO - " + e.getMessage())
+ 				.setStatusCode(500);
+		try {
+			response.flushBuffer();
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		}
+		throw e;
+ 	}
+	
 	@Get("/app/expediente/mov/assinado")
 	public void assinado(final ExMobil mob) {
 		result.include("mob", mob);
 	}
 
+	@Transacional
 	@Get("/public/app/atualizar_publicacao")
 	public void atualizarPublicacao(final String data,
 			final String tipoCaderno, final String secao, final String soLerXml)
@@ -4862,9 +4951,14 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@Post("/app/expediente/mov/ciencia_gravar")
 	public void ciencia_gravar(final Integer postback, final String sigla, final String descrMov) {					
 		this.setPostback(postback);
+		
+		if (Prop.getBool("/siga.ciencia.preenchimento.obrigatorio") && (descrMov == null || descrMov.trim().length() == 0)) {
+			throw new AplicacaoException("Necessário o preenchimento do campo para dar Ciência.");
+		}
 		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
 				.novaInstancia();
@@ -4897,10 +4991,6 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	private Object getListaMarcadoresTaxonomiaAdministrada() {
-		return dao().listarCpMarcadoresTaxonomiaAdministrada();
-	}
-	
 	@Get("/app/expediente/mov/publicacao_transparencia")
 	public void aPublicarTransparencia(String sigla, String descrPublicacao,
 			String mensagem) throws Exception {
@@ -4916,13 +5006,11 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao movimentacao = movimentacaoBuilder
 				.construir(dao());
 
-		List<CpMarcador> marcadores = dao().listarCpMarcadoresTaxonomiaAdministrada();
+		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
 		if (marcadores != null) {
 			marcadores.removeAll(marcadoresAtivo);
 		}
-
-		
 
 		result.include("sigla", sigla);
 		result.include("mob", documentoBuilder.getMob());
@@ -4934,6 +5022,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	
+	@Transacional
 	@Post("/app/expediente/mov/publicacao_transparencia_gravar")
 	public void publicarTransparenciaGravar(final String sigla,
 			final Long nivelAcesso) {
@@ -4959,6 +5048,72 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mensagemCabec", "Documento enviado para publicação. Gerado <a class='alert-link' id='urlPermanente'  href='"+caminho+"' target='_Blank'  data-toggle='tooltip' data-placement='bottom'  data-html='true' title='Ir para endereço <i class=\"fa fa-link\"></i>'>Endereço Permanente</a> para acesso externo ao documento. <script>$(function () {$('[data-toggle=\"tooltip\"]').tooltip();$('#urlPermanente').tooltip('show');});</script> ");
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+
+	@Transacional
+	@Get("/app/expediente/mov/exibir_no_acompanhamento_do_protocolo")
+	public void exibirNoAcompanhamentoDoProtocolo(final String sigla) {					
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		
+		String siglaRetorno = sigla;
+
+		if (documentoBuilder.getMob().getDoc().getExMobilPai() != null) {
+			siglaRetorno = documentoBuilder.getMob().getDoc().getExMobilPai().getSigla();
+		}
+			
+		try {	
+			Ex.getInstance()
+					.getBL()
+					.exibirNoAcompanhamentoDoProtocolo(getCadastrante(), getLotaTitular(),
+							documentoBuilder.getMob(), getTitular());
+	
+		} catch (RegraNegocioException | AplicacaoException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
+		}
+
+		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
+	}
+	
+	@Transacional
+	@Get("/app/expediente/mov/desfazer_exibir_no_acompanhamento_do_protocolo")
+	public void desfazerExibirNoAcompanhamentoDoProtocolo(final Long id) throws Exception {					
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setId(id);
+		buscarDocumento(builder);
+		final ExMobil mob = builder.getMob();
+		String siglaRetorno = mob.getSigla();
+
+		if (mob.getDoc().getExMobilPai() != null) {
+			siglaRetorno = mob.getDoc().getExMobilPai().getSigla();
+		}
+		
+
+		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class,
+				false);
+
+		if (mov == null 
+				|| !mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO) 
+				|| mov.isCancelada()) {
+			throw new AplicacaoException("Não existe a disponibilização no acompanhamento do protocolo a ser cancelada.");
+		}
+		
+		try {
+			Ex.getInstance()
+			.getBL()
+			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+					mov, null, null, null,
+					"Disponibilização no acompanhamento do protocolo");
+		} catch (RegraNegocioException | AplicacaoException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Erro ao desfazer a disponibilização no acompanhamento do protocolo - " 
+					+ e.getMessage()));
+			ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
+		}
+
+		ExDocumentoController.redirecionarParaExibir(result, siglaRetorno);
 	}
 	
 }

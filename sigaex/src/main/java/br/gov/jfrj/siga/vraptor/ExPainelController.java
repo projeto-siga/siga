@@ -32,6 +32,7 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
@@ -75,9 +76,16 @@ public class ExPainelController extends ExController {
 		ExDocumentoVO docVO = null;
 		try {
 			buscarDocumento(false, exDocumentoDTO);
+			for (ExDocumento docFilho : exDocumentoDTO.getDoc().getExDocumentoFilhoSet()) {
+				if(docFilho.getDescrDocumento() == null) {
+					result.include("erroFilhoSemDescricao", true);
+					result.include("siglaFilho",docFilho.getSigla());
+					return;
+				}
+			}
 			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-					getLotaTitular(), true, true);
+					getLotaTitular(), true, true, false);
 			if (exDocumentoDTO.getDoc().isFinalizado() 
 					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
 				result.include("erroSemMobil", true);
@@ -106,6 +114,7 @@ public class ExPainelController extends ExController {
 		result.include("currentTimeMillis", System.currentTimeMillis());
 	}
 
+	@Transacional
 	@Get("app/expediente/painel/corrigeDocSemMobil")
 	public void corrigeDocSemMobil(final ExMobilSelecao documentoRefSel) throws Exception {
 		assertAcesso(CORRIGEMOBIL);
@@ -125,7 +134,7 @@ public class ExPainelController extends ExController {
 			buscarDocumento(false, exDocumentoDTO);
 			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-					getLotaTitular(), true, true);
+					getLotaTitular(), true, true, false);
 		} catch (Exception e) {
 		}
 		if (exDocumentoDTO != null && exDocumentoDTO.getDoc().isFinalizado() 
@@ -148,6 +157,7 @@ public class ExPainelController extends ExController {
 		result.redirectTo(this).exibe(documentoRefSel);
 	}
 
+	@Transacional
 	@Get("app/expediente/painel/corrigeDocSemDescricao")
 	public void corrigeDocSemDescricao(final ExMobilSelecao documentoRefSel) throws Exception {
 		assertAcesso(CORRIGEMOBIL);
@@ -167,7 +177,7 @@ public class ExPainelController extends ExController {
 			buscarDocumento(false, exDocumentoDTO);
 			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-					getLotaTitular(), true, true);
+					getLotaTitular(), true, true, false);
 		} catch (Exception e) {
 		}
 		if (exDocumentoDTO.getDoc().getDescrDocumento() != null) {

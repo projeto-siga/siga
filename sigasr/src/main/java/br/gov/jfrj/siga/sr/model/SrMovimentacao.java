@@ -29,19 +29,20 @@ import javax.persistence.TemporalType;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 @Entity
-@Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
+@Table(name = "sr_movimentacao", schema = "sigasr")
 public class SrMovimentacao extends Objeto {
     private static final long serialVersionUID = 1L;
     public static final ActiveRecord<SrMovimentacao> AR = new ActiveRecord<>(SrMovimentacao.class);
@@ -112,7 +113,7 @@ public class SrMovimentacao extends Objeto {
     private Long numSequencia;
 
     @Enumerated
-    public SrPrioridade prioridade;
+    private SrPrioridade prioridade;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PESQUISA")
@@ -348,6 +349,7 @@ public class SrMovimentacao extends Objeto {
 
         checarCampos();
         super.save();
+        ContextoPersistencia.em().flush();
 
         getSolicitacao().refresh();
 
@@ -423,11 +425,16 @@ public class SrMovimentacao extends Objeto {
             setPrioridade(solicitacao.getPrioridade());
         } else {
             SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
+            
+        	
+        	if (getAtendente().getId() == null) {
+        		this.setAtendente(null);
+        	}
 
             if (getLotaAtendente() == null) {
             	if (anterior != null && anterior.getLotaAtendente() != null)
             		setLotaAtendente(anterior.getLotaAtendente());
-            }
+            } 
             
             if (getItemConfiguracao() == null) {
             	if (anterior != null && anterior.getItemConfiguracao() != null)

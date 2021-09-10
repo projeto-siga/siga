@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @Entity
 @Audited
 @Immutable
-@Table(name = "GRUPOVEICULO", schema = "SIGATP")
+@Table(name = "grupoveiculo", schema = "sigatp")
 public class Grupo extends TpModel implements ConvertableEntity, Comparable<Grupo> {
 
 	private static final long serialVersionUID = -3681022838391034811L;
@@ -29,9 +29,9 @@ public class Grupo extends TpModel implements ConvertableEntity, Comparable<Grup
 	public static final ActiveRecord<Grupo> AR = new ActiveRecord<>(Grupo.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
-	private long id;
+	private Long id;
 
 	@NotNull
 	@UpperCase
@@ -75,7 +75,7 @@ public class Grupo extends TpModel implements ConvertableEntity, Comparable<Grup
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

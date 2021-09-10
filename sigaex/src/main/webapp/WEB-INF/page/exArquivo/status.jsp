@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="fg"%>
 
 <siga:pagina titulo="Aguarde..." popup="${true}">
 
@@ -102,7 +103,11 @@
 		    },
 		    
 		    end: function() {
-		    	window.location = "/sigaex/api/v1/download/${jwt}/${filename}";
+		    	if("${filename}".includes(".html")){
+		    		window.location = "/sigaex/api/v1/download/${jwt}/${filename}";
+		    	} else {
+		    		window.location = montarUrlDocPDF("/sigaex/api/v1/download/${jwt}/${filename}", "${fg:resource('/sigaex.pdf.visualizador')}");
+		    	}
 		    },
 		    
 		    formatBytes: function(bytes, decimals = 2) {

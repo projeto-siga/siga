@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.tp.model;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -18,12 +20,16 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.tp.validation.annotation.Unique;
 import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 
-@SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "penalidade", schema = "sigatp")
 @Unique(message="{penalidade.codigoInfracao.unique}", field="codigoInfracao")
 public class Penalidade extends TpModel implements ConvertableEntity {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static final long _ID_DA_PENALIDADE_OUTRA = -1;
 
 	public static final ActiveRecord<Penalidade> AR = new ActiveRecord<>(Penalidade.class);
@@ -68,13 +74,16 @@ public class Penalidade extends TpModel implements ConvertableEntity {
 	}
 
 	public static List<Penalidade> listarTodos(CpOrgaoUsuario orgaoUsuario) {
-		return Penalidade.AR.find("cpOrgaoOrigem = ? and id <> ?", orgaoUsuario, _ID_DA_PENALIDADE_OUTRA).fetch();
+		HashMap<String,Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoOrigem", orgaoUsuario);
+		parametros.put("id", _ID_DA_PENALIDADE_OUTRA);		
+		return Penalidade.AR.find("cpOrgaoOrigem = :cpOrgaoOrigem and id <> :id", orgaoUsuario, _ID_DA_PENALIDADE_OUTRA).fetch();
 	}
 
 	public static Penalidade buscar(Long idBuscar) {
 		Penalidade retorno = null;
 		try {
-			retorno = Penalidade.AR.find("id = ?", idBuscar).first();
+			retorno = Penalidade.AR.find("id = :id", Collections.singletonMap("id", idBuscar)).first();
 		} catch (Exception e) {
 			return null;
 		}
@@ -85,7 +94,8 @@ public class Penalidade extends TpModel implements ConvertableEntity {
 	public Long getId() {
 		return id;
 	}
-
+	
+	
 	public void setId(Long id) {
 		this.id = id;
 	}

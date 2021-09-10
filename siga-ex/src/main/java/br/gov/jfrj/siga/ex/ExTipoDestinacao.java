@@ -38,17 +38,14 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  * A class that represents a row in the 'EX_TIPO_DESTINACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_TIPO_DESTINACAO", catalog = "SIGA")
+@Table(name = "siga.ex_tipo_destinacao")
 public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 		Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8791659138846087059L;
 
 	public static final long TIPO_DESTINACAO_ELIMINACAO = 1;
 

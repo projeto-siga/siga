@@ -38,7 +38,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 @Entity
-@Table(name = "EX_CONFIGURACAO", schema = "SIGA")
+@Table(name = "siga.ex_configuracao")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
 @NamedQueries({ @NamedQuery(name = "consultarExConfiguracoes", query = "from ExConfiguracao excfg where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)") })
 public class ExConfiguracao extends CpConfiguracao {
@@ -79,12 +79,40 @@ public class ExConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_PAPEL")
 	private ExPapel exPapel;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3624557793773660738L;
-
 	public ExConfiguracao() {
+	}
+
+	public ExConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
+		if (configuracaoBaseParaExConfiguracao.isAtivo())
+			this.updateAtivo();
+		this.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
+		this.setComplexo(configuracaoBaseParaExConfiguracao.getComplexo());
+		this.setConfiguracaoInicial(configuracaoBaseParaExConfiguracao.getConfiguracaoInicial());
+		this.setConfiguracoesPosteriores(configuracaoBaseParaExConfiguracao.getConfiguracoesPosteriores());
+		this.setCpGrupo(configuracaoBaseParaExConfiguracao.getCpGrupo());
+		this.setCpIdentidade(configuracaoBaseParaExConfiguracao.getCpIdentidade());
+		this.setCpServico(configuracaoBaseParaExConfiguracao.getCpServico());
+		this.setCpSituacaoConfiguracao(configuracaoBaseParaExConfiguracao.getCpSituacaoConfiguracao());
+		this.setCpTipoConfiguracao(configuracaoBaseParaExConfiguracao.getCpTipoConfiguracao());
+		this.setCpTipoLotacao(configuracaoBaseParaExConfiguracao.getCpTipoLotacao());
+		this.setDpPessoa(configuracaoBaseParaExConfiguracao.getDpPessoa());
+		this.setDscFormula(configuracaoBaseParaExConfiguracao.getDscFormula());
+		this.setDtFimVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtFimVigConfiguracao());
+		this.setDtIniVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtIniVigConfiguracao());
+		this.setFuncaoConfianca(configuracaoBaseParaExConfiguracao.getFuncaoConfianca());
+		this.setHisAtivo(configuracaoBaseParaExConfiguracao.getHisAtivo());
+		this.setHisDtFim(configuracaoBaseParaExConfiguracao.getHisDtFim());
+		this.setHisDtIni(configuracaoBaseParaExConfiguracao.getHisDtIni());
+		this.setHisIdcFim(configuracaoBaseParaExConfiguracao.getHisIdcFim());
+		this.setHisIdcIni(configuracaoBaseParaExConfiguracao.getHisIdcIni());
+		this.setHisIdIni(configuracaoBaseParaExConfiguracao.getHisIdIni());
+		this.setId(configuracaoBaseParaExConfiguracao.getId());
+		this.setIdConfiguracao(configuracaoBaseParaExConfiguracao.getIdConfiguracao());
+		this.setLotacao(configuracaoBaseParaExConfiguracao.getLotacao());
+		this.setNmEmail(configuracaoBaseParaExConfiguracao.getNmEmail());
+		this.setOrgaoObjeto(configuracaoBaseParaExConfiguracao.getOrgaoObjeto());
+		this.setOrgaoUsuario(configuracaoBaseParaExConfiguracao.getOrgaoUsuario());
+		return;
 	}
 
 	public ExTipoMovimentacao getExTipoMovimentacao() {
@@ -159,10 +187,6 @@ public class ExConfiguracao extends CpConfiguracao {
 		this.exPapel = exPapel;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public boolean isAgendamentoPublicacaoBoletim() {
 		return getExTipoMovimentacao() != null
 				&& getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM;
@@ -177,4 +201,5 @@ public class ExConfiguracao extends CpConfiguracao {
 						.getOrgaoUsuario().getId()
 						.equals(lotacaoTitular.getOrgaoUsuario().getId()));
 	}
+	
 }

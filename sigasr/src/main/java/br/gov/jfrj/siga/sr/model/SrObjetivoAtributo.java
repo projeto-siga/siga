@@ -12,7 +12,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_OBJETIVO_ATRIBUTO", schema = "SIGASR")
+@Table(name = "sr_objetivo_atributo", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrObjetivoAtributo extends Objeto {
 

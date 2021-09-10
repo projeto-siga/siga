@@ -23,6 +23,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -52,13 +54,15 @@ public class ExGadgetController extends ExController {
 	}
 
 	@Inject
-	public ExGadgetController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
+	public ExGadgetController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
+			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Get("app/expediente/gadget")
-	public void execute(final String idTpMarcadorExcluir, final Integer idTpFormaDoc, boolean apenasQuadro) throws Exception {
+	public void execute(final String idTpMarcadorExcluir, final Integer idTpFormaDoc, boolean apenasQuadro)
+			throws Exception {
 		if (idTpFormaDoc == null || idTpFormaDoc.equals(0)) {
 			throw new AplicacaoException("Código do tipo de marca (Processos ou Expedientes) não foi informado");
 		}
@@ -80,13 +84,15 @@ public class ExGadgetController extends ExController {
 			listEstados = listEstadosReduzida;
 		}
 
+		
+
 		if (super.getTitular() == null) {
 			throw new AplicacaoException("Titular nulo, verificar se usuário está ativo no RH");
 		}
 
-		super.getRequest().setAttribute("_cadastrante",
-				super.getTitular().getSigla() + "@" + super.getLotaTitular().getOrgaoUsuario().getSiglaOrgaoUsu() + super.getLotaTitular().getSigla());
-		
+		super.getRequest().setAttribute("_cadastrante", super.getTitular().getSigla() + "@"
+				+ super.getLotaTitular().getOrgaoUsuario().getSiglaOrgaoUsu() + super.getLotaTitular().getSigla());
+
 		result.include("listEstados", listEstados);
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
@@ -98,17 +104,20 @@ public class ExGadgetController extends ExController {
 	@Get("/public/app/testes/gadgetTest")
 	public void test(final String matricula, final Integer idTpFormaDoc) throws Exception {
 		if (matricula == null) {
-			result.use(Results.http()).body("ERRO: É necessário especificar o parâmetro 'matricula'.").setStatusCode(400);
+			result.use(Results.http()).body("ERRO: É necessário especificar o parâmetro 'matricula'.")
+					.setStatusCode(400);
 			return;
 		}
-			
+
 		final DpPessoa pes = daoPes(matricula);
-		
+
 		if (pes == null) {
-			result.use(Results.http()).body("ERRO: Não foi localizada a pessoa referenciada pelo parâmetro 'matricula'.").setStatusCode(400);
+			result.use(Results.http())
+					.body("ERRO: Não foi localizada a pessoa referenciada pelo parâmetro 'matricula'.")
+					.setStatusCode(400);
 			return;
 		}
-		
+
 		final Integer id = (idTpFormaDoc == null || idTpFormaDoc == 0 ? 1 : idTpFormaDoc);
 
 		setTitular(pes);

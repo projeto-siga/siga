@@ -38,16 +38,15 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_TIPO_DESPACHO", catalog = "SIGA")
+@Table(name = "siga.ex_tipo_despacho")
 public class ExTipoDespacho extends AbstractExTipoDespacho implements
 		Serializable {
-
-	private static final long serialVersionUID = 3256722875116761397L;
 
 	/**
 	 * Simple constructor of ExTipoDespacho instances.

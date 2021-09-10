@@ -33,6 +33,8 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -43,22 +45,24 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 
-	public RelMovimentacaoDocSubordinados(Map parametros)
-			throws DJBuilderException {
+	public RelMovimentacaoDocSubordinados(Map<String, String> parametros)
+			throws Exception {
 		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException(
+ 					"Parâmetro secaoUsuario não informado!");
+ 		}
+		if (Utils.empty(parametros.get("lotacao"))) {
+			throw new AplicacaoException(
+					"Parâmetro lotacao não informado!");
 		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
-		}
-
+		if (Utils.empty(parametros.get("link_siga"))) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
+ 		}
 	}
 
 	@Override
@@ -80,6 +84,19 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 	
 	public Collection processarDados() throws Exception {
 
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+		
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
+		
+		
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = ContextoPersistencia.em().createQuery(
@@ -200,69 +217,75 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 			ExMovimentacao movimentacao = (ExMovimentacao) array[1];
 			ExMobil mob = (ExMobil)array[2];
 			Long idDoc = (Long)array[3];
-			String siglaOrgaoUsu = (String)array[4];
-			String acronimoOrgaoUsu = (String)array[5];
-			String siglaFormaDoc = (String)array[6];
-			Long anoEmissao = (Long)array[7];
-			Long numExpediente = (Long)array[8];
-			Integer docNumSequencia = (Integer)array[9];
-			Long idTipoMobil = (Long)array[10];
-			Integer mobilNumSequencia = (Integer)array[11];
-			Long pai_idDoc = (Long)array[12];
-			String pai_siglaOrgaoUsu = (String)array[13];
-			String pai_acronimoOrgaoUsu = (String)array[14];
-			String pai_siglaFormaDoc = (String)array[15];
-			Long pai_anoEmissao = (Long)array[16];
-			Long pai_numExpediente = (Long)array[17];
-			Integer pai_numSequencia = (Integer)array[18];
-			Long pai_idTipoMobil = (Long)array[19];
-			Integer pai_mobilNumSequencia = (Integer)array[20];
 			
-			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, 
-					pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
-			
-			String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
-			
-			String url = ((String)array[21]).trim() + codigoMobil;
-			
-			String descricao = (String)array[22];
-			
-			String nomePessoa = (String)array[23];
-			
-			String descrMarcador =  (String)array[24];
-			
-			long identificador = movimentacao.getExMobil().getId();
-			datatual = System.currentTimeMillis();
-			movimentacao.getExMobil().getId();
-			if ((mob.getUltimaMovimentacao(3) == null) || (mob.getUltimaMovimentacao(8) == null)) {
-				dataant = mob.getUltimaMovimentacao(1).getData().getTime();
-				durentrelots = (((datatual - dataant)/86400000L)+1);
-			}
-			else
-			{
-				if (mob.getUltimaMovimentacao(3).getData().getTime() > mob.getUltimaMovimentacao(8).getData().getTime()){
-					dataant = mob.getUltimaMovimentacao(3).getData().getTime();
+			ExDocumento documento = ExDao.getInstance().consultarExDocumentoPorId(idDoc);
+			if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+					documento, titular, 
+							lotaTitular)) {
+				String siglaOrgaoUsu = (String)array[4];
+				String acronimoOrgaoUsu = (String)array[5];
+				String siglaFormaDoc = (String)array[6];
+				Long anoEmissao = (Long)array[7];
+				Long numExpediente = (Long)array[8];
+				Integer docNumSequencia = (Integer)array[9];
+				Long idTipoMobil = (Long)array[10];
+				Integer mobilNumSequencia = (Integer)array[11];
+				Long pai_idDoc = (Long)array[12];
+				String pai_siglaOrgaoUsu = (String)array[13];
+				String pai_acronimoOrgaoUsu = (String)array[14];
+				String pai_siglaFormaDoc = (String)array[15];
+				Long pai_anoEmissao = (Long)array[16];
+				Long pai_numExpediente = (Long)array[17];
+				Integer pai_numSequencia = (Integer)array[18];
+				Long pai_idTipoMobil = (Long)array[19];
+				Integer pai_mobilNumSequencia = (Integer)array[20];
+				
+				String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc, anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, 
+						pai_idDoc, pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente, pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
+				
+				String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
+				
+				String url = ((String)array[21]).trim() + codigoMobil;
+				
+				String descricao = (String)array[22];
+				
+				String nomePessoa = (String)array[23];
+				
+				String descrMarcador =  (String)array[24];
+				
+				long identificador = movimentacao.getExMobil().getId();
+				datatual = System.currentTimeMillis();
+				movimentacao.getExMobil().getId();
+				if ((mob.getUltimaMovimentacao(3) == null) || (mob.getUltimaMovimentacao(8) == null)) {
+					dataant = mob.getUltimaMovimentacao(1).getData().getTime();
 					durentrelots = (((datatual - dataant)/86400000L)+1);
 				}
-				else{
-					dataant = mob.getUltimaMovimentacao(8).getData().getTime();
-					durentrelots = (((datatual - dataant)/86400000L)+1);
+				else
+				{
+					if (mob.getUltimaMovimentacao(3).getData().getTime() > mob.getUltimaMovimentacao(8).getData().getTime()){
+						dataant = mob.getUltimaMovimentacao(3).getData().getTime();
+						durentrelots = (((datatual - dataant)/86400000L)+1);
+					}
+					else{
+						dataant = mob.getUltimaMovimentacao(8).getData().getTime();
+						durentrelots = (((datatual - dataant)/86400000L)+1);
+					}
+						
 				}
-					
+				mob.getUltimaMovimentacao(28);
+				listaFinal.add(nomeLotacao);
+				listaFinal.add(codigoMobil);
+				listaFinal.add(mov.getDtRegMovDDMMYY().toString());
+				listaFinal.add(mov.getLotaResp().getSigla().toString());
+				listaFinal.add(descrMarcador);
+				listaFinal.add(descricao);
+				if (mob.getUltimaMovimentacao(28)  != null) {
+					listaFinal.add(mob.getUltimaMovimentacao(28).toString());
+				} else {
+					listaFinal.add("");
+				}
+				listaFinal.add(String.valueOf(durentrelots));
 			}
-			mob.getUltimaMovimentacao(28);
-			listaFinal.add(nomeLotacao);
-			listaFinal.add(codigoMobil);
-			listaFinal.add(mov.getDtRegMovDDMMYY().toString());
-			listaFinal.add(mov.getLotaResp().getSigla().toString());
-			listaFinal.add(descrMarcador);
-			listaFinal.add(descricao);
-			if (mob.getUltimaMovimentacao(28)  != null) {
-				listaFinal.add(mob.getUltimaMovimentacao(28).toString());
-			} else {
-				listaFinal.add("");
-			}
-			listaFinal.add(String.valueOf(durentrelots));
 		
 		}
 		return listaFinal;

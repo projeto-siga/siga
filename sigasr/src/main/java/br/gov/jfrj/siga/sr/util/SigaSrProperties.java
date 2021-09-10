@@ -1,6 +1,6 @@
 package br.gov.jfrj.siga.sr.util;
 
-import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
+import br.gov.jfrj.siga.sr.prop.ModeloPropriedade;
 
 public class SigaSrProperties extends ModeloPropriedade {
 

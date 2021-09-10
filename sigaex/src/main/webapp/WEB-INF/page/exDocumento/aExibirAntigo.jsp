@@ -18,6 +18,7 @@
 	</script>
 </c:if>
 <siga:pagina titulo="Documento" popup="${popup}" >
+<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 <!-- main content bootstrap -->
 <div class="container-fluid content" id="page">
 	<c:if test="${not empty msg}">
@@ -67,9 +68,14 @@
 				<c:set var="acoes" value="${m.acoesOrdenadasPorNome}" />
 				<siga:links>
 					<c:forEach var="acao" items="${acoes}">
-						<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
-							url="${pageContext.request.contextPath}${acao.url}" test="${true}" popup="${acao.popup}" confirm="${acao.msgConfirmacao}" 
-							classe="${acao.classe}" atalho="${true}" />
+						<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+								pre="${acao.pre}" pos="${acao.pos}"
+								url="${pageContext.request.contextPath}${acao.url}"
+								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
+								classe="${acao.classe}" estilo="line-height: 160% !important"
+								atalho="${true}" modal="${acao.modal}"
+								explicacao="${acao.explicacao}" post="${acao.post}"
+								test="${acao.pode}" />
 					</c:forEach>
 				</siga:links>
 			</c:if>
@@ -208,9 +214,10 @@
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
-													url="${pageContext.request.contextPath}${acao.url}" test="${true}" popup="${acao.popup}" 
+													url="${pageContext.request.contextPath}${acao.url}" popup="${acao.popup}" 
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
-													idAjax="${mov.idMov}" classe="${acao.classe}" />
+													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" 
+													explicacao="${acao.explicacao}"	test="${acao.pode}" />
 												<c:if test='${assinadopor and mov.idTpMov == 2}'>
 													${mov.complemento}
 													<c:set var="assinadopor" value="${false}" />
@@ -463,10 +470,90 @@
 						</div>
 					</div>
 				</div>
-				<div class="gt-sidebar-content" id="gc">
+					<!-- tabela de móbiles e marcas -->
+					<c:if test="${not empty docVO.outrosMobsLabel and not empty docVO.marcasPorMobil}">
+						<div class="card-sidebar card bg-light mb-3">
+							<c:set var="butRefresh"><a title="Atualizar marcas"
+								style="float: right; margin-top: 0px; padding-left: 1em; padding-right: 1em;"
+								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc(sigla)}?sigla=${sigla}"
+								${popup?'target="_blank" ':''}> <img
+								src="/siga/css/famfamfam/icons/arrow_refresh.png">
+								
+							</a></c:set>
+							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}" addToTitle="${butRefresh}" classInfo="m-0 p-0">
+								<div class="table-responsive">
+								<table class="table table-sm mb-0 w-100">
+								<!-- <thead class="align-middle text-center">
+									<tr>
+										<th class="text-left"></th>
+										<th class="text-left">Marca</th>
+										<th class="text-left"><fmt:message key="usuario.pessoa"/></th>
+										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
+										<th class="text-left">Texto</th>
+									</tr>
+								</thead> -->
+								<tbody>
+									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
+										<c:set var="outroMob" value="${entry.key}" />
+										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
+										<c:forEach var="marca" items="${entry.value}" varStatus="loop">
+											<c:set var="lotacaoAtual" value="${marca.dpLotacaoIni.lotacaoAtual}"/>
+											<c:set var="pessoaAtual" value="${marca.dpPessoaIni.pessoaAtual}"/>
+											<tr class="${mov.classe} ${mov.disabled}">
+											<c:if test="${loop.first}">
+											<td rowspan="${entry.value.size()}" style="padding-left: 1.25rem"><c:choose>
+													<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
+														<i><b>${mobNome}</b></i>
+													</c:when>
+													<c:otherwise>
+														<a
+															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${outroMob.sigla}"
+															title="${outroMob.doc.descrDocumento}"
+															style="text-decoration: none">
+															${mobNome} </a>
+													</c:otherwise>
+												</c:choose></td>
+											</c:if>
+											<td>${marca.descricaoComDatas}</td>
+											<td><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
+												descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
+												pessoaParam="${pessoaAtual.siglaCompleta}" /></td>
+											<td><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+												descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+												lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></td>
+											<c:choose>
+												<c:when test="${not empty marca.exMovimentacao.descrMov}">
+													<td>${marca.exMovimentacao.descrMov}</td>
+												</c:when>
+												<c:otherwise>
+													<td style="padding-left:0; padding-right: 0"></td>
+												</c:otherwise>
+											</c:choose>
+											<c:choose>
+												<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
+													<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+												</c:when>
+												<c:otherwise>
+													<td style="padding-left:0; padding-right: 0"></td>
+												</c:otherwise>
+											</c:choose>
+											<td style="padding-left:0; padding-right: 1.25rem"></td>
+											</tr>
+										</c:forEach>
+									</c:forEach>
+								</tbody>
+							</table>
+							</div>
+							</tags:collapse>
+						</div>
+					</c:if>
+					
+					<div class="gt-sidebar-content" id="gc">
 				</div>
 			</div>
 		</div>
+		
+		
 	</div>
 </div>
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">

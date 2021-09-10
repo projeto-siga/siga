@@ -32,6 +32,15 @@ function personalizacaoJuntar() {
 	document.getElementById('frm_nmFuncaoSubscritor').value = j;
 }
 
+function getQueryParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 	var frm = document.getElementById('frm');
@@ -47,7 +56,11 @@ function sbmt(id) {
 	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
-		frm.action = 'recarregar';
+		var paiSigla = getQueryParameterByName('mobilPaiSel.sigla');
+		var criandoAnexo = getQueryParameterByName('criandoAnexo');
+		
+		frm.action = id ? 'recarregar' : 'editar?modelo=' + document.getElementsByName('exDocumentoDTO.idMod')[0].value
+				+ (paiSigla ? '&mobilPaiSel.sigla=' + paiSigla : '') + (criandoAnexo ? '&criandoAnexo=' + criandoAnexo : '');
 		frm.submit();
 	}
 	return;
@@ -98,6 +111,8 @@ function validar(silencioso) {
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
+	var hasPai = document.getElementById('hasPai');
+	var isPaiEletronico = document.getElementById('isPaiEletronico');
 	var subscritor = document.getElementById('formulario_exDocumentoDTO.subscritorSel_id');
 	var temCossignatarios = document.getElementById('temCossignatarios');
 	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
@@ -115,6 +130,23 @@ function validar(silencioso) {
 				silencioso);
 		return false;
 	}
+	
+    if ( eletroHidden == null ) {
+		if ( hasPai.value === 'true' ) {
+			if ( isPaiEletronico.value == 'true' && eletro2.checked) {
+				aviso(
+				"O documento deve ser digital, não pode ser de outro tipo.",
+				silencioso);
+				return false;
+			} 
+			if ( isPaiEletronico.value == 'false' && eletro1.checked) {
+				aviso(
+				"O documento deve ser físico, não pode ser de outro tipo.",
+				silencioso);
+				return false;
+			} 
+		}
+    }
 
 	var limite = document
 			.getElementsByName('exDocumentoDTO.tamanhoMaximoDescricao')[0].value;
@@ -158,6 +190,9 @@ function aviso(msg, silencioso, elemento) {
 
 // <c:set var="url" value="excluirpreench" />
 function removePreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -168,6 +203,9 @@ function removePreench() {
 
 // <c:set var="url" value="alterarpreench" />
 function alteraPreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+	
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -564,3 +602,22 @@ $(window).load(function() {
 	var observadorDeAlteracoesNoDocumento = new SigaSP.Documento();
 	observadorDeAlteracoesNoDocumento.observar();	
 });
+
+updateURL = function() {
+	if (!history || !history.replaceState)
+		return;
+	
+	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
+	if (id)
+		return;
+	
+	var modelo = document.getElementsByName('exDocumentoDTO.idMod')[0].value;
+	var lotaDestFields = document.getElementsByName('exDocumentoDTO.lotacaoDestinatarioSel.id');
+	var lotaDest = lotaDestFields && lotaDestFields[0].value ? '&lotaDest=' + lotaDestFields[0].value : '';
+	var classifFields = document.getElementsByName('exDocumentoDTO.classificacaoSel.id');
+	var classif = classifFields && classifFields[0].value ? '&classif=' + classifFields[0].value : '';
+	var descrFields = document.getElementsByName('exDocumentoDTO.descrDocumento');
+	var descr = descrFields && descrFields[0].value ? '&descr=' + descrFields[0].value : '';
+	
+	history.replaceState(null, null, 'editar?modelo=' + modelo + lotaDest + classif + descr);
+}

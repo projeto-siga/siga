@@ -1,0 +1,6 @@
+*
+!Dockerfile
+!eap/*
+!target/siga.war
+!target/sigaex.war
+!target/sigawf.war

@@ -3694,10 +3694,13 @@ public class ExBL extends CpBL {
 			Set<Integer> atributosDesconsiderados = new HashSet<>();
 			atributosDesconsiderados.add(CpConfiguracaoBL.PESSOA_OBJETO);
 			atributosDesconsiderados.add(CpConfiguracaoBL.LOTACAO_OBJETO);
+			
+			CpConfiguracaoCache filtroConfiguracaoCache = confFiltro.converterParaCache();
 			for (ExConfiguracaoCache conf : lista) {
+				
 				if (// (!conf.ativaNaData(dt)) ||
 				conf.exPapel == 0 || (conf.pessoaObjeto == 0 && conf.lotacaoObjeto == 0)
-						|| !confBL.atendeExigencias(confFiltro.converterParaCache(), atributosDesconsiderados, conf, null))
+						|| !confBL.atendeExigencias(filtroConfiguracaoCache, atributosDesconsiderados, conf, null))
 					continue;
 				DpPessoa po = null;
 				DpLotacao lo = null;

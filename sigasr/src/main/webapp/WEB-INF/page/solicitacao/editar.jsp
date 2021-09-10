@@ -203,6 +203,7 @@
 								</div>
 								
 								<div id="divLocalRamalEMeioContato" depende="solicitacao.solicitante">
+									<input type="hidden" name="solicitante" value="${solicitacao.solicitante.id}" id="solicitante"></input>
 									<script>
 										//Edson: talvez fosse possivel fazer de um modo melhor, mas assim � mais pr�tico
 										$("#solicitacaosolicitanteSpan").html("${solicitanteDescricaoCompleta}");
@@ -213,7 +214,6 @@
 											<div class="col-sm-12">
 												<div class="form-group">
 													<label>Local</label>
-													<input type="hidden" name="solicitante" value="${solicitacao.solicitante.id}" id="solicitante"></input>
 				 									<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')" class="form-control">
 					        						<c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
 					                						<optgroup label="${orgao.acronimoOrgaoUsu}">

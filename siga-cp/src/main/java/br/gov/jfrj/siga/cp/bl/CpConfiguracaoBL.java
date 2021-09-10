@@ -400,11 +400,12 @@ public class CpConfiguracaoBL {
 			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao());
 		if (lista == null)
 			return null;
-
+		
+		CpConfiguracaoCache filtroConfiguracaoCache = cpConfiguracaoFiltro.converterParaCache();
 		for (CpConfiguracaoCache cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn)) || (cpConfiguracao.situacao != null
 					&& cpConfiguracao.situacao == CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR)
-					|| !atendeExigencias(cpConfiguracaoFiltro.converterParaCache(), atributosDesconsiderados, cpConfiguracao, perfis))
+					|| !atendeExigencias(filtroConfiguracaoCache, atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
 			return cpConfiguracao;
 		}

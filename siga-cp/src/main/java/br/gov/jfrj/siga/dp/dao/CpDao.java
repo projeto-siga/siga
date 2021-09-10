@@ -2553,7 +2553,7 @@ public class CpDao extends ModeloDao {
 	}
 
 	public <T extends Historico> T obterInicial(final T u) {
-		if (u.getId() == u.getHisIdIni())
+		if (u.getId().equals(u.getHisIdIni()))
 			return u;
 
 		if (u instanceof DpPessoa)
@@ -2571,7 +2571,7 @@ public class CpDao extends ModeloDao {
 		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
-		String sql = "from " + clazz + " u where u." + queryHisIdIni + " = :idIni";		
+		String sql = "from " + clazz + " u where u." + queryHisIdIni + " = :idIni order by 1";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
 		qry.setFirstResult(0);

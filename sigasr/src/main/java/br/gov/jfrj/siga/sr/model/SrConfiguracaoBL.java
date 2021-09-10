@@ -46,8 +46,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
                 srConf.setAcaoFiltro(srConf.getAcaoFiltro().getAtual());
             if (srConf.getListaPrioridade() != null)
                 srConf.setListaPrioridade(srConf.getListaPrioridade().getListaAtual());
+            cpConfiguracao = srConf;
         }
-
     }
 
     @Override
@@ -57,10 +57,11 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
             return false;
 
         if (cfg instanceof SrConfiguracaoCache && cfgFiltro instanceof SrConfiguracaoCache) {
+       
         	SrConfiguracaoCache conf = (SrConfiguracaoCache) cfg;
         	SrConfiguracaoCache filtro = (SrConfiguracaoCache) cfgFiltro;
 
-            if (!atributosDesconsiderados.contains(ACAO) && conf.acoesSet != null && conf.acoesSet.size() > 0) {
+            if (!atributosDesconsiderados.contains(ACAO) && conf.acoesSet != null && conf.acoesSet.size() > 0 && filtro.getAcaoFiltro() != null) {
                 boolean acaoAtende = false;
                 for (SrAcao item : conf.acoesSet) {
                     if (filtro.getAcaoFiltro() != null && item.getAtual().isPaiDeOuIgualA(filtro.getAcaoFiltro())) {
@@ -72,8 +73,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
                     return false;
             }
 
-            if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO) && conf.itemConfiguracaoSet != null && conf.itemConfiguracaoSet.size() > 0) {
-                boolean itemAtende = false;
+            if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO) && conf.itemConfiguracaoSet != null && conf.itemConfiguracaoSet.size() > 0 && filtro.getItemConfiguracaoFiltro() != null)
+            {   
+            	boolean itemAtende = false;
                 for (SrItemConfiguracao item : conf.itemConfiguracaoSet) {
                     if (filtro.getItemConfiguracaoFiltro() != null && item.getAtual().isPaiDeOuIgualA(filtro.getItemConfiguracaoFiltro())) {
                         itemAtende = true;

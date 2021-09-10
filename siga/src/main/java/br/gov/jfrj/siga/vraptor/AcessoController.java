@@ -241,9 +241,9 @@ public class AcessoController extends GiControllerSupport {
 		CpOrgaoUsuario orgao = null;
 
 		if (pessoaSel != null && pessoaSel.getId() != null) {
-			pessoa = daoPes(pessoaSel.getId());
+			pessoa = daoPes(pessoaSel.getId()).getPessoaInicial();
 		} else if (lotacaoSel != null && lotacaoSel.getId() != null) {
-			lotacao = daoLot(lotacaoSel.getId());
+			lotacao = daoLot(lotacaoSel.getId()).getLotacaoInicial();
 		} else if (perfilSel != null && perfilSel.getId() != null) {
 			perfil = dao().consultar(perfilSel.getId(), CpPerfil.class,false);
 		} else if (idOrgaoUsuSel != null && idOrgaoUsuSel != null) {

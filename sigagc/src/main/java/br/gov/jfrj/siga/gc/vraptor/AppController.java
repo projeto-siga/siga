@@ -87,9 +87,9 @@ public class AppController extends GcController {
 	}
 
 	@Inject
-	public AppController(HttpServletRequest request, Result result, GcBL bl, SigaObjects so, EntityManager em,
+	public AppController(HttpServletRequest request,  CpDao dao, Result result, GcBL bl, SigaObjects so, EntityManager em,
 			Correio correio) {
-		super(request, result, so, em);
+		super(request,dao, result, so, em);
 		this.bl = bl;
 		this.correio = correio;
 	}
@@ -103,7 +103,7 @@ public class AppController extends GcController {
 		Query query = em().createNamedQuery("contarGcMarcas");
 		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
 		query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
-		query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
+		query.setParameter("dbDatetime", dao().consultarDataEHoraDoServidor());
 		List contagens = query.getResultList();
 		result.include("contagens", contagens);
 	}
@@ -186,6 +186,7 @@ public class AppController extends GcController {
 				pagina);
 	}
 
+	@Path("/app/knowledgeInplace")
 	public void knowledgeInplace(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
@@ -354,6 +355,7 @@ public class AppController extends GcController {
 	}
 
 	@Get("/app/estatisticaGeral")
+	@Transacional
 	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
@@ -362,11 +364,11 @@ public class AppController extends GcController {
 		List<Object[]> listaMaisRecentes = query1.getResultList();
 		if (listaMaisRecentes.size() == 0)
 			listaMaisRecentes = null;
-
-		Query query2 = em().createNamedQuery("maisVisitados");
+		
+	 	Query query2 = em().createNamedQuery("maisVisitados");
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
-		if (listaMaisVisitados.size() == 0)
+		if (listaMaisVisitados.size() == 0)  
 			listaMaisVisitados = null;
 
 		Query query3 = em().createNamedQuery("principaisAutores");
@@ -416,6 +418,7 @@ public class AppController extends GcController {
 		result.use(Results.page()).defaultView();
 	}
 
+	@Transacional
 	public void estatisticaLotacao() throws Exception {
 
 		DpLotacao lotacao = getLotaTitular();

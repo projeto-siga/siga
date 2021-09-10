@@ -36,7 +36,7 @@ var appMesa = new Vue({
 			errormsg: undefined,
 			toggleConfig: '',
 			selQtd: undefined,
-			selQtdPag: 15,
+			selQtdPag: (getParmUser('qtdPag') == null ? 15 : getParmUser('qtdPag')),
 			trazerAnotacoes: true,
 			trazerComposto: false,
 			trazerArquivados: false,
@@ -92,6 +92,7 @@ var appMesa = new Vue({
 					}
 				}
 			}
+			setParmUser('qtdPag', qtdPag);
 			this.recarregarMesa();
 		},
 		trazerAnotacoes: function() {
@@ -135,9 +136,9 @@ var appMesa = new Vue({
 			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
 			this.usuarioPosse = (getParmUser('usuarioPosse') == null ? false : getParmUser('usuarioPosse'));
 			this.dtDMA = (getParmUser('dtDMA') == null ? false : getParmUser('dtDMA'));
+			this.qtdPag = (getParmUser('qtdPag') == null ? 15 : getParmUser('qtdPag'));
 			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
 			
-
 			/* clean toast container before reload notification */
 			$('#toastContainer').empty();
 
@@ -164,11 +165,12 @@ var appMesa = new Vue({
 			if (grpNome != null) {
 				parms[grpNome] = {
 					'grupoOrdem': parmGrupos[grpNome].ordem,
-					'grupoQtd': parseInt(parmGrupos[grpNome].qtd) + qtdPagina,
+					'grupoQtd': parseInt(parmGrupos[grpNome].qtd) + parseInt(this.qtdPag),
 					'grupoQtdPag': parmGrupos[grpNome].qtdPag, 'grupoCollapsed': parmGrupos[grpNome].collapsed,
 					'grupoHide': parmGrupos[grpNome].hide
 				};
-				setValueGrupo(grpNome, 'qtd', parseInt(parmGrupos[grpNome].qtd) + qtdPagina);
+				setValueGrupo(grpNome, 'qtd', parseInt(parmGrupos[grpNome].qtd) + parseInt(this.qtdPag));
+				
 			} else {
 				var i = 0;
 				for (let p in parmGrupos) {
@@ -250,6 +252,7 @@ var appMesa = new Vue({
 			localStorage.removeItem('ordemCrescenteData' + getUser());
 			localStorage.removeItem('usuarioPosse' + getUser());
 			localStorage.removeItem('dtDMA' + getUser());
+			localStorage.removeItem('qtdPag' + getUser());
 			this.recarregarMesa();
 			this.selQtdPag = 15;
 			
@@ -291,11 +294,7 @@ var appMesa = new Vue({
 			if (collapsibleElemHeader.classList.contains('collapsed')) {
 				setValueGrupoSessionStorage(grupoNome, 'grupoCollapsed', false);
 				setValueGrupo(grupoNome, 'collapsed', false);
-				if (parmGrupos[grupoNome].qtd === 0) {
-					setValueGrupo(grupoNome, 'qtd', parmGrupos[grupoNome].qtdPag)
-				} else {
-					setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
-				}
+				setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
 				if ($('#collapsetab-' + grupoOrdem + ' tr').length < 2) {
 					sessionStorage.removeItem('timeout' + getUser());
 					this.carregarMesa(grupoNome, 0);

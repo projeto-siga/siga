@@ -63,7 +63,7 @@ public class ConfiguracaoGrupoPessoa extends ConfiguracaoGrupo {
 		DpPessoa t_pesPessoa =  CpDao.getInstance().consultarPorSigla(t_pesPessoaExemplo); */
 		
 		Long t_lngId = Long.parseLong(p_strConteudo);
-		DpPessoa t_pesPessoa =  CpDao.getInstance().consultar(t_lngId,(new DpPessoa()).getClass(), false);
+		DpPessoa t_pesPessoa =  CpDao.getInstance().consultar(t_lngId,(new DpPessoa()).getClass(), false).getPessoaInicial();
 		setDpPessoa(t_pesPessoa);
 		conteudoConfiguracao = p_strConteudo;
 	}

@@ -418,7 +418,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public static List<SrConfiguracao> listarAssociacoesAtributo(SrAtributo atributo, Boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao = ");
-		queryBuilder.append(SrTipoDeConfiguracao.ASSOCIACAO_TIPO_ATRIBUTO);
+		queryBuilder.append(SrTipoDeConfiguracao.ASSOCIACAO_TIPO_ATRIBUTO.getId());
 		queryBuilder.append(" and conf.atributo.hisIdIni = ");
 		queryBuilder.append(atributo.getHisIdIni());
 
@@ -726,6 +726,11 @@ public class SrConfiguracao extends CpConfiguracao {
 			jsonArray.add(configuracao.toVO().toJsonObject());
 		}
 		return jsonArray.toString();
+	}
+	
+	@Override
+	public CpConfiguracaoCache converterParaCache() {
+		return new SrConfiguracaoCache(this);
 	}
 
 }

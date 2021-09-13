@@ -4585,32 +4585,22 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
-[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false org=""]
-<table width="100%" border="0" bgcolor="#FFFFFF">
-    <tr bgcolor="#FFFFFF">
-        <td width="100%">
-        <table align="center" width="100%" border="0" cellpadding="2">
-			<tr>
-	        	<td width="30%" align="left" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
-	         	<td>&nbsp;&nbsp;&nbsp;</td>
-	        	<td rowspan="2">
-					
-						<table align="left" width="100%" border="0" cellpadding="2">
-							<tr >
-								<td width="100%" align="left" nowrap style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;" >
-				                         ${_tituloGeralParteI}<br />
-				                         ${_tituloGeralParteII}<br />
-				                          ${org}<br />
-				 				</td>
- 
-							</tr>
-	        		  </table>
-	        	</td>
-   			</tr>
-        </table>
-        </td>
-    </tr>
-</table>
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
+   <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
+		<tr>
+	       	<td width="30%" align="center" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+			<td>&nbsp;</td> 
+	       	<td align="left" nowrap >
+		        ${_tituloGeralParteI}<br />
+                ${_tituloGeralParteII}<br />
+                [#if org??]  [#-- tratando null  --] 
+					${org}
+				[/#if]
+ 				
+ 				<br />
+	       	</td>
+   		</tr>
+   </table>
 [/#macro]
 
 [#assign _pathBrasao = "contextpath/imagens/BrasaoPCRJ.png" /]

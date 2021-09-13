@@ -4585,9 +4585,29 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
+   <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
+		<tr>
+	       	<td width="30%" align="center" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+			<td>&nbsp;</td> 
+	       	<td align="left" nowrap >
+		        ${_tituloGeralParteI}<br />
+                ${_tituloGeralParteII}<br />
+                [#if org??]  [#-- tratando null  --] 
+					${org}
+				[/#if]
+ 				
+ 				<br />
+	       	</td>
+   		</tr>
+   </table>
+[/#macro]
+
 [#assign _pathBrasao = "contextpath/imagens/BrasaoPCRJ.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
 [#assign _widthBrasao = "auto" /]
 [#assign _heightBrasao = "65" /]
 [#assign _tituloGeral = "Prefeitura da Cidade do Rio de Janeiro" /]
 [#assign _subtituloGeral = "" /]
+[#assign _tituloGeralParteI = "PREFEITURA" /]
+[#assign _tituloGeralParteII = "DA CIDADE DO RIO DE JANEIRO" /]

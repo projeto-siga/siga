@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.tp.model;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
@@ -26,13 +28,13 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "afastamento", schema = "sigatp")
 public class Afastamento extends TpModel implements ConvertableEntity {
 
     public static final ActiveRecord<Afastamento> AR = new ActiveRecord<>(Afastamento.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+    @GeneratedValue(generator = "hibernate_sequence_generator")
     @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
     private Long id;
 
@@ -41,7 +43,6 @@ public class Afastamento extends TpModel implements ConvertableEntity {
     @JoinColumn(name = "CONDUTOR_ID")
     private Condutor condutor;
 
-    @NotEmpty
     @UpperCase
     @NotNull
     private String descricao;
@@ -156,9 +157,14 @@ public class Afastamento extends TpModel implements ConvertableEntity {
 
     public static List<Afastamento> buscarPorCondutores(Condutor condutor, Calendar dataHoraInicio, Calendar dataHoraFim) {
         List<Afastamento> retorno = null;
+        HashMap<String, Object> parametros = new HashMap<String, Object>();
+        parametros.put("idCondutor",  condutor.getId());
+        parametros.put("dataHoraInicio",  dataHoraInicio);
+        parametros.put("dataHoraFim",  dataHoraFim);
+        
         retorno = Afastamento.AR.find(
-                "condutor.id = ? " + "and " + "((dataHoraInicio <= ? and (dataHoraFim = null or dataHoraFim >= ?)) " + "or " + "(dataHoraInicio <= ? and (dataHoraFim = null or dataHoraFim >= ?)))",
-                condutor.getId(), dataHoraInicio, dataHoraInicio, dataHoraFim, dataHoraFim).fetch();
+                "condutor.id = :idCondutor " + "and " + "((dataHoraInicio <= :dataHoraInicio and (dataHoraFim = null or dataHoraFim >= :dataHoraFim)) " + "or " + "(dataHoraInicio <= :dataHoraInicio and (dataHoraFim = null or dataHoraFim >= :dataHoraFim)))",
+               parametros).fetch();
 
         return retorno;
     }

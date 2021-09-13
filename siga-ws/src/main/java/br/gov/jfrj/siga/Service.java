@@ -21,6 +21,7 @@ package br.gov.jfrj.siga;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -30,6 +31,7 @@ import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gc.service.GcService;
@@ -45,6 +47,7 @@ public abstract class Service {
 	static GiService gi = null;
 	static GcService gc = null;
 	static BlucService bluc = null;
+	static UsuarioDeSistemaEnum usuarioDeSistema = null;
 
 	static {
 		Unirest.setObjectMapper(new ObjectMapper() {
@@ -136,6 +139,16 @@ public abstract class Service {
 			BindingProvider bp = (BindingProvider) e;
 			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
 		}
+		if (usuarioDeSistema != null) {
+			BindingProvider bp = (BindingProvider) e;
+			bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, usuarioDeSistema.name());
+			bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, usuarioDeSistema.name());
+			//bp.getBinding().getHandlerChain().add(new SOAPHeaderHandler(origin));
+		}
+		
+//		service.setHandlerResolver(
+//		        portInfo -> Collections.singletonList(new SOAPHeaderHandler(origin))
+//		);
 		
 		// Client client = ClientProxy.getClient(e);
 
@@ -209,6 +222,10 @@ public abstract class Service {
 	public static void throwExceptionIfError(byte[] ba) throws Exception {
 		if (Service.isError(ba))
 			throw new Exception(retrieveError(ba));
+	}
+
+	public static void setUsuarioDeSistema(UsuarioDeSistemaEnum u) {
+		usuarioDeSistema = u;
 	}
 
 	// public static WfService getWfService() {

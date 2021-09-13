@@ -94,12 +94,12 @@
 										<tr id ="row_${requisicaoTransporte.id}">
 						    				<td class="edicao">
 						    					<c:if test="${(exibirMenuAprovador || exibirMenuAdministrar || exibirMenuAdministrarMissao || exibirMenuAdministrarMissaoComplexo) && ! requisicaoTransporte.getUltimoAndamento().estadoRequisicao.toString().equals('AUTORIZADA')}">
-						    						<sigatp:formatarColuna operacao="autorizar" href="${linkTo[AndamentoController].autorizar[requisicaoTransporte.id]}" titulo="andamento" classe="once" />
+						    						<sigatp:formatarColuna operacao="autorizar" href="${linkTo[AndamentoController].autorizar(requisicaoTransporte.id)}" titulo="andamento" classe="once" />
 						    					</c:if>
 											</td>
 											<td class="edicao">
 												<c:if test="${(exibirMenuAprovador || exibirMenuAdministrar || exibirMenuAdministrarMissao || exibirMenuAdministrarMissaoComplexo ) && ! requisicaoTransporte.getUltimoAndamento().estadoRequisicao.toString().equals('REJEITADA')}">
-						    						<sigatp:formatarColuna operacao="rejeitar" href="${linkTo[AndamentoController].rejeitar[requisicaoTransporte.id]}" titulo="andamento" classe="once" />
+						    						<sigatp:formatarColuna operacao="rejeitar" href="${linkTo[AndamentoController].rejeitar(requisicaoTransporte.id)}" titulo="andamento" classe="once" />
 												</c:if>
 											</td> 		
 											<td><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${requisicaoTransporte.dataHoraSaidaPrevista.time}"/></td>
@@ -117,7 +117,7 @@
 							   	    		<td>
 							   	    			<tptags:link texto="${requisicaoTransporte.descricaoCompleta}" 
 							   	    						 parteTextoLink="${requisicaoTransporte.buscarSequence()}" 
-							   	    						 comando="${linkTo[RequisicaoController].buscarPelaSequence[true][requisicaoTransporte.buscarSequence()]}">
+							   	    						 comando="${linkTo[RequisicaoController].buscarPelaSequence(true,requisicaoTransporte.buscarSequence())}">
 							   	    						</tptags:link>
 											</td>
 											<td class="complexo" valign="middle" colspan="2">

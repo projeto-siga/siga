@@ -3,10 +3,6 @@ package br.gov.jfrj.siga.api.v1;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,12 +14,15 @@ import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
+import br.gov.jfrj.siga.context.AcessoPublico;
+import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
 	private static final long serialVersionUID = 1756711359239182178L;
+	public static boolean migrationComplete = false;
 
 //	public static ExecutorService executor = null;
 
@@ -103,7 +102,8 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(true)) {
+				try (SigaApiV1Context ctx = new SigaApiV1Context()) {
+					ctx.init(null);
 					return CpDao.getInstance().dt() != null;
 				}
 			}
@@ -111,6 +111,24 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 			@Override
 			public boolean isPartial() {
 				return false;
+			}
+		});
+
+		addDependency(new TestableDependency("database", "sigaexds-migration", false, 0, 10000) {
+
+			@Override
+			public String getUrl() {
+				return getProperty("datasource.name") + "-migration";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				return migrationComplete;
+			}
+
+			@Override
+			public boolean isPartial() {
+				return true;
 			}
 		});
 
@@ -139,6 +157,8 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 	private void defineProperties() {
 		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
 		addPublicProperty("senha.usuario.expiracao.dias", null);
+		addPrivateProperty("sinc.password", null);
+
 	}
 
 	@Override

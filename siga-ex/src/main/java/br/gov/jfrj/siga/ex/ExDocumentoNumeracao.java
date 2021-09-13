@@ -12,8 +12,9 @@ import java.math.BigDecimal;
  * The persistent class for the EX_DOCUMENTO_NUMERACAO database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
-@Table(name="EX_DOCUMENTO_NUMERACAO")
+@Table(name = "siga.ex_documento_numeracao")
 @NamedQueries({
 	@NamedQuery(name="ExDocumentoNumeracao.findAll", query="SELECT e FROM ExDocumentoNumeracao e"),
 	@NamedQuery(name="ExDocumentoNumeracao.findById", query="SELECT e.idDocumentoNumeracao FROM ExDocumentoNumeracao e where e.idDocumentoNumeracao = :id "),
@@ -33,7 +34,6 @@ import java.math.BigDecimal;
 	@NamedQuery(name="ExDocumentoNumeracao.existeRangeDocumentoNumeracao", query="SELECT e.idDocumentoNumeracao FROM ExDocumentoNumeracao e "
 			+ "where e.idOrgaoUsu = :idOrgaoUsu "
 			+ "and e.idFormaDoc = :idFormaDoc "
-			+ "and rownum = :rownum "
 			+ "Order by e.anoEmissao desc"),
 	@NamedQuery(name="ExDocumentoNumeracao.mantemRangeNumeroDocumento", query="UPDATE ExDocumentoNumeracao e SET e.nrDocumento = e.nrDocumento + :increment, e.anoEmissao = :anoEmissao,  e.flAtivo = :flAtivo WHERE e.idDocumentoNumeracao = :id")
 
@@ -41,11 +41,10 @@ import java.math.BigDecimal;
 })
 
 public class ExDocumentoNumeracao implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@SequenceGenerator(name="EX_DOCUMENTO_NUMERACAO_IDDOCUMENTONUMERACAO_GENERATOR", sequenceName="EX_DOCUMENTO_NUMERACAO_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_DOCUMENTO_NUMERACAO_IDDOCUMENTONUMERACAO_GENERATOR")
+	@GeneratedValue(generator="EX_DOCUMENTO_NUMERACAO_IDDOCUMENTONUMERACAO_GENERATOR")
 	@Column(name="ID_DOCUMENTO_NUMERACAO")
 	private long idDocumentoNumeracao;
 

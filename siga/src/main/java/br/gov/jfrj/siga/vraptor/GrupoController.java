@@ -42,7 +42,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
@@ -217,11 +217,12 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			for (ConfiguracaoGrupo t_cfgConfiguracaoGrupo : configuracoesGrupo) {
 				CpConfiguracao t_cpcConfiguracao = dao().consultar(
 						t_cfgConfiguracaoGrupo.getCpConfiguracao().getIdConfiguracao(), CpConfiguracao.class, false);
-				t_cpcConfiguracao.setHisDtFim(dt);
+				t_cpcConfiguracao = dao().carregar(t_cpcConfiguracao);
 				dao().gravarComHistorico(t_cpcConfiguracao,
 						getIdentidadeCadastrante());
 			}
 			grp.setHisDtFim(dt);
+			grp = dao().carregar(grp);
 			dao().gravarComHistorico(grp, getIdentidadeCadastrante());
 			ModeloDao.commitTransacao();
 		} catch (Exception e) {
@@ -368,10 +369,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 												+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
 							}
 
-							cfgGrpGravada.getCpConfiguracao().setHisDtFim(dt);
-							dao().gravarComHistorico(
-									cfgGrpGravada.getCpConfiguracao(),
-									getIdentidadeCadastrante());
+							CpConfiguracao t_cpcConfiguracao = cfgGrpGravada.getCpConfiguracao();
+								t_cpcConfiguracao.setHisDtFim(dt);
+							t_cpcConfiguracao = dao().carregar(t_cpcConfiguracao);
+							dao().gravarComHistorico(t_cpcConfiguracao,getIdentidadeCadastrante());
 						} else {
 							String cfgConteudo = conteudoConfiguracao.get(i);
 							// Nato: o ideal seria se pudéssemos utilizar o
@@ -412,6 +413,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 								cfgGrpNova.setCpConfiguracao(cfgNova);
 								cfgGrpNova.setCpGrupo(grp);
 								cfgGrpNova.atualizarCpConfiguracao();
+								cfgGrpGravada.setCpConfiguracao(dao.carregar(cfgGrpGravada.getCpConfiguracao()));
 								dao().gravarComHistorico(cfgNova,
 										cfgGrpGravada.getCpConfiguracao(), dt,
 										getIdentidadeCadastrante());

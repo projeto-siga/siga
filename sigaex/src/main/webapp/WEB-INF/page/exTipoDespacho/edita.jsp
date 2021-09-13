@@ -12,7 +12,7 @@
 			<div class="card-header"><h5>Cadastro de Tipos de despacho</h5></div>
 
 			<div class="card-body">
-				<form name="frm" action="gravar" theme="simple" method="POST">
+				<form name="frm" action="gravar" theme="simple" method="post">
 
 						<c:if test="${!empty exTipoDespacho.idTpDespacho}">
 							<input type="hidden" name="exTipoDespacho.idTpDespacho" value="${exTipoDespacho.idTpDespacho}"/>

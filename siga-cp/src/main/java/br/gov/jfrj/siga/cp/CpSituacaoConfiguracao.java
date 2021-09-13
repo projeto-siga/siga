@@ -29,17 +29,13 @@ import org.hibernate.annotations.Immutable;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
+@SuppressWarnings("serial")
 @Entity
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "CP_SITUACAO_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_situacao_configuracao")
 public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao implements CpConvertableEntity  {
-
-	/**
-	 * 
-	 */
-	public static final long serialVersionUID = 3624557793773660738L;
 
 	public static final long SITUACAO_PODE = 1;
 

@@ -3,13 +3,13 @@
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <div class="gt-content-box gt-form">
-<form action="#" method="post" enctype="multipart/form-data" id="frm">
+<form action="#" method="post" enctype="multipart/form-data" id="frm" class="form-group">
 	<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 	<input type="hidden" name="ocultas" value="${ocultas}" />
 	<input type="hidden" name="solicitacao.codigo" id="sigla" value="${siglaCompacta}" autofocus="true"/>
 	<sigasr:classificacao metodo="reclassificar" />
 	<div class="gt-form-row">
-		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="gravar()"/>
+		<input type="button" value="Gravar" class="btn btn-primary" onclick="gravar()"/>
 	</div>
 </form>
 </div>

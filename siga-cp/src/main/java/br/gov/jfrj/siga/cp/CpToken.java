@@ -9,17 +9,15 @@ import javax.persistence.Table;
  * The persistent class for the CP_TOKEN database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
-@Table(name="CP_TOKEN", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_token")
 @NamedQueries({
 	@NamedQuery(name="CpToken.findAll", query="SELECT t FROM CpToken t"),
 	@NamedQuery(name="CpToken.findById", query="SELECT t.idToken FROM CpToken t where t.idToken = :id ")
 })
 
 public class CpToken extends AbstractCpToken {
-	
-	private static final long serialVersionUID = 1L;
-
 
 	public CpToken() {
 	}

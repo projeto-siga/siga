@@ -31,10 +31,10 @@
 								<c:forEach items="${fornecedores}" var="item">
 									<tr>
 										<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[FornecedorController].editar[item.id]}" titulo="fornecedor" />
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[FornecedorController].editar(item.id)}" titulo="fornecedor" />
 										</td>
 										<td>
-											<sigatp:formatarColuna operacao="excluir" href="${linkTo[FornecedorController].excluir[item.id]}" titulo="fornecedor"
+											<sigatp:formatarColuna operacao="excluir" href="${linkTo[FornecedorController].excluir(item.id)}" titulo="fornecedor"
 											 onclick="javascript:return confirm('Tem certeza de que deseja excluir este fornecedor?');"/>
 										</td>
 										<td><c:if test="${not empty item.cnpj}">${item.cnpj}</c:if></td>

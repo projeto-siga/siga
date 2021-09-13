@@ -198,7 +198,8 @@
 			sigaModal.enviarHTMLEAbrir('pessoasModal', titulo.concat(response));			
 		}
 	}
-</script>
+
+	</script>
 
 <siga:pagina titulo="Cadastro de Pessoa">
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
@@ -280,6 +281,12 @@
 								<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
 							</div>
 						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="nmPessoa">Nome Abreviado</label>
+								<input type="text" id="nmPessoaAbreviado" name="nomeExibicao" value="${nomeExibicao}" maxlength="60" class="form-control" data-toggle="tooltip"  data-placement="top" title="O campo nome abreviado só deverá ser preenchido caso o usuário opte por usar seu nome de registro civil com abreviação na assinatura dos documentos. Vale considerar que ainda sim no rodapé do documento será exibido seu nome completo." onkeyup="validarNome(this)"/>
+							</div>
+						</div>
 						<div class="col-md-2">
 							<div class="form-group">
 								<label for="nmPessoa">Data de Nascimento</label>
@@ -335,12 +342,18 @@
 					<!-- Fim da alteracao cartao 1057 -->
 					
 					<div class="row">
-						<div class="col-sm-12">
+						<div class="col-sm-2">
 							<div class="form-group">
 								<button type="button" id="btnOk" onclick="javascript: validarNomeCpf();" class="btn btn-primary" >Ok</button> 
 								<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
+								
 							</div>
-						</div>	
+						</div>
+						<c:if test="${empty id}">
+							<div class="col-sm-5">
+								<input type="checkbox" class="form-check-input" id="enviarEmail" name="enviarEmail" value="1" checked /> Enviar automaticamente o e-mail com os dados de acesso para o Usuário.
+							</div>
+						</c:if>
 					</div>
 	
 					<c:if test="${empty id}">
@@ -398,4 +411,12 @@ function carregarRelacionados(id) {
 		*/
 
 }
+
+
+$(document).ready(function() {									
+	 $(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+	 });
+	
+});
 </script>

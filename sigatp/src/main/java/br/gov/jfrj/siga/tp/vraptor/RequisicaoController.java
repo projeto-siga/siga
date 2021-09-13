@@ -2,18 +2,21 @@ package br.gov.jfrj.siga.tp.vraptor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -36,8 +39,9 @@ import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.util.SigaTpException;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import javax.transaction.Transactional;
 
-@Resource
+@Controller
 @Path("/app/requisicao")
 public class RequisicaoController extends TpController {
 
@@ -46,11 +50,20 @@ public class RequisicaoController extends TpController {
     private static final String CHECK_RETORNO = "checkRetorno";
     private static final String ESTADO_REQUISICAO = "estadoRequisicao";
     private static final String REQUISICAO_TRANSPORTE = "requisicaoTransporte";
+    
+    @Inject
     private AutorizacaoGI autorizacaoGI;
 
-    public RequisicaoController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em, AutorizacaoGI autorizacaoGI) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public RequisicaoController() {
+		super();
+	}
+	
+	@Inject
+    public RequisicaoController(HttpServletRequest request, Result result, Validator validator, SigaObjects so,  EntityManager em) {
         super(request, result, TpDao.getInstance(), validator, so, em);
-        this.autorizacaoGI = autorizacaoGI;
     }
 
     @Path("/listar")
@@ -82,6 +95,7 @@ public class RequisicaoController extends TpController {
 
     @RoleAdmin
     @RoleAdminMissao
+    @Transactional
     @Path("/salvarNovoComplexo")
     public void salvarNovoComplexo(Long[] req, CpComplexo novoComplexo) {
         if (req == null) {
@@ -159,6 +173,7 @@ public class RequisicaoController extends TpController {
         result.use(Results.page()).of(RequisicaoController.class).listarPAprovar();
     }
 
+    @Transactional
     @Path("/salvar")
     public void salvar(RequisicaoTransporte requisicaoTransporte, TipoDePassageiro[] tiposDePassageiros, boolean checkRetorno, boolean checkSemPassageiros) throws Exception {
         validar(requisicaoTransporte, checkSemPassageiros, tiposDePassageiros, checkRetorno);
@@ -240,39 +255,28 @@ public class RequisicaoController extends TpController {
     private void carregarRequisicoesUltimosDiasInformadosPorEstados(EstadoRequisicao[] estadosRequisicao) {
         StringBuilder criterioBusca = new StringBuilder();
 		int totalDias = Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), autorizacaoGI.getComplexoPadrao()));
-        criterioBusca.append("((dataHoraRetornoPrevisto is null and dataHoraSaidaPrevista >= ?) or (dataHoraRetornoPrevisto >= ?)) and cpOrgaoUsuario = ? ");
+        criterioBusca.append("((dataHoraRetornoPrevisto is null and dataHoraSaidaPrevista >= :ultimosdias) or (dataHoraRetornoPrevisto >= :ultimosdias)) and cpOrgaoUsuario = :cpOrgaoUsuario ");
         Calendar ultimosdias = Calendar.getInstance();
         ultimosdias.add(Calendar.DATE, -totalDias);
-        Object[] parametros = { ultimosdias, ultimosdias, getTitular().getOrgaoUsuario() };
+        HashMap<String, Object> parametros = new HashMap<String, Object>();
+        parametros.put("ultimosdias", ultimosdias);
+        parametros.put("cpOrgaoUsuario", getTitular().getOrgaoUsuario());
         recuperarRequisicoes(criterioBusca, parametros, estadosRequisicao);
     }
 
-    protected void recuperarRequisicoes(StringBuilder criterioBusca, Object[] parametros, EstadoRequisicao[] estadosRequisicao) {
+    protected void recuperarRequisicoes(StringBuilder criterioBusca, HashMap<String, Object> parametros, EstadoRequisicao[] estadosRequisicao) {
         if (!autorizacaoGI.ehAdministrador() && !autorizacaoGI.ehAdministradorMissao() && !autorizacaoGI.ehAdministradorMissaoPorComplexo() && !autorizacaoGI.ehAprovador()) {
-            criterioBusca.append(" and solicitante.idPessoaIni = ?");
-            Object[] parametrosFiltrado = new Object[parametros.length + 1];
-
-            for (int i = 0; i < parametros.length; i++) {
-                parametrosFiltrado[i] = parametros[i];
-            }
-
-            parametrosFiltrado[parametros.length] = getTitular().getIdInicial();
-            parametros = parametrosFiltrado;
+            criterioBusca.append(" and solicitante.idPessoaIni = :idPessoaIni");
+            parametros.put("idPessoaIni", getTitular().getIdInicial());
         } else {
             if (autorizacaoGI.ehAdministradorMissaoPorComplexo() || autorizacaoGI.ehAprovador()) {
-                criterioBusca.append(" and cpComplexo = ?");
-                Object[] parametrosFiltrado = new Object[parametros.length + 1];
-
-                for (int i = 0; i < parametros.length; i++) {
-                    parametrosFiltrado[i] = parametros[i];
-                }
+                criterioBusca.append(" and cpComplexo = :cpComplexo");
 
                 if (autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
-                    parametrosFiltrado[parametros.length] = autorizacaoGI.getComplexoAdministrador();
+                    parametros.put("cpComplexo", autorizacaoGI.getComplexoAdministrador());
                 } else {
-                    parametrosFiltrado[parametros.length] = autorizacaoGI.getComplexoPadrao();
+                    parametros.put("cpComplexo", autorizacaoGI.getComplexoPadrao());
                 }
-                parametros = parametrosFiltrado;
             }
         }
         criterioBusca.append(" order by dataHoraSaidaPrevista desc");
@@ -323,7 +327,8 @@ public class RequisicaoController extends TpController {
  		result.include("opcoesDeTiposDePassageiro", tipos);
 	}
 
-    @Path("/salvarAndamentos")
+    @Transactional
+	@Path("/salvarAndamentos")
     public void salvarAndamentos(@Valid RequisicaoTransporte requisicaoTransporte, boolean checkRetorno, boolean checkSemPassageiros) throws Exception{
         redirecionarSeErroAoSalvar(requisicaoTransporte, checkRetorno, checkSemPassageiros);
         checarSolicitante(requisicaoTransporte.getSolicitante().getIdInicial(), requisicaoTransporte.getCpComplexo().getIdComplexo(), true);
@@ -502,6 +507,7 @@ public class RequisicaoController extends TpController {
         return requisicaoTransporte;
     }
 
+    @Transactional
     @Path("/excluir/{id}")
     public void excluir(Long id) throws Exception {
         RequisicaoTransporte requisicaoTransporte = RequisicaoTransporte.AR.findById(id);
@@ -528,14 +534,16 @@ public class RequisicaoController extends TpController {
 
     private DpPessoa recuperaPessoa(Long idSolicitante) {
         DpPessoa dpPessoa = DpPessoa.AR.findById(idSolicitante);
-        return DpPessoa.AR.find("idPessoaIni = ? and dataFimPessoa = null", dpPessoa.getIdInicial()).first();
+        HashMap<String, Object> parametros = new HashMap<String, Object>();
+        parametros.put("idPessoaIni",  dpPessoa.getIdInicial());
+        return DpPessoa.AR.find("idPessoaIni = :idPessoaIni and dataFimPessoa = null", parametros).first();
     }
 
     private void tratarExcecoes(Exception e) {
         throw new AplicacaoException(e.getMessage());
     }
     
-    public List<RequisicaoTransporte> podeCancelar(Missao missaoAExcluirNaVerificacao) throws Exception {
+    protected List<RequisicaoTransporte> podeCancelar(Missao missaoAExcluirNaVerificacao) throws Exception {
 		List<RequisicaoTransporte> requisicoesParaCancelar = new ArrayList<RequisicaoTransporte>();
 		
 		List<RequisicaoTransporte> requisicoesDaMissao = missaoAExcluirNaVerificacao.getRequisicoesTransporte();
@@ -567,7 +575,10 @@ public class RequisicaoController extends TpController {
 		
 		boolean finalizadaSemAtender;
 		try {
-			Andamento andamentoEmComum = (Andamento) Andamento.AR.find("requisicaoTransporte = ? and missao = ? order by dataAndamento desc", requisicaoAConsultar, missaoAConsultar).first();
+	        HashMap<String, Object> parametros = new HashMap<String, Object>();
+	        parametros.put("requisicaoTransporte", requisicaoAConsultar);
+	        parametros.put("missao", missaoAConsultar);
+			Andamento andamentoEmComum = (Andamento) Andamento.AR.find("requisicaoTransporte = :requisicaoTransporte and missao = :missao order by dataAndamento desc", parametros).first();
 			finalizadaSemAtender = andamentoEmComum.getEstadoRequisicao().equals(EstadoRequisicao.NAOATENDIDA);
 		} catch (Exception e) {
 			finalizadaSemAtender = true;

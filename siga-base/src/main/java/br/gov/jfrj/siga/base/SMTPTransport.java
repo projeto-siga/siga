@@ -388,8 +388,11 @@ public class SMTPTransport extends Transport {
 	private DigestMD5 md5support;
 
 	private synchronized DigestMD5 getMD5() {
-		if (md5support == null)
-			md5support = new DigestMD5(debug ? out : null);
+		if (md5support == null) {
+			final MailLogger logger = new MailLogger(this.getClass(), "DEBUG SMTP",
+					session.getDebug(), session.getDebugOut());
+			md5support = new DigestMD5(logger);
+		}
 		return md5support;
 	}
 

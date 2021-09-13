@@ -65,6 +65,7 @@ public class LoginController extends SigaController {
 		this.context = context;
 	}
 
+	@Transacional
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
 		Map<String, String> manifest = new HashMap<>();
@@ -91,6 +92,7 @@ public class LoginController extends SigaController {
 	}
 
 	@Post("public/app/login")
+	@Transacional
 	public void auth(String username, String password, String cont) throws IOException {
 		try {
 			GiService giService = Service.getGiService();
@@ -98,9 +100,9 @@ public class LoginController extends SigaController {
 
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
-				if (lista.size() > 1) {
+				/* if (lista.size() > 1) {
 					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
-				}
+				}*/
 			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
 				StringBuffer mensagem = new StringBuffer();
@@ -119,6 +121,7 @@ public class LoginController extends SigaController {
 				result.forwardTo(this).login(cont);				
 			} else {
 				gravaCookieComToken(username, cont);
+				result.include("isPinNotDefined", true);
 			}
 					
 			
@@ -156,6 +159,7 @@ public class LoginController extends SigaController {
 	}
 
 	@Get("app/swapUser")
+	@Transacional
 	public void authSwap(String username, String cont) throws IOException {
 		
 		try {
@@ -165,7 +169,7 @@ public class LoginController extends SigaController {
 			if (usuarioSwap == null)
 				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
 			
-			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getCpfPessoa().toString(), true);
+			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getPessoaAtual().getCpfPessoa().toString(), true);
 			
 			boolean usuarioPermitido = false;
 			for (CpIdentidade identCpf : idsCpf) {
@@ -315,6 +319,7 @@ public class LoginController extends SigaController {
 	 * 
 	 */
 	@Get("public/app/loginSSO")
+	@Transacional
 	public void loginSSO(String cont) throws AplicacaoException, IOException {
 		try {
 			
@@ -344,7 +349,7 @@ public class LoginController extends SigaController {
 				result.include("loginMensagem", a.getMessage());		
 				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
 			}catch(Exception e){
-				throw new AplicacaoException("Não foi possivel acessar o Login SP." );
+				throw new AplicacaoException("Não foi possivel acessar o LoginSP." );
 		}
 	}
 	

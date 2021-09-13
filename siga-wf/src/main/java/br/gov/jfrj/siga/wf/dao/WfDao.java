@@ -23,392 +23,343 @@
  */
 package br.gov.jfrj.siga.wf.dao;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.config.CacheConfiguration;
+import javax.enterprise.inject.Specializes;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.cfg.Configuration;
-import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.graph.node.TaskNode;
-import org.jbpm.taskmgmt.def.Task;
-import org.jbpm.taskmgmt.exe.TaskInstance;
+import org.jboss.logging.Logger;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import br.gov.jfrj.siga.wf.WfConfiguracao;
-import br.gov.jfrj.siga.wf.WfConhecimento;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
-import br.gov.jfrj.siga.wf.util.WfHibernateUtil;
+import br.gov.jfrj.siga.sinc.lib.Item;
+import br.gov.jfrj.siga.sinc.lib.Sincronizador;
+import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+import br.gov.jfrj.siga.wf.model.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfConhecimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.WfResponsavel;
+import br.gov.jfrj.siga.wf.model.WfVariavel;
+import br.gov.jfrj.siga.wf.util.SiglaUtils;
+import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
+import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
+import br.gov.jfrj.siga.wf.util.WfProcedimentoDaoFiltro;
+import br.gov.jfrj.siga.wf.util.WfTarefa;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
  * 
- * @author kpf
- * 
  */
-public class WfDao extends CpDao {
+@Specializes
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento> {
 
 	public static final String CACHE_WF = "wf";
 
-	/**
-	 * Retorna uma instância do DAO.
-	 * 
-	 * @return
-	 */
+	private static final Logger log = Logger.getLogger(WfDao.class);
+
 	public static WfDao getInstance() {
 		return ModeloDao.getInstance(WfDao.class);
 	}
 
-	public Session getSessao() {
-		return WfHibernateUtil.getSessao();
+	public WfDao() {
 	}
 
-	/**
-	 * Pesquisa as configurações que são semelhantes ao exemplo
-	 * 
-	 * @param exemplo
-	 *            Uma configuração de exemplo para a pesquisa.
-	 * @return Lista de configurações encontradas.
-	 */
-	public List<WfConfiguracao> consultar(final WfConfiguracao exemplo) {
-		Query query = getSessao().getNamedQuery("consultarWfConfiguracoes");
-
-		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-				.getIdTpConfiguracao());
-
-		query.setCacheable(true);
-		query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);
-		return query.list();
-	}
-
-	public List<TaskInstance> consultarTarefasAtivasPorDocumento(String siglaDoc) {
-		Query query = getSessao().getNamedQuery(
-				"consultarTarefasAtivasPorDocumento");
-		query.setParameter("siglaDoc", siglaDoc);
-		return query.list();
-	}
-
-	public WfConhecimento consultarConhecimento(String procedimento,
-			String tarefa) {
-		Query query = getSessao().getNamedQuery("consultarConhecimento");
-		query.setParameter("procedimento", procedimento);
-		query.setParameter("tarefa", tarefa);
-		List<WfConhecimento> l = query.list();
-		if (l.size() == 0)
-			return null;
-		return l.get(0);
-
-	}
-
-	public List<ProcessInstance> consultarInstanciasDoProcessInstance(Long id) {
-		return WfContextBuilder.getJbpmContext().getGraphSession()
-				.findProcessInstances(id);
-	}
-
-	static public Configuration criarHibernateCfg(String datasource)
-			throws Exception {
-		Configuration cfg = CpDao.criarHibernateCfg(datasource);
-
-		return WfDao.configurarHibernate(cfg);
-	}
-
-	static private Configuration configurarHibernate(Configuration cfg)
-			throws Exception {
-		cfg.addClass(br.gov.jfrj.siga.wf.WfConfiguracao.class);
-		cfg.addClass(br.gov.jfrj.siga.wf.WfConhecimento.class);
-
-		cfg.addResource("org/jbpm/db/hibernate.queries.hbm.xml");
-		cfg.addResource("org/jbpm/db/hibernate.types.hbm.xml");
-		cfg.addResource("hibernate.extra.hbm.xml");
-
-		cfg.addClass(org.jbpm.graph.action.MailAction.class);
-		cfg.addClass(org.jbpm.graph.def.ProcessDefinition.class);
-		cfg.addClass(org.jbpm.graph.def.Node.class);
-		cfg.addClass(org.jbpm.graph.def.Transition.class);
-		cfg.addClass(org.jbpm.graph.def.Event.class);
-		cfg.addClass(org.jbpm.graph.def.Action.class);
-		cfg.addClass(org.jbpm.graph.def.SuperState.class);
-		cfg.addClass(org.jbpm.graph.def.ExceptionHandler.class);
-		cfg.addClass(org.jbpm.instantiation.Delegation.class);
-		cfg.addClass(org.jbpm.graph.action.Script.class);
-		cfg.addClass(org.jbpm.graph.node.StartState.class);
-		cfg.addClass(org.jbpm.graph.node.EndState.class);
-		cfg.addClass(org.jbpm.graph.node.ProcessState.class);
-		cfg.addClass(org.jbpm.graph.node.Decision.class);
-		cfg.addClass(org.jbpm.graph.node.Fork.class);
-		cfg.addClass(org.jbpm.graph.node.Join.class);
-		cfg.addClass(org.jbpm.graph.node.MailNode.class);
-		cfg.addClass(org.jbpm.graph.node.State.class);
-		cfg.addClass(org.jbpm.graph.node.TaskNode.class);
-
-		cfg.addClass(org.jbpm.context.def.ContextDefinition.class);
-		cfg.addClass(org.jbpm.context.def.VariableAccess.class);
-		cfg.addClass(org.jbpm.bytes.ByteArray.class);
-
-		cfg.addClass(org.jbpm.module.def.ModuleDefinition.class);
-		cfg.addClass(org.jbpm.file.def.FileDefinition.class);
-
-		cfg.addClass(org.jbpm.taskmgmt.def.TaskMgmtDefinition.class);
-		cfg.addClass(org.jbpm.taskmgmt.def.Swimlane.class);
-		cfg.addClass(org.jbpm.taskmgmt.def.Task.class);
-
-		cfg.addClass(org.jbpm.taskmgmt.def.TaskController.class);
-
-		cfg.addClass(org.jbpm.scheduler.def.CreateTimerAction.class);
-
-		cfg.addClass(org.jbpm.scheduler.def.CancelTimerAction.class);
-		cfg.addClass(org.jbpm.graph.exe.Comment.class);
-		cfg.addClass(org.jbpm.graph.exe.ProcessInstance.class);
-		cfg.addClass(org.jbpm.graph.exe.Token.class);
-		cfg.addClass(org.jbpm.graph.exe.RuntimeAction.class);
-		cfg.addClass(org.jbpm.module.exe.ModuleInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.ContextInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.TokenVariableMap.class);
-
-		cfg.addClass(org.jbpm.context.exe.VariableInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.ByteArrayInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.DateInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.DoubleInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.HibernateLongInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.HibernateStringInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.LongInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.NullInstance.class);
-
-		cfg.addClass(org.jbpm.context.exe.variableinstance.StringInstance.class);
-		cfg.addClass(org.jbpm.job.Job.class);
-		cfg.addClass(org.jbpm.job.Timer.class);
-		cfg.addClass(org.jbpm.job.ExecuteNodeJob.class);
-		cfg.addClass(org.jbpm.job.ExecuteActionJob.class);
-		cfg.addClass(org.jbpm.job.CleanUpProcessJob.class);
-
-		cfg.addClass(org.jbpm.taskmgmt.exe.TaskMgmtInstance.class);
-		cfg.addClass(org.jbpm.taskmgmt.exe.TaskInstance.class);
-		cfg.addClass(org.jbpm.taskmgmt.exe.PooledActor.class);
-
-		cfg.addClass(org.jbpm.taskmgmt.exe.SwimlaneInstance.class);
-		cfg.addClass(org.jbpm.logging.log.ProcessLog.class);
-		cfg.addClass(org.jbpm.logging.log.MessageLog.class);
-		cfg.addClass(org.jbpm.logging.log.CompositeLog.class);
-		cfg.addClass(org.jbpm.graph.log.ActionLog.class);
-		cfg.addClass(org.jbpm.graph.log.NodeLog.class);
-
-		cfg.addClass(org.jbpm.graph.log.ProcessInstanceCreateLog.class);
-
-		cfg.addClass(org.jbpm.graph.log.ProcessInstanceEndLog.class);
-		cfg.addClass(org.jbpm.graph.log.ProcessStateLog.class);
-		cfg.addClass(org.jbpm.graph.log.SignalLog.class);
-		cfg.addClass(org.jbpm.graph.log.TokenCreateLog.class);
-		cfg.addClass(org.jbpm.graph.log.TokenEndLog.class);
-		cfg.addClass(org.jbpm.graph.log.TransitionLog.class);
-		cfg.addClass(org.jbpm.context.log.VariableLog.class);
-
-		cfg.addClass(org.jbpm.context.log.VariableCreateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.VariableDeleteLog.class);
-
-		cfg.addClass(org.jbpm.context.log.VariableUpdateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.variableinstance.ByteArrayUpdateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.variableinstance.DateUpdateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.variableinstance.DoubleUpdateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.variableinstance.HibernateLongUpdateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.variableinstance.HibernateStringUpdateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.variableinstance.LongUpdateLog.class);
-
-		cfg.addClass(org.jbpm.context.log.variableinstance.StringUpdateLog.class);
-		cfg.addClass(org.jbpm.taskmgmt.log.TaskLog.class);
-		cfg.addClass(org.jbpm.taskmgmt.log.TaskCreateLog.class);
-		cfg.addClass(org.jbpm.taskmgmt.log.TaskAssignLog.class);
-		cfg.addClass(org.jbpm.taskmgmt.log.TaskEndLog.class);
-		cfg.addClass(org.jbpm.taskmgmt.log.SwimlaneLog.class);
-
-		cfg.addClass(org.jbpm.taskmgmt.log.SwimlaneCreateLog.class);
-
-		cfg.addClass(org.jbpm.taskmgmt.log.SwimlaneAssignLog.class);
-
-		cfg.addClass(br.gov.jfrj.siga.wf.util.WfTaskInstance.class);
-
-		cfg.setCacheConcurrencyStrategy("org.jbpm.context.def.VariableAccess",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.file.def.FileDefinition.processFiles",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.action.Script.variableAccesses",
-				"transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Action",
-				"transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Event",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Event.actions", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ExceptionHandler.actions", "transactional",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Node",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.events", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.exceptionHandlers", "transactional",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.leavingTransitions", "transactional",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Node.arrivingTransitions", "transactional",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.events", "transactional",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.exceptionHandlers",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.nodes", "transactional",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.actions",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.ProcessDefinition.definitions",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.SuperState.nodes", "transactional",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Transition",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Transition.events", "transactional",
-				CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.def.Transition.exceptionHandlers",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.node.Decision.decisionConditions",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.node.ProcessState.variableAccesses",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.graph.node.TaskNode.tasks", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.instantiation.Delegation",
-				"transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.module.def.ModuleDefinition",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.Swimlane.tasks", "transactional",
-				CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController",
-				"transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.TaskController.variableAccesses",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.Task.events", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.Task.exceptionHandlers",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.swimlanes",
-				"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy(
-				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks",
-				"transactional", CACHE_WF);
-
-		CacheManager manager = CacheManager.getInstance();
-		Cache cache;
-		CacheConfiguration config;
-
-		if (!manager.cacheExists(CACHE_WF)) {
-			manager.addCache(CACHE_WF);
-			cache = manager.getCache(CACHE_WF);
-			config = cache.getCacheConfiguration();
-			config.setTimeToIdleSeconds(3600);
-			config.setTimeToLiveSeconds(36000);
-			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
+	public WfDefinicaoDeProcedimento consultarWfDefinicaoDeProcedimentoPorNome(String nome) {
+		CriteriaQuery<WfDefinicaoDeProcedimento> q = cb().createQuery(WfDefinicaoDeProcedimento.class);
+		Root<WfDefinicaoDeProcedimento> c = q.from(WfDefinicaoDeProcedimento.class);
+		q.select(c);
+		q.where(cb().equal(c.get("nome"), nome), cb().equal(c.get("hisAtivo"), 1));
+		try {
+			return em().createQuery(q).getSingleResult();
+		} catch (Exception ex) {
+			throw new RuntimeException("Não foi possível localizar definição de procedimento com nome '" + nome + "'",
+					ex);
 		}
-
-		return cfg;
 	}
 
-	public ProcessDefinition getProcessDefinition(Long id) {
-		return WfContextBuilder.getJbpmContext().getGraphSession()
-				.getProcessDefinition(id);
+	public SortedSet<WfTarefa> consultarTarefasDeLotacao(DpLotacao lotaTitular) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public List<ProcessDefinition> getTodasAsVersoesProcessDefinition(
-			String nome) {
-		return WfContextBuilder.getJbpmContext().getGraphSession()
-				.findAllProcessDefinitionVersions(nome);
-	}
-
-	public Set<Task> getTodasAsTarefas(String nomeProcessDefinition) {
-		Set<Task> result = new TreeSet<Task>(new Comparator<Task>() {
-
-			@Override
-			public int compare(Task t1, Task t2) {
-				return t1.getName().compareTo(t2.getName());
-			}
-
-		});
-
-		List<ProcessDefinition> lstPD = WfDao.getInstance()
-				.getTodasAsVersoesProcessDefinition(nomeProcessDefinition);
-		for (ProcessDefinition pd : lstPD) {
-			for (Object o : pd.getNodes()) {
-				if (o instanceof TaskNode) {
-					TaskNode t = (TaskNode) o;
-					result.addAll(t.getTasks());
-				}
-
-			}
-		}
+	public List<WfProcedimento> consultarProcedimentosAtivosPorEvento(String evento) {
+		String sql = "from WfProcedimento p where p.eventoNome like :eventoNome";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("eventoNome", evento + "%");
+		List<WfProcedimento> result = query.getResultList();
 		return result;
 	}
-	
-	public static void iniciarTransacao() {
-		WfHibernateUtil.iniciarTransacao();
+
+	public void gravarInstanciaDeProcedimento(WfProcedimento pi) {
+		SortedSet<Sincronizavel> setDepois = new TreeSet<>();
+		SortedSet<Sincronizavel> setAntes = new TreeSet<>();
+
+		setAntes.addAll(pi.getVariaveis());
+
+		if (pi.getVariavelMap() != null) {
+			for (String k : pi.getVariavelMap().keySet()) {
+				WfVariavel v = new WfVariavel();
+				v.setProcedimento(pi);
+				v.setNome(k);
+
+				Object o = pi.getVariavelMap().get(k);
+				if (o != null) {
+					if (o instanceof Date)
+						v.setDate((Date) o);
+					else if (o instanceof Double)
+						v.setNumber((Double) o);
+					else if (o instanceof Boolean)
+						v.setBool((Boolean) o);
+					else
+						v.setString((String) o);
+				}
+				setDepois.add(v);
+			}
+		}
+
+		// Utilizaremos o sincronizador para perceber apenas as diferenças entre a
+		// as variáveis que estão no banco e as variáveis no mapa..
+		Sincronizador sinc = new Sincronizador();
+		sinc.setSetNovo(setDepois);
+		sinc.setSetAntigo(setAntes);
+		List<Item> list = sinc.getEncaixe();
+		sinc.ordenarOperacoes();
+
+		gravar(pi);
+		for (Item i : list) {
+			switch (i.getOperacao()) {
+			case alterar:
+				WfVariavel antigo = (WfVariavel) i.getAntigo();
+				WfVariavel novo = (WfVariavel) i.getNovo();
+				antigo.setBool(novo.getBool());
+				antigo.setDate(novo.getDate());
+				antigo.setNumber(novo.getNumber());
+				antigo.setString(novo.getString());
+				gravar(antigo);
+				break;
+			case incluir:
+				pi.getVariaveis().add((WfVariavel) i.getNovo());
+				gravar(i.getNovo());
+				break;
+			case excluir:
+				pi.getVariaveis().remove((WfVariavel) i.getAntigo());
+				excluir(i.getAntigo());
+				break;
+			}
+		}
+		gravar(pi);
 	}
 
-	public static void commitTransacao() throws AplicacaoException {
-		WfHibernateUtil.commitTransacao();
+	@Override
+	public void persist(WfProcedimento pi) {
+		gravarInstanciaDeProcedimento((WfProcedimento) pi);
 	}
 
-	public static void rollbackTransacao() {
-		WfHibernateUtil.rollbackTransacao();
+	@Override
+	public List<WfProcedimento> listByEvent(String event) {
+		List<WfProcedimento> l = new ArrayList<>();
+		l.addAll(consultarProcedimentosAtivosPorEvento(event));
+		return l;
 	}
 
+	public WfConhecimento consultarConhecimento(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+//	public List<ExDocumento> consultarDocsInclusosNoBoletim(ExDocumento doc) {
+//		final Query query = em().createNamedQuery(
+//				"consultarDocsInclusosNoBoletim");
+//		query.setHint("org.hibernate.cacheable", true);
+//		query.setHint("org.hibernate.cacheRegion", ExDao.CACHE_QUERY_SECONDS);
+//
+//		query.setParameter("idDoc", doc.getIdDoc());
+//		return query.getResultList();
+//	}
+
+	public List<WfProcedimento> consultarProcedimentosPorPessoaOuLotacao(DpPessoa titular, DpLotacao lotaTitular) {
+		String sql = "select p from WfProcedimento p left join p.eventoPessoa pes left join p.eventoLotacao lot where pes.idPessoaIni = :idPessoaIni or lot.idLotacaoIni = :idLotacaoIni";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idPessoaIni", titular.getIdPessoaIni());
+		query.setParameter("idLotacaoIni", lotaTitular.getIdLotacaoIni());
+		List<WfProcedimento> result = query.getResultList();
+		return result;
+	}
+
+	public List<WfResponsavel> consultarResponsaveisPorDefinicaoDeResponsavel(WfDefinicaoDeResponsavel dr) {
+		String sql = "from WfResponsavel o where o.definicaoDeResponsavel.hisIdIni = :idIni and o.hisDtFim is null";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idIni", dr.getHisIdIni());
+		List<WfResponsavel> result = query.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return result;
+	}
+
+	public WfResponsavel consultarResponsavelPorOrgaoEDefinicaoDeResponsavel(CpOrgaoUsuario ou,
+			WfDefinicaoDeResponsavel dr) {
+		String sql = "from WfResponsavel o where o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and o.definicaoDeResponsavel.hisIdIni = :idIni and o.hisDtFim is null";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idOrgaoUsu", ou.getIdOrgaoUsu());
+		query.setParameter("idIni", dr.getHisIdIni());
+		WfResponsavel result = (WfResponsavel) query.getSingleResult();
+		return result;
+	}
+
+	public List<WfProcedimento> consultarProcedimentosParaEstatisticas(WfDefinicaoDeProcedimento pd, Date dataInicialDe,
+			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte) {
+		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni and p.hisDtFim is not null "
+				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
+				+ " and p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("hisIdIni", pd.getHisIdIni());
+		query.setParameter("dataInicialDe", dataInicialDe);
+		query.setParameter("dataInicialAte", dataInicialAte);
+		query.setParameter("dataFinalDe", dataFinalDe);
+		query.setParameter("dataFinalAte", dataFinalAte);
+		List<WfProcedimento> result = query.getResultList();
+		return result;
+	}
+
+	public List<WfProcedimento> consultarProcedimentosParaEstatisticasPorPrincipal(WfDefinicaoDeProcedimento pd,
+			Date dataInicialDe, Date dataInicialAte, Date dataFinalDe, Date dataFinalAte) {
+		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni and p.hisDtFim is not null "
+				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
+				+ " and p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte "
+				+ " and p.principal is not null and p.principal <> '' order by p.principal";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("hisIdIni", pd.getHisIdIni());
+		query.setParameter("dataInicialDe", dataInicialDe);
+		query.setParameter("dataInicialAte", dataInicialAte);
+		query.setParameter("dataFinalDe", dataFinalDe);
+		query.setParameter("dataFinalAte", dataFinalAte);
+		List<WfProcedimento> result = query.getResultList();
+		return result;
+	}
+
+	public List<WfProcedimento> consultarProcedimentosParaEstatisticasPorPrincipalInclusiveNaoFinalizados(
+			WfDefinicaoDeProcedimento pd, Date dataInicialDe, Date dataInicialAte, Date dataFinalDe,
+			Date dataFinalAte) {
+		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni "
+				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
+				+ " and ((p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte) or p.hisDtFim is null) "
+				+ " and p.principal is not null and p.principal <> '' order by p.principal";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("hisIdIni", pd.getHisIdIni());
+		query.setParameter("dataInicialDe", dataInicialDe);
+		query.setParameter("dataInicialAte", dataInicialAte);
+		query.setParameter("dataFinalDe", dataFinalDe);
+		query.setParameter("dataFinalAte", dataFinalAte);
+		List<WfProcedimento> result = query.getResultList();
+		return result;
+	}
+
+	public WfDefinicaoDeProcedimento consultarPorSigla(WfDefinicaoDeProcedimentoDaoFiltro flt) {
+		return consultarPorSigla(flt.getSigla(), WfDefinicaoDeProcedimento.class, flt.ouDefault);
+	}
+
+	public WfProcedimento consultarPorSigla(WfProcedimentoDaoFiltro flt) {
+		return consultarPorSigla(flt.getSigla(), WfProcedimento.class, flt.ouDefault);
+	}
+
+	public <T> T consultarPorSigla(String sigla, Class<T> clazz, CpOrgaoUsuario ouDefault) {
+		String acronimo = null;
+		if (clazz.isAssignableFrom(WfProcedimento.class)) {
+			acronimo = "WF";
+		} else if (clazz.isAssignableFrom(WfDefinicaoDeProcedimento.class)) {
+			acronimo = "DP";
+		} else {
+			throw new RuntimeException("Não é permitido consultar por sigla registros da classe " + clazz.getName());
+		}
+		SiglaDecodificada d = SiglaUtils.parse(sigla, acronimo, ouDefault);
+		Integer ano = d.ano;
+		Integer numero = d.numero;
+		CpOrgaoUsuario orgaoUsuario = d.orgaoUsuario;
+
+		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<T> q = criteriaBuilder.createQuery(clazz);
+		Root<T> c = q.from(clazz);
+		Join<T, CpOrgaoUsuario> joinOrgao = c.join("orgaoUsuario", JoinType.INNER);
+		// if (clazz.isAssignableFrom(Historico.class))
+		if (Historico.class.isAssignableFrom(clazz))
+			q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
+					cb().equal(c.get("hisAtivo"), 1), cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
+		else
+			q.where(cb().equal(c.get("numero"), numero), cb().equal(c.get("ano"), ano),
+					cb().equal(joinOrgao.get("idOrgaoUsu"), orgaoUsuario.getId()));
+		return em().createQuery(q).getSingleResult();
+	}
+
+	public List<WfConfiguracao> consultar(final WfConfiguracao exemplo) {
+		CpTipoConfiguracao tpConf = exemplo.getCpTipoConfiguracao();
+		CpOrgaoUsuario orgao = exemplo.getOrgaoUsuario();
+
+		StringBuffer sbf = new StringBuffer();
+
+		sbf.append("select * from sigawf.wf_configuracao wf inner join " + "corporativo"
+				+ ".cp_configuracao cp on wf.conf_id = cp.id_configuracao ");
+
+		sbf.append("" + "where 1 = 1");
+
+		if (tpConf != null && tpConf.getIdTpConfiguracao() != null && tpConf.getIdTpConfiguracao() != 0) {
+			sbf.append(" and cp.id_tp_configuracao = ");
+			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
+		}
+
+		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
+			sbf.append(" and (cp.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(" or cp.id_lotacao in (select id_lotacao from " + "corporativo"
+					+ ".dp_lotacao lot where lot.id_orgao_usu= ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_pessoa in (select id_pessoa from " + "corporativo"
+					+ ".dp_pessoa pes where pes.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_cargo in (select id_cargo from " + "corporativo"
+					+ ".dp_cargo cr where cr.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from " + "corporativo"
+					+ ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
+			sbf.append(orgao.getId());
+			sbf.append(")");
+			sbf.append(
+					" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");
+			sbf.append(")");
+			sbf.append(")");
+			sbf.append("order by wf.conf_id");
+
+		}
+
+		Query query = em().createNativeQuery(sbf.toString(), WfConfiguracao.class);
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", "query.ExConfiguracao");
+		return query.getResultList();
+
+	}
+
+	public List<WfDefinicaoDeProcedimento> listarDefinicoesDeProcedimentos() {
+		return listarAtivos(WfDefinicaoDeProcedimento.class, "nome");
+	}
 
 }

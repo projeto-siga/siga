@@ -39,19 +39,15 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * A class that represents a row in the 'EX_ESTADO_DOC' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_ESTADO_DOC", catalog = "SIGA")
+@Table(name = "siga.ex_estado_doc")
 public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 		Selecionavel {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4750343917027470158L;
 
 	final static public long ESTADO_DOC_EM_ELABORACAO = 1;
 

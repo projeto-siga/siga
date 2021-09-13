@@ -21,15 +21,15 @@
 						<th width="15%" class="obrigatorio">Dia In&iacute;cio / Fim </th>
 						<td>
 							<select name="diaEntrada" >
-								<c:forEach items="${diaSemana.values()}" var="dia">
-									<option value="${dia}" ${dia == diaDeTrabalho.getDiaEntrada() ? 'selected' : ''} ${dia == diaDeTrabalho.getDiaEntrada() ? 'class=\"selecionado \"' : ''}>${dia.nomeAbreviado}</option>
+								<c:forEach items="${diaSemana.getValues()}" var="dia">
+									<option value="${dia}" ${dia == diaDeTrabalho.getDiaEntrada() ? 'selected' : ''} ${dia == diaDeTrabalho.getDiaEntrada() ? 'class="selecionado"' : ''}>${dia.nomeAbreviado}</option>
 								</c:forEach>
 							</select>
 							<input type="text" name="horaEntrada" value='<fmt:formatDate pattern="HH:mm" value="${diaDeTrabalho.getHoraEntrada().time}"/>' size="8" class="hora selecionado" />
 							at&eacute;
 							<select name="diaSaida">
-								<c:forEach items="${diaSemana.values()}" var="dia">
-									<option value="${dia}" ${dia == diaDeTrabalho.getDiaEntrada() ? 'selected' : ''} ${dia == diaDeTrabalho.getDiaEntrada() ? 'class=\"selecionado \"' : ''}>${dia.nomeAbreviado}</option>
+								<c:forEach items="${diaSemana.getValues()}" var="dia">
+									<option value="${dia}" ${dia == diaDeTrabalho.getDiaEntrada() ? 'selected' : ''} ${dia == diaDeTrabalho.getDiaEntrada() ? 'class="selecionado"' : ''}>${dia.nomeAbreviado}</option>
 								</c:forEach>
 							</select>
 							<input type="text" name="horaSaida" value='<fmt:formatDate pattern="HH:mm" value="${diaDeTrabalho.horaSaida.time}"/>' size="8" class="hora selecionado" />
@@ -56,14 +56,14 @@
 
 <div id="rowDiasDeTrabalho" style="display: none">
 	<select name="diaEntrada" class="naoSelecionado">
-		<c:forEach items="${diaSemana.values()}" var="dia">
+		<c:forEach items="${diaSemana.getValues()}" var="dia">
 			<option value="${dia}" ${dia == "SEGUNDA" ? 'selected' : ''}>${dia.nomeAbreviado}</option>
 		</c:forEach>
 	</select>
 	<input type="text" name="horaEntrada" value="11:00" size="8" class="hora naoSelecionado" /> 
 	at&eacute;
 	<select name="diaSaida" class="naoSelecionado">
-		<c:forEach items="${diaSemana.values()}" var="dia">
+		<c:forEach items="${diaSemana.getValues()}" var="dia">
 			<option value="${dia}" ${dia == "SEGUNDA" ? 'selected' : ''}>${dia.nomeAbreviado}</option>
 		</c:forEach>
 	</select>

@@ -15,69 +15,9 @@
 
 	<build>
 		<plugins>
-			<!-- vraptor static scan -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.javassist</groupId>
-						<artifactId>javassist</artifactId>
-						<version>3.15.0-GA</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>static-scanning</id>
-						<phase>package</phase>
-						<configuration>
-							<target>
-								<echo message="Starting static scanning process..." />
-								<path id="build.classpath">
-									<fileset
-										dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib"
-										includes="*.jar" />
-									<fileset
-										dir="${project.build.directory}/../../lib/static_scan_vraptor/"
-										includes="*.jar" />
-								</path>
-								<java classpathref="build.classpath"
-									classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning"
-									fork="true">
-									<arg
-										value="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml" />
-									<classpath refid="build.classpath" />
-									<classpath
-										path="${project.build.directory}/${project.build.finalName}/WEB-INF/classes" />
-								</java>
-								<war
-									destfile="${project.build.directory}/${project.build.finalName}.war"
-									webxml="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml">
-									<fileset
-										dir="${project.build.directory}/${project.build.finalName}" />
-								</war>
-								<echo message="Static scanning process finished!" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- end vraptor static scan -->
-
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.11</version>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
 				<executions>
 					<execution>
 						<id>copy-artifact</id>
@@ -103,12 +43,10 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>2.0.2.Final</version>
                 <configuration>
                     <server-groups>
                         <server-group>siga</server-group>
                     </server-groups>
-                    <skip>false</skip>
                 </configuration>
             </plugin>
 		</plugins>
@@ -134,10 +72,6 @@
 			<groupId>nl.captcha</groupId>
 			<artifactId>simplecaptcha</artifactId>
 		</dependency>
-
-		<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId> 
-			</dependency> <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml-taglib</artifactId> 
-			</dependency> -->
 
 		<dependency>
 			<groupId>org.directwebremoting</groupId>
@@ -168,12 +102,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxrpc-api</artifactId>
 		</dependency>
@@ -186,7 +114,6 @@
 		<dependency>
 			<groupId>commons-discovery</groupId>
 			<artifactId>commons-discovery</artifactId>
-			<version>0.5</version>
 		</dependency>
 
 		<dependency>
@@ -236,15 +163,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.jslsolucoes</groupId>
+			<artifactId>vraptor</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-jpa</artifactId>
-			<version>4.0.5</version>
-			<exclusions>
-				<exclusion>  <!-- declare the exclusion here -->
-					<groupId>org.eclipse.persistence</groupId>
-					<artifactId>javax.persistence</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -254,19 +178,14 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		
-		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
-			<version>2.8.0</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
 	</dependencies>
 </project>

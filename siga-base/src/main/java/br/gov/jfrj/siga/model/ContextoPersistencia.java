@@ -1,20 +1,34 @@
 package br.gov.jfrj.siga.model;
 
+import java.util.Date;
+
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
+import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
+import org.jboss.logging.Logger;
 
 public class ContextoPersistencia {
 
-	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
-	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<String>();
+	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<>();
+	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<>();
+	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<>();
+	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<>();
+	private final static Logger LOGGER = Logger.getLogger(ContextoPersistencia.class);
 
 	static public void setEntityManager(EntityManager em) {
 		emByThread.set(em);
 	}
 
+	static public EntityManager getEntityManager() {
+		return emByThread.get();
+	}
+	
 	static public EntityManager em() {
 		EntityManager em = emByThread.get();
-		if (em == null)
+		if (em == null) {
 			throw new RuntimeException("EM nulo!");
+		}
 		return em;
 	}
 
@@ -23,9 +37,24 @@ public class ContextoPersistencia {
 			em().flush();
 			em().getTransaction().commit();
 			em().getTransaction().begin();
-		}	
+		}
+	}
+	
+	public static void begin() {
+		EntityTransaction transaction = em().getTransaction();
+		if (transaction != null && !transaction.isActive()) {
+			transaction.begin();
+		}
 	}
 
+	public static void commit() {
+		EntityTransaction transaction = em().getTransaction();
+		if (transaction != null && transaction.isActive()) {
+			transaction.commit();
+			LOGGER.debugf("Transaction is active? %s", transaction.isActive());
+		}
+ 	}
+	
 	static public void setUserPrincipal(String userPrincipal) {
 		userPrincipalByThread.set(userPrincipal);
 	}
@@ -36,5 +65,31 @@ public class ContextoPersistencia {
 
 	static public void removeUserPrincipal() {
 		userPrincipalByThread.remove();
+	}
+	
+	static public void setDt(Date dt) {
+		dataEHoraDoServidor.set(dt);
+	}
+
+	static public Date dt() {
+		return dataEHoraDoServidor.get();
+	}
+	
+	static public void setUsuarioDeSistema(UsuarioDeSistemaEnum u) {
+		usuarioDeSistema.set(u);
+	}
+
+	static public UsuarioDeSistemaEnum getUsuarioDeSistema() {
+		return usuarioDeSistema.get();
+	}
+
+	static public void removeUsuarioDeSistema() {
+		usuarioDeSistema.remove();
+	}
+	
+	static public void removeAll() {
+		removeUsuarioDeSistema();
+		removeUserPrincipal();
+		setDt(null);
 	}
 }

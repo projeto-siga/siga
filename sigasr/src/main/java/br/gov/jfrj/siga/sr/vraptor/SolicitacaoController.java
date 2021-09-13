@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -18,15 +19,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
 
+import com.google.gson.Gson;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.validator.ValidationMessage;
+import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -37,6 +39,7 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -52,8 +55,10 @@ import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
+import br.gov.jfrj.siga.sr.model.SrMarca;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
+import br.gov.jfrj.siga.sr.model.SrOperacao;
 import br.gov.jfrj.siga.sr.model.SrPendencia;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
@@ -68,16 +73,14 @@ import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
-import br.gov.jfrj.siga.sr.validator.SrError;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
-
-import com.google.gson.Gson;
-
+import br.gov.jfrj.siga.vraptor.Transacional;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
-@Resource
+@Controller
+@Path("/app/solicitacao")
 public class SolicitacaoController extends SrController {
     private static final String TITULAR = "titular";
     private static final String ACOES_E_ATENDENTES = "acoesEAtendentes";
@@ -99,18 +102,24 @@ public class SolicitacaoController extends SrController {
 	private static final String PRIORIDADE_LIST = "prioridadeList";
 	private static final String TIPO_MOTIVO_ESCALONAMENTO_LIST = "tipoMotivoEscalonamentoList";
 
-    private Validator validator;
 
-    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public SolicitacaoController() {
+		super();
+	}
+	
+	@Inject
+    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) throws Throwable {
         super(request, result, dao, so, em, srValidator);
-        this.validator = validator;
         
         result.on(AplicacaoException.class).forwardTo(this).appexception();
         result.on(Exception.class).forwardTo(this).exception();
     }
 
     @SuppressWarnings("unchecked")
-    @Path("app/solicitacao/listarLista")
+    @Path("/listarLista")
     public void listarLista(boolean mostrarDesativados) throws Exception {
         List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
         List<CpComplexo> locais = CpComplexo.AR.all().fetch();
@@ -136,13 +145,14 @@ public class SolicitacaoController extends SrController {
         result.include("cargocargoAtualSel", new DpCargoSelecao());
     }
 
-    @Path("app/solicitacao/gravarPermissaoUsoLista")
+    @Transacional
+    @Path("/gravarPermissaoUsoLista")
     public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
         permissao.salvarComoPermissaoUsoLista();
         result.use(Results.http()).body(permissao.toVO().toJson());
     }
 
-    @Path("app/solicitacao/listarPermissaoUsoLista")
+    @Path("/listarPermissaoUsoLista")
     public void listarPermissaoUsoLista(Long idLista, boolean mostrarDesativados) throws Exception {
 
         SrLista lista = new SrLista();
@@ -153,7 +163,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
 
-    @Path("app/solicitacao/desativarPermissaoUsoListaEdicao")
+    @Path("/desativarPermissaoUsoListaEdicao")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
         configuracao.finalizar();
@@ -161,14 +171,15 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.getSrConfiguracaoJson());
     }
 
-    @Path("app/solicitacao/configuracoesParaInclusaoAutomatica")
+    @Path("/configuracoesParaInclusaoAutomatica")
     public void configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(idLista);
 
         result.use(Results.http()).body(SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados));
     }
 
-    @Path("app/solicitacao/configuracaoAutomaticaGravar")
+    @Transacional
+    @Path("/configuracaoAutomaticaGravar")
     public void configuracaoAutomaticaGravar(SrConfiguracao configuracao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
         configuracao.setAcoesSet(acoesSet);
         configuracao.setItemConfiguracaoSet(itemConfiguracaoSet);
@@ -176,21 +187,23 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    @Path("app/solicitacao/desativarConfiguracaoAutomaticaGravar")
+    @Transacional
+    @Path("/desativarConfiguracaoAutomaticaGravar")
     public void desativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
         configuracao.finalizar();
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    @Path("app/solicitacao/reativarConfiguracaoAutomaticaGravar")
+    @Transacional
+    @Path("/reativarConfiguracaoAutomaticaGravar")
     public void reativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
         configuracao.salvarComHistorico();
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    @Path("app/solicitacao/buscarPermissoesLista")
+    @Path("/buscarPermissoesLista")
     public void buscarPermissoesLista(Long idLista) throws Exception {
         List<SrConfiguracao> permissoes;
 
@@ -204,7 +217,8 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));
     }
 
-    @Path("app/solicitacao/gravarLista")
+    @Transacional
+    @Path("/gravarLista")
     public void gravarLista(SrLista lista) throws Exception {
         lista.setLotaCadastrante(getLotaTitular());
         validarFormEditarLista(lista);
@@ -230,7 +244,8 @@ public class SolicitacaoController extends SrController {
         }
     }
 
-    @Path("app/solicitacao/desativarLista")
+    @Transacional
+    @Path("/desativarLista")
     public void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
         lista.finalizar();
@@ -238,7 +253,8 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(lista.toJson());
     }
 
-    @Path("app/solicitacao/reativarLista")
+    @Transacional
+    @Path("/reativarLista")
     public void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
         lista.salvarComHistorico();
@@ -246,7 +262,7 @@ public class SolicitacaoController extends SrController {
     }
 
     @SuppressWarnings("unchecked")
-    @Path("app/solicitacao/exibirLista/{id}")
+    @Path("/exibirLista/{id}")
     public void exibirLista(Long id) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
         if (lista == null)
@@ -288,10 +304,13 @@ public class SolicitacaoController extends SrController {
         PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
     }
 
-    @Path("app/solicitacao/gravar")
+    @Transacional
+    @Path("/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
     	if (solicitacao == null)
     		throw new AplicacaoException("Não foram informados dados suficientes para a gravação");
+    	
+    	limparDpPessoa(solicitacao);
     	
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null){
@@ -316,6 +335,11 @@ public class SolicitacaoController extends SrController {
 			 enviarErroValidacao();
 			 return;
 		}
+		
+		// Carregar a acao:
+		if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null && solicitacao.getAcao().getIdAcao() != null) {
+        	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+        }
 		
 		// BJN - caso a solicitação seja NOVA E do tipo "Atividades da Lotação", 
 		// o atendente deverá ser a própria lotação do cadastrante titular
@@ -348,7 +372,19 @@ public class SolicitacaoController extends SrController {
         result.include("siglaCompacta", solicitacao.getSiglaCompacta());
         result.include("local", solicitacao.getLocal());
         result.include("lotacaoDoTitularLegivel", getTitular().getLotacao().getLotacaoAtual().toString() + " - " + getTitular().getLotacao().getLotacaoAtual().getNomeLotacao());
+        result.include("solicitanteDescricaoCompleta", getDescricaoCompleta(solicitacao.getSolicitante()));
 	}
+    
+    private String getDescricaoCompleta(DpPessoa solicitante) {
+    	String result = "";    	
+    	try {
+    		result = solicitante.getDescricaoCompleta(); 
+    	}
+    	catch(Exception e) {    		
+    	}
+    	return result;
+    }
+    
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) 
@@ -400,12 +436,12 @@ public class SolicitacaoController extends SrController {
          return Boolean.parseBoolean(getRequest().getParameter("ocultas"));
     }
     
-    @Path("app/solicitacao/exibir/{sigla}/{todoOContexto}/{ocultas}")
+    @Path("/exibir/{sigla}/{todoOContexto}/{ocultas}")
     public void exibirComParametros(String sigla, Boolean todoOContexto, Boolean ocultas) throws Exception {
         result.forwardTo(this).exibir(sigla, todoOContexto, ocultas);
     }
 
-    @Path("app/solicitacao/exibir/{sigla}")
+    @Path("/exibir/{sigla}")
     public void exibir(String sigla, Boolean todoOContexto, Boolean ocultas) throws Exception {
         
     	if (sigla == null || sigla.trim().equals(""))
@@ -434,6 +470,10 @@ public class SolicitacaoController extends SrController {
         if (ocultas == null)
             ocultas = false;
 
+        // Para informacoes do solicitante, exibidas no sidebar (exibirIncludeSidebarSolicitacao): 
+        setupInfoSolicitante(solicitacao);
+       
+        
         Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas, null, false, todoOContexto, !ocultas, false);
         Set<SrArquivo> arqs = solicitacao.getArquivosAnexos(todoOContexto);
         Set<SrLista> listas = solicitacao.getListasAssociadas(todoOContexto);
@@ -462,21 +502,38 @@ public class SolicitacaoController extends SrController {
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
         result.include("atributos", atributos);
     }
+    
+    private void setupInfoSolicitante(SrSolicitacao solicitacao) {
+    	// para evitar erro de 'no session' quando acessado diretamente apos reiniciar
+    	solicitacao.getSolicitante().getSiglaCompleta();
+    	solicitacao.getSolicitante().getFuncaoStringIniciaisMaiusculas();
+    	solicitacao.getSolicitante().getLotacao().getSiglaCompleta();
+    	solicitacao.getLocal().getNomeComplexo();    	
+    }
 
     @SuppressWarnings("unchecked")
-    @Path("app/solicitacao/buscar")
+    @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, boolean telaDeListas) throws Exception {
         
+    	setupFiltros(filtro);
+    	
         if (filtro != null && filtro.isPesquisar()){
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
         } else {
-        	if (filtro == null){
+        	if (filtro == null || !filtro.isRazoavelmentePreenchido()){
         		filtro = novoFiltroZerado();
         	}
+        	
+        	
         	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
         	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
-        	result.include("marcadores", ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList());
+        	
+        	
+        	List<SrMarca> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca marca where marca.cpMarcador.idMarcador <> 9").getResultList();
+        	result.include("marcadores", marcadores );
+        	
+        	
         	result.include("filtro", filtro);
         	result.include("propriedade", propriedade);
         	result.include("popup", popup);
@@ -484,6 +541,39 @@ public class SolicitacaoController extends SrController {
             result.include("listasPrioridade", SrLista.listar(false));
         	result.include("prioridadesEnum", SrPrioridade.values());
         }
+    }
+    
+    private void setupFiltros(SrSolicitacaoFiltro filtro) {
+    	
+    	if(filtro == null) return;
+    	
+    	if(filtro.getSituacao() != null && filtro.getSituacao().getIdMarcador() != null && filtro.getSituacao().getDescrMarcador() == null) {
+    		filtro.setSituacao(CpMarcador.AR.findById(filtro.getSituacao().getIdMarcador()));
+    	}
+    	if(filtro.getItemConfiguracao() != null && filtro.getItemConfiguracao().getIdItemConfiguracao() != null) {
+    		filtro.setItemConfiguracao(SrItemConfiguracao.AR.findById(filtro.getItemConfiguracao().getIdItemConfiguracao()));
+    	}
+    	if(filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
+    		filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));
+    	}    	
+    	if(filtro.getCadastranteBusca() != null && filtro.getCadastranteBusca().getIdPessoa() != null) {
+    		filtro.setCadastranteBusca(DpPessoa.AR.findById(filtro.getCadastranteBusca().getIdPessoa()));
+    	}
+    	if(filtro.getLotaCadastranteBusca() != null && filtro.getLotaCadastranteBusca().getIdLotacao() != null) {
+    		filtro.setLotaCadastranteBusca(DpLotacao.AR.findById(filtro.getLotaCadastranteBusca().getIdLotacao()));
+    	}
+    	if(filtro.getSolicitante() != null && filtro.getSolicitante().getIdPessoa() != null) {
+    		filtro.setSolicitante(DpPessoa.AR.findById(filtro.getSolicitante().getIdPessoa()));
+    	}
+    	if(filtro.getLotaSolicitante() != null && filtro.getLotaSolicitante().getIdLotacao() != null) {
+    		filtro.setLotaSolicitante(DpLotacao.AR.findById(filtro.getLotaSolicitante().getIdLotacao()));
+		}
+    	if(filtro.getAtendente() != null && filtro.getAtendente().getIdPessoa() != null) {
+    		filtro.setAtendente(DpPessoa.AR.findById(filtro.getAtendente().getIdPessoa())); 
+    	}
+    	if(filtro.getLotaAtendente() != null && filtro.getLotaAtendente().getIdLotacao() != null) {
+    		filtro.setLotaAtendente(DpLotacao.AR.findById(filtro.getLotaAtendente().getIdLotacao()));
+    	}
     }
     
     private SrSolicitacaoFiltro novoFiltroZerado() {
@@ -495,10 +585,60 @@ public class SolicitacaoController extends SrController {
 		retorno.setAtendente(getCadastrante());
 		return retorno;
 	}
+    
+    
+    /**
+     * Metodo necessario devido a diferenca da 7.2, onde os objetos ja vem instanciados, mas vazios.
+     * @param solicitacao
+     */
+    private void limparDpPessoa(SrSolicitacao solicitacao) {
+    	if(solicitacao != null) {
+			if(solicitacao.getSolicitante() != null && solicitacao.getSolicitante().getId() == null) 
+				solicitacao.setSolicitante(null);
+			if(solicitacao.getCadastrante() != null && solicitacao.getCadastrante().getId() == null) 
+				solicitacao.setCadastrante(null);
+			if(solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null) 
+				solicitacao.setInterlocutor(null);
+			if(solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null) 
+				solicitacao.setItemConfiguracao(null);
+		}
+    }
+    
+    private void setupItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getItemConfiguracao() != null) {
+			SrItemConfiguracao srItemConf = solicitacao.getItemConfiguracao();
+			boolean found = false;
+			for(SrItemConfiguracao itemConf : solicitacao.getItensDisponiveis()) {
+				if(srItemConf.getIdItemConfiguracao().equals(itemConf.getIdItemConfiguracao())) {
+					found = true;
+				}
+			}
+			if(!found) {
+				solicitacao.setItemConfiguracao(null);
+			}
+		}
+    }
+    
+    private void setupAcoes(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getAcao() != null) {
+			if(solicitacao.getAcao().getHisIdIni() == null && solicitacao.getAcao().getIdAcao() != null)
+				solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+			boolean containsAcao = false;
+			for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
+				for (SrTarefa t : tarefas)
+					if (t.getAcao().equivale(solicitacao.getAcao()))
+						containsAcao = true;
+			if (!containsAcao)
+				solicitacao.setAcao(null);
+		}
+    }
 
-	@Path({ "app/solicitacao/editar", "app/solicitacao/editar/{sigla}"})
+	@Path({ "/editar", "/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
+		
+		limparDpPessoa(solicitacao);
+		
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
 			//carregamento forçado de atributos lazy
@@ -510,7 +650,8 @@ public class SolicitacaoController extends SrController {
 			}
 		}
 		else {
-			if (solicitacao == null){
+			if(solicitacao == null || solicitante == null ) {
+				
 				solicitacao = new SrSolicitacao();
 		        try{
 		        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
@@ -536,25 +677,19 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 		        if (descricao != null && !descricao.equals(""))
 		        	solicitacao.setDescricao(descricao);
-			} 
+			}
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
 			if (solicitacao.getLocal() == null || 
 					(solicitacao.getSolicitante() != null && !solicitacao.getSolicitante().getId().equals(solicitante)))
 				solicitacao.deduzirLocalRamalEMeioContato();
-			if (solicitacao.getItemConfiguracao() != null && !solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())){
-				solicitacao.setItemConfiguracao(null);
-			}
-			if (solicitacao.getAcao() != null){
-				boolean containsAcao = false;
-				for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
-					for (SrTarefa t : tarefas)
-						if (t.getAcao().equivale(solicitacao.getAcao()))
-							containsAcao = true;
-				if (!containsAcao)
-					solicitacao.setAcao(null);
-			}
+			
+			
+			setupItemConfiguracao(solicitacao);
+			
+			setupAcoes(solicitacao);
+			
 			//Edson: por causa do detach:
 			if (solicitacao.getSolicitacaoInicial() != null){
 				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
@@ -573,7 +708,7 @@ public class SolicitacaoController extends SrController {
         
     }
 	
-	@Path("app/solicitacao/listarSolicitacoesRelacionadas")
+	@Path("/listarSolicitacoesRelacionadas")
 	public void listarSolicitacoesRelacionadas(SrSolicitacao solicitacao, SrSolicitacaoFiltro filtro) throws Exception{
         if (filtro == null && solicitacao != null){
         	filtro = new SrSolicitacaoFiltro();
@@ -581,12 +716,19 @@ public class SolicitacaoController extends SrController {
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
         }
+        if(solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null && solicitacao.getAcao().getIdAcao() != null) {
+        	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));
+        }
+        if(solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null) {
+        	solicitacao.setItemConfiguracao(null);
+        }
         result.include("solicitacoesRelacionadas", filtro.buscarSimplificado(getTitular()));
         result.include("filtro", filtro);
         result.include(SOLICITACAO, solicitacao);
 	}
 	
-    @Path("app/solicitacao/retirarDeLista")
+    @Transacional
+	@Path("/retirarDeLista")
     public void retirarDeLista(String sigla, Long idLista) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -596,7 +738,7 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibirLista(idLista);
     }
 
-    @Path("app/solicitacao/incluirEmLista")
+    @Path("/incluirEmLista")
     public void incluirEmLista(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -608,7 +750,8 @@ public class SolicitacaoController extends SrController {
         result.include("prioridades", prioridades);
     }
 
-    @Path("app/solicitacao/incluirEmListaGravar")
+    @Transacional
+    @Path("/incluirEmListaGravar")
     public void incluirEmListaGravar(String sigla, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
             throw new AplicacaoException("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
@@ -622,8 +765,11 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
     }
     
-	@Path("app/solicitacao/reclassificar")
+	@Path("/reclassificar")
     public void reclassificar(SrSolicitacao solicitacao) throws Exception {
+		
+		carregaItemConfiguracao(solicitacao);
+		
 		if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
 			throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
@@ -651,7 +797,8 @@ public class SolicitacaoController extends SrController {
         incluirListasReclassificacao(solicitacaoEntity);
     }
         
-    @Path("app/solicitacao/reclassificarGravar")
+	@Transacional
+	@Path("/reclassificarGravar")
     public void reclassificarGravar(SrSolicitacao solicitacao) throws Exception {
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -675,8 +822,10 @@ public class SolicitacaoController extends SrController {
         result.include("atributoSolicitacaoMap", solicitacao.getAtributoSolicitacaoMap());
     }
 
-    @Path("app/solicitacao/fechar")
+    @Path("/fechar")
     public void fechar(SrSolicitacao solicitacao) throws Exception {
+    	carregaItemConfiguracao(solicitacao);
+    	
     	reclassificar(solicitacao);
     	Set<SrTipoMotivoFechamento> motivos = new TreeSet<SrTipoMotivoFechamento>(new Comparator<SrTipoMotivoFechamento>(){
 			@Override
@@ -690,7 +839,8 @@ public class SolicitacaoController extends SrController {
     	result.include("motivosFechamento", motivos);
     }
     
-    @Path("app/solicitacao/fecharGravar")
+    @Transacional
+    @Path("/fecharGravar")
     public void fecharGravar(SrSolicitacao solicitacao, String motivoFechar, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -705,7 +855,7 @@ public class SolicitacaoController extends SrController {
     	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
     }
     
-    @Path("app/solicitacao/erPesquisa")
+    @Path("/erPesquisa")
     public void responderPesquisa(String sigla) throws Exception {
         /*
          * SrSolicitacao sol = SrSolicitacao.findById(id); SrPesquisa pesquisa = sol.getPesquisaDesignada(); if (pesquisa == null) throw new
@@ -715,7 +865,8 @@ public class SolicitacaoController extends SrController {
     }
 
 
-    @Path("app/solicitacao/responderPesquisaGravar")
+    @Transacional
+    @Path("/responderPesquisaGravar")
     public void responderPesquisaGravar(String sigla, Map<Long, String> respostaMap) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -725,16 +876,26 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/baixar/{idArquivo}")
+    @Path("/baixar/{idArquivo}")
     public Download baixar(Long idArquivo) throws Exception {
     	if (idArquivo == null)
     		throw new AplicacaoException("Arquivo não informado");
         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
         return new ByteArrayDownload(arq.getBlob(), arq.getMime(), arq.getNomeArquivo(), false);
     }
+    
+    private void carregaItemConfiguracao(SrSolicitacao solicitacao) {
+    	SrItemConfiguracao item = solicitacao.getItemConfiguracao();
+    	if(item != null && item.getIdItemConfiguracao() != null && item.getDescrItemConfiguracao() == null) {
+    		solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(item.getIdItemConfiguracao()));
+    	}
+    }
 
-    @Path("app/solicitacao/escalonar")
+    @Path("/escalonar")
     public void escalonar(SrSolicitacao solicitacao) throws Exception {
+    	
+    	carregaItemConfiguracao(solicitacao);
+
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
@@ -782,7 +943,8 @@ public class SolicitacaoController extends SrController {
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
     }
 
-    @Path("app/solicitacao/escalonarGravar")
+    @Transacional
+    @Path("/escalonarGravar")
     public void escalonarGravar(SrSolicitacao solicitacao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
         	SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
@@ -811,7 +973,8 @@ public class SolicitacaoController extends SrController {
         }
     }
 
-    @Path("app/solicitacao/vincular")
+    @Transacional
+    @Path("/vincular")
     public void vincular(String sigla, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -820,7 +983,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/juntar")
+    @Transacional
+    @Path("/juntar")
     public void juntar(String sigla, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -829,7 +993,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/desentranhar")
+    @Transacional
+    @Path("/desentranhar")
     public void desentranhar(String sigla, String justificativa) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -838,7 +1003,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/cancelar")
+    @Transacional
+    @Path("/cancelar")
     public void cancelar(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -848,7 +1014,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/reabrir")
+    @Transacional
+    @Path("/reabrir")
     public void reabrir(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -857,7 +1024,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/deixarPendente")
+    @Transacional
+    @Path("/deixarPendente")
     public void deixarPendente(String sigla, SrTipoMotivoPendencia motivo, String calendario, String horario, String detalheMotivo) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -872,7 +1040,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/excluir")
+    @Transacional
+    @Path("/excluir")
     public void excluir(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -882,15 +1051,17 @@ public class SolicitacaoController extends SrController {
         result.redirectTo("/../siga/");
     }
 
-    @Path("app/solicitacao/anexarArquivo")
+    @Transacional
+    @Path("/anexarArquivo")
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
     	if (movimentacao == null || movimentacao.getArquivo() == null)
     		throw new AplicacaoException("Não foram informados dados suficientes para a anexação");
+    	if(movimentacao.getAtendente() != null && movimentacao.getAtendente().getIdPessoa() == null) movimentacao.setAtendente(null);
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/termoAtendimento")
+    @Path("/termoAtendimento")
     public void termoAtendimento(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -906,7 +1077,8 @@ public class SolicitacaoController extends SrController {
         result.include("atributos", atributos);
     }
 
-    @Path("app/solicitacao/desfazerUltimaMovimentacao")
+    @Transacional
+    @Path("/desfazerUltimaMovimentacao")
     public void desfazerUltimaMovimentacao(String sigla) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -916,7 +1088,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/alterarPrioridade")
+    @Transacional
+    @Path("/alterarPrioridade")
     public void alterarPrioridade(String sigla, SrPrioridade prioridade) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -925,7 +1098,8 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/terminarPendencia")
+    @Transacional
+    @Path("/terminarPendencia")
     public void terminarPendencia(String sigla, String descricao, Long idMovimentacao) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
@@ -934,14 +1108,16 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/darAndamento")
+    @Transacional
+    @Path("/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
-        movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+        movimentacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("app/solicitacao/priorizarLista")
+    @Transacional
+    @Path("/priorizarLista")
     public void priorizarLista(List<SrPrioridadeSolicitacao> listaPrioridadeSolicitacao, Long id) throws Exception {
     	for (SrPrioridadeSolicitacao pNova : listaPrioridadeSolicitacao){
     		SrPrioridadeSolicitacao p = SrPrioridadeSolicitacao.AR.findById(pNova.getId());
@@ -958,7 +1134,9 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).setStatusCode(200);
     }
     
-    @Path("public/app/solicitacao/selecionar")
+
+    @Get("/public/app/solicitacao/selecionar")
+	@Post
     public void selecionarPublico(String sigla, String matricula) throws Exception {
     	try {
     		SrSolicitacao sol = new SrSolicitacao();
@@ -981,7 +1159,7 @@ public class SolicitacaoController extends SrController {
 
     @Get
 	@Post
-    @Path("app/solicitacao/selecionar")
+    @Path("/selecionar")
     public void selecionar(String sigla) throws Exception {
         SrSolicitacao sel = new SrSolicitacao();
         sel.setLotaTitular(getLotaTitular());
@@ -996,23 +1174,26 @@ public class SolicitacaoController extends SrController {
     }
     
     @SuppressWarnings("rawtypes")
-    @Path("app/solicitacao/gadget")
+    @Path("/gadget")
     public void gadget() {
         Query query = ContextoPersistencia.em().createNamedQuery("contarSrMarcas");
         query.setParameter("idPessoaIni", getTitular().getIdInicial());
         query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+        query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
         List contagens = query.getResultList();
         result.include("contagens", contagens);
     }
     
-    @Path("app/solicitacao/atributo/gravar")
+    @Transacional
+    @Path("/atributo/gravar")
     public void gravarAtributo(SrAtributoSolicitacao atributo) throws Exception {
     	SrAtributoSolicitacao atributoEntity = SrAtributoSolicitacao.AR.findById(atributo.getId());
     	atributoEntity.gravar(atributo.getValorAtributoSolicitacao(), getCadastrante(), getLotaCadastrante());
     	result.use(Results.http()).body(atributo.getValorAtributoSolicitacao());
     }
     
-    @Path("app/solicitacao/atributo/excluir")
+    @Transacional
+    @Path("/atributo/excluir")
 	public void excluirAtributo(Long id) throws Exception {
 		SrAtributoSolicitacao atributoEntity = SrAtributoSolicitacao.AR.findById(id);	
 		atributoEntity.excluir(getCadastrante(), getLotaCadastrante());

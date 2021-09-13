@@ -23,11 +23,12 @@
 					<div class="card-body">
 
 						<div>
+							<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 							<c:url var='pdfAssinado'
 								value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
 							<c:url var='pdf'
 								value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
-							<iframe src="${pdfAssinado}" width="100%" height="600"
+							<iframe id="frameDoc" width="100%" height="600"
 								align="center" style="margin-top: 10px;"> </iframe>
 						</div>
 					</div>
@@ -43,7 +44,7 @@
 								</h5>
 							</div>
 							<div class="card-body">
-								<i class="fa fa-angle-double-right"></i> <a href="${pdf}" target="_blank">PDF do documento</a>
+								<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc" target="_blank">PDF do documento</a>
 							</div>
 						</div>
 					</div>
@@ -60,7 +61,7 @@
 								<c:forEach var="assinatura" items="${assinaturas}" varStatus="loop">
 									<c:url var='arqAssinatura'
 										value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&idMov=${assinatura.idMov}' />
-									<p class="p-0 m-0"><i class="fa fa-angle-double-right"></i> <a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a></p>
+									<p class="p-0 m-0"><i class="fa fa-angle-double-right"></i> <a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}, ${assinatura.getAssinaturaValida()}</a></p>
 								</c:forEach>
 								<div id="dados-assinatura" style="visible: hidden">
 									<input type="hidden" name="ad_url_base" value="" /> <input
@@ -84,7 +85,7 @@
 								</div>
 								<c:if test="${mostrarBotaoAssinarExterno}">
 									<tags:assinatura_botoes assinar="true" autenticar="false"
-										assinarComSenha="false" autenticarComSenha="false"
+										assinarComSenha="false" autenticarComSenha="false" assinarComSenhaPin="false" autenticarComSenhaPin="false"
 										idMovimentacao="${mov.idMov}" />
 								</c:if>
 							</div>
@@ -248,4 +249,10 @@
 		</div>
 	</div>
 	<tags:assinatura_rodape />
+	<script>
+	window.onload = function () { 
+		document.getElementById('frameDoc').src = montarUrlDocPDF('${pdfAssinado }',document.getElementById('visualizador').value); 
+		document.getElementById('linkDoc').href = montarUrlDocPDF('${pdf}', document.getElementById('visualizador').value);
+	} 
+</script>
 </siga:pagina>

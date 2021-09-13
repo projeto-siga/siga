@@ -1,8 +1,8 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import com.crivano.swaggerservlet.IMemCache;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.Prop;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -36,27 +36,27 @@ public class MemCacheRedis implements IMemCache {
 	}
 
 	public static int getDatabase() {
-		return Integer.parseInt(SwaggerServlet.getProperty("redis.database"));
+		return Integer.parseInt(Prop.get("redis.database"));
 	}
 
 	public static String getPassword() {
-		return SwaggerServlet.getProperty("redis.password");
+		return Prop.get("redis.password");
 	}
 
 	public static int getSlavePort() {
-		return Integer.parseInt(SwaggerServlet.getProperty("redis.slave.port"));
+		return Prop.getInt("redis.slave.port");
 	}
 
 	public static String getSlaveHost() {
-		return SwaggerServlet.getProperty("redis.slave.host");
+		return Prop.get("redis.slave.host");
 	}
 
 	public static String getMasterHost() {
-		return SwaggerServlet.getProperty("redis.master.host");
+		return Prop.get("redis.master.host");
 	}
 
 	public static int getMasterPort() {
-		return Integer.parseInt(SwaggerServlet.getProperty("redis.master.port"));
+		return Prop.getInt("redis.master.port");
 	}
 
 	@Override

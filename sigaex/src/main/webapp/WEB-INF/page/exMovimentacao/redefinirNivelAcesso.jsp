@@ -20,7 +20,7 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<form name="frm" action="redefinir_nivel_acesso_gravar" namespace="/expediente/mov" theme="simple" method="POST">
+				<form name="frm" action="redefinir_nivel_acesso_gravar" namespace="/expediente/mov" theme="simple" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
 					<div class="row">

@@ -23,10 +23,10 @@
 									<c:forEach items="${escalas}" var="escala">
 									   	<tr>
 								    		<td>
-								    			<sigatp:formatarColuna operacao="editar" href="${linkTo[EscalaDeTrabalhoController].editar[escala.id]}" titulo="escala"/>
+								    			<sigatp:formatarColuna operacao="editar" href="${linkTo[EscalaDeTrabalhoController].editar(escala.id)}" titulo="escala"/>
 								    		</td>
 								    		<td>
-								    			<sigatp:formatarColuna operacao="excluir" href="${linkTo[EscalaDeTrabalhoController].excluir[escala.id]}" 
+								    			<sigatp:formatarColuna operacao="excluir" href="${linkTo[EscalaDeTrabalhoController].excluir(escala.id)}" 
 								    			onclick="javascript:return confirm('Tem certeza de que deseja excluir esta escala?');" titulo="escala"/>
 								    		</td>
 								    	    <td>${escala.dataVigenciaInicio?.format("dd/MM/yyyy")}</td>
@@ -45,7 +45,7 @@
 				</c:otherwise>
 			</c:choose>
 			<div class="gt-table-buttons">
-				<a href="${linkTo[EscalaDeTrabalhoController].incluir[condutor.id]}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir" /></a>
+				<a href="${linkTo[EscalaDeTrabalhoController].incluir(condutor.id)}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir" /></a>
 			</div>
 		</div>
 	</div>

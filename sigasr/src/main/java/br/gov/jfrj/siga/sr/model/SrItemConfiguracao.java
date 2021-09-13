@@ -34,7 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -46,7 +46,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
 import com.google.gson.JsonArray;
 
 @Entity
-@Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
+@Table(name = "sr_item_configuracao", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel, Selecionavel {

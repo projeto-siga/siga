@@ -57,17 +57,14 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk16</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcmail-jdk16</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bctsp-jdk16</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>opensc</groupId>

@@ -25,9 +25,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaConstraintViolationException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -38,15 +39,16 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class Excel {
 	
-	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade cadastrante) {
 		InputStream retorno = null;
 		if(".txt".equalsIgnoreCase(extensao) || ".csv".equalsIgnoreCase(extensao)) {
 			retorno = uploadCVS(file, orgaoUsuario);
 		} else if(".xlsx".equalsIgnoreCase(extensao)){
-			retorno = uploadExcelLotacao(file, orgaoUsuario);
+			retorno = uploadExcelLotacao(file, orgaoUsuario, cadastrante);
 		}
 		return retorno;
 	}
@@ -239,7 +241,7 @@ public class Excel {
 			loc.setNmLocalidade(Texto.removeAcento(Texto.removerEspacosExtra(loc.getNmLocalidade().replace("'", " ")).trim()));
 			CpLocalidade localidade = CpDao.getInstance().consultarLocalidadesPorNomeUF(loc);
 			if(localidade == null) {
-				return "Linha " + linha +": LOCALIDADE não cadastrada" + System.lineSeparator();
+				return "Linha " + linha +": UF/LOCALIDADE não cadastrada" + System.lineSeparator();
 			} else {
 				localidades.add(localidade);
 				loc = localidade;
@@ -249,11 +251,11 @@ public class Excel {
 		return "";
 	}
 	
-    public InputStream uploadExcelLotacao(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelLotacao(File file, CpOrgaoUsuario orgaoUsuario, CpIdentidade cadastrante) {
     	InputStream inputStream = null;
     	String problemas = "";
-        CpUF uf = new CpUF();
-        uf.setIdUF(26L);
+        CpUF uf = null;
+
     	try {
 			FileInputStream fis = new FileInputStream(file); 
 			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis); 
@@ -293,19 +295,31 @@ public class Excel {
 					lot.setSiglaLotacao(celula.toUpperCase().trim());
 				}
 				
-				//LOCALIDADE DA LOTACAO
+				//ESTADO
 				celula = retornaConteudo(row.getCell(2, Row.CREATE_NULL_AS_BLANK));
-				loc.setUF(uf);
-				loc.setNmLocalidade(celula);
-				problemas += validarLocalidadeLotacao(localidades, linha, loc);
 				
+				if(uf == null || !uf.getSigla().equalsIgnoreCase(celula)) {
+					uf = CpDao.getInstance().consultaSiglaUF(celula.toUpperCase());	
+				}
+				
+				if(uf == null) {
+					problemas += "Linha " + linha +": UF não encontrada" + System.getProperty("line.separator");
+				} else {
+					//LOCALIDADE DA LOTACAO
+					celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+					loc.setUF(uf);
+					loc.setNmLocalidade(celula);
+					problemas += validarLocalidadeLotacao(localidades, linha, loc);		
+				}
+				
+
 				/*
 				 * Alteracao 24/04/2020
 				 */
 				//Lotacao Pai
 				//celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
 				//String lotacaopaidescricao = celula;
-				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
 				String lotacaopaisigla = celula;
 				if(!celula.equals("")) {
 					DpLotacao lo = CpDao.getInstance().consultarLotacaoPorOrgaoEId(orgaoUsuario, lotacaopaisigla);
@@ -318,7 +332,7 @@ public class Excel {
 				}
 				
 				//LOTACAO EXTERNA
-				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
+				celula = retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK));
 				problemas += validarIsExternaLotacao(celula.trim(), linha);
 				
 				if(problemas == null || "".equals(problemas.toString())) {
@@ -345,7 +359,7 @@ public class Excel {
 			if(problemas == null || "".equals(problemas.toString())) {
             	for (DpLotacao dpLotacao : lista) {
 	            	CpDao.getInstance().iniciarTransacao();
-	    			CpDao.getInstance().gravar(dpLotacao);
+	    			CpDao.getInstance().gravarComHistorico(dpLotacao, cadastrante);
 	    			
     				if(dpLotacao.getIdLotacaoIni() == null && dpLotacao.getId() != null) {
     					dpLotacao.setIdLotacaoIni(dpLotacao.getId());
@@ -407,14 +421,14 @@ public class Excel {
     	return retorno;
     }
     
-    public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+    public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao, final CpIdentidade identidadeCadastrante) {
 		InputStream retorno = null;
-		retorno = uploadExcelFuncao(file, orgaoUsuario);
+		retorno = uploadExcelFuncao(file, orgaoUsuario,identidadeCadastrante);
 
 		return retorno;
 	}
     
-    public InputStream uploadExcelFuncao(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelFuncao(File file, CpOrgaoUsuario orgaoUsuario,final CpIdentidade identidadeCadastrante) {
     	InputStream inputStream = null;
     	StringBuffer problemas = new StringBuffer();
 
@@ -452,21 +466,22 @@ public class Excel {
 					lista.add(func);
 				}
 			}
+			
 			if(problemas == null || "".equals(problemas.toString())) {
 				try {
 	            	for (DpFuncaoConfianca dpFuncaoConfianca : lista) {
-		            	CpDao.getInstance().iniciarTransacao();
-		    			CpDao.getInstance().gravar(dpFuncaoConfianca);
-		    			
-	    				if(dpFuncaoConfianca.getIdFuncaoIni() == null && dpFuncaoConfianca.getId() != null) {
-	    					dpFuncaoConfianca.setIdFuncaoIni(dpFuncaoConfianca.getId());
-	    					dpFuncaoConfianca.setIdeFuncao(dpFuncaoConfianca.getId().toString());
-	    					CpDao.getInstance().gravar(dpFuncaoConfianca);
-	        			}
-					}
-	    			CpDao.getInstance().commitTransacao();			
+	            		Cp.getInstance().getBL().gravarFuncaoConfianca(identidadeCadastrante, null, dpFuncaoConfianca.getNomeFuncao(), dpFuncaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(),Boolean.TRUE);
+					}		
 	    		} catch (final Exception e) {
-	    			CpDao.getInstance().rollbackTransacao();
+	    			throw new AplicacaoException("Erro na gravação", 0, e);
+	    		}
+			}
+			if(problemas == null || "".equals(problemas.toString())) {
+				try {
+	            	for (DpFuncaoConfianca dpFuncaoConfianca : lista) {
+	            		Cp.getInstance().getBL().gravarFuncaoConfianca(identidadeCadastrante, null, dpFuncaoConfianca.getNomeFuncao(), dpFuncaoConfianca.getOrgaoUsuario().getIdOrgaoUsu(),Boolean.TRUE);
+					}		
+	    		} catch (final Exception e) {
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}
@@ -508,14 +523,14 @@ public class Excel {
 		return "";
 	}
     
-    public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+    public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao,final CpIdentidade identidadeCadastrante) {
 		InputStream retorno = null;
-		retorno = uploadExcelCargo(file, orgaoUsuario);
+		retorno = uploadExcelCargo(file, orgaoUsuario,identidadeCadastrante);
 
 		return retorno;
 	}
     
-    public InputStream uploadExcelCargo(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelCargo(File file, CpOrgaoUsuario orgaoUsuario, final CpIdentidade identidadeCadastrante) {
     	InputStream inputStream = null;
     	StringBuffer problemas = new StringBuffer();
 
@@ -556,18 +571,9 @@ public class Excel {
 			if(problemas == null || "".equals(problemas.toString())) {
 				try {
 	            	for (DpCargo dpCargo : lista) {
-		            	CpDao.getInstance().iniciarTransacao();
-		    			CpDao.getInstance().gravar(dpCargo);
-		    			
-	    				if(dpCargo.getIdCargoIni() == null && dpCargo.getId() != null) {
-	    					dpCargo.setIdCargoIni(dpCargo.getId());
-	    					dpCargo.setIdeCargo(dpCargo.getId().toString());
-	        				CpDao.getInstance().gravar(dpCargo);
-	        			}
-					}
-	    			CpDao.getInstance().commitTransacao();			
+	            		Cp.getInstance().getBL().gravarCargo(identidadeCadastrante, null, dpCargo.getNomeCargo(), dpCargo.getOrgaoUsuario().getIdOrgaoUsu(),Boolean.TRUE);
+					}		
 	    		} catch (final Exception e) {
-	    			CpDao.getInstance().rollbackTransacao();
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}
@@ -643,6 +649,7 @@ public class Excel {
 			Date dateExp = null;
 			int i = 0;
 			String email = "";
+			String nomeExibicao = null;
 			
 			DpPessoaDaoFiltro dpPessoaFiltro = new DpPessoaDaoFiltro();
 			Integer tamanho = 0;
@@ -663,7 +670,21 @@ public class Excel {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Cell cell;
 				
-				//SIGLA DO ORGAO				
+				/* 6 --------  CPF -----------*/
+				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
+				cpf = celula.replaceAll("[^0-9]", "");
+				cpf = StringUtils.leftPad(cpf, 11, "0");
+				if(!"".equals(cpf.trim())) {
+					if(!validarCPF(cpf)) {
+						problemas.append("Linha " + linha +": CPF inválido" + System.lineSeparator());
+					}
+				} else {
+					problemas.append("Linha " + linha +": CPF em branco" + System.lineSeparator());
+				}
+				/* ----------  END ---------- */
+				
+				
+				/* 0 --------  SIGLA DO ORGAO -----------*/			
 				celula = retornaConteudo(row.getCell(0, Row.CREATE_NULL_AS_BLANK));
 				if("".equals(celula.trim())) {
 					problemas.append("Linha " + linha +": ÓRGÃO em branco" + System.lineSeparator());
@@ -672,8 +693,9 @@ public class Excel {
 						problemas.append("Linha " + linha +": ÓRGÃO inválido" + System.lineSeparator());
 					}
 				}
+				/* ----------  END ---------- */
 
-				//NOME DO CARGO
+				/* 1 --------  NOME DO CARGO -----------*/	
 				celula = retornaConteudo(row.getCell(1, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					cargo.setOrgaoUsuario(orgaoUsuario);
@@ -700,8 +722,9 @@ public class Excel {
 				} else {
 					problemas.append("Linha " + linha +": CARGO em branco" + System.lineSeparator());
 				}
-				
-				//NOME FUNCAO DE CONFIANCA
+				/* ----------  END ---------- */
+							
+				/* 2 --------  NOME FUNCAO DE CONFIANCA -----------*/	
 				celula = retornaConteudo(row.getCell(2, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					funcao.setOrgaoUsuario(orgaoUsuario);
@@ -730,8 +753,9 @@ public class Excel {
 				} else {
 					funcao = null;
 				}
+				/* ----------  END ---------- */
 				
-				//NOME DA LOTACAO
+				/* 3 --------  NOME DA LOTACAO -----------*/	
 				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					lotacao.setOrgaoUsuario(orgaoUsuario);
@@ -760,8 +784,30 @@ public class Excel {
 				} else {
 					problemas.append("Linha " + linha +": LOTAÇÃO em branco" + System.lineSeparator());
 				}
+				/* ----------  END ---------- */
 				
-				//DATA DE NASCIMENTO
+				/* 4 --------  NOME DA PESSOA -----------*/
+				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
+				
+				
+				if(problemas == null || "".equals(problemas.toString())) {
+					pe.setNomePessoa(celula.trim());
+				}
+				
+				List<DpPessoa> listaP = new ArrayList<DpPessoa>();
+				listaP.addAll(CpDao.getInstance().listarCpfAtivoInativo(Long.valueOf(cpf.replace("-", "").replace(".", ""))));
+				
+				for (DpPessoa dpPessoa : listaP) {
+					if(!dpPessoa.getNomePessoa().equalsIgnoreCase(celula.trim())) {
+						problemas.append("Linha " + linha +": Nome diferente para o mesmo CPF já cadastrado.");
+						break;
+					}
+				}
+				/* ----------  END ---------- */
+				
+				
+				/* 5 --------  DATA DE NASCIMENTO -----------*/
 				if(retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK)) != "") {
 					if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(5, Row.CREATE_NULL_AS_BLANK))){
 						date = row.getCell(5).getDateCellValue();
@@ -784,7 +830,7 @@ public class Excel {
 						problemas.append(validarData(row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha));
 						if(problemas != null && problemas.toString().equals("")) {
 							dataString = row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-							date = formato.parse(dataString.replace("-", "").replace("/", "").trim());	
+							date = formato.parse(dataString.replaceAll("[^0-9]", ""));	
 							
 							if(date.compareTo(new Date()) > 0) {
 				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
@@ -795,38 +841,9 @@ public class Excel {
 						problemas.append("Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.lineSeparator());
 					}
 				}
-				//CPF
-				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
-				cpf = celula.replaceAll("[^0-9]", "");
-				cpf = StringUtils.leftPad(cpf, 11, "0");
-				if(!"".equals(cpf.trim())) {
-					if(!validarCPF(cpf)) {
-						problemas.append("Linha " + linha +": CPF inválido" + System.lineSeparator());
-					}
-				} else {
-					problemas.append("Linha " + linha +": CPF em branco" + System.lineSeparator());
-				}
-				
-				//NOME DA PESSOA
-				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
-				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
-				
-				
-				if(problemas == null || "".equals(problemas.toString())) {
-					pe.setNomePessoa(celula.trim());
-				}
-				
-				List<DpPessoa> listaP = new ArrayList<DpPessoa>();
-				listaP.addAll(CpDao.getInstance().listarCpfAtivoInativo(Long.valueOf(cpf.replace("-", "").replace(".", ""))));
-				
-				for (DpPessoa dpPessoa : listaP) {
-					if(!dpPessoa.getNomePessoa().equalsIgnoreCase(celula.trim())) {
-						problemas.append("Linha " + linha +": Nome diferente para o mesmo CPF já cadastrado.");
-						break;
-					}
-				}
-				
-				//EMAIL
+				/* ----------  END ---------- */
+			
+				/* 7 --------  EMAIL -----------*/
 				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK)).trim().toLowerCase();
 				email = celula;
 				
@@ -850,29 +867,29 @@ public class Excel {
 				if(i > 0) {
 					problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF" + System.lineSeparator());
 				}
-				
-				/*
-				 * Alteracao 20/04/2020
-				 * Insercao dos campos RG, Orcao Expeditor, UF, Data Expedicao
-				 */
-				
-				//RG				
+				/* ----------  END ---------- */
+
+				/* 8 --------  RG -----------*/
 				celula = retornaConteudo(row.getCell(8, Row.CREATE_NULL_AS_BLANK));
 				rg = celula;
+				/* ----------  END ---------- */
 				
-				//RG Orgao Expeditor
+
+				/* 9 --------  RG Orgao Expeditor -----------*/
 				celula = retornaConteudo(row.getCell(9, Row.CREATE_NULL_AS_BLANK));
 				orgexp = celula;
+				/* ----------  END ---------- */
 				
-				//UF RG
+				/* 10 --------  UF RG -----------*/
 				celula = retornaConteudo(row.getCell(10, Row.CREATE_NULL_AS_BLANK));
 				ufexp = celula;
 				if(!"".equals(ufexp.trim())) {
 					if(CpDao.getInstance().consultaSiglaUF(ufexp)==null)
 						problemas.append( "Linha " + linha + ": UF DO RG inválido" + System.lineSeparator());
 				}
+				/* ----------  END ---------- */
 				
-				//RG Data Expedicao
+				/* 11 --------  RG Data Expedicao -----------*/
 				if(retornaConteudo(row.getCell(11, Row.CREATE_NULL_AS_BLANK)) != "") {
 					if(row.getCell(11).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(11, Row.CREATE_NULL_AS_BLANK))){
 						dateExp = row.getCell(11).getDateCellValue();
@@ -906,10 +923,15 @@ public class Excel {
 						problemas.append("Linha " + linha + ": DATA DE EXPEDIÇÃO DO RG inválida" + System.lineSeparator());
 					}
 				}
+				/* ----------  END ---------- */
+
+				/* 12 --------  Nome Abreviado -----------*/
+				celula = retornaConteudo(row.getCell(12, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomeAbreviado(celula.trim(), linha, 40));
+				nomeExibicao = celula;
+				/* ----------  END ---------- */
 				
-				/*
-				 * Fim da Alteracao 20/04/2020
-				 */
+
 				
 				if(cargo != null && lotacao != null && cpf != null && !"".equals(cpf) && !Long.valueOf(0).equals(Long.valueOf(cpf))) {
 					dpPessoaFiltro = new DpPessoaDaoFiltro();
@@ -945,6 +967,7 @@ public class Excel {
 				}
 				
 				if(problemas == null || "".equals(problemas.toString())) {
+					pe.setNomeExibicao(nomeExibicao);
 					pe.setDataNascimento(date);
 					pe.setCpfPessoa(Long.valueOf(cpf));
 					pe.setOrgaoUsuario(orgaoUsuario);
@@ -971,36 +994,33 @@ public class Excel {
 				CpIdentidade usuarioExiste = null;
 				List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
             	for (DpPessoa dpPessoa : lista) {
-	    			CpDao.getInstance().gravar(dpPessoa);
+	    			CpDao.getInstance().gravarComHistorico(dpPessoa, identidade);
 
-    				if(dpPessoa.getIdPessoaIni() == null && dpPessoa.getId() != null) {
-    					dpPessoa.setIdPessoaIni(dpPessoa.getId());
-    					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
-    					dpPessoa.setMatricula(10000 + dpPessoa.getId());	
-        				CpDao.getInstance().gravar(dpPessoa);
-        				
-        				lista1.clear();
-        				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
-        				
-        				if(lista1.size() > 0) {
-        					usuarioExiste = lista1.get(0);
-        					usu = new CpIdentidade();
-        					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
-        										CpTipoIdentidade.class, false));
-        					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
-        					usu.setDtCriacaoIdentidade(CpDao.getInstance()
-        							.consultarDataEHoraDoServidor());
-        					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
-        					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
-        					usu.setHisAtivo(1);
-        					
-	        				if(usu != null) {
-	        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
-	        					usu.setDpPessoa(dpPessoa);
-	        					CpDao.getInstance().gravarComHistorico(usu, identidade);
-	        				}
+	    			dpPessoa.setMatricula(10000 + dpPessoa.getId());
+					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
+					CpDao.getInstance().gravar(dpPessoa);
+								
+    				lista1.clear();
+    				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
+    				
+    				if(lista1.size() > 0) {
+    					usuarioExiste = lista1.get(0);
+    					usu = new CpIdentidade();
+    					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
+    										CpTipoIdentidade.class, false));
+    					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+    					usu.setDtCriacaoIdentidade(CpDao.getInstance()
+    							.consultarDataEHoraDoServidor());
+    					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
+    					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+    					usu.setHisAtivo(1);
+    					
+        				if(usu != null) {
+        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
+        					usu.setDpPessoa(dpPessoa);
+        					CpDao.getInstance().gravarComHistorico(usu, identidade);
         				}
-        			}
+    				}
 				}
             	CpDao.getInstance().em().getTransaction().commit();				    		
 			}
@@ -1069,6 +1089,18 @@ public class Excel {
 		}
 		return "";
 	}    
+    
+    public String validarNomeAbreviado(String nomeAbreviado, Integer linha, Integer tamanho) {
+    	
+    	if(nomeAbreviado.length() > tamanho){
+			return "Linha " + linha +": NOME ABREVIADO com mais de 40 caracteres" + System.lineSeparator();
+		}
+    	
+    	if(nomeAbreviado != null && !"".equals(nomeAbreviado.trim()) && !nomeAbreviado.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS)) {
+			return "Linha " + linha +": NOME ABREVIADO com caracteres não permitidos" + System.lineSeparator();
+		}
+    	return "";
+    }
     
     public boolean validarCPF(String CPF) {
         // considera-se erro CPF's formados por uma sequencia de numeros iguais

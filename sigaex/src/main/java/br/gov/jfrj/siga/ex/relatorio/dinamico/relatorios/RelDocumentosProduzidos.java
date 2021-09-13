@@ -25,7 +25,9 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -48,6 +50,8 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		}
 		listColunas = new ArrayList<String>();
 		listDados = new ArrayList<String>();
+		
+		
 	}
 
 	@Override
@@ -71,6 +75,19 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 	public Collection processarDados() throws Exception {
 
 		List<String> d = new ArrayList<String>();
+		
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgao")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
+		
 
 		// Total de documentos criados (por orgao, lotação ou usuário)
 		String addSelect = "doc.lotaCadastrante.siglaLotacao, "
@@ -88,16 +105,20 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 			Object[] obj = (Object[]) it.next();
 			String lotaDoc = (String) obj[0];
 			String modeloDoc = (String) obj[1];
-			listDados.add(lotaDoc);
-			listDados.add(modeloDoc);
-			listDados.add(obj[2].toString());
-			d.add(lotaDoc);
-			d.add(modeloDoc);
-			d.add(obj[2].toString());
-			Long docs = Long.valueOf(obj[2].toString());
-			Long pags = Long.valueOf(obj[3].toString());
-			totalDocumentos = totalDocumentos + docs;
-			totalPaginas = totalPaginas + pags;
+			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+					 titular, lotaTitular ,ExDao.getInstance().consultarModeloPeloNome(modeloDoc)
+							)) {
+				listDados.add(lotaDoc);
+				listDados.add(modeloDoc);
+				listDados.add(obj[2].toString());
+				d.add(lotaDoc);
+				d.add(modeloDoc);
+				d.add(obj[2].toString());
+				Long docs = Long.valueOf(obj[2].toString());
+				Long pags = Long.valueOf(obj[3].toString());
+				totalDocumentos = totalDocumentos + docs;
+				totalPaginas = totalPaginas + pags;
+			}
 
 		}
 		if (d.size() == 0) {
@@ -137,6 +158,20 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 	private Collection processarDadosDetalhes() throws Exception {
 
 		List<String> d = new ArrayList<String>();
+		
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
+		
+		
 		ExDao dao = ExDao.getInstance();
 		ExMobil mob = null;
 		String siglaDoc = "";
@@ -160,35 +195,41 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 
 			String lotaDoc = (String) obj[0];
 			String modeloDoc = (String) obj[1];
-			BigDecimal idMobil = new BigDecimal(obj[2].toString());
-			if (idMobil != null) {
-				mob = dao.consultar(new Long(idMobil.longValue()),
-						ExMobil.class, false);
-				siglaDoc = mob.getSigla();
-			}
-
-			Long pags = (long) 0;
-
-			if (obj[3] != null) {
-				pags = Long.valueOf(obj[3].toString());
-			}
-
-			if(!lotacaoAnterior.equals(lotaDoc)){
-				listDados.add(lotaDoc);
-				d.add(lotaDoc);
-				lotacaoAnterior = lotaDoc;
-			} else {
-				listDados.add(" ");
-				d.add(" ");
-			}
-			listDados.add(modeloDoc);
-			listDados.add(siglaDoc);
 			
-			d.add(modeloDoc);
-			d.add(siglaDoc);
-
-			totalDocumentos = totalDocumentos + 1;
-			totalPaginas = totalPaginas + pags;
+			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+					 titular, lotaTitular ,ExDao.getInstance().consultarModeloPeloNome(modeloDoc)
+							)) {
+			
+				BigDecimal idMobil = new BigDecimal(obj[2].toString());
+				if (idMobil != null) {
+					mob = dao.consultar(new Long(idMobil.longValue()),
+							ExMobil.class, false);
+					siglaDoc = mob.getSigla();
+				}
+	
+				Long pags = (long) 0;
+	
+				if (obj[3] != null) {
+					pags = Long.valueOf(obj[3].toString());
+				}
+	
+				if(!lotacaoAnterior.equals(lotaDoc)){
+					listDados.add(lotaDoc);
+					d.add(lotaDoc);
+					lotacaoAnterior = lotaDoc;
+				} else {
+					listDados.add(" ");
+					d.add(" ");
+				}
+				listDados.add(modeloDoc);
+				listDados.add(siglaDoc);
+				
+				d.add(modeloDoc);
+				d.add(siglaDoc);
+	
+				totalDocumentos = totalDocumentos + 1;
+				totalPaginas = totalPaginas + pags;
+			}
 		}
 		if (d.size() == 0) {
 			throw new Exception(

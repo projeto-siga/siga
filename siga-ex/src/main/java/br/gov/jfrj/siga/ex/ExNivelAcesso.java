@@ -22,6 +22,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -32,22 +33,28 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-@Table(name = "EX_NIVEL_ACESSO", catalog = "SIGA")
+@Table(name = "siga.ex_nivel_acesso")
 public class ExNivelAcesso extends AbstractExNivelAcesso implements
 		Serializable {
-
-	private static final long serialVersionUID = 3256722875116761397L;
 
 	public static final long NIVEL_ACESSO_PUBLICO = 10;
 
@@ -74,4 +81,36 @@ public class ExNivelAcesso extends AbstractExNivelAcesso implements
 	public ExNivelAcesso() {
 	}
 
+	public static ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, 
+			final ExModelo exMod, final ExClassificacao classif, final DpPessoa titular, final DpLotacao lotaTitular) {
+		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+
+		final ExConfiguracao config = new ExConfiguracao();
+		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
+		final CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
+		config.setDpPessoa(titular);
+		config.setLotacao(lotaTitular);
+		config.setExTipoDocumento(exTpDoc);
+		config.setExFormaDocumento(forma);
+		config.setExModelo(exMod);
+		config.setExClassificacao(classif);
+		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
+		config.setCpTipoConfiguracao(exTpConfig);
+		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
+		config.setCpSituacaoConfiguracao(exStConfig);
+		ExConfiguracao exConfig;
+
+		try {
+			exConfig = new ExConfiguracao(Ex.getInstance().getConf()
+					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
+		} catch (Exception e) {
+			exConfig = null;
+		}
+
+		if (exConfig != null) {
+			return exConfig.getExNivelAcesso();
+		}
+
+		return null;
+	}
 }

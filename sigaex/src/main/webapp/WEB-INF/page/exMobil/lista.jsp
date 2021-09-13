@@ -9,6 +9,22 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
+<script type="text/javascript" language="Javascript1.1">
+	function csv(id, action) {
+		var frm = document.getElementById(id);
+		frm.method = "POST";
+		document.getElementById("exportar").disabled = true;
+		sbmtAction(id, action);
+		frm.action = 'listar';
+		frm.method = "GET";
+	}
+</script>
+<div id="inicio" class="row mb-3">
+	<div class="col">		
+		<button type="button" class="btn btn-outline-success" id="exportar" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
+	</div>
+</div>
+
 <c:choose>
 	<c:when test="${visualizacao == 2 or visualizacao == 4}">
 		<div id="pivot" style="margin: 30px;"></div>
@@ -201,13 +217,17 @@
 							<td width="4%" align="center"><siga:selecionado
 									sigla="${documento[2].dpPessoaIni.iniciais}"
 									descricao="${documento[2].dpPessoaIni.descricao}"
-									pessoaParam="${documento[2].dpPessoaIni.sigla}" /></td>
+									pessoaParam="${documento[2].dpPessoaIni.sigla}" />
+							</td>
+
+
 							<td width="10.5%" align="center">
 								${documento[2].cpMarcador.descrMarcador}</td>
 						</c:if>
 						<c:if test="${documento[1].numSequencia == 0}">
 							<td width="5%" align="center">
 								${documento[0].dtDocDDMMYY}</td>
+
 							<td width="4%" align="center"><siga:selecionado
 									sigla="${documento[0].lotaSubscritor.sigla}"
 									descricao="${documento[0].lotaSubscritor.descricao}"
@@ -217,13 +237,15 @@
 									sigla="${documento[0].subscritor.iniciais}"
 									descricao="${documento[0].subscritor.descricao}"
 									pessoaParam="${documento[0].subscritor.sigla}" /></td>
+
+
 							<td width="5%" align="center">tag1</td>
 							<td width="4%" align="center"></td>
 							<td width="4%" align="center"></td>
 							<td width="10.5%" align="center">tag4</td>
 						</c:if>
-
 						<td width="6%">${documento[0].descrFormaDoc}</td>
+
 						<td width="6%">${documento[0].nmMod}</td>
 
 						<c:set var="acessivel" value="" />

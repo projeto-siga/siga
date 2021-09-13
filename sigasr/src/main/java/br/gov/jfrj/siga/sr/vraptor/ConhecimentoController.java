@@ -3,14 +3,15 @@ import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EDTCONH_CRIAR_CONHE
 
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
-import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
@@ -18,13 +19,21 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 
 
-@Resource
+@Controller
 @Path("app/solicitacao/conhecimento")
 public class ConhecimentoController extends SrController {
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ConhecimentoController() {
+		super();
+	}
+	
+	@Inject
 	public ConhecimentoController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em, SrValidator srValidator) {
-		super(request, result, SrDao.getInstance(), so, em, srValidator);
+		super(request, result, CpDao.getInstance(), so, em, srValidator);
 	}
 
 	@AssertAcesso(EDTCONH_CRIAR_CONHECIMENTOS)

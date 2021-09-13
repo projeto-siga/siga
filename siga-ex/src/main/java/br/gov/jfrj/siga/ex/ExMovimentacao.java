@@ -21,12 +21,18 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static java.util.Objects.nonNull;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,13 +44,25 @@ import java.util.TreeSet;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 
+import com.auth0.jwt.JWTVerifier;
+import com.crivano.jlogic.Expression;
+import com.crivano.swaggerservlet.SwaggerUtils;
+
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.bluc.service.ValidateRequest;
+import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
@@ -56,16 +74,12 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
  * be customized as it is never re-generated after being created.
  */
 
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_MOVIMENTACAO", catalog = "SIGA")
+@Table(name = "siga.ex_movimentacao")
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2559924666592487436L;
 
 	/**
 	 * Simple constructor of ExMovimentacao instances.
@@ -92,7 +106,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public String getConteudoBlobPdfB64() {
-		return Base64.encode(getConteudoBlobpdf());
+		return Base64.getEncoder().encodeToString(getConteudoBlobpdf());
 	}
 
 	/* Add customized code below */
@@ -388,14 +402,14 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return String.valueOf(getNumVia2());
 	}
 
-	private Integer tpMovDesempatePosicao(Long idTpMov) {
+	public static Integer tpMovDesempatePosicao(Long idTpMov) {
 		final List<Long> tpMovDesempate = Arrays.asList(new Long[] {ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA});
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO});
 
 		if (idTpMov == null)
 			return Integer.MAX_VALUE;
@@ -409,8 +423,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public int compareTo(final ExMovimentacao mov) {
 		try {
 			int i = 0;
-			if (getDtIniMov() != null)
-				i = getDtIniMov().compareTo(mov.getDtIniMov());
+			if (this.getDtTimestamp() != null) {
+				i = this.getDtTimestamp().compareTo(mov.getDtTimestamp());
+			} else if(this.getDtIniMov() != null) {
+				i = this.getDtIniMov().compareTo(mov.getDtIniMov());
+			}	
+			
 			if (i != 0)
 				return i;
 			
@@ -491,7 +509,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public String getConteudoBlobHtmlB64() {
-		return Base64.encode(getConteudoBlobHtml());
+		return Base64.getEncoder().encodeToString(getConteudoBlobHtml());
 	}
 
 	public void setConteudoBlobHtml(final byte[] conteudo) {
@@ -1194,5 +1212,140 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			return "Despacho";
 		}
 		return "Outro";
+	}
+	
+	
+	public boolean podeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
+			return exp.eval();
+		}
+		return false;
+	}
+
+	public boolean isAssinatura() {
+		long l = getExTipoMovimentacao().getId();
+		switch ((int) l) {
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isAssinaturaComSenha() {
+		long l = getExTipoMovimentacao().getId();
+		switch ((int) l) {
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
+			return true;
+		}
+		return false;
+	}
+
+	public String expliquePodeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
+			return AcaoVO.Helper.formatarExplicacao(exp, exp.eval());
+		}
+		return null;
+	}
+
+	public String getAssinaturaValida() {
+		if (!isAssinatura())
+			throw new AplicacaoException("Não é Assinatura");
+
+		if (isAssinaturaComSenha() && getAuditHash() == null) 
+			return "OK";
+
+		try {
+			return assertAssinaturaValida();
+		} catch (AplicacaoException e) {
+			return e.getMessage();
+		} catch (Exception e) {
+			return "Inválida - " + e.getMessage();
+		}
+	}
+
+	public String assertAssinaturaValida() throws Exception {
+		long l = getExTipoMovimentacao().getId();
+		switch ((int) l) {
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
+			return assertAssinaturaComSenhaValida(this.getExDocumento().getPdf(), this.getAuditHash(),
+					this.getDtIniMov());
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+			return assertAssinaturaComSenhaValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getAuditHash(),
+					this.getDtIniMov());
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
+			return assertAssinaturaDigitalValida(this.getExDocumento().getPdf(), this.getConteudoBlobMov(),
+					this.getDtIniMov());
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(),
+					this.getConteudoBlobMov(), this.getDtIniMov());
+		default:
+			throw new AplicacaoException("Não é Assinatura");
+		}
+	}
+
+	private String assertAssinaturaComSenhaValida(byte[] pdf, String jwt, Date dtMov) throws Exception {
+		if (dtMov == null || dtMov.before(Prop.getData("data.validar.assinatura.com.senha")))
+			return "OK.";
+		
+		final JWTVerifier verifier;
+		String pwd = Prop.get("carimbo.public.key");
+		if (pwd == null)
+			throw new AplicacaoException("Inválido (falta propriedade sigaex.carimbo.public.key)");
+		
+		PublicKey publicKey = null;
+
+		byte[] publicKeyBytes = SwaggerUtils.base64Decode(pwd);
+
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
+		publicKey = kf.generatePublic(publicKeySpec);
+		
+		verifier = new JWTVerifier(publicKey);
+
+		Map<String, Object> payload = verifier.verify(jwt);
+		String sha256AuditB64 = (String) payload.get("sha256");
+		if (sha256AuditB64 == null)
+			throw new AplicacaoException("Inválido (sha256 audit)");
+		byte[] sha256Audit = SwaggerUtils.base64Decode(sha256AuditB64);
+		byte[] sha256Pdf = BlucService.calcSha256(pdf);
+		if (!Arrays.equals(sha256Audit, sha256Pdf))
+			throw new AplicacaoException("Inválido (sha256 diferente)");
+		return "OK (sha256)";
+	}
+
+	private String assertAssinaturaDigitalValida(byte[] pdf, byte[] cms, Date dtMov) throws Exception {
+		if (dtMov == null || dtMov.before(Prop.getData("data.validar.assinatura.digital")))
+			return "OK.";
+		
+		// Chamar o BluC para validar a assinatura
+		//
+		BlucService bluc = Service.getBlucService();
+		ValidateRequest validatereq = new ValidateRequest();
+		validatereq.setEnvelope(bluc.bytearray2b64(cms));
+		validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(pdf)));
+		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(pdf)));
+		validatereq.setTime(dtMov);
+		validatereq.setCrl("true");
+		ValidateResponse validateresp = Ex.getInstance().getBL().assertValid(bluc, validatereq);
+
+		String sNome = validateresp.getCn();
+
+		Service.throwExceptionIfError(sNome);
+
+		String sCPF = validateresp.getCertdetails().get("cpf0");
+		Service.throwExceptionIfError(sCPF);
+
+		return "OK (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
 	}
 }

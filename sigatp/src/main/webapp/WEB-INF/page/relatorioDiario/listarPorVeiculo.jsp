@@ -36,10 +36,10 @@
 								<c:forEach items="${relatoriosDiarios}" var="relatorioDiario">
 									<tr>
 							    		<td>
-											<sigatp:formatarColuna operacao="editar" href="${linkTo[RelatorioDiarioController].editar[relatorioDiario.id]}" titulo="relat&oacute;rio di&aacute;rio" />
+											<sigatp:formatarColuna operacao="editar" href="${linkTo[RelatorioDiarioController].editar(relatorioDiario.id)}" titulo="relat&oacute;rio di&aacute;rio" />
 							    		</td>
 							    		<td>
-											<sigatp:formatarColuna operacao="excluir" href="${linkTo[RelatorioDiarioController].excluir[relatorioDiario.id]}" 
+											<sigatp:formatarColuna operacao="excluir" href="${linkTo[RelatorioDiarioController].excluir(relatorioDiario.id)}" 
 											onclick="javascript:return confirm('Tem certeza de que deseja excluir este Relat&oacute;rio Di&aacute;rio?');" titulo="relat&oacute;rio di&aacute;rio" /> 
 							    		</td>
 							    	    <td><fmt:formatDate value="${relatorioDiario.data.time}" pattern="dd/MM/yyyy"/></td>
@@ -66,7 +66,7 @@
 			</c:choose>
 		
 			<div class="gt-table-buttons">
-				<a href="${linkTo[RelatorioDiarioController].incluir[veiculo.id]}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir"/></a>
+				<a href="${linkTo[RelatorioDiarioController].incluir(veiculo.id)}" class="gt-btn-medium gt-btn-left"><fmt:message key="views.botoes.incluir"/></a>
 			</div>
 		</div>
 	</div>

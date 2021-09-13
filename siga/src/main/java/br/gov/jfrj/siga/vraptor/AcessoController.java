@@ -125,10 +125,14 @@ public class AcessoController extends GiControllerSupport {
 					  ,Long idOrgaoUsuSel, String servicoPai) throws Exception {
 		
 				
+		CpServico cpServicoPai=null;
 		if (servicoPai == null) {
 			assertAcesso("PERMISSAO:Gerenciar permissões");
 		} else {
-			assertAcesso("PERMISSAOPORSERVICO:Gerenciar permissões de um serviço");
+			cpServicoPai = dao().consultarCpServicoPorChave(servicoPai);
+			if (cpServicoPai != null) {	
+			   assertAcesso("PERMISSAONARVORE-"+servicoPai+":Gerenciar permissões do serviço "+servicoPai);
+			}
 		}
 		if (idAbrangencia == 0) {
 			this.idAbrangencia = 1;
@@ -156,7 +160,7 @@ public class AcessoController extends GiControllerSupport {
 				l = dao().listarServicos();
 			} else {
 				l = new ArrayList<CpServico>(); 
-				CpServico cpServicoPai = dao().consultarCpServicoPorChave(servicoPai);
+			//	CpServico cpServicoPai = dao().consultarCpServicoPorChave(servicoPai);
 
 				if (cpServicoPai != null) {	
 					l = listarServicosPorPai(cpServicoPai);
@@ -220,6 +224,7 @@ public class AcessoController extends GiControllerSupport {
 		return lista;
 	}
 
+	@Transacional
 	@Get("/app/gi/acesso/gravar")
 	public void gravar(Long idServico
 			          ,Long idSituacao
@@ -405,7 +410,7 @@ public class AcessoController extends GiControllerSupport {
 		sb.append("</li>");
 	}
 
-	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
+	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
 		return this.dao.listarOrgaosUsuarios();
 	}	
 	

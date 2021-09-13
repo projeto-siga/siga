@@ -96,7 +96,7 @@
 			<input id="btnSalvar" type="submit" value="<fmt:message key="views.botoes.salvar" />" class="gt-btn-medium gt-btn-left" />
 			<c:choose>
 				<c:when test="${requisicaoTransporte.id > 0}">
-					<input type="button" id="btnVoltar"  value="<fmt:message key="views.botoes.voltar"/>" onClick="javascript:location.href='${linkTo[RequisicaoController].buscarPelaSequence[false][requisicaoTransporte.buscarSequence()]}'" class="gt-btn-medium gt-btn-left" />
+					<input type="button" id="btnVoltar"  value="<fmt:message key="views.botoes.voltar"/>" onClick="javascript:location.href='${linkTo[RequisicaoController].buscarPelaSequence(false,requisicaoTransporte.buscarSequence())}'" class="gt-btn-medium gt-btn-left" />
 				</c:when>
 				<c:otherwise>
 					<input type="button" id="btnVoltar"  value="<fmt:message key="views.botoes.voltar"/>" onClick="javascript:location.href='${linkTo[RequisicaoController].listar}'" class="gt-btn-medium gt-btn-left" />

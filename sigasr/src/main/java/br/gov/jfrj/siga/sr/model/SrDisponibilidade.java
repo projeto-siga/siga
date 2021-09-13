@@ -41,7 +41,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_DISPONIBILIDADE", schema = "SIGASR")
+@Table(name = "sr_disponibilidade", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 

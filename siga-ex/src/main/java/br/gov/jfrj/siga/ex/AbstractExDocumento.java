@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -41,18 +42,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCFacade;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoBCInterface;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -63,6 +61,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "obterProximoNumeroSub", query = "select max(doc.numExpediente)+1"
@@ -232,8 +231,9 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				order by  doc.dtFinalizacao") })
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
-
-	private static final long serialVersionUID = 1L;
+	
+	/* Limitador para indexação do campo pesquisável da descrição do documento. Length Default 4000. Length indexável: 3150*/
+	private static final int LENGTH_DESCR_DOCUMENTO_AI = System.getProperty("sigaex.descricao.documento.ai.length") != null ? Integer.parseInt(System.getProperty("sigaex.descricao.documento.ai.length")) : 4000;
 
 	@Id
 	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
@@ -819,7 +819,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public void setDescrDocumento(final java.lang.String descrDocumento) {
 		this.descrDocumento = descrDocumento;
-		this.descrDocumentoAI = Texto.removeAcentoMaiusculas(this.descrDocumento);
+		setDescrDocumentoAI(descrDocumento);
 	}
 
 	/**
@@ -1012,9 +1012,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			criarCpArquivo();
-			cpArquivo.setOrgaoUsuario(orgaoUsuario);
+		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
 		}
 	}
 
@@ -1099,9 +1098,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
-		if (!CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			criarCpArquivo();
-			cpArquivo.setConteudoTpArq(conteudoTp);
+		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
 		}
 	}
 	
@@ -1112,8 +1110,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 			cacheConteudoBlobDoc = conteudoBlobDoc;
 		} else {
 			try {
-				ArmazenamentoBCInterface a = ArmazenamentoBCFacade.getArmazenamentoBC(getCpArquivo());
-				cacheConteudoBlobDoc = a.recuperar(getCpArquivo());
+				cacheConteudoBlobDoc = getCpArquivo().getConteudo();
 			} catch (Exception e) {
 				throw new AplicacaoException(e.getMessage());
 			}
@@ -1123,22 +1120,23 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
 		cacheConteudoBlobDoc = createBlob;
-		if (CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
+		if (this.cpArquivo==null && (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			conteudoBlobDoc = createBlob;
 		} else if(cacheConteudoBlobDoc != null){
-			criarCpArquivo();
-			cpArquivo.setTamanho(cacheConteudoBlobDoc.length);
-			cpArquivo.setHashMD5(DigestUtils.md5Hex(cacheConteudoBlobDoc));
+			if(orgaoPermiteHcp())
+				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
+			else
+				conteudoBlobDoc = createBlob;
 		}
 	}
 	
-	private void criarCpArquivo() {
-		if(cpArquivo == null) {
-			cpArquivo = new CpArquivo();
-			cpArquivo.setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
-			if(CpArquivoTipoArmazenamentoEnum.HCP.equals(cpArquivo.getTipoArmazenamento()))
-				cpArquivo.gerarCaminho(getDtRegDoc()!=null?getDtRegDoc():new Date());
-		}
+	
+	private boolean orgaoPermiteHcp() {
+		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
+		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
+		if(orgaos != null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
+			return true;
+		return false;
 	}
 	
 	public ExProtocolo getExProtocolo() {
@@ -1157,16 +1155,15 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dtPrimeiraAssinatura = dtPrimeiraAssinatura;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public java.lang.String getDescrDocumentoAI() {
 		return descrDocumentoAI;
 	}
 
 	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
-		this.descrDocumentoAI = descrDocumentoAI;
+		if(descrDocumentoAI != null)
+			this.descrDocumentoAI = Texto.removeAcentoMaiusculas(descrDocumentoAI).substring(0, descrDocumentoAI.length() < LENGTH_DESCR_DOCUMENTO_AI ? descrDocumentoAI.length() : LENGTH_DESCR_DOCUMENTO_AI );
+		else
+			this.descrDocumentoAI = descrDocumentoAI;
 	}
 	
 }

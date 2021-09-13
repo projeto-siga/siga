@@ -25,10 +25,6 @@ import java.io.FileReader;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
-import junit.framework.TestCase;
-
-import org.hibernate.Session;
-
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -36,7 +32,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import junit.framework.TestCase;
 
 public class GcCacheTest extends TestCase {
 	private EntityManager em;

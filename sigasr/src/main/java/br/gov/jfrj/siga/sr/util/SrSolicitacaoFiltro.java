@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Specializes;
 import javax.persistence.Query;
 
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
@@ -19,6 +21,7 @@ import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
+@Specializes
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private static final long serialVersionUID = 1L;
@@ -78,6 +81,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		incluirJoinsEWheres(query, buscador);
 		try {
 			return (Long) ContextoPersistencia.em().createQuery(query.toString())
+					.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor())
 					.getSingleResult();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -138,6 +142,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(sentidoOrdenacao.name());
 		Query jq = ContextoPersistencia.em().createQuery(query.toString());
+		jq.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
 		jq.setFirstResult(getStart().intValue());
 		if (getLength() > 0)
 			jq.setMaxResults(getLength().intValue());
@@ -178,18 +183,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador()); 
 		
 		query.append(" and (situacao.dtIniMarca is null or "
-					+ "situacao.dtIniMarca < sysdate) ");
+					+ "situacao.dtIniMarca < :dbDatetime) ");
 		query.append(" and (situacao.dtFimMarca is null or "
-					+ "situacao.dtFimMarca > sysdate) ");
+					+ "situacao.dtFimMarca > :dbDatetime) ");
 		
 		if (situacaoFiltro.equals("situacaoAux")) {
 			if (getSituacao() != null)
 				query.append(" and situacaoAux.cpMarcador.idMarcador = "
 					+ getSituacao().getIdMarcador());
 			query.append(" and (situacaoAux.dtIniMarca is null or "
-					+ "situacaoAux.dtIniMarca < sysdate) ");
+					+ "situacaoAux.dtIniMarca < :dbDatetime) ");
 			query.append(" and (situacaoAux.dtFimMarca is null or "
-					+ "situacaoAux.dtFimMarca > sysdate) ");
+					+ "situacaoAux.dtFimMarca > :dbDatetime) ");
 		}
 		
 		if (Filtros.deveAdicionar(getAtendente())){
@@ -222,7 +227,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.lotaSolicitante.idLotacaoIni = "
 					+ getLotaSolicitante().getIdInicial());
 		
-		if (Filtros.deveAdicionar(getItemConfiguracao())){
+		if (Filtros.deveAdicionar(getItemConfiguracao()) && getItemConfiguracao().getItemInicial() != null) {
 			query.append(" and ultMov.itemConfiguracao.hisIdIni = "
 					+ getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
 		}
@@ -473,4 +478,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		this.atributoSolicitacao = atributoSolicitacao;
 	}
 
+	
+	
 }

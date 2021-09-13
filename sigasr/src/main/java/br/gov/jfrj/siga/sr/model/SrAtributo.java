@@ -22,7 +22,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -34,7 +34,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 
 @Entity
-@Table(name = "SR_ATRIBUTO", schema = "SIGASR")
+@Table(name = "sr_atributo", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Selecionavel {
 	private static final long serialVersionUID = 1L;

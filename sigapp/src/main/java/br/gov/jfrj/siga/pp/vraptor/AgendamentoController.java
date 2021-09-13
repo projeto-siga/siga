@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -335,7 +336,7 @@ public class AgendamentoController extends PpController {
 				// sloop
 				hrAux = hr.substring(0, 2);
 				minAux = hr.substring(3, 5);
-			    EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
+			    EntityManagerFactory emf = CDI.current().select(EntityManagerFactory.class).get();
 				EntityManager em = emf.createEntityManager();
 				  
 				em.getTransaction().begin();

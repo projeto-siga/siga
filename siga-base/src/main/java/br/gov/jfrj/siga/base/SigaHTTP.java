@@ -18,7 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -309,9 +311,16 @@ public class SigaHTTP {
 
 	public String getNaWeb(String URL, HashMap<String, String> header,
 			Integer timeout, String payload) throws AplicacaoException {
-
 		try {
-
+			return IOUtils.toString(fetch(URL, header, timeout, payload), "UTF-8");
+		} catch (Exception ioe) {
+			throw new RuntimeException("Erro obtendo recurso externo", ioe);
+		}
+	}
+	
+	public InputStream fetch(String URL, HashMap<String, String> header,
+			Integer timeout, String payload) throws AplicacaoException {
+		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
 					.openConnection();
 
@@ -341,17 +350,30 @@ public class SigaHTTP {
 					os.close();
 				}
 			}
-
-			// StringWriter writer = new StringWriter();
-			// IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
-			// return writer.toString();
-			return IOUtils.toString(conn.getInputStream(), "UTF-8");
-
+			return conn.getInputStream();
 		} catch (IOException ioe) {
-			throw new AplicacaoException(
-					"NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel abrir conexÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o",
-					1, ioe);
+			throw new RuntimeException("Não foi possível abrir conexão", ioe);
+		}
+	}
+
+	public static byte[] convertStreamToByteArray(InputStream stream, long size) throws IOException {
+		// check to ensure that file size is not larger than Integer.MAX_VALUE.
+		if (size > Integer.MAX_VALUE) {
+			return new byte[0];
 		}
 
+		byte[] buffer = new byte[(int) size];
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		int line = 0;
+		// read bytes from stream, and store them in buffer
+		while ((line = stream.read(buffer)) != -1) {
+			// Writes bytes from byte array (buffer) into output stream.
+			os.write(buffer, 0, line);
+		}
+		stream.close();
+		os.flush();
+		os.close();
+		return os.toByteArray();
 	}
 }

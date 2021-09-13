@@ -40,7 +40,7 @@ function sbmtDoc() {
 			</div>
 		</div>
 		<div class="card-body">
-			<form id="frmDoc" action="exibir" enctype="multipart/form-data" class="form" method="GET">
+			<form id="frmDoc" action="exibir" enctype="multipart/form-data" class="form" method="get">
 				<div class="row">
 					<input type="hidden" name="postback" value="1" />
 					<div class="col-9">
@@ -84,6 +84,21 @@ function sbmtDoc() {
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE;PAINEL;CORRIGEMOBIL:Corrige Documento sem Mobil de Via ou Volume')}">
 						<a class="btn btn-sm btn-primary float-right" title="Corrige falta de descricao"
 						  href="corrigeDocSemDescricao?documentoRefSel.sigla=${documentoRefSel.sigla}"
+						  ${popup?'target="_blank" ':''}><i class="fas fa-file-medical mr-2"></i>Corrige Falta de Descri&ccedil;&atilde;o</a>
+					</c:if>
+				</div>
+			</div>
+		</div>
+	</c:if>
+	<c:if test="${erroFilhoSemDescricao}">
+		<div class="row mb-2">
+			<div class="col-12">
+				<div class="alert alert-warning" role="alert">
+					Atenção: O documento juntado ${siglaFilho} está sem a descri&ccedil;&atilde;o.
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE;PAINEL;CORRIGEMOBIL:Corrige Documento sem Mobil de Via ou Volume')}">
+						<a class="btn btn-sm btn-primary float-right" title="Corrige falta de descricao"
+						  href="corrigeDocSemDescricao?documentoRefSel.sigla=${siglaFilho}"
 						  ${popup?'target="_blank" ':''}><i class="fas fa-file-medical mr-2"></i>Corrige Falta de Descri&ccedil;&atilde;o</a>
 					</c:if>
 				</div>
@@ -339,9 +354,7 @@ function sbmtDoc() {
 					<c:set var="dtUlt" value="" />
 					<c:set var="temmov" value="${false}" />
 					<c:forEach var="mov" items="${m.movs}">
-						<c:if test="${mov.idTpMov != 14 and not mov.cancelada}">
 							<c:set var="temmov" value="${true}" />
-						</c:if>
 					</c:forEach>
 					<c:if test="${temmov}">
 						<table class="table table-sm table-hover table-striped mov mt-2 text-size-7">

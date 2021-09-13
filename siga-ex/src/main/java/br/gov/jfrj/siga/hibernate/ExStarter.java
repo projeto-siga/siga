@@ -3,22 +3,46 @@ package br.gov.jfrj.siga.hibernate;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.enterprise.inject.spi.CDI;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-/**
- * 
- * @author Rodrigo Ramalho hodrigohamalho@gmail.com
- *
- */
+import org.jboss.logging.Logger;
+
+import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
+import br.gov.jfrj.siga.cp.util.SigaFlyway;
+
 @Startup
 @Singleton
+@TransactionManagement(value = TransactionManagementType.BEAN)
 public class ExStarter {
 
+	private final static org.jboss.logging.Logger log = Logger.getLogger(ExStarter.class);
 	public static EntityManagerFactory emf;
 
 	@PostConstruct
 	public void init() {
-		emf = Persistence.createEntityManagerFactory("default");
+		log.info("INICIANDO SIGAEX.WAR");
+
+		emf = CDI.current().select(EntityManagerFactory.class).get();
+		assert emf != null;
+		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_EX);
+		new MigrationThread().start();
 	}
+
+	public static class MigrationThread extends Thread {
+		public void run() {
+			try {
+				SigaFlyway.migrate("java:/jboss/datasources/SigaExDS", "classpath:db/mysql/sigaex", true);
+			} catch (NamingException e) {
+				log.error("Erro na migração do banco", e);
+				SigaFlyway.stopJBoss();
+			}
+		}
+	}
+
 }

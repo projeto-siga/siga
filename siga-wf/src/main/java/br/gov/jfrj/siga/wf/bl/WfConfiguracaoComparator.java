@@ -20,7 +20,7 @@ package br.gov.jfrj.siga.wf.bl;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
-import br.gov.jfrj.siga.wf.WfConfiguracao;
+import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 
 /**
  * Classe que permite a comparação entre duas configurações de workflow.
@@ -44,21 +44,9 @@ public class WfConfiguracaoComparator extends CpConfiguracaoComparator {
 			WfConfiguracao wfC1 = (WfConfiguracao) c1;
 			WfConfiguracao wfC2 = (WfConfiguracao) c2;
 
-			if (wfC1.getProcedimento() == null
-					&& wfC2.getProcedimento() != null)
+			if (wfC1.getDefinicaoDeProcedimento() == null && wfC2.getDefinicaoDeProcedimento() != null)
 				return 1;
-			else if (wfC1.getProcedimento() != null
-					&& wfC2.getProcedimento() == null)
-				return -1;
-
-			if (wfC1.getRaia() == null && wfC2.getRaia() != null)
-				return 1;
-			else if (wfC1.getRaia() != null && wfC2.getRaia() == null)
-				return -1;
-
-			if (wfC1.getTarefa() == null && wfC2.getTarefa() != null)
-				return 1;
-			else if (wfC1.getTarefa() != null && wfC2.getTarefa() == null)
+			else if (wfC1.getDefinicaoDeProcedimento() != null && wfC2.getDefinicaoDeProcedimento() == null)
 				return -1;
 		}
 

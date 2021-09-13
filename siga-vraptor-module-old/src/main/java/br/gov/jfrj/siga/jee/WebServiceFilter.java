@@ -1,11 +1,10 @@
 package br.gov.jfrj.siga.jee;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,11 +12,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
 
-import br.gov.jfrj.siga.jee.ResponseHeaderFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class WebServiceFilter implements Filter {
@@ -54,12 +51,15 @@ public class WebServiceFilter implements Filter {
 		}
 	}
 
+	@Override
 	public void init(FilterConfig filterConfig) {
-		factory = Persistence.createEntityManagerFactory("default");
+		factory = CDI.current().select(EntityManagerFactory.class).get();
+		assert factory != null;
 	}
 
+	@Override
 	public void destroy() {
-		if (factory.isOpen()) {
+		if (factory != null && factory.isOpen()) {
 			factory.close();
 		}
 	}

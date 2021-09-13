@@ -19,8 +19,8 @@
 package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -34,26 +34,43 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PostPersist;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.engine.spi.PersistentAttributeInterceptable;
+import org.hibernate.engine.spi.PersistentAttributeInterceptor;
+import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+
 
 /**
  * A class that represents a row in the CP_ARQUIVO table. You can customize the
  * behavior of this class by editing the class, {@link CpArquivo()}.
  */
+@SuppressWarnings("serial")
 @Entity
 @Immutable
-@Table(name = "CP_ARQUIVO", schema = "CORPORATIVO")
-public class CpArquivo implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "corporativo.cp_arquivo")
+public class CpArquivo implements Serializable, PersistentAttributeInterceptable {
+	
+	private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
 
 	@Id
 	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")
@@ -61,38 +78,182 @@ public class CpArquivo implements Serializable {
 	@Column(name = "ID_ARQ")
 	private java.lang.Long idArq;
 
-	@ManyToOne
+	@LazyToOne(LazyToOneOption.NO_PROXY)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@PrimaryKeyJoinColumn
+	private CpArquivoBlob arquivoBlob;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@Column(name = "CONTEUDO_TP_ARQ", length = 128)
 	private java.lang.String conteudoTpArq;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@PrimaryKeyJoinColumn
-	private CpArquivoBlob arquivoBlob;
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TP_ARMAZENAMENTO")
 	private CpArquivoTipoArmazenamentoEnum tipoArmazenamento;
-	
+
 	@Column(name = "CAMINHO")
 	private String caminho;
-	
+
 	@Column(name = "TAMANHO_ARQ")
 	private Integer tamanho = 0;
-	
-	@Column(name = "HASH_MD5")
-	private String hashMD5;
+
+	@Transient
+	protected byte[] cacheArquivo;
 	
 	@Transient
-	private String hashMD5Original;
+    private PersistentAttributeInterceptor persistentAttributeInterceptor;
+ 
+    @Override
+    public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
+        return persistentAttributeInterceptor;
+    }
+ 
+    @Override
+    public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
+        this.persistentAttributeInterceptor = persistentAttributeInterceptor;
+    }
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
 	public CpArquivo() {
+	}
 
+	@PrePersist
+	private void salvarArquivo() {
+		long ini = System.currentTimeMillis();
+		switch (getTipoArmazenamento()) {
+		case TABELA:
+//			EntityTransaction transaction = CpDao.getInstance().em().getTransaction();
+//			 System.out.println("* " + (CpDao.getInstance().em().getTransaction() ==
+//					 null || !CpDao.getInstance().em().getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" );
+//		
+			if (this.arquivoBlob == null) {
+				this.arquivoBlob = new CpArquivoBlob();
+				this.arquivoBlob.setArquivo(this);
+				this.arquivoBlob.setConteudoBlobArq(this.getConteudo());
+			}
+			break;
+		case HCP:
+			gerarCaminho();
+			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
+			a.salvar(this, this.getConteudo());
+			break;
+		default:
+			break;
+		}
+		long fim = System.currentTimeMillis();
+		log.info("### Tempo: " + (fim-ini) + " Tamanho: " + this.getConteudo().length);
+	}
+
+	@PostPersist
+	private void atualizarIdArqBlob() {
+		if (this.arquivoBlob != null) {
+			this.arquivoBlob.setIdArqBlob(this.getIdArq());
+			;
+		}
+	}
+
+	@PreRemove
+	private void removerArquivo() {
+		switch (getTipoArmazenamento()) {
+		case HCP:
+			if (getCaminho() != null) {
+				CpArquivoExcluir excluir = new CpArquivoExcluir();
+				excluir.setIdArqExc(getIdArq());
+				excluir.setCaminho(getCaminho());
+				ContextoPersistencia.em().persist(excluir);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	public static CpArquivo forUpdate(CpArquivo old) {
+		if (old != null) {
+			if (old.getIdArq() != null) {
+				CpArquivo arq = new CpArquivo();
+				arq.setTipoArmazenamento(old.getTipoArmazenamento());
+				arq.setConteudoTpArq(old.getConteudoTpArq());
+				arq.setOrgaoUsuario(old.getOrgaoUsuario());
+
+				arq.setConteudo(old.getConteudo());
+
+				ContextoPersistencia.em().remove(old);
+				return arq;
+			} else
+				return old;
+		} else
+			return new CpArquivo();
+	}
+
+	public byte[] getConteudo() {
+		if (cacheArquivo != null)
+			return cacheArquivo;
+		switch (getTipoArmazenamento()) {
+		case TABELA:
+			cacheArquivo = getArquivoBlob() != null ? getArquivoBlob().getConteudoBlobArq() : null;
+			break;
+		case HCP:
+			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
+			cacheArquivo = a.recuperar(this);
+			break;
+		default:
+			break;
+		}
+		return cacheArquivo;
+	}
+
+	private void setConteudo(byte[] createBlob) {
+		this.cacheArquivo = createBlob;
+	}
+
+	public static CpArquivo updateOrgaoUsuario(CpArquivo old, CpOrgaoUsuario orgaoUsuario) {
+		if (old == null || old.getOrgaoUsuario() == null || !old.getOrgaoUsuario().equals(orgaoUsuario)) {
+			CpArquivo arq = CpArquivo.forUpdate(old);
+			arq.setOrgaoUsuario(orgaoUsuario);
+			return arq;
+		}
+		return old;
+	}
+
+	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
+		if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
+			CpArquivo arq = CpArquivo.forUpdate(old);
+			arq.setConteudoTpArq(conteudoTp);
+			return arq;
+		}
+		return old;
+	}
+
+	public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
+		if (old == null || !Arrays.equals(old.getConteudo(), conteudo)) {
+			CpArquivo arq = CpArquivo.forUpdate(old);
+			arq.setConteudo(conteudo);
+			arq.setTamanho(conteudo.length);
+			return arq;
+		}
+		return old;
+	}
+
+	private void gerarCaminho() {
+		String extensao;
+
+		TipoConteudo t = TipoConteudo.getByMimeType(getConteudoTpArq());
+		if (t != null)
+			extensao = t.getExtensao();
+		else
+			extensao = TipoConteudo.ZIP.getExtensao();
+
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.AM_PM, Calendar.PM);
+		this.caminho = c.get(Calendar.YEAR) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.DATE) + "/"
+				+ c.get(Calendar.HOUR_OF_DAY) + "/" + c.get(Calendar.MINUTE) + "/" + UUID.randomUUID().toString() + "."
+				+ extensao;
 	}
 
 	public java.lang.Long getIdArq() {
@@ -103,81 +264,46 @@ public class CpArquivo implements Serializable {
 		this.idArq = idArq;
 	}
 
-	public java.lang.String getConteudoTpArq() {
-		return conteudoTpArq;
-	}
-
-	public void setConteudoTpArq(java.lang.String conteudoTpArq) {
-		this.conteudoTpArq = conteudoTpArq;
-	}
-
 	public CpOrgaoUsuario getOrgaoUsuario() {
 		return orgaoUsuario;
 	}
 
-	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
+	private void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
 	}
 
-	private CpArquivoBlob getArquivoBlob() {
-		return arquivoBlob;
+	public java.lang.String getConteudoTpArq() {
+		return conteudoTpArq;
 	}
 
-	public void setArquivoBlob(CpArquivoBlob arquivoBlob) {
-		this.arquivoBlob = arquivoBlob;
+	private void setConteudoTpArq(java.lang.String conteudoTpArq) {
+		this.conteudoTpArq = conteudoTpArq;
 	}
-
-	public byte[] getConteudoBlobArq() {
-		if (this.arquivoBlob == null) {
-			this.arquivoBlob = new CpArquivoBlob();
-			this.arquivoBlob.setArquivo(this);
-		}
-		return this.arquivoBlob.getConteudoBlobArq();
+	
+	public CpArquivoBlob getArquivoBlob() {
+	    if (this.persistentAttributeInterceptor != null) {
+	        return (CpArquivoBlob) this.persistentAttributeInterceptor.readObject(
+	                  this, "arquivoBlob", this.arquivoBlob);
+	    }
+	    return this.arquivoBlob;
 	}
-
-	public void setConteudoBlobArq(byte[] createBlob) {
-		if (this.arquivoBlob == null) {
-			this.arquivoBlob = new CpArquivoBlob();
-			this.arquivoBlob.setArquivo(this);
-		}
-		this.arquivoBlob.setConteudoBlobArq(createBlob);
-	}
-
-	public static CpArquivo forUpdate(CpArquivo old) {
-		if (old != null) {
-			if (old.getIdArq() != null) {
-				CpArquivo arq = new CpArquivo();
-				arq.setConteudoTpArq(old.getConteudoTpArq());
-				arq.setOrgaoUsuario(old.getOrgaoUsuario());
-				if (old.getArquivoBlob() != null) {
-					arq.setArquivoBlob(new CpArquivoBlob());
-					arq.getArquivoBlob().setArquivo(arq);
-					arq.getArquivoBlob().setConteudoBlobArq(old.getArquivoBlob().getConteudoBlobArq());
-				}
-				ContextoPersistencia.em().remove(old);
-				return arq;
-			} else
-				return old;
-		} else
-			return new CpArquivo();
-	}
-
-	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
-		//TODO: Verificar essa linha
-		//if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
-		if (old == null) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
-			arq.setConteudoTpArq(conteudoTp);
-			return arq;
-		}
-		return old;
+	 
+	public void setArquivoBlob(CpArquivoBlob contaCorrente) {
+	    if (this.persistentAttributeInterceptor != null) {
+	        this.arquivoBlob = (CpArquivoBlob) persistentAttributeInterceptor.writeObject(
+	                  this, "arquivoBlob", this.arquivoBlob, contaCorrente);
+	    } else {
+	        this.arquivoBlob = contaCorrente;
+	    }
 	}
 
 	public CpArquivoTipoArmazenamentoEnum getTipoArmazenamento() {
+		if (tipoArmazenamento == null)
+			tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"));
 		return tipoArmazenamento;
 	}
 
-	public void setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
+	private void setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
 		this.tipoArmazenamento = tipoArmazenamento;
 	}
 
@@ -185,7 +311,7 @@ public class CpArquivo implements Serializable {
 		return caminho;
 	}
 
-	public void setCaminho(String caminho) {
+	private void setCaminho(String caminho) {
 		this.caminho = caminho;
 	}
 
@@ -193,42 +319,16 @@ public class CpArquivo implements Serializable {
 		return tamanho;
 	}
 
-	public void setTamanho(Integer tamanho) {
+	private void setTamanho(Integer tamanho) {
 		this.tamanho = tamanho;
 	}
 
-	public void gerarCaminho(Date data) {
-		String extensao;
-		
-		if(TipoConteudo.ZIP.getMimeType().equals(getConteudoTpArq()))
-			extensao = TipoConteudo.ZIP.getExtensao();
-		else if(TipoConteudo.PDF.getMimeType().equals(getConteudoTpArq()))
-			extensao = TipoConteudo.PDF.getExtensao();
-		else if(TipoConteudo.TXT.getMimeType().equals(getConteudoTpArq()))
-			extensao = TipoConteudo.TXT.getExtensao();
-		else
-			extensao = TipoConteudo.ZIP.getExtensao();
-		
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.AM_PM, Calendar.PM);
-		if(data!=null)
-			c.setTime(data);
-		this.caminho = c.get(Calendar.YEAR)+"/"+(c.get(Calendar.MONTH)+1)+"/"+c.get(Calendar.DATE)+"/"+c.get(Calendar.HOUR_OF_DAY)+"/"+c.get(Calendar.MINUTE)+"/"+UUID.randomUUID().toString()+"."+extensao;
+	private byte[] getCacheArquivo() {
+		return cacheArquivo;
 	}
 
-	public String getHashMD5() {
-		return hashMD5;
+	private void setCacheArquivo(byte[] cacheArquivo) {
+		this.cacheArquivo = cacheArquivo;
 	}
 
-	public void setHashMD5(String hash) {
-		if(this.hashMD5Original == null && this.getIdArq()!=null)
-			this.hashMD5Original = this.hashMD5;
-		this.hashMD5 = hash;
-	}
-
-	public String getHashMD5Original() {
-		return hashMD5Original;
-	}
-	
-	
 }

@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.tp.model;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,16 +38,20 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.uteis.SequenceMethods;
 import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 
-@SuppressWarnings({ "serial", "deprecation" })
 @Entity
 @Audited
-@Table(name = "SERVICOVEICULO", schema = "SIGATP")
+@Table(name = "servicoveiculo", schema = "sigatp")
 public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo>, SequenceMethods, ConvertableEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public static final ActiveRecord<ServicoVeiculo> AR = new ActiveRecord<>(ServicoVeiculo.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence")
 	private Long id;
 
@@ -85,7 +91,6 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 
  	@UpperCase
  	@NotNull
- 	@NotEmpty
 	private String descricao;
 
  	@NotNull
@@ -118,6 +123,7 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 		this.tiposDeServico = TiposDeServico.VISTORIA;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -307,7 +313,7 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 	}
 
 	public static List<ServicoVeiculo> buscarEmAndamento() {
-		return ServicoVeiculo.AR.find("trunc(dataHoraFim) = trunc(sysdate)").fetch();
+		return ServicoVeiculo.AR.find("trunc(dataHoraFim) = trunc(CURRENT_TIMESTAMP)").fetch();
 	}
 
 	public static ServicoVeiculo buscar(String sequence) throws Exception {
@@ -332,8 +338,12 @@ public class ServicoVeiculo extends TpModel implements Comparable<ServicoVeiculo
 			throw new Exception(MessagesBundle.getMessage("servicoVeiculo.siglaDocumento.exception", sequence));
 		}
 
-		List<ServicoVeiculo> servicos =  ServicoVeiculo.AR.find("cpOrgaoUsuario = ? and numero = ? and YEAR(dataHora) = ?" ,
-										 cpOrgaoUsuario,numero,ano).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoUsuario",cpOrgaoUsuario);
+		parametros.put("numero",numero);
+		parametros.put("ano",ano);		
+		List<ServicoVeiculo> servicos =  ServicoVeiculo.AR.find("cpOrgaoUsuario = :cpOrgaoUsuario and numero = :numero and YEAR(dataHora) = :ano" ,
+										 parametros).fetch();
 
 		if (servicos.size() > 1) { 
 			//throw new Exception(new I18nMessage("codigoDuplicado", "servicoVeiculo.codigoDuplicado.exception", sequence).getMessage());

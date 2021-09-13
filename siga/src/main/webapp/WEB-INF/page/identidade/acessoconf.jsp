@@ -36,7 +36,7 @@
 
 			<div class="gt-content-box gt-for-table">
 				<form id="listar" name="listar"
-					action="/siga/app/gi/acesso/listar" method="GET" class="form100">
+					action="/siga/app/gi/acesso/listar" method="get" class="form100">
 					<table class="gt-form-table">
 						<colgroup>
 							<col width="15%" />
@@ -49,7 +49,7 @@
 
 						<tr>
 							<td>Abrangência:</td>
-							<td><siga:escolha id='idAbrangencia' var='idAbrangencia'>
+							<td><siga:escolha id='idAbrangencia' var='idAbrangencia' singleLine="${true}">
 									<siga:opcao id='4' texto="Perfil">
 										<siga:selecao tema='simple' titulo="Perfil:"
 											propriedade="perfil" modulo="siga"/>

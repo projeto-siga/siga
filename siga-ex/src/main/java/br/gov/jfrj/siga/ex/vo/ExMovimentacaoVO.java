@@ -46,6 +46,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO;
@@ -55,31 +56,40 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENAC
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
-	private static final String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
-	private static final String JWT_FIXED_HEADER_REPLACEMENT = "!";
-	ExMovimentacao mov;
+	private static final transient String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
+	private static final transient String JWT_FIXED_HEADER_REPLACEMENT = "!";
+	
+	transient ExMovimentacao mov;
+	
+	transient ExMobilVO mobVO;
 	String classe;
 	boolean originadaAqui;
 	boolean desabilitada;
@@ -88,32 +98,44 @@ public class ExMovimentacaoVO extends ExVO {
 	long idTpMov;
 	String complemento;
 	Map<String, ExParteVO> parte = new TreeMap<String, ExParteVO>();
+	Date dtIniMov;
 	String dtRegMovDDMMYYHHMMSS;
-	private String tempoRelativo;
 	String dtFimMovDDMMYYHHMMSS;
 	String descrTipoMovimentacao;
 	long idMov;
-	ExMobilVO mobVO;
 	int duracaoSpan;
 	int duracaoSpanExibirCompleto;
 	String duracao;
+	String mimeType;
+	String lotaCadastranteSigla;
+	String exTipoMovimentacaoSigla;
+	String tempoRelativo;
+	boolean podeExibirNoSigale;
+	private String subscritor;
 
 	public ExMobilVO getMobVO() {
 		return mobVO;
 	}
 
 	public ExMovimentacaoVO(ExMobilVO mobVO, ExMovimentacao mov, DpPessoa cadastrante, DpPessoa titular,
-			DpLotacao lotaTitular) {
+			DpLotacao lotaTitular, boolean serializavel) {
+		originadaAqui = (mov.getExMobil().getId().equals(mobVO.id));
 		this.mov = mov;
 		this.mobVO = mobVO;
-		originadaAqui = (this.mov.getExMobil().getId().equals(getMobVO().mob.getId()));
+		originadaAqui = (mov.getExMobil().getId().equals(getMobVO().id));
 		idTpMov = mov.getExTipoMovimentacao().getIdTpMov();
+		dtIniMov = mov.getDtIniMov();
+
+		mimeType = (mov.getConteudoTpMov() == null) ? "" : mov.getConteudoTpMov();
+
 
 		this.idMov = mov.getIdMov();
 		this.dtRegMovDDMMYYHHMMSS = mov.getDtRegMovDDMMYYHHMMSS();
 		this.tempoRelativo = Data.calcularTempoRelativo(mov.getDtIniMov());
 		this.descrTipoMovimentacao = mov.getDescrTipoMovimentacao();
 		this.cancelada = mov.getExMovimentacaoCanceladora() != null;
+		this.lotaCadastranteSigla = mov.getLotaCadastrante() != null ? mov.getLotaCadastrante().getSigla() : null;
+		this.exTipoMovimentacaoSigla = mov.getExTipoMovimentacao().getSigla();
 
 		if (mov.getLotaCadastrante() != null)
 			parte.put("lotaCadastrante", new ExParteVO(mov.getLotaCadastrante()));
@@ -130,16 +152,31 @@ public class ExMovimentacaoVO extends ExVO {
 
 		descricao = mov.getObs();
 
+		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ANEXACAO))
+			descricao = mov.getNmArqMov();
+
+		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
+			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov,false);
+		}
+
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 
 		calcularClasse(mov);
 
-		desabilitada = mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada()
+		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && !mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO) && !mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_RECEBIMENTO))
 				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		
 		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL))
 			complemento = (mov.getSubscritor() != null ? mov.getSubscritor().getDescricao() : mov.getLotaSubscritor() != null ? mov.getLotaSubscritor().getDescricao() : null) + " - " + mov.getExPapel().getDescPapel() + ". ";
+		
+		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO))
+			subscritor = mov.getSubscritor().getNomePessoa();
+				
+		if (serializavel) {
+			this.mov = null;
+		}
+		
 	}
 
 	/**
@@ -172,6 +209,24 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
 					Ex.getInstance().getComp().podeCancelarVinculacaoPapel(titular, lotaTitular, mov.mob(), mov));
+		}
+
+		if (idTpMov == TIPO_MOVIMENTACAO_MARCACAO) {
+			descricao = mov.getMarcador().getDescrMarcador();
+			if (mov.getSubscritor() != null) 
+				descricao += ", interessado: " + mov.getSubscritor().getPrimeiroNomeEIniciais();
+			if (mov.getLotaSubscritor() != null) 
+				descricao += (mov.getSubscritor() == null ? ", lotação interessada: " : "/") + mov.getLotaSubscritor().getSiglaCompleta();
+			if (mov.getDtParam1() != null) 
+				descricao += ", data de exibição: " + Data.formatDataETempoRelativo(mov.getDtParam1());
+			if (mov.getDtParam2() != null) 
+				descricao += ", prazo final: " + Data.formatDataETempoRelativo(mov.getDtParam2());
+			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
+				descricao += ", obs: " + mov.getObs();
+			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")
+					.acao("cancelar_movimentacao_gravar").params("sigla", mov.mob().getCodigoCompacto())
+					.params("id", mov.getIdMov().toString()).post(true)
+					.exp(new ExPodeCancelarMarcacao(mov, titular, lotaTitular)).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
@@ -339,6 +394,30 @@ public class ExMovimentacaoVO extends ExVO {
 
 				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento juntado: ", mensagemPos, null);
+
+				if (mov.getExMobil().podeExibirNoAcompanhamento(titular, lotaTitular)) {
+						Set<ExMovimentacao> movs = mov.getExMobil().getMovsNaoCanceladas(ExTipoMovimentacao
+								.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+						if (!movs.isEmpty()) {
+							addAcao(null, "Desfazer Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
+									"desfazer_exibir_no_acompanhamento_do_protocolo",
+									true, "Ao clicar em OK o conteúdo deste documento deixará de ficar disponível através do número do " 
+											+ "protocolo de acompanhamento. Deseja continuar?", 
+									"id=" + movs.iterator().next().getIdMov().toString(), null,
+									null, null);
+						}
+				} else {
+					if (mov.getExMobil().isJuntado()
+							&& Ex.getInstance().getComp()
+								.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, mov.getExDocumento())) {
+						addAcao(null, "Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
+								"exibir_no_acompanhamento_do_protocolo", 
+								true, "Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "
+										+ "protocolo de acompanhamento. Deseja continuar? ",
+								"sigla=" + mov.getExMobil().getSigla(), null,
+								null, null);
+					}
+				}
 			}
 		}
 
@@ -812,5 +891,13 @@ public class ExMovimentacaoVO extends ExVO {
 
 	public String getTempoRelativo() {
 		return tempoRelativo;
+	}
+
+	public String getSubscritor() {
+		return subscritor;
+	}
+
+	public void setSubscritor(String subscritor) {
+		this.subscritor = subscritor;
 	}
 }

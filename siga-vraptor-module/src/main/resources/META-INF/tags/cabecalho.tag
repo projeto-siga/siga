@@ -16,6 +16,7 @@
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
 <%@ attribute name="desabilitarComplementoHEAD"%>
+<%@ attribute name="incluirBS" required="false" %>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -74,7 +75,10 @@ ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
 
-<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css"	type="text/css" media="screen, projection" />
+<c:if test="${empty incluirBS or incluirBS}" >
+ 	<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+</c:if> 
+
 
 <!--   <link rel="stylesheet" href="/siga/css/menuhover.css" type="text/css"/> -->
 
@@ -93,7 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="9.0.6.0" />
+<c:set var="siga_version"  scope="request" value="10.0.18.3" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -113,7 +117,7 @@ ${meta}
 		<c:set var="sub_menu_class" value="submenusp" />
 		<c:set var="ambiente_class" value="ambiente_class" />
 		<c:set var="navbar_class" value="navbar-light" />
-		<c:set var="navbar_logo" value="logo-sem-papel-cor.png" />
+		<c:set var="navbar_logo" value="/siga/imagens/logo-sem-papel-cor.png" /> 
 		<c:set var="navbar_logo_size" value="50" />
 		<c:set var="button_class_busca" value="btn-primary" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible closed" />
@@ -132,11 +136,12 @@ ${meta}
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
 		
 		<c:set var="navbar_class" value="navbar-dark bg-primary" />
-		<c:if test="${f:resource('/siga.ambiente') ne 'prod'}">
+		<c:if test="${f:resource('/siga.ambiente') != 'prod'}">
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		
-		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
+		<c:set var="navbar_logo" value="/siga/imagens/logo-siga-novo-38px.png" />
+		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo')}" />
 		<c:set var="navbar_logo_size" value="38" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible expanded" />
@@ -166,7 +171,7 @@ ${meta}
 	<c:if test="${popup!='true'}">
    		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
-				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
+				src="${navbar_logo}" height="${navbar_logo_size}">
 			</a>
 			
 			<c:if test="${siga_cliente != 'GOVSP'}">
@@ -178,8 +183,8 @@ ${meta}
 				</c:when>
 				<c:otherwise>
 					<img id="logo-header2"
-					 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAmCAYAAAA1MOAmAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH4QUPFCQBHI8nPQAAA2pJREFUWMO9l0uIllUYx3/P+DkalpO3RU1hoQ7jpUDSTS1Gogi6EAm1icxFi4aKFkHShSgolAgqyhYhtGhX1sKwoqhFg1BYQS1EjJpoSiq7OEmTM47+WvS8cnqZyzvTNz3wcs57zvme/3n/z/WDWYi6RO3l/xD1UnVopr/rmCXeGWDZnIKpZ6ezuWHHTIAiAnUrcF4FWFygbTaqxuv9R9aoJ9SuuQK6Ux0pwH5Wn27716l3+W9Zo36n/qVubgrY1GY3197HgdPAQmC/uh1YpXapi/PpUqP8Uash2Kna+xDwFXAJsAJ4BTgGjNTOfabeCpyJiMY0vlGjsaWuV0edXl5UO2dis/drChbm+lXqFw0AP1CXRQOgxcBBoKdai+SkiL2NwOa05WRyqDWVu6fOrcDqYnt/DWgNsBHozkDvzHG0br/pvmqbOlbQcUK9oLZ/vEbZM+omdUPxrFcXoS5K7rfk05cBfLBQcEodUvsKoC01kGPq5RPk0bMSajdwExC1rD5W2OAX4JOI+C0VzQM+Aq4sYzEi9lX0TiSt5Pt24OQkbP4KHADeK258IXBxcWYwIvYVdp7ULi11dwP3Hc2Mj7oyaa1kd6MSExHjEXEP8NA0ZzuBveraTFWljDUBaxVuvEvtAPprxbETWJJjAHuAG9tSSiZYP0e9Tj1U0HZRZv1KXmpbLcv5UvXbWokx43Ddf24LSs9Kt3++2J6XntoXEYfmoj3YnF/Tm7T2zGW/2JtgK9QFM20JWjPEq3gdjoixqbJFO5vUmDZbtAFsOJ+Ohh7cLL6mULaqqtQz7oizAPaq36iDxfhj1qsHM6a+Vr8EromIkxnY3+fZQfVAxuIj6h/pSG+pS+u3Xa7ep+5Ux9W38/0y9eUskNvU11PJberanO/Ns9vVc9Uj6gPqh7l/72Qcb1D/VB8t1vaogzm/Wj2t7lB7Ull/7eLzc7wl9+8/6/oNPEpgufoccANwGHgVOD/371A3AT8AT0VE1Xv0Zx8yUIVIU28czwZ0NfBxRBwtPHIk09Zw8c9mB3At8HBEfD6Zp01H4wtJzUp1Xc7vrumo6Hu8aCEmjLOO7N/n1+pZ5eqv5fhEsb+gAOoG3szieoX6LrBzsnR1FNgFvFOs7QU+zYwxoD4GHAd+Ap4FBoqzvwNPZsNUXf5Itfk35wXnXBwGnuIAAAAASUVORK5CYII="
-				 	 alt="Logo TRF2" height="38" class="ml-2" />
+					 src="${navbar_logo2}"
+				 	 alt="${f:resource('siga.cabecalho.titulo')}" height="${navbar_logo_size}" class="ml-2" />
 				</c:otherwise>
 				</c:choose>
 			</c:if>
@@ -394,7 +399,7 @@ ${meta}
 						<div class="dropdown d-inline">
 							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
-									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">																		
+									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" data-cadastrante="${cadastrante.sigla}" title="${cadastrante.sigla}">																		
 											<c:out default="Convidado" value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
 									</strong>
 									<c:if test="${not empty cadastrante.lotacao}">
@@ -426,11 +431,11 @@ ${meta}
 							<c:catch>
 								<c:choose>
 									<c:when
-										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
+										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong title="${titular.sigla}">${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
 										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:when
-										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
+										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong title="${lotaTitular.sigla}">${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
 										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:otherwise></c:otherwise>
@@ -470,5 +475,11 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+
+	for (var obj in sessionStorage) {
+      if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {
+    	  sessionStorage.removeItem(obj);
+      }
+	}
 }
 </script>		

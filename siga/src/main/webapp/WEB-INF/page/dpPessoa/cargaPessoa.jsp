@@ -19,14 +19,14 @@
 				<h5>Carga de Planilha Pessoa</h5>
 			</div>
 			<div class="card-body">
-			<form action="carga" method="POST" enctype="multipart/form-data" class="form">
+			<form action="carga" method="post" enctype="multipart/form-data" class="form">
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="form-group">
 							<b>Observa&ccedil;&otilde;es:</b>
 						</div>
 					</div>
-				</div>				
+				</div>					
 				<div class="row">
 					<div class="col-sm">
 						<ul class="list-group">
@@ -35,6 +35,8 @@
 							<dt>&#149;&#160;Ap&oacute;s realizar a carga, os dados ser&atilde;o inseridos automaticamente na base de dados;</dt>
 							<dt>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</dt>
 							<dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos: (itens destacados são obrigatórios)</dt>
+							<dt>&#149;&#160;O campo nome abreviado só deverá ser preenchido caso o usuário opte por usar seu nome de registro civil com abreviação na assinatura dos documentos. Vale considerar que ainda sim no rodapé do documento será exibido seu nome completo</dt>
+							
 						</ul>
 					</div>
 				</div>
@@ -54,6 +56,7 @@
                                 <li class="list-group-item"> Órgão Expedidor RG: m&aacute;ximo de 50 caracteres</li>
                                 <li class="list-group-item"> Sigla UF RG: m&aacute;ximo de 2 caracteres</li>
                                 <li class="list-group-item"> Data de Expedição: (8 n&uacute;meros dd/mm/aaaa)</li>
+                                <li class="list-group-item"> Nome Abreviado: m&aacute;ximo de 40 caracteres</li>
 							</ul>
 						</div>
 					</div>

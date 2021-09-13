@@ -30,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -48,32 +47,28 @@ import javax.swing.text.MaskFormatter;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
-@Table(name = "DP_PESSOA", schema = "CORPORATIVO")
+@SuppressWarnings("serial")
+@Table(name = "corporativo.dp_pessoa")
 @Entity
 @SqlResultSetMapping(name = "scalar", columns = @ColumnResult(name = "dt"))
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5743631829922578717L;
+
 	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(
 			DpPessoa.class);
 	
@@ -188,8 +183,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public String getDescricaoCompleta() {
-		return getNomePessoa() + ", " + getFuncaoString().toUpperCase() + ", "
-				+ getLotacao().getSiglaCompleta();
+		String funcaoStr = getFuncaoString();
+		DpLotacao lotacao = getLotacao();
+		return getNomePessoa() + ", " + (funcaoStr != null ? funcaoStr.toUpperCase() : "") + ", "
+				+ (lotacao != null ? lotacao.getSiglaCompleta() : "");				
 	}
 
 	public String getDescricaoCompletaIniciaisMaiusculas() {
@@ -200,7 +197,9 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	static Pattern p1 = null;
 
-	public void setSigla(String sigla) {
+	public void setSigla(String sigla) {	
+		if (sigla == null) return;
+		
 		if (p1 == null) {
 			Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 			for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
@@ -230,6 +229,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public boolean equivale(Object other) {
 		if (other == null || ((DpPessoa) other).getId() == null
 				|| this.getId() == null)
+			return false;
+		if(this.getIdInicial() == null || ((DpPessoa)other).getIdInicial() == null)
 			return false;
 		return this.getIdInicial().longValue() == ((DpPessoa) other)
 				.getIdInicial().longValue();
@@ -576,6 +577,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		}
 
 	}
+	
+	public String getEmailPessoaAtualParcialmenteOculto() {
+		return getEmailPessoaAtual().substring(0,4) + "*********@***" + getEmailPessoaAtual().substring(getEmailPessoaAtual().length()-5,getEmailPessoaAtual().length());
+	}
 
 	/**
 	 * Retorna a data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por
@@ -735,4 +740,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 						&& this.getLotacao().getIsExternaLotacao() == 1));
 	}
 
+	@Override
+	public String getSiglaDePessoaEOuLotacao() {
+		return SiglaParser.makeSigla(this, this.getLotacao());
+	}
 }

@@ -8,17 +8,20 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissao;
@@ -34,7 +37,7 @@ import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/plantoesMensais")
 public class PlantoesMensaisController extends TpController {
     
@@ -42,7 +45,15 @@ public class PlantoesMensaisController extends TpController {
     
     private static final String HORARIO_INICIO_PLANTAO_24H = "07:00";
 
-    public PlantoesMensaisController(HttpServletRequest request, Result result, Validator validator, SigaObjects so, EntityManager em) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PlantoesMensaisController() {
+		super();
+	}
+	
+	@Inject
+    public PlantoesMensaisController(HttpServletRequest request, Result result,  Validator validator, SigaObjects so,  EntityManager em) {
         super(request, result, TpDao.getInstance(), validator, so, em);
     }
 
@@ -91,6 +102,7 @@ public class PlantoesMensaisController extends TpController {
         return Mes.getMes(mesPorExtenso);
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo
@@ -289,6 +301,7 @@ public class PlantoesMensaisController extends TpController {
         }
     }
 
+    @Transactional
     @RoleAdmin
     @RoleAdminMissao
     @RoleAdminMissaoComplexo

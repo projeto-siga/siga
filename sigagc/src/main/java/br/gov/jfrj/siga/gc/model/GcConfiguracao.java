@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 
 @Entity
-@Table(name = "GC_CONFIGURACAO", schema = "SIGAGC")
+@Table(name = "sigagc.gc_configuracao")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_GC")
 public class GcConfiguracao extends CpConfiguracao // implements
 // HistoricoPersistivel
@@ -24,7 +24,15 @@ public class GcConfiguracao extends CpConfiguracao // implements
 	//
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_INFORMACAO")
-	public GcTipoInformacao tipoInformacao;
+	private GcTipoInformacao tipoInformacao;
+
+	public GcTipoInformacao getTipoInformacao() {
+		return tipoInformacao;
+	}
+
+	public void setTipoInformacao(GcTipoInformacao tipoInformacao) {
+		this.tipoInformacao = tipoInformacao;
+	}
 
 	public GcConfiguracao() {
 

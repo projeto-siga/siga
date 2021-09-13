@@ -2,11 +2,12 @@ package br.gov.jfrj.siga.tp.model;
 
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,17 +21,17 @@ import org.hibernate.envers.RelationTargetAuditMode;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.validation.annotation.Data;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
-import br.gov.jfrj.siga.validation.ValidarAnoData;
 
 @Entity
 // @Table(name = "LOTACAO_VEICULO_2", schema="SIGAOR")
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "lotacaoveiculo", schema = "sigatp")
 public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
 	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
 	private Long id;
 
@@ -45,10 +46,10 @@ public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 	private DpLotacao lotacao;
 
 	@NotNull
-	@ValidarAnoData(descricaoCampo = "Data/Hora Inicio", nullable=false)
+	@Data(descricaoCampo = "Data/Hora Inicio", nullable=false)
 	private Calendar dataHoraInicio;
 
-	@ValidarAnoData(descricaoCampo = "Data/Hora Fim")
+	@Data(descricaoCampo = "Data/Hora Fim")
 	private Calendar dataHoraFim;
 
 	private Double odometroEmKm;
@@ -77,7 +78,9 @@ public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 	 */
 	public static String atualizarDataFimLotacaoAnterior(Veiculo veiculo) throws Exception {
 		try {
-			List<LotacaoVeiculo> lotacoesVeiculo = LotacaoVeiculo.AR.find("veiculo.id = ? and dataHoraFim is null order by dataHoraInicio DESC", veiculo.getId()).fetch();
+			Map<String, Object> parametros = new HashMap<String,Object>();
+			parametros.put("idVeiculo",veiculo.getId());
+			List<LotacaoVeiculo> lotacoesVeiculo = LotacaoVeiculo.AR.find("veiculo.id = :idVeiculo and dataHoraFim is null order by dataHoraInicio DESC", parametros).fetch();
 			if (lotacoesVeiculo.size() == 1) {
 				lotacoesVeiculo.get(0).dataHoraFim = Calendar.getInstance();
 				lotacoesVeiculo.get(0).save();
@@ -93,7 +96,9 @@ public class LotacaoVeiculo extends TpModel implements ConvertableEntity {
 	}
 
 	public static List<LotacaoVeiculo> buscarTodosPorVeiculo(Veiculo veiculo) {
-		return LotacaoVeiculo.AR.find("veiculo = ? order by dataHoraInicio DESC", veiculo).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("veiculo",veiculo);
+		return LotacaoVeiculo.AR.find("veiculo = :veiculo order by dataHoraInicio DESC", parametros).fetch();
 	}
 
 	@Override

@@ -1,11 +1,14 @@
 package br.gov.jfrj.siga.tp.interceptor;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
+import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.controller.ControllerMethod;
+import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminFrota;
@@ -26,17 +29,27 @@ import br.gov.jfrj.siga.tp.auth.annotation.RoleGabinete;
  *
  */
 @RequestScoped
-@Intercepts(after = { PreencherAutorizacaoGIInterceptor.class }, before = MotivoLogInterceptor.class)
-public class AutorizacaoAcessoInterceptor implements Interceptor {
+@Intercepts(after = { PreencherAutorizacaoGIInterceptor.class }, before = {MotivoLogInterceptor.class, JPATransactionInterceptor.class})
+public class AutorizacaoAcessoInterceptor  {
 
 	private AutorizacaoGI autorizacaoGI;
+	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AutorizacaoAcessoInterceptor() {
+		super();
+		autorizacaoGI = null;
 
-	public AutorizacaoAcessoInterceptor(AutorizacaoGI dadosAutorizacao) {
-		this.autorizacaoGI = dadosAutorizacao;
+	}
+	
+	@Inject
+	public AutorizacaoAcessoInterceptor(AutorizacaoGI autorizacaoGI) {
+		this.autorizacaoGI = autorizacaoGI;
 	}
 
-	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
+	@AroundCall
+	public void intercept(SimpleInterceptorStack stack, ControllerMethod method)  {
 		try {
 			DadosValidacaoAutorizacao dados = new DadosValidacaoAutorizacao(method);
 
@@ -49,7 +62,7 @@ public class AutorizacaoAcessoInterceptor implements Interceptor {
 			this.validarAdminMissao(dados);
 			this.validarAdminMissaoComplexo(dados);
 
-			stack.next(method, resourceInstance);
+			stack.next();
 		} catch (Exception e) {
 			throw new InterceptionException(e);
 		}
@@ -198,8 +211,8 @@ public class AutorizacaoAcessoInterceptor implements Interceptor {
 		}
 	}
 
-	@Override
-	public boolean accepts(ResourceMethod method) {
+
+	public boolean accepts(ControllerMethod method) {
 		return Boolean.TRUE;
 	}
 
@@ -213,7 +226,7 @@ public class AutorizacaoAcessoInterceptor implements Interceptor {
 		boolean admMissaoAnnotation;
 		boolean admMissaoComplexoAnnotation;
 
-		public DadosValidacaoAutorizacao(ResourceMethod method) {
+		public DadosValidacaoAutorizacao(ControllerMethod method) {
 			this.adminAnnotation = method.containsAnnotation(RoleAdmin.class);
 			this.aprovadorAnnotation = method.containsAnnotation(RoleAprovador.class);
 			this.gabineteAnnotation = method.containsAnnotation(RoleGabinete.class);

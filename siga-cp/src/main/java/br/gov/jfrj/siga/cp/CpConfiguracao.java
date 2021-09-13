@@ -43,15 +43,11 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
-@Table(name = "CP_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_configuracao")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3624557793773660738L;
 	
 	public static final ActiveRecord<CpConfiguracao> AR = new ActiveRecord<>(CpConfiguracao.class);
 

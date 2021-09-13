@@ -121,9 +121,14 @@
   <function-signature>java.lang.String selDescricaoConfidencial(br.gov.jfrj.siga.model.Selecionavel, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.dp.DpPessoa)</function-signature>
  </function>
  <function>
-  <name>mostraDescricaoConfidencial</name>
+   <name>mostraDescricaoConfidencial</name>
   <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
   <function-signature>java.lang.Boolean mostraDescricaoConfidencial( br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
+  <function>
+   <name>exibirQuemTemAcessoDocumentosLimitados</name>
+  <function-class>br.gov.jfrj.siga.ex.bl.ExBL</function-class>
+  <function-signature>java.lang.Boolean exibirQuemTemAcessoDocumentosLimitados( br.gov.jfrj.siga.ex.ExDocumento, br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
  <function>
   <name>anotacaoConfidencial</name>
@@ -244,6 +249,11 @@
   <name>quebraLinhas</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.String quebraLinhas(java.lang.String)</function-signature>
+ </function>
+ <function>
+  <name>stringParaMinusculaNomes</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.String f:stringParaMinusculaNomes(java.lang.String)</function-signature>
  </function>
  <function>
   <name>primeiraMaiuscula</name>
@@ -383,9 +393,14 @@
   <function-signature>java.lang.Boolean podeAssinarComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
  </function>
  <function>
-  <name>podeAssinarPorComSenha</name>
+  <name>deveAssinarComSenha</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.Boolean podeAssinarPorComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
+  <function-signature>java.lang.Boolean deveAssinarComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
+ </function> 
+ <function>
+  <name>podeAssinarPor</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeAssinarPor(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
  </function>
  <function>
   <name>podeAssinarMovimentacaoComSenha</name>
@@ -393,11 +408,21 @@
   <function-signature>java.lang.Boolean podeAssinarMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMovimentacao)</function-signature>
  </function>
  <function>
+  <name>deveAssinarMovimentacaoComSenha</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean deveAssinarMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMovimentacao)</function-signature>
+ </function>
+ <function>
   <name>podeAutenticarMovimentacaoComSenha</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.Boolean podeAutenticarMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMovimentacao)</function-signature>
  </function>
-  <function>
+ <function>
+  <name>deveAutenticarMovimentacaoComSenha</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean deveAutenticarMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMovimentacao)</function-signature>
+ </function>
+ <function>
   <name>podeAssinarMovimentacaoDoMobilComSenha</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.Boolean podeAssinarMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
@@ -407,9 +432,39 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.Boolean podeAutenticarComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
  </function>
-  <function>
+ <function>
+  <name>deveAutenticarComSenha</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean deveAutenticarComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
+ </function>
+ <function>
   <name>podeAutenticarDocumento</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.Boolean podeAutenticarDocumento(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
  </function> 
+ <function>
+  <name>podeDisponibilizarNoAcompanhamentoDoProtocolo</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
+ </function> 
+ <function>
+  <name>calculaDiasAPartirDeHoje</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String calculaDiasAPartirDeHoje( java.lang.Long )</function-signature>
+ </function>
+ <function>
+  <name>podeUtilizarSegundoFatorPin</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeUtilizarSegundoFatorPin(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>  
+ <function>
+  <name>deveUtilizarSegundoFatorPin</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean deveUtilizarSegundoFatorPin(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>  
+ <function>
+  <name>defaultUtilizarSegundoFatorPin</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean defaultUtilizarSegundoFatorPin(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>  
 </taglib>

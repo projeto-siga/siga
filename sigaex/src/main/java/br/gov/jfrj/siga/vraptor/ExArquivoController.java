@@ -24,7 +24,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.Map;
@@ -56,9 +55,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.api.v1.DocumentoSiglaArquivoGet;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentoSiglaArquivoGetResponse;
+import br.gov.jfrj.siga.ex.api.v1.DocumentosSiglaArquivoGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -161,9 +158,9 @@ public class ExArquivoController extends ExController {
 			}
 
 			if ((isPdf || isHtml) && completo && mob != null && mov == null) {
-				DocumentoSiglaArquivoGet act = new DocumentoSiglaArquivoGet();
-				DocumentoSiglaArquivoGetRequest req = new DocumentoSiglaArquivoGetRequest();
-				DocumentoSiglaArquivoGetResponse resp = new DocumentoSiglaArquivoGetResponse();
+				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
+				DocumentosSiglaArquivoGet.Request req = new DocumentosSiglaArquivoGet.Request();
+				DocumentosSiglaArquivoGet.Response resp = new DocumentosSiglaArquivoGet.Response();
 				req.sigla = mob.getSigla();
 				req.contenttype = isPdf ? "application/pdf" : "text/html";
 				req.estampa = estampar;
@@ -172,7 +169,7 @@ public class ExArquivoController extends ExController {
 				req.exibirReordenacao = exibirReordenacao;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
-				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
+				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
 						filename, contextpath, servernameport);
 				result.redirectTo("/app/arquivo/status/" + mob.getCodigoCompacto() + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);
@@ -300,9 +297,9 @@ public class ExArquivoController extends ExController {
 			
 			/*TODO: Implementar bloco para escrita em disco e controle do status 
 			if ((isPdf || isHtml) && completo && mob != null) {
-				DocumentoSiglaArquivoGet act = new DocumentoSiglaArquivoGet();
-				DocumentoSiglaArquivoGetRequest req = new DocumentoSiglaArquivoGetRequest();
-				DocumentoSiglaArquivoGetResponse resp = new DocumentoSiglaArquivoGetResponse();
+				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
+				DocumentosSiglaArquivoGetRequest req = new DocumentosSiglaArquivoGetRequest();
+				DocumentosSiglaArquivoGetResponse resp = new DocumentosSiglaArquivoGetResponse();
 				req.sigla = mob.getSigla();
 				req.contenttype = isPdf ? "application/pdf" : "text/html";
 				req.estampa = semmarcas;
@@ -311,7 +308,7 @@ public class ExArquivoController extends ExController {
 				req.exibirReordenacao = exibirReordenacao;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
-				DocumentoSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
+				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
 						filename, contextpath, servernameport);
 				result.redirectTo("/app/arquivo/status/" + URLEncoder.encode(req.sigla, "utf-8") + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);

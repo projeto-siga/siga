@@ -77,6 +77,15 @@ public abstract class Selecao<T extends Selecionavel> {
 	public abstract boolean buscarPorId() throws AplicacaoException;
 
 	public abstract T buscarObjeto() throws AplicacaoException;
+	
+	public Selecao() {
+		super();
+	}
+
+	public Selecao(T o) {
+		super();
+		buscarPorObjeto(o);
+	}
 
 	public T getObjeto() throws AplicacaoException {
 		return buscarObjeto();
@@ -159,4 +168,7 @@ public abstract class Selecao<T extends Selecionavel> {
 		this.buscar = buscar;
 	}
 
+	public boolean empty() {
+		return id == null;
+	}
 }

@@ -70,4 +70,8 @@ public enum TipoDeCombustivel {
 		return retorno;
 	}
 	
+	public TipoDeCombustivel[] getValues() {
+		return TipoDeCombustivel.values();
+	}
+	
 }

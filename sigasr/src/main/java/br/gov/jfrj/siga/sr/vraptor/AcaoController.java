@@ -5,6 +5,7 @@ import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +13,7 @@ import org.jboss.logging.Logger;
 import org.jfree.util.Log;
 
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
@@ -24,11 +25,19 @@ import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.TipoAcaoSelecao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
-@Resource
+@Controller
 @Path("app/acao")
 public class AcaoController extends SrController {
-
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AcaoController() {
+		super();
+	}
+	
+	@Inject	
 	public AcaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
 		super(request, result, dao, so, em, srValidator);
 	}
@@ -62,6 +71,7 @@ public class AcaoController extends SrController {
 		result.include(ACAO, acao);
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrAcao acao, TipoAcaoSelecao tipoAcaoSel) throws Exception {
@@ -83,6 +93,7 @@ public class AcaoController extends SrController {
 		result.use(Results.http()).body(acao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -92,6 +103,7 @@ public class AcaoController extends SrController {
 		result.use(Results.http()).body(acao.toJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -103,7 +115,8 @@ public class AcaoController extends SrController {
 
 	@Path("/selecionar")
 	public void selecionar(String sigla, SrSolicitacao sol)throws Exception {
-		SrAcao acao = new SrAcao().selecionar(sigla, sol != null ? sol.getAcoesDisponiveis() : null);
+		boolean possuiAcoesDisponiveis = sol != null && sol.getAcoesDisponiveis() != null && sol.getAcoesDisponiveis().size() > 0;
+		SrAcao acao = new SrAcao().selecionar(sigla, possuiAcoesDisponiveis ? sol.getAcoesDisponiveis() : null);
 		result
 			.forwardTo(SelecaoController.class)
 			.ajaxRetorno(acao);

@@ -38,17 +38,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractCpToken implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1155912355132032160L;
-
 	@Id
 	@SequenceGenerator(name="CP_TOKEN_GENERATOR", sequenceName="CORPORATIVO.CP_TOKEN_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CP_TOKEN_GENERATOR")
+	@GeneratedValue(generator="CP_TOKEN_GENERATOR")
 	@Column(name="ID_TOKEN")
 	private long idToken;
 

@@ -63,7 +63,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 					if (i != 0)
 						return i;
 
-					return (o1.id < o2.id ? 1 : o1.id == o1.id ? 0 : -1);
+					return (o1.getId() < o2.getId() ? 1 : o1.getId() == o1.getId() ? 0 : -1);
 				}
 			});
 		}
@@ -178,7 +178,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 					sb.append("<ul>");
 					for (GcInformacao inf : no.infs) {
 						sb.append("<li style='display:none' class=li"+ no.tag.getTitulo() + "><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
-						sb.append(inf.arq.titulo);
+						sb.append(inf.getArq().getTitulo());
 						sb.append("</a></li>");
 					}
 					sb.append("</ul>");
@@ -224,7 +224,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 					sb.append("<ul>");
 					for (GcInformacao inf : no.infs) {
 						sb.append("<li class=li"+ no.tag.getTitulo() +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
-						sb.append(inf.arq.titulo);
+						sb.append(inf.getArq().getTitulo());
 						sb.append("</a></li>");
 					}
 					sb.append("</ul>");
@@ -242,7 +242,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 						else{
 							sb.append("<li style='display:none' class=li"+ no.tag.getTitulo() +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						}
-						sb.append(inf.arq.titulo);
+						sb.append(inf.getArq().getTitulo());
 						sb.append("</a></li>");
 					}
 					sb.append("</ul>");

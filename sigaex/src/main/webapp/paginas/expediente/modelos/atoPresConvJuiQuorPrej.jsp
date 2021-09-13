@@ -89,6 +89,6 @@
 			
 			
 			<p align="center">PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE</p>
-			
+		</mod:valor>
 	</mod:documento>
 </mod:modelo>

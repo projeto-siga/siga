@@ -1,13 +1,15 @@
 package br.gov.jfrj.siga.tp.interceptor;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
+import br.com.caelum.vraptor.Accepts;
+import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.InstantiateInterceptor;
-import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.controller.ControllerMethod;
+import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
 import br.gov.jfrj.siga.tp.auth.Autorizacoes;
 
@@ -18,20 +20,36 @@ import br.gov.jfrj.siga.tp.auth.Autorizacoes;
  *
  */
 @RequestScoped
-@Intercepts(after = { ContextInterceptor.class }, before = InstantiateInterceptor.class)
-public class PreencherAutorizacaoGIInterceptor implements Interceptor {
+@Intercepts(after = { ContextInterceptor.class })
+public class PreencherAutorizacaoGIInterceptor  {
+
 
 	private AutorizacaoGI autorizacaoGI;
+	
+
 	private Result result;
 
-	public PreencherAutorizacaoGIInterceptor(Result result, AutorizacaoGI autorizacaoGI) {
-		this.result = result;
-		this.autorizacaoGI = autorizacaoGI;
-	}
 
-	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
-		autorizacaoGI.incluir(Autorizacoes.ADM_ADMINISTRAR)
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PreencherAutorizacaoGIInterceptor() {
+		super();
+		autorizacaoGI = null;
+		result = null;
+
+	}
+	
+	@Inject
+	public PreencherAutorizacaoGIInterceptor(AutorizacaoGI autorizacaoGI, Result result) {
+		this.autorizacaoGI = autorizacaoGI;
+		this.result = result;
+	}
+	
+	@AroundCall
+	public void intercept(SimpleInterceptorStack stack)  {
+		try {
+			autorizacaoGI.incluir(Autorizacoes.ADM_ADMINISTRAR)
 			.incluir(Autorizacoes.ADMFROTA_ADMINISTRAR_FROTA)
 			.incluir(Autorizacoes.ADMMISSAO_ADMINISTRAR_MISSAO)
 			.incluir(Autorizacoes.APR_APROVADOR)
@@ -41,11 +59,19 @@ public class PreencherAutorizacaoGIInterceptor implements Interceptor {
 			.incluirAdministrarMissaoComplexo(result)
 			.preencherDadosAutorizacoes(result);
 
-		stack.next(method, resourceInstance);
+		stack.next();
+		
+		} catch (Exception e) {
+			throw new InterceptionException(e);
+	} finally {
+		
+	}
+		
+
 	}
 
-	@Override
-	public boolean accepts(ResourceMethod method) {
+	@Accepts
+	public boolean accepts(ControllerMethod method) {
 		return Boolean.TRUE;
 	}
 }

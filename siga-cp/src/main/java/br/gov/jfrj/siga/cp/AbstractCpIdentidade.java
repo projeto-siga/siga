@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 // Ver um lugar melhor para queries assim ficarem quando não se estiver usando
 // XML
@@ -88,6 +89,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp36)")})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
+
 	@Id
 	@SequenceGenerator(name = "CP_IDENTIDADE_SEQ", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
 	@GeneratedValue(generator = "CP_IDENTIDADE_SEQ")
@@ -131,6 +133,10 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 
 	@Column(name = "LOGIN_IDENTIDADE", length = 20)
 	private String nmLoginIdentidade;
+	
+	@Column(name = "PIN_IDENTIDADE")
+	private String pinIdentidade;
+
 
 	/*
 	 * (non-Javadoc)
@@ -398,4 +404,12 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 		this.nmLoginIdentidade = nmLoginIdentidade;
 	}
 
+
+	public String getPinIdentidade() {
+		return pinIdentidade;
+	}
+
+	public void setPinIdentidade(String pinIdentidade) {
+		this.pinIdentidade = pinIdentidade;
+	}
 }

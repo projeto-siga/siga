@@ -2,17 +2,22 @@
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
 	<link rel="stylesheet" href="/siga/javascript/hierarchy-select/hierarchy-select.css" type="text/css" media="screen, projection" />
-	<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="${f:resource('/ckeditor.url')}?v=4.15.0.L0FJ.c71958523b"></script>
 	<script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
 
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+
+	<c:set var="timeoutMod" scope="session" value="${f:resource('/siga.session.modelos.tempo.expiracao')}" />
 	<div class="container-fluid">
 	<c:if test="${not empty mensagem}">
 			<div class="row">
@@ -47,19 +52,24 @@
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" /> 
 				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" /> 
 				<input type="hidden" id="clickSelect" name="clickSelect" /> 
+				<input type="hidden" id="clickSelect" name="clickSelect" />
+				<input type="hidden" id="hasPai" name="hasPai" value="${hasPai}" />
+				<input type="hidden" id="isPaiEletronico" name="isPaiEletronico" value="${isPaiEletronico}" />
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" /> 
 				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" /> 
-				<input type="hidden" name="campos" value="criandoAnexo" />  
+				<input type="hidden" name="campos" value="criandoAnexo" />
+				<input type="hidden" name="campos" value="criandoSubprocesso" />  
 				<input type="hidden" name="campos" value="autuando" /> 
 				<input type="hidden" name="exDocumentoDTO.autuando" value="${exDocumentoDTO.autuando}" /> 
 				<input type="hidden" name="exDocumentoDTO.criandoAnexo" value="${exDocumentoDTO.criandoAnexo}" /> 
+				<input type="hidden" name="exDocumentoDTO.criandoSubprocesso" value="${exDocumentoDTO.criandoSubprocesso}" /> 
 				<input type="hidden" name="campos" value="idMobilAutuado" /> 
 				<input type="hidden" name="exDocumentoDTO.idMobilAutuado" value="${exDocumentoDTO.idMobilAutuado}" /> 
 				<input type="hidden" name="exDocumentoDTO.id" value="${exDocumentoDTO.doc.idDoc}" /> 
 				<input type="hidden" name="exDocumentoDTO.idMod.original" value="${exDocumentoDTO.modelo.idMod}" /> 
-				<input type="hidden" name="jsonHierarquiaDeModelos" value="${jsonHierarquiaDeModelos}" />
 				<input type="hidden" name="cliente" id="cliente" value="${siga_cliente}">
+				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 				<c:choose>
 					<c:when	test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 						<c:set var="estiloTipo" value="display: none" />
@@ -75,53 +85,32 @@
 				<!-- Modelo -->
 				<div class="row">
 					<div class="col-sm-12">
-						<c:choose>
-							<c:when test="${possuiMaisQueUmModelo}">
-								<div class="form-group">
-									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
+						<div class="form-group">
+							<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
-										<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
-											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
-											<span class="selected-label pull-left">&nbsp;</span>
-										</button>
-										<div class="dropdown-menu form-control" aria-labelledby="dropdownMenuButton">
-											<div class="hs-searchbox">
-												<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
-											</div>
-											<ul class="dropdown-menu show inner" role="menu">
-												<c:forEach items="${hierarquiaDeModelos}" var="item">
-													<li class="dropdown-item" data-value="${item.value}"
-														data-level="${item.level}" data-search="${item.searchText}"
-														${item.group ? 'data-group' : ''}
-														${item.selected ? 'data-default-selected' : ''}>
-														<c:if test="${item.group}">
-															<a href="#">${item.text}</a>
-														</c:if>
-														<c:if test="${!item.group}">
-															<a href="#" class="d-inline">${item.text}<small class="pl-2 text-muted">${item.keywords}</small></a>
-														</c:if>
-													</li>
-												</c:forEach>
-											</ul>
-										</div>
-										<input class="hidden hidden-field" name="exDocumentoDTO.idMod" readonly="readonly" onchange="alterouModeloSelect()"
-											aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}" />
+							<div class="btn-group hierarchy-select form-control p-0 div-width-min0" data-resize="auto" id="modelos-select" style="min-width: 0px !important;">
+									<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
+									id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
+									<span class="selected-label pull-left">&nbsp;</span>
+								</button>
+								<div class="dropdown-menu form-control" aria-labelledby="dropdownMenuButton">
+									<div class="hs-searchbox">
+										<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
 									</div>
-									<small class="form-text text-muted"><fmt:message key="documento.help.modelo"/></small>
+									<ul id="ulmod" class="dropdown-menu show inner" role="menu"></ul>
 								</div>
-							</c:when>
-							<c:otherwise>
-								<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.modelo.idMod}" />
-							</c:otherwise>
-						</c:choose>
+								<input class="hidden hidden-field" name="exDocumentoDTO.idMod" readonly="readonly" onchange="alterouModeloSelect()"
+									aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}" />
+							</div>
+							<small class="form-text text-muted"><fmt:message key="documento.help.modelo"/></small>
+						</div>
 						<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
 							<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}" />
 						</c:if>
 					</div>
 				</div>
-					<div class="row ${((exDocumentoDTO.tiposDocumento).size() != 1 or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (exDocumentoDTO.listaNivelAcesso.size() != 1) or (!exDocumentoDTO.eletronicoFixo))? '': 'd-none'}">
-						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1? '': 'd-none'} ${hide_only_GOVSP}">
+					<div class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
+						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1 ? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
 								<label for="exDocumentoDTO.idTpDoc">Origem</label>
 								<select name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
@@ -138,11 +127,11 @@
 							<div class="form-group">
 								<input type="hidden" name="campos" value="dtDocString" />						
 								<label class=" " for="exDocumentoDTO.dtDocString">Data</label>
-								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control"/>
+								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control campoData" autocomplete="off"/>
 							</div>
 						</div>
 
-						<div class="col-sm-2 ${(exDocumentoDTO.listaNivelAcesso).size() != 1? '': 'd-none'}">
+						<div class="col-sm-2 ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? '': 'd-none'}">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="nivelAcesso" /> 
 								<label for="exDocumentoDTO.dtDocString">Acesso</label>
@@ -212,7 +201,7 @@
 							<label for="exDocumentoDTO.numAntigoDoc">Nº antigo</label>
 							<input type="text" name="exDocumentoDTO.numAntigoDoc" size="16" maxLength="32" value="${exDocumentoDTO.numAntigoDoc}" class="form-control" />
 							<small class="form-text text-muted">(informar o número do documento no antigo sistema de controle de expedientes ou de
-											processos administrativos [SISAPA] ou [PROT]).</small>
+											processos administrativos).</small>
 						</div>
 					</div>
 				</div>
@@ -348,7 +337,7 @@
 								<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
 									<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
 									<label>&nbsp;&nbsp;&nbsp;</label>
-									<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" />
+									<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" onchangeid="updateURL()" />
 									<!--  idAjax="destinatario" -->
 								</c:when>
 								<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
@@ -376,40 +365,42 @@
 				</div>
 				</c:if>	
 				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
-				<div class="row">
-					<input type="hidden" name="campos" value="preenchimento" />
+				<div class="row inline">					
 					<div class="col-sm-12">
-						<div class="form-group">
-							<label><fmt:message key="documento.preenchimento.automatico"/></label>							
-							<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-								<div class="input-group">
-									<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
+				  		<div class="form-group">
+				    		<label><fmt:message key="documento.preenchimento.automatico"/></label>
+				    		<div class="row">
+				      			<div class="col col-xl-4 col-lg-12">
+							        <select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control siga-select2">
 										<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
 											<option value="${item.idPreenchimento}"
 												${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
 												${item.nomePreenchimento}</option>
 										</c:forEach>
 									</select>
-								</div>
-								<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
-									<c:set var="desabilitaBtn"> disabled </c:set>
-								</c:if> 
-								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
-									<i class="far fa-edit"></i>
-									<span class="${hide_only_GOVSP}">Alterar</span>
-								</button>
-								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
-									<i class="far fa-trash-alt"></i>
-									<span class="${hide_only_GOVSP}">Remover</span>
-								</button>
-								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2">
-									<i class="fas fa-plus"></i>
-									<span class="${hide_only_GOVSP}">Adicionar</span>
-								</button>
-							</div>
-						</div>
-					</div>
+				      			</div>
+				      			<div class="col col-xl-8 col-lg-12">
+							        <c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
+										<c:set var="desabilitaBtn"> disabled </c:set>
+									</c:if> 
+									<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+										<i class="far fa-edit"></i>
+										<span class="${hide_only_GOVSP}">Alterar</span>
+									</button>
+									<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+										<i class="far fa-trash-alt"></i>
+										<span class="${hide_only_GOVSP}">Remover</span>
+									</button>
+									<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2 p-2">
+										<i class="fas fa-plus"></i>
+										<span class="${hide_only_GOVSP}">Adicionar</span>
+									</button>
+				      			</div>
+				    		</div>
+				  		</div>
+				  </div>
 				</div>
+				
 			</c:if>
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
 					<div class="row  ${hide_only_GOVSP}">
@@ -423,7 +414,7 @@
 								<siga:span id="classificacao" depende="forma;modelo">
 									<!-- OI -->
 									<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"
-										inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
+										inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" onchangeid="updateURL()" />
 									<!--  idAjax="classificacao" -->
 								</siga:span>
 							</div>
@@ -459,7 +450,7 @@
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label>Descrição</label>
-								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control">${exDocumentoDTO.descrDocumento}</textarea>
+								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control" oninput="updateURL()">${exDocumentoDTO.descrDocumento}</textarea>
 								<small class="form-text text-muted">(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e
 									singular).</small>
 							</div>
@@ -599,6 +590,7 @@
 				.val();
 		if (valor !== '' && valor !== valorOriginal) {
 			document.getElementById('alterouModelo').value = 'true';
+			setModeloSelecionado (valor, valorOriginal);
 			sbmt();
 		}
 	}
@@ -618,15 +610,105 @@
 			}
 		}
 	}
+	function getListaModelos () {
+		this.carregando = true; 
+		sigaSpinner.mostrar();
+		$('.selected-label').append('<span id="select-spinner" class="spinner-border text-secondary" role="status"></span><span class="disabled"> Carregando...</span>');
+		const urlParams = new URLSearchParams(window.location.search);
+		const idMod = document.getElementsByName('exDocumentoDTO.idMod')[0].value;
+		const isEditandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value === "true";
+		const isCriandoSubprocesso = document.getElementsByName('exDocumentoDTO.criandoSubprocesso')[0].value === "true";
+		const isAutuando = document.getElementsByName('exDocumentoDTO.autuando')[0].value === "true";
+		const siglaMobPai = document.getElementsByName('exDocumentoDTO.mobilPaiSel.sigla')[0].value;
+		var qry = (isEditandoAnexo? 'isEditandoAnexo=true&' : '')
+			+ (isCriandoSubprocesso? 'isCriandoSubprocesso=true&' : '')
+			+ (isAutuando? 'isAutuando=true&' : '')
+			+ (siglaMobPai != undefined && siglaMobPai != "" ? 'siglaMobPai=' + siglaMobPai : '');
+		var timeoutModelos = Math.abs(new Date() -
+				new Date(getUserSessionStorage('timeoutModelos' )));
+		var ulMod = $('#ulmod');
+		var listMod = getUserSessionStorage('modelos');
+		var expire = parseInt('${timeoutMod}') * 60000;
+		var lastQry = getUserSessionStorage('lastQry');
 
-	$(document).ready(function() {
+		if (timeoutModelos < expire && qry === lastQry) {
+			// Não expirou o timeout e a query será a mesma da 
+			// ultima vez: carrega da session storage se tiver
+			if (listMod != undefined) {
+				var listaDeModelos = JSON.parse(listMod);
+				for (var i = 0; i<listaDeModelos.length; i++) {
+					if (listaDeModelos[i].idModelo == idMod) {
+		 				carregaModelos(ulMod, listaDeModelos);
+						return;
+					}
+				}
+ 			}
+		}
+		
+		$.ajax({
+	        url: "/sigaex/api/v1/modelos/lista-hierarquica?" + qry,
+	        contentType: "application/json",
+	        dataType: 'json',
+	        success: function(result){
+				if (result.list.length > 0) {
+					setUserSessionStorage('lastQry', qry); 
+					setUserSessionStorage('modelos', JSON.stringify(result.list));
+					var idModSelected = $('input[name="exDocumentoDTO.idMod"]').val();
+					setModeloSelecionado(idModSelected, 0);
+					setUserSessionStorage('timeoutModelos', new Date());
+					carregaModelos(ulMod, JSON.parse(getUserSessionStorage('modelos')));
+				}
+	        },
+			error: function(result){
+				sigaSpinner.ocultar();
+	        	console.log(result.errormsg);
+	        },
+	   });
+	}
+
+	function setModeloSelecionado (idModSelecionado, idModAnterior) {
+		var listMod = JSON.parse(getUserSessionStorage('modelos'));
+		for (var i = 0; i < listMod.length; i++) {
+			var item = listMod[i];
+			if (idModAnterior === item.idModelo)  
+				item.selected = false;
+			if (idModSelecionado === item.idModelo)  
+				item.selected = true;
+		}
+		setUserSessionStorage('modelos', JSON.stringify(listMod));
+		
+	}
+	
+	function carregaModelos (ulMod, listMod) {
+		var idModSelected = $('input[name="exDocumentoDTO.idMod"]').val();
+		for (var i = 0; i < listMod.length; i++) {
+			var item = listMod[i];
+			var liMod = "<li class='dropdown-item' data-value='" + item.idModelo
+				+ "' data-level='" + item.level + "' data-search='" + item.descr + "' "
+				+ (item.group ? 'data-group ' : '')
+				+ (item.idModelo == '${exDocumentoDTO.idMod}' ? 'data-default-selected ' : '') + ">";
+			if (item.group) {
+				liMod = liMod + "<a href='#'>" + item.nome + "</a></li>";
+			} else {
+				liMod = liMod + "<a href='#' class='d-inline'>" + item.nome 
+					+ "<small class='pl-2 text-muted'>" + (item.keywords != undefined ? item.keywords : '') + "</small></a></li>"
+			}
+			ulMod.append(liMod);
+		}
+		sigaSpinner.ocultar();
 		$('#modelos-select').hierarchySelect({
 			width : 'auto',
 			height : 'auto'
 		});
-
+	}
+	
+	$(document).ready(function() {
+		getListaModelos();
 		personalizacaoSeparar();
 	});
+	window.onbeforeunload = function(){
+		sigaSpinner.mostrar();
+	};
 	// window.customOnsubmit = function() {return true;};
 	// {
 	//	var frm = document.getElementById('frm');
@@ -639,4 +721,11 @@
 	    trigger: 'click'
 	});
 
+</script>
+
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript">
+	$(document.getElementById('preenchimento')).select2({theme: "bootstrap"});	
 </script>

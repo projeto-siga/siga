@@ -60,12 +60,12 @@
 
 
 	<script type="text/javascript" language="Javascript1.1">
-		function visualizarImpressao() {
-			window.open(
-					"/sigaex/app/arquivo/exibir?arquivo=${mov.referencia}.pdf",
-					"_blank");
-		}
-	</script>
+        function visualizarImpressao() {
+            window.open(
+                    "/sigaex/app/arquivo/exibir?${mov.idTpMov == 13? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
+                    "_blank");
+        }
+    </script>
 
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -309,20 +309,30 @@
 		
 							<c:set var="lote" value="false" />
 						</div>
-						<c:if test="${siga_cliente != 'GOVSP'}">
-							<tags:assinatura_botoes assinar="true"
-								autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
-								assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								idMovimentacao="${mov.idMov}" />
-						</c:if>
-						<c:if test="${siga_cliente == 'GOVSP'}">
-							<tags:assinatura_botoes assinar="true"
-								autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
-								assinarComSenhaChecado="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								autenticarComSenhaChecado="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-								idMovimentacao="${mov.idMov}" />
-						</c:if>
+						<c:set var="podeAssinarComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						<c:set var="podeAutenticarComSenha" value="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						<c:set var="defaultAssinarComSenha" value="${f:deveAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+						
+						<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+						<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+						<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+						
+						<tags:assinatura_botoes assinar="true"
+							autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
+							
+								assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+							    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
+								assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
+								autenticarComSenhaChecado="${podeAutenticarComSenha and defaultAutenticarComSenha and not defaultUtilizarSegundoFatorPin}"
+	
+	
+								assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+								autenticarComSenhaPin="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin}"
+								assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+								autenticarComSenhaPinChecado="${podeAutenticarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"
+							
+							idMovimentacao="${mov.idMov}" />
 		
 					</div>
 				</div>

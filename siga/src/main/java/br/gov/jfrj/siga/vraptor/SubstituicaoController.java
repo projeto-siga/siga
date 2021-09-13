@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -25,6 +24,8 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -47,11 +48,10 @@ public class SubstituicaoController extends SigaController {
 	private DpPessoaSelecao substitutoSel;
 	private DpLotacaoSelecao lotaSubstitutoSel;	
 	
+	private List<String> chaves = Prop.getList("/siga.substituto.tipos");
+	
 	private Map<Integer, String> getListaTipo() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
-		return map;
+		return TipoResponsavelEnum.getLista(chaves);
 	}	
 		
 
@@ -66,9 +66,6 @@ public class SubstituicaoController extends SigaController {
 	@Inject
 	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(ServletException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 
 		titularSel = new DpPessoaSelecao();	
 		lotaTitularSel = new DpLotacaoSelecao();
@@ -193,6 +190,7 @@ public class SubstituicaoController extends SigaController {
 		result.include("lotaSubstitutoSel", lotaSubstitutoSel);//tipoSubstituto=2
 	}
 	
+	@Transacional
 	@Post("/app/substituicao/gravar")
 	public void gravar(DpSubstituicao substituicao
 					  ,Integer tipoTitular
@@ -378,6 +376,7 @@ public class SubstituicaoController extends SigaController {
 
 	}
 	
+	@Transacional
 	@Get("/app/substituicao/finalizar")
 	public void finalizar() throws Exception {
 		try {
@@ -407,6 +406,7 @@ public class SubstituicaoController extends SigaController {
 		dao().gravar(per);
 	}
 	
+	@Transacional
 	@Get("/app/substituicao/substituirGravar")
 	public void substituirGravar(Long id) throws Exception {
 		try {
@@ -447,6 +447,7 @@ public class SubstituicaoController extends SigaController {
 			result.redirectTo(PrincipalController.class).principal(false,false);
 	}	
 	
+	@Transacional
 	public void exclui(Long id) throws Exception {
 		
 		try{

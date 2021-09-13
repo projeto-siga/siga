@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.persistence.CascadeType;
@@ -17,7 +19,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -34,7 +35,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -46,23 +46,29 @@ import br.gov.jfrj.siga.tp.util.Reflexao;
 import br.gov.jfrj.siga.tp.util.SigaTpException;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
 import br.gov.jfrj.siga.tp.validation.annotation.Sequence;
+import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 import br.gov.jfrj.siga.tp.vraptor.ServicoVeiculoController;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 import br.gov.jfrj.siga.vraptor.handler.Resources;
 
-@SuppressWarnings({ "serial", "deprecation" })
+
+
 @Entity
 @Audited
-@Table(name = "REQUISICAOTRANSPORTE", schema = "SIGATP")
+@Table(name = "requisicaotransporte", schema = "sigatp")
 public class RequisicaoTransporte extends TpModel implements Comparable<RequisicaoTransporte>, ConvertableEntity {
-    private static final String IMG_LINKNOVAJANELAICON = "/sigatp/public/images/linknovajanelaicon.png";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final String IMG_LINKNOVAJANELAICON = "/sigatp/public/images/linknovajanelaicon.png";
     private static final String END_23_59_59 = "23:59:59";
     private static final String START_00_00_00 = "00:00:00";
     public static final ActiveRecord<RequisicaoTransporte> AR = new ActiveRecord<>(RequisicaoTransporte.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
+    @GeneratedValue(generator = "hibernate_sequence_generator")
     @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
     private Long id;
 
@@ -85,7 +91,7 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
     private TipoRequisicao tipoRequisicao;
 
     @ElementCollection(targetClass = TipoDePassageiro.class)
-    @JoinTable(name = "requisicao_tipopassageiro", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
+    @JoinTable(name = "sigatp.requisicao_tipopassageiro", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
     @Column(name = "tipoPassageiro", nullable = false)
     @Enumerated(EnumType.STRING)
     private List<TipoDePassageiro> tiposDePassageiro;
@@ -96,12 +102,14 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
     private FinalidadeRequisicao tipoFinalidade;
 
     //Campo detalheFinalidade no form Requisicoes
+    @UpperCase
     private String finalidade;
 
+    @UpperCase
     private String passageiros;
 
-    @NotNull
-    @NotEmpty
+    @org.hibernate.validator.constraints.NotEmpty
+    @UpperCase
     private String itinerarios;
 
     @OneToMany(orphanRemoval = true, mappedBy = "requisicaoTransporte")
@@ -114,7 +122,7 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
     private EstadoRequisicao ultimoEstado;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "missao_requisTransporte", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"), inverseJoinColumns = @JoinColumn(name = "missao_Id"))
+    @JoinTable(name = "sigatp.missao_requisTransporte", joinColumns = @JoinColumn(name = "requisicaoTransporte_Id"), inverseJoinColumns = @JoinColumn(name = "missao_Id"))
     private List<Missao> missoes;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
@@ -426,7 +434,11 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
             throw new AplicacaoException(MessagesBundle.getMessage("requisicaoTransporte.siglaDocumento.exception", codigoRequisicao));
         }
         
-        List<RequisicaoTransporte> requisicoesTransporte = RequisicaoTransporte.AR.find("cpOrgaoUsuario = ? and numero = ? and YEAR(dataHora) = ?", cpOrgaoUsuario, numero, ano).fetch();
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("cpOrgaoUsuario", cpOrgaoUsuario);
+		parametros.put("numero", numero);
+		parametros.put("ano", ano);
+        List<RequisicaoTransporte> requisicoesTransporte = RequisicaoTransporte.AR.find("cpOrgaoUsuario = :cpOrgaoUsuario and numero = :numero and YEAR(dataHora) = :ano", parametros).fetch();
 
         if (requisicoesTransporte.size() > 1) {
             throw new AplicacaoException(MessagesBundle.getMessage("requisicaoTransporte.codigoDuplicado.exception"));
@@ -463,7 +475,11 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
 
     public EstadoRequisicao getUltimoEstadoNestaMissao(Long idMissao) {
         Missao missao = Missao.AR.findById(idMissao);
-        Andamento andamento = (Andamento) Andamento.AR.find("requisicaoTransporte = ? and missao = ? order by dataAndamento desc", this, missao).first();
+        
+		Map<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("requisicaoTransporte",this);
+		parametros.put("missao", missao);
+        Andamento andamento = (Andamento) Andamento.AR.find("requisicaoTransporte = :requisicaoTransporte and missao = :missao order by dataAndamento desc",parametros).first();
         return andamento.getEstadoRequisicao();
     }
 

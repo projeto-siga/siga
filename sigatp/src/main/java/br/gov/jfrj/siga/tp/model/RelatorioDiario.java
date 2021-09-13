@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -19,23 +18,23 @@ import org.hibernate.envers.Audited;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
+import br.gov.jfrj.siga.tp.validation.annotation.Data;
 import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
-import br.gov.jfrj.siga.validation.ValidarAnoData;
 
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "relatoriodiario", schema = "sigatp")
 public class RelatorioDiario extends TpModel implements ConvertableEntity {
 	
 	public static ActiveRecord<RelatorioDiario> AR = new ActiveRecord<>(RelatorioDiario.class);
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence") 
+	@GeneratedValue(generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence") 
 	private Long id;
 	
 	@NotNull
-	@ValidarAnoData(descricaoCampo="Data", nullable=false)
+	@Data(descricaoCampo="Data", nullable=false)
 	private Calendar data;
 	
 	@ManyToOne
@@ -83,6 +82,7 @@ public class RelatorioDiario extends TpModel implements ConvertableEntity {
 		this.observacao = observacao;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

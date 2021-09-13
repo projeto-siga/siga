@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 
 public class DocumentoUtil {
 

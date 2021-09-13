@@ -1,0 +1,1 @@
+alter table siga.ex_documento add DESCR_DOCUMENTO_AI VARCHAR(4000);

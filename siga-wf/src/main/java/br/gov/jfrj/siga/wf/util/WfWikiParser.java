@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import info.bliki.wiki.model.WikiModel;
+// import info.bliki.wiki.model.WikiModel;
 
 
 /**
@@ -41,7 +41,8 @@ public class WfWikiParser {
 						" **** ", "\n**** ").replace(" ==", "\n==");
 		
 	//	String fragment = WikiParser.renderXHTML(s);
-		String fragment = WikiModel.toHtml(s);
-		return fragment;
+	//	String fragment = WikiModel.toHtml(s);
+	//	return fragment;
+		return s;
 	}
 }

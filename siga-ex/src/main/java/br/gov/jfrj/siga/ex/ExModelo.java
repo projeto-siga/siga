@@ -22,6 +22,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -29,8 +30,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
 /**
@@ -39,8 +41,8 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_MODELO", catalog = "SIGA")
-public class ExModelo extends AbstractExModelo implements Sincronizavel {
+@Table(name = "siga.ex_modelo")
+public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecionavel {
 
 	/**
 	 * Simple constructor of ExModelo instances.
@@ -85,19 +87,19 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 	public ExModelo getModeloAtual() {
 		return ExDao.getInstance().consultarModeloAtual(this);
 	}
+	
+	public ExModelo getModeloPeloId() {
+		return ExDao.getInstance().consultar(this.getIdMod(),ExModelo.class, false);
+	}
 
 	public boolean isDescricaoAutomatica() {
-		try {
-			if ("template/freemarker".equals(getConteudoTpBlob())
-					&& getConteudoBlobMod2() != null
-					&& (new String(getConteudoBlobMod2(), "utf-8"))
-							.contains("@descricao"))
+		if ("template/freemarker".equals(getConteudoTpBlob())) {
+			byte[] blob = getConteudoBlobMod2();
+			if (blob == null) return false;
+			String freemarker = new String(getConteudoBlobMod2(), StandardCharsets.UTF_8);
+			if (freemarker.contains("@descricao"))
 				return true;
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
 		return false;
 	}
 
@@ -181,6 +183,21 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 		String filename = getSubdiretorioENome();
 		if (filename.contains("/"))
 			return filename.substring(0, filename.lastIndexOf("/"));
+		return null;
+	}
+	
+	@Override
+	public String getSigla() {
+		return getNmMod();
+	}
+
+	@Override
+	public void setSigla(String sigla) {
+		setNmMod(sigla);
+	}
+
+	@Override
+	public String getDescricao() {
 		return null;
 	}
 }

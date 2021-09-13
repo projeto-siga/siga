@@ -38,13 +38,9 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractCpComplexo extends Objeto implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4514355304185987860L;
 
 	@Id
 	@Column(name = "ID_COMPLEXO", unique = true, nullable = false)

@@ -12,19 +12,12 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>br.com.caelum</groupId>
+			<groupId>com.jslsolucoes</groupId>
 			<artifactId>vraptor</artifactId>
-			<version>3.5.4</version> <!--or the latest version -->
-			<exclusions>
-				<exclusion>  <!-- declare the exclusion here -->
-					<groupId>javassist</groupId>
-					<artifactId>javassist</artifactId>
-				</exclusion>
-				<exclusion>  <!-- declare the exclusion here -->
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-core</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>br.com.caelum.vraptor</groupId>
+			<artifactId>vraptor-jpa</artifactId>
 		</dependency>
 		
 		<dependency>
@@ -34,16 +27,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>6.0.32</version>
-			<scope>provided</scope>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
 		</dependency>
 
 		<!-- Siga -->
@@ -64,7 +49,6 @@
 		<dependency>
 			<groupId>org.mvel</groupId>
 			<artifactId>mvel2</artifactId>
-			<version>2.2.4.Final</version>
 		</dependency>
 	</dependencies>
 </project>

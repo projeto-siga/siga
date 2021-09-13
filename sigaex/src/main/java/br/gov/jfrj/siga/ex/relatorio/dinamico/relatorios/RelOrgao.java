@@ -21,44 +21,63 @@ import ar.com.fdvs.dj.domain.constants.Font;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelOrgao extends RelatorioTemplate {
+	
+	private String nomelotacao;
 
-	public RelOrgao(Map parametros) throws DJBuilderException {
-		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+	public RelOrgao(Map<String, String> parametros) throws Exception {
+ 		super(parametros);
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException(
+ 					"Parâmetro secaoUsuario não informado!");
+ 		}
+		if (Utils.empty(parametros.get("lotacaoTitular"))) {
+			throw new AplicacaoException("Parâmetro lotação não informado!");
+ 		}
+		if (Utils.empty(parametros.get("orgao"))) {
+			throw new AplicacaoException("Parâmetro órgão não informado!");
+ 		}
+		//if (parametros.get("lotacao"))) {
+		//	throw new AplicacaoException("Parâmetro órgão não informado!");
+ 		//}
+		if (Utils.empty(parametros.get("dataInicial"))) {
+			throw new AplicacaoException("Parâmetro dataInicial não informado!");
 		}
-		if (parametros.get("lotacaoTitular") == null) {
-			throw new DJBuilderException("Parâmetro lotação não informado!");
-		}
-		if (parametros.get("orgao") == null) {
-			throw new DJBuilderException("Parâmetro órgão não informado!");
-		}
-		//if (parametros.get("lotacao") == null) {
-		//	throw new DJBuilderException("Parâmetro órgão não informado!");
-		//}
-		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Parâmetro dataInicial não informado!");
-		}
-		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Parâmetro dataFinal não informado!");
-		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
-		}
+		if (Utils.empty(parametros.get("dataFinal"))) {
+			throw new AplicacaoException("Parâmetro dataFinal não informado!");
+ 		}
+		if (Utils.empty(parametros.get("link_siga"))) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
+ 		}
+		this.nomelotacao = "";
+		if (!Utils.empty(parametros.get("lotacao"))) {
+			this.nomelotacao = buscarLotacaoPor(Long.valueOf(parametros.get("lotacao")));
+ 		}
+ 	}
+ 
+	private String buscarLotacaoPor(Long id) {
+		CpDao dao = CpDao.getInstance();
+		DpLotacao lotacao = dao.consultar(id, DpLotacao.class, false);
+		return lotacao.getNomeLotacao();
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
+		String titulo = "Relatório de Despachos e Transferências de " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString();
+		this.setTitle(titulo);
+		if (this.nomelotacao != "") {
+			String subtitulo = "Do(a) " + this.nomelotacao;
+			this.setSubtitle(subtitulo);
+		}
 		
-		this.setTitle("Relatório de Despachos e Transferências");
 		estiloTituloColuna.setFont(new Font(8,"Arial",true));
 		this.addColuna("Lotação", 10, RelatorioRapido.CENTRO, false);
 		this.addColuna("Expedientes recebidos", 10, RelatorioRapido.CENTRO,

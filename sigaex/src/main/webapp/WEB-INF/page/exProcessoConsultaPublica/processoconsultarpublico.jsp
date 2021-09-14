@@ -12,7 +12,7 @@
 <c:set var="texto1"><fmt:message key="tela.consultaprocessopublico.texto1" /></c:set>
 <c:set var="texto2"><fmt:message key="tela.consultaprocessopublico.texto2" /></c:set>
 
-<siga:pagina titulo="Consulta de Processos Públicos" desabilitarmenu="sim"
+<siga:pagina titulo="Consulta de Processos e Expedientes" desabilitarmenu="sim"
 	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
 	<script src='https://www.google.com/recaptcha/api.js'></script>
 	<div class="container-fluid">

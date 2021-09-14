@@ -186,6 +186,7 @@ public class AppController extends GcController {
 				pagina);
 	}
 
+	@Path("/app/knowledgeInplace")
 	public void knowledgeInplace(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {

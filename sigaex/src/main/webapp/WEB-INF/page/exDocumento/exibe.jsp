@@ -333,6 +333,7 @@
 												${mov.descricao}
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
+											
 												<siga:links
 														buttons="${false}"
 														inline="${true}"

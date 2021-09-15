@@ -2446,4 +2446,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return p;
 	}
 	
+	public String getModeloSigla(){
+		return this.getExDocumento().getNmMod()+" " + getSigla();
+	}
 }

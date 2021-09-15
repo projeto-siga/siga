@@ -365,7 +365,7 @@ public class ExMovimentacaoVO extends ExVO {
 					.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
 				mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
 
-			addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+			addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 					"sigla=" + mov.getExMobilRef().getSigla(), "Copia do documento: ", mensagemPos, null);
 		}
 
@@ -380,8 +380,12 @@ public class ExMovimentacaoVO extends ExVO {
 							.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
 						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
 
-					addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+//					addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+//							"sigla=" + mov.getExMobilRef().getSigla(), "Juntado ao documento: ", mensagemPos, null);
+					
+					addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 							"sigla=" + mov.getExMobilRef().getSigla(), "Juntado ao documento: ", mensagemPos, null);
+					
 				} else {
 					descricao = "Juntado ao documento: " + mov.getDescrMov();
 				}
@@ -393,7 +397,10 @@ public class ExMovimentacaoVO extends ExVO {
 						.equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
 					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
 
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
+//				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
+//						"sigla=" + mov.getExMobil().getSigla(), "Documento juntado: ", mensagemPos, null);
+				
+				addAcao(null, mov.getExMobil().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento juntado: ", mensagemPos, null);
 
 				if (mov.getExMobil().podeExibirNoAcompanhamento(titular, lotaTitular)) {
@@ -439,7 +446,7 @@ public class ExMovimentacaoVO extends ExVO {
 						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento() + motivo;
 					}
 						
-					addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+					addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 							"sigla=" + mov.getExMobilRef().getSigla(), "Desentranhado do documento: ", mensagemPos,
 							null);
 				} else {
@@ -453,7 +460,7 @@ public class ExMovimentacaoVO extends ExVO {
 						.equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
 					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
 
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobil().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento desentranhado: ", mensagemPos, null);
 			}
 		}
@@ -461,10 +468,10 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_APENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobilRef().getSigla(), "Apensado ao documento: ", null, null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobil().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento apensado: ", null, null);
 			}
 		}
@@ -472,16 +479,16 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_DESAPENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobilRef().getSigla(), "Desapensado do documento: ", null, null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobil().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Documento desapensado: ", null, null);
 			}
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI) {
-			addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+			addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 					"sigla=" + mov.getExMobilRef().getSigla(), "Publicado no Boletim Interno: ",
 					" em " + mov.getDtMovDDMMYY(), null);
 		}
@@ -489,11 +496,11 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobilRef().getSigla(), "Ver também: ",
 						" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobil().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "Ver também: ",
 						" Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
 			}
@@ -502,10 +509,10 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobilRef().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobilRef().getSigla(), "", null, null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
+				addAcao(null, mov.getExMobil().getModeloSigla(), "/app/expediente/doc", "exibir", true, null,
 						"sigla=" + mov.getExMobil().getSigla(), "", null, null);
 			}
 		}

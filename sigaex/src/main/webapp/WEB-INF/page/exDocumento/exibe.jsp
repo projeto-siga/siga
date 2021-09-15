@@ -331,8 +331,11 @@
 													<c:if test="${mov.idTpMov == 43}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
 													</c:if>>
 												${mov.descricao}
-												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
+												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} ${m.mob.descrDocumento}</c:if>
 												<c:set var="assinadopor" value="${true}" />
+												
+												
+												
 												<siga:links
 														buttons="${false}"
 														inline="${true}"

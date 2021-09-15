@@ -30,8 +30,8 @@
 							<div class="row">
 								<div class="col">
 									<div class="form-group">
-										<label>Número do Processo</label> 
-										<input type="text" id="id_number" name="n" placeholder="Informe o número do Processo" class="form-control" value="${n}"/>
+										<label>Número do Processo/Expediente</label> 
+										<input type="text" id="id_number" name="n" placeholder="Informe o Número do Processo/Expediente" class="form-control" value="${n}"/>
 									</div>
 								</div>
 							</div>

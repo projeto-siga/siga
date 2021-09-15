@@ -45,6 +45,10 @@ import org.apache.commons.io.FileUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.logging.Logger;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -57,6 +61,7 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaModal;
@@ -81,6 +86,7 @@ import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
 
 @Controller
 public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPessoa, DpPessoaDaoFiltro> {
@@ -911,7 +917,56 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	
 	@Consumes("application/json")
 	@Get("/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/{cpf}")
-	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") Long cpf) {								
+	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") Long cpf) {	
+		
+		String recaptchaSiteKey = Prop.get("/siga.recaptcha.key");
+		String recaptchaSitePassword =  Prop.get("/siga.recaptcha.pwd");
+		result.include("recaptchaSiteKey", recaptchaSiteKey);
+		
+		if (recaptchaSiteKey == null || recaptchaSitePassword == null ) {
+			throw new RuntimeException("Google ReCaptcha não definido");
+		}
+		
+
+		if (cpf == null ) {
+			result.include("request", getRequest());
+			return;
+		}
+
+		if (false) {
+			try {
+				String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+				boolean success = false;
+				if (gRecaptchaResponse != null) {
+					JsonNode body = null;
+					if (GoogleRecaptcha.isProxySetted()) {
+						body = GoogleRecaptcha.validarRecaptcha(recaptchaSitePassword, gRecaptchaResponse, request.getRemoteAddr());
+					} else {
+		    			HttpResponse<JsonNode> result = Unirest
+		    					.post("https://www.google.com/recaptcha/api/siteverify")
+		    					.header("accept", "application/json")
+		    					.header("Content-Type", "application/json")
+		    					.queryString("secret", recaptchaSitePassword)
+		    					.queryString("response", gRecaptchaResponse)
+		    					.queryString("remoteip", request.getRemoteAddr()).asJson();
+			
+						body = result.getBody();
+					}
+					String hostname = request.getServerName();
+					if (body.getObject().getBoolean("success")) {
+						String retHostname = body.getObject().getString("hostname");
+						success = retHostname.equals(hostname);
+					}
+				}
+				if (!success) {
+					result.include("request", getRequest());
+					return;
+				}
+			} catch (final Exception e) {
+				throw new RuntimeException("Não é possível realizar a verificação de segurança com o Google ReCaptcha: " + e.getMessage());
+			}
+		
+		}
 		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
 		
 		dpPessoa.setBuscarFechadas(false);
@@ -921,9 +976,17 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
 		List<String> emails = new ArrayList<String>();
 	    
-		for(DpPessoa usuario : usuarios) {
-			emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
-	    }
+		if (!usuarios.isEmpty()) {
+			for(DpPessoa usuario : usuarios) {
+				emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
+		    }
+			
+		} else {
+			throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+		}
+
+		emails.add("te******@***.om");
+		emails.add("te******@***.et");
 		
 		result.use(Results.json()).from(emails).serialize();
 	}

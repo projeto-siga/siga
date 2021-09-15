@@ -43,7 +43,7 @@
 											  <div class="input-group-prepend">
 											    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-user"></i></span>
 											  </div>
-											  <input type="text" id="cpfUser" class="form-control " style="text-align: center;" minlength="14" maxlength="14" size="11" autofocus inputmode="numeric" required  />
+											  <input type="text" id="cpfUser" class="form-control " style="text-align: center;" minlength="14" maxlength="14" size="11" autofocus inputmode="numeric" required value="76633006020" />
 											</div>
 											<div class="row mt-4">
 												<div class="col">
@@ -71,10 +71,9 @@
 										<div class="col-md-4 col-lg-4"></div>
 										<div class="col-md-4 col-lg-4">
 											
-											<c:if test="${not empty cadastrante}">
-										 		<p><span class="font-weight-bold"> ${cadastrante.emailPessoaAtualParcialmenteOculto}</span></p>
-										 	</c:if>	
-										 		
+
+										 	<div id="emailListContainer" class="font-weight-bold"></div>
+
 										    <button type="button" id="btnEnviarCodigo" class="btn btn-primary btn-lg mt-2">Enviar Código <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 										
 										</div>

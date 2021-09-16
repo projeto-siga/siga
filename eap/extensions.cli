@@ -80,7 +80,7 @@ echo Adding SIGA system properties
 /system-property="siga.cabecalho.logo":add(value="${env.SIGA_CABECALHO_LOGO}")
 /system-property="sigaex.modelos.cabecalho.brasao":add(value="${env.SIGAEX_MODELOS_CABECALHO_BRASAO}")
 /system-property="sigaex.modelos.cabecalho.subtitulo":add(value="${env.SIGAEX_MODELOS_CABECALHO_SUBTITULO}")
-
+/system-property="siga.jwt.cookie.name":add(value="${env.SIGA_JWT_COOKIE_NAME}")
 /system-property="siga.base.url":add(value="${env.SIGA_BASE_URL}")
 /system-property="sigaex.base.url":add(value="${env.SIGAEX_BASE_URL}")
 /system-property="sigawf.base.url":add(value="${env.SIGAWF_BASE_URL}")

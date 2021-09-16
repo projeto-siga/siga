@@ -1,1 +1,1 @@
-Siga-Versao: 10.0.18.6
+Siga-Versao: 10.0.18.7

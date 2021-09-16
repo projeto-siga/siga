@@ -3,4 +3,6 @@ embed-server --std-out=echo --server-config=standalone-openshift.xml
 echo Adding data-source "SigaCpDs"
 data-source add --name=SigaCpDS --jndi-name="java:/jboss/datasources/SigaCpDS" --driver-name=mysql --connection-url="jdbc:mysql://${env.DB_HOST:localhost}:${env.DB_PORT:3306}/${env.DB_NAME:corporativo}?noAccessToProcedureBodies=true" --user-name="${env.DB_USER:root}" --password="${env.DB_PASSWORD:siga}" --min-pool-size=5 --max-pool-size=50 --validate-on-match=true --background-validation=false --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter
 
+echo Adding SIGA system properties
+
 quit

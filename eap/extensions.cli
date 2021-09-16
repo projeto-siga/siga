@@ -16,7 +16,6 @@ echo Adding SIGA system properties
 /system-property="siga.smtp.auth":add(value="${env.SIGA_SMTP_AUTH}")
 /system-property="siga.smtp.usuario.remetente":add(value="${env.SIGA_SMTP_USUARIO_REMETENTE}")
 /system-property="siga.jwt.cookie.domain":add(value="${env.SIGA_JWT_COOKIE_DOMAIN}")
-/system-property="siga.jwt.cookie.name":add(value="${env.SIGA_JWT_COOKIE_NAME}")
 /system-property="siga.ws.seguranca.token.jwt":add(value="${env.SIGA_WS_SEGURANCA_TOKEN_JWT}")
 /system-property="siga.pagina.inicial.url":add(value="${env.SIGA_PAGINA_INICIAL_URL}")
 /system-property="sigaex.threadpool.size":add(value="${env.SIGAEX_THREADPOOL_SIZE}")
@@ -81,7 +80,7 @@ echo Adding SIGA system properties
 /system-property="siga.cabecalho.logo":add(value="${env.SIGA_CABECALHO_LOGO}")
 /system-property="sigaex.modelos.cabecalho.brasao":add(value="${env.SIGAEX_MODELOS_CABECALHO_BRASAO}")
 /system-property="sigaex.modelos.cabecalho.subtitulo":add(value="${env.SIGAEX_MODELOS_CABECALHO_SUBTITULO}")
-
+/system-property="siga.jwt.cookie.name":add(value="${env.SIGA_JWT_COOKIE_NAME}")
 /system-property="siga.base.url":add(value="${env.SIGA_BASE_URL}")
 /system-property="sigaex.base.url":add(value="${env.SIGAEX_BASE_URL}")
 /system-property="sigawf.base.url":add(value="${env.SIGAWF_BASE_URL}")

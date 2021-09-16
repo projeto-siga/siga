@@ -6,4 +6,4 @@ ADD --chown=jboss:root ./eap/modules.tar.gz ${JBOSS_HOME}/
 
 COPY --chown=jboss:root eap/postconfigure.sh eap/extensions.cli /opt/eap/extensions/
 COPY --chown=jboss:root target/sigawf.war /deployments/
-COPY --chown=jboss:root eap/datasource.sigawf.cli /opt/eap/extensions/datasource.cli
+COPY --chown=jboss:root eap/sigawf.cli /opt/eap/extensions/datasource.cli

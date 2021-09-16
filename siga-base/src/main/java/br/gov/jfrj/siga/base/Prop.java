@@ -168,6 +168,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.ambiente", "desenv");
 		provider.addPublicProperty("/siga.base.teste", "true");
 		provider.addPublicProperty("/siga.devolucao.dias", null);
+		provider.addPublicProperty("/siga.jwt.cookie.name", "siga-jwt-auth");
 		provider.addPublicProperty("/siga.jwt.cookie.domain", null);
 		provider.addPrivateProperty("/siga.jwt.secret");
 		provider.addPrivateProperty("/siga.autenticacao.senha", provider.getProp("/siga.jwt.secret"));

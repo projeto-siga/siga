@@ -1903,8 +1903,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public Set<ExMovimentacao> getAssinaturasComTokenOuSenha() {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
-		set.addAll(getAssinaturasComSenha());
-		set.addAll(getAssinaturasComToken());
+		
+		long[] idTpMovs = {ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO, 
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA};
+		
+		set.addAll(getMobilGeral().getMovsNaoCanceladas(idTpMovs));
 		return set;
 	}
 

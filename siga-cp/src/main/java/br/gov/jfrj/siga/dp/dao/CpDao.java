@@ -1103,7 +1103,7 @@ public class CpDao extends ModeloDao {
 
 	public CpLocalidade consultarLocalidadesPorNomeUF(final CpLocalidade localidade) {
 		Query query = em().createQuery("from CpLocalidade lot where "
-				+ "      upper(TRANSLATE(lot.nmLocalidade,'âàãáÁÂÀÃéêÉÊíÍóôõÓÔÕüúÜÚçÇ''','AAAAAAAAEEEEIIOOOOOOUUUUCC ')) = upper(:nome) and lot.UF.id = :idUf");
+				+ "      upper(REMOVE_ACENTO(lot.nmLocalidade)) = upper(:nome) and lot.UF.id = :idUf");
 		query.setParameter("idUf", localidade.getUF().getId());
 		query.setParameter("nome", localidade.getNmLocalidade());
 

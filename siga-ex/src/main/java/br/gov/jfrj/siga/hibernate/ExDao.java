@@ -88,6 +88,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
@@ -274,6 +275,18 @@ public class ExDao extends CpDao {
 		
 		query.executeUpdate();
 		
+	}
+	
+	public ExTipoSequencia obterTipoSequencia(String nomeTipoSequencia) {
+		final Query query = em().createNamedQuery("ExTipoSequencia.obterTipoSequencia");
+		query.setParameter("nomeTipoSequencia", nomeTipoSequencia);
+		
+		try {
+			List results = query.getResultList();			
+			return (ExTipoSequencia) (!results.isEmpty() ? results.get(0) : null);
+		} catch (NoResultException ne) {
+			return null;
+		}
 	}
 	
 	/*****************************/

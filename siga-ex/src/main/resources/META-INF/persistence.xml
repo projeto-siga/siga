@@ -75,6 +75,7 @@
 		<class>br.gov.jfrj.siga.ex.ExConfiguracaoCache</class>
 		<class>br.gov.jfrj.siga.ex.ExDocumentoNumeracao</class>
 		<class>br.gov.jfrj.siga.ex.ExSequencia</class>
+		<class>br.gov.jfrj.siga.ex.ExTipoSequencia</class>
 		<class>br.gov.jfrj.siga.ex.ExProtocolo</class>
 		<class>br.gov.jfrj.siga.cp.CpArquivo</class>
 		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>

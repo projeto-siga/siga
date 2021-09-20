@@ -220,6 +220,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("modelo.processo.administrativo", null);
 		addPublicProperty("montador.query", "br.gov.jfrj.siga.hibernate.ext.MontadorQuery");
 		addPublicProperty("pdf.tamanho.maximo", "5000000");
+		addPublicProperty("pdf.tamanho.maximo.completo", null);
 		addPublicProperty("relarmaz.qtd.bytes.pagina", "51200");
 		addPublicProperty("reordenacao.ativo", null);
 		addPublicProperty("rodape.data.assinatura.ativa", "31/12/2099");

@@ -35,7 +35,6 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -133,7 +132,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
-import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
@@ -153,6 +151,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
@@ -192,6 +191,7 @@ public class ExBL extends CpBL {
 	private static final String MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO = "Folha de Rosto - Processo Administrativo Interno";
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
+	private static final String STRING_TRUE = "1";
 	
 	private final ThreadLocal<SortedSet<ExMobil>> threadAlteracaoParcial = new ThreadLocal<SortedSet<ExMobil>>();
 
@@ -3056,6 +3056,9 @@ public class ExBL extends CpBL {
 				if (doc.getNumExpediente() == null)
 					doc.setNumExpediente(obterProximoNumero(doc));
 			}
+			
+			//Esse metodo deve estar acima do doc.setDtFinalizacao(dt), devido a flag de doc.isFinalizado()
+			gerarTipoSequenciaGenerica(doc);
 
 			doc.setDtFinalizacao(dt);
 
@@ -3154,6 +3157,28 @@ public class ExBL extends CpBL {
 		return Long.parseLong(sequencia);
 	}
 	
+	private String obterSequenciaAno(Long ano, ExTipoSequencia tipoSequencia) throws Exception {
+		
+		String sequencia = obterSequencia(ano, 
+				tipoSequencia.getidTipoSequencia().intValue(), 
+				tipoSequencia.getZerarInicioAno()).toString();
+		
+		return  sequencia + "/" + ano;
+	}
+	
+	private void gerarTipoSequenciaGenerica(ExDocumento doc) throws Exception {
+		if (doc != null) {
+			ExTipoSequencia tipoSequencia = obterTipoSequenciaPorNomeModelo(doc.getExModelo().getNmMod());
+			
+			if (!Utils.empty(tipoSequencia) && !doc.isFinalizado()) {
+				doc.setNumeroSequenciaGenerica(obterSequenciaAno(doc.getAnoEmissao(), tipoSequencia));
+			}
+		}
+	}
+	
+	private ExTipoSequencia obterTipoSequenciaPorNomeModelo(String nomeModelo) {
+		return dao().obterTipoSequencia(nomeModelo);
+	}
 	
 	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante,
 			ExDocumento doc) throws AplicacaoException {
@@ -3662,10 +3687,13 @@ public class ExBL extends CpBL {
 			Set<Integer> atributosDesconsiderados = new HashSet<>();
 			atributosDesconsiderados.add(CpConfiguracaoBL.PESSOA_OBJETO);
 			atributosDesconsiderados.add(CpConfiguracaoBL.LOTACAO_OBJETO);
+			
+			CpConfiguracaoCache filtroConfiguracaoCache = confFiltro.converterParaCache();
 			for (ExConfiguracaoCache conf : lista) {
+				
 				if (// (!conf.ativaNaData(dt)) ||
 				conf.exPapel == 0 || (conf.pessoaObjeto == 0 && conf.lotacaoObjeto == 0)
-						|| !confBL.atendeExigencias(confFiltro.converterParaCache(), atributosDesconsiderados, conf, null))
+						|| !confBL.atendeExigencias(filtroConfiguracaoCache, atributosDesconsiderados, conf, null))
 					continue;
 				DpPessoa po = null;
 				DpLotacao lo = null;
@@ -5460,6 +5488,18 @@ public class ExBL extends CpBL {
 					.getNmArqMod() != null))
 					|| doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 				if (doc.getConteudoBlobForm() != null) {
+					if (!Utils.empty(doc.getNumeroSequenciaGenerica())) {
+						Map<String, String> form = new TreeMap<String, String>();
+						//Get Form atual
+						Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());
+						//gera e adiciona a entrevista o número da sequencia generica
+						form.put("numeroSequenciaGenerica", doc.getNumeroSequenciaGenerica());
+						//Atualiza Form 
+						doc.setConteudoBlobForm(urlEncodedFormFromMap(form));
+						//Reprocessa Descrição para adição de sequencia se implementado no modelo
+						gravaDescrDocumento(doc.getTitular(), doc.getLotaTitular(), doc);
+					}
+					
 				}
 				if (gravar && transacao) {
 					iniciarAlteracao();
@@ -6741,8 +6781,7 @@ public class ExBL extends CpBL {
 			String motivo) throws Exception {		
 		
 		if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
-			throw new RegraNegocioException("Cancelamento não permitido." 
-					+ " Isso pode ocorrer se o documento não estiver apto a ser cancelado ou devido a alguma regra para não permitir esta operação");
+			throw new RegraNegocioException(SigaMessages.getMessage("excecao.cancelamento.naopodetornardocumentosemefeito"));
 
 		// Verifica se o subscritor pode movimentar todos os mobils
 		// E Também se algum documento diferente está apensado ou juntado a este
@@ -6752,7 +6791,7 @@ public class ExBL extends CpBL {
 			if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas					
 				
 				if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m)) {
-					throw new RegraNegocioException("Cancelamento não permitido. Você não possui permissão para executar essa operação no documento");
+					throw new RegraNegocioException(SigaMessages.getMessage("excecao.cancelamento.naopodemovimentar"));
 				}
 				
 				if (m.isJuntado()) {

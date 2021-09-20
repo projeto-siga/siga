@@ -115,7 +115,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true),
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
 	DESTINATARIO(31, "Destinatário",
 			"Indica se determinada espécie ou modelo requerem a especificação de um destinatário, ou não. Para fazer com que o destinatário seja exigido, preencher o campo situação com o valor \"Obrigatório\".",
@@ -167,7 +167,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true),
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
 	ELETRONICO(4, "Eletrônico",
 			"Identifica os modelos documentos que são exclusivamente digitais, fisícos ou os que podem assumir as duas formas. Para forçar um modelo de documento a ser digital, utilize a situação \"Obrigatório\".",
@@ -234,7 +234,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	//
 	INCLUIR_DOCUMENTO(41, "Incluir Documento",
 			"Esta configuração indica se o usuário poderá executar a ação de \"Incluir Documento\".",
@@ -318,7 +318,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true),
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
 	PODE_ASSINAR_SEM_SOLICITACAO(39, "Pode Assinar sem Solicitação",
 			"Esta configuração é utilizada para obter um efeito muito interessante no Siga-Doc. Algumas pessoas, geralmente de alto escalão, assinam grande quantidade de documentos por dia. Diremos que uma dessas pessoas é uma \"autoridade\". Devido a dificuldade de validar todos esses documentos, a autoridade pode precisar identificar pessoas de confiança para realizarem a revisão dos documentos antes que estes apareçam na lista para assinatura em lote.\n"
@@ -519,7 +519,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 
+			CpSituacaoDeConfiguracaoEnum.PODE, true), 
 	//
 	UTILIZAR_EXTENSAO_EDITOR(32, "Utilizar Extensão de Editor", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,

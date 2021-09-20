@@ -759,13 +759,22 @@ public class SolicitacaoController extends SrController {
 
 	@Path("/listarSolicitacoesRelacionadas")
 	public void listarSolicitacoesRelacionadas(SrSolicitacao solicitacao, SrSolicitacaoFiltro filtro) throws Exception {
-		forcarCargaDoItemEDaAcao(solicitacao);
+		//forcarCargaDoItemEDaAcao(solicitacao);
 		if (filtro == null && solicitacao != null) {
 			filtro = new SrSolicitacaoFiltro();
 			filtro.setSolicitante(solicitacao.getSolicitante());
 			filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
 			filtro.setAcao(solicitacao.getAcao());
+		} else if (filtro != null) {
+			if (filtro.getItemConfiguracao() != null && filtro.getItemConfiguracao().getId() != null) {
+				filtro.setItemConfiguracao(SrItemConfiguracao.AR.findById(filtro.getItemConfiguracao().getId()));
+			}
+			
+			if (filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
+				filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));
+			}	
 		}
+		
 		if (solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null
 				&& solicitacao.getAcao().getIdAcao() != null) {
 			solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));

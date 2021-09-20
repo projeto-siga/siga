@@ -171,7 +171,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			dscCpTipoGrupo = tpGrp.getDscTpGrupo();
 			try {
 				configuracoesGrupo = Cp.getInstance().getConf()
-						.obterCfgGrupo(grp);
+						.obterCfgGrupo(dao().consultar(grp.getHisIdIni(),CpGrupo.class,false));
 				for (ConfiguracaoGrupo t_cfgConfiguracaoGrupo : configuracoesGrupo) {
 					CpConfiguracao t_cpcConfiguracaoCorrente = t_cfgConfiguracaoGrupo
 							.getCpConfiguracao();
@@ -298,6 +298,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				grp = (CpGrupo) Objeto.getImplementation(daoGrupo(idCpGrupo));
 				PropertyUtils.copyProperties(grpNovo, grp);
 				grpNovo.setIdGrupo(null);
+				grpNovo.setHisIdIni(grp.getHisIdIni());
 			}
 			grpNovo.setCpGrupoPai(grupoPaiSel != null ? grupoPaiSel.getObjeto()
 					: null);
@@ -308,6 +309,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			
 			grp = (CpGrupo) dao().gravarComHistorico(grpNovo, grp, dt,
 					getIdentidadeCadastrante());
+			CpGrupo grupoInicial = null;
 			idCpGrupo = grp.getIdGrupo();
 
 			// Fabrica
@@ -342,7 +344,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				cfg.setCpTipoConfiguracao(tipoConfiguracao);
 				cfg.setHisDtIni(dt);
 				cfgGrp.setCpConfiguracao(cfg);
-				cfgGrp.setCpGrupo(grp);
+				grupoInicial = dao().consultar(grp.getHisIdIni(),CpGrupo.class,false);
+				cfgGrp.setCpGrupo(grupoInicial);
 				cfgGrp.atualizarCpConfiguracao();
 				dao().gravarComHistorico(cfg, getIdentidadeCadastrante());
 			}

@@ -1518,7 +1518,7 @@ public class CpBL {
 			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
 			if (marcadorAnt != null) {
 				if (marcadorAnt.getDpLotacaoIni() != null &&
-						marcadorAnt.getDpLotacaoIni().getIdInicial() != cadastrante.getLotacao().getIdInicial())
+						!(marcadorAnt.getDpLotacaoIni().getIdInicial().equals(cadastrante.getLotacao().getIdInicial())))
 					throw new AplicacaoException ("Não é permitida a alteração de marcador de outra " + msgLotacao);
 
 				marcador.setHisIdIni(marcadorAnt.getHisIdIni());

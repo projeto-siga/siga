@@ -4588,9 +4588,9 @@ ${texto}
 [#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
 	<tr>
-		<td width="30%" align="right" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+		<td width="12%" align="right" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
 		<td width="2%">&nbsp;</td>
-		<td width="68%" align="left" nowrap >
+		<td align="left" nowrap >
 		${_tituloGeralParteI}<br>
 		${_tituloGeralParteII}<br>		
 		[#if org??][#-- tratando null  --]  

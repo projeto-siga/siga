@@ -228,7 +228,8 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial"
 				+ "					and doc.dtFinalizacao is not null"
 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
-				+ "				order by  doc.dtFinalizacao") })
+				+ "				order by  doc.dtFinalizacao"),
+		@NamedQuery(name = "consultarExDocumentoId", query = "from ExDocumento doc	where  	doc.id=:idDoc" )})
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 	

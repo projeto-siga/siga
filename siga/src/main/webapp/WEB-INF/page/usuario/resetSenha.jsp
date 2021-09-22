@@ -83,7 +83,7 @@
 											  <div class="input-group-prepend">
 											    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-user"></i></span>
 											  </div>
-											  <input type="text" id="cpfUser" class="form-control " style="text-align: center;" minlength="14" maxlength="14" size="11" autofocus inputmode="numeric" required value="76633006020" />
+											  <input type="text" id="cpfUser" class="form-control " style="text-align: center;" minlength="14" maxlength="14" size="11" autofocus inputmode="numeric" required />
 											</div>
 											
 											<div class="row mt-4">

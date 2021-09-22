@@ -291,6 +291,7 @@ public class ExAssinadorExternoController extends ExController {
 			Boolean autenticar = false;
 			Boolean juntar = null;
 			Boolean tramitar = null;
+			Boolean exibirNoProtocolo = null;
 			if (extra != null) {
 				if (extra.contains("autenticar"))
 					autenticar = true;
@@ -302,6 +303,10 @@ public class ExAssinadorExternoController extends ExController {
 					tramitar = false;
 				else if (extra.contains("tramitar"))
 					tramitar = true;
+				if(extra.contains("nao_exibirNoProtocolo"))
+					exibirNoProtocolo = false;
+				else if(extra.contains("exibirNoProtocolo"))
+					exibirNoProtocolo = true;
 			}
 
 			byte[] assinatura = Base64.decode(envelope);
@@ -337,7 +342,7 @@ public class ExAssinadorExternoController extends ExController {
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar, null, getTitular());
+						null, tpMov, juntar, tramitar == null ? false : tramitar, exibirNoProtocolo, getTitular());
 				if (msg != null)
 					msg = "OK: " + msg;
 				else

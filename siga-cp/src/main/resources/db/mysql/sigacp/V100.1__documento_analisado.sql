@@ -1,1 +1,1 @@
-INSERT INTO corporativo.cp_marcador (ID_MARCADOR, DESCR_MARCADOR, ID_FINALIDADE_MARCADOR, ORD_MARCADOR) values (1005,'Documento Analisado', 2, null);
+INSERT INTO corporativo.cp_marcador (ID_MARCADOR, DESCR_MARCADOR, ID_FINALIDADE_MARCADOR, ORD_MARCADOR,GRUPO_MARCADOR) values (1005,'Documento Analisado', 2, null,7);

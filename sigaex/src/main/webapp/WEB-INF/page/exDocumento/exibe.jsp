@@ -102,7 +102,7 @@
 </style>						
 
 <script>
-	if (${not empty f:resource('graphviz.url')}) {
+	if (${not empty f:resource('/vizservice.url')}) {
 	} else if (window.Worker) {
 		window.VizWorker = new Worker("/siga/javascript/viz.js");
 		window.VizWorker.onmessage = function(oEvent) {
@@ -126,7 +126,7 @@
 	}
 
 	function buildSvg(id, input, cont) {
-		if (${not empty f:resource('graphviz.url')}) {
+		if (${not empty f:resource('/vizservice.url')}) {
 		    input = input.replace(/fontsize=\d+/gm, "");
 			$.ajax({
 			    url: "/siga/public/app/graphviz/svg",
@@ -200,7 +200,7 @@
 	}
 </script>
 
-<div class="container-fluid content" id="page">
+<div class="container-fluid content" id="page">	
 	<c:if test="${not empty param.msg}">
 		<div class="row mt-3">
 			<p align="center">
@@ -211,18 +211,19 @@
 	<div class="row mt-3">
 		<div class="col">
 			<form name="frm" action="exibir" theme="simple" method="POST">
-				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>
+				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>	
+				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 			</form>
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
 				</c:if>
-				<button type="button" name="voltar" onclick="${(empty param.linkVolta) ? 'javascript:window.location.href=\'/siga\';' : 'javascript:'.concat(param.linkVolta) }" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
+				<button type="button" name="voltar" onclick="${(empty param.linkVolta) ? 'javascript:window.location.href=\'/siga\';' : 'javascript:'.concat(param.linkVolta) }" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>				
 			</h2>
 		</div>
 	</div>
 	<c:set var="primeiroMobil" value="${true}" />
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
-		<div class="row">
+		<div class="row  siga-menu-acoes">
 			<div class="col">
 				<h3 class="${hide_only_GOVSP} style="margin-bottom: 0px;">
 					${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}
@@ -238,9 +239,11 @@
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 								pre="${acao.pre}" pos="${acao.pos}"
 								url="${pageContext.request.contextPath}${acao.url}"
-								test="${true}" popup="${acao.popup}"
-								confirm="${acao.msgConfirmacao}" classe="${acao.classe}"
-								estilo="line-height: 160% !important" atalho="${true}" />
+								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
+								classe="${acao.classe}" estilo="line-height: 160% !important"
+								atalho="${true}" modal="${acao.modal}"
+								explicacao="${acao.explicacao}" post="${acao.post}"
+								test="${acao.pode}" />
 						</c:forEach>
 					</siga:links>
 				</c:if>
@@ -259,7 +262,7 @@
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
 				<div>
-					<c:if test="${f:resource('isWorkflowEnabled')}">
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 						<c:if
 							test="${ (primeiroMobil == true) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
@@ -286,9 +289,9 @@
 							</div>
 						</c:when>
 						<c:when test="${docVO.doc.pdf}">
+							<c:set var="urlCapturado" value="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"/>
 							<iframe style="display: block;" name="painel" id="painel"
-								src="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"
-								width="100%" frameborder="0" scrolling="auto"></iframe>
+								width="100%" frameborder="0" scrolling="auto"></iframe>			
 							<script>
 							$(document).ready(function(){resize();$(window).resize(function(){resize();});});
 						</script>
@@ -313,7 +316,6 @@
 										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
 										<th class="text-left">Evento</th>
 										<th class="text-left">Descrição</th>
-										<th></th>
 									</tr>
 								</thead>
 								<c:set var="evenorodd" value="odd" />
@@ -325,10 +327,13 @@
 											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td class="text-left" >${mov.mov.exTipoMovimentacao.sigla}</td>
-											<td class="text-left">
+											<td class="text-left" 
+													<c:if test="${mov.idTpMov == 43}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
+													</c:if>>
 												${mov.descricao}
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
+											
 												<siga:links
 														buttons="${false}"
 														inline="${true}"
@@ -337,9 +342,9 @@
 															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 																pos="${acao.pos}"
 																url="${pageContext.request.contextPath}${acao.url}"
-																test="${true}" popup="${acao.popup}"
+																test="${acao.pode}" explicacao="${acao.explicacao}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-																idAjax="${mov.idMov}" classe="${acao.classe}" />
+																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
 															<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
@@ -360,7 +365,7 @@
 							</table>
 						</div>
 					</c:if>
-				</div>
+				</div>				
 			</div>
 			<div class="col col-sm-12 col-md-4">
 				<div class="gt-sidebar">
@@ -518,58 +523,130 @@
 						</div>
 					</c:if>
 
-					<c:if test="${not empty docVO.outrosMobsLabel and not empty docVO.marcasPorMobil}">
-						<jsp:useBean id="now" class="java.util.Date" />
+					<!-- tabela de móbiles e marcas -->
+					<c:if test="${not empty docVO.outrosMobsLabel and not empty docVO.marcasDeSistemaPorMobil}">
 						<div class="card-sidebar card bg-light mb-3">
-							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}">
-								<a title="Atualizar marcas"
-								style="float: right; margin-top: -3px;"
+							<c:set var="butRefresh"><a title="Atualizar marcas"
+								style="float: right; margin-top: 0px; padding-left: 1em; padding-right: 1em;"
 								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc(sigla)}?sigla=${sigla}"
 								${popup?'target="_blank" ':''}> <img
 								src="/siga/css/famfamfam/icons/arrow_refresh.png">
 								
-							</a>
-								<ul style="list-style-type: none; margin: 0; padding: 0;">
-									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
+							</a></c:set>
+							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}" addToTitle="${butRefresh}" classInfo="m-0 p-0">
+								<div class="table-responsive">
+								<table class="table table-sm mb-0 w-100">
+								<!-- <thead class="align-middle text-center">
+									<tr>
+										<th class="text-left"></th>
+										<th class="text-left">Marca</th>
+										<th class="text-left"><fmt:message key="usuario.pessoa"/></th>
+										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
+										<th class="text-left">Texto</th>
+									</tr>
+								</thead> -->
+								<tbody>
+									<c:forEach var="entry" items="${docVO.marcasDeSistemaPorMobil}">
 										<c:set var="outroMob" value="${entry.key}" />
 										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
-										<li><c:choose>
-												<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
-													<i><b>${mobNome}</b></i>
+										<c:forEach var="marca" items="${entry.value}" varStatus="loop">
+											<c:set var="lotacaoAtual" value="${marca.dpLotacaoIni.lotacaoAtual}"/>
+											<c:set var="pessoaAtual" value="${marca.dpPessoaIni.pessoaAtual}"/>
+											<tr class="${mov.classe} ${mov.disabled}">
+											<c:if test="${loop.first}">
+											<td rowspan="${entry.value.size()}" style="padding-left: 1.25rem"><c:choose>
+													<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
+														<i><b>${mobNome}</b></i>
+													</c:when>
+													<c:otherwise>
+														<a
+															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${outroMob.sigla}"
+															title="${outroMob.doc.descrDocumento}"
+															style="text-decoration: none">
+															${mobNome} </a>
+													</c:otherwise>
+												</c:choose></td>
+											</c:if>
+											<td>${marca.descricaoComDatas}</td>
+											<td><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
+												descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
+												pessoaParam="${pessoaAtual.siglaCompleta}" /></td>
+											<td><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+												descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+												lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></td>
+											<c:choose>
+												<c:when test="${not empty marca.exMovimentacao.descrMov}">
+													<td>${marca.exMovimentacao.descrMov}</td>
 												</c:when>
 												<c:otherwise>
-													<a
-														href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${outroMob.sigla}"
-														title="${outroMob.doc.descrDocumento}"
-														style="text-decoration: none">
-														${mobNome} </a>
+													<td style="padding-left:0; padding-right: 0"></td>
 												</c:otherwise>
-											</c:choose> &nbsp;-&nbsp; 
-											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
-												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
-												    	${marca.cpMarcador.descrMarcador}
-														<c:if test="${marca.dtIniMarca gt now}">
-															a partir de ${marca.dtIniMarcaDDMMYYYY}
-														</c:if>
-														<c:if test="${not empty marca.dtFimMarca}"> 
-															até ${marca.dtFimMarcaDDMMYYYY}
-														</c:if>
-														<c:if test="${not empty marca.dpLotacaoIni}">
-															[${marca.dpLotacaoIni.lotacaoAtual.sigla}
-															    <c:if test="${not empty marca.dpPessoaIni}">
-																    &nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
-															    </c:if>
-															]
-														</c:if>
-									
-												</c:if>
-												<c:if test="${siga_cliente ne 'GOVSP'}">
-												    ${marca}<c:if test="${!lopp.last}">,</c:if>
-												</c:if>
-											</c:forEach>
-										</li>
+											</c:choose>
+											<c:choose>
+												<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
+													<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+												</c:when>
+												<c:otherwise>
+													<td style="padding-left:0; padding-right: 0"></td>
+												</c:otherwise>
+											</c:choose>
+											<td style="padding-left:0; padding-right: 1.25rem"></td>
+											</tr>
+										</c:forEach>
 									</c:forEach>
-								</ul>
+								</tbody>
+							</table>
+							</div>
+							</tags:collapse>
+						</div>
+					</c:if>
+
+					<!-- tabela marcas -->
+					<c:if test="${not empty docVO.marcasDoMobil}">
+						<div class="card-sidebar card bg-light mb-3">
+							<tags:collapse title="Marcadores" id="Marcadores" collapseMode="${collapse_Expanded}" classInfo="m-0 p-0">
+								<div class="table-responsive">
+								<table class="table table-sm mb-0 w-100">
+								<tbody>
+									<c:forEach var="marca" items="${docVO.marcasDoMobil}" varStatus="loop">
+										<c:set var="lotacaoAtual" value="${marca.dpLotacaoIni.lotacaoAtual}"/>
+										<c:set var="pessoaAtual" value="${marca.dpPessoaIni.pessoaAtual}"/>
+										<c:if test="${loop.first or (marca.cpMarcador.idFinalidade.grupo != g)}">
+											<tr><td colspan="6" style="padding-left: 1.25rem; color: gray">${marca.cpMarcador.idFinalidade.grupo.nome}</td></tr>
+											<c:set var="g" value="${marca.cpMarcador.idFinalidade.grupo}"/>
+										</c:if>
+										<tr>
+										<td style="padding-left: 2.5rem">${marca.descricaoComDatas}
+										<c:if test="${marca.cpMarcador.idFinalidade.idTpInteressado != 'ATENDENTE'}">
+											- <c:if test="${not empty pessoaAtual}"><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
+											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
+											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if><c:if test="${not empty lotacaoAtual}"><c:if test="${not empty pessoaAtual}">/</c:if><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+											descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+											lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></c:if>
+										</c:if>
+										</td>
+										<c:choose>
+											<c:when test="${not empty marca.exMovimentacao.descrMov}">
+												<td>${marca.exMovimentacao.descrMov}</td>
+											</c:when>
+											<c:otherwise>
+												<td style="padding-left:0; padding-right: 0"></td>
+											</c:otherwise>
+										</c:choose>
+										<c:choose>
+											<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
+												<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${marca.exMovimentacao.exMobil.sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+											</c:when>
+											<c:otherwise>
+												<td style="padding-left:.25em; padding-right: 0"><a title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt text-secondary"></i></a></td>
+											</c:otherwise>
+										</c:choose>
+										<td style="padding-left:0; padding-right: 1.25rem"></td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+							</div>
 							</tags:collapse>
 						</div>
 					</c:if>
@@ -998,6 +1075,14 @@
 								 		- ${m.tamanhoDeArquivo}
 									</c:if>
 								</p>
+								<c:if test="${not empty docVO.dtPrazoDeAssinatura}">
+									<div>
+										<span>Prazo de Assinatura: ${docVO.dtPrazoDeAssinatura}</span>
+										<a class="float-right ${marca.exMovimentacao.podeCancelarOuAlterarPrazoDeAssinatura(titular, lotaTitular, m.mob, docVO.doc.movPrazoDeAssinatura)? '' : 'disabled' }" 
+										href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${docVO.doc.movPrazoDeAssinatura.idMov}&sigla=${docVO.doc.movPrazoDeAssinatura.exMobil.sigla}')" 
+											><i class="far fa-trash-alt"></i></a>
+									</div>
+								</c:if>
 							</tags:collapse>
 						</div>
 					</c:if>
@@ -1007,7 +1092,7 @@
 							<tags:collapse title="Cossignatários" id="Cossignatários" collapseMode="${collapse_Expanded}">
 								<ul>
 									<c:forEach var="cossig" items="${docVO.cossignatarios}">
-										<li>${cossig.key.subscritor.nomePessoa}
+										<li>${cossig.key.subscritor}
 										<c:if test="${cossig.value}">&nbsp;
 											<a class="btn btn-sm btn-light mb-2" href="/sigaex/app/expediente/mov/excluir?id=${cossig.key.idMov}">Excluir</a>
 										</c:if>
@@ -1158,7 +1243,7 @@
 															</c:when>
 															<c:when test="${acao.nomeNbsp eq 'Cancelar' and siga_cliente eq 'GOVSP'}">
 																<button type="button" class="btn btn-sm btn-outline-danger btn-cancel"																	
-																	onclick="confirmarExclusaoArquivoAuxiliar(${mov.idMov}, '${sigla}', this)">																
+																	onclick="confirmarExclusaoArquivoAuxiliar(${mov.idMov}, '${mov.mov.exMobil.sigla}', this)">																
 																	Cancelar
 																</button>																													
 															</c:when>															
@@ -1181,6 +1266,7 @@
 							<div id="gc"></div>
 						</div>
 					</div>
+		<%@ include file="marcar.jsp"%>
 	</c:forEach>
 
 </div>
@@ -1244,7 +1330,7 @@
 		class="gt-btn-large gt-btn-left">Voltar</a>
 </div>
 
-<c:if test="${f:resource('isWorkflowEnabled')}">
+<c:if test="${f:resource('/sigawf.ativo') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 	<script type="text/javascript">
 		<c:if test="${ (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 			var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";
@@ -1279,55 +1365,189 @@
 		var urlGc = "${url}";
 
         $.ajax({
-            url: url,
+            url: urlGc,
             type: "GET"
         }).fail(function(jqXHR, textStatus, errorThrown){
-			$("#gc").html(errorThrown);
+        	if (errorThrown !== "Not Found")
+        		$("#gc").html(errorThrown);
         }).done(function(data, textStatus, jqXHR ){
-			$("#gc").html(response);
+        	$("#gc").html(data); 
         });
 	</script>
 </c:if>
 </div>
 </div>
-	
-<c:if test="${siga_cliente eq 'GOVSP'}">
-	<script>
-		$(document).ready(function() {
-			var btnArqCorrente = $('.arq-corrente-requer-confirmacao');
-			
-			if (btnArqCorrente.length > 0) {
-				var btnConfirmacaoArqCorrente = $('.btn-confirmacao-arq-corrente');
+
+<c:if test="${recebimentoPendente  and !origemRedirectTransferirGravar}">				
+	<style>
+		.gt-sidebar, .siga-menu-acoes {
+			filter: blur(2px);
+   			-moz-filter: blur(2px);
+   			-webkit-filter: blur(2px);
+   			-o-filter: blur(2px);    			
+		}	
+		
+		.gt-sidebar a, .siga-menu-acoes a {
+			cursor: not-allowed;
+   			pointer-events: none;
+		}		
+		
+		#modalReceberDocumento {
+			left: auto !important;
+			overflow-y: hidden !important;
+			max-width: 260px;
+			max-height: 180px;
+			padding-right: 0;
+		}		
 				
-				btnArqCorrente.attr('data-toggle', 'modal').attr('data-target', '#modalDeConfirmacaoArqCorrente');
-				btnConfirmacaoArqCorrente.attr('href', btnArqCorrente.attr('href'));	
-			}							
-		});	
-	</script>
+		.siga-btn-receber-doc {					
+			opacity: 0;
+			visibility: hidden;					
+			background: #007bff;
+			border-radius: 50%;
+			width: 60px;
+			height: 60px;		
+			position: fixed;
+			bottom: 25px;
+			right: 25px;			
+			box-shadow: 0 0 0 0 #28a745, 0 0 0 0 #007bff;	
+			transition: box-shadow 1.1s cubic-bezier(.19,1,.22,1), opacity 1.3s, visibility 1.3s;
+			animation: piscar 1s linear infinite;
+		}
+
+		.siga-btn-receber-doc:hover {
+			box-shadow: 0 0 0 8px #007bff, 0 0 0 8px #007bff;		
+		}
+		
+		.icone-receber-doc {		
+			font-size: 24px;			
+			transition: font-size .5s;
+		}
+		
+		.siga-btn-receber-doc:hover .icone-receber-doc {
+			font-size: 28px;
+		}	
+		
+		@keyframes piscar {
+		  50% {
+		    box-shadow: 0 0 0 8px #007bff, 0 0 0 8px #007bff;
+		  }
+		}	
+	</style>
 	
-	<div class="modal fade" id="modalDeConfirmacaoArqCorrente" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
+	<div class="modal fade" id="modalReceberDocumento" tabindex="-1" role="dialog" aria-labelledby="confirmacao" aria-hidden="true">
 	  <div class="modal-dialog text-center" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <div class="col-12" style="margin: 0 auto;">
-	        	<i class="fas fa-exclamation-circle" style="font-size: 5em; color: #ffc107; margin: 15px 0;"></i>
-	        	<h5 class="modal-title" id="confirmacao" style="font-size: 2em; font-weight: bold">Atenção</h5>
-	        </div>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: -40px">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body text-center" style="padding-top: 0;">
-	        Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
-	      </div>
-	      <div class="modal-footer text-center" style="margin: 0 auto;">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        
-	        <a href="#" class="btn btn-primary btn-confirmacao-arq-corrente" role="button" aria-pressed="true">Sim</a>
+	    <div class="modal-content">	      
+	      <div class="modal-body text-center">Deseja receber o documento?</div>
+	      <div class="modal-footer text-center">
+	      	<div class="row" style="margin: 0 auto;">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
+	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
+		    </div>    
 	      </div>
 	    </div>
 	  </div>
 	</div>	
-</c:if>	
+	<button type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
+		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
+	</button>
+	<c:if test="${!docVO.mob.isJuntado() and !origemRedirectTransferirGravar}">
+	<script>
+		$(function() {						
+			var modalReceberDocumento = $('#modalReceberDocumento');				
+			var btnReceberDocumento = $('.siga-btn-receber-doc');
+			
+			sigaModal.abrir('modalReceberDocumento');								
+			btnReceberDocumento.tooltip();					
+			$('body').css('overflow', 'auto');
+										
+			modalReceberDocumento.on('shown.bs.modal', function (e) {
+				btnReceberDocumento.css({'opacity':'0', 'visibility':'hidden'});								
+			});	
+			
+			modalReceberDocumento.on('hidden.bs.modal', function (e) {
+				btnReceberDocumento.css({'opacity':'1', 'visibility':'visible'});								
+			});												
+		});	
+	</script>	
+	</c:if>
+</c:if>
+<c:if test="${docVO.doc.isComposto()}">
+	<c:choose>
+		<c:when test="${podeExibirTodosOsVolumes }">
+			<siga:siga-modal id="modalDeConfirmacaoArqCorrente" exibirRodape="true" 
+					tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+					descricaoBotaoFechaModalDoRodape="Não" descricaoBotaoDeAcao="Sim" 
+					linkBotaoDeAcao="${linkTo[ExMovimentacaoController].aArquivarCorrenteGravar()}?sigla=${docVO.sigla}">
+				<div class="modal-body">
+		       		 Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
+		     	</div>	     	
+			</siga:siga-modal>	
+		</c:when>
+		<c:otherwise>
+			<siga:siga-modal id="modalDeConfirmacaoArqCorrente" exibirRodape="true" 
+					tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+					descricaoBotaoFechaModalDoRodape="Não" descricaoBotaoDeAcao="Sim" 
+					linkBotaoDeAcao="${linkTo[ExMovimentacaoController].aArquivarCorrenteGravar()}?sigla=${mob.sigla}">
+				<div class="modal-body">
+		       		 Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
+		     	</div>	     	
+			</siga:siga-modal>			
+		</c:otherwise>
+	</c:choose>
+	<script>
+		$(function() {
+			var btnArqCorrente = $('.siga-btn-arq-corrente');				
+			if (btnArqCorrente) {				
+				btnArqCorrente.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeConfirmacaoArqCorrente');					
+			}							
+		});	
+	</script>
+</c:if>
+<c:if test="${mob.isJuntado()}">			
+	<siga:siga-modal id="modalDeAvisoTornarDocumentoSemEfeito" exibirRodape="true" 
+		tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+		descricaoBotaoFechaModalDoRodape="Ok">
+		<div class="modal-body">
+       		É necessário desentranhar o documento para realizar o seu cancelamento.
+     	</div>	     	
+	</siga:siga-modal>
+	
+	<c:if test="${mob.mobilPrincipal.isSobrestado() && mob.mobilPrincipal.doc.isComposto()}">
+		<siga:siga-modal id="modalDeAvisoDesentranhar" exibirRodape="true" 
+			tituloADireita="<i class='fas fa-exclamation-circle' style='font-size: 1.5em; color: #ffc107;'></i> <label style='font-size: 1.1em;vertical-align: middle;'><b>Atenção</b></label>"
+			descricaoBotaoFechaModalDoRodape="Ok">
+			<div class="modal-body">
+	       		Não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se sobrestado.
+	     	</div>	     	
+		</siga:siga-modal>
+		<script>
+			$(function() {
+				var btnDesentranhar = $('.siga-btn-desentranhar');
+				if (btnDesentranhar) {
+					btnDesentranhar.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoDesentranhar');					
+				}							
+			});
+		</script>
+	</c:if>	
+			
+	<script>
+		$(function() {
+			var btnCancelar = $('.siga-btn-tornar-documento-sem-efeito');				
+			if (btnCancelar) {										
+				btnCancelar.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoTornarDocumentoSemEfeito');					
+			}							
+		});	
+		
+		$(function() {
+			var btnRefazer = $('.siga-btn-refazer');				
+			if (btnRefazer) {										
+				btnRefazer.attr('href', '#').attr('data-siga-modal-abrir', 'modalDeAvisoTornarDocumentoSemEfeito');					
+			}							
+		});
+	</script>	
+</c:if>
+	
 <script>
 	var containerArquivosAuxiliares = $('.container-files');
 	var containerConfimarcaoArquivoAuxiliarACancelar = $('.container-confirmacao-cancelar-arquivo');
@@ -1370,6 +1590,10 @@
 	function cancelarExclusaoArquivoAuxiliar() {
 		containerConfimarcaoArquivoAuxiliarACancelar.css({'visibility':'hidden', 'opacity':'0'});
 		containerArquivosAuxiliares.css({'visibility':'visible', 'opacity':'1'});				
-	}																	
+	}
+	window.onload = function () { 
+		if (document.getElementById('painel'))
+			document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
+	} 
 </script>
 </siga:pagina>

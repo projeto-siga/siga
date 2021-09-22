@@ -37,15 +37,16 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.view.JasperViewer;
 
@@ -60,19 +61,19 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	public RelConsultaDocEntreDatas(Map<String, String> parametros) throws Exception {
 		super(parametros);
 		
-		if (!isPreenchido(parametros.get("secaoUsuario"))) {
+		if (Utils.empty(parametros.get("secaoUsuario"))) {
 			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
 		}
-		if (!isPreenchido(parametros.get("lotacao"))) {
+		if (Utils.empty(parametros.get("lotacao"))) {
 			throw new AplicacaoException("Parâmetro lotação não informado!");
 		}
-		if (!isPreenchido(parametros.get("dataInicial"))) {
+		if (Utils.empty(parametros.get("dataInicial"))) {
 			throw new AplicacaoException("Parâmetro data inicial não informado!");
 		}
-		if (!isPreenchido(parametros.get("dataFinal"))) {
+		if (Utils.empty(parametros.get("dataFinal"))) {
 			throw new AplicacaoException("Parâmetro data final não informado!");
 		}
-		if (!isPreenchido(parametros.get("link_siga"))) {
+		if (Utils.empty(parametros.get("link_siga"))) {
 			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
 		
@@ -88,10 +89,6 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		this.dataInicial = stringToDate(parametros.get("dataInicial") + " 00:00:00");
 		this.dataFinal = stringToDate(parametros.get("dataFinal") + " 23:59:59");	
 		this.link = parametros.get("link_siga"); 
-	}
-	
-	private boolean isPreenchido(String texto) {
-		return texto != null && !"".equals(texto);
 	}
 	
 	private DpLotacao buscarLotacaoPor(Long id) {
@@ -114,9 +111,28 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		String titulo = "Relação de Documentos do(a) " + lotacao.getSiglaCompleta() 
-				+ " de " + dateToString(dataInicial) + " a " + dateToString(dataFinal);
-		
+		String origemtext = "";
+ 		
+		switch (tipoDoDocumento.intValue()) {
+		case 1:
+			origemtext = "Interno Produzido ";
+			break;
+		case 2:
+			origemtext = "Interno Folha de Rosto ";
+			break;
+		case 3:
+			origemtext = "Externo Folha de Rosto ";
+			break;
+		case 4:
+			origemtext = "Externo Capturado ";
+			break;
+		case 5:
+			origemtext = "Interno Capturado ";
+			break;
+		}
+		String titulo = "Relação de Documento(s) " + origemtext + " de " + dateToString(dataInicial) + " a " + dateToString(dataFinal);
+		String subtitulo = "Do(a) " + lotacao.getNomeLotacao();
+		this.setSubtitle(subtitulo);	
 		this.setTitle(titulo);
 		this.addColuna("Código do Documento", 140, RelatorioRapido.ESQUERDA, true, true);
 		this.addColuna("Descrição do documento", 140, RelatorioRapido.ESQUERDA, false);
@@ -137,12 +153,33 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 			query.setParameter("dataInicial", dataInicial);
 			query.setParameter("dataFinal", dataFinal);
 			
+			Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+					"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+							+ "and lot.orgaoUsuario = "
+							+ parametros.get("orgaoUsuario")
+							+ " and lot.siglaLotacao = '"
+							+ parametros.get("lotacaoTitular") + "'");
+			DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+			DpPessoa titular = ExDao.getInstance().consultar(
+					new Long((String) parametros.get("idTit")), DpPessoa.class,
+					false);
+			
 			List<ExDocumento> listaDocumentos = query.getResultList();
 
 			for (ExDocumento documento : listaDocumentos) {
-				dados.add(documento.getCodigo());
-				dados.add(link.concat(documento.getCodigo()));
-				dados.add(documento.getDescrDocumento());
+				if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+						documento, titular, 
+								lotaTitular)) {
+					dados.add(documento.getCodigo());
+					dados.add(link.concat(documento.getCodigo()));
+					dados.add(Ex
+							.getInstance()
+							.getBL()
+							.descricaoConfidencialDoDocumento(documento.getMobilGeral(), titular,
+									lotaTitular));
+				}
+
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao gerar o relatorio");

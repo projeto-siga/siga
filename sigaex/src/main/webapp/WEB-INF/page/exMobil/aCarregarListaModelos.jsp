@@ -5,11 +5,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="form-group" id="idModGroup">
-	<label><fmt:message key="documento.modelo2"/></label> 
-	<select class="form-control" id="idMod" name="idMod">
+	<label><fmt:message key="documento.modelo2"/> <span id="idMod-spinner" class="spinner-border text-secondary d-none"></span></label> 
+	<select class="form-control siga-select2" id="idMod" name="idMod">
 		<c:forEach items="${modelos}" var="item">
 			<option value="${item.idMod}" ${item.idMod == idMod ? 'selected' : ''}>
 				${item.nmMod}</option>
 		</c:forEach>
 	</select>
 </div>
+
+<script type="text/javascript">
+	$(document.getElementById('idMod')).select2({theme: "bootstrap"});	
+</script>

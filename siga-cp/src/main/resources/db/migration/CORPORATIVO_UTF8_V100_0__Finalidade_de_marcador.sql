@@ -1,0 +1,58 @@
+-- Substitui os vários campos no cadastro de marcadores por um único campo chamado "Finalidade".
+-- Garante que só existem marcadores de sistema (1) ou Gerais (2), convertendo os outros para Gerais.
+
+
+UPDATE corporativo.cp_marcador set ID_TP_MARCADOR = 2 where ID_TP_MARCADOR > 2;
+
+
+-- Drop Constraint FK ID_TP_MARCADOR
+DECLARE
+ v_fk_name VARCHAR2(30);  
+ stmt VARCHAR2(500);
+BEGIN 
+    SELECT A.CONSTRAINT_NAME
+      INTO v_fk_name 
+	  FROM all_cons_columns a
+	  JOIN all_constraints c ON a.owner = c.owner AND a.constraint_name = c.constraint_name
+	 WHERE c.constraint_type = 'R'
+	   AND a.table_name =  'CP_MARCADOR'
+	   AND a.column_name = 'ID_TP_MARCADOR';
+
+     CASE WHEN v_fk_name IS NOT NULL THEN
+         stmt := 'ALTER TABLE "CORPORATIVO"."CP_MARCADOR" DROP CONSTRAINT '|| v_fk_name ;
+         --DBMS_OUTPUT.PUT_LINE (stmt);
+         EXECUTE IMMEDIATE stmt;
+     END CASE;
+     EXCEPTION WHEN NO_DATA_FOUND THEN
+     	DBMS_OUTPUT.PUT_LINE (stmt);
+
+END;
+/
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR 
+DROP COLUMN ID_TP_APLICACAO_MARCADOR;
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR 
+DROP COLUMN ID_TP_DATA_PLANEJADA;
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR 
+DROP COLUMN ID_TP_DATA_LIMITE;
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR 
+DROP COLUMN ID_TP_OPCAO_EXIBICAO;
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR 
+DROP COLUMN ID_TP_TEXTO;
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR 
+DROP COLUMN ID_TP_INTERESSADO;
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR RENAME COLUMN ID_TP_MARCADOR TO ID_FINALIDADE_MARCADOR;
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR  
+MODIFY (DESCR_MARCADOR NOT NULL);
+
+ALTER TABLE CORPORATIVO.CP_MARCADOR  
+MODIFY (ID_TP_MARCADOR NOT NULL);
+
+COMMIT;

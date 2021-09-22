@@ -13,7 +13,7 @@ public class Imagem /*extends TpModel implements Comparable<Condutor>*/ {
 
 //	@Id
 //	@GeneratedValue
-	//@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="SIGATP.hibernate_sequence") 
+	//@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator") @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName="sigatp.hibernate_sequence") 
 	public Long id;
 	
 //	@NotNull

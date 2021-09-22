@@ -27,6 +27,8 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.itextpdf.Stamp;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
 @MappedSuperclass
@@ -72,9 +74,9 @@ public abstract class ExArquivo extends Objeto {
 
 			// Verifica se é possível estampar o documento
 			try {
-				byte[] documentoComStamp = Documento.stamp(abPdf, "", true,
+				byte[] documentoComStamp = Stamp.stamp(abPdf, "", true,
 						false, false, false, false, null, null, null, null, null,
-						null, null, "");
+						null, null, "", null);
 
 				return documentoComStamp;
 
@@ -153,8 +155,7 @@ public abstract class ExArquivo extends Objeto {
 		if (isAssinadoDigitalmente()) {
 			sMensagem += getAssinantesCompleto();
 			sMensagem += "Documento Nº: " + getSiglaAssinatura()
-					+ " - consulta à autenticidade em "
-					+ SigaExProperties.getEnderecoAutenticidadeDocs() + "?n="+getSiglaAssinatura();
+					+ " - consulta à autenticidade em " + getQRCode();
 		}
 		return sMensagem;
 	}
@@ -221,7 +222,7 @@ public abstract class ExArquivo extends Objeto {
 	public String getQRCode() {
 		if (isAssinadoDigitalmente()) {
 			String sQRCode;
-			sQRCode = SigaExProperties.getEnderecoAutenticidadeDocs() + "?n="
+			sQRCode = Prop.get("/sigaex.autenticidade.url") + "?n="
 					+ getSiglaAssinatura();
 			return sQRCode;
 		}

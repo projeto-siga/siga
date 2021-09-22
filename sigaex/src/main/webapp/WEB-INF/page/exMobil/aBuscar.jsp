@@ -8,15 +8,96 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-
+<script src="/siga/public/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+<c:set var="podePesquisarDescricao" scope="session" 
+	value="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição')}" />
+<c:set var="podePesquisarDescricaoLimitada" scope="session" 
+	value="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros')}" />
 <script type="text/javascript" language="Javascript1.1">
+$(document).ready(function() {
+// 	console.log('ready1 idforma: ${idforma}');
+// 	console.log('ready2 idforma hidden:' + $("#idforma").val());
+// 	alteraOrigem();
+	var frmsel = document.getElementById('idFormaDoc');
+	var modsel = document.getElementById('idMod');
+	${idFormaDoc != null && idFormaDoc != 0? 'alteraTipoDaForma(false);' : ''}
+	${idMod != null && idMod != 0? 'alteraForma(false);' : ''}
+	podeDescricao(false);
+	$(document.body).on("change","#idFormaDoc",function(){ podeDescricao(false);});	
+	$(document.body).on("change","#idMod",function(){ podeDescricao(false);});
+});
 
-function alteraTipoDaForma(){
+
+function podeDescricao(limpaDescricao) {
+	if ("${podePesquisarDescricao}" != "true") { 
+		desabilitaDescricao();
+		return;
+	}
+
+	if ("${podePesquisarDescricaoLimitada}" === "true") {
+		if ($('#orgaoUsu').val() != 0 && $('#idFormaDoc').find(':selected').val() != "0" 
+				&& $('#idMod').find(':selected').val() != "0"  
+				&& $('#anoEmissaoString').val() != 0) {
+			habilitaDescricao();
+		} else {
+			desabilitaDescricao();
+			if (limpaDescricao)
+				$('#descrDocumento').val("");
+		}
+	} else {
+		habilitaDescricao();
+	}
+}
+
+function habilitaDescricao() {
+	$('#descrDocumento').attr('placeholder', "Clique aqui para pesquisar pela descrição");
+	$('#descrDocumento').removeAttr('readonly');
+}
+
+function desabilitaDescricao() {
+	$('#descrDocumento').attr('placeholder', "Não é possível realizar a pesquisa pela descrição");
+	$('#descrDocumento').attr('readonly', true);
+}
+
+function alteraTipoDaFormaAntigo(){
 	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'))
 }
 
-function alteraForma(){
-	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+function alteraFormaAntigo(){
+	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='+document.getElementById('idFormaDoc').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+}
+
+function alteraTipoDaForma(abrir) {
+	if ($('#idFormaDoc-spinner').hasClass('d-none')) {
+		$('#idFormaDoc-spinner').removeClass('d-none');
+		$('#idFormaDoc').prop('disabled', 'disabled');
+		SetInnerHTMLFromAjaxResponse(
+				'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
+						+ document.getElementById('tipoForma').value
+						+ '&idFormaDoc=' + '${idFormaDoc}', document
+						.getElementById('comboFormaDiv'), null, 
+						(abrir? function(){	$('#idFormaDoc').select2('open'); buscar.appendChild(document.getElementById("idFormaDoc")); } : null)							
+						);
+	}
+}
+
+function alteraForma(abrir) {
+	if ($('#idMod-spinner').hasClass('d-none')) {
+		$('#idMod-spinner').removeClass('d-none');
+		$('#idMod').prop('disabled', 'disabled');
+		var idFormaDoc = document.getElementById('idFormaDoc');
+		SetInnerHTMLFromAjaxResponse(
+				'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
+						+ (idFormaDoc != null ? idFormaDoc.value : '${idFormaDoc}' )
+						+ '&idMod='	+ '${idMod}', document
+						.getElementById('comboModeloDiv'), null, 
+						(abrir? function(){	$('#idMod').select2('open'); 
+											podeDescricao(true);buscar.appendChild(document.getElementById("idMod"));} : 
+								function(){	podeDescricao(true);buscar.appendChild(document.getElementById("idMod"));})							
+						);
+	}
 }
 
 function sbmt(offset) {
@@ -31,7 +112,7 @@ function submitBusca(cliente) {
 	if(cliente == 'GOVSP') {
 		var descricao = document.getElementById('descrDocumento').value.trim();
 		if(descricao.length != 0 && descricao.length < 5) {
-			mensagemAlerta("Preencha no mínimo 5 caracteres no campo descrição");
+			sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
 		} else {
 			$('#buscandoSpinner').removeClass('d-none');
 			document.getElementById("btnBuscar").disabled = true;
@@ -42,11 +123,6 @@ function submitBusca(cliente) {
 		document.getElementById("btnBuscar").disabled = true;
 		buscar.submit();
 	}
-}
-
-function mensagemAlerta(mensagem) {
-	$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-	$('#alertaModal').modal();
 }
 
 function montaDescricao(id,via,descrDoc){
@@ -411,7 +487,17 @@ function limpaCampos()
 
 <siga:pagina titulo="Lista de Expedientes" popup="${popup}">
 	<!-- main content bootstrap -->
-	<div class="container-fluid">
+	<div class="container-fluid" id="content-busca" onload="carregado();">
+		<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
+			<div class="col" >
+				<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
+					${mensagemCabec}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>			
+			</div>
+		</div>
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h5>Pesquisa de Documentos</h5>
@@ -515,61 +601,56 @@ function limpaCampos()
 									</td>
 									<c:if test="${documento[1].numSequencia != 0}">
 										<td width="5%" align="center">
-											${documento[0].dtDocDDMMYY}
+											${documento[0].dtDocDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${documento[0].lotaSubscritor.sigla}"
+											descricao="${documento[0].lotaSubscritor.descricao}"
+											lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
 										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].lotaSubscritor.sigla}" descricao="${documento[0].lotaSubscritor.descricao}" 
-												lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
-										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].subscritor.iniciais}" descricao="${documento[0].subscritor.descricao}"
-												pessoaParam="${documento[0].subscritor.sigla}" />
-										</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[0].subscritor.iniciais}"
+												descricao="${documento[0].subscritor.descricao}"
+												pessoaParam="${documento[0].subscritor.sigla}" /></td>
 										<td width="5%" align="center">
-											${documento[2].dtIniMarcaDDMMYYYY}
-										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}" descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
+											${documento[2].dtIniMarcaDDMMYYYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
+												descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
 												lotacaoParam="${documento[2].dpLotacaoIni.orgaoUsuario.siglaOrgaoUsu}${documento[2].dpLotacaoIni.sigla}" />
 										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[2].dpPessoaIni.iniciais}" descricao="${documento[2].dpPessoaIni.descricao}"
+										<td width="4%" align="center"><siga:selecionado
+												sigla="${documento[2].dpPessoaIni.iniciais}"
+												descricao="${documento[2].dpPessoaIni.descricao}"
 												pessoaParam="${documento[2].dpPessoaIni.sigla}" />
 										</td>
+			
 										<td width="10.5%" align="center">
-											${documento[2].cpMarcador.descrMarcador}
-										</td>
+											${documento[2].cpMarcador.descrMarcador}</td>
 									</c:if>
 									<c:if test="${documento[1].numSequencia == 0}">
 										<td width="5%" align="center">
-											${documento[0].dtDocDDMMYY}
+											${documento[0].dtDocDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${documento[0].lotaSubscritor.sigla}"
+											descricao="${documento[0].lotaSubscritor.descricao}"
+											lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
 										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].lotaSubscritor.sigla}" descricao="${documento[0].lotaSubscritor.descricao}"
-												lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
-										</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${documento[0].subscritor.iniciais}" descricao="${documento[0].subscritor.descricao}"
-												pessoaParam="${documento[0].subscritor.sigla}" />
-										</td>
-										<td width="5%" align="center">
-											tag1
-										</td>
-										<td width="4%" align="center">
-										</td>
-										<td width="4%" align="center">
-										</td>
-										<td width="10.5%" align="center">
-											tag4
-										</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${documento[0].subscritor.iniciais}"
+											descricao="${documento[0].subscritor.descricao}"
+											pessoaParam="${documento[0].subscritor.sigla}" /></td>
+			
+										<td width="5%" align="center">tag1</td>
+										<td width="4%" align="center"></td>
+										<td width="4%" align="center"></td>
+										<td width="10.5%" align="center">tag4</td>
 									</c:if>
 
 									<td width="6%">
 										${documento[0].descrFormaDoc}
 									</td>
-									<td width="6%">
-										${documento[0].nmMod}
-									</td>
+
+									<td width="6%">${documento[0].nmMod}</td>
 
 									<c:set var="acessivel" value="" />
 									<c:set var="acessivel" value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />
@@ -590,11 +671,11 @@ function limpaCampos()
 										</c:when>
 										<c:otherwise>
 											<td>
-												[Descrição Inacessível]
+												CONFIDENCIAL
 											</td>
 											<c:if test="${visualizacao == 1}"> 
 												<td>
-													[Anotação Inacessível]
+													CONFIDENCIAL
 												</td>
 											</c:if>
 										</c:otherwise>
@@ -701,10 +782,10 @@ function limpaCampos()
 										</div>
 									</div>	
 								</div>
-				<div class="form-row">
+					<div class="form-row">
 						<div class="form-group col-md-3">
 							<label for="orgaoUsu">Órgão</label> <select class="form-control"
-								id="orgaoUsu" name="orgaoUsu">
+								id="orgaoUsu" name="orgaoUsu" onchange="podeDescricao(true)">
 								<c:if test="${siga_cliente != 'GOVSP'}">
 									<option value="0">[Todos]</option>
 								</c:if>
@@ -729,6 +810,8 @@ function limpaCampos()
 								</select>
 							</div>
 						</c:if>
+					</div>
+					<div class="form-row">
 						<div class="form-group col-md-3">
 							<label for="dtDocString">Data Inicial</label> <input
 								class="form-control" type="text" name="dtDocString"
@@ -738,7 +821,7 @@ function limpaCampos()
 						<div class="form-group col-md-3">
 							<label for="dtDocFinalString">Data Final</label> <input
 								class="form-control" type="text" name="dtDocFinalString"
-								id="dtDocFinalString" value="${dtDocString}"
+								id="dtDocFinalString" value="${dtDocFinalString}"
 								onblur="javascript:verifica_data(this,0);" />
 						</div>
 					</div>
@@ -754,7 +837,7 @@ function limpaCampos()
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label>Tipo</label>
-											<select id="tipoForma" name="idTipoFormaDoc" onchange="javascript:alteraTipoDaForma();" class="form-control">
+											<select id="tipoForma" name="idTipoFormaDoc" onchange="javascript:alteraTipoDaForma(false);" class="form-control">
 												<option value="0">
 													[Todos]
 												</option>
@@ -766,28 +849,36 @@ function limpaCampos()
 											</select>
 										</div>
 									</div>
-									<div class="col-sm-4">
-										<div id="comboFormaDiv">
-											<script type="text/javascript">
-												setTimeout("alteraTipoDaForma()",500);
-											</script>
+
+									<div class="form-group col-md-3">
+										<div style="display: inline" id="comboFormaDiv">
+											<div class="form-group" id="idFormaDocGroup" onclick="javascript:alteraTipoDaForma(true);"
+											 		onfocus="javascript:alteraTipoDaForma(true);">
+												<label><fmt:message key="documento.label.especie"/> <span id="idFormaDoc-spinner" class="spinner-border text-secondary d-none"></span></label> 
+												<select class="form-control siga-select2" id="idFormaDoc" name="idFormaDoc">
+													<option value="0">[Todos]</option>
+												</select>
+											</div>
 										</div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-4">		
-										<div id="comboModeloDiv">
-											<script type="text/javascript">
-												setTimeout("alteraForma()",500);
-											</script>
-										</div>										
+			
+									<div class="form-group col-md-6">
+										<div style="display: inline" id="comboModeloDiv">
+											<div class="form-group" id="idModGroup" onclick="javascript:alteraForma(true);"
+													onfocus="javascript:alteraForma(true);">
+												<label><fmt:message key="documento.modelo2"/> <span id="idMod-spinner" class="spinner-border text-secondary d-none"></span></label> 
+												<select class="form-control siga-select2" id="idMod" name="idMod">
+													<option value="0" >[Todos]</option>
+												</select>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label>Ano de Emissão</label>
-											<select  name="anoEmissaoString" class="form-control">
+											<select id="anoEmissaoString" name="anoEmissaoString" class="form-control" onchange="podeDescricao(true)">
 												<option value="0">
 													[Todos]
 												</option>
@@ -992,10 +1083,17 @@ function limpaCampos()
 								</div>	
 								
 								<div class="row">
-									<div class="col-sm-4">
+									<div class="col-sm-12">
 										<div class="form-group">	
 											<label>Descrição</label>
-											<input type="text" name="descrDocumento" id="descrDocumento" value="${descrDocumento}" size="80" class="form-control" />
+											<input type="text" name="descrDocumento" id="descrDocumento" value="${descrDocumento}" size="80" class="form-control"
+												<c:if test="${!podePesquisarDescricao}">
+													readonly placeholder="Não é possível realizar a pesquisa pela descrição"
+												</c:if>
+												/>
+											<c:if test="${podePesquisarDescricao && podePesquisarDescricaoLimitada}">
+												<small>Campo "Descrição" habilitado para pesquisa após o preenchimento dos campos "Órgão", "Espécie", "Documento" e "Ano de Emissão"</small>
+											</c:if>
 										</div>
 									</div>
 								</div>	
@@ -1014,27 +1112,12 @@ function limpaCampos()
 											</button>
 										</div>
 									</div>
-								</div>
-								<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-									<div class="modal-dialog" role="document">
-								    	<div class="modal-content">
-								      		<div class="modal-header">
-										        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-										        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-										          <span aria-hidden="true">&times;</span>
-										    	</button>
-										    </div>
-									      	<div class="modal-body">
-									        	<p class="mensagem-Modal"></p>
-									      	</div>
-											<div class="modal-footer">
-											  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-											</div>
-								    	</div>
-								  	</div>
-								</div>	
+								</div>					
 							</form>
 						</div>
 					</div>
 				</div>
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 </siga:pagina>

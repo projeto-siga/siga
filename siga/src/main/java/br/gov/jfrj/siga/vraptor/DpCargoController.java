@@ -10,9 +10,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
-
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FileUtils;
-
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -23,7 +22,9 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -31,6 +32,7 @@ import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpCargoDaoFiltro;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Controller
@@ -52,7 +54,7 @@ public class DpCargoController extends
 		super(request, result, dao, so, em);
 	}
 	
-	public boolean temPermissaoParaExportarDados() {
+	protected boolean temPermissaoParaExportarDados() {
 		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_CARGO;EXP_DADOS"));
 	}
 	
@@ -84,7 +86,7 @@ public class DpCargoController extends
 	}
 
 	@Override
-	public DpCargoDaoFiltro createDaoFiltro() {
+	protected DpCargoDaoFiltro createDaoFiltro() {
 		final DpCargoDaoFiltro flt = new DpCargoDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
 		flt.setIdOrgaoUsu(orgaoUsu);
@@ -99,7 +101,7 @@ public class DpCargoController extends
 	}
 	
 	@Override
-	public Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpCargoDaoFiltro flt)
 			throws AplicacaoException {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
@@ -144,6 +146,7 @@ public class DpCargoController extends
 			}
 			dpCargo.setIdOrgaoUsu(idOrgaoUsu);
 			dpCargo.setNome(Texto.removeAcento(nome));
+			dpCargo.setBuscarInativos(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, paramoffset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpCargo));
@@ -157,6 +160,60 @@ public class DpCargoController extends
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));		
 		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
 	}	
+	
+	@Transacional
+	@Post("/app/cargo/gravar")
+	public void editarGravar(final Long id, 
+							 final String nmCargo, 
+							 final Long idOrgaoUsu) throws Exception{
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
+		Cp.getInstance().getBL().gravarCargo(getIdentidadeCadastrante(), id, nmCargo, idOrgaoUsu,null);
+		this.result.redirectTo(this).lista(0, null, "");
+	}
+	
+	@Transacional
+	@Post("/app/cargo/ativarInativar")
+	public void ativarInativar(final Long id) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
+		DpCargo cargo = dao().consultar(id, DpCargo.class, false);
+		
+		// ativar
+		if (cargo.getDataFimCargo() != null ) {		
+			Cp.getInstance().getBL().gravarCargo(getIdentidadeCadastrante(), id, null, null, Boolean.TRUE);
+		} else {// inativar
+			Cp.getInstance().getBL().gravarCargo(getIdentidadeCadastrante(), id, null, null, Boolean.FALSE);
+		}
+		
+		if (cargo.getOrgaoUsuario() != null)
+			this.result.redirectTo(this).lista(0,cargo.getOrgaoUsuario().getIdOrgaoUsu(), "");
+		else
+			this.result.redirectTo(this).lista(0,null, "");
+	}
+	
+	
+	@Transacional
+	@Post("/app/cargo/excluir")
+	public void excluir(final Long id) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
+		
+		if (id != null) {
+			try {
+				DpCargo cargo = dao().consultar(id, DpCargo.class, false);	
+				Cp.getInstance().getBL().excluirCargo(cargo);	
+				
+				if (cargo.getOrgaoUsuario() != null)
+					this.result.redirectTo(this).lista(0,cargo.getOrgaoUsuario().getIdOrgaoUsu(), "");
+				else
+					this.result.redirectTo(this).lista(0,null, "");
+			} catch (final AplicacaoException e) {
+				throw new AplicacaoException("<b>Não é possível efetuar a exclusão:</b> " + e.getMessage(),0);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Não é possível efetuar a exclusão. Favor tentar inativar o cargo.");
+			}
+		} else {
+			throw new AplicacaoException("ID não informado.");
+		}
+	}
 		
 	@Post
 	@Path("app/cargo/exportarCsv")
@@ -170,11 +227,11 @@ public class DpCargoController extends
 			if (lista.size() > 0) {				
 				InputStream inputStream = null;
 				StringBuffer texto = new StringBuffer();
-				texto.append("Cargo" + System.getProperty("line.separator"));
+				texto.append("Cargo" + System.lineSeparator());
 				
 				for (DpCargo cargo : lista) {
 					texto.append(cargo.getNomeCargo() + ";");										
-					texto.append(System.getProperty("line.separator"));
+					texto.append(System.lineSeparator());
 				}
 				
 				inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));									
@@ -227,70 +284,6 @@ public class DpCargoController extends
 		result.include("request",getRequest());
 		result.include("id",id);
 	}
-	
-	@Post("/app/cargo/gravar")
-	public void editarGravar(final Long id, 
-							 final String nmCargo, 
-							 final Long idOrgaoUsu) throws Exception{
-		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
-		
-		if(nmCargo == null)
-			throw new AplicacaoException("Nome do cargo não informado");
-		
-		if(idOrgaoUsu == null)
-			throw new AplicacaoException("Órgão não informada");
-		
-		if(nmCargo != null && !nmCargo.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9-/.]+")) 			                              
-			throw new AplicacaoException("Nome com caracteres não permitidos");
-				
-		List<DpPessoa> listPessoa = null;
-		
-		DpCargo cargo = new DpCargo();
-		cargo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(nmCargo).trim()));
-		CpOrgaoUsuario ou = new CpOrgaoUsuario();
-		ou.setIdOrgaoUsu(idOrgaoUsu);
-		cargo.setOrgaoUsuario(ou);
-		
-		cargo = CpDao.getInstance().consultarPorNomeOrgao(cargo);
-		
-		if(cargo != null && !cargo.getId().equals(id)) {
-			throw new AplicacaoException("Nome do cargo já cadastrado!");
-		}
-		
-		cargo = new DpCargo();
-		
-		if (id == null) {
-			cargo = new DpCargo();
-			Date data = new Date(System.currentTimeMillis());
-			cargo.setDataInicio(data);
-		} else {
-			cargo = dao().consultar(id, DpCargo.class, false);
-			listPessoa = CpDao.getInstance().consultarPessoasComCargo(id);
-			
-		}
-		cargo.setDescricao(Texto.removerEspacosExtra(nmCargo).trim());
-		
-		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
-			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);	
-			cargo.setOrgaoUsuario(orgaoUsuario);
-		}
-		
-		try {
-			dao().iniciarTransacao();
-			dao().gravar(cargo);
-			if(cargo.getIdCargoIni() == null && cargo.getId() != null) {
-				cargo.setIdCargoIni(cargo.getId());
-				cargo.setIdeCargo(cargo.getId().toString());
-				dao().gravar(cargo);
-			}
-			dao().commitTransacao();			
-		} catch (final Exception e) {
-			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
-		}
-		this.result.redirectTo(this).lista(0, null, "");
-	}
 
 	@Get("/app/cargo/carregarExcel")
 	public void carregarExcel() {
@@ -303,8 +296,10 @@ public class DpCargoController extends
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpCargo/cargaCargo.jsp");
 	}
 	
+	@Transacional
 	@Post("/app/cargo/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
 		InputStream inputStream = null;
 		try {
 			String nomeArquivo = arquivo.getFileName();
@@ -323,16 +318,15 @@ public class DpCargoController extends
 			}
 			
 			CpBL cpbl = new CpBL();
-			inputStream = cpbl.uploadCargo(file, orgaoUsuario, extensao);
+			inputStream = cpbl.uploadCargo(file, orgaoUsuario, extensao,getIdentidadeCadastrante());
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
 			
 		if(inputStream == null) {
-			result.include("msg", "Arquivo processado com sucesso!");
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Arquivo processado com sucesso!").titulo("Sucesso"));
 			carregarExcel();
-		} else {
-			result.include("msg", "");
+		} else {			
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

@@ -41,17 +41,18 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpAcesso;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.Mesa2;
-import br.gov.jfrj.siga.ex.bl.Mesa2.MarcadorEnum;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -75,7 +76,7 @@ public class ExMesa2Controller extends ExController {
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {
 			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
-					CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO));
+					ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO));
 		} catch (Exception e) {
 			throw e;
 		} 
@@ -107,7 +108,8 @@ public class ExMesa2Controller extends ExController {
 
 	@Post("app/mesa2.json")
 	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerArquivados, 
-			boolean trazerComposto, boolean trazerCancelados, String parms) throws Exception {
+			boolean trazerComposto, boolean trazerCancelados, boolean ordemCrescenteData, 
+			boolean usuarioPosse, String parms) throws Exception {
 		
 		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
@@ -117,12 +119,12 @@ public class ExMesa2Controller extends ExController {
 
 		if (SigaMessages.isSigaSP()) { 
 			if (!trazerArquivados) {
-				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
-				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
-				marcasAIgnorar.add(MarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
+				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
+				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
+				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
 			}
 			if (!trazerCancelados) 
-				marcasAIgnorar.add(MarcadorEnum.CANCELADO.getId());
+				marcasAIgnorar.add((int) CpMarcadorEnum.CANCELADO.getId());
 		}
 		try {
 			if (parms != null) {
@@ -132,7 +134,7 @@ public class ExMesa2Controller extends ExController {
 			if (exibeLotacao 
 					&& (Ex.getInstance().getComp().ehPublicoExterno(
 							getTitular()) 
-					|| !SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao"))) {
+					|| !Prop.getBool("/siga.mesa.carrega.lotacao"))) {
 				result.use(Results.http()).addHeader("Content-Type", "text/plain")
 					.body("Não é permitido exibir dados da sua " 
 							+ SigaMessages.getMessage("usuario.lotacao"))
@@ -144,19 +146,19 @@ public class ExMesa2Controller extends ExController {
 					&& Cp.getInstance().getConf().podePorConfiguracao
 						(getCadastrante(), 
 						 getCadastrante().getLotacao(), 
-						 CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+						 ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
 				lotaTitular = vis.getTitular().getLotacao();
 				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
 						exibeLotacao, marcasAIgnorar);
 				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, marcasAIgnorar);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar);
 			} else {
 				lotaTitular = getTitular().getLotacao();
 				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
 						exibeLotacao, marcasAIgnorar);
 				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, marcasAIgnorar);
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar);
 			}
 	
 			String s = ExAssinadorExternoController.gson.toJson(g);

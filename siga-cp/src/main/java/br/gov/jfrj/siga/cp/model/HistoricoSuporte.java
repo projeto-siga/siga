@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -29,24 +31,26 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class HistoricoSuporte extends Objeto implements Historico, Assemelhavel {
-
-	private static final long serialVersionUID = 992555792295390723L;
 
 	@Column(name = "HIS_ID_INI")
 	@Desconsiderar
 	private Long hisIdIni;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "HIS_DT_INI")
 	@Desconsiderar
 	private Date hisDtIni;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "HIS_DT_FIM")
 	@Desconsiderar
 	private Date hisDtFim;
@@ -144,21 +148,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 			
 			//Edson: caso a instância esteja fechada, obtém a última
 			if (thisAntigo.getHisDtFim() != null) {
-				CriteriaBuilder builder = em().getCriteriaBuilder();
-				
-				CriteriaQuery query = builder.createQuery(thisAntigo.getClass());
-				
-				Subquery<Date> sub = query.subquery(Date.class);
-				Root subFrom = sub.from(this.getClass());
-				sub.select(builder.greatest(subFrom.<Date>get("hisDtIni")));
-				sub.where(builder.equal(subFrom.get("hisIdIni"), thisAntigo.getHisIdIni()));
-				
-				Root from = query.from(this.getClass());
-				CriteriaQuery select = query.select(from);
-				select.where(builder.and(builder.equal(from.get("hisIdIni"), thisAntigo.getHisIdIni()), builder.equal(from.get("hisDtIni"), sub)));
-				
-				TypedQuery typedQuery = em().createQuery(query);
-				thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
+				thisAntigo = CpDao.getInstance().obterAtual(thisAntigo);
 			} 
 			
 			if (thisAntigo.getHisDtFim() == null)

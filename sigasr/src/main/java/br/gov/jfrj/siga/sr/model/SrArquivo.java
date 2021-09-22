@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.sr.model;
 
-import java.beans.Transient;
 import java.io.IOException;
 
 import javax.persistence.Column;
@@ -13,12 +12,12 @@ import javax.persistence.Table;
 
 import org.apache.commons.io.IOUtils;
 
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_ARQUIVO", schema = "SIGASR")
+@Table(name = "sr_arquivo", schema = "sigasr")
 public class SrArquivo extends Objeto implements Comparable<SrArquivo>{
 
     private static final long serialVersionUID = -4338358297062727340L;
@@ -46,7 +45,7 @@ public class SrArquivo extends Objeto implements Comparable<SrArquivo>{
     @javax.persistence.Transient
     private String descricaoComplementar;
 
-    private SrArquivo() {
+    protected SrArquivo() {
 
     }
 

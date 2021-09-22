@@ -32,16 +32,16 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
-import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Controller
 public class ExPainelController extends ExController {
-	private static final String ACESSO_PAINEL = "PAINEL:Painel Administrativo";
+	private static final String CORRIGEMOBIL = "CORRIGEMOBIL:Corrige Documento sem Mobil de Via ou Volume";
 	
 	/**
      * @deprecated CDI eyes only
@@ -58,10 +58,8 @@ public class ExPainelController extends ExController {
 	}
 
 	@Get("app/expediente/painel/exibir")
-	public void exibe(final ExMobilSelecao documentoRefSel, final Long idOrgaoUsu, 
-			final DpLotacaoSelecao lotacaoSel, final DpPessoaSelecao usuarioSel, 
-			final String dataInicial, final String dataFinal) throws Exception {
-		assertAcesso(ACESSO_PAINEL);
+	public void exibe(final ExMobilSelecao documentoRefSel) throws Exception {
+		assertAcesso("");
 		boolean postback = param("postback") != null;
 		
 		if (documentoRefSel.getSigla() == null) {
@@ -71,18 +69,134 @@ public class ExPainelController extends ExController {
 			}
 			return;
 		}
+		result.include("documentoRefSel", documentoRefSel);
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
 		exDocumentoDTO.setSigla(documentoRefSel.getSigla());
-		buscarDocumento(false, exDocumentoDTO);
 
-		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
-				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true);
-
+		ExDocumentoVO docVO = null;
+		try {
+			buscarDocumento(false, exDocumentoDTO);
+			for (ExDocumento docFilho : exDocumentoDTO.getDoc().getExDocumentoFilhoSet()) {
+				if(docFilho.getDescrDocumento() == null) {
+					result.include("erroFilhoSemDescricao", true);
+					result.include("siglaFilho",docFilho.getSigla());
+					return;
+				}
+			}
+			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
+					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
+					getLotaTitular(), true, true, false);
+			if (exDocumentoDTO.getDoc().isFinalizado() 
+					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
+				result.include("erroSemMobil", true);
+			}
+			if (exDocumentoDTO.getDoc().getDescrDocumento() == null) {
+				result.include("erroSemDescricao", true);
+			}
+		} catch (AplicacaoException e) {
+			result.include("mensagemCabec", "Documento não encontrado." );
+			result.include("msgCabecClass", "alert-danger");
+			return;
+		} catch (Exception e) {
+			if (exDocumentoDTO != null 
+					&& exDocumentoDTO.getDoc() != null
+					&& exDocumentoDTO.getDoc().isFinalizado() 
+					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
+				result.include("erroSemMobil", true);
+			}
+			result.include("mensagemCabec", "Erro ao tentar obter o documento: " + e);
+			result.include("msgCabecClass", "alert-danger");
+			return;
+		}
 		result.include("msg", exDocumentoDTO.getMsg());
 		result.include("docVO", docVO);
 		result.include("mob", exDocumentoDTO.getMob());
 		result.include("currentTimeMillis", System.currentTimeMillis());
+	}
+
+	@Transacional
+	@Get("app/expediente/painel/corrigeDocSemMobil")
+	public void corrigeDocSemMobil(final ExMobilSelecao documentoRefSel) throws Exception {
+		assertAcesso(CORRIGEMOBIL);
+		
+		result.include("postback", true);
+
+		if (documentoRefSel.getSigla() == null) {
+			result.include("mensagemCabec", "Informe o número do documento.");
+			result.include("msgCabecClass", "alert-warning");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		exDocumentoDTO.setSigla(documentoRefSel.getSigla());
+		ExDocumentoVO docVO;
+		try {
+			buscarDocumento(false, exDocumentoDTO);
+			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
+					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
+					getLotaTitular(), true, true, false);
+		} catch (Exception e) {
+		}
+		if (exDocumentoDTO != null && exDocumentoDTO.getDoc().isFinalizado() 
+				&& exDocumentoDTO.getDoc().getExMobilSet().size() > 1) {
+			result.include("mensagemCabec", "Documento já está com mais de um mobil.");
+			result.include("msgCabecClass", "alert-danger");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+
+		try {
+			Ex.getInstance()
+				.getBL()
+				.corrigeDocSemMobil(
+						exDocumentoDTO.getDoc());
+
+		} catch (final Throwable t) {
+			throw new AplicacaoException("Erro ao tentar corrigir documento sem mobil.", 0, t);
+		}
+		result.redirectTo(this).exibe(documentoRefSel);
+	}
+
+	@Transacional
+	@Get("app/expediente/painel/corrigeDocSemDescricao")
+	public void corrigeDocSemDescricao(final ExMobilSelecao documentoRefSel) throws Exception {
+		assertAcesso(CORRIGEMOBIL);
+		
+		result.include("postback", true);
+
+		if (documentoRefSel.getSigla() == null) {
+			result.include("mensagemCabec", "Informe o número do documento.");
+			result.include("msgCabecClass", "alert-warning");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		exDocumentoDTO.setSigla(documentoRefSel.getSigla());
+		ExDocumentoVO docVO;
+		try {
+			buscarDocumento(false, exDocumentoDTO);
+			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
+					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
+					getLotaTitular(), true, true, false);
+		} catch (Exception e) {
+		}
+		if (exDocumentoDTO.getDoc().getDescrDocumento() != null) {
+			result.include("mensagemCabec", "Documento já está com a descrição.");
+			result.include("msgCabecClass", "alert-danger");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+
+		try {
+			Ex.getInstance()
+				.getBL()
+				.corrigeDocSemDescricao(
+						exDocumentoDTO.getDoc());
+
+		} catch (final Throwable t) {
+			throw new AplicacaoException("Erro ao tentar corrigir descrição do documento", 0, t);
+		}
+		result.redirectTo(this).exibe(documentoRefSel);
 	}
 
 	private void buscarDocumento(final boolean fVerificarAcesso,
@@ -136,6 +250,6 @@ public class ExPainelController extends ExController {
 	}
 	
 	protected void assertAcesso(final String pathServico) {
-		super.assertAcesso("FE:Ferramentas;" + pathServico);
+		super.assertAcesso("FE:Ferramentas;PAINEL:Painel Administrativo;" + pathServico);
 	}
 }

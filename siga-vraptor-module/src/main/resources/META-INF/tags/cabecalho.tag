@@ -16,6 +16,7 @@
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
 <%@ attribute name="desabilitarComplementoHEAD"%>
+<%@ attribute name="incluirBS" required="false" %>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -42,19 +43,7 @@
 	<c:set var="XUACompatible" scope="request">${compatibilidade}</c:set>
 </c:if>
 
-<c:set var="logo_topo_orgao" scope="request" value="${f:resource('siga.logo.topo.orgao')}" />
-
-<c:set var="ambiente">
-	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
-		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
-		<c:if
-			test="${f:resource('isVersionTest') and f:resource('isBaseTest')}"> E </c:if>
-		<c:if test="${f:resource('isBaseTest')}">BASE</c:if> DE TESTES
-	</c:if>
-</c:set>
-<c:if test="${not empty ambiente}">
-	<c:set var="env" scope="request">${ambiente}</c:set>
-</c:if>
+<c:set var="logo_topo_orgao" scope="request" value="${f:resource('/siga.logo.topo.orgao')}" />
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -86,7 +75,10 @@ ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
 
-<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css"	type="text/css" media="screen, projection" />
+<c:if test="${empty incluirBS or incluirBS}" >
+ 	<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+</c:if> 
+
 
 <!--   <link rel="stylesheet" href="/siga/css/menuhover.css" type="text/css"/> -->
 
@@ -104,8 +96,8 @@ ${meta}
 <link rel="stylesheet" href="/siga/fontawesome/css/all.css"	type="text/css" />
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
-
-<c:set var="siga_version"  scope="request" value="9.0.0.1" />
+ 
+<c:set var="siga_version"  scope="request" value="10.0.21.8-PCRJ-1.5.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -119,13 +111,13 @@ ${meta}
 		<c:if test="${desabilitarmenu == 'sim'}">
 			<c:set var="body_color" value="login_body_color" scope="request" />
 		</c:if>
-		
+												
 		<c:set var="ico_siga" value="sem-papel.ico" />
 		<c:set var="menu_class" value="menusp" />
 		<c:set var="sub_menu_class" value="submenusp" />
 		<c:set var="ambiente_class" value="ambiente_class" />
 		<c:set var="navbar_class" value="navbar-light" />
-		<c:set var="navbar_logo" value="logo-sem-papel-cor.png" />
+		<c:set var="navbar_logo" value="/siga/imagens/logo-sem-papel-cor.png" /> 
 		<c:set var="navbar_logo_size" value="50" />
 		<c:set var="button_class_busca" value="btn-primary" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible closed" />
@@ -133,6 +125,7 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
@@ -142,18 +135,20 @@ ${meta}
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />
 		
 		<c:set var="navbar_class" value="navbar-dark bg-primary" />
-		<c:if test="${f:resource('isBaseTest')}">
+		<c:if test="${f:resource('/siga.ambiente') != 'prod'}">
 			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
 		</c:if>
 		
-		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
-		<c:set var="navbar_logo_size" value="38" />
+		<c:set var="navbar_logo" value="/siga/imagens/logo-siga-novo-38px.png" />
+		<c:set var="navbar_logo2" value="${f:resource('/siga.cabecalho.logo')}" />
+		<c:set var="navbar_logo_size" value="60" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible expanded" />
 		<c:set var="collapse_NivelAcesso" scope="request" value="collapsible expanded" />
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />		
 	</c:otherwise>
 </c:choose>
 
@@ -175,10 +170,24 @@ ${meta}
 	<c:if test="${popup!='true'}">
    		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
-				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
+				src="${navbar_logo}" height="${navbar_logo_size}">
 			</a>
 			
-	
+			<c:if test="${siga_cliente != 'GOVSP'}">
+				<c:choose>
+				<c:when test="${not empty logo_topo_orgao}">
+					<img id="logo-header2"
+					 src="${logo_topo_orgao}"
+					 alt="Logo do Órgão" height="38" class="ml-2" />
+				</c:when>
+				<c:otherwise>
+					<img id="logo-header2"
+					 src="${navbar_logo2}"
+				 	 alt="${f:resource('siga.cabecalho.titulo')}" height="${navbar_logo_size}" class="ml-2" />
+				</c:otherwise>
+				</c:choose>
+			</c:if>
+			
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarSupportedContent"
 				aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -209,7 +218,7 @@ ${meta}
 									    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
 									        <div class="modal-content" >
 									            <div class="modal-header bg-success">
-									            	<h5 class="modal-title text-white" >Tutoriais SP Sem Papel</h5>
+									            	<h5 class="modal-title text-white">Tutoriais SP Sem Papel</h5>
 									                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
 									            </div>
 										        <div class="modal-body bg-light">
@@ -348,27 +357,30 @@ ${meta}
 					<div class="row">
 						<div class="col gt-company d-inline align-middle">
 							<span class="h-100">
-								<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
+								<strong><span>${f:resource('/siga.cabecalho.titulo')}</span> </strong>
 								 <c:catch>
 										<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
 								 </c:catch>
 							</span>
 						</div>
 					</div>
-					<div class="row ${hide_only_TRF2}  ${ambiente_class}">
+					<div class="row  ${ambiente_class}">
 						<div class="col">
 							<span>
 								<c:choose>
-									<c:when test="${f:resource('ambiente') eq 'desenv'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'desenv'}">
 										Ambiente de Desenvolvimento
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'prod'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'prod'}">
 										Ambiente Oficial
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'treinamento'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'treinamento'}">
 										Ambiente de Simulação
 									</c:when>
-									<c:when test="${f:resource('ambiente') eq 'homolog'}">
+									<c:when test="${f:resource('/siga.ambiente') eq 'configuracao'}">
+										Ambiente de Configuração
+									</c:when>
+									<c:when test="${f:resource('/siga.ambiente') eq 'homolog'}">
 										Ambiente de Homologação
 									</c:when>
 								</c:choose>
@@ -386,7 +398,7 @@ ${meta}
 						<div class="dropdown d-inline">
 							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
-									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">																		
+									<strong id="cadastrante" data-toggle="tooltip" data-placement="top" data-cadastrante="${cadastrante.sigla}" title="${cadastrante.sigla}">																		
 											<c:out default="Convidado" value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
 									</strong>
 									<c:if test="${not empty cadastrante.lotacao}">
@@ -418,11 +430,11 @@ ${meta}
 							<c:catch>
 								<c:choose>
 									<c:when
-										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
+										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong title="${titular.sigla}">${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
 										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:when
-										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
+										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong title="${lotaTitular.sigla}">${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
 										<button class="btn btn-secondary btn-sm" type="button" onclick="delSession();javascript:location.href='/siga/app/substituicao/finalizar'">Finalizar</button>
 									</c:when>
 									<c:otherwise></c:otherwise>
@@ -450,13 +462,7 @@ ${meta}
 	</c:if>
 
 	<div id="carregando"
-		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>
-	
-	<div class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" id="spinnerModal">
-        <div class="modal-dialog modal-dialog-centered text-center" role="document">
-            <span class="fa fa-spinner fa-spin fa-3x w-100 text-white"></span>
-        </div>
-    </div>
+		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>	
     
 <script type="text/javascript" language="Javascript1.1">
 setTimeout(function() {
@@ -468,5 +474,11 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+
+	for (var obj in sessionStorage) {
+      if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {
+    	  sessionStorage.removeItem(obj);
+      }
+	}
 }
 </script>		

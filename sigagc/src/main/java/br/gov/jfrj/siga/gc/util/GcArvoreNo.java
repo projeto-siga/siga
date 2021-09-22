@@ -49,7 +49,15 @@ public class GcArvoreNo implements Comparable<GcArvoreNo> {
 			return (f1 < f2 ? -1 : (f1 == f2 ? 0 : 1));
 		if (!tag.getTitulo().equals(o.tag.getTitulo()))
 			return tag.getTitulo().compareTo(o.tag.getTitulo());
-		return (tag.id < o.tag.id ? -1 : (tag.id == o.tag.id ? 0 : 1));
+		
+		int i = 0;
+		if (tag.getId() == null && o.tag.getId() != null)
+			return 1;
+		else if (tag.getId() != null && o.tag.getId() == null)
+			return -1;
+		else if(tag.getId() != null && o.tag.getId() != null)
+			i = tag.getId() < o.tag.getId() ? -1 : (tag.getId() == o.tag.getId() ? 0 : 1);
+		return i;
 	}
 
 	public void build() {

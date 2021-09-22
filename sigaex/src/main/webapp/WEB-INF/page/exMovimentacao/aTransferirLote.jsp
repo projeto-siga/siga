@@ -70,55 +70,7 @@
 					<input type="hidden" name="postback" value="1" /> 
 					<input type="hidden" name="paramoffset" value="0" /> 
 					<input type="hidden" name="p.offset" value="0" />
-					<div class="row">
-						<div class="col-sm-3">
-							<div class="form-group">
-								<label>Data</label> <input type="text" name="dtMovString"
-									id="dtMovString" onblur="javascript:verifica_data(this,0);"
-									class="form-control" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm">
-							<div class="form-group">
-								<label>Responsável</label>
-								<siga:selecao tema="simple" propriedade="subscritor"
-									modulo="siga" />
-							</div>
-						</div>
-						<div class="col-sm">
-							<div class="form-group">
-								<div class="form-check form-check-inline mt-4">
-									<input type="checkbox" name="substituicao"
-										onclick="javascript:displayTitular(this);"
-										class="form-check-input" /> <label class="form-check-label">Substituto</label>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div id="tr_titular" style="display: none" class="row">
-						<div class="col-sm-6">
-							<div class="form-group">
-								<div>
-									<label>Titular</label> <input type="hidden" name="campos"
-										value="${titularSel.id}" />
-									<siga:selecao propriedade="titular" tema="simple" modulo="siga" />
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm">
-							<div class="form-group">
-								<label>Função do Responsável</label> <input type="hidden"
-									name="campos" value="${nmFuncaoSubscritor}" /> <input
-									type="text" name="nmFuncaoSubscritor" id="nmFuncaoSubscritor"
-									value="${nmFuncaoSubscritor}" size="50" maxLength="128"
-									class="form-control" /> <small class="form-text text-muted">(opcional)</small>
-							</div>
-						</div>
-					</div>
+					
 					<div class="row campo-orgao-externo" style="display: none;">
 						<div class="col-sm">
 							<div class="form-group">
@@ -130,7 +82,8 @@
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="form-group">
-								<label>Atendente</label> <select class="custom-select"
+								<label for="tipoResponsavel"><fmt:message key="tela.tramitarLote.tipoResponsavel"/></label> 
+								<select class="custom-select"
 									id="tipoResponsavel" name="tipoResponsavel"
 									value="${tipoResponsavel}"
 									onchange="javascript:updateTipoResponsavel();">
@@ -280,7 +233,16 @@
 												<td class="text-center"></td>
 												<td class="text-center"></td>
 											</c:if>
-											<td>${f:descricaoConfidencial(documento.doc, lotaTitular)}</td>
+											<td>
+												<c:choose>
+													<c:when test="${siga_cliente == 'GOVSP'}">
+														${documento.doc.descrDocumento}
+													</c:when>
+													<c:otherwise>
+														${f:descricaoConfidencial(documento.doc, lotaTitular)}
+													</c:otherwise>
+												</c:choose>
+											</td>
 										</tr>
 									</siga:paginador>
 								</tbody>

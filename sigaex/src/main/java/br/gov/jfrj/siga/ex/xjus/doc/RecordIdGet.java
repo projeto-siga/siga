@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Map;
 
 import br.gov.jfrj.siga.base.HtmlToPlainText;
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -39,7 +39,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			}
 
 			resp.id = req.id;
-			resp.url = Cp.getInstance().getProp().xjusPermalinkUrl()
+			resp.url = Prop.get("/xjus.permalink.url")
 					+ doc.getCodigoCompacto();
 			resp.acl = "PUBLIC";
 			resp.refresh = "NEVER";
@@ -111,6 +111,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 	}
 
 	private void addMetadataForDoc(ExDocumento doc, RecordIdGetResponse resp) {
+		addFacet(resp, "tipo", "Documento");
 		addFieldAndFacet(resp, "orgao", doc.getOrgaoUsuario()
 				.getAcronimoOrgaoUsu());
 		addField(resp, "codigo", doc.getCodigo());
@@ -126,8 +127,11 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		if (doc.getDnmExNivelAcesso() != null)
 			addField(resp, "acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());
-		if (doc.getDtDocYYYYMMDD() != null)
+		if (doc.getDtDocYYYYMMDD() != null) {
 			addField(resp, "data", doc.getDtDocYYYYMMDD());
+			addFacet(resp, "ano", doc.getDtDocYYYYMMDD().substring(0, 4));
+			addFacet(resp, "mes", doc.getDtDocYYYYMMDD().substring(5, 7));
+		}
 
 		ExClassificacao cAtual = doc.getExClassificacaoAtual();
 		if (cAtual == null && doc.getExClassificacao() != null)

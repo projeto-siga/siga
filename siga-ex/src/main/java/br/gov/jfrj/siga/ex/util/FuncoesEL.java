@@ -25,6 +25,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,13 +43,11 @@ import org.xml.sax.InputSource;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaHTTP;
-import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.CpLocalidade;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -57,7 +57,6 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
-import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -66,9 +65,9 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
@@ -114,7 +113,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REMESSA_PARA_PUBLICACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -129,7 +128,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -144,7 +143,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -156,7 +155,7 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES);
+						ExTipoDeConfiguracao.DEFINIR_PUBLICADORES);
 
 	}
 
@@ -200,8 +199,18 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(null, lota, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_EDITOR);
+						ExTipoDeConfiguracao.UTILIZAR_EXTENSAO_EDITOR);
 	}
+
+	public static Boolean podeDelegarVisualizacao(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf()
+			.podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO);
+	}
+
+	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO);
+	}
+
 
 	public static List<CpLocalidade> consultarPorUF(String siglaUF) {
 		return dao().consultarLocalidadesPorUF(siglaUF);
@@ -676,14 +685,6 @@ public class FuncoesEL {
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
 
-		// Nato: Nesse caso, o titular ï¿½ considerado o subscritor do
-		// documento.
-		// Nï¿½o sei se isso ï¿½ 100% correto, mas acho que ï¿½ uma abordagem
-		// bastante
-		// razoï¿½vel.
-		// Markenson: Conversando com o Renato, alteramos o titular para o
-		// titular do sistema
-		// e nï¿½o do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,
@@ -916,12 +917,9 @@ public class FuncoesEL {
 		String chaveUrl = null;
 		String urlStr = null;
 
-		attrs.put("code_base_path",
-				SigaExProperties.getAssinaturaCodebasePath());
-		attrs.put("messages_url_path",
-				SigaExProperties.getAssinaturaMessagesURLPath());
-		attrs.put("policy_url_path",
-				SigaExProperties.getAssinaturaPorlicyUrlPath());
+		attrs.put("code_base_path", Prop.get("assinatura.code.base.path"));
+		attrs.put("messages_url_path", Prop.get("assinatura.messages.url.path"));
+		attrs.put("policy_url_path", Prop.get("assinatura.policy.url.path"));
 
 		attrs.put("request_scheme", requestScheme);
 		attrs.put("request_serverName", requestServerName);
@@ -999,6 +997,9 @@ public class FuncoesEL {
 		try {
 			HashMap<String, String> headers = new HashMap<String, String>();
 			headers.put("Content-Type", "text/xml;charset=UTF-8");
+			String auth = (String) resource("/siga.freemarker.webservice.password");
+			if (auth != null)
+				headers.put("Authorization", auth);
 			// String s = ConexaoHTTP.get(url, headers, timeout, corpo);
 			// //Reescrito para utilizar o SigaTTP
 			SigaHTTP sigaHTTP = new SigaHTTP();
@@ -1025,16 +1026,28 @@ public class FuncoesEL {
 				.podeAssinarComSenha(titular, lotaTitular, mob);
 	}
 
-	public static Boolean podeAssinarPorComSenha(DpPessoa titular,
+	public static Boolean podeAssinarPor(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeAssinarPorComSenha(titular, lotaTitular, mob);
+				.podeAssinarPor(titular, lotaTitular, mob);
 	}
 
+	public static Boolean deveAssinarComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveAssinarComSenha(titular, lotaTitular, mob);
+	}
+			
 	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
 		return Ex.getInstance().getComp()
 				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+	}
+	
+	public static Boolean deveAssinarMovimentacaoComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
 	}
 
 	public static Boolean podeAutenticarMovimentacaoComSenha(
@@ -1044,6 +1057,16 @@ public class FuncoesEL {
 				.getInstance()
 				.getComp()
 				.podeAutenticarMovimentacaoComSenha(titular, lotaTitular,
+						mov);
+	}
+	
+	public static Boolean deveAutenticarMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
+			throws Exception {
+		return Ex
+				.getInstance()
+				.getComp()
+				.deveAutenticarMovimentacaoComSenha(titular, lotaTitular,
 						mov);
 	}
 
@@ -1060,6 +1083,16 @@ public class FuncoesEL {
 				.getInstance()
 				.getComp()
 				.podeAutenticarComSenha(titular, lotaTitular,
+						mob);
+	}
+	
+	public static Boolean deveAutenticarComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
+			throws Exception {
+		return Ex
+				.getInstance()
+				.getComp()
+				.deveAutenticarComSenha(titular, lotaTitular,
 						mob);
 	}
 
@@ -1091,7 +1124,7 @@ public class FuncoesEL {
 	
 	public String dataAtual(ExDocumento doc) {
 		String retorno = "";
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if("GOVSP".equals(Prop.get("/siga.local"))) {
 			if(doc.getDtDoc() != null) {
 				Date data = new Date();
 				Calendar cal = new GregorianCalendar();
@@ -1107,7 +1140,7 @@ public class FuncoesEL {
 		List<ExMovimentacao> mov;
 		try {
 			if (doc.isFinalizado()) {
-				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72);
+				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72, false);
 				for (ExMovimentacao movAssPor : mov) {
 					retorno = "Documento assinado POR  \"" +  movAssPor.getSubscritor().getNomePessoa() + "\" - \"" + movAssPor.getSubscritor().getSigla()+ "\"";
 				}
@@ -1118,5 +1151,37 @@ public class FuncoesEL {
 		}
 		return retorno;
 	}	
+
+	public static Boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(DpPessoa titular,
+			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
+	}
+
+	public static String calculaDiasAPartirDeHoje(Long qtdDias) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate dt = LocalDate.now().plusDays(qtdDias);
+		return formatter.format(dt);
+	}
+	
+	public static Boolean podeUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean deveUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean defaultUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+
+	public static String slugify(String string, Boolean lowercase,
+			Boolean underscore) {
+		return Texto.slugify(string, lowercase, underscore);
+	}
 
 }

@@ -5,27 +5,37 @@
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
+
+<c:if test="${empty uri_logo_siga_pequeno}">
+	<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-siga-140x40.png" scope="request" />
+</c:if>
+
+
 <%@ attribute name="metodo" required="true"%>
 <%@ attribute name="exibeLotacaoNaAcao" required="false"%>
 <%@ attribute name="exibeConhecimento" required="false"%>
+<%@ attribute name="lotacaoDoTitular" required="false"%>
 
-<div id="${metodo}" class="gt-form-row" style="min-width: 550px;">
-	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
-	<siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
-		tipo="itemConfiguracao" 
-		tema="simple" 
-		modulo="sigasr" 
-		tamanho="grande"
-		onchange="dispararFuncoesOnBlurItem();"
-		checarInput="true"
-		paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
-	<br/><span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
-	<br/>
+<div id="${metodo}">
+	<div class="form-group">
+		<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
+		<sigasr:selecao3 propriedade="solicitacao.itemConfiguracao" 
+			tipo="itemConfiguracao" 
+			tema="simple" 
+			modulo="sigasr" 
+			tamanho="grande"
+			onchange="dispararFuncoesOnBlurItem();"
+			checarInput="true"			
+			paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+		<span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
+	</div>
+	
 	<div id="divAcao" depende="solicitacao.itemConfiguracao" >
 		<c:if test="${exibeConhecimento}">
 			<c:if test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
 				<c:if test="${podeVerGestorItem && not empty solicitacao.itemConfiguracao.gestorSet}">
-					<div class="gt-form-row">
+					<div class="form-control">
 						<label>Gestor do Produto</label>
 					    <c:forEach var="g" items="${solicitacao.itemConfiguracao.gestorSet}">
 					        <p>
@@ -54,45 +64,49 @@
 		</c:if>
 		<c:set var="acoesEAtendentes" value="${solicitacao.acoesEAtendentes}" />
 		<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
-			<div class="gt-form-row" style="margin-top: 10px;">
+			<div class="form-group">
 				<label>A&ccedil;&atilde;o</label>	
-				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();">
+				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();" class="form-control">
 					<c:if test="${metodo == 'editar'}">
 						<option value=""></option>
 					</c:if>	
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
+								<c:set var="atividadeLotacao" value="${fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'atividades da lotação')}" />
+								
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${exibeLotacaoNaAcao && !atividadeLotacao}">(${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${atividadeLotacao}"><!-- (${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta}) --></c:if>
 								</option>
-							</c:forEach>					 
+							</c:forEach>
 						</optgroup>
 					</c:forEach>
 				</select>
-				<br/><span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
+				<span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
 			</div>
 			<c:if test="${exibeLotacaoNaAcao}">
-				<div class="gt-form-row" style="margin-top: 10px;">
+				<div class="form-group">
 					<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 							ja que acima no select nao tem como "esconder" essa informacao -->
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
 						<c:forEach items="${acoesEAtendentes.get(cat)}" var="t" varStatus="tPosition">
 							<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
-							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.siglaCompleta} 
-												- ${t.conf.atendente.lotacaoAtual.descricao}</span>
-							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.idLotacao}</span>
+							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta} 
+												- ${t.conf.lotacaoAtendente.lotacaoAtual.descricao}</span>
+							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.lotacaoAtendente.lotacaoAtual.idLotacao}</span>
 						</c:forEach>
 					</c:forEach>
 			
 					<label id="labelAtendentePadrao">Atendente</label>
-					<span id="atendentePadrao" style="display:block;"></span>
+					<span id="atendentePadrao" style="display:block;" class="form-control" readonly>						
+					</span>
 					<input type="hidden" name="solicitacao.designacao.id" id="idDesignacao" value="" />
 					<input type="hidden" name="atendente.id" id="idAtendente" value="" />
 				</div>
 				<c:if test="${metodo == 'escalonar'}">
-					<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
+					<a href="javascript: modalAbrir('lotacaoAtendente')" class="btn btn-primary" style="color: #fff">
 						Alterar atendente
 					</a>
 				</c:if>
@@ -102,6 +116,7 @@
 					<c:if test="${not empty solicitacao.itemConfiguracao && not empty solicitacao.acao && podeUtilizarServicoSigaGC}">
 						<!-- CONHECIMENTOS RELACIONADOS -->
 						<div style="display: inline-block" >
+							<!-- Exibe resultado da chamada exibirConhecimentoRelacionadoAoItemEAcao: -->
 							<div id="gc-ancora-item-acao"></div>
 						</div>
 						<script>
@@ -148,8 +163,9 @@ function carregarAcao() {
 		carregarLotacaoDaAcao();
 		removerAcaoRepetida();
 		apagarMsgErroFechamentoAutomatico();
+		$('#atendentePadrao').show();
 		sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
-	}
+	}	
 }
 function apagarMsgErroFechamentoAutomatico() {
 	$('#erroCheckFechadoAuto').hide();
@@ -158,7 +174,7 @@ function apagarMsgErroFechamentoAutomatico() {
 }
 function dispararFuncoesOnBlurItem() {
 	var executarFuncao = carregarLotacaoDaAcao;
-	$('#itemNaoInformado').hide();
+	$('#itemNaoInformado').hide();	
 	if ('${metodo}' !== 'editar')
 		executarFuncao = carregarAcao;
 	sbmt('solicitacao.itemConfiguracao', null, false, executarFuncao);
@@ -193,7 +209,7 @@ function limparMensagemListener() {
 function addMensagemErroGeral() {
 	$('div.error-message').find('p')
 		.addClass('gt-error')
-		.text('Alguns campos obrigatórios não foram preenchidos. Verificar mensagens abaixo.');
+		.text('Alguns campos obrigatórios não foram preenchidos. Verificar mensagens abaixo.').show();
 
 	$('html, body').animate({ scrollTop: 0 }, 'fast');
 }
@@ -228,9 +244,13 @@ function carregarConhecimento(titulo, gcTag, div) {
 	var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty" +
 	"&titulo=" + titulo + gcTag + "&pagina=exibir";
 	
-	Siga.ajax(url, null, "GET", function(response) {
+	/* Siga.ajax(url, null, "GET", function(response) {
+		div.html(response);
+	}); */
+	$.get( url, function(response){
 		div.html(response);
 	});
+
 }
 
 function getLotacaoDaAcao(conteudoAcao) {
@@ -240,10 +260,10 @@ function getLotacaoDaAcao(conteudoAcao) {
 	for (var i = 0; i < matches.length; i++) {
 	    var str = matches[i];
 	    var texto = str.substring(1, str.length - 1);
-	    if (texto.length > 2 && (texto.substring(0, 2) == "ES" || texto.substring(0, 2) == "T2" 
-	        || texto.substring(0, 2) == "RJ")){
+	    /* if (texto.length > 2 && (texto.substring(0, 2) == "ES" || texto.substring(0, 2) == "T2" 
+	        || texto.substring(0, 2) == "RJ")){ */
 	    	lotacoes[i]= texto;
-	    }
+	    /* } */
 	}
 	return lotacoes[lotacoes.length-1];
 }
@@ -257,6 +277,8 @@ function carregarLotacaoDaAcao() {
 			var siglaLotacao = getLotacaoDaAcao(opcaoSelecionada.html()); 
 			var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
 			var descLotacao = spanLotacao.html();
+			if (opcaoSelecionada.text().toLowerCase().includes('atividades da lotação'))
+				descLotacao = '${lotacaoDoTitular}';
 			var idLotacao = spanLotacao.next().html();
 			var idDesignacaoDaAcao = spanLotacao.prev().html();
 			
@@ -272,7 +294,10 @@ function carregarLotacaoDaAcao() {
 
 function definirDesignacaoEAtendente(idDesignacaoDaAcao, descLotacao, idLotacao) {
 	$("#idDesignacao").val(idDesignacaoDaAcao);
-	$("#atendentePadrao").html(descLotacao);
+	if(descLotacao)
+		$("#atendentePadrao").html(descLotacao);
+	else 
+		$("#atendentePadrao").hide();
 	$("#idAtendente").val(idLotacao);
 	//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
 	$("#atendenteNaoDesignado").val('');

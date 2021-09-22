@@ -1,0 +1,1138 @@
+swagger: '2.0'
+
+info:
+  version: "1.0.0"
+  title: SigaApiV1
+  description: "Esta API pertence ao módulo principal do SIGA. Cada
+    módulo possui um conjunto de APIs. Por exemplo o módulo de documentos
+    (sigaex) possui também um link do swagger contendo a documentação para
+    o conjunto de funções para manipular documentos do SIGA. Basta alterar
+    o link desta página substituindo a palavra <i>siga</i> por <i>sigaex</i>.
+    
+    <p>Todas as funções necessitam de um token, que deve ser gerado 
+    fazendo o seguinte procedimento:
+    <ul><li>Passar no header a chave: <i>'Authorization: Basic
+    xxxxxxxxx'</i> onde <i>xxxxxxxxx</i> é a informação 'usuario:password' 
+    <b>codificado em base64</b>;</li>
+    <li>O Webservice POST /autenticar irá retornar um json contendo o token de 
+    acesso JWT;</li>
+    <li>Este token deverá ser passado no header para cada request 
+    realizado, na chave Authorization.</li></ul>
+    <p>Se desejar, esta página permite fazer testes unitários via swagger: 
+    <ul><li>Clique no botão <i>Authorize</i> e insira o usuário/senha 
+    no <i>Basic Authentication</i>.</li>
+    <li>Execute o POST /autenticar e copie o token do json de
+    resultado.</li>
+    <li>Clique novamente no authorize e cole no campo do <i>Bearer</i> o token.
+    </li></ul>"
+basePath: /siga/api/v1
+schemes: [http,https]
+consumes: [application/json,application/x-www-form-urlencoded]
+produces: [application/json]
+
+tags:
+  - name: auth
+    description: Autenticação
+  - name: cadastro
+    description: Consulta nos Cadastros
+  - name: PIN
+    description: API para Criação, Troca e Reset de PIN
+  - name: utils
+    description: Utilitários
+    
+securityDefinitions:
+  Basic:
+    type: basic
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+################################################################################
+#                                   Parameters                                 #
+################################################################################
+parameters:
+  sigla:
+    name: sigla
+    in: path
+    description: Sigla da entidade
+    type: string
+    required: true
+  id:
+    name: id
+    in: path
+    description: id da entidade
+    type: string
+    required: true
+
+  username:
+    name: username
+    in: query
+    description: Sigla do usuário
+    required: true
+    type: string
+  password:
+    name: password
+    in: query
+    description: Password do usuário
+    required: true
+    type: string
+  pin:
+    name: pin
+    in: query
+    description: PIN para Segundo Fator de Autenticação e Assinatura e Autenticação com Senha
+    required: true
+    type: string
+  pinAtual:
+    name: pinAtual
+    in: query
+    description: PIN Atual para Confirmação da Troca de PIN
+    required: true
+    type: string
+  tokenPin:
+    name: tokenPin
+    in: query
+    description: Token para Reset de PIN
+    required: true
+    type: string
+  lotacao:
+    name: lotacao
+    in: formData
+    description: Sigla completa da lotação integrada ao Siga
+    required: false
+    type: string
+  matricula:
+    name: matricula
+    in: formData
+    description: Sigla completa da matrícula do usuário do Siga
+    required: false
+    type: string
+  orgao:
+    name: orgao
+    in: formData
+    description: Sigla completa do órgão externo ao Siga
+    required: false
+    type: string
+  matriculaQuery:
+    name: matricula
+    in: query
+    description: Sigla completa da matrícula
+    required: false
+    type: string
+  texto:
+    name: texto
+    in: query
+    description: Texto a ser pesquisado
+    required: false
+    type: string    
+  cpf:
+    name: cpf
+    in: query
+    description: CPF do usuário, somente números sem ponto ou traço
+    required: false
+    type: string
+  idPessoaIni:
+    name: idPessoaIni
+    in: query
+    description: Identificador da Pessoa Inicial
+    required: false
+    type: string    
+  idPessoa:
+    name: idPessoa
+    in: query
+    description: Identificador da Pessoa (id)
+    required: false
+    type: string    
+  idLotacao:
+    name: idLotacao
+    in: query
+    description: Identificador da Lotação (id)
+    required: false
+    type: string         
+  idLotacaoIni:
+    name: idLotacaoIni
+    in: query
+    description: Identificador da Lotação Inicial
+    required: false
+    type: string            
+  idOrgao:
+    name: idOrgao
+    in: query
+    description: Identificador do Órgão (id)
+    required: false
+    type: string
+  nomeCargo:
+    name: nomeCargo
+    in: query
+    description: Nome do cargo ou parte do nome
+    required: false
+    type: string
+  nomeFuncaoConfianca:
+    name: nomeFuncaoConfianca
+    in: query
+    description: Nome da função de confiança cargo ou parte do nome
+    required: false
+    type: string
+  idUf:
+    name: idUf
+    in: query
+    description: Identificador da UF (id)
+    required: false
+    type: string
+    
+  siglaOrgao:
+    name: siglaOrgao
+    in: formData
+    description: Sigla do órgão
+    required: false
+    type: string
+  idCargoIni:
+    name: idCargoIni
+    in: formData
+    description: Id inicial do cargo
+    required: false
+    type: string
+  idFuncaoConfiancaIni:
+    name: idFuncaoConfiancaIni
+    in: formData
+    description: Id inicial da função de confiança
+    required: false
+    type: string
+  formCpf:
+    name: formCpf
+    in: formData
+    description: Número do CPF, com ou sem traço e pontos
+    required: false
+    type: string
+  nome:
+    name: nome 
+    in: formData
+    description: Nome
+    required: false
+    type: string
+  nomeAbreviado:
+    name: nomeAbreviado
+    in: formData
+    description: Nome abreviado
+    required: false
+    type: string
+  dataNascimento:
+    name: dataNascimento
+    in: formData
+    description: Data de nascimento no formato dd/mm/aaaa
+    required: false
+    type: string
+  email:
+    name: email
+    in: formData
+    description: E-mail
+    required: false
+    format: email
+    type: string
+  rg:
+    name: rg 
+    in: formData
+    description: Número do RG com ou sem traços ou pontos
+    required: false
+    type: string
+  rgOrgaoExpedidor:
+    name: rgOrgaoExpedidor
+    in: formData
+    description: Órgão Expedidor do RG
+    required: false
+    type: string
+  rgUf:
+    name: rgUf 
+    in: formData
+    description: UF do RG (Estado). Sigla com dois caracteres.
+    required: false
+    type: string
+  rgDataExpedicao:
+    name: rgDataExpedicao 
+    in: formData
+    description: Data de expedição do RG no formato dd/mm/aaaa
+    required: false
+    type: string
+  enviarEmailAcesso:
+    name: enviarEmailAcesso
+    in: formData
+    description: Opção para enviar o e-mail de acesso automaticamente ao usuário
+    required: false
+    type: boolean
+
+  idLotacaoPaiIni:
+    name: idLotacaoPaiIni
+    in: formData
+    description: Identificador da Lotação Pai Inicial
+    required: false
+    type: string
+  idLocalidade:
+    name: idLocalidade
+    in: formData
+    description: Identificador da Localidade
+    required: false
+    type: string
+  isAcessoExterno:
+    name: isAcessoExterno
+    in: formData
+    description: Lotação é de acesso externo? (true/false)
+    required: false
+    type: boolean
+  siglaOrgaoQuery:
+    name: siglaOrgaoQuery
+    in: query
+    description: Sigla do órgão
+    required: false
+    type: string
+    
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+  /autenticar:
+    post:
+      summary: Recebe login e senha e gera um token JWT para ser usado nos outros métodos da API
+      tags: [auth]
+      security:
+        - Basic: []
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: Token JWT
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /pessoas:
+    get:
+      summary: "Pesquisa de pessoas"
+      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul>
+        <li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
+        <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li></ul>"
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idPessoaIni"
+        - $ref: "#/parameters/texto"
+        - $ref: "#/parameters/cpf"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Pessoa"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      summary: "Inclusão de pessoas"
+      description: "Inclui uma pessoa no cadastro de pessoas e cria a identidade para a mesma. 
+        Acesso restrito para usuários autorizados."
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/siglaOrgao"
+        - $ref: "#/parameters/idCargoIni"
+        - $ref: "#/parameters/idFuncaoConfiancaIni"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/formCpf"
+        - $ref: "#/parameters/nome"
+        - $ref: "#/parameters/nomeAbreviado"
+        - $ref: "#/parameters/dataNascimento"
+        - $ref: "#/parameters/email"
+        - $ref: "#/parameters/rg"
+        - $ref: "#/parameters/rgOrgaoExpedidor"
+        - $ref: "#/parameters/rgUf"
+        - $ref: "#/parameters/rgDataExpedicao"
+        - $ref: "#/parameters/enviarEmailAcesso"
+      responses:
+        200:
+          description: Criado com sucesso
+          schema:
+            type: object
+            properties:
+              idPessoa:
+                type: string
+              siglaPessoa:
+                type: string
+        400:
+          description: Órgão, lotação, cargo ou função de confiança não existente.
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: Inclusão de pessoa não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+
+  /pessoas/{sigla}:
+    get:
+      summary: "Pesquisa de pessoa por sigla"
+      description: "Retorna a pessoa correspondente a sigla pesquisada" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              pessoa:
+                $ref: "#/definitions/Pessoa"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para a sigla informada.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /pin:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/pin"
+      summary: Criação de PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /pin/trocar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/pinAtual"
+        - $ref: "#/parameters/pin"
+      summary: Troca de PIN para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /pin/reset:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/tokenPin"
+        - $ref: "#/parameters/pin"
+      summary: Esqueceu PIN.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"  
+            
+  /pin/gerar-token-reset:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      summary: Gera Token e Envia para Email cadastrado para Reset de PIN.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"           
+            
+  
+  /lotacoes:
+    get:
+      summary: "Pesquisa de lotações"
+      description: "Retorna uma lista de lotações. A pesquisa será feita de acordo com os parâmetros informados 
+        (informar somente um):
+        <ul>
+        <li><b>siglaOrgaoQuery=</b>Pesquisa as lotações do órgão especificado.</li>
+        <li><b>idLotacaoIni=</b>Pesquisa a Lotação Atual da Lotação Inicial solicitada.</li>
+        <li><b>texto=</b>Pesquisa as lotacoes cuja sigla ou nome contém uma determinada palavra.</li></ul>"
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/siglaOrgaoQuery"
+        - $ref: "#/parameters/texto"
+        - $ref: "#/parameters/idLotacaoIni"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Lotacao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+  
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      summary: "Inclusão de lotação"
+      description: "Inclui uma lotação no cadastro de lotações. 
+        Acesso restrito à usuários autorizados."
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/siglaOrgao"
+        - $ref: "#/parameters/nome"
+        - name: sigla
+          in: formData
+          description: Sigla da lotação a criar
+          type: string
+          required: true
+        - $ref: "#/parameters/idLotacaoPaiIni"
+        - $ref: "#/parameters/idLocalidade"
+        - $ref: "#/parameters/isAcessoExterno"
+      responses:
+        200:
+          description: Criado com sucesso
+          schema:
+            type: object
+            properties:
+              idLotacao:
+                type: string
+              siglaLotacao:
+                type: string
+        400:
+          description: Órgão, unidade pai ou localidade não existente.
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: Inclusão de lotação não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+
+  /lotacoes/{sigla}:
+    get:
+      summary: "Pesquisa de lotacoes por sigla"
+      description: "Retorna a lotacao correspondente a sigla pesquisda" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              lotacao:
+                $ref: "#/definitions/Lotacao"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma lotação foi encontrada para a sigla informada.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /orgaos:
+    get:
+      summary: "Pesquisa de órgãos"
+      description: "Retorna uma lista de órgãos."
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idOrgao"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Orgao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"        
+  
+  /orgaos/{sigla}:
+    get:
+      summary: "Pesquisa de órgão por sigla"
+      description: "Retorna o órgão correspondente a sigla pesquisada" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              orgao:
+                $ref: "#/definitions/Orgao"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhum Órgão foi encontrado para a sigla informada.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /cargos/{id}:
+    get:
+      summary: "Pesquisa de cargo por id"
+      description: "Retorna o cargo correspondente ao id pesquisado" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              cargo:
+                $ref: "#/definitions/Cargo"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhum cargo foi encontrado para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /cargos:
+    get:
+      summary: "Pesquisa de cargos por id do órgão e nome do cargo"
+      description: "Retorna uma lista de cargos correspondente ao id do órgão e nome do cargo pesquisados. Se não for informado o nome do cargo, retorna todos do órgão.
+        Não é permitida a consulta de cargos de outro órgão que não seja o do usuário logado." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idOrgao"
+        - $ref: "#/parameters/nomeCargo"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Cargo"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhum cargo foi encontrado para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /funcoes/{id}:
+    get:
+      summary: "Pesquisa de função de confiança por id"
+      description: "Retorna a função de confiança correspondente ao id pesquisado" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              funcaoConfianca:
+                $ref: "#/definitions/FuncaoConfianca"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma função de confiança foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /funcoes:
+    get:
+      summary: "Pesquisa de funções de confiança por id do órgão e nome do cargo"
+      description: "Retorna uma lista de funções de confiança correspondentes ao id do órgão e nome pesquisados. Se não for informado o nome, retorna todos do órgão." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idOrgao"
+        - $ref: "#/parameters/nomeFuncaoConfianca"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/FuncaoConfianca"
+        403:
+          description: Acesso não permitido ou Usuário não autorizado para consultar dados deste órgão.
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma função de confiança foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /localidades/{id}:
+    get:
+      summary: "Pesquisa de localidade por id"
+      description: "Retorna a localidade correspondente ao id pesquisado" 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              localidade:
+                $ref: "#/definitions/Localidade"
+        404:
+          description: Nenhuma localidade foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /localidades:
+    get:
+      summary: "Pesquisa de localidades"
+      description: "Retorna a lista de localidades por UF ou nome." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idUf"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Localidade"
+        404:
+          description: Nenhuma localidade foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /ufs:
+    get:
+      summary: "Pesquisa de UFs"
+      description: "Retorna a lista de UFs." 
+      tags: [cadastro]
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Uf"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /acessos:
+    get:
+      description: Listar os últimos acessos
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/AcessoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /notificacoes:
+    get:
+      description: Listar as notificações para determinado Usuário
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Notificacao"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"            
+
+
+################################################################################
+#                                     Definitions                              #
+################################################################################
+definitions:
+  Status:
+    type: object
+    properties:
+      mensagem:
+        type: string
+        description: Mensagem
+      indice:
+        type: number
+        description: Quantos passos já foram executados
+      contador:
+        type: number
+        description: Número total de passos a serem executados
+      bytes:
+        type: number
+        description: Tamanho total do payload até o momento
+      errormsg:
+        type: string
+        description: Mensagem de erro se houver
+      stacktrace:
+        type: string
+        description: Detalhamento do erro
+
+  Error:
+    type: object
+    properties:
+      errormsg:
+        type: string
+
+  Pessoa:
+    type: object
+    description: Dados de uma determinada Pessoa
+    properties:
+      idPessoa:
+        type: string
+        description: Id da pessoa
+      idPessoaIni:
+        type: string        
+        description: Id inicial da pessoa
+      sigla:
+        type: string
+        description: Sigla da pessoa
+      nome:
+        type: string        
+        description: Nome da pessoa
+      siglaLotacao:
+        type: string          
+        description: Sigla da lotação da pessoa
+      isExternaPessoa:
+        type: boolean
+        description: Devolve true se for pessoa externa e false se não for
+      lotacao:
+        $ref: "#/definitions/Lotacao"
+      cargo:
+        $ref: "#/definitions/Cargo"
+      funcaoConfianca:
+        $ref: "#/definitions/FuncaoConfianca"
+  
+  Orgao:
+    type: object
+    description: Dados do Órgão da pessoa para perfil de acesso
+    properties:
+      idOrgao:
+        type: string
+        description: Id do Órgão da Pessoa
+      sigla:
+        type: string
+        description: Sigla do Órgão da Pessoa
+      nome:
+        type: string
+        description: Nome do Órgão da Pessoa
+
+  Lotacao:
+    type: object
+    description: Dados de uma determinada Lotação
+    properties:
+      idLotacao:
+        type: string
+        description: Id da lotação
+      idLotacaoIni:
+        type: string
+        description: Id inicial da lotação 
+      sigla:
+        type: string
+        description: Sigla completa da Lotação (com o órgão)
+      siglaLotacao:
+        type: string
+        description: Sigla da lotação (sem o órgão)
+      nome:
+        type: string
+        description: Nome da lotação
+      orgao:
+        $ref: "#/definitions/Orgao"
+
+  LotacaoAtual:
+    type: object
+    properties:
+      idLotacao:
+        type: string
+      idLotacaoIni:
+        type: string        
+      sigla:
+        type: string
+      nome:
+        type: string
+      orgao:
+        type: string        
+
+  Cargo:
+    type: object
+    description: Dados do Cargo da Pessoa
+    properties:
+      idCargo:
+        type: string
+        description: Id do Cargo
+      idCargoIni:
+        type: string
+        description: Id inicial do Cargo
+      idExterna:
+        type: string
+        description: id do Cargo Externo
+      sigla:
+        type: string
+        description: Sigla do Cargo
+      nome: 
+        type: string
+        description: Nome do Cargo
+
+  FuncaoConfianca:
+    type: object
+    description: Dados da Função de Confiança da Pessoa
+    properties:
+      idFuncaoConfianca:
+        type: string
+        description: Id da função de confiança
+      idFuncaoConfiancaIni:
+        type: string
+        description: Id inicial da função de confiança
+      idExterna:
+        type: string
+        description: id da função de confiança externa
+      sigla:
+        type: string
+        description: Sigla da função de confiança
+      nome: 
+        type: string
+        description: Nome da função de confiança
+      idpai:
+        type: string
+        description: id da função de confiança pai
+
+  Localidade:
+    type: object
+    description: Dados da Localidade
+    properties:
+      idLocalidade:
+        type: string
+        description: Id da localidade
+      nome: 
+        type: string
+        description: Nome da localidade
+      uf:
+        $ref: "#/definitions/Uf"
+
+  Uf:
+    type: object
+    description: Dados das UFs
+    properties:
+      idUf:
+        type: string
+        description: Id da UF
+      nomeUf: 
+        type: string
+        description: Nome da UF
+
+  AcessoItem:
+    description: Acessos recentes
+    type: object
+    properties:
+      datahora:
+        type: string
+        format: date-time
+      ip:
+        type: string
+        
+  Notificacao:
+    type: object
+    description: Dados de Notificacao
+    properties:
+      idNotificacao:
+        type: string
+        description: Id do Cargo
+      titulo:
+        type: string
+        description: Título da Notificação
+      icone:
+        type: string
+        description: Class Font Awesome do Icone da Notificação
+      resumo:
+        type: string
+        description: Resumo da Notificação
+      conteudo: 
+        type: string
+        description: Conteúdo da Notificação     
+      dataInicio: 
+        type: string
+        format: date-time
+        description: Data de Início da Notificação    
+      dataTermino: 
+        type: string
+        format: date-time
+        description: Data de Início de Término da Notificação  
+      sempreMostrar: 
+        type: boolean
+        description: true se notificação não for dispensável. false se notificação for dispensável
+        

@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.AutorizacaoGI;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminGabinete;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleGabinete;
@@ -22,11 +24,12 @@ import br.gov.jfrj.siga.tp.exceptions.ControleGabineteControllerException;
 import br.gov.jfrj.siga.tp.model.Condutor;
 import br.gov.jfrj.siga.tp.model.ControleGabinete;
 import br.gov.jfrj.siga.tp.model.ItemMenu;
+import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.model.Veiculo;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/controleGabinete")
 public class ControleGabineteController extends TpController {
 
@@ -34,11 +37,19 @@ public class ControleGabineteController extends TpController {
     private static final String CONTROLE_GABINETE = "controleGabinete";
     private static final String VEICULOS = "veiculos";
     private static final String CONDUTORES = "condutores";
+    @Inject
     private AutorizacaoGI autorizacaoGI;
 
-    public ControleGabineteController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em, AutorizacaoGI autorizacaoGI) {
-        super(request, result, dao, validator, so, em);
-        this.autorizacaoGI = autorizacaoGI;
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ControleGabineteController() {
+		super();
+	}
+	
+	@Inject
+    public ControleGabineteController(HttpServletRequest request, Result result,   Validator validator, SigaObjects so,   EntityManager em) {
+        super(request, result, TpDao.getInstance(), validator, so, em);
     }
 
     @RoleGabinete
@@ -152,6 +163,7 @@ public class ControleGabineteController extends TpController {
             validator.add(new I18nMessage("odometroEmKmSaida", "controlesGabinete.odometroEmKmSaida.validation"));
     }
 
+    @Transactional
     @RoleGabinete
     @RoleAdminGabinete
     public void salvar(@Valid ControleGabinete controleGabinete) throws ControleGabineteControllerException {
@@ -183,6 +195,7 @@ public class ControleGabineteController extends TpController {
         }
     }
 
+    @Transactional
     @RoleGabinete
     @RoleAdminGabinete
     @Path("/excluir/{id}")

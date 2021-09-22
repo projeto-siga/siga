@@ -25,8 +25,6 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -34,38 +32,15 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "CP_LOCALIDADE", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_localidade")
 @SuppressWarnings("serial")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 		Selecionavel {
-
-	private static List<String> municipios = null;
-
-	@SuppressWarnings("unchecked")
-	private static List<String> obterMunicipios() {
-		try {
-			return Cp.getInstance().getProp().obterMunicipios();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ArrayList();
-		}
-	}
-
-	/*
-	 * static { String[] municipiosArray ={"Angra dos Reis", "Barra do Piraí",
-	 * "Cachoeiro do Itapemirim", "Campos", "Duque de Caxias", "Itaboraí",
-	 * "Itaperuna", "Macaé", "Magé", "Niterói", "Nova Friburgo", "Nova Iguaçu",
-	 * "Petrópolis", "Resende", "Rio de Janeiro", "São Gonçalo",
-	 * "São João de Meriti", "São Mateus", "São Pedro da Aldeia", "Teresópolis",
-	 * "Três Rios", "Vitória", "Volta Redonda" }; MUNICIPIOS =
-	 * Arrays.asList(municipiosArray); }
-	 */
 
 	public String getDescricao() {
 		return getNmLocalidade();
@@ -82,16 +57,6 @@ public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 	public void setSigla(String sigla) {
 		setNmLocalidade(sigla);
 
-	}
-
-	public static List<String> getMunicipios() {
-		if (municipios == null)
-			municipios = obterMunicipios();
-		return municipios;
-	}
-
-	public static void setMunicipios(List<String> municipios) {
-		CpLocalidade.municipios = municipios;
 	}
 
 }

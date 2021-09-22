@@ -1,38 +1,26 @@
 package br.gov.jfrj.siga.sr.util;
 
 import java.util.Calendar;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.StatelessSession;
-
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
-import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sr.model.Sr;
 import br.gov.jfrj.siga.sr.model.SrAcao;
-import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
-import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
-import br.gov.jfrj.siga.sr.model.SrOperador;
-import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.notifiers.CorreioFake;
@@ -60,7 +48,6 @@ public class TestUtil {
 		ContextoPersistencia.em().createNativeQuery("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.deadlockTrace', 'true')").executeUpdate();*/
 			
 		tiposMov();
-		tiposConfig();
 		marcadores();
 		servicos();
 		
@@ -373,30 +360,12 @@ public class TestUtil {
 		new SrTipoMovimentacao(14L, "Cancelamento de Movimentação").save();
 	}
 	
-	private static void tiposConfig(){
-		
-		CpTipoConfiguracao design = new CpTipoConfiguracao();
-		design.setIdTpConfiguracao(300L);
-		design.setDscTpConfiguracao("Designação");
-		design.save();
-		
-		CpTipoConfiguracao assoc = new CpTipoConfiguracao();
-		assoc.setIdTpConfiguracao(304L);
-		assoc.setDscTpConfiguracao("Abrangência de Acordo");
-		assoc.save();
-	}
-	
 	private static void servicos() {
-		
-		CpSituacaoConfiguracao naoPode = new CpSituacaoConfiguracao();
-		naoPode.setIdSitConfiguracao(2L);
-		naoPode.setDscSitConfiguracao("Não Pode");
-		naoPode.save();
 		
 		CpTipoServico ts = new CpTipoServico();
 		ts.setIdCpTpServico(2);
 		ts.setDscTpServico("Sistema");
-		ts.setSituacaoDefault(naoPode);
+		ts.setSituacaoDefault(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
 		ts.save();
 
 		CpServico siga = new CpServico();
@@ -428,81 +397,69 @@ public class TestUtil {
 		t.setDescrTipoMarca("Siga-SR");
 		t.save();
 
-		CpTipoMarcador cptm = new CpTipoMarcador();
-		cptm.setIdTpMarcador(1L);
-		cptm.setDescrTipoMarcador("Sistema");
+		CpTipoMarca cptm = new CpTipoMarca();
+		cptm.setIdTpMarca(1L);
+		cptm.setDescrTipoMarca("Sistema");
 		cptm.save();
 
-		CpMarcador m41 = new CpMarcador();
-		m41.setIdMarcador(41L);
-		m41.setDescrMarcador("A Receber");
-		m41.setCpTipoMarcador(cptm);
+		CpTipoMarca m41 = new CpTipoMarca();
+		m41.setIdTpMarca(41L);
+		m41.setDescrTipoMarca("A Receber");
 		m41.save();
 
 		CpMarcador m42 = new CpMarcador();
 		m42.setIdMarcador(42L);
 		m42.setDescrMarcador("Em Andamento");
-		m42.setCpTipoMarcador(cptm);
 		m42.save();
 
 		CpMarcador m43 = new CpMarcador();
 		m43.setIdMarcador(43L);
 		m43.setDescrMarcador("Fechado");
-		m43.setCpTipoMarcador(cptm);
 		m43.save();
 
 		CpMarcador m44 = new CpMarcador();
 		m44.setIdMarcador(44L);
 		m44.setDescrMarcador("Pendente");
-		m44.setCpTipoMarcador(cptm);
 		m44.save();
 
 		CpMarcador m45 = new CpMarcador();
 		m45.setIdMarcador(45L);
 		m45.setDescrMarcador("Cancelado");
-		m45.setCpTipoMarcador(cptm);
 		m45.save();
 
 		CpMarcador m48 = new CpMarcador();
 		m48.setIdMarcador(48L);
 		m48.setDescrMarcador("Como Cadastrante");
-		m48.setCpTipoMarcador(cptm);
 		m48.save();
 
 		CpMarcador m49 = new CpMarcador();
 		m49.setIdMarcador(49L);
 		m49.setDescrMarcador("Como Solicitante");
-		m49.setCpTipoMarcador(cptm);
 		m49.save();
 		
 		CpMarcador m53 = new CpMarcador();
 		m53.setIdMarcador(53L);
 		m53.setDescrMarcador("A Fechar");
-		m53.setCpTipoMarcador(cptm);
 		m53.save();
 
 		CpMarcador m61 = new CpMarcador();
 		m61.setIdMarcador(61L);
 		m61.setDescrMarcador("Em Elaboração");
-		m61.setCpTipoMarcador(cptm);
 		m61.save();
 		
 		CpMarcador m65 = new CpMarcador();
 		m65.setIdMarcador(65L);
 		m65.setDescrMarcador("Fora do Prazo");
-		m65.setCpTipoMarcador(cptm);
 		m65.save();
 		
 		CpMarcador m66 = new CpMarcador();
 		m66.setIdMarcador(66L);
 		m66.setDescrMarcador("Ativo");
-		m66.setCpTipoMarcador(cptm);
 		m66.save();
 		
 		CpMarcador m69 = new CpMarcador();
 		m69.setIdMarcador(69L);
 		m69.setDescrMarcador("Necessita Providência");
-		m69.setCpTipoMarcador(cptm);
 		m69.save();
 		
 	}
@@ -557,7 +514,7 @@ public class TestUtil {
 				.get()
 				.limparCache(
 						(CpTipoConfiguracao) CpTipoConfiguracao
-								.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+								.findById(CpTipoDeConfiguracao.SR_ASSOCIACAO_TIPO_ATRIBUTO));
 	}*/
 	
 	public static String removeAcento(String acentuado){

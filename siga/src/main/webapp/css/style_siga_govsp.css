@@ -24,9 +24,13 @@
 
 .box_login {
 	background-color: rgb(190,213,206);
-	border-radius:8px;border: 1px solid #dadce0;
+	border-radius:3px;border: 1px solid #dadce0;
 }
 
 p.gt-table-action-list a.link-tag {
 	margin-top: 0.4em;
 }
+
+.div-width-min0 { 
+    min-width: 0px !important;
+} 

@@ -18,26 +18,19 @@
  ******************************************************************************/
 package br.gov.jfrj.ldap.conf;
 
-import java.util.Map;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Criptografia;
-import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
+import br.gov.jfrj.siga.base.Prop;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
-public class LdapProperties extends ModeloPropriedade {
+public class LdapProperties {
 
 	private static final String CHAVE_CRIPTO = "MJywdb7udby7&4IKYGD5tg327";
 	
-	@Override
-	public String getPrefixoModulo() {
-		return "siga.ldap";
-	}
-
 	public String getDnUsuarios()  {
 		try {
-			return this.obterPropriedade("dnUsuarios");
+			return Prop.get("/siga.ldap.dn.usuarios");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter a propriedade dnUsuarios", 9, e);
 		}
@@ -45,7 +38,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getServidorLdap()  {
 		try {
-			return this.obterPropriedade("servidor");
+			return Prop.get("/siga.ldap.servidor");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter o servidor LDAP", 9, e);
 		}
@@ -53,7 +46,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getPortaLdap()  {
 		try {
-			return this.obterPropriedade("porta");
+			return Prop.get("/siga.ldap.porta");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter a porta LDAP", 9, e);
 		}
@@ -61,7 +54,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getPortaSSLLdap()  {
 		try {
-			return this.obterPropriedade("ssl.porta");
+			return Prop.get("/siga.ldap.ssl.porta");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter a porta SSL LDAP", 9, e);
 		}
@@ -69,7 +62,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getUsuarioLdap()  {
 		try {
-			return this.obterPropriedade("usuario");
+			return Prop.get("/siga.ldap.usuario");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter o usuário LDAP", 9, e);
 		}
@@ -77,8 +70,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getSenhaLdap()  {
 		try {
-			String senhaCriptografada = this.obterPropriedade(
-					"senha");
+			String senhaCriptografada = Prop.get("/siga.ldap.senha");
 			if(senhaCriptografada != null){
 				senhaCriptografada= senhaCriptografada.trim();
 				return descriptografarSenha(senhaCriptografada);
@@ -105,7 +97,7 @@ public class LdapProperties extends ModeloPropriedade {
 
 	public String getKeyStore()  {
 		try {
-			return this.obterPropriedade("keystore");
+			return Prop.get("/siga.ldap.keystore");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter o keystore", 9, e);
 		}
@@ -113,8 +105,7 @@ public class LdapProperties extends ModeloPropriedade {
 	
 	public Boolean isModoEscrita() {
 		try {
-			return Boolean.valueOf(this.obterPropriedade("modo_escrita")
-					.trim());
+			return Prop.getBool("/siga.ldap.modo.escrita");
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter a propriedade modo_escrita", 9, e);
 		}

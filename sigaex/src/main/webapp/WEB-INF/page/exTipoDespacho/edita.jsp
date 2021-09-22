@@ -12,15 +12,15 @@
 			<div class="card-header"><h5>Cadastro de Tipos de despacho</h5></div>
 
 			<div class="card-body">
-				<form name="frm" action="gravar" theme="simple" method="POST">
+				<form name="frm" action="gravar" theme="simple" method="post">
 
 						<c:if test="${!empty exTipoDespacho.idTpDespacho}">
 							<input type="hidden" name="exTipoDespacho.idTpDespacho" value="${exTipoDespacho.idTpDespacho}"/>
 							<div class="row">
-								<div class="col-sm-1">
+								<div class="col-sm-12">
 									<div class="form-group">
 										<label>C&oacute;digo</label>
-										<label class="form-control"><fmt:formatNumber pattern="0000000" value="${exTipoDespacho.idTpDespacho}"/></label>
+										<label class="form-control" style="max-width: 90px"><fmt:formatNumber pattern="0000000" value="${exTipoDespacho.idTpDespacho}"/></label>
 									</div>
 								</div>
 							</div>
@@ -28,27 +28,34 @@
 						<div class="row">
 							<div class="col-sm-6">
 								<div class="form-group">
-									<label>Descri&ccedil;&atilde;o</label>
-									<textarea name="exTipoDespacho.descTpDespacho" cols="60" rows="5" class="form-control">${exTipoDespacho.descTpDespacho}</textarea>
+									<label for="descTpDespacho">Descri&ccedil;&atilde;o</label>
+									<textarea id="descTpDespacho" name="exTipoDespacho.descTpDespacho" cols="60" rows="5" maxlength="256" class="form-control">${exTipoDespacho.descTpDespacho}</textarea>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-sm-6">
 								<div class="form-check">
-									  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1"  name="exTipoDespacho.fgAtivo" <c:if test="${exTipoDespacho.fgAtivo == 'S'}">checked</c:if> >
-									  <label class="form-check-label" for="defaultCheck1">Ativo</label>
+									  <input class="form-check-input" type="checkbox" value="S" id="ativo" name="exTipoDespacho.fgAtivo" ${exTipoDespacho.fgAtivo == 'S' ? 'checked' : ''} />
+									  <label class="form-check-label" for="ativo">Ativo</label>
 								</div>
 							</div>
 						</div>
-						<div class="row">
+						<div class="row  mt-3">
 							<div class="col-sm-6">
 								<div class="form-group">
-									<input type="submit" value="OK" class="btn btn-primary" />
+									<c:choose>
+										<c:when test="${empty exTipoDespacho.idTpDespacho}">
+											<input type="submit" value="OK" class="btn btn-primary" />
+											<a href="${linkTo[ExTipoDespachoController].lista()}" class="btn btn-cancel ml-2">Cancela</a>
+										</c:when>
+										<c:otherwise>
+											<a href="${linkTo[ExTipoDespachoController].lista()}" class="btn btn-secondary">Voltar</a>
+										</c:otherwise>
+									</c:choose>																	
 								</div>
 							</div>
 						</div>
-
 				</form>
 			</div>
 		</div>

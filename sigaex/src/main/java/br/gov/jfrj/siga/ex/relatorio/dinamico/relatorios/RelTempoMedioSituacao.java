@@ -18,12 +18,13 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelTempoMedioSituacao extends RelatorioTemplate {
@@ -66,6 +67,19 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 	public Collection processarDados() throws Exception {
 
 		List<String> d = new ArrayList<String>();
+		
+		
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
 
 		Iterator it = obtemDados(d);
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
@@ -75,18 +89,22 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 			Object[] obj = (Object[]) it.next();
 			String lotaDoc = (String) obj[0];
 			String modeloDoc = (String) obj[1];
-			List<String> listDados = new ArrayList();
-
-			if (!lotaDoc.equals(lotaAnt)) {
-				listDados.add(lotaDoc);
-				lotaAnt = lotaDoc;
-			} else {
-				listDados.add("");
+			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+					 titular, lotaTitular ,ExDao.getInstance().consultarModeloPeloNome(modeloDoc)
+							)) {
+				List<String> listDados = new ArrayList();
+	
+				if (!lotaDoc.equals(lotaAnt)) {
+					listDados.add(lotaDoc);
+					lotaAnt = lotaDoc;
+				} else {
+					listDados.add("");
+				}
+				listDados.add(modeloDoc);
+				listDados.add(obj[2].toString());
+				listDados.add(obj[3].toString());
+				listModelos.add(listDados);
 			}
-			listDados.add(modeloDoc);
-			listDados.add(obj[2].toString());
-			listDados.add(obj[3].toString());
-			listModelos.add(listDados);
 		}
 		for (List<String> lin : listModelos) {
 			for (String dado : lin) {
@@ -225,7 +243,7 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 					);
 
 		query.setParameter("idTpMovMarcacao", ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO);
-		query.setParameter("idMarcadorUrgente", CpMarcador.MARCADOR_URGENTE);
+		query.setParameter("idMarcadorUrgente", CpMarcadorEnum.URGENTE.getId());
 		query.setParameter("idTpMovTransf", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 		query.setParameter("idTpMovDespTransf", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
 		query.setParameter("idTpMovDespTransfExt", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);

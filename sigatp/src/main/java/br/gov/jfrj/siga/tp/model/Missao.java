@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.tp.model;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -10,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -29,8 +29,10 @@ import org.hibernate.envers.RelationTargetAuditMode;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.tp.util.Reflexao;
 import br.gov.jfrj.siga.tp.validation.annotation.Data;
@@ -40,21 +42,26 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.uteis.SequenceMethods;
 import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
 
-@SuppressWarnings({ "serial", "deprecation" })
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "missao", schema = "sigatp")
 public class Missao extends TpModel implements ConvertableEntity, Comparable<Missao>, SequenceMethods {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String MISSAO_BUSCAR_SEQUENCE_EXCEPTION = "missao.buscar.sequence.exception";
     private static final String END_23_59_59 = "23:59:59";
     private static final String START_00_00_00 = "00:00:00";
+	private static final String PATTERN_DDMMYYYYHHMM = "dd/MM/yyyy HH:mm";
+	private static final String PATTERN_DDMMYYYYHHMM_MYSQL = "yyyy-MM-dd HH:mm";
     public static final ActiveRecord<Missao> AR = new ActiveRecord<>(Missao.class);
 
 	@Id
 	@Sequence(propertieOrgao="cpOrgaoUsuario",siglaDocumento=SiglaDocumentoType.MTP)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 
     @Column(updatable = false)
@@ -143,7 +150,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 
 	@NotNull
 	@ManyToMany
-	@JoinTable(name = "missao_requisTransporte", joinColumns = @JoinColumn(name = "missao_Id"), inverseJoinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
+	@JoinTable(name = "sigatp.missao_requistransporte", joinColumns = @JoinColumn(name = "missao_Id"), inverseJoinColumns = @JoinColumn(name = "requisicaoTransporte_Id"))
 	private List<RequisicaoTransporte> requisicoesTransporte;
 
 	@NotNull
@@ -206,11 +213,12 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	@Override
 	public String getSequence() {
 		if (this.numero != 0) {
-			return cpOrgaoUsuario.getAcronimoOrgaoUsu().replace("-","").toString() +  "-" +
-				   Reflexao.recuperaAnotacaoField(this).substring(1) + "-" +
-				   String.format("%04d",this.dataHora.get(Calendar.YEAR)) + "/" +
-				   String.format("%05d", numero) + "-" +
-				   Reflexao.recuperaAnotacaoField(this).substring(0,1);
+			String sequencia = cpOrgaoUsuario.getAcronimoOrgaoUsu().replace("-","").toString() +  "-" +
+					   Reflexao.recuperaAnotacaoField(this).substring(1) + "-" +
+					   String.format("%04d",this.dataHora.get(Calendar.YEAR)) + "/" +
+					   String.format("%05d", numero) + "-" +
+					   Reflexao.recuperaAnotacaoField(this).substring(0,1);
+			return sequencia;
 		} else {
 			return "";
 		}
@@ -237,7 +245,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	}
 
 	public static List<Missao> buscarEmAndamento() {
-		return Missao.AR.find("trunc(dataHoraSaida) = trunc(sysdate)").fetch();
+		return Missao.AR.find(FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraSaida) = " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + CpDao.getInstance().consultarDataEHoraDoServidor() + ")").fetch();
 	}
 
 	public static Missao buscar(String sequence) throws Exception {
@@ -249,14 +257,20 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			throw new Exception(MessagesBundle.getMessage(MISSAO_BUSCAR_SEQUENCE_EXCEPTION, sequence));
 		}
 
-		CpOrgaoUsuario cpOrgaoUsuario = CpOrgaoUsuario.AR.find("acronimoOrgaoUsu",partesDoCodigo[0]).first();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("acronimoOrgaoUsu", partesDoCodigo[0]);
+		CpOrgaoUsuario cpOrgaoUsuario = CpOrgaoUsuario.AR.find("acronimoOrgaoUsu = :acronimoOrgaoUsu",parametros).first();
 		Integer ano = Integer.valueOf(partesDoCodigo[2]);
 		Long numero = Long.valueOf(partesDoCodigo[3]);
 		String siglaDocumento = partesDoCodigo[4] + partesDoCodigo[1];
 		if (! Reflexao.recuperaAnotacaoField(missao).equals(siglaDocumento)) {
 			throw new Exception(MessagesBundle.getMessage("missao.buscar.siglaDocumento.exception", sequence));
 		}
-		List<Missao> missoes = Missao.AR.find("cpOrgaoUsuario = ? and numero = ? and YEAR(dataHora) = ?", cpOrgaoUsuario, numero, ano).fetch();
+		parametros.clear();
+		parametros.put("cpOrgaoUsuario", cpOrgaoUsuario);
+		parametros.put("numero", numero);
+		parametros.put("ano", ano);
+		List<Missao> missoes = Missao.AR.find("cpOrgaoUsuario = :cpOrgaoUsuario and numero = :numero and YEAR(dataHora) = :ano", parametros).fetch();
 		if (missoes.size() > 1)
 			throw new Exception(MessagesBundle.getMessage("missao.buscar.codigoDuplicado.exception"));
 		if (missoes.isEmpty())
@@ -265,12 +279,20 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	}
 
 	public static List<Missao> buscarPorCondutor(Long idCondutor, Calendar dataHoraInicio) {
-		return Missao.AR.find("condutor.id = ? AND dataHoraSaida <= ? AND (dataHoraRetorno is null OR dataHoraRetorno >= ?) AND estadoMissao NOT IN (?,?) order by dataHoraSaida", idCondutor,
-				dataHoraInicio, dataHoraInicio, EstadoMissao.CANCELADA, EstadoMissao.FINALIZADA).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", idCondutor);
+		parametros.put("dataHoraInicio", dataHoraInicio);
+		parametros.put("estadoMissao1", EstadoMissao.CANCELADA);
+		parametros.put("estadoMissao2", EstadoMissao.FINALIZADA);
+		return Missao.AR.find("condutor.id = :idCondutor AND dataHoraSaida <= :dataHoraInicio AND (dataHoraRetorno is null OR dataHoraRetorno >= :dataHoraInicio) AND estadoMissao NOT IN (:estadoMissao1,:estadoMissao2) order by dataHoraSaida", parametros ).fetch();
 	}
 
 	public static List<Missao> buscarMissoesEmAbertoPorCondutor(Condutor condutor) {
-		return Missao.AR.find("condutor.id = ? AND estadoMissao NOT IN (?,?) order by dataHoraSaida", condutor.getId(), EstadoMissao.CANCELADA, EstadoMissao.FINALIZADA).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", condutor.getId());
+		parametros.put("estadoMissao1", EstadoMissao.CANCELADA);
+		parametros.put("estadoMissao2", EstadoMissao.FINALIZADA);		
+		return Missao.AR.find("condutor.id = :idCondutor AND estadoMissao NOT IN (:estadoMissao1,:estadoMissao2) order by dataHoraSaida", parametros).fetch();
 	}
 
 	public static List<Missao> buscarTodasAsMissoesAvancado(Condutor condutor, EstadoMissao estadoMissao, Calendar dataInicio, Calendar dataFim) throws Exception {
@@ -278,10 +300,14 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			return new ArrayList<Missao>();
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
-		String dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime())  + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+		SimpleDateFormat sdf = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL));
+//		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+//		String dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime())  + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
 
+		String dataInicioFormatada = dataInicio != null ? FormatarDataHora.retorna_DataeHoraeSegundoInvertido(sdf.format(dataInicio.getTime() + " " + START_00_00_00 )) : "";
+		String dataFimFormatada = dataFim != null ? FormatarDataHora.retorna_DataeHoraeSegundoInvertido(sdf.format(dataFim.getTime() + " " + END_23_59_59 )) : "";
+
+		
         String qrl = (condutor != null) ? "condutor.id = " + condutor.getId() : "";
         qrl += (!qrl.equals("") && (dataInicio!= null || dataFim!=null)) ? " AND" : "";
 	    qrl += ((!dataInicioFormatada.equals("") && !dataFimFormatada.equals("")) ? " dataHoraSaida BETWEEN " + dataInicioFormatada + " AND " + dataFimFormatada  : "");
@@ -297,11 +323,16 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 		if (condutor == null) {
 			return new ArrayList<Missao>();
 		}
-		return Missao.AR.find("condutor.id = ? order by dataHoraSaida desc", condutor.getId()).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", condutor.getId());
+		return Missao.AR.find("condutor.id = :idCondutor order by dataHoraSaida desc", parametros).fetch();
 	}
 	
 	public static List<Missao> buscarMissoesProgramadasPorCondutor(Long idCondutor) {
-		return Missao.AR.find("condutor.id = ? AND estadoMissao = ? order by id", idCondutor, EstadoMissao.PROGRAMADA).fetch();
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("idCondutor", idCondutor);
+		parametros.put("estadoMissao", EstadoMissao.PROGRAMADA);
+		return Missao.AR.find("condutor.id = :idCondutor AND estadoMissao = :estadoMissao order by id", parametros).fetch();
 	}
 
 	public static List<Missao> buscarPorVeiculos(Long idVeiculo, String dataHoraInicio) {
@@ -319,14 +350,15 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			filtroEntidade = entidade + ".id = " + idEntidade + " AND ";
 		}
 
-		String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+	//	String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+		String dataFormatadaOracle = dataHoraInicio;
 		List<Missao> missoes;
 
 		String qrl = "SELECT m FROM Missao m WHERE " + filtroEntidade
 				+
 				// "  estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "','" + EstadoMissao.FINALIZADA + "')" +
-				"  estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "')" + " AND trunc(dataHoraSaida) <= trunc(" + dataFormatadaOracle + ")"
-				+ " AND (dataHoraRetorno IS NULL OR trunc(dataHoraRetorno) >= trunc(" + dataFormatadaOracle + "))";
+				"  estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "')" + " AND " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraSaida) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + ")"
+				+ " AND (dataHoraRetorno IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraRetorno) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + "))";
 
 		Query qry = AR.em().createQuery(qrl);
 		try {
@@ -349,15 +381,18 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 
 		String qrl = "SELECT m FROM Missao m";
 		qrl += " WHERE " + filtroEntidade;
-		SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		String dataInicioFormatadaOracle = "to_date('" + formatar.format(dataHoraInicio.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
-		String dataFimFormatadaOracle = dataHoraFim == null ? "" : "to_date('" + formatar.format(dataHoraFim.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
+	//	SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		SimpleDateFormat formatar = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM, PATTERN_DDMMYYYYHHMM_MYSQL));
+		String dataInicioFormatadaOracle = FormatarDataHora.retorna_DataeHoraInvertido(formatar.format(dataHoraInicio.getTime()));
+		//"to_date('" + formatar.format(dataHoraInicio.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
+		String dataFimFormatadaOracle = dataHoraFim == null ? "" : FormatarDataHora.retorna_DataeHoraInvertido(formatar.format(dataHoraFim.getTime()));
+//		String dataFimFormatadaOracle = dataHoraFim == null ? "" : "to_date('" + formatar.format(dataHoraFim.getTime()) + "', 'DD/MM/YYYY HH24:MI')";
 
 
 		if (!dataFimFormatadaOracle.isEmpty()) {
 			qrl += " AND dataHoraSaida BETWEEN " + dataInicioFormatadaOracle + " AND " + dataFimFormatadaOracle;
 		} else {
-			qrl += " AND trunc(dataHoraSaida) <= trunc(" + dataInicioFormatadaOracle + ")";
+			qrl += " AND " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataHoraSaida) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataInicioFormatadaOracle + ")";
 		}
 
 

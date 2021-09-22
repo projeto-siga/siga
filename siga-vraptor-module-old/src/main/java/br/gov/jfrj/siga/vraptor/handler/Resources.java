@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import br.com.caelum.vraptor.http.route.Router;
-import br.com.caelum.vraptor.ioc.ApplicationScoped;
-import br.com.caelum.vraptor.ioc.Component;
+
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-@Component
 @ApplicationScoped
 public final class Resources {
 

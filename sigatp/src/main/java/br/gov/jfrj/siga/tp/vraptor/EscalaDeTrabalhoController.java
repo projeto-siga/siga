@@ -6,16 +6,18 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.I18nMessage;
+import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdmin;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissao;
 import br.gov.jfrj.siga.tp.auth.annotation.RoleAdminMissaoComplexo;
@@ -26,9 +28,10 @@ import br.gov.jfrj.siga.tp.model.EscalaDeTrabalho;
 import br.gov.jfrj.siga.tp.model.ItemMenu;
 import br.gov.jfrj.siga.tp.model.Missao;
 import br.gov.jfrj.siga.tp.model.TpDao;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
-@Resource
+@Controller
 @Path("/app/escalaDeTrabalho")
 public class EscalaDeTrabalhoController extends TpController {
 
@@ -39,10 +42,20 @@ public class EscalaDeTrabalhoController extends TpController {
     private static final String MODO = "modo";
 	private static final String LABEL_EDITAR = "views.label.editar";
 	private static final String LABEL_INCLUIR = "views.label.incluir";
+	private static final String PATTERN_DDMMYYYYHHMM = "dd/MM/yyyy HH:mm";
+	private static final String PATTERN_DDMMYYYYHHMM_MYSQL = "yyyy-MM-dd HH:mm";
 
 	private MissaoController missaoController;
 
-	public EscalaDeTrabalhoController(HttpServletRequest request, Result result, CpDao dao, Validator validator, SigaObjects so, EntityManager em, MissaoController missaoController) {
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public EscalaDeTrabalhoController() {
+		super();
+	}
+	
+	@Inject
+	public EscalaDeTrabalhoController(HttpServletRequest request, Result result,   Validator validator, SigaObjects so,  EntityManager em, MissaoController missaoController) {
 		super(request, result, TpDao.getInstance(), validator, so, em);
 
 		this.missaoController = missaoController;
@@ -118,6 +131,7 @@ public class EscalaDeTrabalhoController extends TpController {
         result.include(DIA_SEMANA, diaSemana);
      }
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -132,7 +146,8 @@ public class EscalaDeTrabalhoController extends TpController {
 		result.redirectTo(this).listarPorCondutor(escalaDeTrabalho.getCondutor().getId());
 	}
 
-	@SuppressWarnings("static-access")
+    @Transactional
+    @SuppressWarnings("static-access")
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -248,6 +263,7 @@ public class EscalaDeTrabalhoController extends TpController {
 		return diasDeTrabalhoAntigo.equals(diasDeTrabalhoNovo);
 	}
 
+    @Transactional
 	@RoleAdmin
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
@@ -318,7 +334,7 @@ public class EscalaDeTrabalhoController extends TpController {
 	private boolean validarMissoesParaNovaEscala(EscalaDeTrabalho escala) throws Exception {
 		missaoController.buscarPorCondutoreseEscala(escala);
 		List<Missao> missoes = (List<Missao>) getRequest().getAttribute("missoesPorCondutoreEscala");
-		SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		SimpleDateFormat formatar = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL));
 		boolean valido = true;
 		StringBuilder listaMissoes = new StringBuilder();
 		String delimitador="";
@@ -326,7 +342,8 @@ public class EscalaDeTrabalhoController extends TpController {
 		if (missoes != null && !missoes.isEmpty()) {
 			for (Missao missao : missoes) {
 				String dataMissao = formatar.format(missao.getDataHoraSaida().getTime());
-				String dataFormatadaOracle = "to_date('" + dataMissao + "', 'DD/MM/YYYY HH24:mi')";
+				String dataFormatadaOracle = dataMissao;
+		//		String dataFormatadaOracle = "to_date('" + dataMissao + "', 'DD/MM/YYYY HH24:mi')";
 				if (! missao.getCondutor().estaEscalado(dataMissao) &&
 					! missao.getCondutor().estaDePlantao(dataFormatadaOracle)	) {
 					listaMissoes.append(delimitador).append(missao.getSequence());

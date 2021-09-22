@@ -34,18 +34,19 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.tp.util.Situacao;
 import br.gov.jfrj.siga.tp.validation.annotation.Chassi;
+import br.gov.jfrj.siga.tp.validation.annotation.Data;
 import br.gov.jfrj.siga.tp.validation.annotation.Renavam;
 import br.gov.jfrj.siga.tp.validation.annotation.Unique;
 import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
-import br.gov.jfrj.siga.validation.ValidarAnoData;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "veiculo", schema = "sigatp")
 @Unique(message = "{veiculo.placa.unique}", field = "placa")
 public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Veiculo> {
 
@@ -53,11 +54,11 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	public static final ActiveRecord<Veiculo> AR = new ActiveRecord<>(Veiculo.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+    @GeneratedValue(generator = "hibernate_sequence_generator")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 
-	@NotEmpty
+	@NotNull
 	@Size(max = 8, message = "{veiculo.placa.maxSize}")
 	@UpperCase
 	private String placa;
@@ -74,7 +75,7 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	@Enumerated(EnumType.STRING)
 	private Situacao situacao;
 
-	@NotEmpty
+	@NotNull
 	@UpperCase
 	@Size(max = 11, message = "{veiculo.patrimonio.maxSize}")
 	private String patrimonio;
@@ -98,11 +99,11 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	@Min(value = 1000, message = "{veiculo.anoModelo.minSize}")
 	private int anoModelo;
 
-	@NotEmpty
+	@NotNull
 	@UpperCase
 	private String marca;
 
-	@NotEmpty
+	@NotNull
 	@UpperCase
 	private String modelo;
 
@@ -110,7 +111,7 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	private TipoDeCombustivel tipoDeCombustivel;
 
 	@ManyToOne
-	public Cor cor;
+	private Cor cor;
 
 	@UpperCase
 	private String motor;
@@ -135,11 +136,11 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 
 	private String pneuPressaoTraseira;
 
-	@NotEmpty
+	@NotNull
 	@Renavam
 	private String renavam;
 
-	@NotEmpty
+	@NotNull
 	@Chassi
 	@UpperCase
 	private String chassi;
@@ -188,12 +189,12 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	@UpperCase
 	private String outros;
 
-	@ValidarAnoData(descricaoCampo = "Data de Aquisicao")
+	@Data(descricaoCampo = "Data de Aquisicao")
 	private Calendar dataAquisicao;
 
 	private Double valorAquisicao;
 
-	@ValidarAnoData(descricaoCampo = "Data de Garantia")
+	@Data(descricaoCampo = "Data de Garantia")
 	private Calendar dataGarantia;
 
 	@ManyToOne
@@ -201,15 +202,15 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 
 	private String numeroCartaoAbastecimento;
 
-	@ValidarAnoData(descricaoCampo = "Validade do Cartao de Abastecimento")
+	@Data(descricaoCampo = "Validade do Cartao de Abastecimento")
 	private Calendar validadeCartaoAbastecimento;
 
 	private String numeroCartaoSeguro;
 
-	@ValidarAnoData(intervalo = 10, descricaoCampo = "Validade do Cartao de Seguro")
+	@Data(intervalo = 10, descricaoCampo = "Validade do Cartao de Seguro")
 	private Calendar validadeCartaoSeguro;
 
-	@ValidarAnoData(descricaoCampo = "Data de Alienacao")
+	@Data(descricaoCampo = "Data de Alienacao")
 	private Calendar dataAlienacao;
 
 	@UpperCase
@@ -323,7 +324,7 @@ public class Veiculo extends TpModel implements ConvertableEntity, Comparable<Ve
 	@SuppressWarnings("unchecked")
 	public static List<Veiculo> listarDisponiveis(String dataSaida, Long idMissao, Long idOrgao) {
 		List<Veiculo> veiculos;
-		String dataFormatadaOracle = "to_date('" + dataSaida + "', 'DD/MM/YYYY HH24:mi')";
+		String dataFormatadaOracle = FormatarDataHora.retorna_DataeHora(dataSaida);
 		String qrl = "SELECT v FROM Veiculo v where " + " v.situacao = '" + Situacao.Ativo.toString() + "' " + " AND v.cpOrgaoUsuario.id in  " + "(SELECT cp.id FROM CpOrgaoUsuario cp"
 				+ " WHERE  cp.id = " + idOrgao + ")" + " AND v.id not in " + "(SELECT s.veiculo.id FROM ServicoVeiculo s" + " WHERE  s.veiculo.id = v.id" + " AND   s.dataHoraInicio <= "
 				+ dataFormatadaOracle + " AND    (s.dataHoraFim = NULL " + " OR    s.dataHoraFim >= " + dataFormatadaOracle + "))" + " AND   v.id not in" + "(SELECT m.veiculo.id FROM Missao m"

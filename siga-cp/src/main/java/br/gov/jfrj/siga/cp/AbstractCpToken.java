@@ -20,17 +20,11 @@ package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
 
-
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -38,17 +32,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractCpToken implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1155912355132032160L;
-
 	@Id
 	@SequenceGenerator(name="CP_TOKEN_GENERATOR", sequenceName="CORPORATIVO.CP_TOKEN_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CP_TOKEN_GENERATOR")
+	@GeneratedValue(generator="CP_TOKEN_GENERATOR")
 	@Column(name="ID_TOKEN")
 	private long idToken;
 

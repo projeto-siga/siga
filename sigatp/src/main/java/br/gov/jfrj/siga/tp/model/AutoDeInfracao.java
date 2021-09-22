@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -28,14 +29,14 @@ import br.gov.jfrj.siga.tp.validation.annotation.UpperCase;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "autodeinfracao", schema = "sigatp")
 public class AutoDeInfracao extends TpModel implements ConvertableEntity, Comparable<AutoDeInfracao> {
 
 	public static final ActiveRecord<AutoDeInfracao> AR = new ActiveRecord<>(AutoDeInfracao.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 
 	@NotNull
@@ -78,6 +79,7 @@ public class AutoDeInfracao extends TpModel implements ConvertableEntity, Compar
 	private String enquadramento; */
 
 	@NotNull
+	@NotEmpty
 	@UpperCase
 	private String local;
 
@@ -293,6 +295,7 @@ public class AutoDeInfracao extends TpModel implements ConvertableEntity, Compar
 		this.numeroDoProcesso = numeroDoProcesso;
 	}
 
+	
 	public void setId(Long id) {
 		this.id = id;
 	}

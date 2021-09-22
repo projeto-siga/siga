@@ -722,8 +722,7 @@
 				.getElementById("transition-container").innerHTML;
 	</script>
 
-	<script
-		src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+	<script	src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
 	<script src="../../../js/xmlutils.js" type="text/javascript"
 		language="javascript"></script>
 	<script src="../../../js/wf-design.js"></script>

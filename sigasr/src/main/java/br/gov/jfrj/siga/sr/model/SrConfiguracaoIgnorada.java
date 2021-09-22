@@ -15,7 +15,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO_IGNORADA", schema = "SIGASR")
+@Table(name = "sr_configuracao_ignorada", schema = "sigasr")
 public class SrConfiguracaoIgnorada extends Objeto {
 
     private static final long serialVersionUID = 1L;
@@ -64,9 +64,9 @@ public class SrConfiguracaoIgnorada extends Objeto {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<SrConfiguracaoIgnorada> findByConfiguracao(SrConfiguracao configuracao) {
-        StringBuffer sb = new StringBuffer("select ig from SrConfiguracaoIgnorada as ig where ig.configuracao.id = ");
-        sb.append(configuracao.getId());
+    public static List<SrConfiguracaoIgnorada> findByConfiguracao(SrConfiguracaoCache configuracao) {
+        StringBuffer sb = new StringBuffer("select ig from SrConfiguracaoIgnorada as ig where ig.configuracao.idConfiguracao = ");
+        sb.append(configuracao.idConfiguracao);
 
         List<SrConfiguracaoIgnorada> list = AR.em().createQuery(sb.toString()).getResultList();
 

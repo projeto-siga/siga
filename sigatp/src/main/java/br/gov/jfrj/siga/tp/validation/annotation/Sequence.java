@@ -21,7 +21,6 @@ import br.gov.jfrj.siga.uteis.SiglaDocumentoType;
  * @author db1
  *
  */
-@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Sequence {

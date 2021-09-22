@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
  * 
  */
 public class Ex extends
-		Cp<ExConfiguracaoBL, ExCompetenciaBL, ExBL, ExPropriedadeBL> {
+		Cp<ExConfiguracaoBL, ExCompetenciaBL, ExBL> {
 
 	/**
 	 * Retorna uma instância do sistema de workflow. Através dessa instância é
@@ -41,9 +41,8 @@ public class Ex extends
 			synchronized (Cp.class) {
 				if (!isInstantiated(Ex.class)) {
 					ExConfiguracaoBL confBL = new ExConfiguracaoBL();
-					ExConfiguracaoComparator comparator = new ExConfiguracaoComparator();
+					ExConfiguracaoCacheComparator comparator = new ExConfiguracaoCacheComparator();
 					ExCompetenciaBL compBL = new ExCompetenciaBL();
-					ExPropriedadeBL propBL = new ExPropriedadeBL();
 					ExBL exBL = new ExBL();
 					
 					Ex instance = new Ex();
@@ -54,7 +53,6 @@ public class Ex extends
 					instance.getComp().setConfiguracaoBL(instance.getConf());
 					instance.setBL(exBL);
 					instance.getBL().setComp(instance.getComp());
-					instance.setProp(propBL);
 				}
 			}
 		}

@@ -15,7 +15,7 @@ public class IntegracaoLdapViaWebService {
 	private static IntegracaoLdapViaWebService instancia;
 	private IntegracaoLdapProperties props;
 	private IntegracaoLdapViaWebService(){
-		props = new IntegracaoLdapProperties();
+		props = new IntegracaoLdapProperties(null);
 	}
 	
 	public synchronized static IntegracaoLdapViaWebService getInstancia(){

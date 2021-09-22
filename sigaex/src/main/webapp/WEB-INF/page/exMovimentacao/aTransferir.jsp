@@ -98,6 +98,7 @@ $(function(){
 				<input type="hidden" name="sigla" value="${sigla}" id="transferir_gravar_sigla" />
 				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
 				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
+				<input type="hidden" name="tipoTramite" value="3"/>
 
 				<c:if test="${not doc.eletronico}">
 				<div class="row">
@@ -119,7 +120,7 @@ $(function(){
 				</div>
 				</c:if>
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col col-3">
 						<div class="form-group">
 							<label>Destinatário</label> 
 							<select name="tipoResponsavel" onchange="javascript:sbmt();" class="form-control" >
@@ -131,7 +132,7 @@ $(function(){
 							</select> 
 						</div>
 					</div>
-					<div class="col-sm-6">
+					<div class="col col-9">
 						<div class="form-group">
 							<label>&nbsp;&nbsp;&nbsp;</label> 
 							<c:choose>
@@ -147,25 +148,76 @@ $(function(){
 							</c:choose></td>
 						</div>
 					</div>
-				</div>				
-				<div class="row">
-					<div class="col-sm-2">
-						<div class="form-group">
-							<label>Data da devolução</label> 
-							<input type="text" name="dtDevolucaoMovString"onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control"/>					 
-							<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
-						</div>
-					</div>
-					<c:if test="${tipoResponsavel == 3}">
-					<div class="col-sm-3">
-						<div class="form-group">
-							<div class="form-check form-check-inline mt-4">
-							  <input class="form-check-input" type="checkbox" name="protocolo" id="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
-							  <label class="form-check-label" for="protocolo"><fmt:message key="tela.tramitar.checkbox"/></label>
+				</div>	
+				<c:if test="${siga_cliente == 'GOVSP'}">
+					<div class="row">
+						<div class="col col-3">
+							<div class="form-group mb-0">
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dataModal">Data de Devolução</button>
+								<%-- <label>Data da devolução</label>
+								<input type="text" name="dtDevolucaoMovString" onblur="alert('ATENÇÃO!! Só preencha o campo data de devolução se o documento tiver que retornar para a sua unidade, caso contrário após o vencimento o mesmo ficará marcado com o status Aguardando devolução fora do prazo, até que retorne para sua unidade.')" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control" placeholder="dd/mm/aaaa" autocomplete="off" />--%>			
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="dataModalLabel" aria-hidden="true">
+					  <div class="modal-dialog" role="document">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					        <h5 class="modal-title" id="dataModalLabel">Data de Devolução</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+					      </div>
+					      <div class="modal-body">
+					        <form>
+					          <div class="row">
+					          	<div class="col col-4">
+						          	<div class="form-group mb-0">
+							           <label>Selecione a Data:</label>
+							           <input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" placeholder="dd/mm/aaaa" autocomplete="off"/>
+						          	</div>
+					          	</div>
+					          </div>
+					          <div>
+						          <div class="form-group mb-0">
+						            <label>ATENÇÃO!! Só preencha o campo data de devolução se o documento tiver que retornar para a sua unidade, caso contrário após o vencimento o mesmo ficará marcado com o status Aguardando devolução fora do prazo, até que retorne para sua unidade.</label>
+						          </div>
+						       </div>
+					        </form>
+					      </div>
+					      <div class="modal-footer">
+					        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+				</c:if>
+				<c:if test="${siga_cliente != 'GOVSP'}">
+					<div class="row">
+						<div class="col col-3">
+							<div class="form-group mb-0">
+								<label>Data da devolução</label> 
+								<input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off"/>					 
+							</div>
+						</div>
+					</div>	
+				</c:if>
+				<c:if test="${siga_cliente != 'GOVSP'}">			
+					<div class="row">
+						<div class="col col-12">
+								<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
+						</div>				
+					</div>
+				</c:if>				
+				<div class="row">
+					<div class="col col-9">
+						<div class="form-check form-check-inline mt-3 mb-3">
+						  <input class="form-check-input" type="checkbox" name="protocolo" id="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
+						  <label class="form-check-label" for="protocolo"><fmt:message key="tela.tramitar.checkbox"/></label>
+						</div>
+					</div>
+					<c:if test="${tipoResponsavel == 3}">
+					<div class="col col-12">
 						<div class="form-group">
 							<label>Observação</label> 
 							<input type="text" size="30" name="obsOrgao" value="${obsOrgao}" class="form-control"/>			 
@@ -174,10 +226,10 @@ $(function(){
 					</c:if>
 				</div>
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col col-12">
 						<div class="form-group">
 							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="btn btn-primary"><u>O</u>k</a>																			
-							<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" class="btn btn-primary">Cancela</a>
+							<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" class="btn btn-light ml-2">Cancela</a>
 						</div>
 					</div>
 				</div>				

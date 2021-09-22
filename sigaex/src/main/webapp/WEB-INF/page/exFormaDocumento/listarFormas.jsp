@@ -6,7 +6,14 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Lista de Espécies Documentais">
+<siga:pagina titulo="Lista de EspÃ©cies Documentais">
+
+<style>
+	#tableOrder tr td span.badge:nth-last-child(2) {
+		margin-bottom: 0!important;
+	}
+</style>
+		
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -22,31 +29,30 @@
 					</div>
 				</div>
 				<div class="row">
-					<form id="listar" name="listar" method="GET" class="form100">
+					<form id="listar" name="listar" method="get" class="form100">						
 						<div class="col-sm-4">
 							<div class="form-group">
 								<div class="form-check form-check-inline">
-									<input type="radio" id="order1" name="ordenar"
-										value="descricao" onclick="this.form.submit();"
-										class="form-check-input"><label
-										class="form-check-label" for="order1">Descri&ccedil;&atilde;o</label>
-										<input type="radio" id="order2" name="ordenar" value="sigla"
-										onclick="this.form.submit();" class="form-check-input ml-2"><label
-											class="form-check-label" for="order2">Sigla</label>
-								</div>
+									<input type="radio" id="ordenadoPorDescricao" name="ordenar" value="descricao" onclick="this.form.submit();"
+										class="form-check-input" ${ordenadoPor eq 'descricao' ? 'checked' : ''} />
+									<label class="form-check-label" for="ordenadoPorDescricao">Descri&ccedil;&atilde;o</label>
+									<input type="radio" id="ordenadoPorSigla" name="ordenar" value="sigla" onclick="this.form.submit();" 
+										class="form-check-input ml-2" ${ordenadoPor eq 'sigla' ? 'checked' : ''} />
+									<label class="form-check-label" for="ordenadoPorSigla">Sigla</label>
+								</div>								
 							</div>
 						</div>
 					</form>
 				</div>
 				<div class="row">
 					<div class="col-sm-2">
-						<form name="frm" action="editar" theme="simple" method="GET">
+						<form name="frm" action="editar" theme="simple" method="get">
 							<button type="submit" class="btn btn-primary">Novo</button>
 						</form>
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>		
 		<div class="row">
 			<div class="col-sm">
 				<table id="tableOrder" class="table table-sm table-striped">
@@ -63,15 +69,57 @@
 						<c:set var="tamanho" value="0" />
 						<c:forEach var="forma" items="${itens}">
 							<tr class="${evenorodd}">
-								<td><a
-									href="${pageContext.request.contextPath}/app/forma/editar?id=${forma.idFormaDoc}">${forma.descrFormaDoc}</a>
+								<td>
+									<a href="${pageContext.request.contextPath}/app/forma/editar?id=${forma.idFormaDoc}">${forma.descrFormaDoc}</a>
 								</td>
 								<td>${forma.sigla}</td>
-								<td>${forma.exTipoFormaDoc.descricao}</td>
-								<td><c:forEach var="origem"
-										items="${forma.exTipoDocumentoSet}">
-											${origem.descricao}<br />
-									</c:forEach></td>
+								<td class="pt-2">
+									<span class="badge badge-${forma.exTipoFormaDoc.id eq 1 ? 'primary' : 'secondary'}">
+										${forma.exTipoFormaDoc.descricao}
+									</span>
+								</td>
+								<td class="pt-2">
+									<c:forEach var="origem" items="${forma.exTipoDocumentoSet}">
+										<c:choose>
+											<c:when test="${origem.id eq 1}">												
+												<span class="badge badge-primary  mb-1">
+													${origem.descricaoSimples}
+												</span>
+												<br />
+											</c:when>
+											<c:when test="${origem.id eq 2}">												
+												<span class="badge badge-info  mb-1">
+													${origem.descricaoSimples}
+												</span>
+												<br />
+											</c:when>
+											<c:when test="${origem.id eq 3}">												
+												<span class="badge badge-secondary  mb-1">
+													${origem.descricaoSimples}
+												</span>
+												<br />
+											</c:when>
+											<c:when test="${origem.id eq 4}">												
+												<span class="badge badge-dark  mb-1">
+													${origem.descricaoSimples}
+												</span>
+												<br />
+											</c:when>
+											<c:when test="${origem.id eq 5}">												
+												<span class="badge badge-light  mb-1">
+													${origem.descricaoSimples}
+												</span>
+												<br />
+											</c:when>
+											<c:otherwise>
+												<span class="badge badge-warning  mb-1">
+													${origem.descricao}
+												</span>
+												<br />
+											</c:otherwise>										
+										</c:choose>										
+									</c:forEach>
+								</td>
 							</tr>
 							<c:choose>
 								<c:when test='${evenorodd == "even"}'>

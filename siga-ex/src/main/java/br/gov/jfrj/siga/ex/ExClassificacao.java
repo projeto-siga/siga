@@ -45,17 +45,14 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * A class that represents a row in the 'EX_CLASSIFICACAO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 //@AttributeOverride(name = "hisAtivo", column = @Column(name = "HIS_ATIVO"))
-@Table(name = "EX_CLASSIFICACAO", catalog = "SIGA")
+@Table(name = "siga.ex_classificacao")
 @Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExClassificacao extends AbstractExClassificacao implements
 		Serializable, Selecionavel {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5783951238385826556L;
 	
 	/**
 	 * Simple constructor of ExClassificacao instances.

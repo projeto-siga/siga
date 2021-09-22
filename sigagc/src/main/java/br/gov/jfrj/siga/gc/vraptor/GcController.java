@@ -9,11 +9,20 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.vraptor.SigaController;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
+
 public class GcController extends SigaController {
 
-	public GcController(HttpServletRequest request, Result result,
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GcController() {
+		super();
+	}
+	
+
+	public GcController(HttpServletRequest request, CpDao dao ,Result result,
 			SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+		super(request, result, dao, so, em);
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException {

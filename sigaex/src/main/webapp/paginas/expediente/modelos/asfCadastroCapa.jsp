@@ -4,7 +4,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
+
 
 <mod:modelo>
 	<mod:entrevista>
@@ -267,13 +267,13 @@
 				<table align="left" width="100%">
 					<tr>
 						<td width="100%" align="left">
-						<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${f:resource('siga.ex.modelos.cabecalho.titulo')}</p>
+						<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${f:resource('modelos.cabecalho.titulo')}</p>
 						</td>
 					</tr>
-					<c:if test="${not empty f:resource('siga.ex.modelos.cabecalho.subtitulo')}">
+					<c:if test="${not empty f:resource('modelos.cabecalho.subtitulo')}">
 						<tr>
 							<td width="100%" align="left">
-							<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${f:resource('siga.ex.modelos.cabecalho.subtitulo')}L</p>
+							<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${f:resource('modelos.cabecalho.subtitulo')}L</p>
 							</td>
 						</tr>
 					</c:if>

@@ -47,7 +47,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -402,11 +402,17 @@ public class SigaExSinc {
 		try {
 			ExDao.getInstance().iniciarTransacao();
 			OperadorComHistorico o = new OperadorComHistorico() {
-				public Sincronizavel gravar(Sincronizavel s) {
+				public Sincronizavel gravar(Sincronizavel s , boolean descarregar) {
+
 					Sincronizavel o = ExDao.getInstance().gravar(s);
-					ExDao.getInstance().getSessao().flush();
+				
+					if (descarregar){
+						ExDao.getInstance().getSessao().flush();
+					}
+					
 					return o;
 				}
+
 			};
 
 			for (Item opr : list) {

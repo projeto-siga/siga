@@ -49,11 +49,11 @@ public class ProcessadorHtml {
 
 	static final String asTrimElements[] = { "html", "title", "head", "body",
 			"div", "hr", "table", "caption", "colgroup", "col", "th", "tr", "td", "ol", "ul",
-			"li", "p", "br", "hr", "blockquote" };
+			"li", "p", "br", "hr", "blockquote", "section", "header", "sup" };
 
 	static final String asKnownElements[] = { "html", "title", "head", "body",
 			"div", "hr", "table", "caption", "colgroup", "col", "th", "tr", "td", "ol", "ul",
-			"li", "p", "br", "hr", "blockquote" };
+			"li", "p", "br", "hr", "blockquote", "section", "header", "sup" };
 	
 	private String htmlCompleto, htmlPersonalizado = "";
 
@@ -139,20 +139,29 @@ public class ProcessadorHtml {
 			add(myTags, "b", null, null, true);
 			add(myTags, "strong", null, null, true);
 			add(myTags, "i", null, null, true);
+			add(myTags, "u", null, null, true);
+			add(myTags, "s", null, null, true);
+			add(myTags, "sub", null, null, true);
 			add(myTags, "em", null, null, true);
 
 			add(myTags, "blockquote", null, null, true);
 			add(myTags, "br", null, null, false);
-
+			
+			add(myTags, "section", "class", null, true);
+			add(myTags, "header", "class", null, true);
+			add(myTags, "sup", "data-footnote-id", null, true);
+			add(myTags, "a", "href;id;rel;class", null, true);
+			add(myTags, "cite", null, null, true);
+			
 			String styleP = "background-color;width;font-family=arial,avantgarde bk bt\\, arial;font-size=6pt,7pt,8pt,9pt,10pt,11pt,12pt,13pt,14pt;font-weight=bold"
 					+ ";margin-left;text-decoration=italic;text-align=left,right,center,justify"
 					+ ";text-indent;text-decoration;font-size-no-fix=yes;float=none;clear=both";
-			add(myTags, "div", "align;class", styleP + ";page-break-after;",
+			add(myTags, "div", "align;class", styleP + ";page-break-after;word-wrap;",
 					true);
 			add(myTags, "span", "align;class", styleP, true);
 
-			add(myTags, "h1", null, null, true);
-			add(myTags, "h2", null, null, true);
+			add(myTags, "h1", null, styleP, true);
+			add(myTags, "h2", null, styleP, true);
 			add(myTags, "h3", null, null, true);
 			add(myTags, "h4", null, null, true);
 			add(myTags, "h5", null, null, true);
@@ -161,9 +170,9 @@ public class ProcessadorHtml {
 					true);
 			add(myTags, "ol", "class", "list-style-type=roman", true);
 			add(myTags, "ul", "class", null, true);
-			add(myTags, "li", "class", null, true);
+			add(myTags, "li", "class;data-footnote-id;id", null, true);
 
-			add(myTags, "hr", "size;color", "color", false);
+			add(myTags, "hr", "class", null, false);
 
 			final String sWidth = "width="
 					+ "1%,2%,3%,4%,5%,6%,7%,8%,9%,10%,11%,12%,13%,14%,15%,16%,17%,18%,19%,20%"
@@ -281,6 +290,24 @@ public class ProcessadorHtml {
 		s = s.replace("FIM PRIMEIRO RODAPE -->", "<!-- FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE", "<!-- INICIO RODAPE -->");
 		s = s.replace("FIM RODAPE -->", "<!-- FIM RODAPE -->");
+		
+		
+		
+		int posIniFootnote = s.indexOf("<div style=\"font-size:11pt;\" class=\"footnotes\">");
+		
+		if (posIniFootnote > 0) {
+			int posFimFootnote = s.indexOf("<!-- FIM FOOTNOTE -->");
+			if (posFimFootnote > 0) {
+				String footnote ="";
+				posFimFootnote = posFimFootnote + 21;
+				footnote = s.substring(posIniFootnote, posFimFootnote);
+				s = s.replace("<div style=\"font-size:11pt;\" class=\"footnotes\">", "<!-- div style=\"font-size:11pt;\" class=\"footnotes\"");
+				s = s.replace("<!-- FIM FOOTNOTE -->", "FIM FOOTNOTE -->");
+				s = s.replace("<!-- INICIO RODAPE -->", footnote +"<!-- INICIO RODAPE -->");
+			}
+		}
+
+		
 
 		// Resolve o problema do namespace colado do word. Outra opcao seria
 		// alterar o jtidy conforme abaixo:
@@ -378,6 +405,11 @@ public class ProcessadorHtml {
 	}
 
 	public static String bodyOnly(String s) {
+		
+		//ativa edição nota de rodapé
+		s = s.replace("FIM FOOTNOTE -->", "<!-- FIM FOOTNOTE -->");
+		s = s.replace("<!-- div style=\"font-size:11pt;\" class=\"footnotes\"", "<div style=\"font-size:11pt;\" class=\"footnotes\">");
+
 		Pattern p = Pattern.compile("<body[^>]*>\n?(\\s*+.*?)\\s*+</body>",
 				Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 		Matcher m = p.matcher(s);

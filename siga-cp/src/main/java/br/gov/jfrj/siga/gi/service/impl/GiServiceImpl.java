@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service.impl;
 
-import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
-
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -32,9 +30,8 @@ import org.codehaus.jettison.json.JSONObject;
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -42,13 +39,13 @@ import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.cp.util.TokenException;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
-import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 
 /**
@@ -95,13 +92,9 @@ public class GiServiceImpl implements GiService {
     private String buscarModoAutenticacao(CpIdentidade id) {
     	String orgao = id.getCpOrgaoUsuario().getSiglaOrgaoUsu();
     	String retorno = _MODO_AUTENTICACAO_DEFAULT;
-    	CpPropriedadeBL props = new CpPropriedadeBL();
-    	try {
-			String modo = props.getModoAutenticacao(orgao);
-			if(modo != null) 
-				retorno = modo;
-		} catch (Exception e) {
-		}
+		String modo = Cp.getInstance().getBL().buscarModoAutenticacao(orgao);
+		if(modo != null) 
+			retorno = modo;
     	return retorno;
     }
     
@@ -154,7 +147,7 @@ public class GiServiceImpl implements GiService {
 		
 		String resultado = "";
 		try {
-			//if("true".equals(SigaBaseProperties.getString("siga.ws.seguranca.token.jwt")))
+			//if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				//SigaUtil.getInstance().validarToken(token);
 				
 			if (Pattern.matches("\\d+", cpf) && cpf.length() == 11) {
@@ -190,6 +183,7 @@ public class GiServiceImpl implements GiService {
 					DpPessoa p = identidade.getPessoaAtual();
 					pessoa.put("siglaPessoa", p.getSiglaCompleta());
 					pessoa.put("nomePessoa", p.getNomePessoa());
+					pessoa.put("isExternaPessoa", p.isUsuarioExterno());
 					
 					// Orgao Pessoa
 					CpOrgaoUsuario o = p.getOrgaoUsuario();
@@ -248,6 +242,7 @@ public class GiServiceImpl implements GiService {
 			DpPessoa p = id.getPessoaAtual();
 			pessoa.put("idPessoa", p.getId());
 			pessoa.put("idExternaPessoa", p.getIdExterna());
+			pessoa.put("isExternaPessoa", p.isUsuarioExterno());
 			pessoa.put("matriculaPessoa", p.getMatricula());
 			pessoa.put("cpf", p.getCpfPessoa());
 			pessoa.put("siglaPessoa", p.getSiglaCompleta());
@@ -332,8 +327,7 @@ public class GiServiceImpl implements GiService {
 				ConfiguracaoAcesso ac;
 				ac = ConfiguracaoAcesso.gerar(null, p, lot, null, srv, null);
 				if (ac != null)
-					servicos.put(ac.getServico().getSigla(), ac.getSituacao()
-							.getDscSitConfiguracao());
+					servicos.put(ac.getServico().getSigla(), ac.getSituacao().getDescr());
 			}
 			resultado = servicos.toString(2);
 		} catch (AplicacaoException e) {
@@ -372,7 +366,7 @@ public class GiServiceImpl implements GiService {
 								null);
 						if (ac != null)
 							servicos.put(ac.getServico().getSigla(), ac
-									.getSituacao().getDscSitConfiguracao());
+									.getSituacao().getDescr());
 					} catch (Exception e) {
 					}
 				}
@@ -433,6 +427,9 @@ public class GiServiceImpl implements GiService {
 			Long idLotacaoUsu = null;
 			Long idFuncaoUsu = null;
 
+			// Obtem identidade do cadastrante
+			CpIdentidade identidadeCadastrante = CpDao.getInstance()
+					.consultaIdentidadeCadastrante(cadastranteStr, true);
 			// Obtém Id Órgão
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 			orgaoUsuario.setNmOrgaoUsu(Texto.removeAcento(orgaoUsu));
@@ -481,13 +478,14 @@ public class GiServiceImpl implements GiService {
 				}
 			}
 
-			resultado = Cp
+			DpPessoa pes = Cp
 					.getInstance()
 					.getBL()
-					.criarUsuario(cadastranteStr, null, idOrgaoUsu, idCargoUsu,
+					.criarUsuario(null, identidadeCadastrante, idOrgaoUsu, idCargoUsu,
 							idFuncaoUsu, idLotacaoUsu, nmPessoa, dtNascimento,
-							cpf, email);
+							cpf, email, null, null, null, null, null, "true");
 
+			resultado = "Usuário cadastrado com sucesso: " + pes.getSesbPessoa() + pes.getMatricula();
 		} catch (Exception e) {
 			return e.getMessage();
 		}

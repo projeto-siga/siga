@@ -18,39 +18,46 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jbpm.JbpmContext;
-import org.jbpm.db.GraphSession;
-import org.jbpm.graph.def.Node;
-import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.graph.def.Transition;
-import org.jbpm.graph.exe.ExecutionContext;
-import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.graph.exe.Token;
-import org.jbpm.instantiation.Delegation;
-import org.jbpm.taskmgmt.def.Swimlane;
-import org.jbpm.taskmgmt.def.Task;
-import org.jbpm.taskmgmt.exe.SwimlaneInstance;
-import org.jbpm.taskmgmt.exe.TaskInstance;
-import org.jbpm.taskmgmt.exe.TaskMgmtInstance;
+import org.apache.commons.beanutils.PropertyUtils;
 
+import com.crivano.jlogic.Expression;
+
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
+import br.gov.jfrj.siga.wf.logic.WfPodePegar;
+import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
+import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
+import br.gov.jfrj.siga.wf.model.WfMov;
+import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
+import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
+import br.gov.jfrj.siga.wf.model.WfMovRedirecionamento;
+import br.gov.jfrj.siga.wf.model.WfMovTermino;
+import br.gov.jfrj.siga.wf.model.WfMovTransicao;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
+import br.gov.jfrj.siga.wf.util.WfEngine;
+import br.gov.jfrj.siga.wf.util.WfHandler;
+import br.gov.jfrj.siga.wf.util.WfResp;
+import br.gov.jfrj.siga.wf.util.WfTarefa;
+import br.gov.jfrj.siga.wf.util.WfTarefaComparator;
 
 /**
  * Classe que representa a lógica do negócio do sistema de workflow.
@@ -63,18 +70,18 @@ public class WfBL extends CpBL {
 	public static final String WF_LOTA_CADASTRANTE = "wf_lota_cadastrante";
 	public static final String WF_TITULAR = "wf_titular";
 	public static final String WF_LOTA_TITULAR = "wf_lota_titular";
-	private static TaskInstanceComparator tic = new TaskInstanceComparator();
+	private static WfTarefaComparator tic = new WfTarefaComparator();
 
 	/**
 	 * Cria uma instância de processo. Ao final da criação, define as seguintes
-	 * variáveis na instância do processo: WF_CADASTRANTE - Pessoa responsável
-	 * (que responde) pelas ações realizadas no sistema no momento da criação da
+	 * variáveis na instância do processo: WF_CADASTRANTE - Pessoa responsável (que
+	 * responde) pelas ações realizadas no sistema no momento da criação da
 	 * instância do processo WF_LOTA_CADASTRANTE - Lotação da pessoa que está
-	 * operando o sistema no momento da criação da instância do processo
-	 * WF_TITULAR - Pessoa responsável (que responde) pelas ações realizadas no
-	 * sistema no momento da criação da instância do processo WF_LOTA_TITULAR -
-	 * Lotação da pessoa responsável (que responde) pelas ações realizadas no
-	 * sistema no momento da criação da instância do processo
+	 * operando o sistema no momento da criação da instância do processo WF_TITULAR
+	 * - Pessoa responsável (que responde) pelas ações realizadas no sistema no
+	 * momento da criação da instância do processo WF_LOTA_TITULAR - Lotação da
+	 * pessoa responsável (que responde) pelas ações realizadas no sistema no
+	 * momento da criação da instância do processo
 	 * 
 	 * Essas variáveis são do banco de dados corporativo.
 	 * 
@@ -88,111 +95,104 @@ public class WfBL extends CpBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public ProcessInstance createProcessInstance(long pdId,
-			DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular,
-			DpLotacao lotaTitular, ArrayList<String> keys,
-			ArrayList<String> values, boolean fCreateStartTask)
-			throws Exception {
-		GraphSession graph = WfContextBuilder.getJbpmContext()
-				.getGraphSession();
-		ProcessDefinition pd = graph.loadProcessDefinition(pdId);
-		// ProcessInstance processInstance = pd.createProcessInstance();
-		// ExecutionContext ec = new ExecutionContext(processInstance
-		// .getRootToken());
-		// // processInstance.getRootToken().getNode().leave(ec);
-		// processInstance.getRootToken().signal();
-		// WfContextBuilder.getJbpmContext().getJbpmContext()
-		// .save(processInstance);
-		// return processInstance;
+	public WfProcedimento createProcessInstance(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
+			DpLotacao lotaTitular, CpIdentidade identidade, WfTipoDePrincipal tipoDePrincipal, String principal,
+			ArrayList<String> keys, ArrayList<String> values, boolean fCreateStartTask) throws Exception {
 
-		final ProcessInstance pi = pd.createProcessInstance();
-		// Signal the root token based on the following criteria:
-		// 1. If there is no start task, and
-		// 2. If the root token is still at the start state, and
-		// 3. If the start state has a default leaving transition, then
-		// signal the token along the default transition.
-		// context.addSuccessMessage("Started process");
+		// Create the process definition,
+		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
 
-		pi.getContextInstance().setVariable(WF_CADASTRANTE,
-				cadastrante.getSigla());
-		pi.getContextInstance().setVariable(WF_LOTA_CADASTRANTE,
-				lotaCadastrante.getSiglaCompleta());
-		pi.getContextInstance().setVariable(WF_TITULAR, titular.getSigla());
-		pi.getContextInstance().setVariable(WF_LOTA_TITULAR,
-				lotaTitular.getSiglaCompleta());
+		// Create the process instance without responsible support
+		HashMap<String, Object> variable = new HashMap<>();
+//		variable.put(WF_CADASTRANTE, cadastrante.getSigla());
+//		variable.put(WF_LOTA_CADASTRANTE, lotaCadastrante.getSiglaCompleta());
+//		variable.put(WF_TITULAR, titular.getSigla());
+//		variable.put(WF_LOTA_TITULAR, lotaTitular.getSiglaCompleta());
 
 		if (keys != null && values != null) {
 			for (int n = 0; n < keys.size(); n++) {
-				pi.getContextInstance().setVariable(keys.get(n), values.get(n));
+				variable.put(keys.get(n), values.get(n));
 			}
 		}
 
-		final TaskMgmtInstance taskMgmtInstance = pi.getTaskMgmtInstance();
-		TaskInstance startTaskInstance = null;
-		if (fCreateStartTask)
-			startTaskInstance = taskMgmtInstance.createStartTaskInstance();
+		if (variable.containsKey("doc_document"))
+			principal = (String) variable.get("doc_document");
 
-		/*
-		 * next piece causes NPE. and i don't think it is needed to signal a new
-		 * process automatically. that can be done in the console itself as
-		 * well. TODO it would be nice if the console automatically navigated to
-		 * the screen where you can see the root token and actually give the
-		 * signal
-		 */
+		if (tipoDePrincipal == null)
+			tipoDePrincipal = WfTipoDePrincipal.NENHUM;
 
-		if (startTaskInstance == null) {
-			// There is no start task
-			final Node initialNode = pd.getStartState();
-			final Token rootToken = pi.getRootToken();
-			final Node rootTokenNode = rootToken.getNode();
-			if (initialNode.getId() == rootTokenNode.getId()) {
+		WfProcedimento pi = new WfProcedimento(pd, variable);
 
-				Task startTaskDefinition = initialNode.getProcessDefinition()
-						.getTaskMgmtDefinition().getStartTask();
+		// Impedir a inicialização de procedimento sem informar o principal, quando este
+		// é obrigatório
+		if (principal == null && tipoDePrincipal != WfTipoDePrincipal.NENHUM
+				&& (pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OBRIGATORIO
+						|| pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OBRIGATORIO_E_EXCLUSIVO))
+			throwErroDeInicializacao(pi, null, "não é permitido instanciar este procedimento sem informar o principal");
 
-				if (startTaskDefinition != null) {
-					SwimlaneInstance si = pi
-							.getTaskMgmtInstance()
-							.createSwimlaneInstance(
-									startTaskDefinition.getSwimlane().getName());
-					si.setActorId(titular.getSigla());
-					String[] actorsId = new String[1];
-					actorsId[0] = lotaTitular.getSiglaCompleta();
-					si.setPooledActors(actorsId);
-					pi.getTaskMgmtInstance().addSwimlaneInstance(si);
-				}
-				// The root token is still at the start node
-				final Transition defaultLeavingTransition = initialNode
-						.getDefaultLeavingTransition();
-				if (defaultLeavingTransition != null) {
-					// There's a default transition
-					rootToken.signal(defaultLeavingTransition);
-					// context.addSuccessMessage("Signalled root token");
-				}
-			} 
-		} else {
-			startTaskInstance.assign(new ExecutionContext(startTaskInstance.getToken()));
+		// Impedir que o mesmo documento seja referenciado por 2 procedimentos
+		// diferentes ativos, quando o vínculo é exclusivo
+		if (principal != null && (pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OPCIONAL_E_EXCLUSIVO
+				|| pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OBRIGATORIO_E_EXCLUSIVO)) {
+			List<WfProcedimento> l = dao().consultarProcedimentosAtivosPorPrincipal(principal);
+			if (l.size() > 0)
+				throwErroDeInicializacao(pi, null,
+						"não é permitido instanciar este procedimento com um principal que já está sendo orquestrado por pelo procedimento ativo "
+								+ l.get(0).getSigla());
 		}
 
-		// context.selectOutcome("started");
-		if (pi.hasEnded()) {
-			// context.selectOutcome("finished");
-			// context.addSuccessMessage("Process completed");
+		pi.setTipoDePrincipal(WfTipoDePrincipal.DOCUMENTO);
+		pi.setPrincipal(principal);
+		pi.setTitular(titular);
+		pi.setLotaTitular(lotaTitular);
+		pi.setHisIdcIni(identidade);
+		pi.setOrgaoUsuario(titular.getOrgaoUsuario());
+		pi.setHisDtIni(dao().consultarDataEHoraDoServidor());
+
+		for (WfDefinicaoDeTarefa td : pi.getDefinicaoDeProcedimento().getDefinicaoDeTarefa()) {
+			if (td.getTipoDeTarefa() == null)
+				throwErroDeInicializacao(pi, td, "não foi possível identificar o tipo da tarefa");
+			if (td.getTipoDeTarefa().isExigirResponsavel()) {
+				WfResp r = pi.calcResponsible(td);
+				if (r == null)
+					throwErroDeInicializacao(pi, td, "não foi possível calcular o responsável pela tarefa");
+			}
+			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO) {
+				if (td.getRefId() == null)
+					throwErroDeInicializacao(pi, td,
+							"não foi definido o modelo para a inclusão de documento na tarefa");
+				if (pi.getPrincipal() == null)
+					throwErroDeInicializacao(pi, td,
+							"não foi definido o principal para a inclusão de documento na tarefa");
+				if (pi.getTipoDePrincipal() != WfTipoDePrincipal.DOCUMENTO)
+					throwErroDeInicializacao(pi, td,
+							"o principal não é um documento para a inclusão de documento na tarefa");
+			}
 		}
 
-		// if (instanceExpression != null) {
-		// try {
-		// instanceExpression.setValue(elContext, instance);
-		// } catch (ELException ex) {
-		// context.setError("Error setting value of "
-		// + instanceExpression.getExpressionString(), ex);
-		// return;
-		// }
-		// }
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 
-		// Nothing else saves the process, so we must
-		WfContextBuilder.getJbpmContext().getJbpmContext().save(pi);
+		// Start the process instance
+		if (idxPrimeiraTarefa == null)
+			engine.start(pi);
+		else {
+			pi.start();
+			engine.execute(pi, pi.getCurrentIndex(), idxPrimeiraTarefa);
+		}
+
 		return pi;
+	}
+
+	private String throwErroDeInicializacao(WfProcedimento pi, WfDefinicaoDeTarefa td, String mensagem) {
+		throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
+				+ pi.getDefinicaoDeProcedimento().getSigla() + "', " + mensagem
+				+ (td != null && td.getTitle() != null ? " '" + td.getTitle() + "'" : ""));
+	}
+
+	public void prosseguir(String event, Integer detourIndex, Map<String, Object> param, DpPessoa titular,
+			DpLotacao lotaTitular, CpIdentidade identidade) throws Exception {
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
+		engine.resume(event, detourIndex, param);
 	}
 
 	/**
@@ -200,98 +200,79 @@ public class WfBL extends CpBL {
 	 * 
 	 * @throws AplicacaoException
 	 */
-	public SortedSet<TaskInstance> getTaskList(DpPessoa cadastrante,
-			DpPessoa titular, DpLotacao lotaTitular) throws AplicacaoException {
-		SortedSet<TaskInstance> tasks = new TreeSet<TaskInstance>(tic);
-		boolean fActorIdNaLista = false;
-
-		List<String> actorIds = new ArrayList<String>(2);
-		actorIds.add(lotaTitular.getSiglaCompleta());
-		actorIds.add(titular.getSigla());
-
-		// Acrescenta os tasks do titular
-		// tasks.addAll(WfContextBuilder.getJbpmContext().getJbpmContext()
-		// .getTaskList(titular.getSigla()));
-
-		// Acrescenta os tasks das pessoas da lotação. Se o usuário estiver
-		// substituindo uma lotação, seu actorId deve ser adicionado à lista
-		// posteriormente.
-		List<DpPessoa> pessoas = dao().pessoasPorLotacao(lotaTitular.getId(),
-				false,true);
-		if (pessoas != null) {
-			List<String> aActorIds = new ArrayList<String>(pessoas.size());
-			int i = 0;
-			for (DpPessoa pes : pessoas) {
-				aActorIds.add(pes.getSigla());
-				if (pes.getSigla().equals(titular.getSigla()))
-					fActorIdNaLista = true;
-				i++;
-			}
-			if (!fActorIdNaLista)
-				aActorIds.add(titular.getSigla());
-
-			tasks.addAll(WfContextBuilder.getJbpmContext().getJbpmContext()
-					.getTaskMgmtSession().findTaskInstances(aActorIds));
-		}
-
-		tasks.addAll(getGroupTaskList(actorIds));
+	public SortedSet<WfTarefa> getTaskList(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular)
+			throws AplicacaoException {
+		SortedSet<WfTarefa> tasks = WfDao.getInstance().consultarTarefasDeLotacao(lotaTitular);
 		return tasks;
 	}
 
-	/*
-	 * Esse método é necessário pois o método getGroupTaskList de JbpmContext
-	 * gera uma exceção sempre que nenhum task é encontrado.
-	 */
-	private static List<TaskInstance> getGroupTaskList(List<String> actorIds) {
-		// Acrescenta os tasks que não tem actorId, mas que possuem a
-		// lotaTitular ou o titular no seu pool de atores
-		List taskInstanceIds = WfDao.getInstance().getSessao().getNamedQuery(
-				"TaskMgmtSession.findPooledTaskInstancesByActorIds")
-				.setParameterList("actorIds", actorIds).list();
-		List<TaskInstance> taskInstances = null;
-		if (taskInstanceIds != null && taskInstanceIds.size() > 0) {
-			taskInstances = WfDao.getInstance().getSessao().getNamedQuery(
-					"TaskMgmtSession.findTaskInstancesByIds").setParameterList(
-					"taskInstanceIds", taskInstanceIds).list();
-			return taskInstances;
-		}
-		return new ArrayList<TaskInstance>();
+	public List<WfProcedimento> getTaskList(String siglaDoc) {
+		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
+		return pis;
 	}
 
-	public SortedSet<TaskInstance> getTaskList(String siglaDoc) {
-		SortedSet<TaskInstance> tasks = new TreeSet<TaskInstance>(tic);
-		tasks.addAll(WfDao.getInstance().consultarTarefasAtivasPorDocumento(
-				siglaDoc));
-		return tasks;
+	public static void transferirDocumentosVinculados(WfProcedimento pi, String siglaTitular) throws Exception {
+		String principal = pi.getPrincipal();
+		WfTipoDePrincipal tipo = pi.getTipoDePrincipal();
+		if (principal == null || tipo == null)
+			return;
+
+		if (tipo != WfTipoDePrincipal.DOCUMENTO)
+			return;
+
+		if (pi.getResponsible() == null)
+			return;
+
+		String destino = pi.getResponsible().getCodigo();
+
+		ExService service = Service.getExService();
+		if (service.podeTransferir(principal, siglaTitular, true))
+			service.transferir(principal, destino, siglaTitular, true);
 	}
 
-	public static Boolean podePegarTarefa(DpPessoa cadastrante,
-			DpPessoa titular, DpLotacao lotaCadastrante, DpLotacao lotaTitular,
-			TaskInstance ti) {
-		Set<TaskInstance> tasks = new TreeSet<TaskInstance>(tic);
-		List<String> actorIds = new ArrayList<String>();
-		actorIds.add(lotaTitular == null ? lotaCadastrante.getSiglaCompleta()
-				: lotaTitular.getSiglaCompleta());
+	public static void assertPodeTransferirDocumentosVinculados(WfTarefa ti, String siglaTitular) throws Exception {
+		String principal = ti.getInstanciaDeProcedimento().getPrincipal();
+		WfTipoDePrincipal tipo = ti.getInstanciaDeProcedimento().getTipoDePrincipal();
+		if (principal == null || tipo == null)
+			return;
 
-		tasks.addAll(getGroupTaskList(actorIds));
+		if (tipo != WfTipoDePrincipal.DOCUMENTO)
+			return;
 
-		for (TaskInstance t : tasks) {
-			if (t.getId() == ti.getId()) {
+		ExService service = Service.getExService();
+		if (!service.podeTransferir(principal, siglaTitular, true)) {
+			throw new AplicacaoException("A tarefa não pode prosseguir porque o documento '" + principal
+					+ "' não pode ser transferido. Por favor, verifique se o documento está em sua lotação e se está 'Aguardando andamento'.");
+		}
+	}
+
+	public static boolean assertLotacaoAscendenteOuDescendente(DpLotacao lotAtual, DpLotacao lotFutura)
+			throws AplicacaoException {
+		if (lotAtual.getIdInicial().equals(lotFutura.getIdInicial()))
+			return true;
+
+		// Linha ascendente
+		DpLotacao lot = lotAtual;
+		while (lot.getLotacaoPai() != null) {
+			lot = lot.getLotacaoPai();
+			if (lot.getIdInicial().equals(lotFutura.getIdInicial()))
 				return true;
-			}
 		}
 
-		
-		if (ti.getActorId() != null){
-			DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-			flt.setSigla(ti.getActorId());
-			DpPessoa actor = (DpPessoa) WfDao.getInstance().consultarPorSigla(flt);
-			if (cadastrante.getLotacao().equivale(actor.getLotacao()) ||
-					(lotaTitular != null && lotaTitular.equivale(actor.getLotacao()))){
+		// Descendente direta
+		lot = lotFutura;
+		while (lot.getLotacaoPai() != null) {
+			lot = lot.getLotacaoPai();
+			if (lot.getIdInicial().equals(lotAtual.getIdInicial()))
 				return true;
-			}
 		}
-		
+
+		throw new AplicacaoException("A designação de '" + lotAtual.getSigla() + "' para '" + lotFutura.getSigla()
+				+ "' não é permitida pois só são aceitas lotações ascendentes seguindo a linha do organograma ou descendentes diretas.");
+	}
+
+	public static Boolean podePegarTarefa(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
+			DpLotacao lotaTitular, WfTarefa ti) {
 		return false;
 	}
 
@@ -299,212 +280,117 @@ public class WfBL extends CpBL {
 		return (WfDao) getComp().getConfiguracaoBL().dao();
 	}
 
-	public Comparator<? super TaskInstance> getTaskInstanceComparator() {
-		return tic;
+	public void encerrarProcessInstance(Long id, Date consultarDataEHoraDoServidor) {
+		// TODO Auto-generated method stub
 	}
 
-	/**
-	 * Finaliza todas as Processes Instances que estiverem abertas.
-	 * @throws AplicacaoException 
-	 */
-	public void encerrarTodasProcessesInstances(String nomeProcesso) throws AplicacaoException {
-		List<ProcessDefinition> pd = WfContextBuilder.getJbpmContext()
-				.getJbpmContext().getGraphSession()
-				.findAllProcessDefinitionVersions(nomeProcesso);
-
-		for (ProcessDefinition p : pd) {
-			List<ProcessInstance> instanciasProcesso = WfDao.getInstance().consultarInstanciasDoProcessInstance(p.getId());
-
-			for (ProcessInstance pi : instanciasProcesso) {
-				encerrarProcessInstance(pi.getId(), new Date());
-			}
-
-		}
-		WfContextBuilder.closeContext();
-
-	}
-
-	/**
-	 * Encerra uma process instance com uma data de fim específica.
-	 * 
-	 * @param idProcessInstance
-	 * @param dataFim
-	 * @throws AplicacaoException
-	 */
-	public void encerrarProcessInstance(Long idProcessInstance, Date dataFim)
-			throws AplicacaoException {
-		Calendar cDtFim = Calendar.getInstance();
-		cDtFim.setTime(dataFim);
-		ProcessInstance pi = WfContextBuilder.getJbpmContext()
-				.getGraphSession().getProcessInstance(idProcessInstance);
-
-		Calendar cPiStart = Calendar.getInstance();
-		cPiStart.setTime(pi.getStart());
-		pi.end();
-
-		if (cDtFim != null && (cDtFim.after(cPiStart))) {
-			pi.setEnd(cDtFim.getTime());
-		} else {
-			throw new AplicacaoException(
-					"A data de fim é anterior à data de criação do Process Instance ID: "
-							+ pi.getId() + " START: " + pi.getStart());
-		}
-
-		for (TaskInstance ti : (Collection<TaskInstance>) (pi
-				.getTaskMgmtInstance().getUnfinishedTasks(pi.getRootToken()))) {
-			Calendar cTiCreate = Calendar.getInstance();
-			cTiCreate.setTime(ti.getCreate());
-			ti.end();
-			if (cDtFim != null && (cDtFim.after(cTiCreate))) {
-				ti.setEnd(cDtFim.getTime());
-			} else {
-				throw new AplicacaoException(
-						"A data de fim é anterior à data de criação da Task Instance ID:"
-								+ ti.getId() + " CREATE: " + ti.getCreate());
-			}
-		}
-
-	}
-
-	public void excluirProcessInstance(Long idProcessInstance) {
-		ProcessInstance pi = WfContextBuilder.getJbpmContext()
-				.getGraphSession().getProcessInstance(idProcessInstance);
-		WfContextBuilder.getJbpmContext().getGraphSession()
-				.deleteProcessInstance(pi.getId());
-	}
-	
-	/**
-	 * Exclui do banco de dados todas as instâncias do processo. CUIDADO: As
-	 * exclusões de instâncias são realizadas em TODAS AS VERSÕES do Process
-	 * Definition.
-	 * 
-	 * @param nomeProcesso -
-	 *            Nome do processo que terá suas instâncias excluídas.
-	 */
-	public void excluirTodasProcessInstances(String nomeProcesso) {
-		List<ProcessDefinition> pd = WfContextBuilder.getJbpmContext()
-				.getJbpmContext().getGraphSession()
-				.findAllProcessDefinitionVersions(nomeProcesso);
-
-		for (ProcessDefinition p : pd) {
-			List<ProcessInstance> instanciasProcesso =  WfDao.getInstance().consultarInstanciasDoProcessInstance(p.getId());
-
-			for (ProcessInstance pi : instanciasProcesso) {
-				WfContextBuilder.getJbpmContext().getGraphSession()
-						.deleteProcessInstance(pi.getId());
-			}
-
-		}
-		WfContextBuilder.closeContext();
-	}
-	
-	/**
-	 * Exclui a última versão da definição do processo (Process Definition) do
-	 * banco de dados. CUIDADO: todas as instâncias associadas a ela também
-	 * serão excluídas.
-	 * 
-	 * @param nomeProcesso -
-	 *            Nome do processo.
-	 */
-	private static void excluirUltimaVersaoProcessDefinition(String nomeProcesso) {
-		ProcessDefinition pd = WfContextBuilder.getJbpmContext()
-				.getJbpmContext().getGraphSession()
-				.findLatestProcessDefinition(nomeProcesso);
-
-		WfContextBuilder.getJbpmContext().getGraphSession()
-				.deleteProcessDefinition(pd.getId());
-
-		WfContextBuilder.closeContext();
-
-	}
-	
-	
-	/**
-	 * Exclui TODAS as definições de processo (Process definition) do banco de
-	 * dados. O process definition deixará de existir, bem como suas instâncias
-	 * de processo.
-	 * 
-	 * @param nomeProcesso
-	 */
-	private static void excluirTodosProcessDefinition(String nomeProcesso) {
-		List<ProcessDefinition> pd = WfContextBuilder.getJbpmContext()
-				.getJbpmContext().getGraphSession()
-				.findAllProcessDefinitionVersions(nomeProcesso);
-
-		for (ProcessDefinition p : pd) {
-			WfContextBuilder.getJbpmContext().getGraphSession()
-					.deleteProcessDefinition(p.getId());
-		}
-		WfContextBuilder.closeContext();
-
-	}
-
-	/**
-	 * Encerra o processo da tarefa especificada.
-	 * @param idTI
-	 * @param dtFim
-	 * @throws AplicacaoException
-	 */
-	public void encerrarProcessInstanceDaTarefa(Long idTI, Date dtFim) throws AplicacaoException {
-		TaskInstance ti = WfContextBuilder.getJbpmContext().getJbpmContext().getTaskInstance(idTI);
-
-		if (ti==null){
-			throw new AplicacaoException("Tarefa não encontrada!");
-		}
-		if (dtFim==null){
-			throw new AplicacaoException("Data inválida!");
-		}
-		
-		encerrarProcessInstance(ti.getProcessInstance().getId(), dtFim);
-	}
-	
-	public String gravarProcessDefinition(String xml) {
-		JbpmContext jbpmContext = WfContextBuilder.getJbpmContext().getJbpmContext();
-		ProcessDefinition processDefinition = ProcessDefinition.parseXmlString(xml);
-		jbpmContext.deployProcessDefinition(processDefinition);
-		long id = processDefinition.getId();
-
-		String sReturn = "Definição de Procedimento: " + processDefinition.getName()
-				+ " atualizada com sucesso.";
-
-		// ProcessDefinition pi = jbpmContext.getGraphSession()
-		// .loadProcessDefinition(id);
-
-		Delegation d = new Delegation(
-				"br.gov.jfrj.siga.wf.util.WfAssignmentHandler");
-
-		for (Swimlane s : ((Collection<Swimlane>) processDefinition
-				.getTaskMgmtDefinition().getSwimlanes().values())) {
-			if (s.getTasks() != null)
-				for (Object t : s.getTasks()) {
-					System.out.println(((Task) t).toString());
-				}
-			if (s.getAssignmentDelegation() == null)
-				s.setAssignmentDelegation(d);
-		}
-
-		for (Task t : ((Collection<Task>) processDefinition
-				.getTaskMgmtDefinition().getTasks().values())) {
-			if (t.getSwimlane() == null
-					&& t.getAssignmentDelegation() == null)
-				t.setAssignmentDelegation(d);
-		}
-		return sReturn; 
-	}
-
-	public String lerProcessDefinition(String nome) {
-		JbpmContext jbpmContext = WfContextBuilder.getJbpmContext().getJbpmContext();
-		ProcessDefinition pd = jbpmContext.getGraphSession().findLatestProcessDefinition(nome);
-
-		byte ab[] = pd.getFileDefinition().getBytes("processdefinition.xml");
-		String sXML;
+	public WfDefinicaoDeProcedimento getCopia(WfDefinicaoDeProcedimento original) {
+		WfDefinicaoDeProcedimento copia = new WfDefinicaoDeProcedimento();
 		try {
-			sXML = new String(ab, "UTF-8");
-			return sXML; 
-		} catch (UnsupportedEncodingException e) {
-			return null;
+
+			PropertyUtils.copyProperties(copia, original);
+
+			// novo id
+			copia.setId(null);
+			copia.setHisDtFim(null);
+			copia.setHisDtIni(null);
+			copia.updateAtivo();
+
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao copiar as propriedades anteriores.");
 		}
-		
+
+		return copia;
+	}
+
+	public void gravar(WfDefinicaoDeProcedimento novo, WfDefinicaoDeProcedimento antigo, Date dt,
+			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+		if (novo.getNome() == null || novo.getNome().trim().length() == 0)
+			throw new AplicacaoException("não é possível salvar sem informar o nome.");
+		dao().gravarComHistorico(novo, antigo, dt, identidadeCadastrante);
+	}
+
+	private void gravarMovimentacao(final WfMov mov) throws AplicacaoException {
+		dao().gravar(mov);
+		if (mov.getProcedimento().getMovimentacoes() == null)
+			mov.getProcedimento().setMovimentacoes(new TreeSet<WfMov>());
+		mov.getProcedimento().getMovimentacoes().add(mov);
+	}
+
+	public void anotar(WfProcedimento pi, String descrMov, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) {
+		try {
+
+			WfMovAnotacao mov = new WfMovAnotacao(pi, descrMov, dao().consultarDataEHoraDoServidor(), titular,
+					lotaTitular, identidade);
+			gravarMovimentacao(mov);
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao fazer anotação.", 0, e);
+		}
+	}
+
+	public void excluirAnotacao(WfProcedimento pi, WfMovAnotacao mov) {
+		pi.getMovimentacoes().remove(mov);
+		mov.delete();
+	}
+
+	public void registrarTransicao(WfProcedimento pi, Integer de, Integer para, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) {
+		WfMovTransicao mov = new WfMovTransicao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
+				identidade, de, para);
+
+		// Não registraremos a transição quando a movimentação anterior for um
+		// redirecionamento com a mesma origem e destino
+		WfMov last = pi.getUltimaMovimentacao();
+		if (last != null && last instanceof WfMovRedirecionamento) {
+			WfMovRedirecionamento lastr = (WfMovRedirecionamento) last;
+			if (lastr.getDefinicaoDeTarefaDe() != null && lastr.getDefinicaoDeTarefaPara() != null
+					&& lastr.getDefinicaoDeTarefaDe().equals(mov.getDefinicaoDeTarefaDe())
+					&& lastr.getDefinicaoDeTarefaPara().equals(mov.getDefinicaoDeTarefaPara()))
+				return;
+		}
+
+		gravarMovimentacao(mov);
+	}
+
+	public void pegar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade) {
+		assertLogic(new WfPodePegar(pi, titular, lotaTitular), "pegar");
+		WfMovDesignacao mov = new WfMovDesignacao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
+				identidade, pi.getEventoPessoa(), pi.getEventoLotacao(), titular, lotaTitular);
+		gravarMovimentacao(mov);
+
+		if (pi.getEventoPessoa() != null || pi.getEventoLotacao() != null) {
+			WfResp resp = pi.calcResponsible(pi.getCurrentTaskDefinition());
+			pi.setEventoPessoa(resp.getPessoa());
+			pi.setEventoLotacao(resp.getLotacao());
+			dao().gravarInstanciaDeProcedimento(pi);
+		}
+	}
+
+	public void redirecionar(WfProcedimento pi, int para, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) throws Exception {
+		assertLogic(new WfPodeRedirecionar(pi, titular, lotaTitular), "redirecionar");
+		WfMovRedirecionamento mov = new WfMovRedirecionamento(pi, dao().consultarDataEHoraDoServidor(), titular,
+				lotaTitular, identidade, pi.getCurrentIndex(), para);
+		gravarMovimentacao(mov);
+
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
+		engine.execute(pi, pi.getCurrentIndex(), para);
+	}
+
+	public void terminar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade)
+			throws Exception {
+		assertLogic(new WfPodeTerminar(pi, titular, lotaTitular), "terminar");
+		WfMovTermino mov = new WfMovTermino(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular, identidade,
+				pi.getCurrentIndex());
+		gravarMovimentacao(mov);
+		pi.end();
+		dao().gravar(pi);
+	}
+
+	private static void assertLogic(Expression expr, String descr) {
+		if (!expr.eval())
+			throw new AplicacaoException("Não pode " + descr + " porque " + expr.explain(false));
 	}
 
 }

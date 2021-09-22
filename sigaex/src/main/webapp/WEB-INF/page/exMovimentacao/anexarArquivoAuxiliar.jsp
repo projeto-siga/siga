@@ -6,10 +6,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
-<style type="text/css" media="screen">
-	.custom-file-label::after{content: 'Escolher arquivo' !important;}
-</style>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Anexação de Arquivo Auxiliar">
 
@@ -29,10 +26,11 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<form action="anexar_arquivo_auxiliar_gravar" method="POST" onsubmit="sbmt.disabled=true;"
+				<form action="anexar_arquivo_auxiliar_gravar" method="post" onsubmit="sbmt.disabled=true;"
 					enctype="multipart/form-data" class="form">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
+					<p class="alert alert-warning"><strong>Atenção!</strong> <fmt:message key="documento.arquivoAuxiliar.texto"/></p>
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-control custom-file">

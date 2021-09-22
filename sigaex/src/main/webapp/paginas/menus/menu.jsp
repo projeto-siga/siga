@@ -7,22 +7,21 @@
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('siga.local') eq 'GOVSP' && fx:podeCriarNovoExterno(titular, titular.lotacao)))}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('/siga.local') eq 'GOVSP' && f:podeCriarNovoExterno(titular, titular.lotacao)))}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>
 		<ul class="dropdown-menu">
 			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/doc/editar">Novo</a></li>
-			<c:if test="${!fx:ehPublicoExterno(titular)}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
 				<li><a class="dropdown-item"
 					href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
 			</c:if>
 			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
 					Virtual </a></li>
 			
-			
-			<c:if test="${not empty meusDelegados && fx:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
+			<c:if test="${not empty meusDelegados && f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
 				<li class="dropdown-submenu"><a href="javascript:void(0);"
 					class="dropdown-item dropdown-toggle">Mesa Virtual Delegada</a>
 					<ul class="dropdown-menu navmenu-large">
@@ -38,27 +37,37 @@
 			<div class="dropdown-divider"></div>
 			<c:catch>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRALOTE:Tramitar em Lote')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/transferir_lote"><fmt:message key="documento.transferencia.lote" /></a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;RECLOTE:Receber em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
+						href="/sigaex/app/expediente/mov/receber_lote">Receber em Lote</a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ANOLOTE:Anotar em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/anotar_lote">Anotar em lote</a></li>
-					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/assinar_tudo">Assinar em lote</a></li>
+						href="/sigaex/app/expediente/mov/anotar_lote">Anotar em Lote</a></li>
+				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASSLOTE:Assinar em Lote')}">
+					<c:choose>
+						<c:when test="${siga_cliente == 'GOVSP'}">
+							<li><a class="dropdown-item"
+								href="/sigaex/app/expediente/mov/assinar_lote">Assinar em Lote</a></li>
+						</c:when>
+						<c:otherwise>
+							<li><a class="dropdown-item"
+								href="/sigaex/app/expediente/mov/assinar_tudo">Assinar em Lote</a></li>
+						</c:otherwise>
+					</c:choose>
 				</c:if>
 			</c:catch>
 
 
 		<!--  Retirado pois já não funcionava desta forma -->
-			<c:catch>
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					<span class="${hide_only_TRF2}"><li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/assinar_lote">Assinar em lote</a></li></span>
-				</c:if>
-			</c:catch>
 			<!--  
 			<c:catch>
 				<c:if
@@ -71,10 +80,10 @@
 			</c:catch> -->
 			<c:catch>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ARQLOTE:Arquivar em Lote')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_corrente_lote">Arquivar
-							em lote</a></li>
+							em Lote</a></li>
 				</c:if>
 			</c:catch>
 			<c:catch>
@@ -82,7 +91,7 @@
 					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_intermediario_lote">Arquivar
-							Intermediário em lote</a></li>
+							Intermediário em Lote</a></li>
 				</c:if>
 			</c:catch>
 			<c:catch>
@@ -90,7 +99,7 @@
 					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_permanente_lote">Arquivar
-							Permanente em lote</a></li>
+							Permanente em Lote</a></li>
 				</c:if>
 			</c:catch>
 			<c:catch>
@@ -106,7 +115,7 @@
 				<c:if
 					test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/configuracao/gerenciar_publicacao_boletim">Definir
+						href="/sigaex/app/configuracao/gerenciar_publicacao_boletim">Definir
 							Publicadores Boletim</a></li>
 				</c:if>
 			</c:catch>
@@ -123,25 +132,25 @@
 				<li><a class="dropdown-item" href="/sigaex/app/forma/listar">Cadastro
 						de Espécies</a></li>
 				<li><a class="dropdown-item" href="/sigaex/app/modelo/listar">Cadastro
-						de modelos</a></li>
+						de Modelos</a></li>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
+					test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/despacho/tipodespacho/listar">Cadastro de
-							tipos de despacho</a></li>
+							Tipos de Despacho</a></li>
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/configuracao/listar">Cadastro de
-							configurações</a></li>
+						href="/sigaex/app/configuracao/listar">Cadastro de Configurações</a></li>
+								
 				</c:if>
 
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;EMAIL:Email de Notificação')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/emailNotificacao/listar">Cadastro
-							de email de notificação</a></li>
+							de Email de Notificação</a></li>
 				</c:if>
 
 				<c:if
@@ -202,7 +211,7 @@
 				</c:if>
 
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELMVP:Relatório de movimentações de processos')}">
+					test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELMVP:Relatório de movimentações de processos')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relMovProcesso.jsp">
 							Relatório de Movimentações de Processos </a></li>

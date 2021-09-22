@@ -15,10 +15,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
@@ -72,9 +73,7 @@ public class SigaUtil {
 		p_cpsServico.setSiglaServico(CpServico.ACESSO_WEBSERVICE);
 		t_cfgConfigExemplo.setCpServico(p_cpsServico);
 
-		CpTipoConfiguracao cpT = new CpTipoConfiguracao();
-		cpT.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
-		t_cfgConfigExemplo.setCpTipoConfiguracao(cpT);
+		t_cfgConfigExemplo.setCpTipoConfiguracao(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 
 		try {
 			List<CpConfiguracao> ll = CpDao.getInstance().porLotacaoPessoaServicoTipo(t_cfgConfigExemplo);
@@ -209,7 +208,7 @@ public class SigaUtil {
 	private static String getJwtPassword() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.pwd");
+			pwd = Prop.get("/siga.autenticacao.senha");
 			if (pwd == null)
 				throw new AplicacaoException(
 						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
@@ -235,5 +234,37 @@ public class SigaUtil {
 		}	
 		return sb.toString();
 	}
+	
+	/*
+	 * Funcao para geracao de codigos numericos randomicos
+	 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+	 */
+	public static String randomNumerico(int contador) {
+		final String STRING_NUMERICA = "0123456789";
+		StringBuilder sb = new StringBuilder();
+		while (contador-- != 0) {	
+			int caracteres = (int)(Math.random()*STRING_NUMERICA.length());	
+			sb.append(STRING_NUMERICA.charAt(caracteres));	
+		}	
+		return sb.toString();
+	}
+	
+	/*
+	 * Funcao para geracao de codigos numericos randomicos
+	 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+	 */
+	public static String randomAlfanumericoSeletivo(int contador) {
+		final String STRING_ALFANUMERICACUSTOM = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+		StringBuilder sb = new StringBuilder();
+		while (contador-- != 0) {	
+			int caracteres = (int)(Math.random()*STRING_ALFANUMERICACUSTOM.length());	
+			sb.append(STRING_ALFANUMERICACUSTOM.charAt(caracteres));	
+		}	
+		return sb.toString();
+	}
+	
+	public static boolean isNumeric(String str) {
+        return str != null && str.matches("[0-9]*");
+    }
 
 }

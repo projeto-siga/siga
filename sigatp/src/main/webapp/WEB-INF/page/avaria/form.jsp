@@ -46,7 +46,7 @@
 	<div class="gt-table-buttons">
 		<input type="submit" value="<fmt:message key="views.botoes.salvar" />" class="gt-btn-medium gt-btn-left" />
 		<input type="button" value="<fmt:message key="views.botoes.cancelar" />" class="gt-btn-medium gt-btn-left" 
-			onclick="javascript:window.location = '<c:choose> <c:when test="${fixarVeiculo}">${linkTo[AvariaController].listarPorVeiculo[avaria.veiculo.id]} </c:when> <c:otherwise>${linkTo[AvariaController].listar}</c:otherwise></c:choose>'">
+			onclick="javascript:window.location = '<c:choose> <c:when test="${fixarVeiculo}">${linkTo[AvariaController].listarPorVeiculo(avaria.veiculo.id)} </c:when> <c:otherwise>${linkTo[AvariaController].listar}</c:otherwise></c:choose>'">
 		</input>
 	</div>
 </form>

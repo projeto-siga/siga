@@ -5,6 +5,7 @@ import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,7 +14,7 @@ import org.jfree.util.Log;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
@@ -36,9 +37,10 @@ import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
-@Resource
-@Path("app/itemConfiguracao")
+@Controller
+@Path("/app/itemConfiguracao")
 public class ItemConfiguracaoController extends SrController {
 
 	private static final String MOSTRAR_DESATIVADOS = "mostrarDesativados";
@@ -49,6 +51,14 @@ public class ItemConfiguracaoController extends SrController {
 	private static final String PESQUISA_SATISFACAO = "pesquisaSatisfacao";
 	private final static Logger log = Logger.getLogger(ItemConfiguracaoController.class);
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ItemConfiguracaoController() {
+		super();
+	}
+	
+	@Inject
 	public ItemConfiguracaoController(HttpServletRequest request,
 			Result result, CpDao dao, SigaObjects so, EntityManager em,
 			SrValidator srValidator) {
@@ -94,6 +104,7 @@ public class ItemConfiguracaoController extends SrController {
 		PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -103,6 +114,7 @@ public class ItemConfiguracaoController extends SrController {
 		result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
@@ -112,6 +124,7 @@ public class ItemConfiguracaoController extends SrController {
 		result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
 	}
 
+	@Transacional
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrItemConfiguracao itemConfiguracao,
@@ -216,8 +229,9 @@ public class ItemConfiguracaoController extends SrController {
 
 	@Path("/selecionar")
 	public void selecionar(String sigla, SrSolicitacao sol) throws Exception {
+		boolean possuiItensDisponiveis = sol != null && sol.getItensDisponiveis() != null && sol.getItensDisponiveis().size() > 0;
 		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				sol != null ? sol.getItensDisponiveis() : null);
+				possuiItensDisponiveis ? sol.getItensDisponiveis() : null);
 
 		result.forwardTo(SelecaoController.class).ajaxRetorno(sel);
 	}

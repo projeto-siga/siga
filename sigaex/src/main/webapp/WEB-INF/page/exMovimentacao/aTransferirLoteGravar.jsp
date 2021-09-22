@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
@@ -16,7 +17,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Protocolo de Transferência</h5>
+				<h5><fmt:message key='protocolo.transferencia' /></h5>
 			</div>
 
 			<div class="card-body">
@@ -40,7 +41,7 @@
 		</div>
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Documento(s) Não Transferido(s)</h5>
+				<h5><fmt:message key='documentos.nao.transferidos' /></h5>
 			</div>
 
 			<div class="card-body">
@@ -78,7 +79,7 @@
 			<input type="hidden" name="itens" value="${itens[1]}" />
 			<div class="card bg-light mb-3">
 				<div class="card-header">
-					<h5>Documento(s) Transferido(s) Com Sucesso</h5>
+					<h5><fmt:message key='documentos.transferidos' /></h5>
 				</div>
 
 				<div class="card-body">
@@ -98,7 +99,7 @@
 								<th rowspan="2" class="text-right">Número</th>
 								<th colspan="3">Documento</th>
 								<th colspan="3">Última Movimentação</th>
-								<th colspan="2">Atendente</th>
+								<th colspan="2"><fmt:message key="tela.tramitarLote.tipoResponsavel"/></th>
 								<th rowspan="2" class="text-left">Descrição</th>
 							</tr>
 							<tr>
@@ -168,9 +169,16 @@
 										<td></td>
 										<td></td>
 									</c:if>
-								<td class="text-left">
-									${f:descricaoConfidencial(documento[0], lotaTitular)}
-								</td>
+									<td class="text-left">
+										<c:choose>
+											<c:when test="${siga_cliente == 'GOVSP'}">
+												${documento[0].descrDocumento}
+											</c:when>
+											<c:otherwise>
+												${f:descricaoConfidencial(documento[0], lotaTitular)}
+											</c:otherwise>
+										</c:choose>
+									</td>
 							</tr>
 						</c:forEach>
 					</table>

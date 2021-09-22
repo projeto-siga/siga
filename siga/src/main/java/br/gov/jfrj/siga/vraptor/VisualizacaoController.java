@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -20,7 +18,7 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
@@ -45,24 +43,12 @@ public class VisualizacaoController extends SigaController {
 	public VisualizacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-
 		titularSel = new DpPessoaSelecao();	
 		
 		delegadoSel = new DpPessoaSelecao();		
 		
 	}
 	
-
-	private Map<Integer, String> getListaTipo() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
-		return map;
-	}	
-		
-
 	private List<DpVisualizacao> buscarVisualizacoes(DpPessoa pessoa) 
 			throws SQLException, AplicacaoException {
 		List<DpVisualizacao> todasVis = new ArrayList<DpVisualizacao>();
@@ -122,6 +108,7 @@ public class VisualizacaoController extends SigaController {
 	}
 	
 	@Post("/app/visualizacao/gravar")
+	@Transacional
 	public void gravar(DpVisualizacao visualizacao
 			          ,DpPessoaSelecao delegadoSel
 				      ,String dtIniDeleg
@@ -208,9 +195,12 @@ public class VisualizacaoController extends SigaController {
 			throw new AplicacaoException("Dados não informados");
 			
 		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/mesa" 
-				+ SigaBaseProperties.getString("siga.mesa.versao") + "?idVisualizacao="+idVisualizacao);
+				+ Prop.get("/siga.mesa.versao") + "?idVisualizacao="+idVisualizacao);
 	}	
 	
+	
+	@Get("/app/visualizacao/exclui")
+	@Transacional
 	public void exclui(Long id) throws Exception {
 		
 		try{

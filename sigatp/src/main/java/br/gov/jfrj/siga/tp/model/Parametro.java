@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.tp.model;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -20,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -30,15 +34,15 @@ import br.gov.jfrj.siga.tp.validation.annotation.Data;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "parametro", schema = "sigatp")
 public class Parametro extends TpModel implements ConvertableEntity {
 
     public static final ActiveRecord<Parametro> AR = new ActiveRecord<Parametro>(Parametro.class);
     private static final Logger LOGGER = LoggerFactory.getLogger(Parametro.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
-    @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+    @GeneratedValue(generator = "hibernate_sequence_generator")
+    @SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
     private Long id;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
@@ -88,7 +92,7 @@ public class Parametro extends TpModel implements ConvertableEntity {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(Long id) {
         this.id = id;
     }
 
@@ -202,7 +206,9 @@ public class Parametro extends TpModel implements ConvertableEntity {
 	public static Parametro buscar(Long idBuscar) {
         Parametro retorno = null;
         try {
-            retorno = Parametro.AR.find("id = ?", idBuscar).first();
+    		Map<String, Object> parametros = new HashMap<String,Object>();
+    		parametros.put("id",idBuscar);
+            retorno = Parametro.AR.find("id = :id", parametros).first();
             configurarNivel(retorno);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -214,16 +220,25 @@ public class Parametro extends TpModel implements ConvertableEntity {
 	public static String buscarValorEmVigor(String nome, DpPessoa usuario, CpComplexo complexoPadrao) {
 		String retorno = null;
 		Calendar hoje = Calendar.getInstance();
-		String queryComData = "nomeParametro = ? "
-				+ "and dataInicio < ? "
-				+ "and (dataFim is null or dataFim > ?) "
-				+ "and (dpPessoa is null or dpPessoa = ?) "
-				+ "and (dpLotacao is null or dpLotacao = ?) "
-				+ "and (cpComplexo is null or cpComplexo = ?) "
-				+ "and (cpOrgaoUsuario is null or cpOrgaoUsuario = ?)";
+		String queryComData = "SELECT pa FROM Parametro pa Where  nomeParametro = :nomeParametro "
+				+ "and pa.dataInicio < :dataHoje "
+				+ "and (pa.dataFim is null or pa.dataFim > :dataHoje) "
+				+ "and (pa.dpPessoa is null or pa.dpPessoa = :usuario) "
+				+ "and (pa.dpLotacao is null or pa.dpLotacao = :lotacao) "
+				+ "and (pa.cpComplexo is null or pa.cpComplexo = :complexoPadrao) "
+				+ "and (pa.cpOrgaoUsuario is null or cpOrgaoUsuario = :orgaoUsuario)";
 		
-		List<Parametro> parametros = Parametro.AR.find(queryComData, nome, hoje, hoje, usuario, 
-					usuario.getLotacao(), complexoPadrao, usuario.getOrgaoUsuario()).fetch();
+		Query qry = Parametro.AR.em().createQuery(queryComData);
+    	qry.setParameter("nomeParametro",nome);
+    	qry.setParameter("dataHoje", hoje);
+    	qry.setParameter("usuario",usuario);
+    	qry.setParameter("lotacao", usuario.getLotacao());
+    	qry.setParameter("complexoPadrao",complexoPadrao);
+    	qry.setParameter("orgaoUsuario", usuario.getOrgaoUsuario());
+    	@SuppressWarnings("unchecked")
+		List<Parametro> parametros  = (List<Parametro>) qry.getResultList();
+		
+
 		configurarNivel(parametros);
 		
 		if((parametros != null) && !(parametros.isEmpty())) {
@@ -253,15 +268,18 @@ public class Parametro extends TpModel implements ConvertableEntity {
     public static String buscarConfigSistemaEmVigor(String nome) {
         String retorno = null;
         Calendar hoje = Calendar.getInstance();
-        String queryComData = "nomeParametro = ? "
-                + "and dataInicio <= ? "
-                + "and (dataFim is null or dataFim > ?) "
+		Map<String, Object> parametros_find = new HashMap<String,Object>();
+		parametros_find.put("nome", nome);
+		parametros_find.put("hoje", hoje);
+        String queryComData = "nomeParametro = :nome "
+                + "and dataInicio <= :hoje "
+                + "and (dataFim is null or dataFim > :hoje) "
                 + "and dpPessoa is null "
                 + "and dpLotacao is null "
                 + "and cpComplexo is null "
                 + "and cpOrgaoUsuario is null";
         
-        Parametro parametro = Parametro.AR.find(queryComData, nome, hoje, hoje).first();
+        Parametro parametro = Parametro.AR.find(queryComData, parametros_find).first();
         if(parametro != null) {
             retorno = parametro.valorParametro;
         }

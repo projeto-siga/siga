@@ -14,7 +14,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.CpContrato;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -108,6 +108,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		}
 	}
 
+	@Transacional
 	@Post("/app/orgaoUsuario/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmOrgaoUsuario,
@@ -212,11 +213,11 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		this.result.redirectTo(this).lista(0, "");
 	}
 	
-	public CpOrgaoUsuario daoOrgaoUsuario(long id) {
+	private CpOrgaoUsuario daoOrgaoUsuario(long id) {
 		return dao().consultar(id, CpOrgaoUsuario.class, false);
 	}	
 	
-	public CpContrato daoContrato(long idOrgaoUsu) {
+	private CpContrato daoContrato(long idOrgaoUsu) {
 		return dao().consultar(idOrgaoUsu, CpContrato.class, false);
 	}	
 }

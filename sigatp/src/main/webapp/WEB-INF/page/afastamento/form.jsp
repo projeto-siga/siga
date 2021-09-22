@@ -28,7 +28,7 @@
 
 	<div class="gt-table-buttons">
 		<input type="submit" value="<fmt:message key="views.botoes.salvar"/>" class="gt-btn-medium gt-btn-left" />
-		<input type="button" value="<fmt:message key="views.botoes.cancelar"/>" onClick="javascript:location.href='${linkTo[AfastamentoController].listarPorCondutor[afastamento.condutor.id]}'" class="gt-btn-medium gt-btn-left" />
+		<input type="button" value="<fmt:message key="views.botoes.cancelar"/>" onClick="javascript:location.href='${linkTo[AfastamentoController].listarPorCondutor(afastamento.condutor.id)}'" class="gt-btn-medium gt-btn-left" />
 	</div>
 </form>
 

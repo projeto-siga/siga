@@ -7,13 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -24,24 +23,24 @@ import br.gov.jfrj.siga.validation.Email;
 @SuppressWarnings("serial")
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "fornecedor", schema = "sigatp")
 @Unique.List(value = { @Unique(message = "{fornecedor.cnpj.unique}", field = "cnpj"), @Unique(message = "{fornecedor.email.unique}", field = "eMail") })
 public class Fornecedor extends TpModel implements ConvertableEntity, Comparable<Fornecedor> {
 
 	public static ActiveRecord<Fornecedor> AR = new ActiveRecord<>(Fornecedor.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
+	@GeneratedValue(generator = "hibernate_sequence_generator")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
 	private RamoDeAtividade ramoDeAtividade;
 
-	@NotEmpty
+	@NotNull
 	private String cnpj;
 
-	@NotEmpty
+	@NotNull
 	@UpperCase
 	private String razaoSocial;
 
@@ -127,11 +126,12 @@ public class Fornecedor extends TpModel implements ConvertableEntity, Comparable
 		return fornecedores;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

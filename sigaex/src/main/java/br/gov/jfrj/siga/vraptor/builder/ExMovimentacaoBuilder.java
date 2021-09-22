@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -45,6 +46,7 @@ public final class ExMovimentacaoBuilder {
 	private DpPessoaSelecao responsavelSel;
 	private DpPessoaSelecao titularSel;
 	private DpPessoaSelecao subscritorSel;
+	private DpLotacaoSelecao lotaSubscritorSel;
 	private Long idPapel;
 	private Long idMarcador;
 	private String contentType;
@@ -55,6 +57,7 @@ public final class ExMovimentacaoBuilder {
 		cpOrgaoSel = new CpOrgaoSelecao();
 		titularSel = new DpPessoaSelecao();
 		subscritorSel = new DpPessoaSelecao();
+		lotaSubscritorSel = new DpLotacaoSelecao();
 		documentoRefSel = new ExMobilSelecao();
 		responsavelSel = new DpPessoaSelecao();
 		destinoFinalSel = new DpPessoaSelecao();
@@ -112,9 +115,14 @@ public final class ExMovimentacaoBuilder {
 			mov.setLotaCadastrante(mov.getCadastrante().getLotacao());
 		}
 
+		if (lotaSubscritorSel != null && lotaSubscritorSel.getId() != null) {
+			mov.setLotaSubscritor(dao.consultar(lotaSubscritorSel.getId(), DpLotacao.class, false));
+		}
+
 		if (subscritorSel != null && subscritorSel.getId() != null) {
 			mov.setSubscritor(dao.consultar(subscritorSel.getId(), DpPessoa.class, false));
-			mov.setLotaSubscritor(mov.getSubscritor().getLotacao());
+			if (mov.getLotaSubscritor() == null)
+				mov.setLotaSubscritor(mov.getSubscritor().getLotacao());
 		}
 
 		mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
@@ -170,6 +178,8 @@ public final class ExMovimentacaoBuilder {
 
 		try {
 			mov.setDtMov(df.parse(dtMovString));
+			if (mov.getDtMov() != null && !Data.dataDentroSeculo21(mov.getDtMov()))
+				throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
 		} catch (final Exception e) {
 		}
 
@@ -291,6 +301,10 @@ public final class ExMovimentacaoBuilder {
 
 	public DpPessoaSelecao getSubscritorSel() {
 		return subscritorSel;
+	}
+
+	public DpLotacaoSelecao getLotaSubscritorSel() {
+		return lotaSubscritorSel;
 	}
 
 	public Long getIdPapel() {
@@ -416,6 +430,11 @@ public final class ExMovimentacaoBuilder {
 
 	public ExMovimentacaoBuilder setSubscritorSel(DpPessoaSelecao subscritorSel) {
 		this.subscritorSel = subscritorSel;
+		return this;
+	}
+
+	public ExMovimentacaoBuilder setLotaSubscritorSel(DpLotacaoSelecao lotaSubscritorSel) {
+		this.lotaSubscritorSel = lotaSubscritorSel;
 		return this;
 	}
 

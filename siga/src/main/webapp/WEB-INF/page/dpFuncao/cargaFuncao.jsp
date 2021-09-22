@@ -10,9 +10,7 @@
 		<div class="card bg-light mb-3" >
 			<div class="card-header"><h5>Carga de Planilha Fun&ccedil;&atilde;o de Confian&ccedil;a</h5></div>
 			<div class="card-body">
-				<form action="carga" method="POST" enctype="multipart/form-data" class="form">
-					
-				<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>
+				<form action="carga" method="post" enctype="multipart/form-data" class="form">								
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
@@ -82,29 +80,9 @@
 							</div>
 						</div>
 					</div>
-				</form>
-				<!-- Modal -->
-				<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-					<div class="modal-dialog" role="document">
-				    	<div class="modal-content">
-				      		<div class="modal-header">
-						        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
-						        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-						          <span aria-hidden="true">&times;</span>
-						    	</button>
-						    </div>
-					      	<div class="modal-body">
-					        	<p class="mensagem-Modal"></p>
-					      	</div>
-							<div class="modal-footer">
-							  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-							</div>
-				    	</div>
-				  	</div>
-				</div>				
-				<!--Fim Modal -->
+				</form>										
 			</div>
-		</div>
+		</div>		
 	</div>
 	<script>
 		/**
@@ -114,14 +92,10 @@
 			var result = true;
 			var arquivo = form.arquivo;
 			if (arquivo == null || arquivo.value == '') {
-				mensagemAlerta('Selecione um arquivo');
+				sigaModal.alerta('Selecione um arquivo');
 				result = false;
 			}
 			return result;
-		}
-		function mensagemAlerta(mensagem) {
-			$('#alertaModal').find('.mensagem-Modal').text(mensagem);
-			$('#alertaModal').modal();
-		}
+		}		
 	</script>
 </siga:pagina>

@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Optional;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -34,6 +33,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -42,11 +42,15 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 
 
+@SuppressWarnings("serial")
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
+@Table(name = "corporativo.cp_identidade")
 public class CpIdentidade extends AbstractCpIdentidade {
+
+	public static final long pinLength = 8L;
+	
 
 	public DpPessoa getPessoaAtual() {
 		return CpDao.getInstance().consultarPorIdInicial(
@@ -109,9 +113,9 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	}
 	
 	public boolean isSenhaUsuarioExpirada() {		
-		final long diasExpiracaoSenha = Integer.valueOf(Optional.ofNullable(System.getProperty("siga.cp.diasExpiracaoSenhaUsuario")).orElseGet(() -> "0"));					
+		final Integer diasExpiracaoSenha = Prop.getInt("senha.usuario.expiracao.dias");					
 		
-		if (diasExpiracaoSenha <= 0) {
+		if (diasExpiracaoSenha == null) {
 			return false;
 		}					
 		
@@ -144,5 +148,9 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	public void setHisAtivo(Integer hisAtivo) {
 		super.setHisAtivo(hisAtivo);
 		this.hisAtivo = getHisAtivo();
+	}
+	
+	public boolean isPinCadastrado()  {
+		return this.getPinIdentidade() != null;
 	}
 }

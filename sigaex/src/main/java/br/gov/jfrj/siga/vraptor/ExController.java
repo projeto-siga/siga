@@ -18,13 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
@@ -33,16 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -51,10 +48,10 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
@@ -100,118 +97,36 @@ public class ExController extends SigaController {
 	}
 
 	protected  List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
-		List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
-		ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-
-		ExConfiguracao config = new ExConfiguracao();
-		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		config.setDpPessoa(getTitular());
-		config.setLotacao(getLotaTitular());
-		config.setExTipoDocumento(exTpDoc);
-		config.setExFormaDocumento(forma);
-		config.setExModelo(exMod);
-		config.setExClassificacao(classif);
-
-		ExConfiguracao exConfiguracaoMin;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		try {
-			exConfiguracaoMin = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
-		} catch (Exception e) {
-			exConfiguracaoMin = null;
-		}
-
-		ExConfiguracao exConfiguracaoMax;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		try {
-			exConfiguracaoMax = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
-		} catch (Exception e) {
-			exConfiguracaoMax = null;
-		}
-
-		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.getExNivelAcesso() != null
-				&& exConfiguracaoMax.getExNivelAcesso() != null) {
-			int nivelMinimo = exConfiguracaoMin.getExNivelAcesso().getGrauNivelAcesso();
-			int nivelMaximo = exConfiguracaoMax.getExNivelAcesso().getGrauNivelAcesso();
-
-			for (ExNivelAcesso nivelAcesso : listaNiveis) {
-				if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo && nivelAcesso.getGrauNivelAcesso() <= nivelMaximo) {
-					niveisFinal.add(nivelAcesso);
-				}
-			}
-		}
-
-		return niveisFinal;
+		return NivelDeAcessoUtil.getListaNivelAcesso(exTpDoc, forma, exMod,
+				classif, getTitular(), getLotaTitular());
 	}
 
 	protected  ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, final ExModelo exMod, final ExClassificacao classif) {
 		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 		final ExConfiguracao config = new ExConfiguracao();
-		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		final CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
 		config.setDpPessoa(getTitular());
 		config.setLotacao(getLotaTitular());
 		config.setExTipoDocumento(exTpDoc);
 		config.setExFormaDocumento(forma);
 		config.setExModelo(exMod);
 		config.setExClassificacao(classif);
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
-		config.setCpSituacaoConfiguracao(exStConfig);
-		ExConfiguracao exConfig;
+		config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_DE_ACESSO);
+		config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
+		ExConfiguracaoCache exConfig;
 
 		try {
-			exConfig = criarExConfiguracaoPorCpConfiguracao(Ex.getInstance().getConf()
-					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
+			exConfig = (ExConfiguracaoCache) Ex.getInstance().getConf()
+					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
 		} catch (Exception e) {
 			exConfig = null;
 		}
 
 		if (exConfig != null) {
-			return exConfig.getExNivelAcesso();
+			return dao.consultar(exConfig.exNivelAcesso, ExNivelAcesso.class, false);
 		}
 
 		return null;
-	}
-
-	public ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
-		ExConfiguracao exConfiguracao = new ExConfiguracao();
-
-		if (configuracaoBaseParaExConfiguracao.isAtivo())
-			exConfiguracao.updateAtivo();
-		exConfiguracao.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
-		exConfiguracao.setComplexo(configuracaoBaseParaExConfiguracao.getComplexo());
-		exConfiguracao.setConfiguracaoInicial(configuracaoBaseParaExConfiguracao.getConfiguracaoInicial());
-		exConfiguracao.setConfiguracoesPosteriores(configuracaoBaseParaExConfiguracao.getConfiguracoesPosteriores());
-		exConfiguracao.setCpGrupo(configuracaoBaseParaExConfiguracao.getCpGrupo());
-		exConfiguracao.setCpIdentidade(configuracaoBaseParaExConfiguracao.getCpIdentidade());
-		exConfiguracao.setCpServico(configuracaoBaseParaExConfiguracao.getCpServico());
-		exConfiguracao.setCpSituacaoConfiguracao(configuracaoBaseParaExConfiguracao.getCpSituacaoConfiguracao());
-		exConfiguracao.setCpTipoConfiguracao(configuracaoBaseParaExConfiguracao.getCpTipoConfiguracao());
-		exConfiguracao.setCpTipoLotacao(configuracaoBaseParaExConfiguracao.getCpTipoLotacao());
-		exConfiguracao.setDpPessoa(configuracaoBaseParaExConfiguracao.getDpPessoa());
-		exConfiguracao.setDscFormula(configuracaoBaseParaExConfiguracao.getDscFormula());
-		exConfiguracao.setDtFimVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtFimVigConfiguracao());
-		exConfiguracao.setDtIniVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtIniVigConfiguracao());
-		exConfiguracao.setFuncaoConfianca(configuracaoBaseParaExConfiguracao.getFuncaoConfianca());
-		exConfiguracao.setHisAtivo(configuracaoBaseParaExConfiguracao.getHisAtivo());
-		exConfiguracao.setHisDtFim(configuracaoBaseParaExConfiguracao.getHisDtFim());
-		exConfiguracao.setHisDtIni(configuracaoBaseParaExConfiguracao.getHisDtIni());
-		exConfiguracao.setHisIdcFim(configuracaoBaseParaExConfiguracao.getHisIdcFim());
-		exConfiguracao.setHisIdcIni(configuracaoBaseParaExConfiguracao.getHisIdcIni());
-		exConfiguracao.setHisIdIni(configuracaoBaseParaExConfiguracao.getHisIdIni());
-		exConfiguracao.setId(configuracaoBaseParaExConfiguracao.getId());
-		exConfiguracao.setIdConfiguracao(configuracaoBaseParaExConfiguracao.getIdConfiguracao());
-		exConfiguracao.setLotacao(configuracaoBaseParaExConfiguracao.getLotacao());
-		exConfiguracao.setNmEmail(configuracaoBaseParaExConfiguracao.getNmEmail());
-		exConfiguracao.setOrgaoObjeto(configuracaoBaseParaExConfiguracao.getOrgaoObjeto());
-		exConfiguracao.setOrgaoUsuario(configuracaoBaseParaExConfiguracao.getOrgaoUsuario());
-		return exConfiguracao;
-
 	}
 
 	@SuppressWarnings("static-access")
@@ -244,10 +159,7 @@ public class ExController extends SigaController {
 	}
 
 	protected Map<Integer, String> getListaTipoResp() {
-		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, SigaMessages.getMessage("usuario.matricula"));
-		map.put(2, "Órgão Integrado");
-		return map;
+		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}
 
 	protected List<String> getListaAnos() {
@@ -263,7 +175,7 @@ public class ExController extends SigaController {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
 
-	protected  HttpServletResponse getResponse() {
+	public  HttpServletResponse getResponse() {
 		return response;
 	}
 
@@ -272,12 +184,16 @@ public class ExController extends SigaController {
 	}
 	
 	protected Boolean podeVisualizarDocumento(final ExMobil mob, DpPessoa titular, Long idVisualizacao) throws Exception {
-		Boolean retorno = Boolean.FALSE;
+		return podeVisualizarDocumento(getCadastrante(), titular, idVisualizacao, mob);
+	}
+
+	public static boolean podeVisualizarDocumento(DpPessoa cadastrante, DpPessoa titular, Long idVisualizacao, final ExMobil mob) throws Exception {
+		boolean retorno = Boolean.FALSE;
 		
 		if(Cp.getInstance().getConf()
-				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+				.podePorConfiguracao(cadastrante, cadastrante.getLotacao(), ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0))) {
-				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
+				DpVisualizacao vis = ExDao.getInstance().consultar(idVisualizacao, DpVisualizacao.class, false);
 				
 				if(vis.getDelegado().equals(titular)) {
 					if(Ex.getInstance()

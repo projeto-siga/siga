@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +20,13 @@ import org.kxml2.io.KXmlSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
@@ -35,8 +37,10 @@ import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
 
 @Controller
 public class ExModeloController extends ExSelecionavelController {
@@ -46,6 +50,7 @@ public class ExModeloController extends ExSelecionavelController {
 	private static final String UTF8 = "utf-8";
 	private static final Logger LOGGER = Logger
 			.getLogger(ExModeloController.class);
+	private boolean paraIncluir;
 
 	/**
 	 * @deprecated CDI eyes only
@@ -60,6 +65,19 @@ public class ExModeloController extends ExSelecionavelController {
 		super(request, result, dao, so, em);
 	}
 
+	@Get
+	@Path({"/app/modelo/buscar-json/{sigla}"})
+	public void busca(String sigla) throws Exception{
+		aBuscarJson(sigla);
+	}
+	
+	@Get
+	@Path({"/app/modelo/buscar-json-para-incluir/{sigla}"})
+	public void buscaParaIncluir(String sigla) throws Exception{
+		this.paraIncluir  = true;
+		aBuscarJson(sigla);
+	}
+	
 	@Get("app/modelo/listar")
 	public void lista(final String script) throws Exception {
 		try {
@@ -125,6 +143,7 @@ public class ExModeloController extends ExSelecionavelController {
 		}
 	}
 
+	@Transacional
 	@Post("app/modelo/gravar")
 	public void editarGravar(final Long id, final String nome,
 			final String tipoModelo, final String conteudo,
@@ -134,7 +153,7 @@ public class ExModeloController extends ExSelecionavelController {
 			final String arquivo, final String diretorio, final String uuid, 
 			final String marcaDagua, final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
-		ExModelo modelo = buscarModelo(id);
+		ExModelo modelo = copiarModeloAtual(id);
 		if (postback != null) {
 			modelo.setNmMod(nome);
 			modelo.setExClassificacao(classificacaoSel.buscarObjeto());
@@ -164,13 +183,14 @@ public class ExModeloController extends ExSelecionavelController {
 				.getBL()
 				.gravarModelo(modelo, modAntigo, null,
 						getIdentidadeCadastrante());
-		if ("Aplicar".equals(param("submit"))) {
-			result.redirectTo("editar?id=" + modelo.getId());
-			return;
+		if ("Ok".equals(param("ok"))) {
+			result.redirectTo(ExModeloController.class).lista(null);
+		} else {
+			result.redirectTo("editar?id=" + (modelo.getId()!=null?modelo.getId():id));
 		}
-		result.redirectTo(ExModeloController.class).lista(null);
 	}
 
+	@Transacional
 	@Get("app/modelo/desativar")
 	public void desativar(final Long id) throws Exception {
 		ModeloDao.iniciarTransacao();
@@ -234,6 +254,7 @@ public class ExModeloController extends ExSelecionavelController {
 					}
 					if (m.getUuid() == null) {
 						m.setUuid(UUID.randomUUID().toString());
+				        SigaTransacionalInterceptor.upgradeParaTransacional();
 						dao().gravar(m);
 					}
 					if (m.getUuid() != null) {
@@ -367,6 +388,7 @@ public class ExModeloController extends ExSelecionavelController {
 				}
 				if (m.getUuid() == null) {
 			        m.setUuid(UUID.randomUUID().toString());
+			        SigaTransacionalInterceptor.upgradeParaTransacional();
 			        dao().gravar(m);
 				}
 				if (m.getUuid() != null) {
@@ -407,6 +429,16 @@ public class ExModeloController extends ExSelecionavelController {
 		return new ExModelo();
 	}
 
+	private ExModelo copiarModeloAtual(final Long id) {
+		ExModelo modelo = buscarModelo(id);
+		if(modelo.getIdInicial()!=null) {
+			return Ex.getInstance().getBL().getCopia(
+					dao().consultar(modelo.getIdInicial(), ExModelo.class, false).getModeloAtual()
+					);
+		} else 
+			return modelo;
+	}
+	
 	private ExModelo buscarModeloAntigo(final Long idInicial) {
 		if (idInicial != null) {
 			return dao().consultar(idInicial, ExModelo.class, false)
@@ -414,7 +446,7 @@ public class ExModeloController extends ExSelecionavelController {
 		}
 		return null;
 	}
-
+	
 	private List<ExNivelAcesso> getListaNivelAcesso() {
 		return dao().listarOrdemNivel();
 	}
@@ -424,8 +456,28 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Override
-	public DaoFiltroSelecionavel createDaoFiltro() {
-		return null;
+	protected DaoFiltroSelecionavel createDaoFiltro() {
+		ExModeloDaoFiltro flt = new ExModeloDaoFiltro();
+		flt.setSigla(getNome());
+		flt.setParaIncluir(this.paraIncluir);
+		return flt;
 	}
-
+	
+	@Override
+	protected String aBuscar(String sigla, String postback) throws Exception {
+		String s = super.aBuscar(sigla, postback);
+		
+		if (paraIncluir) {
+			List<ExModelo> lExcluir = new ArrayList<>();
+			for (ExModelo mod : (List<ExModelo>)getItens()) {
+				if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), mod,
+				ExTipoDeConfiguracao.DESPACHAVEL)) {
+					lExcluir.add(mod);
+				}
+			}
+			getItens().removeAll(lExcluir);
+		}
+		
+		return s;
+	}
 }

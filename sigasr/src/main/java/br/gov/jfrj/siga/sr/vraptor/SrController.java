@@ -11,6 +11,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrError;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaController;
@@ -19,10 +20,18 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
+
 public class SrController extends SigaController {
 
 	protected SrValidator srValidator;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public SrController() {
+		super();
+	}
+	
 	public SrController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
 		super(request, result, dao, so, em);
 		this.srValidator = srValidator;
@@ -45,4 +54,5 @@ public class SrController extends SigaController {
 
 		return jsonArray;
 	}
+
 }

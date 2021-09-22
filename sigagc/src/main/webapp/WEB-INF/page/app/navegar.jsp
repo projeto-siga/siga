@@ -1,20 +1,16 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 <siga:pagina titulo="Índice">
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Árvore de Conhecimentos</h2>
-			<c:choose>
-				<c:when test="${arvore.getContador() == 0}">
-					<h6 style="background: #d8d8c0; padding: 3px 10px;">Nenhum
-						conhecimento com uma classificação para ser listado.</h6>
-				</c:when>
-				<c:otherwise>
-			${arvore.toHTML('')}
-		</c:otherwise>
-			</c:choose>
-
-		</div>
+	<div class="container-fluid">
+		<h2>Árvore de Conhecimentos</h2>
+		<c:choose>
+			<c:when test="${arvore.getContador() == 0}">
+				<p class="alert alert-warning">Nenhum
+					conhecimento com uma classificação para ser listado.</p>
+			</c:when>
+			<c:otherwise>
+				${arvore.toHTML('')}
+			</c:otherwise>
+		</c:choose>
 	</div>
 </siga:pagina>
 

@@ -22,6 +22,7 @@
 		<class>br.gov.jfrj.siga.dp.CpPersonalizacao</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoPessoa</class>
 		<class>br.gov.jfrj.siga.cp.CpConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpConfiguracaoCache</class>
 		<class>br.gov.jfrj.siga.cp.CpSituacaoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoConfiguracao</class>
 		<class>br.gov.jfrj.siga.cp.CpServico</class>
@@ -40,15 +41,14 @@
 		<class>br.gov.jfrj.siga.cp.CpUnidadeMedida</class>
 		<class>br.gov.jfrj.siga.cp.CpComplexo</class>
 		<class>br.gov.jfrj.siga.dp.CpMarcador</class>
-		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
 		<class>br.gov.jfrj.siga.dp.DpVisualizacao</class>
-		<class>br.gov.jfrj.siga.dp.DpVisualizacaoAcesso</class>		
+		<class>br.gov.jfrj.siga.dp.DpVisualizacaoAcesso</class>
 		<class>br.gov.jfrj.siga.dp.CpContrato</class>
 		<class>br.gov.jfrj.siga.cp.CpToken</class>
-		
+
 		<class>br.gov.jfrj.siga.ex.ExTipoDocumento</class>
 		<class>br.gov.jfrj.siga.ex.ExFormaDocumento</class>
 		<class>br.gov.jfrj.siga.ex.ExClassificacao</class>
@@ -70,12 +70,37 @@
 		<class>br.gov.jfrj.siga.ex.ExDocumento</class>
 		<class>br.gov.jfrj.siga.ex.ExMobil</class>
 		<class>br.gov.jfrj.siga.ex.ExTipoMobil</class>
-		<class>br.gov.jfrj.siga.ex.ExSituacaoConfiguracao</class>
 		<class>br.gov.jfrj.siga.ex.ExMarca</class>
 		<class>br.gov.jfrj.siga.ex.ExConfiguracao</class>
+		<class>br.gov.jfrj.siga.ex.ExConfiguracaoCache</class>
 		<class>br.gov.jfrj.siga.ex.ExDocumentoNumeracao</class>
 		<class>br.gov.jfrj.siga.ex.ExSequencia</class>
 		<class>br.gov.jfrj.siga.ex.ExProtocolo</class>
+		<class>br.gov.jfrj.siga.cp.CpArquivo</class>
+		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>
+		<class>br.gov.jfrj.siga.cp.CpArquivoExcluir</class>
+
+		<class>br.gov.jfrj.siga.cp.CpMarcadorCorEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorIconeEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoDataEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoExibicaoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoInteressadoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoTextoEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoMarcadorEnum</class>
+		<class>br.gov.jfrj.siga.cp.CpSituacaoDeConfiguracaoEnum</class>
+
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorCorEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorIconeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorFinalidadeEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoAplicacaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoDataEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoExibicaoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoInteressadoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorTipoTextoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpMarcadorGrupoEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpTipoMarcadorEnumConverter</class>
+		<class>br.gov.jfrj.siga.cp.converter.CpSituacaoDeConfiguracaoEnumConverter</class>
 
 		<properties>
 		<property name="hibernate.jpa.compliance.global_id_generators" value="false"/>
@@ -99,13 +124,17 @@
 
 			<property name="hibernate.max_fetch_depth" value="3" />
 			<property name="hibernate.default_batch_fetch_size" value="1000" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect" />
+			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.enable_lazy_load_no_trans" value="true"/>
 			
+			<property name="hibernate.hql.bulk_id_strategy"
+          		value="org.hibernate.hql.spi.id.inline.InlineIdsInClauseBulkIdStrategy"/>			
+
 			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
 			<property name="hibernate.id.new_generator_mappings" value="false"/>
-			
+
 			<!-- Cache Region QUERY_CACHE_SECONDS -->
 			<property name="hibernate.cache.infinispan.querySeconds.eviction.strategy"
 				value="LRU" />
@@ -166,7 +195,7 @@
 				value="36000000" />
 			<property name="hibernate.cache.infinispan.hours.expiration.max_idle"
 				value="3600000" />
-				
+
 			<!-- Cache Region CACHE_SECONDS -->
 			<property name="hibernate.cache.infinispan.seconds.eviction.strategy"
 				value="LRU" />
@@ -195,7 +224,7 @@
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
 				value="300000" />
-			
+
 
 			<!-- Cache Region CACHE_EX -->
 			<property name="hibernate.cache.infinispan.ex.eviction.strategy"
@@ -215,4 +244,3 @@
 		</properties>
 	</persistence-unit>
 </persistence>
-

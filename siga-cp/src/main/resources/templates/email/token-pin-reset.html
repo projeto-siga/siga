@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<body style="font-family: Arial, Helvetica, sans-serif; color: #212529;">
+		<div id="header">
+			<div
+				style='height: 80px; background-color: #f6f5f6; margin: 0px; padding: 20px;'>
+				<img style='text-align: center;'
+					src='${url}/${logo}'
+					alt='SP Sem Papel' width='150' />
+			</div>
+			<div style='background-color: #dadada;'>
+				<h3 style="height: 20px; margin: 0px; padding: 10px;">${titulo}</h3>
+			</div>
+		</div>
+		<div id="content" style="margin-top: 30px; padding: 20px;">
+	
+			<div>
+				<p>
+					Prezado usuário(a) <b>${nomeUsuario}</b>,
+				</p>
+				<br />
+				<p>Seu código para definir um novo PIN é o seguinte:</p>
+			</div>
+	
+			<div style="background-color:  #009900; margin: auto;width: 25%;padding: 10px;text-align:center;color:#fff;">
+	
+				<h1>${tokenPin}</h1>
+	
+			</div>  
+			<div style="margin-top: 50px;">
+				<p>
+					Caso não tenha solicitada a redefinição da seu PIN, para sua
+					segurança, defina um novo PIN <a href="${url}/siga/app/pin/troca">clicando aqui</a>.
+				</p>
+			</div>
+	
+		</div>
+	
+	
+		<div id="footer" style='background-color: #dadada; padding: 5px;'>
+			<p><span style='color: #555;'><b>Atenção</b>: Esta é uma mensagem automática. Por favor não	responda.</span></p>
+		</div>
+
+	</body>	
+</html>

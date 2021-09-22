@@ -24,6 +24,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -53,14 +54,14 @@ public class SigaLinkPermanenteController extends SigaController {
 	private static String getRecaptchaSiteKey() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.key");
+			pwd = Prop.get("/siga.recaptcha.key");
 			if (pwd == null)
 				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key");
+						"Erro obtendo propriedade siga.recaptcha.key");
 			return pwd;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key",
+					"Erro obtendo propriedade siga.recaptcha.key",
 					0, e);
 		}
 	}
@@ -68,14 +69,14 @@ public class SigaLinkPermanenteController extends SigaController {
 	private static String getRecaptchaSitePassword() {
 		String pwd = null;
 		try {
-			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.pwd");
+			pwd = Prop.get("/siga.recaptcha.pwd");
 			if (pwd == null)
 				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd");
+						"Erro obtendo propriedade siga.recaptcha.pwd");
 			return pwd;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd",
+					"Erro obtendo propriedade siga.recaptcha.pwd",
 					0, e);
 		}
 	}

@@ -29,7 +29,7 @@
 						    	    <td style="white-space: pre;">${andamento.responsavel != null ? andamento.responsavel.siglaCompleta : ""} - ${andamento.responsavel != null ? andamento.responsavel.nomePessoaAI : ""}</td>
 						    	    <c:choose>
 								        <c:when test="${andamento.missao != null}">
-									        <c:set var="linkMissaoMontado" value="<nobr><a href=\"${linkTo[MissaoController].buscarPelaSequence[false][andamento.missao.sequence]}\">${andamento.missao.sequence}</a> <a href=\"#\" onclick=\"javascript:window.open('${linkTo[MissaoController].buscarPelaSequence[true][andamento.missao.sequence]}');\"><img src=\"/sigatp/public/images/linknovajanelaicon.png\" alt=\"Abrir em uma nova janela\" title=\"Abrir em uma nova janela\"></a></nobr>" />
+									        <c:set var="linkMissaoMontado" value="<nobr><a href=\"${linkTo[MissaoController].buscarPelaSequence(false,andamento.missao.sequence)}\">${andamento.missao.sequence}</a> <a href=\"#\" onclick=\"javascript:window.open('${linkTo[MissaoController].buscarPelaSequence(true,andamento.missao.sequence)}');\"><img src=\"/sigatp/public/images/linknovajanelaicon.png\" alt=\"Abrir em uma nova janela\" title=\"Abrir em uma nova janela\"></a></nobr>" />
 									        <c:choose>
 									        	<c:when test="${fn:contains(andamento.descricao, andamento.missao.sequence)}">
 									        		<c:set var="descricaoMontada" value="${fn:replace(andamento.descricao, andamento.missao.sequence, linkMissaoMontado)}" />

@@ -40,16 +40,32 @@
 	class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message
 			key="menu.titulo" /></a>
 	<ul class="dropdown-menu">
-		<c:if test="${not empty f:resource('siga.pagina.inicial.url') && (f:resource('siga.local') ne 'GOVSP' || !f:ehPublicoExterno(titular))}">
+		<c:if test="${not empty f:resource('/siga.pagina.inicial.url') && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;QUADRO:Quadros Quantitativos')}">
 			<li><a class="dropdown-item"
 				href="/siga/app/principal?redirecionar=false">Quadros
 					Quantitativos</a></li>
 		</c:if>
-		<c:if test="${f:resource('siga.local') ne 'GOVSP'}">
+		<c:if test="${f:resource('/siga.local') != 'GOVSP'}">
 			<li><a class="dropdown-item" href="/siga/app/principal">Página
 					Inicial</a></li>
 		</c:if>
-		<c:if test="${ f:resource('siga.local') ne 'GOVSP' || !f:ehPublicoExterno(titular)}">
+		<c:if
+			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:Módulo de Workflow') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GO:Gestão Orçamentária') or	
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar') or	
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BDP: Módulo de Banco de Permutas') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
 			<ul class="dropdown-menu">
@@ -62,7 +78,7 @@
 
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:Módulo de Workflow')}">
-					<li><a class="dropdown-item" href="/sigawf/app/resumo">Workflow</a></li>
+					<li><a class="dropdown-item" href="/sigawf/app/ativos">Workflow</a></li>
 				</c:if>
 
 				<c:if
@@ -80,7 +96,7 @@
 					<li><a class="dropdown-item" href="/sigatp/">Transportes</a></li>
 				</c:if>
 
-				<c:if test="${!('ZZ'.equals(titular.orgaoUsuario.sigla))}">
+				<c:if test="${'ZZ' != titular.orgaoUsuario.sigla}">
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">
@@ -109,49 +125,49 @@
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.aq')}">AQ</a></li>
+										href="${f:getURLSistema('/siga.sgp.aq')}">AQ</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BDP: Módulo de Banco de Permutas')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.bdp')}">Banco de
+										href="${f:getURLSistema('/siga.sgp.bdp')}">Banco de
 											Permutas</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.bnf')}">Benefícios</a></li>
+										href="${f:getURLSistema('/siga.sgp.bnf')}">Benefícios</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.cad')}">Cadastro</a></li>
+										href="${f:getURLSistema('/siga.sgp.cad')}">Cadastro</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.cst')}">Consultas</a></li>
+										href="${f:getURLSistema('/siga.sgp.cst')}">Consultas</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.dcn')}">Docência de
+										href="${f:getURLSistema('/siga.sgp.dcn')}">Docência de
 											Magistrados</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.lot')}">Lotação</a></li>
+										href="${f:getURLSistema('/siga.sgp.lot')}">Lotação</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.trn')}">Treinamento</a></li>
+										href="${f:getURLSistema('/siga.sgp.trn')}">Treinamento</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('siga.sgp.terc')}">Terceirizados</a></li>
+										href="${f:getURLSistema('/siga.sgp.terc')}">Terceirizados</a></li>
 								</c:if>
 							</ul></li>
 					</c:if>
@@ -171,15 +187,14 @@
 
 			</ul></li>
 		</c:if>
-		<c:if test="${f:resource('siga.local') eq 'GOVSP'}">
+		<c:if test="${f:resource('/siga.local') eq 'GOVSP'}">
 			<c:if test="${not empty f:resource('gsa.url')}">
 				<li><a class="dropdown-item" href="/siga/app/busca">Busca
 						Textual</a></li>
 			</c:if>
 		</c:if>
 
-		<li class="dropdown-submenu"><a href="javascript:void(0);"
-			class="dropdown-item dropdown-toggle">Administração</a>
+		<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Administração</a>
 			<ul class="dropdown-menu">
 				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração;TSEN:Ocultar Trocar Senha') || titular.orgaoUsuario.sigla == 'ZZ')}">
 					<li><a class="dropdown-item"
@@ -189,6 +204,23 @@
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
 				</c:if>
+				<c:if test="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }">
+					<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
+						<ul class="dropdown-menu">
+						<c:choose>
+							<c:when test="${(empty identidadeCadastrante.pinIdentidade)}">
+								<li><a class="dropdown-item" href="/siga/app/pin/cadastro">Cadastrar novo PIN</a>
+							</c:when>
+							<c:otherwise>	
+								<li><a class="dropdown-item" href="/siga/app/pin/troca">Alterar PIN</a>
+								<li><a class="dropdown-item" href="/siga/app/pin/reset">Esqueci meu PIN</a>
+							</c:otherwise>	
+						</c:choose>
+						</ul>
+					</li>
+				</c:if>
+
+				
 				
 				<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar
@@ -231,7 +263,8 @@
 						</c:catch>
 					</c:otherwise>
 				</c:choose>
-				<c:if test="${f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
+				<!-- f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao) -->
+				<c:if test="${false}">
 					<li><a class="dropdown-item"
 									href="${serverAndPort}/siga/app/visualizacao/listar">Delegar visualização</a></li>
 				</c:if>
@@ -344,7 +377,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
 						<li><a class="dropdown-item" href="/siga/app/modelo/listar">Cadastro
-								de modelos</a></li>
+								de Modelos</a></li>
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Orgãos')}">
@@ -366,6 +399,18 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FERIADO:Cadastrar Feriados')}">
 						<li><a class="dropdown-item" href="/siga/app/feriado/listar">Cadastro
 								de Feriados</a></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CFG:Cadastrar Configurações')}">
+						<li><a class="dropdown-item"
+							href="/siga/app/configuracao/listar">Cadastro de
+								Configurações</a></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;CAD_MARCADOR: Cadastro de Marcadores')}">
+						<li><a class="dropdown-item"
+							href="/siga/app/marcador/listar">Cadastro de 
+								Marcadores</a></li>
 					</c:if>
 				</ul></li>
 		</c:if>
@@ -402,14 +447,17 @@
 		</c:if>
 
 		<li><c:choose>
-				<c:when test="${f:resource('siga.local') eq 'GOVSP'}">
-					<a class="dropdown-item" id="apostilaSiga"
-						href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
-						target="_blank">Manual</a>
+				<c:when test="${f:resource('/siga.local') eq 'GOVSP'}">
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;MA:Manual')}">
+							<a class="dropdown-item" id="apostilaSiga"
+								href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
+								target="_blank">Manual</a>
+					</c:if>
 				</c:when>
+				
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"
-						href="https://processo.rio/wp-content/uploads/2020/09/MANUAL-PROCESSO.RIO-usuário.pdf" target="_blank">Manual processo.rio</a>
+						href="https://processo.rio/manual-do-usuario-processo-rio/" target="_blank">Manual processo.rio</a>
 
 				</c:otherwise>
 			</c:choose></li>

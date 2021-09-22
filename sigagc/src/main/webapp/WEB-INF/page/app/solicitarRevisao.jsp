@@ -2,8 +2,8 @@
 
 <siga:pagina titulo="Solicitar Revisão de Tópico de Informação">
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
+	<div class="container-fluid">
+		<div>
 			<h2>
 				<span id="codigoInf">Solicitar Revisão - ${informacao.sigla}</span>
 			</h2>
@@ -14,20 +14,15 @@
 
 					<p>Escolha a Pessoa ou a Lotação que irá fazer a revisão desse
 						conhecimento</p>
-					<br />
 					<div class="gt-form-row gt-width-100">
-						<label>Revisar</label>
-						<siga:pessoaLotaSelecao2 propriedadePessoa="pessoa"
-							propriedadeLotacao="lotacao" />
+						<siga:pessoaLotaSelecao2 labelPessoaLotacao="Revisar"
+							propriedadePessoa="pessoa" propriedadeLotacao="lotacao" />
 					</div>
 					<br />
 					<div class="gt-form-row gt-width-100">
-						<input type="submit" value="Solicitar"
-							class="gt-btn-medium gt-btn-left" style="cursor: pointer;" />
-						<p class="gt-cancel">
-							ou <a
-								href="${linkTo[AppController].exibir[informacao.siglaCompacta]}">voltar</a>
-						</p>
+						<input type="submit" value="Solicitar" class="btn btn-primary" />
+						ou <a
+							href="${linkTo[AppController].exibir(informacao.siglaCompacta)}">voltar</a>
 					</div>
 				</form>
 			</div>

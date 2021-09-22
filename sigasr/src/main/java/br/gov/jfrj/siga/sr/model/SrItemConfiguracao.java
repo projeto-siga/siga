@@ -34,7 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -46,7 +46,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
 import com.google.gson.JsonArray;
 
 @Entity
-@Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
+@Table(name = "sr_item_configuracao", schema = "sigasr")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel, Selecionavel {
@@ -122,7 +122,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	private List<SrConfiguracao> designacoes;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_ITEM_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") })
+	@JoinTable(name = "sr_configuracao_item", schema = "sigasr", joinColumns = { @JoinColumn(name = "ID_ITEM_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") })
 	private List<SrConfiguracao> designacoesSet;
 
 	public SrItemConfiguracao() {
@@ -545,16 +545,16 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	/**
 	 * Marca os itens como herdados.
 	 */
-	public static List<SrConfiguracao> marcarComoHerdadas(
-			List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
-		Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
+	public static List<SrConfiguracaoCache> marcarComoHerdadas(
+			List<SrConfiguracaoCache> listasDesignacoesPai, SrItemConfiguracao item) {
+		Iterator<SrConfiguracaoCache> i = listasDesignacoesPai.iterator();
 
 		while (i.hasNext()) {
-			SrConfiguracao conf = i.next();
+			SrConfiguracaoCache conf = i.next();
 			boolean encontrou = false;
 
-			conf.setHerdado(true);
-			conf.setUtilizarItemHerdado(true);
+			conf.herdado = true;
+			conf.utilizarItemHerdado = true;
 
 			List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada
 					.findByConfiguracao(conf);
@@ -562,7 +562,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
 				// Se a configuraÃ§Ã£o for do Item, vai como desmarcado
 				if (item.getId().equals(igItem.getItemConfiguracao().getId())) {
-					conf.setUtilizarItemHerdado(false);
+					conf.utilizarItemHerdado = false;
 				}
 
 				// se a configuraÃ§Ã£o for do Item (histÃ³rico), vai como
@@ -573,7 +573,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 							.getHistoricoItemConfiguracao()) {
 						if (itemHist.getId().equals(
 								igItem.getItemConfiguracao().getId())) {
-							conf.setUtilizarItemHerdado(false);
+							conf.utilizarItemHerdado = false;
 							encontrou = true;
 							break;
 						}

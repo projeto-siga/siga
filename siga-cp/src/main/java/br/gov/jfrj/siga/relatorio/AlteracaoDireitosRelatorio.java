@@ -35,11 +35,13 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -96,10 +98,10 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		parametros.put("titulo","SIGA");
 		parametros.put("subtitulo","Sistema de Gestão Administrativa");
 		parametros.put("secaoUsuario", "");
-		if ( System.getProperty("siga.relat.brasao") == null ) {
+		if ( Prop.get("/siga.relat.brasao")  == null ) {
 			parametros.put("brasao","brasao.png");
 		} else {
-			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+			parametros.put("brasao", Prop.get("/siga.relat.brasao") );
 		}
 		//System.out.println("Brasao: " + parametros.get("brasao"));
 		// this.setPageSizeAndOrientation(Page.Page_A4_Landscape());
@@ -189,13 +191,13 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		}
 		try {
 			dados.add((antigo != null) ? antigo.getSituacao()
-					.getDscSitConfiguracao() : "-");
+					.getDescr() : "-");
 		} catch (Exception e) {
 			dados.add("");
 		}
 		try {
 			dados.add((novo != null) ? novo.getSituacao()
-					.getDscSitConfiguracao() : " - ");
+					.getDescr() : " - ");
 		} catch (Exception e) {
 			dados.add("");
 		}
@@ -279,7 +281,7 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 	 */
 	@SuppressWarnings("unchecked")
 	public static SortedSet obterDasPessoasDoOrgaoNaData(
-			CpTipoConfiguracao tipo, List<DpPessoa> pessoas,
+			CpTipoDeConfiguracao tipo, List<DpPessoa> pessoas,
 			List<CpServico> servicos, Date dtEvn) throws Exception {
 		TreeSet lista = new TreeSet<AlteracaoDireitosItem>();
 		for (DpPessoa pes : pessoas) {
@@ -329,7 +331,7 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		return pasas;
 	}
 
-	private static AlteracaoDireitosItem gerar(CpTipoConfiguracao tipo,
+	private static AlteracaoDireitosItem gerar(CpTipoDeConfiguracao tipo,
 			CpPerfil perfil, DpPessoa pessoa, DpLotacao lotacao,
 			CpOrgaoUsuario orgao, CpServico servico, Date dtEvn)
 			throws Exception {
@@ -340,8 +342,9 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		cfgFiltro.setOrgaoUsuario(orgao);
 		cfgFiltro.setCpServico(servico);
 		cfgFiltro.setCpTipoConfiguracao(tipo);
-		CpConfiguracao cfg = Cp.getInstance().getConf().buscaConfiguracao(
+		CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
 				cfgFiltro, new int[0], dtEvn);
+		CpConfiguracao cfg = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
 		AlteracaoDireitosItem itm = new AlteracaoDireitosItem();
 		itm.setServico(servico);
 		itm.setPessoa(pessoa);
@@ -374,9 +377,9 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 				.consultarPorOrgaoUsuDpPessoaInclusiveFechadas(ou.getId());
 		// ArrayList<DpPessoa> pesas = testeObterPessoas2();
 		List<CpServico> servicos = CpDao.getInstance().listarServicos();
-		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tipo = CpDao.getInstance().consultar(
+				CpTipoDeConfiguracao.UTILIZAR_SERVICO,
+				CpTipoDeConfiguracao.class, false);
 		SortedSet<Sincronizavel> setAntes = obterDasPessoasDoOrgaoNaData(tipo,
 				pessoas, servicos, dtAntes);
 		SortedSet<Sincronizavel> setDepois = obterDasPessoasDoOrgaoNaData(tipo,

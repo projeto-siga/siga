@@ -32,6 +32,7 @@ import javax.persistence.NamedQuery;
 
 import br.gov.jfrj.siga.model.Objeto;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "consultarSiglaOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.siglaOrgaoUsu) = upper(:sigla) or upper(org.acronimoOrgaoUsu) = upper(:sigla)"),

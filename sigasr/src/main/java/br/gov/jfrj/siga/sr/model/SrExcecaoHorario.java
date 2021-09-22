@@ -20,7 +20,7 @@ import javax.xml.bind.DatatypeConverter;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_EXCECAO_HORARIO", schema = "SIGASR")
+@Table(name = "sr_excecao_horario", schema = "sigasr")
 public class SrExcecaoHorario extends Objeto{
 	
 	/**

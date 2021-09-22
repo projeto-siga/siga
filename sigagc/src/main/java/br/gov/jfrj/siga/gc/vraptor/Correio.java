@@ -1,20 +1,30 @@
 package br.gov.jfrj.siga.gc.vraptor;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
 import br.com.caelum.vraptor.freemarker.Freemarker;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.view.LinkToHandler;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 
-@Component
 @RequestScoped
 public class Correio {
 
 	private final Freemarker freemarker;
 	private LinkToHandler linkTo;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public Correio() {
+		super();
+		this.freemarker = null;
+		this.linkTo = null;
+	}
+	
+	@Inject
 	public Correio(Freemarker freemarker, LinkToHandler linkTo) {
 		this.freemarker = freemarker;
 		this.linkTo = linkTo;

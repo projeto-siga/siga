@@ -11,32 +11,6 @@
 
 	<artifactId>siga-cp</artifactId>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.9</version>
-					<executions>
-						<execution>
-							<id>add-source</id>
-							<phase>generate-sources</phase>
-							<goals>
-								<goal>add-source</goal>
-							</goals>
-							<configuration>
-								<sources>
-									<source>src/main/app</source>
-								</sources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-
 	<dependencies>
 
 		<dependency>
@@ -53,11 +27,6 @@
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
 			<artifactId>jettison</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
 		</dependency>
 
 		<dependency>
@@ -105,6 +74,11 @@
 		    <artifactId>xmlbeans</artifactId>
 		    <version>3.0.2</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.kxml</groupId>
+			<artifactId>kxml2</artifactId>
+ 		</dependency>
 
 		<!-- Siga -->
 		<dependency>
@@ -136,6 +110,10 @@
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+         </dependency>
 	</dependencies>
 	
 	
@@ -286,6 +264,12 @@
 								<configuration>
 									<!-- specify your SQL commands, can be all of the following configurations -->
 									<sqlCommand>
+									    SELECT * FROM DUAL;
+										CREATE USER sigatp IDENTIFIED BY sigatp default tablespace USERS;
+										CREATE USER sigapmp IDENTIFIED BY sigapmp default tablespace USERS;
+										CREATE USER sigatp_con IDENTIFIED BY sigatp_con default tablespace USERS;
+										CREATE USER sigase IDENTIFIED BY sigase default tablespace USERS;
+										CREATE USER sigase_con IDENTIFIED BY sigase_con default tablespace USERS;										
 										CREATE USER corporativo IDENTIFIED BY corporativo default tablespace USERS;
 										CREATE USER siga IDENTIFIED BY siga default tablespace USERS;
 										CREATE USER sigawf IDENTIFIED BY sigawf default tablespace USERS;
@@ -295,7 +279,9 @@
 										grant connect,resource to SIGA;
 										grant connect,resource to SIGAWF;
 										grant connect,resource to SIGAGC;
-										grant connect,resource to SIGASR;
+										grant connect,resource to SIGASR; 
+										grant connect,resource to SIGATP;
+                                        grant connect,resource to SIGAPMP;
 									</sqlCommand>
 									<autocommit>true</autocommit>
 								</configuration>
@@ -318,7 +304,7 @@
 							<sqlMigrationPrefix>CORPORATIVO_UTF8_V</sqlMigrationPrefix>
 							<placeholderPrefix>flyway${</placeholderPrefix>
 							<locations>
-								<location>filesystem:src\main\resources</location>
+								<location>filesystem:src\main\resources\db\migration</location>
 							</locations>
 						</configuration>
 						<executions>

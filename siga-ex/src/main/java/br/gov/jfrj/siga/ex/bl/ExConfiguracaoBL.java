@@ -26,20 +26,21 @@ import java.util.SortedSet;
 
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
@@ -76,175 +77,80 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * Verifica se a configuração é uma configuração válida.
 	 */
 	@Override
-	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
-			Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
+	public boolean atendeExigencias(CpConfiguracaoCache filtro,
+			Set<Integer> atributosDesconsiderados, CpConfiguracaoCache cfg,
 			SortedSet<CpPerfil> perfis) {
-		if (!super.atendeExigencias(cfgFiltro, atributosDesconsiderados, cfg,
+		if (!super.atendeExigencias(filtro, atributosDesconsiderados, cfg,
 				perfis))
 			return false;
 
-		if (cfg instanceof ExConfiguracao
-				&& cfgFiltro instanceof ExConfiguracao) {
-			ExConfiguracao exCfg = (ExConfiguracao) cfg;
-			ExConfiguracao exCfgFiltro = (ExConfiguracao) cfgFiltro;
+		if (cfg instanceof ExConfiguracaoCache
+				&& filtro instanceof ExConfiguracaoCache) {
+			ExConfiguracaoCache exCfg = (ExConfiguracaoCache) cfg;
+			ExConfiguracaoCache exFiltro = (ExConfiguracaoCache) filtro;
+			if (filtro == null)
+				exFiltro = new ExConfiguracaoCache();
 
-			if (exCfg.getExNivelAcesso() != null
-					&& ((exCfgFiltro.getExNivelAcesso() != null && !exCfg
-							.getExNivelAcesso().getGrauNivelAcesso().equals(
-									exCfgFiltro.getExNivelAcesso()
-											.getGrauNivelAcesso())) || ((exCfgFiltro
-							.getExNivelAcesso() == null) && !atributosDesconsiderados
-							.contains(NIVEL_ACESSO))))
+			if (desigual(exCfg.exNivelAcesso, exFiltro.exNivelAcesso, atributosDesconsiderados, NIVEL_ACESSO))
 				return false;
 
-			if (exCfg.getDpPessoa() != null
-					&& ((exCfgFiltro.getDpPessoa() != null
-							&& !exCfg.getDpPessoa().equivale(
-									exCfgFiltro.getDpPessoa()) || ((exCfgFiltro
-							.getDpPessoa() == null) && !atributosDesconsiderados
-							.contains(PESSOA)))))
+			if (desigual(exCfg.exTipoMovimentacao, exFiltro.exTipoMovimentacao, atributosDesconsiderados, TIPO_MOVIMENTACAO))
 				return false;
 
-			if (exCfg.getLotacao() != null
-					&& ((exCfgFiltro.getLotacao() != null
-							&& !exCfg.getLotacao().equivale(
-									exCfgFiltro.getLotacao()) || ((exCfgFiltro
-							.getLotacao() == null) && !atributosDesconsiderados
-							.contains(LOTACAO)))))
+			if (desigual(exCfg.exVia, exFiltro.exVia, atributosDesconsiderados, VIA))
 				return false;
 
-			if (exCfg.getFuncaoConfianca() != null
-					&& ((exCfgFiltro.getFuncaoConfianca() != null && !exCfg
-							.getFuncaoConfianca().getIdFuncao().equals(
-									exCfgFiltro.getFuncaoConfianca()
-											.getIdFuncao())) || ((exCfgFiltro
-							.getFuncaoConfianca() == null) && !atributosDesconsiderados
-							.contains(FUNCAO))))
+			if (desigual(exCfg.exClassificacao, exFiltro.exClassificacao, atributosDesconsiderados, CLASSIFICACAO))
 				return false;
 
-			if (exCfg.getOrgaoUsuario() != null
-					&& ((exCfgFiltro.getOrgaoUsuario() != null && !exCfg
-							.getOrgaoUsuario().getIdOrgaoUsu().equals(
-									exCfgFiltro.getOrgaoUsuario()
-											.getIdOrgaoUsu())) || ((exCfgFiltro
-							.getOrgaoUsuario() == null) && !atributosDesconsiderados
-							.contains(ORGAO))))
+			if (desigual(exCfg.exModelo, exFiltro.exModelo, atributosDesconsiderados, MODELO))
 				return false;
 
-			if (exCfg.getCargo() != null
-					&& ((exCfgFiltro.getCargo() != null && !exCfg.getCargo()
-							.getIdCargo().equals(
-									exCfgFiltro.getCargo().getIdCargo())) || ((exCfgFiltro
-							.getCargo() == null) && !atributosDesconsiderados
-							.contains(CARGO))))
+			if (desigual(exCfg.exFormaDocumento, exFiltro.exFormaDocumento, atributosDesconsiderados, FORMA))
 				return false;
 
-			if (exCfg.getExTipoMovimentacao() != null
-					&& ((exCfgFiltro.getExTipoMovimentacao() != null && !exCfg
-							.getExTipoMovimentacao().getIdTpMov().equals(
-									exCfgFiltro.getExTipoMovimentacao()
-											.getIdTpMov())) || ((exCfgFiltro
-							.getExTipoMovimentacao() == null) && !atributosDesconsiderados
-							.contains(TIPO_MOVIMENTACAO))))
+			if (desigual(exCfg.exTipoDocumento, exFiltro.exTipoDocumento, atributosDesconsiderados, TIPO))
 				return false;
 
-			if (exCfg.getExVia() != null
-					&& ((exCfgFiltro.getExVia() != null && !exCfg.getExVia()
-							.equivale(exCfgFiltro.getExVia())) || ((exCfgFiltro
-							.getExVia() == null) && !atributosDesconsiderados
-							.contains(VIA))))
+			if (desigual(exCfg.exPapel, exFiltro.exPapel, atributosDesconsiderados, PAPEL))
 				return false;
 
-			if (exCfg.getExClassificacao() != null
-					&& ((exCfgFiltro.getExClassificacao() != null && !exCfg
-							.getExClassificacao().equivale(exCfgFiltro.getExClassificacao())) || ((exCfgFiltro
-							.getExClassificacao() == null) && !atributosDesconsiderados
-							.contains(CLASSIFICACAO))))
-				return false;
-
-			if (exCfg.getExModelo() != null
-					&& ((exCfgFiltro.getExModelo() != null && !exCfg
-							.getExModelo().equivale(
-									exCfgFiltro.getExModelo())) || ((exCfgFiltro
-							.getExModelo() == null) && !atributosDesconsiderados
-							.contains(MODELO))))
-				return false;
-
-			if (exCfg.getExFormaDocumento() != null
-					&& ((exCfgFiltro.getExFormaDocumento() != null && !exCfg
-							.getExFormaDocumento().getIdFormaDoc().equals(
-									exCfgFiltro.getExFormaDocumento()
-											.getIdFormaDoc())) || ((exCfgFiltro
-							.getExFormaDocumento() == null) && !atributosDesconsiderados
-							.contains(FORMA))))
-				return false;
-
-			if (exCfg.getExTipoDocumento() != null
-					&& ((exCfgFiltro.getExTipoDocumento() != null && !exCfg
-							.getExTipoDocumento().getIdTpDoc().equals(
-									exCfgFiltro.getExTipoDocumento().getId())) || ((exCfgFiltro
-							.getExTipoDocumento() == null) && !atributosDesconsiderados
-							.contains(TIPO))))
-				return false;
-
-			if (exCfg.getExPapel() != null
-					&& ((exCfgFiltro.getExPapel() != null && !exCfg
-							.getExPapel().getIdPapel().equals(
-									exCfgFiltro.getExPapel().getIdPapel())) || ((exCfgFiltro
-							.getExPapel() == null) && !atributosDesconsiderados
-							.contains(PAPEL))))
-				return false;
-
-			if (exCfg.getExTipoFormaDoc() != null
-					&& ((exCfgFiltro.getExTipoFormaDoc() != null && !exCfg
-							.getExTipoFormaDoc().getId().equals(
-									exCfgFiltro.getExTipoFormaDoc().getId())) || ((exCfgFiltro
-							.getExTipoFormaDoc() == null) && !atributosDesconsiderados
-							.contains(TIPO_FORMA_DOC))))
-				return false;
-
-			if (exCfg.getCpServico() != null
-					&& ((exCfgFiltro.getCpServico() != null && !exCfg
-							.getCpServico().getIdServico().equals(
-									exCfgFiltro.getCpServico().getIdServico())) || ((exCfgFiltro
-							.getCpServico() == null) && !atributosDesconsiderados
-							.contains(SERVICO))))
+			if (desigual(exCfg.exTipoFormaDoc, exFiltro.exTipoFormaDoc, atributosDesconsiderados, TIPO_FORMA_DOC))
 				return false;
 		}
 		return true;
 	}
 
-	public CpSituacaoConfiguracao buscaSituacao(final ExConfiguracao exConfiguracao) {
-		final CpConfiguracao cpConfiguracaoResult = buscaConfiguracao(exConfiguracao,
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(final ExConfiguracao exConfiguracao) {
+		final CpConfiguracaoCache cpConfiguracaoResult = buscaConfiguracao(exConfiguracao,
 				new int[] { 0 }, ExDao.getInstance()
 						.consultarDataEHoraDoServidor());
 		if (cpConfiguracaoResult != null) {
-			return cpConfiguracaoResult.getCpSituacaoConfiguracao();
+			return cpConfiguracaoResult.situacao;
 		} else {
 			return exConfiguracao.getCpTipoConfiguracao().getSituacaoDefault();
+
 		}
 	}
 
-	public CpSituacaoConfiguracao buscaSituacao(ExModelo mod, DpPessoa pess,
-			DpLotacao lota, long idTpConfig) {
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(ExModelo mod, DpPessoa pess,
+			DpLotacao lota, ITipoDeConfiguracao idTpConfig) {
 		ExConfiguracao exConfig = new ExConfiguracao();
 		exConfig.setDpPessoa(pess);
 		exConfig.setLotacao(lota);
 		exConfig.setExModelo(mod);
-		exConfig.setCpTipoConfiguracao(ExDao.getInstance().consultar(
-				idTpConfig, CpTipoConfiguracao.class, false));
+		exConfig.setCpTipoConfiguracao(idTpConfig);
 		return buscaSituacao(exConfig);
 
 	}
-	public CpSituacaoConfiguracao buscaSituacao(final ExModelo mod, final ExTipoDocumento tipo, final DpPessoa pess,
-			final DpLotacao lota, final long idTpConfig) {
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(final ExModelo mod, final ExTipoDocumento tipo, final DpPessoa pess,
+			final DpLotacao lota, final ITipoDeConfiguracao idTpConfig) {
 		final ExConfiguracao exConfig = new ExConfiguracao();
 		exConfig.setDpPessoa(pess);
 		exConfig.setLotacao(lota);
 		exConfig.setExModelo(mod);
 		exConfig.setExTipoDocumento(tipo);
-		exConfig.setCpTipoConfiguracao(ExDao.getInstance().consultar(
-				idTpConfig, CpTipoConfiguracao.class, false));
+		exConfig.setCpTipoConfiguracao(idTpConfig);
 		return buscaSituacao(exConfig);
 	}
 
@@ -274,59 +180,86 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
-			long idTpConf, DpPessoa pessoaObjeto, 
+			ITipoDeConfiguracao idTpConf, DpPessoa pessoaObjeto, 
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 
-		if (isUsuarioRoot(dpPessoa) && idTpConf != CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML){
-			return true;
-		}
-
-		try {
-			ExConfiguracao config = new ExConfiguracao();
-			config.setCargo(cargo);
-			config.setOrgaoUsuario(cpOrgaoUsu);
-			config.setFuncaoConfianca(dpFuncaoConfianca);
-			config.setLotacao(dpLotacao);
-			config.setDpPessoa(dpPessoa);
-			config.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
-					CpTipoConfiguracao.class, false));
-			config.setCpTipoLotacao(cpTpLotacao);
-
-			config.setCpServico(cpServico);
-			config.setExTipoFormaDoc(exTipoFormaDoc);
-			config.setExPapel(exPapel);
-			config.setExTipoDocumento(exTpDoc);
-			config.setExFormaDocumento(exFormaDoc);
-			config.setExModelo(exMod);
-			config.setExClassificacao(exClassificacao);
-			config.setExVia(exVia);
-			config.setExTipoMovimentacao(exTpMov);
-			config.setExNivelAcesso(nivelAcesso);
-			
-			config.setPessoaObjeto(pessoaObjeto);
-			config.setLotacaoObjeto(lotacaoObjeto);
-			config.setComplexoObjeto(complexoObjeto);
-			config.setCargoObjeto(cargoObjeto);
-			config.setFuncaoConfiancaObjeto(funcaoConfiancaObjeto);
-			config.setOrgaoObjeto(orgaoObjeto);
-
-			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
-					new int[] { 0 }, null);
-
-			CpSituacaoConfiguracao situacao;
-			if (cfg != null)
-				situacao = cfg.getCpSituacaoConfiguracao();
-			else
-				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
-
-			if (situacao != null
-					&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+			CpSituacaoDeConfiguracaoEnum situacao = situacaoPorConfiguracao(cpServico, exTipoFormaDoc, exPapel, exTpDoc,
+							exFormaDoc, exMod, exClassificacao, exVia, exTpMov, cargo, cpOrgaoUsu, dpFuncaoConfianca, dpLotacao,
+							dpPessoa, nivelAcesso, cpTpLotacao, idTpConf, pessoaObjeto, lotacaoObjeto, complexoObjeto, cargoObjeto,
+							funcaoConfiancaObjeto, orgaoObjeto);
+			if (situacao != null && situacao.isPermissiva())			
 				return true;
-		} catch (Exception e) {
-			return false;
-		}		
 		return false;
+	}
+	
+	public CpSituacaoDeConfiguracaoEnum situacaoPorConfiguracao(CpServico cpServico,
+			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
+			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
+			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
+			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
+			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
+			ITipoDeConfiguracao idTpConf, DpPessoa pessoaObjeto, 
+			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
+			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
+
+		ExConfiguracao config = new ExConfiguracao();
+		config.setCargo(cargo);
+		config.setOrgaoUsuario(cpOrgaoUsu);
+		config.setFuncaoConfianca(dpFuncaoConfianca);
+		config.setLotacao(dpLotacao);
+		config.setDpPessoa(dpPessoa);
+		config.setCpTipoConfiguracao(idTpConf);
+		config.setCpTipoLotacao(cpTpLotacao);
+
+		config.setCpServico(cpServico);
+		config.setExTipoFormaDoc(exTipoFormaDoc);
+		config.setExPapel(exPapel);
+		config.setExTipoDocumento(exTpDoc);
+		config.setExFormaDocumento(exFormaDoc);
+		config.setExModelo(exMod);
+		config.setExClassificacao(exClassificacao);
+		config.setExVia(exVia);
+		config.setExTipoMovimentacao(exTpMov);
+		config.setExNivelAcesso(nivelAcesso);
+		
+		config.setPessoaObjeto(pessoaObjeto);
+		config.setLotacaoObjeto(lotacaoObjeto);
+		config.setComplexoObjeto(complexoObjeto);
+		config.setCargoObjeto(cargoObjeto);
+		config.setFuncaoConfiancaObjeto(funcaoConfiancaObjeto);
+		config.setOrgaoObjeto(orgaoObjeto);
+
+		CpConfiguracaoCache cfg = (CpConfiguracaoCache) buscaConfiguracao(config,
+				new int[] { 0 }, null);
+
+		CpSituacaoDeConfiguracaoEnum situacao = null;
+		if (cfg != null)
+			situacao = cfg.situacao;
+		else
+			if (config.getCpTipoConfiguracao() != null)
+				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
+		
+		return situacao;
+	}
+	
+	public CpSituacaoDeConfiguracaoEnum situacaoPorConfiguracao(CpServico cpServico,
+			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
+			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
+			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
+			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
+			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
+			ITipoDeConfiguracao idTpConf) {
+		return situacaoPorConfiguracao(cpServico,
+				exTipoFormaDoc, exPapel,
+				exTpDoc, exFormaDoc,
+				exMod, exClassificacao, exVia,
+				exTpMov, cargo,
+				cpOrgaoUsu, dpFuncaoConfianca,
+				dpLotacao, dpPessoa, nivelAcesso, cpTpLotacao,
+				idTpConf, null, null, null, null, null, null);
 	}
 	
 	public boolean podePorConfiguracao(CpServico cpServico,
@@ -336,7 +269,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
-			long idTpConf) {
+			ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(cpServico,
 				exTipoFormaDoc, exPapel,
 				exTpDoc, exFormaDoc,
@@ -359,7 +292,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			long idTpConf) {
+			ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
@@ -377,7 +310,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			long idTpMov, long idTpConf) {
+			long idTpMov, ITipoDeConfiguracao idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, null, null,
@@ -396,7 +329,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, DpCargo cargo, DpFuncaoConfianca funcaoConficanca, ExFormaDocumento tipo, ExModelo modelo,
-			long idTpMov, long idTpConf) {
+			long idTpMov, ITipoDeConfiguracao idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, tipo, modelo, null,
@@ -404,12 +337,12 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				idTpConf);
 	}	
 
-	public boolean podePorConfiguracao(ExModelo mod, long idTpConf) {
+	public boolean podePorConfiguracao(ExModelo mod, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
 				null, null, null, null, null, null, null, null, null,idTpConf);
 	}
 
-	public boolean podePorConfiguracao(ExModelo mod, long idTpMov, long idTpConf) {
+	public boolean podePorConfiguracao(ExModelo mod, long idTpMov, ITipoDeConfiguracao idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
@@ -433,7 +366,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao lotacao,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
 			ExModelo exMod, ExClassificacao exClassif,
-			ExNivelAcesso nivelAcesso, Long idTpConf) throws Exception {
+			ExNivelAcesso nivelAcesso, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, exTpDoc, exFormaDoc,
 				exMod, exClassif, null, null, null, null, null, lotacao,
 				dpPessoa, nivelAcesso, null,idTpConf);
@@ -453,7 +386,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao lotacao,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
-			ExModelo exMod, Long idTpConf) {
+			ExModelo exMod, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, exTpDoc, exFormaDoc,
 				exMod, null, null, null, null, null, null, lotacao,
 				dpPessoa, null, null,idTpConf);
@@ -467,7 +400,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * 
 	 * @throws Exception
 	 */
-	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, ExFormaDocumento exFormaDoc, Long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, ExFormaDocumento exFormaDoc, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, null, exFormaDoc, null, null, null,
 				null, null, cpOrgaoUsu, null, null, null, null, null,idTpConf); 
 	}
@@ -484,7 +417,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExFormaDocumento forma, long idTpConf) {
+			ExFormaDocumento forma, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, forma, null, null,
 				null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
@@ -502,18 +435,18 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExModelo mod, long idTpConf) {
+			ExModelo mod, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
 				null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf) {
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, null, dpPessoa, null, null,idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpLotacao dpLotacao, long idTpConf)
+	public boolean podePorConfiguracao(DpLotacao dpLotacao, ITipoDeConfiguracao idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, dpLotacao, null, null, null,idTpConf);
@@ -532,7 +465,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExModelo mod, long idTpMov, long idTpConf) {
+			ExModelo mod, long idTpMov, ITipoDeConfiguracao idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
@@ -541,7 +474,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	}
 
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
-			ExPapel exPapel, ExTipoMovimentacao exTpMov, long idTpConf)
+			ExPapel exPapel, ExTipoMovimentacao exTpMov, ITipoDeConfiguracao idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, null, null, null,null,
@@ -550,7 +483,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
 			ExPapel exPapel, DpPessoa pessoa, ExTipoMovimentacao exTpMov,
-			long idTpConf) throws Exception {
+			ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, null, pessoa,
 				null,null, idTpConf);
@@ -558,14 +491,14 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
 			ExPapel exPapel, DpLotacao lotacao, ExTipoMovimentacao exTpMov,
-			long idTpConf) throws Exception {
+			ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, lotacao, null,
 				null,null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			CpServico cpServico, long idTpConf) throws Exception {
+			CpServico cpServico, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(cpServico, null, null, null, null, null,
 				null, null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
@@ -644,18 +577,18 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	//
 	// }
 
-	public DpPessoa getDiretorForo() throws Exception {
-		ExConfiguracao c = new ExConfiguracao();
-		c.setCpTipoConfiguracao(ExDao.getInstance().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_DIRETORFORO,
-				CpTipoConfiguracao.class, false));
-		c = ExDao.getInstance().consultar(c).get(0);
-		return c.getDpPessoa();
-	}
-
-	public boolean isDiretorForo(DpPessoa quem) throws Exception {
-		return (quem.equivale(getDiretorForo()));
-	}
+//	public DpPessoa getDiretorForo() throws Exception {
+//		ExConfiguracao c = new ExConfiguracao();
+//		c.setCpTipoConfiguracao(ExDao.getInstance().consultar(
+//				CpTipoDeConfiguracao.DIRETORFORO,
+//				CpTipoConfiguracao.class, false));
+//		c = ExDao.getInstance().consultar(c).get(0);
+//		return c.getDpPessoa();
+//	}
+//
+//	public boolean isDiretorForo(DpPessoa quem) throws Exception {
+//		return (quem.equivale(getDiretorForo()));
+//	}
 	
 	
 	/**
@@ -721,7 +654,5 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 			}
 		}
-
 	}
-
 }

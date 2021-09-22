@@ -5,6 +5,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<c:set var="msg">
+	<fmt:message key="tela.substituto.mensagem" />
+</c:set>
+
 <script>
 	function hideShowSel(combo) {
 		var sel1Span = document.getElementById('span'
@@ -40,10 +44,10 @@
 		return false;
 	}
 
-	function aviso() {
+	function aviso(msg) {
 		var dataFim = document.getElementById("dtFimSubst").value;
 		var dataInicio = document.getElementById("dtIniSubst").value;
-		var mensagem = "Caso a 'Data de Início' não seja informada, será assumida a data atual.<br/>A 'Data de Fim' é obrigatória e limitada a 2 anos após Data de Início. O usuário é responsável por gerir suas substituições";
+		var mensagem = msg;
 		var atencao = "Importante";
 		document.getElementById("dataFim").innerHTML = mensagem;
 		document.getElementById("dataFim").value = mensagem;
@@ -51,7 +55,8 @@
 		document.getElementById("atencao").value = atencao;
 		document.getElementById("dtFimSubst").focus;
 	}
-</script>   
+</script>
+
 <siga:pagina titulo="Cadastro de substituição">
 	<!-- main content -->
 	<div class="container-fluid">
@@ -142,8 +147,6 @@
 								<label for="tipoTitular">Data de Início</label>
 								<input type="text" id="dtIniSubst" name="dtIniSubst" label="Data de Início" value="${dtIniSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" class="form-control" />
-									<small id="emailHelp" class="form-text text-muted">(opcional)</small>
-								
 							</div>
 						</div>
 						<div class="col-sm-2">
@@ -157,7 +160,7 @@
 					</div>
 					<c:if test="${ empty dataFim }">
 					<div class="row">
-						<div class="col-sm-1">
+						<div class="col-sm-2">
 							<div class="form-group">
 								<b><span id="atencao" ></span></b>
 							</div>
@@ -178,7 +181,7 @@
 				</form>
 			</div>
 			<script>
-				aviso();
+				aviso("${msg}");
 			</script>
 		</div>
 	</div>

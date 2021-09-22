@@ -2,19 +2,20 @@ package br.gov.jfrj.siga.sr.notifiers;
 
 import java.lang.reflect.Method;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.controller.DefaultControllerMethod;
+import br.com.caelum.vraptor.controller.HttpMethod;
 import br.com.caelum.vraptor.http.MutableRequest;
 import br.com.caelum.vraptor.http.route.Router;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.proxy.MethodInvocation;
 import br.com.caelum.vraptor.proxy.Proxifier;
 import br.com.caelum.vraptor.proxy.SuperMethod;
-import br.com.caelum.vraptor.resource.DefaultResourceMethod;
-import br.com.caelum.vraptor.resource.HttpMethod;
 import br.com.caelum.vraptor.view.PathResolver;
 
-@Component
+
 @RequestScoped
 public class PathBuilder {
 
@@ -24,6 +25,18 @@ public class PathBuilder {
 	private PathResolver resolver;
 	private String path;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PathBuilder() {
+		super();
+		this.proxifier = null;
+		this.router = null;
+		this.request = null;
+		this.resolver = null;
+	}
+	
+	@Inject
 	public PathBuilder(Proxifier proxifier, Router router, MutableRequest request, PathResolver resolver) {
 		this.proxifier = proxifier;
 		this.router = router;
@@ -34,7 +47,7 @@ public class PathBuilder {
 	public <T> T pathToForwardTo(final Class<T> type) {
 		return proxifier.proxify(type, new MethodInvocation<T>() {
 			public Object intercept(T proxy, Method method, Object[] args, SuperMethod superMethod) {
-				path = resolver.pathFor(DefaultResourceMethod.instanceFor(type, method));
+				path = resolver.pathFor(DefaultControllerMethod.instanceFor(type, method));
 				return null;
 			}
 		});

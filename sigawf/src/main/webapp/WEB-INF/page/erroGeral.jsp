@@ -7,37 +7,34 @@
 	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
 			java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
-			if (t == null){
-				t = (Throwable) exception;
-			}
-			if (t != null) {
-				if (!t.getClass().getSimpleName()
-						.equals("AplicacaoException")
-						&& t.getCause() != null) {
-					if (t.getCause().getClass().getSimpleName()
-							.equals("AplicacaoException")) {
-						t = t.getCause();
-					} else if (t.getCause().getCause() != null
-							&& t.getCause().getCause().getClass()
-									.getSimpleName()
-									.equals("AplicacaoException")) {
-						t = t.getCause().getCause();
+					if (t == null) {
+						t = (Throwable) exception;
 					}
-				}
-				// Get the ErrorData
-				pageContext.getRequest().setAttribute("exceptionGeral", t);
-				java.io.StringWriter sw = new java.io.StringWriter();
-				java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-				t.printStackTrace(pw);
-				pageContext.getRequest().setAttribute("exceptionStackGeral",
-						sw.toString());
-			}
+					if (t != null) {
+						while ((t.getClass().getSimpleName().equals("ServletException")
+								|| t.getClass().getSimpleName().equals("InterceptionException")
+								|| t.getClass().getSimpleName().equals("InvocationTargetException")
+								|| t.getClass().getSimpleName().equals("ProxyInvocationException"))
+								&& t.getCause() != null && t != t.getCause()) {
+							t = t.getCause();
+						}
+
+						pageContext.getRequest().setAttribute("exceptionApp",
+								t instanceof br.gov.jfrj.siga.base.AplicacaoException);
+						pageContext.getRequest().setAttribute("exceptionMsg", t.getMessage());
+						pageContext.getRequest().setAttribute("exceptionGeral", t);
+						pageContext.getRequest().setAttribute("exceptionStackGeral",
+								br.gov.jfrj.siga.base.log.RequestExceptionLogger.simplificarStackTrace(t));
+					}
 		%>
 	</c:if>
 </c:catch>
 <c:catch var="catchException">
-	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim" desabilitarmenu="sim" desabilitarComplementoHEAD="sim">
-		<!--
+	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim"
+		desabilitarmenu="sim" desabilitarComplementoHEAD="sim">
+		<div class="container content">
+
+			<!--
 Unless this text is here, if your page is less than 513 bytes, Internet Explorer will display it's "Friendly HTTP Error Message",
 and your custom error will never be displayed.  This text is just used as filler.
 This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
@@ -45,69 +42,51 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
 -->
 
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
+			<div class="gt-bd clearfix">
+				<div class="gt-content clearfix">
 
-				<div id="caption" class="gt-error-page-hd">
-					<h2>Não Foi Possível Completar a Operação (${pageContext.request.serverName})</h2>
-				</div>
+					<c:choose>
+						<c:when test="${exceptionApp}">
+							<p class="mb-2 mt-5">Operação Inválida:</p>
+							<h2 class="mt-0">${exceptionMsg}</h2>
+						</c:when>
+						<c:otherwise>
+							<div id="caption">
+								${t.exceptionStackGeral }
+								<h2>Não Foi Possível Completar a Operação
+									(${pageContext.request.serverName})</h2>
+							</div>
+							<div align="left" id="stack">
+								<pre style="font-size: 8pt;"><c:out value="${exceptionStackGeral}" /></pre>
+							</div>
+						</c:otherwise>
+					</c:choose>
 
-				<div class="gt-content-box">
-					<table width="100%">
-						<tr>
-							<td align="center" valign="middle">
-								<table class="form" width="50%">
-									<c:catch>
-										<c:if test="${not empty exceptionGeral}">
-											<c:if test="${not empty exceptionGeral.message}">
-												<tr>
-													<td style="text-align: center; padding-top: 10px;"><h3>${exceptionGeral.message}</h3>
-													</td>
-												</tr>
-											</c:if>
-											<c:if test="${not empty exceptionGeral.cause}">
+					<div class="row mt-3">
+						<div class="col">
+							<div class="form-group">
+							<c:if test="${newWindow != 1}">
+								<input type="button" value="Voltar"
+									onclick="javascript:history.back();" class="btn btn-secondary btn-sm" />
+							</c:if>
+							<c:if test="${newWindow eq 1}">
+								<input type="button" value="Fechar"
+									onclick="javascript:window.close();" class="btn btn-secondary btn-sm" />
+							</c:if>
+							</div>
+						</div>
+					</div>
 
-												<tr>
-													<td
-														style="text-align: center;"><h4>${exceptionGeral.cause.message}</h4></td>
-												</tr>
-											</c:if>
-										</c:if>
-									</c:catch>
-								</table>
-							</td>
-						</tr>
-						<tr>
-							<td style="text-align: center; padding:0;">
-								<div style="display: none; padding: 8pt;" align="left" id="stack">
-									<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
-								</div>
-							</td>
-						</tr>
-					</table>
-				</div>
-				<div style="padding-top:10px;float: right;">
-					<table>
-						<tr>
-							<td><input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" /></td>
-							<td><input type="button" id="show_stack" value="Mais detalhes" class="gt-btn-large gt-btn-right" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" /></td>
-						</tr>
-					</table>
 				</div>
 			</div>
+
 		</div>
 
 	</siga:pagina>
 </c:catch>
 
 <c:if test="${catchException!=null}">
-Erro: ${catchException.message}<br>
-	<br>
-	<br>
-
-	<pre>
+Erro: ${catchException.message}<br> <br> <br> <pre>
 Erro original:
 ${exceptionStack}</pre>
 </c:if>
-
-

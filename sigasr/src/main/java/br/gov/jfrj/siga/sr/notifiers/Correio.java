@@ -7,20 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.freemarker.Freemarker;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
-import br.gov.jfrj.siga.sr.util.SigaSrProperties;
 import br.gov.jfrj.siga.sr.vraptor.CompatibilidadeController;
 import freemarker.template.TemplateException;
 
-@Component
+
 @RequestScoped
 public class Correio {
 	private static final String TEMPLATE_PESQUISA_SATISFACAO = "pesquisaSatisfacao";
@@ -36,6 +35,16 @@ public class Correio {
 	
 	private static final Logger log = Logger.getLogger(Correio.class);
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public Correio() {
+		super();
+		this.freemarker = null;
+		this.pathBuilder = null;
+	}
+	
+	@Inject
 	public Correio(Freemarker freemarker, PathBuilder urlLogic) {
 		this.freemarker = freemarker;
 		this.pathBuilder = urlLogic;
@@ -149,7 +158,7 @@ public class Correio {
 	}
 
 	private String link(SrSolicitacao solicitacao) {
-		String url = SigaSrProperties.getString("url");
+		String url = System.getProperty("siga.sr.url");
 		if (url != null)
 			return url + (url.endsWith("/") ? "" : "/") + "solicitacao/exibir?id=" + solicitacao.getId();
 		log.error("Não foi encontrada a property siga.sr.url");
@@ -208,8 +217,7 @@ public class Correio {
 		@Override
 		public void run() {		
 			try{
-				br.gov.jfrj.siga.base.Correio.enviar(SigaBaseProperties
-						.getString("servidor.smtp.usuario.remetente"),
+				br.gov.jfrj.siga.base.Correio.enviar(System.getProperty("servidor.smtp.usuario.remetente"),
 						dest,		
 						assunto, txt, html);					
 			} catch (Exception e) {

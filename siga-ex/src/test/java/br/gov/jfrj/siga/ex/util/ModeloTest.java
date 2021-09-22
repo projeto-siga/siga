@@ -133,8 +133,6 @@ public class ModeloTest extends TestCase {
 		d.addClass(br.gov.jfrj.siga.dp.CpUF.class, fI);
 		d.addClass(br.gov.jfrj.siga.dp.CpPersonalizacao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpConfiguracao.class, fI);
-		d.addClass(br.gov.jfrj.siga.cp.CpSituacaoConfiguracao.class, fI);
-		d.addClass(br.gov.jfrj.siga.cp.CpTipoConfiguracao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpServico.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpTipoGrupo.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpGrupo.class, fI);
@@ -168,8 +166,6 @@ public class ModeloTest extends TestCase {
 		d.addClass(br.gov.jfrj.siga.dp.CpUF.class, fI);
 		d.addClass(br.gov.jfrj.siga.dp.CpPersonalizacao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpConfiguracao.class, fI);
-		d.addClass(br.gov.jfrj.siga.cp.CpSituacaoConfiguracao.class, fI);
-		d.addClass(br.gov.jfrj.siga.cp.CpTipoConfiguracao.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpServico.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpTipoGrupo.class, fI);
 		d.addClass(br.gov.jfrj.siga.cp.CpGrupo.class, fI);
@@ -184,7 +180,6 @@ public class ModeloTest extends TestCase {
 		d.addClass(br.gov.jfrj.siga.ex.ExDocumento.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExFormaDocumento.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExConfiguracao.class, fI);
-		d.addClass(br.gov.jfrj.siga.ex.ExSituacaoConfiguracao.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExClassificacao.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExModelo.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExTemporalidade.class, fI);
@@ -203,7 +198,6 @@ public class ModeloTest extends TestCase {
 		d.addClass(br.gov.jfrj.siga.ex.BIE.ExBoletimDoc.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExPapel.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExEmailNotificacao.class, fI);
-		d.addClass(br.gov.jfrj.siga.dp.CpTipoMarcador.class, fI);
 		d.addClass(br.gov.jfrj.siga.dp.CpMarcador.class, fI);
 		d.addClass(br.gov.jfrj.siga.dp.CpTipoMarca.class, fI);
 

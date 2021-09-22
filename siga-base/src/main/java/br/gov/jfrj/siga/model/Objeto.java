@@ -54,6 +54,7 @@ import org.hibernate.type.Type;
 
 
 //@MappedSuperclass
+@SuppressWarnings("serial")
 public class Objeto extends ObjetoBase{
 
 //	@Override
@@ -95,8 +96,6 @@ public class Objeto extends ObjetoBase{
 		return isInstance(clazz) ? this : null;
 	}
 	
-	private static final long serialVersionUID = -7830448334427331897L;
-
 	protected static EntityManager em() {
 		return ContextoPersistencia.em();
 	}
@@ -105,14 +104,16 @@ public class Objeto extends ObjetoBase{
 		if (!em().contains(this)) {
 			em().persist(this);
 		}
-		avoidCascadeSaveLoops.set(new HashSet<Objeto>());
+
+		/*
+	  	avoidCascadeSaveLoops.set(new HashSet<Objeto>());
 		try {
 			saveAndCascade(true);
 		} catch (UnexpectedException e) {
 			throw new RuntimeException(e);
 		} finally {
 			avoidCascadeSaveLoops.get().clear();
-		}
+		} 
 		try {
 			em().flush();
 		} catch (PersistenceException e) {
@@ -131,6 +132,7 @@ public class Objeto extends ObjetoBase{
 		} finally {
 			avoidCascadeSaveLoops.get().clear();
 		}
+		*/
 	}
 	
 	public void refresh() {

@@ -10,34 +10,46 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>siga-ex</artifactId>
+	
+	<properties>
+		<openhtml.version>1.0.8</openhtml.version>
+	    <maven.compiler.source>1.8</maven.compiler.source>
+	    <maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
 
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.6</version>
-					<executions>
-						<execution>
-							<id>add-source</id>
-							<phase>generate-sources</phase>
-							<goals>
-								<goal>add-source</goal>
-							</goals>
-							<configuration>
-								<sources>
-									<source>src/main/nheengatu</source>
-								</sources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
 				<!-- <plugin> <groupId>org.hibernate.orm.tooling</groupId> <artifactId>hibernate-enhance-maven-plugin</artifactId> 
 					<executions> <execution> <phase>compile</phase> <goals> <goal>enhance</goal> 
 					</goals> </execution> </executions> <dependencies> <dependency> <groupId>siga</groupId> 
 					<artifactId>siga-ex</artifactId> <version>${project.version}</version> </dependency> 
 					</dependencies> </plugin> -->
+
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.hibernate.orm.tooling</groupId>
+										<artifactId>hibernate-enhance-maven-plugin</artifactId>
+										<versionRange>[${hibernate.version},)</versionRange>
+										<goals>
+											<goal>enhance</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
 				
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
@@ -126,12 +138,6 @@
 			<artifactId>Tidy</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-		</dependency>
-		<!-- <dependency> <groupId>com.swetake.util</groupId> <artifactId>Qrcode</artifactId> 
-			</dependency> -->
-		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
 		</dependency>
@@ -139,17 +145,12 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers</artifactId>
-		</dependency>
-		 -->
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>fop</artifactId>
 			<scope>provided</scope>
-		</dependency>
+    	</dependency>
+
 		<dependency>
 			<groupId>org.ccil.cowan.tagsoup</groupId>
 			<artifactId>tagsoup</artifactId>
@@ -226,6 +227,42 @@
 		<dependency>
 			<groupId>com.crivano</groupId>
 			<artifactId>swaggerservlet</artifactId>
+		</dependency>
+		
+		<!-- PDF Related -->
+		<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.13</version>
+		</dependency>
+		
+ 		<dependency>
+			<!-- ALWAYS required, usually included transitively. -->
+			<groupId>com.openhtmltopdf</groupId>
+			<artifactId>openhtmltopdf-core</artifactId>
+			<version>${openhtml.version}</version>
+ 		</dependency>
+
+		<dependency>
+			<!-- Required for PDF output. -->
+			<groupId>com.openhtmltopdf</groupId>
+			<artifactId>openhtmltopdf-pdfbox</artifactId>
+			<version>${openhtml.version}</version>
+		</dependency>
+
+ 		<dependency>
+			<!-- Optional, leave out if you do not need logging via slf4j. -->
+			<groupId>com.openhtmltopdf</groupId>
+			<artifactId>openhtmltopdf-slf4j</artifactId>
+			<version>${openhtml.version}</version>
+ 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>20.0</version>
 		</dependency>
 	</dependencies>
 
@@ -321,7 +358,7 @@
 							<sqlMigrationPrefix>SIGA_UTF8_V</sqlMigrationPrefix>
 							<placeholderPrefix>flyway${</placeholderPrefix>
 							<locations>
-								<location>filesystem:src\main\resources</location>
+								<location>filesystem:src\main\resources\db\migration</location>
 							</locations>
 						</configuration>
 						<executions>

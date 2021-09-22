@@ -32,6 +32,15 @@ function personalizacaoJuntar() {
 	document.getElementById('frm_nmFuncaoSubscritor').value = j;
 }
 
+function getQueryParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 	var frm = document.getElementById('frm');
@@ -47,7 +56,13 @@ function sbmt(id) {
 	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
-		frm.action = 'recarregar';
+		var paiSigla = document.getElementsByName('exDocumentoDTO.mobilPaiSel.sigla')[0].value;
+		var criandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value;
+		
+		
+		frm.action = id ? 'recarregar' : 'editar?modelo=' + mod.value
+				+ (paiSigla ? '&mobilPaiSel.sigla=' + paiSigla : '') 
+				+ (criandoAnexo ? '&criandoAnexo=' + criandoAnexo : '');
 		frm.submit();
 	}
 	return;
@@ -70,16 +85,6 @@ function sbmt(id) {
 
 // <c:set var="url" value="gravar" />
 function gravarDoc() {
-	
-	var arquivo = document.getElementById("arquivo");
-	
-	if(arquivo !== null) {
-		var tamanhoArquivo = parseInt(document.getElementById("arquivo").files[0].size);
-		if(tamanhoArquivo > 10485760){
-	        alert("TAMANHO DO ARQUIVO EXCEDE O PERMITIDO (10MB)!");
-	        return false;
-	    }
-	}
 	
 	clearTimeout(saveTimer);
 	if (!validar(false)) {
@@ -108,6 +113,8 @@ function validar(silencioso) {
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
+	var hasPai = document.getElementById('hasPai');
+	var isPaiEletronico = document.getElementById('isPaiEletronico');
 	var subscritor = document.getElementById('formulario_exDocumentoDTO.subscritorSel_id');
 	var temCossignatarios = document.getElementById('temCossignatarios');
 	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
@@ -121,11 +128,27 @@ function validar(silencioso) {
 		return false;
 	}
 	if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {
-		aviso(
-				"É necessário informar se o documento será digital ou físico, na parte superior da tela.",
+		aviso("É necessário informar se o documento será digital ou físico, na parte superior da tela.",
 				silencioso);
 		return false;
 	}
+	
+    if ( eletroHidden == null ) {
+		if ( hasPai.value === 'true' ) {
+			if ( isPaiEletronico.value == 'true' && eletro2.checked) {
+				aviso(
+				"O documento deve ser digital, não pode ser de outro tipo.",
+				silencioso);
+				return false;
+			} 
+			if ( isPaiEletronico.value == 'false' && eletro1.checked) {
+				aviso(
+				"O documento deve ser físico, não pode ser de outro tipo.",
+				silencioso);
+				return false;
+			} 
+		}
+    }
 
 	var limite = document
 			.getElementsByName('exDocumentoDTO.tamanhoMaximoDescricao')[0].value;
@@ -140,56 +163,38 @@ function validar(silencioso) {
 				silencioso);
 		return false;
 	}
-
-	// Impede a gravação de um documento que possui campos obrigatorios quando
-	// esses não forem informados
-	var frm = document.getElementById('frm');
-	var obrigatorios = frm.elements["obrigatorios"];
-	if (typeof (obrigatorios) != "undefined") {
-		if (typeof (obrigatorios.length) != "number") {
-			obrigatorios = [ obrigatorios ];
+	
+	validarCamposEntrevista();
+	
+	var camposInvalidos = $('#frm').find('.is-invalid').not('input[type="hidden"]');
+	if (camposInvalidos.length > 0) {
+		var mensagem = 'Favor verificar os campos destacados';
+		
+		if (camposInvalidos.length == 1) {
+			mensagem = 'Favor verificar o campo destacado';
 		}
-		var s = "";
-		for (var i = 0; i < obrigatorios.length; i++) {
-			var elm = frm.elements[obrigatorios[i].value];
-			var obr = elm.value;
-			if (obr == null || obr == "" || !obr || /^\s*$/.test(obr)) {
-				aviso("Parâmetro obrigatório não foi informado: "
-						+ obrigatorios[i].value, silencioso);
-				elm.focus();
-				return false;
-			}
-		}
-	}
-
-	// Impede que um documento capturado seja gravado sem que seja informado o
-	// arquivo PDF
-	var origem = document.getElementsByName('exDocumentoDTO.idTpDoc')[0].value;
-	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
-	if (origem == 4 && !id) {
-		var arquivo = document.getElementsByName('arquivo')[0];
-		if (arquivo.value == "") {
-			aviso('('+document.getElementById('codigoDoc').innerHTML + ') ' +
-					'Documento capturado não pode ser gravado sem que seja informado o nome do arquivo PDF',
-					silencioso);
-			arquivo.focus();
-			return false;
-		}
-	}
+		
+		aviso(mensagem, silencioso, camposInvalidos[0]);
+		return false;
+	}	
+	
 	return true;
 }
 
-function aviso(msg, silencioso) {
+function aviso(msg, silencioso, elemento) {
 	document.getElementById("btnGravar").disabled = false;
 	
 	if (silencioso)
 		avisoVermelho('O documento não pôde ser salvo: ' + msg);
 	else
-		alert(msg);
+		sigaModal.alerta(msg).focus(elemento);
 }
 
 // <c:set var="url" value="excluirpreench" />
 function removePreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -200,6 +205,9 @@ function removePreench() {
 
 // <c:set var="url" value="alterarpreench" />
 function alteraPreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+	
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -596,3 +604,22 @@ $(window).load(function() {
 	var observadorDeAlteracoesNoDocumento = new SigaSP.Documento();
 	observadorDeAlteracoesNoDocumento.observar();	
 });
+
+updateURL = function() {
+	if (!history || !history.replaceState)
+		return;
+	
+	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
+	if (id)
+		return;
+	
+	var modelo = document.getElementsByName('exDocumentoDTO.idMod')[0].value;
+	var lotaDestFields = document.getElementsByName('exDocumentoDTO.lotacaoDestinatarioSel.id');
+	var lotaDest = lotaDestFields && lotaDestFields[0].value ? '&lotaDest=' + lotaDestFields[0].value : '';
+	var classifFields = document.getElementsByName('exDocumentoDTO.classificacaoSel.id');
+	var classif = classifFields && classifFields[0].value ? '&classif=' + classifFields[0].value : '';
+	var descrFields = document.getElementsByName('exDocumentoDTO.descrDocumento');
+	var descr = descrFields && descrFields[0].value ? '&descr=' + descrFields[0].value : '';
+	
+	history.replaceState(null, null, 'editar?modelo=' + modelo + lotaDest + classif + descr);
+}

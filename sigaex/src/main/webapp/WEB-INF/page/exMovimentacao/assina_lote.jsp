@@ -10,8 +10,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <siga:pagina titulo="Assinatura em Lote"
-	onLoad="javascript: TestarAssinaturaDigital();"
-	incluirJs="/sigaex/javascript/assinatura.js"
 	compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
@@ -30,17 +28,17 @@
 			var theForm = theElement.form, z = 0;
 			for (z = 0; z < theForm.length; z++) {
 				if (theForm[z].type == 'checkbox'
-						&& theForm[z].name != 'checkall') {
+						&& theForm[z].name != 'checkall' && theForm[z].name != 'ad_password_0') {
 					theForm[z].checked = !(theElement.checked);
 					theForm[z].click();
 				}
 			}
 		}
 
-		function displaySel(chk, el) {
-			document.getElementById('div_' + el).style.display = chk.checked ? ''
+		function displaySel(ad_chk, el) {
+			document.getElementById('div_' + el).style.display = ad_chk.checked ? ''
 					: 'none';
-			if (chk.checked == -2)
+			if (ad_chk.checked == -2)
 				document.getElementById(el).focus();
 		}
 
@@ -49,6 +47,37 @@
 					: 'none';
 			document.getElementById(el).focus();
 		}
+		
+		function somenteLetrasNumeros(){
+			tecla = event.keyCode;
+			if ((tecla >= 48 && tecla <= 57) || (tecla >= 65 && tecla <= 90) || (tecla >= 97 && tecla <= 122)){
+			    return true;
+			}else{
+			   return false;
+			}
+		}
+		$(document).ready(
+			function() {
+				$("#bot-assinar").click(function() {
+					var theForm = document.getElementById('frm'), z = 0, check = 0;
+					for (z = 0; z < theForm.length; z++) {
+						if (theForm[z].type == 'checkbox'
+								&& theForm[z].name != 'checkall' && theForm[z].name != 'ad_password_0') {
+							if(theForm[z].checked) {
+								check = 1;
+								break;
+							}
+						}
+					}
+					if(check == 0) {
+						sigaModal.alerta("Selecione um ou mais documento(s).");
+						gAssinando = false;
+						return;
+					} else {
+						sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
+					}
+				})
+			})
 	</script>
 	<script
 		src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"
@@ -62,99 +91,31 @@
 				</div>
 				<div class="card-body">
 					<div id="dados-assinatura" style="visible: hidden">
-						<c:set var="jspServer"
-							value="${request.contextPath}/app/expediente/mov/assinar_gravar" />
-						<c:set var="jspServerSenha"
-							value="${request.contextPath}/app/expediente/mov/assinar_senha_gravar" />
-						<c:set var="nextURL" value="/siga/app/principal" />
-						<c:set var="urlPath" value="${request.contextPath}" />
-
-						<input type="hidden" id="jspserver" name="jspserver"
-							value="${jspServer}" /> <input type="hidden" id="jspServerSenha"
-							name="jspServerSenha" value="${jspServerSenha}" /> <input
-							type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
-						<input type="hidden" id="urlpath" name="urlpath"
-							value="${urlPath}" />
-						<c:set var="url">${request.requestURL}</c:set>
-						<c:set var="uri" value="${request.requestURI}" />
-						<c:set var="urlBase"
-							value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
-						<input type="hidden" id="urlbase" name="urlbase"
-							value="${urlBase}" />
-
+						<input type="hidden" name="ad_url_base" value="" /> <input
+								type="hidden" name="ad_url_next" value="/siga/app/principal" />
 						<c:set var="botao" value="" />
-						<c:if test="${autenticando}">
-							<c:set var="botao" value="autenticando" />
-						</c:if>
-						<c:set var="lote" value="true" />
+							<c:if test="${autenticando}">
+								<c:set var="botao" value="autenticando" />
+							</c:if>
+							<c:set var="lote" value="false" />
 					</div>
 					<div class="row">
 						<div class="col-sm">
-							<c:if
-								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-								<div class="form-group form-inline">
-									<c:import url="/javascript/inc_assina_js.jsp" />
-									<div id="capicom-div">
-										<c:if test="${not autenticando}">
-											<a id="bot-assinar" href="#"
-												onclick="javascript: AssinarDocumentos('false', this);"
-												class="gt-btn-alternate-large gt-btn-left">Assinar
-												Documento</a>
-										</c:if>
-										<c:if test="${autenticando}">
-											<a id="bot-conferir" href="#"
-												onclick="javascript: AssinarDocumentos('true', this);"
-												class="gt-btn-alternate-large gt-btn-left">Autenticar
-												Documento</a>
-										</c:if>
-									</div>
-									<c:if test="${siga_cliente != 'GOVSP'}">
-										<p id="ie-missing" style="display: none;">
-											A assinatura digital utilizando padrão do SIGA-DOC só poderá
-											ser realizada no Internet Explorer. No navegador atual,
-											apenas a assinatura com <i>Applet Java</i> é permitida.
-										</p>
-									</c:if>
-									<p id="capicom-missing" style="display: none;">
-										Não foi possível localizar o componente <i>CAPICOM.DLL</i>.
-										Para realizar assinaturas digitais utilizando o método padrão
-										do SIGA-DOC, será necessário instalar este componente. O <i>download</i>
-										pode ser realizado clicando <a
-											href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view"><u>aqui</u></a>.
-										Será necessário expandir o <i>ZIP</i> e depois executar o
-										arquivo de instalação.
-									</p>
-									<script type="text/javascript">
-										if (window.navigator.userAgent
-												.indexOf("MSIE ") > 0
-												|| window.navigator.userAgent
-														.indexOf(" rv:11.0") > 0) {
-											document
-													.getElementById("capicom-div").style.display = "block";
-											document
-													.getElementById("ie-missing").style.display = "none";
-										} else {
-											document
-													.getElementById("capicom-div").style.display = "none";
-											document
-													.getElementById("ie-missing").style.display = "block";
-										}
-									</script>
-								</div>
-							</c:if>
-							<div class="form-group form-inline">
-								<c:if test="${siga_cliente != 'GOVSP'}">
-									<c:if
-										test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
-						   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
-				         	</c:if>
-								</c:if>
-								<c:if
-									test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-									<a id="bot-assinar-senha" href="#"
-										onclick="javascript: assinarComSenha();"
-										class="btn btn-primary ml-3">Assinar com Senha</a>
-								</c:if>
+							<div class="form-group">
+
+								<c:set var="podeAssinarComSenha" value="${(not empty documentosQuePodemSerAssinadosComSenha)}" />
+								<c:set var="defaultAssinarComSenha" value="true" />
+
+								<c:set var="podeUtilizarSegundoFatorPin" value="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+								<c:set var="obrigatorioUtilizarSegundoFatorPin" value="${f:deveUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao)}" />
+								<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
+								
+								<tags:assinatura_botoes assinar="true" 
+									assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
+									assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
+									assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"
+									assinarComSenhaPinChecado="${podeAssinarComSenha and podeUtilizarSegundoFatorPin and defaultUtilizarSegundoFatorPin}"/>
+
 							</div>
 						</div>
 					</div>
@@ -167,7 +128,6 @@
 						<thead class="${thead_color} align-middle text-center">
 							<tr>
 								<th width="3%"></th>
-								<th width="3%"></th>
 								<th width="13%" align="left">Número</th>
 								<th width="5%"></th>
 								<th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>
@@ -175,7 +135,6 @@
 								<th width="49%"></th>
 							</tr>
 							<tr>
-								<th width="3%"></th>
 								<th width="3%" align="right"><input type="checkbox"
 									name="checkall" onclick="checkUncheckAll(this)" /></th>
 								<th width="13%"></th>
@@ -190,27 +149,15 @@
 						</thead>
 						<tbody class="table-bordered">
 							<c:forEach var="doc" items="${itensSolicitados}">
-								<c:set var="x" scope="request">chk_${doc.idDoc}</c:set>
+								<c:set var="x" scope="request">ad_chk_${doc.idDoc}</c:set>
 								<c:remove var="x_checked" scope="request" />
 								<c:if test="${param[x] == 'true'}">
 									<c:set var="x_checked" scope="request">checked</c:set>
 								</c:if>
-								<c:set var="podeAssinarComSenha"
-									value="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}" />
-								<c:set var="classAssinarComSenha" value="nao-pode-assinar-senha" />
-								<c:if test="${podeAssinarComSenha}">
-									<c:set var="classAssinarComSenha" value="pode-assinar-senha" />
-								</c:if>
 								<tr class="even">
-									<td width="3%" align="center"><c:if
-											test="${podeAssinarComSenha}">
-											<img src="/siga/css/famfamfam/icons/keyboard.png"
-												alt="Permite assinatura com senha"
-												title="Permite assinatura com senha" />
-										</c:if></td>
-									<td width="3%" align="center"><input type="checkbox"
-										name="${x}" value="true" ${x_checked}
-										class="${classAssinarComSenha}" /></td>
+									<td width="3%" align="center">
+										<input type="checkbox" name="${x}" value="true" ${x_checked} />
+									</td>
 									<td width="13%" align="left"><a
 										href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
 									</td>
@@ -223,6 +170,25 @@
 								<input type="hidden" name="pdf${x}" value="${doc.sigla}" />
 								<input type="hidden" name="url${x}"
 									value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
+								<input type="hidden" name="ad_tramitar_${doc.idDoc}"
+									value="false" />
+								<input type="hidden" name="ad_descr_${doc.idDoc}"
+									value="${doc.sigla}" />
+								<input type="hidden" name="ad_url_pdf_${doc.idDoc}"
+									value="/sigaex/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
+								<input type="hidden" name="ad_url_post_${doc.idDoc}"
+									value="/sigaex/app/expediente/mov/assinar_gravar" />
+								<input type="hidden"
+									name="ad_url_post_password_${doc.idDoc}"
+									value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
+								
+								<input type="hidden" name="ad_id_${doc.idDoc}"
+									value="${doc.codigoCompacto}" />
+								<input type="hidden" name="ad_description_${doc.idDoc}"
+									value="${doc.descrDocumento}" />
+								<input type="hidden" name="ad_kind_${doc.idDoc}"
+									value="${doc.descrFormaDoc}" />
+							
 							</c:forEach>
 						</tbody>
 					</table>
@@ -230,96 +196,5 @@
 			</c:if>
 		</form>
 	</div>
-
-	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-		<div id="dialog-form" title="Assinar com Senha">
-			<form id="form-assinarSenha" method="post"
-				action="assinar_mov_login_senha_gravar">
-				<input type="hidden" id="id" name="id" value="${mov.idMov}" /> <input
-					type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov"
-					value="A" />
-				<div class="form-group">
-					<label>Matrícula</label> <input id="nomeUsuarioSubscritor"
-						type="text" name="nomeUsuarioSubscritor" class="form-control"
-						onblur="javascript:converteUsuario(this)" />
-				</div>
-				<div class="form-group">
-					<label>Senha</label> <input type="password"
-						id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"
-						class="form-control" autocomplete="off" />
-				</div>
-			</form>
-		</div>
-
-		<div id="dialog-message" title="Basic dialog">
-			<p id="mensagemAssinaSenha"></p>
-		</div>
-
-		<script>
-			dialog = $("#dialog-form").dialog({
-				autoOpen : false,
-				height : 360,
-				width : 350,
-				modal : true,
-				buttons : {
-					"Assinar" : assinarGravar,
-					"Cancelar" : function() {
-						dialog.dialog("close");
-					}
-				},
-				close : function() {
-
-				}
-			});
-
-			function assinarGravar() {
-				AssinarDocumentosSenha('false', this);
-			}
-
-			dialogM = $("#dialog-message").dialog({
-				autoOpen : false,
-				height : 230,
-				width : 550,
-				modal : true,
-				buttons : {
-					"Ok" : function() {
-						dialogM.dialog("close");
-					}
-				},
-
-			});
-
-			function assinarComSenha() {
-				var n = $("input.nao-pode-assinar-senha:checked").length;
-
-				if (n > 0) {
-					$("#mensagemAssinaSenha")
-							.html(
-									n
-											+ (n === 1 ? " documento selecionado não pode ser assinado somente com senha."
-													: " documentos selecionados não podem ser assinados somente com senha.")
-											+ " Selecione somente os documentos que estão marcados com ");
-					$("#mensagemAssinaSenha")
-							.append(
-									"<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />");
-
-					dialogM.dialog("open");
-				} else {
-					var nPode = $("input.pode-assinar-senha:checked").length;
-
-					if (nPode == 0) {
-						$("#mensagemAssinaSenha")
-								.html(
-										"Nenhum documento selecionado. Selecione somente os documentos que estão marcados com ");
-						$("#mensagemAssinaSenha")
-								.append(
-										"<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />");
-						dialogM.dialog("open");
-					} else {
-						dialog.dialog("open");
-					}
-				}
-			}
-		</script>
-	</c:if>
+	<tags:assinatura_rodape />
 </siga:pagina>

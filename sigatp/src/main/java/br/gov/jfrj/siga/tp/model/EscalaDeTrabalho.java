@@ -5,11 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -23,19 +24,20 @@ import org.hibernate.envers.Audited;
 
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 
 @Entity
 @Audited
-@Table(schema = "SIGATP")
+@Table(name = "escaladetrabalho", schema = "sigatp")
 public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 
 	private static final long serialVersionUID = 1L;
 	public static final ActiveRecord<EscalaDeTrabalho> AR = new ActiveRecord<>(EscalaDeTrabalho.class);
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence_generator")
-	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "SIGATP.hibernate_sequence")
-	private long id;
+	@GeneratedValue(generator = "hibernate_sequence_generator")
+	@SequenceGenerator(name = "hibernate_sequence_generator", sequenceName = "sigatp.hibernate_sequence")
+	private Long id;
 
 	@NotNull
 	private Calendar dataVigenciaInicio;
@@ -51,7 +53,7 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 	private List<DiaDeTrabalho> diasDeTrabalho;
 
 	public EscalaDeTrabalho() {
-		this.id = 0;
+		this.id = 0L;
 		this.diasDeTrabalho = new ArrayList<DiaDeTrabalho>();
 	}
 
@@ -60,7 +62,7 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -105,7 +107,9 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 	}
 
 	public static List<EscalaDeTrabalho> buscarTodosPorCondutor(Condutor condutor) {
-		return EscalaDeTrabalho.AR.find("condutor = ? ORDER BY dataVigenciaInicio DESC, dataVigenciaFim DESC", condutor).fetch();		
+		HashMap<String, Object> parametros = new HashMap<String,Object>();
+		parametros.put("condutor", condutor);
+		return EscalaDeTrabalho.AR.find("condutor = :condutor ORDER BY dataVigenciaInicio DESC, dataVigenciaFim DESC", parametros).fetch();		
 	}
 
 	public static List<EscalaDeTrabalho> buscarTodasVigentes() {
@@ -163,11 +167,12 @@ public class EscalaDeTrabalho extends TpModel implements ConvertableEntity  {
 			filtroCondutor = "condutor.id = " + idCondutor + " AND ";
 		}
 
-		String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+//		String dataFormatadaOracle = "to_date('" + dataHoraInicio + "', 'DD/MM/YYYY')";
+		String dataFormatadaOracle = dataHoraInicio;
 		List<EscalaDeTrabalho> escalas;
 
-		String qrl = "SELECT e FROM EscalaDeTrabalho e WHERE " + filtroCondutor + " trunc(dataVigenciaInicio) <= trunc(" + dataFormatadaOracle + ")"
-				+ " AND (dataVigenciaFim IS NULL OR trunc(dataVigenciaFim) >= trunc(" + dataFormatadaOracle + "))";
+		String qrl = "SELECT e FROM EscalaDeTrabalho e WHERE " + filtroCondutor + FormatarDataHora.recuperaFuncaoTrunc() + "(dataVigenciaInicio) <= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + ")"
+				+ " AND (dataVigenciaFim IS NULL OR " + FormatarDataHora.recuperaFuncaoTrunc() + "(dataVigenciaFim) >= " + FormatarDataHora.recuperaFuncaoTrunc() + "(" + dataFormatadaOracle + "))";
 
 		Query qry = AR.em().createQuery(qrl);
 		try {

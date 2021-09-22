@@ -1,0 +1,121 @@
+.xrp-label-container {
+	margin-top: 4px;
+	margin-bottom: 0px;
+}
+
+.xrp-label {
+	font-size: 13px;
+	margin-bottom: 4px;
+	line-height: 1.1;
+	padding-left: 7px;
+	padding-right: 7px;
+	/* border-radius: 5px */
+}
+
+.label-clue {
+	margin-left: 0.25em;
+	color: #aaa;
+	font-size: 60%;
+	/*	float: right;
+	margin-top: 4px; */
+}
+
+.validation-error {
+	border-color: #e74c3c !important;
+}
+
+.graph-container {
+	position: relative;
+	width: 100%;
+	padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.graph-container-tall {
+	position: relative;
+	width: 100%;
+	padding-top: 120%;
+}
+
+.graph-svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	text-align: center;
+	background-color: white;
+}
+
+.xrp-actions {
+	margin-bottom: 0;
+}
+
+.form-check-input {
+	margin-right: 0.5em !important;
+}
+
+.form-check-label {
+	display: inline;
+}
+
+/* JUIA */
+header.juia {
+	padding: 0.75rem 1rem;
+	margin-bottom: 1rem;
+	list-style: none;
+	background-color: #e2e3e5 !important;
+	color: #383d41;
+	opacity: 1;
+	border-radius: 0.25rem;
+}
+
+/* JUIA */
+header.juia-strong {
+	padding: 0.75rem 1rem;
+	margin-bottom: 1rem;
+	list-style: none;
+	background-color: var(- -dark) !important;
+	color: #fff;
+	opacity: 1;
+	border-radius: 0.25rem;
+}
+
+.juia-title {
+	padding: 0.75rem 1rem;
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-bottom: 1rem;
+	list-style: none;
+	background-color: var(- -primary) !important;
+	opacity: 1;
+	color: #fff;
+	border-radius: 0;
+}
+
+.juia-title-old {
+	padding: 0.75rem 1rem;
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-top: -15px;
+	margin-bottom: 1rem;
+	list-style: none;
+	background-color: #e9ecef !important;
+	border-radius: 0.25rem;
+}
+
+.juia-form .label {
+	display: block;
+	margin-bottom: 0px;
+	line-height: 19px;
+	font-weight: 400;
+}
+
+big.juia {
+	font-size: 150%;
+}
+
+#footer:after {
+	clear: both;
+	content: "";
+	display: table;
+}

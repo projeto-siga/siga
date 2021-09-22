@@ -1,49 +1,47 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
-<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+<div>
 	<form id="formSelecionarLista" action="${linkTo[SolicitacaoController].incluirEmListaGravar}?sigla=${solicitacao.siglaCompacta}
 		${lista != null ? '&idLista='+lista.idLista : ''}" onsubmit="javascript: return block();" enctype="multipart/form-data">
 		<input type="hidden" name="prioridade" />
 		<input type="hidden" name="naoReposicionarAutomatico"/>
 			
-		<div style="max-height: 500px; max-width: 800px; overflow-y: scroll;">
-			<table border="0" class="gt-table">
-				<col width="20%" />
-		   		<col width="20%" />
-		    		<thead>
-						<tr class="gt-celula-nowrap">
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Incluir</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descri&ccedil;&atilde;o da Lista</th>
-		  				</tr>
-		  			</thead>
-				<tbody>
-				<c:forEach items="${solicitacao.getListasDisponiveisParaInclusao(lotaTitular, titular)}" var="lista">
-					<tr>
-						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<input type="radio" name="idLista" value="${lista.idLista}" data-pode-priorizar="${lista.podePriorizar(lotaTitular, titular)}">	
-						</td>
-						<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
-							${lista.nomeLista}
-						</td>
-					</tr>		
-				</c:forEach>
+		<div>
+			<table border="0" class="table">
+	    		<thead>
+					<tr class="gt-celula-nowrap">
+						<th>Incluir</th>
+						<th>Descri&ccedil;&atilde;o da Lista</th>
+	  				</tr>
+	  			</thead>
+	  			<tbody>
+					<c:forEach items="${solicitacao.getListasDisponiveisParaInclusao(lotaTitular, titular)}" var="lista">
+						<tr>
+							<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+								<input type="radio" name="idLista" value="${lista.idLista}" data-pode-priorizar="${lista.podePriorizar(lotaTitular, titular)}">	
+							</td>
+							<td style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
+								${lista.nomeLista}
+							</td>
+						</tr>		
+					</c:forEach>
 				</tbody>
 			</table>
-		</div>	
+		</div>
 		
 		<div class="gt-table-button gt-width-66">
 			<input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}">
-			<input type="button" value="Selecionar Lista" class="gt-btn-medium gt-btn-left" onclick="listaService.incluirEmLista()"/>
-			<a href="${linkTo[SolicitacaoController].exibir[solicitacao.siglaCompacta]}" class="gt-btn-medium gt-btn-left">Voltar</a>
+			<input type="button" value="Selecionar Lista" class="btn btn-primary" onclick="listaService.incluirEmLista()"/>
+			<a href="${linkTo[SolicitacaoController].exibir(solicitacao.siglaCompacta)}" class="btn btn-primary" style="color: #fff">Voltar</a>
 		</div>
 		
 		<sigasr:modal nome="selecionarPrioridade" titulo="Selecionar Prioridade">
 			<div class="gt-form gt-content-box">
-				<div class="gt-form-row gt-width-66">
+				<div class="form-group">
 					<label>Prioridade <span>*</span></label> 
 					
-					<select name="prioridade">	
+					<select name="prioridade" class="form-control">	
 						<option value="">Nenhuma</option>
 						<c:forEach items="${prioridades}" var="prioridade">
 							<option value="${prioridade}">${prioridade.descPrioridade}</option>
@@ -51,13 +49,15 @@
 					</select>
 				</div>
 				
-				<div class="gt-form-row gt-width-100">
-					<label>N&atilde;o reposicionar automaticamente ao alterar a prioridade: <input type="checkbox" name="naoReposicionarAutomatico"></label> 
+				<div>
+					<label>N&atilde;o reposicionar automaticamente ao alterar a prioridade: 
+						<input type="checkbox" name="naoReposicionarAutomatico">
+					</label> 
 				</div>
 				
 				<div class="gt-width-100 gt-form-row ">
-					<input type="button" value="Adicionar" class="gt-btn-medium gt-btn-left" onclick="listaService.gravarInclusaoComPrioridade()"/>
-					<input type="button" class="gt-btn-medium gt-btn-left" value="Cancelar" onclick="listaService.fecharModalPrioridade()"/>
+					<input type="button" value="Adicionar" class="btn btn-primary" onclick="listaService.gravarInclusaoComPrioridade()"/>
+					<input type="button" class="btn btn-primary" value="Cancelar" onclick="listaService.fecharModalPrioridade()" style="color: #fff"/>
 				</div>
 			</div>
 		</sigasr:modal>

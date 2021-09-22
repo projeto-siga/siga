@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -51,7 +50,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import antlr.ASdebug.TokenOffsetInfo;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -61,16 +59,17 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
@@ -83,9 +82,9 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovProcesso;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelPermanenciaSetorAssunto;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoMedioSituacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoTramitacaoPorEspecie;
-import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelPermanenciaSetorAssunto;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacaoPorModelo;
@@ -172,7 +171,7 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelCrDocSubordinados(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relDocsClassificados.jsp")) {
 			fazerResultsParaRelDocClassificados(lotacaoDestinatarioSel);
-			
+ 
 		} else if (nomeArquivoRel.equals("relExpedientes.jsp")) {
 			fazerResultsParaRelExpedientes(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relFormularios.jsp")) {
@@ -370,11 +369,9 @@ public class ExRelatorioController extends ExController {
 
 		assertAcesso(ACESSO_FORMS);
 
-		final Map<String, Object> parametros = new HashMap<String, Object>();
+		final Map<String, String> parametros = new HashMap<>();
 		parametros.put("secaoUsuario", secaoUsuario);
-		//System.out.println(System.getProperty("siga.relat.titulo"));
-		addParametrosPersonalizadosOrgão(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
+		addParametrosPersonalizadosOrgao(parametros);
 		parametros.put("orgaoUsuario", orgaoUsuario);
 		parametros.put("lotacaoTitular", lotacaoTitular);
 		parametros.put("idTit", idTit);
@@ -394,14 +391,12 @@ public class ExRelatorioController extends ExController {
 		final String dataInicio = param("dataInicio");
 		final String dataFim = param("dataFim");
 
-		final Map<String, Object> parameters = new HashMap<String, Object>();
+		final Map<String, String> parameters = new HashMap<>();
 		parameters.put("tipoRelatorio", param("tipoRelatorio"));
 		parameters.put("secaoUsuario", param("secaoUsuario"));
 		parameters.put("dataInicio", dataInicio);
 		parameters.put("dataFim", dataFim);
-		//System.out.println(System.getProperty("siga.relat.titulo"));
-		addParametrosPersonalizadosOrgão(parameters);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
+		addParametrosPersonalizadosOrgao(parameters);
 		if (lotacaoDestinatarioSel != null
 				&& lotacaoDestinatarioSel.getId() != null) {
 			final DpLotacao lota = dao().consultar(
@@ -435,27 +430,13 @@ public class ExRelatorioController extends ExController {
 				"emiteRelDocumentosSubordinados");
 	}
 
-	private void addParametrosPersonalizadosOrgão(final Map<String, Object> parameters) {
-		if ( System.getProperty("siga.relat.titulo") == null ) {
-			parameters.put("titulo","PODER JUDICIÁRIO");
-		} else {
-			parameters.put("titulo", System.getProperty("siga.relat.titulo"));
-		}
-		//System.getProperty("siga.relat.subtitulo");
-		if ( System.getProperty("siga.relat.subtitulo") == null ) {
-			parameters.put("subtitulo","JUSTIÇA FEDERAL");
-		} else {
-			parameters.put("subtitulo", System.getProperty("siga.relat.subtitulo"));
-		}
-		//System.out.println("Titulo: " + parametros.get("titulo"));
-		if ( System.getProperty("siga.relat.brasao") == null ) {
-			parameters.put("brasao","brasao.png");
-		} else {
-			parameters.put("brasao", System.getProperty("siga.relat.brasao"));
-		}
+	private void addParametrosPersonalizadosOrgao(final Map<String, String> parameters) {
+			parameters.put("titulo", Prop.get("/siga.relat.titulo"));
+			parameters.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
+			parameters.put("brasao", Prop.get("/siga.relat.brasao"));
 	}
 
-	private InputStream aGeraRelatorio(final Map<String, Object> parameters)
+	private InputStream aGeraRelatorio(final Map<String, String> parameters)
 			throws JRException {
 		final String cam = (String) getContext().getRealPath(
 				"/WEB-INF/page/exRelatorio/");
@@ -463,7 +444,7 @@ public class ExRelatorioController extends ExController {
 				+ (String) parameters.get("tipoRelatorio"));
 		final JasperReport jr = JasperCompileManager.compileReport(design);
 		final JasperPrint relGerado = JasperFillManager.fillReport(jr,
-				parameters);
+				(Map<String,Object>) (Map) parameters);
 		return new ByteArrayInputStream(
 				JasperExportManager.exportReportToPdf(relGerado));
 	}
@@ -502,25 +483,7 @@ public class ExRelatorioController extends ExController {
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "app/expediente/doc/exibir?sigla=");
-		//System.out.println(System.getProperty("siga.relat.titulo"));
-		if ( System.getProperty("siga.relat.titulo") == null ) {
-			parametros.put("titulo","PODER JUDICIÁRIO");
-		} else {
-			parametros.put("titulo", System.getProperty("siga.relat.titulo"));
-		}
-		//System.getProperty("siga.relat.subtitulo");
-		if ( System.getProperty("siga.relat.subtitulo") == null ) {
-			parametros.put("subtitulo","JUSTIÇA FEDERAL");
-		} else {
-			parametros.put("subtitulo", System.getProperty("siga.relat.subtitulo"));
-		}
-		//System.out.println("Titulo: " + parametros.get("titulo"));
-		if ( System.getProperty("siga.relat.brasao") == null ) {
-			parametros.put("brasao","brasao.png");
-		} else {
-			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
-		}
-		//System.out.println("Brasao: " + parametros.get("brasao"));
+		addParametrosPersonalizadosOrgãoString(parametros);
 		final RelatorioDocumentosSubordinados rel = new RelatorioDocumentosSubordinados(
 				parametros);
 		rel.gerar();
@@ -535,7 +498,7 @@ public class ExRelatorioController extends ExController {
 	public Download aRelMovDocumentosSubordinados() throws Exception {
 		assertAcesso(ACESSO_MVSUB);
 
-		final Map<String, Object> parametros = new HashMap<String, Object>();
+		final Map<String, String> parametros = new HashMap<>();
 
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.id"));
@@ -555,9 +518,7 @@ public class ExRelatorioController extends ExController {
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
-		//System.out.println(System.getProperty("siga.relat.titulo"));
-		addParametrosPersonalizadosOrgão(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
+		addParametrosPersonalizadosOrgao(parametros);
 		final RelMovimentacaoDocSubordinados rel = new RelMovimentacaoDocSubordinados(
 				parametros);
 		rel.gerar();
@@ -572,7 +533,7 @@ public class ExRelatorioController extends ExController {
 	public Download aRelDocsSubCriados() throws Exception {
 		assertAcesso(ACESSO_CRSUB);
 
-		final Map<String, Object> parametros = new HashMap<String, Object>();
+		final Map<String, String> parametros = new HashMap<>();
 
 		parametros.put("lotacao",
 				getRequest().getParameter("lotacaoDestinatarioSel.id"));
@@ -592,9 +553,7 @@ public class ExRelatorioController extends ExController {
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
-		//System.out.println(System.getProperty("siga.relat.titulo"));
-		addParametrosPersonalizadosOrgão(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
+		addParametrosPersonalizadosOrgao(parametros);
 		final RelDocSubordinadosCriados rel = new RelDocSubordinadosCriados(
 				parametros);
 		rel.gerar();
@@ -639,9 +598,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("lotacaoTitular",
 				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelConsultaDocEntreDatas rel = new RelConsultaDocEntreDatas(
 				parametros);
 
@@ -658,24 +615,10 @@ public class ExRelatorioController extends ExController {
 	}
 
 	private void addParametrosPersonalizadosOrgãoString(Map<String, String> parameters) {
-		if ( System.getProperty("siga.relat.titulo") == null ) {
-			parameters.put("titulo","PREFEITURA DA CIDADE DO RIO DE JANEIRO");
-		} else {
-			parameters.put("titulo", System.getProperty("siga.relat.titulo"));
-		}
-		//System.getProperty("siga.relat.subtitulo");
-		if ( System.getProperty("siga.relat.subtitulo") == null ) {
-			parameters.put("subtitulo","Processo.Rio");
-		} else {
-			parameters.put("subtitulo", System.getProperty("siga.relat.subtitulo"));
-		}
-		//System.out.println("Titulo: " + parametros.get("titulo"));
-		if ( System.getProperty("siga.relat.brasao") == null ) {
-			parameters.put("brasao","brasao.png");
-		} else {
-			parameters.put("brasao", System.getProperty("siga.relat.brasao"));
-		}
-		
+ 
+			parameters.put("titulo", Prop.get("/siga.relat.titulo"));
+			parameters.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
+			parameters.put("brasao", Prop.get("/siga.relat.brasao"));
 	}
 
 	@Get("app/expediente/rel/emiteRelMovimentacao")
@@ -683,8 +626,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -708,9 +651,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("lotacaoTitular",
 				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelMovimentacao rel = new RelMovimentacao(parametros);
 		rel.gerar();
 
@@ -725,8 +666,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_MOVCAD);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -750,9 +691,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("lotacaoTitular",
 				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelMovCad rel = new RelMovCad(parametros);
 		rel.gerar();
 
@@ -767,8 +706,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -793,9 +732,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("lotacaoTitular",
 				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelOrgao rel = new RelOrgao(parametros);
 		rel.gerar();
 
@@ -810,8 +747,8 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -833,9 +770,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("lotacaoTitular",
 				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelTipoDoc rel = new RelTipoDoc(parametros);
 		rel.gerar();
 
@@ -850,8 +785,14 @@ public class ExRelatorioController extends ExController {
 		assertAcesso(ACESSO_RELMVP);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (Utils.empty(getRequest().getParameter("dataInicial"))) {
+			throw new AplicacaoException("Parâmetro dataInicial não informado!");
+		}
+		if (Utils.empty(getRequest().getParameter("dataFinal"))) {
+			throw new AplicacaoException("Parâmetro dataFinal não informado!");
+		}
+		final Date dtIni = parseDate("dataInicial");
+		final Date dtFim = parseDate("dataFinal");
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
@@ -870,9 +811,7 @@ public class ExRelatorioController extends ExController {
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelMovProcesso rel = new RelMovProcesso(parametros);
 		rel.gerar();
 
@@ -890,9 +829,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("codificacao", getRequest().getParameter("codificacao"));
 		parametros.put("secaoUsuario", getRequest()
 				.getParameter("secaoUsuario"));
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelClassificacao rel = new RelClassificacao(parametros);
 		rel.gerar();
 
@@ -923,9 +860,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("idLotacao", idLotacao);
 		parametros.put("idOrgaoUsu", idOrgaoUsu);
 		parametros.put("secaoUsuario", secaoUsuario);
-		//System.out.println(System.getProperty("siga.relat.titulo"));
 		addParametrosPersonalizadosOrgãoString(parametros);
-		//System.out.println("Brasao: " + parametros.get("brasao"));
 		final RelDocsClassificados rel = new RelDocsClassificados(parametros);
 		rel.gerar();
 
@@ -947,15 +882,18 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
-
+			parametros.put("lotacaoTitular",getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
+			parametros.put("orgao", orgaoSelId.toString());
+			parametros.put("orgaoUsuario", orgaoUsu.toString());
+			
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
 					throw new AplicacaoException(
 							"Não é permitido consultas de outros órgãos.");
 				}
 				consistePeriodo(dataInicial, dataFinal);
-
-				parametros.put("orgao", orgaoSelId.toString());
+	
 				parametros.put("lotacao",
 						getRequest().getParameter("lotacaoSel.id"));
 				parametros.put("usuario",
@@ -969,6 +907,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/doc/exibir?sigla=");
+				addParametrosPersonalizadosOrgãoString(parametros);
 
 				final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 						parametros);
@@ -1047,6 +986,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/doc/exibir?sigla=");
+				addParametrosPersonalizadosOrgãoString(parametros);
 
 				final RelDocsOrgaoInteressado rel = new RelDocsOrgaoInteressado(
 						parametros);
@@ -1098,7 +1038,7 @@ public class ExRelatorioController extends ExController {
 					lotacaoSel.getId(), usuarioSel.getId(),
 					formatter.parse((String) dataInicial),
 					formatter.parse((String) dataFinal),
-					CpMarcador.MARCADOR_COMO_INTERESSADO);
+					CpMarcadorEnum.COMO_INTERESSADO.getId());
 			if (listOrgaos == null) {
 				throw new AplicacaoException(
 						"Não foram encontrados documentos para a pesquisa solicitada.");
@@ -1132,6 +1072,9 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			parametros.put("lotacaoTitular",getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
+			parametros.put("orgaoUsuario", orgaoUsu.toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
@@ -1159,6 +1102,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/doc/exibir?sigla=");
+				addParametrosPersonalizadosOrgãoString(parametros);
 
 				final RelTempoTramitacaoPorEspecie rel = new RelTempoTramitacaoPorEspecie(
 						parametros);
@@ -1199,8 +1143,7 @@ public class ExRelatorioController extends ExController {
 					"Não é permitido consultas de outros órgãos.");
 		}
 		consistePeriodo(dataInicial, dataFinal);
-
-		parametros.put("titulo", "Tempo Médio de Tramitação Por Espécie Documental");
+			
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
 				.getNmOrgaoUsu());
 		parametros.put("descrEspecie", descrFormaDoc);
@@ -1220,6 +1163,10 @@ public class ExRelatorioController extends ExController {
 				+ getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
+		addParametrosPersonalizadosOrgãoString(parametros);
+		
+		if (Prop.isGovSP()) /* Troca subtítulo por Nome do Relatório */
+			parametros.put("subtitulo", "Tempo Médio de Tramitação Por Espécie Documental");
 
 		final RelTempoTramitacaoPorEspecie rel = new RelTempoTramitacaoPorEspecie(
 				parametros);
@@ -1278,6 +1225,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/doc/exibirHistorico?sigla=");
+				addParametrosPersonalizadosOrgãoString(parametros);
 				final RelVolumeTramitacaoPorModelo rel = new RelVolumeTramitacaoPorModelo(
 						parametros);
 				if (idMod == null) {
@@ -1325,6 +1273,12 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			
+			parametros.put("orgao", String.valueOf(orgaoUsu));
+
+			parametros.put("lotacaoTitular",
+					getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
@@ -1333,7 +1287,6 @@ public class ExRelatorioController extends ExController {
 				}
 				consistePeriodo(dataInicial, dataFinal);
 
-				parametros.put("orgao", orgaoSelId.toString());
 				parametros.put("lotacao",
 						getRequest().getParameter("lotacaoSel.id"));
 				parametros.put("usuario",
@@ -1347,6 +1300,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/doc/exibir?sigla=");
+				addParametrosPersonalizadosOrgãoString(parametros);
 
 				final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 						parametros);
@@ -1419,6 +1373,11 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			parametros.put("orgaoUsuario", String.valueOf(orgaoUsu));
+
+			parametros.put("lotacaoTitular",
+					getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
 //				if (orgaoUsu != orgaoSelId) {
@@ -1454,6 +1413,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/rel/relDocumentosForaPrazo");
+				addParametrosPersonalizadosOrgãoString(parametros);
 
 				final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(
 						parametros);
@@ -1498,6 +1458,11 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			parametros.put("orgaoUsuario", String.valueOf(orgaoUsu));
+
+			parametros.put("lotacaoTitular",
+					getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
@@ -1515,6 +1480,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
 						getRequest().getParameter("dataFinal"));
+				addParametrosPersonalizadosOrgãoString(parametros);
 
 				final RelTempoMedioSituacao rel = new RelTempoMedioSituacao(
 						parametros);
@@ -1552,6 +1518,11 @@ public class ExRelatorioController extends ExController {
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+			parametros.put("orgaoUsuario", String.valueOf(orgaoUsu));
+
+			parametros.put("lotacaoTitular",
+					getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
@@ -1587,6 +1558,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/rel/relDocumentosDevolucaoProgramada");
+				addParametrosPersonalizadosOrgãoString(parametros);
 
 				final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(
 						parametros);
@@ -1655,7 +1627,10 @@ public class ExRelatorioController extends ExController {
 		consistePeriodo(dataInicial, dataFinal);
 
 		parametros.put("orgao", orgaoSelId.toString());
-		parametros.put("titulo", "Documentos Por Volume");
+		parametros.put("lotacaoTitular",
+				getLotaTitular().getSiglaLotacao());
+		parametros.put("idTit", getTitular().getId().toString());
+
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
 				.getNmOrgaoUsu());
 		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
@@ -1663,6 +1638,11 @@ public class ExRelatorioController extends ExController {
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal",
 				 getRequest().getParameter("dataFinal"));
+		addParametrosPersonalizadosOrgãoString(parametros);
+		
+		if (Prop.isGovSP()) /* Troca subtítulo por Nome do Relatório */
+			parametros.put("subtitulo", "Documentos Por Volume");
+		
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
 		rel.setTemplateFile("RelatorioBaseGestao.jrxml");
@@ -1689,7 +1669,7 @@ public class ExRelatorioController extends ExController {
 	}
 
 	private String getMascaraJavascript() {
-		return SigaExProperties.getExClassificacaoMascaraJavascript();
+		return Prop.get("classificacao.mascara.javascript");
 	}
 
 	private void consistePeriodo(String dataInicial, String dataFinal) throws Exception {
@@ -1750,6 +1730,7 @@ public class ExRelatorioController extends ExController {
 		return orgaoSelId;
 	}
 	
+
 	@Get("app/expediente/rel/emiteRelPermanenciaSetorAssunto")
 	public Download aRelPermanenciaSetorAssunto() throws Exception {
 		
@@ -1797,5 +1778,16 @@ public class ExRelatorioController extends ExController {
 		final InputStream inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
 		
 		return new InputStreamDownload(inputStream, APPLICATION_PDF,	"emiteRelPermanenciaSetorAssunto");
+}
+	private Date parseDate(String parameter) throws AplicacaoException {
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		if (Utils.empty(getRequest().getParameter(parameter)))
+			throw new AplicacaoException("Campo " + parameter + " deve ser preenchido!");
+		try {
+			return df.parse(getRequest().getParameter(parameter));
+		} catch (Exception ex) {
+			throw new AplicacaoException("Campo  \" + parameter + \" inválido!", 0, ex);
+		}
+ 
 	}
 }

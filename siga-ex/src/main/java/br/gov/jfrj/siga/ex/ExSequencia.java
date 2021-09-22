@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -17,8 +16,9 @@ import javax.persistence.Table;
  * The persistent class for the EX_SEQUENCIA database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
-@Table(name="EX_SEQUENCIA")
+@Table(name = "siga.ex_sequencia")
 @NamedQueries({
 	@NamedQuery(name="ExSequencia.findAll", query="SELECT e FROM ExSequencia e"),
 	@NamedQuery(name="ExSequencia.findById", query="SELECT e.idSequencia FROM ExSequencia e where e.idSequencia = :id "),
@@ -35,7 +35,6 @@ import javax.persistence.Table;
 	@NamedQuery(name="ExSequencia.incrementaSequencia", query="UPDATE ExSequencia e SET e.numero = e.numero + :increment WHERE e.idSequencia = :id"),
 	@NamedQuery(name="ExSequencia.existeRangeSequencia", query="SELECT e FROM ExSequencia e "
 			+ "where e.tipoSequencia = :tipoSequencia "
-			+ "and rownum = :rownum "
 			+ "Order by e.anoEmissao desc"),
 	@NamedQuery(name="ExSequencia.mantemRangeNumero", query="UPDATE ExSequencia e SET e.numero = e.numero + :increment, e.anoEmissao = :anoEmissao,  e.flAtivo = :flAtivo WHERE e.idSequencia = :id")
 
@@ -59,11 +58,9 @@ public class ExSequencia implements Serializable {
 	    }
 	}
 	
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@SequenceGenerator(name="EX_SEQUENCIA_NUMERACAO_GENERATOR", sequenceName="EX_SEQUENCIA_SEQ")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="EX_SEQUENCIA_NUMERACAO_GENERATOR")
+	@GeneratedValue(generator="EX_SEQUENCIA_NUMERACAO_GENERATOR")
 	@Column(name="ID_SEQ")
 	private long idSequencia;
 

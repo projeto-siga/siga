@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" lang="en">
+<head>
+<style type="text/css">
+@page :first {
+
+    @bottom-left {                 
+        content: element(doc-first-footer);  
+        vertical-align: top;
+    }
+
+    @top-right {
+        content: element(doc-first-header); 
+        vertical-align: bottom;
+        padding-bottom: 1cm;
+    }
+
+    size: A4 portrait;
+    margin-left: 3cm; 
+    margin-right: 2cm; 
+    margin-top: 1cm; 
+    margin-bottom: 2.5cm;
+}
+
+@page{
+
+    @bottom-left {                 
+        content: element(doc-footer);  
+        vertical-align: top;
+        padding-top: 10px;
+        padding-right: 0px;
+        margin-right: 0px;
+    }
+
+    @top-right {
+        content: element(doc-header); 
+        vertical-align: bottom;
+        padding-bottom: 10px;
+    }
+
+    size: A4 portrait;
+    margin-left: 3cm; 
+    margin-right: 2cm; 
+    margin-top: 3cm; 
+    margin-bottom: 2.5cm;
+}
+
+div.doc-first-header {
+	display: block;
+	position: running(doc-first-header);
+}
+
+div.doc-header {
+	display: block;
+	position: running(doc-header);
+}
+
+div.doc-first-footer {
+	display: block;
+	position: running(doc-first-footer);
+}
+
+div.doc-footer {
+	display: block;
+	position: running(doc-footer);
+	padding-top: 0px;
+}
+
+.footnotes {
+	font-size: 8pt !important;
+	margin-top: 25pt !important;
+}
+
+.footnotes hr {
+	width: 25% !important;
+	border-top: 1px solid #000 !important;
+	text-align: left !important;
+	margin-left: 0 !important;
+}
+
+#pagenumber:after {
+	content: counter(page);
+}
+
+#pagecount:before {
+	content: counter(pages);
+}
+
+body {
+	font-family:Times-Roman;
+}
+
+a {
+	color: black;
+	text-decoration: none;
+}
+
+table {
+	border-collapse: collapse;
+}
+</style>
+</head>
+<body>
+	<!-- INICIO PRIMEIRO CABECALHO<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF"><tr bgcolor="#FFFFFF"><td width="100%"><table width="100%" border="0" cellpadding="2"><tr><td width="100%" align="center" valign="bottom"><img src="https://siga.jfrj.jus.br/sigaex/imagens/brasaoColoridoTRF2.png" width="65" height="65"></img></td></tr><tr><td width="100%" align="center"><p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p></td></tr><tr><td width="100%" align="center"><p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p></td></tr><tr><td width="100%" align="center"><p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">ORGAO TESTE ZZ</p></td></tr></table></td></tr></table>FIM PRIMEIRO CABECALHO -->
+	<!-- INICIO CABECALHO<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF"><tr bgcolor="#FFFFFF"><td width="100%"><table width="100%" border="0" cellpadding="2"><tr><td width="100%" align="center" valign="bottom"><img src="https://siga.jfrj.jus.br/sigaex/imagens/brasaoColoridoTRF2.png" width="65" height="65"></img></td></tr><tr><td width="100%" align="center"><p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p></td></tr><tr><td width="100%" align="center"><p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p></td></tr><tr><td width="100%" align="center"><p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">ORGAO TESTE ZZ</p></td></tr></table></td></tr></table>FIM CABECALHO -->
+	<span style="font-size: 11pt"></span>
+	<table style="float: none; clear: both;" width="100%" border="0"
+		bgcolor="#FFFFFF">
+		<tr>
+			<td style="font-size: 11pt;" align="left"><p
+					style="font-family: Arial; font-weight: bold; font-size: 11pt;">
+					<br></br>
+					<!-- INICIO NUMERO -->
+					MEMORANDO SIGA Nº TMP-1
+					<!-- FIM NUMERO -->
+				</p></td>
+		</tr>
+		<tr>
+			<td style="font-size: 11pt;" align="right"><span
+				style="font-size: 11pt"></span></td>
+		</tr>
+	</table>
+	<!-- INICIO TITULO <p style="font-family:Arial;font-weight:bold;font-size:11pt;"> MEMORANDO TMP-34</p> FIM TITULO -->
+	<p style="font-size: 11pt; text-align: left">
+		De: LOTACAO TESTE<br></br>Para: LOTACAO TESTE<br></br>Assunto:
+		Modernização Administrativa
+	</p>
+	<span style="font-size: 11pt"></span>
+	<p style="font-size: 11pt; text-align: justify; text-indent: 2cm">Teste 123.</p>
+	<p style="font-size: 11pt; align: justify; TEXT-INDENT: 2cm">Atenciosamente,</p>
+	<p style="font-size: 11pt;">&nbsp;</p>
+	<!-- INICIO ASSINATURA -->
+	<p style="font-family: Arial; font-size: 11pt; text-align: center">
+		<!-- INICIO SUBSCRITOR 1 -->
+		USUARIO TESTE<br></br>FUNCIONÁRIO
+		<!-- FIM SUBSCRITOR 1 -->
+	</p>
+	<!-- FIM ASSINATURA -->
+	<!-- INICIO PRIMEIRO RODAPE<table align="left" width="100%" bgcolor="#FFFFFF"><tr><td width="60%"></td><td width="40%"><table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000"><tr><td align="center" width="55%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF"><i>Classif. documental</i> </td><td align="center" width="45%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF"><span>00.01.01.01</span> </td></tr></table></td></tr></table>FIM PRIMEIRO RODAPE -->
+	<!-- INICIO RODAPE<table width="100%" border="0" cellpadding="0" bgcolor="#FFFFFF"><tr><td width="100%" align="right"><p>#pg</p></td></tr></table>FIM RODAPE -->
+	
+	    <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+        <p>This is the content</p><p>This is the content</p><p>This is the content</p>
+</body>
+</html>

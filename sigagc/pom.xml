@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>siga-doc</artifactId>
@@ -15,57 +16,6 @@
 
 	<build>
 		<plugins>
-			<!-- vraptor static scan -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.javassist</groupId>
-						<artifactId>javassist</artifactId>
-						<version>3.15.0-GA</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>static-scanning</id>
-						<phase>package</phase>
-						<configuration>
-							<target>
-								<echo message="Starting static scanning process..." />
-								<path id="build.classpath">
-									<fileset
-										dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib"
-										includes="*.jar" />
-									<fileset
-										dir="${project.build.directory}/../../lib/static_scan_vraptor/"
-										includes="*.jar" />
-								</path>
-								<java classpathref="build.classpath"
-									classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning"
-									fork="true">
-									<arg
-										value="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml" />
-									<classpath refid="build.classpath" />
-									<classpath
-										path="${project.build.directory}/${project.build.finalName}/WEB-INF/classes" />
-								</java>
-								<war destfile="${project.build.directory}/${project.build.finalName}.war"
-									webxml="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml">
-									<fileset
-										dir="${project.build.directory}/${project.build.finalName}" />
-								</war>
-								<echo message="Static scanning process finished!" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- end vraptor static scan -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -93,18 +43,51 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>2.0.2.Final</version>
+				<configuration>
+					<server-groups>
+						<server-group>siga</server-group>
+					</server-groups>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
-			<scope>provided</scope>
+			<groupId>jsptags</groupId>
+			<artifactId>pager-taglib</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
-			<artifactId>jboss-jsp-api_2.3_spec</artifactId>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-vraptor-module</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.caelum.vraptor</groupId>
+			<artifactId>vraptor-jpa</artifactId>
+			<version>4.0.5</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
@@ -112,44 +95,12 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
-
+		<!-- <dependency> <groupId>javax.mail</groupId> <artifactId>mail</artifactId> 
+			<scope>provided</scope> </dependency> <dependency> <groupId>jaxen</groupId> 
+			<artifactId>jaxen</artifactId> <version>1.1.6</version> </dependency> -->
 		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>jsptags</groupId>
-			<artifactId>pager-taglib</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
-			<version>1.1.6</version>			
-		</dependency>
-
-		<!-- SIGA -->
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-base</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-vraptor-module-old</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-rel</artifactId>
-		</dependency>
-
-
-		<!-- CDI -->
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
 		</dependency>
 
 		<dependency>
@@ -169,6 +120,7 @@
 			<version>0.3</version>
 		</dependency>
 
+
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
@@ -177,26 +129,8 @@
 
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
-			<artifactId>vraptor-jpa</artifactId>
-			<version>1.0.2</version>
-			<exclusions>
-				<exclusion>  <!-- declare the exclusion here -->
-					<groupId>org.eclipse.persistence</groupId>
-					<artifactId>javax.persistence</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-freemarker</artifactId>
 			<version>1.1.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>

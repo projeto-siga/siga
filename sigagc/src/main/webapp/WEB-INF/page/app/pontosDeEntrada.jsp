@@ -18,7 +18,7 @@ ol.categoria ol.item li {
 
 <siga:pagina titulo="Pontos de Entrada" meta="${meta}">
 
-	<div class="gt-bd clearfix">
+	<div class="container-fluid">
 		<div class="gt-content">
 			<h2>Pontos de Entrada</h2>
 			<!-- Dados do documento -->

@@ -35,11 +35,13 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -118,10 +120,10 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		parametros.put("titulo","SIGA");
 		parametros.put("subtitulo","Sistema de Gestão Administrativa");
 		parametros.put("secaoUsuario", "");
-		if ( System.getProperty("siga.relat.brasao") == null ) {
+		if ( Prop.get("/siga.relat.brasao")  == null ) {
 			parametros.put("brasao","brasao.png");
 		} else {
-			parametros.put("brasao", System.getProperty("siga.relat.brasao"));
+			parametros.put("brasao", Prop.get("/siga.relat.brasao"));
 		}
 		//System.out.println("Brasao: " + parametros.get("brasao"));
 	}
@@ -178,7 +180,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 			dados.add("");
 		}
 		try {
-			dados.add(novo.getSituacao().getDscSitConfiguracao());
+			dados.add(novo.getSituacao().getDescr());
 		} catch (Exception e) {
 			dados.add("");
 		}
@@ -241,10 +243,8 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		for (CpConfiguracao conf : confs) {
 
 			if (conf.getCpTipoConfiguracao() != null){
-				if (conf.getCpTipoConfiguracao().getIdTpConfiguracao().equals(
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO)
-						|| conf.getCpTipoConfiguracao().getIdTpConfiguracao()
-								.equals(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
+				if (conf.getCpTipoConfiguracao() == CpTipoDeConfiguracao.UTILIZAR_SERVICO
+						|| conf.getCpTipoConfiguracao() == CpTipoDeConfiguracao.PERTENCER) {
 				
 					if (conf.getHisDtIni() != null) {
 						arlDatas.add(conf.getHisDtIni());
@@ -271,9 +271,9 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	public Collection processarDados() {
 		ArrayList<String> dados = new ArrayList<String>();
 		List<CpServico> servicos = CpDao.getInstance().listarServicos();
-		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tipo = CpDao.getInstance().consultar(
+				CpTipoDeConfiguracao.UTILIZAR_SERVICO,
+				CpTipoDeConfiguracao.class, false);
 
 		SortedSet<Sincronizavel> setAntes = new TreeSet<Sincronizavel>(); // obterItensDosServicosNaData(tipo,
 		setDtAnterior(null);
@@ -336,7 +336,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	}
 
 	@SuppressWarnings("unchecked")
-	public SortedSet obterItensDosServicosNaData(CpTipoConfiguracao tipo,
+	public SortedSet obterItensDosServicosNaData(CpTipoDeConfiguracao tipo,
 			List<CpServico> srvs, Date dtEvn) throws Exception {
 		TreeSet lista = new TreeSet<AlteracaoDireitosItem>();
 		for (CpServico srv : srvs) {
@@ -348,7 +348,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		return lista;
 	}
 
-	static public AlteracaoDireitosItem gerar(CpTipoConfiguracao tipo,
+	static public AlteracaoDireitosItem gerar(CpTipoDeConfiguracao tipo,
 			CpPerfil perfil, DpPessoa pessoa, DpLotacao lotacao,
 			CpOrgaoUsuario orgao, CpServico servico, Date dtEvn)
 			throws Exception {
@@ -359,8 +359,9 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		cfgFiltro.setOrgaoUsuario(orgao);
 		cfgFiltro.setCpServico(servico);
 		cfgFiltro.setCpTipoConfiguracao(tipo);
-		CpConfiguracao cfg = Cp.getInstance().getConf().buscaConfiguracao(
+		CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
 				cfgFiltro, new int[0], dtEvn);
+		CpConfiguracao cfg = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
 		AlteracaoDireitosItem itm = new AlteracaoDireitosItem();
 		itm.setServico(servico);
 		itm.setPessoa(pessoa);

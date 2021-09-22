@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.gc.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -9,9 +10,10 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "GC_ACESSO", schema = "SIGAGC")
+@Table(name = "sigagc.gc_acesso")
 public class GcAcesso extends Objeto {
 	private static final long serialVersionUID = -6824464659652929435L;
+	public static final long ACESSO_EXTERNO_PUBLICO = 0;
 	public static final long ACESSO_PUBLICO = 1;
 	public static final long ACESSO_ORGAO_USU = 2;
 	public static final long ACESSO_LOTACAO_E_SUPERIORES = 3;
@@ -24,11 +26,20 @@ public class GcAcesso extends Objeto {
 			GcAcesso.class);
 	
 	@Id
-	@Column(name = "ID_ACESSO")
-	public long id;
+	@GeneratedValue
+	@Column(name = "ID_ACESSO", unique = true, nullable = false)
+	private Long id;
 
 	@Column(name = "NOME_ACESSO", nullable = false)
-	public String nome;
+	private String nome;
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
 	public GcAcesso() {
 		super();
@@ -40,7 +51,7 @@ public class GcAcesso extends Objeto {
 		this.nome = nome;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

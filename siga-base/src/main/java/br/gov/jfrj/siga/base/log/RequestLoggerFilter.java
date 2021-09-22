@@ -30,8 +30,7 @@ public class RequestLoggerFilter implements Filter {
 		} catch (Exception e) {
 			if (isAplicacaoException(e))
 				throw e;
-			long duracao = System.currentTimeMillis() - inicio;
-			new RequestExceptionLogger(request, e, duracao, getLoggerName()).logar();
+			logException(request, inicio, e);
 			throw e;
 		}
 
@@ -43,9 +42,9 @@ public class RequestLoggerFilter implements Filter {
 		long duracao = System.currentTimeMillis() - inicio;
 		new RequestExceptionLogger(request, e, duracao, getLoggerName()).logar();
 	}
-
-	public static boolean isAplicacaoException(Throwable e) {
-		while (e != null) {
+	
+	public static boolean isAplicacaoException(Throwable e) {		
+			while (e != null) {
 			if (e instanceof AplicacaoException)
 				return true;
 			if (e.getCause() == null)

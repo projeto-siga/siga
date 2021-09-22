@@ -169,26 +169,31 @@ public class Sincronizador {
 	}
 
 	public void gravar(Item i, OperadorComHistorico opr, boolean religar) {
+		
 		if (i.getOperacao() == Operacao.incluir) {
+		
 			if (religar)
 				religar(i.getNovo());
-			i.setNovo(opr.gravar(i.getNovo()));
+			
+			i.setNovo(opr.gravar(i.getNovo(), false));
+			
 			i.getNovo().setIdInicial(i.getNovo().getId());
 			this.map.put(getSicronizavelKey(i.getNovo()), i.getNovo());
-		}
-		if (i.getOperacao() == Operacao.excluir) {
-			i.setAntigo(opr.gravar(i.getAntigo()));
+
+		} else 	if (i.getOperacao() == Operacao.excluir) {
+			i.setAntigo(opr.gravar(i.getAntigo(), false));
+			
 			this.map.remove(getSicronizavelKey(i.getAntigo()));
-		}
-		if (i.getOperacao() == Operacao.alterar) {
+		
+		} else {   //Operacao.alterar
+
 			if (religar)
 				religar(i.getNovo());
-			// if (i.getNovo().getClass().getName().contains("DpLotacao"))
-			// System.out.println("*********** GRAVANDO ************"
-			// + i.getNovo().getDescricaoExterna());
 
-			i.setAntigo(opr.gravar(i.getAntigo()));
-			i.setNovo(opr.gravar(i.getNovo()));
+			i.setAntigo(opr.gravar(i.getAntigo(), true));
+			
+			i.setNovo(opr.gravar(i.getNovo(), false));
+			
 			this.map.put(getSicronizavelKey(i.getNovo()), i.getNovo());
 		}
 	}

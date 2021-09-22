@@ -18,11 +18,12 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -37,10 +38,6 @@ public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 
-	private SigaObjects so;
-
-	
-
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -51,18 +48,14 @@ public class UsuarioController extends SigaController {
 	@Inject
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-
-		this.so = so;
 	}
 
 	@Get({ "/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha" })
 	public void trocaSenha() {
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}
 
+	@Transacional
 	@Post({ "/app/usuario/trocar_senha_gravar", "/public/app/usuario/trocar_senha_gravar" })
 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
 		String senhaAtual = usuario.getSenhaAtual();
@@ -70,8 +63,7 @@ public class UsuarioController extends SigaController {
 		String senhaConfirma = usuario.getSenhaConfirma();
 		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();		
 
-		if (SigaBaseProperties.getString("siga.local") != null
-				&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if (Prop.isGovSP()) {
 			List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
 			CpIdentidade i = null;
 			nomeUsuario = nomeUsuario.replace(".", "").replace("-", "");
@@ -91,8 +83,15 @@ public class UsuarioController extends SigaController {
 				try {
 					IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
 				} catch (Exception e) {
-					throw new Exception("Não foi possível alterar o e-mail. "
-							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Email\"");
+					LOG.error("Não foi possível alterar a senha de rede de " + nomeUsuario  + ". "
+							+ "Tente novamente em alguns instantes", e);
+					result.include("mensagem", "Senha do siga alterada com sucesso. Não foi possível alterar a senha de rede e do email. "
+							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Trocar também a senha...\"");
+					result.include("volta", "troca");
+					result.include("titulo", "Troca de Senha");
+					result.redirectTo(UsuarioController.class).trocaSenha();
+					return;
+					
 				}
 			}
 
@@ -108,6 +107,7 @@ public class UsuarioController extends SigaController {
 	/*
 	 * Alterar email do usuuário Referente ao Cartão 859
 	 */
+	@Transacional
 	@Get({ "/app/usuario/trocar_email", "/public/app/usuario/trocar_email" })
 	public void trocaEmail(UsuarioEmailAction usuario) {
 		List<DpPessoaTrocaEmailDTO> lstDto = new ArrayList<DpPessoaTrocaEmailDTO>(
@@ -119,9 +119,10 @@ public class UsuarioController extends SigaController {
 		result.include("usuarios", lstDto);
 		result.include("matricula", so.getCadastrante().getSigla());
 		result.include("email", so.getCadastrante().getEmailPessoaAtual());
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 	}	
 
+	@Transacional
 	@Post({ "/app/usuario/trocar_email_gravar", "/public/app/usuario/trocar_email_gravar" })
 	public void gravarTrocaEmail(UsuarioEmailAction usuario) throws Exception {		
 		String emailAtual = so.getCadastrante().getEmailPessoaAtual();
@@ -237,7 +238,7 @@ public class UsuarioController extends SigaController {
 	@Get({ "/app/usuario/incluir_usuario", "/public/app/usuario/incluir_usuario" })
 	public void incluirUsuario() {
 		if (!SigaMessages.isSigaSP()) {
-			result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+			result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 			result.include("titulo", SigaMessages.getMessage("usuario.novo"));
 			result.include("proxima_acao", "incluir_usuario_gravar");
 			result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
@@ -248,6 +249,7 @@ public class UsuarioController extends SigaController {
 
 	}
 
+	@Transacional
 	@Post({ "/app/usuario/incluir_usuario_gravar", "/public/app/usuario/incluir_usuario_gravar" })
 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
 		String msgComplemento = "";
@@ -304,18 +306,19 @@ public class UsuarioController extends SigaController {
 
 	@Get({ "/app/usuario/esqueci_senha", "/public/app/usuario/esqueci_senha" })
 	public void esqueciSenha() {
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
 		result.include("titulo", "Esqueci Minha Senha");
 		result.include("proxima_acao", "esqueci_senha_gravar");
 	}
 
+	@Transacional
 	@Post({ "/app/usuario/esqueci_senha_gravar", "/public/app/usuario/esqueci_senha_gravar" })
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
 		// caso LDAP, orientar troca pelo Windows / central
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(usuario.getMatricula(), true);
 		if (id == null)
 			throw new AplicacaoException("O usuário não está cadastrado.");
-		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu())
+		boolean autenticaPeloBanco = Cp.getInstance().getBL().buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu())
 				.equals(GiService._MODO_AUTENTICACAO_BANCO);
 		if (!autenticaPeloBanco)
 			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows "
@@ -341,8 +344,7 @@ public class UsuarioController extends SigaController {
 		case 1:
 //			verificarMetodoIntegracaoAD(usuario.getMatricula());
 
-			if (SigaBaseProperties.getString("siga.local") != null
-					&& "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			if (Prop.isGovSP()) {
 				String msg = Cp.getInstance().getBL().alterarSenha(cpfNumerico, null, usuario.getMatricula());
 				if (msg != "OK") {
 					result.include("mensagemCabec", msg);
@@ -407,18 +409,6 @@ public class UsuarioController extends SigaController {
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
 
-	private String buscarModoAutenticacao(String orgao) {
-		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		CpPropriedadeBL props = new CpPropriedadeBL();
-		try {
-			String modo = props.getModoAutenticacao(orgao);
-			if (modo != null)
-				retorno = modo;
-		} catch (Exception e) {
-		}
-		return retorno;
-	}
-
 	@Get({ "/app/usuario/integracao_ldap", "/public/app/usuario/integracao_ldap" })
 	public void isIntegradoLdap(String matricula) throws AplicacaoException {
 		try {
@@ -431,18 +421,16 @@ public class UsuarioController extends SigaController {
 
 	private boolean isIntegradoAD(String matricula) throws AplicacaoException {
 		boolean result = false;
-		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
 
 		if (matricula == null || matricula.length() < 2) {
 			LOG.warn("A matrícula informada é nula ou inválida");
 			throw new AplicacaoException("A matrícula informada é nula ou inválida.");
 		}
 
-		orgaoFlt.setSiglaOrgaoUsu(MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula));
-		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
+		String sesbPessoa = MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula);
 
-		if (orgaoUsu != null) {
-			result = IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu);
+		if (sesbPessoa != null) {
+			result = IntegracaoLdap.getInstancia().integrarComLdap(sesbPessoa);
 		}
 
 		return result;

@@ -8,8 +8,9 @@ import java.util.Enumeration;
 import java.util.ListIterator;
 import java.util.logging.Logger;
 
-import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
+import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 
 /**
  * Classe que trata da lógica de carregamento da extensão de busca textual em outro classloader. 
@@ -62,7 +63,7 @@ public class CarregadorPlugin {
 	 */
 	public IMontadorQuery getMontadorQueryDefault() {
 		try {
-			return (IMontadorQuery) (IMontadorQuery) this.classloader.loadClass("br.gov.jfrj.siga.hibernate.ext.MontadorQuery").newInstance();
+			return new MontadorQuery();
 		} catch (Exception e) {
 			log.severe("Não foi possível instanciar o MontadorQuery default! Será utilizado o MontadorQuery no mesmo classloader da aplicação e isso"
 					+ " poderá exigir o reinicio da instância do servidor de aplicação durante o redeploy");
@@ -76,7 +77,7 @@ public class CarregadorPlugin {
 	 */
 	public IMontadorQuery getMontadorQueryImpl() {
 		try {
-			return (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery(),true,this.classloader).newInstance();
+			return (IMontadorQuery) Class.forName(Prop.get("montador.query"),true,this.classloader).newInstance();
 		} catch (Exception e) {
 			log.warning("Não foi possível instanciar o MontadorQuery do plugin!");
 		}

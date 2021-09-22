@@ -3,8 +3,8 @@
 <siga:pagina titulo="Busca Textual">
 	<!-- 	 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" >
 	 -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
+	<div class="container-fluid">
+		<div class="">
 			<h2>Busca Textual</h2>
 			<c:if test="${not empty success}"> <p class="gt-success">${flash.success}</p> </c:if>
 			<div class="gt-sidebar-box gt-sidebar-box-blue">
@@ -12,7 +12,7 @@
 				<div class="gt-search">
 					<div class="gt-search-inner">
 						<form id="frm" action="${linkTo[AppController].buscar}" method="get">
-							<input type="text" id="texto" name="texto" class="gt-search-text">
+							<input type="text" id="texto" name="texto" class="form-control">
 								<input type="hidden" id="classificacao" name="classificacao">
 						</form>
 					</div>

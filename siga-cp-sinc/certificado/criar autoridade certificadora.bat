@@ -1,1 +1,0 @@
-makecert -pe -n "CN=Autoridade Raiz de Desenvolvimento e Teste da SJRJ" -ss my -sr LocalMachine -a sha1 -sky signature -r "Autoridade Raiz de Desenvolvimento e Teste da SJRJ.cer"

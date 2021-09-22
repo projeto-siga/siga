@@ -41,6 +41,10 @@ public enum EstadoMissao {
 		return this.descricao.equals(outroEstado.getDescricao());
 	}
 	
+	public EstadoMissao [] getValores() {
+		return EstadoMissao.values();
+	}
+	
 	/**
 	 * Sobrecarga criada para auxiliar o desenvolvimento 
 	 * na camada de visao. 
@@ -55,4 +59,5 @@ public enum EstadoMissao {
 	public String primeiraLetra() {
 		return this.toString().substring(0, 1);
 	}
+	
 }

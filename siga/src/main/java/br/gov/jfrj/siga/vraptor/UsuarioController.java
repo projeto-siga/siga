@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
 
+import com.crivano.swaggerservlet.SwaggerException;
+
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -23,13 +26,16 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
@@ -501,6 +507,65 @@ public class UsuarioController extends SigaController {
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		
 		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
+	}
+	
+	@Post
+	@Transacional
+	@Path({"/app/usuario/senha/gerar-token-reset", "/public/app/usuario/senha/gerar-token-reset" })
+	public void gerarTokenReset() throws Exception {
+
+		String emailOculto = request.getParameter("emailOculto");
+		if (emailOculto == null && "".equals(emailOculto)) {
+			throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+		}
+		
+		if (request.getParameter("cpf") != null) {
+			CPFUtils.efetuaValidacaoSimples(request.getParameter("cpf"));
+		}
+		long cpf = Long.valueOf(request.getParameter("cpf"));
+
+		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+		dpPessoa.setBuscarFechadas(false);
+		dpPessoa.setCpf(cpf);	
+		dpPessoa.setNome("");
+
+		List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
+		boolean emailLocalizado = false;
+		if (!usuarios.isEmpty()) {
+			for(DpPessoa usuario : usuarios) {
+				if (emailOculto.equals(usuario.getEmailPessoaAtualParcialmenteOculto())) {
+					CpToken token = Cp.getInstance().getBL().gerarTokenResetSenha(cpf);
+					Cp.getInstance().getBL().enviarEmailTokenResetPIN(usuario, "Código para redefinição de SENHA ",token.getToken());
+					emailLocalizado = true;
+					break;
+				}
+		    }
+		} 
+		
+		if (!emailLocalizado) {
+			throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+		}
+
+		result.use(Results.status()).noContent();
+	}
+	
+	@Transacional
+	@Post({ "/app/usuario/senha/reset", "/public/app/usuario/senha/reset" })
+	public void gravarNovaSenha() throws Exception {
+	
+		String cpf = request.getParameter("cpf");
+		String token = request.getParameter("token");
+		String senhaNova = request.getParameter("senhaNova");
+		String senhaConfirma = request.getParameter("senhaConfirma");
+		
+		List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
+
+		listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(cpf);
+
+		Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, cpf, listaIdentidadesCpf);
+
+		
+		result.redirectTo(UsuarioController.class).resetSenha();
 	}
 	
 	private static String getRecaptchaSiteKey() {

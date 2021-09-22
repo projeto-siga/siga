@@ -879,6 +879,49 @@ public class CpBL {
 			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
 		}
 	}
+	
+	
+	public CpIdentidade redefinirSenha(String token, String senhaNova, String senhaConfirma,
+			String cpfUsuario, List<CpIdentidade> listaIdentidades)
+			throws NoSuchAlgorithmException, AplicacaoException {
+
+
+		boolean podeTrocar = Boolean.FALSE;
+
+		for (CpIdentidade cpIdentidade : listaIdentidades) {
+			podeTrocar = Boolean.TRUE;
+			break;
+		}
+
+
+		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
+			try {
+				Date dt = dao().consultarDataEHoraDoServidor();
+				final String hashNova = GeraMessageDigest.executaHash(senhaNova.getBytes(), "MD5");
+
+				dao().iniciarTransacao();
+				CpIdentidade i = null;
+				for (CpIdentidade cpIdentidade : listaIdentidades) {
+					i = new CpIdentidade();
+					PropertyUtils.copyProperties(i, cpIdentidade);
+					i.setIdIdentidade(null);
+					i.setDtCriacaoIdentidade(dt);
+					i.setDscSenhaIdentidade(hashNova);
+					i.setDscSenhaIdentidadeCripto(null);
+					i.setDscSenhaIdentidadeCriptoSinc(null);
+					dao().gravarComHistorico(i, cpIdentidade, dt, null);
+				}
+
+				dao().commitTransacao();
+				return null;
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
+			}
+		} else {
+			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		}
+	}
 
 	private boolean autenticarViaBanco(String senhaAtual, final CpIdentidade id) throws NoSuchAlgorithmException {
 		String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");

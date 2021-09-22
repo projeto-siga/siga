@@ -62,7 +62,8 @@ SenhaReset.Etapas = (function() {
 	
 
 	function onBtnProximoClicado(podeValidar) {
-		localizarAcesso.call(this);
+		if (this.etapaAtual === 0)
+			localizarAcesso.call(this);
 		if (podeValidar !== false && !validarCampos.call(this, this.etapaAtual)) {
 			return false;
 		} 			

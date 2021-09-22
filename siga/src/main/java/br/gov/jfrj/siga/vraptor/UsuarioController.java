@@ -565,7 +565,7 @@ public class UsuarioController extends SigaController {
 		Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, cpf, listaIdentidadesCpf);
 
 		
-		result.redirectTo(UsuarioController.class).resetSenha();
+		result.use(Results.status()).noContent();
 	}
 	
 	private static String getRecaptchaSiteKey() {

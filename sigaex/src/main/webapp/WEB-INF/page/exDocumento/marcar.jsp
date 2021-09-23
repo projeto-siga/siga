@@ -46,18 +46,18 @@
 									name="interessado" v-model="interessado" id="interessado"
 									class="form-control">
 									<option v-if="marcador.interessado.includes('PESSOA')"
-										value="pessoa">Pessoa</option>
+										value="pessoa"><fmt:message key="usuario.pessoa"/></option>
 									<option v-if="marcador.interessado.includes('LOTACAO')"
-										value="lotacao">Lotacao</option>
+										value="lotacao"><fmt:message key="usuario.lotacao"/></option>
 								</select>
 							</div>
 							<div v-if="exibirLotacao" class="form-group">
-								<label for="marcador">Lotacao</label>
+								<label for="marcador"><fmt:message key="usuario.lotacao"/></label>
 								<siga:selecao tema='simple' titulo="Lotação:"
 									propriedade="lotaSubscritor" modulo="siga" />
 							</div>
 							<div v-if="exibirPessoa" class="form-group">
-								<label for="marcador">Pessoa</label>
+								<label for="marcador"><fmt:message key="usuario.pessoa"/></label>
 								<siga:selecao tema='simple' titulo="Matrícula:"
 									propriedade="subscritor" modulo="siga" />
 							</div>

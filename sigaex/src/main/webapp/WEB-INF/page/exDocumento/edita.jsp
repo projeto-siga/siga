@@ -452,6 +452,47 @@
 				<c:if test="${exDocumentoDTO.modelo.descricaoAutomatica or (not podeEditarDescricao)}">
 					<input type="hidden" id="descricaoAutomatica" value="sim" />
 				</c:if>
+				
+				
+				
+				
+				<div id="tr_requerente" style="display: ${exDocumentoDTO.possuiRequerente? '': 'none'};">
+					<div class="row ml-1">
+						<h6>Requerente</h6>
+					</div>
+					<div class="row  js-siga-sp-documento-analisa-alteracao">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label>CPF</label>
+								<input type="text" id="cpfRequerente" maxlength="125" class="form-control">
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label>CNPJ</label>
+								<input type="text" id="cnpjRequerente" maxlength="125" class="form-control">
+							</div>
+						</div>
+						 
+						 <div class="col-sm-2">
+							<div class="form-group">
+								<label>Matricula</label>
+								<input type="text" id="matriculaRequerente" maxlength="125" class="form-control">
+							</div>
+						</div>
+						
+						<div class="col-sm-4">
+							<div class="form-group ${hide_only_GOVSP}">
+								<label>Nome</label>
+								<input type="text" id="nomeRequerente"  maxlength="125" class="form-control">
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
 				<div class="${displayDescricao}">
 					<div class="row  js-siga-sp-documento-analisa-alteracao">
 						<div class="col-sm-8">

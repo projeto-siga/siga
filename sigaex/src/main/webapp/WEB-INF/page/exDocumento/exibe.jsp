@@ -1028,6 +1028,7 @@
 							<p id="descricao">
 								<b>Descrição:</b> ${docVO.descrDocumento}
 							</p>
+							
 							<script language="javascript">
                     function parseDescricao(id){
                         var descricao = document.getElementById(id);
@@ -1054,6 +1055,27 @@
 								<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>
 							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
+
+<p>
+ <b>Dados do Requerente</b>
+</p>
+
+							<p>
+								<c:if test="${not empty docVO.cpfRequerente}"><b>CPF:</b>${docVO.cpfRequerente}</c:if>
+								<c:if test="${not empty docVO.cnpjRequerente}"><b>CNPJ:</b>${docVO.cnpjRequerente}</c:if> 
+							</p>
+							
+							<p>
+								<c:if test="${not empty docVO.nomeRequerente}"><b>Nome:</b> ${docVO.nomeRequerente}</c:if>
+							</p>
+							<p>
+								<c:if test="${not empty docVO.matriculaRequerente}"><b>Matrícula:</b> ${docVO.matriculaRequerente}</c:if>
+							</p>
+							<p>
+								<c:if test="${not empty docVO.enderecoRequerente}"><b>Endereço:</b> ${docVO.enderecoRequerente}</c:if>
+								
+							</p>
+							 
 
 						</tags:collapse>
 					</div>

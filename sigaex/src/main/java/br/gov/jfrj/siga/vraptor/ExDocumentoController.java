@@ -1397,7 +1397,8 @@ public class ExDocumentoController extends ExController {
 		if(docVO != null && docVO.getDoc() != null && docVO.getDoc().getNumPaginas() == null) {
 			docVO.getDoc().setNumPaginas(docVO.getDoc().getContarNumeroDePaginas());
 		}
-
+		
+		 
 		docVO.exibe();
 		
 		String Sigla = "";

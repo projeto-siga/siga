@@ -116,6 +116,13 @@ public class ExDocumentoVO extends ExVO {
 	boolean podeAnexarArquivoAuxiliar;
 	String dtLimiteDemandaJudicial;
 	String dtPrazoDeAssinatura;
+	
+	
+	Long cpfRequerente;
+	Long cnpjRequerente;
+	Long matriculaRequerente;
+	String nomeRequerente;
+	String enderecoRequerente;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel) {
@@ -342,6 +349,9 @@ public class ExDocumentoVO extends ExVO {
 			this.dotColaboracao = null;
 			this.dotRelacaoDocs = null;
 		}
+		
+		
+		atualizarDependente();
 	}
 	
 	/*
@@ -1198,5 +1208,56 @@ public class ExDocumentoVO extends ExVO {
 	public String getDtPrazoDeAssinatura() {
 		return dtPrazoDeAssinatura;
 	}
+
+	public Long getCpfRequerente() {
+		return cpfRequerente;
+	}
+
+	public void setCpfRequerente(Long cpfRequerente) {
+		this.cpfRequerente = cpfRequerente;
+	}
+
+	public Long getCnpjRequerente() {
+		return cnpjRequerente;
+	}
+
+	public void setCnpjRequerente(Long cnpjRequerente) {
+		this.cnpjRequerente = cnpjRequerente;
+	}
+
+	public String getNomeRequerente() {
+		return nomeRequerente;
+	}
+
+	public void setNomeRequerente(String nomeRequerente) {
+		this.nomeRequerente = nomeRequerente;
+	}
+
+	public String getEnderecoRequerente() {
+		return enderecoRequerente;
+	}
+
+	public void setEnderecoRequerente(String enderecoRequerente) {
+		this.enderecoRequerente = enderecoRequerente;
+	}
+
+	public Long getMatriculaRequerente() {
+		return matriculaRequerente;
+	}
+
+	public void setMatriculaRequerente(Long matriculaRequerente) {
+		this.matriculaRequerente = matriculaRequerente;
+	}
+	
+	public void atualizarDependente() {
+	 
+		this.cpfRequerente =this.doc.getCpfRequerente();
+		this.cnpjRequerente =this.doc.getCnpjRequerente();
+		this.nomeRequerente = this.doc.getNomeRequerente();
+		this.matriculaRequerente = this.doc.getMatriculaRequerente();
+		this.enderecoRequerente =this.doc.getEnderecoRequerente();		
+	}
+	
+	
 
 }

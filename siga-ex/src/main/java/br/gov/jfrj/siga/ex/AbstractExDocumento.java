@@ -1306,14 +1306,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	public String getEnderecoRequerente() {
 		
-		String endereco = StringUtils.isNotBlank(this.tipoLogradouroRequerente) ?   this.tipoLogradouroRequerente:" ";
-				endereco += StringUtils.isNotBlank(this.logradouroRequerente) ?   this.logradouroRequerente:" ";
-				endereco += StringUtils.isNotBlank(this.numeroLogradouroRequerente) ?   this.numeroLogradouroRequerente:" ";
-				endereco += StringUtils.isNotBlank(this.complementoLogradouroRequerente) ?   this.complementoLogradouroRequerente:" ";
-				endereco += StringUtils.isNotBlank(this.bairroRequerente) ?   this.bairroRequerente:" ";
-				endereco += StringUtils.isNotBlank(this.cidadeRequerente) ?   this.cidadeRequerente:" ";
-				endereco += StringUtils.isNotBlank(this.ufRequerente) ?   this.ufRequerente:" ";
-				endereco += StringUtils.isNotBlank(this.cepRequerente) ?   this.cepRequerente:"";
+		String endereco = StringUtils.isNotBlank(this.tipoLogradouroRequerente) ?   this.tipoLogradouroRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.logradouroRequerente) ?   this.logradouroRequerente+", ":" ";
+				endereco += StringUtils.isNotBlank(this.numeroLogradouroRequerente) ?   this.numeroLogradouroRequerente+" - ":"s/n ";
+				endereco += StringUtils.isNotBlank(this.complementoLogradouroRequerente) ?   this.complementoLogradouroRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.bairroRequerente) ?   this.bairroRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.cidadeRequerente) ?   this.cidadeRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.ufRequerente) ?   this.ufRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.cepRequerente) ?   this.cepRequerente:" ";
 	   return endereco;
 	}
  

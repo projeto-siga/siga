@@ -1259,8 +1259,6 @@ public class CpBL {
 		}
 		pessoa.setSesbPessoa(ou.getSigla());
 		
-
-
 		// ÓRGÃO / CARGO / FUNÇÃO DE CONFIANÇA / LOTAÇÃO e CPF iguais.
 		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
 		dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
@@ -1280,10 +1278,8 @@ public class CpBL {
 		
 		List<DpPessoa> listaPessoasMesmoCPF = new ArrayList<DpPessoa>();
 		DpPessoa pessoa2 = new DpPessoa();
-		
 	
 		listaPessoasMesmoCPF.addAll(CpDao.getInstance().listarCpfAtivoInativo(pessoa.getCpfPessoa()));
-		
 		
 		try {
 	//		dao().em().getTransaction().begin();
@@ -1361,7 +1357,10 @@ public class CpBL {
 			if(e.getCause() instanceof ConstraintViolationException &&
 					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
 				throw new RegraNegocioException("Ocorreu um problema no cadastro da pessoa");
-			} else {
+			} else if(e.getCause() instanceof ConstraintViolationException &&
+					("CORPORATIVO.SIGA_VALID_UNIQUE".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
+				throw new RegraNegocioException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+			}else {
 		//	dao().em().getTransaction().rollback();
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
@@ -1483,7 +1482,7 @@ public class CpBL {
 			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
 			if (marcadorAnt != null) {
 				if (marcadorAnt.getDpLotacaoIni() != null &&
-						marcadorAnt.getDpLotacaoIni().getIdInicial() != cadastrante.getLotacao().getIdInicial())
+						!(marcadorAnt.getDpLotacaoIni().getIdInicial().equals(cadastrante.getLotacao().getIdInicial())))
 					throw new AplicacaoException ("Não é permitida a alteração de marcador de outra " + msgLotacao);
 
 				marcador.setHisIdIni(marcadorAnt.getHisIdIni());

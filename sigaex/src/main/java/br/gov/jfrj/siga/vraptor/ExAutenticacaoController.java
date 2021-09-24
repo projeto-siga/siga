@@ -306,7 +306,7 @@ public class ExAutenticacaoController extends ExController {
 				}
 			}
 			List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
-			lista.addAll(doc.getAutenticacoesComSenha());
+			lista.addAll(doc.getAutenticacoesComTokenOuSenha());
 			
 			DpPessoa p = new DpPessoa();    
 			DpLotacao l = new DpLotacao();

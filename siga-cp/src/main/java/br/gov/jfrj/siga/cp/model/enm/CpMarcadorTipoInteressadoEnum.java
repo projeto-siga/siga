@@ -13,9 +13,9 @@ public enum CpMarcadorTipoInteressadoEnum implements IEnumWithId {
 	//
 	LOTACAO(3, SigaMessages.getMessage("usuario.lotacao")),
 	//
-	PESSOA_OU_LOTACAO(4, SigaMessages.getMessage("usuario.pessoa") + " ou " + SigaMessages.getMessage("usuario.lotação")),
+	PESSOA_OU_LOTACAO(4, SigaMessages.getMessage("usuario.pessoa") + " ou " + SigaMessages.getMessage("usuario.lotacao")),
 	//
-	LOTACAO_OU_PESSOA(5, SigaMessages.getMessage("usuario.lotação") + " ou " + SigaMessages.getMessage("usuario.pessoa"));
+	LOTACAO_OU_PESSOA(5, SigaMessages.getMessage("usuario.lotacao") + " ou " + SigaMessages.getMessage("usuario.pessoa"));
 
 	private final Integer id;
 	private final String descricao;

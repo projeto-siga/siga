@@ -233,7 +233,7 @@ public class ExMovimentacaoVO extends ExVO {
 				throw new AplicacaoException("Erro ao converter", 0, e);
 			}
 			if (!mov.isCancelada())
-				addAcao(AcaoVO.builder().nome("Exclusão de Marcação").nameSpace("/app/expediente/mov")
+				addAcao(AcaoVO.builder().nome("Excluir Marcador").nameSpace("/app/expediente/mov")
 						.acao("cancelar_movimentacao_gravar").params("sigla", mov.mob().getCodigoCompacto())
 						.params("id", mov.getIdMov().toString())
 						.params("descrMov", descrUrl).post(true)

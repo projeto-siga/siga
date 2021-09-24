@@ -2314,6 +2314,8 @@ public class ExDocumentoController extends ExController {
 		}
 
 		exDocumentoDTO.setPersonalizacao(doc.getNmFuncaoSubscritor() != null);
+		
+		exDocumentoDTO.setPossuiRequerente(doc.isPossuiRequerente());
 
 		// TODO Verificar se ha realmente a necessidade de setar novamente o
 		// nível de acesso do documento

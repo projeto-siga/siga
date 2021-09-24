@@ -1316,5 +1316,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 				endereco += StringUtils.isNotBlank(this.cepRequerente) ?   this.cepRequerente:" ";
 	   return endereco;
 	}
- 
+	
+	public boolean isPossuiRequerente() {
+		return this.cpfRequerente != null ||
+				this.cnpjRequerente != null ||
+				this.matriculaRequerente != null ||
+				StringUtils.isNotBlank(nomeRequerente) ;
+	}
 }

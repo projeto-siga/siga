@@ -1,6 +1,27 @@
 /**
  * 
  */
+function displayPossuiRequerente(thisElement) {
+	var thatElement = document.getElementById('tr_possuiRequerente');
+	if (thisElement.checked)
+		thatElement.style.display = '';
+	else {
+		thatElement.style.display = 'none';
+		document.getElementById('cpfRequerente').value = '';
+		document.getElementById('cnpjRequerente').value = '';
+		document.getElementById('matriculaRequerente').value = '';
+		document.getElementById('nomeRequerente').value = '';
+		
+		document.getElementById('tipoLogradouroRequerente').value = '';
+		document.getElementById('logradouroRequerente').value = '';
+		document.getElementById('numeroLogradouroRequerente').value = '';
+		document.getElementById('complementoLogradouroRequerente').value = '';
+		document.getElementById('bairroRequerente').value = '';
+		document.getElementById('cidadeRequerente').value = '';
+		document.getElementById('ufRequerente').value = '';
+		document.getElementById('cepRequerente').value = '';
+	}
+}
 
 function displayPersonalizacao(thisElement) {
 	var thatElement = document.getElementById('tr_personalizacao');

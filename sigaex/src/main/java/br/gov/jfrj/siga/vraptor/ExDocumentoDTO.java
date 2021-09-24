@@ -238,30 +238,30 @@ public class ExDocumentoDTO {
 	
 	
 	private boolean possuiRequerente;
-	
-	private Long cpfRequerente;
-	
-	private Long cnpjRequerente;
-
-	private Long matriculaRequerente;
-	
-	private String nomeRequerente;
-	
-	private String tipoLogradouroRequerente;
-	
-	private String logradouroRequerente;
-	
-	private String numeroLogradouroRequerente;
-
-	private String complementoLogradouroRequerente;
-	
-	private String bairroRequerente;
-
-	private String cidadeRequerente;
-
-	private String ufRequerente;
-	
-	private String cepRequerente;
+//	
+//	private Long cpfRequerente;
+//	
+//	private Long cnpjRequerente;
+//
+//	private Long matriculaRequerente;
+//	
+//	private String nomeRequerente;
+//	
+//	private String tipoLogradouroRequerente;
+//	
+//	private String logradouroRequerente;
+//	
+//	private String numeroLogradouroRequerente;
+//
+//	private String complementoLogradouroRequerente;
+//	
+//	private String bairroRequerente;
+//
+//	private String cidadeRequerente;
+//
+//	private String ufRequerente;
+//	
+//	private String cepRequerente;
 
 	public ExDocumentoDTO() {
 		classificacaoSel = new ExClassificacaoSelecao();
@@ -1063,86 +1063,86 @@ public class ExDocumentoDTO {
 		return dtPrazoAssinaturaString;
 	}
 
-	public Long getCpfRequerente() {
-		return cpfRequerente;
-	}
-
-	public void setCpfRequerente(Long cpfRequerente) {
-		this.cpfRequerente = cpfRequerente;
-	}
-
-	public Long getCnpjRequerente() {
-		return cnpjRequerente;
-	}
-
-	public void setCnpjRequerente(Long cnpjRequerente) {
-		this.cnpjRequerente = cnpjRequerente;
-	}
-
-	public Long getMatriculaRequerente() {
-		return matriculaRequerente;
-	}
-
-	public void setMatriculaRequerente(Long matriculaRequerente) {
-		this.matriculaRequerente = matriculaRequerente;
-	}
-
-	public String getNomeRequerente() {
-		return nomeRequerente;
-	}
-
-	public void setNomeRequerente(String nomeRequerente) {
-		this.nomeRequerente = nomeRequerente;
-	}
-
-	public String getNumeroLogradouroRequerente() {
-		return numeroLogradouroRequerente;
-	}
-
-	public void setNumeroLogradouroRequerente(String numeroLogradouroRequerente) {
-		this.numeroLogradouroRequerente = numeroLogradouroRequerente;
-	}
-
-	public String getComplementoLogradouroRequerente() {
-		return complementoLogradouroRequerente;
-	}
-
-	public void setComplementoLogradouroRequerente(String complementoLogradouroRequerente) {
-		this.complementoLogradouroRequerente = complementoLogradouroRequerente;
-	}
-
-	public String getBairroRequerente() {
-		return bairroRequerente;
-	}
-
-	public void setBairroRequerente(String bairroRequerente) {
-		this.bairroRequerente = bairroRequerente;
-	}
-
-	public String getCidadeRequerente() {
-		return cidadeRequerente;
-	}
-
-	public void setCidadeRequerente(String cidadeRequerente) {
-		this.cidadeRequerente = cidadeRequerente;
-	}
-
-	public String getUfRequerente() {
-		return ufRequerente;
-	}
-
-	public void setUfRequerente(String ufRequerente) {
-		this.ufRequerente = ufRequerente;
-	}
-
-	public String getCepRequerente() {
-		return cepRequerente;
-	}
-
-	public void setCepRequerente(String cepRequerente) {
-		this.cepRequerente = cepRequerente;
-	}
-
+//	public Long getCpfRequerente() {
+//		return cpfRequerente;
+//	}
+//
+//	public void setCpfRequerente(Long cpfRequerente) {
+//		this.cpfRequerente = cpfRequerente;
+//	}
+//
+//	public Long getCnpjRequerente() {
+//		return cnpjRequerente;
+//	}
+//
+//	public void setCnpjRequerente(Long cnpjRequerente) {
+//		this.cnpjRequerente = cnpjRequerente;
+//	}
+//
+//	public Long getMatriculaRequerente() {
+//		return matriculaRequerente;
+//	}
+//
+//	public void setMatriculaRequerente(Long matriculaRequerente) {
+//		this.matriculaRequerente = matriculaRequerente;
+//	}
+//
+//	public String getNomeRequerente() {
+//		return nomeRequerente;
+//	}
+//
+//	public void setNomeRequerente(String nomeRequerente) {
+//		this.nomeRequerente = nomeRequerente;
+//	}
+//
+//	public String getNumeroLogradouroRequerente() {
+//		return numeroLogradouroRequerente;
+//	}
+//
+//	public void setNumeroLogradouroRequerente(String numeroLogradouroRequerente) {
+//		this.numeroLogradouroRequerente = numeroLogradouroRequerente;
+//	}
+//
+//	public String getComplementoLogradouroRequerente() {
+//		return complementoLogradouroRequerente;
+//	}
+//
+//	public void setComplementoLogradouroRequerente(String complementoLogradouroRequerente) {
+//		this.complementoLogradouroRequerente = complementoLogradouroRequerente;
+//	}
+//
+//	public String getBairroRequerente() {
+//		return bairroRequerente;
+//	}
+//
+//	public void setBairroRequerente(String bairroRequerente) {
+//		this.bairroRequerente = bairroRequerente;
+//	}
+//
+//	public String getCidadeRequerente() {
+//		return cidadeRequerente;
+//	}
+//
+//	public void setCidadeRequerente(String cidadeRequerente) {
+//		this.cidadeRequerente = cidadeRequerente;
+//	}
+//
+//	public String getUfRequerente() {
+//		return ufRequerente;
+//	}
+//
+//	public void setUfRequerente(String ufRequerente) {
+//		this.ufRequerente = ufRequerente;
+//	}
+//
+//	public String getCepRequerente() {
+//		return cepRequerente;
+//	}
+//
+//	public void setCepRequerente(String cepRequerente) {
+//		this.cepRequerente = cepRequerente;
+//	}
+//
 	public boolean isPossuiRequerente() {
 		return possuiRequerente;
 	}
@@ -1150,7 +1150,4 @@ public class ExDocumentoDTO {
 	public void setPossuiRequerente(boolean possuiRequerente) {
 		this.possuiRequerente = possuiRequerente;
 	}
-
-	
-	
 }

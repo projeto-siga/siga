@@ -1056,26 +1056,16 @@
 							</p>
 							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
 
-<p>
- <b>Dados do Requerente</b>
-</p>
-
-							<p>
-								<c:if test="${not empty docVO.cpfRequerente}"><b>CPF:</b>${docVO.cpfRequerente}</c:if>
-								<c:if test="${not empty docVO.cnpjRequerente}"><b>CNPJ:</b>${docVO.cnpjRequerente}</c:if> 
-							</p>
-							
-							<p>
-								<c:if test="${not empty docVO.nomeRequerente}"><b>Nome:</b> ${docVO.nomeRequerente}</c:if>
-							</p>
-							<p>
-								<c:if test="${not empty docVO.matriculaRequerente}"><b>Matrícula:</b> ${docVO.matriculaRequerente}</c:if>
-							</p>
-							<p>
-								<c:if test="${not empty docVO.enderecoRequerente}"><b>Endereço:</b> ${docVO.enderecoRequerente}</c:if>
-								
-							</p>
-							 
+						<c:if test="${docVO.possuiRequerente}">
+							 <b>Dados do Requerente</b>
+							<ul>
+								<c:if test="${not empty docVO.doc.cpfRequerente}"><li><b>CPF:</b>${docVO.doc.cpfRequerente}</li></c:if>
+								<c:if test="${not empty docVO.doc.cnpjRequerente}"><li><b>CNPJ:</b>${docVO.doc.cnpjRequerente}</li></c:if> 
+								<c:if test="${not empty docVO.doc.nomeRequerente}"><li><b>Nome:</b> ${docVO.doc.nomeRequerente}</li></c:if>
+								<c:if test="${not empty docVO.doc.matriculaRequerente}"><li><b>Matrícula:</b> ${docVO.doc.matriculaRequerente}</li></c:if>
+								<c:if test="${not empty docVO.doc.enderecoRequerente}"><li><b>Endereço:</b> ${docVO.doc.enderecoRequerente}</li></c:if>
+							</ul>
+						</c:if> 
 
 						</tags:collapse>
 					</div>

@@ -396,7 +396,7 @@
 							<div class="col-sm-32">
 								<div class="form-group" >
 									<label>Complemento</label>
-									<input type="text" id="complementoLogradouroRequerente"  value="${exDocumentoDTO.doc.complementoRequerente}" class="form-control">
+									<input type="text" id="complementoLogradouroRequerente"  value="${exDocumentoDTO.doc.complementoLogradouroRequerente}" class="form-control">
 								</div>
 							</div>
 						</div>

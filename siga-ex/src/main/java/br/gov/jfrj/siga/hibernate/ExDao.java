@@ -1683,15 +1683,8 @@ public class ExDao extends CpDao {
 		return q.getResultList();
 	}	
 	
-	public ExDocumento consultarExDocumentoPorId(
-			Long idDoc) {
-		Query q;
-
-			q = em().createNamedQuery(
-					"consultarExDocumentoId");
-			q.setParameter("idDoc", idDoc);
-	
-		return (ExDocumento) q.getSingleResult();
+	public ExDocumento consultarExDocumentoPorId(Long idDoc) {
+		return consultar(idDoc,ExDocumento.class,false);
 	}	
 
 	public List<ExPapel> listarExPapeis() {

@@ -619,9 +619,24 @@
 										<c:if test="${marca.cpMarcador.idFinalidade.idTpInteressado != 'ATENDENTE'}">
 											- <c:if test="${not empty pessoaAtual}"><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
 											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
-											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if><c:if test="${not empty lotacaoAtual}"><c:if test="${not empty pessoaAtual}">/</c:if><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
-											descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
-											lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></c:if>
+											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if>
+											<c:choose>
+												<c:when test="${not empty lotacaoAtual}">
+													<c:if test="${not empty pessoaAtual}">/</c:if>
+													<siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+														descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+														lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" />
+												</c:when>
+												<c:otherwise>
+													<c:if test="${empty pessoaAtual}">
+														<siga:selecionado 
+															isVraptor="true" 
+															sigla="${marca.exMovimentacao.lotaSubscritor.sigla} (Sem acesso ao documento - A marca não será mostrada)"
+															descricao="${marca.exMovimentacao.lotaSubscritor.descricaoAmpliada}"
+															lotacaoParam="${marca.exMovimentacao.lotaSubscritor.siglaCompleta}" />
+													</c:if>												
+												</c:otherwise>
+											</c:choose>
 										</c:if>
 										</td>
 										<c:choose>

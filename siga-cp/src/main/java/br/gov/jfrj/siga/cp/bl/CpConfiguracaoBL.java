@@ -827,14 +827,17 @@ public class CpConfiguracaoBL {
 			limparCacheSeNecessario();
 			Set<CpConfiguracaoCache> configs = Cp.getInstance().getConf()
 					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
-			for (CpConfiguracaoCache c : configs) {
-				DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.dpPessoa);
-				if (c.dpPessoa == pesAtual.getIdInicial()) {
-					if (c.hisDtFim == null && pesAtual.getDataFim() == null && c.lotacao == lot.getIdInicial()) {
-						resultado.add(pesAtual);
+			if (configs != null) {
+				for (CpConfiguracaoCache c : configs) {
+					DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.dpPessoa);
+					if (c.dpPessoa == pesAtual.getIdInicial()) {
+						if (c.hisDtFim == null && pesAtual.getDataFim() == null && c.lotacao == lot.getIdInicial()) {
+							resultado.add(pesAtual);
+						}
 					}
 				}
 			}
+
 
 		} catch (Exception e) {
 			e.printStackTrace();

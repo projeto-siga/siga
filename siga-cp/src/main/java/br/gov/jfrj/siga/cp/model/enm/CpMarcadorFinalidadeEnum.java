@@ -15,80 +15,99 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 			CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA, null, null, null, null, null, null, false, false),
 	//
 	GERAL(2, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral",
-			"Marcador que pode ser definido por qualquer pessoa e estará visível para quem receber o documento",
+			"Marcador que pode ser definido por qualquer " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " e estará visível para quem receber o documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false, true),
 	//
 	GERAL_AGENDADA(3, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendada",
-			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber o documento",
+			"Marcador que pode ser definido por qualquer " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " e estará visível, a partir de uma data definida, para quem receber o documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	GERAL_PRAZOS(4, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral com Prazos",
-			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para quem receber o documento, contendo a informação sobre a proximidade de um prazo",
+			"Marcador que pode ser definido por qualquer " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " e estará visível, a partir de uma data definida, para quem receber o documento, contendo a informação sobre a proximidade de um prazo",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.OBRIGATORIA,
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	GERAL_DIRECIONADA(5, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Direcionada",
-			"Marcador que pode ser definido por qualquer pessoa e estará visível para uma lotação ou pessoa  definida, independente da localização do documento",
+			"Marcador que pode ser definido por qualquer " + SigaMessages.getMessage("usuario.pessoa") 
+			+ " e estará visível para uma " + SigaMessages.getMessage("usuario.lotacao") + " ou " 
+				+ SigaMessages.getMessage("usuario.pessoa") + " definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false, true),
 	//
 	GERAL_AGENDADA_DIRECIONADA(7, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Agendada Direcionada",
-			"Marcador que pode ser definido por qualquer pessoa e estará visível, a partir de uma data definida, para uma lotação ou pessoa definida, independente da localização do documento",
+			"Marcador que pode ser definido por qualquer " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " e estará visível, a partir de uma data definida, para uma " + SigaMessages.getMessage("usuario.lotacao") + " ou " 
+				+ SigaMessages.getMessage("usuario.pessoa") + " definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
 			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	GERAL_LIMITE_XOR(6, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Com Data Limite e Mutuamente Exclusiva",
-			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer pessoa e estará visível, com data limite, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
+			"Marcador, mutuamente exclusivo, que pode ser definido por qualquer " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " e estará visível, com data limite, para quem receber com o documento. Apenas um marcador desse tipo pode ser definido para um mesmo documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoExibicaoEnum.IMEDIATA,			
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true, false),
 	//
 	LOCAL(100, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local",
-			"Marcador que pode ser definido por pessoa da minha lotação e estará visível para quem receber qualquer via do documento",
+			"Marcador que pode ser definido por " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " da minha " + SigaMessages.getMessage("usuario.lotacao") 
+				+ " e estará visível para quem receber qualquer via do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false, true),
 	//
 	LOCAL_AGENDADA(101, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local Agendada",
-			"Marcador que pode ser definido por pessoa da minha lotação e estará visível, a partir de uma data definida, para quem receber qualquer via do documento",
+			"Marcador que pode ser definido por " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " da minha " + SigaMessages.getMessage("usuario.lotacao") 
+				+ " e estará visível, a partir de uma data definida, para quem receber qualquer via do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	LOCAL_DIRECIONADA(102, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local Direcionada",
-			"Marcador que pode ser definido por pessoa da minha lotação e estará visível para uma lotação ou pessoa definida, independente da localização do documento",
+			"Marcador que pode ser definido por " + SigaMessages.getMessage("usuario.pessoa") + " da minha " + SigaMessages.getMessage("usuario.lotacao") 
+				+ " e estará visível para uma " + SigaMessages.getMessage("usuario.lotacao") + " ou " + SigaMessages.getMessage("usuario.pessoa") 
+				+ " definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false, true),
 	//
-	PASTA(200, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta", "Organizar o acervo em andamento na minha lotação",
+	PASTA(200, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta", "Organizar o acervo em andamento na minha " + SigaMessages.getMessage("usuario.lotacao"),
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true, true),
 	//
-	PASTA_PADRAO(201, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta Padrão", "Pasta atribuída automaticamente ao documento tramitado para a minha lotação.",
+	PASTA_PADRAO(201, CpMarcadorFinalidadeGrupoEnum.PASTA, "Pasta Padrão", "Pasta atribuída automaticamente ao documento tramitado para a minha " 
+				+ SigaMessages.getMessage("usuario.lotacao"),
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, true, true),
 	//
 	LISTA(300, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista",
-			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida",
+			"Marcador que pode ser definido por " + SigaMessages.getMessage("usuario.pessoa") + " da minha " + SigaMessages.getMessage("usuario.lotacao") 
+			+ " para agrupar documentos de interesse de " + SigaMessages.getMessage("usuario.pessoa") 
+			+ " ou " + SigaMessages.getMessage("usuario.lotacao") +  " definida",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	LISTA_AGENDADA(301, CpMarcadorFinalidadeGrupoEnum.LISTA, "Lista Agendada",
-			"Marcador que pode ser definido por pessoa da minha lotação para agrupar documentos de interesse de Pessoa ou Lotação definida, a partir de uma data definida",
+			"Marcador que pode ser definido por " + SigaMessages.getMessage("usuario.pessoa") + " da minha " + SigaMessages.getMessage("usuario.lotacao")
+				+ " para agrupar documentos de interesse de " + SigaMessages.getMessage("usuario.pessoa") + " ou " + SigaMessages.getMessage("usuario.lotacao") 
+				+ " definida, a partir de uma data definida",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false, false);

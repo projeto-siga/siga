@@ -1,11 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <jsp:useBean id="now" class="java.util.Date" />
 
 <siga:pagina titulo="Lista Marcadores">
+	<c:set var="grupoDefault" scope="session" value="${f:resource('/siga.marcadores.grupo.default')}" />
 	<form name="frm" action="listar" class="form" method="GET">
 		<input type="hidden" name="paramoffset" value="0" /> <input
 			type="hidden" name="p.offset" value="0" />
@@ -20,11 +22,13 @@
 						<thead class="${thead_color}">
 							<tr>
 								<th class="text-left w-10">Categoria</th>
-								<th class="text-left w-35">Marcador</th>
+								<th class="text-left w-20">Marcador</th>
 								<th class="text-left w-10">Tipo</th>
-								<th class="text-left w-10">Finalidade</th>
-								<th class="text-left w-10">Grupo</th>
-								<th colspan="2" class="text-right w-15">Op&ccedil;&otilde;es</th>
+								<th class="text-left w-30">Finalidade</th>
+								<c:if test="${empty grupoDefault}">
+									<th class="text-left w-10">Grupo</th>
+								</c:if>
+								<th colspan="2" class="text-right w-20">Op&ccedil;&otilde;es</th>
 							</tr>
 						</thead>
 
@@ -33,7 +37,7 @@
 								<tr>
 									<fmt:formatDate var="dtIni" value="${marcador.hisDtIni}" type='date' pattern="dd/MM/yyyy" />
 									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idFinalidade.grupo.nome}</td>
-									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-30"><span
+									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-20"><span
 										class="badge badge-pill badge-secondary tagmesa btn-xs"
 										title="${marcador.descrDetalhada}"> <i
 											class="${marcador.idIcone.codigoFontAwesome}"
@@ -43,9 +47,11 @@
 										${marcador.hisDtIni gt now? '<br /><small>(Será ativado em '.concat(dtIni).concat(')</small>'):''}
 									</td>
 									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idFinalidade.nome}</td>
-									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idFinalidade.descricao}</td>
-									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idGrupo.nome}</td>
-									<td class="text-left w-10">
+									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-30">${marcador.idFinalidade.descricao}</td>
+									<c:if test="${empty grupoDefault}">
+										<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idGrupo.nome}</td>
+									</c:if>
+									<td class="text-left w-20">
 										<div class="">
 											<button type="button" id="btn-excluir"
 												class="enabled btn btn-outline-secondary btn-sm p-1 m-1 float-right"

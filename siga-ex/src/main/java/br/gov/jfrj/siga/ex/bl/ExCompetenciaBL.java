@@ -677,12 +677,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
 			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 		ExConfiguracao cfgFiltro = new ExConfiguracao();
-
-		cfgFiltro.setCargo(titularIniciador.getCargo());
-		cfgFiltro.setOrgaoUsuario(lotaTitularIniciador.getOrgaoUsuario());
-		cfgFiltro.setFuncaoConfianca(titularIniciador.getFuncaoConfianca());
-		cfgFiltro.setLotacao(lotaTitularIniciador);
+		
+		if (titularIniciador != null) {
+			cfgFiltro.setCargo(titularIniciador.getCargo());
+			cfgFiltro.setFuncaoConfianca(titularIniciador.getFuncaoConfianca());
+		}
 		cfgFiltro.setDpPessoa(titularIniciador);
+		if (lotaTitularIniciador != null) {
+			cfgFiltro.setOrgaoUsuario(lotaTitularIniciador.getOrgaoUsuario());
+		}
+		cfgFiltro.setLotacao(lotaTitularIniciador);
 		cfgFiltro.setCpTipoConfiguracao(tipoConfig);
 		if (cfgFiltro.getCpTipoConfiguracao() == null)
 			throw new RuntimeException(

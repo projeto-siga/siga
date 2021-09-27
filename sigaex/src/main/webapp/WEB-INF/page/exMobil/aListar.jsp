@@ -791,6 +791,7 @@
 							</select>
 						</div>
 					</div>
+					
 					<button id="btnBuscar" type="button" value="Buscar" class="btn btn-primary" onclick="submitBusca('${siga_cliente}')">
 						<span id="buscandoSpinner" class="spinner-border d-none" role="status"></span> Buscar
 					</button>

@@ -2463,6 +2463,20 @@ public class ExDocumentoController extends ExController {
 				ExTipoDocumento.class, false));
 
 		doc.setNmDestinatario(exDocumentoDTO.getNmDestinatario());
+		
+		//requerente
+		doc.setCpfRequerente(exDocumentoDTO.isPossuiRequerente() ? exDocumentoDTO.getCpfRequerente() : null);
+		doc.setCnpjRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCnpjRequerente() : null);
+		doc.setMatriculaRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getMatriculaRequerente() : null);
+		doc.setNomeRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getNomeRequerente() : null);
+		doc.setTipoLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getTipoLogradouroRequerente() : null);
+		doc.setLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getLogradouroRequerente() : null);
+		doc.setNumeroLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getNumeroLogradouroRequerente() : null);		
+		doc.setComplementoLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getTipoLogradouroRequerente() : null);
+		doc.setBairroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getBairroRequerente() : null);		
+		doc.setCidadeRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCidadeRequerente() : null);
+		doc.setUfRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getUfRequerente() : null);
+		doc.setCepRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCepRequerente() : null);		
 
 		doc.setExModelo(null);
 		if (exDocumentoDTO.getIdMod() != 0) {

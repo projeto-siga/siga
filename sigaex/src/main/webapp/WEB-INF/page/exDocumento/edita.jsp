@@ -325,78 +325,105 @@
 				</div>
 
 					<div class="row">
-						<div class="col-sm-12">
-							<input type="checkbox" name="exDocumentoDTO.possuiRequerente" 	class="form-check-input ml-3" onclick="javascript:displayPossuiRequerente(this);"
-								<c:if test="${exDocumentoDTO.possuiRequerente}">checked</c:if> />
-							<label class="form-check-label" 	for="exDocumentoDTO.possuiRequerente">Requerente</label>
+						<div class="col-sm-2">
+							<div class="form-group">
+								<div class="form-check form-check-inline mt-4">
+									<input type="checkbox" name="exDocumentoDTO.possuiRequerente"
+										class="form-check-input ml-3"
+										onclick="javascript:displayPossuiRequerente(this);"
+										<c:if test="${exDocumentoDTO.possuiRequerente}">checked</c:if> />
+									<label class="form-check-label"
+										for="exDocumentoDTO.possuiRequerente">Interessado</label>
+
+
+								</div>
+							</div>
 						</div>
 					</div>
 
-			<div class="row">
+					<div class="row">
 					<div id="tr_possuiRequerente" style="display: ${exDocumentoDTO.possuiRequerente? '': 'none'};">
 						
-						<div class="row ml-1">
-							<h6>Requerente</h6>
-						</div>
-						<div class="row">
-							<div class="col-sm-2">
-								<div class="form-group">
-									<label>CPF</label>
-									<input type="text" id="cpfRequerente" value="${exDocumentoDTO.doc.cpfRequerente}" class="form-control">
-								</div>
+						<input type="hidden" name="campos" value="cpfRequerente" />
+						<input type="hidden" name="campos" value="cnpjRequerente" />
+						<input type="hidden" name="campos" value="matriculaRequerente" />
+						<input type="hidden" name="campos" value="nomeRequerente" />
+						<input type="hidden" name="campos" value="tipoLogradouroRequerente" />
+						<input type="hidden" name="campos" value="logradouroRequerente" />
+						<input type="hidden" name="campos" value="numeroLogradouroRequerente" />
+						<input type="hidden" name="campos" value="complementoLogradouroRequerente" />
+						<input type="hidden" name="campos" value="bairroRequerente" />
+						<input type="hidden" name="campos" value="cidadeRequerente" />
+						<input type="hidden" name="campos" value="ufRequerente" />
+						<input type="hidden" name="campos" value="cepRequerente" />
+						
+						<div class="col-sm-4">
+							<div class="form-group">
+								<div class="form-check form-check-inline">
+									<input type="radio" id="tipoDocumentoCPF" name="tipoDocumentoRequerente" value="1" onclick="alterarDocumentoRequerente(1);"
+										class="form-check-input" ${not empty  exDocumentoDTO.cpfRequerente ? 'checked' : ''} />
+									<label class="form-check-label" for="tipoDocumentoCPF">CPF</label>
+									<input type="radio" id="tipoDocumentoCNPJ" name="tipoDocumentoRequerente" value="2" onclick="alterarDocumentoRequerente(2);" 
+										class="form-check-input ml-2" ${not empty  exDocumentoDTO.cnpjRequerente  ? 'checked' : ''} />
+									<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
+								</div>	
 							</div>
-							<div class="col-sm-2">
+						</div>
+						
+						<div class="form-row">
+							<div class="col-sm-2" >
 								<div class="form-group">
-									<label>CNPJ</label>
-									<input type="text" id="cnpjRequerente" value="${exDocumentoDTO.doc.cnpjRequerente}" class="form-control">
+									<label>Número</label>
+									 
+ 									<input  type="text" id="cpfRequerente"  name="exDocumentoDTO.cpfRequerente"   value="${exDocumentoDTO.cpfRequerente}"    class="form-control"   maxlength="11" />
+									<input type="text" id="cnpjRequerente" name="exDocumentoDTO.cnpjRequerente" value="${exDocumentoDTO.cnpjRequerente}" class="form-control"   maxlength="14" >
 								</div>
 							</div>
 							 
 							 <div class="col-sm-2">
 								<div class="form-group">
 									<label>Matrícula</label>
-									<input type="text" id="matriculaRequerente" value="${exDocumentoDTO.doc.matriculaRequerente}" class="form-control">
+									<input type="text" id="matriculaRequerente" name="exDocumentoDTO.matriculaRequerente" value="${exDocumentoDTO.matriculaRequerente}" class="form-control"   maxlength="8" >
 								</div>
 							</div>
 							
-							<div class="col-sm-4">
+							<div class="col-sm-6">
 								<div class="form-group" >
 									<label>Nome</label>
-									<input type="text" id="nomeRequerente"  value="${exDocumentoDTO.doc.nomeRequerente}" class="form-control">
+									<input type="text" id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"  value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
-						</div>
-						
-						<div class="row ml-1">
-							<h6>Endereço</h6>
-						</div>
-							<div class="row">
-							
+					</div>
+					
+
+
+
+					<div class="form-row">
 							
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label>Tipo Logradouro</label>
-									<input type="text" id="tipoLogradouroRequerente" value="${exDocumentoDTO.doc.tipoLogradouroRequerente}" class="form-control">
+									<input type="text" id="tipoLogradouroRequerente" name="exDocumentoDTO.tipoLogradouroRequerente" value="${exDocumentoDTO.tipoLogradouroRequerente}" class="form-control" >
 								</div>
 							</div>
 							<div class="col-sm-6">
 								<div class="form-group">
 									<label>Logradouro</label>
-									<input type="text" id="logradouroRequerente" value="${exDocumentoDTO.doc.logradouroRequerente}" class="form-control">
+									<input type="text" id="logradouroRequerente" name="exDocumentoDTO.logradouroRequerente" value="${exDocumentoDTO.logradouroRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
 							 
 							 <div class="col-sm-2">
 								<div class="form-group">
 									<label>Número</label>
-									<input type="text" id="numeroLogradouroRequerente" value="${exDocumentoDTO.doc.numeroLogradouroRequerente}" class="form-control">
+									<input type="text" id="numeroLogradouroRequerente" name="exDocumentoDTO.numeroLogradouroRequerente" value="${exDocumentoDTO.numeroLogradouroRequerente}" class="form-control">
 								</div>
 							</div>
 							
-							<div class="col-sm-32">
+							<div class="col-sm-2">
 								<div class="form-group" >
 									<label>Complemento</label>
-									<input type="text" id="complementoLogradouroRequerente"  value="${exDocumentoDTO.doc.complementoLogradouroRequerente}" class="form-control">
+									<input type="text"	id="complementoLogradouroRequerente"  name="exDocumentoDTO.complementoLogradouroRequerente"  value="${exDocumentoDTO.complementoLogradouroRequerente}" class="form-control">
 								</div>
 							</div>
 						</div>
@@ -407,27 +434,27 @@
 							<div class="col-sm-4">
 								<div class="form-group">
 									<label>Bairro</label>
-									<input type="text" id="bairroRequerente" value="${exDocumentoDTO.doc.bairroRequerente}" class="form-control">
+									<input type="text" 	id="bairroRequerente" name="exDocumentoDTO.bairroRequerente" value="${exDocumentoDTO.bairroRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-sm-5">
 								<div class="form-group">
 									<label>Cidade</label>
-									<input type="text" id="cidadeRequerente" value="${exDocumentoDTO.doc.cidadeRequerente}" class="form-control">
+									<input type="text" 	id="cidadeRequerente" name="exDocumentoDTO.cidadeRequerente" value="${exDocumentoDTO.cidadeRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
 							 
-							 <div class="col-sm-2">
+							 <div class="col-sm-1">
 								<div class="form-group">
 									<label>UF</label>
-									<input type="text" id="ufRequerente" value="${exDocumentoDTO.doc.ufRequerente}" class="form-control">
+									<input type="text" 	id="ufRequerente" name="exDocumentoDTO.ufRequerente" value="${exDocumentoDTO.ufRequerente}" class="form-control" maxlength="2">
 								</div>
 							</div>
 							
-							<div class="col-sm-32">
+							<div class="col-sm-2">
 								<div class="form-group" >
 									<label>CEP</label>
-									<input type="text" id="cepRequerente"  value="${exDocumentoDTO.doc.cepRequerente}" class="form-control">
+									<input type="text" 	id="cepRequerente" name="exDocumentoDTO.cepRequerente"  value="${exDocumentoDTO.cepRequerente}" class="form-control"   maxlength="8" >
 								</div>
 							</div>
 						</div>
@@ -847,6 +874,26 @@
 	    trigger: 'click'
 	});
 
+
+	function alterarDocumentoRequerente(tipodocumento) {
+
+		switch (tipodocumento) {
+		case 1:
+			document.getElementById('cpfRequerente').style.display = '';
+			document.getElementById('cnpjRequerente').style.display = 'none';
+			
+			document.getElementById('cnpjRequerente').value = '';
+			document.getElementById('cpfRequerente').value = '';
+			break;
+		case 2:
+			document.getElementById('cnpjRequerente').style.display = '';
+			document.getElementById('cpfRequerente').style.display = 'none';
+			
+			document.getElementById('cnpjRequerente').value = '';
+			document.getElementById('cpfRequerente').value = '';
+			break;
+		}
+}
 </script>
 
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>

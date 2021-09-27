@@ -4297,7 +4297,7 @@ public class ExBL extends CpBL {
 							ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
 							cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null,
 							null, null, null);
-					mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);
+					mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc.getSigla());
 				
 					gravarMovimentacao(mov);
 				}

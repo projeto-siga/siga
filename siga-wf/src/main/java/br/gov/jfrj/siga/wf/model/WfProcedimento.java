@@ -554,7 +554,7 @@ public class WfProcedimento extends Objeto
 		if (d.id != null) {
 			info = AR.findById(d.id);
 		} else if (d.numero != null) {
-			info = AR.find("ano = ?1 and numero = ?2 and ou.idOrgaoUsu = ?3", d.ano, d.numero, d.orgaoUsuario.getId())
+			info = AR.find("ano = ?1 and numero = ?2 and orgaoUsuario.idOrgaoUsu = ?3", d.ano, d.numero, d.orgaoUsuario.getId())
 					.first();
 		}
 

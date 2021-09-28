@@ -20,7 +20,7 @@ public class AtivosGet implements IAtivosGet {
 	public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception {
 		SortedSet<WfTarefa> tarefas = obterTarefasAtivas(ctx.getTitular(), ctx.getLotaTitular());
 		for (WfTarefa t : tarefas) {
-			Procedimento r = new ProcedimentoAPIO(t);
+			Procedimento r = new ProcedimentoAPIO(t.getInstanciaDeProcedimento());
 			resp.list.add(r);
 		}
 	}

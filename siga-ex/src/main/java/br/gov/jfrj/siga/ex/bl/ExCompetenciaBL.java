@@ -4162,7 +4162,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-				&& ultMov.getCadastrante().equivale(cadastrante) && ultMov.getLotaResp().equivale(lotaCadastrante))
+				&& ultMov.getCadastrante() != null && ultMov.getCadastrante().equivale(cadastrante) 
+				&& ultMov.getLotaResp() != null && ultMov.getLotaResp().equivale(lotaCadastrante))
 			return false;
 		return true;
 	}

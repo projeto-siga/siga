@@ -237,7 +237,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Procedimento"
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
         500:
           description: Error ocurred
           schema:
@@ -255,7 +258,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Procedimento"
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
         500:
           description: Error ocurred
           schema:
@@ -271,7 +277,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Procedimento"
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
         500:
           description: Error ocurred
           schema:
@@ -288,7 +297,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Procedimento"
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
         500:
           description: Error ocurred
           schema:
@@ -304,7 +316,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Procedimento"
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
         500:
           description: Error ocurred
           schema:
@@ -321,7 +336,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Procedimento"
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
         500:
           description: Error ocurred
           schema:
@@ -338,7 +356,10 @@ paths:
         200:
           description: Successful response
           schema:
-            $ref: "#/definitions/Procedimento"
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
         500:
           description: Error ocurred
           schema:
@@ -787,6 +808,18 @@ definitions:
       prioridadeNome:
         type: string
         description: Nome da prioridade
+      vizProcedimento:
+        type: string
+        description: Gráfico do procedimento
+      msgAviso:
+        type: string
+        description: Mensagem de aviso
+      formulario:
+        type: boolean
+        description: Indica se o formulário deve ser apresentado
+      desabilitarFormulario:
+        type: boolean
+        description: Indica se o formulário deve ser desabilitado
       tarefaTitulo:
         type: string
         description: Título da tarefa
@@ -794,9 +827,11 @@ definitions:
         type: string
         format: date-time
         description: Data e hora do início da tarefa
-      tarefaTempoTranscorrido:
+      tarefaTempoRelativo:
         type: string
         description: Tempo transcorrido desde o início da tarefa
+      definicaoDeTarefaCorrente:
+        $ref: "#/definitions/DefinicaoDeTarefa"      
       definicaoDeProcedimentoId:
         type: string
         description: Identificador da definição de procedimento
@@ -806,17 +841,63 @@ definitions:
       definicaoDeProcedimentoNome:
         type: string
         description: Nome da definição do procedimento
+      variaveis:
+        type: array
+        items:
+          $ref: "#/definitions/Variavel"      
       eventos:
         type: array
         items:
           $ref: "#/definitions/Evento"      
+      acoes:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"      
         
+  Acao:
+    description: Ação que pode ser realizada a um procedimento
+    type: object
+    properties:
+      nome:
+        type: string
+      icone:
+        type: string
+      nameSpace:
+        type: string
+      acao:
+        type: string
+      pode:
+        type: boolean
+      explicacao:
+        type: string
+      msgConfirmacao:
+        type: string
+      params:
+        type: string
+      pre:
+        type: string
+      pos:
+        type: string
+      classe:
+        type: string
+      modal:
+        type: string
+      post:
+        type: boolean
+
   Evento:
     type: object
     properties:
       eventoId:
         type: string
         description: Identificador do evento
+      eventoHora:
+        type: string
+        format: date-time
+        description: Data e hora do evento
+      eventoTempoRelativo:
+        type: string
+        description: Tempo transcorrido do evento
       eventoTitulo:
         type: string
         description: Título do evento
@@ -837,9 +918,19 @@ definitions:
       variavelTipo:
         type: string
         description: Tipo da variável
-      variavelValor:
+      variavelValorString:
         type: string
-        description: Valor da variável
+        description: Valor string da variável
+      variavelValorDate:
+        type: string
+        format: date-time
+        description: Valor data da variável
+      variavelValorBoolean:
+        type: boolean
+        description: Valor lógico da variável
+      variavelValorNumber:
+        type: number
+        description: Valor numérido da variável
         
   DefinicaoDeResponsavel:
     type: object
@@ -944,7 +1035,7 @@ definitions:
         type: string
         description: Identificador da tarefa seguinte
       definicaoDeTarefaUltimo:
-        type: string
+        type: boolean
         description: Indica se depois dessa tarefa deve prosseguir direto para o fim
       tipoDeResponsavel:
         type: string
@@ -1015,7 +1106,7 @@ definitions:
         type: string
         description: Identificador da próxima tarefa apontada por este desvio
       definicaoDeTarefaUltimo:
-        type: string
+        type: boolean
         description: Indica se depois desse desvio deve prosseguir direto para o fim
 
 

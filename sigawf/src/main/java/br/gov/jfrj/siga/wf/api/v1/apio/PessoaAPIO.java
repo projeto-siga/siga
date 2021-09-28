@@ -8,7 +8,7 @@ public class PessoaAPIO extends Pessoa {
 		if (p == null)
 			return null;
 		PessoaAPIO o = new PessoaAPIO();
-		o.id = Long.toString(p.getId());
+		o.id = LongAPIO.of(p.getId());
 		o.sigla = p.getSigla();
 		o.descr = p.getDescricao();
 		return o;

@@ -20,6 +20,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -234,71 +235,38 @@ public class WfAppController extends WfController {
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
 		WfProcedimento pi = loadTaskInstance(piId);
-
 		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
 
-		// TODO Pegar automaticamente
-
-		// WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
-
-		Map<String, Object> param = new HashMap<>();
+		Map<String, String> params = new HashMap<>();
 
 		if (td.getVariable() != null) {
 			for (int n = 0, c = 0; n < campoIdentificador.length; n++) {
-				// Associa cada variavel com seu valore especifico
+				// Corrige o vetor incluindo as siglas que vêm em parâmetros diferentes
 				for (WfDefinicaoDeVariavel variable : td.getVariable()) {
-					if (campoIdentificador[n] == null)
+					if (campoIdentificador[n] == null || c >= campoValor.length)
 						continue;
 					if (variable.getIdentifier().equals(campoIdentificador[n])
 							&& (variable.getEditingKind() == VariableEditingKind.READ_WRITE
 									|| variable.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED)) {
 						Object value;
-						StringQualquer campo = campoValor[c];
 						if (variable.getTipo() == WfTipoDeVariavel.DOC_MOBIL) {
-							value = param(variable.getIdentifier() + "_expedienteSel.sigla");
+							campoValor[c] = new StringQualquer(
+									param(variable.getIdentifier() + "_expedienteSel.sigla"));
 						} else if (variable.getTipo() == WfTipoDeVariavel.PESSOA) {
-							value = param(variable.getIdentifier() + "_pessoaSel.sigla");
+							campoValor[c] = new StringQualquer(param(variable.getIdentifier() + "_pessoaSel.sigla"));
 						} else if (variable.getTipo() == WfTipoDeVariavel.LOTACAO) {
-							value = param(variable.getIdentifier() + "_lotacaoSel.sigla");
-						} else if (variable.getTipo() == WfTipoDeVariavel.DATE) {
-							value = SigaCalendar.converteStringEmData(campo.toString());
-							c++;
-						} else if (variable.getTipo() == WfTipoDeVariavel.BOOLEAN) {
-							value = converterParaBoolean(campo);
-							c++;
-						} else if (variable.getTipo() == WfTipoDeVariavel.DOUBLE) {
-							value = converterParaDouble(campo);
-							c++;
-						} else if (variable.getTipo() == WfTipoDeVariavel.SELECAO) {
-							value = campo;
-							c++;
-						} else {
-							value = campo;
-							c++;
+							campoValor[c] = new StringQualquer(param(variable.getIdentifier() + "_lotacaoSel.sigla"));
 						}
-
-						if (value instanceof StringQualquer)
-							value = ((StringQualquer) value).toString();
-
-						// TODO: Verifica se as variáveis "required" foram preenchidas
-						if (variable.isRequired() && (value == null
-								|| (value instanceof String && (((String) value).trim().length() == 0)))) {
-							throw new AplicacaoException("O campo " + variable.getTitle() + " deve ser preenchido");
-						}
-
-						param.put(campoIdentificador[n], value);
+						params.put(variable.getIdentifier(), campoValor[c].toString());
+						c++;
+						break;
 					}
 				}
 			}
 		}
 
-		Integer desvio = null;
-		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
-			desvio = indiceDoDesvio;
-		}
-
-		Wf.getInstance().getBL().prosseguir(pi.getEvent(), desvio, param, getTitular(), getLotaTitular(),
-				getIdentidadeCadastrante());
+		WfProcedimento piAlterado = WfBL.converterVariaveisEProsseguir(pi, params, indiceDoDesvio, getTitular(),
+				getLotaTitular(), getIdentidadeCadastrante());
 
 		// Redireciona para a pagina escolhida quando o procedimento criar uma
 		// variavel pre-definida
@@ -325,35 +293,13 @@ public class WfAppController extends WfController {
 		// task existir e for designado para o mesmo ator, então a próxima
 		// página a ser exibida será a página de apresentação do task, e não a
 		// página inicial.
-		if (pi.getStatus() == ProcessInstanceStatus.PAUSED && pi.getEventoLotacao() != null
-				&& pi.getEventoLotacao().equivale(getLotaTitular())) {
-			result.redirectTo(this).procedimento(pi.getId());
+		if (piAlterado.getStatus() == ProcessInstanceStatus.PAUSED && piAlterado.getEventoLotacao() != null
+				&& piAlterado.getEventoLotacao().equivale(getLotaTitular())) {
+			result.redirectTo(this).procedimento(piAlterado.getId());
 			return;
 		}
 
-		result.redirectTo(this).procedimento(pi.getId());
-	}
-
-	private Boolean converterParaBoolean(StringQualquer campo) {
-		if (campo == null)
-			return null;
-		String s = campo.toString().trim();
-		if (s.length() == 0)
-			return null;
-		return "1".equals(s) || "true".equals(s);
-	}
-
-	private Double converterParaDouble(StringQualquer campo) {
-		if (campo == null)
-			return null;
-		String s = campo.toString().trim();
-		if (s.length() == 0)
-			return null;
-		if (s.contains("."))
-			s = s.replace(".", "");
-		if (s.contains(","))
-			s = s.replace(",", ".");
-		return Double.parseDouble(s);
+		result.redirectTo(this).procedimento(piAlterado.getId());
 	}
 
 	@Transacional

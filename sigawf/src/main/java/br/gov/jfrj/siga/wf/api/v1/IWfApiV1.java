@@ -19,17 +19,42 @@ public interface IWfApiV1 {
 		public Lotacao lotaAtendente;
 		public String prioridadeId;
 		public String prioridadeNome;
+		public String vizProcedimento;
+		public String msgAviso;
+		public Boolean formulario;
+		public Boolean desabilitarFormulario;
 		public String tarefaTitulo;
 		public Date tarefaDataDeInicio;
-		public String tarefaTempoTranscorrido;
+		public String tarefaTempoRelativo;
+		public DefinicaoDeTarefa definicaoDeTarefaCorrente;
 		public String definicaoDeProcedimentoId;
 		public String definicaoDeProcedimentoSigla;
 		public String definicaoDeProcedimentoNome;
+		public List<Variavel> variaveis = new ArrayList<>();
 		public List<Evento> eventos = new ArrayList<>();
+		public List<Acao> acoes = new ArrayList<>();
+	}
+
+	public static class Acao implements ISwaggerModel {
+		public String nome;
+		public String icone;
+		public String nameSpace;
+		public String acao;
+		public Boolean pode;
+		public String explicacao;
+		public String msgConfirmacao;
+		public String params;
+		public String pre;
+		public String pos;
+		public String classe;
+		public String modal;
+		public Boolean post;
 	}
 
 	public static class Evento implements ISwaggerModel {
 		public String eventoId;
+		public Date eventoHora;
+		public String eventoTempoRelativo;
 		public String eventoTitulo;
 		public String eventoDescr;
 		public Pessoa responsavel;
@@ -39,7 +64,10 @@ public interface IWfApiV1 {
 	public static class Variavel implements ISwaggerModel {
 		public String variavelIdentificador;
 		public String variavelTipo;
-		public String variavelValor;
+		public String variavelValorString;
+		public Date variavelValorDate;
+		public Boolean variavelValorBoolean;
+		public Double variavelValorNumber;
 	}
 
 	public static class DefinicaoDeResponsavel implements ISwaggerModel {
@@ -82,7 +110,7 @@ public interface IWfApiV1 {
 		public String definicaoDeTarefaAssunto;
 		public String definicaoDeTarefaConteudo;
 		public String definicaoDeTarefaSeguinteId;
-		public String definicaoDeTarefaUltimo;
+		public Boolean definicaoDeTarefaUltimo;
 		public String tipoDeResponsavel;
 		public String definicaoDeResponsavelId;
 		public Pessoa responsavel;
@@ -109,7 +137,7 @@ public interface IWfApiV1 {
 		public String definicaoDeDesvioNome;
 		public String definicaoDeDesvioCondicao;
 		public String definicaoDeTarefaSeguinteId;
-		public String definicaoDeTarefaUltimo;
+		public Boolean definicaoDeTarefaUltimo;
 	}
 
 	public static class Enumeravel implements ISwaggerModel {
@@ -162,6 +190,7 @@ public interface IWfApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
+			public Procedimento procedimento;
 		}
 
 		public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception;
@@ -175,6 +204,7 @@ public interface IWfApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
+			public Procedimento procedimento;
 		}
 
 		public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception;
@@ -186,6 +216,7 @@ public interface IWfApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
+			public Procedimento procedimento;
 		}
 
 		public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception;
@@ -198,6 +229,7 @@ public interface IWfApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
+			public Procedimento procedimento;
 		}
 
 		public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception;
@@ -209,6 +241,7 @@ public interface IWfApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
+			public Procedimento procedimento;
 		}
 
 		public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception;
@@ -221,6 +254,7 @@ public interface IWfApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
+			public Procedimento procedimento;
 		}
 
 		public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception;
@@ -233,6 +267,7 @@ public interface IWfApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
+			public Procedimento procedimento;
 		}
 
 		public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception;

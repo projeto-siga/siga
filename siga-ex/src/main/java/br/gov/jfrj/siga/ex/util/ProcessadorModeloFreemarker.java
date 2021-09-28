@@ -115,6 +115,18 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			temp.process(root, out);
 			out.flush();
 			String processed = baos.toString(StandardCharsets.UTF_8.name());
+			
+			// Reprocessar para substituir variáveis declaradas nos campos da entrevista
+			if (root.get("gerar_documento") != null || root.get("gerar_descricao") != null) {
+				baos.reset();
+				// Altera para que não seja necessário aplicar o (...)! manualmente
+				processed = processed.replaceAll("\\$\\{([^\\}]+)\\}", "\\${($1)!}");
+				temp = new Template(((String) attrs.get("nmMod")) + " (post-processing)", new StringReader(processed), cfg);
+				temp.process(root, out);
+				out.flush();
+				processed = baos.toString(StandardCharsets.UTF_8.name());
+			}
+			
 			return processed;
 		} catch (TemplateException e) {
 			if (e.getCauseException() != null

@@ -82,6 +82,7 @@ public class ProcessadorReferencias {
 		s = s.replace("<!-- FIM PRIMEIRO RODAPE -->", "FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE -->", "<!-- INICIO RODAPE");
 		s = s.replace("<!-- FIM RODAPE -->", "FIM RODAPE -->");
+		
 		return s;
 	}
 
@@ -185,7 +186,7 @@ public class ProcessadorReferencias {
 			}
 		}
 
-		final Pattern p2 = Pattern.compile("TMP-([0-9]{1,7})");
+		final Pattern p2 = Pattern.compile("TMP-([0-9]{1,10})");
 		final Pattern p1 = Pattern
 				.compile("("
 						+ acronimos

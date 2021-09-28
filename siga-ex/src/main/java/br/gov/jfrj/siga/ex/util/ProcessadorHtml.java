@@ -290,6 +290,7 @@ public class ProcessadorHtml {
 		
 		
 		
+		
 		int posIniFootnote = s.indexOf("<div style=\"font-size:11pt;\" class=\"footnotes\">");
 		
 		if (posIniFootnote > 0) {
@@ -365,6 +366,7 @@ public class ProcessadorHtml {
 		s = s.replace("<!-- FIM PRIMEIRO RODAPE -->", "FIM PRIMEIRO RODAPE -->");
 		s = s.replace("<!-- INICIO RODAPE -->", "<!-- INICIO RODAPE");
 		s = s.replace("<!-- FIM RODAPE -->", "FIM RODAPE -->");
+
 
 		s = s.replace("\r\n", "*newline*");
 		s = s.replace("\n", "*newline*");

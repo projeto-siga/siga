@@ -366,10 +366,13 @@
 											class="form-check-input ml-2" ${not empty  exDocumentoDTO.cnpjRequerente  ? 'checked' : ''} />
 										<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
 							
+							 
+							  
 									<input  type="text" id="cpfRequerente"  name="exDocumentoDTO.cpfRequerente"   value="${exDocumentoDTO.cpfRequerente}"  
 										  class="form-control"    maxlength="11"   />
 									<input type="text" id="cnpjRequerente" name="exDocumentoDTO.cnpjRequerente" value="${exDocumentoDTO.cnpjRequerente}"
 										 class="form-control"   maxlength="14"   />
+							 	
 								 
 								</div>
 							</div>
@@ -379,7 +382,7 @@
 							
 							<div class="col-sm-6">
 								<div class="form-group">
-									<label id="lblRequerenteNome">Nome</label> 
+									<label id="lblNomeRequerente">Nome</label> 
 									<input type="text"	id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"
 											value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"  onkeyup="validarTexto(this)">
 								</div>
@@ -876,6 +879,8 @@
 			document.getElementById('cpfRequerente').value = '';
 			document.getElementById('matriculaRequerente').value = '';
 			document.getElementById('lblMatriculaRequerente').style.display = '';
+
+			document.getElementById("lblNomeRequerente").innerHTML ='Nome';
 			break;
 		case 2:
 			document.getElementById('cnpjRequerente').style.display = '';
@@ -886,6 +891,9 @@
 			document.getElementById('cpfRequerente').value = '';
 			document.getElementById('matriculaRequerente').value = '';
 			document.getElementById('lblMatriculaRequerente').style.display = 'none';
+
+			document.getElementById("lblNomeRequerente").innerHTML ='Razão Social';
+			
 			break;
 		}
 }

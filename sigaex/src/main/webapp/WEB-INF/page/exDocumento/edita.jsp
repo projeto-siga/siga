@@ -357,8 +357,8 @@
 						<input type="hidden" name="campos" value="cepRequerente" />
 						
 						<div class="row">
-							<div class="form-check form-check-inline mt-2">
-								<div class="form-group">
+							<div class="col-sm-4">
+								<div class="form-group form-check form-check-inline">
 									<input type="radio" id="tipoDocumentoCPF" name="exdocumentoDTO.tipoDocumentoRequerente" value="1" onclick="alterarDocumentoRequerente(1);"
 											class="form-check-input" ${not empty  exDocumentoDTO.cpfRequerente ? 'checked' : ''} />
 										<label class="form-check-label" for="tipoDocumentoCPF">CPF</label>
@@ -367,15 +367,17 @@
 										<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
 							
 							 
-							  
+								</div>
+							</div>
+							  <div class="col-sm-2">
+								<div class="form-group">
 									<input  type="text" id="cpfRequerente"  name="exDocumentoDTO.cpfRequerente"   value="${exDocumentoDTO.cpfRequerente}"  
 										  class="form-control"    maxlength="11"   />
 									<input type="text" id="cnpjRequerente" name="exDocumentoDTO.cnpjRequerente" value="${exDocumentoDTO.cnpjRequerente}"
 										 class="form-control"   maxlength="14"   />
 							 	
-								 
-								</div>
-							</div>
+									</div>
+							</div> 
 						</div>
 
 						<div class="row">

@@ -5,12 +5,13 @@ function displayPossuiRequerente(thisElement) {
 	var thatElement = document.getElementById('tr_possuiRequerente');
 	if (thisElement.checked){
 		thatElement.style.display = '';
-		document.getElementById('cpfRequerente').style.display = 'none';
-		document.getElementById('cnpjRequerente').style.display = 'none';
-		document.getElementById('matriculaRequerente').style.display = 'none';
-		document.getElementById('lblMatriculaRequerente').style.display = 'none';
-		
+
 		document.getElementById('tipoDocumentoCPF').checked = true;
+		document.getElementById('cpfRequerente').style.display = '';
+		document.getElementById('lblMatriculaRequerente').style.display = '';
+		document.getElementById('matriculaRequerente').style.display = '';
+		
+		document.getElementById('cnpjRequerente').style.display = 'none';
 		document.getElementById('tipoDocumentoCNPJ').checked = false;
 	}else {
 		thatElement.style.display = 'none';
@@ -22,6 +23,7 @@ function displayPossuiRequerente(thisElement) {
 		
 		document.getElementById('matriculaRequerente').value = '';
 		document.getElementById('matriculaRequerente').style.display = 'none';
+		document.getElementById('lblMatriculaRequerente').style.display = '';
 		
 		document.getElementById('nomeRequerente').value = '';
 		

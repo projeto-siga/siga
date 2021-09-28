@@ -8,8 +8,14 @@ function displayPossuiRequerente(thisElement) {
 	else {
 		thatElement.style.display = 'none';
 		document.getElementById('cpfRequerente').value = '';
+		document.getElementById('cpfRequerente').style.display = 'none';
+		
 		document.getElementById('cnpjRequerente').value = '';
+		document.getElementById('cnpjRequerente').style.display = 'none';
+		
 		document.getElementById('matriculaRequerente').value = '';
+		document.getElementById('matriculaRequerente').style.display = 'none';
+		
 		document.getElementById('nomeRequerente').value = '';
 		
 		document.getElementById('tipoLogradouroRequerente').value = '';

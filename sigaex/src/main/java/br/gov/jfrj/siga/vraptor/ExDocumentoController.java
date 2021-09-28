@@ -56,6 +56,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jboss.logging.Logger;
 
+import com.auth0.jwt.internal.org.apache.commons.lang3.StringUtils;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -523,6 +525,10 @@ public class ExDocumentoController extends ExController {
 
 		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
 
+			if (exDocumentoDTO.getTipoDocumentoRequerente() == 0){
+				exDocumentoDTO.setTipoDocumentoRequerente(1); //cpf
+			}
+			
 			if (exDocumentoDTO.getTipoDestinatario() == null)
 				exDocumentoDTO.setTipoDestinatario(2);
 
@@ -2316,7 +2322,8 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setPersonalizacao(doc.getNmFuncaoSubscritor() != null);
 		
 		exDocumentoDTO.setPossuiRequerente(doc.isPossuiRequerente());
-
+		exDocumentoDTO.setTipoDocumentoRequerente( doc.getCnpjRequerente() != null ? 2 : 1);
+		
 		// TODO Verificar se ha realmente a necessidade de setar novamente o
 		// nível de acesso do documento
 		// tendo em vista que o nível de acesso já foi setado anteriormente
@@ -2472,7 +2479,7 @@ public class ExDocumentoController extends ExController {
 		doc.setTipoLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getTipoLogradouroRequerente() : null);
 		doc.setLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getLogradouroRequerente() : null);
 		doc.setNumeroLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getNumeroLogradouroRequerente() : null);		
-		doc.setComplementoLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getTipoLogradouroRequerente() : null);
+		doc.setComplementoLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getComplementoLogradouroRequerente() : null);
 		doc.setBairroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getBairroRequerente() : null);		
 		doc.setCidadeRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCidadeRequerente() : null);
 		doc.setUfRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getUfRequerente() : null);

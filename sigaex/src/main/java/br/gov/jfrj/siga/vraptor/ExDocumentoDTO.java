@@ -263,6 +263,8 @@ public class ExDocumentoDTO {
 	
 	private String cepRequerente;
 	
+	private int tipoDocumentoRequerente;
+	
 	public ExDocumentoDTO() {
 		classificacaoSel = new ExClassificacaoSelecao();
 		destinatarioSel = new DpPessoaSelecao();
@@ -1166,4 +1168,14 @@ public class ExDocumentoDTO {
 	public void setLogradouroRequerente(String logradouroRequerente) {
 		this.logradouroRequerente = logradouroRequerente;
 	}
+
+	public int getTipoDocumentoRequerente() {
+		return tipoDocumentoRequerente;
+	}
+
+	public void setTipoDocumentoRequerente(int tipoDocumentoRequerente) {
+		this.tipoDocumentoRequerente = tipoDocumentoRequerente;
+	}
+	
+	
 }

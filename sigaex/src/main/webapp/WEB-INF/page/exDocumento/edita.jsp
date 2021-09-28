@@ -327,7 +327,7 @@
 					<div class="row">
 						<div class="col-sm-2">
 							<div class="form-group">
-								<div class="form-check form-check-inline mt-4">
+								<div class="form-check form-check-inline mt-2">
 									<input type="checkbox" name="exDocumentoDTO.possuiRequerente"
 										class="form-check-input ml-3"
 										onclick="javascript:displayPossuiRequerente(this);"
@@ -341,7 +341,6 @@
 						</div>
 					</div>
 
-					<div class="row">
 					<div id="tr_possuiRequerente" style="display: ${exDocumentoDTO.possuiRequerente? '': 'none'};">
 						
 						<input type="hidden" name="campos" value="cpfRequerente" />
@@ -357,49 +356,45 @@
 						<input type="hidden" name="campos" value="ufRequerente" />
 						<input type="hidden" name="campos" value="cepRequerente" />
 						
-						<div class="col-sm-4">
-							<div class="form-group">
-								<div class="form-check form-check-inline">
-									<input type="radio" id="tipoDocumentoCPF" name="tipoDocumentoRequerente" value="1" onclick="alterarDocumentoRequerente(1);"
-										class="form-check-input" ${not empty  exDocumentoDTO.cpfRequerente ? 'checked' : ''} />
-									<label class="form-check-label" for="tipoDocumentoCPF">CPF</label>
-									<input type="radio" id="tipoDocumentoCNPJ" name="tipoDocumentoRequerente" value="2" onclick="alterarDocumentoRequerente(2);" 
-										class="form-check-input ml-2" ${not empty  exDocumentoDTO.cnpjRequerente  ? 'checked' : ''} />
-									<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
-								</div>	
+						<div class="row">
+							<div class="form-check form-check-inline mt-2">
+								<div class="form-group">
+									<input type="radio" id="tipoDocumentoCPF" name="exdocumentoDTO.tipoDocumentoRequerente" value="1" onclick="alterarDocumentoRequerente(1);"
+											class="form-check-input" ${not empty  exDocumentoDTO.cpfRequerente ? 'checked' : ''} />
+										<label class="form-check-label" for="tipoDocumentoCPF">CPF</label>
+									<input type="radio" id="tipoDocumentoCNPJ" name="exdocumentoDTO.tipoDocumentoRequerente" value="2" onclick="alterarDocumentoRequerente(2);" 
+											class="form-check-input ml-2" ${not empty  exDocumentoDTO.cnpjRequerente  ? 'checked' : ''} />
+										<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
+							
+									<input  type="text" id="cpfRequerente"  name="exDocumentoDTO.cpfRequerente"   value="${exDocumentoDTO.cpfRequerente}"  
+										  class="form-control"    maxlength="11"   />
+									<input type="text" id="cnpjRequerente" name="exDocumentoDTO.cnpjRequerente" value="${exDocumentoDTO.cnpjRequerente}"
+										 class="form-control"   maxlength="14"   />
+								 
+								</div>
 							</div>
 						</div>
-						
-						<div class="form-row">
-							<div class="col-sm-2" >
-								<div class="form-group">
-									<label>Número</label>
-									 
- 									<input  type="text" id="cpfRequerente"  name="exDocumentoDTO.cpfRequerente"   value="${exDocumentoDTO.cpfRequerente}"    class="form-control"   maxlength="11" />
-									<input type="text" id="cnpjRequerente" name="exDocumentoDTO.cnpjRequerente" value="${exDocumentoDTO.cnpjRequerente}" class="form-control"   maxlength="14" >
-								</div>
-							</div>
-							 
-							 <div class="col-sm-2">
-								<div class="form-group">
-									<label>Matrícula</label>
-									<input type="text" id="matriculaRequerente" name="exDocumentoDTO.matriculaRequerente" value="${exDocumentoDTO.matriculaRequerente}" class="form-control"   maxlength="8" >
-								</div>
-							</div>
+
+						<div class="row">
 							
 							<div class="col-sm-6">
-								<div class="form-group" >
-									<label>Nome</label>
-									<input type="text" id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"  value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125">
+								<div class="form-group">
+									<label id="lblRequerenteNome">Nome</label> 
+									<input type="text"	id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"
+											value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"  onkeyup="validarTexto(this)">
 								</div>
 							</div>
-					</div>
-					
-
-
-
-					<div class="form-row">
 							
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label id="lblMatriculaRequerente">Matrícula</label> 
+									<input type="text" id="matriculaRequerente"	name="exDocumentoDTO.matriculaRequerente"
+										value="${exDocumentoDTO.matriculaRequerente}" class="form-control" maxlength="8">
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label>Tipo Logradouro</label>
@@ -412,14 +407,12 @@
 									<input type="text" id="logradouroRequerente" name="exDocumentoDTO.logradouroRequerente" value="${exDocumentoDTO.logradouroRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
-							 
-							 <div class="col-sm-2">
+		     				<div class="col-sm-2">
 								<div class="form-group">
 									<label>Número</label>
 									<input type="text" id="numeroLogradouroRequerente" name="exDocumentoDTO.numeroLogradouroRequerente" value="${exDocumentoDTO.numeroLogradouroRequerente}" class="form-control">
 								</div>
 							</div>
-							
 							<div class="col-sm-2">
 								<div class="form-group" >
 									<label>Complemento</label>
@@ -428,9 +421,7 @@
 							</div>
 						</div>
 						
-							<div class="row">
-							
-							
+						<div class="row">
 							<div class="col-sm-4">
 								<div class="form-group">
 									<label>Bairro</label>
@@ -443,14 +434,12 @@
 									<input type="text" 	id="cidadeRequerente" name="exDocumentoDTO.cidadeRequerente" value="${exDocumentoDTO.cidadeRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
-							 
-							 <div class="col-sm-1">
+                            <div class="col-sm-1">
 								<div class="form-group">
 									<label>UF</label>
 									<input type="text" 	id="ufRequerente" name="exDocumentoDTO.ufRequerente" value="${exDocumentoDTO.ufRequerente}" class="form-control" maxlength="2">
 								</div>
 							</div>
-							
 							<div class="col-sm-2">
 								<div class="form-group" >
 									<label>CEP</label>
@@ -460,7 +449,7 @@
 						</div>
 						
 				</div>
-			</div>	
+		 	
 				<input type="hidden" name="campos" value="tipoDestinatario" />
 				<c:if test='${exDocumentoDTO.tipoDocumento != "interno_capturado" }'> 
 				<div class="row ${hide_only_GOVSP}">
@@ -876,24 +865,159 @@
 
 
 	function alterarDocumentoRequerente(tipodocumento) {
-
+		
 		switch (tipodocumento) {
 		case 1:
 			document.getElementById('cpfRequerente').style.display = '';
+			document.getElementById('matriculaRequerente').style.display = '';
 			document.getElementById('cnpjRequerente').style.display = 'none';
 			
 			document.getElementById('cnpjRequerente').value = '';
 			document.getElementById('cpfRequerente').value = '';
+			document.getElementById('matriculaRequerente').value = '';
+			document.getElementById('lblMatriculaRequerente').style.display = '';
 			break;
 		case 2:
 			document.getElementById('cnpjRequerente').style.display = '';
 			document.getElementById('cpfRequerente').style.display = 'none';
+			document.getElementById('matriculaRequerente').style.display = 'none';
 			
 			document.getElementById('cnpjRequerente').value = '';
 			document.getElementById('cpfRequerente').value = '';
+			document.getElementById('matriculaRequerente').value = '';
+			document.getElementById('lblMatriculaRequerente').style.display = 'none';
 			break;
 		}
 }
+
+	function cpf_mask(v){
+		v=v.replace(/\D/g,"");
+		v=v.replace(/(\d{3})(\d)/,"$1.$2");
+		v=v.replace(/(\d{3})(\d)/,"$1.$2");
+		v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+		if(v.length == 14) {
+	    	validarCPF(v);
+	    }
+		return v;
+		}
+
+	function cnpj_mask(v){
+		v=v.replace(/^(\d{2})(\d)/,"$1.$2")
+	    v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3")
+	    v=v.replace(/\.(\d{3})(\d)/,".$1/$2")
+	    v=v.replace(/(\d{4})(\d)/,"$1-$2")
+	    
+	    if(v.length == 18) {
+	    	validarCNPJ(v);
+	    }
+	    return v;
+	}
+
+	function validarTexto(campo) {
+		campo.value = campo.value.replace(/[^a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]/g,'');
+	}
+
+	function validarCpf(elemento) {
+		if (!isCpfValido(elemento.val())) {
+			alert(elemento, 'Favor informar um CPF válido');
+		}		
+	}
+
+	function validarCnpj(elemento) {
+		if (!isCnpjValido(elemento.val())) {
+			alert(elemento, 'Favor informar um CNPJ válido');
+		}				
+	}
+	
+	function isCpfValido(cpf) {	
+		cpf = cpf.replace(/[^\d]+/g,'');	
+	    if(cpf == '') return false;	
+	    // Elimina CPFs invalidos conhecidos	
+	    if (cpf.length != 11 || 
+	        cpf == "00000000000" || 
+	        cpf == "11111111111" || 
+	        cpf == "22222222222" || 
+	        cpf == "33333333333" || 
+	        cpf == "44444444444" || 
+	        cpf == "55555555555" || 
+	        cpf == "66666666666" || 
+	        cpf == "77777777777" || 
+	        cpf == "88888888888" || 
+	        cpf == "99999999999")
+	      return false;		
+	    // Valida 1o digito	
+	    add = 0;	
+	    for (i=0; i < 9; i ++)		
+	      add += parseInt(cpf.charAt(i)) * (10 - i);	
+	    rev = 11 - (add % 11);	
+	    if (rev == 10 || rev == 11)		
+	      rev = 0;	
+	    if (rev != parseInt(cpf.charAt(9)))		
+	      return false;		
+	    // Valida 2o digito	
+	    add = 0;	
+	    for (i = 0; i < 10; i ++)		
+	      add += parseInt(cpf.charAt(i)) * (11 - i);	
+	    rev = 11 - (add % 11);	
+	    if (rev == 10 || rev == 11)	
+	      rev = 0;	
+	    if (rev != parseInt(cpf.charAt(10)))
+	      return false;		
+	    return true;   
+	}
+
+	function isCnpjValido(cnpj) {
+	    cnpj = cnpj.replace(/[^\d]+/g,'');
+
+	    if(cnpj == '') return false;
+
+	    if (cnpj.length != 14)
+	      return false;
+
+	    // Elimina CNPJs invalidos conhecidos
+	    if (cnpj == "00000000000000" || 
+	        cnpj == "11111111111111" || 
+	        cnpj == "22222222222222" || 
+	        cnpj == "33333333333333" || 
+	        cnpj == "44444444444444" || 
+	        cnpj == "55555555555555" || 
+	        cnpj == "66666666666666" || 
+	        cnpj == "77777777777777" || 
+	        cnpj == "88888888888888" || 
+	        cnpj == "99999999999999")
+	      return false;
+
+	    // Valida DVs
+	    tamanho = cnpj.length - 2
+	      numeros = cnpj.substring(0,tamanho);
+	    digitos = cnpj.substring(tamanho);
+	    soma = 0;
+	    pos = tamanho - 7;
+	    for (i = tamanho; i >= 1; i--) {
+	      soma += numeros.charAt(tamanho - i) * pos--;
+	      if (pos < 2)
+	        pos = 9;
+	    }
+	    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+	    if (resultado != digitos.charAt(0))
+	      return false;
+
+	    tamanho = tamanho + 1;
+	    numeros = cnpj.substring(0,tamanho);
+	    soma = 0;
+	    pos = tamanho - 7;
+	    for (i = tamanho; i >= 1; i--) {
+	      soma += numeros.charAt(tamanho - i) * pos--;
+	      if (pos < 2)
+	        pos = 9;
+	    }
+	    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+	    if (resultado != digitos.charAt(1))
+	      return false;
+
+	    return true;
+	}
 </script>
 
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>

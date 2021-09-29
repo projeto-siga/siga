@@ -15,6 +15,7 @@
 <c:set var="texto4"><fmt:message key="tela.consultaprocessopublico.texto4" /></c:set>
 <c:set var="texto5"><fmt:message key="tela.consultaprocessopublico.texto5" /></c:set>
 <c:set var="texto6"><fmt:message key="tela.consultaprocessopublico.texto6" /></c:set>
+<c:set var="texto6"><fmt:message key="tela.consultaprocessopublico.texto7" /></c:set>
 
 
 <siga:pagina titulo="Consulta de Processos e Expedientes" desabilitarmenu="sim"
@@ -71,7 +72,8 @@
 				    <c:if test="${!fn:startsWith(texto3,'???')}">	<p>    ${texto3} </p></c:if>
 				    <c:if test="${!fn:startsWith(texto4,'???')}">	<p>    ${texto4} </p></c:if>
 				    <c:if test="${!fn:startsWith(texto5,'???')}">	<p>    ${texto5} </p></c:if>
-					<c:if test="${!fn:startsWith(texto6,'???')}">	<p><u> ${texto6} </u></p></c:if> 
+				    <c:if test="${!fn:startsWith(texto6,'???')}">	<p>    ${texto6} </p></c:if>
+					<c:if test="${!fn:startsWith(texto7,'???')}">	<p><u> ${texto7} </u></p></c:if> 
 					
 					 
 				  </div>

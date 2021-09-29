@@ -895,6 +895,7 @@ public class CpBL {
 
 
 		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
+			consisteFormatoSenha(senhaNova);
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				final String hashNova = GeraMessageDigest.executaHash(senhaNova.getBytes(), "MD5");

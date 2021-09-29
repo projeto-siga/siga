@@ -1308,7 +1308,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		
 		String endereco = StringUtils.isNotBlank(this.tipoLogradouroRequerente) ?   this.tipoLogradouroRequerente+" ":" ";
 				endereco += StringUtils.isNotBlank(this.logradouroRequerente) ?   this.logradouroRequerente+", ":" ";
-				endereco += StringUtils.isNotBlank(this.numeroLogradouroRequerente) ?   this.numeroLogradouroRequerente+" - ":"s/n ";
+				endereco += StringUtils.isNotBlank(this.numeroLogradouroRequerente) ?   this.numeroLogradouroRequerente+" - ":" ";
 				endereco += StringUtils.isNotBlank(this.complementoLogradouroRequerente) ?   this.complementoLogradouroRequerente+" ":" ";
 				endereco += StringUtils.isNotBlank(this.bairroRequerente) ?   this.bairroRequerente+" ":" ";
 				endereco += StringUtils.isNotBlank(this.cidadeRequerente) ?   this.cidadeRequerente+" ":" ";

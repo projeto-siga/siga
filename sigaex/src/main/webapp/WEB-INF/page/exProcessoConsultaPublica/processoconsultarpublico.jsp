@@ -15,7 +15,7 @@
 <c:set var="texto4"><fmt:message key="tela.consultaprocessopublico.texto4" /></c:set>
 <c:set var="texto5"><fmt:message key="tela.consultaprocessopublico.texto5" /></c:set>
 <c:set var="texto6"><fmt:message key="tela.consultaprocessopublico.texto6" /></c:set>
-<c:set var="texto6"><fmt:message key="tela.consultaprocessopublico.texto7" /></c:set>
+<c:set var="texto7"><fmt:message key="tela.consultaprocessopublico.texto7" /></c:set>
 
 
 <siga:pagina titulo="Consulta de Processos e Expedientes" desabilitarmenu="sim"

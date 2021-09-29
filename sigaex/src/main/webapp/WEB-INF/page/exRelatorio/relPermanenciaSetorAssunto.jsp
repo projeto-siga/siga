@@ -31,9 +31,9 @@ fieldset.group legend {
 }
 
 ul.checkbox {
- 	columns: 2;
-    -webkit-columns: 2;
-    -moz-columns: 2;
+ 	columns: 1;
+    -webkit-columns: 1;
+    -moz-columns: 1;
 	margin: 0;
 	padding: 0;
 	margin-left: 20px;
@@ -67,7 +67,7 @@ Relatório de Permanência por Setor e Assunto
 <input type="hidden" name="secaoUsuario" id="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 
-<div class="row">
+<div class="row" style="height: 300px; overflow-y: auto;">
 	<fieldset class="group">
 		<legend>Assuntos</legend>
 		<ul class="checkbox">

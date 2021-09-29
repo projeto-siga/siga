@@ -565,6 +565,8 @@ public class ExDocumentoController extends ExController {
 				if (modeloDefault == null && modelos.size() > 0)
 					modeloDefault = modelos.get(0);
 
+				
+				
 				if (modeloDefault == null)
 					throw new RuntimeException(
 							"Não foi possível carregar um modelo inicial");
@@ -826,6 +828,9 @@ public class ExDocumentoController extends ExController {
 			// System.out.println("*** " + p + ", "
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
+		
+		exDocumentoDTO.setPermiteRequerente( exDocumentoDTO.getModelo().getExFormaDocumento().isPermiteRequerente());
+
 		result.include("vars", l);
 
 		result.include("par", parFreeMarker);

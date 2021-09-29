@@ -56,6 +56,16 @@
 								  <label class="form-check-label${temDocumentoVinculado ? '  label-disabled' : ''}" for="isComposto">Documento Composto</label>
 								</div>
 							</div>
+						</div>
+						
+						<div class="col-md-2">
+							<div class="form-group">
+								<div class="form-check form-check-inline mt-4">
+								  <input class="form-check-input" type="checkbox" name="isPermiteRequerente" id="isPermiteRequerente" value="1"
+								   <c:if test="${isPermiteRequerente == 1}">checked</c:if>				  	/>
+								  <label  for="isPermiteRequerente">Permite Requerente</label>
+								</div>
+							</div>
 						</div>						
 					</div>			
 					<div class="row">

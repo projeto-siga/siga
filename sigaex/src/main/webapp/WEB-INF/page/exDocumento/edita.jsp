@@ -324,11 +324,12 @@
 					</div>
 				</div>
 
+<c:if test="${exDocumentoDTO.permiteRequerente}"> 
 					<div class="row">
 						<div class="col-sm-2">
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-2">
-									<input type="checkbox" name="exDocumentoDTO.possuiRequerente"
+									<input type="checkbox"  name="exDocumentoDTO.possuiRequerente"
 										class="form-check-input ml-3"
 										onclick="javascript:displayPossuiRequerente(this);"
 										<c:if test="${exDocumentoDTO.possuiRequerente}">checked</c:if> />
@@ -340,8 +341,9 @@
 							</div>
 						</div>
 					</div>
+</c:if>
 
-					<div id="tr_possuiRequerente" style="display: ${exDocumentoDTO.possuiRequerente? '': 'none'};">
+					<div id="tr_possuiRequerente" style="display: ${exDocumentoDTO.possuiRequerente and exDocumentoDTO.permiteRequerente ? '': 'none'};">
 						
 						<input type="hidden" name="campos" value="cpfRequerente" />
 						<input type="hidden" name="campos" value="cnpjRequerente" />
@@ -355,30 +357,45 @@
 						<input type="hidden" name="campos" value="cidadeRequerente" />
 						<input type="hidden" name="campos" value="ufRequerente" />
 						<input type="hidden" name="campos" value="cepRequerente" />
-						
+
+
 						<div class="row">
-							<div class="col-sm-4">
+							<div class="col-sm-3">
 								<div class="form-group form-check form-check-inline">
-									<input type="radio" id="tipoDocumentoCPF" name="exdocumentoDTO.tipoDocumentoRequerente" value="1" onclick="alterarDocumentoRequerente(1);"
-											class="form-check-input" ${not empty  exDocumentoDTO.cpfRequerente ? 'checked' : ''} />
-										<label class="form-check-label" for="tipoDocumentoCPF">CPF</label>
-									<input type="radio" id="tipoDocumentoCNPJ" name="exdocumentoDTO.tipoDocumentoRequerente" value="2" onclick="alterarDocumentoRequerente(2);" 
-											class="form-check-input ml-2" ${not empty  exDocumentoDTO.cnpjRequerente  ? 'checked' : ''} />
-										<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
-							
-							 
+									<input type="radio" id="tipoDocumentoCPF"
+										name="exdocumentoDTO.tipoDocumentoRequerente" value="1"
+										onclick="alterarDocumentoRequerente(1);"
+										class="form-check-input"
+										${not empty  exDocumentoDTO.cpfRequerente ? 'checked' : ''} />
+									<label class="form-check-label" for="tipoDocumentoCPF">CPF</label>
+									<input type="radio" id="tipoDocumentoCNPJ"
+										name="exdocumentoDTO.tipoDocumentoRequerente" value="2"
+										onclick="alterarDocumentoRequerente(2);"
+										class="form-check-input ml-2"
+										${not empty  exDocumentoDTO.cnpjRequerente  ? 'checked' : ''} />
+									<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
+
+
 								</div>
 							</div>
-							  <div class="col-sm-2">
+							<div class="col-sm-2">
 								<div class="form-group">
-									<input  type="text" id="cpfRequerente"  name="exDocumentoDTO.cpfRequerente"   value="${exDocumentoDTO.cpfRequerente}"  
-										  class="form-control"    maxlength="11"   />
-									<input type="text" id="cnpjRequerente" name="exDocumentoDTO.cnpjRequerente" value="${exDocumentoDTO.cnpjRequerente}"
-										 class="form-control"   maxlength="14"   />
-							 	
-									</div>
-							</div> 
+
+									 
+										<input type="text" id="cpfRequerente"
+											name="exDocumentoDTO.cpfRequerente"
+											value="${exDocumentoDTO.cpfRequerente}" class="form-control"
+											maxlength="11" />
+								 
+							 
+									<input type="text" id="cnpjRequerente"
+										name="exDocumentoDTO.cnpjRequerente"
+										value="${exDocumentoDTO.cnpjRequerente}" class="form-control"
+										maxlength="14" />
+							 
+							</div>
 						</div>
+					</div>
 
 						<div class="row">
 							
@@ -386,7 +403,7 @@
 								<div class="form-group">
 									<label id="lblNomeRequerente">Nome</label> 
 									<input type="text"	id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"
-											value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"  onkeyup="validarTexto(this)">
+											value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"   >
 								</div>
 							</div>
 							
@@ -738,6 +755,7 @@
 		if (valor !== '' && valor !== valorOriginal) {
 			document.getElementById('alterouModelo').value = 'true';
 			setModeloSelecionado (valor, valorOriginal);
+
 			sbmt();
 		}
 	}
@@ -894,7 +912,7 @@
 			document.getElementById('matriculaRequerente').value = '';
 			document.getElementById('lblMatriculaRequerente').style.display = 'none';
 
-			document.getElementById("lblNomeRequerente").innerHTML ='Razão Social';
+			document.getElementById("lblNomeRequerente").innerHTML ='Nome';
 			
 			break;
 		}

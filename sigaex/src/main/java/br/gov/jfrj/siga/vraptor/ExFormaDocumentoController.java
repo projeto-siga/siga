@@ -61,7 +61,7 @@ public class ExFormaDocumentoController extends ExController {
 	@Get("app/forma/editar")
 	public void editarForma(final Long id, String descricao, String sigla, Long idTipoFormaDoc, boolean origemExterno,
 			boolean origemInternoImportado, boolean origemInternoProduzido, boolean origemInternoCapturado, 
-			Integer isComposto, boolean origemExternoCapturado) {
+			Integer isComposto, boolean origemExternoCapturado, Integer isPermiteRequerente) {
 		
 		assertAcesso(ACESSO_SIGA_DOC_MOD);
 
@@ -79,6 +79,8 @@ public class ExFormaDocumentoController extends ExController {
 			}			
 						
 			temDocumentoVinculado = dao().isExFormaComDocumentoVinculado(forma.getId());
+			
+			isPermiteRequerente = forma.getIsPermiteRequerente();
 		}
 
 		if (getPostback() == null) {
@@ -111,7 +113,9 @@ public class ExFormaDocumentoController extends ExController {
 			result.include("origemInternoImportado", origemInternoImportado);
 			result.include("origemInternoProduzido", origemInternoProduzido);
 			result.include("origemInternoCapturado", origemInternoCapturado);
-			result.include("origemExternoCapturado", origemExternoCapturado);			
+			result.include("origemExternoCapturado", origemExternoCapturado);	
+			
+			result.include("isPermiteRequerente", isPermiteRequerente);
 		}
 
 		result.include("id", id);
@@ -144,7 +148,7 @@ public class ExFormaDocumentoController extends ExController {
 	@Post("app/forma/gravar")
 	public void gravar(final Integer postback, final Long id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
 			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemInternoCapturado, 
-			final Integer isComposto, final boolean origemExternoCapturado) {
+			final Integer isComposto, final boolean origemExternoCapturado, final Integer isPermiteRequerente) {
 		assertAcesso(ACESSO_SIGA_DOC_MOD);
 		setPostback(postback);
 				
@@ -190,6 +194,8 @@ public class ExFormaDocumentoController extends ExController {
 			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO, ExTipoDocumento.class, false));
 		}
 
+		forma.setIsPermiteRequerente(isPermiteRequerente);
+		
 		try {
 			Ex.getInstance().getBL().gravarForma(forma, formaCadastrada);
 			
@@ -204,12 +210,14 @@ public class ExFormaDocumentoController extends ExController {
 			result.include("origemInternoCapturado", origemInternoCapturado);
 			result.include("origemExternoCapturado", origemExternoCapturado);
 			
+			result.include("isPermiteRequerente", isPermiteRequerente);
+			
 			result.redirectTo(this).listarFormas(null);
 		} catch (RegraNegocioException e) {			
 			
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
 			result.forwardTo(this).editarForma(id, descricao, sigla, idTipoFormaDoc, origemExterno, origemInternoImportado,  origemInternoProduzido
-					, origemInternoCapturado, isComposto,  origemExternoCapturado);
+					, origemInternoCapturado, isComposto,  origemExternoCapturado, isPermiteRequerente);
 		}
 	}
 
@@ -232,6 +240,9 @@ public class ExFormaDocumentoController extends ExController {
 			}																				
 		} 		
 		formaCadastrada.setExTipoDocumentoSet(origensCadastradas);
+		
+		formaCadastrada.setIsPermiteRequerente(forma.getIsPermiteRequerente());
+
 		
 		return formaCadastrada;
 	}

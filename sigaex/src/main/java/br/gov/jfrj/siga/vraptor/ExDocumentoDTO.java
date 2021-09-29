@@ -265,6 +265,8 @@ public class ExDocumentoDTO {
 	
 	private int tipoDocumentoRequerente;
 	
+	private boolean permiteRequerente;
+	
 	public ExDocumentoDTO() {
 		classificacaoSel = new ExClassificacaoSelecao();
 		destinatarioSel = new DpPessoaSelecao();
@@ -1176,6 +1178,15 @@ public class ExDocumentoDTO {
 	public void setTipoDocumentoRequerente(int tipoDocumentoRequerente) {
 		this.tipoDocumentoRequerente = tipoDocumentoRequerente;
 	}
-	
+
+	public boolean isPermiteRequerente() {
+		return permiteRequerente;
+	}
+
+	public void setPermiteRequerente(boolean permiteRequerente) {
+		this.permiteRequerente = permiteRequerente;
+	}
+
+	 
 	
 }

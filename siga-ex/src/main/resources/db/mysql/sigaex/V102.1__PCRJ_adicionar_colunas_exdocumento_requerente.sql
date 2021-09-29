@@ -10,3 +10,5 @@ alter table ex_documento  add column BAIRRO_REQUERENTE varchar(50) DEFAULT null;
 alter table ex_documento  add column CIDADE_REQUERENTE varchar(30) DEFAULT null;
 alter table ex_documento  add column UF_REQUERENTE varchar(2) DEFAULT null;
 alter table ex_documento  add column CEP_REQUERENTE varchar(8) DEFAULT null;
+
+alter table ex_forma_documento add column IS_PERMITEREQUERENTE tinyint DEFAULT NULL;

@@ -1059,10 +1059,10 @@
 						<c:if test="${docVO.possuiRequerente}">
 							 <b>Dados do Interessado</b>
 							<ul>
+								<c:if test="${not empty docVO.doc.nomeReuerente}"><li><b>Nome:</b>${docVO.doc.nomeRequerente}</li>
 								<c:if test="${not empty docVO.doc.cpfRequerente}"><li><b>CPF:</b>${docVO.doc.cpfRequerente}</li></c:if>
-								<c:if test="${not empty docVO.doc.cnpjRequerente}"><li><b>CNPJ:</b>${docVO.doc.cnpjRequerente}</li></c:if> 
-								<li><b>Matrícula:</b> ${docVO.doc.matriculaRequerente}</li>
-								<li><b>Nome:</b> ${docVO.doc.nomeRequerente}</li>
+								<c:if test="${not empty docVO.doc.cnpjRequerente}"><li><b>CNPJ:</b>${docVO.doc.cnpjRequerente}</li></c:if>
+								 <c:if test="${not empty docVO.doc.matricula}"><li><b>Matrícula:</b> ${docVO.doc.matriculaRequerente}</li></c:if>
 								<c:if test="${not empty docVO.doc.enderecoRequerente}"><li><b>Endereço:</b> ${docVO.doc.enderecoRequerente}</li></c:if>
 							</ul>
 						</c:if> 

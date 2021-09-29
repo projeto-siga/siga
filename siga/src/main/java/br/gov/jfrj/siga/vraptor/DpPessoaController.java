@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,6 +74,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -915,8 +917,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	protected DpPessoa getUsuario() {
 		return so.getCadastrante();
 	}
-	
-	
 	@Consumes("application/json")
 	@Get("/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/{cpf}")
 	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") Long cpf) {	
@@ -925,72 +925,80 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		String recaptchaSitePassword =  Prop.get("/siga.recaptcha.pwd");
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		
-		if (recaptchaSiteKey == null || recaptchaSitePassword == null ) {
-			throw new RuntimeException("Google ReCaptcha não definido");
-		}
+		try { 
 		
-
-		if (cpf == null ) {
-			result.include("request", getRequest());
-			return;
-		}
-
-		if (false) {
-			try {
-				String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-				boolean success = false;
-				if (gRecaptchaResponse != null) {
-					JsonNode body = null;
-					if (GoogleRecaptcha.isProxySetted()) {
-						body = GoogleRecaptcha.validarRecaptcha(recaptchaSitePassword, gRecaptchaResponse, request.getRemoteAddr());
-					} else {
-		    			HttpResponse<JsonNode> result = Unirest
-		    					.post("https://www.google.com/recaptcha/api/siteverify")
-		    					.header("accept", "application/json")
-		    					.header("Content-Type", "application/json")
-		    					.queryString("secret", recaptchaSitePassword)
-		    					.queryString("response", gRecaptchaResponse)
-		    					.queryString("remoteip", request.getRemoteAddr()).asJson();
-			
-						body = result.getBody();
-					}
-					String hostname = request.getServerName();
-					if (body.getObject().getBoolean("success")) {
-						String retHostname = body.getObject().getString("hostname");
-						success = retHostname.equals(hostname);
-					}
-				}
-				if (!success) {
-					result.include("request", getRequest());
-					return;
-				}
-			} catch (final Exception e) {
-				throw new RuntimeException("Não é possível realizar a verificação de segurança com o Google ReCaptcha: " + e.getMessage());
+			if (recaptchaSiteKey == null || recaptchaSitePassword == null ) {
+				throw new RuntimeException("Google ReCaptcha não definido");
 			}
-		
-		}
-		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
-		
-		dpPessoa.setBuscarFechadas(false);
-		dpPessoa.setCpf(cpf);	
-		dpPessoa.setNome("");
-
-		List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
-		List<String> emails = new ArrayList<String>();
-	    
-		if (!usuarios.isEmpty()) {
-			for(DpPessoa usuario : usuarios) {
-				emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
-		    }
 			
-		} else {
-			throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+	
+			if (cpf == null ) {
+				result.include("request", getRequest());
+				return;
+			}
+	
+	
+			
+			String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+			boolean success = false;
+			if (gRecaptchaResponse != null) {
+				JsonNode body = null;
+				if (GoogleRecaptcha.isProxySetted()) {
+					body = GoogleRecaptcha.validarRecaptcha(recaptchaSitePassword, gRecaptchaResponse, request.getRemoteAddr());
+				} else {
+	    			HttpResponse<JsonNode> result = Unirest
+	    					.post("https://www.google.com/recaptcha/api/siteverify")
+	    					.header("accept", "application/json")
+	    					.header("Content-Type", "application/json")
+	    					.queryString("secret", recaptchaSitePassword)
+	    					.queryString("response", gRecaptchaResponse)
+	    					.queryString("remoteip", request.getRemoteAddr()).asJson();
+		
+					body = result.getBody();
+				}
+				String hostname = request.getServerName();
+				if (body.getObject().getBoolean("success")) {
+					String retHostname = body.getObject().getString("hostname");
+					success = retHostname.equals(hostname);
+				}
+			}
+			if (!success) {
+				throw new RuntimeException("Não é possível realizar a verificação de segurança com o Google ReCaptcha.");
+			}
+
+			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+			
+			dpPessoa.setBuscarFechadas(false);
+			dpPessoa.setCpf(cpf);	
+			dpPessoa.setNome("");
+	
+			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
+			List<String> emails = new ArrayList<String>();
+		    
+			if (!usuarios.isEmpty()) {
+				for(DpPessoa usuario : usuarios) {
+					emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
+			    }
+				
+			} else {
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			}
+			
+			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf.toString());
+			HashMap<String, Object> json = new HashMap<>();
+			
+			json.put("emails", emails);
+			json.put("jwt", jwt);
+			
+			result.use(Results.json()).withoutRoot().from(json).serialize();
+		} catch (RuntimeException ex) {
+			result.use(Results.http()).sendError(400, ex.getMessage());
+		} catch (Exception ex) {
+			result.use(Results.http()).sendError(500, ex.getMessage());
 		}
 
-		emails.add("te******@***.om");
-		emails.add("te******@***.et");
 		
-		result.use(Results.json()).from(emails).serialize();
+		
 	}
 	
 	

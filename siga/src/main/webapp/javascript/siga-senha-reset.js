@@ -15,6 +15,7 @@ SenhaReset.Etapas = (function() {
 
 			this.emailListContainer = $('#emailListContainer');
 			this.cpfUser = $('#cpfUser');
+			this.jwt = $('#jwt');
 			
 			this.btnEnviarCodigo = $('#btnEnviarCodigo');
             this.btnReenviarCodigo = $('#btnReenviarCodigo');
@@ -48,16 +49,22 @@ SenhaReset.Etapas = (function() {
 		return true;		
 	}
 
-	function onBtnAnteriorClicado() {			
-		switch (this.etapas[this.etapaAtual - 1].id) {
-			case 'cpfResetSenha':		
-									
-				break;
-			case 'emailResetSenha':				
-				break;
+	function onBtnAnteriorClicado() {		
+		
+		if (typeof this.etapas[this.etapaAtual - 1] !== 'undefined') {	
+			switch (this.etapas[this.etapaAtual - 1].id) {
+				case 'cpfResetSenha':		
+										
+					break;
+				case 'emailResetSenha':				
+					break;
+			}
+			atualizarEtapa(this, -1, false);
+		} else {
+			window.location.href = "/siga/public/app/login";
 		}
 		
-		atualizarEtapa(this, -1, false);	
+			
 	}
 	
 
@@ -76,8 +83,6 @@ SenhaReset.Etapas = (function() {
 			case 'emailResetSenha':
 				break;
 			}
-			
-			atualizarEtapa(this, 1);
 		} else if (this.etapaAtual + 1 >= this.etapas.length) {
 			salvar.call(this);
 		}
@@ -101,7 +106,7 @@ SenhaReset.Etapas = (function() {
 		$.ajax({
 			url: '/siga/public/app/usuario/senha/gerar-token-reset',
 		    type: 'POST',		
-			data: {'cpf':this.cpfUser.val(),'emailOculto':emailSelected},
+			data: {'cpf':this.cpfUser.val(),'emailOculto':emailSelected,'jwt':this.jwt.val()},
 			beforeSend: onSpinnerMostrar.bind(this),							
 	        success: function(result){
 				if (form.etapaAtual === 1)
@@ -110,7 +115,8 @@ SenhaReset.Etapas = (function() {
 				
 	        },
 	        error: function(result){	
-	        	erroRequisicao(form,result);
+				let msgError = result.responseText;
+	        	erroRequisicao(form,msgError);
 	        },
 			complete: onSpinnerOcultar.bind(this)	
 		});									
@@ -129,11 +135,14 @@ SenhaReset.Etapas = (function() {
 			
 			this.btnProximo.removeClass('btn-success').addClass('btn-primary');
 			this.btnProximo.html('Próximo  <i class="fas fa-long-arrow-alt-right"></i>');  
-			this.btnAnterior.html('Cancelar');   
+			this.btnAnterior.html('Cancelar');  
+			
+			this.cpfUser.focus(); 
 			habilitarBtnProximo(this);
- 
 		} else if (numeroEtapa == 1) {
 			this.btnProximo.css('display', 'none');  
+			this.btnAnterior.html('<i class="fas fa-long-arrow-alt-left"></i> Anterior');  
+			this.emailListContainer.innerHTML = ''; //clear
  
 		} else {
 			this.btnProximo.css('display', 'inline');  
@@ -142,6 +151,7 @@ SenhaReset.Etapas = (function() {
 			this.btnProximo.html('Redefinir Senha  <i class="fas fa-check"></i>');    
 			this.btnAnterior.html('<i class="fas fa-long-arrow-alt-left"></i> Anterior');  
 			
+			this.tokenSenha.focus();
 
 		}
 		
@@ -159,24 +169,25 @@ SenhaReset.Etapas = (function() {
 	
 	function salvar() {			
 		if (validarCampos.call(this, this.etapaAtual)){																	
-			var form = this;			
+			var form = this;
+			emailSelected = $('input[name="gridRadioEmail"]:checked').val();				
 			$.ajax({
 				url: '/siga/public/app/usuario/senha/reset',
 			    type: 'POST',
-			   	data: {'cpf':this.cpfUser.val(),'token':this.tokenSenha.val(),'senhaNova':this.passNova.val(),'senhaConfirma':this.passConfirmacao.val()},										
+			   	data: {'cpf':this.cpfUser.val(),'token':this.tokenSenha.val(),'senhaNova':this.passNova.val(),'senhaConfirma':this.passConfirmacao.val(),'jwt':this.jwt.val(),'emailOculto':emailSelected},										
 				beforeSend: iniciarRequisicao.bind(this),
 		        success: function(result){
 		        	finalizarRequisicao(form);
 		        },
 		        error: function(result){	
-		        	erroRequisicao(form,result);
+		        	erroRequisicao(form,result.responseText);
 		        },
 			});	
 		}								
 	}
 	
 	function localizarAcesso() {																			
-		var form = this;	
+		let form = this;	
 		
 		if(this.cpfUser.val() === "") {
 			sigaModal.alerta('CPF não informado. Favor inserí-lo.').select(this.cpfUser);		
@@ -189,6 +200,13 @@ SenhaReset.Etapas = (function() {
 			validacao.resultado = false;
 			return false;
 		}
+		
+		if (grecaptcha.getResponse().length == 0) {
+			sigaModal.alerta('Verificação de Segurança não efetuada.').select(grecaptcha);		
+			validacao.resultado = false;
+			return false;
+			
+		}
 						
 		$.ajax({
 			url: '/siga/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/'+ this.cpfUser.val(),
@@ -197,13 +215,14 @@ SenhaReset.Etapas = (function() {
 			data: {'g-recaptcha-response':grecaptcha.getResponse()},
 			beforeSend: onSpinnerMostrar.bind(this),							
 	        success: function(result){
-
-				createRadioEmail(result.list);
-				
-				//atualizarEtapa(form, 1);
+				grecaptcha.reset();
+				form.jwt.val(result.jwt);
+				createRadioEmail(result.emails);
+				atualizarEtapa(form, 1);
 	        },
 	        error: function(result){	
-	        	erroRequisicao(form,"Usuário não localizado. Verifique as informações fornecidas.");
+				grecaptcha.reset();
+	        	erroRequisicao(form,result.responseText);
 	        },
 			complete: onSpinnerOcultar.bind(this)	
 		});									
@@ -227,6 +246,8 @@ SenhaReset.Etapas = (function() {
 		form.btnProximo.parent().show();					
 		form.spinner.parent().parent().parent().hide();
 	
+		errormsg = errormsg.replace('<html><head><title>Error</title></head><body>','').replace('</body></html>','');
+		
     	sigaModal.alerta(errormsg,false,"Erro");
     	console.log(errormsg);
 	}
@@ -282,7 +303,7 @@ SenhaReset.Etapas = (function() {
 	}
 	
 	function createRadioEmail(list) {
-		
+		this.emailListContainer.innerHTML = ''; //clear
 		for (var idx in list) {
 			$('<div>', {
 			    class: 'form-check',

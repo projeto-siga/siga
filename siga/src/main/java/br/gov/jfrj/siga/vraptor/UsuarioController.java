@@ -19,6 +19,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.core.Try.Success;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
@@ -31,6 +32,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
@@ -497,7 +499,6 @@ public class UsuarioController extends SigaController {
 	    return matcher.find();   
 	}
 	
-	
 	/* Reset Senha */
 	@Get
 	@Path({"/app/usuario/senha/reset", "/public/app/usuario/senha/reset" })
@@ -514,58 +515,120 @@ public class UsuarioController extends SigaController {
 	@Path({"/app/usuario/senha/gerar-token-reset", "/public/app/usuario/senha/gerar-token-reset" })
 	public void gerarTokenReset() throws Exception {
 
-		String emailOculto = request.getParameter("emailOculto");
-		if (emailOculto == null && "".equals(emailOculto)) {
-			throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+		try { 
+			String emailOculto = request.getParameter("emailOculto");
+			String jwt = request.getParameter("jwt");
+			String strCpf = request.getParameter("cpf");
+	
+			if (strCpf != null) {
+				CPFUtils.efetuaValidacaoSimples(request.getParameter("cpf"));
+			} else
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			
+			if (emailOculto == null && "".equals(emailOculto)) {
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			}
+			
+			/* --- Verifica Token gerado na pesquisa de acesso: buscarEmailUsuarioPorCpf */
+			SigaUtil.verifyGetJwtToken(jwt).get("sub").toString();
+			final String TIPO_JWT = "RESET-SENHA";
+			if (!TIPO_JWT.equals(SigaUtil.verifyGetJwtToken(jwt).get("tipo").toString()) || !strCpf.equals(SigaUtil.verifyGetJwtToken(jwt).get("sub").toString())) {
+				throw new RuntimeException("Não é possível gerar código para redefinir a Senha. Token inválido.");
+			}
+			/* End */
+	
+			
+			long cpf = Long.valueOf(request.getParameter("cpf"));
+	
+			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+			dpPessoa.setBuscarFechadas(false);
+			dpPessoa.setCpf(cpf);	
+			dpPessoa.setNome("");
+	
+			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
+			boolean emailLocalizado = false;
+			if (!usuarios.isEmpty()) {
+				for(DpPessoa usuario : usuarios) {
+					if (emailOculto.equals(usuario.getEmailPessoaAtualParcialmenteOculto())) {
+						CpToken token = Cp.getInstance().getBL().gerarTokenResetSenha(cpf);
+						Cp.getInstance().getBL().enviarEmailTokenResetPIN(usuario, "Código para redefinição de SENHA ",token.getToken());
+						emailLocalizado = true;
+						break;
+					}
+			    }
+			} 
+			
+			if (!emailLocalizado) {
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			}
+			result.use(Results.status()).noContent();
+		} catch (RuntimeException ex) {
+			result.use(Results.http()).sendError(400, ex.getMessage());
+		} catch (Exception ex) {
+			result.use(Results.http()).sendError(500, ex.getMessage());
 		}
 		
-		if (request.getParameter("cpf") != null) {
-			CPFUtils.efetuaValidacaoSimples(request.getParameter("cpf"));
-		}
-		long cpf = Long.valueOf(request.getParameter("cpf"));
 
-		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
-		dpPessoa.setBuscarFechadas(false);
-		dpPessoa.setCpf(cpf);	
-		dpPessoa.setNome("");
-
-		List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
-		boolean emailLocalizado = false;
-		if (!usuarios.isEmpty()) {
-			for(DpPessoa usuario : usuarios) {
-				if (emailOculto.equals(usuario.getEmailPessoaAtualParcialmenteOculto())) {
-					CpToken token = Cp.getInstance().getBL().gerarTokenResetSenha(cpf);
-					Cp.getInstance().getBL().enviarEmailTokenResetPIN(usuario, "Código para redefinição de SENHA ",token.getToken());
-					emailLocalizado = true;
-					break;
-				}
-		    }
-		} 
 		
-		if (!emailLocalizado) {
-			throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
-		}
-
-		result.use(Results.status()).noContent();
 	}
 	
 	@Transacional
 	@Post({ "/app/usuario/senha/reset", "/public/app/usuario/senha/reset" })
 	public void gravarNovaSenha() throws Exception {
 	
-		String cpf = request.getParameter("cpf");
+		String strCpf = request.getParameter("cpf");
 		String token = request.getParameter("token");
 		String senhaNova = request.getParameter("senhaNova");
 		String senhaConfirma = request.getParameter("senhaConfirma");
+		String jwt = request.getParameter("jwt");
+		String emailOculto = request.getParameter("emailOculto");
 		
-		List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
-
-		listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(cpf);
-
-		Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, cpf, listaIdentidadesCpf);
-
+		try {
+			/* --- Verifica Token gerado na pesquisa de acesso: buscarEmailUsuarioPorCpf */
+			SigaUtil.verifyGetJwtToken(jwt).get("sub").toString();
+			final String TIPO_JWT = "RESET-SENHA";
+			if (!TIPO_JWT.equals(SigaUtil.verifyGetJwtToken(jwt).get("tipo").toString()) || !strCpf.equals(SigaUtil.verifyGetJwtToken(jwt).get("sub").toString())) {
+				throw new RuntimeException("Não é possível gerar código para redefinir a Senha. Token inválido.");
+			}
+			/* End */
+			
+			if (!senhaNova.equals(senhaConfirma)) {
+				throw new RuntimeException("Repetição da nova senha não confere, favor redigitar.");
+			}
+			
+			long cpf = Long.valueOf(request.getParameter("cpf"));
+			if (Cp.getInstance().getBL().isTokenValido(3L, cpf, token)) {
+				
+				List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
+				listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(strCpf);
+				Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, strCpf, listaIdentidadesCpf);
 		
-		result.use(Results.status()).noContent();
+				Cp.getInstance().getBL().invalidarTokenUtilizado(3L, cpf, token);
+				
+				//Obter email usado e enviar notificação
+				if (!listaIdentidadesCpf.isEmpty()) {
+					for(CpIdentidade usuario : listaIdentidadesCpf) {
+						if (emailOculto.equals(usuario.getDpPessoa().getEmailPessoaAtualParcialmenteOculto())) {
+							Cp.getInstance().getBL().enviarEmailDefinicaoPIN(usuario.getDpPessoa(), "Redefinição de Senha","Você redefiniu sua Senha.");
+						}
+				    }
+				} 
+				
+			} else {
+				throw new RegraNegocioException("Token para redefinição de Senha inválido ou expirado.");
+			}
+			
+			Cp.getInstance().getBL().consisteFormatoSenha(senhaNova);
+					
+
+			result.use(Results.status()).noContent();
+		} catch (RuntimeException ex) {
+			result.use(Results.http()).sendError(400, ex.getMessage());
+		} catch (Exception ex) {
+			result.use(Results.http()).sendError(500, ex.getMessage());
+		}
+		
+		
 	}
 	
 	private static String getRecaptchaSiteKey() {
@@ -597,5 +660,4 @@ public class UsuarioController extends SigaController {
 					0, e);
 		}
 	}
-
 }

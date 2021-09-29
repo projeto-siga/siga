@@ -1607,6 +1607,23 @@ public class CpBL {
 		return formatoPinIsValido;
 	}
 	
+	public Boolean consisteFormatoSenha(String senhaNova) throws RegraNegocioException {
+		boolean formatoSenhaValido = false;
+		final int SIZE_MIN_SENHA = 6;
+		
+		if (senhaNova.isEmpty()) {
+			throw new RegraNegocioException("Senha não informada.");
+		}
+
+		if (!SigaUtil.validacaoFormatoSenha(senhaNova)) {
+			throw new RegraNegocioException("Senha inválida. Deve conter pelo menos 6 caracteres sendo eles maiúsculos, minúsculos e números para aumentar a força da senha.");
+		}	
+				
+		formatoSenhaValido = true;
+		
+		return formatoSenhaValido;
+	}
+	
 	public Boolean validaHashPin(String pin, CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
 		String hashPinAValidar = null;
 		boolean hashPinIsValido = false;

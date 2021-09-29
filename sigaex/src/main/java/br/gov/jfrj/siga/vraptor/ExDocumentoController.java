@@ -2250,6 +2250,24 @@ public class ExDocumentoController extends ExController {
 			if(exDocumentoDTO.getSubscritorSel() != null && exDocumentoDTO.getSubscritorSel().getId() == null) {
 				exDocumentoDTO.getSubscritorSel().buscarPorObjeto(getCadastrante());
 			}
+			
+		}
+		
+		if (mod != null && exDocumentoDTO.isAlterouModelo() && !exDocumentoDTO.isPermiteRequerente()) {
+			exDocumentoDTO.setTipoDocumentoRequerente(1);
+			exDocumentoDTO.setCpfRequerente( null);
+			exDocumentoDTO.setCnpjRequerente(null);
+			exDocumentoDTO.setMatriculaRequerente( null);
+			exDocumentoDTO.setNomeRequerente( null);
+			exDocumentoDTO.setTipoLogradouroRequerente( null);
+			exDocumentoDTO.setLogradouroRequerente(null);
+			exDocumentoDTO.setNumeroLogradouroRequerente( null);		
+			exDocumentoDTO.setComplementoLogradouroRequerente( null);
+			exDocumentoDTO.setBairroRequerente(null);		
+			exDocumentoDTO.setCidadeRequerente( null);
+			exDocumentoDTO.setUfRequerente( null);
+			exDocumentoDTO.setCepRequerente( null);		
+
 		}
 
 		exDocumentoDTO.setModelo(mod);

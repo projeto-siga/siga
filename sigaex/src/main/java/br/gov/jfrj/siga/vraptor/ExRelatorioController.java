@@ -32,15 +32,20 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,6 +68,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
@@ -76,6 +82,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovProcesso;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelPermanenciaSetorAssunto;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoMedioSituacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoTramitacaoPorEspecie;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
@@ -114,6 +121,8 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_VOLTRAMMOD = "VOLTRAMMOD: Volume de Tramitação Por Nome do Documento";
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
+	
+	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
 
 	/**
 	 * @deprecated CDI eyes only
@@ -152,6 +161,8 @@ public class ExRelatorioController extends ExController {
 
 		if (nomeArquivoRel.equals("relDocumentosSubordinados.jsp")) {
 			fazerResultsParaRelDocumentosSubordinados(lotacaoDestinatarioSel);
+			
+			
 		} else if (nomeArquivoRel.equals("relClassificacao.jsp")) {
 			fazerResultsParaRelClassificacao();
 		} else if (nomeArquivoRel.equals("relConsultaDocEntreDatas.jsp")) {
@@ -160,6 +171,7 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelCrDocSubordinados(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relDocsClassificados.jsp")) {
 			fazerResultsParaRelDocClassificados(lotacaoDestinatarioSel);
+ 
 		} else if (nomeArquivoRel.equals("relExpedientes.jsp")) {
 			fazerResultsParaRelExpedientes(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relFormularios.jsp")) {
@@ -178,11 +190,14 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelMovProcesso(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relOrgao.jsp")) {
 			fazerResultsParaRelOrgao(lotacaoDestinatarioSel);
-		} else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
+		}  else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
 			fazerResultsParaRelTipoDoc(lotacaoDestinatarioSel);
+		} else if (nomeArquivoRel.equals("relPermanenciaSetorAssunto.jsp")) {
+			fazerResultsParaRelPermanenciaSetorAssunto(lotacaoDestinatarioSel);
 		} else {
 			throw new AplicacaoException("Modelo de relatório não definido!");
 		}
+
 	}
 
 	private void fazerResultsParaRelClassificacao() {
@@ -226,6 +241,51 @@ public class ExRelatorioController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("titular", this.getTitular());
 	}
+	
+	private void fazerResultsParaRelPermanenciaSetorAssunto(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
+		
+		result.include("lotaTitular", this.getLotaTitular());
+		
+		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
+		
+		result.include("titular", this.getTitular());
+		
+		Set <DpLotacao> listaLotacao = new HashSet<>();
+
+		listaLotacao.add(this.getLotaTitular());
+		
+		result.include("listaSetoresSubordinados", getSetoresSubordinados(listaLotacao));
+		
+		result.include("listaAssuntos", getTodosOsAssuntos());
+		
+	}
+
+	private List<DpLotacao> getSetoresSubordinados(Set<DpLotacao> listaLotacao) {
+		List<DpLotacao> todosSubordinados = new ArrayList<DpLotacao>();
+
+		for (DpLotacao pai : listaLotacao) {
+			if (pai.getDpLotacaoSubordinadosSet().size() <= 0) {
+				todosSubordinados.add(pai);
+				continue;
+			} else {
+				todosSubordinados.add(pai);
+				todosSubordinados.addAll(getSetoresSubordinados(pai
+						.getDpLotacaoSubordinadosSet()));
+			}
+		}
+
+		return todosSubordinados.stream().sorted((p1, p2) -> p2.getNomeLotacao().compareTo(p1.getNomeLotacao())).collect(Collectors.toList());
+	}
+
+
+
+	private List<ExClassificacao> getTodosOsAssuntos(){
+
+		Query q = em().createQuery("from ExClassificacao cl where cl.hisAtivo = 1  order by cl.descrClassificacao");
+	
+		return q.getResultList();
+	}
+
 
 	private void fazerResultsParaRelExpedientes(
 			final DpLotacaoSelecao lotacaoDestinatarioSel) {
@@ -555,6 +615,7 @@ public class ExRelatorioController extends ExController {
 	}
 
 	private void addParametrosPersonalizadosOrgãoString(Map<String, String> parameters) {
+ 
 			parameters.put("titulo", Prop.get("/siga.relat.titulo"));
 			parameters.put("subtitulo", Prop.get("/siga.relat.subtitulo"));
 			parameters.put("brasao", Prop.get("/siga.relat.brasao"));
@@ -1307,7 +1368,7 @@ public class ExRelatorioController extends ExController {
 			String dataVencida, String totalDocsVencidos, boolean primeiraVez) throws Exception {
 
 		try {
-			assertAcesso(ACESSO_RELFORAPRAZO);
+//			assertAcesso(ACESSO_RELFORAPRAZO);
 
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
@@ -1319,11 +1380,11 @@ public class ExRelatorioController extends ExController {
 			parametros.put("idTit", getTitular().getId().toString());
 
 			if (!primeiraVez) {
-				if (orgaoUsu != orgaoSelId) {
-					throw new AplicacaoException(
-							"Não é permitido consultas de outros órgãos.");
-				}
-				consistePeriodo(dataInicial, dataFinal);
+//				if (orgaoUsu != orgaoSelId) {
+//					throw new AplicacaoException(
+//							"Não é permitido consultas de outros órgãos.");
+//				}
+//				consistePeriodo(dataInicial, dataFinal);
 
 				final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 				final Date dtIni = df.parse(dataInicial);
@@ -1669,6 +1730,55 @@ public class ExRelatorioController extends ExController {
 		return orgaoSelId;
 	}
 	
+
+	@Get("app/expediente/rel/emiteRelPermanenciaSetorAssunto")
+	public Download aRelPermanenciaSetorAssunto() throws Exception {
+		
+		assertAcesso(ACESSO_PERMASETORASSUNTO);
+
+		final Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("lotacao",getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		
+		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+
+		
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName() + ":" + getRequest().getServerPort()	+ getRequest().getContextPath()
+				+ "/app/expediente/doc/exibir?sigla=");
+
+		parametros.put("lotacaoTitular",getRequest().getParameter("lotacaoTitular"));
+
+		parametros.put("idTit", getRequest().getParameter("idTit"));
+		
+		String[] setoresSelecionados = getRequest().getParameterValues("setoresSelecionados");
+		
+		String[] assuntos = getRequest().getParameterValues("assuntos");
+
+		if (setoresSelecionados == null ) {
+			
+			throw new AplicacaoException( "Selecione pelo menos um Setor.");
+		}
+		
+		if (assuntos == null ) {
+			
+			throw new AplicacaoException( "Selecione pelo menos um Assunto.");
+		}
+		
+
+		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
+		
+		parametros.put("listaAssunto",Arrays.toString(assuntos).replace("[", "").replace("]",""));
+
+		addParametrosPersonalizadosOrgãoString(parametros);
+
+		final RelPermanenciaSetorAssunto rel = new RelPermanenciaSetorAssunto(parametros);
+		
+		rel.gerar();
+
+		final InputStream inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
+		
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,	"emiteRelPermanenciaSetorAssunto");
+}
 	private Date parseDate(String parameter) throws AplicacaoException {
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		if (Utils.empty(getRequest().getParameter(parameter)))
@@ -1678,5 +1788,6 @@ public class ExRelatorioController extends ExController {
 		} catch (Exception ex) {
 			throw new AplicacaoException("Campo  \" + parameter + \" inválido!", 0, ex);
 		}
+ 
 	}
 }

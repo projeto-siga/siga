@@ -13,6 +13,7 @@ function displayPossuiRequerente(thisElement) {
 		
 		document.getElementById('cnpjRequerente').style.display = 'none';
 		document.getElementById('tipoDocumentoCNPJ').checked = false;
+		
 	}else {
 		thatElement.style.display = 'none';
 		document.getElementById('cpfRequerente').value = '';
@@ -39,6 +40,24 @@ function displayPossuiRequerente(thisElement) {
 		document.getElementById('tipoDocumentoCPF').checked = true;
 		document.getElementById('tipoDocumentoCNPJ').checked = false;
 	}
+
+//	document.getElementById("lblLogradouro").innerHTML ='Endereço';
+//	retira os campos da tela
+//	document.getElementById('tipoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('numeroLogradouroRequerente').style.display = 'none';
+//	document.getElementById('complementoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('bairroRequerente').style.display = 'none';
+//	document.getElementById('cidadeRequerente').style.display = 'none';
+//	document.getElementById('ufRequerente').style.display = 'none';
+//	document.getElementById('cepRequerente').style.display = 'none';
+//	
+//	document.getElementById('lblTipoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('lblNumeroLogradouroRequerente').style.display = 'none';
+//	document.getElementById('lblComplementoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('lblBairroRequerente').style.display = 'none';
+//	document.getElementById('lblCidadeRequerente').style.display = 'none';
+//	document.getElementById('lblUfRequerente').style.display = 'none';
+//	document.getElementById('lblCepRequerente').style.display = 'none';
 }
 
 function displayPersonalizacao(thisElement) {

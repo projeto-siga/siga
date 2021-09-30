@@ -140,7 +140,7 @@ public class ExMobilController extends
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText, final Long ultMovEstadoDoc,
-			final Integer offset) {
+			final Integer offset, final String nomeRequerente) {
 		assertAcesso("");
 		
 		getP().setOffset(offset);
@@ -231,7 +231,9 @@ public class ExMobilController extends
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", idFormaDoc);
-		result.include("idMod", idMod);		
+		result.include("idMod", idMod);	
+		
+		result.include("nomeRequerente", nomeRequerente);
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaConsulta() {
@@ -258,7 +260,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) throws UnsupportedEncodingException {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String nomeRequerente) throws UnsupportedEncodingException {
 			
 		
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -414,7 +416,7 @@ public class ExMobilController extends
 
 		} catch (final RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
-			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset);
+			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset,nomeRequerente);
 		}
 		return null;	
 	}
@@ -428,7 +430,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String nomeRequerente) {
 		assertAcesso("");
 
 		getP().setOffset(paramoffset);
@@ -517,6 +519,8 @@ public class ExMobilController extends
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);		
+		
+		result.include("nomeRequerente", nomeRequerente);
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();
@@ -756,6 +760,7 @@ public class ExMobilController extends
 		flt.setIdMod(paramLong("idMod"));
 		flt.setOrdem(paramInteger("ordem"));
 
+		flt.setNomeRequerente(param("nomeRequerente"));
 		return flt;
 	}
 

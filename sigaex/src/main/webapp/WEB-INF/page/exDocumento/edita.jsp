@@ -419,25 +419,25 @@
 						<div class="row">
 							<div class="col-sm-2">
 								<div class="form-group">
-									<label>Tipo Logradouro</label>
+									<label id="lblTipoLogradouroRequerente">Tipo Logradouro</label>
 									<input type="text" id="tipoLogradouroRequerente" name="exDocumentoDTO.tipoLogradouroRequerente" value="${exDocumentoDTO.tipoLogradouroRequerente}" class="form-control" >
 								</div>
 							</div>
 							<div class="col-sm-6">
 								<div class="form-group">
-									<label>Logradouro</label>
-									<input type="text" id="logradouroRequerente" name="exDocumentoDTO.logradouroRequerente" value="${exDocumentoDTO.logradouroRequerente}" class="form-control" maxlength="125">
+									<label id="lblLogradouro">Logradouro</label>
+									<input type="text" id="logradouroRequerente" name="exDocumentoDTO.logradouroRequerente" value="${exDocumentoDTO.logradouroRequerente}" class="form-control" maxlength="300">
 								</div>
 							</div>
 		     				<div class="col-sm-2">
 								<div class="form-group">
-									<label>Número</label>
+									<label id="lblNumeroLogradouroRequerente">Número</label>
 									<input type="text" id="numeroLogradouroRequerente" name="exDocumentoDTO.numeroLogradouroRequerente" value="${exDocumentoDTO.numeroLogradouroRequerente}" class="form-control">
 								</div>
 							</div>
 							<div class="col-sm-2">
 								<div class="form-group" >
-									<label>Complemento</label>
+									<label id="lblComplementoLogradouroRequerente">Complemento</label>
 									<input type="text"	id="complementoLogradouroRequerente"  name="exDocumentoDTO.complementoLogradouroRequerente"  value="${exDocumentoDTO.complementoLogradouroRequerente}" class="form-control">
 								</div>
 							</div>
@@ -446,25 +446,25 @@
 						<div class="row">
 							<div class="col-sm-4">
 								<div class="form-group">
-									<label>Bairro</label>
+									<label id="lblBairroRequerente">Bairro</label>
 									<input type="text" 	id="bairroRequerente" name="exDocumentoDTO.bairroRequerente" value="${exDocumentoDTO.bairroRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
 							<div class="col-sm-5">
 								<div class="form-group">
-									<label>Cidade</label>
+									<label id="lblCidadeRequerente">Cidade</label>
 									<input type="text" 	id="cidadeRequerente" name="exDocumentoDTO.cidadeRequerente" value="${exDocumentoDTO.cidadeRequerente}" class="form-control" maxlength="125">
 								</div>
 							</div>
                             <div class="col-sm-1">
 								<div class="form-group">
-									<label>UF</label>
+									<label id="lblUfRequerente">UF</label>
 									<input type="text" 	id="ufRequerente" name="exDocumentoDTO.ufRequerente" value="${exDocumentoDTO.ufRequerente}" class="form-control" maxlength="2">
 								</div>
 							</div>
 							<div class="col-sm-2">
 								<div class="form-group" >
-									<label>CEP</label>
+									<label id="lblCepRequerente">CEP</label>
 									<input type="text" 	id="cepRequerente" name="exDocumentoDTO.cepRequerente"  value="${exDocumentoDTO.cepRequerente}" class="form-control"   maxlength="8" >
 								</div>
 							</div>
@@ -1045,6 +1045,47 @@
 	      return false;
 
 	    return true;
+	}
+
+
+	function Matricula(v){
+	    //Remove tudo o que não é dígito
+	    v=v.replace(/\D/g,"");
+	 
+	    if (v.length <= 9) { //Matricula - 00/000.000-0
+	 
+	        //Coloca uma barra entre o segundo e o terceiro dígitos
+	        v=v.replace(/(\d{2})(\d)/,"$1/$2");
+	 
+	        //Coloca um ponto entre o terceiro e o quarto dígitos
+	        //de novo (para o segundo bloco de números)
+	        v=v.replace(/(\d{3})(\d)/,"$1.$2");
+	 
+	        //Coloca um hífen entre o terceiro e o quarto dígitos
+	        v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+	    }
+	 
+	    return v;
+	 
+	}
+	function verificarMatricula(m) 
+	{
+		var matricula = document.getElementById(m).value;
+		tam =  matricula.length;
+		
+		if(isNaN(matricula)) 
+		{
+	       alert("Erro: O campo deve ser numérico!");	 
+		   LimparCampoMatricula(m);
+	    }else{
+			if(tam <9)
+				{
+					alert("Erro: O campo deve ter 9 dígitos!");	 
+					LimparCampoMatricula(m);
+				}
+		}
+		
+		return;
 	}
 </script>
 

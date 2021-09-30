@@ -63,7 +63,7 @@
 								<div class="form-check form-check-inline mt-4">
 								  <input class="form-check-input" type="checkbox" name="isPermiteRequerente" id="isPermiteRequerente" value="1"
 								   <c:if test="${isPermiteRequerente == 1}">checked</c:if>				  	/>
-								  <label  for="isPermiteRequerente">Permite Requerente</label>
+								  <label  for="isPermiteRequerente">Permite interessado ?</label>
 								</div>
 							</div>
 						</div>						

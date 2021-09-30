@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -56,6 +57,8 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+import br.gov.jfrj.siga.ex.converter.ExTipoDePrincipalConverter;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
@@ -433,6 +436,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
 	
+	@Column(name = "CD_PRINCIPAL")
+	private String principal;
+
+	@Convert(converter = ExTipoDePrincipalConverter.class)
+	@Column(name = "TP_PRINCIPAL")
+	private ExTipoDePrincipal tipoDePrincipal;
+
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -1164,6 +1174,22 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 			this.descrDocumentoAI = Texto.removeAcentoMaiusculas(descrDocumentoAI).substring(0, descrDocumentoAI.length() < LENGTH_DESCR_DOCUMENTO_AI ? descrDocumentoAI.length() : LENGTH_DESCR_DOCUMENTO_AI );
 		else
 			this.descrDocumentoAI = descrDocumentoAI;
+	}
+
+	public String getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
+
+	public ExTipoDePrincipal getTipoDePrincipal() {
+		return tipoDePrincipal;
+	}
+
+	public void setTipoDePrincipal(ExTipoDePrincipal tipoDePrincipal) {
+		this.tipoDePrincipal = tipoDePrincipal;
 	}
 	
 }

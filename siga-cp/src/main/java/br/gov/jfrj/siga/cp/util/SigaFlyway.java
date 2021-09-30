@@ -44,6 +44,11 @@ public class SigaFlyway {
 			Context envContext = (Context) initContext.lookup("java:");
 			DataSource ds = (DataSource) envContext.lookup(dataSource);
 			Flyway flyway = Flyway.configure().dataSource(ds).locations(location).placeholderReplacement(false).load();
+			
+			if ("true".equals(System.getProperty("siga.flyway.mysql.repair", "true"))) {
+				flyway.repair();
+			}
+			
 			flyway.migrate();
 		}
 	}

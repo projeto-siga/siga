@@ -167,6 +167,9 @@ public class WfServiceImpl implements WfService {
 						"Não foi encontrado um procedimento com a sigla '" + siglaProcedimento + "'");
 			WfProcedimentoWSTO r = new WfProcedimentoWSTO();
 			r.setSigla(pi.getSigla());
+			r.setPrincipal(pi.getPrincipal());
+			r.setTitular(pi.getTitular().getDescricao());
+			r.setLotaTitular(pi.getLotaTitular().getDescricao());
 			r.setVar(pi.getVariable());
 			return r;
 		}

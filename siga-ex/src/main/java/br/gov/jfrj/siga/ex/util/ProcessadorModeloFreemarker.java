@@ -39,6 +39,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -162,7 +163,9 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 	}
 
 	static LoadingCache<String, String> cache = CacheBuilder.newBuilder().maximumSize(1000)
-			.expireAfterWrite(5, TimeUnit.MINUTES).build(new CacheLoader<String, String>() {
+			.expireAfterWrite(Prop.get("debug.default.template.pathname") == null ? 5 : 1,
+					Prop.get("debug.default.template.pathname") == null ? TimeUnit.MINUTES : TimeUnit.SECONDS)
+			.build(new CacheLoader<String, String>() {
 				public String load(String source) throws Exception {
 					CpModelo mod;
 					if ("DEFAULT".equals(source)) {
@@ -172,7 +175,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 					} else {
 						mod = ExDao.getInstance().consultaCpModeloPorNome(source);
 					}
-					
+
 					String conteudoBlob = "";
 					if (mod != null)
 						conteudoBlob = mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();

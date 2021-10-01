@@ -14,10 +14,11 @@
 		<ul class="dropdown-menu">
 			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/doc/editar">Novo</a></li>
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
-				<li><a class="dropdown-item"
-					href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
-			</c:if>
+			<c:if test="${!ehPublicoExterno && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
+                <li><a class="dropdown-item"
+                    href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
+                    <fmt:message key="documento.pesquisar"/></a>
+            </c:if>
 			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
 					Virtual </a></li>
 			

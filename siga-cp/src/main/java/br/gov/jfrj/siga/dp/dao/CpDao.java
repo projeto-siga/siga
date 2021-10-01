@@ -1776,7 +1776,7 @@ public class CpDao extends ModeloDao {
 		}
 
 		for (DpLotacao lot : sublotacoes) {
-			final String[] values = new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO", "JUIZ FEDERAL" };
+			final String[] values = new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO", "JUIZ FEDERAL", "DESEMBARGADOR FEDERAL" };
 			CriteriaQuery<DpPessoa> q = cb().createQuery(DpPessoa.class);
 			Root<DpPessoa> c = q.from(DpPessoa.class);
 			q.select(c);
@@ -1786,7 +1786,7 @@ public class CpDao extends ModeloDao {
 			whereList.add(cb().equal(joinLotacao.get("idLotacao"), lot.getId()));
 			if (somenteServidor) { 
 				Join<DpPessoa, DpCargo> joinCargo = c.join("cargo", JoinType.LEFT);
-				whereList.add(joinCargo.get("nomeCargo").in(values));
+				whereList.add(joinCargo.get("nomeCargo").in(values).not());
 			}
 			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));

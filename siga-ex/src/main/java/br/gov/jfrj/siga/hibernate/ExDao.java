@@ -669,6 +669,10 @@ public class ExDao extends CpDao {
 					ExModelo.class, false);
 			query.setParameter("hisIdIni", mod.getHisIdIni());
 		}
+		
+		if (flt.getNomeRequerente()  != null && !flt.getNomeRequerente().trim().equals("")) {
+			query.setParameter("nomeRequerente",flt.getNomeRequerente());
+		}
 	}
 
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,

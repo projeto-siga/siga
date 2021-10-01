@@ -18,8 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 
 public class MontadorQuery implements IMontadorQuery {
 
@@ -179,6 +182,10 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
 			sbf.append(" and doc.exModelo.hisIdIni = :hisIdIni");
+		}
+ 
+		if (flt.getNomeRequerente()  != null && !flt.getNomeRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.nomeRequerente) like upper('%' || :nomeRequerente || '%')");
 		}
 
 		if (!apenasCount) {

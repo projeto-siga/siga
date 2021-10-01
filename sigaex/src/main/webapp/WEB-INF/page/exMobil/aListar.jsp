@@ -800,16 +800,8 @@
 
 						<div class="form-group col-md-3">
 							<label for="nomeRequerente">Nome interessado</label> 
-
- 
-								<div class="form-group">
-									<label id="nomeRequerente">Nome</label> 
 									<input type="text"	id="nomeRequerente" name="nomeRequerente"
 											value="${nomeRequerente}" class="form-control" maxlength="125"   >
-								</div>
-							 
-
-
 						</div>
 					</div>
 					

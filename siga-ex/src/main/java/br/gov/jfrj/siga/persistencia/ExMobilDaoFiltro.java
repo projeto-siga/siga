@@ -388,7 +388,8 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		return nomeRequerente;
 	}
 
-	public void setNomeRequerente(String nomeRequerente) {
+	 
+	public void setNomeRequerente(final String nomeRequerente) {
 		this.nomeRequerente = nomeRequerente;
 	}
 	

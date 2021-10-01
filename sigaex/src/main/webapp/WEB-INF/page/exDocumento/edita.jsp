@@ -384,12 +384,14 @@
 									 
 										<input type="text" id="cpfRequerente"
 											name="exDocumentoDTO.cpfRequerente"
+											style="display: ${not empty exDocumentoDTO.cpfRequerente ? '': 'none'};"
 											value="${exDocumentoDTO.cpfRequerente}" class="form-control"
 											maxlength="11" />
 								 
 							 
 									<input type="text" id="cnpjRequerente"
 										name="exDocumentoDTO.cnpjRequerente"
+										style="display: ${not empty exDocumentoDTO.cnpjRequerente ? '': 'none'};"
 										value="${exDocumentoDTO.cnpjRequerente}" class="form-control"
 										maxlength="14" />
 							 
@@ -409,9 +411,13 @@
 							
 							<div class="col-sm-2">
 								<div class="form-group">
-									<label id="lblMatriculaRequerente">Matrícula</label> 
+									<label id="lblMatriculaRequerente"
+									style="display: ${exdocumentoDTO.tipoDocumentoRequerente eq 1 or not empty exDocumentoDTO.matriculaRequerente ? '': 'none'};" 
+									>Matrícula</label> 
 									<input type="text" id="matriculaRequerente"	name="exDocumentoDTO.matriculaRequerente"
-										value="${exDocumentoDTO.matriculaRequerente}" class="form-control" maxlength="8">
+										value="${exDocumentoDTO.matriculaRequerente}" 
+										style="display: ${exdocumentoDTO.tipoDocumentoRequerente eq 1 or not empty exDocumentoDTO.matriculaRequerente ? '': 'none'};"
+										class="form-control" maxlength="8">
 								</div>
 							</div>
 						</div>

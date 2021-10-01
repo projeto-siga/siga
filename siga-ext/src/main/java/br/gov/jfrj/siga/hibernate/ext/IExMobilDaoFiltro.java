@@ -22,6 +22,10 @@ import java.util.Date;
 
 public interface IExMobilDaoFiltro {
 
+	public abstract String  getNomeRequerente();
+
+	public abstract void setNomeRequerente(final String nomeRequerente); 
+	
 	public abstract void setSigla(final String nome);
 
 	public abstract Long getAnoEmissao();

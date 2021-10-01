@@ -158,6 +158,7 @@ import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -181,6 +182,7 @@ import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
+import br.gov.jfrj.siga.wf.service.WfProcedimentoWSTO;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
@@ -5613,6 +5615,23 @@ public class ExBL extends CpBL {
 		if (acao != null)
 			attrs.put(acao, "1");
 		attrs.put("doc", doc);
+		
+		// Incluir um atributo chamado "wf" que contém os dados do procedimento vinculado
+		if (doc.getTipoDePrincipal() != null && doc.getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getPrincipal() != null) {
+			WfProcedimentoWSTO wf = Service.getWfService().consultarProcedimento(doc.getPrincipal());
+			Map<String, Object> vars = wf.getVar();
+			
+			// Converter boolean em Sim/Não
+			if (vars != null) 
+				for (String key : vars.keySet()) {
+					Object val = vars.get(key);
+					if (val instanceof Boolean)
+						vars.put(key, ((Boolean)val) ? "Sim" : "Não");
+				}
+			
+			attrs.put("wf", wf);
+		}
+		
 		// rw.setAttribute("modelo", doc.getExModelo());
 		if (mov == null) {
 			if (doc.getExModelo() != null) {

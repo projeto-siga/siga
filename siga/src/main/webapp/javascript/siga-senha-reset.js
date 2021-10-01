@@ -168,13 +168,17 @@ SenhaReset.Etapas = (function() {
 	}	
 	
 	function salvar() {			
+		if (!validateSenha(this)) {
+			return false;
+		}
 		if (validarCampos.call(this, this.etapaAtual)){																	
 			var form = this;
-			emailSelected = $('input[name="gridRadioEmail"]:checked').val();				
+			emailSelected = $('input[name="gridRadioEmail"]:checked').val();	
+			trocarSenhaRede = $('#trocarSenhaRede').is(':checked');
 			$.ajax({
 				url: '/siga/public/app/usuario/senha/reset',
 			    type: 'POST',
-			   	data: {'cpf':this.cpfUser.val(),'token':this.tokenSenha.val(),'senhaNova':this.passNova.val(),'senhaConfirma':this.passConfirmacao.val(),'jwt':this.jwt.val(),'emailOculto':emailSelected},										
+			   	data: {'cpf':this.cpfUser.val(),'token':this.tokenSenha.val(),'senhaNova':this.passNova.val(),'senhaConfirma':this.passConfirmacao.val(),'jwt':this.jwt.val(),'emailOculto':emailSelected,'trocarSenhaRede':trocarSenhaRede},										
 				beforeSend: iniciarRequisicao.bind(this),
 		        success: function(result){
 		        	finalizarRequisicao(form);
@@ -329,15 +333,15 @@ SenhaReset.Etapas = (function() {
 	}
 	
 	
-	function validateUsuarioForm(form) {
-		var s = document.getElementById("passwordStrength").className;
-		if (s == "strength0" || s == "strength1" || s == "strength2") {			
+	function validateSenha(form) {
+		let strength = $("#passwordStrength").className;
+		if (strength== "strength0" || strength == "strength1" || strength == "strength2") {			
 			sigaModal.alerta('Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números.');
 			return false;
 		}
-		var p1 = document.getElementById("pass").value;
-		var p2 = document.getElementById("pass2").value;
-		if (p1 != p2) {			
+		let passNova = $("#passNova").val();
+		let passConfirmacao = $("#passConfirmacao").val();
+		if (passNova != passConfirmacao) {			
 			sigaModal.alerta('Repetição da nova senha não confere, favor redigitar.');					
 			return false;
 		}

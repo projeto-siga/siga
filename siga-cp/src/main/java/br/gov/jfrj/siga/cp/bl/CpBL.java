@@ -1811,11 +1811,46 @@ public class CpBL {
 		}
 			
 	}
+	
+	private String textoEmailDefinicaoSenha(DpPessoa destinatario, String corpo) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/nova-senha-definida.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${corpo}", corpo);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
 
 	
 	public void enviarEmailDefinicaoPIN(DpPessoa destinatario, String assunto, String corpo) {
 		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
 		String conteudoHTML = textoEmailDefinicaoPin(destinatario,corpo);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
+	public void enviarEmailDefinicaoSenha(DpPessoa destinatario, String assunto, String corpo) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailDefinicaoSenha(destinatario,corpo);
 		
 		try {
 			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
@@ -1848,11 +1883,46 @@ public class CpBL {
 		}
 			
 	}
+	
+	private String textoEmailTokenResetSenha(DpPessoa destinatario,  String token) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/token-senha-reset.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${token}", token);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
 
 	
 	public void enviarEmailTokenResetPIN(DpPessoa destinatario, String assunto, String tokenPin) {
 		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
 		String conteudoHTML = textoEmailTokenResetPin(destinatario,tokenPin);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
+	public void enviarEmailTokenResetSenha(DpPessoa destinatario, String assunto, String token) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailTokenResetSenha(destinatario,token);
 		
 		try {
 			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);

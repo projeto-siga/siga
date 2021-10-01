@@ -3384,6 +3384,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL,
 				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
+	
+	public boolean podeRestringirDefAcompanhamento(final DpPessoa pessoa, final DpLotacao lotacao, final DpPessoa pessoaObjeto,
+			final DpLotacao lotacaoObjeto, final DpCargo cargoObjeto, final DpFuncaoConfianca funcaoConfiancaObjeto, final CpOrgaoUsuario orgaoObjeto) {
+
+		return this.podePorConfiguracao(pessoa,
+				lotacao, 0, ExTipoDeConfiguracao.RESTRINGIR_DEF_ACOMPANHAMENTO, pessoaObjeto, 
+				lotacaoObjeto, null, cargoObjeto, 
+				funcaoConfiancaObjeto, orgaoObjeto);
+				
+	}
+
 
 	/**
 	 * Retorna se é possível vincular uma marca ao documento. Basta não estar

@@ -76,10 +76,16 @@ function alteraResponsavel()
 		case 1:
 			document.getElementById('selecaoResponsavel').style.display = '';
 			document.getElementById('selecaoLotaResponsavel').style.display = 'none';
+			document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
+			document.getElementById('lotaResponsavelSelSpan').textContent = '';
+			document.getElementById('formulario_lotaResponsavelSel_id').value = '';	
 			break;
 		case 2:
 			document.getElementById('selecaoResponsavel').style.display = 'none';
 			document.getElementById('selecaoLotaResponsavel').style.display = '';
+			document.getElementById('formulario_responsavelSel_sigla').value = '';
+			document.getElementById('responsavelSelSpan').textContent = '';
+			document.getElementById('formulario_responsavelSel_id').value = '';
 			break;
 	}
 }

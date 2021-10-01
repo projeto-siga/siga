@@ -2633,6 +2633,13 @@ public class ExBL extends CpBL {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO:
 				set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
+				Set<ExMobil> setJuntados = mob.getJuntadosRecursivo();
+				
+				for (ExMobil exMobil : setJuntados) {
+					set.addAll(exMobil.getMobilEApensosExcetoVolumeApensadoAoProximo());
+				}
+				set.removeAll(setJuntados);
+
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA:
@@ -4905,6 +4912,13 @@ public class ExBL extends CpBL {
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
 
 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
+		
+		Set<ExMobil> setJuntados = mob.getJuntadosRecursivo();
+		
+		for (ExMobil exMobil : setJuntados) {
+			set.addAll(exMobil.getMobilEApensosExcetoVolumeApensadoAoProximo());
+		}
+		set.removeAll(setJuntados);
 
 		Date dtUltReceb = null;
 

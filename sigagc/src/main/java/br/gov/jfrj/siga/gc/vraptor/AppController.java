@@ -1074,8 +1074,15 @@ public class AppController extends GcController {
 		// ideal seria injetar null se nenhum parâmetro for especificado.
 		if (pessoa != null && pessoa.getId() == null)
 			pessoa = null;
+		
+		if (pessoa != null && pessoa.getId() != null)
+			pessoa = dao().consultar(pessoa.getId(),DpPessoa.class,false);
+		
 		if (lotacao != null && lotacao.getId() == null)
 			lotacao = null;
+		
+		if (lotacao != null && lotacao.getId() != null)
+			lotacao = dao().consultar(lotacao.getId(),DpLotacao.class,false);
 
 		if (pessoa != null || lotacao != null || email != null) {
 

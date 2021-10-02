@@ -95,6 +95,10 @@
 		<name>pessoaLotaSelecao2</name>
 		<path>/META-INF/tags/pessoaLotaSelecao2.tag</path>
 	</tag-file>
+		<tag-file>
+		<name>pessoaLotaSelecao3</name>
+		<path>/META-INF/tags/pessoaLotaSelecao3.tag</path>
+	</tag-file>
 	<tag-file>
 		<name>rodape</name>
 		<path>/META-INF/tags/rodape.tag</path>

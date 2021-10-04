@@ -24,8 +24,8 @@
 						<h5>
  
 
-							<b>${titulo} - ${sigla}</b>
-							<c:if test="${docVO.doc.exNivelAcesso.grauNivelAcesso == 10}">
+							<b>${titulo} - ${sigla}</b> 
+							<c:if test="${docVO.doc.exNivelAcessoAtual.grauNivelAcesso == 10}">
 								 <a	href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${sigla}"		id="linkDocPdf" target="_blank">
 								 	 <img	src="/siga/css/famfamfam/icons/page_white_acrobat.png"></a>
 							</c:if>
@@ -116,7 +116,7 @@
 															documento juntado ${movSigla} </span>
 
 														<c:if
-															test="${mov.exMobil.exDocumento.exNivelAcesso.grauNivelAcesso == 10}">
+															test="${mov.exMobil.exDocumento.exNivelAcessoAtual.grauNivelAcesso == 10}">
 															<a
 																href="${request.contextPath}/public/app/arquivoConsultado_stream?jwt=${jwt}&sigla=${movSigla}"
 																target="_blank"> <img

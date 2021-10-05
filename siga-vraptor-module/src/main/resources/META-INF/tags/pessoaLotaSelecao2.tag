@@ -149,6 +149,7 @@
 		const idSelect = '${propriedadePessoaClean}${propriedadeLotacaoClean}';
 		const idPessoa = "spanPessoa${propriedadePessoaClean}";
 		const idLotacao = "spanLotacao${propriedadeLotacaoClean}";
+		const idEmail = "spanEmail${propriedadeEmailClean}";
 
 		var objSelecionado = document.getElementById(idSelect);
 	
@@ -169,6 +170,16 @@
 			// Apaga as informacoes da pessoa selecionada:
 			limpa_${propriedadePessoaClean}();
 			break;
-		}
+		case 3:
+			// Exibe as entradas para lotacao e esconde as entradas para pessoa:
+			document.getElementById(idPessoa).style.display = 'none';
+			document.getElementById(idLotacao).style.display = 'none';
+			document.getElementById(idEmail).style.display = '';
+
+			// Apaga as informacoes da pessoa selecionada:
+			limpa_${propriedadePessoaClean}();
+			limpa_${propriedadeLotacaoClean}();
+			break;
+		}	
 	}
 </script>

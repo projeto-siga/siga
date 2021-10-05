@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
+import static org.apache.commons.lang3.math.NumberUtils.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -1765,8 +1767,196 @@ public class CpBL {
 	}
 	
 	public DpLotacao criarLotacao(final CpIdentidade identidadeCadastrante, final DpPessoa titular, final DpLotacao lotaTitular, 
-			final Long id, final String nmLotacao, final Long idOrgaoUsu, final String siglaLotacao,
+			final Long idLotacao, final String nmLotacao, final Long idOrgaoUsu, final String siglaLotacao,
 			final String situacao, final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade) {
+		
+		validarCriacaoLotacao(nmLotacao, idOrgaoUsu, siglaLotacao, idLocalidade);
+		
+		CpOrgaoUsuario cpOrgaoUsuario = new CpOrgaoUsuario();
+		cpOrgaoUsuario.setIdOrgaoUsu(idOrgaoUsu);
+		
+		validarSiglaCastradaOutraLotacao(idLotacao, siglaLotacao, cpOrgaoUsuario);
+		
+		List<DpPessoa> listPessoa = null;
+		DpLotacao lotacaoNova = new DpLotacao();
+		DpLotacao lotacao = null;	
+		
+		if(idLotacao != null) {
+			lotacao = dao().consultar(idLotacao, DpLotacao.class, false);
+			lotacaoNova.setIsSuspensa(lotacao.getIsSuspensa());
+		} else {
+			lotacaoNova.setIsSuspensa(INTEGER_ZERO);
+		}
+		
+		Date dataSistema = new Date(System.currentTimeMillis());
+		
+		if(podeGravarLotacao(idLotacao, nmLotacao, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade,
+				lotacao)) {
+			if (idLotacao != null) {			
+				listPessoa = popularInativacaoLotacaoEditada(titular, lotaTitular, idLotacao, nmLotacao, siglaLotacao, situacao,
+						lotacao, lotacaoNova, dataSistema);
+			} else {
+				lotacao = null;
+			}
+			
+			popularLotacaoNova(idLotacao, nmLotacao, siglaLotacao, isExternaLotacao, lotacaoPai, idLocalidade,
+					cpOrgaoUsuario, lotacaoNova, lotacao, dataSistema);
+			
+			try {
+				if(lotacaoNova.getDataFimLotacao() != null) {
+					lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
+					dao().gravarComHistorico(lotacao, identidadeCadastrante);
+				} else {
+					dao().gravarComHistorico(lotacaoNova, lotacao, dataSistema, identidadeCadastrante);
+				}
+				
+				gravarLotacaoPessoaComHistorico(identidadeCadastrante, listPessoa, lotacaoNova, lotacao, dataSistema);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", INTEGER_ZERO, e);
+			}
+		}
+		return lotacaoNova;
+	}
+
+	private boolean podeGravarLotacao(final Long idLotacao, final String nmLotacao, final String siglaLotacao,
+			final String situacao, final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade,
+			DpLotacao lotacao) {
+		return idLotacao == null ||(idLotacao != null && lotacao != null && (!nmLotacao.equals(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
+										|| (lotacao.getDataFim() == null && "false".equals(situacao)) || (lotacao.getDataFim() != null && "true".equals(situacao)) 
+										|| (isExternaLotacao != null && ((lotacao.getIsExternaLotacao() == null) || lotacao.getIsExternaLotacao() == 0))
+										|| (isExternaLotacao == null && ((lotacao.getIsExternaLotacao() != null) && lotacao.getIsExternaLotacao() == 1))
+										|| (isExternaLotacao != null && lotacao.getIsExternaLotacao() != null && !isExternaLotacao.equals(lotacao.getIsExternaLotacao().equals(Integer.valueOf(1)) ? Boolean.TRUE : Boolean.FALSE))
+										|| (lotacaoPai != null && lotacao.getLotacaoPai() == null)
+										|| (lotacaoPai == null && lotacao.getLotacaoPai() != null)
+										|| (lotacaoPai != null && !lotacaoPai.equals(lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getId() : 0L))
+										|| !idLocalidade.equals(lotacao.getLocalidade().getId())));
+	}
+
+	private void gravarLotacaoPessoaComHistorico(final CpIdentidade identidadeCadastrante, List<DpPessoa> listPessoa,
+			DpLotacao lotacaoNova, DpLotacao lotacao, Date dataSistema) {
+		if(lotacao != null && lotacao.getId() != null) {					
+			DpPessoa pessoaNova = null;
+			for (DpPessoa dpPessoa : listPessoa) {
+				pessoaNova = new DpPessoa();
+				if(dpPessoa.getLotacao().getIdInicial().equals(lotacaoNova.getIdLotacaoIni())) {
+					pessoaNova.setLotacao(lotacaoNova);
+				} else {
+					if(dpPessoa.getLotacao().getLotacaoPai() != null && lotacaoNova.getId().equals(dpPessoa.getLotacao().getLotacaoAtual().getLotacaoPai().getId())) {
+						pessoaNova.setLotacao(dpPessoa.getLotacao().getLotacaoAtual());
+					} else {
+						//grava nova lotacao filho e setar na pessoa
+						DpLotacao lotacaoFilhoNova = new DpLotacao();
+						DpLotacao lotacaoFilhoAntiga =  dpPessoa.getLotacao().getLotacaoAtual();
+						
+						lotacaoFilhoNova.setDataInicio(dataSistema);
+						copiaLotacao(lotacaoFilhoAntiga, lotacaoFilhoNova);
+						
+						dao().gravarComHistorico(lotacaoFilhoNova, lotacaoFilhoAntiga, dataSistema, identidadeCadastrante);
+						pessoaNova.setLotacao(lotacaoFilhoNova);
+					}
+				}				
+				copiarPessoa(dpPessoa, pessoaNova);
+				dao().gravarComHistorico(pessoaNova, dpPessoa, dataSistema, identidadeCadastrante);
+			}
+		}
+	}
+
+	private void popularLotacaoNova(final Long idLotacao, final String nmLotacao, final String siglaLotacao,
+			final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade,
+			CpOrgaoUsuario cpOrgaoUsuario, DpLotacao lotacaoNova, DpLotacao lotacao, Date dataSistema) {
+		if(lotacaoPai != null) {
+			validarIdLotacaoPai(idLotacao, lotacaoPai);
+			lotacaoNova.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
+		}
+		lotacaoNova.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
+		lotacaoNova.setSiglaLotacao(siglaLotacao.toUpperCase());
+		
+		CpLocalidade localidade = new CpLocalidade();
+		localidade.setIdLocalidade(idLocalidade);
+		lotacaoNova.setLocalidade(dao().consultarLocalidade(localidade));
+		
+		if(lotacaoNova.getOrgaoUsuario() == null && lotacao != null) {
+			lotacaoNova.setOrgaoUsuario(lotacao.getOrgaoUsuario());
+		} else {
+			lotacaoNova.setOrgaoUsuario(cpOrgaoUsuario);
+		}
+		
+		if (isExternaLotacao != null) {
+			lotacaoNova.setIsExternaLotacao(INTEGER_ONE);
+		} else {
+			lotacaoNova.setIsExternaLotacao(INTEGER_ZERO);	
+		}
+		
+		lotacaoNova.setDataInicioLotacao(dataSistema);
+	}
+
+	private void validarIdLotacaoPai(final Long idLotacao, final Long lotacaoPai) {
+		DpLotacao lotPai = new DpLotacao();
+		lotPai = CpDao.getInstance().consultarLotacaoPorId(lotacaoPai);
+		if(idLotacao != null) {
+			while(lotPai != null) {				
+				if(lotPai.getId().equals(idLotacao)) {
+					throw new AplicacaoException(SigaMessages.getMessage("usuario.lotacao") + " não pode ser selecionada como pai", 0);
+				} else if(lotPai.getLotacaoPai() != null) {
+					lotPai = CpDao.getInstance().consultarLotacaoPorId(lotPai.getLotacaoPai().getId());
+				} else {
+					lotPai = null;
+				}
+			}
+		}
+	}
+
+	private void validarSiglaCastradaOutraLotacao(final Long idLotacao, final String siglaLotacao,
+			CpOrgaoUsuario cpOrgaoUsuario) {
+		DpLotacao lotacaoTemp = consultarLotacaoPorSigla(siglaLotacao, cpOrgaoUsuario);		
+		
+		if(lotacaoTemp != null && lotacaoTemp.getId() != null && !lotacaoTemp.getId().equals(idLotacao)) {
+			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
+		}
+	}
+
+	private List<DpPessoa> popularInativacaoLotacaoEditada(final DpPessoa titular, final DpLotacao lotaTitular,
+			final Long idLotacao, final String nmLotacao, final String siglaLotacao, final String situacao,
+			DpLotacao lotacao, DpLotacao lotacaoNova, Date dataSistema) {
+		List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(idLotacao, Boolean.TRUE, Boolean.FALSE);
+		Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+		
+		if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
+				(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
+			throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
+		}
+						
+		if(podeInativarLotacao(lotacaoNova, listPessoa, qtdeDocumentoCriadosPosse, situacao)) {
+			lotacaoNova.setDataFimLotacao(dataSistema);
+		}
+		lotacaoNova.setIdLotacaoIni(lotacao.getIdLotacaoIni());
+		return listPessoa;
+	}
+	
+	private boolean podeInativarLotacao(final DpLotacao lotacao, final List<DpPessoa> listPessoa, 
+					final Integer qtdeDocumentoCriadosPosse, final String situacao) throws AplicacaoException {
+		if(lotacao.getDataFim() == null && "false".equals(situacao)) {
+	        if(listPessoa.size() > 0 || qtdeDocumentoCriadosPosse > 0) {	        		 
+	        	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa " + SigaMessages.getMessage("usuario.lotacao") , 0);
+	        } else if(dao().listarLotacoesPorPai(lotacao).size() > 0) {
+	        	throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao") , 0);
+	        } else {
+	        	return Boolean.TRUE;
+	        }
+		}
+		return Boolean.FALSE;
+	}
+
+	private DpLotacao consultarLotacaoPorSigla(final String siglaLotacao, CpOrgaoUsuario cpOrgaoUsuario) {
+		DpLotacao lotacaoTemp = new DpLotacao();		
+		lotacaoTemp.setSiglaLotacao(siglaLotacao);		
+		lotacaoTemp.setOrgaoUsuario(cpOrgaoUsuario);
+		DpLotacao lotacao = CpDao.getInstance().consultarPorSigla(lotacaoTemp);
+		return lotacao;
+	}
+
+	private void validarCriacaoLotacao(final String nmLotacao, final Long idOrgaoUsu, final String siglaLotacao,
+			final Long idLocalidade) {
 		if(nmLotacao == null)
 			throw new AplicacaoException("Nome da lotação não informado");
 		
@@ -1784,140 +1974,6 @@ public class CpBL {
 		
 		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) 
 			throw new AplicacaoException("Sigla com caracteres não permitidos");
-		
-		DpLotacao lotacao = new DpLotacao();
-		DpLotacao lotacaoNova = new DpLotacao();
-		lotacao.setSiglaLotacao(siglaLotacao);
-		CpOrgaoUsuario ou = new CpOrgaoUsuario();
-		ou.setIdOrgaoUsu(idOrgaoUsu);
-		lotacao.setOrgaoUsuario(ou);
-		lotacao = CpDao.getInstance().consultarPorSigla(lotacao);
-		Date data = new Date(System.currentTimeMillis());
-		
-		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
-			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
-		}
-		
-		List<DpPessoa> listPessoa = null;
-		
-		lotacao = null;	
-		if(id != null) {
-			lotacao = dao().consultar(id, DpLotacao.class, false);
-			lotacaoNova.setIsSuspensa(lotacao.getIsSuspensa());
-		} else {
-			lotacaoNova.setIsSuspensa(0);
-		}
-		
-		if(id == null ||(id != null && lotacao != null && (!nmLotacao.equals(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
-										|| (lotacao.getDataFim() == null && "false".equals(situacao)) || (lotacao.getDataFim() != null && "true".equals(situacao)) 
-										|| (isExternaLotacao != null && ((lotacao.getIsExternaLotacao() == null) || lotacao.getIsExternaLotacao() == 0))
-										|| (isExternaLotacao == null && ((lotacao.getIsExternaLotacao() != null) && lotacao.getIsExternaLotacao() == 1))
-										|| (isExternaLotacao != null && lotacao.getIsExternaLotacao() != null && !isExternaLotacao.equals(lotacao.getIsExternaLotacao().equals(Integer.valueOf(1)) ? Boolean.TRUE : Boolean.FALSE))
-										|| (lotacaoPai != null && lotacao.getLotacaoPai() == null)
-										|| (lotacaoPai == null && lotacao.getLotacaoPai() != null)
-										|| (lotacaoPai != null && !lotacaoPai.equals(lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getId() : 0L))
-										|| !idLocalidade.equals(lotacao.getLocalidade().getId())))) {
-			if (id != null) {			
-				listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
-				Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
-				
-				if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
-						(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
-					throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
-				}
-				
-				//valida se pode inativar lotação
-				if(lotacao.getDataFim() == null && "false".equals(situacao)) {
-			        if(listPessoa.size() > 0 || qtdeDocumentoCriadosPosse > 0) {	        		 
-			        	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa " + SigaMessages.getMessage("usuario.lotacao") , 0);
-			        } else if(dao().listarLotacoesPorPai(lotacao).size() > 0) {
-			        	throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao") , 0);
-			        } else {
-			        	lotacaoNova.setDataFimLotacao(data);
-			        }
-				}
-				lotacaoNova.setIdLotacaoIni(lotacao.getIdLotacaoIni());
-			} else {
-				lotacao = null;
-			}
-			
-			if(lotacaoPai != null) {
-				DpLotacao lotPai = new DpLotacao();
-				lotPai = CpDao.getInstance().consultarLotacaoPorId(lotacaoPai);
-				if(id != null) {
-					while(lotPai != null) {				
-						if(lotPai.getId().equals(id)) {
-							throw new AplicacaoException(SigaMessages.getMessage("usuario.lotacao") + " não pode ser selecionada como pai", 0);
-						} else if(lotPai.getLotacaoPai() != null) {
-							lotPai = CpDao.getInstance().consultarLotacaoPorId(lotPai.getLotacaoPai().getId());
-						} else {
-							lotPai = null;
-						}
-					}
-				}
-				lotacaoNova.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
-			}
-			lotacaoNova.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
-			lotacaoNova.setSiglaLotacao(siglaLotacao.toUpperCase());
-			
-			CpLocalidade localidade = new CpLocalidade();
-			localidade.setIdLocalidade(idLocalidade);
-			lotacaoNova.setLocalidade(dao().consultarLocalidade(localidade));
-			
-			if(lotacaoNova.getOrgaoUsuario() == null && lotacao != null) {
-				lotacaoNova.setOrgaoUsuario(lotacao.getOrgaoUsuario());
-			} else {
-				lotacaoNova.setOrgaoUsuario(ou);
-			}
-			
-			if (isExternaLotacao != null) {
-				lotacaoNova.setIsExternaLotacao(1);
-			} else {
-				lotacaoNova.setIsExternaLotacao(0);	
-			}
-			
-			lotacaoNova.setDataInicioLotacao(data);
-			DpLotacao lotacaoFilhoNova = null;
-			DpLotacao lotacaoFilhoAntiga = null;
-			try {
-				if(lotacaoNova.getDataFimLotacao() != null) {
-					lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
-					dao().gravarComHistorico(lotacao, identidadeCadastrante);
-				} else {
-					dao().gravarComHistorico(lotacaoNova, lotacao, data, identidadeCadastrante);
-				}
-				
-				if(lotacao != null && lotacao.getId() != null) {
-					
-					DpPessoa pessoaNova = null;
-					for (DpPessoa dpPessoa : listPessoa) {
-						pessoaNova = new DpPessoa();
-						if(dpPessoa.getLotacao().getIdInicial().equals(lotacaoNova.getIdLotacaoIni())) {
-							pessoaNova.setLotacao(lotacaoNova);
-						} else {
-							if(dpPessoa.getLotacao().getLotacaoPai() != null && lotacaoNova.getId().equals(dpPessoa.getLotacao().getLotacaoAtual().getLotacaoPai().getId())) {
-								pessoaNova.setLotacao(dpPessoa.getLotacao().getLotacaoAtual());
-							} else {
-								//grava nova lotacao filho e setar na pessoa
-								lotacaoFilhoNova = new DpLotacao();
-								lotacaoFilhoAntiga =  dpPessoa.getLotacao().getLotacaoAtual();
-								
-								lotacaoFilhoNova.setDataInicio(data);
-								copiaLotacao(lotacaoFilhoAntiga, lotacaoFilhoNova);
-								
-								dao().gravarComHistorico(lotacaoFilhoNova, lotacaoFilhoAntiga, data, identidadeCadastrante);
-								pessoaNova.setLotacao(lotacaoFilhoNova);
-							}
-						}				
-						copiarPessoa(dpPessoa, pessoaNova);
-						dao().gravarComHistorico(pessoaNova, dpPessoa, data, identidadeCadastrante);
-					}
-				}
-			} catch (final Exception e) {
-				throw new AplicacaoException("Erro na gravação", 0, e);
-			}
-		}
-		return lotacaoNova;
 	}
 	
 	public void copiaLotacao(DpLotacao lotAnt, DpLotacao lotNova) {

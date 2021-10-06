@@ -198,6 +198,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										<option value="DECISAO">Decisão</option>
 										<option value="EMAIL">E-mail</option>
 										<option value="EXECUTAR">Executar</option>
+										<option value="CRIAR_DOCUMENTO">Criar Documento</option>
 										<optgroup label="{{getPrincipalNome()}}"
 											ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
 											<option value="AGUARDAR_ASSINATURA_PRINCIPAL"
@@ -212,9 +213,6 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 											<option value="ARQUIVAR_PRINCIPAL"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Arquivar</option>
-											<option value="CRIAR_DOCUMENTO"
-												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
-												Criar Documento</option>
 										</optgroup>
 								</select></label> <i></i> </section>
 								<section class="col col-12 col-md-2 col-lg-2 form-group">

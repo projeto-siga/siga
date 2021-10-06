@@ -1014,5 +1014,30 @@ public class ExServiceImpl implements ExService {
 			return "Ocorreu um problema na publicação de documento em Portal.";
 		}
 	}
+
+	@Override
+	public void incluirCopiaDeDocumento(String siglaCadastrante, String siglaMobilPai, String siglaMobilFilho) throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
+			try {
+				if (siglaMobilPai == null)
+					throw new Exception("Informe a sigla do móbil pai");
+				ExMobil mobPai = buscarMobil(siglaMobilPai);
+				if (siglaMobilFilho == null)
+					throw new Exception("Informe a sigla do móbil filho");
+				ExMobil mobFilho = buscarMobil(siglaMobilFilho);
+				
+				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
+//				if (cadastranteParser.getLotacao() == null && cadastranteParser.getPessoa() == null)
+//					throw new Exception("Cadastrante inválido");
+				
+				Ex.getInstance().getBL().copiar(cadastranteParser.getPessoa(),
+						cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa(), mobPai, mobFilho, null, null, null);
+				return;
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
+			}
+		}
+	}
 	
 }

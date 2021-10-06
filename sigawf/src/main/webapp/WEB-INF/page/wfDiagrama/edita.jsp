@@ -207,6 +207,9 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 											<option value="INCLUIR_DOCUMENTO"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Aguardar Juntada</option>
+											<option value="INCLUIR_COPIA"
+												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+												Incluir Cópia</option>
 											<option value="TRAMITAR_PRINCIPAL"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Tramitar</option>
@@ -348,6 +351,25 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										remote-url="/sigaex/app/modelo/buscar-json-para-incluir/"
 										angucomplete-alt name="ref"
 										placeholder="Pesquisar Tipologia Documental" id="ref"
+										class="angucomplete-ctrl"
+										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+								</label> </section>
+								<section ng-show="tarefaItem.tipo == 'INCLUIR_COPIA'"
+									class="col col-12 col-md-6 col-lg-6 form-group"> <label
+									for="ref" title="" class="label">Documento
+									<div minlength="1" selected-object="selectedObject"
+										focus-first="true"
+										text-searching="Pesquisando Documento..."
+										initial-value="tarefaItem.ref.originalObject"
+										title-field="firstLine" description-field="secondLine"
+										input-class="form-control form-control-small"
+										remote-url-data-field="list" pause="200"
+										text-no-results="Não encontrei nenhuma Tipologia Documental."
+										match-class="highlight"
+										selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
+										remote-url="/sigaex/app/mobil/buscar-json/"
+										angucomplete-alt name="ref"
+										placeholder="Pesquisar Documento" id="ref"
 										class="angucomplete-ctrl"
 										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>

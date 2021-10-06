@@ -117,7 +117,7 @@ app
 						if (t.tipoResponsavel == 'RESPONSAVEL')
 							td.definicaoDeResponsavelId = t.refResponsavel;
 
-						if ((t.tipo == 'INCLUIR_DOCUMENTO' || t.tipo == 'CRIAR_DOCUMENTO') && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
+						if ((t.tipo == 'INCLUIR_DOCUMENTO' || t.tipo == 'INCLUIR_COPIA' || t.tipo == 'CRIAR_DOCUMENTO') && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
 							td.refId = t.ref.originalObject.key;
 							td.refSigla = t.ref.originalObject.firstLine;
 						}

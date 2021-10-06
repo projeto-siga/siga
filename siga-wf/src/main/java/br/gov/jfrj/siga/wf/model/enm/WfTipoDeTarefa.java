@@ -6,11 +6,12 @@ import com.crivano.jflow.task.TaskDecision;
 import com.crivano.jflow.task.TaskEmail;
 import com.crivano.jflow.task.TaskEval;
 
-import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarAssinatura;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaArquivar;
-import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
-import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarAssinatura;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarJuntada;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocIncluirCopia;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
 
 public enum WfTipoDeTarefa implements TaskKind {
@@ -23,6 +24,8 @@ public enum WfTipoDeTarefa implements TaskKind {
 	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", WfTarefaArquivar.class, false),
 	//
 	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", WfTarefaDocAguardarJuntada.class, true),
+	//
+	INCLUIR_COPIA("Incluir Cópia", "rectangle", WfTarefaDocIncluirCopia.class, false),
 	//
 	CRIAR_DOCUMENTO("Criar Documento", "rectangle", WfTarefaDocCriar.class, true),
 	//

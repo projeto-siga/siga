@@ -84,6 +84,8 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport.RetornoJson;
+import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport.RetornoJsonItem;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
 @Controller
@@ -233,7 +235,30 @@ public class ExMobilController extends
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);		
 	}
+	
+	@Get
+	@Path({"/app/mobil/buscar-json/{sigla}"})
+	public void buscaParaIncluir(String sigla) throws Exception{
+		try {
+			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+			filter.setSigla(sigla);
+			ExMobil mob = (ExMobil) dao().consultarPorSigla(filter);
 
+			RetornoJson l = new RetornoJson();
+			if (mob != null) {
+				RetornoJsonItem i = new RetornoJsonItem();
+				i.key = Long.toString(mob.getId());
+				i.firstLine = mob.getSigla();
+				i.secondLine = mob.getDescricao();
+				l.list.add(i);
+			}
+			jsonSuccess(l);
+		} catch (Exception e) {
+			jsonError(e);
+		}
+
+	}
+	
 	private List<ExTipoDocumento> getTiposDocumentoParaConsulta() {
 		List<ExTipoDocumento> l = dao().listarExTiposDocumento();
 		if ("inativa".equals(Prop.get("folha.de.rosto"))) {
@@ -754,7 +779,7 @@ public class ExMobilController extends
 		}
 		flt.setIdMod(paramLong("idMod"));
 		flt.setOrdem(paramInteger("ordem"));
-
+		
 		return flt;
 	}
 

@@ -382,12 +382,7 @@ app
 								t.preenchimentoPessoaId = undefined;
 								if (t.tipoResponsavel == 'PESSOA')
 									t.preenchimentoPessoaId = t.refPessoaResponsavel.originalObject.key;
-								var tarefa = t;
-								$http({ url: '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : '/lotacoes/' + t.preenchimentoLotacaoId) + '/preenchimentos', method: "GET" }).then(
-									function(response) {
-										tarefa.preenchimentos = response.data.list;
-									},
-									function(response) { });
+								$scope.atualizarPreenchimentos(t);
 							}
 						}
 
@@ -395,6 +390,14 @@ app
 						console.log('graphDrawDebounced')
 						$scope.graphDrawDebounced();
 					}, true);
+					
+			$scope.atualizarPreenchimentos = function(t) {
+				$http({ url: '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : '/lotacoes/' + t.preenchimentoLotacaoId) + '/preenchimentos', method: "GET" }).then(
+					function(response) {
+						t.preenchimentos = response.data.list;
+					},
+					function(response) { });
+			}
 
 			$scope.getResponsavelNome = function(s) {
 				if (!$scope.responsaveis)

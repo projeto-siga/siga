@@ -203,15 +203,15 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 											<option value="AGUARDAR_ASSINATURA_PRINCIPAL"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Aguardar Assinatura</option>
+											<option value="INCLUIR_DOCUMENTO"
+												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+												Aguardar Juntada</option>
 											<option value="TRAMITAR_PRINCIPAL"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Tramitar</option>
 											<option value="ARQUIVAR_PRINCIPAL"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Arquivar</option>
-											<option value="INCLUIR_DOCUMENTO"
-												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
-												Incluir Documento</option>
 											<option value="CRIAR_DOCUMENTO"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Criar Documento</option>

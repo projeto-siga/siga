@@ -12,7 +12,7 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.util.WfResp;
 
-public class WfTarefaCriarDocumento implements Task<WfDefinicaoDeTarefa, WfProcedimento> {
+public class WfTarefaDocCriar implements Task<WfDefinicaoDeTarefa, WfProcedimento> {
 
 	@Override
 	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {

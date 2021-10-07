@@ -6,6 +6,7 @@ import com.crivano.jflow.TaskResult;
 import com.crivano.jflow.model.enm.TaskResultKind;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
@@ -44,9 +45,12 @@ public class WfTarefaDocCriar implements Task<WfDefinicaoDeTarefa, WfProcediment
 		// Nato: Esse flush é necessário porque o documento precisará dos dados
 		// atualizados do workflow para processar o modelo
 		ContextoPersistencia.flushTransaction();
-		Service.getExService().criarDocumento(cadastranteStr, subscritorStr, destinatarioStr, destinatarioCampoExtraStr,
+		String valor = Service.getExService().criarDocumento(cadastranteStr, subscritorStr, destinatarioStr, destinatarioCampoExtraStr,
 				descricaoTipoDeDocumento, nomeForma, nomeModelo, nomePreenchimento, classificacaoStr, descricaoStr,
 				eletronico, nomeNivelDeAcesso, conteudo, siglaMobilPai, "PROCEDIMENTO", pi.getSigla(), finalizar);
+		
+		String identificador = Texto.slugify(pi.getDefinicaoDeTarefaCorrente().getNome(), true, true);
+		pi.getVariable().put(identificador, valor);
 
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 	}

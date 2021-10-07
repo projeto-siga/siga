@@ -126,6 +126,12 @@ app
 							td.refId2 = t.ref2;
 						}
 
+						if (t.tipo == 'CRIAR_DOCUMENTO') {
+							td.param = t.param;
+							if (t.param == 'FINALIZAR')
+								td.param2 = t.param2;
+						}
+
 						pd.definicaoDeTarefa.push(td);
 
 						if (d.tarefa[i].variavel) {
@@ -217,9 +223,14 @@ app
 							}
 						}
 
-						if (t.refId2) {
+						if (t.refId2) 
 							td.ref2 = '' + t.refId2
-						}
+
+						if (t.param) 
+							td.param = '' + t.param
+						
+						if (t.param2) 
+							td.param2 = '' + t.param2
 
 						pd.tarefa.push(td);
 

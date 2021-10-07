@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.wf.logic;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSuport;
 import com.crivano.jlogic.Expression;
+import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -23,7 +24,8 @@ public class WfPodeTerminar extends CompositeExpressionSuport {
 
 	@Override
 	protected Expression create() {
-		return Or.of(new WfEstaResponsavel(pi, titular, lotaTitular), And.of(new WfEstaSemResponsavel(pi),
-				new WfPodeEditarDiagrama(pi.getDefinicaoDeProcedimento(), titular, lotaTitular)));
+		return And.of(Not.of(new WfEstaTerminado(pi)),
+				Or.of(new WfEstaResponsavel(pi, titular, lotaTitular), And.of(new WfEstaSemResponsavel(pi),
+						new WfPodeEditarDiagrama(pi.getDefinicaoDeProcedimento(), titular, lotaTitular))));
 	}
 };

@@ -80,6 +80,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 							Resp.
 							<div minlength="1" selected-object="selectedObject"
 								focus-first="true" text-searching="Pesquisando Unidades..."
+								focus-out="$broadcast(!data.workflow.lotaResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
 								initial-value="data.workflow.lotaResponsavel.originalObject"
 								title-field="firstLine" description-field="secondLine"
 								input-class="form-control form-control-small"
@@ -100,6 +101,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 							Resp.
 							<div minlength="1" selected-object="selectedObject"
 								focus-first="true" text-searching="Pesquisando Pessoas..."
+								focus-out="$broadcast(!data.workflow.responsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
 								initial-value="data.workflow.responsavel.originalObject"
 								title-field="firstLine" description-field="secondLine"
 								input-class="form-control form-control-small"
@@ -296,6 +298,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									Resp.
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true" text-searching="Pesquisando Unidades..."
+										focus-out="$broadcast(!tarefaItem.refUnidadeResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
 										initial-value="tarefaItem.refUnidadeResponsavel.originalObject"
 										title-field="firstLine" description-field="secondLine"
 										input-class="form-control form-control-small"
@@ -315,6 +318,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									Resp.
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true" text-searching="Pesquisando Pessoas..."
+										focus-out="$broadcast(!tarefaItem.refPessoaResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
 										initial-value="tarefaItem.refPessoaResponsavel.originalObject"
 										title-field="firstLine" description-field="secondLine"
 										input-class="form-control form-control-small"
@@ -340,6 +344,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									for="ref" title="" class="label">Modelo
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true"
+										focus-out="$broadcast(!tarefaItem.ref.originalObject ? 'angucomplete-alt:clearInput' : '');"
 										text-searching="Pesquisando Modelo Documental..."
 										initial-value="tarefaItem.ref.originalObject"
 										title-field="firstLine" description-field="secondLine"
@@ -359,6 +364,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									for="ref" title="" class="label">Documento
 									<div minlength="1" selected-object="selectedObject"
 										focus-first="true"
+										focus-out="$broadcast(!tarefaItem.ref.originalObject ? 'angucomplete-alt:clearInput' : '');"
 										text-searching="Pesquisando Documento..."
 										initial-value="tarefaItem.ref.originalObject"
 										title-field="firstLine" description-field="secondLine"

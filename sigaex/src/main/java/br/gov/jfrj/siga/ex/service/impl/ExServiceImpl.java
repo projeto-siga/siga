@@ -22,6 +22,7 @@ package br.gov.jfrj.siga.ex.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -30,9 +31,7 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
-import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
 import org.jboss.logging.Logger;
 
@@ -58,6 +57,7 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExSequencia;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
@@ -66,6 +66,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -400,16 +401,18 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr,
-			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo,
+			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo, String nomePreenchimento,
 			String classificacaoStr, String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo,
-			String siglaMobilPai, Boolean finalizar) throws Exception {
+			String siglaMobilPai, String tipoPrincipal, String siglaPrincipal, Boolean finalizar) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				DpPessoa cadastrante = null;
+				DpLotacao lotaCadastrante = null;
 				DpPessoa subscritor = null;
 				ExModelo modelo = null;
 				ExFormaDocumento forma = null;
 				ExTipoDocumento tipoDocumento = null;
+				ExPreenchimento preenchimento = null;
 				ExClassificacao classificacao = null;
 				ExNivelAcesso nivelDeAcesso = null;
 				DpLotacao destinatarioLotacao = null;
@@ -417,30 +420,98 @@ public class ExServiceImpl implements ExService {
 				CpOrgao destinatarioOrgaoExterno = null;
 
 				ExDocumento doc = new ExDocumento();
+				
+				if (tipoPrincipal != null) {
+					doc.setTipoDePrincipal(ExTipoDePrincipal.valueOf(tipoPrincipal));
+					doc.setPrincipal(siglaPrincipal);
+				}
+				
+				if (nomePreenchimento != null) {
+					if (nomePreenchimento.matches("^\\d+$")) {
+						preenchimento = dao().consultar(Long.parseLong(nomePreenchimento), ExPreenchimento.class, false);
+					} else {
+						ExPreenchimento filtro = new ExPreenchimento();
+						filtro.setNomePreenchimento(nomePreenchimento);
+						filtro.setExModelo(modelo);
+						filtro.setDpLotacao(lotaCadastrante);
+						List<ExPreenchimento> lista = dao().consultar(filtro);
+						if (lista.size() == 1)
+							preenchimento = lista.get(0);
+					}
+					if (preenchimento == null)
+						throw new AplicacaoException("Não foi possível encontrar um preenchimento com os dados informados.");
+					
+					final String strBanco = new String(preenchimento.getPreenchimentoBlob());
+					final String arrStrBanco[] = strBanco.split("&");
+					for (final String elem : arrStrBanco) {
+						final String[] paramNameAndValue = ((String) elem).split("=");
+						final String paramName = paramNameAndValue[0];
+						String paramValueEncoded = paramNameAndValue[1];
+						String paramValue = URLDecoder.decode(paramValueEncoded, "ISO-8859-1");
+						switch (paramName) {
+						case "subscritorSel.id": 
+							subscritorStr = dao().consultar(Long.parseLong(paramValue), DpPessoa.class, false).getSigla();
+							break;
+						case "destinatarioSel.id": 
+							destinatarioStr = dao().consultar(Long.parseLong(paramValue), DpPessoa.class, false).getSigla();
+							break;
+						case "lotacaoDestinatarioSel.id": 
+							destinatarioStr = dao().consultar(Long.parseLong(paramValue), DpLotacao.class, false).getSigla();
+							break;
+						case "classificacaoSel.id": 
+							classificacaoStr = dao().consultar(Long.parseLong(paramValue), ExClassificacao.class, false).getSigla();
+							break;
+						case "descricao": 
+							descricaoStr = paramValue;
+							break;
+						case "nivelDeAcesso": 
+							nomeNivelDeAcesso = paramValue;
+							break;
+						default:
+							if (conteudo == null) 
+								conteudo = "";
+							else 
+								conteudo += "&";
+							conteudo += paramName + "=" + paramValueEncoded;
+						}
+					}
+				}
+				
+				if (subscritorStr != null) {
+					subscritor = dao().getPessoaFromSigla(subscritorStr);
+					if (subscritor == null)
+						throw new AplicacaoException("Não foi possível encontrar um subscritor com a matrícula informada.");
+					if (subscritor.isFechada())
+						throw new AplicacaoException("O subscritor não está mais ativo.");
+				}
 
 				if (cadastranteStr == null || cadastranteStr.isEmpty())
 					throw new AplicacaoException("A matrícula do cadastrante não foi informada.");
 
-				if (subscritorStr == null || subscritorStr.isEmpty())
-					throw new AplicacaoException("A matrícula do subscritor não foi informada.");
+				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(cadastranteStr);
 
-				cadastrante = dao().getPessoaFromSigla(cadastranteStr);
+				cadastrante = cadastranteParser.getPessoa();
+				lotaCadastrante = cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa();
+				
+				if (cadastrante == null && lotaCadastrante != null) {
+					if (subscritor != null && lotaCadastrante.equivale(subscritor.getLotacao()))
+						cadastrante = subscritor;
+					else {
+						List<DpPessoa> pessoas = dao().pessoasPorLotacao(lotaCadastrante.getId(), false, false);
+						if (pessoas == null || pessoas.size() == 0)
+							throw new AplicacaoException(
+									"Não foi possível eleger um cadastrante para a lotação informada.");
+						cadastrante = pessoas.get(0);
+					}
+				}
 
-				if (cadastrante == null)
+				if (cadastrante == null || lotaCadastrante == null)
 					throw new AplicacaoException(
-							"Não foi possível encontrar um cadastrante com a matrícula informada.");
+							"Não foi possível encontrar um cadastrante ou uma lotação cadastrante com a matrícula informada.");
 
-				if (cadastrante.isFechada())
+				if (cadastrante != null && cadastrante.isFechada())
 					throw new AplicacaoException("O cadastrante não está mais ativo.");
-
-				subscritor = dao().getPessoaFromSigla(subscritorStr);
-
-				if (subscritor == null)
-					throw new AplicacaoException("Não foi possível encontrar um subscritor com a matrícula informada.");
-
-				if (subscritor.isFechada())
-					throw new AplicacaoException("O subscritor não está mais ativo.");
-
+				
 				if (descricaoTipoDeDocumento == null)
 					tipoDocumento = (dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class,
 							false));
@@ -451,13 +522,17 @@ public class ExServiceImpl implements ExService {
 					throw new AplicacaoException(
 							"Não foi possível encontrar o Tipo de Documento. Os Tipos de Documentos aceitos são: 1-Interno Produzido, 2-Interno Importado, 3-Externo");
 
-				if (nomeForma == null)
-					throw new AplicacaoException("O Tipo não foi informado.");
-
 				if (nomeModelo == null)
 					throw new AplicacaoException("O modelo não foi informado.");
 
-				modelo = dao().consultarExModelo(nomeForma, nomeModelo);
+				// Aceita também o ID do modelo
+				if (nomeModelo.matches("^\\d+$")) {
+					modelo = dao().consultar(Long.parseLong(nomeModelo), ExModelo.class, false);
+				} else {
+					if (nomeForma == null)
+						throw new AplicacaoException("O Tipo não foi informado.");
+					modelo = dao().consultarExModelo(nomeForma, nomeModelo);
+				}
 
 				if (modelo == null)
 					throw new AplicacaoException("Não foi possível encontrar um modelo com os dados informados.");
@@ -469,7 +544,7 @@ public class ExServiceImpl implements ExService {
 				if (!forma.podeSerDoTipo(tipoDocumento))
 					throw new AplicacaoException("O documento do tipo " + forma.getDescricao() + " não pode ser "
 							+ tipoDocumento.getDescricao());
-
+				
 				if ((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica())
 					throw new AplicacaoException("A Classificação não foi informada.");
 
@@ -487,9 +562,8 @@ public class ExServiceImpl implements ExService {
 				if (eletronico == null)
 					eletronico = true;
 
-				CpSituacaoDeConfiguracaoEnum idSit = Ex
-						.getInstance().getConf().buscaSituacao(modelo, tipoDocumento, cadastrante,
-								cadastrante.getLotacao(), ExTipoDeConfiguracao.ELETRONICO);
+				CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(modelo, tipoDocumento,
+						cadastrante, lotaCadastrante, ExTipoDeConfiguracao.ELETRONICO);
 
 				if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 					eletronico = true;
@@ -498,12 +572,11 @@ public class ExServiceImpl implements ExService {
 				}
 
 				if (nomeNivelDeAcesso == null) {
-
 					Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 					ExConfiguracao config = new ExConfiguracao();
 					config.setDpPessoa(cadastrante);
-					config.setLotacao(cadastrante.getLotacao());
+					config.setLotacao(lotaCadastrante);
 					config.setExTipoDocumento(tipoDocumento);
 					config.setExFormaDocumento(forma);
 					config.setExModelo(modelo);
@@ -511,8 +584,8 @@ public class ExServiceImpl implements ExService {
 					config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_DE_ACESSO);
 					config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
 
-					ExConfiguracaoCache exConfig = ((ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
-							new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
+					ExConfiguracaoCache exConfig = ((ExConfiguracaoCache) Ex.getInstance().getConf()
+							.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
 
 					if (exConfig != null)
 						nivelDeAcesso = dao().consultar(exConfig.exNivelAcesso, ExNivelAcesso.class, false);
@@ -523,16 +596,16 @@ public class ExServiceImpl implements ExService {
 				if (nivelDeAcesso == null)
 					nivelDeAcesso = dao().consultar(6L, ExNivelAcesso.class, false);
 
-			
-		List<ExNivelAcesso> niveisFinal = NivelDeAcessoUtil.getListaNivelAcesso(tipoDocumento, forma, modelo, classificacao, cadastrante, cadastrante.getLotacao());
+				List<ExNivelAcesso> niveisFinal = NivelDeAcessoUtil.getListaNivelAcesso(tipoDocumento, forma, modelo,
+						classificacao, cadastrante, lotaCadastrante);
 
-		if (niveisFinal != null && !niveisFinal.isEmpty() & !niveisFinal.contains(nivelDeAcesso))
-			nivelDeAcesso = niveisFinal.get(0);
+				if (niveisFinal != null && !niveisFinal.isEmpty() & !niveisFinal.contains(nivelDeAcesso))
+					nivelDeAcesso = niveisFinal.get(0);
 
 				doc.setCadastrante(cadastrante);
-				doc.setLotaCadastrante(cadastrante.getLotacao());
+				doc.setLotaCadastrante(lotaCadastrante);
 				doc.setTitular(cadastrante);
-				doc.setLotaTitular(cadastrante.getLotacao());
+				doc.setLotaTitular(lotaCadastrante);
 
 				if (destinatarioStr != null) {
 					try {
@@ -626,13 +699,10 @@ public class ExServiceImpl implements ExService {
 					doc.setConteudoBlobForm(baos.toByteArray());
 				}
 
-				ServletContext servletContext = (ServletContext) context.getMessageContext()
-						.get(MessageContext.SERVLET_CONTEXT);
-
-				doc = Ex.getInstance().getBL().gravar(cadastrante, cadastrante, cadastrante.getLotacao(), doc);
+				doc = Ex.getInstance().getBL().gravar(cadastrante, cadastrante, lotaCadastrante, doc);
 
 				if (finalizar)
-					Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);
+					Ex.getInstance().getBL().finalizar(cadastrante, lotaCadastrante, doc);
 
 				return doc.getSigla();
 			} catch (Exception ex) {

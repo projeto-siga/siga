@@ -123,6 +123,15 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	@Column(name = "DEFT_DS_REF", length = 256)
 	private java.lang.String refDescr;
 
+	@Column(name = "DEFT_ID_REF2")
+	private java.lang.Long refId2;
+
+	@Column(name = "DEFT_SG_REF2", length = 32)
+	private java.lang.String refSigla2;
+
+	@Column(name = "DEFT_DS_REF2", length = 256)
+	private java.lang.String refDescr2;
+
 	@Transient
 	private java.lang.String hisIde;
 
@@ -451,6 +460,30 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 
 	public void setRefDescr(java.lang.String refDescr) {
 		this.refDescr = refDescr;
+	}
+
+	public java.lang.Long getRefId2() {
+		return refId2;
+	}
+
+	public void setRefId2(java.lang.Long refId2) {
+		this.refId2 = refId2;
+	}
+
+	public java.lang.String getRefSigla2() {
+		return refSigla2;
+	}
+
+	public void setRefSigla2(java.lang.String refSigla2) {
+		this.refSigla2 = refSigla2;
+	}
+
+	public java.lang.String getRefDescr2() {
+		return refDescr2;
+	}
+
+	public void setRefDescr2(java.lang.String refDescr2) {
+		this.refDescr2 = refDescr2;
 	}
 
 	@Override

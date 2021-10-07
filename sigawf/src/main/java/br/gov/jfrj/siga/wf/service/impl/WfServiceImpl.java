@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.wf.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -40,6 +41,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.dao.WfStarter;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.service.WfProcedimentoWSTO;
 import br.gov.jfrj.siga.wf.service.WfService;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
@@ -152,6 +154,24 @@ public class WfServiceImpl implements WfService {
 				ctx.rollback(ex);
 				throw ex;
 			}
+		}
+	}
+
+	public WfProcedimentoWSTO consultarProcedimento(String siglaProcedimento) throws Exception {
+		try (SoapContext ctx = new WfSoapContext(false)) {
+			if (siglaProcedimento == null)
+				throw new RuntimeException("Sigla do procedimento precisa ser informada.");
+			WfProcedimento pi = WfDao.getInstance().consultarPorSigla(siglaProcedimento, WfProcedimento.class, null);
+			if (pi == null)
+				throw new RuntimeException(
+						"Não foi encontrado um procedimento com a sigla '" + siglaProcedimento + "'");
+			WfProcedimentoWSTO r = new WfProcedimentoWSTO();
+			r.setSigla(pi.getSigla());
+			r.setPrincipal(pi.getPrincipal());
+			r.setTitular(pi.getTitular().getDescricao());
+			r.setLotaTitular(pi.getLotaTitular().getDescricao());
+			r.setVar(pi.getVariable());
+			return r;
 		}
 	}
 

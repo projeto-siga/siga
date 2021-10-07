@@ -1074,8 +1074,15 @@ public class AppController extends GcController {
 		// ideal seria injetar null se nenhum parâmetro for especificado.
 		if (pessoa != null && pessoa.getId() == null)
 			pessoa = null;
+		
+		if (pessoa != null && pessoa.getId() != null)
+			pessoa = dao().consultar(pessoa.getId(),DpPessoa.class,false);
+		
 		if (lotacao != null && lotacao.getId() == null)
 			lotacao = null;
+		
+		if (lotacao != null && lotacao.getId() != null)
+			lotacao = dao().consultar(lotacao.getId(),DpLotacao.class,false);
 
 		if (pessoa != null || lotacao != null || email != null) {
 
@@ -1196,10 +1203,13 @@ public class AppController extends GcController {
 			String js = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('" + CKEditorFuncNum
 					+ "','" + url + "');</script>";
 
-			HttpResult response = result.use(Results.http());
-			response.addHeader("Content-Type", "text/html");
+	//		HttpResult response = result.use(Results.http());
+	//		response.addHeader("Content-Type", "text/html");
 
-			result.use(Results.http()).body(js);
+	//		result.use(Results.http()).body(js);
+			
+			
+			result.use(Results.http()).addHeader("Content-Type", "text/html").body(js);
 		} else {
 			if (titulo != null && titulo.trim().length() > 0)
 				tituloArquivo = titulo;
@@ -1238,7 +1248,8 @@ public class AppController extends GcController {
 			throw new Exception("Arquivo não encontrado.");
 
 		// TODO verificar se o conhecimento pai eh sem autenticacao
-		GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq, idInformacao);
+		GcInformacao infoMae = GcInformacao.AR.findById(idInformacao);
+		//GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq, idInformacao);
 		if (infoMae == null || !(infoMae.acessoExternoPublicoPermitido()))
 			throw new Exception("Arquivo não pode ser acessado sem autenticação.");
 

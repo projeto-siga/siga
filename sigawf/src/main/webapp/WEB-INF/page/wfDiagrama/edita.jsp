@@ -212,6 +212,9 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 											<option value="INCLUIR_DOCUMENTO"
 												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 												Incluir Documento</option>
+											<option value="CRIAR_DOCUMENTO"
+												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+												Criar Documento</option>
 										</optgroup>
 								</select></label> <i></i> </section>
 								<section class="col col-12 col-md-2 col-lg-2 form-group">
@@ -230,7 +233,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="form-control"><option value="">[Próxima]</option></select></label>
 								<i></i> </section>
 								<section
-									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL'"
+									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL'"
 									class="col col-12 col-md-2 col-lg-2 form-group"> <label
 									for="tipoResponsavel" title="" class="label">Tipo Resp.<i
 									title="Preenchimento obrigatório"
@@ -286,7 +289,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 								</select>
 								</label> <i></i> </section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refUnidadeResponsavel" title="" class="label">Lotação
 									Resp.
@@ -305,7 +308,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refPessoaResponsavel" title="" class="label">Pessoa
 									Resp.
@@ -324,14 +327,14 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</label> </section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refResponsavel" title="" class="label">Responsável
 									<select ng-model="tarefaItem.refResponsavel"
 									ng-options="item.hisIdIni as item.nome for item in responsaveis"
 									class="form-control"></select>
 								</label> </section>
-								<section ng-show="tarefaItem.tipo == 'INCLUIR_DOCUMENTO'"
+								<section ng-show="tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="ref" title="" class="label">Modelo
 									<div minlength="1" selected-object="selectedObject"
@@ -349,6 +352,15 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										placeholder="Pesquisar Tipologia Documental" id="ref"
 										class="angucomplete-ctrl"
 										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+								</label> </section>
+								<section
+									ng-show="tarefaItem.tipo == 'CRIAR_DOCUMENTO'"
+									ng-if="tarefaItem.preenchimentos"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="ref2" title="" class="label">Preenchimento
+									<select ng-model="tarefaItem.ref2"
+									ng-options="item.idPreenchimento as item.nome for item in tarefaItem.preenchimentos"
+									class="form-control"></select>
 								</label> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"
 									title="Variáveis" class="col col-12">

@@ -1081,7 +1081,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 	    [#if !gerar_formulario!false]    	
     		[#if titulo != ""]    			
-    			<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+    			<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${titulo}</label>
     		[/#if]
     		
        		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""}${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control" [#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"[#else]${jlargura!""}${jmaxcaracteres!""}[/#if]/>
@@ -1175,7 +1175,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 		        <input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
 		               [#if v=='Sim']checked[/#if] 
 		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '${default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
-		        <label class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+		        <label title="campo: ${var}" class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 		        [#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]		       
@@ -1215,7 +1215,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 	    [#if !gerar_formulario!false]        	
 			<div class="custom-control custom-radio">
 	        	<input class="custom-control-input" type="radio" id="${id}" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; ${onclique}; ${jreler!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
-				<label class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+				<label title="campo: ${var}" class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 				[#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]						
@@ -1347,7 +1347,7 @@ CKEDITOR.replace( '${var}',
 
         <div>
         [#if titulo != ""]
-                        <b>${titulo}</b>
+                        <span title="campo: ${var}"><b>${titulo}</b></span>
         [/#if]
 
         [#if !gerar_formulario!false]
@@ -1363,16 +1363,12 @@ CKEDITOR.replace( '${var}',
                 <tr>
                     <td></td>
                     <td colspan="3">
-
-                        
-                         
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
                              <input type="hidden" id="${var}" name="${var}" value="${v?html}">
                             [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
                         [#else]
                             <script type="text/javascript">
-
 								CKEDITOR.config.disableNativeSpellChecker = false;
 								CKEDITOR.config.scayt_autoStartup = false;
 								CKEDITOR.config.scayt_sLang = 'pt_BR';
@@ -1444,9 +1440,101 @@ CKEDITOR.replace( '${var}',
 								    {
 								        name: 'document',
 								        items: ['Source']
+								    },
+								    {
+								        name: 'extra',
+								        items: ['strinsert']
 								    }
 								];
-								CKEDITOR.config.extraPlugins = 'footnotes';
+								
+								// @license Copyright © 2013 Stuart Sillitoe <stuart@vericode.co.uk>
+ 								// This is open source, can modify it as you wish.
+ 								// Stuart Sillitoe - stuartsillitoe.co.uk
+ 								CKEDITOR.config.strinsert_strings =	 [
+											{'name': 'Documento'},
+											{'name': 'Código', 'value': '$' + '{doc.sigla}'},
+											{'name': 'Data', 'value': '$' + '{doc.dtDocDDMMYYYY}'},
+											{'name': 'Nome do Subscritor', 'value': '$' + '{doc.subscritor.descricao}'},
+											{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.subscritor.lotacao.descricao}'},
+											{'name': 'Destinatário', 'value': '$' + '{doc.destinatarioString}'},
+											{'name': 'Campo X da Entrevista', 'value': '$' + '{doc.form.x}'},
+											{'name': 'Campo X da Entrevista do Pai', 'value': '$' + '{doc.pai.form.x}'},
+											{'name': 'Descrição', 'value': '$' + '{doc.descrDocumento}'},
+											{'name': 'Workflow'},
+											{'name': 'Sigla do Procedimento', 'value': '$' + '{wf.sigla}'},
+											{'name': 'Principal', 'value': '$' + '{wf.principal}'},
+											{'name': 'Nome do Titular', 'value': '$' + '{wf.titular}'},
+											{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
+											{'name': 'Variável X', 'value': '$' + '{wf.var.x}'},
+										];
+								CKEDITOR.config.strinsert_button_label = 'Variável';
+								CKEDITOR.config.strinsert_button_title = 'Inserir Variável';
+								CKEDITOR.config.strinsert_button_voice = 'Inserir Variável';
+								
+								CKEDITOR.plugins.add('strinsert',
+								{
+									requires : ['richcombo'],
+									init : function( editor )
+									{
+										var config = editor.config;
+								
+										// Gets the list of insertable strings from the settings.
+										var strings = config.strinsert_strings;
+								
+										// add the menu to the editor
+										editor.ui.addRichCombo('strinsert',
+										{
+											label: 		config.strinsert_button_label,
+											title: 		config.strinsert_button_title,
+											voiceLabel: config.strinsert_button_voice,
+											toolbar: 'insert',
+											className: 	'cke_format',
+											multiSelect:false,
+											panel:
+											{
+												css: [ editor.config.contentsCss, CKEDITOR.skin.getPath('editor') ],
+												voiceLabel: editor.lang.panelVoiceLabel
+											},
+								
+											init: function()
+											{
+												var lastgroup = '';
+												for(var i=0, len=strings.length; i < len; i++)
+												{
+													string = strings[i];
+													// If there is no value, make a group header using the name.
+													if (!string.value) {
+														this.startGroup( string.name );
+													}
+													// If we have a value, we have a string insert row.
+													else {
+														// If no name provided, use the value for the name.
+														if (!string.name) {
+															string.name = string.value;
+														}
+														// If no label provided, use the name for the label.
+														if (!string.label) {
+															string.label = string.name;
+														}
+														this.add(string.value, string.name, string.label);
+													}
+												}
+											},
+								
+											onClick: function( value )
+											{
+												editor.focus();
+												editor.fire( 'saveSnapshot' );
+												editor.insertHtml(value);
+												editor.fire( 'saveSnapshot' );
+											},
+								
+										});
+									}
+								});
+
+								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
+								
 								window.onload = function() {
 								    $("textarea.editor").each(function(index) {
 								        CKEDITOR.replace(this, {
@@ -1486,7 +1574,7 @@ CKEDITOR.replace( '${var}',
 
     [#if !gerar_formulario!false]    
     	<div class="form-group" style="margin-bottom:0">
-    		[#if titulo?? && titulo != ""]<label for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
+    		[#if titulo?? && titulo != ""]<label title="campo: ${var}" for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
     		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
     			[#if opcaoNeutra?? && opcaoNeutra != "" && obrigatorio]
     				<option id="opcaoNeutra" value="${opcaoNeutra}" [#if !(temValor??)]selected[/#if]>${opcaoNeutra}</option>
@@ -1575,7 +1663,7 @@ CKEDITOR.replace( '${var}',
         [/#if]
         
         [#if titulo != ""]                         
-        	<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+        	<label title="campo: ${var}" for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
         [/#if]
 
         [#if !gerar_formulario!false]

@@ -29,12 +29,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.parser.Parser;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -115,6 +120,32 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			temp.process(root, out);
 			out.flush();
 			String processed = baos.toString(StandardCharsets.UTF_8.name());
+			
+			// Reprocessar para substituir variáveis declaradas nos campos da entrevista
+			if (root.get("gerar_documento") != null || root.get("gerar_descricao") != null) {
+				baos.reset();
+
+				// Altera para desfazer o HTML encoding de dentro das operações do Freemarker
+				Pattern p = Pattern.compile("\\$\\{([^\\}]+)\\}");
+				Matcher m = p.matcher(processed);
+				StringBuffer sb = new StringBuffer();
+				while (m.find()) {
+				    String group = m.group(1);
+					String unescapeEntities = "\\${" + Parser.unescapeEntities(group, true) + "}";
+					m.appendReplacement(sb, unescapeEntities);
+				}
+				m.appendTail(sb);
+				processed = sb.toString();
+
+				// Altera para que não seja necessário aplicar o (...)! manualmente
+				processed = processed.replaceAll("\\$\\{([^\\}]+)\\}", "\\${($1)!}");
+				
+				temp = new Template(((String) attrs.get("nmMod")) + " (post-processing)", new StringReader(processed), cfg);
+				temp.process(root, out);
+				out.flush();
+				processed = baos.toString(StandardCharsets.UTF_8.name());
+			}
+			
 			return processed;
 		} catch (TemplateException e) {
 			if (e.getCauseException() != null
@@ -132,7 +163,9 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 	}
 
 	static LoadingCache<String, String> cache = CacheBuilder.newBuilder().maximumSize(1000)
-			.expireAfterWrite(5, TimeUnit.MINUTES).build(new CacheLoader<String, String>() {
+			.expireAfterWrite(Prop.get("debug.default.template.pathname") == null ? 5 : 1,
+					Prop.get("debug.default.template.pathname") == null ? TimeUnit.MINUTES : TimeUnit.SECONDS)
+			.build(new CacheLoader<String, String>() {
 				public String load(String source) throws Exception {
 					CpModelo mod;
 					if ("DEFAULT".equals(source)) {
@@ -142,7 +175,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 					} else {
 						mod = ExDao.getInstance().consultaCpModeloPorNome(source);
 					}
-					
+
 					String conteudoBlob = "";
 					if (mod != null)
 						conteudoBlob = mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();

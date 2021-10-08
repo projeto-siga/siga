@@ -78,7 +78,10 @@ public class WfTarefaDocCriar extends
 	}
 
 	public static String getIdentificadorDaVariavel(WfDefinicaoDeTarefa td) {
-		return "doc_" + Texto.slugify(td.getNome(), true, true);
+		String s = Texto.slugify(td.getNome(), true, true);
+		if (!s.startsWith("doc_"))
+			s = "doc_" + s;
+		return s;
 	}
 
 	public static String getSiglaDoDocumentoCriado(WfProcedimento pi) {

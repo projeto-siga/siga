@@ -2283,11 +2283,13 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
 	}
 	
-	public boolean isModeloIncluso(Long idModelo) {
+	public boolean isModeloIncluso(Long idModelo, Date depoisDaData) {
 		ExModelo mod = ExDao.getInstance().consultar(idModelo, ExModelo.class, false);
 		
 		for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
 			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (depoisDaData != null && depoisDaData.after(m.getDtIniMov()))
 				continue;
 			if (m.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
 				continue;

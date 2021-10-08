@@ -241,7 +241,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 				pd.setTipoDePrincipal(WfTipoDePrincipal.NENHUM);
 			if (pd.getTipoDePrincipal() == WfTipoDePrincipal.NENHUM)
 				pd.setTipoDeVinculoComPrincipal(null);
-			
+
 			if (pd.getOrgaoUsuario() == null)
 				pd.setOrgaoUsuario(getTitular().getOrgaoUsuario());
 
@@ -356,9 +356,16 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 				result.redirectTo("editar?id=" + pd.getId());
 				return;
 			}
-			jsonSuccess("OK");
+			jsonSuccess(new GravarResultado(pd.getId()));
 		} catch (Exception e) {
 			jsonError(e);
+		}
+	}
+	
+	private static class GravarResultado {
+		String id;
+		public GravarResultado(Long id) {
+			this.id = id.toString();
 		}
 	}
 

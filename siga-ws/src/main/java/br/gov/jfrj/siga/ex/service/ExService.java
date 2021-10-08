@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service;
 
+import java.util.Date;
+
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
@@ -130,7 +132,7 @@ public interface ExService extends Remote {
 	public String liquidante(String codigoDocumentoVia) throws Exception;
 
 	@WebMethod
-	public Boolean isModeloIncluso(String codigoDocumentoVia, Long idModelo) throws Exception;
+	public Boolean isModeloIncluso(String codigoDocumentoVia, Long idModelo, Date depoisDaData) throws Exception;
 
 	@WebMethod
 	public void incluirCopiaDeDocumento(String siglaCadastrante, String siglaMobilPai, String siglaMobilFilho)

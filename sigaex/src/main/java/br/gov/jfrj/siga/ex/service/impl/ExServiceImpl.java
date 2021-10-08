@@ -789,13 +789,13 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
-	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo) throws Exception {
+	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo, Date depoisDaData) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob.isGeral())
 					mob = mob.getDoc().getPrimeiroMobil();
-				return mob.isModeloIncluso(idModelo);
+				return mob.isModeloIncluso(idModelo, depoisDaData);
 			} catch (Exception ex) {
 				ctx.rollback(ex);
 				throw ex;

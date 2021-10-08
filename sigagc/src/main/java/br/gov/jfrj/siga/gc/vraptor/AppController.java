@@ -194,6 +194,14 @@ public class AppController extends GcController {
 				pagina);
 	}
 
+	@Path("/app/knowledgeInplaceMinimal")
+	public void knowledgeInplaceMinimal(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
+			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+			throws Exception {
+		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
+				pagina);
+	}
+
 	public void knowledgeSidebar(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {

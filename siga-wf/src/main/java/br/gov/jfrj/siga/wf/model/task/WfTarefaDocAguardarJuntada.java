@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.wf.model.task;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.crivano.jflow.Engine;
@@ -28,7 +29,7 @@ public class WfTarefaDocAguardarJuntada extends
 
 	@Override
 	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {
-		if (Utils.empty(pi.getPrincipal()) || Service.getExService().isModeloIncluso(pi.getPrincipal(), td.getRefId()))
+		if (Utils.empty(pi.getPrincipal()) || Service.getExService().isModeloIncluso(pi.getPrincipal(), td.getRefId(), pi.getEventoData() != null ? pi.getEventoData() : new Date()))
 			return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 		return new TaskResult(TaskResultKind.PAUSE, null, null, getEvent(td, pi), pi.calcResponsible(td));
 	}

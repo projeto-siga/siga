@@ -52,7 +52,7 @@ app
 						'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 					}
 				}).then(function(response) {
-					window.location = '/sigawf/app/diagrama/listar';
+					window.location = '/sigawf/app/diagrama/exibir?id=' + response.data.id;
 				}, function(response) {
 					alert(response.data.errormsg)
 				});

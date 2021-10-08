@@ -1053,7 +1053,7 @@ public class ExBL extends CpBL {
 			if (mobVerif.isApensadoAVolumeDoMesmoProcesso())
 				continue;
 
-			if (!mobVerif.isApensadoAVolumeDoMesmoProcesso() && !mobVerif.isAtendente(cadastrante, lotaCadastrante))
+			if (lotaCadastrante != null && !mobVerif.isApensadoAVolumeDoMesmoProcesso() && !mobVerif.isAtendente(cadastrante, lotaCadastrante))
 				foraDaLota += (foraDaLota.length() < 2
 						? " Os seguintes volumes ou vias encontram-se em lotação diferente de " + lotaCadastrante.getSigla()
 								+ ": "

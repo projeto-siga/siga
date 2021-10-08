@@ -24,8 +24,8 @@ public class WfPodeTerminar extends CompositeExpressionSuport {
 
 	@Override
 	protected Expression create() {
-		return And.of(Not.of(new WfEstaTerminado(pi)),
-				Or.of(new WfEstaResponsavel(pi, titular, lotaTitular), And.of(new WfEstaSemResponsavel(pi),
-						new WfPodeEditarDiagrama(pi.getDefinicaoDeProcedimento(), titular, lotaTitular))));
+		return And.of(Not.of(new WfEstaTerminado(pi)), Or.of(new WfEstaResponsavel(pi, titular, lotaTitular),
+				// And.of(new WfEstaSemResponsavel(pi),
+				new WfPodeEditarDiagrama(pi.getDefinicaoDeProcedimento(), titular, lotaTitular)));
 	}
 };

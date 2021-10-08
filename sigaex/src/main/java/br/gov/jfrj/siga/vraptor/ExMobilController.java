@@ -93,7 +93,6 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
 	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
-	final static public Long MAXIMO_DIAS_PESQUISA = 30L;	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -142,6 +141,7 @@ public class ExMobilController extends
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText, final Long ultMovEstadoDoc,
 			final Integer offset) {
 		assertAcesso("");
+		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 		
 		getP().setOffset(offset);
 		this.setSigla(sigla);
@@ -172,10 +172,11 @@ public class ExMobilController extends
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {
-				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(Long.valueOf(maxDiasPesquisa * -1));
         		result.include("msgCabecClass", "alert-warning");
         		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
-        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+        				+ maxDiasPesquisa.toString() + " dias. Será assumida uma data inicial "
+        				+ maxDiasPesquisa.toString() + " dias anterior à hoje no campo Data Inicial.");
 			}
 		}
 
@@ -430,6 +431,7 @@ public class ExMobilController extends
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
 		assertAcesso("");
+		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);
@@ -459,10 +461,11 @@ public class ExMobilController extends
 		} else {
 			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
 					SIGA_DOC_PESQ_DTLIMITADA )) {
-				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(Long.valueOf(-maxDiasPesquisa));
         		result.include("msgCabecClass", "alert-warning");
         		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
-        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+        				+ maxDiasPesquisa.toString() + " dias. Será assumida uma data inicial "
+        				+ maxDiasPesquisa.toString() + " dias anterior à hoje no campo Data Inicial.");
 			}
 		}
 
@@ -535,6 +538,8 @@ public class ExMobilController extends
 	private String listarItensPesquisa(final String dtDocString, final String dtDocFinalString,
 			final ExMobilBuilder builder, String dtDoc) {
 		final ExMobilDaoFiltro flt = createDaoFiltro();
+		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
+
 		if (Prop.isGovSP() && flt.getDescrDocumento() != null 
 				&& !"".equals(flt.getDescrDocumento())) {
 			if (!(Cp.getInstance().getConf() 
@@ -558,10 +563,11 @@ public class ExMobilController extends
 					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA )) {
 			result.include("msgCabecClass", "alert-warning");
 			result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
-					+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Foi assumida uma data inicial 30 dias anterior à hoje.");
-			dt = LocalDate.now().plusDays(-MAXIMO_DIAS_PESQUISA);
+					+ maxDiasPesquisa.toString() + " dias. Foi assumida uma data inicial "
+					+ maxDiasPesquisa.toString() + " dias anterior à hoje.");
+			dt = LocalDate.now().plusDays(-maxDiasPesquisa);
 			flt.setDtDoc(Date.from(dt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+			dtDoc = FuncoesEL.calculaDiasAPartirDeHoje((Long.valueOf(maxDiasPesquisa * -1)));
 		}
 
 		try {
@@ -592,6 +598,7 @@ public class ExMobilController extends
 		LocalDate dtIni = null;
 		LocalDate dtFinal = null;
 		LocalDate dataAtual = LocalDate.now();
+		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 		
 		if (dtDocString != null && !"".equals(dtDocString)) {
 			if (Data.validaDDMMYYYY(dtDocString)) {
@@ -601,23 +608,23 @@ public class ExMobilController extends
 			}
 		} else {
 			throw new RegraNegocioException("Data Inicial não informada. Para grandes volumes, período para pesquisa não deve ser superior à "
-					+ MAXIMO_DIAS_PESQUISA.toString() + " dias.");
+					+ maxDiasPesquisa.toString() + " dias.");
 		}
 		
 		if (dtDocFinalString != null && !"".equals(dtDocFinalString)) {
 			if (Data.validaDDMMYYYY(dtDocFinalString)) {
 				dtFinal = LocalDate.parse(dtDocFinalString, formatter);
-				if (ChronoUnit.DAYS.between(dtIni, dtFinal) > MAXIMO_DIAS_PESQUISA) {
+				if (ChronoUnit.DAYS.between(dtIni, dtFinal) > maxDiasPesquisa) {
 					throw new RegraNegocioException("Para grandes volumes, período para pesquisa não deve ser superior a "
-							+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Informe a Data Inicial e/ou Final.");
+							+ maxDiasPesquisa.toString() + " dias. Informe a Data Inicial e/ou Final.");
 				}	
 			} else {
 				throw new RegraNegocioException("Data Final inválida.");
 			}
 		} else {
-			if (ChronoUnit.DAYS.between(dtIni, dataAtual) > MAXIMO_DIAS_PESQUISA) {
+			if (ChronoUnit.DAYS.between(dtIni, dataAtual) > maxDiasPesquisa) {
 				throw new RegraNegocioException("Para grandes volumes, período para exportação não deve ser superior a "
-						+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Informe a Data Inicial e/ou Final.");
+						+ maxDiasPesquisa.toString() + " dias. Informe a Data Inicial e/ou Final.");
 			}	
 		}
 	}

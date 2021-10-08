@@ -263,6 +263,10 @@ public class Prop {
 		 * - False ou inexistente: Não confere, evitando leitura dos modelos.
 		 * */
 		provider.addPublicProperty("/siga.pesquisa.confere.modelos", "true");
+		/* Tela de Pesquisa, só funciona se permissão de acesso SIGA;DOC;PESQ;DTLIMITADA estiver permitida. Será a qtd máxima 
+		 * de dias que poderá ser pesquisada na pesquisa avançada.
+		 * */
+		provider.addPublicProperty("/siga.pesquisa.limite.dias", "31");
 		/* Tela de Criar/Editar Documentos: Qtde de minutos para recarregar o combo de modelos que fica 
 		 * armazenado em session storage no browser do usuário.
 		 * */

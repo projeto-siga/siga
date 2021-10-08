@@ -403,7 +403,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return String.valueOf(getNumVia2());
 	}
 
-	public static Integer tpMovDesempatePosicao(Long idTpMov) {
+	public static Integer tpMovDesempatePosicao(Long idTpMov, Long idTpMov2) {
 		final List<Long> tpMovDesempate = Arrays.asList(new Long[] {ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
@@ -412,13 +412,18 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO});
 
-		if (idTpMov == null)
+		// Trata o caso de alguma parâmetro ser null
+		if (idTpMov == null && idTpMov2 == null)
+			return 0;
+		if (idTpMov == null && idTpMov2 != null)
 			return Integer.MAX_VALUE;
+		if (idTpMov != null && idTpMov2 == null)
+			return Integer.MIN_VALUE;
 		
 		int i = tpMovDesempate.indexOf(idTpMov);
-		if (i == -1)
-			return Integer.MAX_VALUE;
-		return i;
+		int i2 = tpMovDesempate.indexOf(idTpMov2);
+		
+		return i - i2;
 	}
 
 	public int compareTo(final ExMovimentacao mov) {
@@ -434,8 +439,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				return i;
 			
 			if (getExTipoMovimentacao() != null && mov.getExTipoMovimentacao() != null) {
-				i = tpMovDesempatePosicao(getExTipoMovimentacao().getId()).compareTo(
-						tpMovDesempatePosicao(mov.getExTipoMovimentacao().getId()));
+				i = tpMovDesempatePosicao(getExTipoMovimentacao().getId(), mov.getExTipoMovimentacao().getId());
 				if (i != 0)
 					return i;
 			}

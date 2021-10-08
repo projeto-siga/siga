@@ -132,6 +132,12 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	@Column(name = "DEFT_DS_REF2", length = 256)
 	private java.lang.String refDescr2;
 
+	@Column(name = "DEFT_TX_PARAM", length = 256)
+	private java.lang.String param;
+
+	@Column(name = "DEFT_TX_PARAM2", length = 256)
+	private java.lang.String param2;
+
 	@Transient
 	private java.lang.String hisIde;
 
@@ -506,6 +512,22 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		String s = tipoDeResponsavel.getDescr();
 		s = s.replace("Principal: ", "").replace("Lotação ", "Lota. ");
 		return s;
+	}
+
+	public java.lang.String getParam() {
+		return param;
+	}
+
+	public void setParam(java.lang.String param) {
+		this.param = param;
+	}
+
+	public java.lang.String getParam2() {
+		return param2;
+	}
+
+	public void setParam2(java.lang.String param2) {
+		this.param2 = param2;
 	}
 
 }

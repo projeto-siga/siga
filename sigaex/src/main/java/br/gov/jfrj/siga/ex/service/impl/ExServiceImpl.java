@@ -90,7 +90,7 @@ public class ExServiceImpl implements ExService {
 		public ExSoapContext(boolean transacional) {
 			super(context, ExStarter.emf, transacional);
 		}
-		
+
 		@Override
 		public void initDao() {
 			ExDao.getInstance();
@@ -111,7 +111,8 @@ public class ExServiceImpl implements ExService {
 
 	public Boolean transferir(String codigoDocumentoVia, String siglaDestino, String siglaCadastrante,
 			Boolean forcarTransferencia) throws Exception {
-		// System.out.println("*** transferir: " + codigoDocumentoVia + " - " + siglaDestino + " - " + siglaCadastrante + " - " + forcarTransferencia);
+		// System.out.println("*** transferir: " + codigoDocumentoVia + " - " +
+		// siglaDestino + " - " + siglaCadastrante + " - " + forcarTransferencia);
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				if (codigoDocumentoVia == null)
@@ -401,9 +402,10 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr,
-			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo, String nomePreenchimento,
-			String classificacaoStr, String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo,
-			String siglaMobilPai, String tipoPrincipal, String siglaPrincipal, Boolean finalizar) throws Exception {
+			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo,
+			String nomePreenchimento, String classificacaoStr, String descricaoStr, Boolean eletronico,
+			String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, String tipoPrincipal,
+			String siglaPrincipal, Boolean finalizar) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				DpPessoa cadastrante = null;
@@ -420,15 +422,16 @@ public class ExServiceImpl implements ExService {
 				CpOrgao destinatarioOrgaoExterno = null;
 
 				ExDocumento doc = new ExDocumento();
-				
+
 				if (tipoPrincipal != null) {
 					doc.setTipoDePrincipal(ExTipoDePrincipal.valueOf(tipoPrincipal));
 					doc.setPrincipal(siglaPrincipal);
 				}
-				
+
 				if (nomePreenchimento != null) {
 					if (nomePreenchimento.matches("^\\d+$")) {
-						preenchimento = dao().consultar(Long.parseLong(nomePreenchimento), ExPreenchimento.class, false);
+						preenchimento = dao().consultar(Long.parseLong(nomePreenchimento), ExPreenchimento.class,
+								false);
 					} else {
 						ExPreenchimento filtro = new ExPreenchimento();
 						filtro.setNomePreenchimento(nomePreenchimento);
@@ -439,8 +442,9 @@ public class ExServiceImpl implements ExService {
 							preenchimento = lista.get(0);
 					}
 					if (preenchimento == null)
-						throw new AplicacaoException("Não foi possível encontrar um preenchimento com os dados informados.");
-					
+						throw new AplicacaoException(
+								"Não foi possível encontrar um preenchimento com os dados informados.");
+
 					final String strBanco = new String(preenchimento.getPreenchimentoBlob());
 					final String arrStrBanco[] = strBanco.split("&");
 					for (final String elem : arrStrBanco) {
@@ -449,38 +453,43 @@ public class ExServiceImpl implements ExService {
 						String paramValueEncoded = paramNameAndValue[1];
 						String paramValue = URLDecoder.decode(paramValueEncoded, "ISO-8859-1");
 						switch (paramName) {
-						case "subscritorSel.id": 
-							subscritorStr = dao().consultar(Long.parseLong(paramValue), DpPessoa.class, false).getSigla();
+						case "subscritorSel.id":
+							subscritorStr = dao().consultar(Long.parseLong(paramValue), DpPessoa.class, false)
+									.getSigla();
 							break;
-						case "destinatarioSel.id": 
-							destinatarioStr = dao().consultar(Long.parseLong(paramValue), DpPessoa.class, false).getSigla();
+						case "destinatarioSel.id":
+							destinatarioStr = dao().consultar(Long.parseLong(paramValue), DpPessoa.class, false)
+									.getSigla();
 							break;
-						case "lotacaoDestinatarioSel.id": 
-							destinatarioStr = dao().consultar(Long.parseLong(paramValue), DpLotacao.class, false).getSigla();
+						case "lotacaoDestinatarioSel.id":
+							destinatarioStr = dao().consultar(Long.parseLong(paramValue), DpLotacao.class, false)
+									.getSigla();
 							break;
-						case "classificacaoSel.id": 
-							classificacaoStr = dao().consultar(Long.parseLong(paramValue), ExClassificacao.class, false).getSigla();
+						case "classificacaoSel.id":
+							classificacaoStr = dao().consultar(Long.parseLong(paramValue), ExClassificacao.class, false)
+									.getSigla();
 							break;
-						case "descricao": 
+						case "descricao":
 							descricaoStr = paramValue;
 							break;
-						case "nivelDeAcesso": 
+						case "nivelDeAcesso":
 							nomeNivelDeAcesso = paramValue;
 							break;
 						default:
-							if (conteudo == null) 
+							if (conteudo == null)
 								conteudo = "";
-							else 
+							else
 								conteudo += "&";
 							conteudo += paramName + "=" + paramValueEncoded;
 						}
 					}
 				}
-				
+
 				if (subscritorStr != null) {
 					subscritor = dao().getPessoaFromSigla(subscritorStr);
 					if (subscritor == null)
-						throw new AplicacaoException("Não foi possível encontrar um subscritor com a matrícula informada.");
+						throw new AplicacaoException(
+								"Não foi possível encontrar um subscritor com a matrícula informada.");
 					if (subscritor.isFechada())
 						throw new AplicacaoException("O subscritor não está mais ativo.");
 				}
@@ -492,7 +501,7 @@ public class ExServiceImpl implements ExService {
 
 				cadastrante = cadastranteParser.getPessoa();
 				lotaCadastrante = cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa();
-				
+
 				if (cadastrante == null && lotaCadastrante != null) {
 					if (subscritor != null && lotaCadastrante.equivale(subscritor.getLotacao()))
 						cadastrante = subscritor;
@@ -511,7 +520,7 @@ public class ExServiceImpl implements ExService {
 
 				if (cadastrante != null && cadastrante.isFechada())
 					throw new AplicacaoException("O cadastrante não está mais ativo.");
-				
+
 				if (descricaoTipoDeDocumento == null)
 					tipoDocumento = (dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class,
 							false));
@@ -544,7 +553,7 @@ public class ExServiceImpl implements ExService {
 				if (!forma.podeSerDoTipo(tipoDocumento))
 					throw new AplicacaoException("O documento do tipo " + forma.getDescricao() + " não pode ser "
 							+ tipoDocumento.getDescricao());
-				
+
 				if ((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica())
 					throw new AplicacaoException("A Classificação não foi informada.");
 
@@ -780,13 +789,13 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
-	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo) throws Exception {
+	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo, Date depoisDaData) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob.isGeral())
 					mob = mob.getDoc().getPrimeiroMobil();
-				return mob.isModeloIncluso(idModelo);
+				return mob.isModeloIncluso(idModelo, depoisDaData);
 			} catch (Exception ex) {
 				ctx.rollback(ex);
 				throw ex;
@@ -800,127 +809,134 @@ public class ExServiceImpl implements ExService {
 				Long idDocNumeracao = null;
 				Long nrDocumento = 0L;
 				ContextoPersistencia.flushTransaction();
-				
-				//Verifica se Range atual existe
-				ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao, false);
-	
+
+				// Verifica se Range atual existe
+				ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao,
+						false);
+
 				if (docNumeracao == null) {
 					CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 					ExFormaDocumento formaDocumento = new ExFormaDocumento();
 					orgaoUsuario.setIdOrgaoUsu(idOrgaoUsu);
 					formaDocumento.setIdFormaDoc(idFormaDoc);
-					
+
 					orgaoUsuario = dao().consultarPorId(orgaoUsuario);
 					formaDocumento = dao().consultarExFormaPorId(idFormaDoc);
-					
+
 					idDocNumeracao = dao().existeRangeNumeroDocumento(idOrgaoUsu, idFormaDoc);
-					
-					if ( (idDocNumeracao != null) && !Ex.getInstance().getComp().podeReiniciarNumeracao(orgaoUsuario, formaDocumento)) { //Existe Range Anterior e Não pode Resetar numeracao
+
+					if ((idDocNumeracao != null)
+							&& !Ex.getInstance().getComp().podeReiniciarNumeracao(orgaoUsuario, formaDocumento)) { // Existe
+																													// Range
+																													// Anterior
+																													// e
+																													// Não
+																													// pode
+																													// Resetar
+																													// numeracao
 						dao().updateMantemRangeNumeroDocumento(idDocNumeracao);
-			
-					} else { //Não existe ou deve resetar numeração
+
+					} else { // Não existe ou deve resetar numeração
 						ExDocumentoNumeracao documentoNumeracao = new ExDocumentoNumeracao();
-						
+
 						documentoNumeracao.setIdOrgaoUsu(idOrgaoUsu);
 						documentoNumeracao.setIdFormaDoc(idFormaDoc);
 						documentoNumeracao.setFlAtivo("1");
 						documentoNumeracao.setAnoEmissao(anoEmissao);
-	
+
 						nrDocumento = 1L;
 						documentoNumeracao.setNrDocumento(nrDocumento);
 						documentoNumeracao.setNrInicial(nrDocumento);
-						
+
 						dao().gravar(documentoNumeracao);
-	
+
 						documentoNumeracao = null;
 					}
-					
+
 					orgaoUsuario = null;
 					formaDocumento = null;
-	
-				} else { //Range vigente. Só incrementa
+
+				} else { // Range vigente. Só incrementa
 					idDocNumeracao = docNumeracao.getIdDocumentoNumeracao();
 					dao().incrementNumeroDocumento(idDocNumeracao);
 				}
-	
-		
-				if (nrDocumento != 1L) { //Obtém Número Gerado antes de liberar registro
+
+				if (nrDocumento != 1L) { // Obtém Número Gerado antes de liberar registro
 					nrDocumento = dao().obterNumeroGerado(idOrgaoUsu, idFormaDoc, anoEmissao);
 				}
-	
+
 				ContextoPersistencia.flushTransaction();
-				
-				//Retorno em String para WS
-				return nrDocumento.toString();			
+
+				// Retorno em String para WS
+				return nrDocumento.toString();
 			} catch (Exception ex) {
 				ctx.rollback(ex);
-				throw new Exception("Ocorreu um problema na obtenção do número do documento definitivo: "
-						+ ex.getMessage(), ex);
+				throw new Exception(
+						"Ocorreu um problema na obtenção do número do documento definitivo: " + ex.getMessage(), ex);
 			}
 		}
 	}
-	
+
 	public String obterSequencia(Integer tipoSequencia, Long anoEmissao, String zerarInicioAno) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				Long idSeq = null;
 				Long numero = 0L;
 				ContextoPersistencia.flushTransaction();
-				
-				//Verifica se Range atual existe
+
+				// Verifica se Range atual existe
 				ExSequencia sequencia = dao().obterSequencia(tipoSequencia, anoEmissao, true);
-	
+
 				if (sequencia == null) {
-	
+
 					sequencia = dao().existeRangeSequencia(tipoSequencia);
-					
-					if (sequencia != null && "0".equals(sequencia.getZerarInicioAno())) { //Existe Range Anterior e Não pode Resetar numeracao
+
+					if (sequencia != null && "0".equals(sequencia.getZerarInicioAno())) { // Existe Range Anterior e Não
+																							// pode Resetar numeracao
 						dao().updateMantemRangeSequencia(sequencia.getIdSequencia());
-			
-					} else { //Não existe ou deve resetar numeração
+
+					} else { // Não existe ou deve resetar numeração
 						ExSequencia exSequencia = new ExSequencia();
-						
+
 						exSequencia.setTipoSequencia(tipoSequencia);
 						exSequencia.setFlAtivo("1");
 						exSequencia.setAnoEmissao(anoEmissao);
-						if(zerarInicioAno != null && !"".equals(zerarInicioAno)) {
+						if (zerarInicioAno != null && !"".equals(zerarInicioAno)) {
 							exSequencia.setZerarInicioAno(zerarInicioAno);
 						} else {
 							exSequencia.setZerarInicioAno("1");
 						}
-	
+
 						numero = 1L;
 						exSequencia.setNumero(numero);
 						exSequencia.setNrInicial(numero);
-						
+
 						dao().gravar(exSequencia);
-	
+
 						exSequencia = null;
 					}
-	
-				} else { //Range vigente. Só incrementa
+
+				} else { // Range vigente. Só incrementa
 					idSeq = sequencia.getIdSequencia();
 					dao().incrementNumero(idSeq);
 				}
-	
-		
-				if (numero != 1L) { //Obtém Número Gerado antes de liberar registro
+
+				if (numero != 1L) { // Obtém Número Gerado antes de liberar registro
 					numero = dao().obterNumeroGerado(tipoSequencia, anoEmissao);
 				}
-	
+
 				ContextoPersistencia.flushTransaction();
-				
-				//Retorno em String para WS
-				return numero.toString();			
+
+				// Retorno em String para WS
+				return numero.toString();
 			} catch (Exception ex) {
 				ctx.rollback(ex);
-				throw new Exception("Ocorreu um problema na obtenção do número: "
-						+ ex.getMessage(), ex);
+				throw new Exception("Ocorreu um problema na obtenção do número: " + ex.getMessage(), ex);
 			}
-		}	
+		}
 	}
-	
-	public String obterSiglaMobilPorIdDoc(Long idDoc)  throws Exception {
+
+	public String obterSiglaMobilPorIdDoc(Long idDoc) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExDocumento doc = ExDao.getInstance().consultar(idDoc, ExDocumento.class, false);
 			if (doc != null) {
@@ -929,90 +945,143 @@ public class ExServiceImpl implements ExService {
 				return "";
 		}
 	}
-	
-	
+
 	public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(false)) {
-			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
+			if (Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				SigaUtil.getInstance().validarToken(token);
-			
-			
+
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(siglaDocumento);
-			
+
 			ExMobil mob = dao().consultarPorSigla(filter);
-			if (mob != null){
+			if (mob != null) {
 				return Ex.getInstance().getBL().documentoToJSON(mob.getDoc());
 			}
 		} catch (Exception e) {
-			throw new Exception("Ocorreu um problema na obtenção dos Metadados do Documento: "
-					+ e.getMessage(), e);
+			throw new Exception("Ocorreu um problema na obtenção dos Metadados do Documento: " + e.getMessage(), e);
 		}
 		return "Ocorreu um problema na obtenção dos Metadados do Documento";
 	}
-	
+
 	public String obterMarcadores(String token) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(false)) {
-			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
+			if (Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				SigaUtil.getInstance().validarToken(token);
-			
+
 			return Ex.getInstance().getBL().marcadoresGeraisTaxonomiaAdministradaToJSON();
-			
+
 		} catch (Exception e) {
-			throw new Exception("Ocorreu um problema na obtenção da lista de Marcadores: "
-					+ e.getMessage(), e);
+			throw new Exception("Ocorreu um problema na obtenção da lista de Marcadores: " + e.getMessage(), e);
 		}
 	}
-	public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr, String token) throws Exception {
+
+	public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr,
+			String token) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
-				if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
+				if (Prop.getBool("/siga.ws.seguranca.token.jwt"))
 					SigaUtil.getInstance().validarToken(token);
-				
+
 				DpPessoa cadastrante = null;
-				
-	    		cadastrante = dao().getPessoaFromSigla(cadastranteStr);
-	    		
-	    		if(cadastrante == null)
-	    			throw new AplicacaoException("Não foi possível encontrar um cadastrante com a matrícula informada.");
-	    		
-	    		if(cadastrante.isFechada())
-	    			throw new AplicacaoException("O cadastrante não está mais ativo.");
-				
+
+				cadastrante = dao().getPessoaFromSigla(cadastranteStr);
+
+				if (cadastrante == null)
+					throw new AplicacaoException(
+							"Não foi possível encontrar um cadastrante com a matrícula informada.");
+
+				if (cadastrante.isFechada())
+					throw new AplicacaoException("O cadastrante não está mais ativo.");
+
 				final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 				filter.setSigla(siglaDocumento);
-				
+
 				ExMobil mob = dao().consultarPorSigla(filter);
-				
-				if (mob != null){
-					
+
+				if (mob != null) {
+
 					/* Valida se usuário WS pode movimentar */
 					DpPessoa cadastranteWS = null;
-					cadastranteWS = dao().getPessoaFromSigla(SigaUtil.getInstance().parseTokenJwt(token).get("sub").toString());
-		    		if (!Ex.getInstance().getComp().podePublicarPortalTransparenciaWS(cadastranteWS, cadastranteWS.getLotacao(),mob)) {
-		    			throw new AplicacaoException(
-		    					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
-		    		}
+					cadastranteWS = dao()
+							.getPessoaFromSigla(SigaUtil.getInstance().parseTokenJwt(token).get("sub").toString());
+					if (!Ex.getInstance().getComp().podePublicarPortalTransparenciaWS(cadastranteWS,
+							cadastranteWS.getLotacao(), mob)) {
+						throw new AplicacaoException(
+								"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
+					}
 					/* Fim da Validação */
-		    		String[] listaMarcadores = null;	    		
-		    		if (!"".equals(marcadoresStr)) {
-		    			listaMarcadores = marcadoresStr.split(",");
-		    		}
-		    		
+					String[] listaMarcadores = null;
+					if (!"".equals(marcadoresStr)) {
+						listaMarcadores = marcadoresStr.split(",");
+					}
+
 					CpToken sigaUrlPermanente = new CpToken();
-					sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(mob, cadastrante, cadastrante.getLotacao(),listaMarcadores,true);
-					String url = System.getProperty("siga.ex.enderecoAutenticidadeDocs").replace("/sigaex/public/app/autenticar", "");
+					sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(mob, cadastrante,
+							cadastrante.getLotacao(), listaMarcadores, true);
+					String url = System.getProperty("siga.ex.enderecoAutenticidadeDocs")
+							.replace("/sigaex/public/app/autenticar", "");
 					String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
-					
-					return "Documento "+ siglaDocumento +" enviado para publicação. Gerado para acesso externo ao documento: "+ caminho; 
+
+					return "Documento " + siglaDocumento
+							+ " enviado para publicação. Gerado para acesso externo ao documento: " + caminho;
 				}
 			} catch (Exception ex) {
 				ctx.rollback(ex);
-				throw new Exception("Ocorreu um problema na publicação de documento em Portal: "
-						+ ex.getMessage(), ex);
+				throw new Exception("Ocorreu um problema na publicação de documento em Portal: " + ex.getMessage(), ex);
 			}
 			return "Ocorreu um problema na publicação de documento em Portal.";
 		}
 	}
-	
+
+	@Override
+	public void incluirCopiaDeDocumento(String siglaCadastrante, String siglaMobilPai, String siglaMobilFilho)
+			throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
+			try {
+				if (siglaMobilPai == null)
+					throw new Exception("Informe a sigla do móbil pai");
+				ExMobil mobPai = buscarMobil(siglaMobilPai);
+				if (siglaMobilFilho == null)
+					throw new Exception("Informe a sigla do móbil filho");
+				ExMobil mobFilho = buscarMobil(siglaMobilFilho);
+
+				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
+//				if (cadastranteParser.getLotacao() == null && cadastranteParser.getPessoa() == null)
+//					throw new Exception("Cadastrante inválido");
+
+				Ex.getInstance().getBL().copiar(cadastranteParser.getPessoa(),
+						cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa(), mobPai, mobFilho, null, null, null);
+				return;
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
+			}
+		}
+	}
+
+	@Override
+	public boolean isJuntado(String siglaMobilFilho, String siglaMobilPai) throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
+			if (siglaMobilFilho == null)
+				throw new Exception("Informe a sigla do móbil filho");
+			ExMobil mobFilho = buscarMobil(siglaMobilFilho);
+
+			if (mobFilho.isGeralDeExpediente())
+				mobFilho = mobFilho.doc().getPrimeiraVia();
+			else if (mobFilho.isGeralDeProcesso())
+				mobFilho = mobFilho.doc().getUltimoVolume();
+
+			if (!mobFilho.isJuntado())
+				return false;
+
+			if (siglaMobilPai == null)
+				return mobFilho.isJuntado();
+			ExMobil mobPai = buscarMobil(siglaMobilPai);
+
+			return mobFilho.getMobilPrincipal().equals(mobPai)
+					|| mobFilho.getMobilPrincipal().equals(mobPai.doc().getMobilGeral());
+		}
+	}
+
 }

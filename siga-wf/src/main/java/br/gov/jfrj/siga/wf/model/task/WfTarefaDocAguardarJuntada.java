@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.wf.model.task;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.crivano.jflow.Engine;
@@ -18,7 +19,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.util.WfResp;
 
-public class WfTarefaAguardarAssinatura extends
+public class WfTarefaDocAguardarJuntada extends
 		TaskForm<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp, WfTipoDeTarefa, WfTipoDeResponsavel, WfDefinicaoDeVariavel, WfDefinicaoDeDesvio, WfProcedimento> {
 
 	@Override
@@ -28,7 +29,7 @@ public class WfTarefaAguardarAssinatura extends
 
 	@Override
 	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {
-		if (Utils.empty(pi.getPrincipal()) || Service.getExService().isAssinado(pi.getPrincipal(), null))
+		if (Utils.empty(pi.getPrincipal()) || Service.getExService().isModeloIncluso(pi.getPrincipal(), td.getRefId(), pi.getEventoData() != null ? pi.getEventoData() : new Date()))
 			return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 		return new TaskResult(TaskResultKind.PAUSE, null, null, getEvent(td, pi), pi.calcResponsible(td));
 	}
@@ -38,5 +39,4 @@ public class WfTarefaAguardarAssinatura extends
 			Engine<?, ?, ?> engine) throws Exception {
 		return execute(td, pi, engine);
 	}
-
 }

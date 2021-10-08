@@ -6,25 +6,28 @@ import com.crivano.jflow.task.TaskDecision;
 import com.crivano.jflow.task.TaskEmail;
 import com.crivano.jflow.task.TaskEval;
 
-import br.gov.jfrj.siga.wf.model.task.WfTarefaAguardarAssinatura;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaArquivar;
-import br.gov.jfrj.siga.wf.model.task.WfTarefaCriarDocumento;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarAssinatura;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarJuntada;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocIncluirCopia;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
-import br.gov.jfrj.siga.wf.model.task.WfTarefaIncluirDocumento;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
 
 public enum WfTipoDeTarefa implements TaskKind {
 
 	//
-	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", WfTarefaAguardarAssinatura.class, true),
+	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", WfTarefaDocAguardarAssinatura.class, true),
 	//
 	TRAMITAR_PRINCIPAL("Enviar", "rectangle", WfTarefaTramitar.class, true),
 	//
 	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", WfTarefaArquivar.class, false),
 	//
-	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", WfTarefaIncluirDocumento.class, true),
+	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", WfTarefaDocAguardarJuntada.class, true),
 	//
-	CRIAR_DOCUMENTO("Criar Documento", "rectangle", WfTarefaCriarDocumento.class, true),
+	INCLUIR_COPIA("Incluir Cópia", "rectangle", WfTarefaDocIncluirCopia.class, false),
+	//
+	CRIAR_DOCUMENTO("Criar Documento", "rectangle", WfTarefaDocCriar.class, true),
 	//
 	FORMULARIO("Formulário", "rectangle", WfTarefaFormulario.class, true),
 	//

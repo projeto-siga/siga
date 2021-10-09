@@ -1626,8 +1626,10 @@ public class ExDocumentoController extends ExController {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
 		
-		if(exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null && exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null && 
-					!Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto())) {
+		if(!exDocumentoDTO.getCriandoSubprocesso() 
+				&& (exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
+					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null 
+					&& !Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto()))) {
 			throw new AplicacaoException("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
 				+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
 				+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".");			

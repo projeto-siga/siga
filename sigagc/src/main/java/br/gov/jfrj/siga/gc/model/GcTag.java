@@ -33,7 +33,8 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 			.compile("^([@#^])(?:([\\w-]+?)(?:-(\\d)(?:-(\\d+))?)?:)?([\\w\\d-]+)$");
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
+	@GeneratedValue(generator = "gcTagSeq")
 	@Column(name = "ID_TAG")
 	private Long id;
 

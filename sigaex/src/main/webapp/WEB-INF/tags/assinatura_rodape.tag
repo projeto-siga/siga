@@ -19,8 +19,7 @@
 
 <input type="hidden" id="siglaUsuCossignatarios" value="${cossignatarios}"/>
 
-<c:if
-	test="${not empty f:resource('assinador.externo.popup.url')}">
-	<script
-		src="${f:resource('assinador.externo.popup.url')}/popup-api.js"></script>
+<c:if test="${not empty f:resource('assinador.externo.popup.url')}">
+	<input type="hidden" id="iframePopupUrl" value="${f:resource('assinador.externo.popup.url')}/popup.html"/>
+	<script src="${f:resource('assinador.externo.popup.url')}/popup-api.js"></script>
 </c:if>

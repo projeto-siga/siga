@@ -503,7 +503,7 @@ public class ExServiceImpl implements ExService {
 				lotaCadastrante = cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa();
 
 				if (cadastrante == null && lotaCadastrante != null) {
-					if (subscritor != null && lotaCadastrante.equivale(subscritor.getLotacao()))
+					if (subscritor != null)
 						cadastrante = subscritor;
 					else {
 						List<DpPessoa> pessoas = dao().pessoasPorLotacao(lotaCadastrante.getId(), false, false);

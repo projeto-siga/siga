@@ -1,11 +1,11 @@
 package br.gov.jfrj.siga.ex.logic;
 
-import com.crivano.jlogic.CompositeExpressionSuport;
+import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.dp.CpMarcador;
 
-public class ExEMarcadorUnico extends CompositeExpressionSuport {
+public class ExEMarcadorUnico extends CompositeExpressionSupport {
 
 	private CpMarcador marcador;
 

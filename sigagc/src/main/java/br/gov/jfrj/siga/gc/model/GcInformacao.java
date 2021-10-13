@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -135,7 +135,7 @@ public class GcInformacao extends Objeto {
 	@Column(name = "NUMERO")
 	private Integer numero;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(cascade=CascadeType.PERSIST,optional = false)
 	@JoinColumn(name = "ID_ARQUIVO")
 	private GcArquivo arq;
 

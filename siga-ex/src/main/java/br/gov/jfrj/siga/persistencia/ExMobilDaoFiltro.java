@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.persistencia;
 import java.util.Date;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -128,7 +130,7 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 	private Long ultMovRespSelId;
 
 	private Integer ordem;
-
+	
 	public Integer getOrdem() {
 		return ordem;
 	}

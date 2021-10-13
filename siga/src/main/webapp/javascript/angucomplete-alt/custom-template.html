@@ -11,7 +11,7 @@
               autocorrect="off"
               autocomplete="off"
               ng-change="inputChangeHandler(searchStr)" id="dropdownSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
-            <div ng-class="{'angucomplete-dropdown': true, 'dropdown-menu': true, 'show': showDropdown}" ng-show="showDropdown" aria-labelledby="dropdownSearch" id="dropdownSearchList">
+            <div style="width: 30em;" ng-class="{'angucomplete-dropdown': true, 'dropdown-menu': true, 'show': showDropdown}" ng-show="showDropdown" aria-labelledby="dropdownSearch" id="dropdownSearchList">
               <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>
               <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>
               <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{'angucomplete-selected-row': $index == currentIndex}">

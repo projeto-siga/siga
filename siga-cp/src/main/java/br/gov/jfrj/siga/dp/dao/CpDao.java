@@ -89,6 +89,7 @@ import br.gov.jfrj.siga.dp.DpCargoDTO;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpFuncaoDTO;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaDTO;
 import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
@@ -96,6 +97,7 @@ import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.DpUnidadeDTO;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
+import br.gov.jfrj.siga.dp.NotificarPorEmail;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
@@ -144,6 +146,35 @@ public class CpDao extends ModeloDao {
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<DpNotificarPorEmail> consultarNotificaocaoEmail(Integer offset, Integer itemPagina) {
+		try {
+			final Query query = em().createNamedQuery("consultarNotificaocaoEmail");
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
+			final List<DpNotificarPorEmail> l = query.getResultList();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public int consultarQuantidadeNotificacaoPorEmail() {
+		try {
+			final Query query = em().createNamedQuery("consultarQuantidadeNotificarPorEmail");
+
+			final int l = ((Long) query.getSingleResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
 		}
 	}
 
@@ -1136,6 +1167,10 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<DpPessoa> consultarPorFiltro(final DpPessoaDaoFiltro flt) {
+		return consultarPorFiltro(flt, 0, 0);
+	}
+	
+	public List<NotificarPorEmail> consultarPorFiltroNotificarPorEmail(final DpNotificarPorEmailDaoFiltro flt) throws Exception {
 		return consultarPorFiltro(flt, 0, 0);
 	}
 
@@ -2206,6 +2241,11 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpNotificarPorEmail> listarNotificarEmail() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, DpNotificarPorEmail.class);
 	}
 	
 	@SuppressWarnings("unchecked")

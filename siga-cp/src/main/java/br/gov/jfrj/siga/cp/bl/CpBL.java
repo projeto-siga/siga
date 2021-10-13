@@ -77,7 +77,9 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.NotificarPorEmail;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
@@ -1931,6 +1933,20 @@ public class CpBL {
 		lotNova.setIsSuspensa(lotAnt.getIsSuspensa());
 	}
 	
+	public void copiaNotificarPorEmail(DpNotificarPorEmail lotAnt, DpNotificarPorEmail lotNova) {
+		lotNova.setNomeDaAcao(lotAnt.getNomeDaAcao());
+		lotNova.setNaoConfiguravel(lotAnt.getNaoConfiguravel());		
+		lotNova.setConfiguravel(lotAnt.getConfiguravel());
+		lotNova.setRestringir(lotAnt.getRestringir());
+		
+		lotNova.setIdNotificarPorEmailIni(lotAnt.getIdNotificarPorEmailIni());
+		lotNova.setHisIdcIni(lotAnt.getHisIdcIni());
+		lotNova.setHisIdcFim(lotAnt.getHisIdcFim());
+		lotNova.setDataInicioNotificarPorEmail(lotAnt.getDataInicioNotificarPorEmail());
+		lotNova.setDataFimNotificarPorEmail(lotAnt.getDataFimNotificarPorEmail());
+		lotNova.setIdeNotificarPorEmail(lotAnt.getIdeNotificarPorEmail());
+	}
+	
 	public void copiarPessoa(DpPessoa pesAnt, DpPessoa pesNova) {
 		pesNova.setNomePessoa(pesAnt.getNomePessoa());
 		pesNova.setCpfPessoa(pesAnt.getCpfPessoa());
@@ -2214,6 +2230,57 @@ public class CpBL {
 		}
 
 	}
+	
+//Habilitar ou desabilitar configuravel.
+//public NotificarPorEmail gravarCargo(final CpIdentidade identidadeCadastrante, final Long id, final String nomeDaAcao, final int configuravel, int naoConfiguravel) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+//		
+//		if (identidadeCadastrante == null) {
+//			throw new AplicacaoException("Não é possível cadastrar ou alterar o cargo sem que seja informado o cadastrante.");
+//		}
+//		
+//		NotificarPorEmail email = null;
+//		NotificarPorEmail emailNovo = new NotificarPorEmail();
+//		Date dt = dao().consultarDataEHoraDoServidor();
+//		
+//		if (id != null && id > 0) {
+//			email = dao().consultar(id, NotificarPorEmail.class, false);
+//			if (email == null) {
+//				throw new AplicacaoException("Ação informado não localizado.");
+//			}
+//			PropertyUtils.copyProperties(emailNovo, email); //Copia cargo existente para novo registro
+//			emailNovo.setId(null);
+//		} 
+//		
+//		
+//		emailNovo.setConfiguravel(1);
+//		
+//		//Persistindo as alterações
+//		try {
+//			dao().gravarComHistorico(cargoNovo, cargo, dt, identidadeCadastrante);
+//			
+//			//Aplica cargo alterado nas pessoas ativas do cargo anterior.
+//			if (pessoasAtivasCargo != null && !pessoasAtivasCargo.isEmpty()) {
+//				DpPessoa pessoaNovo = new DpPessoa();
+//				for (DpPessoa pessoaAtual : pessoasAtivasCargo) {
+//					copiarPessoa(pessoaAtual,pessoaNovo); //copyProperty não funciona, pois DpPessoa é um Bean despadronizado
+//
+//					if (pessoaNovo != null) {
+//						pessoaNovo.setCargo(cargoNovo);
+//						pessoaNovo.setLotacao(pessoaAtual.getLotacao());
+//						dao().gravarComHistorico(pessoaNovo, pessoaAtual, dt, identidadeCadastrante);
+//					}
+//					
+//				}
+//			}
+//
+//			
+//		} catch (final Exception e) {
+//			throw e;
+//		}
+//		
+//		return cargoNovo;
+//		
+//	}
 	
 	
 }

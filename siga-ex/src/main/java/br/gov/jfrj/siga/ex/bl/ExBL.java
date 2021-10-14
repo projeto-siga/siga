@@ -5096,7 +5096,7 @@ public class ExBL extends CpBL {
 					
 					// Localiza o tramite que será recebido
 					for (ExMovimentacao t : p.recebimentosPendentes) {
-						if (t.isResp(titular, lotaCadastrante)) {
+						if (forcarTransferencia || (titular == null && lotaCadastrante == null) || t.isResp(titular, lotaCadastrante)) {
 							mov.setExMovimentacaoRef(t);
 							break;
 						}

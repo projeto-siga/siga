@@ -214,6 +214,10 @@ public class WfBL extends CpBL {
 
 	public List<WfProcedimento> getTaskList(String siglaDoc) {
 		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
+		List<WfProcedimento> pis2 = WfDao.getInstance().consultarProcedimentosAtivosPorPrincipal(siglaDoc);
+		for (WfProcedimento pi : pis2)
+			if (!pis.contains(pi))
+				pis.add(pi);
 		return pis;
 	}
 

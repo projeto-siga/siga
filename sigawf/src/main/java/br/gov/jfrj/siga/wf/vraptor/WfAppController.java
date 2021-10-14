@@ -301,7 +301,7 @@ public class WfAppController extends WfController {
 			desvio = indiceDoDesvio;
 		}
 
-		Wf.getInstance().getBL().prosseguir(pi.getEvent(), desvio, param, getTitular(), getLotaTitular(),
+		Wf.getInstance().getBL().prosseguir(pi.getIdEvent(), desvio, param, getTitular(), getLotaTitular(),
 				getIdentidadeCadastrante());
 
 		// Redireciona para a pagina escolhida quando o procedimento criar uma

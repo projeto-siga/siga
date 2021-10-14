@@ -136,7 +136,7 @@
 																${mov.exMobil}
 																<c:if test="${(((not isProtocoloFilho) 
 																			or (mov.exMobil.doc.descricaoEspecieDespacho)) 
-																		and (mov.exMobil.exibirNoAcompanhamento))}">
+																		and (mov.exMobil.exibirNoAcompanhamento) and mov.exMobil.juntado)}">
 																	&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
 																		onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?sigla=${mov.exMobil}');"
 																		rel="popover" data-title="${mov.exMobil}" 

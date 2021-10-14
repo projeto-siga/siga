@@ -17,37 +17,41 @@ import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
 public enum WfTipoDeTarefa implements TaskKind {
 
 	//
-	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", WfTarefaDocAguardarAssinatura.class, true),
+	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", "Aguardar Assinatura",
+			WfTarefaDocAguardarAssinatura.class, true),
 	//
-	TRAMITAR_PRINCIPAL("Enviar", "rectangle", WfTarefaTramitar.class, true),
+	TRAMITAR_PRINCIPAL("Enviar", "rectangle", "Enviar", WfTarefaTramitar.class, true),
 	//
-	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", WfTarefaArquivar.class, false),
+	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", "Arquivar", WfTarefaArquivar.class, false),
 	//
-	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", WfTarefaDocAguardarJuntada.class, true),
+	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", "Incluir Documento", WfTarefaDocAguardarJuntada.class, true),
 	//
-	INCLUIR_COPIA("Incluir Cópia", "rectangle", WfTarefaDocIncluirCopia.class, false),
+	INCLUIR_COPIA("Incluir Cópia", "rectangle", "Incluir Cópia", WfTarefaDocIncluirCopia.class, false),
 	//
-	CRIAR_DOCUMENTO("Criar Documento", "rectangle", WfTarefaDocCriar.class, true),
+	CRIAR_DOCUMENTO("Criar Documento", "rectangle", "Criar Documento", WfTarefaDocCriar.class, true),
 	//
-	FORMULARIO("Formulário", "rectangle", WfTarefaFormulario.class, true),
+	FORMULARIO("Formulário", "tab", null, WfTarefaFormulario.class, true),
 	//
-	DECISAO("Decisão", "diamond", TaskDecision.class, false),
+	DECISAO("Decisão", "diamond", null, TaskDecision.class, false),
 	//
-	EXECUTAR("Executar", "rectangle", TaskEval.class, false),
+	EXECUTAR("Executar", "rectangle", null, TaskEval.class, false),
 	//
-	EMAIL("Email", "folder", TaskEmail.class, true);
+	EMAIL("Email", "folder", null, TaskEmail.class, true);
 
 	private final String descr;
 
 	private Class<? extends Task> clazz;
 
 	private String graphKind;
+	private String graphTitle;
 
 	private boolean exigirResponsavel;
 
-	WfTipoDeTarefa(String descr, String graphKind, Class<? extends Task> clazz, boolean exigirResponsavel) {
+	WfTipoDeTarefa(String descr, String graphKind, String graphTitle, Class<? extends Task> clazz,
+			boolean exigirResponsavel) {
 		this.descr = descr;
 		this.graphKind = graphKind;
+		this.graphTitle = graphTitle;
 		this.clazz = clazz;
 		this.exigirResponsavel = exigirResponsavel;
 	}
@@ -65,6 +69,11 @@ public enum WfTipoDeTarefa implements TaskKind {
 	@Override
 	public String getGraphKind() {
 		return this.graphKind;
+	}
+
+	@Override
+	public String getGraphTitle() {
+		return this.graphTitle;
 	}
 
 	public boolean isExigirResponsavel() {

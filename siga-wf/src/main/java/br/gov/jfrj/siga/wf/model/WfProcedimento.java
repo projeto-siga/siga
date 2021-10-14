@@ -586,9 +586,8 @@ public class WfProcedimento extends Objeto
 		return set;
 	}
 
-	public boolean isFormulario() {
-		return status == ProcessInstanceStatus.PAUSED
-				&& getCurrentTaskDefinition().getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO;
+	public boolean isPausado() {
+		return status == ProcessInstanceStatus.PAUSED;
 	}
 
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
@@ -684,7 +683,7 @@ public class WfProcedimento extends Objeto
 			} else if (WfTarefaDocCriarParam2.AGUARDAR_JUNTADA.name()
 					.equals(getDefinicaoDeTarefaCorrente().getParam2())) {
 				return "Este workflow prosseguirá automaticamente quando o documento " + siglaDoDocumentoCriado
-						+ " for juntado ao documento" + getPrincipal() + ".";
+						+ " for juntado ao documento " + getPrincipal() + ".";
 			}
 		}
 		return null;
@@ -789,7 +788,7 @@ public class WfProcedimento extends Objeto
 	}
 
 	@Override
-	public String getEvent() {
+	public String getIdEvent() {
 		return getEventoNome();
 	}
 

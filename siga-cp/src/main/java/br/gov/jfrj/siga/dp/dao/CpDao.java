@@ -782,10 +782,22 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public List<DpLotacao> listarLotacoesPorPai(DpLotacao lotacaoPai) {
+		return listarLotacoesPorPai(lotacaoPai, Boolean.TRUE);
+	}
+	
+	public List<DpLotacao> listarLotacoesPorPai(DpLotacao lotacaoPai, boolean dtFimLotacaoIsNull) {
 		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 		Root<DpLotacao> c = q.from(DpLotacao.class);
 		q.select(c);
-		q.where(cb().equal(c.get("lotacaoPai"), lotacaoPai),cb().isNull(c.get("dataFimLotacao")));
+		
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		whereList.add(cb().equal(c.get("lotacaoPai"), lotacaoPai));
+		if (dtFimLotacaoIsNull) {
+			whereList.add(cb().isNull(c.get("dataFimLotacao")));
+		}
+		
+		q.where(whereList.toArray(new Predicate[whereList.size()]));
+		
 		return em().createQuery(q).getResultList();
 	}
 
@@ -1764,21 +1776,15 @@ public class CpDao extends ModeloDao {
 			List<DpLotacao> sublotacoes = new ArrayList<DpLotacao>();
 			sublotacoes.add(lotacao);
 			if (incluirSublotacoes) {
-				List<DpLotacao> lotacoes = listarLotacoes();
-				boolean continuar = true;
-				while (continuar) {
-					continuar = false;
-					for (DpLotacao lot : lotacoes) {
-						if (sublotacoes.contains(lot))
-							continue;
-						if (sublotacoes.contains(lot.getLotacaoPai())) {
-							if (!lot.isSubsecretaria()) {
-								sublotacoes.add(lot);
-								continuar = true;
-							}
-						}
-					}
+				List<DpLotacao> listaLotacaoPai = listarLotacoesPorPai(lotacao, Boolean.FALSE);
+				for (DpLotacao lotaPai : listaLotacaoPai) {
+					if (sublotacoes.contains(lotaPai))
+						continue;
+					if (!lotaPai.isSubsecretaria()) {
+						sublotacoes.add(lotaPai);
+					}					
 				}
+				
 			}
 			
 			return obterListaPessoaPorLotacoes(somenteServidor, situacoesFuncionais, sublotacoes);

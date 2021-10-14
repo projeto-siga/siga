@@ -613,6 +613,10 @@ public class ExServiceImpl implements ExService {
 
 				doc.setCadastrante(cadastrante);
 				doc.setLotaCadastrante(lotaCadastrante);
+				if (subscritor != null && doc.getTitular() == null) {
+					doc.setTitular(subscritor);
+					doc.setLotaTitular(subscritor.getLotacao());
+				}
 
 				if (destinatarioStr != null) {
 					try {

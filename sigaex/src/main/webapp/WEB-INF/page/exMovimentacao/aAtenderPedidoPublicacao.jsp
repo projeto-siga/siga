@@ -40,7 +40,7 @@
 	
 </script>
 	<div class="container-fluid">
-	<form name="frm" action="atender_pedido_publicacao_gravar" namespace="/expediente/mov" method="GET" theme="simple">
+	<form name="frm" action="atender_pedido_publicacao_gravar" namespace="/expediente/mov" method="get" theme="simple">
 		<c:set var="i" value="1" />
 		<input type="hidden" name="postback" value="1" />
 		<div class="card bg-light mb-3" >

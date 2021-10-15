@@ -26,7 +26,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +49,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
@@ -54,7 +57,7 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -76,17 +79,13 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @BatchSize(size = 500)
 @Table(name = "siga.ex_documento")
 @DynamicUpdate
 public class ExDocumento extends AbstractExDocumento implements Serializable,
 		CarimboDeTempo {
-
-	/**
-         * 
-         */
-	private static final long serialVersionUID = -1462217739890785344L;
 
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
@@ -418,7 +417,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlB64() {
-		return Base64.encode(getConteudoBlobHtml());
+		return Base64.getEncoder().encodeToString(getConteudoBlobHtml());
 	}
 
 	/**
@@ -452,8 +451,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// Verifica se todos os subscritores assinaram o documento
 		try {
 			for (DpPessoa subscritor : getSubscritorECosignatarios()) {
-				if (isEletronico() && isFinalizado()
-						&& !isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
+				if (isEletronico() && isFinalizado()) {
 					String comentarioInicio = "<!-- INICIO SUBSCRITOR "
 							+ subscritor.getId() + " -->";
 					String comentarioFim = "<!-- FIM SUBSCRITOR "
@@ -467,10 +465,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 								sHtml.indexOf(comentarioFim));
 
 						StringBuilder sb = new StringBuilder();
-						sb.append("<span style=\"color:#CD3700;\">");
-						sb.append(blocoSubscritor);
-						sb.append("</span>");
-
+						
+						if (!isAssinadoPelaPessoaComTokenOuSenha(subscritor)) {
+							sb.append("<span style=\"color:#CD3700;\">");
+							sb.append(blocoSubscritor);
+							sb.append("</span>");
+						} else {
+							if (Prop.getBool("assinatura.estampar")) {
+								sb.append("<span>- assinado eletronicamente -<br/>");
+							} else {
+								sb.append("<span>");
+							}
+							sb.append(blocoSubscritor);
+							sb.append("</span>");	
+						}
 						sHtml = sHtml.replace(blocoSubscritor, sb).toString();
 					}
 				}
@@ -495,7 +503,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <b>pdf</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobPdfB64() {
-		return Base64.encode(getConteudoBlobPdf());
+		return Base64.getEncoder().encodeToString(getConteudoBlobPdf());
 	}
 
 	/**
@@ -1840,11 +1848,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA);
 	}
 	
-	public Set<ExMovimentacao> getAssinaturasPorComSenha() {
+	public Set<ExMovimentacao> getAssinaturasPor() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral().getMovsNaoCanceladas(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA);
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR);
 	}
 
 
@@ -1969,36 +1977,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				.getAssinantesString(getAssinaturasComToken(),getDtDoc());
 		String assinantesSenha = Documento
 				.getAssinantesString(getAssinaturasComSenha(),getDtDoc());
-		String assinantesPorSenha = Documento
-				.getAssinantesStringComMatricula(getAssinaturasPorComSenha(),getDtDoc());
+		Set<ExMovimentacao> movsAssinatura = getAssinaturasComToken();
+		movsAssinatura.addAll(getAssinaturasComSenha());
+		String assinantesPor = Documento
+				.getAssinantesPorString(getAssinaturasPor(),getDtDoc(),movsAssinatura);
 		
-		if(Prop.isGovSP() && assinantesPorSenha != null && !"".equals(assinantesPorSenha)) {
-			Set<ExMovimentacao> listaAssinantesSenha1 = new TreeSet<ExMovimentacao>();
-			Set<ExMovimentacao> listaAssinantesSenha2 = new TreeSet<ExMovimentacao>();
-			Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
-			
-			listaAssinantesPor.addAll(getAssinaturasPorComSenha());
-			listaAssinantesSenha1.addAll(getAssinaturasComSenha());
-
-			String porAss = "";
-			for (ExMovimentacao por : listaAssinantesPor) {
-				porAss = por.getDescrMov() != null ? por.getDescrMov().substring(por.getDescrMov().lastIndexOf(":"), por.getDescrMov().length()) : "";
-				for (ExMovimentacao ass : listaAssinantesSenha1) {
-					if(ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) || (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) == -1)) {
-						listaAssinantesSenha2.add(ass);
-						break;
-					}
-				}
-			}
-			 assinantesSenha = Documento
-						.getAssinantesString(listaAssinantesSenha2,getDtDoc());
+		if(Prop.isGovSP() && assinantesPor != null && !"".equals(assinantesPor)) { 
+			assinantesToken = removeAssinadosPor(getAssinaturasComToken());
+			assinantesSenha = removeAssinadosPor(getAssinaturasComSenha());
 		}
 		
 		if (assinantesToken.length() > 0)
 			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
 
-		if (assinantesPorSenha.length() > 0) {
-			retorno = retorno + "Assinado com senha por " + assinantesPorSenha +".\n" ;
+		if (assinantesPor.length() > 0) {
+			retorno = retorno + assinantesPor +".\n" ;
 		}
 		
 		if (assinantesSenha.length() > 0)
@@ -2016,6 +2009,24 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 					: "";
 
 		return retorno;
+	}
+
+	private String removeAssinadosPor(Set<ExMovimentacao> listaAssinantes) {
+		// Remove da lista de assinantes (tanto com certificado digital quanto com senha) os que já estão na lista de assinar por 
+		Set<ExMovimentacao> listaAssinantesPor = new TreeSet<ExMovimentacao>();
+		listaAssinantesPor.addAll(getAssinaturasPor());
+		String porAss = "";
+
+		for (ExMovimentacao por : listaAssinantesPor) {
+			porAss = por.getDescrMov() != null ? por.getDescrMov().substring(por.getDescrMov().lastIndexOf(":"), por.getDescrMov().length()) : "";
+			for (ExMovimentacao ass : listaAssinantes) {
+				if(!ass.getCadastrante().getId().equals(ass.getSubscritor().getId()) && (ass.getDescrMov() != null && ass.getDescrMov().indexOf(porAss) != -1)) {
+					listaAssinantes.remove(ass);
+					break;
+				}
+			}
+		}
+		return Documento.getAssinantesString(listaAssinantes,getDtDoc());
 	}
 
 	public String getSolicitantesDeAssinaturaCompleto() {
@@ -2080,7 +2091,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	public boolean isAssinadoPelaPessoaComTokenOuSenha(DpPessoa subscritor) {
 		for (ExMovimentacao assinatura : getAssinaturasComTokenOuSenha()) {
-			if (assinatura.getSubscritor().equivale(subscritor))
+			if (assinatura.getSubscritor().equivale(subscritor) 
+					|| (!assinatura.getSubscritor().equivale(assinatura.getCadastrante())
+							&& assinatura.getCadastrante().equivale(subscritor)))
 				return true;
 		}
 		return false;
@@ -2700,7 +2713,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			else if (o instanceof DpLotacao)
 				s += ((DpLotacao) o).getNomeLotacao()+ " - " +((DpLotacao) o).getSiglaCompleta() + "/" + ((DpLotacao) o).getOrgaoUsuario();
 			else if (o instanceof DpPessoa)
-				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta() + "/" + getTitular().getLotacao().getSigla();
+				s += ((DpPessoa) o).getNomePessoa() + " - " + ((DpPessoa) o).getSiglaCompleta() + "/" + ((DpPessoa) o).getLotacao().getSigla();
 			else
 				s += o.toString();
 		}
@@ -2842,8 +2855,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 					&& (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
 							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || mov
-							.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA))
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA))
 				return true;
 		}
 
@@ -2915,5 +2930,93 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return this.idDocPrincipal;
 	}
 
+	/**
+	 * Verifica se o documento contém um determinado mobil 
+	 */
+	public boolean contemMobil(ExMobil mob) {
+		for (ExMobil m : getExMobilSet()) {
+			if (m.equals(mob))
+				return true;
+		}
+		return false;
+	}
 
+	/**
+	 * Retorna se o móbil possui acompanhamento de protocolo gerado.
+	 * 
+	 * @return
+	 */
+	public boolean temAcompanhamentoDeProtocolo() {
+		boolean b = false;
+		for (ExMovimentacao movRef : getExMovimentacaoSet()) {
+			if (!movRef.isCancelada()
+				&& movRef.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO)
+					b = true;
+		}
+		return b;
+	}
+
+	public List<Long> getIdsDeAssinantes() {
+		List<Long> l = new ArrayList<>();
+		for (DpPessoa subscritor : getSubscritorECosignatarios()) {
+			if (isAssinadoPelaPessoaComTokenOuSenha(subscritor)) 
+				l.add(subscritor.getId());
+		}
+		return l;
+	}
+
+	public boolean isDescricaoEspecieDespacho() {
+		return this.getExFormaDocumento()
+				.getDescricao().contains("Despacho");
+	}
+
+	/**
+	 * Verifica se o prazo para todos assinarem o documento está vencido.
+	 */
+	public boolean isPrazoDeAssinaturaVencido() {
+		Date dtNow = ExDao.getInstance().consultarDataEHoraDoServidor();
+		ExMovimentacao mov = getMovPrazoDeAssinatura();
+
+		if (mov != null && mov.getDtParam1().before(dtNow)) 
+			return true;
+		return false;
+	}
+
+	/**
+	 * Obtem a movimentação de definição de prazo de assinatura.
+	 */
+	public ExMovimentacao getMovPrazoDeAssinatura() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		if(movs != null)
+			for (final ExMovimentacao mov : movs) {
+				if (!mov.isCancelada()
+						&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA)
+					return mov;
+			}
+		return null;
+	}
+	
+	/**
+	 * Retorna a data do prazo de assinatura no formato dd/mm/aaaa hh:mm.
+	 */
+	public Date getDtPrazoDeAssinatura() {
+		ExMovimentacao mov = getMovPrazoDeAssinatura();
+		if (mov != null) {
+			return new Date(mov.getDtParam1().getTime());
+		}
+		return null;
+	}
+	/**
+	 * Retorna a data do prazo de assinatura no formato dd/mm/aaaa hh:mm.
+	 */
+	public String getDtPrazoDeAssinaturaDDMMYYYYHHMM() {
+		Date dt = getDtPrazoDeAssinatura();
+		if (dt != null) {
+	        LocalDateTime localDateTime = LocalDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
+			DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+			return localDateTime.format(fmt);
+		}
+		return "";
+	}
 }

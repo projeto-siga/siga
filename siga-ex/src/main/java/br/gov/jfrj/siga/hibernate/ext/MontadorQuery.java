@@ -18,8 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
+import org.apache.commons.lang3.StringUtils;
+
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 
 public class MontadorQuery implements IMontadorQuery {
 
@@ -28,9 +31,9 @@ public class MontadorQuery implements IMontadorQuery {
 		StringBuffer sbf = new StringBuffer();
 
 		if (apenasCount)
-			sbf.append("select count(doc) from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc");
+			sbf.append("select count(1) from ExMarca label  inner join label.cpMarcador marcador inner join label.exMobil mob inner join mob.exDocumento doc");
 		else
-			sbf.append("select doc, mob, label from ExMarca label inner join label.exMobil mob inner join mob.exDocumento doc");
+			sbf.append("select label.idMarca from ExMarca label inner join label.cpMarcador marcador inner join label.exMobil mob inner join mob.exDocumento doc");
 
 		//Nato: desabilitei este where pois causava muito impacto na velocidade da consulta. Precisamos criar uma variavel denormalizada mais a frente para resolver esse problema.
 		//sbf.append(" where not exists (from ExMovimentacao where exTipoMovimentacao.idTpMov = 10 and (exMobil.idMobil = mob.idMobil ");
@@ -38,11 +41,11 @@ public class MontadorQuery implements IMontadorQuery {
 		sbf.append(" where");
 
 		if (flt.getUltMovIdEstadoDoc() != null	&& flt.getUltMovIdEstadoDoc() != 0) {
-			sbf.append(" and label.cpMarcador.hisIdIni = :idMarcadorIni");
+			sbf.append(" and marcador.hisIdIni = :idMarcadorIni");
 			sbf.append(" and (dt_ini_marca is null or dt_ini_marca < :dbDatetime)");
 			sbf.append(" and (dt_fim_marca is null or dt_fim_marca > :dbDatetime)");
 		} else {
-			sbf.append(" and not (label.cpMarcador.idMarcador = :id1 or label.cpMarcador.idMarcador = :id2 or label.cpMarcador.idMarcador = :id3)");
+			sbf.append(" and marcador.listavelPesquisaDefault = 1");
 		}
 
 		if (flt.getUltMovRespSelId() != null && flt.getUltMovRespSelId() != 0) {
@@ -108,15 +111,21 @@ public class MontadorQuery implements IMontadorQuery {
 		// }
 
 		if (flt.getDtDoc() != null) {
-			sbf.append(" and doc.dtDoc >= to_date(");
+			if (((Long)CpMarcadorEnum.EM_ELABORACAO.getId()).equals(flt.getUltMovIdEstadoDoc())) { 
+				sbf.append(" and doc.dtRegDoc >= ");
+			} else {
+				sbf.append(" and doc.dtDoc >= ");
+			}
 			sbf.append(":dtDoc");
-			sbf.append(", 'dd/mm/yyyy HH24:MI:SS')");
 		}
 
 		if (flt.getDtDocFinal() != null) {
-			sbf.append(" and doc.dtDoc <= to_date(");
+			if (((Long)CpMarcadorEnum.EM_ELABORACAO.getId()).equals(flt.getUltMovIdEstadoDoc())) { 
+				sbf.append(" and doc.dtRegDoc <= ");
+			} else {
+				sbf.append(" and doc.dtDoc <= ");
+			}
 			sbf.append(":dtDocFinal");
-			sbf.append(", 'dd/mm/yyyy HH24:MI:SS')");
 		}
 
 		if (flt.getNumAntigoDoc() != null
@@ -173,6 +182,10 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
 			sbf.append(" and doc.exModelo.hisIdIni = :hisIdIni");
+		}
+ 
+		if (flt.getNomeRequerente()  != null && !flt.getNomeRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.nomeRequerente) like upper('%' || :nomeRequerente || '%')");
 		}
 
 		if (!apenasCount) {

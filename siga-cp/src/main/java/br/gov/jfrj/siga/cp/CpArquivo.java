@@ -52,7 +52,7 @@ import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -63,13 +63,12 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
  * A class that represents a row in the CP_ARQUIVO table. You can customize the
  * behavior of this class by editing the class, {@link CpArquivo()}.
  */
+@SuppressWarnings("serial")
 @Entity
 @Immutable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "corporativo.cp_arquivo")
 public class CpArquivo implements Serializable, PersistentAttributeInterceptable {
-
-	private static final long serialVersionUID = 1L;
 	
 	private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
 

@@ -1,22 +1,23 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <siga:pagina titulo="${informacao.sigla}" desabilitarmenu="sim">
-	<div class="gt-bd gt-cols clearfix">
-		<div class="gt-content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-8">
 			<h2>${informacao.sigla}</h2>
 			<c:if test="${flash.success}">
 				<p class="gt-success">${flash.success}</p>
 			</c:if>
 
 			<!-- Dados do documento -->
-			<div id="knowledgeContent" class="gt-content-box" style="padding: 10px;">
-				<h2>${informacao.arq.titulo}</h2>
+			<div id="knowledgeContent" class="card card-body mb-1">
+				<h4>${informacao.arq.titulo}</h4>
 				${conteudo}
 			</div>
 		</div>
 
-		<div class="gt-sidebar">
-			<div class="gt-sidebar-content">
+		<div class="col-sm-4">
+				<div class="gt-sidebar-content">
 				<h3>${informacao.tipo.nome}</h3>
 				<p>
 					<b>Tipo: </b> ${informacao.tipo.nome}
@@ -76,7 +77,7 @@
 							<p>
 								<img style="margin-bottom: -4px;"
 									src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-									target="_blank" href="${linkTo[AppController].baixarSemAutenticacao(m.arq.id)}">${m.arq.titulo}</a>
+									target="_blank" href="${linkTo[AppController].baixarSemAutenticacao(m.arq.id,informacao.id)}">${m.arq.titulo}</a>
 							</p>
 						</c:if>
 					</c:forEach>
@@ -112,7 +113,7 @@
 			<!-- / sidebar -->
 		</div>
 	</div>
-
+</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$(".gt-success").delay(5000).fadeOut("slow", "linear");

@@ -80,6 +80,9 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 
 	@Column(name = "IS_COMPOSTO", length = 1)
 	private Integer isComposto;
+	
+	@Column(name = "IS_PERMITEREQUERENTE", length = 1)
+	private Integer isPermiteRequerente;
 
 	/**
 	 * Simple constructor of AbstractExFormaDocumento instances.
@@ -219,4 +222,14 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 		this.isComposto = isComposto;
 	}
 
+	public Integer getIsPermiteRequerente() {
+		return isPermiteRequerente;
+	}
+
+	public void setIsPermiteRequerente(Integer isPermiteRequerente) {
+		this.isPermiteRequerente = isPermiteRequerente;
+	}
+
+ 
+	
 }

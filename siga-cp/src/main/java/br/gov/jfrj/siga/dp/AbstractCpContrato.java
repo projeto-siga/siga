@@ -33,11 +33,10 @@ import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractCpContrato extends Objeto implements
 		Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 //	@Id
 //	@SequenceGenerator(name = "CP_CONTRATO_SEQ", sequenceName = "CORPORATIVO.CP_CONTRATO_SEQ")

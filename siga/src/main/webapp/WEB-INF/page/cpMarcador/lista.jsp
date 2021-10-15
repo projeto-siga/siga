@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<jsp:useBean id="now" class="java.util.Date" />
 
 <siga:pagina titulo="Lista Marcadores">
 	<form name="frm" action="listar" class="form" method="GET">
@@ -10,75 +12,72 @@
 		<div class="container-fluid">
 			<div class="card bg-light mb-3">
 				<div class="card-header">
-					<h5>Cadastro de Marcadores</h5> 
+					<h5>Cadastro de Marcadores</h5>
 				</div>
 				<div class="card-body">
 					<!-- main content -->
 					<table border="0" class="table table-sm table-striped">
 						<thead class="${thead_color}">
 							<tr>
-								<th class="text-left w-10">Tipo</th>
+								<th class="text-left w-10">Categoria</th>
 								<th class="text-left w-35">Marcador</th>
-								<th class="text-left w-5">Aplica&ccedil;&atilde;o</th>
-								<th scope="text-left w-5">Exibi&ccedil;&atilde;o</th>
-								<th scope="text-left w-5">Data Planejada</th>
-								<th scope="text-left w-5">Data Limite</th>
-								<th class="text-left w-5">Exibição</th>
-								<th class="text-left w-5">Interessado</th>
+								<th class="text-left w-10">Tipo</th>
+								<th class="text-left w-10">Finalidade</th>
+								<th class="text-left w-10">Grupo</th>
 								<th colspan="2" class="text-right w-15">Op&ccedil;&otilde;es</th>
 							</tr>
 						</thead>
-		
+
 						<tbody>
 							<c:forEach items="${listaMarcadores}" var="marcador">
 								<tr>
-									<td class="text-left w-10">${marcador.cpTipoMarcador.descricao}</td>
-									<td class="text-left w-30"><span
+									<fmt:formatDate var="dtIni" value="${marcador.hisDtIni}" type='date' pattern="dd/MM/yyyy" />
+									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idFinalidade.grupo.nome}</td>
+									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-30"><span
 										class="badge badge-pill badge-secondary tagmesa btn-xs"
 										title="${marcador.descrDetalhada}"> <i
-											class="${marcador.idIcone.codigoFontAwesome}" style="color: ${marcador.idCor.descricao}"></i>
+											class="${marcador.idIcone.codigoFontAwesome}"
+											style="color: ${marcador.idCor.descricao}"></i>
 											${marcador.descrMarcador}
 										</span>
+										${marcador.hisDtIni gt now? '<br /><small>(Será ativado em '.concat(dtIni).concat(')</small>'):''}
 									</td>
-									<td class="text-left w-5">${marcador.idTpAplicacao.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpExibicao.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpDataPlanejada.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpDataLimite.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpTexto.descricao}</td>
-									<td class="text-left w-5">${marcador.idTpInteressado.descricao}</td>
+									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idFinalidade.nome}</td>
+									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idFinalidade.descricao}</td>
+									<td class="${marcador.hisDtIni gt now? 'disabled':''} text-left w-10">${marcador.idGrupo.nome}</td>
 									<td class="text-left w-10">
 										<div class="">
 											<button type="button" id="btn-excluir"
-												class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
-												onclick="excluir(${marcador.id})"
-												title="Excluir"><i class="far fa-trash-alt"></i>
+												class="enabled btn btn-outline-secondary btn-sm p-1 m-1 float-right"
+												onclick="excluir(${marcador.id})" title="Excluir">
+												<i class="far fa-trash-alt"></i>
 											</button>
 											<a type="button" id="btn-historico"
-												class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
+												class="enabled btn btn-outline-secondary btn-sm p-1 m-1 float-right"
 												href="/siga/app/marcador/historico?id=${marcador.hisIdIni}"
-												title="Histórico"><i class="fas fa-history"></i>
-											</a>
-											<a type="button" id="btn-editar"
-												class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
+												title="Histórico"><i class="fas fa-history"></i> </a> <a
+												type="button" id="btn-editar"
+												class="enabled btn btn-outline-secondary btn-sm p-1 m-1 float-right"
 												href="/siga/app/marcador/editar?id=${marcador.id}"
-												title="Editar"><i class="far fa-edit"></i>
-											</a>
+												title="Editar"><i class="far fa-edit"></i> </a>
 										</div>
 									</td>
 								</tr>
 							</c:forEach>
 						</tbody>
 					</table>
-		
+
 					<div class="gt-table-buttons">
-						<a id="btn-editar" class="btn btn-primary" href="/siga/app/marcador/editar">Incluir</a>
-						<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+						<a id="btn-editar" class="btn btn-primary"
+							href="/siga/app/marcador/editar">Incluir</a> <input type="button"
+							value="Voltar" onclick="javascript:history.back();"
+							class="btn btn-cancel ml-2" />
 					</div>
 				</div>
 			</div>
 		</div>
 	</form>
-	
+
 	<script type="text/javascript"
 		src="/siga/javascript/select2/select2.min.js"></script>
 	<script type="text/javascript"

@@ -21,6 +21,12 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.3</version>
 		</dependency>
+		
+		<dependency>
+    <groupId>br.com.caelum.vraptor</groupId>
+    <artifactId>vraptor-freemarker</artifactId>
+    <version>4.1.0-RC3</version>
+</dependency>
 		<!-- Demais dependencias -->
 		<!-- <dependency>
 			<groupId>ar.com.fdvs</groupId>
@@ -161,11 +167,6 @@
 			<version>1.3.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>br.com.caelum.vraptor</groupId>
-			<artifactId>vraptor-freemarker</artifactId>
-			<version>1.1.3</version>
-		</dependency>
 		
 		
 			<!-- CDI -->

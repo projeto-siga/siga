@@ -10,7 +10,7 @@
 		<div class="card bg-light mb-3" >
 			<div class="card-header"><h5>Carga de Planilha Fun&ccedil;&atilde;o de Confian&ccedil;a</h5></div>
 			<div class="card-body">
-				<form action="carga" method="POST" enctype="multipart/form-data" class="form">								
+				<form action="carga" method="post" enctype="multipart/form-data" class="form">								
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">

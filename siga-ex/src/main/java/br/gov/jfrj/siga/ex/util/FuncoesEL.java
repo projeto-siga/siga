@@ -25,6 +25,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,8 +46,7 @@ import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaHTTP;
-import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -66,6 +67,7 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
@@ -111,7 +113,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REMESSA_PARA_PUBLICACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -126,7 +128,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -141,7 +143,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -153,7 +155,7 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES);
+						ExTipoDeConfiguracao.DEFINIR_PUBLICADORES);
 
 	}
 
@@ -197,8 +199,18 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(null, lota, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_EDITOR);
+						ExTipoDeConfiguracao.UTILIZAR_EXTENSAO_EDITOR);
 	}
+
+	public static Boolean podeDelegarVisualizacao(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf()
+			.podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO);
+	}
+
+	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO);
+	}
+
 
 	public static List<CpLocalidade> consultarPorUF(String siglaUF) {
 		return dao().consultarLocalidadesPorUF(siglaUF);
@@ -1014,10 +1026,10 @@ public class FuncoesEL {
 				.podeAssinarComSenha(titular, lotaTitular, mob);
 	}
 
-	public static Boolean podeAssinarPorComSenha(DpPessoa titular,
+	public static Boolean podeAssinarPor(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeAssinarPorComSenha(titular, lotaTitular, mob);
+				.podeAssinarPor(titular, lotaTitular, mob);
 	}
 
 	public static Boolean deveAssinarComSenha(DpPessoa titular,
@@ -1144,6 +1156,32 @@ public class FuncoesEL {
 			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
 		return Ex.getInstance().getComp()
 				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
+	}
+
+	public static String calculaDiasAPartirDeHoje(Long qtdDias) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate dt = LocalDate.now().plusDays(qtdDias);
+		return formatter.format(dt);
+	}
+	
+	public static Boolean podeUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean deveUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.deveUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+	
+	public static Boolean defaultUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
+		return Ex.getInstance().getComp()
+				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
+	}
+
+	public static String slugify(String string, Boolean lowercase,
+			Boolean underscore) {
+		return Texto.slugify(string, lowercase, underscore);
 	}
 
 }

@@ -32,6 +32,7 @@ import javax.persistence.Transient;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_modelo")
 @NamedQueries({
@@ -40,7 +41,6 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 	@NamedQuery(name = "consultarCpModeloPorNome", query = "select u from CpModelo u where u.cpOrgaoUsuario.acronimoOrgaoUsu = :nome and u.hisDtFim is null"),
 	@NamedQuery(name = "consultarPorIdInicialCpModelo", query = "select mod from CpModelo mod where mod.hisIdIni = :idIni and mod.hisDtFim = null") })
 public class CpModelo extends AbstractCpModelo {
-	private static final long serialVersionUID = 1256614496347273713L;
 
 	@Transient
 	private byte[] cacheConteudoBlobMod;

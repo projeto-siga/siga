@@ -44,7 +44,7 @@
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 				<div class="col col-sm-12 col-md-6">
 					<div class="card bg-light mb-3">
-						<div class="card-header">Expedientes</div>
+						<div class="card-header"><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim&idTipoFormaDoc=1">Expedientes</a></div>
 						<div class="card-body">
 							<div id='left'>
 								<jsp:include page="loading.jsp" />
@@ -53,7 +53,7 @@
 					</div>
 
 					<div class="card bg-light mb-3">
-						<div class="card-header">Processos Administrativos</div>
+						<div class="card-header"><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim&idTipoFormaDoc=2">Processos Administrativos</a></div>
 						<div class="card-body">
 							<div id='leftbottom'>
 								<jsp:include page="loading.jsp" />
@@ -85,7 +85,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow')}">
 						<div class="card bg-light mb-3">
-							<div class="card-header">Tarefas</div>
+							<div class="card-header"><a href="/sigawf/app/ativos">Tarefas</a></div>
 							<div class="card-body">
 								<div id='right'>
 									<jsp:include page="loading.jsp" />
@@ -96,7 +96,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 						<div class="card bg-light mb-3">
-							<div class="card-header">Solicitações</div>
+							<div class="card-header"><a href="/sigasr/app/solicitacao/buscar">Solicitações</a></div>
 							<div class="card-body">
 								<div id='rightbottom'>
 									<jsp:include page="loading.jsp" />
@@ -107,7 +107,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
 						<div class="card bg-light mb-3">
-							<div class="card-header">Gestão de Conhecimento</div>
+							<div class="card-header"><a href="/sigagc/app/estatisticaGeral">Gestão de Conhecimento</a></div>
 							<div class="card-body">
 								<div id='rightbottom2'>
 									<jsp:include page="loading.jsp" />
@@ -118,7 +118,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
 						<div class="card bg-light mb-3">
-							<div class="card-header">Transportes</div>
+							<div class="card-header"><a href="/sigatp/">Transportes</a></div>
 							<div class="card-body">
 								<div id='rightbottom3'>
 									<jsp:include page="loading.jsp" />

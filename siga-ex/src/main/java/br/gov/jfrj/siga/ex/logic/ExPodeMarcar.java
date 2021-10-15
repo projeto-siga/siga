@@ -6,6 +6,7 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -20,7 +21,7 @@ public class ExPodeMarcar extends CompositeExpressionSuport {
 //
 //	return getConf().podePorConfiguracao(titular, lotaTitular,
 //			ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
-//			CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+//			CpTipoDeConfiguracao.MOVIMENTAR);
 
 	private ExMobil mob;
 	private DpPessoa titular;
@@ -45,7 +46,7 @@ public class ExPodeMarcar extends CompositeExpressionSuport {
 	public static void afirmar(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		ExPodeMarcar teste = new ExPodeMarcar(mob, titular, lotaTitular);
 		if (!teste.eval())
-			throw new AplicacaoException("Não é possível marcar porque " + teste.explain(false));
+			throw new AplicacaoException("Não é possível marcar porque " + AcaoVO.Helper.produzirExplicacao(teste, false));
 	}
 
 };

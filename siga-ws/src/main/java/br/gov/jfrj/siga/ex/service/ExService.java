@@ -99,4 +99,40 @@ public interface ExService extends Remote {
     @WebMethod
     public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr, String token) throws Exception;
 
+
+    @WebMethod
+	public String cadastrante(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String titular(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String subscritor(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String destinatario(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String gestor(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String fiscalTecnico(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String fiscalAdministrativo(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String interessado(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String autorizador(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String revisor(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public String liquidante(String codigoDocumentoVia) throws Exception;
+
+    @WebMethod
+	public Boolean isModeloIncluso(String codigoDocumentoVia, Long idModelo) throws Exception;
 }

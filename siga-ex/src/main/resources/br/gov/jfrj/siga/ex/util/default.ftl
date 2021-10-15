@@ -566,7 +566,7 @@ document.getElementById("${var}").value="${v}";
 [#-- Início do comentário
 Aplicação: Atualiza o valor de um campo via DOM
 Autor:    Ruben
-Data:     13/05/2012
+Data:     13/05/2012develop_SigaParaConstrucao
 Descrição: Recebe o nome da variável que deve ser modificada e a variável com conteúdo novo
 --]
 <script type="text/javascript">
@@ -928,10 +928,21 @@ LINHA  VARIÁVEL / CONTEÚDO
 					   text-align: left !important;
 					   margin-left: 0 !important;
                     }
+                    a.doc-sign {
+						color: #000;
+						text-decoration: none;
+					}
+					                    
                 </style>
             </head>
             <body>
-                [#nested]
+            	[#if func.resource('conversor.html.ext') == 'br.gov.jfrj.itextpdf.MyPD4ML']
+			    	[#nested]
+	            [#else]
+					<div style="word-wrap: break-word" class="divDoc">
+				     	[#nested]
+		           	</div>
+			    [/#if]
             </body>
         </html>
     [/#if]
@@ -1129,9 +1140,9 @@ LINHA  VARIÁVEL / CONTEÚDO
 
 [#macro checkbox var titulo="" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
     [#if reler == true && idAjax != ""]
-            [#local jreler = " sbmt('" + idAjax + "');\""]
+            [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
-            [#local jreler = " sbmt();\""]
+            [#local jreler = " sbmt();"]
     [/#if]
 
     [#if .vars[var]??]
@@ -1160,11 +1171,11 @@ LINHA  VARIÁVEL / CONTEÚDO
 	    [/#if]
 	
 	    [#if !gerar_formulario!false]    	
-			<div class="custom-control custom-checkbox">
-		        <input class="custom-control-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
+			<div class="form-check">
+		        <input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
 		               [#if v=='Sim']checked[/#if] 
-		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '{default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
-		        <label class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '${default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
+		        <label class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 		        [#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]		       
@@ -1367,42 +1378,47 @@ CKEDITOR.replace( '${var}',
 								CKEDITOR.config.scayt_sLang = 'pt_BR';
 								CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
 								
-								CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
-								        name: 'Título',
-								        element: 'h1',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Subtítulo',
-								        element: 'h2',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Com recuo',
-								        element: 'p',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Marcador',
-								        element: 'span',
-								        styles: {
-								        	'background-color' : '#FFFF00'
-								        }
-								    },
-								    {
-								        name: 'Normal',
-								        element: 'span'
-								    }
-								]);
+								if (CKEDITOR.stylesSet.get('siga_ckeditor_styles') == null) {
+								
+									CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+									        name: 'Título',
+									        element: 'h1',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Subtítulo',
+									        element: 'h2',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Com recuo',
+									        element: 'p',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Marcador',
+									        element: 'span',
+									        styles: {
+									        	'background-color' : '#FFFF00'
+									        }
+									    },
+									    {
+									        name: 'Normal',
+									        element: 'span'
+									    }
+									]);
+								
+								};
+								
 								CKEDITOR.config.toolbar = 'SigaToolbar';
 								
 								CKEDITOR.config.toolbar_SigaToolbar = [{
@@ -2154,52 +2170,51 @@ Pede deferimento.</span><br/><br/><br/>
     FIM TITULO -->
 [/#macro]
 
-[#macro inicioSubscritor]
-    <!-- INICIO SUBSCRITOR [#nested/] -->
+[#macro inicioSubscritor sigla]
+    <!-- INICIO SUBSCRITOR [#nested/] --><!-- SIGLA ${sigla!} -->
 [/#macro]
-
 
 [#macro fimSubscritor]
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
-<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
-    cellspacing="0" bgcolor="#FFFFFF">
-    <tr bgcolor="#FFFFFF">
-        <td width="100%">
-        <table width="100%" border="0" cellpadding="2">
-            <tr>
-                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
-            </tr>
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
-                </td>
-            </tr>
-            [#if _subtituloGeral?has_content]
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
-                </td>
-            </tr>
-            [/#if]
-            [#if orgaoCabecalho?? && orgaoCabecalho]
+	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
+	    cellspacing="0" bgcolor="#FFFFFF">
+	    <tr bgcolor="#FFFFFF">
+	        <td width="100%">
+	        <table width="100%" border="0" cellpadding="2">
+	            <tr>
+	                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+	            </tr>
 	            <tr>
 	                <td width="100%" align="center">
-	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
-	                [#if mov??]
-	                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-	                [#else]
-	                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-	                [/#if]</p>
+	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
 	                </td>
 	            </tr>
-            [/#if]
-        </table>
-        </td>
-    </tr>
-</table>
+	            [#if _subtituloGeral?has_content]
+	            <tr>
+	                <td width="100%" align="center">
+	                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
+	                </td>
+	            </tr>
+	            [/#if]
+	            [#if orgaoCabecalho?? && orgaoCabecalho]
+		            <tr>
+		                <td width="100%" align="center">
+		                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
+		                [#if mov??]
+		                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                [#else]
+		                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                [/#if]</p>
+		                </td>
+		            </tr>
+	            [/#if]
+	        </table>
+	        </td>
+	    </tr>
+	</table>
 [/#macro]
 
 [#macro cabecalhoCentralizado orgaoCabecalho=true]
@@ -2420,8 +2435,9 @@ Pede deferimento.</span><br/><br/><br/>
    <!-- INICIO ASSINATURA -->
 [/#if]
 <p style="font-family: Arial; font-size: 11pt;" align="center">
+	<br/>
     [#if (doc.subscritor)??]
-       [@inicioSubscritor]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
+       [@inicioSubscritor sigla=doc.codigoCompacto]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
     [/#if]
     [#if (doc.nmSubscritor)??]
         ${doc.nmSubscritor}
@@ -2464,8 +2480,8 @@ Pede deferimento.</span><br/><br/><br/>
                 [#if (doc.mobilGeral.exMovimentacaoSet)??]
         [#list doc.mobilGeral.exMovimentacaoSet as mov]
                     [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
-                        [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         <br/><br/><br/>
+                        [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         [#if mov.nmSubscritor??]
                             ${mov.nmSubscritor}
                         [#else]
@@ -4574,6 +4590,27 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
+<table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
+	<tr>
+		<td width="12%" align="right" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+		<td width="2%">&nbsp;</td>
+		<td align="left" nowrap >
+		${_tituloGeralParteI}<br>
+		${_tituloGeralParteII}<br>		
+		[#if org??][#-- tratando null  --]  
+		  ${org}
+		[/#if]
+	  </td>
+  </tr>
+</table>
+[/#macro]
+
 [#assign _pathBrasao = "contextpath/imagens/BrasaoPCRJ.png" /]
+[#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
+[#assign _widthBrasao = "auto" /]
+[#assign _heightBrasao = "65" /]
 [#assign _tituloGeral = "Prefeitura da Cidade do Rio de Janeiro" /]
 [#assign _subtituloGeral = "" /]
+[#assign _tituloGeralParteI = "PREFEITURA" /]
+[#assign _tituloGeralParteII = "DA CIDADE DO RIO DE JANEIRO" /]

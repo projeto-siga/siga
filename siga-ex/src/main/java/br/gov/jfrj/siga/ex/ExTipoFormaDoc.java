@@ -38,6 +38,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * A class that represents a row in the 'EX_TIPO_MOVIMENTACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@SuppressWarnings("serial")
 @Entity
 @Immutable
 @Cacheable
@@ -45,10 +46,6 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Table(name = "siga.ex_tipo_forma_documento")
 public class ExTipoFormaDoc extends AbstractExTipoFormaDoc implements
 		Serializable, Selecionavel {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3690757276252517939L;
 
 	final static public long TIPO_FORMA_DOC_EXPEDIENTE = 1;
 

@@ -22,21 +22,28 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
+import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
-import org.xhtmlrenderer.pdf.ITextOutputDevice;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xhtmlrenderer.pdf.ITextUserAgent;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.crivano.swaggerservlet.SwaggerUtils;
+import com.openhtmltopdf.extend.FSStream;
+import com.openhtmltopdf.extend.FSStreamFactory;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaHTTP;
@@ -67,12 +74,10 @@ public class FlyingSaucer implements ConversorHtml {
 		return s;
 	}
 
-	private static class ResourceLoaderUserAgent extends ITextUserAgent {
-		public ResourceLoaderUserAgent(ITextOutputDevice outputDevice) {
-			super(outputDevice);
-		}
+	public static class DownloadExterno implements FSStreamFactory {
 
-		protected InputStream resolveAndOpenStream(String uri) {
+		@Override
+		public FSStream getUrl(String uri) {
 			logger.fine("buscando recurso externo: " + uri);
 
 			byte ab[] = null; // (byte[]) Dao.syncCache().get(entry);
@@ -89,7 +94,24 @@ public class FlyingSaucer implements ConversorHtml {
 
 			logger.fine("retornando recurso externo: " + uri);
 			ByteArrayInputStream bais = new ByteArrayInputStream(ab);
-			return bais;
+
+			return new FSStream() {
+				@Override
+				public InputStream getStream() {
+					return bais;
+				}
+
+				@Override
+				public Reader getReader() {
+					return new InputStreamReader(getStream());
+				}
+			};
+		}
+	}
+
+	private static class DummyEntityResolver implements EntityResolver {
+		public InputSource resolveEntity(String publicID, String systemID) throws SAXException {
+			return new InputSource(new StringReader(""));
 		}
 	}
 
@@ -104,36 +126,33 @@ public class FlyingSaucer implements ConversorHtml {
 		sHtml = corrigirEscolhaDeFonts(sHtml);
 
 		sHtml = corrigirNBSP(sHtml);
+		
+		sHtml = corrigirDatas(sHtml);
 
 		sHtml = cleanHtml(sHtml);
 
 		logger.fine(sHtml);
 
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			ITextRenderer renderer = new ITextRenderer();
-			ResourceLoaderUserAgent callback = new ResourceLoaderUserAgent(renderer.getOutputDevice());
-			callback.setSharedContext(renderer.getSharedContext());
-			renderer.getSharedContext().setUserAgentCallback(callback);
+//		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//		factory.setNamespaceAware(true);
+//		DocumentBuilder docBuilder = factory.newDocumentBuilder();
+//		docBuilder.setEntityResolver(new DummyEntityResolver());
+//		Document dom = docBuilder.parse(new ByteArrayInputStream(sHtml.getBytes(StandardCharsets.UTF_8)));
+		
+		org.jsoup.nodes.Document jsoupDoc = Jsoup.parse(sHtml);
+		org.w3c.dom.Document dom = new W3CDom().fromJsoup(jsoupDoc);
+		
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			logger.fine("comecei a gerar o pdf");
+			PdfRendererBuilder builder = new PdfRendererBuilder();
+			builder.useHttpStreamImplementation(new DownloadExterno());
+			builder.useFastMode();
+			builder.withW3cDocument(dom, null);
+			builder.toStream(os);
+			builder.run();
 
-			try (StringReader reader = new StringReader(sHtml)) {
-				javax.xml.parsers.DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-				factory.setNamespaceAware(true);
-				factory.setValidating(false);
-				factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-				javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
-
-				org.xml.sax.InputSource inputSource = new InputSource(reader);
-				Document doc = builder.parse(inputSource);
-				renderer.setDocument(doc, ""); // Prop.get("/siga.base.url"));
-			}
-
-			// renderer.setDocument(sHtml.getBytes(StandardCharsets.UTF_8));
-			renderer.layout();
-			renderer.createPDF(baos);
-			logger.fine("PDF gerado");
-
-			return baos.toByteArray();
+			logger.fine("terminei de gerar o pdf");
+			return os.toByteArray();
 		}
 	}
 
@@ -232,10 +251,31 @@ public class FlyingSaucer implements ConversorHtml {
 		html = html.replace("<br></br>", "<br/>");
 		return html;
 	}
-	
+
 	private String corrigirNBSP(String html) {
-		// Remove &nbsp; pois isso não está sendo corretamente renderizado pelo no Flying Saucer
+		// Remove &nbsp; pois isso não está sendo corretamente renderizado pelo no
+		// Flying Saucer
 		html = html.replace("&nbsp;", " ");
+		return html;
+	}
+	
+	private String corrigirDatas(String html) {
+		Pattern pattern = Pattern
+				.compile("[0-9]{1,2}+[//]+[0-9]{1,2}+[//]+[0-9]{2,4}");
+
+		Matcher matcher = pattern
+				.matcher(html);
+		
+		Set<String> listaDatas = new HashSet<String>();
+		
+		while (matcher.find()) {
+			listaDatas.add(matcher.group());
+		}
+		
+		for (String data : listaDatas) {
+			html = html.replace(data, "<span style=\'white-space: nowrap;\'>"+data+"</span>");
+		}
+		
 		return html;
 	}
 
@@ -314,10 +354,10 @@ public class FlyingSaucer implements ConversorHtml {
 //		Nheengatu h2p = new Nheengatu();
 		String html = SwaggerUtils.convertStreamToString(FlyingSaucer.class.getResourceAsStream("pagina.html"));
 		byte[] ab = h2p.converter(html, (byte) 0);
-		ab = Documento.stamp(ab, "TRF2-MEM-2020/11111", false, false, false, false, true,
+		ab = Stamp.stamp(ab, "TRF2-MEM-2020/11111", false, false, false, false, true,
 				"https://siga.jfrj.jus.br/sigaex/public/app/autenticar?n=1111111-1111",
 				"Assinado digitalmente por USUARIO TESTE. Documento No: 1111111-1111 - https://siga.jfrj.jus.br/sigaex/public/app/autenticar?n=1111111-1111",
-				1, 1, 1, "Justiça Federal", "TRF2", "");
+				1, 1, 1, "Justiça Federal", "TRF2", "", null);
 		try (FileOutputStream fos = new FileOutputStream("/Users/nato/Downloads/testedepdf.pdf")) {
 			fos.write(ab);
 		}

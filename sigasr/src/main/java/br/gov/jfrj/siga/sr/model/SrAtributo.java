@@ -22,15 +22,14 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 
 @Entity
@@ -145,12 +144,12 @@ public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Sele
 		return preDefinidos;
 	}
 
-	public List<SrConfiguracao> getAssociacoes(DpLotacao lotaTitular, DpPessoa pess) {
+	public List<SrConfiguracaoCache> getAssociacoes(DpLotacao lotaTitular, DpPessoa pess) {
 		try {
 			SrConfiguracao confFiltro = new SrConfiguracao();
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
-			confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+			confFiltro.setCpTipoConfiguracao(SrTipoDeConfiguracao.ASSOCIACAO_TIPO_ATRIBUTO);
 			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
 		} catch (Exception e) {
 			throw new RuntimeException(e);

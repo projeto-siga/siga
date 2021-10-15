@@ -26,10 +26,10 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -78,7 +78,7 @@ public class SubstituicaoController extends SigaController {
 	private boolean podeCadastrarQualquerSubstituicao() throws Exception {
 		return Cp.getInstance().getConf().podePorConfiguracao(
 				getCadastrante(), getCadastrante().getLotacao(), 
-				CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);
+				CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST);
 	}
 	
 	private List<DpSubstituicao> buscarSubstitutos(String substituicao, DpPessoa pessoa, DpLotacao lotacao) 

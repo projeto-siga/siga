@@ -30,27 +30,22 @@
 </c:if>
 <table class="table-hover" style="width: 100%">
 	<c:forEach var="listEstado" items="${listEstados}">
-		<c:if test="${listEstado[4].descricao != descr}">
+		<c:if test="${listEstado[4].grupo.nome != descr}">
 			<thead>
 				<tr>
 					<th width="50%" style="text-align: left; padding-top: 0.5em;">
-					
-									    
 					    <c:choose>
-
-    <c:when test="${!fn:startsWith(situacao,'???')}">
-        ${situacao}
-    </c:when>    
-
-    <c:otherwise>
-         	 ${listEstado[4].descricao}
-    </c:otherwise>
-
-</c:choose>
-					 
- 
+						    <c:when test="${!fn:startsWith(situacao,'???')}">
+						        ${situacao}
+						    </c:when>    
+						
+						    <c:otherwise>
+						         	 ${listEstado[4].descricao}
+						    </c:otherwise>
+						</c:choose>
 					</th>
 
+ 
 					<th width="25%" style="text-align: right"><c:if
 							test="${empty descr}">
 							<fmt:message key="quadro.atendente" />
@@ -62,7 +57,7 @@
 				</tr>
 			</thead>
 		</c:if>
-		<c:set var="descr" value="${listEstado[4].descricao}" />
+		<c:set var="descr" value="${listEstado[4].grupo.nome}" />
 		<c:if
 			test="${listEstado[0] != 9 && listEstado[0] != 8  && listEstado[0] != 10 
 			&& listEstado[0] != 11 && listEstado[0] != 12 

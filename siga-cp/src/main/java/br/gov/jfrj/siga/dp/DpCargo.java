@@ -34,24 +34,21 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.dp_cargo")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpCargo extends AbstractDpCargo implements Serializable,
-		Selecionavel, Sincronizavel, DpConvertableEntity {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1727725732071861392L;
+		Selecionavel, Historico, Sincronizavel, DpConvertableEntity {
 
 	@Formula(value = "REMOVE_ACENTO(NOME_CARGO)")
 	@Desconsiderar
@@ -170,6 +167,50 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 			return false;
 		return this.getIdInicial().longValue() == ((DpCargo) other)
 				.getIdInicial().longValue();
+	}
+
+	@Override
+	public Long getHisIdIni() {
+		return getIdCargoIni();
+	}
+
+	@Override
+	public void setHisIdIni(Long hisIdIni) {
+		setIdCargoIni(hisIdIni);
+		
+	}
+
+	@Override
+	public Date getHisDtIni() {
+		return getDataInicioCargo();
+	}
+
+	@Override
+	public void setHisDtIni(Date hisDtIni) {
+		setDataInicioCargo(hisDtIni);
+		
+	}
+
+	@Override
+	public Date getHisDtFim() {
+		return getDataFimCargo();
+	}
+
+	@Override
+	public void setHisDtFim(Date hisDtFim) {
+		setDataFimCargo(hisDtFim);
+		
+	}
+
+	@Override
+	public Integer getHisAtivo() {
+		return getDataFimCargo() != null ? 1 : 0;
+	}
+
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

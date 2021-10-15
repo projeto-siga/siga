@@ -78,19 +78,6 @@
 			<artifactId>prettytime</artifactId>
 			<version>4.0.0.Final</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.picketbox</groupId>
-			<artifactId>picketbox</artifactId>
-			<version>4.0.21.Beta3</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>20.0</version>
-		</dependency>
 	</dependencies>
 
 </project>

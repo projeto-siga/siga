@@ -112,18 +112,13 @@
   <function-signature>java.lang.String maximoCaracteres(java.lang.String, java.lang.Integer)</function-signature>
  </function>
  <function>
- <name>podeDelegarVisualizacao</name>
-  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
-  <function-signature>java.lang.Boolean podeDelegarVisualizacao( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
- </function>
- <function>
- <name>podeCriarNovoExterno</name>
-  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
-  <function-signature>java.lang.Boolean podeCriarNovoExterno( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
- </function>
- <function>
  <name>ehPublicoExterno</name>
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.Boolean ehPublicoExterno( br.gov.jfrj.siga.dp.DpPessoa)</function-signature>
+ </function>
+ <function>
+  <name>podeUtilizarSegundoFatorPin</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.Boolean podeUtilizarSegundoFatorPin( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
 </taglib>

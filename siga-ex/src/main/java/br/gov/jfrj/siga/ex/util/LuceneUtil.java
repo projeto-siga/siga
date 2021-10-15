@@ -21,14 +21,8 @@ package br.gov.jfrj.siga.ex.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 import org.kxml2.io.KXmlParser;
-import org.pdfbox.cos.COSDocument;
-import org.pdfbox.pdfparser.PDFParser;
-import org.pdfbox.pdmodel.PDDocument;
-import org.pdfbox.util.PDFTextStripper;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 import org.xmlpull.v1.XmlPullParser;

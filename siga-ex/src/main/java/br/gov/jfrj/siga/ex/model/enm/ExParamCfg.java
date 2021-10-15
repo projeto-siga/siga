@@ -1,0 +1,6 @@
+package br.gov.jfrj.siga.ex.model.enm;
+
+public enum ExParamCfg {
+	CLASSIFICACAO, TIPO_DOCUMENTO, TIPO_FORMA_DOCUMENTO, FORMA_DOCUMENTO, MODELO, NIVEL_DE_ACESSO, PAPEL,
+	TIPO_MOVIMENTACAO, VIA;
+}

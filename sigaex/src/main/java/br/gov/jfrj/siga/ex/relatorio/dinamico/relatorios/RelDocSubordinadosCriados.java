@@ -79,6 +79,19 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 	
 	public Collection processarDados() throws Exception {
 
+		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+						+ "and lot.orgaoUsuario = "
+						+ parametros.get("orgaoUsuario")
+						+ " and lot.siglaLotacao = '"
+						+ parametros.get("lotacaoTitular") + "'");
+		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+		DpPessoa titular = ExDao.getInstance().consultar(
+				new Long((String) parametros.get("idTit")), DpPessoa.class,
+				false);
+		
+		
 		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = ContextoPersistencia.em().createQuery(
@@ -166,59 +179,66 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		
 		for (Object[] array : lista) {
 			Long idDoc = (Long) array[0];
-			String nomeLotacao = (String) array[1];
-			ExMovimentacao mov = (ExMovimentacao) array[2];
 			
-			ExMobil mob = (ExMobil) array[3];
-			String siglaOrgaoUsu = (String) array[4];
-			String acronimoOrgaoUsu = (String) array[5];
-			String siglaFormaDoc = (String) array[6];
-			Long anoEmissao = (Long) array[7];
-			Long numExpediente = (Long) array[8];
-			Integer docNumSequencia = (Integer) array[9];
-			Long idTipoMobil = (Long) array[10];
-			Integer mobilNumSequencia = (Integer) array[11];
-			Long pai_idDoc = (Long) array[12];
-			String pai_siglaOrgaoUsu = (String) array[13];
-			String pai_acronimoOrgaoUsu = (String) array[14];
-			String pai_siglaFormaDoc = (String) array[15];
-			Long pai_anoEmissao = (Long) array[16];
-			Long pai_numExpediente = (Long) array[17];
-			Integer pai_numSequencia = (Integer) array[18];
-			Long pai_idTipoMobil = (Long) array[19];
-			Integer pai_mobilNumSequencia = (Integer) array[20];
-
-			String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc,
-					anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, pai_idDoc,
-					pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente,
-					pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
-			
-			String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
-			
-			String url = ((String)array[21]).trim() + codigoMobil;
-			
-			String descricao = (String)array[22];
-			
-			String nomePessoa = (String)array[23];
-			
-			String descrMarcador =  (String)array[24];
-			
-			long identificador = mov.getExMobil().getId();
-			
-			listaFinal.add(nomeLotacao);
-			listaFinal.add(codigoMobil);
-			//testar se a criação foi cancelada
-			//if (mob.getUltimaMovimentacao(1).isCancelada() == false)
-			listaFinal.add(mob.getUltimaMovimentacao(1).getDtMovDDMMYY().toString());
-			listaFinal.add(mob.getUltimaMovimentacao(1).getLotaCadastrante().getSiglaLotacao().toString());
-			listaFinal.add(descrMarcador);
-			listaFinal.add(mov.getLotaResp().getSigla().toString());
-			if (mob.getUltimaMovimentacao(28)  != null) {
-				listaFinal.add(mob.getUltimaMovimentacao(28).toString());
-			} else {
-				listaFinal.add("");
+			ExDocumento documento = ExDao.getInstance().consultarExDocumentoPorId(idDoc);
+				if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+						documento, titular, 
+								lotaTitular)) {
+				
+				String nomeLotacao = (String) array[1];
+				ExMovimentacao mov = (ExMovimentacao) array[2];
+				
+				ExMobil mob = (ExMobil) array[3];
+				String siglaOrgaoUsu = (String) array[4];
+				String acronimoOrgaoUsu = (String) array[5];
+				String siglaFormaDoc = (String) array[6];
+				Long anoEmissao = (Long) array[7];
+				Long numExpediente = (Long) array[8];
+				Integer docNumSequencia = (Integer) array[9];
+				Long idTipoMobil = (Long) array[10];
+				Integer mobilNumSequencia = (Integer) array[11];
+				Long pai_idDoc = (Long) array[12];
+				String pai_siglaOrgaoUsu = (String) array[13];
+				String pai_acronimoOrgaoUsu = (String) array[14];
+				String pai_siglaFormaDoc = (String) array[15];
+				Long pai_anoEmissao = (Long) array[16];
+				Long pai_numExpediente = (Long) array[17];
+				Integer pai_numSequencia = (Integer) array[18];
+				Long pai_idTipoMobil = (Long) array[19];
+				Integer pai_mobilNumSequencia = (Integer) array[20];
+	
+				String codigoDocumento = ExDocumento.getCodigo(idDoc, siglaOrgaoUsu, acronimoOrgaoUsu, siglaFormaDoc,
+						anoEmissao, numExpediente, docNumSequencia, idTipoMobil, mobilNumSequencia, pai_idDoc,
+						pai_siglaOrgaoUsu, pai_acronimoOrgaoUsu, pai_siglaFormaDoc, pai_anoEmissao, pai_numExpediente,
+						pai_numSequencia, pai_idTipoMobil, pai_mobilNumSequencia);
+				
+				String codigoMobil = ExMobil.getSigla(codigoDocumento, mobilNumSequencia, idTipoMobil);
+				
+				String url = ((String)array[21]).trim() + codigoMobil;
+				
+				String descricao = (String)array[22];
+				
+				String nomePessoa = (String)array[23];
+				
+				String descrMarcador =  (String)array[24];
+				
+				long identificador = mov.getExMobil().getId();
+				
+				listaFinal.add(nomeLotacao);
+				listaFinal.add(codigoMobil);
+				//testar se a criação foi cancelada
+				//if (mob.getUltimaMovimentacao(1).isCancelada() == false)
+				listaFinal.add(mob.getUltimaMovimentacao(1).getDtMovDDMMYY().toString());
+				listaFinal.add(mob.getUltimaMovimentacao(1).getLotaCadastrante().getSiglaLotacao().toString());
+				listaFinal.add(descrMarcador);
+				listaFinal.add(mov.getLotaResp().getSigla().toString());
+				if (mob.getUltimaMovimentacao(28)  != null) {
+					listaFinal.add(mob.getUltimaMovimentacao(28).toString());
+				} else {
+					listaFinal.add("");
+				}
+				listaFinal.add(descricao);
 			}
-			listaFinal.add(descricao);
 		
 		}
 		return listaFinal;

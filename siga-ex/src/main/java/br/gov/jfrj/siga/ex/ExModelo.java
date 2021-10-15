@@ -30,7 +30,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
@@ -86,6 +86,10 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecio
 
 	public ExModelo getModeloAtual() {
 		return ExDao.getInstance().consultarModeloAtual(this);
+	}
+	
+	public ExModelo getModeloPeloId() {
+		return ExDao.getInstance().consultar(this.getIdMod(),ExModelo.class, false);
 	}
 
 	public boolean isDescricaoAutomatica() {

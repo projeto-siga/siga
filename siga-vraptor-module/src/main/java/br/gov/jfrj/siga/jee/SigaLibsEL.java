@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,22 +34,27 @@ import org.mvel2.templates.CompiledTemplate;
 import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
+//import net.sf.ehcache.Cache;
+//import net.sf.ehcache.CacheManager;
+//import net.sf.ehcache.Element;
+//import net.sf.ehcache.config.CacheConfiguration;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaCalendar;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
 
 public class SigaLibsEL {
 	private static String month[] = new String[] { "Jan", "Fev", "Mar", "Abr",
@@ -279,12 +286,12 @@ public class SigaLibsEL {
 						lotaTitular,
 						dao().consultar(idServico.longValue(), CpServico.class,
 								false),
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+						CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		return b;
 	}
 
 	public static Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, Long idTpConf) throws Exception {
+			DpLotacao lotaTitular, ITipoDeConfiguracao idTpConf) throws Exception {
 		return Cp.getInstance().getConf()
 				.podePorConfiguracao(titular, lotaTitular, idTpConf);
 	}
@@ -296,7 +303,7 @@ public class SigaLibsEL {
 	// srv.setSiglaServico(siglaServico);
 	// return Cp.getInstance().getConf().podePorConfiguracao(titular,
 	// lotaTitular, dao().consultarPorSigla(srv),
-	// CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+	// CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 	// }
 
 	public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
@@ -318,43 +325,32 @@ public class SigaLibsEL {
 			throws UnsupportedEncodingException {
 		return URLEncoder.encode(value, "UTF-8");
 	}
-
+	
+	static LoadingCache<String, String> cache = CacheBuilder.newBuilder().maximumSize(1000)
+			.expireAfterWrite(5, TimeUnit.MINUTES).build(new CacheLoader<String, String>() {
+				public String load(String source) throws Exception {
+					Long idOrgaoUsu = Long.valueOf(source.split("-")[1]);
+					ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
+					Map attrs = new HashMap();
+					attrs.put("nmMod", "macro complementoHEAD");
+					attrs.put("template", "[@complementoHEAD/]");
+					try {
+						String s = p.processarModelo(CpDao.getInstance().consultarOrgaoUsuarioPorId(idOrgaoUsu), attrs, null).trim();
+						return s;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return "";
+				}
+			});
+	
 	public static String getComplementoHead(CpOrgaoUsuario oragaoUsu) {
-		final String CACHE_GENERIC_HOURS = "cache.hours";
-		CacheManager manager = CacheManager.getInstance();
-		Cache cache;
-
-		if (!manager.cacheExists(CACHE_GENERIC_HOURS)) {
-			manager.addCache(CACHE_GENERIC_HOURS);
-			cache = manager.getCache(CACHE_GENERIC_HOURS);
-			CacheConfiguration config;
-			config = cache.getCacheConfiguration();
-			config.setTimeToIdleSeconds(3600);
-			config.setTimeToLiveSeconds(36000);
-			config.setMaxElementsInMemory(10000);
-			config.setMaxElementsOnDisk(1000000);
-		} else
-			cache = manager.getCache(CACHE_GENERIC_HOURS);
-
-		Element element;
 		String key = "complementoHEAD-" + oragaoUsu.getId();
-		if ((element = cache.get(key)) != null) {
-			return (String) element.getValue();
-		}
-
-		ProcessadorFreemarkerSimples p = new ProcessadorFreemarkerSimples();
-		Map attrs = new HashMap();
-		attrs.put("nmMod", "macro complementoHEAD");
-		attrs.put("template", "[@complementoHEAD/]");
 		try {
-			String s = p.processarModelo(oragaoUsu, attrs, null).trim();
-			cache.put(new Element(key, s));
-			return s;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return cache.get(key);
+		} catch (ExecutionException e) {
+			throw new RuntimeException("Não foi possível obter o complemento: " + key, e);
 		}
-		return "";
 	}
 
 	public static Boolean podeCadastrarQqSubstituicaoPorConfiguracao(
@@ -364,12 +360,12 @@ public class SigaLibsEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(pessoa,
-						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)
+						CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST)
 				|| Cp.getInstance()
 						.getConf()
 						.podePorConfiguracao(
 								lotacao,
-								CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);
+								CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -462,16 +458,6 @@ public class SigaLibsEL {
 		return Texto.maximoCaracteres(s, max);
 	}
 	
-	public static Boolean podeDelegarVisualizacao(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
-		return Cp.getInstance().getConf()
-				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO);
-	}
-
-	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
-		return Cp.getInstance().getConf()
-				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO);
-	}
-
 	public static Boolean ehPublicoExterno(DpPessoa titular) {
 		return (
 			(titular.getOrgaoUsuario().getIsExternoOrgaoUsu() != null && titular.getOrgaoUsuario().getIsExternoOrgaoUsu() == 1)
@@ -484,5 +470,9 @@ public class SigaLibsEL {
 			url = "#";
 		}
 		return url.trim();
+	}
+	
+	public static boolean podeUtilizarSegundoFatorPin(final DpPessoa cadastrante,final DpLotacao lotacaoCadastrante) throws Exception {
+		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoDeConfiguracao.SEGUNDO_FATOR_PIN);
 	}
 }

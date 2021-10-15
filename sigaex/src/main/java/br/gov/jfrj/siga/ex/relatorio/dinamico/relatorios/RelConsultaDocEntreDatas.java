@@ -44,6 +44,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
@@ -152,12 +153,33 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 			query.setParameter("dataInicial", dataInicial);
 			query.setParameter("dataFinal", dataFinal);
 			
+			Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
+					"from DpLotacao lot " + "where lot.dataFimLotacao is null "
+							+ "and lot.orgaoUsuario = "
+							+ parametros.get("orgaoUsuario")
+							+ " and lot.siglaLotacao = '"
+							+ parametros.get("lotacaoTitular") + "'");
+			DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
+
+			DpPessoa titular = ExDao.getInstance().consultar(
+					new Long((String) parametros.get("idTit")), DpPessoa.class,
+					false);
+			
 			List<ExDocumento> listaDocumentos = query.getResultList();
 
 			for (ExDocumento documento : listaDocumentos) {
-				dados.add(documento.getCodigo());
-				dados.add(link.concat(documento.getCodigo()));
-				dados.add(documento.getDescrDocumento());
+				if (Ex.getInstance().getBL().exibirQuemTemAcessoDocumentosLimitados(
+						documento, titular, 
+								lotaTitular)) {
+					dados.add(documento.getCodigo());
+					dados.add(link.concat(documento.getCodigo()));
+					dados.add(Ex
+							.getInstance()
+							.getBL()
+							.descricaoConfidencialDoDocumento(documento.getMobilGeral(), titular,
+									lotaTitular));
+				}
+
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao gerar o relatorio");

@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
+
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt() {

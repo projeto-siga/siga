@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,7 +30,6 @@ import java.util.TreeSet;
 
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpPapel;
@@ -145,10 +142,18 @@ public class SigaCpSinc {
 		}
 		try {
 			OperadorComHistorico o = new OperadorComHistorico() {
-				public Sincronizavel gravar(Sincronizavel s) {
+
+				public Sincronizavel gravar(Sincronizavel s, boolean descarregar) {
+
 					Sincronizavel o = CpDao.getInstance().gravar(s);
+					
+					if (descarregar){
+						CpDao.getInstance().em().flush();
+					}
+					
 					return o;
 				}
+				
 			};
 
 			for (Item opr : list) {
@@ -157,7 +162,9 @@ public class SigaCpSinc {
 				if (opr.getNovo() != null && opr.getNovo() instanceof DpLotacao)
 					if (opr.getAntigo() != null)
 						opr.getAntigo().semelhante(opr.getNovo(), 0);
+				
 				sinc.gravar(opr, o, true);
+				
 				if (opr.getAntigo() != null) {
 					manterNomeExibicao(opr.getAntigo(), opr.getNovo());
 				}

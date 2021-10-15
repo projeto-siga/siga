@@ -10,30 +10,83 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
 <siga:pagina titulo="Lista de Expedientes" popup="${popup}">
+	<c:set var="podePesquisarDescricao" scope="session" 
+		value="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição')}" />
+	<c:set var="podePesquisarDescricaoLimitada" scope="session" 
+		value="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros')}" />
 	<script type="text/javascript" language="Javascript1.1">
 
 		$(document).ready(function() {
 			alteraOrigem();
-			alteraTipoDaForma();
-			alteraForma();				
+			var frmsel = document.getElementById('idFormaDoc');
+			var modsel = document.getElementById('idMod');
+			${idFormaDoc != null && idFormaDoc != 0? 'alteraTipoDaForma(false);' : ''}
+			${idMod != null && idMod != 0? 'alteraForma(false);' : ''}
+			podeDescricao(false);
+			$(document.body).on("change","#idFormaDoc",function(){ podeDescricao(false);});	
+			$(document.body).on("change","#idMod",function(){ podeDescricao(false);});
 		});
 		
-		function alteraTipoDaForma() {
-			SetInnerHTMLFromAjaxResponse(
-					'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
-							+ document.getElementById('tipoForma').value
-							+ '&idFormaDoc=' + '${idFormaDoc}', document
-							.getElementById('comboFormaDiv'));
-			
+		function podeDescricao(limpaDescricao) {
+			if ("${podePesquisarDescricao}" != "true") { 
+				desabilitaDescricao();
+				return;
+			}
+
+			if ("${podePesquisarDescricaoLimitada}" === "true") {
+				if ($('#orgaoUsu').val() != 0 && $('#idFormaDoc').find(':selected').val() != "0" 
+						&& $('#idMod').find(':selected').val() != "0" 
+						&& $('#anoEmissaoString').val() != 0) {
+					habilitaDescricao();
+				} else {
+					desabilitaDescricao();
+					if (limpaDescricao)
+						$('#descrDocumento').val("");
+				}
+			} else {
+				habilitaDescricao();
+			}
+		}
+
+		function habilitaDescricao() {
+			$('#descrDocumento').attr('placeholder', "Clique aqui para pesquisar pela descrição");
+			$('#descrDocumento').removeAttr('readonly');
+		}
+		
+		function desabilitaDescricao() {
+			$('#descrDocumento').attr('placeholder', "Não é possível realizar a pesquisa pela descrição");
+			$('#descrDocumento').attr('readonly', true);
+		}
+		
+		function alteraTipoDaForma(abrir) {
+			if ($('#idFormaDoc-spinner').hasClass('d-none')) {
+				$('#idFormaDoc-spinner').removeClass('d-none');
+				$('#idFormaDoc').prop('disabled', 'disabled');
+				SetInnerHTMLFromAjaxResponse(
+						'/sigaex/app/expediente/doc/carregar_lista_formas?tipoForma='
+								+ document.getElementById('tipoForma').value
+								+ '&idFormaDoc=' + '${idFormaDoc}', document
+								.getElementById('comboFormaDiv'), null, 
+								(abrir? function(){	$('#idFormaDoc').select2('open'); } : null)							
+								);
+			}
 		}
 	
-		function alteraForma() {
-			var idFormaDoc = document.getElementById('idFormaDoc');
-			SetInnerHTMLFromAjaxResponse(
-					'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
-							+ (idFormaDoc != null ? idFormaDoc.value : '${idFormaDoc}' )
-							+ '&idMod='	+ '${idMod}', document
-							.getElementById('comboModeloDiv'));
+		function alteraForma(abrir) {
+			if ($('#idMod-spinner').hasClass('d-none')) {
+				$('#idMod-spinner').removeClass('d-none');
+				$('#idMod').prop('disabled', 'disabled');
+				var idFormaDoc = document.getElementById('idFormaDoc');
+				SetInnerHTMLFromAjaxResponse(
+						'/sigaex/app/expediente/doc/carregar_lista_modelos?forma='
+								+ (idFormaDoc != null ? idFormaDoc.value : '${idFormaDoc}' )
+								+ '&idMod='	+ '${idMod}', document
+								.getElementById('comboModeloDiv'), null, 
+								(abrir? function(){	$('#idMod').select2('open'); 
+													podeDescricao(true);} : 
+										function(){	podeDescricao(true);})							
+								);
+			}
 		}
 		
 		function sbmtAction(id, action) {
@@ -57,18 +110,14 @@
 				var descricao = document.getElementById('descrDocumento').value.trim();
 				if(descricao.length != 0 && descricao.length < 5) {
 					sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
-				} else {
-					$('#buscandoSpinner').removeClass('d-none');
-					document.getElementById("btnBuscar").disabled = true;
-					listar.submit();
+					return;
 				}
-			} else {
-				$('#buscandoSpinner').removeClass('d-none');
-				document.getElementById("btnBuscar").disabled = true;
-				listar.submit();
 			}
-		}	
-	
+			$('#buscandoSpinner').removeClass('d-none');
+			document.getElementById("btnBuscar").disabled = true;
+			listar.submit();
+		}
+
 		function montaDescricao(id, via, descrDoc) {
 			var popW = 700;
 			var popH = 500;
@@ -400,28 +449,41 @@
 						name="apenasRefresh" value="0" /> <input type="hidden"
 						name="paramoffset" value="0" /> <input type="hidden"
 						name="p.offset" value="0" />
-
 					<c:if test="${siga_cliente == 'GOVSP'}">
 						<div class="form-row">
-							<div class="form-group col-md-6">
+							<div class="form-group col-12">
 								<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
 									class="form-control" type="text" name="descrDocumento" id="descrDocumento"
-									value="${descrDocumento}" size="80" />
+									value="${descrDocumento}" size="80"
+									<c:if test="${!podePesquisarDescricao}">
+										readonly placeholder="Não é possível realizar a pesquisa pela descrição"
+									</c:if>
+									/>
+									<c:if test="${podePesquisarDescricao && podePesquisarDescricaoLimitada}">
+										<small>Campo "Descrição" habilitado para pesquisa após o preenchimento dos campos "Órgão", "Espécie", "Documento" e "Ano de Emissão"</small>
+									</c:if>
 							</div>
 						</div>
 					</c:if>
-
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label for="ultMovIdEstadoDoc">Situação</label> <select
 								class="form-control" id="ultMovIdEstadoDoc"
 								name="ultMovIdEstadoDoc">
 								<option value="0">[Todos]</option>
-								<c:forEach items="${estados}" var="item">
+								<c:forEach items="${estados}" var="item" varStatus="sts">
+									<c:if test="${sts.first or (item.idFinalidade.grupo != g)}">
+										<c:if test="${not sts.first}">
+											</optgroup>
+										</c:if>
+										<optgroup label="${item.idFinalidade.grupo.nome}">
+										<c:set var="g" value="${item.idFinalidade.grupo}"/>
+									</c:if>
 									<option value="${item.idMarcador}"
 										${item.idMarcador == ultMovIdEstadoDoc ? 'selected' : ''}>
 										${item.descrMarcador}</option>
 								</c:forEach>
+								</optgroup>
 							</select>
 						</div>
 
@@ -470,7 +532,7 @@
 					<div class="form-row">
 						<div class="form-group col-md-3">
 							<label for="orgaoUsu">Órgão</label> 
-							<select class="form-control  siga-select2" id="orgaoUsu" name="orgaoUsu">
+							<select class="form-control  siga-select2" id="orgaoUsu" name="orgaoUsu" onchange="podeDescricao(true)">
 								<c:if test="${siga_cliente != 'GOVSP' || orgaoUsu == '0'}">
 									<option value="0">[Todos]</option>
 								</c:if>
@@ -514,7 +576,7 @@
 							<label for="tipoForma">Tipo da Espécie</label> 
 							<select
 								class="form-control" id="tipoForma" name="idTipoFormaDoc"
-								onchange="javascript:alteraTipoDaForma();">
+								onchange="javascript:alteraTipoDaForma(false);">
 								<option value="0">[Todos]</option>
 								<c:forEach items="${tiposFormaDoc}" var="item">
 									<option value="${item.idTipoFormaDoc}"
@@ -525,11 +587,27 @@
 						</div>
 
 						<div class="form-group col-md-3">
-							<div style="display: inline" id="comboFormaDiv"></div>
+							<div style="display: inline" id="comboFormaDiv">
+								<div class="form-group" id="idFormaDocGroup" onclick="javascript:alteraTipoDaForma(true);"
+								 		onfocus="javascript:alteraTipoDaForma(true);">
+									<label><fmt:message key="documento.label.especie"/> <span id="idFormaDoc-spinner" class="spinner-border text-secondary d-none"></span></label> 
+									<select class="form-control siga-select2" id="idFormaDoc" name="idFormaDoc">
+										<option value="0">[Todos]</option>
+									</select>
+								</div>
+							</div>
 						</div>
 
 						<div class="form-group col-md-6">
-							<div style="display: inline" id="comboModeloDiv"></div>
+							<div style="display: inline" id="comboModeloDiv">
+								<div class="form-group" id="idModGroup" onclick="javascript:alteraForma(true);"
+										onfocus="javascript:alteraForma(true);">
+									<label><fmt:message key="documento.modelo2"/> <span id="idMod-spinner" class="spinner-border text-secondary d-none"></span></label> 
+									<select class="form-control siga-select2" id="idMod" name="idMod">
+										<option value="0" >[Todos]</option>
+									</select>
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -537,7 +615,7 @@
 						<div class="form-group col-md-3">
 							<label for="anoEmissaoString">Ano de Emissão</label> <select
 								class="form-control" id="anoEmissaoString"
-								name="anoEmissaoString">
+								name="anoEmissaoString" onchange="podeDescricao(true)">
 								<option value="0">[Todos]</option>
 								<c:forEach items="${listaAnos}" var="item">
 									<option value="${item}"
@@ -713,6 +791,23 @@
 							</select>
 						</div>
 					</div>
+					
+			 
+					
+					
+				 
+					<div class="form-row">
+
+						<div class="form-group col-md-3">
+							<label for="nomeRequerente">Nome interessado</label> 
+									<input type="text"	id="nomeRequerente" name="nomeRequerente"
+											value="${nomeRequerente}" class="form-control" maxlength="125"   >
+						</div>
+					</div>
+					
+					
+					
+					
 					<button id="btnBuscar" type="button" value="Buscar" class="btn btn-primary" onclick="submitBusca('${siga_cliente}')">
 						<span id="buscandoSpinner" class="spinner-border d-none" role="status"></span> Buscar
 					</button>

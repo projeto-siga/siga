@@ -26,7 +26,7 @@ import java.io.UnsupportedEncodingException;
 import com.aryjr.nheengatu.pdf.HTML2PDFParser;
 import com.aryjr.nheengatu.pdf.PDFDocument;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 
 public class Nheengatu implements ConversorHtml {
 

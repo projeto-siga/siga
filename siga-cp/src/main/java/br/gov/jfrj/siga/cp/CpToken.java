@@ -9,6 +9,7 @@ import javax.persistence.Table;
  * The persistent class for the CP_TOKEN database table.
  * 
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_token")
 @NamedQueries({
@@ -17,9 +18,6 @@ import javax.persistence.Table;
 })
 
 public class CpToken extends AbstractCpToken {
-	
-	private static final long serialVersionUID = 1L;
-
 
 	public CpToken() {
 	}

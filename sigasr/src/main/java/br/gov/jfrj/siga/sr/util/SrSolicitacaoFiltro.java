@@ -12,9 +12,9 @@ import javax.persistence.Query;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
@@ -80,6 +80,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		incluirJoinsEWheres(query, buscador);
 		try {
 			return (Long) ContextoPersistencia.em().createQuery(query.toString())
+					.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor())
 					.getSingleResult();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -140,6 +141,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(sentidoOrdenacao.name());
 		Query jq = ContextoPersistencia.em().createQuery(query.toString());
+		jq.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
 		jq.setFirstResult(getStart().intValue());
 		if (getLength() > 0)
 			jq.setMaxResults(getLength().intValue());
@@ -180,18 +182,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador()); 
 		
 		query.append(" and (situacao.dtIniMarca is null or "
-					+ "situacao.dtIniMarca < CURRENT_TIMESTAMP) ");
+					+ "situacao.dtIniMarca < :dbDatetime) ");
 		query.append(" and (situacao.dtFimMarca is null or "
-					+ "situacao.dtFimMarca > CURRENT_TIMESTAMP) ");
+					+ "situacao.dtFimMarca > :dbDatetime) ");
 		
 		if (situacaoFiltro.equals("situacaoAux")) {
 			if (getSituacao() != null)
 				query.append(" and situacaoAux.cpMarcador.idMarcador = "
 					+ getSituacao().getIdMarcador());
 			query.append(" and (situacaoAux.dtIniMarca is null or "
-					+ "situacaoAux.dtIniMarca < CURRENT_TIMESTAMP) ");
+					+ "situacaoAux.dtIniMarca < :dbDatetime) ");
 			query.append(" and (situacaoAux.dtFimMarca is null or "
-					+ "situacaoAux.dtFimMarca > CURRENT_TIMESTAMP) ");
+					+ "situacaoAux.dtFimMarca > :dbDatetime) ");
 		}
 		
 		if (Filtros.deveAdicionar(getAtendente())){
@@ -265,23 +267,53 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
 		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
 
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL")) {
+
+
+		
 		if (getDtIni() != null)
 			try {
-				query.append(" and sol.dtReg >= to_date('"
+				query.append(" and sol.dtReg >= STR_TO_DATE('"
 						+ dfHibernate.format(dfUsuario.parse(getDtIni()))
-						+ "', 'yyyy-MM-dd') ");
+						+ " 00:00:00', '%Y-%m-%d %H:%i:%s') ");
 			} catch (ParseException e) {
 				//
 			}
 
 		if (getDtFim() != null)
 			try {
-				query.append(" and sol.dtReg <= to_date('"
-						+ dfHibernate.format(dfUsuario.parse(getDtFim()))
-						+ " 23:59', 'yyyy-MM-dd HH24:mi') ");
+				query.append(" and sol.dtReg <= STR_TO_DATE('"
+						+ dfHibernate.format(dfUsuario.parse(getDtFim())) 
+						+ " 23:59:59', '%Y-%m-%d %H:%i:%s') ");
 			} catch (ParseException e) {
 				//
 			}
+		
+		
+		
+		} else {
+			
+			
+			if (getDtIni() != null)
+				try {
+					query.append(" and sol.dtReg >= to_date('"
+							+ dfHibernate.format(dfUsuario.parse(getDtIni()))
+							+ "', 'yyyy-MM-dd') ");
+				} catch (ParseException e) {
+					//
+				}
+
+			if (getDtFim() != null)
+				try {
+					query.append(" and sol.dtReg <= to_date('"
+							+ dfHibernate.format(dfUsuario.parse(getDtFim()))
+							+ " 23:59', 'yyyy-MM-dd HH24:mi') ");
+				} catch (ParseException e) {
+					//
+				}
+			
+		}
 		
 		if (Filtros.deveAdicionar(getAcordo()))
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");		

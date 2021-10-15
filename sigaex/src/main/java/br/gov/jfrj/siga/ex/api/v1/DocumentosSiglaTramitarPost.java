@@ -10,53 +10,47 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaTramitarPostRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaTramitarPostResponse;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaTramitarPost;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.Transacional;
 
+@Transacional
 public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost {
 
-	private void validarPreenchimentoDestino(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp)
-			throws SwaggerException {
+	private void validarPreenchimentoDestino(Request req, Response resp) throws AplicacaoException {
 		if (StringUtils.isEmpty(req.orgao) && StringUtils.isEmpty(req.lotacao) && StringUtils.isEmpty(req.matricula)) {
-			throw new SwaggerException("Você deve fornecer ou orgao (apenas) ou matricula ou lotacao *com* a matricula",
-					400, null, req, resp, null);
+			throw new AplicacaoException(
+					"Você deve fornecer ou orgao (apenas) ou matricula ou lotacao *com* a matricula");
 		}
-		if (!StringUtils.isEmpty(req.orgao) && !StringUtils.isEmpty(req.lotacao) && StringUtils.isEmpty(req.matricula)) {
-			throw new SwaggerException("Você deve fornecer a lotacao caso a matricula esteja fornecida", 400, null, req,
-					resp, null);
+		if (!StringUtils.isEmpty(req.orgao) && !StringUtils.isEmpty(req.lotacao)
+				&& StringUtils.isEmpty(req.matricula)) {
+			throw new AplicacaoException("Você deve fornecer a lotacao caso a matricula esteja fornecida");
 		}
 		if (StringUtils.isNotEmpty(req.orgao)
 				&& (StringUtils.isNotEmpty(req.lotacao) || StringUtils.isNotEmpty(req.matricula))) {
-			throw new SwaggerException(
-					"Orgão externo não deve ser fornecido se for tramitar para Lotação e/ou Matrícula", 400, null, req,
-					resp, null);
+			throw new AplicacaoException(
+					"Orgão externo não deve ser fornecido se for tramitar para Lotação e/ou Matrícula");
 		}
 	}
 
-	private void validarAcesso(DocumentosSiglaTramitarPostRequest req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
+	private void validarAcesso(ExApiV1Context ctx, Request req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
 			throws Exception, PresentableUnloggedException {
-		ApiContext.assertAcesso(mob, titular, lotaTitular);
+		ctx.assertAcesso(mob, titular, lotaTitular);
 
 		if (!Ex.getInstance().getComp().podeTransferir(titular, lotaTitular, mob))
 			throw new PresentableUnloggedException("O documento " + req.sigla + " não pode ser tramitado por "
 					+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
 	}
 
-	private CpOrgao getOrgaoExterno(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp)
-			throws SwaggerException {
+	private CpOrgao getOrgaoExterno(Request req, Response resp) throws SwaggerException {
 		if (StringUtils.isEmpty(req.orgao)) {
 			return null;
 		}
@@ -69,7 +63,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 		return orgaoExternoDestino;
 	}
 
-	private DpPessoa getResponsavel(DocumentosSiglaTramitarPostRequest req, CpOrgao orgaoExterno) {
+	private DpPessoa getResponsavel(Request req, CpOrgao orgaoExterno) {
 		DpPessoa pes = null;
 		if (Objects.isNull(orgaoExterno) && StringUtils.isNotEmpty(req.matricula)) {
 			pes = new DpPessoa();
@@ -79,7 +73,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 		return pes;
 	}
 
-	private DpLotacao getLotacao(DocumentosSiglaTramitarPostRequest req, CpOrgao orgaoExterno) {
+	private DpLotacao getLotacao(Request req, CpOrgao orgaoExterno) {
 		DpLotacao lot = null;
 		if (Objects.isNull(orgaoExterno) && StringUtils.isNotEmpty(req.lotacao)) {
 			lot = new DpLotacao();
@@ -89,80 +83,68 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 		return lot;
 	}
 
-	private Date getDataDevolucao(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp)
-			throws SwaggerException {
+	private Date getDataDevolucao(Request req, Response resp) throws AplicacaoException {
 		if (StringUtils.isEmpty(req.dataDevolucao)) {
 			return null;
 		}
 		try {
 			LocalDate localDate = LocalDate.parse(req.dataDevolucao);
 			if (localDate.isBefore(LocalDate.now())) {
-				throw new SwaggerException(
-						"Data de devolução não pode ser anterior à data de hoje: " + req.dataDevolucao, 400, null, req,
-						resp, null);
+				throw new AplicacaoException(
+						"Data de devolução não pode ser anterior à data de hoje: " + req.dataDevolucao);
 			}
 			return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		} catch (DateTimeParseException e) {
-			throw new SwaggerException("Data de Devolução inválida: " + req.dataDevolucao, 400, null, req, resp, null);
+			throw new AplicacaoException("Data de Devolução inválida: " + req.dataDevolucao);
 		}
 	}
 
 	@Override
-	public void run(DocumentosSiglaTramitarPostRequest req, DocumentosSiglaTramitarPostResponse resp) throws Exception {
-		try (ApiContext ctx = new ApiContext(true, true)) {
-			CurrentRequest.set(
-					new RequestInfo(null, SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse()));
-			ApiContext.assertAcesso("");
-			validarPreenchimentoDestino(req, resp);
-	
-			SigaObjects so = ApiContext.getSigaObjects();
-			DpPessoa cadastrante = so.getCadastrante();
-			DpLotacao lotaCadastrante = cadastrante.getLotacao();
-			DpPessoa titular = cadastrante;
-			DpLotacao lotaTitular = cadastrante.getLotacao();
+	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		validarPreenchimentoDestino(req, resp);
 
-			ExMobil mob = SwaggerHelper.buscarEValidarMobil(req.sigla, so, req, resp, "Documento a Tramitar");
+		DpPessoa cadastrante = ctx.getCadastrante();
+		DpLotacao lotaCadastrante = cadastrante.getLotacao();
+		DpPessoa titular = cadastrante;
+		DpLotacao lotaTitular = cadastrante.getLotacao();
 
-			validarAcesso(req, titular, lotaTitular, mob);
+		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Tramitar");
 
-			CpOrgao orgaoExterno = this.getOrgaoExterno(req, resp);
-			DpLotacao lot = getLotacao(req, orgaoExterno);
-			DpPessoa pes = getResponsavel(req, orgaoExterno);
-			String observacao = Objects.isNull(orgaoExterno) ? null : req.observacao;
-			Date dtDevolucao = this.getDataDevolucao(req, resp);
-			Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+		validarAcesso(ctx, req, titular, lotaTitular, mob);
 
-			Ex.getInstance().getBL().transferir(//
-					orgaoExterno, // CpOrgao orgaoExterno
-					observacao, // String obsOrgao
-					cadastrante, // DpPessoa cadastrante
-					lotaCadastrante, // DpLotacao lotaCadastrante
-					mob, // ExMobil mob
-					dt, // final Date dtMov
-					dt, // Date dtMovIni
-					dtDevolucao, // Date dtFimMov
-					lot, // DpLotacao lotaResponsavel
-					pes, // final DpPessoa responsavel
-					null, // DpLotacao lotaDestinoFinal
-					null, // DpPessoa destinoFinal
-					null, // DpPessoa subscritor
-					titular, // DpPessoa titular
-					null, // ExTipoDespacho tpDespacho.
-					true, // final boolean fInterno
-					null, // String descrMov
-					null, // String conteudo
-					null, // String nmFuncaoSubscritor
-					false, // boolean forcarTransferencia
-					false // boolean automatico
-			);
+		CpOrgao orgaoExterno = this.getOrgaoExterno(req, resp);
+		DpLotacao lot = getLotacao(req, orgaoExterno);
+		DpPessoa pes = getResponsavel(req, orgaoExterno);
+		String observacao = Objects.isNull(orgaoExterno) ? null : req.observacao;
+		Date dtDevolucao = this.getDataDevolucao(req, resp);
+		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
-			resp.status = "OK";
-		} catch (AplicacaoException | SwaggerException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw e;
-		}
+		Ex.getInstance().getBL().transferir(//
+				orgaoExterno, // CpOrgao orgaoExterno
+				observacao, // String obsOrgao
+				cadastrante, // DpPessoa cadastrante
+				lotaCadastrante, // DpLotacao lotaCadastrante
+				mob, // ExMobil mob
+				dt, // final Date dtMov
+				dt, // Date dtMovIni
+				dtDevolucao, // Date dtFimMov
+				lot, // DpLotacao lotaResponsavel
+				pes, // final DpPessoa responsavel
+				null, // DpLotacao lotaDestinoFinal
+				null, // DpPessoa destinoFinal
+				null, // DpPessoa subscritor
+				titular, // DpPessoa titular
+				null, // ExTipoDespacho tpDespacho.
+				true, // final boolean fInterno
+				null, // String descrMov
+				null, // String conteudo
+				null, // String nmFuncaoSubscritor
+				false, // boolean forcarTransferencia
+				false, // boolean automatico,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+		);
+
+		resp.status = "OK";
 	}
 
 	@Override

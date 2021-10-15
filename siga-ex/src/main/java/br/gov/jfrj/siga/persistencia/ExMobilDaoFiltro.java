@@ -129,6 +129,8 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 
 	private Integer ordem;
 
+	private String nomeRequerente;
+	
 	public Integer getOrdem() {
 		return ordem;
 	}
@@ -382,6 +384,15 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		this.idMod = idMod;
 	}
 
+	public String getNomeRequerente() {
+		return nomeRequerente;
+	}
+
+	 
+	public void setNomeRequerente(final String nomeRequerente) {
+		this.nomeRequerente = nomeRequerente;
+	}
+	
 	public boolean buscarPorCamposMarca() {
 		return (getUltMovIdEstadoDoc() != null && getUltMovIdEstadoDoc() != 0)
 				|| (getUltMovLotaRespSelId() != null && getUltMovLotaRespSelId() != 0)
@@ -414,6 +425,9 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 				|| (getIdMod() != null && getIdMod() != 0)
 				|| (getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0)
 				|| (getAnoEmissao() != null && getAnoEmissao() != 0)
-				|| (getNumExpediente() != null && getNumExpediente() != 0);
+				|| (getNumExpediente() != null && getNumExpediente() != 0)
+				|| (getNomeRequerente() != null && !getNomeRequerente().trim().equals(""));
 	}
+
+	
 }

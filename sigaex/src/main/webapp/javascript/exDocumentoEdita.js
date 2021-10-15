@@ -1,6 +1,64 @@
 /**
  * 
  */
+function displayPossuiRequerente(thisElement) {
+	var thatElement = document.getElementById('tr_possuiRequerente');
+	if (thisElement.checked){
+		thatElement.style.display = '';
+
+		document.getElementById('tipoDocumentoCPF').checked = true;
+		document.getElementById('cpfRequerente').style.display = '';
+		document.getElementById('lblMatriculaRequerente').style.display = '';
+		document.getElementById('matriculaRequerente').style.display = '';
+		
+		document.getElementById('cnpjRequerente').style.display = 'none';
+		document.getElementById('tipoDocumentoCNPJ').checked = false;
+		
+	}else {
+		thatElement.style.display = 'none';
+		document.getElementById('cpfRequerente').value = '';
+		document.getElementById('cpfRequerente').style.display = 'none';
+		
+		document.getElementById('cnpjRequerente').value = '';
+		document.getElementById('cnpjRequerente').style.display = 'none';
+		
+		document.getElementById('matriculaRequerente').value = '';
+		document.getElementById('matriculaRequerente').style.display = 'none';
+		document.getElementById('lblMatriculaRequerente').style.display = '';
+		
+		document.getElementById('nomeRequerente').value = '';
+		
+		document.getElementById('tipoLogradouroRequerente').value = '';
+		document.getElementById('logradouroRequerente').value = '';
+		document.getElementById('numeroLogradouroRequerente').value = '';
+		document.getElementById('complementoLogradouroRequerente').value = '';
+		document.getElementById('bairroRequerente').value = '';
+		document.getElementById('cidadeRequerente').value = '';
+		document.getElementById('ufRequerente').value = '';
+		document.getElementById('cepRequerente').value = '';
+		
+		document.getElementById('tipoDocumentoCPF').checked = true;
+		document.getElementById('tipoDocumentoCNPJ').checked = false;
+	}
+
+//	document.getElementById("lblLogradouro").innerHTML ='Endereço';
+//	retira os campos da tela
+//	document.getElementById('tipoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('numeroLogradouroRequerente').style.display = 'none';
+//	document.getElementById('complementoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('bairroRequerente').style.display = 'none';
+//	document.getElementById('cidadeRequerente').style.display = 'none';
+//	document.getElementById('ufRequerente').style.display = 'none';
+//	document.getElementById('cepRequerente').style.display = 'none';
+//	
+//	document.getElementById('lblTipoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('lblNumeroLogradouroRequerente').style.display = 'none';
+//	document.getElementById('lblComplementoLogradouroRequerente').style.display = 'none';
+//	document.getElementById('lblBairroRequerente').style.display = 'none';
+//	document.getElementById('lblCidadeRequerente').style.display = 'none';
+//	document.getElementById('lblUfRequerente').style.display = 'none';
+//	document.getElementById('lblCepRequerente').style.display = 'none';
+}
 
 function displayPersonalizacao(thisElement) {
 	var thatElement = document.getElementById('tr_personalizacao');
@@ -32,6 +90,15 @@ function personalizacaoJuntar() {
 	document.getElementById('frm_nmFuncaoSubscritor').value = j;
 }
 
+function getQueryParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 	var frm = document.getElementById('frm');
@@ -47,7 +114,13 @@ function sbmt(id) {
 	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
-		frm.action = 'recarregar';
+		var paiSigla = document.getElementsByName('exDocumentoDTO.mobilPaiSel.sigla')[0].value;
+		var criandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value;
+		
+		
+		frm.action = id ? 'recarregar' : 'editar?modelo=' + mod.value
+				+ (paiSigla ? '&mobilPaiSel.sigla=' + paiSigla : '') 
+				+ (criandoAnexo ? '&criandoAnexo=' + criandoAnexo : '');
 		frm.submit();
 	}
 	return;
@@ -177,6 +250,9 @@ function aviso(msg, silencioso, elemento) {
 
 // <c:set var="url" value="excluirpreench" />
 function removePreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -187,6 +263,9 @@ function removePreench() {
 
 // <c:set var="url" value="alterarpreench" />
 function alteraPreench() {
+	$("[name='btnAlterar']").prop( "disabled", true );
+	$("[name='btnRemover']").prop( "disabled", true );
+	
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -583,3 +662,22 @@ $(window).load(function() {
 	var observadorDeAlteracoesNoDocumento = new SigaSP.Documento();
 	observadorDeAlteracoesNoDocumento.observar();	
 });
+
+updateURL = function() {
+	if (!history || !history.replaceState)
+		return;
+	
+	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
+	if (id)
+		return;
+	
+	var modelo = document.getElementsByName('exDocumentoDTO.idMod')[0].value;
+	var lotaDestFields = document.getElementsByName('exDocumentoDTO.lotacaoDestinatarioSel.id');
+	var lotaDest = lotaDestFields && lotaDestFields[0].value ? '&lotaDest=' + lotaDestFields[0].value : '';
+	var classifFields = document.getElementsByName('exDocumentoDTO.classificacaoSel.id');
+	var classif = classifFields && classifFields[0].value ? '&classif=' + classifFields[0].value : '';
+	var descrFields = document.getElementsByName('exDocumentoDTO.descrDocumento');
+	var descr = descrFields && descrFields[0].value ? '&descr=' + descrFields[0].value : '';
+	
+	history.replaceState(null, null, 'editar?modelo=' + modelo + lotaDest + classif + descr);
+}

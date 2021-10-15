@@ -30,7 +30,7 @@ function sbmt(offset) {
 	    <c:set var="parteFuncao" value="parent" />
 	</c:otherwise>	
 </c:choose>	
-<form name="frm" action="buscar" class="form" method="POST>
+<form name="frm" action="buscar" class="form" method="POST">
 		<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 		<input type="hidden" name="propriedade" value="${param.propriedade}" />
 		<input type="hidden" name="postback" value="1" />
@@ -86,7 +86,8 @@ function sbmt(offset) {
 		<tr class="${evenorodd}">
 			<td width="10%" align="center"><a
 				href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
-			<td width="90%" align="left">${item.descricao}</td>
+			<td width="90%" align="left"><a
+				href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.descricao}</a></td>
 		</tr>
 	</siga:paginador>
 </table>

@@ -42,13 +42,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -61,6 +62,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "obterProximoNumeroSub", query = "select max(doc.numExpediente)+1"
@@ -230,11 +232,13 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				order by  doc.dtFinalizacao"),
 		@NamedQuery(name = "contarDocumentosPorSigla", query = "select count(doc) "
 				+ "					from ExDocumento doc inner join doc.exFormaDocumento forma "
-				+ "					where forma.siglaFormaDoc = :sigla") })
+				+ "					where forma.siglaFormaDoc = :sigla"),
+		@NamedQuery(name = "consultarExDocumentoId", query = "from ExDocumento doc	where 	doc.id=:idDoc" )})
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
-
-	private static final long serialVersionUID = 1L;
+	
+	/* Limitador para indexação do campo pesquisável da descrição do documento. Length Default 4000. Length indexável: 3150*/
+	private static final int LENGTH_DESCR_DOCUMENTO_AI = System.getProperty("sigaex.descricao.documento.ai.length") != null ? Integer.parseInt(System.getProperty("sigaex.descricao.documento.ai.length")) : 4000;
 
 	@Id
 	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
@@ -433,6 +437,43 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
+	
+	
+	@Column(name = "CPF_REQUERENTE", nullable = false)
+	private Long cpfRequerente;
+	
+	@Column(name = "CNPJ_REQUERENTE", nullable = false)
+	private Long cnpjRequerente;
+
+	@Column(name = "MATRICULA_REQUERENTE")
+	private Long matriculaRequerente;
+	
+	@Column(name = "NM_REQUERENTE", nullable = false, length = 60)
+	private String nomeRequerente;
+	
+	@Column(name = "TP_LOGRADOURO_REQUERENTE", length = 100)
+	private String tipoLogradouroRequerente;
+	
+	@Column(name = "LOGRADOURO_REQUERENTE", length = 300)
+	private String logradouroRequerente;
+	
+	@Column(name = "NUM_LOGRADOURO_REQUERENTE", length = 50)
+	private String numeroLogradouroRequerente;
+
+	@Column(name = "COMPLEMENTO_LOGRADOURO_REQUERENTE", length = 300)
+	private String complementoLogradouroRequerente;
+	
+	@Column(name = "BAIRRO_REQUERENTE", length = 50)
+	private String bairroRequerente;
+
+	@Column(name = "CIDADE_REQUERENTE", length = 50)
+	private String cidadeRequerente;
+
+	@Column(name = "UF_REQUERENTE", length = 2)
+	private String ufRequerente;
+	
+	@Column(name = "CEP_REQUERENTE", length = 8)
+	private String cepRequerente;
 	
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -820,7 +861,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public void setDescrDocumento(final java.lang.String descrDocumento) {
 		this.descrDocumento = descrDocumento;
-		this.descrDocumentoAI = Texto.removeAcentoMaiusculas(this.descrDocumento);
+		setDescrDocumentoAI(descrDocumento);
 	}
 
 	/**
@@ -1156,16 +1197,130 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dtPrimeiraAssinatura = dtPrimeiraAssinatura;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public java.lang.String getDescrDocumentoAI() {
 		return descrDocumentoAI;
 	}
 
 	public void setDescrDocumentoAI(java.lang.String descrDocumentoAI) {
-		this.descrDocumentoAI = descrDocumentoAI;
+		if(descrDocumentoAI != null)
+			this.descrDocumentoAI = Texto.removeAcentoMaiusculas(descrDocumentoAI).substring(0, descrDocumentoAI.length() < LENGTH_DESCR_DOCUMENTO_AI ? descrDocumentoAI.length() : LENGTH_DESCR_DOCUMENTO_AI );
+		else
+			this.descrDocumentoAI = descrDocumentoAI;
+	}
+
+	public Long getCpfRequerente() {
+		return cpfRequerente;
+	}
+
+	public void setCpfRequerente(Long cpfRequerente) {
+		this.cpfRequerente = cpfRequerente;
+	}
+
+	public Long getCnpjRequerente() {
+		return cnpjRequerente;
+	}
+
+	public void setCnpjRequerente(Long cnpjRequerente) {
+		this.cnpjRequerente = cnpjRequerente;
+	}
+
+	public Long getMatriculaRequerente() {
+		return matriculaRequerente;
+	}
+
+	public void setMatriculaRequerente(Long matriculaRequerente) {
+		this.matriculaRequerente = matriculaRequerente;
+	}
+
+	public String getNomeRequerente() {
+		return nomeRequerente;
+	}
+
+	public void setNomeRequerente(String nomeRequerente) {
+		this.nomeRequerente = nomeRequerente;
+	}
+
+	public String getTipoLogradouroRequerente() {
+		return tipoLogradouroRequerente;
+	}
+
+	public void setTipoLogradouroRequerente(String tipoLogradouroRequerente) {
+		this.tipoLogradouroRequerente = tipoLogradouroRequerente;
+	}
+
+	public String getLogradouroRequerente() {
+		return logradouroRequerente;
+	}
+
+	public void setLogradouroRequerente(String logradouroRequerente) {
+		this.logradouroRequerente = logradouroRequerente;
+	}
+
+	public String getNumeroLogradouroRequerente() {
+		return numeroLogradouroRequerente;
+	}
+
+	public void setNumeroLogradouroRequerente(String numeroLogradouroRequerente) {
+		this.numeroLogradouroRequerente = numeroLogradouroRequerente;
+	}
+
+	public String getComplementoLogradouroRequerente() {
+		return complementoLogradouroRequerente;
+	}
+
+	public void setComplementoLogradouroRequerente(String complementoLogradouroRequerente) {
+		this.complementoLogradouroRequerente = complementoLogradouroRequerente;
+	}
+
+	public String getBairroRequerente() {
+		return bairroRequerente;
+	}
+
+	public void setBairroRequerente(String bairroRequerente) {
+		this.bairroRequerente = bairroRequerente;
+	}
+
+	public String getCidadeRequerente() {
+		return cidadeRequerente;
+	}
+
+	public void setCidadeRequerente(String cidadeRequerente) {
+		this.cidadeRequerente = cidadeRequerente;
+	}
+
+	public String getUfRequerente() {
+		return ufRequerente;
+	}
+
+	public void setUfRequerente(String ufRequerente) {
+		this.ufRequerente = ufRequerente;
+	}
+
+	public String getCepRequerente() {
+		return cepRequerente;
+	}
+
+	public void setCepRequerente(String cepRequerente) {
+		this.cepRequerente = cepRequerente;
 	}
 	
+	public String getEnderecoRequerente() {
+		
+		String endereco = StringUtils.isNotBlank(this.tipoLogradouroRequerente) ?   this.tipoLogradouroRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.logradouroRequerente) ?   this.logradouroRequerente+", ":" ";
+				endereco += StringUtils.isNotBlank(this.numeroLogradouroRequerente) ?   this.numeroLogradouroRequerente+" - ":" ";
+				endereco += StringUtils.isNotBlank(this.complementoLogradouroRequerente) ?   this.complementoLogradouroRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.bairroRequerente) ?   this.bairroRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.cidadeRequerente) ?   this.cidadeRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.ufRequerente) ?   this.ufRequerente+" ":" ";
+				endereco += StringUtils.isNotBlank(this.cepRequerente) ?   this.cepRequerente:" ";
+	   return endereco;
+	}
+	
+	public boolean isPossuiRequerente() {
+		return this.cpfRequerente != null ||
+				this.cnpjRequerente != null ||
+				this.matriculaRequerente != null ||
+				StringUtils.isNotBlank(nomeRequerente) ;
+	}
 }

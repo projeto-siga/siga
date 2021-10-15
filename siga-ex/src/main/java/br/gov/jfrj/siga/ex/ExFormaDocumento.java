@@ -32,6 +32,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.mashape.unirest.request.GetRequest;
+
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -136,4 +138,10 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		return getIdFormaDoc() != null; 
 	}	
 	
+	public boolean isPermiteRequerente() {
+		if (getIsPermiteRequerente() != null && getIsPermiteRequerente() == 1)
+			return true;
+
+		return false;
+	}
 }

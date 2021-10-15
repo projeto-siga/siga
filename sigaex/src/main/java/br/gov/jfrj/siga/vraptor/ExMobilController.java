@@ -28,10 +28,12 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -58,8 +60,9 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -76,6 +79,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -86,7 +90,10 @@ import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
 	private static final String SIGA_DOC_FE_LD = "FE:Ferramentas;LD:Listar Documentos";
-	
+	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
+	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
+	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
+	final static public Long MAXIMO_DIAS_PESQUISA = 30L;	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -127,13 +134,13 @@ public class ExMobilController extends
 	public void aBuscar(final String sigla, final String popup, final String primeiraVez, final String propriedade, final Integer postback,
 			final int apenasRefresh, final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp,
 			final DpPessoaSelecao ultMovRespSel, final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString,
-			final String dtDocFinalString, final Long idTipoFormaDoc, final Integer forma, final Long idMod, final String anoEmissaoString,
+			final String dtDocFinalString, final Long idTipoFormaDoc, final Long idFormaDoc, final Long idMod, final String anoEmissaoString,
 			final String numExpediente, final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc,
 			final DpPessoaSelecao subscritorSel, String nmSubscritorExt, final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel,
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
-			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
-			final Integer offset) {
+			final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText, final Long ultMovEstadoDoc,
+			final Integer offset, final String nomeRequerente) {
 		assertAcesso("");
 		
 		getP().setOffset(offset);
@@ -158,24 +165,24 @@ public class ExMobilController extends
 
 		builder.processar(getLotaTitular());
 
+		String dtDoc = dtDocString;
+
 		if ((SigaMessages.isSigaSP() && offset != null) || (!SigaMessages.isSigaSP() && (primeiraVez == null || !primeiraVez.equals("sim")))) {
-			final ExMobilDaoFiltro flt = createDaoFiltro();
-			final long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
-					getTitular(), getLotaTitular()));
-
-//			System.out.println("Consulta dos por filtro: "
-//					+ (System.currentTimeMillis() - tempoIni));
-
-			setItens(dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getItemPagina(), getTitular(),
-					getLotaTitular()));
+			dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
+		} else {
+			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+					SIGA_DOC_PESQ_DTLIMITADA )) {
+				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+        		result.include("msgCabecClass", "alert-warning");
+        		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
+        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+			}
 		}
 
 		result.include("primeiraVez", primeiraVez);
 		result.include("popup", true);
 		result.include("apenasRefresh", apenasRefresh);
-		result.include("estados", this.getEstados());
+		result.include("estados", this.getEstados(ultMovIdEstadoDoc));
 		result.include("listaOrdem", this.getListaOrdem());
 		result.include("ordem", ordem);
 		result.include("listaVisualizacao", this.getListaVisualizacao());
@@ -187,7 +194,7 @@ public class ExMobilController extends
 		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
-		result.include("dtDocString", dtDocString);
+		result.include("dtDocString", dtDoc);
 		result.include("dtDocFinalString", dtDocFinalString);
 		result.include("tiposFormaDoc", this.getTiposFormaDoc());
 		result.include("anoEmissaoString", anoEmissaoString);
@@ -210,7 +217,7 @@ public class ExMobilController extends
 		result.include("lotacaoDestinatarioSel",
 				builder.getLotacaoDestinatarioSel());
 		result.include("nmDestinatario", nmDestinatario);
-		result.include("descrDocumento", descrDocument);
+		result.include("descrDocumento", descrDocumento);
 		result.include("visualizacao", visualizacao);
 		result.include("itemPagina", this.getItemPagina());
 		result.include("tamanho", this.getTamanho());
@@ -223,8 +230,10 @@ public class ExMobilController extends
 		result.include("propriedade", propriedade);
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
-		result.include("idFormaDoc", forma);
-		result.include("idMod", idMod);		
+		result.include("idFormaDoc", idFormaDoc);
+		result.include("idMod", idMod);	
+		
+		result.include("nomeRequerente", nomeRequerente);
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaConsulta() {
@@ -251,7 +260,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) throws UnsupportedEncodingException {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String nomeRequerente) throws UnsupportedEncodingException {
 			
 		
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -320,7 +329,7 @@ public class ExMobilController extends
 			}
 			
 			List lista = dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getTamanho(), getTitular(),
+					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
 	
 			InputStream inputStream = null;
@@ -361,6 +370,7 @@ public class ExMobilController extends
 					texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
 				}*/
 				
+						
 				if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getSigla() != null) {
 					texto.append(ma.getDpLotacaoIni().getSigla().replaceAll(";",","));
 				}
@@ -406,13 +416,13 @@ public class ExMobilController extends
 
 		} catch (final RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
-			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset);
+			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset,nomeRequerente);
 		}
 		return null;	
 	}
 
 	@Get("app/expediente/doc/listar")
-	public void aListar(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
+	public void aListar(final String popup,  final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
 			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
 			final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString, final String dtDocFinalString,
 			final Long idTipoFormaDoc, final Long idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
@@ -420,9 +430,9 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String nomeRequerente) {
 		assertAcesso("");
-		
+
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);
 
@@ -444,23 +454,24 @@ public class ExMobilController extends
 
 		builder.processar(getLotaTitular());
 
+		String dtDoc = dtDocString;
+	
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
-			final ExMobilDaoFiltro flt = createDaoFiltro();
-			long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
-					getTitular(), getLotaTitular()));
-
-//			System.out.println("Consulta dos por filtro: "
-//					+ (System.currentTimeMillis() - tempoIni));
-			setItens(dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getItemPagina(), getTitular(),
-					getLotaTitular()));
+				dtDoc = listarItensPesquisa(dtDocString, dtDocFinalString, builder, dtDoc);				
+		} else {
+			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+					SIGA_DOC_PESQ_DTLIMITADA )) {
+				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+        		result.include("msgCabecClass", "alert-warning");
+        		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
+        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+			}
 		}
 
 		result.include("primeiraVez", primeiraVez);
 		result.include("popup", popup);
 		result.include("apenasRefresh", apenasRefresh);
-		result.include("estados", this.getEstados());
+		result.include("estados", this.getEstados(ultMovIdEstadoDoc));
 		result.include("listaOrdem", this.getListaOrdem());
 		result.include("ordem", ordem);
 		result.include("listaVisualizacao", this.getListaVisualizacao());
@@ -472,7 +483,7 @@ public class ExMobilController extends
 		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
-		result.include("dtDocString", dtDocString);
+		result.include("dtDocString", dtDoc);
 		result.include("dtDocFinalString", dtDocFinalString);
 		result.include("tiposFormaDoc", this.getTiposFormaDoc());
 		result.include("anoEmissaoString", anoEmissaoString);
@@ -508,6 +519,8 @@ public class ExMobilController extends
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);		
+		
+		result.include("nomeRequerente", nomeRequerente);
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();
@@ -521,6 +534,97 @@ public class ExMobilController extends
 			result.include("campos", campos);
 		}
 
+	}
+
+	private String listarItensPesquisa(final String dtDocString, final String dtDocFinalString,
+			final ExMobilBuilder builder, String dtDoc) {
+		final ExMobilDaoFiltro flt = createDaoFiltro();
+		if (Prop.isGovSP() && flt.getDescrDocumento() != null 
+				&& !"".equals(flt.getDescrDocumento())) {
+			if (!(Cp.getInstance().getConf() 
+				.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR))) {
+				result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário não autorizado a pesquisar pela descrição do documento."));
+				return dtDocString;
+			}
+			if ((Cp.getInstance().getConf() 
+					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_PESQDESCR_LIMITADA))
+					&& !(flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0
+					&& flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0
+					&& flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0
+					&& flt.getIdMod() != null && flt.getIdMod() != 0) ) {
+					result.include(SigaModal.ALERTA, SigaModal.mensagem("Usuário autorizado a pesquisar pela Descrição somente após o preenchimento dos campos Órgão, Espécie, Documento e Ano de Emissão."));
+					return dtDocString;
+				}
+		}
+		
+		LocalDate dt = null;
+		if ((param("dtDocString") == null || "".equals(param("dtDocString"))) 
+				&& Cp.getInstance().getConf()
+					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA )) {
+			result.include("msgCabecClass", "alert-warning");
+			result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
+					+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Foi assumida uma data inicial 30 dias anterior à hoje.");
+			dt = LocalDate.now().plusDays(-MAXIMO_DIAS_PESQUISA);
+			flt.setDtDoc(Date.from(dt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
+		}
+
+		try {
+			if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), 
+					getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA ) && dt == null) 
+				validarLimiteDeDatas(dtDocString, dtDocFinalString);
+//					long tempoIni = System.currentTimeMillis();
+//					System.out.println("Consulta dos por filtro: "
+//							+ (System.currentTimeMillis() - tempoIni));
+			setItens(dao().consultarPorFiltroOtimizado(flt,
+					builder.getOffset(), getItemPagina() + (Prop.isGovSP() ? 1 : 0), getTitular(),
+					getLotaTitular()));
+			if(Prop.isGovSP()) {
+				setTamanho(getItens().size());
+			} else {
+				setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
+						getTitular(), getLotaTitular()));
+			}
+		} catch (RegraNegocioException e) {
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", e.getMessage());
+		}
+		return dtDoc;
+	}
+
+	private void validarLimiteDeDatas(final String dtDocString, final String dtDocFinalString) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate dtIni = null;
+		LocalDate dtFinal = null;
+		LocalDate dataAtual = LocalDate.now();
+		
+		if (dtDocString != null && !"".equals(dtDocString)) {
+			if (Data.validaDDMMYYYY(dtDocString)) {
+				dtIni = LocalDate.parse(dtDocString, formatter);
+			} else {
+				throw new RegraNegocioException("Data Inicial inválida.");
+			}
+		} else {
+			throw new RegraNegocioException("Data Inicial não informada. Para grandes volumes, período para pesquisa não deve ser superior à "
+					+ MAXIMO_DIAS_PESQUISA.toString() + " dias.");
+		}
+		
+		if (dtDocFinalString != null && !"".equals(dtDocFinalString)) {
+			if (Data.validaDDMMYYYY(dtDocFinalString)) {
+				dtFinal = LocalDate.parse(dtDocFinalString, formatter);
+				if (ChronoUnit.DAYS.between(dtIni, dtFinal) > MAXIMO_DIAS_PESQUISA) {
+					throw new RegraNegocioException("Para grandes volumes, período para pesquisa não deve ser superior a "
+							+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Informe a Data Inicial e/ou Final.");
+				}	
+			} else {
+				throw new RegraNegocioException("Data Final inválida.");
+			}
+		} else {
+			if (ChronoUnit.DAYS.between(dtIni, dataAtual) > MAXIMO_DIAS_PESQUISA) {
+				throw new RegraNegocioException("Para grandes volumes, período para exportação não deve ser superior a "
+						+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Informe a Data Inicial e/ou Final.");
+			}	
+		}
 	}
 
 	final static Pattern preprocessadorPatternSelecao = Pattern
@@ -656,6 +760,7 @@ public class ExMobilController extends
 		flt.setIdMod(paramLong("idMod"));
 		flt.setOrdem(paramInteger("ordem"));
 
+		flt.setNomeRequerente(param("nomeRequerente"));
 		return flt;
 	}
 
@@ -721,9 +826,13 @@ public class ExMobilController extends
 		}
 
 		final List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
-		formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null, null,
-				false, false, null, null, false, getTitular(), getLotaTitular(), false),
-				null, tipoForma));
+		if (Prop.get("/siga.pesquisa.confere.modelos").equals("true")) {
+			formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null, null,
+					false, false, null, null, false, getTitular(), getLotaTitular(), false),
+					null, tipoForma));
+		} else {
+			formasDoc.addAll(dao().listarPorEspecieOrdenarPorSigla(tipoForma));
+		}
 		return formasDoc;
 	}
 
@@ -788,11 +897,8 @@ public class ExMobilController extends
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				if (m.isGeral() || m.isEliminado())
 					continue;
-				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
-				if (mov != null && mov.getResp() != null
-						&& mov.getResp().equivale(super.getTitular())) {
+				if (m.isAtendente(super.getTitular(), null) || m.isNotificado(super.getTitular(), null))
 					return m;
-				}
 			}
 
 			// Se nao encontrar, tentar encontrar uma na lotacao do titular
@@ -800,11 +906,8 @@ public class ExMobilController extends
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				if (m.isGeral() || m.isEliminado())
 					continue;
-				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
-				if (mov != null && mov.getLotaResp() != null
-						&& mov.getLotaResp().equivale(super.getLotaTitular())) {
+				if (m.isAtendente(null, super.getLotaTitular()) || m.isNotificado(null, super.getLotaTitular()))
 					return m;
-				}
 			}
 		}
 
@@ -813,19 +916,8 @@ public class ExMobilController extends
 			// retornar o ultimo volume
 			//
 			ExMobil m = mob.doc().getUltimoVolume();
-			if (m != null) {
-				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
-				if (mov == null) {
-					return m;
-				}
-				if (mov.getLotaResp() != null
-						&& mov.getLotaResp().equivale(super.getLotaTitular())) {
-					return m;
-				}
-				if (mov.getResp() != null
-						&& mov.getResp().equivale(super.getTitular())) {
-					return m;
-				}
+			if (m != null && (m.isAtendente(super.getTitular(), super.getLotaTitular()) || m.isNotificado(super.getTitular(), super.getLotaTitular()))) {
+				return m;
 			}
 		}
 

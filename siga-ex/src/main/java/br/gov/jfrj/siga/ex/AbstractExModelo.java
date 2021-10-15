@@ -38,6 +38,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -50,12 +51,12 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * A class that represents a row in the EX_MODELO table. You can customize the
  * behavior of this class by editing the class, {@link ExModelo()}.
  */
+@SuppressWarnings("serial")
 @MappedSuperclass
-@NamedQueries({ @NamedQuery(name = "consultarModeloAtual", query = "select mod from ExModelo mod where mod.hisIdIni = :hisIdIni and mod.hisDtFim = null") })
+@NamedQueries({ @NamedQuery(name = "consultarModeloAtual", query = "select mod from ExModelo mod where mod.hisIdIni = :hisIdIni and mod.hisDtFim = null"),
+	            @NamedQuery(name = "consultarModeloPeloNome", query = "select mod from ExModelo mod where mod.nmMod = :nmMod")})
 public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	/** The composite primary key value. */
 	@Id

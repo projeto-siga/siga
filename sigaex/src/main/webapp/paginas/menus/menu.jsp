@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('/siga.local') eq 'GOVSP' && fx:podeCriarNovoExterno(titular, titular.lotacao)))}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('/siga.local') eq 'GOVSP' && f:podeCriarNovoExterno(titular, titular.lotacao)))}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>
@@ -21,8 +21,7 @@
 			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
 					Virtual </a></li>
 			
-			
-			<c:if test="${not empty meusDelegados && fx:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
+			<c:if test="${not empty meusDelegados && f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
 				<li class="dropdown-submenu"><a href="javascript:void(0);"
 					class="dropdown-item dropdown-toggle">Mesa Virtual Delegada</a>
 					<ul class="dropdown-menu navmenu-large">
@@ -116,7 +115,7 @@
 				<c:if
 					test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/configuracao/gerenciar_publicacao_boletim">Definir
+						href="/sigaex/app/configuracao/gerenciar_publicacao_boletim">Definir
 							Publicadores Boletim</a></li>
 				</c:if>
 			</c:catch>
@@ -133,31 +132,25 @@
 				<li><a class="dropdown-item" href="/sigaex/app/forma/listar">Cadastro
 						de Espécies</a></li>
 				<li><a class="dropdown-item" href="/sigaex/app/modelo/listar">Cadastro
-						de modelos</a></li>
+						de Modelos</a></li>
 				<c:if
 					test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/despacho/tipodespacho/listar">Cadastro de
-							tipos de despacho</a></li>
+							Tipos de Despacho</a></li>
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/configuracao/listar">Cadastro de
-							configurações</a></li>
-							
-					<li>
-						<a class="dropdown-item" href="/sigaex/app/expediente/configuracao2/nova">
-							Cadastro de configurações <span class="badge badge-pill badge-success">NOVO</span>
-						</a>
-					</li>		
+						href="/sigaex/app/configuracao/listar">Cadastro de Configurações</a></li>
+								
 				</c:if>
 
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;EMAIL:Email de Notificação')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/emailNotificacao/listar">Cadastro
-							de email de notificação</a></li>
+							de Email de Notificação</a></li>
 				</c:if>
 
 				<c:if
@@ -165,12 +158,6 @@
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/classificacao/listar">Classificação
 							Documental</a></li>
-				</c:if>
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;CAD_MARCADOR: Cadastro de Marcadores')}">
-					<li><a class="dropdown-item"
-						href="/siga/app/marcador/listar">Cadastro de 
-							Marcadores</a></li>
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade')}">
@@ -287,6 +274,14 @@
 							</c:if>
 
 						</ul></li>
+				</c:if>
+
+
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relPermanenciaSetorAssunto.jsp">
+							Relatório de Permanência por Setor e Assunto </a></li>
 				</c:if>
 
 

@@ -44,65 +44,10 @@
                       </button>
                     </div>
                     -->
-          <div class="col col-auto mr-auto mb-3">
-            <button
-              type="button"
-              @click="mostrarCompleto()"
-              id="download"
-              class="btn btn-info d-print-none"
-            >
-              <span class="fa fa-download"></span>
-              PDF
-            </button>
-          </div>
-          <div class="col col-auto mr-1 mb-3" v-if="mob.podeAnotar">
-            <button
-              type="button"
-              @click="anotar()"
-              class="btn btn-primary d-print-none"
-            >
-              <span class="fa fa-sticky-note-o"></span>
-              Anotar
-            </button>
-          </div>
-          <div class="col col-auto ml-1 mb-3" v-if="doc.podeAssinar">
-            <button
-              type="button"
-              @click="assinarComSenha()"
-              class="btn btn-primary d-print-none"
-            >
-              <span class="fa fa-shield"></span>
-              Assinar
-            </button>
-          </div>
-          <div class="col col-auto ml-1 mb-3" v-if="mob.podeTramitar">
-            <button
-              type="button"
-              @click="tramitar()"
-              class="btn btn-primary d-print-none"
-            >
-              <span class="fa fa-paper-plane-o"></span>
-              Tramitar
-            </button>
-          </div>
-          <div
-            class="col col-auto ml-1 mb-3"
-            v-if="$parent.test.properties['siga-le.ws.documental.url'] &amp;&amp; $parent.test.properties['siga-le.env'] !== 'prod' || (perfil === 'procurador' &amp;&amp; $parent.jwt.company === 'pgfn.gov.br')"
-          >
-            <button
-              type="button"
-              @click="cotar()"
-              id="cotar"
-              class="btn btn-info d-print-none"
-            >
-              <span class="fa fa-comment"></span>
-              Enviar Cota
-            </button>
-          </div>
         </div>
         <template v-if="doc">
           <div class="row">
-            <div class="col col-sm-12 col-lg-8">
+            <div class="col col-12 col-lg-8">
               <div
                 class="d-print-none"
                 v-if="errormsg === undefined &amp;&amp; doc.conteudoBlobHtmlString"
@@ -117,6 +62,10 @@
                   </div>
                 </div>
               </div>
+              <my-iframe
+                v-if="!doc.conteudoBlobHtmlString"
+                :src="pdfSource"
+              ></my-iframe>
               <table v-if="filteredMovs" class="table table-sm table-striped">
                 <thead>
                   <tr>
@@ -157,7 +106,12 @@
                 </tbody>
               </table>
             </div>
-            <div class="col col-sm-12 col-lg-4">
+            <div class="col col-12 col-lg-4">
+              <h4>Ações</h4>
+              <span v-for="acao in filteredAcoes" :key="acao.nome">
+                <acao :acao="acao" />
+              </span>
+
               <!-- PENDENCIAS -->
               <div class="card text-white bg-danger mb-3" v-if="mob.pendencias">
                 <div class="card-header">Pendências</div>
@@ -321,8 +275,8 @@
                       <div v-if="doc.listaDeAcessos">
                         <div v-if="doc.listaDeAcessos.length == 1">
                           {{
-                            doc.listaDeAcessos[0] == 'PUBLICO'
-                              ? '(Público)'
+                            doc.listaDeAcessos[0] == "PUBLICO"
+                              ? "(Público)"
                               : acesso.sigla
                           }}
                         </div>
@@ -350,18 +304,19 @@
 </template>
 
 <script>
-import UtilsBL from '../bl/utils.js'
-import { Bus } from '../bl/bus.js'
+import UtilsBL from "../bl/utils.js";
+import { Bus } from "../bl/bus.js";
+import Acao from "./Acao";
 
 export default {
-  name: 'processo',
+  name: "documento",
   mounted() {
-    this.$on('filtrar', (texto) => {
-      this.filtrarMovimentos(texto)
-    })
+    this.$on("filtrar", (texto) => {
+      this.filtrarMovimentos(texto);
+    });
     this.$nextTick(function() {
-      this.carregarDocumento(this.$route.params.numero)
-    })
+      this.carregarDocumento(this.$route.params.numero);
+    });
   },
   data() {
     return {
@@ -382,152 +337,170 @@ export default {
       marcasativas: true,
       notas: false,
       tramitacao: undefined,
-    }
+    };
   },
   watch: {
-    '$route.params.numero': function() {
-      this.carregarDocumento(this.$route.params.numero)
+    "$route.params.numero": function() {
+      this.carregarDocumento(this.$route.params.numero);
     },
   },
   computed: {
     filteredMovs() {
       if (!this.mob || !this.mob.movs || this.mob.movs.length == 0)
-        return undefined
-      return this.mob.movs.filter((m) => m.idTpMov != 14 && !m.cancelada)
+        return undefined;
+      return this.mob.movs.filter((m) => m.idTpMov != 14 && !m.cancelada);
+    },
+    filteredAcoes() {
+      if (!this.mob) return undefined;
+      var acoes =
+        this.doc.mobs.length > 1
+          ? this.mob.acoes.concat(this.doc.mobs[1].acoes)
+          : this.mob.acoes;
+      acoes = acoes.sort((a, b) =>
+        a.nome > b.nome ? 1 : b.nome > a.nome ? -1 : 0
+      );
+      return acoes.filter((m) => m.pode);
+    },
+    pdfSource() {
+      if (!this.doc || this.doc.conteudoBlobHtmlString) return undefined;
+      return (
+        this.$http.options.root +
+        "sigaex/api/v1/documentos/" +
+        this.numero +
+        "/arquivo/produzir?contenttype=application/pdf"
+      );
     },
   },
   methods: {
     executar: function(mov, acao) {
-      if (acao.acao === 'exibir') {
+      if (
+        mov.descrTipoMovimentacao === "Anexação" &&
+        (acao.nome === "Assinar/Autenticar" || acao.nome === "Excluir")
+      ) {
         this.$router.push({
-          name: 'Documento',
-          params: { numero: acao.params.sigla.replace(/[^a-z0-9]/gi, '') },
-        })
+          name: "Anexo",
+          params: { numero: this.numero, id: mov.idMov },
+        });
+      } else if (
+        mov.descrTipoMovimentacao.includes("Inclusão de Cossignatário") &&
+        acao.nome === "Excluir"
+      ) {
+        Bus.$emit(
+          "excluirMovimentacao",
+          [{ codigo: this.numero, sigla: this.doc.sigla }],
+          this.carregarDocumento,
+          {
+            idMov: mov.idMov,
+          }
+        );
+        this.emitir();
+      } else if (acao.acao === "exibir") {
+        this.$router.push({
+          name: "Documento",
+          params: { numero: acao.params.sigla.replace(/[^a-z0-9]/gi, "") },
+        });
       }
     },
 
     carregarDocumento: function() {
-      this.errormsg = undefined
-      this.numero = this.$route.params.numero
+      this.errormsg = undefined;
+      this.numero = this.$route.params.numero;
       // Validar o número do processo
-      Bus.$emit('block', 20)
-      this.$http.get('sigaex/api/v1/documentos/' + this.numero).then(
+      Bus.$emit("block", 20);
+      this.$http.get("sigaex/api/v1/documentos/" + this.numero).then(
         (response) => {
-          Bus.$emit('release')
-          this.atualizarDocumento(response.data)
+          Bus.$emit("release");
+          this.atualizarDocumento(response.data);
         },
         (error) => {
-          Bus.$emit('release')
-          UtilsBL.errormsg(error, this)
+          Bus.$emit("release");
+          UtilsBL.errormsg(error, this);
         }
-      )
+      );
     },
 
     atualizarDocumento: function(data) {
-      this.doc = data
-      this.mob = this.doc.mobs[0]
-      if (!this.mob.isGeral) this.numero = this.mob.sigla.replace(/[^a-zA-Z0-9]/gi,'');
+      this.doc = data;
+      this.mob = this.doc.mobs[0];
+      if (!this.mob.isGeral)
+        this.numero = this.mob.sigla.replace(/[^a-zA-Z0-9]/gi, "");
       if (
         this.doc.dotTramitacao &&
-        this.$parent.test.properties['vizservice.url']
+        this.$parent.test.properties["vizservice.url"]
       ) {
         // console.log('dotTramitacao: ' + this.doc.dotTramitacao)
         this.$http
           .post(
-            (location.port === '8081' ? 'http://localhost:8080/' : '') +
-              'siga/public/app/graphviz/svg',
+            (location.port === "8081" ? "http://localhost:8080/" : "") +
+              "siga/public/app/graphviz/svg",
             'digraph G { graph[tooltip="Tramitação"] ' +
               this.doc.dotTramitacao +
-              '}',
+              "}",
             {
-              headers: { 'Content-Type': 'text/vnd.graphviz' },
+              headers: { "Content-Type": "text/vnd.graphviz" },
             }
           )
           .then((response) => {
             this.tramitacao = response.data.replace(
               /width="\d+pt" height="\d+pt"/gm,
               'style="left:0; top:0; width:100%; height:12em; display:block; margin: auto;"'
-            )
+            );
             this.tramitacao = this.tramitacao.replace(
               /<polygon fill="white".+?\/>/gm,
-              ''
-            )
+              ""
+            );
             // console.log('tramitacao: ' + this.tramitacao)
-          })
+          });
       }
     },
 
-    assinarComSenha: function() {
-      // Bus.$emit('iniciarAssinaturaComSenha', [{codigo: this.numero, sigla: this.doc.sigla}], this.reler)
-      Bus.$emit(
-        'assinarComSenha',
-        [{ codigo: this.numero, sigla: this.doc.sigla }],
-        undefined,
-        undefined,
-        this.reler
-      )
-    },
-
-    tramitar: function() {
-      Bus.$emit(
-        'iniciarTramite',
-        [{ codigo: this.numero, sigla: this.doc.sigla }],
-        this.reler
-      )
-    },
-
-    anotar: function() {
-      Bus.$emit(
-        'iniciarAnotacao',
-        [{ codigo: this.numero, sigla: this.doc.sigla }],
-        this.reler
-      )
-    },
-
     reler: function() {
-      this.$http.get('sigaex/api/v1/documentos/' + this.numero, { block: true }).then(
-        (response) => {
-          this.atualizarDocumento(response.data)
-        },
-        (error) => {
-          UtilsBL.errormsg(error, this)
-        }
-      )
+      console.log("relendo");
+      this.$http
+        .get("sigaex/api/v1/documentos/" + this.numero, { block: true })
+        .then(
+          (response) => {
+            this.atualizarDocumento(response.data);
+          },
+          (error) => {
+            UtilsBL.errormsg(error, this);
+          }
+        );
     },
 
     getMarcadores: function() {
       // Carregar os marcadores da classe
       this.$http
         .get(
-          'classe/' + this.proc.dadosBasicos.classeProcessual + '/marcadores'
+          "classe/" + this.proc.dadosBasicos.classeProcessual + "/marcadores"
         )
         .then(
           (response) => {
-            if (!response.data.list) return
+            if (!response.data.list) return;
             for (var i = 0; i < response.data.list.length; i++) {
-              this.marcadores.push(response.data.list[i].texto)
+              this.marcadores.push(response.data.list[i].texto);
             }
           },
           (error) => {
-            if (error.data.errormsg === 'disabled') {
-              this.marcasativas = false
-              return
+            if (error.data.errormsg === "disabled") {
+              this.marcasativas = false;
+              return;
             }
-            UtilsBL.errormsg(error, this)
+            UtilsBL.errormsg(error, this);
           }
-        )
+        );
     },
     getMarcas: function() {
       // Carregar os marcadores da classe
       this.$http
-        .get('processo/' + this.numero + '/marcas?orgao=' + this.orgao)
+        .get("processo/" + this.numero + "/marcas?orgao=" + this.orgao)
         .then(
           (response) => {
             // if (!response.data.list) return
             for (var i = 0; i < response.data.list.length; i++) {
-              var marca = response.data.list[i]
+              var marca = response.data.list[i];
               for (var j = 0; j < this.fixed.movdoc.length; j++) {
-                var movdoc = this.fixed.movdoc[j]
+                var movdoc = this.fixed.movdoc[j];
                 if (movdoc.doc && movdoc.doc.idDocumento === marca.idpeca) {
                   movdoc.marca.push({
                     idmarca: marca.idmarca,
@@ -535,134 +508,138 @@ export default {
                     idestilo: marca.idestilo,
                     paginicial: marca.paginicial,
                     pagfinal: marca.pagfinal,
-                  })
+                  });
                 }
               }
             }
           },
           (error) => {
-            if (error.data.errormsg === 'disabled') {
-              this.marcasativas = false
-              return
+            if (error.data.errormsg === "disabled") {
+              this.marcasativas = false;
+              return;
             }
-            UtilsBL.errormsg(error, this)
+            UtilsBL.errormsg(error, this);
           }
-        )
+        );
     },
     mostrarDadosComplementares: function(ativo) {
-      this.$parent.$emit('setting', 'mostrarDadosComplementares', ativo)
+      this.$parent.$emit("setting", "mostrarDadosComplementares", ativo);
     },
     mostrarProcessosRelacionados: function(ativo) {
-      this.$parent.$emit('setting', 'mostrarProcessosRelacionados', ativo)
+      this.$parent.$emit("setting", "mostrarProcessosRelacionados", ativo);
     },
     mostrarPeca: function(idDocumento, disposition) {
       this.$http
         .get(
-          'processo/' +
+          "processo/" +
             this.numero +
-            '/peca/' +
+            "/peca/" +
             idDocumento +
-            '/pdf?orgao=' +
+            "/pdf?orgao=" +
             this.orgao
         )
         .then(
           (response) => {
-            var jwt = response.data.jwt
+            var jwt = response.data.jwt;
             var url =
               this.$http.options.root +
-              '/download/' +
+              "/download/" +
               jwt +
-              '/' +
+              "/" +
               this.numero +
-              '-peca-' +
+              "-peca-" +
               idDocumento +
-              '.pdf'
-            if (disposition) window.location = url + '?disposition=attachment'
-            else window.open(url)
-            UtilsBL.logEvento('consulta-processual', 'mostrar pdf peça')
+              ".pdf";
+            if (disposition) window.location = url + "?disposition=attachment";
+            else window.open(url);
+            UtilsBL.logEvento("consulta-processual", "mostrar pdf peça");
           },
           (error) => {
-            Bus.$emit('message', 'Erro', error.data.errormsg)
+            Bus.$emit("message", "Erro", error.data.errormsg);
           }
-        )
+        );
     },
     mostrarCompleto: function() {
       this.$http
-        .get('sigaex/api/v1/documentos/' + this.numero + '/arquivo?estampa=true&completo=true')
+        .get(
+          "sigaex/api/v1/documentos/" +
+            this.numero +
+            "/arquivo?estampa=true&completo=true"
+        )
         .then(
           (response) => {
             Bus.$emit(
-              'prgAsyncStart',
-              'PDF Completo',
+              "prgAsyncStart",
+              "PDF Completo",
               response.data.uuid,
               () => {
-                var jwt = response.data.jwt
+                var jwt = response.data.jwt;
                 window.open(
                   this.$http.options.root +
-                    'sigaex/api/v1//download/' +
+                    "sigaex/api/v1//download/" +
                     jwt +
-                    '/' +
+                    "/" +
                     this.numero +
-                    '.pdf'
-                )
+                    ".pdf"
+                );
               }
-            )
+            );
             UtilsBL.logEvento(
-              'consulta-processual',
-              'mostrar pdf completo',
-              'individual'
-            )
+              "consulta-processual",
+              "mostrar pdf completo",
+              "individual"
+            );
           },
           (error) => {
-            Bus.$emit('message', 'Erro', error.data.errormsg)
+            Bus.$emit("message", "Erro", error.data.errormsg);
           }
-        )
+        );
     },
     filtrarMovimentos: function(texto) {
-      this.$parent.$emit('setting', 'filtrarMovimentos', texto !== undefined)
-      var f = this.filtro
+      this.$parent.$emit("setting", "filtrarMovimentos", texto !== undefined);
+      var f = this.filtro;
       if (texto) {
         if (
           texto.length > 0 &&
-          texto.substring(0, 1) === '#' &&
+          texto.substring(0, 1) === "#" &&
           f &&
           f.length > 0 &&
-          f.substring(0, 1) === '#'
+          f.substring(0, 1) === "#"
         ) {
-          this.filtro = f + ' ' + texto
-          return
+          this.filtro = f + " " + texto;
+          return;
         }
       }
-      this.filtro = texto
-      this.$nextTick(() => this.$refs.filtro.focus())
+      this.filtro = texto;
+      this.$nextTick(() => this.$refs.filtro.focus());
     },
     mostrarPartes: function(ativo) {
-      this.$parent.$emit('setting', 'mostrarPartes', ativo)
+      this.$parent.$emit("setting", "mostrarPartes", ativo);
     },
     imprimir: function() {
-      window.print()
+      window.print();
     },
     formatDDMMYYYHHMM: function(s) {
       if (s === undefined) {
-        return
+        return;
       }
       var r =
         s.substring(6, 8) +
-        '/' +
+        "/" +
         s.substring(4, 6) +
-        '/' +
+        "/" +
         s.substring(0, 4) +
-        ' ' +
+        " " +
         s.substring(8, 10) +
-        ':' +
-        s.substring(10, 12)
-      r = r.replace(' ', '&nbsp;')
-      return r
+        ":" +
+        s.substring(10, 12);
+      r = r.replace(" ", "&nbsp;");
+      return r;
     },
 
     exibirProcessoPecaDetalhes: function(movdoc, marca) {
-      this.currentMovDoc = movdoc
-      this.currentMarca = marca
+      this.currentMovDoc = movdoc;
+      this.currentMarca = marca;
       this.$refs.processoPecaDetalhes.show(
         marca,
         this.marcadores,
@@ -672,44 +649,44 @@ export default {
         movdoc.doc && movdoc.doc.outroParametro
           ? movdoc.doc.outroParametro.paginaFinal
           : undefined
-      )
+      );
     },
 
     cotar: function() {
-      this.$refs.Assinatura.show()
+      this.$refs.Assinatura.show();
     },
 
     cotaEnviada: function(msg) {
-      Bus.$emit('message', 'Sucesso', 'Cota enviada com sucesso. ' + msg)
+      Bus.$emit("message", "Sucesso", "Cota enviada com sucesso. " + msg);
     },
 
     cotaNaoEnviada: function(msg, texto) {
       Bus.$emit(
-        'message',
-        'Erro',
+        "message",
+        "Erro",
         'Não foi possível enviar a cota "' +
           texto +
           '". Ocorreu o erro: "' +
           msg +
           '"'
-      )
+      );
     },
 
     salvarProcessoPecaDetalhes: function(marca) {
-      if (!this.currentMovDoc) return
+      if (!this.currentMovDoc) return;
 
-      var movdoc = this.currentMovDoc
+      var movdoc = this.currentMovDoc;
       var inicial =
         movdoc.doc && movdoc.doc.outroParametro
           ? movdoc.doc.outroParametro.paginaInicial
-          : undefined
+          : undefined;
       var final =
         movdoc.doc && movdoc.doc.outroParametro
           ? movdoc.doc.outroParametro.paginaFinal
-          : undefined
+          : undefined;
       if (inicial === marca.paginicial && final === marca.pagfinal) {
-        marca.paginicial = undefined
-        marca.pagfinal = undefined
+        marca.paginicial = undefined;
+        marca.pagfinal = undefined;
       }
 
       var data = {
@@ -719,15 +696,15 @@ export default {
         idestilo: marca.idestilo,
         paginicial: marca.paginicial,
         pagfinal: marca.pagfinal,
-      }
+      };
 
       this.$http
         .post(
-          'processo/' +
+          "processo/" +
             this.numero +
-            '/peca/' +
+            "/peca/" +
             this.currentMovDoc.doc.idDocumento +
-            '/marca?orgao=' +
+            "/marca?orgao=" +
             this.orgao,
           data,
           { block: true }
@@ -735,84 +712,89 @@ export default {
         .then(
           (response) => {
             if (this.currentMarca) {
-              var index = this.currentMovDoc.marca.indexOf(this.currentMarca)
-              UtilsBL.overrideProperties(marca, response.data.marca)
-              UtilsBL.overrideProperties(this.currentMovDoc.marca[index], marca)
+              var index = this.currentMovDoc.marca.indexOf(this.currentMarca);
+              UtilsBL.overrideProperties(marca, response.data.marca);
+              UtilsBL.overrideProperties(
+                this.currentMovDoc.marca[index],
+                marca
+              );
             } else {
-              UtilsBL.overrideProperties(marca, response.data.marca)
-              this.currentMovDoc.marca.push(marca)
+              UtilsBL.overrideProperties(marca, response.data.marca);
+              this.currentMovDoc.marca.push(marca);
             }
           },
           (error) => {
-            Bus.$emit('message', 'Erro', error.data.errormsg)
+            Bus.$emit("message", "Erro", error.data.errormsg);
           }
-        )
+        );
     },
 
     excluirProcessoPecaDetalhes: function() {
-      if (!this.currentMovDoc || !this.currentMarca) return
+      if (!this.currentMovDoc || !this.currentMarca) return;
 
       this.$http
-        .delete('marca/' + this.currentMarca.idmarca, { block: true })
+        .delete("marca/" + this.currentMarca.idmarca, { block: true })
         .then(
           () => {
-            var index = this.currentMovDoc.marca.indexOf(this.currentMarca)
-            if (index > -1) this.currentMovDoc.marca.splice(index, 1)
+            var index = this.currentMovDoc.marca.indexOf(this.currentMarca);
+            if (index > -1) this.currentMovDoc.marca.splice(index, 1);
           },
           (error) => {
-            Bus.$emit('message', 'Erro', error.data.errormsg)
+            Bus.$emit("message", "Erro", error.data.errormsg);
           }
-        )
+        );
     },
 
     favoritar: function(favorito) {
-      this.errormsg = undefined
+      this.errormsg = undefined;
       this.$http
         .post(
-          'processo/' + this.numero + '/sinalizar',
+          "processo/" + this.numero + "/sinalizar",
           { favorito: favorito },
           { block: true }
         )
         .then(
           (response) => {
-            var d = response.data
-            this.favorito = d.processo.favorito
+            var d = response.data;
+            this.favorito = d.processo.favorito;
           },
           (error) => {
-            this.warningmsg = error.data.errormsg
+            this.warningmsg = error.data.errormsg;
           }
-        )
+        );
     },
 
     mostrarNotas: function(show) {
-      this.$parent.$emit('setting', 'mostrarNotas', show)
+      this.$parent.$emit("setting", "mostrarNotas", show);
 
       this.$nextTick(() => {
-        this.$refs.notaUnidade.focus()
-        this.notasAlteradas()
-      })
+        this.$refs.notaUnidade.focus();
+        this.notasAlteradas();
+      });
     },
 
     notasAlteradas: function() {
-      if (this.notaUnidade !== undefined && this.notaUnidade.trim() === '') {
-        this.notaUnidade = undefined
+      if (this.notaUnidade !== undefined && this.notaUnidade.trim() === "") {
+        this.notaUnidade = undefined;
       }
-      if (this.notaPessoal !== undefined && this.notaPessoal.trim() === '') {
-        this.notaPessoal = undefined
+      if (this.notaPessoal !== undefined && this.notaPessoal.trim() === "") {
+        this.notaPessoal = undefined;
       }
-      this.$refs.notaUnidade.style.height = '5px'
-      this.$refs.notaPessoal.style.height = '5px'
+      this.$refs.notaUnidade.style.height = "5px";
+      this.$refs.notaPessoal.style.height = "5px";
       var h = Math.max(
         this.$refs.notaUnidade.scrollHeight,
         this.$refs.notaPessoal.scrollHeight
-      )
-      this.$refs.notaUnidade.style.height = h + 'px'
-      this.$refs.notaPessoal.style.height = h + 'px'
+      );
+      this.$refs.notaUnidade.style.height = h + "px";
+      this.$refs.notaPessoal.style.height = h + "px";
     },
   },
 
-  components: {},
-}
+  components: {
+    acao: Acao,
+  },
+};
 </script>
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->

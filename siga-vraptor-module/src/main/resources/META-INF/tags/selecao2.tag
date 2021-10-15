@@ -144,9 +144,12 @@ self.ajax_${propriedadeClean} = function() {
 	if (executarEventos) {
 		var url = '/${modulo}/app/${tipo}/selecionar?propriedade=${propriedade}'+'${selecaoParams}';
 		url = url + '&sigla=' + sigla;
-		Siga.ajax(url, null, "GET", function(response){		
+		/* Siga.ajax(url, null, "GET", function(response){		
 			resposta_ajax_${propriedadeClean}(response);
-		});	
+		}); */	
+		$.get( url, function(response){
+			resposta_ajax_${propriedadeClean}(response);
+		});
 		//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
 	}
 }
@@ -172,24 +175,31 @@ self.ajax_${propriedadeClean} = function() {
 <input type="hidden" name="${propriedade}.descricao"
 	value="<c:out value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}"/>"
 	id="formulario_${propriedadeClean}_descricao" />
+<div class="input-group">	
 <input type="text" name="${propriedade}.sigla"
 	value="<c:out value="${f:evaluate(f:concat(propriedade,'.sigla'),requestScope)}"/>"
 	id="formulario_${propriedadeClean}_sigla"
+	class="form-control"
 	onkeypress="return handleEnter(this, event)"
-	onblur="javascript: ajax_${propriedadeClean}();"
-	size="25" ${disabledTxt} />
+	onblur="javascript: ajax_${propriedadeClean}();"  style="width: 1%;"
+	 ${disabledTxt} />
 
 <c:if test="${buscar != 'nao'}">
-	<input type="button" id="${propriedadeClean}SelButton" value="..."
-		onclick="javascript: popitup_${propriedadeClean}('');"
-		${disabledBtn} theme="simple">
+	<div class="input-group-append">
+		<input type="button" id="${propriedadeClean}SelButton" value="..."
+			onclick="javascript: popitup_${propriedadeClean}('');" class="btn btn-secondary"
+			${disabledBtn} theme="simple">
+	</div>
 </c:if>
 
 <c:if test="${ocultardescricao != 'sim'}">
-	<span id="${propriedadeClean}Span"> <c:out
-			value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}" />
-	</span>
+	<div class="input-group-append">
+		<span class="input-group-text"  id="${propriedadeClean}Span">
+		 <c:out	value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}" />
+		</span>
+	</div>	
 </c:if>
+</div>
 
 <c:if test="${tema != 'simple'}">
 	</td>

@@ -3,8 +3,22 @@ swagger: '2.0'
 info:
   version: "1.0.0"
   title: ExApiV1
-  description: API para o Siga-Doc
-
+  description: "<h2>API para o Siga-Doc - Módulo de Documentos</h2>
+    <p>Para utilizar esta API, é necessário um token JWT a ser passado na chave
+    <i>Authorization: Bearer</i> do header. Verifique na API do módulo principal (siga) como gerar o token.
+    <p>Os documentos do SIGA são baseados em <b>modelos</b> feitos em <i>freemarker</i> (um engine para templates de páginas). 
+    Nestes modelos, temos os campos de entrada do documento que são chamados de <b>entrevista</b>.
+    Os campos da entrevista são variáveis de acordo com o modelo.</p>
+    <p>As ações realizadas nos documentos (assinatura, trâmites, anotações, etc) são chamadas <b>movimentações</b> e ficam registradas no histórico do documento. 
+    <p>Dependendo destas movimentações, o documento fica em situações diferentes para cada usuário, o que chamamos de <b>marcas</b>. Por exemplo, um documento tramitado fica <i>'A Receber'</i> para o usuário tramitado.
+    <p>Os documentos possuem <b>vias</b> (no caso de expedientes) ou <b>volumes</b> (no caso de processos). Cada documento possui pelo menos uma via ou volume <i>geral</i>, onde são registrados as movimentações referentes ao documento como um todo, e uma ou mais vias ou volumes contendo as movimentações específicas para cada uma delas.
+    <p>A identificação do documento é feito através da <b>sigla</b> e um sufixo que pode ser:</p>
+    <ul>
+    <li>Caso seja uma <b>via</b> possuirá no final uma letra (por ex. '-A');</li>
+    <li>Caso seja um <b>volume</b> terá no final o número do volume (por ex: '-V01').</li>
+    </ul>
+    <p>O documento pode também ser um <b>capturado</b>, onde é feito o upload de um documento em pdf escaneado ou externo ao sistema. 
+    Este necessita ser autenticado pelo usuário criador do documento para comprovar que é uma cópia fiel do documento original.</p>"
 basePath: /sigaex/api/v1
 schemes: [http,https]
 consumes: [application/json,application/x-www-form-urlencoded]
@@ -13,12 +27,16 @@ produces: [application/json]
 tags:
   - name: download
     description: Download
-  - name: mesa
-    description: Mesa Virtual
+  - name: lista
+    description: Listagem de Documentos
   - name: consulta
     description: Consulta a Documentos
   - name: acao
     description: Ações em Documentos
+  - name: modelo
+    description: Informações sobre Modelos para a Criação de Documentos
+  - name: classificacao
+    description: Classificações Documentais
   - name: utils
     description: Utilitários
     
@@ -40,10 +58,34 @@ parameters:
     description: Sigla do mobil
     type: string
     required: true
+  siglaForm:
+    name: sigla
+    in: formData
+    description: Sigla do documento
+    type: string
+    required: false
   siglapai:
     name: siglapai
     in: query
     description: Sigla do mobil do documento pai
+    type: string
+    required: true
+  siglamestre:
+    name: siglamestre
+    in: query
+    description: Sigla do mobil do documento mestre
+    type: string
+    required: true
+  siglacopia:
+    name: siglacopia
+    in: query
+    description: Sigla do mobil do documento a ser copiado
+    type: string
+    required: true
+  siglavertambem:
+    name: siglavertambem
+    in: query
+    description: Sigla do mobil do documento a ser vinculado
     type: string
     required: true
   completo:
@@ -56,7 +98,7 @@ parameters:
   estampa:
     name: estampa
     in: query
-    description: Informar true se deseja receber o PDF sem estampas
+    description: Informar false se deseja receber o PDF sem estampas
     required: false
     default: false
     type: boolean
@@ -152,7 +194,7 @@ parameters:
   id:
     name: id
     in: path
-    description: Identificador da movimentação
+    description: Identificador da entidade
     required: true
     type: string
   lotacao:
@@ -179,6 +221,18 @@ parameters:
     description: Sigla completa da matrícula
     required: false
     type: string
+  funcao:
+    name: funcao
+    in: formData
+    description: Função do cossignatário
+    required: false
+    type: string
+  localidade:
+    name: localidade
+    in: formData
+    description: Localidade do cossignatário
+    required: false
+    type: string
   anotacao:
     name: anotacao
     in: formData
@@ -186,11 +240,18 @@ parameters:
     required: true
     maxLength: 500
     type: string
+  motivo:
+    name: motivo
+    in: formData
+    description: Motivo. Tamanho Máximo = 500.
+    required: true
+    maxLength: 500
+    type: string
   texto:
     name: texto
-    in: path
+    in: query
     description: Texto a ser pesquisado
-    required: true
+    required: false
     type: string    
   observacao:
     name: observacao
@@ -205,6 +266,44 @@ parameters:
     required: false
     type: string
     pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+  data1:
+    name: data1
+    in: formData
+    description: Data (por exemplo, `2020-12-02`).
+    required: false
+    type: string
+    pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+  data2:
+    name: data2
+    in: formData
+    description: Data (por exemplo, `2020-12-02`).
+    required: false
+    type: string
+    pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+  idMarcador:
+    name: idMarcador
+    in: formData
+    description: Identificador do Marcador
+    required: true
+    type: string            
+  idMarcadorQuery:
+    name: idMarcador
+    in: query
+    description: Identificador do Marcador
+    required: true
+    type: string            
+  idPerfil:
+    name: idPerfil
+    in: formData
+    description: Identificador do Perfil
+    required: true
+    type: string            
+  idAcesso:
+    name: idAcesso
+    in: formData
+    description: Identificador do Acesso
+    required: true
+    type: string            
   idPessoaIni:
     name: idPessoaIni
     in: path
@@ -236,6 +335,12 @@ parameters:
     name: siglamobilpai
     in: formData
     description: Sigla da via ou volume (mobil) do documento pai
+    type: string
+    required: false
+  siglamobilfilho:
+    name: siglamobilfilho
+    in: formData
+    description: Sigla da via ou volume (mobil) do documento filho
     type: string
     required: false
   subscritor:
@@ -317,15 +422,363 @@ parameters:
     description: Arquivo para upload se necessário para operação.
     type: file
     required: false
-   
+  idModeloInPath:
+    name: idModelo
+    in: path
+    description: Identificador do modelo
+    type: string
+    required: true
+  idClassificacaoIni:
+    name: idClassificacaoIni
+    in: query
+    description: Identificador da classificacao
+    type: string
+    required: false
+  filtroPessoaLotacao:
+    name: filtroPessoaLotacao
+    in: query
+    description: Informa se deseja filtrar documentos por pessoa ou lotação
+    required: false
+    type: string
+    default: Pessoa e Lotacao
+    enum:
+      - Pessoa e Lotacao
+      - Pessoa
+      - Lotacao
+  filtroExpedienteProcesso:
+    name: filtroExpedienteProcesso
+    in: query
+    description: Informa se deseja filtrar documentos por expediente ou processo
+    required: false
+    type: string
+    default: Expediente e Processo
+    enum:
+      - Expediente e Processo
+      - Expediente
+      - Processo
 
+  isEditandoAnexo:
+    name: isEditandoAnexo
+    in: query
+    description: Informa true se está editando anexo
+    required: false
+    default: false
+    type: boolean
+    
+  isCriandoSubprocesso:
+    name: isCriandoSubprocesso
+    in: query
+    description: Informa true se está criando subprocesso
+    required: false
+    default: false
+    type: boolean
+    
+  siglaMobPai:
+    name: siglaMobPai
+    in: query
+    description: Id do mobil pai
+    required: false
+    type: string
+    
+  isAutuando:
+    name: isAutuando
+    in: query
+    description: Informa true se está autuando
+    required: false
+    default: false
+    type: boolean
+    
 ################################################################################
 #                                           Paths                              #
 ################################################################################
 paths:
+  /modelos:
+    get:
+      summary: Obtem a lista de modelos que o usuário pode criar.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: [] 
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/lista-hierarquica:
+    get:
+      summary: "Obtem a lista hierárquica de modelos que o usuário pode criar. Os nomes dos modelos devem estar cadastrados no formato Grupo: Nome do Modelo (separado por dois pontos)"
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: 
+        - $ref: "#/parameters/isEditandoAnexo"
+        - $ref: "#/parameters/isCriandoSubprocesso"
+        - $ref: "#/parameters/siglaMobPai"
+        - $ref: "#/parameters/isAutuando"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloListaHierarquicaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /documentos/{sigla}/modelos-para-incluir:
+    get:
+      summary: Obtem a lista de modelos que o usuário pode incluir em determinado documento
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: 
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    
+  /documentos/{sigla}/modelos-para-autuar:
+    get:
+      summary: Obtem a lista de modelos em que o usuário pode autuar determinado documento
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters: 
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    
+  /modelos/{id}:
+    get:
+      summary: Obtem informações sobre um modelo específico
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idModelo:
+                type: string
+              nome:
+                type: string
+              descr:
+                type: string
+              especie:
+                type: string
+              nivelDeAcesso:
+                type: string
+              classificacao:
+                type: string
+              classificacaoParaCriacaoDeVias:
+                type: string
+              tipoDeSubscritor:
+                type: string
+              tipoDeDestinatario:
+                type: string
+              tipoDeConteudo:
+                type: string
+              tipoDeDocumento:
+                type: string
+              conteudo:
+                type: string
+        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/processar-entrevista:
+    post:
+      summary: Gera o HTML da entrevista a partir dos campos preenchidos
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/entrevista"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: text/html
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/prever-documento-html:
+    post:
+      summary: Pré-visualização do HTML
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: text/html
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/prever-documento-pdf:
+    post:
+      summary: Pré-visualização do PDF
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: application/pdf
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /classificacoes:
+    get:
+      summary: "Pesquisa de classificação documental"
+      description: "Retorna uma lista de classificações. A pesquisa será feita de acordo com os parâmetros informados: 
+        <ul><li><b>id=</b> Pesquisa a classificação com determinado id inicial.</li>
+        <li><b>texto=</b> Pesquisa as classificações que contém no código de classificação documental o texto especificado.</li>"
+      tags: [classificacao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/idClassificacaoIni"
+        - $ref: "#/parameters/texto"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ClassificacaoItem"
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+
+  /documentos/{sigla}/arquivo/produzir:
+    get:
+      description: "<p>Solicita uma execução síncrona de geração de PDF completo contendo ou não os documentos filhos e as estampas (marca d'água, assinatura, etc)."
+      tags: [download]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/contenttype"
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/estampa"
+        - $ref: "#/parameters/completo"
+        - $ref: "#/parameters/volumes"
+        - $ref: "#/parameters/exibirReordenacao"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: text/html
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}/arquivo:
     get:
-      summary: Inicia o processo de geração do PDF completo de um documento para visualização
+      description: "<p>Solicita uma execução assíncrona de geração de PDF completo contendo ou não os documentos filhos e as estampas (marca d'água, assinatura, etc).
+        <p>Irá devolver um json contendo um JWT que deverá ser passado para o webservice GET /download/{jwt}/{filename}, que fará o download do PDF gerado após este estar completamente gerado.
+        <p>Para verificar andamento da geração do PDF, utilizar o webservice GET /status/{chave} onde chave é o campo uuid devolvido no JSON de retorno deste webservice."
+      summary: "Inicia o processo de geração do PDF completo de um documento para visualização"
       tags: [download]
       security:
         - Bearer: []
@@ -415,11 +868,12 @@ paths:
 
   /mesa:
     get:
-      description: Listar as mesas virtuais disponíveis
-      tags: [mesa]
+      summary: Listar as mesas virtuais disponíveis
+      tags: [lista]
       security:
         - Bearer: []      
-      parameters: []
+      parameters: 
+        - $ref: "#/parameters/filtroPessoaLotacao"
       responses:
         200:
           description: Successful response
@@ -434,10 +888,86 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /quadro:
+    get:
+      summary: Listar a quantidade de documentos
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/filtroExpedienteProcesso"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/QuadroItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /lista:
+    get:
+      summary: Listar móbiles por filtro
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcadorQuery"
+        - $ref: "#/parameters/filtroPessoaLotacao"
+        - $ref: "#/parameters/filtroExpedienteProcesso"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ListaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
   /documentos/{sigla}:
     get:
-      description: Exibir um documento
+      description: "<h3>Exibir um documento</h3>
+        <p>É devolvido um JSON com uma estrutura contendo diversas informações do documento:</p>
+        <ul>
+        <li><b>subscritorString: </b>Nome do subscritor</li>
+        <li><b>dtFinalizacao: </b>Data em que o documento foi finalizado</li>
+        <li><b>descrDocumento: </b>Descrição do documento</li>
+        <li><b>conteudoBlobHtmlString: </b>Conteúdo do documento em HTML</li>
+        <li><b>mobs: </b>Vias ou volumes do documento, chamadas de mobil no sistema. Contém sempre uma via ou volume <b>geral</b> que conterá movimentações ou ações referentes ao documento geral e pelo menos uma <b>via ou volume</b> contendo movimentações ou ações específicas desta via ou volume.</li>
+        <ul>
+        <li><b>isGeral: </b>Se <i>true</i> significa que é a via ou volume geral</li>
+        <li><b>expedientesFilhosNaoCancelados: </b>Documentos da espécie <i>Expediente</i> não cancelados juntados a este <li><b>processosFilhosNaoCancelados: </b>Documentos da espécie <i>Processo</i> não cancelados juntados a este documento</li>
+        <li><b>movs: </b>Movimentações (histórico) da via ou volume. Vem ordenado da mais recente para a mais antiga.</li>
+        <ul>
+        <li><b>cancelada: </b>Se true, a movimentação foi cancelada</li>
+        <li><b>descricao: </b>Pode conter informações referentes à movimentação realizada</li>
+        <li><b>parte:</b>Contém informações dos envolvidos na movimentação</li>
+        <ul>
+        <li><b>cadastrante: </b>Quem realizou a movimentação</li>
+        <li><b>lotaCadastrante: </b>Lotação da pessoa que realizou a movimentação</li>
+        <li><b>resp: </b>No caso de trâmite, pessoa para a qual foi tramitado</li>
+        <li><b>lotaResp: </b>No caso de trâmite, lotação da pessoa para a qual foi tramitado</li>
+        </ul>
+        <li><b>exTipoMovimentacaoSigla: </b>Nome do tipo de movimentação realizada (Trâmitação, anotação, etc)</li>
+        <li><b>dtIniMov: </b>Data em que a movimentação foi realizada</li>
+        </ul>
+        <li><b>marcadoresEmHtml: </b>Marcas (situações) da via ou volume.</li>
+        <li><b>acoes: </b>Correspondente aos botões que aparecem na tela do documento. São as ações que podem ser realizadas para a via ou volume neste momento. As ações não devem ser utilizadas nos webservices, podem somente ser pesquisadas.</li>
+        </ul>
+        </ul>"
       tags: [consulta]
       security:
         - Bearer: []      
@@ -459,7 +989,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-            
+
   /documentos/{sigla}/pdf:
     get:
       summary: SEM IMPLEMENTACAO PRONTA! NAO USAR!
@@ -563,6 +1093,7 @@ paths:
 
   /documentos/{sigla}/assinar-com-senha:
     post:
+      description: "Não é necessário informar novamente a senha."
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
       security:
@@ -589,6 +1120,7 @@ paths:
 
   /documentos/{sigla}/autenticar-com-senha:
     post:
+      description: "A autenticação é uma comprovação de que o documento é igual ao original. Não é necessário informar novamente a senha."
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
       security:
@@ -613,8 +1145,205 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/arquivar-corrente:
+    post:
+      description: "Utilize este método para arquivar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Arquivar documento no arquivo corrente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/desarquivar-corrente:
+    post:
+      description: "Utilize este método para desarquivar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Desarquivar documento do arquivo corrente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/sobrestar:
+    post:
+      description: "Utilize este método para sobrestar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Sobrestar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/dessobrestar:
+    post:
+      description: "Utilize este método para dessobrestar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Dessobrestar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/finalizar:
+    post:
+      description: "Utilize este método para finalizar a elaboração do documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Finalizar elaboração do documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/duplicar:
+    post:
+      description: "Utilize este método para duplicar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Duplicar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/refazer:
+    post:
+      description: "Utilize este método para refazer o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Duplicar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}/tramitar:
     post:
+      description: "<p>O trâmite é feito em uma <b>via ou volume</b> do documento, portanto necessita ser informada no final da sigla (Ex.: letra 
+        <b>'A' ou  'V01'</b> no final da sigla).</p> <p>A sigla deve ser informada sem traços ou barras.</p>
+        <p>Para tramitar para um usuário específico, informar os campos <i>matricula</i> e <i>lotacao</i>.</p>
+        <p>Para tramitar para uma lotação, preencher somente o campo <i>lotacao</i>. Se quiser tramitar para uma lotação 
+        de outro órgão, informar a sigla completa da lotação incluindo o órgão no formato: XXYYYYY onde XX é a sigla do 
+        órgão e YYYYY é a sigla da lotação, sem traços.</p>
+        <p>O campo <i>orgao</i> não é utilizado normalmente, serve para tramitar para órgãos externos ao SIGA.</p>
+        <p>Em São Paulo, lotação é chamada de unidade."
       consumes: ["application/x-www-form-urlencoded"]
       tags: [acao]
       security:
@@ -627,7 +1356,80 @@ paths:
         - $ref: '#/parameters/observacao'
         - $ref: '#/parameters/dataDevolucao'
       summary: Tramitar documento para outro usuário ou lotação ou Órgão externo
-      description: Se `orgao` estiver preenchido, `lotacao` e `matricula` deverão estar vazios.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/definir-perfil:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/idPerfil"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+      summary: Associa uma pessoa ou lotação a um perfil do documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/incluir-cossignatario:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/matricula"
+        - $ref: "#/parameters/funcao"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/localidade"
+      summary: Acrescenta um cossignatário ao documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/definir-acesso:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/idAcesso"
+      summary: Define o nível de acesso do documento
       responses:
         200:
           description: Successful response
@@ -650,7 +1452,7 @@ paths:
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/siglapai"
-      description: Junta a via de um documento com outro informado em siglapai
+      description: "Junta a <b>via ou volume</b> de um documento com <b>outra via ou volume</b> informada em siglapai (ambos devem ter por exemplo a letra 'A' - no caso de expedientes ou 'V01' - no caso de processos no final da sigla)."
       responses:
         200:
           description: Successful response
@@ -672,6 +1474,238 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/desentranhar:
+    post:
+      description: "Utilize este método para desentranhar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/motivo"
+      summary: Desentranhar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/vincular:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/siglavertambem"
+      description: "Vincula a <b>via ou volume</b> de um documento com <b>outra via ou volume</b> informada em siglapai (ambos devem ter por exemplo a letra 'A' - no caso de expedientes ou 'V01' - no caso de processos no final da sigla)."
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/incluir-copia:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/siglacopia"
+      description: "Junta uma cópia do documento informado em siglacopia no documento informado em sigla (ambos devem ter por exemplo a letra 'A' - no caso de expedientes ou 'V01' - no caso de processos no final da sigla)."
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/apensar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/siglamestre"
+      description: "Apensa a <b>via ou volume</b> de um documento com <b>outra via ou volume</b> informada em siglapai (ambos devem ter por exemplo a letra 'A' - no caso de expedientes ou 'V01' - no caso de processos no final da sigla)."
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/desapensar:
+    post:
+      description: "Utilize este método para desapensar o documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Desapensar documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/tornar-sem-efeito:
+    post:
+      description: "Utilize este método para cancelar o documento, tornando ele sem efeito."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/motivo"
+      summary: Tornar documento se efeito
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/criar-via:
+    post:
+      description: "Utilize este método para criar uma via adicional no documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Criar via no documento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/receber:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Recebe um documento. Não há confirmação de recebimento como na tela do SIGA.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
   /documentos/{sigla}/anotar:
     post:
@@ -682,7 +1716,9 @@ paths:
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/anotacao"
-      description: Anotar documento
+      description: "<h3>Anotar documento</h3>
+        <p>A anotação é feito em uma <b>via ou volume</b> do documento, portanto necessita ser informada 
+        (Ex.: letra <b>'A' ou 'V01'</b> no final da sigla).</p> <p>A sigla não deve ter traços ou barras.</p>"
       responses:
         200:
           description: Successful response
@@ -695,6 +1731,65 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/excluir:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Excluir documento temporário
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/marcar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/idMarcador"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+        - $ref: "#/parameters/data1"
+        - $ref: "#/parameters/data2"
+        - $ref: "#/parameters/texto"
+      description: "Apensa a <b>via ou volume</b> de um documento com <b>outra via ou volume</b> informada em siglapai (ambos devem ter por exemplo a letra 'A' - no caso de expedientes ou 'V01' - no caso de processos no final da sigla)."
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Via ou volume não encontrado
+          schema:
+            $ref: "#/definitions/Error"                
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
 
   /documentos/{sigla}/pesquisar-sigla:
     get:
@@ -742,6 +1837,290 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/{sigla}/perfis-disponiveis:
+    get:
+      description: Obter lista de perfis que podem ser aplicados a um móbil
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PerfilItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/acessos-disponiveis:
+    get:
+      description: Obter lista de acessos que podem ser aplicados a um documento
+      tags: [consulta]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/AcessoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/gerar-protocolo:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Gera um número de protocolo e link para acompanhamento de um expediente ou processo
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              numeroProtocolo:
+                type: string
+              linkProtocolo:
+                type: string
+              dataHoraEmissaoProtocolo:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Documento não encontrado
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/consultar-protocolo:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Obtem o número de protocolo e link para acompanhamento de um expediente ou processo
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              numeroProtocolo:
+                type: string
+              linkProtocolo:
+                type: string
+              dataHoraEmissaoProtocolo:
+                type: string
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Protocolo ainda não foi gerado para este documento
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/dossie:
+    get:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      description: Obtem a lista de documentos que compoem o dossiê
+      responses:
+        200:
+          description: Successful response
+          schema:
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/DossieItem"
+        403:
+          description: Acesso ao documento não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Protocolo ainda não foi gerado para este documento
+          schema:
+            $ref: "#/definitions/Error"        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /documentos/{sigla}/anexar:
+    post:
+      summary: Acrescenta um anexo num documento
+      tags: [acao]
+      security:
+        - Bearer: []
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/descricaodocumento"
+        - $ref: "#/parameters/arquivo"
+      description: Anexação de pdf que deve ser enviado no campo arquivo. 
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+        403:
+          description: Anexação não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/assinar-com-senha:
+    post:
+      description: "Não é necessário informar novamente a senha."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Assinar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento assinado
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/autenticar-com-senha:
+    post:
+      description: "Não é necessário informar novamente a senha."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Assinar documento com senha
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento assinado
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/excluir:
+    post:
+      description: "Utilize este método para excluir uma movimentação do documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Excluir movimentação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/movimentacoes/{id}/cancelar:
+    post:
+      description: "Utilize este método para cancelar uma movimentação do documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/id"
+      summary: Cancelar movimentação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -767,6 +2146,105 @@ paths:
             $ref: "#/definitions/Error"         
             
   /documentos:
+    get:
+      description: "Exibe uma lista de mobils com suas marcas, de acordo com a lista de parâmetros. Equivalente à pesquisa de documentos no SIGA. 
+        Liberado somente para pesquisa de documentos da própria lotação."
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: offset
+          in: query
+          description: Irá trazer o resultado pulando a quantidade de registros informada neste campo, para efeito de paginação
+          required: false
+          type: integer
+          format: int64
+        - name: qtdmax
+          in: query
+          description: Quantidade máxima de registros a trazer. Se não informada, assume 50 registros
+          required: false
+          type: integer          
+          format: int64
+        - name: ordenacao
+          in: query
+          description: "Ordenação da lista:<ul>
+            <li>1 - Data descendente</li>
+            <li>2 - Data ascendente</li>
+            <li>3 - Data de criação do temporário descendente</li>
+            <li>4 - Data de criação do temporário ascendente</li> 
+            <li>5 - Data da situação descendente</li>
+            <li>6 - Data da situação ascendente</li>
+            <li>7 - Data da finalização do doc. descendente</li>
+            <li>8 - Data da finalização do doc. ascendente</li>
+            </ul>"
+          required: false
+          type: integer          
+          format: int64
+          default: 1
+          enum:
+            - 1 
+            - 2 
+            - 3 
+            - 4 
+            - 5
+            - 6
+            - 7
+            - 8
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+        - name: grupomarcador
+          in: query
+          description: Nome do grupo de marcadores da mesa
+          required: false
+          type: string
+        - name: idpessoa
+          in: query
+          description: Identificador da Pessoa Inicial
+          required: false
+          type: integer
+          format: int64
+        - name: idlotacao
+          in: query
+          description: Identificador da Lotação Inicial. Pesquisa de outras lotações liberada somente para usuários autorizados. 
+            Se não informado, assume a lotação do usuário.
+          required: false
+          type: integer
+          format: int64
+        - name: dtinicial
+          in: query
+          description: Data inicial para pesquisa (aaaa-mm-dd)
+          required: false
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+        - name: dtfinal
+          in: query
+          description: Data final para pesquisa (aaaa-mm-dd)
+          required: false
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/DocumentoPesq"
+        404:
+          description: Nenhum documento foi encontrado com os argumentos informados
+          schema:
+            $ref: "#/definitions/Error"                
+
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
     post:
       summary: Cria um novo documento
       tags: [acao]
@@ -775,8 +2253,10 @@ paths:
       consumes:
         - multipart/form-data
       parameters:
+        - $ref: "#/parameters/siglaForm"
         - $ref: "#/parameters/modelo"
         - $ref: "#/parameters/siglamobilpai"
+        - $ref: "#/parameters/siglamobilfilho"
         - $ref: "#/parameters/subscritor"
         - $ref: "#/parameters/titular"
         - $ref: "#/parameters/eletronico"
@@ -879,6 +2359,66 @@ definitions:
         items:
           $ref: "#/definitions/Marca"      
 
+  QuadroItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      grupoId:
+        type: string
+      grupoNome:
+        type: string
+      finalidadeId:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      qtdAtendente:
+        type: string
+      qtdLotaAtendente:
+        type: string
+
+  ListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      sigla:
+        type: string
+      documentoData:
+        type: string
+        format: date-time
+      documentoSubscritor:
+        type: string
+      documentoLotaSubscritor:
+        type: string
+      documentoEspecie:
+        type: string
+      documentoModelo:
+        type: string
+      documentoDescricao:
+        type: string
+      mobilUltimaAnotacao:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      marcaData:
+        type: string
+        format: date-time
+      marcaResponsavel:
+        type: string
+      marcaLotaResponsavel:
+        type: string
+
   Marca:
     description: Etiquetas relacionadas a um documento
     type: object
@@ -892,6 +2432,8 @@ definitions:
       icone:
         type: string
       titulo:
+        type: string
+      marcaId:
         type: string
       inicio:
         type: string
@@ -950,6 +2492,9 @@ definitions:
       siglamobilpai:
         description: Sigla da via ou volume (mobil) do documento pai
         type: string
+      siglamobilfilho:
+        description: Sigla da via ou volume (mobil) do documento filho
+        type: string
       subscritor:
         description: Subscritor do documento
         type: string
@@ -986,6 +2531,65 @@ definitions:
         description: Nome do nivel de acesso do documento. Ex. Publico, Limitado Entre Orgaos, Limitado Entre Lotacoes, Limitado Entre Pessoas, ...
         type: string
         
+  DocumentoPesq:
+    description: Item do resultado de pesquisa de documentos
+    type: object
+    properties:
+      sigla:
+        description: Sigla do mobil do documento
+        type: string
+      dtdoc:
+        description: Data de criação do documento
+        type: string
+      dtregdoc:
+        description: Data de finalização documento
+        type: string
+      dtinimarca:
+        description: Data de início da marca
+        type: string
+      descricaomarcador:
+        description: Descrição do marcador
+        type: string
+      nomegrupomarcador:
+        description: Nome do grupo do marcador
+        type: string
+      descricaodocumento:
+        description: Descrição do documento
+        type: string
+      modelo:
+        description: Identificacao do modelo
+        type: string
+      siglamobilpai:
+        description: Sigla da via ou volume (mobil) do documento pai
+        type: string
+      cadastrantesigla:
+        description: Sigla do subscritor do documento
+        type: string
+      cadastrantenome:
+        description: Nome do subscritor do documento
+        type: string
+      lotacadastrantesigla:
+        description: Sigla da lotção do subscritor do documento
+        type: string
+      lotacadastrantenome:
+        description: Nome da lotação do subscritor do documento
+        type: string
+      subscritorsigla:
+        description: Sigla do subscritor do documento
+        type: string
+      subscritornome:
+        description: Nome do subscritor do documento
+        type: string
+      lotasubscritorsigla:
+        description: Sigla da lotação do subscritor do documento
+        type: string
+      lotasubscritornome:
+        description: Nome da lotação do subscritor do documento
+        type: string
+      titular:
+        description: Titular do documento
+        type: string
+
   Marcador:
     description: Dados de um marcador
     type: object
@@ -1007,4 +2611,90 @@ definitions:
       limite:
         type: string
       texto:
+        type: string
+
+  ModeloItem:
+    description: Lista modelos disponíveis.
+    type: object
+    properties:
+      idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+
+  ModeloListaHierarquicaItem:
+    description: Lista hierárquica de modelos disponíveis.
+    type: object
+    properties:        
+      idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+      level:
+        type: integer
+        format: int64
+      keywords:
+        type: string
+      group:
+        type: boolean
+      selected:
+        type: boolean
+
+  ClassificacaoItem:
+    description: Lista classificações documentais disponíveis
+    type: object
+    properties:
+      idClassificacao:
+        type: string
+      sigla:
+        type: string
+      nome:
+        type: string
+        
+  PerfilItem:
+    description: Lista perfis disponíveis
+    type: object
+    properties:
+      idPerfil:
+        type: string
+      nome:
+        type: string
+                
+  AcessoItem:
+    description: Lista acessos disponíveis
+    type: object
+    properties:
+      idAcesso:
+        type: string
+      nome:
+        type: string
+        
+  DossieItem:
+    description: Lista os arquivos que compoem um dossiê
+    type: object
+    properties:
+      paginaInicial:
+        type: string
+      paginaFinal:
+        type: string
+      mobil:
+        type: string
+      descr:
+        type: string
+      origem:
+        type: string
+      data:
+        type: string
+        format: date-time
+      nivel:
+        type: string
+      copia:
+        type: boolean
+      referenciaHtmlCompletoDocPrincipal:
+        type: string
+      referenciaPDFCompletoDocPrincipal:
         type: string

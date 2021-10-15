@@ -42,7 +42,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -54,12 +54,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.dp_lotacao")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable<Object>, DpConvertableEntity {
-	private static final long serialVersionUID = 5628179687234082413L;
+	
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(
 			DpLotacao.class);
 
@@ -182,7 +183,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 			cpOrgao.setSiglaOrgaoUsu(m.group(1).toUpperCase());
 			setOrgaoUsuario(cpOrgao);
-			setSiglaLotacao((m.group(2).substring(0,1).equals("-")) ? m.group(2).substring(1).toUpperCase() : m.group(2).toUpperCase());
+			setSiglaLotacao(m.group(2).toUpperCase());
 		} else {
 			setSiglaLotacao(sigla.toUpperCase());
 		}

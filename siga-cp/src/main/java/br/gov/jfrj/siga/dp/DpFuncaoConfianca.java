@@ -34,24 +34,21 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.dp_funcao_confianca")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
-		Serializable, Selecionavel, Sincronizavel, DpConvertableEntity {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2997532579401295172L;
+		Serializable, Historico, Selecionavel, Sincronizavel, DpConvertableEntity {
 
 	@Formula(value = "REMOVE_ACENTO(NOME_FUNCAO_CONFIANCA)")
 	@Desconsiderar
@@ -182,5 +179,54 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 			return false;
 		return this.getIdInicial().longValue() == ((DpFuncaoConfianca) other)
 				.getIdInicial().longValue();
+	}
+
+	@Override
+	public void setId(Long id) {
+		setIdFuncao(id);
+	}
+
+	@Override
+	public Long getHisIdIni() {
+		return getIdFuncaoIni();
+	}
+
+	@Override
+	public void setHisIdIni(Long hisIdIni) {
+		setIdFuncaoIni(hisIdIni);
+		
+	}
+
+	@Override
+	public Date getHisDtIni() {
+		return getDataInicioFuncao();
+	}
+
+	@Override
+	public void setHisDtIni(Date hisDtIni) {
+		setDataInicioFuncao(hisDtIni);
+		
+	}
+
+	@Override
+	public Date getHisDtFim() {
+		return getDataFimFuncao();
+	}
+
+	@Override
+	public void setHisDtFim(Date hisDtFim) {
+		setDataFimFuncao(hisDtFim);
+		
+	}
+
+	@Override
+	public Integer getHisAtivo() {
+		return getDataFimFuncao() != null ? 1 : 0;
+	}
+
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		// TODO Auto-generated method stub
+		
 	}
 }

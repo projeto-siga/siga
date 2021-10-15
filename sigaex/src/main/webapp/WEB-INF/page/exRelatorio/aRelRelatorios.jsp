@@ -62,11 +62,13 @@ page
 			<c:set var="titulo_pagina" scope="request">Relação de Modelos</c:set>
 			<c:set var="nomeRelatorio" scope="request">relModelos.jsp</c:set>
 		</c:when>
+		
 		<c:when test='${nomeArquivoRel eq "relDocumentosSubordinados.jsp"}'>
 			<c:set var="actionName" scope="request">emiteRelDocumentosSubordinados</c:set>
 			<c:set var="titulo_pagina" scope="request">Relação de Documentos em Setores Subordinados</c:set>
 			<c:set var="nomeRelatorio" scope="request">relDocumentosSubordinados.jsp</c:set>
 		</c:when>
+		
 		<c:when
 			test='${nomeArquivoRel eq "relMovimentacaoDocSubordinados.jsp"}'>
 			<c:set var="actionName" scope="request">emiteRelMovDocsSubordinados</c:set>
@@ -118,6 +120,14 @@ page
 			<c:set var="titulo_pagina" scope="request">Relatórios Gerenciais</c:set>
 			<c:set var="nomeRelatorio" scope="request">relDocumentosPorVolume.jsp</c:set>
 		</c:when>
+
+
+		<c:when test='${nomeArquivoRel eq "relPermanenciaSetorAssunto.jsp"}'>
+			<c:set var="actionName" scope="request">emiteRelPermanenciaSetorAssunto</c:set>
+			<c:set var="titulo_pagina" scope="request">Relatório de Permanência por Setor e Assunto</c:set>
+			<c:set var="nomeRelatorio" scope="request">relPermanenciaSetorAssunto.jsp</c:set>
+		</c:when>
+		
 
 		<c:otherwise>
 			<c:set var="actionName" scope="request">emiteRelExpedientes</c:set>

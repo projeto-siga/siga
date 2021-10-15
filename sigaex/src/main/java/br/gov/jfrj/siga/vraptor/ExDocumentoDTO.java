@@ -16,7 +16,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.persistence.Column;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -52,7 +56,7 @@ public class ExDocumentoDTO {
 
 	private File arquivo;
 
-	private LinkedHashSet<ExPreenchimento> preenchSet = null;
+	private SortedSet<ExPreenchimento> preenchSet = null;
 
 	private String preenchParamRedirect;
 
@@ -226,10 +230,43 @@ public class ExDocumentoDTO {
 
 	private String descrMov;
 	
+	private String dtPrazoAssinaturaString;
+	
 	private List<ExTipoDocumento> tiposDocumento;
 	
 	private List<ExNivelAcesso> listaNivelAcesso;
+	
+	
+	private boolean possuiRequerente;
+//	
+	private Long cpfRequerente;
+	
+	private Long cnpjRequerente;
 
+	private Long matriculaRequerente;
+	
+	private String nomeRequerente;
+	
+	private String tipoLogradouroRequerente;
+	
+	private String logradouroRequerente;
+	
+	private String numeroLogradouroRequerente;
+
+	private String complementoLogradouroRequerente;
+	
+	private String bairroRequerente;
+
+	private String cidadeRequerente;
+
+	private String ufRequerente;
+	
+	private String cepRequerente;
+	
+	private int tipoDocumentoRequerente;
+	
+	private boolean permiteRequerente;
+	
 	public ExDocumentoDTO() {
 		classificacaoSel = new ExClassificacaoSelecao();
 		destinatarioSel = new DpPessoaSelecao();
@@ -993,11 +1030,11 @@ public class ExDocumentoDTO {
 		this.formasDoc = formasDoc;
 	}
     
-    public void setPreenchSet(LinkedHashSet<ExPreenchimento> preenchSet) {
+    public void setPreenchSet(SortedSet<ExPreenchimento> preenchSet) {
 		this.preenchSet = preenchSet;
 	}
     
-    public LinkedHashSet<ExPreenchimento> getPreenchimentos() {
+    public SortedSet<ExPreenchimento> getPreenchimentos() {
 		return preenchSet;
 	}
     
@@ -1022,4 +1059,134 @@ public class ExDocumentoDTO {
 		return listaNivelAcesso;
 	}
 
+	public void setDtPrazoAssinaturaString(final String dtPrazoAssinaturaString) {
+		this.dtPrazoAssinaturaString = dtPrazoAssinaturaString;
+	}
+
+	public String getDtPrazoAssinatura() {
+		return dtPrazoAssinaturaString;
+	}
+
+	public Long getCpfRequerente() {
+		return cpfRequerente;
+	}
+
+	public void setCpfRequerente(Long cpfRequerente) {
+		this.cpfRequerente = cpfRequerente;
+	}
+
+	public Long getCnpjRequerente() {
+		return cnpjRequerente;
+	}
+
+	public void setCnpjRequerente(Long cnpjRequerente) {
+		this.cnpjRequerente = cnpjRequerente;
+	}
+
+	public Long getMatriculaRequerente() {
+		return matriculaRequerente;
+	}
+
+	public void setMatriculaRequerente(Long matriculaRequerente) {
+		this.matriculaRequerente = matriculaRequerente;
+	}
+
+	public String getNomeRequerente() {
+		return nomeRequerente;
+	}
+
+	public void setNomeRequerente(String nomeRequerente) {
+		this.nomeRequerente = nomeRequerente;
+	}
+
+	public String getNumeroLogradouroRequerente() {
+		return numeroLogradouroRequerente;
+	}
+
+	public void setNumeroLogradouroRequerente(String numeroLogradouroRequerente) {
+		this.numeroLogradouroRequerente = numeroLogradouroRequerente;
+	}
+
+	public String getComplementoLogradouroRequerente() {
+		return complementoLogradouroRequerente;
+	}
+
+	public void setComplementoLogradouroRequerente(String complementoLogradouroRequerente) {
+		this.complementoLogradouroRequerente = complementoLogradouroRequerente;
+	}
+
+	public String getBairroRequerente() {
+		return bairroRequerente;
+	}
+
+	public void setBairroRequerente(String bairroRequerente) {
+		this.bairroRequerente = bairroRequerente;
+	}
+
+	public String getCidadeRequerente() {
+		return cidadeRequerente;
+	}
+
+	public void setCidadeRequerente(String cidadeRequerente) {
+		this.cidadeRequerente = cidadeRequerente;
+	}
+
+	public String getUfRequerente() {
+		return ufRequerente;
+	}
+
+	public void setUfRequerente(String ufRequerente) {
+		this.ufRequerente = ufRequerente;
+	}
+
+	public String getCepRequerente() {
+		return cepRequerente;
+	}
+
+	public void setCepRequerente(String cepRequerente) {
+		this.cepRequerente = cepRequerente;
+	}
+
+	public boolean isPossuiRequerente() {
+		return possuiRequerente;
+	}
+
+	public void setPossuiRequerente(boolean possuiRequerente) {
+		this.possuiRequerente = possuiRequerente;
+	}
+
+	public String getTipoLogradouroRequerente() {
+		return tipoLogradouroRequerente;
+	}
+
+	public void setTipoLogradouroRequerente(String tipoLogradouroRequerente) {
+		this.tipoLogradouroRequerente = tipoLogradouroRequerente;
+	}
+
+	public String getLogradouroRequerente() {
+		return logradouroRequerente;
+	}
+
+	public void setLogradouroRequerente(String logradouroRequerente) {
+		this.logradouroRequerente = logradouroRequerente;
+	}
+
+	public int getTipoDocumentoRequerente() {
+		return tipoDocumentoRequerente;
+	}
+
+	public void setTipoDocumentoRequerente(int tipoDocumentoRequerente) {
+		this.tipoDocumentoRequerente = tipoDocumentoRequerente;
+	}
+
+	public boolean isPermiteRequerente() {
+		return permiteRequerente;
+	}
+
+	public void setPermiteRequerente(boolean permiteRequerente) {
+		this.permiteRequerente = permiteRequerente;
+	}
+
+	 
+	
 }

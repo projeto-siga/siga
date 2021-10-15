@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.gc.util;
 import org.mcavallo.opencloud.Cloud;
 import org.mcavallo.opencloud.Tag;
 
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
@@ -32,7 +33,7 @@ public class GcCloud extends Cloud {
 		GcInformacaoFiltro filtro = new GcInformacaoFiltro();
 		filtro.setTag(new GcTag());
 		filtro.tag.setSigla((String) (tag[0]));
-		filtro.situacao = CpMarcador.AR.findById(CpMarcador.MARCADOR_ATIVO);
+		filtro.situacao = CpMarcador.AR.findById(CpMarcadorEnum.ATIVO.getId());
 		if (idLotacao != null)
 			filtro.lotacao = DpLotacao.AR.findById(idLotacao);
 		filtro.pesquisa = true;

@@ -48,6 +48,7 @@ import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.model.Veiculo;
 import br.gov.jfrj.siga.tp.model.vo.ItemVO;
 import br.gov.jfrj.siga.tp.model.vo.MissaoVO;
+import br.gov.jfrj.siga.tp.util.FormatarDataHora;
 import br.gov.jfrj.siga.tp.util.PerguntaSimNao;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -71,6 +72,7 @@ public class MissaoController extends TpController {
 	private static final String CONDUTOR_STR = "condutor";
 	private static final String REQUISICOES_TRANSPORTE_STR = "requisicoesTransporte";
 	private static final String PATTERN_DDMMYYYYHHMM = "dd/MM/yyyy HH:mm";
+	private static final String PATTERN_DDMMYYYYHHMM_MYSQL = "yyyy-MM-dd HH:mm";
 	private static final String MISSAO_CONDUTOR_REQUIRED = "missao.condutor.required";
 	private static final String PROGRAMAR_RAPIDO =  "programarRapido";
 	private static final String MISSOESPORCONDUTOREESCALA_STR = "missoesPorCondutoreEscala";
@@ -236,7 +238,8 @@ public class MissaoController extends TpController {
 	@RoleAdminMissaoComplexo
 	@Path("/salvar")
 	public void salvar(Missao missao, List<RequisicaoTransporte> requisicoesTransporteAlt, List<RequisicaoTransporte> requisicoesTransporteAnt) throws Exception {
-	    error(null == missao.getCondutor() || null == missao.getVeiculo() || null == missao.getDataHoraSaida(), "missao", "views.erro.campoObrigatorio");
+    	
+    	error(null == missao.getCondutor() || null == missao.getVeiculo() || null == missao.getDataHoraSaida(), "missao", "views.erro.campoObrigatorio");
 	    missao.setCpOrgaoUsuario(getTitular().getOrgaoUsuario());
 
 	    Template template;
@@ -705,7 +708,7 @@ public class MissaoController extends TpController {
 			}
 
 			if (missao.getDataHoraSaida() != null) {
-				String dataHoraSaidaStr = new SimpleDateFormat(PATTERN_DDMMYYYYHHMM).format(missao.getDataHoraSaida().getTime());
+				String dataHoraSaidaStr = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL)).format(missao.getDataHoraSaida().getTime());
 				if (!autorizacaoGI.ehAdministrador() && !autorizacaoGI.ehAdministradorMissao() && !autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
 					List<Condutor> condutores = new ArrayList<Condutor>();
 					condutores.add(missao.getCondutor());
@@ -815,7 +818,7 @@ public class MissaoController extends TpController {
 	@RoleAdminMissao
 	@RoleAdminMissaoComplexo
 	@RoleAgente
-	@Path("/buscarPelaSequence/{popUp}/{sequence*}")
+	@Path("/buscarPelaSequence")
 	public void buscarPelaSequence(boolean popUp, String sequence) throws Exception {
 		try {
 			recuperarPelaSigla(sequence, popUp);
@@ -923,24 +926,24 @@ public class MissaoController extends TpController {
 
 	@SuppressWarnings("unchecked")
     protected void buscarPorCondutoreseEscala(EscalaDeTrabalho escala) {
-		SimpleDateFormat formatar = new SimpleDateFormat(PATTERN_DDMMYYYYHHMM);
+		SimpleDateFormat formatar = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL));
 		String dataFormatadaFimOracle;
 		if (escala.getDataVigenciaFim() == null) {
-			dataFormatadaFimOracle = "to_date('31/12/9999 23:59', 'DD/MM/YYYY HH24:mi')";
+			dataFormatadaFimOracle = FormatarDataHora.recuperaDataFim();
 		} else {
 			String dataFim = formatar.format(escala.getDataVigenciaFim().getTime());
-			dataFormatadaFimOracle = "to_date('" + dataFim + "', 'DD/MM/YYYY HH24:mi')";
+			dataFormatadaFimOracle = dataFim;
 		}
 
 		String dataInicio = formatar.format(escala.getDataVigenciaInicio().getTime());
-		String dataFormatadaInicioOracle = "to_date('" + dataInicio + "', 'DD/MM/YYYY HH24:mi')";
+		String dataFormatadaInicioOracle = dataInicio;
 		List<Missao> missoes = null;
 
 		String qrl = 	"SELECT p FROM Missao p" +
 		" WHERE  p.condutor.id = " + escala.getCondutor().getId() +
 		" AND    p.estadoMissao NOT IN ('" + EstadoMissao.CANCELADA + "','" + EstadoMissao.FINALIZADA + "')" +
-		" AND   (p.dataHoraSaida >= " + dataFormatadaInicioOracle +
-		" AND    p.dataHoraSaida <= " + dataFormatadaFimOracle + "))";
+		" AND   (p.dataHoraSaida >= '" + dataFormatadaInicioOracle +
+		"' AND    p.dataHoraSaida <= '" + dataFormatadaFimOracle + "')";
 
 		Query qry = Missao.AR.em().createQuery(qrl);
 		missoes = (List<Missao>) qry.getResultList();
@@ -1052,7 +1055,7 @@ public class MissaoController extends TpController {
 
 	protected void montarDadosParaAMissao(Missao missao) throws Exception {
 		removerRequisicoesDoRenderArgs(missao.getRequisicoesTransporte());
-		SimpleDateFormat formatar = new SimpleDateFormat(PATTERN_DDMMYYYYHHMM);
+		SimpleDateFormat formatar = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL));
 		String dataHoraSaidaStr = formatar.format(missao.getDataHoraSaida().getTime());
 		List<Condutor> condutores = listarCondutoresDisponiveis(missao.getId(), getTitular().getOrgaoUsuario().getId(), dataHoraSaidaStr, missao.getInicioRapido());
 		boolean encontrouCondutor = false;

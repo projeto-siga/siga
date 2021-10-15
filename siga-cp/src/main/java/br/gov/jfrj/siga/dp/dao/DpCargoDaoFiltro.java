@@ -24,12 +24,21 @@ public class DpCargoDaoFiltro extends DaoFiltroSelecionavel {
 	private String nome;
 	private Long idOrgaoUsu;
 	private Long idCargoIni;
+	private boolean buscarInativos;
 	
 	public DpCargoDaoFiltro() {}
 	
 	public DpCargoDaoFiltro(String nome, Long idOrgaoUsu) {
 		this.nome = nome;
 		this.idOrgaoUsu = idOrgaoUsu;
+	}
+	
+	public boolean isBuscarInativos() {
+		return buscarInativos;
+	}
+
+	public void setBuscarInativos(boolean buscarInativos) {
+		this.buscarInativos = buscarInativos;
 	}
 
 	public Long getIdOrgaoUsu() {

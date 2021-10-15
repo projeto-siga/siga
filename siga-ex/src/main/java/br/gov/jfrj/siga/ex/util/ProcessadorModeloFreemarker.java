@@ -120,7 +120,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			if (e.getCauseException() != null
 					&& e.getCauseException() instanceof AplicacaoException)
 				throw (AplicacaoException) e.getCauseException();
-			throw new RuntimeException("Erro executanto template Freemarker", e);
+			throw new RuntimeException("Erro executanto template Freemarker: " + e.getMessage(), e);
 		} catch (IOException e) {
 			return "Erro executando template FreeMarker\n\n" + e.getMessage();
 		} finally {

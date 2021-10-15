@@ -2,8 +2,8 @@ package br.gov.jfrj.siga.base;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
@@ -29,6 +29,22 @@ public class Data {
         try {
             format.setLenient(false);
             data = format.parse(dataDDMMYYYY);
+            if (dataDentroSeculo21(data)) {
+            	return true;
+            } else {
+            	return false;
+            }
+        } catch (ParseException e) {
+        	return false;
+        }
+	}
+	
+	public static Boolean valida(String dt, String formato) {
+        Date data = null;
+		SimpleDateFormat format = new SimpleDateFormat(formato);
+        try {
+            format.setLenient(false);
+            data = format.parse(dt);
             if (dataDentroSeculo21(data)) {
             	return true;
             } else {
@@ -68,6 +84,14 @@ public class Data {
 	public static String formatDDMMYY(Date dt) {
 		if (dt != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			return df.format(dt);
+		}
+		return null;
+	}
+	
+	public static String formatDDMMYYYY(Date dt) {
+		if (dt != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			return df.format(dt);
 		}
 		return null;
@@ -115,5 +139,11 @@ public class Data {
 		}
 		return null;
 	}
-	
+
+	public static LocalDateTime toLocalDateTime(Date dt) {
+	    return dt.toInstant()
+			      .atZone(ZoneId.systemDefault())
+			      .toLocalDateTime();
 	}
+
+}

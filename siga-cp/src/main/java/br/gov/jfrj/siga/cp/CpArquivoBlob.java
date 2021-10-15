@@ -43,13 +43,12 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
  * A class that represents a row in the CP_ARQUIVO_BLOB table. You can customize
  * the behavior of this class by editing the class, {@link CpArquivoBlob()}.
  */
+@SuppressWarnings("serial")
 @Entity
 @Immutable
 @Table(name = "corporativo.cp_arquivo_blob")
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpArquivoBlob implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "ID_ARQ_BLOB")

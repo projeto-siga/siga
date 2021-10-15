@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
 		"                     ELSE 0 "+
 		"                   END) as cont_lota, "+
-		"               mard.cpTipoMarcador, "+
+		"               mard.idFinalidade, "+
 		"               mard.ordem, "+
 		"               mard.idCor, "+
 		"               mard.idIcone "+
@@ -56,14 +56,14 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
 		"               AND marca.cpTipoMarca.idTpMarca = 1 "+
-		"               AND tpForma.idTipoFormaDoc = :idTipoForma "+
+		"               AND (tpForma.idTipoFormaDoc = :idTipoForma)"+
 		"        GROUP  BY mard.idMarcador, "+
 		"                  mard.descrMarcador, "+
-		"                  mard.cpTipoMarcador, "+
+		"                  mard.idFinalidade, "+
 		"                  mard.ordem, "+
 		"                  mard.idCor, "+
 		"                  mard.idIcone "+
-		"ORDER  BY mard.cpTipoMarcador, "+
+		"ORDER  BY mard.idFinalidade, "+
 		"          mard.ordem, "+
 		"          mard.descrMarcador")
 })

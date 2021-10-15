@@ -40,7 +40,7 @@ public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, T
 			synchronized (Cp.class) {
 				if (instance == null) {
 					CpConfiguracaoBL confBL = new CpConfiguracaoBL();
-					CpConfiguracaoComparator comparator = new CpConfiguracaoComparator();
+					CpConfiguracaoCacheComparator comparator = new CpConfiguracaoCacheComparator();
 					CpCompetenciaBL compBL = new CpCompetenciaBL();
 					CpBL cpBL = new CpBL();
 					

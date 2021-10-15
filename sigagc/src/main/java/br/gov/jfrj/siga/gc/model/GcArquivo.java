@@ -21,16 +21,15 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "gc_arquivo", schema = "sigagc")
+@Table(name = "sigagc.gc_arquivo")
 public class GcArquivo extends Objeto implements Serializable {
 	private static final long serialVersionUID = -1924833226821913592L;
 	public static ActiveRecord<GcArquivo> AR = new ActiveRecord<>(
 			GcArquivo.class);
 	@Id
-	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcArquivoSeq")
-	@GeneratedValue(generator = "gcArquivoSeq")
+	@GeneratedValue
 	@Column(name = "ID_CONTEUDO")
-	private long id;
+	private Long id;
 
 	@Column(name = "TITULO")
 	private String titulo;
@@ -45,7 +44,7 @@ public class GcArquivo extends Objeto implements Serializable {
 	@Column(name = "CONTEUDO_TIPO")
 	private String mimeType;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -158,9 +157,9 @@ public class GcArquivo extends Objeto implements Serializable {
 		String extensao = titulo.split("\\.")[1];
 
 		if (extensao != null) {
-			if (extensao.contentEquals("gif") || extensao.contentEquals("jpg")
-					|| extensao.contentEquals("png")
-					|| extensao.contentEquals("tiff"))
+			if (extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("jpg")
+					|| extensao.equalsIgnoreCase("png")
+					|| extensao.equalsIgnoreCase("tiff"))
 				return "image/" + extensao;
 			if (extensao.contains("pdf"))
 				return "application/pdf";
@@ -174,7 +173,7 @@ public class GcArquivo extends Objeto implements Serializable {
 		return null;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

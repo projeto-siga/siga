@@ -85,6 +85,11 @@
 	  width:35%;
 	  border:1px solid red;
 	}
+	
+	#table-wrapper table tr td:nth-child(3) {
+		text-align: right;
+		padding-right: 12px;
+	}
 </style>
 
 <script type="text/javascript" language="Javascript1.1">

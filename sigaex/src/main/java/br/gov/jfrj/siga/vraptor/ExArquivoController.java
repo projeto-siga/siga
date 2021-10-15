@@ -24,7 +24,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.Map;
@@ -57,8 +56,6 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.DocumentosSiglaArquivoGet;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetRequest;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.DocumentosSiglaArquivoGetResponse;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -162,8 +159,8 @@ public class ExArquivoController extends ExController {
 
 			if ((isPdf || isHtml) && completo && mob != null && mov == null) {
 				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
-				DocumentosSiglaArquivoGetRequest req = new DocumentosSiglaArquivoGetRequest();
-				DocumentosSiglaArquivoGetResponse resp = new DocumentosSiglaArquivoGetResponse();
+				DocumentosSiglaArquivoGet.Request req = new DocumentosSiglaArquivoGet.Request();
+				DocumentosSiglaArquivoGet.Response resp = new DocumentosSiglaArquivoGet.Response();
 				req.sigla = mob.getSigla();
 				req.contenttype = isPdf ? "application/pdf" : "text/html";
 				req.estampa = estampar;
@@ -495,12 +492,10 @@ public class ExArquivoController extends ExController {
 		try {
 			pwd = Prop.get("/siga.autenticacao.senha");
 			if (pwd == null)
-				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
+				throw new AplicacaoException("Erro obtendo propriedade siga.autenticacao.senha");
 			return pwd;
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
+			throw new AplicacaoException("Erro obtendo propriedade siga.autenticacao.senha", 0, e);
 		}
 	}
 

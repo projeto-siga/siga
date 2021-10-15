@@ -20,20 +20,17 @@
 package br.gov.jfrj.siga.ex.service.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -42,10 +39,8 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -54,6 +49,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExDocumentoNumeracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -63,19 +59,19 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSequencia;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
+import br.gov.jfrj.siga.jee.SoapContext;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -85,54 +81,22 @@ import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
 public class ExServiceImpl implements ExService {
 	private final static Logger log = Logger.getLogger(ExService.class);
 
-	private class SoapContext implements Closeable {
+	private class ExSoapContext extends SoapContext {
 		EntityManager em;
 		boolean transacional;
 		long inicio = System.currentTimeMillis();
 
-		public SoapContext(boolean transacional) {
-			this.transacional = transacional;
-			em = ExStarter.emf.createEntityManager();
-			ContextoPersistencia.setEntityManager(em);
-
-			ServletContext ctx = (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
-			HttpServletRequest request = (HttpServletRequest) context.getMessageContext()
-					.get(MessageContext.SERVLET_REQUEST);
-			HttpServletResponse response = (HttpServletResponse) context.getMessageContext()
-					.get(MessageContext.SERVLET_RESPONSE);
-			CurrentRequest.set(new RequestInfo(ctx, request, response));
-
-			ModeloDao.freeInstance();
+		public ExSoapContext(boolean transacional) {
+			super(context, ExStarter.emf, transacional);
+		}
+		
+		@Override
+		public void initDao() {
 			ExDao.getInstance();
 			try {
 				Ex.getInstance().getConf().limparCacheSeNecessario();
 			} catch (Exception e1) {
 				throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
-			}
-			if (this.transacional)
-				em.getTransaction().begin();
-		}
-
-		public void rollback(Exception e) {
-			if (em.getTransaction().isActive())
-				em.getTransaction().rollback();
-			if (!RequestLoggerFilter.isAplicacaoException(e)) {
-				RequestLoggerFilter.logException(null, inicio, e);
-			}
-		}
-
-		@Override
-		public void close() throws IOException {
-			try {
-				if (this.transacional)
-					em.getTransaction().commit();
-			} catch (Exception e) {
-				if (em.getTransaction().isActive())
-					em.getTransaction().rollback();
-				throw new RuntimeException(e);
-			} finally {
-				em.close();
-				ContextoPersistencia.setEntityManager(null);
 			}
 		}
 	}
@@ -146,7 +110,8 @@ public class ExServiceImpl implements ExService {
 
 	public Boolean transferir(String codigoDocumentoVia, String siglaDestino, String siglaCadastrante,
 			Boolean forcarTransferencia) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		// System.out.println("*** transferir: " + codigoDocumentoVia + " - " + siglaDestino + " - " + siglaCadastrante + " - " + forcarTransferencia);
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				if (codigoDocumentoVia == null)
 					return false;
@@ -162,14 +127,11 @@ public class ExServiceImpl implements ExService {
 					return false;
 				if (destinoParser.getLotacao() == null)
 					destinoParser.setLotacao(destinoParser.getPessoa().getLotacao());
-				if (mob.getUltimaMovimentacaoNaoCancelada() != null && ((destinoParser.getLotacao() == null
-						|| !destinoParser.getLotacao().equivale(mob.getUltimaMovimentacaoNaoCancelada().getLotaResp()))
-						|| (destinoParser.getPessoa() != null && !destinoParser.getPessoa()
-								.equivale(mob.getUltimaMovimentacaoNaoCancelada().getResp())))) {
+				if (!mob.isAtendente(destinoParser.getPessoa(), destinoParser.getLotacao())) {
 					Ex.getInstance().getBL().transferir(null, null, cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null, null, destinoParser.getLotacao(),
 							destinoParser.getPessoa(), null, null, null, null, null, false, null, null, null,
-							forcarTransferencia, false);
+							forcarTransferencia, false, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 				}
 				return true;
 			} catch (Exception ex) {
@@ -190,7 +152,7 @@ public class ExServiceImpl implements ExService {
 
 	public Boolean arquivarCorrente(String codigoDocumentoVia, String siglaDestino, String siglaCadastrante)
 			throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumentoVia);
 				if (mob.doc().isProcesso()) {
@@ -212,7 +174,7 @@ public class ExServiceImpl implements ExService {
 
 	public Boolean juntar(String codigoDocumentoViaFilho, String codigoDocumentoViaPai, String siglaDestino,
 			String siglaCadastrante) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mobFilho = buscarMobil(codigoDocumentoViaFilho);
 				ExMobil mobPai = buscarMobil(codigoDocumentoViaPai);
@@ -232,7 +194,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return !mob.getExDocumento().isPendenteDeAssinatura();
@@ -244,7 +206,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isSemEfeito(String codigoDocumento) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob == null)
@@ -258,7 +220,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean podeMovimentar(String codigoDocumento, String siglaCadastrante) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -275,24 +237,19 @@ public class ExServiceImpl implements ExService {
 
 	public Boolean podeTransferir(String codigoDocumento, String siglaCadastrante, Boolean forcarTransferencia)
 			throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
-			try {
-				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
-				ExMobil mob = buscarMobil(codigoDocumento);
-				if (mob.doc().isProcesso()) {
-					mob = mob.doc().getUltimoVolume();
-				} else if (contemApenasUmaVia(mob)) {
-					mob = mob.doc().getPrimeiraVia();
-				}
-				if (forcarTransferencia)
-					return Ex.getInstance().getComp().podeSerTransferido(mob);
-				else
-					return Ex.getInstance().getComp().podeTransferir(cadastranteParser.getPessoa(),
-							cadastranteParser.getLotacao(), mob);
-			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
+			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
+			ExMobil mob = buscarMobil(codigoDocumento);
+			if (mob.doc().isProcesso()) {
+				mob = mob.doc().getUltimoVolume();
+			} else if (contemApenasUmaVia(mob)) {
+				mob = mob.doc().getPrimeiraVia();
 			}
+			if (forcarTransferencia)
+				return Ex.getInstance().getComp().podeSerTransferido(mob);
+			else
+				return Ex.getInstance().getComp().podeTransferir(cadastranteParser.getPessoa(),
+						cadastranteParser.getLotacao(), mob);
 		}
 	}
 
@@ -308,7 +265,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isAtendente(String codigoDocumento, String siglaTitular) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -321,7 +278,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String getAtendente(String codigoDocumento, String siglaTitular) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -329,15 +286,15 @@ public class ExServiceImpl implements ExService {
 				if (mob.getDoc().isProcesso())
 					mob = mob.getDoc().getUltimoVolume();
 
-				DpResponsavel resp = ExCompetenciaBL.getAtendente(mob);
-				if (resp == null)
-					return null;
-
-				if (resp instanceof DpPessoa) {
-					return resp.getSiglaCompleta() + "@" + ((DpPessoa) resp).getLotacao().getSiglaCompleta();
-				} else {
-					return "@" + resp.getSiglaCompleta();
+				Set<PessoaLotacaoParser> l = mob.getAtendente();
+				for (PessoaLotacaoParser pl : l) {
+					if (pl.getPessoa() != null) {
+						return pl.getPessoa().getSiglaCompleta() + "@" + pl.getPessoa().getLotacao().getSiglaCompleta();
+					} else if (pl.getLotacao() != null) {
+						return "@" + pl.getLotacao().getSiglaCompleta();
+					}
 				}
+				return null;
 			} catch (Exception ex) {
 				ctx.rollback(ex);
 				throw ex;
@@ -346,7 +303,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				return Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(num);
 			} catch (Exception ex) {
@@ -357,7 +314,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String buscarPorCodigo(String codigo) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobilSelecao sel = new ExMobilSelecao();
 				sel.setSigla(codigo);
@@ -374,7 +331,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String criarVia(String codigoDocumento, String siglaCadastrante) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				if (codigoDocumento == null)
 					return null;
@@ -393,7 +350,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String form(String codigoDocumento, String variavel) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				if (codigoDocumento == null)
 					return null;
@@ -409,7 +366,7 @@ public class ExServiceImpl implements ExService {
 	@Override
 	public Boolean exigirAnexo(String codigoDocumentoVia, String siglaCadastrante, String descricaoDoAnexo)
 			throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumentoVia);
 
@@ -425,7 +382,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String toJSON(String codigo) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = null;
 				{
@@ -446,7 +403,7 @@ public class ExServiceImpl implements ExService {
 			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo,
 			String classificacaoStr, String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo,
 			String siglaMobilPai, Boolean finalizar) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				DpPessoa cadastrante = null;
 				DpPessoa subscritor = null;
@@ -530,14 +487,13 @@ public class ExServiceImpl implements ExService {
 				if (eletronico == null)
 					eletronico = true;
 
-				Long idSit = Ex
+				CpSituacaoDeConfiguracaoEnum idSit = Ex
 						.getInstance().getConf().buscaSituacao(modelo, tipoDocumento, cadastrante,
-								cadastrante.getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
-						.getIdSitConfiguracao();
+								cadastrante.getLotacao(), ExTipoDeConfiguracao.ELETRONICO);
 
-				if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+				if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 					eletronico = true;
-				} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+				} else if (idSit == CpSituacaoDeConfiguracaoEnum.PROIBIDO) {
 					eletronico = false;
 				}
 
@@ -546,24 +502,20 @@ public class ExServiceImpl implements ExService {
 					Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 					ExConfiguracao config = new ExConfiguracao();
-					CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-					CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
 					config.setDpPessoa(cadastrante);
 					config.setLotacao(cadastrante.getLotacao());
 					config.setExTipoDocumento(tipoDocumento);
 					config.setExFormaDocumento(forma);
 					config.setExModelo(modelo);
 					config.setExClassificacao(classificacao);
-					exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
-					config.setCpTipoConfiguracao(exTpConfig);
-					exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
-					config.setCpSituacaoConfiguracao(exStConfig);
+					config.setCpTipoConfiguracao(ExTipoDeConfiguracao.NIVEL_DE_ACESSO);
+					config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.DEFAULT);
 
-					ExConfiguracao exConfig = ((ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
+					ExConfiguracaoCache exConfig = ((ExConfiguracaoCache) Ex.getInstance().getConf().buscaConfiguracao(config,
 							new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
 
 					if (exConfig != null)
-						nivelDeAcesso = exConfig.getExNivelAcesso();
+						nivelDeAcesso = dao().consultar(exConfig.exNivelAcesso, ExNivelAcesso.class, false);
 				} else {
 					nivelDeAcesso = dao().consultarExNidelAcesso(nomeNivelDeAcesso);
 				}
@@ -571,35 +523,11 @@ public class ExServiceImpl implements ExService {
 				if (nivelDeAcesso == null)
 					nivelDeAcesso = dao().consultar(6L, ExNivelAcesso.class, false);
 
-				List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
-				ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
-				Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+			
+		List<ExNivelAcesso> niveisFinal = NivelDeAcessoUtil.getListaNivelAcesso(tipoDocumento, forma, modelo, classificacao, cadastrante, cadastrante.getLotacao());
 
-				ExConfiguracao config = new ExConfiguracao();
-				CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-				config.setDpPessoa(cadastrante);
-				config.setLotacao(cadastrante.getLotacao());
-				config.setExTipoDocumento(tipoDocumento);
-				config.setExFormaDocumento(forma);
-				config.setExModelo(modelo);
-				config.setExClassificacao(classificacao);
-				exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-				config.setCpTipoConfiguracao(exTpConfig);
-				int nivelMinimo = ((ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt)).getExNivelAcesso().getGrauNivelAcesso();
-				exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-				config.setCpTipoConfiguracao(exTpConfig);
-				int nivelMaximo = ((ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt)).getExNivelAcesso().getGrauNivelAcesso();
-
-				for (ExNivelAcesso nivelAcesso : listaNiveis) {
-					if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo
-							&& nivelAcesso.getGrauNivelAcesso() <= nivelMaximo)
-						niveisFinal.add(nivelAcesso);
-				}
-
-				if (niveisFinal != null && !niveisFinal.isEmpty() & !niveisFinal.contains(nivelDeAcesso))
-					nivelDeAcesso = niveisFinal.get(0);
+		if (niveisFinal != null && !niveisFinal.isEmpty() & !niveisFinal.contains(nivelDeAcesso))
+			nivelDeAcesso = niveisFinal.get(0);
 
 				doc.setCadastrante(cadastrante);
 				doc.setLotaCadastrante(cadastrante.getLotacao());
@@ -715,28 +643,28 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String cadastrante(String codigoDocumentoVia) throws Exception {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
 			return SiglaParser.makeSigla(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante());
 		}
 	}
 
 	public String titular(String codigoDocumentoVia) throws Exception {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
 			return SiglaParser.makeSigla(mob.doc().getTitular(), mob.doc().getLotaTitular());
 		}
 	}
 
 	public String subscritor(String codigoDocumentoVia) throws Exception {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
 			return SiglaParser.makeSigla(mob.doc().getSubscritor(), mob.doc().getLotaSubscritor());
 		}
 	}
 
 	public String destinatario(String codigoDocumentoVia) throws Exception {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
 			return SiglaParser.makeSigla(mob.doc().getDestinatario(), mob.doc().getLotaDestinatario());
 		}
@@ -772,7 +700,7 @@ public class ExServiceImpl implements ExService {
 
 	private String obterPrimeiroResponsavelPorIdPapel(String codigoDocumentoVia, long papel)
 			throws Exception, IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
 			List<DpResponsavel> l = mob.doc().getResponsaveisPorPapel(dao().consultar(papel, ExPapel.class, false));
 			if (l == null || l.size() == 0)
@@ -783,7 +711,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob.isGeral())
@@ -797,7 +725,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String obterNumeracaoExpediente(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				Long idDocNumeracao = null;
 				Long nrDocumento = 0L;
@@ -863,7 +791,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public String obterSequencia(Integer tipoSequencia, Long anoEmissao, String zerarInicioAno) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				Long idSeq = null;
 				Long numero = 0L;
@@ -923,7 +851,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public String obterSiglaMobilPorIdDoc(Long idDoc)  throws Exception {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExDocumento doc = ExDao.getInstance().consultar(idDoc, ExDocumento.class, false);
 			if (doc != null) {
 				return doc.getPrimeiroMobil().getSigla();
@@ -934,7 +862,7 @@ public class ExServiceImpl implements ExService {
 	
 	
 	public String obterMetadadosDocumento(String siglaDocumento, String token) throws Exception {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				SigaUtil.getInstance().validarToken(token);
 			
@@ -954,7 +882,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public String obterMarcadores(String token) throws Exception {
-		try (SoapContext ctx = new SoapContext(false)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
 				SigaUtil.getInstance().validarToken(token);
 			
@@ -966,7 +894,7 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 	public String publicarDocumentoPortal(String siglaDocumento, String cadastranteStr, String marcadoresStr, String token) throws Exception {
-		try (SoapContext ctx = new SoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
 				if(Prop.getBool("/siga.ws.seguranca.token.jwt"))
 					SigaUtil.getInstance().validarToken(token);
@@ -1016,4 +944,5 @@ public class ExServiceImpl implements ExService {
 			return "Ocorreu um problema na publicação de documento em Portal.";
 		}
 	}
+	
 }

@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -70,7 +71,7 @@ public class LoginController extends SigaController {
 	public void login(String cont) throws IOException {
 		Map<String, String> manifest = new HashMap<>();
 		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
-			String m = convertStreamToString(is);
+			String m = convertStreamToString(is); 
 			if (m != null) {
 				m = m.replaceAll("\r\n", "\n");
 				for (String s : m.split("\n")) {
@@ -100,9 +101,9 @@ public class LoginController extends SigaController {
 
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
-				if (lista.size() > 1) {
+				/* if (lista.size() > 1) {
 					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
-				}
+				}*/
 			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
 				StringBuffer mensagem = new StringBuffer();
@@ -121,6 +122,7 @@ public class LoginController extends SigaController {
 				result.forwardTo(this).login(cont);				
 			} else {
 				gravaCookieComToken(username, cont);
+				result.include("isPinNotDefined", true);
 			}
 					
 			
@@ -168,7 +170,7 @@ public class LoginController extends SigaController {
 			if (usuarioSwap == null)
 				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
 			
-			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getCpfPessoa().toString(), true);
+			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getPessoaAtual().getCpfPessoa().toString(), true);
 			
 			boolean usuarioPermitido = false;
 			for (CpIdentidade identCpf : idsCpf) {
@@ -180,7 +182,7 @@ public class LoginController extends SigaController {
 			if (!usuarioPermitido)
 				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
 				
-			if (!so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
+			if (Prop.isGovSP() && !so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
 				throw new ServletException("Senha do usuário atual não confere com a do usuário da lotação.");
 
 			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
@@ -348,7 +350,7 @@ public class LoginController extends SigaController {
 				result.include("loginMensagem", a.getMessage());		
 				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
 			}catch(Exception e){
-				throw new AplicacaoException("Não foi possivel acessar o Login SP." );
+				throw new AplicacaoException("Não foi possivel acessar o LoginSP." );
 		}
 	}
 	

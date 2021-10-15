@@ -43,6 +43,10 @@ public class ExGraphTramitacao extends ExGraph {
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
 
 				PessoaLotacaoParser remetente = new PessoaLotacaoParser(mov.getTitular(), mov.getLotaTitular());
+				if (remetente.getPessoa() == null && remetente.getLotacao() == null && mov.getExMovimentacaoRef() != null)
+					remetente = new PessoaLotacaoParser(mov.getExMovimentacaoRef().getTitular(), mov.getExMovimentacaoRef().getLotaTitular());
+				if (remetente.getPessoa() == null && remetente.getLotacao() == null && mov.getExMovimentacaoRef() != null)
+					remetente = new PessoaLotacaoParser(mov.getExMovimentacaoRef().getResp(), mov.getExMovimentacaoRef().getLotaResp());
 				PessoaLotacaoParser destinatario = new PessoaLotacaoParser(mov.getResp(), mov.getLotaResp());
 
 				numTransicao++;

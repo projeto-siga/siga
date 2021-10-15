@@ -1,49 +1,73 @@
 -- -----------------------------------------------------------------------------------------------
 --  SCRIPT: ALTERA A QUANTIDADE DE CAMPOS SIGLA DE 20 PARA 30.
 -- -----------------------------------------------------------------------------------------------
-DECLARE
-    index_count INTEGER;
-BEGIN
-    SELECT Count(1)
-    INTO   index_count
-    FROM   all_indexes
-    WHERE  index_name = 'DP_LOTACAO_IDX_006';
 
-    IF index_count > 0 THEN
-      EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.DP_LOTACAO_IDX_006';
+-- ------------------ PREPARACAO PARA RETIRAR OS INDEX DA COLUNA SIGLA ---------------------------
+BEGIN
+    FOR IDX IN (
+        SELECT
+            INDEX_NAME
+        FROM
+            ALL_IND_EXPRESSIONS
+        WHERE
+                TABLE_OWNER = 'CORPORATIVO'
+            AND TABLE_NAME = 'DP_LOTACAO'
+    ) LOOP
+        EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.' || IDX.INDEX_NAME;
+    END LOOP;
+END;
+/
+
+DECLARE
+    INDEX_COUNT INTEGER;
+BEGIN
+    SELECT
+        COUNT(1)
+    INTO INDEX_COUNT
+    FROM
+        ALL_INDEXES
+    WHERE
+        INDEX_NAME = 'DP_LOTACAO_IDX_006';
+
+    IF INDEX_COUNT > 0 THEN
+        EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.DP_LOTACAO_IDX_006';
     END IF;
 END;
 /
 
 DECLARE
-    index_count INTEGER;
+    INDEX_COUNT INTEGER;
 BEGIN
-    SELECT Count(1)
-    INTO   index_count
-    FROM   all_indexes
-    WHERE  index_name = 'SIGLA_LOTACAO_DP_LOTACAO_UK';
+    SELECT
+        COUNT(1)
+    INTO INDEX_COUNT
+    FROM
+        ALL_INDEXES
+    WHERE
+        INDEX_NAME = 'SIGLA_LOTACAO_DP_LOTACAO_UK';
 
-    IF index_count > 0 THEN
-      EXECUTE IMMEDIATE
-'ALTER TABLE CORPORATIVO.DP_LOTACAO DROP CONSTRAINT SIGLA_LOTACAO_DP_LOTACAO_UK'
-  ;
-
-  EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.SIGLA_LOTACAO_DP_LOTACAO_UK';
-END IF;
+    IF INDEX_COUNT > 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE CORPORATIVO.DP_LOTACAO DROP CONSTRAINT SIGLA_LOTACAO_DP_LOTACAO_UK';
+        EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.SIGLA_LOTACAO_DP_LOTACAO_UK';
+    END IF;
 END;
 /
+-- -----------------------------------------------------------
 
-ALTER TABLE corporativo.dp_lotacao
-  MODIFY (sigla_lotacao VARCHAR2(30));
+-- ---------------------ALTERACAO--------------------------------------
+ALTER TABLE CORPORATIVO.DP_LOTACAO MODIFY (SIGLA_LOTACAO VARCHAR2(30));
+-- -----------------------------------------------------------
 
-CREATE INDEX corporativo.dp_lotacao_idx_006
-  ON corporativo.dp_lotacao (id_orgao_usu ASC, sigla_lotacao ASC, id_lotacao ASC
-);
+-- ------------------ RECRIACAO DOS INDEDES ---------------------------
+CREATE INDEX CORPORATIVO.DP_LOTACAO_IDX_006 ON
+    CORPORATIVO.DP_LOTACAO (ID_ORGAO_USU ASC, SIGLA_LOTACAO ASC, ID_LOTACAO ASC);
 
-CREATE UNIQUE INDEX corporativo.sigla_lotacao_dp_lotacao_uk
-  ON corporativo.dp_lotacao (sigla_lotacao ASC, id_orgao_usu ASC, data_fim_lot
-ASC);
+CREATE UNIQUE INDEX CORPORATIVO.SIGLA_LOTACAO_DP_LOTACAO_UK ON
+    CORPORATIVO.DP_LOTACAO (SIGLA_LOTACAO ASC,ID_ORGAO_USU ASC,DATA_FIM_LOT ASC);
 
-ALTER TABLE "CORPORATIVO"."dp_lotacao"
-  ADD CONSTRAINT "SIGLA_LOTACAO_DP_LOTACAO_UK" UNIQUE ("sigla_lotacao",
-  "id_orgao_usu", "data_fim_lot") ENABLE; 
+ALTER TABLE CORPORATIVO.DP_LOTACAO
+    ADD CONSTRAINT SIGLA_LOTACAO_DP_LOTACAO_UK UNIQUE (SIGLA_LOTACAO,ID_ORGAO_USU,DATA_FIM_LOT) ENABLE;
+
+CREATE INDEX CORPORATIVO.DP_LOTACAO_UPPER_SIGLA ON
+    CORPORATIVO.DP_LOTACAO (UPPER(SIGLA_LOTACAO));
+-- -----------------------------------------------------------

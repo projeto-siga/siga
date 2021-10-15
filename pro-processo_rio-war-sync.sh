@@ -75,7 +75,7 @@ targets=(siga-ext.jar sigaex.war siga.war)
 
 ## DECLARE PRODUCTION SYNC SERVERS ARRAY
 #production_servers=(jproas135-1.infra.rio.gov.br jproas135-2.infra.rio.gov.br)
-production_servers=()
+production_servers=(jproas135.infra.rio.gov.br)
 
 
 

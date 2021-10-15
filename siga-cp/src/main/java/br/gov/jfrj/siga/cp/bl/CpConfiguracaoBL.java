@@ -438,8 +438,6 @@ public class CpConfiguracaoBL {
 				if (cfg.cpGrupo == 0 || cfg.cpPerfil == null || !cfg.ativaNaData(dtEvn))
 					continue;
 
-				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
-
 				if (cfg.dpPessoa != 0 && cfg.dpPessoa != pessoa.getIdInicial())
 					continue;
 
@@ -455,6 +453,8 @@ public class CpConfiguracaoBL {
 				if (cfg.orgaoUsuario != 0 && cfg.lotacao != lotacao.getIdInicial())
 					continue;
 
+				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
+				
 				if (g instanceof CpPerfil && cfg.dscFormula != null) {
 					Map<String, DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
 					pessoaMap.put("pessoa", pessoa);

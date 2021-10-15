@@ -86,6 +86,7 @@ echo "COPYING DEPENDENCIES:"
 
 for t in ${dependencies[@]}; do
   if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+        scp /opt/java/jboss-eap-7.2/standalone/deployments/$t /tmp
         echo $copy_war_jar
         echo "$t - OK"
 else

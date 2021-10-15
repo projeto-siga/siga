@@ -74,8 +74,8 @@ dependencies=(blucservice.war ckeditor.war vizservice.war)
 targets=(siga-ext.jar sigaex.war siga.war)
 
 ## DECLARE PRODUCTION SYNC SERVERS ARRAY
-production_servers=(jproas135-1.infra.rio.gov.br jproas135-2.infra.rio.gov.br)
-
+#production_servers=(jproas135-1.infra.rio.gov.br jproas135-2.infra.rio.gov.br)
+production_servers=(jproas135.infra.rio.gov.br)
 
 
 
@@ -86,7 +86,7 @@ echo ""
 echo "COPYING DEPENDENCIES:"
 
 for t in ${dependencies[@]}; do
-  if copy_war_jar=`scp jboss@jhomas135:/opt/java/jboss-eap-7.2/standalone/deployments/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+  if copy_war_jar=`scp jboss@jhomas135:/tmp/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
         echo $copy_war_jar
         echo "$t - OK"
 else
@@ -102,7 +102,7 @@ echo ""
 echo "COPYING TARGETS:"
 
 for t in ${targets[@]}; do
-if copy_war_jar=`scp jboss@jhomas135:/opt/java/jenkins/workspace/processo.rio/target/$t /tmp`; then
+if copy_war_jar=`scp jboss@jhomas135:/tmp/$t /tmp`; then
         echo $copy_war_jar
         echo "$t - OK"
 else

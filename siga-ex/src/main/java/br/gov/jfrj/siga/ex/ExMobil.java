@@ -2406,11 +2406,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				// Recebimento sem movRef limpa todos os pendentes até agora
 				if (mov.getExMovimentacaoRef() == null)
 					p.tramitesPendentes.clear();
-				else { 
-					if (mov.getExMovimentacaoRef() != null)
-						p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
-					p.recebimentosPendentes.add(mov);
-				}
+				else 
+					p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
+
+				p.recebimentosPendentes.add(mov);
 			}
 			if (mov.getExMovimentacaoRef() != null) {
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO) {

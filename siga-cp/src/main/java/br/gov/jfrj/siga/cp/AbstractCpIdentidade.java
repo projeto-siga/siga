@@ -62,13 +62,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "and u.dtCancelamentoIdentidade is null "
 				+ "and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date()) "
 				+ "and pes.dataFimPessoa is null "
-				+ "and (pes.situacaoFuncionalPessoa in (:sfp1, :sfp2, :sfp4, :sfp12, :sfp22, :sfp31, :sfp36)) "
-				/*+ "or pes.situacaoFuncionalPessoa = :sfp2 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp4 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36) "*/),
+				+ "and (pes.situacaoFuncionalPessoa in (:sfp1, :sfp2, :sfp4, :sfp12, :sfp22, :sfp31, :sfp36)) "),
         @NamedQuery(name = "consultarIdentidadeAtualPelaInicial", query = "from CpIdentidade u "
 				+ "		where u.hisDtIni = "
 				+ "		(select max(p.hisDtIni) from CpIdentidade p where p.hisIdIni = :idIni)"

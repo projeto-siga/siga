@@ -1,12 +1,13 @@
 #!/bin/bash
 #RESUME
-#This scripts is part of your deployment process. First step is previously executed a rsync or scp command to copy all war's from developer #environment.  Second step is to check environment requirements and finally execute the deploy operation.
+#This scripts is part of your deployment process. First step is to check environment requirements.  Second step is previously executed a scp command to copy all war's from developer or stage #environment and finally execute the deploy operation.
 #
 
 #verify parameters 
 if [ $# -lt 5 ]; then
    echo "ARGS NOT FOUND:  FAIL"
    echo "ARGS: JBOSS_USER JBOSS_PASS SCP_USER SERVERS_ARRAY ORIGIN_SERVER_ARTIFACTS"
+   echo "E.G: ./processo_rio-war-sync.sh jboss 12343 root ´jhomas456.infra.rio.gov.br jhomas987.infra.rio.gov.br´ jdevas323"
    echo "ABORTING..."
    exit 1
 fi

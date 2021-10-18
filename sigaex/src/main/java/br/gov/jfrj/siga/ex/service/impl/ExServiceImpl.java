@@ -404,7 +404,7 @@ public class ExServiceImpl implements ExService {
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr,
 			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo,
 			String nomePreenchimento, String classificacaoStr, String descricaoStr, Boolean eletronico,
-			String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, String tipoPrincipal,
+			String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, String siglaMobilFilho, String tipoPrincipal,
 			String siglaPrincipal, Boolean finalizar) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
@@ -695,6 +695,25 @@ public class ExServiceImpl implements ExService {
 									+ docPai.getSigla() + ") ainda não foi assinado.");
 
 						doc.setExMobilPai(mobPai);
+					}
+				}
+
+				if (siglaMobilFilho != null && !siglaMobilFilho.isEmpty()) {
+					final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+					filter.setSigla(siglaMobilFilho);
+					ExMobil mobFilho = (ExMobil) dao().consultarPorSigla(filter);
+					if (mobFilho != null) {
+						ExDocumento docFilho = mobFilho.getExDocumento();
+
+						if (docFilho.getExMobilAutuado() != null)
+							throw new AplicacaoException("Não foi possível criar o documento pois o documento filho ("
+									+ docFilho.getSigla() + ") já é autuado.");
+
+						if (docFilho.isPendenteDeAssinatura())
+							throw new AplicacaoException("Não foi possível criar o documento pois o documento filho ("
+									+ docFilho.getSigla() + ") ainda não foi assinado.");
+
+						doc.setExMobilAutuado(mobFilho);
 					}
 				}
 
@@ -1081,6 +1100,11 @@ public class ExServiceImpl implements ExService {
 				return mobFilho.isJuntado();
 			ExMobil mobPai = buscarMobil(siglaMobilPai);
 
+			if (mobPai.isGeralDeExpediente())
+				mobPai = mobPai.doc().getPrimeiraVia();
+			else if (mobPai.isGeralDeProcesso())
+				mobPai = mobPai.doc().getUltimoVolume();
+			
 			return mobFilho.getMobilPrincipal().equals(mobPai)
 					|| mobFilho.getMobilPrincipal().equals(mobPai.doc().getMobilGeral());
 		}

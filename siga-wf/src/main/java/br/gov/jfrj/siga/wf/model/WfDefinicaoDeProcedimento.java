@@ -475,7 +475,8 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 			if (td.getDefinicaoDeVariavel() != null)
 				for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel())
 					set.add(vd.getIdentificador());
-			if (td.getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO)
+			if (td.getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+					|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO)
 				set.add(WfTarefaDocCriar.getIdentificadorDaVariavel(td));
 		}
 		return String.join(", ", set);

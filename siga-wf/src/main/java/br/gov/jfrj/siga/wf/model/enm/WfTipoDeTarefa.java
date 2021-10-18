@@ -9,6 +9,7 @@ import com.crivano.jflow.task.TaskEval;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaArquivar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarAssinatura;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarJuntada;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAutuar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocIncluirCopia;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
@@ -29,6 +30,8 @@ public enum WfTipoDeTarefa implements TaskKind {
 	INCLUIR_COPIA("Incluir Cópia", "rectangle", "Incluir Cópia", WfTarefaDocIncluirCopia.class, false),
 	//
 	CRIAR_DOCUMENTO("Criar Documento", "rectangle", "Criar Documento", WfTarefaDocCriar.class, true),
+	//
+	AUTUAR_DOCUMENTO("Autuar Documento", "rectangle", "Autuar", WfTarefaDocAutuar.class, true),
 	//
 	FORMULARIO("Formulário", "tab", null, WfTarefaFormulario.class, true),
 	//

@@ -4,26 +4,44 @@
 #
 
 #verify parameters 
-if [ $# -lt 2 ]; then
+if [ $# -lt 5 ]; then
    echo "ARGS NOT FOUND:  FAIL"
-   echo "ARGS: USER PASS"
+   echo "ARGS: JBOSS_USER JBOSS_PASS SCP_USER SERVERS_ARRAY ORIGIN_SERVER_ARTIFACTS"
    echo "ABORTING..."
    exit 1
 fi
 
-user=$1
-pass=$2
+#DECLARE CREDENTIALS
+jboss_user=$1
+jboss_pass=$2
+
+#DECLARE SCP USER
+scp_user=$3
+
+## DECLARE DEPENDENCIES ARRAY
+dependencies=(blucservice.war ckeditor.war vizservice.war)
+
+## DECLARE TARGETS ARRAY
+targets=(siga-ext.jar sigaex.war siga.war)
+
+## DECLARE SERVERS ARRAY
+##e.g jdevasxxx jdevaszzz jdevasyyy
+servers=($4)
+
+## DECLARE ORIGIN SERVER ARTIFACTS VARIABLE
+##e.g jdevasxxx
+origin_server_artifacts=($5)
 
 #set variables
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.el7_9.x86_64/
 export JBOSS_HOME=/opt/java/jboss-eap-7.2
 
 
-#Verify requirements
+#Verifying requirements
 echo ""
 echo ""
 echo "################################################################################"
-echo "                            REQUIREMENTS VERIFICATION"
+echo "                            VERIFYING REQUIREMENTS"
 echo "################################################################################"
 echo ""
 echo "JAVAC VERSION:"
@@ -66,51 +84,40 @@ echo "                                   END"
 echo "###############################################################################"
 echo ""
 
-
-## DECLARE DEPENDENCIES ARRAY
-dependencies=(blucservice.war ckeditor.war vizservice.war)
-
-## DECLARE TARGETS ARRAY
-targets=(siga-ext.jar sigaex.war siga.war)
-
-
-
-
-
-
 echo "###############################################################################"
 echo "                              STARTING SCP"
 echo "###############################################################################"
 echo ""
-echo "COPYING DEPENDENCIES:"
+echo "COPYING DEPENDENCIES FROM $origin_server_artifacts"
 
 for t in ${dependencies[@]}; do
-  if copy_war_jar=`scp jboss@jdevas135:/opt/java/jboss-eap-7.2/standalone/deployments/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
-        scp /opt/java/jboss-eap-7.2/standalone/deployments/$t /tmp
-        echo $copy_war_jar
-        echo "$t - OK"
-else
-        echo $copy_war_jar
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
+        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
+        
+        
+                echo $copy_war_jar
+                echo "$t - OK"
+        else
+                echo $copy_war_jar
+                echo "FAIL"
+                echo "ABORTING..."
+                exit 1
+        fi
 done
 
 echo ""
 echo ""
-echo "COPYING TARGETS:"
+echo "COPYING TARGETS FROM $origin_server_artifacts"
 
 for t in ${targets[@]}; do
-if copy_war_jar=`scp jboss@jdevas135:/opt/java/jenkins/workspace/processo.rio/target/$t /tmp`; then
-        echo $copy_war_jar
-        echo "$t - OK"
-else
-        echo $copy_war_jar
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
+        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /tmp`; then
+                echo $copy_war_jar
+                echo "$t - OK"
+        else
+                echo $copy_war_jar
+                echo "FAIL"
+                echo "ABORTING..."
+                exit 1
+        fi
 done
 
 
@@ -120,73 +127,38 @@ echo "##########################################################################
 echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
+for s in ${servers[@]}; do
 
-for t in ${targets[@]}; do
-if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /tmp/$t"`; then
-        echo "DEPLOY: $t - OK"
-else
-        echo $deploy_siga
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
-echo ""
-done
-echo ""
+echo "$s"
+echo "DEPLOY DEPENDENCIES:"
+        #DEPLOY DEPENDENCIES
+	for t in ${dependencies[@]}; do	
+		if deploy_siga_dependencies=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$jboss_user --password=$jboss_pass`; then
+			echo "DEPLOY: $t - OK"
+		else
+			echo $deploy_siga_dependencies
+			echo "FAIL"
+			echo "ABORTING..."
+			exit 1
+		fi
+	echo ""
+	done
+echo "DEPLOY TARGETS:"
+        #DEPLOY TARGETS
+        for t in ${targets[@]}; do
+	        if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace /tmp/$t" --user=$jboss_user --password=$jboss_pass`; then
+                        echo "DEPLOY: $t - OK"
+	        else
+                        echo $deploy_siga
+                        echo "FAIL"
+                        echo "ABORTING..."
+                        exit 1
+	        fi
+        echo ""
+        done
 
-echo "###############################################################################"
-echo "                              END"
-echo "###############################################################################"
 
-echo ""
-echo "###############################################################################"
-echo "                              SYNCHRONIZING WITH GROUP SERVERS"
-echo "###############################################################################"
-echo ""
-echo "SERVER: jhomas135-1.infra.rio.gov.br"
-echo ""
-echo "NOT WILL BE VERIFY JAVA AND JBOSS VERSION "
-echo "NOT WILL BE VERIFY IF GRAPHIZ IS INSTALLED "
-echo ""
-echo "###############################################################################"
-echo "                             STARTING DEPLOY DEPENDENCIES"
-echo "###############################################################################"
-echo ""
-for t in ${dependencies[@]}; do
-if deploy_siga_dependencies=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jhomas135-1.infra.rio.gov.br:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$user --password=$pass`; then
-        echo "DEPLOY: $t - OK"
-else
-        echo $deploy_siga_dependencies
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
-echo ""
-done
-echo ""
-echo "###############################################################################"
-echo "                                        END"
-echo "###############################################################################"
-
-echo "###############################################################################"
-echo "                                 STARTING DEPLOY"
-echo "###############################################################################"
-for t in ${targets[@]}; do
-if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jhomas135-1.infra.rio.gov.br:9990 --command="deployment deploy-file --replace /tmp/$t" --user=$user --password=$pass`; then
-        echo "DEPLOY: $t - OK"
-else
-        echo $deploy_siga
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
-echo ""
 done
 echo "###############################################################################"
 echo "                                        END"
 echo "###############################################################################"
-
-
-
-
-

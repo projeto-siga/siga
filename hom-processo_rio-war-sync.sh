@@ -93,8 +93,6 @@ echo "COPYING DEPENDENCIES FROM $origin_server_artifacts"
 
 for t in ${dependencies[@]}; do
         if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
-        
-        
                 echo $copy_war_jar
                 echo "$t - OK"
         else
@@ -129,7 +127,6 @@ echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
 for s in ${servers[@]}; do
-
 echo "$s"
 echo ""
 echo "DEPLOY DEPENDENCIES:"
@@ -146,7 +143,6 @@ echo "DEPLOY DEPENDENCIES:"
 	
 	done
 echo ""
-echo ""
 echo "DEPLOY TARGETS:"
         #DEPLOY TARGETS
         for t in ${targets[@]}; do
@@ -160,8 +156,8 @@ echo "DEPLOY TARGETS:"
 	        fi
         done
 echo ""
+echo ""
 done
-
 echo "###############################################################################"
 echo "                                        END"
 echo "###############################################################################"

@@ -66,6 +66,7 @@ else
         exit 1
 fi
 echo ""
+
 echo "VIZSERVICE:"
 curl -s https://api.github.com/repos/projeto-siga/vizservice/releases/latest | grep browser_download_url | grep vizservice.war | cut -d '"' -f 4 | xargs wget -q downloading vizservice.war
 if verify_vizservice_war=`ls -l vizservice.war`; then
@@ -86,8 +87,10 @@ else
         exit 1
 fi
 echo ""
+
 echo "BLUCSERVICE:"
 curl -s https://api.github.com/repos/assijus/blucservice/releases/latest | grep browser_download_url | grep blucservice.war | cut -d '"' -f 4 | xargs wget -q downloading blucservice.war
+
 if verify_blucservice_war=`ls -l blucservice.war`; then
         echo "DOWNLOAD: blucservice.war - OK"
         cp -rf blucservice.war /tmp
@@ -106,6 +109,7 @@ else
         exit 1
 fi
 echo ""
+
 echo "CKEDITOR:"
 curl -s https://api.github.com/repos/projeto-siga/siga-docker/releases/latest | grep browser_download_url | grep .war | cut -d '"' -f 4 | xargs wget -q
 if verify_ckeditor_war=`ls -l ckeditor.war`; then

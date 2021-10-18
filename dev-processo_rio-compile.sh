@@ -70,6 +70,7 @@ echo "VIZSERVICE:"
 curl -s https://api.github.com/repos/projeto-siga/vizservice/releases/latest | grep browser_download_url | grep vizservice.war | cut -d '"' -f 4 | xargs wget -q downloading vizservice.war
 if verify_vizservice_war=`ls -l vizservice.war`; then
         echo "DOWNLOAD: vizservice.war - OK"
+        cp -rf vizservice.war /tmp
                 if deploy_vizservice=`mv -f vizservice.war $JBOSS_HOME/standalone/deployments/`; then
                         echo "DEPLOY: vizservice.war - OK"
                 else
@@ -89,6 +90,7 @@ echo "BLUCSERVICE:"
 curl -s https://api.github.com/repos/assijus/blucservice/releases/latest | grep browser_download_url | grep blucservice.war | cut -d '"' -f 4 | xargs wget -q downloading blucservice.war
 if verify_blucservice_war=`ls -l blucservice.war`; then
         echo "DOWNLOAD: blucservice.war - OK"
+        cp -rf blucservice.war /tmp
                 if deploy_blucservice=`mv -f blucservice.war $JBOSS_HOME/standalone/deployments/`; then
                         echo "DEPLOY: blucservice.war - OK"
                 else
@@ -108,6 +110,7 @@ echo "CKEDITOR:"
 curl -s https://api.github.com/repos/projeto-siga/siga-docker/releases/latest | grep browser_download_url | grep .war | cut -d '"' -f 4 | xargs wget -q
 if verify_ckeditor_war=`ls -l ckeditor.war`; then
         echo "DOWNLOAD: ckeditor.war - OK"
+        cp -rf ckeditor.war /tmp
                 if deploy_ckeditor=`mv -f ckeditor.war $JBOSS_HOME/standalone/deployments/`; then
                         echo "DEPLOY: ckeditor.war - OK"
                 else
@@ -146,6 +149,9 @@ echo "##########################################################################
 echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
+
+cp -rf /opt/java/jenkins/workspace/processo.rio/target/* /tmp"
+
 echo "SIGA:"
 #<<<<<<< HEAD
 #if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio-ramiris/target/siga.war"`; then

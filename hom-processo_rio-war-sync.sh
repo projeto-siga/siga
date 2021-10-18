@@ -130,6 +130,7 @@ echo ""
 for s in ${servers[@]}; do
 
 echo "$s"
+echo ""
 echo "DEPLOY DEPENDENCIES:"
         #DEPLOY DEPENDENCIES
 	for t in ${dependencies[@]}; do	
@@ -141,8 +142,9 @@ echo "DEPLOY DEPENDENCIES:"
 			echo "ABORTING..."
 			exit 1
 		fi
-	echo ""
+	
 	done
+echo ""
 echo "DEPLOY TARGETS:"
         #DEPLOY TARGETS
         for t in ${targets[@]}; do
@@ -154,11 +156,10 @@ echo "DEPLOY TARGETS:"
                         echo "ABORTING..."
                         exit 1
 	        fi
-        echo ""
         done
-
-
+echo ""
 done
+
 echo "###############################################################################"
 echo "                                        END"
 echo "###############################################################################"

@@ -13,6 +13,7 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.NotificarPorEmail;
@@ -60,28 +61,34 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 	
 	@Transacional
 	@Post({ "/app/notificarPorEmail/rec_notificacao_por_email2" })
-	public void notficar(final Long id) throws Exception {
+	public void notificar(final Long id) throws Exception {
 		DpNotificarPorEmail email = dao().consultar(id, DpNotificarPorEmail.class, false);
-		System.out.println(">>>>>>>>>>>>>>>>>>>>Chamou o POST. Agora podemos realizar a alteração no Id: " + id);
+		DpNotificarPorEmail emailNovo = new DpNotificarPorEmail();
 		
-//		DpNotificarPorEmail emailNovo = new DpNotificarPorEmail();
-//		Cp.getInstance().getBL().copiaNotificarPorEmail(email, emailNovo);
-//		dao().gravarComHistorico(emailNovo, email, null, getIdentidadeCadastrante());
+		email.setId(id);
 		
-		email.setId(1L); 
-		email.setNomeDaAcao("ACAO ALTERADA...");
+		int configuravel = email.getConfiguravel();
+		int naoConfiguravel = email.getNaoConfiguravel();
 		
-		adicionar(email);
+		if (configuravel == 1 && naoConfiguravel == 0) {
+			email.setConfiguravel(0);
+			email.setNaoConfiguravel(1);
+		} else {
+			email.setConfiguravel(1);
+			email.setNaoConfiguravel(0);
+		}
 		
-		this.result.redirectTo(this).lista(0);
+		if (configuravel == 0 && naoConfiguravel == 1) {
+			email.setConfiguravel(1);
+			email.setNaoConfiguravel(0);
+		} else {
+			email.setConfiguravel(0);
+			email.setNaoConfiguravel(1);
+		}
+		
+		result.redirectTo(NotificarPorEmailController.class).lista(1);
 	}
 	
-	@PersistenceContext
-	private EntityManager manager;
-	
-	@Transactional
-	public DpNotificarPorEmail adicionar(DpNotificarPorEmail dpNotificarPorEmail) {
-		return manager.merge(dpNotificarPorEmail);
-	}
 	
 }
+

@@ -1934,6 +1934,7 @@ public class CpBL {
 	}
 	
 	public void copiaNotificarPorEmail(DpNotificarPorEmail lotAnt, DpNotificarPorEmail lotNova) {
+		lotNova.setId(lotAnt.getId());
 		lotNova.setNomeDaAcao(lotAnt.getNomeDaAcao());
 		lotNova.setNaoConfiguravel(lotAnt.getNaoConfiguravel());		
 		lotNova.setConfiguravel(lotAnt.getConfiguravel());

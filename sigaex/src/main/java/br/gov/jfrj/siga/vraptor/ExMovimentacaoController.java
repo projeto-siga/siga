@@ -81,6 +81,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -112,6 +113,7 @@ import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 
 @Controller
 public class ExMovimentacaoController extends ExController {
@@ -1399,7 +1401,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpPessoaSelecao cosignatarioSel,
 			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
 		this.setPostback(postback);
-
+		
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
@@ -1429,7 +1431,31 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
 						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
-
+   
+		try {
+			DpNotificarPorEmail emailNotifica = dao().consultar(6L, DpNotificarPorEmail.class, false);
+			
+			if (emailNotifica.isConfiguravel()) {
+				String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
+				 
+				Correio.enviar(null,destinanarios, 
+						"Usuário marcado: ", 
+						"",   
+						"<h2>Prezado usuário, " + cosignatarioSel.getObjeto().getEmailPessoa() + " </h2> "
+								+ "</br>"
+								+ "</br>"
+								+ "<p>Você foi marcado como, cossignatário do ("+ sigla +"), "
+								+ "pelo usuário ("+ getTitular().getNomePessoa() + ") "
+								+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+								+ "	>clique aqui.</a>\r\n"
+								+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
+								+ "	>clique aqui</a>\r\n"
+								+ "para descadastrar.");
+			}
+		}catch(Exception e) {
+			
+		}
+		
 		ExDocumentoController.redirecionarParaExibir(result, mov
 				.getExDocumento().getSigla());
 	}

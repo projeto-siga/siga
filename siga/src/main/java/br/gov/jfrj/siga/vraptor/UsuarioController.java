@@ -31,6 +31,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
 import br.gov.jfrj.siga.dp.NotificarPorEmail;
@@ -108,7 +109,26 @@ public class UsuarioController extends SigaController {
 				(("on".equals(usuario.getTrocarSenhaRede())) ?  " OBS: As senhas de rede e e-mail também foram alteradas." : ""));
 		result.include("volta", "troca");
 		result.include("titulo", "Troca de Senha");
+		
+		CpIdentidade pessoa = null;
+		pessoa = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
+		
+		DpNotificarPorEmail emailNotifica = dao().consultar(2L, DpNotificarPorEmail.class, false);
+		
+		if (emailNotifica.isConfiguravel()) {
+			String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
+			 
+			Correio.enviar(null,destinanarios, 
+					"Usuário marcado: ", 
+					"",    
+					"<h2>Prezado usuário, "+ pessoa.getDpPessoa().getNomePessoa() +" </h2> "
+							+ "</br>"
+							+ "</br>"
+							+ "<p>Sua senha foi alterada com sucesso!."
+							+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a></p>");
+		
 		result.redirectTo(UsuarioController.class).trocaSenha();
+		}
 	}
 
 	/*

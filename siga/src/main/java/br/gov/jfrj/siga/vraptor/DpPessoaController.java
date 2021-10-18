@@ -55,6 +55,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaCalendar;
@@ -72,6 +73,7 @@ import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaUsuarioDTO;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -517,8 +519,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
 			list.add(ou);
 			result.include("orgaosUsu", list);
-
 		}
+		
+		
 	}
 
 	@Post("/app/pessoa/carregarCombos")
@@ -622,6 +625,24 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		try {
 			DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
 					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
+			
+			DpNotificarPorEmail emailNotifica = dao().consultar(1L, DpNotificarPorEmail.class, false);
+			
+			if (emailNotifica.isConfiguravel()) {
+				String[] destinanarios = { email };
+				
+				Correio.enviar(null,destinanarios, 
+						"Novo usuário: ", 
+						"", 
+						"<h2>Prezado usuário, " + nmPessoa + " </h2> "
+								+ "</br>"
+								+ "</br>"
+								+ "<p>O seu endereço de e-mail foi indicado no cadastramento de novo usuário. "
+								+ "Para confirmar o cadastramento automaticamente e começar a utilizar, "
+								+ "clique aqui: "
+								+ "</p><a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>Acessar minha conta</a>");
+			}
+			
 		} catch (RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, e.getMessage());
 		}

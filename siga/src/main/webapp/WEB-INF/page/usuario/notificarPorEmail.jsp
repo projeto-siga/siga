@@ -47,15 +47,6 @@
 }
 </style>
 
-function sbmt(offset) {
-	if (offset == null) {
-		offset = 0;
-	}
-	frm.elements["paramoffset"].value = offset;
-	frm.elements["p.offset"].value = offset;
-	frm.submit();
-}
-
 <siga:pagina popup="false" titulo="Receber notificação por email">
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
@@ -103,19 +94,19 @@ function sbmt(offset) {
 												</c:url>
 												
 												 <c:choose>
-													<c:when test="${email.isConfiguravel()}">
+													<c:when test="${!email.isConfiguravel()}">
 														<c:choose>
 															<c:when test="${email.restringir()}">
 															  	<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																	<div class="form-check form-check-inline">
-																		<a href="return false" class="btn btn-primary disabled" role="button" aria-pressed="true" style="min-width: 80px;">Sim</a>
+																		<a href="return false" class="disabled"  aria-pressed="true"><i class="fas fa-check-square"></i></a>
 																	</div>
 																</td>
 															</c:when>
 															<c:otherwise> 
 																<td style="text-align: center;">
 																	<div class="form-check form-check-inline">
-																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Sim</a>
+																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="fas fa-check-square"></i></a>
 																	</div>
 																</td>
 															</c:otherwise>
@@ -126,14 +117,14 @@ function sbmt(offset) {
 															<c:when test="${email.restringir()}">
 																<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																	<div class="form-check form-check-inline">
-																		<a href="return false" class="btn btn-danger disabled" role="button" aria-pressed="true" style="min-width: 80px;">Não</a>
+																		<a href="return false" class="disabled" aria-pressed="true"><i class="far fa-square"></i></a>
 																	</div>
 																</td>
 															</c:when>
 															<c:otherwise>
 																<td style="text-align: center;">
 																	<div class="form-check form-check-inline">
-																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Não</a>
+																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="far fa-square"></i></a>
 																	</div>
 																</td>
 															</c:otherwise>
@@ -142,19 +133,19 @@ function sbmt(offset) {
 													</c:choose>
 										        
 											        <c:choose>
-													<c:when test="${email.notConfiguravel()}">
+													<c:when test="${!email.notConfiguravel()}">
 														<c:choose>
 															<c:when test="${email.restringir()}">
 																	<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																		<div class="form-check form-check-inline">
-																			<a href="return false" class="btn btn-primary disabled" role="button" aria-pressed="true" style="min-width: 80px;">Sim</a>
+																			<a href="return false" class="disabled" aria-pressed="true"><i class="fas fa-check-square"></i></a>
 																		</div>
 																	</td>
 															</c:when>
 															<c:otherwise>
 																<td style="text-align: center;">
 																	<div class="form-check form-check-inline">
-																			<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Sim</a>
+																			<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="fas fa-check-square"></i></a>
 																		</div>
 																</td>
 															</c:otherwise>
@@ -165,14 +156,14 @@ function sbmt(offset) {
 															<c:when test="${email.restringir()}">
 																<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																	<div class="form-check form-check-inline">
-																		<a href="return false" class="btn btn-danger disabled" role="button" aria-pressed="true" style="min-width: 80px;">Não</a>
+																		<a href="return false" class="disabled" aria-pressed="true"><i class="far fa-square"></i></a>
 																	</div>
 																</td>
 															</c:when>
 															<c:otherwise>
 																<td style="text-align: center;">
 																	<div class="form-check form-check-inline">
-																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Não</a>
+																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="far fa-square"></i></a>
 																	</div>
 																</td>
 															</c:otherwise>

@@ -7,6 +7,7 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<non-jta-data-source>java:/jboss/datasources/SigaExDS</non-jta-data-source>
 
+		<class>br.gov.jfrj.siga.dp.DpNotificarPorEmail</class>
 		<class>br.gov.jfrj.siga.dp.DpCargo</class>
 		<class>br.gov.jfrj.siga.dp.DpFuncaoConfianca</class>
 		<class>br.gov.jfrj.siga.dp.DpLotacao</class>

@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +66,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -79,6 +81,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.DpVisualizacaoAcesso;
@@ -488,7 +491,7 @@ public class ExDocumentoController extends ExController {
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
-
+		
 		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO
 				.getSigla() == null);
 		
@@ -1622,7 +1625,7 @@ public class ExDocumentoController extends ExController {
 			final String[] vars, final String[] campos,
 			final UploadedFile arquivo) {
 		
-		final Ex ex = Ex.getInstance();
+		final Ex ex = Ex.getInstance(); 
 		final ExBL exBL = ex.getBL();	
 		
 		if(exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null && exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null && 
@@ -1800,12 +1803,53 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
+			DpNotificarPorEmail emailNotifica = dao().consultar(5L, DpNotificarPorEmail.class, false);
+			
+			if (emailNotifica.isConfiguravel()) {
+				
+				String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
+				 
+				Correio.enviar(null,destinanarios,  
+						"Usuário marcado: ", 
+						"",   
+						"<h2>Prezado usuário, " + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + " </h2> "
+								+ "</br>"
+								+ "</br>"
+								+ "<p>Você foi marcado como, responsável pela assinatura do ("+ exDocumentoDTO.getDoc().getCodigo() +"), "
+								+ "pelo usuário ("+ getTitular().getNomePessoa() + ") "
+								+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+								+ "	>clique aqui.</a>\r\n"
+								+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
+								+ "	>clique aqui</a>\r\n"
+								+ "para descadastrar.");
+			}
+			
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
 
 			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
 				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc(), so.getCadastrante());
+				
+				DpNotificarPorEmail emailNotificaSubstituto = dao().consultar(7L, DpNotificarPorEmail.class, false);
+				
+				if (emailNotificaSubstituto.isConfiguravel()) {
+					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
+					 
+					Correio.enviar(null,destinanarios, 
+							"Usuário marcado: ", 
+							"",   
+							"<h2>Prezado usuário, " + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + " </h2> "
+									+ "</br>"
+									+ "</br>"
+									+ "<p>Você foi marcado como, substituto do ("+ exDocumentoDTO.getDoc().getCodigo() +"), "
+									+ "pelo usuário ("+ getTitular().getNomePessoa() + ") "
+									+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+									+ "	>clique aqui.</a>\r\n" 
+									+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
+									+ "	>clique aqui</a>\r\n"
+									+ "para descadastrar.");
+				}
 			}
 
 //				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc(), so.getCadastrante());
@@ -1840,7 +1884,7 @@ public class ExDocumentoController extends ExController {
 						"Erro ao tentar incluir os cosignatários deste documento",
 						0, e);
 			}
-
+ 
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro na gravação", e);
 		}

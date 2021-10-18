@@ -145,6 +145,7 @@ echo "DEPLOY DEPENDENCIES:"
 	
 	done
 echo ""
+echo ""
 echo "DEPLOY TARGETS:"
         #DEPLOY TARGETS
         for t in ${targets[@]}; do

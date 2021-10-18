@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -85,6 +86,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 				i.secondLine = s.getDescricao();
 				l.list.add(i);
 			}
+			Collections.sort(l.list);
 			jsonSuccess(l);
 		} catch (Exception e) {
 			jsonError(e);
@@ -95,13 +97,22 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		List<RetornoJsonItem> list = new ArrayList<>();
 	}
 
-	protected static class RetornoJsonItem {
+	protected static class RetornoJsonItem implements Comparable<RetornoJsonItem> {
 		String key;
 		String firstLine;
 		String secondLine;
+		
+		@Override
+		public int compareTo(RetornoJsonItem o) {
+			return firstLine.compareTo(o.firstLine);
+		}
 	}
 
 	protected String aBuscar(String sigla, String postback) throws Exception {
+		return aBuscar(sigla, postback, true);
+	}
+	
+	protected String aBuscar(String sigla, String postback, boolean fCalcularTamanho) throws Exception {
 		if (sigla != null) 
 			setNome(sigla.toUpperCase());
 
@@ -115,7 +126,8 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 		final DaoFiltroT flt = createDaoFiltro();
 
-		tamanho = dao().consultarQuantidade(flt);
+		if (fCalcularTamanho)
+			tamanho = dao().consultarQuantidade(flt);
 		itens = dao().consultarPorFiltro(flt, offset, itemPagina);
 		
 		result.include("currentPageNumber", calculaPaginaAtual(offset));

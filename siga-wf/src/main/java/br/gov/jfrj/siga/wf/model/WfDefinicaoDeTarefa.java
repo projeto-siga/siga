@@ -123,6 +123,21 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	@Column(name = "DEFT_DS_REF", length = 256)
 	private java.lang.String refDescr;
 
+	@Column(name = "DEFT_ID_REF2")
+	private java.lang.Long refId2;
+
+	@Column(name = "DEFT_SG_REF2", length = 32)
+	private java.lang.String refSigla2;
+
+	@Column(name = "DEFT_DS_REF2", length = 256)
+	private java.lang.String refDescr2;
+
+	@Column(name = "DEFT_TX_PARAM", length = 256)
+	private java.lang.String param;
+
+	@Column(name = "DEFT_TX_PARAM2", length = 256)
+	private java.lang.String param2;
+
 	@Transient
 	private java.lang.String hisIde;
 
@@ -453,6 +468,30 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		this.refDescr = refDescr;
 	}
 
+	public java.lang.Long getRefId2() {
+		return refId2;
+	}
+
+	public void setRefId2(java.lang.Long refId2) {
+		this.refId2 = refId2;
+	}
+
+	public java.lang.String getRefSigla2() {
+		return refSigla2;
+	}
+
+	public void setRefSigla2(java.lang.String refSigla2) {
+		this.refSigla2 = refSigla2;
+	}
+
+	public java.lang.String getRefDescr2() {
+		return refDescr2;
+	}
+
+	public void setRefDescr2(java.lang.String refDescr2) {
+		this.refDescr2 = refDescr2;
+	}
+
 	@Override
 	public String getResponsibleDescription() {
 		if (tipoDeResponsavel == null)
@@ -473,6 +512,22 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		String s = tipoDeResponsavel.getDescr();
 		s = s.replace("Principal: ", "").replace("Lotação ", "Lota. ");
 		return s;
+	}
+
+	public java.lang.String getParam() {
+		return param;
+	}
+
+	public void setParam(java.lang.String param) {
+		this.param = param;
+	}
+
+	public java.lang.String getParam2() {
+		return param2;
+	}
+
+	public void setParam2(java.lang.String param2) {
+		this.param2 = param2;
 	}
 
 }

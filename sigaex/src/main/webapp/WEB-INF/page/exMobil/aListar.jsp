@@ -558,14 +558,14 @@
 						</c:if>
 						<div class="form-group col-md-3">
 							<label for="dtDocString">Data Inicial</label> <input
-								class="form-control" type="text" name="dtDocString"
-								id="dtDocString" value="${dtDocString}"
+								class="form-control campoData" placeholder="dd/mm/aaaa" autocomplete="off" 
+								type="text" name="dtDocString" id="dtDocString" value="${dtDocString}"
 								onblur="javascript:verifica_data(this,0);" />
 						</div>
 						<div class="form-group col-md-3">
 							<label for="dtDocFinalString">Data Final</label> <input
-								class="form-control" type="text" name="dtDocFinalString"
-								id="dtDocFinalString" value="${dtDocFinalString}"
+								class="form-control campoData"  placeholder="dd/mm/aaaa" autocomplete="off" 
+								type="text" name="dtDocFinalString"	id="dtDocFinalString" value="${dtDocFinalString}"
 								onblur="javascript:verifica_data(this,0);" />
 						</div>
 					</div>

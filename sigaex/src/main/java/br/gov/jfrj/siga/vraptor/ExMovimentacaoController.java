@@ -2470,7 +2470,8 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/expediente/mov/vincularPapel")
-	public void aVincularPapel(final String sigla) {
+	public void aVincularPapel(final String sigla, final DpPessoaSelecao responsavelSel,
+			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
@@ -2507,8 +2508,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", builder.getMob());
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
 		result.include("listaExPapel", papeis);
-		result.include("responsavelSel", new DpPessoaSelecao());
-		result.include("lotaResponsavelSel", new DpLotacaoSelecao());
+		result.include("responsavelSel", responsavelSel != null ? responsavelSel : new DpPessoaSelecao());
+		result.include("lotaResponsavelSel", lotaResponsavelSel != null ? lotaResponsavelSel : new DpLotacaoSelecao());
+		result.include("tipoResponsavel", tipoResponsavel);
+		result.include("idPapel", idPapel);
 	}
 
 	@Transacional
@@ -2560,6 +2563,19 @@ public class ExMovimentacaoController extends ExController {
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Não é possível fazer vinculação de papel");
+		}
+		
+		
+		if(!Ex.getInstance()
+				.getComp()
+				.podeRestringirDefAcompanhamento(getTitular(), getLotaTitular(), responsavelSel.getObjeto(), lotaResponsavelSel.getObjeto(),
+						responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getCargo() : null,
+						responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getFuncaoConfianca() : null,
+						responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getOrgaoUsuario() : lotaResponsavelSel.getObjeto().getOrgaoUsuario())) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário / unidade não está disponível para ser marcado em definição de acompanhamento."));
+			result.forwardTo(this).aVincularPapel(sigla, responsavelSel, lotaResponsavelSel, tipoResponsavel, idPapel);
+			
+			return;
 		}
 		
 		if(responsavelSel != null) {

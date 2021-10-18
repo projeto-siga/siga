@@ -158,6 +158,7 @@ import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -181,6 +182,7 @@ import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
+import br.gov.jfrj.siga.wf.service.WfProcedimentoWSTO;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
@@ -1051,7 +1053,7 @@ public class ExBL extends CpBL {
 			if (mobVerif.isApensadoAVolumeDoMesmoProcesso())
 				continue;
 
-			if (!mobVerif.isApensadoAVolumeDoMesmoProcesso() && !mobVerif.isAtendente(cadastrante, lotaCadastrante))
+			if (lotaCadastrante != null && !mobVerif.isApensadoAVolumeDoMesmoProcesso() && !mobVerif.isAtendente(cadastrante, lotaCadastrante))
 				foraDaLota += (foraDaLota.length() < 2
 						? " Os seguintes volumes ou vias encontram-se em lotação diferente de " + lotaCadastrante.getSigla()
 								+ ": "
@@ -2494,18 +2496,6 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 
-			Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao
-					.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
-			if (!movs.isEmpty()) {
-				try {
-					cancelar(cadastrante, lotaCadastrante, mob,
-							movs.iterator().next(), null, null, null,
-							"Disponibilização no acompanhamento do protocolo");
-				} catch (Exception e) {
-					throw new AplicacaoException("Erro ao cancelar o acompanhamento de protocolo do documento desentranhado: " 
-								+ e.getMessage());
-				}
-			}
 			concluirAlteracaoComRecalculoAcesso(mov);
 		} catch (RegraNegocioException e) {
 			cancelarAlteracao();
@@ -5094,17 +5084,23 @@ public class ExBL extends CpBL {
 					
 					// Localiza o tramite que será recebido
 					for (ExMovimentacao t : p.recebimentosPendentes) {
-						if (t.isResp(titular, lotaCadastrante)) {
+						if (forcarTransferencia || (titular == null && lotaCadastrante == null) || t.isResp(titular, lotaCadastrante)) {
 							mov.setExMovimentacaoRef(t);
 							break;
 						}
+					}
+					
+					// Titular é a origem e deve sempre ser preenchido
+					if (mov.getExMovimentacaoRef() == null && p.fIncluirCadastrante) {
+						mov.setTitular(mov.mob().doc().getCadastrante());
+						mov.setLotaTitular(mov.mob().doc().getLotaCadastrante());
 					}
 					
 					// Cancelar trâmite pendente quando é para forçar para outro destino
 					Set<ExMovimentacao> movsTramitePendente = m.calcularTramitesPendentes().tramitesPendentes;
 					if (forcarTransferencia && movsTramitePendente.size() > 0) {
 						for (ExMovimentacao tp : movsTramitePendente)
-						gravarMovimentacaoCancelamento(mov, tp);
+							gravarMovimentacaoCancelamento(mov, tp);
 					} else {
 						gravarMovimentacao(mov);
 					}
@@ -5613,6 +5609,23 @@ public class ExBL extends CpBL {
 		if (acao != null)
 			attrs.put(acao, "1");
 		attrs.put("doc", doc);
+		
+		// Incluir um atributo chamado "wf" que contém os dados do procedimento vinculado
+		if (doc.getTipoDePrincipal() != null && doc.getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getPrincipal() != null) {
+			WfProcedimentoWSTO wf = Service.getWfService().consultarProcedimento(doc.getPrincipal());
+			Map<String, Object> vars = wf.getVar();
+			
+			// Converter boolean em Sim/Não
+			if (vars != null) 
+				for (String key : vars.keySet()) {
+					Object val = vars.get(key);
+					if (val instanceof Boolean)
+						vars.put(key, ((Boolean)val) ? "Sim" : "Não");
+				}
+			
+			attrs.put("wf", wf);
+		}
+		
 		// rw.setAttribute("modelo", doc.getExModelo());
 		if (mov == null) {
 			if (doc.getExModelo() != null) {

@@ -55,8 +55,10 @@ import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
+import br.gov.jfrj.siga.wf.model.enm.WfTarefaDocCriarParam2;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -584,9 +586,8 @@ public class WfProcedimento extends Objeto
 		return set;
 	}
 
-	public boolean isFormulario() {
-		return status == ProcessInstanceStatus.PAUSED
-				&& getCurrentTaskDefinition().getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO;
+	public boolean isPausado() {
+		return status == ProcessInstanceStatus.PAUSED;
 	}
 
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
@@ -672,6 +673,19 @@ public class WfProcedimento extends Objeto
 					+ " estiver assinado. Clique <a href=\"/sigaex/app/expediente/mov/assinar?sigla=" + getPrincipal()
 					+ "\">aqui</a> para assinar.";
 		}
+		if (getDefinicaoDeTarefaCorrente() != null
+				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO) {
+			String siglaDoDocumentoCriado = WfTarefaDocCriar.getSiglaDoDocumentoCriado(this);
+			if (WfTarefaDocCriarParam2.AGUARDAR_ASSINATURA.name().equals(getDefinicaoDeTarefaCorrente().getParam2())) {
+				return "Este workflow prosseguirá automaticamente quando o documento " + siglaDoDocumentoCriado
+						+ " estiver assinado. Clique <a href=\"/sigaex/app/expediente/mov/assinar?sigla="
+						+ siglaDoDocumentoCriado + "\">aqui</a> para assinar.";
+			} else if (WfTarefaDocCriarParam2.AGUARDAR_JUNTADA.name()
+					.equals(getDefinicaoDeTarefaCorrente().getParam2())) {
+				return "Este workflow prosseguirá automaticamente quando o documento " + siglaDoDocumentoCriado
+						+ " for juntado ao documento " + getPrincipal() + ".";
+			}
+		}
 		return null;
 	}
 
@@ -691,7 +705,8 @@ public class WfProcedimento extends Objeto
 		if (getProcessDefinition().getNome() != null && getCurrentTaskDefinition() != null
 				&& getCurrentTaskDefinition().getNome() != null)
 			return "^wf:" + Texto.slugify(
-					getProcessDefinition().getSiglaCompacta() + "-" + getCurrentTaskDefinition().getNome(), true, false);
+					getProcessDefinition().getSiglaCompacta() + "-" + getCurrentTaskDefinition().getNome(), true,
+					false);
 		return null;
 	}
 
@@ -773,7 +788,7 @@ public class WfProcedimento extends Objeto
 	}
 
 	@Override
-	public String getEvent() {
+	public String getIdEvent() {
 		return getEventoNome();
 	}
 

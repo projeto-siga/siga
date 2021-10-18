@@ -250,7 +250,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("qtd.max.arquivo.anexado.upload", "1");
 		
 		addPublicProperty("consultapublica.exibe.tramitacao.ate.nivelacesso", "-1");
-
+		
+		addPrivateProperty("debug.default.template.pathname", null);
 	}
 
 	@Override

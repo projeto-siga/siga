@@ -68,6 +68,9 @@
 							<fmt:formatDate value="${pd.hisDtIni}"
 								pattern="dd/MM/yyyy HH:mm:ss" />
 						</p>
+						<p>
+							<b>Variáveis:</b> ${pd.identificadoresDeVariaveis}
+						</p>
 					</div>
 				</div>
 			</div>

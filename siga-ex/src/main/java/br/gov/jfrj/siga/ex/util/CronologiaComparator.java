@@ -11,14 +11,14 @@ public class CronologiaComparator implements Comparator<ExMovimentacao> {
 			int i = o2.getDtTimestamp().compareTo(o1.getDtTimestamp());
 			if (i != 0)
 				return i;
-			
+
 			if (o1.getExTipoMovimentacao() != null && o2.getExTipoMovimentacao() != null) {
-				i = ExMovimentacao.tpMovDesempatePosicao(o1.getExTipoMovimentacao().getId()).compareTo(
-						ExMovimentacao.tpMovDesempatePosicao(o2.getExTipoMovimentacao().getId()));
+				i = ExMovimentacao.tpMovDesempatePosicao(o1.getExTipoMovimentacao().getId(),
+						o2.getExTipoMovimentacao().getId());
 				if (i != 0)
 					return i;
 			}
-			
+
 			i = o1.getIdMov().compareTo(o2.getIdMov());
 			return i;
 		} catch (final Exception ex) {
@@ -26,4 +26,3 @@ public class CronologiaComparator implements Comparator<ExMovimentacao> {
 		}
 	}
 }
-

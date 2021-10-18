@@ -17,6 +17,30 @@
 				${pi.definicaoDeTarefaCorrente.nome}
 			</div>
 			<div class="card-body">
+
+				<!-- Conhecimento -->
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+					<div id="gc-ancora-${pi.id}" />
+					<c:url var="url" value="/../sigagc/app/knowledgeInplaceMinimal"> 
+						<c:param name="tags">${pi.ancora}</c:param>
+						<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
+								href="$1">aqui</a> para contribuir.</c:param>
+						<c:param name="titulo">${pi.definicaoDeProcedimento.nome} - ${pi.currentTaskDefinition.nome}</c:param>
+						<c:param name="ts">${currentTimeMillis}</c:param>
+					</c:url>
+					<script type="text/javascript">
+						$.ajax({
+							type : "GET",
+							url : "${url}",
+							cache : false,
+							success : function(response) {
+								$('#gc-ancora-${pi.id}').replaceWith(response);
+							}
+						});
+					</script>
+				</c:if>
+
 				<form method="POST"
 					action="${linkTo[WfAppController].continuar(pi.id)}?sigla=${param.sigla}"
 					style="margin: 0px; padding: 0px; border: 0px;" id="form${pi.id}">

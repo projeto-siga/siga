@@ -25,7 +25,7 @@ dependencies=(blucservice.war ckeditor.war vizservice.war)
 targets=(siga-ext.jar sigaex.war siga.war)
 
 ## DECLARE SERVERS ARRAY
-##e.g jdevasxxx jdevaszzz jdevasyyy
+##e.g jdevasxxx.infra.rio.gov.br jdevaszzz.infra.rio.gov.br jdevasyyy.infra.rio.gov.br
 servers=($4)
 
 ## DECLARE ORIGIN SERVER ARTIFACTS VARIABLE

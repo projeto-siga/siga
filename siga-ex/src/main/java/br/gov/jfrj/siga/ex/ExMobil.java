@@ -2430,10 +2430,11 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					p.fIncluirCadastrante = false;
 			}
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
-					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 
-							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante())
-							|| Utils.equivale(mov.getTitular(), doc().getCadastrante()) 
-							|| Utils.equivale(mov.getLotaTitular(), doc().getLotaCadastrante()))) 
+//					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 
+//							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante())
+//							|| Utils.equivale(mov.getTitular(), doc().getCadastrante()) 
+//							|| Utils.equivale(mov.getLotaTitular(), doc().getLotaCadastrante()))
+					) 
 				p.fIncluirCadastrante = false;
 		}
 		

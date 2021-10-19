@@ -147,7 +147,7 @@ for s in ${servers[@]}; do
         echo "DEPLOY MODULE TARGETS:"
         echo "SIGA-EXT"
         if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext.jar`; then
-                if module_siga_ext_remove=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module remove --name=sigadoc.ext"`; then
+                if module_siga_ext_remove=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module remove --name=sigadoc.ext" --user=$jboss_user --password=$jboss_pass`; then
                         echo "REMOVE OLD MODULE: OK"
                 else
                         echo $module_siga_ext_remove
@@ -158,7 +158,7 @@ for s in ${servers[@]}; do
         fi
 
 
-        if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar"`; then
+        if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar" --user=$jboss_user --password=$jboss_pass`; then
                 echo "DEPLOY MODULE: siga-ext.jar - OK"
         else
                 echo $module_siga_ext

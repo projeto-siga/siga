@@ -127,23 +127,48 @@ echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
 for s in ${servers[@]}; do
-echo "$s"
-echo ""
-echo "DEPLOY DEPENDENCIES:"
-        #DEPLOY DEPENDENCIES
-	for t in ${dependencies[@]}; do	
-		if deploy_siga_dependencies=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$jboss_user --password=$jboss_pass`; then
-			echo "DEPLOY: $t - OK"
-		else
-			echo $deploy_siga_dependencies
-			echo "FAIL"
-			echo "ABORTING..."
+        echo "$s"
+        echo ""
+        echo "DEPLOY DEPENDENCIES:"
+                #DEPLOY DEPENDENCIES
+	        for t in ${dependencies[@]}; do	
+		        if deploy_siga_dependencies=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace /opt/java/jboss-eap-7.2/standalone/deployments/$t" --user=$jboss_user --password=$jboss_pass`; then
+			        echo "DEPLOY: $t - OK"
+		        else
+			        echo $deploy_siga_dependencies
+			        echo "FAIL"
+			        echo "ABORTING..."
 			exit 1
-		fi
+		        fi
 	
-	done
+	        done
+        echo ""
+
+        echo "DEPLOY MODULE TARGETS:"
+        echo "SIGA-EXT"
+        if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext.jar`; then
+                if module_siga_ext_remove=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module remove --name=sigadoc.ext" --user=$jboss_user --password=$jboss_pass`; then
+                        echo "REMOVE OLD MODULE: OK"
+                else
+                        echo $module_siga_ext_remove
+                        echo "FAIL"
+                        echo "ABORTING..."
+                        exit 1
+                fi
+        fi
+
+
+        if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar" --user=$jboss_user --password=$jboss_pass`; then
+                echo "DEPLOY MODULE: siga-ext.jar - OK"
+        else
+                echo $module_siga_ext
+                echo "FAIL"
+                echo "ABORTING..."
+                exit 1
+        fi        
 echo ""
-echo "DEPLOY TARGETS:"
+
+echo "DEPLOY WAR TARGETS:"
         #DEPLOY TARGETS
         for t in ${targets[@]}; do
 	        if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace /tmp/$t" --user=$jboss_user --password=$jboss_pass`; then

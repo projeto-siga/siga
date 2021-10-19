@@ -141,7 +141,7 @@ public class WfBL extends CpBL {
 								+ l.get(0).getSigla());
 		}
 
-		pi.setTipoDePrincipal(WfTipoDePrincipal.DOCUMENTO);
+		pi.setTipoDePrincipal(tipoDePrincipal);
 		pi.setPrincipal(principal);
 		pi.setTitular(titular);
 		pi.setLotaTitular(lotaTitular);
@@ -175,6 +175,12 @@ public class WfBL extends CpBL {
 								"não foi definido o preenchimento automático de documento na tarefa");
 				}
 			}
+		}
+		
+		
+		if (pi.getPrincipal() != null && pi.getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
+			dao().gravar(pi); // Precisa gravar para gerar uma sigla válida para o procedimento
+			Service.getExService().atualizarPrincipal(pi.getPrincipal(), "PROCEDIMENTO", pi.getSigla());
 		}
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));

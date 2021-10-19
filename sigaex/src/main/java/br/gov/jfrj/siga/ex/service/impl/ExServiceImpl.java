@@ -401,6 +401,25 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	@Override
+	public Boolean atualizarPrincipal(String codigoDocumento, String tipoPrincipal,
+			String siglaPrincipal)
+			throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
+			try {
+				ExMobil mob = buscarMobil(codigoDocumento);
+				ExTipoDePrincipal tipo = null;
+				if (tipoPrincipal != null) 
+					tipo = ExTipoDePrincipal.valueOf(tipoPrincipal);
+				Ex.getInstance().getBL().atualizarPrincipal(mob.doc(), tipo, siglaPrincipal);
+				return true;
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
+			}
+		}
+	}
+
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr,
 			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo,
 			String nomePreenchimento, String classificacaoStr, String descricaoStr, Boolean eletronico,

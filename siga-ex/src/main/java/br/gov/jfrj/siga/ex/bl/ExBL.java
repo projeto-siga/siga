@@ -8058,6 +8058,12 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro na definição de prazo para assinatura do documento.", 0, e);
 		}
 	}
+
+	public void atualizarPrincipal(ExDocumento doc, ExTipoDePrincipal tipo, String siglaPrincipal) {
+		doc.setTipoDePrincipal(tipo);
+		doc.setPrincipal(siglaPrincipal);
+		ExDao.getInstance().gravar(doc);
+	}
 	
 }
 

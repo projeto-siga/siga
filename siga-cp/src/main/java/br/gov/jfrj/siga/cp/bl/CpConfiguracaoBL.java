@@ -463,13 +463,16 @@ public class CpConfiguracaoBL {
 					}
 				}
 
-				do {
-					perfis.add(cfg.cpPerfil);
-					g = cfg.cpPerfil.getCpGrupoPai();
-					if (g instanceof HibernateProxy) {
-						g = (CpPerfil) ((HibernateProxy) g).getHibernateLazyInitializer().getImplementation();
-					}
-				} while (g != null);
+				CpPerfil perfil = cfg.cpPerfil;
+				while (perfil != null) {
+					perfis.add(perfil);
+					CpGrupo grp = cfg.cpPerfil.getCpGrupoPai();
+					if (!(grp instanceof CpPerfil))
+						break;
+					perfil = (CpPerfil) grp; 
+					if (perfil != null && perfil instanceof HibernateProxy) 
+						perfil = (CpPerfil) ((HibernateProxy) perfil).getHibernateLazyInitializer().getImplementation();
+				}
 			}
 		}
 		return perfis;

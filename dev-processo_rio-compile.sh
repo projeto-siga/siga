@@ -180,15 +180,28 @@ fi
 echo ""
 
 
-echo "SIGA-EXT"
-if deploy_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio/target/siga-ext.jar"`; then
-        echo "DEPLOY: siga-ext.war - OK"
+echo "SIGA-EXT:"
+if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext.jar`; then
+        if module_siga_ext_remove=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="module remove --name=sigadoc.ext"`; then
+              echo "REMOVE OLD MODULE: OK"
+        else
+                echo $module_siga_ext_remove
+                echo "FAIL"
+                echo "ABORTING..."
+                exit 1
+        fi
+fi
+
+
+if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jdevas135.infra.rio.gov.br:9990 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar"`; then
+        echo "DEPLOY MODULE: siga-ext.jar - OK"
 else
-        echo $deploy_siga_ext
+        echo $module_siga_ext
         echo "FAIL"
         echo "ABORTING..."
         exit 1
-fi
+fi        
+
 echo ""
 echo "###############################################################################"
 echo "                              END"

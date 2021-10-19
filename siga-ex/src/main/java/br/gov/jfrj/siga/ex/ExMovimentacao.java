@@ -65,6 +65,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
+import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
@@ -427,28 +428,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public int compareTo(final ExMovimentacao mov) {
-		try {
-			int i = 0;
-			if (this.getDtTimestamp() != null) {
-				i = this.getDtTimestamp().compareTo(mov.getDtTimestamp());
-			} else if(this.getDtIniMov() != null) {
-				i = this.getDtIniMov().compareTo(mov.getDtIniMov());
-			}	
-			
-			if (i != 0)
-				return i;
-			
-			if (getExTipoMovimentacao() != null && mov.getExTipoMovimentacao() != null) {
-				i = tpMovDesempatePosicao(getExTipoMovimentacao().getId(), mov.getExTipoMovimentacao().getId());
-				if (i != 0)
-					return i;
-			}
-			
-			i = getIdMov().compareTo(mov.getIdMov());
-			return i;
-		} catch (final Exception ex) {
-			return 0;
-		}
+		return CronologiaComparator.INSTANCE.compare(mov, this);
 	}
 
 	/**

@@ -23,8 +23,6 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 public class ExModeloDaoFiltro extends DaoFiltroSelecionavel {
 	private String nome;
 
-	private Boolean paraIncluir;
-
 	public String getNome() {
 		return nome;
 	}
@@ -32,13 +30,4 @@ public class ExModeloDaoFiltro extends DaoFiltroSelecionavel {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-	public Boolean getParaIncluir() {
-		return paraIncluir;
-	}
-
-	public void setParaIncluir(Boolean paraIncluir) {
-		this.paraIncluir = paraIncluir;
-	}
-
 }

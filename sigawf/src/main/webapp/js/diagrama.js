@@ -117,16 +117,16 @@ app
 						if (t.tipoResponsavel == 'RESPONSAVEL')
 							td.definicaoDeResponsavelId = t.refResponsavel;
 
-						if ((t.tipo == 'INCLUIR_DOCUMENTO' || t.tipo == 'INCLUIR_COPIA' || t.tipo == 'CRIAR_DOCUMENTO') && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
+						if ((t.tipo == 'INCLUIR_DOCUMENTO' || t.tipo == 'INCLUIR_COPIA' || t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
 							td.refId = t.ref.originalObject.key;
 							td.refSigla = t.ref.originalObject.firstLine;
 						}
 
-						if (t.tipo == 'CRIAR_DOCUMENTO' && t.ref2) {
+						if ((t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref2) {
 							td.refId2 = t.ref2;
 						}
 
-						if (t.tipo == 'CRIAR_DOCUMENTO') {
+						if (t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') {
 							td.param = t.param;
 							if (t.param == 'FINALIZAR')
 								td.param2 = t.param2;
@@ -223,13 +223,13 @@ app
 							}
 						}
 
-						if (t.refId2) 
+						if (t.refId2)
 							td.ref2 = '' + t.refId2
 
-						if (t.param) 
+						if (t.param)
 							td.param = '' + t.param
-						
-						if (t.param2) 
+
+						if (t.param2)
 							td.param2 = '' + t.param2
 
 						pd.tarefa.push(td);
@@ -383,7 +383,7 @@ app
 						// Atualizar lista de preenchimentos automáticos da tarefa
 						for (var i = 0; i < $scope.data.workflow.tarefa.length; i++) {
 							var t = $scope.data.workflow.tarefa[i];
-							if (t.tipo == 'CRIAR_DOCUMENTO' && t.ref
+							if ((t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref
 								&& ((t.tipoResponsavel == 'LOTACAO' && t.refUnidadeResponsavel && t.refUnidadeResponsavel.originalObject && t.refUnidadeResponsavel.originalObject.key && t.preenchimentoLotacaoId !== t.refUnidadeResponsavel.originalObject.key)
 									|| (t.tipoResponsavel == 'PESSOA' && t.refPessoaResponsavel && t.refPessoaResponsavel.originalObject && t.refPessoaResponsavel.originalObject.key && t.preenchimentoPessoaId !== t.refPessoaResponsavel.originalObject.key))) {
 								t.preenchimentoModelo = t.ref;
@@ -401,7 +401,7 @@ app
 						console.log('graphDrawDebounced')
 						$scope.graphDrawDebounced();
 					}, true);
-					
+
 			$scope.atualizarPreenchimentos = function(t) {
 				$http({ url: '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : '/lotacoes/' + t.preenchimentoLotacaoId) + '/preenchimentos', method: "GET" }).then(
 					function(response) {

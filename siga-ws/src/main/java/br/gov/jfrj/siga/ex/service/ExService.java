@@ -77,7 +77,7 @@ public interface ExService extends Remote {
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr,
 			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo,
 			String nomePreenchimento, String classificacaoStr, String descricaoStr, Boolean eletronico,
-			String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, String tipoPrincipal, String siglaPrincipal, Boolean finalizar) throws Exception;
+			String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, String siglaMobilFilho, String tipoPrincipal, String siglaPrincipal, Boolean finalizar) throws Exception;
 
 	@WebMethod
 	public String obterNumeracaoExpediente(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao) throws Exception;

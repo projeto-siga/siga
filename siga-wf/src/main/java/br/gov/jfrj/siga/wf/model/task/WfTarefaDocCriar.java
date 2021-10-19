@@ -53,7 +53,8 @@ public class WfTarefaDocCriar extends
 		Boolean eletronico = true;
 		String nomeNivelDeAcesso = null;
 		String conteudo = null;
-		String siglaMobilPai = pi.getPrincipal();
+		String siglaMobilPai = getSiglaMobilPai(pi);
+		String siglaMobilFilho = getSiglaMobilFilho(pi);
 		Boolean finalizar = "FINALIZAR".equals(td.getParam());
 
 		// Nato: Esse flush é necessário porque o documento precisará dos dados
@@ -61,12 +62,20 @@ public class WfTarefaDocCriar extends
 		ContextoPersistencia.flushTransaction();
 		String valor = Service.getExService().criarDocumento(cadastranteStr, subscritorStr, destinatarioStr,
 				destinatarioCampoExtraStr, descricaoTipoDeDocumento, nomeForma, nomeModelo, nomePreenchimento,
-				classificacaoStr, descricaoStr, eletronico, nomeNivelDeAcesso, conteudo, siglaMobilPai, "PROCEDIMENTO",
-				pi.getSigla(), finalizar);
+				classificacaoStr, descricaoStr, eletronico, nomeNivelDeAcesso, conteudo, siglaMobilPai, siglaMobilFilho,
+				"PROCEDIMENTO", pi.getSigla(), finalizar);
 
 		pi.getVariable().put(getIdentificadorDaVariavel(pi.getDefinicaoDeTarefaCorrente()), valor);
 
 		return resume(td, pi, null, null, engine);
+	}
+
+	public String getSiglaMobilPai(WfProcedimento pi) {
+		return pi.getPrincipal();
+	}
+
+	public String getSiglaMobilFilho(WfProcedimento pi) {
+		return null;
 	}
 
 	public boolean isAguardarAssinatura(WfDefinicaoDeTarefa td) {
@@ -94,7 +103,7 @@ public class WfTarefaDocCriar extends
 		String siglaDoDocumentoCriado = getSiglaDoDocumentoCriado(pi);
 		if (isAguardarAssinatura(td) && !Service.getExService().isAssinado(siglaDoDocumentoCriado, null))
 			return new TaskResult(TaskResultKind.PAUSE, null, null, getEvent(td, pi), pi.calcResponsible(td));
-		if (isAguardarJuntada(td) && !Service.getExService().isJuntado(siglaDoDocumentoCriado, pi.getPrincipal()))
+		if (isAguardarJuntada(td) && !Service.getExService().isJuntado(siglaDoDocumentoCriado, getSiglaMobilPai(pi)))
 			return new TaskResult(TaskResultKind.PAUSE, null, null, getEvent(td, pi), pi.calcResponsible(td));
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 	}

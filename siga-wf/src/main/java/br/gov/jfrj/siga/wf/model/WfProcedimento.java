@@ -674,16 +674,23 @@ public class WfProcedimento extends Objeto
 					+ "\">aqui</a> para assinar.";
 		}
 		if (getDefinicaoDeTarefaCorrente() != null
-				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO) {
+				&& (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+						|| getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO)) {
 			String siglaDoDocumentoCriado = WfTarefaDocCriar.getSiglaDoDocumentoCriado(this);
 			if (WfTarefaDocCriarParam2.AGUARDAR_ASSINATURA.name().equals(getDefinicaoDeTarefaCorrente().getParam2())) {
 				return "Este workflow prosseguirá automaticamente quando o documento " + siglaDoDocumentoCriado
 						+ " estiver assinado. Clique <a href=\"/sigaex/app/expediente/mov/assinar?sigla="
 						+ siglaDoDocumentoCriado + "\">aqui</a> para assinar.";
-			} else if (WfTarefaDocCriarParam2.AGUARDAR_JUNTADA.name()
-					.equals(getDefinicaoDeTarefaCorrente().getParam2())) {
+			} else if (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+					&& WfTarefaDocCriarParam2.AGUARDAR_JUNTADA.name()
+							.equals(getDefinicaoDeTarefaCorrente().getParam2())) {
 				return "Este workflow prosseguirá automaticamente quando o documento " + siglaDoDocumentoCriado
 						+ " for juntado ao documento " + getPrincipal() + ".";
+			} else if (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO
+					&& WfTarefaDocCriarParam2.AGUARDAR_JUNTADA.name()
+						.equals(getDefinicaoDeTarefaCorrente().getParam2())) {
+				return "Este workflow prosseguirá automaticamente quando o documento " + getPrincipal()
+						+ " for juntado ao documento " + siglaDoDocumentoCriado + ".";
 			}
 		}
 		return null;

@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -600,8 +601,15 @@ public class WfProcedimento extends Objeto
 	public Object obterValorDeVariavel(WfDefinicaoDeVariavel vd) {
 		return getVariavelMap().get(vd.getIdentificador());
 	}
-
+	
 	public String getMsgAviso(DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		String s = getMsgAvisoSemReferencias(titular, lotaTitular);
+		if (s == null) 
+			return s;
+		return CpProcessadorReferencias.marcarReferenciasParaDocumentos(s, null);
+	}
+
+	public String getMsgAvisoSemReferencias(DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 //		WfConhecimento c = WfDao.getInstance().consultarConhecimento(ti.getDefinicaoDeTarefa().getId());
 //		if (c != null) {
 //			this.setDescricao(WfWikiParser.renderXHTML(c.getDescricao()));

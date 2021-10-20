@@ -22,10 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.kxml2.io.KXmlParser;
 import org.kxml2.io.KXmlSerializer;
@@ -33,8 +30,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 
 public class ProcessadorReferencias {
 	XmlPullParser parser;
@@ -133,7 +129,7 @@ public class ProcessadorReferencias {
 			else {
 				String s = parser.getText();
 
-				s = marcarReferenciasParaDocumentos(s, htIgnorar);
+				s = CpProcessadorReferencias.marcarReferenciasParaDocumentos(s, htIgnorar);
 				serializer.flush();
 				os.write(s.getBytes("utf-8"));
 			}
@@ -166,55 +162,6 @@ public class ProcessadorReferencias {
 			// throw new RuntimeException("unrecognized event: "
 			// + parser.getEventType());
 		}
-	}
-
-	static String acronimos = null;
-	static String siglas = null;
-
-	public static String marcarReferenciasParaDocumentos(String sHtml,
-			Set setIgnorar) {
-		if (acronimos == null) {
-			acronimos = "";
-			siglas = "";
-			List<CpOrgaoUsuario> lou = ExDao.getInstance()
-					.listarOrgaosUsuarios();
-			for (CpOrgaoUsuario ou : lou) {
-				acronimos += (acronimos.length() > 0 ? "|" : "")
-						+ ou.getAcronimoOrgaoUsu();
-				siglas += (siglas.length() > 0 ? "|" : "")
-						+ ou.getSiglaOrgaoUsu();
-			}
-		}
-
-		final Pattern p2 = Pattern.compile("TMP-([0-9]{1,10})");
-		final Pattern p1 = Pattern
-				.compile("("
-						+ acronimos
-						+ "|"
-						+ siglas
-						+ ")-([A-Za-z]{3})-(?:([0-9]{4}))/([0-9]{5,})(\\.[0-9]{1,3})?(?:((?:-?V[0-9]{1,2}))|((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2})))?");
-
-		StringBuffer sb = new StringBuffer();
-		final Matcher m1 = p1.matcher(sHtml);
-		while (m1.find()) {
-			if (setIgnorar == null || !setIgnorar.contains(m1.group(0)))
-				m1.appendReplacement(sb,
-						"<a href=\"/sigaex/app/expediente/doc/exibir?sigla=$0\">$0</a>");
-		}
-		m1.appendTail(sb);
-		sHtml = sb.toString();
-
-		sb = new StringBuffer();
-		final Matcher m2 = p2.matcher(sHtml);
-		while (m2.find()) {
-			if (setIgnorar == null || !setIgnorar.contains(m2.group(0)))
-				m2.appendReplacement(sb,
-						"<a href=\"/sigaex/app/expediente/doc/exibir?sigla=$0\">$0</a>");
-		}
-		m2.appendTail(sb);
-
-		sHtml = sb.toString();
-		return sHtml;
 	}
 
 	public String marcarReferencias(final String sHtml) {

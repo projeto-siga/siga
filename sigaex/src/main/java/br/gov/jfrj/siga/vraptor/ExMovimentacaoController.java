@@ -1399,7 +1399,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) throws AplicacaoException, Exception {
 		this.setPostback(postback);
 		
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -1432,28 +1432,27 @@ public class ExMovimentacaoController extends ExController {
 				.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
 						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
    
-		try {
-			DpNotificarPorEmail emailNotifica = dao().consultar(6L, DpNotificarPorEmail.class, false);
+		DpNotificarPorEmail emailNotifica = dao().consultar(6L, DpNotificarPorEmail.class, false);
+		
+		if (emailNotifica.isConfiguravel()) {
 			
-			if (emailNotifica.isConfiguravel()) {
-				String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
-				 
-				Correio.enviar(null,destinanarios, 
-						"Usuário marcado: ", 
-						"",   
-						"<h2>Prezado usuário, " + cosignatarioSel.getObjeto().getEmailPessoa() + " </h2> "
-								+ "</br>"
-								+ "</br>"
-								+ "<p>Você foi marcado como, cossignatário do ("+ sigla +"), "
-								+ "pelo usuário ("+ getTitular().getNomePessoa() + ") "
-								+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-								+ "	>clique aqui.</a>\r\n"
-								+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
-								+ "	>clique aqui</a>\r\n"
-								+ "para descadastrar.");
-			}
-		}catch(Exception e) {
+			System.out.println(">>>>>>>>>>>>>>>>>Adicionou conssignatário.");
 			
+			String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
+			 
+			Correio.enviar(null,destinanarios, 
+					"Usuário marcado: ", 
+					"",   
+					"Prezado usuário, <a>" + cosignatarioSel.getObjeto().getEmailPessoa() +"</b> "
+							+ "<br>"
+							+ "<br>"
+							+ "Você foi marcado como, cossignatário do ("+ sigla +"), "
+							+ "pelo usuário ("+ getTitular().getNomePessoa() + ") "
+							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "	>clique aqui.</a>"
+							+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
+							+ "	>clique aqui</a>"
+							+ "para descadastrar.");
 		}
 		
 		ExDocumentoController.redirecionarParaExibir(result, mov
@@ -1960,7 +1959,7 @@ public class ExMovimentacaoController extends ExController {
 			if (ultMov.getLotaDestinoFinal() != null) {
 				lotaResponsavelSelFinal.buscarPorObjeto(ultMov
 						.getLotaDestinoFinal());
-				tipoResponsavelFinal = 1;
+				tipoResponsavelFinal = 1; 
 			}
 			if (ultMov.getDestinoFinal() != null) {
 				responsavelSelFinal.buscarPorObjeto(ultMov.getDestinoFinal());
@@ -2021,7 +2020,7 @@ public class ExMovimentacaoController extends ExController {
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
 			final String obsOrgao, final String protocolo, final Long tipoTramite) throws Exception {
 		this.setPostback(postback);
-
+		
 		if(dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	        Date dtDevolucao = sdf.parse(dtDevolucaoMovString);		
@@ -2073,7 +2072,7 @@ public class ExMovimentacaoController extends ExController {
 				.setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao);
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-
+		
 		if (!Ex.getInstance().getComp()
 				.podeReceberPorConfiguracao(mov.getResp(), mov.getLotaResp())) {
 			throw new AplicacaoException(
@@ -2086,6 +2085,7 @@ public class ExMovimentacaoController extends ExController {
 			if(mov.getResp() != null) {
 				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " do Usuário informado está Suspensa para o recebimento de Documentos. Favor inserir outro Usuário ");
 			} else {
+				
 				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa para o recebimento de Documentos. Favor inserir outra " + SigaMessages.getMessage("usuario.lotacao"));
 			}
     		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, postback, dtMovString,
@@ -2199,6 +2199,37 @@ public class ExMovimentacaoController extends ExController {
 		} else {
 			result.include("origemRedirectTransferirGravar", true);
 			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
+			
+			if (tipoResponsavel == 1) {
+				DpNotificarPorEmail emailNotifica = dao().consultar(9L, DpNotificarPorEmail.class, false);
+				
+				if (emailNotifica.isConfiguravel()) {
+					String[] destinanarios = { getCadastrante().getEmailPessoa() };
+					
+					Correio.enviar(null,destinanarios, 
+							"Usuário marcado: ", 
+							"",    
+							"O documento " + buscarDocumento(builder).getCodigo() + ", com descrição " + buscarDocumento(builder).getDescrDocumento() + ", foi transferido para " + lotaResponsavelSel.getDescricao() + " e aguarda recebimento.</p>"
+									+ "<br>"
+									+ "Para visualizar o documento, clique <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'>aqui</a>");
+				}
+			} 
+			
+			if(tipoResponsavel == 2) {
+				
+				DpNotificarPorEmail emailNotifica = dao().consultar(8L, DpNotificarPorEmail.class, false);
+				
+				if (emailNotifica.isConfiguravel()) {
+					String[] destinanarios = { getCadastrante().getEmailPessoa() };
+					
+					Correio.enviar(null,destinanarios, 
+							"Usuário marcado: ", 
+							"",    
+							"O documento " + buscarDocumento(builder).getCodigo() + ", com descrição " + buscarDocumento(builder).getDescrDocumento() + ", foi transferido para " + responsavelSel.getDescricao() + " e aguarda recebimento."
+									+ "<br>"
+									+ "Para visualizar o documento, clique <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'>aqui</a>");
+				}
+			}
 		}
 	}
 
@@ -2704,7 +2735,7 @@ public class ExMovimentacaoController extends ExController {
 		Date dtLimite = Data.parse(limite);
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
-		buscarDocumento(builder);
+		buscarDocumento(builder); 
 
 		if (marcador == null)
 			throw new AplicacaoException("Marcador deve ser informado.");
@@ -2713,7 +2744,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia();
-
+		
 		if (m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA || m.getIdFinalidade().getIdTpInteressado() == CpMarcadorTipoInteressadoEnum.PESSOA_OU_LOTACAO) {
 			if (Utils.empty(interessado))
 				throw new AplicacaoException("Tipo do interessado deve ser informado.");
@@ -2749,6 +2780,27 @@ public class ExMovimentacaoController extends ExController {
 						mov.getSubscritor(), mov.getLotaSubscritor(),
 						mov.getDescrMov(), 
 						mov.getMarcador(), dtPlanejada, dtLimite, true);
+		
+		DpNotificarPorEmail emailNotifica = dao().consultar(12L, DpNotificarPorEmail.class, false);
+		
+		if (emailNotifica.isConfiguravel()) {
+			String[] destinanarios = { getCadastrante().getEmailPessoa() };
+			 
+			Correio.enviar(null,destinanarios, 
+					"Usuário marcado: ", 
+					"",    
+					"Prezado usuário, <b>"+ getCadastrante().getNomePessoa() +"</b>" 
+							+ "<br>"
+							+ "Você recebeu o documento <b>" + buscarDocumento(builder).getCodigo() + "</b> com o alerta, <b>" + marcador + "</b>"
+							+ "<br>"
+							+ "<br>"
+							+ "Para visualizar o documento, clique <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'>aqui</a>"
+							+ "<br>"
+							+ "Caso não deseje mais receber notificações desse documento, clique <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'>aqui</a>");
+		
+		
+		}
+		
 		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 

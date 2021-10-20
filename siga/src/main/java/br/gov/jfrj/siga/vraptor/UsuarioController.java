@@ -121,14 +121,14 @@ public class UsuarioController extends SigaController {
 			Correio.enviar(null,destinanarios, 
 					"Usuário marcado: ", 
 					"",    
-					"<h2>Prezado usuário, "+ pessoa.getDpPessoa().getNomePessoa() +" </h2> "
-							+ "</br>"
-							+ "</br>"
-							+ "<p>Sua senha foi alterada com sucesso!."
-							+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a></p>");
-		
-		result.redirectTo(UsuarioController.class).trocaSenha();
+					"Prezado usuário, <b>"+ pessoa.getDpPessoa().getNomePessoa() +"</b> "
+							+ "<br>"
+							+ "<br>"
+							+ "Sua senha foi alterada com sucesso!."
+							+ "<br>"
+							+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a>");
 		}
+		result.redirectTo(UsuarioController.class).trocaSenha();
 	}
 
 	/*
@@ -175,6 +175,10 @@ public class UsuarioController extends SigaController {
 				List<DpPessoa> lst = new ArrayList<DpPessoa>(dao().listarPorCpf(so.getCadastrante().getCpfPessoa()));
 				for (DpPessoa p : lst) {
 					try {
+						
+						DpNotificarPorEmail emailNotifica = dao().consultar(11L, DpNotificarPorEmail.class, false);
+						
+						if (emailNotifica.isConfiguravel()) {
 						Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
 								"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 										+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
@@ -189,7 +193,7 @@ public class UsuarioController extends SigaController {
 										+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
 										+ "\n\n Atenção: esta é uma "
 										+ "mensagem automática. Por favor, não responda.");
-
+						}
 					} catch (Exception e) {
 						System.out.println(
 								"Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
@@ -211,6 +215,9 @@ public class UsuarioController extends SigaController {
 			} else {
 				DpPessoa pessoa = so.getCadastrante();
 				try {
+					DpNotificarPorEmail emailNotifica = dao().consultar(11L, DpNotificarPorEmail.class, false);
+					
+					if (emailNotifica.isConfiguravel()) {
 					Correio.enviar(pessoa.getEmailPessoaAtual(), "Troca de Email",
 							"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 									+ "\n" + "\n - Nome: " + pessoa.getNomePessoa() + "\n - Matricula: "
@@ -225,6 +232,7 @@ public class UsuarioController extends SigaController {
 									+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
 									+ "\n\n Atenção: esta é uma "
 									+ "mensagem automática. Por favor, não responda.");
+					}
 
 				} catch (Exception e) {
 					System.out.println(
@@ -254,7 +262,8 @@ public class UsuarioController extends SigaController {
 		
 		result.include("mensagem", "Email(s) alterado(s) com sucesso.");
 		result.include("volta", "troca");
-		result.include("titulo", "Troca de Email");							
+		result.include("titulo", "Troca de Email");	
+		
 		result.redirectTo(UsuarioController.class).trocaEmail(usuario);
 	}
 

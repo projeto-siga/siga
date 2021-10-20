@@ -86,7 +86,7 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 			email.setNaoConfiguravel(1);
 		}
 		
-		result.redirectTo(NotificarPorEmailController.class).lista(1);
+		result.redirectTo(NotificarPorEmailController.class).lista(0);
 	}
 	
 	

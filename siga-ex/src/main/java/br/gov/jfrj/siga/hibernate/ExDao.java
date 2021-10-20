@@ -40,7 +40,9 @@ import java.util.Objects;
 
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
+import javax.persistence.ParameterMode;
 import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -92,9 +94,7 @@ import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
-import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
@@ -106,6 +106,7 @@ import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilApiBuilder;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
+import oracle.jdbc.OracleTypes;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExDao extends CpDao {
@@ -693,20 +694,82 @@ public class ExDao extends CpDao {
 		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
 		Query query = null;
+		StoredProcedureQuery spQuery;
+		List<Object[]> l;
 		
 		if(itemPagina > 0) {
-			query = em().createQuery(
-					montadorQuery.montaQueryConsultaporFiltro(flt, false));
-			preencherParametros(flt, query);
-	
-			if (offset > 0) {
-				query.setFirstResult(offset);
+			if (Prop.getBool("/sigaex.pesquisa.via.storedprocedure")) {
+				spQuery = em().createStoredProcedureQuery("SIGA.PESQUISA_ORGAO")
+						.registerStoredProcedureParameter(
+						    1,
+						    Long.class,
+						    ParameterMode.IN
+						)
+						.registerStoredProcedureParameter(
+						    2,
+						    Class.class,
+						    ParameterMode.REF_CURSOR
+						)
+						.setParameter(1, 123L);
+				spQuery.execute();
+				l = spQuery.getResultList();
+				
+//				spQuery = em().createStoredProcedureQuery("SIGA.PESQUISA_MOBILS")
+//						.registerStoredProcedureParameter("l", Class.class, ParameterMode.REF_CURSOR)						
+//						.registerStoredProcedureParameter("idMarcadorIni", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("dbDatetime", Date.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("ultMovRespSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("ultMovLotaRespSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("idTipoMobil", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("numSequencia", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("idOrgaoUsu", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("anoEmissao", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("numExpediente", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("idTpDoc", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("idFormaDoc", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("idTipoFormaDoc", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("classificacaoSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("descrDocumento", String.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("dtDoc", Date.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("dtDocFinal", Date.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("numAntigoDoc", String.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("destinatarioSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("lotacaoDestinatarioSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("nmDestinatario", String.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("orgaoExternoDestinatarioSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("cadastranteSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("lotaCadastranteSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("subscritorSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("nmSubscritorExt", String.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("orgaoExternoSelId", Long.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("numExtDoc", String.class, ParameterMode.IN)
+//						.registerStoredProcedureParameter("hisIdIni", Long.class, ParameterMode.IN);
+//
+//				preencherParametros(flt, spQuery);
+//		
+//				if (offset > 0) {
+//					spQuery.setFirstResult(offset);
+//				}
+//				if (itemPagina > 0) {
+//					spQuery.setMaxResults(itemPagina);
+//				}
+//				spQuery.execute();
+//				l = spQuery.getResultList();
+//				
+			} else {
+				query = em().createQuery(
+						montadorQuery.montaQueryConsultaporFiltro(flt, false));
+				preencherParametros(flt, query);
+		
+				if (offset > 0) {
+					query.setFirstResult(offset);
+				}
+				if (itemPagina > 0) {
+					query.setMaxResults(itemPagina);
+				}
+				l = query.getResultList();
 			}
-			if (itemPagina > 0) {
-				query.setMaxResults(itemPagina);
-			}
-			List l = query.getResultList();
-			 
+			
 			if (l != null && l.size() > 0) {
 				query = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"

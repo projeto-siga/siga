@@ -2450,5 +2450,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return p;
 	}
-	
+
+	public ExRef getRef() {
+		return new ExRef(this);
+	}
+
 }

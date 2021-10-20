@@ -280,7 +280,7 @@ public class ExArquivoController extends ExController {
 			String token = verifyJwtToken(t).get("token").toString();
 			
 			CpToken cpToken = new CpToken();
-			cpToken = dao().obterCpTokenPorTipoToken(1L, token);
+			cpToken = dao().obterCpTokenPorTipoToken(CpToken.TOKEN_URLPERMANENTE, token);
 			
 			ExDocumento doc = Ex.getInstance().getBL().buscarDocumentoPorLinkPermanente(cpToken);
 	

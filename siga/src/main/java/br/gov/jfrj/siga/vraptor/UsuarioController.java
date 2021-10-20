@@ -585,7 +585,7 @@ public class UsuarioController extends SigaController {
 		String trocarSenhaRede = request.getParameter("trocarSenhaRede");
 		
 		try {
-			/* --- Verifica Token gerado na pesquisa de acesso: buscarEmailUsuarioPorCpf */
+			/* --- Valida JWT gerado na pesquisa de acesso: buscarEmailUsuarioPorCpf */
 			SigaUtil.verifyGetJwtToken(jwt).get("sub").toString();
 			final String TIPO_JWT = "RESET-SENHA";
 			if (!TIPO_JWT.equals(SigaUtil.verifyGetJwtToken(jwt).get("tipo").toString()) || !strCpf.equals(SigaUtil.verifyGetJwtToken(jwt).get("sub").toString())) {
@@ -598,10 +598,14 @@ public class UsuarioController extends SigaController {
 			}
 			
 			long cpf = Long.valueOf(request.getParameter("cpf"));
+			
+			//Prosseguir com redefinição se JWT é válido e Token enviado para email é válido
 			if (Cp.getInstance().getBL().isTokenValido(3L, cpf, token)) {
 				
+				//Obter Todas as identidade para o CPF e redefinir a senha
 				List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
 				listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(strCpf);
+				
 				Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, strCpf, listaIdentidadesCpf);
 				
 		

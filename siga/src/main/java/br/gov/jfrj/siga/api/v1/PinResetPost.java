@@ -6,6 +6,7 @@ import java.util.List;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPinResetPost;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -27,14 +28,14 @@ public class PinResetPost implements IPinResetPost {
 			throw new RegraNegocioException(
 					"PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
 
-		if (Cp.getInstance().getBL().isTokenValido(2L, cadastrante.getCpfPessoa(), tokenPin)) {
+		if (Cp.getInstance().getBL().isTokenValido(CpToken.TOKEN_PIN, cadastrante.getCpfPessoa(), tokenPin)) {
 			if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {
 
 				List<CpIdentidade> listaIdentidades = new ArrayList<CpIdentidade>();
 				listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());
 
 				Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
-				Cp.getInstance().getBL().invalidarTokenUtilizado(2L,cadastrante.getCpfPessoa(), tokenPin);
+				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_PIN,cadastrante.getCpfPessoa(), tokenPin);
 				Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante, "Redefinição de PIN",
 						"Você redefiniu seu PIN.");
 				resp.mensagem = "PIN foi redefinido.";

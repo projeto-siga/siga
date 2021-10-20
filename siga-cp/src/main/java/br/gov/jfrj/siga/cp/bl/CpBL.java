@@ -1446,11 +1446,11 @@ public class CpBL {
 	public CpToken gerarUrlPermanente(Long idRef) {
 		try {
 			CpToken sigaUrlPermanente = new CpToken();
-			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(1L,idRef); //Se tem token não expirado, devolve token
+			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE,idRef); //Se tem token não expirado, devolve token
 			if (sigaUrlPermanente == null ) {
 				sigaUrlPermanente = new CpToken();
 				//Seta tipo 1 - Token para URL Permamente
-				sigaUrlPermanente.setIdTpToken(1L);
+				sigaUrlPermanente.setIdTpToken(CpToken.TOKEN_URLPERMANENTE);
 				
 				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
 				sigaUrlPermanente.setIdRef(idRef);
@@ -1664,12 +1664,12 @@ public class CpBL {
 		try {
 			
 			/* Invalidar se existir token ativo */
-			invalidarTokenAtivo(2L,cpf);
+			invalidarTokenAtivo(CpToken.TOKEN_PIN,cpf);
 
 			CpToken tokenResetPin = new CpToken();
 			
 			//Seta tipo 2 - Token para Reset PIN
-			tokenResetPin.setIdTpToken(2L);
+			tokenResetPin.setIdTpToken(CpToken.TOKEN_PIN);
 			tokenResetPin.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
 			tokenResetPin.setIdRef(cpf);
 			
@@ -1700,14 +1700,13 @@ public class CpBL {
 	
 	public CpToken gerarTokenResetSenha(Long cpf) {
 		try {
-			final long tipoToken = 3L;
 			
 			/* Invalidar se existir token ativo */
-			invalidarTokenAtivo(tipoToken,cpf);
+			invalidarTokenAtivo(CpToken.TOKEN_SENHA,cpf);
 
 			CpToken tokenResetSenha = new CpToken();
 			
-			tokenResetSenha.setIdTpToken(tipoToken);
+			tokenResetSenha.setIdTpToken(CpToken.TOKEN_SENHA);
 			tokenResetSenha.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
 			tokenResetSenha.setIdRef(cpf);
 			

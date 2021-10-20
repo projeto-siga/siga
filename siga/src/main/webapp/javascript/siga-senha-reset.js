@@ -37,6 +37,12 @@ SenhaReset.Etapas = (function() {
             this.btnReenviarCodigo.on('click', onBtnReenviarCodigoClicado.bind(this));
 
 			this.passNova.on('keyup', onPassNovaKeyup.bind(this));
+			
+			//Permite apenas números no CPF
+			setInputFilter(this.cpfUser[0], function(value) {
+			  return /^-?\d*$/.test(value); 
+			});
+
 
 
             exibirEtapa.call(this, this.etapaAtual);

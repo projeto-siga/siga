@@ -7755,7 +7755,7 @@ public class ExBL extends CpBL {
 	    documentoJson.put("dataFinalizacao", doc.getDtFinalizacao());
 	    
 	    
-	    CpToken cpToken = CpDao.getInstance().obterCpTokenPorTipoIdRef(1L,doc.getIdDoc());
+	    CpToken cpToken = CpDao.getInstance().obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE,doc.getIdDoc());
 	    String urlPermanente = "";
 	    
 	    if (cpToken != null) { //Obter Link Permanente

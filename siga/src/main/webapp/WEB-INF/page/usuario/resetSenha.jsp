@@ -2,52 +2,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <siga:pagina titulo="Redefinição de Senha">	
 
 	<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
-	<link rel="stylesheet" href="/siga/css/siga-pin.css" type="text/css" media="screen, projection"/>
+	<link rel="stylesheet" href="/siga/css/siga-steps.css" type="text/css" media="screen, projection"/>
 	<script src='https://www.google.com/recaptcha/api.js'></script>
 	
-	<style>
-		#passwordStrength {
-			height: 5px;
-			display: block;
-			float: left;
-			
-		}
-		
-		.strength0 {
-			width: 100%;
-			background: #cccccc;
-		}
-		
-		.strength1 {
-			width: 20%;
-			background: #ff0000;
-		}
-		
-		.strength2 {
-			width: 40%;
-			background: #ff5f5f;
-		}
-		
-		.strength3 {
-			width: 60%;
-			background: #56e500;
-		}
-		
-		.strength4 {
-			background: #4dcd00;
-			width: 80%;
-		}
-		
-		.strength5 {
-			background: #399800;
-			width: 100%;
-		}
-
-	</style>
  	
  	<div class="container-fluid">
  		<c:if test="${baseTeste}">
@@ -60,7 +22,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-sm-9">
-						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Senha</h5>
+						<h5 class="titulo-principal-etapa" id="tituloPrincipalEtapa">Redefinição de Senha</h5>
 					</div>
 				</div>
 			</div>
@@ -83,7 +45,7 @@
 											  <div class="input-group-prepend">
 											    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fa fa-user"></i></span>
 											  </div>
-											  <input type="text" id="cpfUser" class="form-control " style="text-align: center;" minlength="14" maxlength="14" size="11" autofocus inputmode="numeric" required />
+											  <input type="text" id="cpfUser" class="form-control " style="text-align: center;" minlength="11" maxlength="11" size="11" autofocus inputmode="numeric" required />
 											</div>
 											
 											<div class="row mt-4">
@@ -113,12 +75,9 @@
 									<div class="row text-center">
 										<div class="col-md-4 col-lg-4"></div>
 										<div class="col-md-4 col-lg-4">
-											
-
+											<!-- Email list container -->
 										 	<div id="emailListContainer" class="font-weight-bold"></div>
-
 										    <button type="button" id="btnEnviarCodigo" class="btn btn-primary btn-lg mt-2">Enviar Código <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-										
 										</div>
 										<div class="col-md-4 col-lg-4"></div>
 									</div>
@@ -132,8 +91,7 @@
 							<div class="col-md-12 col-lg-12">
 								<div class="py-1 text-center">
 									<h2 class="mt-5">Cadastre uma Nova Senha</h2>
-						            
-						            
+						        			            
 									<div class="row text-center">
 										<div class="col-md-4 col-lg-4"></div>
 										<div class="col-md-4 col-lg-4">
@@ -172,16 +130,18 @@
 													class="form-control" style="text-align: center;" /> 
 											</div>
 			
-										<hr />
-										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
-											<div class="col-sm-11">
-												<div class="form-check">
-													<input type="checkbox" checked="checked" id="trocarSenhaRede" name="usuario.trocarSenhaRede" class="form-check-input"></input>
-													<label class="form-check-label" >Redefinir também a senha do computador, da rede e do e-mail</label>
+											
+											<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
+												<hr />
+												<div class="col-sm-11">
+													<div class="form-check">
+														<input type="checkbox" checked="checked" id="trocarSenhaRede" name="usuario.trocarSenhaRede" class="form-check-input"></input>
+														<label class="form-check-label" >Redefinir também a senha do computador, da rede e do e-mail</label>
+													</div>
 												</div>
-											</div>
-										</c:if>
-														
+											</c:if>
+											<hr />
+											<small class="text-muted">*Será redefinida a senha para todos os acessos.</small>		
 											
 										</div>
 										<div class="col-md-4 col-lg-4"></div>
@@ -224,6 +184,5 @@
 					
 	<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>	
 	<script type="text/javascript" src="/siga/javascript/siga-senha-reset.js?v=1614289085"></script>
-	<script type="text/javascript" src="http://andti.com.br/bootstrap-strong-password/js/bootstrap-strong-password.js"></script>	
 
 </siga:pagina>

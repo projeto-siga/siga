@@ -19,10 +19,11 @@ public class WfResp implements Responsible {
 
 	@Override
 	public String getInitials() {
-		if (pessoa != null)
-			return pessoa.getSigla();
 		if (lotacao != null)
 			return lotacao.getSiglaCompleta();
+		if (pessoa != null)
+			return pessoa.getSigla();
+		
 		return null;
 	}
 

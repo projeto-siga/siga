@@ -635,39 +635,3 @@ ol ol {
 	list-style-type: lower-alpha;
 	padding-left: 1cm;
 }
-
-#passwordStrength {
-	height: 5px;
-	display: block;
-	float: left;
-}
-
-.strength0 {
-	width: 100%;
-	background: #cccccc;
-}
-
-.strength1 {
-	width: 20%;
-	background: #ff0000;
-}
-
-.strength2 {
-	width: 40%;
-	background: #ff5f5f;
-}
-
-.strength3 {
-	width: 60%;
-	background: #56e500;
-}
-
-.strength4 {
-	background: #4dcd00;
-	width: 80%;
-}
-
-.strength5 {
-	background: #399800;
-	width: 100%;
-}

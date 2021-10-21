@@ -23,6 +23,8 @@ SenhaReset.Etapas = (function() {
 			this.passNova = $('#passNova');
 			this.passConfirmacao = $('#passConfirmacao');
 			this.tokenSenha = $('#tokenSenha');
+			
+			this.ldap = $('#ldapContainer');
 
             this.cpfResetSenhaOK = false;
             this.emailResetSenhaOK = false;
@@ -38,24 +40,22 @@ SenhaReset.Etapas = (function() {
 
 			this.passNova.on('keyup', onPassNovaKeyup.bind(this));
 			
+			this.on('validarResetSenha', validarResetSenha.bind(this));
+			this.on('validarCpfRecaptcha', validarCpfRecaptcha.bind(this));
+			this.on('validarEmail', validarEmail.bind(this));
+			
 			//Permite apenas números no CPF
 			setInputFilter(this.cpfUser[0], function(value) {
 			  return /^-?\d*$/.test(value); 
 			});
 
-
-
             exibirEtapa.call(this, this.etapaAtual);
         }
     }
-	
-	
-	
-	function onValidar(evento, validacao) {			
-		return true;		
-	}
 
+	/* -----  eventos ------ */
 	function onBtnAnteriorClicado() {		
+		const LOGIN_URL = "/siga/public/app/login";
 		
 		if (typeof this.etapas[this.etapaAtual - 1] !== 'undefined') {	
 			switch (this.etapas[this.etapaAtual - 1].id) {
@@ -67,21 +67,15 @@ SenhaReset.Etapas = (function() {
 			}
 			atualizarEtapa(this, -1, false);
 		} else {
-			window.location.href = "/siga/public/app/login";
-		}
-		
-			
+			window.location.href = LOGIN_URL;
+		}	
 	}
 	
 
-	function onBtnProximoClicado(podeValidar) {
+	function onBtnProximoClicado() {
 		if (this.etapaAtual === 0)
 			localizarAcesso.call(this);
-		if (podeValidar !== false && !validarCampos.call(this, this.etapaAtual)) {
-			return false;
-		} 			
-		
-				
+					
 		if (typeof this.etapas[this.etapaAtual + 1] !== 'undefined') {
 			switch (this.etapas[this.etapaAtual + 1].id) {
 			case 'cpfResetSenha':											
@@ -106,28 +100,10 @@ SenhaReset.Etapas = (function() {
 		enviarCodigo.call(this);
 	}
 	
-	function enviarCodigo() {																			
-		var form = this;	
-		emailSelected = $('input[name="gridRadioEmail"]:checked').val();					
-		$.ajax({
-			url: '/siga/public/app/usuario/senha/gerar-token-reset',
-		    type: 'POST',		
-			data: {'cpf':this.cpfUser.val(),'emailOculto':emailSelected,'jwt':this.jwt.val()},
-			beforeSend: onSpinnerMostrar.bind(this),							
-	        success: function(result){
-				if (form.etapaAtual === 1)
-					atualizarEtapa(form, 1);
-				sigaModal.alerta("Código de segurança gerado e enviado para o e-mail cadastrado.");
-				
-	        },
-	        error: function(result){	
-				let msgError = result.responseText;
-	        	erroRequisicao(form,msgError);
-	        },
-			complete: onSpinnerOcultar.bind(this)	
-		});									
-	}
+	/* ---- ----- */
 	
+
+	/*--- comtroles das etapas -----*/
 	function habilitarBtnProximo(obj) {
 		obj.btnProximo.removeAttr('disabled');
 	}
@@ -173,12 +149,98 @@ SenhaReset.Etapas = (function() {
 
 	}	
 	
-	function salvar() {			
-		if (!validateSenha(this)) {
-			return false;
-		}
-		if (validarCampos.call(this, this.etapaAtual)){																	
-			var form = this;
+	function atualizarTituloEtapaTopo() {
+		this.tituloPrincipalEtapa.find('.js-titulo-etapa-topo').remove();
+				
+		for (var i = 0; i <= this.etapaAtual; i++) {
+			switch (this.etapas[i].id) {				
+				case 'cpfResetSenha':				
+					titulo = 'Localize seu Acesso';	
+					break;
+				case 'emailResetSenha':		
+					titulo = 'Enviar Código';		
+					break;
+				case 'resetSenha':		
+					titulo = 'Defina uma Nova Senha';		
+					break;
+
+			}	
+			this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;'+titulo+'</span>');					
+		}	
+	}
+	
+	function atualizarSpanIndicadorEtapa(numeroEtapa) {  
+		this.spanIndicadorEtapa.removeClass('active');	   
+	  	this.spanIndicadorEtapa[numeroEtapa].className += " active";
+	}
+	/* ---- ----- */
+	
+	/*--------- AJAX ------------*/
+	//1 - Etapa
+	function localizarAcesso() {																			
+		if (validar.call(this, this.etapaAtual)){		
+			let form = this;				
+			$.ajax({
+				url: '/siga/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/'+ this.cpfUser.val(),
+			    contentType: 'application/json',
+			    type: 'GET',	
+				data: {'g-recaptcha-response':grecaptcha.getResponse()},
+				beforeSend: onSpinnerMostrar.bind(this),							
+		        success: function(result){
+					grecaptcha.reset();
+					form.jwt.val(result.jwt);
+					createRadioEmail(result.emails);
+					atualizarEtapa(form, 1);
+		        },
+		        error: function(result){	
+					grecaptcha.reset();
+		        	erroRequisicao(form,result.responseText);
+		        },
+				complete: onSpinnerOcultar.bind(this)	
+			});	
+		}								
+	}
+	
+	//2 - Etapa
+	function enviarCodigo() {	
+		if (validar.call(this, this.etapaAtual)){																		
+			let form = this;	
+			emailSelected = $('input[name="gridRadioEmail"]:checked').val();					
+			$.ajax({
+				url: '/siga/public/app/usuario/senha/gerar-token-reset',
+			    type: 'POST',		
+				data: {'cpf':this.cpfUser.val(),'emailOculto':emailSelected,'jwt':this.jwt.val()},
+				beforeSend: onSpinnerMostrar.bind(this),							
+		        success: function(result){
+					//redireciona para etapa seguinte se estiver na lista de email
+					if (form.etapaAtual === 1) {
+						atualizarEtapa(form, 1);
+					}	
+					
+					if (result.ldapEnable) {
+						form.ldap.css('display', 'inline');
+						$('#trocarSenhaRede').attr("checked", true);
+					} else {
+						form.ldap.css('display', 'none');
+						$('#trocarSenhaRede').attr("checked", false);
+					}
+						
+						
+					sigaModal.alerta("Código de segurança gerado e enviado para o e-mail cadastrado.");
+		        },
+		        error: function(result){	
+					let msgError = result.responseText;
+		        	erroRequisicao(form,msgError);
+		        },
+				complete: onSpinnerOcultar.bind(this)	
+			});	
+		}								
+	}
+	
+	//3 - Etapa final
+	function salvar() {		
+		if (validar.call(this, this.etapaAtual)){																	
+			let form = this;
 			emailSelected = $('input[name="gridRadioEmail"]:checked').val();	
 			trocarSenhaRede = $('#trocarSenhaRede').is(':checked');
 			$.ajax({
@@ -196,48 +258,7 @@ SenhaReset.Etapas = (function() {
 		}								
 	}
 	
-	function localizarAcesso() {																			
-		let form = this;	
-		
-		if(this.cpfUser.val() === "") {
-			sigaModal.alerta('CPF não informado. Favor inserí-lo.').select(this.cpfUser);		
-			validacao.resultado = false;
-			return false;
-		} 
-		
-		if (!isCpfValido(this.cpfUser.val())) {
-			sigaModal.alerta('CPF informado inválido.').select(this.cpfUser);		
-			validacao.resultado = false;
-			return false;
-		}
-		
-		if (grecaptcha.getResponse().length == 0) {
-			sigaModal.alerta('Verificação de Segurança não efetuada.').select(grecaptcha);		
-			validacao.resultado = false;
-			return false;
-			
-		}
-						
-		$.ajax({
-			url: '/siga/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/'+ this.cpfUser.val(),
-		    contentType: 'application/json',
-		    type: 'GET',	
-			data: {'g-recaptcha-response':grecaptcha.getResponse()},
-			beforeSend: onSpinnerMostrar.bind(this),							
-	        success: function(result){
-				grecaptcha.reset();
-				form.jwt.val(result.jwt);
-				createRadioEmail(result.emails);
-				atualizarEtapa(form, 1);
-	        },
-	        error: function(result){	
-				grecaptcha.reset();
-	        	erroRequisicao(form,result.responseText);
-	        },
-			complete: onSpinnerOcultar.bind(this)	
-		});									
-	}
-	
+	/* controlar andamento requisição */
 	function iniciarRequisicao() {
 		this.btnGoToMesa.hide();
 		$(this.etapas[this.etapaAtual]).hide();
@@ -270,47 +291,80 @@ SenhaReset.Etapas = (function() {
 		form.btnGoToMesa.show();
 	
 	}	
+	/*---- -----*/
 	
-	function validarCampos(numeroEtapa) {				
-		var retorno = { resultado: true, alertaConfirmado: false };
+	/*--- validadores ------*/
+	function validar(numeroEtapa) {				
+		let retorno = { resultado: true, alertaConfirmado: false };
 		
 		switch (this.etapas[numeroEtapa].id) {
-			case 'cpfResetSenha':			
+			case 'cpfResetSenha':	
+				this.emitter.trigger('validarCpfRecaptcha', retorno);			
 				break;
-			case 'emailResetSenha':					
-				this.emitter.trigger('validarNovoPin', retorno);	
+			case 'emailResetSenha':		
+				this.emitter.trigger('validarEmail', retorno);			
 				break;
+			case 'resetSenha':		
+				this.emitter.trigger('validarResetSenha', retorno);	
+				break;				
 		}
 		
 		return retorno.resultado;					
 	}		
 	
-	function atualizarTituloEtapaTopo() {
-		this.tituloPrincipalEtapa.find('.js-titulo-etapa-topo').remove();
-				
-		for (var i = 0; i <= this.etapaAtual; i++) {
-			switch (this.etapas[i].id) {				
-				case 'cpfResetSenha':				
-					titulo = 'Encontre seu Acesso';	
-					break;
-				case 'emailResetSenha':		
-					titulo = 'Gerar e Enviar Código';		
-					break;
-				case 'resetSenha':		
-					titulo = 'Defina uma nova Senha';		
-					break;
-
-			}	
-			this.tituloPrincipalEtapa.append('<span class="titulo-etapa-topo  js-titulo-etapa-topo">&nbsp;<i class="fa fa-angle-right" style="color: #000;font-size: 1rem;"></i>&nbsp;'+titulo+'</span>');					
-		}	
-		
-
+	function validarResetSenha(evento, validacao) {	
+		let strength = $("#passwordStrength").className;
+		if (strength== "strength0" || strength == "strength1" || strength == "strength2") {			
+			sigaModal.alerta('Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números.');
+			validacao.resultado = false;
+			return false;
+		}
+		let passNova = $("#passNova").val();
+		let passConfirmacao = $("#passConfirmacao").val();
+		if (passNova != passConfirmacao) {			
+			sigaModal.alerta('Repetição da nova senha não confere, favor redigitar.');					
+			validacao.resultado = false;
+			return false;
+		}
+		validacao.resultado = true;
+		return true;
 	}
 	
-	function atualizarSpanIndicadorEtapa(numeroEtapa) {  
-		this.spanIndicadorEtapa.removeClass('active');	   
-	  	this.spanIndicadorEtapa[numeroEtapa].className += " active";
+	function validarEmail(evento, validacao) {	
+		let emailSelected = $('input[name="gridRadioEmail"]:checked').val();
+		if (emailSelected === undefined || emailSelected === "") {			
+			sigaModal.alerta('Email para envio do código não foi selecionado.');
+			validacao.resultado = false;
+			return false;
+		}
+		validacao.resultado = true;
+		return true;
 	}
+	
+	function validarCpfRecaptcha(evento, validacao) {	
+		if(this.cpfUser.val() === "") {
+			sigaModal.alerta('CPF não informado. Favor inserí-lo.').select(this.cpfUser);		
+			validacao.resultado = false;
+			return false;
+		} 
+		
+		if (!isCpfValido(this.cpfUser.val())) {
+			sigaModal.alerta('CPF informado inválido.').select(this.cpfUser);		
+			validacao.resultado = false;
+			return false;
+		}
+		
+		if (grecaptcha.getResponse().length == 0) {
+			sigaModal.alerta('Verificação de Segurança não efetuada.').select(grecaptcha);		
+			validacao.resultado = false;
+			return false;
+			
+		}
+		validacao.resultado = true;
+		return true;
+	}
+	
+	
 	
 	function createRadioEmail(list) {
 		this.emailListContainer.innerHTML = ''; //clear
@@ -337,70 +391,12 @@ SenhaReset.Etapas = (function() {
 		}
 
 	}
-	
-	
-	function validateSenha(form) {
-		let strength = $("#passwordStrength").className;
-		if (strength== "strength0" || strength == "strength1" || strength == "strength2") {			
-			sigaModal.alerta('Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números.');
-			return false;
-		}
-		let passNova = $("#passNova").val();
-		let passConfirmacao = $("#passConfirmacao").val();
-		if (passNova != passConfirmacao) {			
-			sigaModal.alerta('Repetição da nova senha não confere, favor redigitar.');					
-			return false;
-		}
-		return true;
-	}
-
-	function passwordStrength(password) {
-		var desc = new Array();
-		desc[0] = "Inaceitável";
-		desc[1] = "Muito Fraca";
-		desc[2] = "Fraca";
-		desc[3] = "Razoável";
-		desc[4] = "Boa";
-		desc[5] = "Forte";
-		var score = 0;
-
-		//if password bigger than 6 give 1 point
-		if (password.length >= 6)
-			score++;
-
-		//if password has both lower and uppercase characters give 1 point      
-		if ((password.match(/[a-z]/)) && (password.match(/[A-Z]/)))
-			score++;
-
-		//if password has at least one number give 1 point
-		if ((password.match(/[a-z]/) || password.match(/[A-Z]/))
-				&& (password.match(/\d+/)))
-			score++;
-
-		//if password has at least one special caracther give 1 point
-		if (password.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/))
-			score++;
-
-		//if password bigger than 12 give another 1 point
-		if (password.length >= 12)
-			score++;
-
-		//mininum requirements to be accepted by the AD
-		if (score > 2
-				&& (password.length < 6 || !password.match(/[a-z]/)
-						|| !password.match(/[A-Z]/) || !password.match(/\d+/)))
-			score = 2;
-
-		document.getElementById("passwordDescription").innerHTML = desc[score];
-		document.getElementById("passwordStrength").className = "strength"
-				+ score;
-	}
 
 	return Etapas;	
 }());
 
 
-
+//inicializa módulo
 $(function() {
 	var etapas = new SenhaReset.Etapas();
 	etapas.iniciar();

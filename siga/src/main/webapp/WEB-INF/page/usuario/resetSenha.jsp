@@ -131,15 +131,15 @@
 											</div>
 			
 											
-											<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
+											<div id="ldapContainer">
 												<hr />
 												<div class="col-sm-11">
 													<div class="form-check">
-														<input type="checkbox" checked="checked" id="trocarSenhaRede" name="usuario.trocarSenhaRede" class="form-check-input"></input>
+														<input type="checkbox" id="trocarSenhaRede" name="usuario.trocarSenhaRede" class="form-check-input"></input>
 														<label class="form-check-label" >Redefinir também a senha do computador, da rede e do e-mail</label>
 													</div>
 												</div>
-											</c:if>
+											</div>
 											<hr />
 											<small class="text-muted">*Será redefinida a senha para todos os acessos.</small>		
 											

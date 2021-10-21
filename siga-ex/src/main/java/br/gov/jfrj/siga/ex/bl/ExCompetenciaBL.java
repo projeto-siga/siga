@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
@@ -4561,6 +4562,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (lotaDestinatario == null && destinatario == null) 
+			return false;
+		
+		if (mob.doc().getPrincipal() != null && ExTipoDePrincipal.PROCEDIMENTO == mob.doc().getTipoDePrincipal()) 
 			return false;
 		
 		if (!podeReceberPorConfiguracao(destinatario, lotaDestinatario))

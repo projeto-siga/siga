@@ -144,6 +144,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExProtocolo;
+import br.gov.jfrj.siga.ex.ExRef;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
@@ -5630,6 +5631,10 @@ public class ExBL extends CpBL {
 		if (acao != null)
 			attrs.put(acao, "1");
 		attrs.put("doc", doc);
+		if (mov != null && mov.getExMobil() != null)
+			attrs.put("ref", new ExRef(doc, mov.getExMobil()));
+		else
+			attrs.put("ref", doc.getRef());
 		
 		// Incluir um atributo chamado "wf" que contém os dados do procedimento vinculado
 		if (doc.getTipoDePrincipal() != null && doc.getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getPrincipal() != null) {
@@ -8057,6 +8062,12 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro na definição de prazo para assinatura do documento.", 0, e);
 		}
+	}
+
+	public void atualizarPrincipal(ExDocumento doc, ExTipoDePrincipal tipo, String siglaPrincipal) {
+		doc.setTipoDePrincipal(tipo);
+		doc.setPrincipal(siglaPrincipal);
+		ExDao.getInstance().gravar(doc);
 	}
 	
 }

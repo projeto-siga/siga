@@ -140,4 +140,7 @@ public interface ExService extends Remote {
 
 	@WebMethod
 	public boolean isJuntado(String siglaMobilFilho, String siglaMobilPai) throws Exception;
+
+	@WebMethod
+	public Boolean atualizarPrincipal(String codigoDocumento, String tipoPrincipal, String siglaPrincipal) throws Exception;
 }

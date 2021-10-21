@@ -78,13 +78,13 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
-import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
 	private static final transient String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
@@ -582,7 +582,7 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 		
 		if (descricao != null && descricao.equals(mov.getObs())) {
-			descricao = ProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
+			descricao = CpProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
 		}
 	}
 

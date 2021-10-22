@@ -551,6 +551,13 @@ public class UsuarioController extends SigaController {
 			if (!usuarios.isEmpty()) {
 				for(DpPessoa usuario : usuarios) {
 					if (emailOculto.equals(usuario.getEmailPessoaAtualParcialmenteOculto())) {
+						boolean autenticaPeloBanco = Cp.getInstance().getBL().buscarModoAutenticacao(usuario.getOrgaoUsuario().getSiglaOrgaoUsu()).equals(GiService._MODO_AUTENTICACAO_BANCO);
+						//Autenticação não for via banco
+						if (!autenticaPeloBanco)
+							throw new RuntimeException("O usuário deve modificar sua senha usando a interface do Windows "
+														+ "(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')"
+														+ ", ou entrando em contato com a Central de Atendimento.");
+
 						CpToken token = Cp.getInstance().getBL().gerarTokenResetSenha(cpf);
 						Cp.getInstance().getBL().enviarEmailTokenResetSenha(usuario, "Código para redefinição de SENHA ",token.getToken());
 						emailLocalizado = true;

@@ -388,6 +388,9 @@ public class CpBL {
 					dao().commitTransacao();
 
 					if (SigaMessages.isSigaSP()) {
+						DpNotificarPorEmail emailNotifica = dao().consultar(3L, DpNotificarPorEmail.class, false);
+						
+						if (emailNotifica.isConfiguravel()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
 						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
@@ -413,12 +416,17 @@ public class CpBL {
 										+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
 										+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
 										+ "</td>" + "</tr>" + "</tbody>" + "</table>");
+						}
 					} else {
-						Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
-								"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
-										+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
-										+ novaSenha + "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor, não responda. ");
+						DpNotificarPorEmail emailNotifica = dao().consultar(3L, DpNotificarPorEmail.class, false);
+						
+						if (emailNotifica.isConfiguravel()) {
+							Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
+									"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
+											+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
+											+ novaSenha + "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda. ");
+						}
 					}
 
 					return idNova;

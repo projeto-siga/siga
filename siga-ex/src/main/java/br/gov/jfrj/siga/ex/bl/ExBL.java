@@ -126,6 +126,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
@@ -3866,7 +3867,16 @@ public class ExBL extends CpBL {
 
 		if (!mov.getExTipoMovimentacao().getIdTpMov()
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
-			Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+			
+			DpNotificarPorEmail emailNotificaDocumentoTramitadoParaUsuario = dao().consultar(8L, DpNotificarPorEmail.class, false);
+			if (emailNotificaDocumentoTramitadoParaUsuario.isConfiguravel() && emailNotificaDocumentoTramitadoParaUsuario.getId() == 8L) {
+				Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+			}
+			
+			DpNotificarPorEmail emailNotificaDocumentoTramitadoParaUnidade = dao().consultar(9L, DpNotificarPorEmail.class, false);
+			if (emailNotificaDocumentoTramitadoParaUnidade.isConfiguravel() && emailNotificaDocumentoTramitadoParaUnidade.getId() == 9L) {
+				Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+			}
 		}
 		
 		if (SigaMessages.isSigaSP()) {

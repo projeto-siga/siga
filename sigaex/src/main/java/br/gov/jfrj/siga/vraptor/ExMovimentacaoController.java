@@ -1435,25 +1435,24 @@ public class ExMovimentacaoController extends ExController {
 		DpNotificarPorEmail emailNotifica = dao().consultar(6L, DpNotificarPorEmail.class, false);
 		
 		if (emailNotifica.isConfiguravel()) {
-			
-			System.out.println(">>>>>>>>>>>>>>>>>Adicionou conssignatário.");
-			
 			String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
 			 
 			Correio.enviar(null,destinanarios, 
 					"Usuário marcado: ", 
 					"",   
-					"Prezado usuário, <a>" + cosignatarioSel.getObjeto().getEmailPessoa() +"</b> "
+					"Prezado usuário, <b>" + cosignatarioSel.getObjeto().getNomePessoa() +"</b> "
+							+ "<br>"
+							+ "Você foi marcado como, cossignatário do (<b>"+ sigla +"</b>), "
+							+ "pelo usuário (<b>"+ getTitular().getNomePessoa() + "</b>) "
 							+ "<br>"
 							+ "<br>"
-							+ "Você foi marcado como, cossignatário do ("+ sigla +"), "
-							+ "pelo usuário ("+ getTitular().getNomePessoa() + ") "
 							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
 							+ "	>clique aqui.</a>"
+							+ "<br>"
 							+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
 							+ "	>clique aqui</a>"
-							+ "para descadastrar.");
-		}
+							+ " para descadastrar.");
+		} 
 		
 		ExDocumentoController.redirecionarParaExibir(result, mov
 				.getExDocumento().getSigla());
@@ -2198,38 +2197,7 @@ public class ExMovimentacaoController extends ExController {
 			
 		} else {
 			result.include("origemRedirectTransferirGravar", true);
-			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
-			
-			if (tipoResponsavel == 1) {
-				DpNotificarPorEmail emailNotifica = dao().consultar(9L, DpNotificarPorEmail.class, false);
-				
-				if (emailNotifica.isConfiguravel()) {
-					String[] destinanarios = { getCadastrante().getEmailPessoa() };
-					
-					Correio.enviar(null,destinanarios, 
-							"Usuário marcado: ", 
-							"",    
-							"O documento " + buscarDocumento(builder).getCodigo() + ", com descrição " + buscarDocumento(builder).getDescrDocumento() + ", foi transferido para " + lotaResponsavelSel.getDescricao() + " e aguarda recebimento.</p>"
-									+ "<br>"
-									+ "Para visualizar o documento, clique <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'>aqui</a>");
-				}
-			} 
-			
-			if(tipoResponsavel == 2) {
-				
-				DpNotificarPorEmail emailNotifica = dao().consultar(8L, DpNotificarPorEmail.class, false);
-				
-				if (emailNotifica.isConfiguravel()) {
-					String[] destinanarios = { getCadastrante().getEmailPessoa() };
-					
-					Correio.enviar(null,destinanarios, 
-							"Usuário marcado: ", 
-							"",    
-							"O documento " + buscarDocumento(builder).getCodigo() + ", com descrição " + buscarDocumento(builder).getDescrDocumento() + ", foi transferido para " + responsavelSel.getDescricao() + " e aguarda recebimento."
-									+ "<br>"
-									+ "Para visualizar o documento, clique <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'>aqui</a>");
-				}
-			}
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 		}
 	}
 
@@ -2284,7 +2252,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("listaTipoResp", this.getListaTipoRespParaNotificar());
 		result.include("tipoResponsavel", tipoResponsavelFinal);
 		result.include("lotaResponsavelSel", lotaResponsavelSelFinal);
-		result.include("responsavelSel", responsavelSelFinal);
+		result.include("responsavelSel", responsavelSelFinal); 
 	}
 
 	@Post("/app/expediente/mov/tramitar_paralelo")

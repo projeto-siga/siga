@@ -76,8 +76,8 @@
 								      <thead class="thead-dark">
 									      <tr>
 									        <th style="width: 70%;">Ações</th>
-									        <th style="text-align: center;">Não configurável</th>
 									        <th style="text-align: center;">Configurável</th>
+									        <th style="text-align: center;">Não configurável</th>
 									      </tr> 
 								      </thead>
 								      

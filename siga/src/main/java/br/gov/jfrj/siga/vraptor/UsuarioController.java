@@ -119,7 +119,7 @@ public class UsuarioController extends SigaController {
 			String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
 			 
 			Correio.enviar(null,destinanarios, 
-					"Usuário marcado: ", 
+					"Troca de Senha: ", 
 					"",    
 					"Prezado usuário, <b>"+ pessoa.getDpPessoa().getNomePessoa() +"</b> "
 							+ "<br>"

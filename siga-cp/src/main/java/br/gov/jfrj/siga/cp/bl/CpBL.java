@@ -881,6 +881,50 @@ public class CpBL {
 			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
 		}
 	}
+	
+	
+	public CpIdentidade redefinirSenha(String token, String senhaNova, String senhaConfirma,
+			String cpfUsuario, List<CpIdentidade> listaIdentidades)
+			throws NoSuchAlgorithmException, AplicacaoException {
+
+
+		boolean podeTrocar = Boolean.FALSE;
+
+		for (CpIdentidade cpIdentidade : listaIdentidades) {
+			podeTrocar = Boolean.TRUE;
+			break;
+		}
+
+
+		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
+			consisteFormatoSenha(senhaNova);
+			try {
+				Date dt = dao().consultarDataEHoraDoServidor();
+				final String hashNova = GeraMessageDigest.executaHash(senhaNova.getBytes(), "MD5");
+
+				dao().iniciarTransacao();
+				CpIdentidade i = null;
+				for (CpIdentidade cpIdentidade : listaIdentidades) {
+					i = new CpIdentidade();
+					PropertyUtils.copyProperties(i, cpIdentidade);
+					i.setIdIdentidade(null);
+					i.setDtCriacaoIdentidade(dt);
+					i.setDscSenhaIdentidade(hashNova);
+					i.setDscSenhaIdentidadeCripto(null);
+					i.setDscSenhaIdentidadeCriptoSinc(null);
+					dao().gravarComHistorico(i, cpIdentidade, dt, null);
+				}
+
+				dao().commitTransacao();
+				return null;
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
+			}
+		} else {
+			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		}
+	}
 
 	private boolean autenticarViaBanco(String senhaAtual, final CpIdentidade id) throws NoSuchAlgorithmException {
 		String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
@@ -1402,11 +1446,11 @@ public class CpBL {
 	public CpToken gerarUrlPermanente(Long idRef) {
 		try {
 			CpToken sigaUrlPermanente = new CpToken();
-			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(1L,idRef); //Se tem token não expirado, devolve token
+			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE,idRef); //Se tem token não expirado, devolve token
 			if (sigaUrlPermanente == null ) {
 				sigaUrlPermanente = new CpToken();
 				//Seta tipo 1 - Token para URL Permamente
-				sigaUrlPermanente.setIdTpToken(1L);
+				sigaUrlPermanente.setIdTpToken(CpToken.TOKEN_URLPERMANENTE);
 				
 				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
 				sigaUrlPermanente.setIdRef(idRef);
@@ -1522,12 +1566,10 @@ public class CpBL {
 	public void definirPinIdentidade( List<CpIdentidade> listaIdentidades, String pin, CpIdentidade idCadastrante)
 			throws NoSuchAlgorithmException, AplicacaoException {
 
-
-		boolean podeTrocar = Boolean.TRUE;
-
-
-		if (podeTrocar) {
-			try {
+		try {
+			boolean podeTrocar = Cp.getInstance().getComp().podeSegundoFatorPin(idCadastrante.getPessoaAtual(), idCadastrante.getPessoaAtual().getLotacao());
+			
+			if (podeTrocar) {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				final String pinHash = GeraMessageDigest.calcSha256(pin);
 
@@ -1540,12 +1582,11 @@ public class CpBL {
 					i.setPinIdentidade(pinHash);
 					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
 				}
-
-			} catch (final Exception e) {
-				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
+			} else {
+				throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
 			}
-		} else {
-			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
 		}
 	}
 	
@@ -1567,6 +1608,23 @@ public class CpBL {
 		formatoPinIsValido = true;
 		
 		return formatoPinIsValido;
+	}
+	
+	public Boolean consisteFormatoSenha(String senhaNova) throws RegraNegocioException {
+		boolean formatoSenhaValido = false;
+		final int SIZE_MIN_SENHA = 6;
+		
+		if (senhaNova.isEmpty()) {
+			throw new RegraNegocioException("Senha não informada.");
+		}
+
+		if (!SigaUtil.validacaoFormatoSenha(senhaNova)) {
+			throw new RegraNegocioException("Senha inválida. Deve conter pelo menos 6 caracteres sendo eles maiúsculos, minúsculos e números para aumentar a força da senha.");
+		}	
+				
+		formatoSenhaValido = true;
+		
+		return formatoSenhaValido;
 	}
 	
 	public Boolean validaHashPin(String pin, CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
@@ -1606,12 +1664,12 @@ public class CpBL {
 		try {
 			
 			/* Invalidar se existir token ativo */
-			invalidarTokenAtivo(2L,cpf);
+			invalidarTokenAtivo(CpToken.TOKEN_PIN,cpf);
 
 			CpToken tokenResetPin = new CpToken();
 			
 			//Seta tipo 2 - Token para Reset PIN
-			tokenResetPin.setIdTpToken(2L);
+			tokenResetPin.setIdTpToken(CpToken.TOKEN_PIN);
 			tokenResetPin.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
 			tokenResetPin.setIdRef(cpf);
 			
@@ -1640,30 +1698,68 @@ public class CpBL {
 		}
 	}
 	
-	public Boolean isTokenResetPinValido(Long cpf, String token) {
-		Boolean isTokenValido = false;
+	public CpToken gerarTokenResetSenha(Long cpf) {
+		try {
+			
+			/* Invalidar se existir token ativo */
+			invalidarTokenAtivo(CpToken.TOKEN_SENHA,cpf);
+
+			CpToken tokenResetSenha = new CpToken();
+			
+			tokenResetSenha.setIdTpToken(CpToken.TOKEN_SENHA);
+			tokenResetSenha.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
+			tokenResetSenha.setIdRef(cpf);
+			
+			/* HORA ATUAL */
+			GregorianCalendar gc = new GregorianCalendar();
+			Date dt = dao().consultarDataEHoraDoServidor();
+			gc.setTime(dt);
+
+			
+			/* EXP - Expiração do Token */
+			gc.add(Calendar.HOUR, 1);
+			tokenResetSenha.setDtExp(gc.getTime());	
+
+			try {
+				dao().gravar(tokenResetSenha);
+			} catch (final Exception e) {
+
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		
+			return tokenResetSenha;
+
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+		}
+	}
+	
+	/**** Controle de Validade Token ****/
+	public Boolean isTokenValido(Long tipoToken, Long cpf, String token) {
+		Boolean isValido = false;
 		try {
 			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
 			if (tokenResetPin != null ) {
 				if (cpf.equals(tokenResetPin.getIdRef())) {
 					Date dt = dao().consultarDataEHoraDoServidor();
 					LocalDateTime dtNow = LocalDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
 					LocalDateTime dtExp = LocalDateTime.ofInstant(tokenResetPin.getDtExp().toInstant(), ZoneId.systemDefault());
 					
-					isTokenValido = dtNow.isBefore(dtExp);			
+					isValido = dtNow.isBefore(dtExp);			
 				}
 			}
 
-			return isTokenValido;
+			return isValido;
 			
 		} catch (final Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
 	}
 	
-	public void invalidarTokenAtivo(Long tipo, Long idRef) {
-		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipo,idRef);
+	public void invalidarTokenAtivo(Long tipoToken, Long idRef) {
+		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
 		if (tokenResetPin != null) {
 			tokenResetPin.setDtExp(tokenResetPin.getDtIat());
 			try {
@@ -1674,10 +1770,10 @@ public class CpBL {
 		} 
 	}
 	
-	public void invalidarTokenUtilizado(Long cpf, String token) {
+	public void invalidarTokenUtilizado(Long tipoToken, Long cpf, String token) {
 		try {
 			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
 			if (tokenResetPin != null ) {
 				tokenResetPin.setDtExp(tokenResetPin.getDtIat());
 				try {
@@ -1691,12 +1787,36 @@ public class CpBL {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
 	}
-	
+	/****  ****/
 	
 	private String textoEmailDefinicaoPin(DpPessoa destinatario, String corpo) {		
 		String conteudo = "";
 		
 		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/novo-pin-definido.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${corpo}", corpo);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
+	
+	private String textoEmailDefinicaoSenha(DpPessoa destinatario, String corpo) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/nova-senha-definida.html"),StandardCharsets.UTF_8))) {			
 			String str;
 			
 			while((str = bfr.readLine()) != null) {
@@ -1729,6 +1849,17 @@ public class CpBL {
 		}
 	}
 	
+	public void enviarEmailDefinicaoSenha(DpPessoa destinatario, String assunto, String corpo) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailDefinicaoSenha(destinatario,corpo);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
 	
 	private String textoEmailTokenResetPin(DpPessoa destinatario,  String tokenPin) {		
 		String conteudo = "";
@@ -1753,11 +1884,46 @@ public class CpBL {
 		}
 			
 	}
+	
+	private String textoEmailTokenResetSenha(DpPessoa destinatario,  String token) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/token-senha-reset.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${token}", token);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
 
 	
 	public void enviarEmailTokenResetPIN(DpPessoa destinatario, String assunto, String tokenPin) {
 		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
 		String conteudoHTML = textoEmailTokenResetPin(destinatario,tokenPin);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
+	public void enviarEmailTokenResetSenha(DpPessoa destinatario, String assunto, String token) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailTokenResetSenha(destinatario,token);
 		
 		try {
 			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);

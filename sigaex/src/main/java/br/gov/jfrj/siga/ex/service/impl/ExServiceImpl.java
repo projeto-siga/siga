@@ -709,10 +709,6 @@ public class ExServiceImpl implements ExService {
 							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
 									+ docPai.getSigla() + ") já é documento filho.");
 
-						if (docPai.isPendenteDeAssinatura())
-							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
-									+ docPai.getSigla() + ") ainda não foi assinado.");
-
 						doc.setExMobilPai(mobPai);
 					}
 				}

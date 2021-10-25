@@ -1320,8 +1320,7 @@ public class ExBL extends CpBL {
 			}
 
 			if (doc.getExMobilAutuado() != null) {
-				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, mov.getDtMov(), cadastrante, cadastrante,
-						mov);
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, mov.getDtMov(), cadastrante);
 			}
 
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
@@ -1658,7 +1657,7 @@ public class ExBL extends CpBL {
 				}
 	
 				if (doc.getExMobilAutuado() != null) {
-					juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
+					juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante);
 				}
 			} catch (final Exception e) {
 				throw new RuntimeException(
@@ -1890,7 +1889,7 @@ public class ExBL extends CpBL {
 				}
 	
 				if (doc.getExMobilAutuado() != null) {
-					juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
+					juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante);
 				}
 	
 				if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
@@ -3114,6 +3113,13 @@ public class ExBL extends CpBL {
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
+			
+			ExMobil mob = doc.getMobilDefaultParaReceberJuntada();
+			if (doc.getExMobilAutuado() != null 
+					&& Ex.getInstance().getComp().podeSerJuntado(cadastrante, lotaCadastrante, mob)
+					&& Ex.getInstance().getComp().podeJuntar(cadastrante, lotaCadastrante, doc.getExMobilAutuado()))
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
+			
 			return s;
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao finalizar o documento: " + e.getMessage(), e);
@@ -5753,8 +5759,7 @@ public class ExBL extends CpBL {
 	}
 
 	private void juntarAoDocumentoAutuado(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
-			final ExDocumento doc, final Date dtMov, final DpPessoa subscritor, final DpPessoa titular,
-			final ExMovimentacao mov) throws Exception, AplicacaoException {
+			final ExDocumento doc, final Date dtMov, final DpPessoa titular) throws Exception, AplicacaoException {
 
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)

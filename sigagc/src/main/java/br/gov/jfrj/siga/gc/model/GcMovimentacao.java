@@ -42,9 +42,10 @@ public class GcMovimentacao extends Objeto implements
 			GcMovimentacao.class);
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcMovimentacaoSeq")
+	@GeneratedValue(generator = "gcMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
-	private Long id;
+	private long id;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
@@ -90,7 +91,7 @@ public class GcMovimentacao extends Objeto implements
 	@JoinColumn(name = "ID_LOTACAO_TITULAR")
 	private DpLotacao lotacaoTitular;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(cascade=CascadeType.PERSIST,optional = false)
 	@JoinColumn(name = "ID_CONTEUDO")
 	private GcArquivo arq;
 

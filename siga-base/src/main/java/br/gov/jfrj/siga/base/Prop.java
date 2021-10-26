@@ -271,6 +271,9 @@ public class Prop {
 		 * armazenado em session storage no browser do usuário.
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
+		/* Tela de Pesquisa: Fazer ou não a pesquisa via native query 
+		 * */
+		provider.addPublicProperty("/sigaex.pesquisa.native.query", "true");
 		
 	}
 }

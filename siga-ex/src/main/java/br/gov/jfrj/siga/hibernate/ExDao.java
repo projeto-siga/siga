@@ -695,8 +695,13 @@ public class ExDao extends CpDao {
 		Query query = null;
 		
 		if(itemPagina > 0) {
-			query = em().createQuery(
-					montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			if (Prop.getBool("/sigaex.pesquisa.native.query")) {
+				query = em().createNativeQuery(
+						montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			} else {
+				query = em().createQuery(
+						montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			}
 			preencherParametros(flt, query);
 	
 			if (offset > 0) {

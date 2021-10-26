@@ -1451,22 +1451,25 @@ CKEDITOR.replace( '${var}',
  								// This is open source, can modify it as you wish.
  								// Stuart Sillitoe - stuartsillitoe.co.uk
  								CKEDITOR.config.strinsert_strings =	 [
-											{'name': 'Documento'},
-											{'name': 'Código', 'value': '$' + '{doc.sigla}'},
-											{'name': 'Data', 'value': '$' + '{doc.dtDocDDMMYYYY}'},
-											{'name': 'Nome do Subscritor', 'value': '$' + '{doc.subscritor.descricao}'},
-											{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.subscritor.lotacao.descricao}'},
-											{'name': 'Destinatário', 'value': '$' + '{doc.destinatarioString}'},
-											{'name': 'Campo X da Entrevista', 'value': '$' + '{doc.form.x}'},
-											{'name': 'Campo X da Entrevista do Pai', 'value': '$' + '{doc.pai.form.x}'},
-											{'name': 'Descrição', 'value': '$' + '{doc.descrDocumento}'},
-											{'name': 'Workflow'},
-											{'name': 'Sigla do Procedimento', 'value': '$' + '{wf.sigla}'},
-											{'name': 'Principal', 'value': '$' + '{wf.principal}'},
-											{'name': 'Nome do Titular', 'value': '$' + '{wf.titular}'},
-											{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
-											{'name': 'Variável X', 'value': '$' + '{wf.var.x}'},
-										];
+									{'name': 'Documento'},
+									{'name': 'Código', 'value': '$' + '{doc.sigla}'},
+									{'name': 'Data', 'value': '$' + '{doc.dtDocDDMMYYYY}'},
+									{'name': 'Nome do Subscritor', 'value': '$' + '{doc.subscritor.descricao}'},
+									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.subscritor.lotacao.descricao}'},
+									{'name': 'Destinatário', 'value': '$' + '{doc.destinatarioString}'},
+									{'name': 'Campo da Entrevista', 'value': '$' + '{doc.form.NOMECAMPO}'},
+									{'name': 'Campo da Entrevista do Pai', 'value': '$' + '{doc.pai.form.NOMECAMPO}'},
+									{'name': 'Campo da Entrevista do Autuado', 'value': '$' + '{doc.autuado.form.NOMECAMPO}'},
+									{'name': 'Descrição', 'value': '$' + '{doc.descrDocumento}'},
+									{'name': 'Workflow'},
+									{'name': 'Sigla do Procedimento', 'value': '$' + '{wf.sigla}'},
+									{'name': 'Principal', 'value': '$' + '{wf.principal}'},
+									{'name': 'Nome do Titular', 'value': '$' + '{wf.titular}'},
+									{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
+									{'name': 'Variável', 'value': '$' + '{wf.var.NOMEVARIAVEL}'},
+									{'name': 'Data', 'value': '$' + '{fmt.data(wf.var.NOMEVARIAVEL)}'},
+									{'name': 'Reais por Extenso', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},
+								];
 								CKEDITOR.config.strinsert_button_label = 'Variável';
 								CKEDITOR.config.strinsert_button_title = 'Inserir Variável';
 								CKEDITOR.config.strinsert_button_voice = 'Inserir Variável';

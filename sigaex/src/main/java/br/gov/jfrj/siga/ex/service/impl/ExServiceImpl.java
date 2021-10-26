@@ -721,8 +721,14 @@ public class ExServiceImpl implements ExService {
 				doc.setExFormaDocumento(forma);
 				doc.setExModelo(modelo);
 
-				if (!modelo.isDescricaoAutomatica())
-					doc.setDescrDocumento(descricaoStr);
+				if (!modelo.isDescricaoAutomatica()) {
+					if (descricaoStr != null && !descricaoStr.isEmpty())
+						doc.setDescrDocumento(descricaoStr);
+					else if (doc.getExMobilPai() != null && doc.getExMobilPai().doc().getDescrDocumento() != null && !doc.getExMobilPai().doc().getDescrDocumento().isEmpty())
+						doc.setDescrDocumento(doc.getExMobilPai().doc().getDescrDocumento());
+					else if (doc.getExMobilAutuado() != null && doc.getExMobilAutuado().doc().getDescrDocumento() != null && !doc.getExMobilAutuado().doc().getDescrDocumento().isEmpty())
+						doc.setDescrDocumento(doc.getExMobilAutuado().doc().getDescrDocumento());
+				}
 
 				doc.setExClassificacao(classificacao);
 				if (eletronico)

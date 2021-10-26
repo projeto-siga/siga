@@ -97,6 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
+
 <c:set var="siga_version"  scope="request" value="10.0.24.0" />
 
 <c:choose>

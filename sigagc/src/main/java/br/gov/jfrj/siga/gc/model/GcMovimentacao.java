@@ -91,7 +91,7 @@ public class GcMovimentacao extends Objeto implements
 	@JoinColumn(name = "ID_LOTACAO_TITULAR")
 	private DpLotacao lotacaoTitular;
 
-	@ManyToOne(cascade=CascadeType.PERSIST,optional = false)
+	@ManyToOne(cascade=CascadeType.PERSIST,optional = true)
 	@JoinColumn(name = "ID_CONTEUDO")
 	private GcArquivo arq;
 

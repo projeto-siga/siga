@@ -3868,14 +3868,30 @@ public class ExBL extends CpBL {
 		if (!mov.getExTipoMovimentacao().getIdTpMov()
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
 			
-			DpNotificarPorEmail emailNotificaDocumentoTramitadoParaUsuario = dao().consultar(8L, DpNotificarPorEmail.class, false);
-			if (emailNotificaDocumentoTramitadoParaUsuario.isConfiguravel() && emailNotificaDocumentoTramitadoParaUsuario.getId() == 8L) {
-				Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
-			}
+			for (int i = 0; i < mov.getExDocumento().getCosignatarios().size(); i ++) {
+				List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
+				if (!listaNotificarPorEmail.isEmpty()) {
+					int codigoDaAcao = 8;
+					DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
+					if (emailUser.isConfiguravel() && emailUser.getCodigo() == codigoDaAcao) {
+						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+					}
+				} else {
+					Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+				}
+			} 
 			
-			DpNotificarPorEmail emailNotificaDocumentoTramitadoParaUnidade = dao().consultar(9L, DpNotificarPorEmail.class, false);
-			if (emailNotificaDocumentoTramitadoParaUnidade.isConfiguravel() && emailNotificaDocumentoTramitadoParaUnidade.getId() == 9L) {
-				Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+			for (int i = 0; i < mov.getExDocumento().getCosignatarios().size(); i ++) {
+					List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
+					if (!listaNotificarPorEmail.isEmpty()) {
+					int codigoDaAcao = 9;
+					DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
+					if (emailUser.isConfiguravel() && emailUser.getCodigo() == codigoDaAcao) {
+						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+					} else {
+						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+					}
+				}
 			}
 		}
 		

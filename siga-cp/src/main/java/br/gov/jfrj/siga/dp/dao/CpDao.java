@@ -151,7 +151,7 @@ public class CpDao extends ModeloDao {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<DpNotificarPorEmail> consultarNotificaocaoEmail(Integer offset, Integer itemPagina) {
+	public List<DpNotificarPorEmail> consultarNotificaocaoEmail(Integer offset, Integer itemPagina, Long idUsuario) {
 		try {
 			final Query query = em().createNamedQuery("consultarNotificaocaoEmail");
 			if (offset > 0) {
@@ -159,12 +159,57 @@ public class CpDao extends ModeloDao {
 			}
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
-			}
+			} 
+			query.setParameter("idPessoa", idUsuario); 
 			final List<DpNotificarPorEmail> l = query.getResultList();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpNotificarPorEmail consultarNotificaocaoEmailIdEPorUsuario(final Long id, Long idUsuario) {
+		final Query query = em().createNamedQuery("consultarNotificaocaoEmailIdEPorUsuario");
+		query.setParameter("id", id);
+		query.setParameter("idPessoa", idUsuario);
+
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<DpNotificarPorEmail> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpNotificarPorEmail consultarPeloCodigoNotificacaoPoremail(final int codigo, Long idPessoa) {
+		final Query query = em().createNamedQuery("consultarPeloCodigoNotificacaoPoremail");
+		query.setParameter("codigo", codigo);
+		query.setParameter("idPessoa", idPessoa);
+		
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<DpNotificarPorEmail> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpNotificarPorEmail verificaSeUsuarioJaPossuiConfiguracoesDeNotificacoesPorEmail(Long idPessoa) {
+		final Query query = em().createNamedQuery("verificaSeUsuarioJaPossuiConfiguracoesDeNotificacoesPorEmail");
+		query.setParameter("idPessoa", idPessoa);
+		
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<DpNotificarPorEmail> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
 	}
 	
 	public int consultarQuantidadeNotificacaoPorEmail() {

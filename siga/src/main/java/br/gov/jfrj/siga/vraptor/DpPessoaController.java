@@ -626,14 +626,28 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
 					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
 			
-			DpNotificarPorEmail emailNotifica = dao().consultar(1L, DpNotificarPorEmail.class, false);
-			
-			if (emailNotifica.isConfiguravel()) {
+			List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+			if (!listaNotificarPorEmail.isEmpty()) {
+			int codigoDaAcao = 1;
+			DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+			if (emailUser.isConfiguravel()) {
 				String[] destinanarios = { email };
-				
 				Correio.enviar(null,destinanarios, 
 						"Novo usuário: ", 
-						"", 
+						"",  
+						"<h2>Prezado usuário, " + nmPessoa + " </h2> "
+								+ "</br>"
+								+ "</br>"
+								+ "<p>O seu endereço de e-mail foi indicado no cadastramento de novo usuário. "
+								+ "Para confirmar o cadastramento automaticamente e começar a utilizar, "
+								+ "clique aqui: "
+								+ "</p><a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>Acessar minha conta</a>");
+			}
+			} else {
+				String[] destinanarios = { email }; 
+				Correio.enviar(null,destinanarios, 
+						"Novo usuário: ", 
+						"",  
 						"<h2>Prezado usuário, " + nmPessoa + " </h2> "
 								+ "</br>"
 								+ "</br>"

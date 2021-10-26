@@ -83,14 +83,14 @@
 								      
 								      <tbody>
 								      	<c:forEach items="${itens}" var="email">
-										  <tr>
+										  <tr> 
 										      <td style="width: 70%;">${email.nomeDaAcao}</td>
 										      
 										      	<c:url var="url" value="/app/notificarPorEmail/editar">
-													<c:param name="id" value="${email.id}"></c:param>
+													<c:param name="codigo" value="${email.codigo}"></c:param>
 												</c:url>
 												<c:url var="urlHabilitaDesabilitaConfiguravel" value="/app/notificarPorEmail/rec_notificacao_por_email2">
-													<c:param name="id" value="${email.id}"></c:param>
+													<c:param name="codigo" value="${email.codigo}"></c:param>
 												</c:url>
 												
 												 <c:choose>
@@ -170,7 +170,6 @@
 														</c:choose>
 													</c:otherwise>
 													</c:choose>
-													
 										    	</tr>
 									      	</c:forEach>
 								      </tbody>
@@ -191,19 +190,19 @@
 		if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
 	});
 	
-	function csv(id, action) {
-		var frm = document.getElementById(id);
+	function csv(codigo, action) {
+		var frm = document.getElementById(codigo);
 		frm.method = "POST";
-		sbmtAction(id, action);
+		sbmtAction(codigo, action);
 		
 		$('.mensagem-pesquisa').alert('close');
-		
+		 
 		frm.action = 'rec_notificacao_por_email';
 		frm.method = "GET";
 	}
 	
-	function sbmtAction(id, action) {
-		var frm = document.getElementById(id);
+	function sbmtAction(codigo, action) {
+		var frm = document.getElementById(codigo);
 		frm.action = action;
 		frm.submit();
 		return;

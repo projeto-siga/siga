@@ -1803,12 +1803,29 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
-			DpNotificarPorEmail emailNotifica = dao().consultar(5L, DpNotificarPorEmail.class, false);
-			
-			if (emailNotifica.isConfiguravel()) {
-				
+			List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+			if (!listaNotificarPorEmail.isEmpty()) {
+				int codigoDaAcao = 5;
+				DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+				if (emailUser.isConfiguravel()) {
+					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
+					Correio.enviar(null,destinanarios,  
+							"Usuário marcado: ", 
+							"",    
+							"Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + "</b> "
+									+ "<br>"
+									+ "<br>"
+									+ "Você foi marcado como, responsável pela assinatura do (<b>"+ exDocumentoDTO.getDoc().getCodigo() +"</b>), "
+									+ "pelo usuário (<b>"+ getTitular().getNomePessoa() +"</b>) "
+									+ "<br>"
+									+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+									+ "	>clique aqui.</a>"
+									+ "<br>"
+									+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
+									+ "	>clique aqui</a> para descadastrar.");
+				}
+			} else {
 				String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
-				 
 				Correio.enviar(null,destinanarios,  
 						"Usuário marcado: ", 
 						"",    
@@ -1823,6 +1840,7 @@ public class ExDocumentoController extends ExController {
 								+ "<br>"
 								+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
 								+ "	>clique aqui</a> para descadastrar.");
+				
 			}
 			
 			/*

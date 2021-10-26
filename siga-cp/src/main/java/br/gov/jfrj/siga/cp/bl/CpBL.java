@@ -388,39 +388,76 @@ public class CpBL {
 					dao().commitTransacao();
 
 					if (SigaMessages.isSigaSP()) {
-						DpNotificarPorEmail emailNotifica = dao().consultar(3L, DpNotificarPorEmail.class, false);
-						
-						if (emailNotifica.isConfiguravel()) {
-						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-						Correio.enviar(null, destinanarios,
-								"Esqueci Minha Senha", "",
-								"<table>" + "<tbody>" + "<tr>"
-										+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-										+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-										+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
-										+ "<td style='background-color: #bbb; padding: 0 20px;'>"
-										+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
-										+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
-										+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
-										+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
-										+ idNova.getDpPessoa().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
-										+ idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>"
-										+ ",</span></h4>"
-										+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua nova senha para acesso "
-										+ "ao Portal SP Sem Papel.</span></p>"
-										+ "<p><span style='color: #808080;'><strong>"
-										+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
-										+ idNova.getDpPessoa().getSigla() + "</strong></span></p>"
-										+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
-										+ novaSenha + "</strong></span></p>" + "</div>" + "</td>" + "</tr>" + "<tr>"
-										+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
-										+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
-										+ "</td>" + "</tr>" + "</tbody>" + "</table>");
-						}
+						List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, id.getDpPessoa().getIdPessoa());
+						if (!listaNotificarPorEmail.isEmpty()) {
+							int codigoDaAcao = 3;
+							DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, id.getDpPessoa().getIdPessoa());
+							if (emailUser.isConfiguravel()) {
+							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+							Correio.enviar(null, destinanarios,
+									"Esqueci Minha Senha", "",
+									"<table>" + "<tbody>" + "<tr>"
+											+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
+											+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
+											+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
+											+ "<td style='background-color: #bbb; padding: 0 20px;'>"
+											+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
+											+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
+											+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
+											+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
+											+ idNova.getDpPessoa().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
+											+ idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>"
+											+ ",</span></h4>"
+											+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua nova senha para acesso "
+											+ "ao Portal SP Sem Papel.</span></p>"
+											+ "<p><span style='color: #808080;'><strong>"
+											+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
+											+ idNova.getDpPessoa().getSigla() + "</strong></span></p>"
+											+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
+											+ novaSenha + "</strong></span></p>" + "</div>" + "</td>" + "</tr>" + "<tr>"
+											+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
+											+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
+											+ "</td>" + "</tr>" + "</tbody>" + "</table>");
+							}
+						} else {
+							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+							Correio.enviar(null, destinanarios,
+									"Esqueci Minha Senha", "",
+									"<table>" + "<tbody>" + "<tr>"
+											+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
+											+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
+											+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
+											+ "<td style='background-color: #bbb; padding: 0 20px;'>"
+											+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
+											+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
+											+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
+											+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
+											+ idNova.getDpPessoa().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
+											+ idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>"
+											+ ",</span></h4>"
+											+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua nova senha para acesso "
+											+ "ao Portal SP Sem Papel.</span></p>"
+											+ "<p><span style='color: #808080;'><strong>"
+											+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
+											+ idNova.getDpPessoa().getSigla() + "</strong></span></p>"
+											+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
+											+ novaSenha + "</strong></span></p>" + "</div>" + "</td>" + "</tr>" + "<tr>"
+											+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
+											+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
+											+ "</td>" + "</tr>" + "</tbody>" + "</table>");
+							}
 					} else {
-						DpNotificarPorEmail emailNotifica = dao().consultar(3L, DpNotificarPorEmail.class, false);
-						
-						if (emailNotifica.isConfiguravel()) {
+						List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, id.getDpPessoa().getIdPessoa());
+						if (!listaNotificarPorEmail.isEmpty()) {
+							DpNotificarPorEmail emailNotifica = dao().consultar(3L, DpNotificarPorEmail.class, false);
+							if (emailNotifica.isConfiguravel()) {
+								Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
+										"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
+												+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
+												+ novaSenha + "\n\n Atenção: esta é uma "
+												+ "mensagem automática. Por favor, não responda. ");
+							} 
+						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
 									"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
 											+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "

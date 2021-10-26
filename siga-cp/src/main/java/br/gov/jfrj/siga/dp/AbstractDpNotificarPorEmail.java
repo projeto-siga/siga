@@ -22,9 +22,11 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
-@MappedSuperclass
+@MappedSuperclass 
 @NamedQueries({
-@NamedQuery(name = "consultarNotificaocaoEmail", query = "from DpNotificarPorEmail email"),
+@NamedQuery(name = "verificaSeUsuarioJaPossuiConfiguracoesDeNotificacoesPorEmail", query = "select email from DpNotificarPorEmail email where email.dpPessoa.idPessoa = :idPessoa"),
+@NamedQuery(name = "consultarPeloCodigoNotificacaoPoremail", query = "select email from DpNotificarPorEmail email where email.codigo = :codigo AND email.dpPessoa.idPessoa = :idPessoa"),
+@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from DpNotificarPorEmail email where email.dpPessoa.idPessoa = :idPessoa"),
 @NamedQuery(name = "consultarQuantidadeNotificarPorEmail", query = "select count(e) from DpNotificarPorEmail e") })
 public abstract class AbstractDpNotificarPorEmail extends Objeto implements Serializable, HistoricoAuditavel {
 
@@ -46,11 +48,21 @@ public abstract class AbstractDpNotificarPorEmail extends Objeto implements Seri
 	@Column(name = "RESTRINGIR", nullable = false, length = 200)
 	private int restringir;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DP_PESSOA_ID")
+	private DpPessoa dpPessoa;
+	
+	@Column(name = "CODIGO", nullable = false, length = 200)
+	private int codigo;
+	
+	@Column(name = "CADASTRADO", nullable = false, length = 200)
+	private int cadastrado;
+	
 	@Column(name = "ID_NOTIFICAR_POR_EMAIL_INICIAL")
 	@Desconsiderar
 	private Long idNotificarPorEmailIni;
 
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY) 
     @JoinColumn(name="HIS_IDC_INI")
 	@Desconsiderar 
 	private CpIdentidade hisIdcIni;
@@ -72,7 +84,22 @@ public abstract class AbstractDpNotificarPorEmail extends Objeto implements Seri
 	@Column(name = "IDE_NOTIFICAR_POR_EMAIL", length = 256)
 	private String ideNotificarPorEmail;
 	
-	
+	public int getCadastrado() {
+		return cadastrado;
+	}
+
+	public void setCadastrado(int cadastrado) {
+		this.cadastrado = cadastrado;
+	}
+
+	public int getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
+
 	public String getIdeNotificarPorEmail() {
 		return ideNotificarPorEmail;
 	}
@@ -181,6 +208,14 @@ public abstract class AbstractDpNotificarPorEmail extends Objeto implements Seri
 		this.configuravel = configuravel;
 	}
 
+	public DpPessoa getDpPessoa() {
+		return dpPessoa;
+	}
+
+	public void setDpPessoa(DpPessoa dpPessoa) {
+		this.dpPessoa = dpPessoa;
+	}
+
 	public boolean isConfiguravel () {
 		if(this.configuravel == 1) {
 			return true;
@@ -199,6 +234,14 @@ public abstract class AbstractDpNotificarPorEmail extends Objeto implements Seri
 	
 	public boolean restringir () {
 		if(this.restringir == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean isCadastrado () {
+		if(this.cadastrado == 1) {
 			return true;
 		} else {
 			return false;

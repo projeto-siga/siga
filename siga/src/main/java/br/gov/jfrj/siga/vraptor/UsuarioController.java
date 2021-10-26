@@ -113,20 +113,37 @@ public class UsuarioController extends SigaController {
 		CpIdentidade pessoa = null;
 		pessoa = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
 		
-		DpNotificarPorEmail emailNotifica = dao().consultar(2L, DpNotificarPorEmail.class, false);
-		
-		if (emailNotifica.isConfiguravel()) {
-			String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
-			 
-			Correio.enviar(null,destinanarios, 
-					"Troca de Senha: ", 
-					"",    
-					"Prezado usuário, <b>"+ pessoa.getDpPessoa().getNomePessoa() +"</b> "
-							+ "<br>"
-							+ "<br>"
-							+ "Sua senha foi alterada com sucesso!."
-							+ "<br>"
-							+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a>");
+		List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+		if (!listaNotificarPorEmail.isEmpty()) {
+			int codigoDaAcao = 2;
+			DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+			if (emailUser.isConfiguravel()) {
+				String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
+				Correio.enviar(null,destinanarios, 
+						"Troca de Senha: ", 
+						"",    
+						"Prezado usuário, <b>"+ pessoa.getDpPessoa().getNomePessoa() +"</b> "
+								+ "<br>"
+								+ "<br>"
+								+ "Sua senha foi alterada com sucesso!."
+								+ "<br>"
+								+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a>");
+			}
+		} else {
+			int codigoDaAcao = 2;
+			DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+			if (emailUser.isConfiguravel()) {
+				String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
+				Correio.enviar(null,destinanarios, 
+						"Troca de Senha: ", 
+						"",    
+						"Prezado usuário, <b>"+ pessoa.getDpPessoa().getNomePessoa() +"</b> "
+								+ "<br>"
+								+ "<br>"
+								+ "Sua senha foi alterada com sucesso!."
+								+ "<br>"
+								+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a>");
+			}
 		}
 		result.redirectTo(UsuarioController.class).trocaSenha();
 	}
@@ -175,25 +192,46 @@ public class UsuarioController extends SigaController {
 				List<DpPessoa> lst = new ArrayList<DpPessoa>(dao().listarPorCpf(so.getCadastrante().getCpfPessoa()));
 				for (DpPessoa p : lst) {
 					try {
-						
-						DpNotificarPorEmail emailNotifica = dao().consultar(11L, DpNotificarPorEmail.class, false);
-						
-						if (emailNotifica.isConfiguravel()) {
-						Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
-								"O Administrador do sistema removeu este endereço de email do seguinte usuário "
-										+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
-										+ p.getSigla() + "\n - Novo email: " + emailNovo
-										+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
-										+ "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor, não responda.");
-						Correio.enviar(emailNovo, "Troca de Email",
-								"O Administrador do sistema inseriu este endereço de email como seguinte usuário "
-										+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
-										+ p.getSigla() + "\n - Novo email: " + emailNovo
-										+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
-										+ "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor, não responda.");
-						}
+						List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+						if (!listaNotificarPorEmail.isEmpty()) {
+							int codigoDaAcao = 11;
+							DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+							if (emailUser.isConfiguravel()) {
+							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
+									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
+											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
+											+ p.getSigla() + "\n - Novo email: " + emailNovo
+											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda.");
+							Correio.enviar(emailNovo, "Troca de Email",
+									"O Administrador do sistema inseriu este endereço de email como seguinte usuário "
+											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
+											+ p.getSigla() + "\n - Novo email: " + emailNovo
+											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda.");
+							}
+						} else {
+							int codigoDaAcao = 11;
+							DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+							if (emailUser.isConfiguravel()) {
+							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
+									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
+											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
+											+ p.getSigla() + "\n - Novo email: " + emailNovo
+											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda.");
+							Correio.enviar(emailNovo, "Troca de Email",
+									"O Administrador do sistema inseriu este endereço de email como seguinte usuário "
+											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
+											+ p.getSigla() + "\n - Novo email: " + emailNovo
+											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda.");
+							} 
+					  }
 					} catch (Exception e) {
 						System.out.println(
 								"Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
@@ -215,9 +253,10 @@ public class UsuarioController extends SigaController {
 			} else {
 				DpPessoa pessoa = so.getCadastrante();
 				try {
-					DpNotificarPorEmail emailNotifica = dao().consultar(11L, DpNotificarPorEmail.class, false);
+					int codigoDaAcao = 11;
+					DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
 					
-					if (emailNotifica.isConfiguravel()) {
+					if (emailUser.isConfiguravel()) {
 					Correio.enviar(pessoa.getEmailPessoaAtual(), "Troca de Email",
 							"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 									+ "\n" + "\n - Nome: " + pessoa.getNomePessoa() + "\n - Matricula: "

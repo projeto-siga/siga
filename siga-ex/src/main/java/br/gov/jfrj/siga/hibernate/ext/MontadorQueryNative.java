@@ -2,9 +2,9 @@ package br.gov.jfrj.siga.hibernate.ext;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 
-public class MontadorQueryNative {
+public class MontadorQueryNative implements IMontadorQuery {
 	
-	public String montaNativeQueryConsultaporFiltro(final IExMobilDaoFiltro flt, boolean apenasCount) {
+	public String montaQueryConsultaporFiltro(final IExMobilDaoFiltro flt, boolean apenasCount) {
 
 		StringBuffer sbf = new StringBuffer();
 
@@ -197,6 +197,11 @@ public class MontadorQueryNative {
 		s = s.replace("WHERE  AND", "WHERE");
 
 		return s;
+	}
+	
+	public void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal) {
+		// Este médodo não faz nada. É utilizado apenas para a extensão da busca
+		// textual do SIGA.
 	}
 
 }

@@ -6114,9 +6114,11 @@ public class ExBL extends CpBL {
 			set = docsParaAtualizacaoDeWorkflow.get();
 		}
 		
-		if (mov != null && mov.getExMobilRef() != null) 
-			set.add(mov.getExMobilRef().doc().getCodigo());
-		else if (mob != null) 
+		if (mov != null) {
+			set.add(mov.mob().doc().getCodigo());
+			if (mov.getExMobilRef() != null)
+				set.add(mov.getExMobilRef().doc().getCodigo());
+		} else if (mob != null) 
 			set.add(mob.doc().getCodigo());
 		else if (doc != null)
 			set.add(doc.getCodigo());

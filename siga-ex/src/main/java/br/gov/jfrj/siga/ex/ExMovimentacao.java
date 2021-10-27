@@ -405,13 +405,15 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public static Integer tpMovDesempatePosicao(Long idTpMov, Long idTpMov2) {
-		final List<Long> tpMovDesempate = Arrays.asList(new Long[] {ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
+		final List<Long> tpMovDesempate = Arrays.asList(new Long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO});
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO });
 
 		// Trata o caso de alguma parâmetro ser null
 		if (idTpMov == null && idTpMov2 == null)

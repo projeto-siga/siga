@@ -1639,56 +1639,8 @@ public class ExBL extends CpBL {
 				throw new RuntimeException("Erro ao assinar documento: " + e.getLocalizedMessage(), e);
 			}
 	
-			try {
-				// Verifica se o documento possui documento pai e faz a juntada
-				// automática. Caso o pai seja um volume de um processo, primeiro
-				// verifica se o volume está encerrado, se estiver procura o último
-				// volume para juntar.
-	
-				if (juntar == null)
-					juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
-	
-				if (doc.getExMobilPai() != null && juntar) {
-					if (doc.getExMobilPai().getDoc().isProcesso() && doc.getExMobilPai().isVolumeEncerrado()) {
-						doc.setExMobilPai(doc.getExMobilPai().doc().getUltimoVolume());
-						gravar(cadastrante, cadastrante, lotaCadastrante, doc);
-					}
-					juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
-				}
-	
-				if (doc.getExMobilAutuado() != null) {
-					juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante);
-				}
-			} catch (final Exception e) {
-				throw new RuntimeException(
-						"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
-								+ e.getMessage(),
-						e);
-			}
-	
-			try {
-				if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
-					processarComandosEmTag(doc, "assinatura");
-				}
-			} catch (final Exception e) {
-				throw new RuntimeException("Erro ao executar procedimento pós-assinatura: " + e.getLocalizedMessage(), e);
-			}
-	
-			try {
-				if (tramitar == null)
-					tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
-				if (tramitar)
-					trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
-			} catch (final Exception e) {
-				throw new RuntimeException("Erro ao tramitar automaticamente: " + e.getLocalizedMessage(), e);
-			}
-	
-			try {
-				if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
-					removerPapel(doc, ExPapel.PAPEL_REVISOR);
-			} catch (final Exception e) {
-				throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
-			}
+			depoisDeAssinar(cadastrante, lotaCadastrante, doc, mov, dtMov, juntar, tramitar, fPreviamenteAssinado,
+					usuarioDoToken);
 		
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao assinar documento: " + e.getLocalizedMessage(), e);
@@ -1703,6 +1655,64 @@ public class ExBL extends CpBL {
 		}
 		
 		return s;
+	}
+
+	private void depoisDeAssinar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final ExMovimentacao mov, final Date dtMov, Boolean juntar, Boolean tramitar, boolean fPreviamenteAssinado,
+			DpPessoa usuarioDoToken) {
+		try {
+			// Verifica se o documento possui documento pai e faz a juntada
+			// automática. Caso o pai seja um volume de um processo, primeiro
+			// verifica se o volume está encerrado, se estiver procura o último
+			// volume para juntar.
+
+			if (juntar == null)
+				juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
+
+			if (doc.getExMobilPai() != null && juntar) {
+				if (doc.getExMobilPai().getDoc().isProcesso() && doc.getExMobilPai().isVolumeEncerrado()) {
+					doc.setExMobilPai(doc.getExMobilPai().doc().getUltimoVolume());
+					gravar(cadastrante, cadastrante, lotaCadastrante, doc);
+				}
+				// Receber o móbil pai caso ele tenha sido tramitado para o cadastrante ou sua lotação
+				if (Ex.getInstance().getComp().podeReceber(cadastrante, lotaCadastrante, doc.getExMobilPai())) 
+					receber(cadastrante, cadastrante, lotaCadastrante, doc.getExMobilPai(), null);
+				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
+			}
+
+			if (doc.getExMobilAutuado() != null) {
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante);
+			}
+		} catch (final Exception e) {
+			throw new RuntimeException(
+					"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
+							+ e.getMessage(),
+					e);
+		}
+
+		try {
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
+				processarComandosEmTag(doc, "assinatura");
+			}
+		} catch (final Exception e) {
+			throw new RuntimeException("Erro ao executar procedimento pós-assinatura: " + e.getLocalizedMessage(), e);
+		}
+
+		try {
+			if (tramitar == null)
+				tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
+			if (tramitar)
+				trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
+		} catch (final Exception e) {
+			throw new RuntimeException("Erro ao tramitar automaticamente: " + e.getLocalizedMessage(), e);
+		}
+
+		try {
+			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+				removerPapel(doc, ExPapel.PAPEL_REVISOR);
+		} catch (final Exception e) {
+			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
+		}
 	}
 
 	public ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
@@ -1796,7 +1806,7 @@ public class ExBL extends CpBL {
 			if (!getComp().podeAssinarComSenha(subscritor, subscritor.getLotacao(), doc.getMobilGeral()))
 				throw new AplicacaoException("Usuário não tem permissão de assinar documento com senha.");
 	
-			// Verifica se a matrícula confere com o subscritor titular ou com um
+			// Verifica se a matrícula confere com o subscritor, titular ou com um
 			// cossignatario
 			if (!autenticando) {
 				try {
@@ -1858,9 +1868,9 @@ public class ExBL extends CpBL {
 			DpPessoa assinante = calculaAssinanteCriaMovAssinadoPor(cadastrante, lotaCadastrante, doc, dtMov, titular,
 					subscritor, cosignatario, fSubstituindoSubscritor, fSubstituindoCosignatario);
 
+			final ExMovimentacao mov;
 			try {
 				iniciarAlteracao();
-				final ExMovimentacao mov;
 	
 				// Hash de auditoria
 				//
@@ -1878,43 +1888,14 @@ public class ExBL extends CpBL {
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
-	
-				// Verifica se o documento possui documento pai e faz a juntada
-				// automática.
-				if (juntar == null)
-					juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
-	
-				if (doc.getExMobilPai() != null && juntar) {
-					juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, subscritor, titular, mov);
-				}
-	
-				if (doc.getExMobilAutuado() != null) {
-					juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, dtMov, cadastrante);
-				}
-	
-				if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
-					s = processarComandosEmTag(doc, "assinatura");
-				}
-	
 			} catch (final Exception e) {
 				cancelarAlteracao();
-				log.error(e.getMessage(), e);
-				e.printStackTrace();
-				throw new RuntimeException("Erro ao registrar assinatura: " + getRootCauseMessage(e));
+				throw new RuntimeException("Erro ao registrar assinatura: " + getRootCauseMessage(e), e);
 			}
-	
-			if (tramitar == null)
-				tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
-			if (tramitar)
-				trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
-	
-			try {
-				if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
-					removerPapel(doc, ExPapel.PAPEL_REVISOR);
-			} catch (final Exception e) {
-				throw new RuntimeException("Erro ao remover revisores.", e);
-			}
-		
+			
+			depoisDeAssinar(cadastrante, lotaCadastrante, doc, mov, dtMov, juntar, tramitar, fPreviamenteAssinado,
+					subscritor);
+
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao assinar documento: " + e.getLocalizedMessage(), e);
 		} finally {

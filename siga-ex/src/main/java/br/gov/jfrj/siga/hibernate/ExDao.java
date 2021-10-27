@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.hibernate;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -689,13 +691,14 @@ public class ExDao extends CpDao {
 			DpLotacao lotaTitular) {
 
 		IMontadorQuery montadorQuery = carregarPlugin();
+		boolean isNativeQuery = Prop.getBool("/sigaex.pesquisa.native.query") && !flt.getDescrDocumento().equals("QUERYANTIGA");
 
 		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
 		Query query = null;
 		
 		if(itemPagina > 0) {
-			if (Prop.getBool("/sigaex.pesquisa.native.query")) {
+			if (isNativeQuery) {
 				query = em().createNativeQuery(
 						montadorQuery.montaQueryConsultaporFiltro(flt, false));
 			} else {
@@ -707,10 +710,18 @@ public class ExDao extends CpDao {
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
-			if (itemPagina > 0) {
+			if (itemPagina > 0 && !isNativeQuery) {
 				query.setMaxResults(itemPagina);
 			}
-			List l = query.getResultList();
+			List listResult = query.getResultList();
+			List l;
+			if (isNativeQuery) {
+				l = (List<Object[]>) listResult.stream()
+						.map(k -> ((BigDecimal) k).longValue())
+						.collect(Collectors.toList());				
+			} else {
+				l = listResult;
+			}
 			 
 			if (l != null && l.size() > 0) {
 				query = em().createQuery("select doc, mob, label from ExMarca label"

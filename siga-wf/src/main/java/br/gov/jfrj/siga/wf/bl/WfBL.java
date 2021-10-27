@@ -28,6 +28,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.crivano.jflow.TaskResult;
+import com.crivano.jflow.model.enm.TaskResultKind;
 import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
@@ -40,6 +42,7 @@ import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
+import br.gov.jfrj.siga.wf.logic.WfPodeRetomar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
@@ -176,7 +179,6 @@ public class WfBL extends CpBL {
 				}
 			}
 		}
-		
 		
 		if (pi.getPrincipal() != null && pi.getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
 			dao().gravar(pi); // Precisa gravar para gerar uma sigla válida para o procedimento
@@ -403,6 +405,13 @@ public class WfBL extends CpBL {
 		gravarMovimentacao(mov);
 		pi.end();
 		dao().gravar(pi);
+	}
+
+	public void retomar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade)
+			throws Exception {
+		assertLogic(new WfPodeRetomar(pi, titular, lotaTitular), "retomar");
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
+		engine.resume(pi);
 	}
 
 	private static void assertLogic(Expression expr, String descr) {

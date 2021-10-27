@@ -22,7 +22,7 @@
 					</c:forEach>
 				</siga:links>
 
-				<c:if test="${pi.pausado}">
+				<c:if test="${pi.pausado || pi.retomando}">
 					<div class="card bg-info mb-3 mt-3">
 						<div class="card-header text-white">
 							<c:if

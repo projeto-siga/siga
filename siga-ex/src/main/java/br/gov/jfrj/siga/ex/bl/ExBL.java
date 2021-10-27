@@ -1783,13 +1783,14 @@ public class ExBL extends CpBL {
 			// atualizado apenas no final.
 			suprimirAtualizacaoDeWorkflow.set(true);
 		
-			if (!doc.isFinalizado())
+			if (!doc.isFinalizado()) {
 				ExTipoSequencia tipoSequencia = obterTipoSequenciaPorNomeModelo(doc.getExModelo().getNmMod());
 				if (!Utils.empty(tipoSequencia)) {
 					throw new AplicacaoException("Documentos com numerações automáticas necessitam de ser finalizados antes de assinar. Favor finalizar o documento e depois assinar.");
 				}
 				finalizar(cadastrante, lotaCadastrante, doc);
-	
+			}
+			
 			boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
 	
 			if (!doc.isFinalizado())

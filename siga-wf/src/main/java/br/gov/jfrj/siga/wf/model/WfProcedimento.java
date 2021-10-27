@@ -598,6 +598,10 @@ public class WfProcedimento extends Objeto
 		return !titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao());
 	}
 
+	public boolean isDesabilitarConhecimento(DpPessoa titular, DpLotacao lotaTitular) {
+		return !titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao());
+	}
+
 	public Object obterValorDeVariavel(WfDefinicaoDeVariavel vd) {
 		return getVariavelMap().get(vd.getIdentificador());
 	}

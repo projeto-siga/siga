@@ -16,14 +16,12 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Facet;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Field;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetRequest;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetResponse;
+import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 	@Override
-	public void run(RecordIdGetRequest req, RecordIdGetResponse resp)
-			throws Exception {
+	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
 		try {
 			long primaryKey;
 			try {
@@ -31,16 +29,14 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			} catch (NumberFormatException nfe) {
 				throw new RuntimeException("REMOVED");
 			}
-			ExDocumento doc = ExDao.getInstance().consultar(primaryKey,
-					ExDocumento.class, false);
+			ExDocumento doc = ExDao.getInstance().consultar(primaryKey, ExDocumento.class, false);
 
 			if (doc == null || doc.isCancelado()) {
 				throw new RuntimeException("REMOVED");
 			}
 
 			resp.id = req.id;
-			resp.url = Prop.get("/xjus.permalink.url")
-					+ doc.getCodigoCompacto();
+			resp.url = Prop.get("/xjus.permalink.url") + doc.getCodigoCompacto();
 			resp.acl = "PUBLIC";
 			resp.refresh = "NEVER";
 			resp.code = doc.getCodigo();
@@ -70,7 +66,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 	}
 
-	public void addField(RecordIdGetResponse resp, String name, String value) {
+	public void addField(Response resp, String name, String value) {
 		Field fld = new Field();
 		fld.kind = "TEXT";
 		fld.name = name;
@@ -78,7 +74,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		resp.field.add(fld);
 	}
 
-	public void addFacet(RecordIdGetResponse resp, String name, String value) {
+	public void addFacet(Response resp, String name, String value) {
 		Facet facet = new Facet();
 		facet.kind = "KEYWORD";
 		facet.name = name;
@@ -86,15 +82,13 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		resp.facet.add(facet);
 	}
 
-	public void addFieldAndFacet(RecordIdGetResponse resp, String name,
-			String value) {
+	public void addFieldAndFacet(Response resp, String name, String value) {
 		addField(resp, name, value);
 		addFacet(resp, name, value);
 	}
 
-	public static void addAclForDoc(ExDocumento doc, RecordIdGetResponse resp) {
-		if (doc.getDnmAcesso() == null
-				|| doc.isDnmAcessoMAisAntigoQueODosPais()) {
+	public static void addAclForDoc(ExDocumento doc, Response resp) {
+		if (doc.getDnmAcesso() == null || doc.isDnmAcessoMAisAntigoQueODosPais()) {
 			Ex.getInstance().getBL().atualizarDnmAcesso(doc);
 		}
 		String sAcessos = doc.getDnmAcesso();
@@ -103,30 +97,24 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			ExAcesso acesso = new ExAcesso();
 			sAcessos = acesso.getAcessosString(doc, dt);
 			if (sAcessos == null || sAcessos.trim().length() == 0)
-				throw new RuntimeException(
-						"Não foi possível calcular os acesos de "
-								+ doc.getSigla());
+				throw new RuntimeException("Não foi possível calcular os acesos de " + doc.getSigla());
 		}
 		resp.acl = sAcessos.replace(ExAcesso.ACESSO_PUBLICO, "PUBLIC");
 	}
 
-	private void addMetadataForDoc(ExDocumento doc, RecordIdGetResponse resp) {
+	private void addMetadataForDoc(ExDocumento doc, Response resp) {
 		addFacet(resp, "tipo", "Documento");
-		addFieldAndFacet(resp, "orgao", doc.getOrgaoUsuario()
-				.getAcronimoOrgaoUsu());
+		addFieldAndFacet(resp, "orgao", doc.getOrgaoUsuario().getAcronimoOrgaoUsu());
 		addField(resp, "codigo", doc.getCodigo());
 		if (doc.getExTipoDocumento() != null) {
-			addFieldAndFacet(resp, "origem", doc.getExTipoDocumento()
-					.getSigla());
+			addFieldAndFacet(resp, "origem", doc.getExTipoDocumento().getSigla());
 		}
 		if (doc.getExFormaDocumento() != null)
-			addFieldAndFacet(resp, "especie", doc.getExFormaDocumento()
-					.getDescricao());
+			addFieldAndFacet(resp, "especie", doc.getExFormaDocumento().getDescricao());
 		if (doc.getExModelo() != null)
 			addFieldAndFacet(resp, "modelo", doc.getExModelo().getNmMod());
 		if (doc.getDnmExNivelAcesso() != null)
-			addField(resp, "acesso", doc.getDnmExNivelAcesso()
-					.getNmNivelAcesso());
+			addField(resp, "acesso", doc.getDnmExNivelAcesso().getNmNivelAcesso());
 		if (doc.getDtDocYYYYMMDD() != null) {
 			addField(resp, "data", doc.getDtDocYYYYMMDD());
 			addFacet(resp, "ano", doc.getDtDocYYYYMMDD().substring(0, 4));
@@ -137,37 +125,25 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		if (cAtual == null && doc.getExClassificacao() != null)
 			cAtual = doc.getExClassificacao();
 		if (cAtual != null) {
-			String[] pais = MascaraUtil.getInstance().getPais(
-					cAtual.getCodificacao());
+			String[] pais = MascaraUtil.getInstance().getPais(cAtual.getCodificacao());
 			if (pais != null) {
 				for (String sigla : pais) {
 					ExClassificacao c = new ExClassificacao();
 					c.setSigla(sigla);
-					ExClassificacao cPai = ExDao.getInstance()
-							.consultarPorSigla(c);
+					ExClassificacao cPai = ExDao.getInstance().consultarPorSigla(c);
 					if (cPai != null) {
-						addField(
-								resp,
-								"classificacao_"
-										+ MascaraUtil.getInstance()
-												.calcularNivel(
-														c.getCodificacao()),
+						addField(resp, "classificacao_" + MascaraUtil.getInstance().calcularNivel(c.getCodificacao()),
 								cPai.getDescrClassificacao());
 					}
 				}
 			}
 
-			addField(
-					resp,
-					"classificacao_"
-							+ MascaraUtil.getInstance().calcularNivel(
-									cAtual.getCodificacao()),
+			addField(resp, "classificacao_" + MascaraUtil.getInstance().calcularNivel(cAtual.getCodificacao()),
 					cAtual.getDescricao());
 		}
 
 		if (doc.getLotaSubscritor() != null) {
-			addFieldAndFacet(resp, "subscritor_lotacao", doc
-					.getLotaSubscritor().getSiglaLotacao());
+			addFieldAndFacet(resp, "subscritor_lotacao", doc.getLotaSubscritor().getSiglaLotacao());
 		}
 		if (doc.getSubscritor() != null) {
 			addField(resp, "subscritor", doc.getSubscritor().getNomePessoa());

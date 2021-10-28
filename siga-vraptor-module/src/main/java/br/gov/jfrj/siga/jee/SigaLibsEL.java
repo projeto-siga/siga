@@ -18,7 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.jee;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -35,20 +34,6 @@ import org.mvel2.templates.CompiledTemplate;
 import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
-import br.gov.jfrj.siga.base.Contexto;
-import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.ReaisPorExtenso;
-import br.gov.jfrj.siga.base.SigaCalendar;
-import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpModelo;
-import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
-
 //import net.sf.ehcache.Cache;
 //import net.sf.ehcache.CacheManager;
 //import net.sf.ehcache.Element;
@@ -56,6 +41,20 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
+import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.ReaisPorExtenso;
+import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class SigaLibsEL {
 	private static String month[] = new String[] { "Jan", "Fev", "Mar", "Abr",
@@ -287,12 +286,12 @@ public class SigaLibsEL {
 						lotaTitular,
 						dao().consultar(idServico.longValue(), CpServico.class,
 								false),
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+						CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		return b;
 	}
 
 	public static Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, Long idTpConf) throws Exception {
+			DpLotacao lotaTitular, ITipoDeConfiguracao idTpConf) throws Exception {
 		return Cp.getInstance().getConf()
 				.podePorConfiguracao(titular, lotaTitular, idTpConf);
 	}
@@ -304,7 +303,7 @@ public class SigaLibsEL {
 	// srv.setSiglaServico(siglaServico);
 	// return Cp.getInstance().getConf().podePorConfiguracao(titular,
 	// lotaTitular, dao().consultarPorSigla(srv),
-	// CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+	// CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 	// }
 
 	public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
@@ -361,12 +360,12 @@ public class SigaLibsEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(pessoa,
-						CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST)
+						CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST)
 				|| Cp.getInstance()
 						.getConf()
 						.podePorConfiguracao(
 								lotacao,
-								CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);
+								CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -459,15 +458,6 @@ public class SigaLibsEL {
 		return Texto.maximoCaracteres(s, max);
 	}
 	
-	public static Boolean podeDelegarVisualizacao(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
-		return Cp.getInstance().getConf()
-				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO);
-	}
-
-	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
-		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_CRIAR_NOVO_EXTERNO);
-	}
-
 	public static Boolean ehPublicoExterno(DpPessoa titular) {
 		return (
 			(titular.getOrgaoUsuario().getIsExternoOrgaoUsu() != null && titular.getOrgaoUsuario().getIsExternoOrgaoUsu() == 1)
@@ -483,6 +473,6 @@ public class SigaLibsEL {
 	}
 	
 	public static boolean podeUtilizarSegundoFatorPin(final DpPessoa cadastrante,final DpLotacao lotacaoCadastrante) throws Exception {
-		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_SEGUNDO_FATOR_PIN);
+		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoDeConfiguracao.SEGUNDO_FATOR_PIN);
 	}
 }

@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.observer.upload.UploadSizeLimit;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
@@ -64,13 +65,15 @@ import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -86,7 +89,6 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -98,6 +100,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -178,6 +181,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", movimentacaoBuilder.getTitularSel());
 		result.include("request", getRequest());
 		result.include("assinandoAnexosGeral", assinandoAnexosGeral);
+		result.include("tamanhoMaxArquivoAnexadoUpload",Prop.getInt("pdf.tamanho.maximo")/1024/1024);
+		result.include("qtdMaxArquivoAnexadoUpload", Prop.getInt("qtd.max.arquivo.anexado.upload"));
 	}
 
 	@Get("app/expediente/mov/assinarAnexos")
@@ -210,6 +215,118 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Transacional
+	@Post("app/expediente/mov/anexar_gravarmultiplos")
+	public void anexarGravarMultiplos(final String sigla,
+			final DpPessoaSelecao subscritorSel,
+			final DpPessoaSelecao titularSel, final boolean substituicao,
+			final List<UploadedFile> arquivoLista 	,final String dtMovString,
+			final List<String> descrMovLista) throws IOException {
+		
+			validarArquivosAnexados( arquivoLista);
+		 
+			BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			
+			buscarDocumento(documentoBuilder);
+			
+			ExMobil mob = documentoBuilder.getMob();
+	
+			for (int i = 0; i < arquivoLista.size(); i++) {
+				
+				String descrMov =descrMovLista !=null &&  StringUtils.isNotBlank(descrMovLista.get(i)) ? descrMovLista.get(i): arquivoLista.get(i).getFileName();
+				
+				if (mob.isVolumeEncerrado()) {
+					//DpPessoa cadastrante, DpLotacao lotaCadastrante,		ExDocumento doc
+					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaTitular(), mob.doc());
+					
+					mob = mob.doc().getUltimoVolume();
+				}
+				
+				gravarArquivoAnexado( subscritorSel, titularSel,substituicao, arquivoLista.get(i),dtMovString, descrMov,mob);
+			
+			}
+			
+			finalizarArquivoAnexar(mob.isVolumeEncerrado(),  mob.getSigla());
+		
+	}
+	
+
+	private void validarArquivosAnexados( List<UploadedFile> arquivoLista ) throws IOException{
+
+		 if (arquivoLista == null || arquivoLista.isEmpty()){
+				
+			 throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
+		 }
+		 
+		 int qtdMaxArquivoUpload =  Prop.getInt("qtd.max.arquivo.anexado.upload");
+		 
+		 if (arquivoLista.size() > qtdMaxArquivoUpload ){
+			 throw new AplicacaoException(String.format("A quantidade de arquivos selecionados excedeu o permitido (%s).", qtdMaxArquivoUpload ) );
+		 }
+
+		 for (int i = 0; i < arquivoLista.size(); i++) {
+			 
+			 validarArquivoAnexado(arquivoLista.get(i));
+			 
+		 }
+	}
+		
+
+	private void validarArquivoAnexado(UploadedFile arquivo) throws IOException{
+		
+		validarSeArquivoFoiAnexado(arquivo);
+		
+		validarTipoArquivoAnexado(arquivo);
+		
+		validarTamanhoArquivoAnexado(arquivo);
+			
+		validarSeArquivoAnexadoEstaCorrompido(arquivo);
+	}
+	
+	
+	private void validarTamanhoArquivoAnexado(UploadedFile arquivo) throws IOException{
+		
+		byte[] baArquivo = toByteArray(arquivo);
+		
+		if ( baArquivo == null) {
+			throw new AplicacaoException(String.format("O Arquivo %s  vazio não pode ser anexado.",arquivo.getFileName())	);
+		}
+		
+		Integer numBytes =   baArquivo.length;
+
+		//if (numBytes > 10 * 1024 * 1024 ) {
+		if (numBytes > Prop.getInt("pdf.tamanho.maximo") ) {
+			throw new AplicacaoException(String.format("O tamanho do arquivo %s é superior ao permitido (10MB).",arquivo.getFileName()));
+		}
+	}
+	
+	private void validarTipoArquivoAnexado(final UploadedFile arquivo) {
+		
+		if (!arquivo.getContentType().equals("application/pdf")) {
+			throw new AplicacaoException(String.format("O tipo do arquivo %s é inválido. Somente é permitido anexar arquivo PDF.",arquivo.getFileName()));
+		}
+	}
+
+	private void validarSeArquivoFoiAnexado(UploadedFile arquivo) throws IOException {
+		
+		//é realmente necessario fazer ?
+		if (arquivo.getFile() == null) {
+			throw new AplicacaoException(String.format("O arquivo %s a ser anexado não foi selecionado!",arquivo.getFileName()));
+		}
+	}	
+	 
+	private void validarSeArquivoAnexadoEstaCorrompido( UploadedFile arquivo) throws IOException {
+		
+		ExMovimentacao mov = new ExMovimentacao();
+		
+		mov.setConteudoBlobMov2(  toByteArray(arquivo) );
+		mov.setConteudoTpMov(arquivo.getContentType());
+		
+		if (mov.getContarNumeroDePaginas() == null || mov.getArquivoComStamp() == null) {
+			throw new AplicacaoException(MessageFormat.format("O arquivo %s está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
+		}
+	}
+
+	@Transacional
 	@Post("app/expediente/mov/anexar_gravar")
 	public void anexarGravar(final String sigla,
 			final DpPessoaSelecao subscritorSel,
@@ -217,10 +334,12 @@ public class ExMovimentacaoController extends ExController {
 			final UploadedFile arquivo, final String dtMovString,
 			final String descrMov) throws IOException {
 
-		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
+		validarArquivoAnexado(arquivo);
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		buscarDocumento(documentoBuilder);
+		
 		final ExMobil mob = documentoBuilder.getMob();
 		
 		if (!(mob.isGeral() && mob.doc().isFinalizado())) {
@@ -228,9 +347,21 @@ public class ExMovimentacaoController extends ExController {
 				throw new AplicacaoException("Arquivo não pode ser anexado");
 			}
 		}
+		
+		gravarArquivoAnexado(subscritorSel, titularSel,substituicao, arquivo,dtMovString, descrMov, mob );
+		
+		finalizarArquivoAnexar(mob.isVolumeEncerrado(),  mob.getSigla());
+	}
+
+	private void gravarArquivoAnexado(
+			final DpPessoaSelecao subscritorSel,
+			final DpPessoaSelecao titularSel, final boolean substituicao,
+			final UploadedFile arquivo, final String dtMovString,
+			final String descrMov,
+			final ExMobil mob ) throws IOException {
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia().setMob(documentoBuilder.getMob())
+				.novaInstancia().setMob(mob)
 				.setSubstituicao(substituicao).setSubscritorSel(subscritorSel)
 				.setTitularSel(titularSel).setDtMovString(dtMovString)
 				.setDescrMov(descrMov).setContentType(arquivo.getContentType())
@@ -239,55 +370,9 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		mov.setSubscritor(subscritorSel.getObjeto());
 		mov.setTitular(titularSel.getObjeto());
-
-		if (arquivo.getFile() == null) {
-			throw new AplicacaoException(
-					"O arquivo a ser anexado não foi selecionado!");
-		}
 		
-		Integer numBytes = 0;
-		try {
-			final byte[] baArquivo = toByteArray(arquivo);
-			if (baArquivo == null) {
-				throw new AplicacaoException(
-						"Arquivo vazio não pode ser anexado.");
-			}
-			numBytes = baArquivo.length;
-			if (numBytes > 10 * 1024 * 1024) {
-				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
-			}
-			mov.setConteudoBlobMov2(baArquivo);
-		} catch (IOException ex) {
-			throw new AplicacaoException("Falha ao manipular aquivo", 1, ex);
-		}
-
-		Integer numPaginas = mov.getContarNumeroDePaginas();
-		if (mov.getContarNumeroDePaginas() == null
-			|| mov.getArquivoComStamp() == null) {
-			throw new AplicacaoException(
-					MessageFormat
-							.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.",
-									arquivo.getFileName()));
-		}
+		mov.setConteudoBlobMov2(  toByteArray(arquivo) );
 		
-//		if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
-//			throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
-//		}
-		
-		if (mob.isVolumeEncerrado()) {
-			throw new AplicacaoException(
-					"Não é possível anexar arquivo em volume encerrado.");
-		}
-
-		if (!Ex.getInstance().getComp()
-				.podeAnexarArquivo(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException("Arquivo não pode ser anexado");
-		}
-		if (!arquivo.getContentType().equals("application/pdf")) {
-			throw new AplicacaoException(
-					"Somente é permitido anexar arquivo PDF.");
-		}
-
 		// Obtem as pendencias que serÃ£o resolvidas
 		final String aidMov[] = getRequest().getParameterValues(
 				"pendencia_de_anexacao");
@@ -300,16 +385,8 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 
-		// Nato: Precisei usar o código abaixo para adaptar o charset do
-		// nome do arquivo
-		try {
-			final byte[] ab = mov.getNmArqMov().getBytes();
-			for (int i = 0; i < ab.length; i++) {
-				if (ab[i] == -29) {
-					ab[i] = -61;
-				}
-			}
-			final String sNmArqMov = new String(ab, "utf-8");
+		// Nato: Precisei usar o código abaixo para adaptar o charset do nome do arquivo
+	 		final String sNmArqMov = adaptarCharsetNomeArquivo(mov.getNmArqMov());
 
 			Ex.getInstance()
 					.getBL()
@@ -318,18 +395,22 @@ public class ExMovimentacaoController extends ExController {
 							mov.getTitular(), mov.getLotaTitular(),
 							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
 							movimentacaoBuilder.getDescrMov(), pendencias);
-		} catch (UnsupportedEncodingException ex) {
-			LOGGER.error(ex.getMessage(), ex);
-		}
-		
-		if (mob.isVolumeEncerrado()) {
-			result.redirectTo(MessageFormat.format("/app/expediente/doc/exibir?sigla={0}&msg=N%26uacute;mero m%26aacute;ximo de p%26aacute;ginas atingido. Volume fechado automaticamente.", sigla));
+			
+	}
+
+	private void finalizarArquivoAnexar(boolean volumeEncerrado, String sigla) {
+
+		if (volumeEncerrado) {
+			result.redirectTo(MessageFormat.format(
+					"/app/expediente/doc/exibir?sigla={0}&msg=N%26uacute;mero m%26aacute;ximo de p%26aacute;ginas atingido. Volume fechado automaticamente.",
+					sigla));
 			return;
 		}
 
 		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
 	}
 
+	
 	@Get("app/expediente/mov/mostrar_anexos_assinados")
 	public void mostrarAnexosAssinados(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -379,6 +460,7 @@ public class ExMovimentacaoController extends ExController {
 
 		buscarDocumento(documentoBuilder);
 		final ExMobil mobOriginal = documentoBuilder.getMob();
+		
 		ExMobil mob = mobOriginal;
 		if (mob != null && !mob.isGeral())
 			mob = mob.doc().getMobilGeral();
@@ -396,10 +478,7 @@ public class ExMovimentacaoController extends ExController {
 		mov.setSubscritor(getCadastrante());
 		mov.setTitular(getCadastrante());
 
-		if (arquivo.getFile() == null) {
-			throw new AplicacaoException(
-					"O arquivo a ser anexado não foi selecionado!");
-		}
+		validarSeArquivoFoiAnexado(arquivo);
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
@@ -408,42 +487,39 @@ public class ExMovimentacaoController extends ExController {
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
 		
-		Integer numBytes = 0;
+		validarTamanhoArquivoAnexado(arquivo);
+		
+		mov.setConteudoBlobMov2(toByteArray(arquivo));
+ 
+		// Nato: Precisei usar o código abaixo para adaptar o charset do  nome do arquivo
+		final String sNmArqMov = adaptarCharsetNomeArquivo(mov.getNmArqMov());
+		
+		
+		Ex.getInstance().getBL()
+		.anexarArquivoAuxiliar(getCadastrante(), getLotaTitular(), mob,
+				mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
+				mov.getTitular(), mov.getLotaTitular(),
+				mov.getConteudoBlobMov2(), mov.getConteudoTpMov());
+		
+		
+		ExDocumentoController.redirecionarParaExibir(result, mobOriginal.getSigla());
+	}
+	
+	private String adaptarCharsetNomeArquivo(final String nmArqMov) {
 		try {
-			final byte[] baArquivo = toByteArray(arquivo);
-			if (baArquivo == null) {
-				throw new AplicacaoException(
-						"Arquivo vazio não pode ser anexado.");
-			}
-			numBytes = baArquivo.length;
-			if (numBytes > 10 * 1024 * 1024) {
-				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
-			}
-			mov.setConteudoBlobMov2(baArquivo);
-		} catch (IOException ex) {
-			throw new AplicacaoException("Falha ao manipular aquivo", 1, ex);
-		}
-
-		// Nato: Precisei usar o código abaixo para adaptar o charset do
-		// nome do arquivo
-		try {
-			final byte[] ab = mov.getNmArqMov().getBytes();
+			final byte[] ab = nmArqMov.getBytes();
 			for (int i = 0; i < ab.length; i++) {
 				if (ab[i] == -29) {
 					ab[i] = -61;
 				}
 			}
-			final String sNmArqMov = new String(ab, "utf-8");
+			return  new String(ab, "utf-8");
 
-			Ex.getInstance().getBL()
-					.anexarArquivoAuxiliar(getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
-							mov.getTitular(), mov.getLotaTitular(),
-							mov.getConteudoBlobMov2(), mov.getConteudoTpMov());
 		} catch (UnsupportedEncodingException ex) {
 			LOGGER.error(ex.getMessage(), ex);
 		}
-		ExDocumentoController.redirecionarParaExibir(result, mobOriginal.getSigla());
+		
+		return null;
 	}
 
 	@Get("app/expediente/mov/copiar")
@@ -627,9 +703,9 @@ public class ExMovimentacaoController extends ExController {
 					.processarComandosEmTag(doc, "pre_assinatura");
 		}
 		
-		AtivoEFixo afTramite = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+		AtivoEFixo afTramite = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), ExTipoDeConfiguracao.TRAMITE_AUTOMATICO);
 		
-		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA);
+		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
 		
 		// Habilita ou desabilita o trâmite 
 		if (!Ex.getInstance()
@@ -666,28 +742,27 @@ public class ExMovimentacaoController extends ExController {
 		public boolean fixo;
 	}
 
-	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, long tipoConf) {
-		final Long idSit = Ex
+	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, ITipoDeConfiguracao tipoConf) {
+		final CpSituacaoDeConfiguracaoEnum idSit = Ex
 				.getInstance()
 				.getConf()
 				.buscaSituacao(modelo,
 						tipoDocumento,
 						getTitular(), getLotaTitular(),
-						tipoConf)
-				.getIdSitConfiguracao();
+						tipoConf);
 
 		AtivoEFixo af = new AtivoEFixo();
 		
-		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+		if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 			af.ativo = true;
 			af.fixo = true;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO || idSit == ExSituacaoConfiguracao.SITUACAO_NAO_PODE) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.PROIBIDO || idSit == CpSituacaoDeConfiguracaoEnum.NAO_PODE) {
 			af.ativo = false;
 			af.fixo = true;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT || idSit == ExSituacaoConfiguracao.SITUACAO_PODE) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.DEFAULT || idSit == CpSituacaoDeConfiguracaoEnum.PODE) {
 			af.ativo = true;
 			af.fixo = false;
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.NAO_DEFAULT) {
 			af.ativo = false;
 			af.fixo = false;
 		}
@@ -2001,7 +2076,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Data de devolução inválida, deve estar entre o ano 2000 e ano 2100");	
 
 		
-		if(!Ex.getInstance().getConf().podePorConfiguracao(builder.getMob().getExDocumento().getExModelo(),CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_SEM_CAPTURADO)) {
+		if(!Ex.getInstance().getConf().podePorConfiguracao(builder.getMob().getExDocumento().getExModelo(),ExTipoDeConfiguracao.TRAMITAR_SEM_CAPTURADO)) {
 			Boolean podeTramitar = Boolean.FALSE;
 			Set<ExMobil> mobilsJuntados = builder.getMob().getDoc().getMobilDefaultParaReceberJuntada().getJuntados();
 
@@ -2036,7 +2111,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		if(lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && !Cp.getInstance().getConf().podePorConfiguracao(
 				null, lotaResponsavelSel.getObjeto(), 
-				CpTipoConfiguracao.TIPO_CONFIG_TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS)) {
+				ExTipoDeConfiguracao.TRAMITAR_PARA_LOTACAO_SEM_USUARIOS_ATIVOS)) {
 			DpPessoaDaoFiltro filtro = new DpPessoaDaoFiltro();
 			filtro.setBuscarFechadas(Boolean.FALSE);
 			filtro.setNome("");
@@ -2979,7 +3054,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote() throws Exception {
-		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 		final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
 		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
 
@@ -3007,7 +3082,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/assinar_tudo")
 	public void assina_tudo() throws Exception {
-		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 		List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL()
 				.obterAssinaveis(getTitular(), getLotaTitular(), apenasComSolicitacaoDeAssinatura);
 
@@ -3068,7 +3143,7 @@ public class ExMovimentacaoController extends ExController {
 							.assinarDocumento(getCadastrante(),
 									getLotaTitular(), mob.doc(), dt,
 									assinatura, certificado, tpMovAssinatura, juntar, tramitar,
-									exibirNoProtocolo));
+									exibirNoProtocolo, getTitular()));
 			
 		} catch (final Exception e) {
 			httpError(e);
@@ -3206,7 +3281,7 @@ public class ExMovimentacaoController extends ExController {
 				.podePorConfiguracao(
 						getTitular(),
 						getLotaTitular(),
-						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO))
+						ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO))
 			throw new AplicacaoException("Operação restrita");
 
 		result.include("itensSolicitados",
@@ -4164,7 +4239,7 @@ public class ExMovimentacaoController extends ExController {
 				.podePorConfiguracao(
 						getTitular(),
 						getLotaTitular(),
-						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)) {
+						ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO)) {
 
 			if (doc.getSubscritor() != null
 					&& doc.getSubscritor().getLotacao() != null) {

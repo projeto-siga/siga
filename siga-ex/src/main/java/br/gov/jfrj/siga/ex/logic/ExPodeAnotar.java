@@ -17,7 +17,7 @@ public class ExPodeAnotar extends CompositeExpressionSuport {
 //		&& !mob.isGeral())
 //	&& getConf().podePorConfiguracao(titular, lotaTitular,
 //					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO,
-//					CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+//					CpTipoDeConfiguracao.MOVIMENTAR);
 
 	private ExMobil mob;
 	private long idTpMov;

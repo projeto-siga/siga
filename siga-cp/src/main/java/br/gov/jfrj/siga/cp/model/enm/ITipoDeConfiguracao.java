@@ -2,18 +2,23 @@ package br.gov.jfrj.siga.cp.model.enm;
 
 public interface ITipoDeConfiguracao {
 
-	Long getId();
+	int getId();
 
 	String getDescr();
 
 	String getExplicacao();
 
-	SituacaoDeConfiguracao[] getSituacoes();
+	boolean isEditavel();
+	
+	CpSituacaoDeConfiguracaoEnum getSituacaoDefault();
+	
+	CpSituacaoDeConfiguracaoEnum[] getSituacoes();
 
 	Enum[] getParams();
 
 	Enum[] getObrigatorios();
 
+	
 	default public boolean ativo(String param) {
 		if (obrigatorio(param))
 			return true;

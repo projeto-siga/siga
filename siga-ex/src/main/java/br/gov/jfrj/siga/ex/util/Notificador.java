@@ -27,7 +27,6 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
@@ -37,6 +36,7 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Notificador {
@@ -388,7 +388,7 @@ public class Notificador {
 						papel,
 						pessoa,
 						tipoMovimentacao,
-						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL));
+						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL));
 				
 	}
 	
@@ -396,7 +396,7 @@ public class Notificador {
 		
 			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
 							lotacao, modelo,idTpMov,
-							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL));		
+							ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL));		
 				
 	}
 	

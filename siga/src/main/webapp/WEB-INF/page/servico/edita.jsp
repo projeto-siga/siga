@@ -39,20 +39,20 @@
 										test="${(config.dpPessoa.matricula == pessoa.matricula) && (config.cpServico.idServico == servico.idServico) }">
 										<td><select name="configuracao_pessoa_servico"
 											id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
-											valorSalvo="${config.cpSituacaoConfiguracao.idSitConfiguracao}"
-											onchange="javascript:alterar(this, ${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
+											valorSalvo="${config.cpSituacaoConfiguracao.id}"
+											onchange="javascript:alterar(this, ${pessoa.getPessoaInicial().idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
 												<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
 												<c:forEach var="sit"
 													items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
 													<c:if
-														test="${sit.idSitConfiguracao == config.cpSituacaoConfiguracao.idSitConfiguracao }">
-														<option value="${sit.idSitConfiguracao}"
-															selected="selected">${sit.dscSitConfiguracao}</option>
+														test="${sit.getId() == config.cpSituacaoConfiguracao.id }">
+														<option value="${sit.getId()}"
+															selected="selected">${sit.getDescr()}</option>
 													</c:if>
 													<c:if
-														test="${sit.idSitConfiguracao != config.cpSituacaoConfiguracao.idSitConfiguracao }">
-															<option value="${sit.idSitConfiguracao}">
-																${sit.dscSitConfiguracao}</option>
+														test="${sit.getId() != config.cpSituacaoConfiguracao.id }">
+															<option value="${sit.getId()}">
+																${sit.getDescr()}</option>
 														</c:if>
 													</c:forEach>
 											</select></td>
@@ -83,17 +83,17 @@
 									<select	name="configuracao_pessoa_servico"
 										id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
 										valorSalvo="${idSitConf}"
-										onchange="javascript:alterar(this, ${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});">
+										onchange="javascript:alterar(this, ${pessoa.getPessoaInicial().idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});">
 										<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
 										<c:forEach var="sit"
 											items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
-											<c:if test="${sit.idSitConfiguracao == idSitConf }">
-												<option value="${sit.idSitConfiguracao}" selected="selected">
-													${sit.dscSitConfiguracao}</option>
+											<c:if test="${sit == idSitConf }">
+												<option value="${sit.getId()}" selected="selected">
+													${sit.getDescr()}</option>
 											</c:if>
-											<c:if test="${sit.idSitConfiguracao != idSitConf }">
-												<option value="${sit.idSitConfiguracao}">
-													${sit.dscSitConfiguracao}</option>
+											<c:if test="${sit != idSitConf }">
+												<option value="${sit.getId()}">
+													${sit.getDescr()}</option>
 											</c:if>
 										</c:forEach>
 								</select></td>

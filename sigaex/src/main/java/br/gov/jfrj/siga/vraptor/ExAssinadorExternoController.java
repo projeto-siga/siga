@@ -48,7 +48,6 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -62,6 +61,7 @@ import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoSave;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -125,7 +125,7 @@ public class ExAssinadorExternoController extends ExController {
 				throw new Exception("Nenhuma pessoa localizada com o CPF: " + sCpf);
 			List<ExAssinadorExternoListItem> list = new ArrayList<ExAssinadorExternoListItem>();
 			for (DpPessoa pes : pessoas) {
-				boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pes, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+				boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pes, ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 				List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), apenasComSolicitacaoDeAssinatura);
 				for (ExAssinavelDoc ass : assinaveis) {
 					if (ass.isPodeAssinar()) {
@@ -317,7 +317,7 @@ public class ExAssinadorExternoController extends ExController {
 
 			DpPessoa cadastrante = obterCadastrante(cpf, mob, mov);
 
-			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
 				throw new Exception("Documento requer solicitação de assinatura. Provavelmente, o documento foi editado após a solicitação.");
 
@@ -337,7 +337,7 @@ public class ExAssinadorExternoController extends ExController {
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar, null);
+						null, tpMov, juntar, tramitar == null ? false : tramitar, null, getTitular());
 				if (msg != null)
 					msg = "OK: " + msg;
 				else

@@ -49,7 +49,7 @@
 		<jsp:doBody />
 
 		<td style="${tipoDeConfiguracao.style('SITUACAO')}"><c:if
-				test="${not empty cfg.cpSituacaoConfiguracao}">${cfg.cpSituacaoConfiguracao.dscSitConfiguracao}</c:if></td>
+				test="${not empty cfg.cpSituacaoConfiguracao}">${cfg.cpSituacaoConfiguracao.descr}</c:if></td>
 		<td><c:if test="${not empty nmTipoRetorno}">
 				<c:url var="url" value="/app/configuracao/editar">
 					<c:param name="id" value="${cfg.idConfiguracao}" />

@@ -130,6 +130,20 @@ public class ExApiV1Context extends ApiContextSupport {
 
 		return mob;
 	}
+	
+	public ExMobil buscarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp,
+            String descricaoDocumento) throws SwaggerException {
+        final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+        filter.setSigla(sigla);
+        ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
+
+ 
+
+        if (isNull(mob)) {
+            throw new SwaggerException("Número do " + descricaoDocumento + " não existe", 404, null, req, resp, null);
+        }
+        return mob;
+    }
 
 	/**
 	 * Retorna um {@link ExMobil Mobil} relacionado a uma certa

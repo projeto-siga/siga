@@ -47,7 +47,6 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -68,6 +67,7 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
@@ -113,7 +113,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REMESSA_PARA_PUBLICACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -128,7 +128,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -143,7 +143,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -155,7 +155,7 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES);
+						ExTipoDeConfiguracao.DEFINIR_PUBLICADORES);
 
 	}
 
@@ -199,8 +199,18 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(null, lota, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_EDITOR);
+						ExTipoDeConfiguracao.UTILIZAR_EXTENSAO_EDITOR);
 	}
+
+	public static Boolean podeDelegarVisualizacao(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf()
+			.podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO);
+	}
+
+	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO);
+	}
+
 
 	public static List<CpLocalidade> consultarPorUF(String siglaUF) {
 		return dao().consultarLocalidadesPorUF(siglaUF);
@@ -1016,10 +1026,10 @@ public class FuncoesEL {
 				.podeAssinarComSenha(titular, lotaTitular, mob);
 	}
 
-	public static Boolean podeAssinarPorComSenha(DpPessoa titular,
+	public static Boolean podeAssinarPor(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeAssinarPorComSenha(titular, lotaTitular, mob);
+				.podeAssinarPor(titular, lotaTitular, mob);
 	}
 
 	public static Boolean deveAssinarComSenha(DpPessoa titular,

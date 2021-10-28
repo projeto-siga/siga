@@ -57,62 +57,91 @@
 					<textarea cols="100" id="xxxeditorxxx" name="xxxeditorxxx" rows="20" class="editor">${v}</textarea>
 					
 					
-					 <script type="text/javascript">
+					 	<script type="text/javascript">
 
-CKEDITOR.config.scayt_autoStartup = true;
-CKEDITOR.config.scayt_sLang = 'pt_BR';
+								CKEDITOR.config.disableNativeSpellChecker = false;
+								CKEDITOR.config.scayt_autoStartup = false;
+								CKEDITOR.config.scayt_sLang = 'pt_BR';
+								CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+								
+								CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+								        name: 'Título',
+								        element: 'h1',
+								        styles: {
+								            'text-align': 'justify',
+								            'text-indent': '2cm'
+								        }
+								    },
+								    {
+								        name: 'Subtítulo',
+								        element: 'h2',
+								        styles: {
+								            'text-align': 'justify',
+								            'text-indent': '2cm'
+								        }
+								    },
+								    {
+								        name: 'Com recuo',
+								        element: 'p',
+								        styles: {
+								            'text-align': 'justify',
+								            'text-indent': '2cm'
+								        }
+								    },
+								    {
+								        name: 'Marcador',
+								        element: 'span',
+								        styles: {
+								        	'background-color' : '#FFFF00'
+								        }
+								    },
+								    {
+								        name: 'Normal',
+								        element: 'span'
+								    }
+								]);
+								CKEDITOR.config.toolbar = 'SigaToolbar';
+								
+								CKEDITOR.config.toolbar_SigaToolbar = [{
+								        name: 'styles',
+								        items: ['Styles']
+								    },
+								    {
+								        name: 'clipboard',
+								        items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+								    },
+								    {
+								        name: 'editing',
+								        items: ['Find', 'Replace', '-', 'SelectAll']
+								    },
+								    '/',
+								    {
+								        name: 'basicstyles',
+								        items: ['Bold', 'Italic', 'Subscript', 'Underline', 'Strike', '-', 'RemoveFormat']
+								    },
+								    {
+								        name: 'paragraph',
+								        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyBlock', 'JustifyRight']
+								    },
+								    {
+								        name: 'insert',
+								        items: ['Table' , 'Footnotes', '-', 'SpecialChar', '-', 'PageBreak']
+								    },
+								    {
+								        name: 'document',
+								        items: ['Source']
+								    }
+								];
+								CKEDITOR.config.extraPlugins = 'footnotes';
+								window.onload = function() {
+								    $("textarea.editor").each(function(index) {
+								        CKEDITOR.replace(this, {
+								            toolbar: 'SigaToolbar'
+								        });
+								    });
+								}
 
-CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
-
-
-
-CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
-                                               {
-                                            	   name:'Título',
-                                            	   element:'h1',
-                                            	   styles:{
-                                            		   'text-align':'justify',
-                                            		   'text-indent':'2cm'
-                                            			   }
-                                               },
-                                               {
-                                            	   name:'Subtítulo',
-                                            	   element:'h2',
-                                            	   styles:{
-                                            		   'text-align':'justify',
-                                            		   'text-indent':'2cm'
-                                            			   }
-                                               },
-                                               {
-                                            	   name:'Com recuo',
-                                            	   element:'p',
-                                            	   styles:{
-                                            		   'text-align':'justify',
-                                            		   'text-indent':'2cm'
-                                            			   }
-                                               }]);
-	CKEDITOR.config.toolbar = 'SigaToolbar';
- 
-	CKEDITOR.config.toolbar_SigaToolbar =
-	[
-		{ name: 'styles', items : [ 'Styles' ] },
-		{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
-		'/',
-		{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','-','RemoveFormat' ] },
-		{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyBlock','JustifyRight' ] },
-		{ name: 'insert', items : [ 'Table','-','SpecialChar','-','PageBreak' ] },
-		{ name: 'document', items : [ 'Source' ] }
-	];
-
-window.onload = function(){
-	$( "textarea.editor" ).each(function( index ) {
-    	CKEDITOR.replace( this,
-		{
-		   toolbar : 'SigaToolbar'
-		});
-    });	
-}                            </script>
+                            </script>
                             
                             
 					<!-- <FCK:replace replace="xxxeditorxxx" basePath="/ckeditor/ckeditor" config="${ckconfig}"></FCK:replace> -->

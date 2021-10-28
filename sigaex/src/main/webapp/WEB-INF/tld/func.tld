@@ -398,9 +398,9 @@
   <function-signature>java.lang.Boolean deveAssinarComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
  </function> 
  <function>
-  <name>podeAssinarPorComSenha</name>
+  <name>podeAssinarPor</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.Boolean podeAssinarPorComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
+  <function-signature>java.lang.Boolean podeAssinarPor(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
  </function>
  <function>
   <name>podeAssinarMovimentacaoComSenha</name>
@@ -467,4 +467,14 @@
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.Boolean defaultUtilizarSegundoFatorPin(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>  
+ <function>
+  <name>podeDelegarVisualizacao</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeDelegarVisualizacao( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
+ <function>
+  <name>podeCriarNovoExterno</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeCriarNovoExterno( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
+ </function>
 </taglib>

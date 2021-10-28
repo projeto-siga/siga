@@ -1596,8 +1596,8 @@ UNLOCK TABLES;
 
 drop function if exists remove_acento;
 delimiter //
-create function remove_acento( textvalue varchar(20000) )
-returns varchar(20000) DETERMINISTIC
+create function remove_acento( textvalue varchar(16383) )
+returns varchar(16383) DETERMINISTIC
 begin
 
 set @textvalue = textvalue;

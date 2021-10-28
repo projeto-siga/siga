@@ -39,10 +39,10 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpAcesso;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.ex.bl.Mesa;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -115,7 +115,7 @@ public class ExMesaController extends ExController {
 	@Get("app/mesa.json")
 	public void json(Long idVisualizacao) throws Exception {
 		List<br.gov.jfrj.siga.ex.bl.Mesa.MesaItem> l = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa.MesaItem>();
-		if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) && Cp.getInstance().getConf().podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+		if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) && Cp.getInstance().getConf().podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 			DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
 			l = Mesa.getMesa(dao(), vis.getTitular(), vis.getTitular().getLotacao());
 		} else {

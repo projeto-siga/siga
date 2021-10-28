@@ -30,7 +30,7 @@ public class ExPodeCancelarMarcacao extends CompositeExpressionSuport {
 //	}
 //
 //	if (getConf().podePorConfiguracao(titular, lotaTitular, mov.getIdTpMov(),
-//			CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO)) {
+//			CpTipoDeConfiguracao.CANCELAR_MOVIMENTACAO)) {
 //		return Optional.empty();
 //	}
 //

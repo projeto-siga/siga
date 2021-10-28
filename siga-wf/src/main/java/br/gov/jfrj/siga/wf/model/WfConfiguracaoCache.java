@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 - 2011 SJRJ.
+] * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
  * 
@@ -21,41 +21,32 @@
  *
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package br.gov.jfrj.siga.ex;
-
-import java.io.Serializable;
+package br.gov.jfrj.siga.wf.model;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
-import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
 
-@MappedSuperclass
-public abstract class AbstractExSituacaoConfiguracao extends Objeto implements
-		Serializable {
+@Entity
+@Table(name = "sigawf.wf_configuracao")
+@PrimaryKeyJoinColumn(name = "CONF_ID")
+public class WfConfiguracaoCache extends CpConfiguracaoCache {
 
-	@Id
-	@Column(name = "ID_SIT_CONFIGURACAO", unique = true, nullable = false)
-	private Long idSitConfiguracao;
+	@Convert(converter = LongNonNullConverter.class)
+	@Column(name = "DEFP_ID")
+	public long definicaoDeProcedimento;
 
-	@Column(name = "DSC_SIT_CONFIGURACAO", length = 256)
-	private String dscSitConfiguracao;
-
-	public Long getIdSitConfiguracao() {
-		return idSitConfiguracao;
+	public WfConfiguracaoCache() {
 	}
 
-	public void setIdSitConfiguracao(Long idConfiguracao) {
-		this.idSitConfiguracao = idConfiguracao;
+	public WfConfiguracaoCache(WfConfiguracao cfg) {
+		super(cfg);
+		this.definicaoDeProcedimento = longOrZero(
+				cfg.getDefinicaoDeProcedimento() != null ? cfg.getDefinicaoDeProcedimento().getIdInicial() : null);
 	}
-
-	public String getDscSitConfiguracao() {
-		return dscSitConfiguracao;
-	}
-
-	public void setDscSitConfiguracao(String dscSitConfiguracao) {
-		this.dscSitConfiguracao = dscSitConfiguracao;
-	}
-
 }

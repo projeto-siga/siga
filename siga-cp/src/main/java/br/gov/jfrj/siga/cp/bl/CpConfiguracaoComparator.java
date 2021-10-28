@@ -92,10 +92,8 @@ public class CpConfiguracaoComparator implements Comparator<CpConfiguracao> {
 		//
 		if (c1.getCpSituacaoConfiguracao() != null
 				&& c2.getCpSituacaoConfiguracao() != null) {
-			long i1 = c1.getCpSituacaoConfiguracao()
-					.getRestritividadeSitConfiguracao();
-			long i2 = c2.getCpSituacaoConfiguracao()
-					.getRestritividadeSitConfiguracao();
+			long i1 = c1.getCpSituacaoConfiguracao().getRestritividade();
+			long i2 = c2.getCpSituacaoConfiguracao().getRestritividade();
 			if (i1 > i2)
 				return -1;
 			if (i1 < i2)

@@ -41,12 +41,12 @@ import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -171,7 +171,7 @@ public class AcessoController extends GiControllerSupport {
 			for (CpServico srv : l) {
 				ConfiguracaoAcesso ac = ConfiguracaoAcesso.gerar(perfil, pessoa, lotacao, orgao, srv, null);
 
-				System.out.print(ac.getSituacao().getDscSitConfiguracao());
+				System.out.print(ac.getSituacao().getDescr());
 				achm.put(ac.getServico().getSigla(), ac);
 				
 			}
@@ -227,7 +227,7 @@ public class AcessoController extends GiControllerSupport {
 	@Transacional
 	@Get("/app/gi/acesso/gravar")
 	public void gravar(Long idServico
-			          ,Long idSituacao
+			          ,Integer idSituacao
 			          ,DpPessoaSelecao pessoaSel
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel
@@ -241,9 +241,9 @@ public class AcessoController extends GiControllerSupport {
 		CpOrgaoUsuario orgao = null;
 
 		if (pessoaSel != null && pessoaSel.getId() != null) {
-			pessoa = daoPes(pessoaSel.getId());
+			pessoa = daoPes(pessoaSel.getId()).getPessoaInicial();
 		} else if (lotacaoSel != null && lotacaoSel.getId() != null) {
-			lotacao = daoLot(lotacaoSel.getId());
+			lotacao = daoLot(lotacaoSel.getId()).getLotacaoInicial();
 		} else if (perfilSel != null && perfilSel.getId() != null) {
 			perfil = dao().consultar(perfilSel.getId(), CpPerfil.class,false);
 		} else if (idOrgaoUsuSel != null && idOrgaoUsuSel != null) {
@@ -255,9 +255,9 @@ public class AcessoController extends GiControllerSupport {
 
 		CpServico servico = dao().consultar(idServico, CpServico.class, false);
 		
-		CpSituacaoConfiguracao situacao = dao().consultar(idSituacao,CpSituacaoConfiguracao.class, false);
+		CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.getById(idSituacao);
 		
-		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO, CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.UTILIZAR_SERVICO;
 		
 		Cp.getInstance().getBL().configurarAcesso(perfil, orgao, lotacao,pessoa, servico, situacao,tpConf, getIdentidadeCadastrante());
 		
@@ -290,8 +290,8 @@ public class AcessoController extends GiControllerSupport {
 	}
 
 	private void acessoHTML(StringBuilder sb, ConfiguracaoAcesso ac) {
-		boolean fPode = ac.getSituacao().getDscSitConfiguracao().equals("Pode");
-		boolean fNaoPode = ac.getSituacao().getDscSitConfiguracao().equals("Não Pode");
+		boolean fPode = ac.getSituacao() == CpSituacaoDeConfiguracaoEnum.PODE;
+		boolean fNaoPode = ac.getSituacao() == CpSituacaoDeConfiguracaoEnum.NAO_PODE;
 		
 		sb.append("<li style=\"color:"+ (fPode ? "green" : (fNaoPode ? "red" : "black")) + ";\">");
 		
@@ -309,7 +309,7 @@ public class AcessoController extends GiControllerSupport {
 		
 		if (!(fPode || fNaoPode)) {
 			sb.append(" (");
-			sb.append(ac.getSituacao().getDscSitConfiguracao());
+			sb.append(ac.getSituacao().getDescr());
 			sb.append(")");
 		}
 		
@@ -373,8 +373,8 @@ public class AcessoController extends GiControllerSupport {
 	}
 
 	private void acessoHTMLOld(StringBuilder sb, ConfiguracaoAcesso ac) {
-		boolean fPode = ac.getSituacao().getDscSitConfiguracao().equals("Pode");
-		boolean fNaoPode = ac.getSituacao().getDscSitConfiguracao().equals(
+		boolean fPode = ac.getSituacao().getDescr().equals("Pode");
+		boolean fNaoPode = ac.getSituacao().getDescr().equals(
 				"Não Pode");
 		sb.append("<li style=\"color:"
 				+ (fPode ? "green" : (fNaoPode ? "red" : "black")) + ";\">");
@@ -392,7 +392,7 @@ public class AcessoController extends GiControllerSupport {
 		
 		if (!(fPode || fNaoPode)) {
 			sb.append(" (");
-			sb.append(ac.getSituacao().getDscSitConfiguracao());
+			sb.append(ac.getSituacao().getDescr());
 			sb.append(")");
 		}
 		

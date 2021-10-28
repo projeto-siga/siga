@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "gc_tag", schema = "sigagc")
+@Table(name = "sigagc.gc_tag")
 @NamedQueries({ @NamedQuery(name = "listarTagCategorias", query = "select t.categoria from GcTag t where t.categoria is not null group by t.categoria order by t.categoria") })
 public class GcTag extends Objeto implements Comparable<GcTag>,
 		ObjetoSelecionavel {
@@ -36,7 +36,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
 	@GeneratedValue(generator = "gcTagSeq")
 	@Column(name = "ID_TAG")
-	private long id;
+	private Long id;
 
 	@ManyToOne(optional = false)
 	private GcTipoTag tipo;
@@ -53,7 +53,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	// @Column(name = "ID_EXTERNA", length = 256)
 	// private String ide;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -163,7 +163,8 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		int result = super.hashCode();
 		result = prime * result
 				+ ((getCategoria() == null) ? 0 : getCategoria().hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
+		if (id != null)
+			result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		result = prime * result
 				+ ((getTitulo() == null) ? 0 : getTitulo().hashCode());
@@ -203,14 +204,6 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	public Long getId() {
 		// TODO Auto-generated method stub
 		return id;
-	}
-
-	public void setId(Long id) {
-		if (id == null) {
-			this.id = 0;
-			return;
-		}
-		this.id = id;
 	}
 
 	@Override

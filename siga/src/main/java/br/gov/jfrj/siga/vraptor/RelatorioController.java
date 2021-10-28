@@ -38,7 +38,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.libs.rpc.FaultMethodResponseRPC;
@@ -163,7 +163,7 @@ public class RelatorioController extends SigaController {
 			Long t_lngIdServico = Long.parseLong(idServico);
 			CpServico t_cpsServico = dao().consultar(t_lngIdServico,
 					CpServico.class, false);
-			Set<CpSituacaoConfiguracao> t_setSituacao = t_cpsServico
+			Set<CpSituacaoDeConfiguracaoEnum> t_setSituacao = t_cpsServico
 					.getCpTipoServico().getCpSituacoesConfiguracaoSet();
 			HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
 			t_hmpRetorno.put("idservico",
@@ -172,19 +172,19 @@ public class RelatorioController extends SigaController {
 				throw new AplicacaoException(
 						"Serviço sem situação! >> Avise sistemas");
 			}
-			CpSituacaoConfiguracao t_scfSituacaoDefault = t_cpsServico
+			CpSituacaoDeConfiguracaoEnum t_scfSituacaoDefault = t_cpsServico
 					.getCpTipoServico().getSituacaoDefault();
 			t_hmpRetorno.put("quantas", String.valueOf(t_setSituacao.size()));
 			Integer t_intContaServico = new Integer(0);
-			for (CpSituacaoConfiguracao t_scfSituacao : t_setSituacao) {
+			for (CpSituacaoDeConfiguracaoEnum t_scfSituacao : t_setSituacao) {
 				t_hmpRetorno.put("idsituacao_" + t_intContaServico,
-						String.valueOf(t_scfSituacao.getIdSitConfiguracao()));
+						String.valueOf(t_scfSituacao.getId()));
 				t_hmpRetorno.put("descsituacao_" + t_intContaServico,
-						t_scfSituacao.getDscSitConfiguracao());
+						t_scfSituacao.getDescr());
 				t_hmpRetorno.put(
 						"sedefault_" + t_intContaServico,
-						t_scfSituacaoDefault.getIdSitConfiguracao().equals(
-								t_scfSituacao.getIdSitConfiguracao()) ? "true"
+						t_scfSituacaoDefault.getId().equals(
+								t_scfSituacao.getId()) ? "true"
 								: "false");
 				t_intContaServico++;
 			}

@@ -21,6 +21,6 @@
 		</tbody>
 	</table>
 <div class="mt-2">
-<a title="Novo Conhecimento" class="btn btn-primary float-right btn-sm ml-2" href="${linkTo[AppController].editar}" >Novo Conhecimento</a>
+<a title="Novo Conhecimento" class="btn btn-primary float-right btn-sm ml-2" href="${linkTo[AppController].novo}" >Novo Conhecimento</a>
 <a title="Pesquisar Conhecimentos" class="btn btn-primary float-right btn-sm ml-2" href="${linkTo[AppController].listar}">Pesquisar Conhecimentos</a>
 </div>

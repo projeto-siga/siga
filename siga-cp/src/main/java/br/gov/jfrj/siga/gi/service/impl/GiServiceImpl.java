@@ -327,8 +327,7 @@ public class GiServiceImpl implements GiService {
 				ConfiguracaoAcesso ac;
 				ac = ConfiguracaoAcesso.gerar(null, p, lot, null, srv, null);
 				if (ac != null)
-					servicos.put(ac.getServico().getSigla(), ac.getSituacao()
-							.getDscSitConfiguracao());
+					servicos.put(ac.getServico().getSigla(), ac.getSituacao().getDescr());
 			}
 			resultado = servicos.toString(2);
 		} catch (AplicacaoException e) {
@@ -367,7 +366,7 @@ public class GiServiceImpl implements GiService {
 								null);
 						if (ac != null)
 							servicos.put(ac.getServico().getSigla(), ac
-									.getSituacao().getDscSitConfiguracao());
+									.getSituacao().getDescr());
 					} catch (Exception e) {
 					}
 				}

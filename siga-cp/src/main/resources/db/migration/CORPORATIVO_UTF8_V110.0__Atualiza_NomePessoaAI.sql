@@ -1,0 +1,1 @@
+update  corporativo.dp_pessoa SET NOME_PESSOA_AI = UPPER(corporativo.REMOVE_ACENTO(NOME_PESSOA))  WHERE NOME_PESSOA_AI IS NULL;

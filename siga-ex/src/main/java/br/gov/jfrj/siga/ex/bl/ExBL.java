@@ -45,7 +45,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -107,8 +106,8 @@ import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -117,6 +116,8 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -129,6 +130,7 @@ import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -139,7 +141,6 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExProtocolo;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
@@ -152,6 +153,7 @@ import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -786,25 +788,26 @@ public class ExBL extends CpBL {
 
 			sbHtml.append("</body></html>");
 
-			TreeSet<CpConfiguracao> atendentes = getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO);
+			TreeSet<CpConfiguracaoCache> atendentes = getConf()
+					.getListaPorTipo(ExTipoDeConfiguracao.ATENDER_PEDIDO_PUBLICACAO);
 
 			ArrayList<String> emailsAtendentes = new ArrayList<String>();
 			Date hoje = new Date();
-			for (CpConfiguracao cpConf : atendentes) {
+			for (CpConfiguracaoCache cpConf : atendentes) {
 				if (!cpConf.ativaNaData(hoje))
 					continue;
-				if (!(cpConf instanceof ExConfiguracao))
+				if (!(cpConf instanceof ExConfiguracaoCache))
 					continue;
-				ExConfiguracao conf = (ExConfiguracao) cpConf;
-				if (conf.getCpSituacaoConfiguracao().getIdSitConfiguracao() == ExSituacaoConfiguracao.SITUACAO_PODE) {
-					if (conf.getDpPessoa() != null) {
-						if (!emailsAtendentes.contains(conf.getDpPessoa().getEmailPessoaAtual())) {
-							emailsAtendentes.add(conf.getDpPessoa().getEmailPessoaAtual());
+				ExConfiguracaoCache conf = (ExConfiguracaoCache) cpConf;
+				if (conf.situacao == CpSituacaoDeConfiguracaoEnum.PODE) {
+					if (conf.dpPessoa != 0) {
+						DpPessoa pes = dao().consultar(conf.dpPessoa, DpPessoa.class, false);
+						if (!emailsAtendentes.contains(pes.getEmailPessoaAtual())) {
+							emailsAtendentes.add(pes.getEmailPessoaAtual());
 						}
-					} else if (conf.getLotacao() != null) {
+					} else if (conf.lotacao != 0) {
 						List<DpPessoa> pessoasLotacao = CpDao.getInstance()
-								.pessoasPorLotacao(conf.getLotacao().getIdLotacao(), false, true);
+								.pessoasPorLotacao(conf.lotacao, false, true);
 						for (DpPessoa pessoa : pessoasLotacao) {
 							if (!emailsAtendentes.contains(pessoa.getEmailPessoaAtual()))
 								emailsAtendentes.add(pessoa.getEmailPessoaAtual());
@@ -1396,26 +1399,23 @@ public class ExBL extends CpBL {
 	}
 
 	public boolean deveTramitarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
-		final Long idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
-				titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO).getIdSitConfiguracao();
-
-		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO || idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT)
-			return true;
-		return false;
+		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
+				titular, lotaTitular, ExTipoDeConfiguracao.TRAMITE_AUTOMATICO);
+		return idSit != null && idSit.isDefaultOuObrigatoria();
 	}
 
 	public boolean deveJuntarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
-		final Long idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
-				titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA).getIdSitConfiguracao();
-
-		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO || idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT)
-			return true;
-		return false;
+		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
+				titular, lotaTitular, ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
+		return idSit != null && idSit.isDefaultOuObrigatoria();
 	}
 
 	public String assinarDocumento(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado, long tpMovAssinatura, Boolean juntar,
-			Boolean tramitar, Boolean exibirNoProtocolo) throws AplicacaoException {
+			Boolean tramitar, Boolean exibirNoProtocolo, DpPessoa titular) throws AplicacaoException, SQLException {
+		DpPessoa cosignatario = null;
+		boolean fSubstituindoSubscritor = false;
+		boolean fSubstituindoCosignatario = false;
 		String sNome;
 		Long lCPF = null;
 
@@ -1521,7 +1521,7 @@ public class ExBL extends CpBL {
 					fValido = (lMatricula.equals(doc.getCadastrante().getMatricula())) && (doc.getExTipoDocumento()
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
-				if (!fValido)
+				if (!fValido) {
 					for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
 						if (m.getExTipoMovimentacao()
 								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
@@ -1532,7 +1532,8 @@ public class ExBL extends CpBL {
 							continue;
 						}
 					}
-
+				}
+				
 				if (!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						&& Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
@@ -1564,12 +1565,42 @@ public class ExBL extends CpBL {
 						&& Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
+				
+				if ((!fValido || (fValido && doc.isAssinadoPelaPessoaComTokenOuSenha(cadastrante))) && cadastrante != titular) { 
+					// Verificar se é substituto do subscritor do documento						
+					if(doc.getSubscritor().equivale(titular)) {	
+						fSubstituindoSubscritor = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, doc.getSubscritor(),
+								cadastrante);
+						fValido = fSubstituindoSubscritor;
+					}
+					
+					if(!fSubstituindoSubscritor) {
+						for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) { // Verifica se é substituto de cossignatário
+							if (m.getExTipoMovimentacao()
+									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+									&& m.getExMovimentacaoCanceladora() == null &&  titular.equivale(m.getSubscritor()) ) {
+								// Verificar se é substituto do cosignatario do documento
+								fSubstituindoCosignatario = estaSubstituindoSubscritorOuCosignatario(cadastrante, lotaCadastrante, m.getSubscritor(),
+										cadastrante);
+								if (fSubstituindoCosignatario) {
+									cosignatario = titular;
+									fValido = true;
+									break;								
+								}
+							}
+						}
+					}
+				}
 			}
 
 			if (lMatricula == null && lCPF == null)
 				throw new AplicacaoException("não foi possível recuperar nem a matrícula nem o CPF do assinante");
+			if (!lCPF.equals(cadastrante.getCpfPessoa()))
+				throw new AplicacaoException("Usuário não permitido a utilizar o certificado digital de " + sNome);
 			if (fValido == false)
 				throw new AplicacaoException("Assinante não é subscritor nem cossignatario");
+		} catch (final AplicacaoException e) {
+			throw e;
 		} catch (final Exception e) {
 			throw new RuntimeException(
 					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento", e);
@@ -1581,14 +1612,18 @@ public class ExBL extends CpBL {
 		}
 
 		String s = null;
+		DpPessoa assinante = calculaAssinanteCriaMovAssinadoPor(cadastrante, lotaCadastrante, doc, dtMov, titular,
+				cadastrante, cosignatario, fSubstituindoSubscritor, fSubstituindoCosignatario);
+		
 		final ExMovimentacao mov;
 		try {
 			if (usuarioDoToken != null && usuarioDoToken.equivale(cadastrante))
 				usuarioDoToken = cadastrante;
 
-			mov = criarNovaMovimentacao(tpMovAssinatura, cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-					usuarioDoToken, null, null, null, null);
+			mov = criarNovaMovimentacao(tpMovAssinatura, cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, 
+					assinante, null, null, null, null);
 
+			
 			// if (BUSCAR_CARIMBO_DE_TEMPO) {
 			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
 			mov.setConteudoBlobMov2(cms);
@@ -1597,8 +1632,7 @@ public class ExBL extends CpBL {
 			// mov.setConteudoBlobMov2(pkcs7);
 			// }
 
-			mov.setDescrMov(sNome);
-
+			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " [Digital]");
 			gravarMovimentacao(mov);
 
 			concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -1810,28 +1844,8 @@ public class ExBL extends CpBL {
 		}
 
 		String s = null;
-		DpPessoa assinante;
-		if (!fSubstituindoSubscritor && !fSubstituindoCosignatario ) {
-			assinante = subscritor;
-			if (subscritor != null) {
-				if (doc.isAssinadoPelaPessoaComTokenOuSenha(subscritor))
-					throw new AplicacaoException("Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
-			}
-		} else {
-			if (fSubstituindoSubscritor) { 
-				assinante = titular; 
-			} else {
-				assinante = cosignatario;	
-			}
-			assinante = dao().consultarPorSigla(assinante);
-			if (assinante != null) {
-				if (doc.isAssinadoPelaPessoaComTokenOuSenha(assinante))
-					throw new AplicacaoException("Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
-			}
-
-			//Cria movimentação de Assinatura POR
-			criarMovimentacaoAssinadorPor(cadastrante, lotaCadastrante, doc, dtMov, subscritor, assinante);
-		}
+		DpPessoa assinante = calculaAssinanteCriaMovAssinadoPor(cadastrante, lotaCadastrante, doc, dtMov, titular,
+				subscritor, cosignatario, fSubstituindoSubscritor, fSubstituindoCosignatario);
 
 		
 		try {
@@ -1898,6 +1912,34 @@ public class ExBL extends CpBL {
 
 		return s;
 	}
+
+	private DpPessoa calculaAssinanteCriaMovAssinadoPor(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+			final ExDocumento doc, final Date dtMov, final DpPessoa titular, DpPessoa subscritor, DpPessoa cosignatario,
+			boolean fSubstituindoSubscritor, boolean fSubstituindoCosignatario) throws SQLException {
+		DpPessoa assinante;
+		if (!fSubstituindoSubscritor && !fSubstituindoCosignatario ) {
+			assinante = subscritor;
+			if (subscritor != null) {
+				if (doc.isAssinadoPelaPessoaComTokenOuSenha(subscritor))
+					throw new AplicacaoException("Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
+			}
+		} else {
+			if (fSubstituindoSubscritor) { 
+				assinante = titular; 
+			} else {
+				assinante = cosignatario;	
+			}
+			assinante = dao().consultarPorSigla(assinante);
+			if (assinante != null) {
+				if (doc.isAssinadoPelaPessoaComTokenOuSenha(assinante))
+					throw new AplicacaoException("Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
+			}
+
+			//Cria movimentação de Assinatura POR
+			criarMovimentacaoAssinadorPor(cadastrante, lotaCadastrante, doc, dtMov, subscritor, assinante);
+		}
+		return assinante;
+	}
 	
 	private String getRootCauseMessage(Exception ex) {
 		Throwable cause = ex;
@@ -1913,7 +1955,7 @@ public class ExBL extends CpBL {
 	private void criarMovimentacaoAssinadorPor(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			final ExDocumento doc, final Date dtMov, DpPessoa subscritor, DpPessoa assinante) throws SQLException {
 		final ExMovimentacao movsub;
-		movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+		movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR,
 				cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, subscritor, null, null, null, null);
 		movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla() + " em substituição a "
 				+ assinante.getNomePessoa() + ":" + assinante.getSigla());
@@ -1925,7 +1967,7 @@ public class ExBL extends CpBL {
 			throws SQLException {
 		Boolean fSubstituindo = false;
 		if (subscritor.getId() != subscritorOuCosignatarioDoDocumento.getId()) {
-			if (Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
+			if (Ex.getInstance().getComp().podeAssinarPor(cadastrante, lotaCadastrante)) {
 				DpSubstituicao dpSubstituicao = new DpSubstituicao();
 				dpSubstituicao.setSubstituto(subscritor);
 				dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
@@ -3641,9 +3683,9 @@ public class ExBL extends CpBL {
 		// Inclui em setDepois os papeis que devem estar atribuídos ao documento
 		//
 		Date dt = dao().consultarDataEHoraDoServidor();
-		TreeSet<ExConfiguracao> lista = null;
+		TreeSet<ExConfiguracaoCache> lista = null;
 		ExConfiguracaoBL confBL = Ex.getInstance().getConf();
-		lista = (TreeSet) confBL.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_DEFINICAO_AUTOMATICA_DE_PAPEL);
+		lista = (TreeSet) confBL.getListaPorTipo(ExTipoDeConfiguracao.DEFINICAO_AUTOMATICA_DE_PAPEL);
 		if (lista != null) {
 			CpConfiguracao confFiltro = new CpConfiguracao();
 			confFiltro.setDpPessoa(doc.getTitular());
@@ -3652,18 +3694,21 @@ public class ExBL extends CpBL {
 			Set<Integer> atributosDesconsiderados = new HashSet<>();
 			atributosDesconsiderados.add(CpConfiguracaoBL.PESSOA_OBJETO);
 			atributosDesconsiderados.add(CpConfiguracaoBL.LOTACAO_OBJETO);
-			for (ExConfiguracao conf : lista) {
+			
+			CpConfiguracaoCache filtroConfiguracaoCache = confFiltro.converterParaCache();
+			for (ExConfiguracaoCache conf : lista) {
+				
 				if (// (!conf.ativaNaData(dt)) ||
-				conf.getExPapel() == null || (conf.getPessoaObjeto() == null && conf.getLotacaoObjeto() == null)
-						|| !confBL.atendeExigencias(confFiltro, atributosDesconsiderados, conf, null))
+				conf.exPapel == 0 || (conf.pessoaObjeto == 0 && conf.lotacaoObjeto == 0)
+						|| !confBL.atendeExigencias(filtroConfiguracaoCache, atributosDesconsiderados, conf, null))
 					continue;
 				DpPessoa po = null;
 				DpLotacao lo = null;
-				if (conf.getPessoaObjeto() != null)
-					po = dao().obterPessoaAtual(conf.getPessoaObjeto());
-				if (conf.getLotacaoObjeto() != null)
-					lo = dao().obterLotacaoAtual(conf.getLotacaoObjeto());
-				ExPapel p = dao().consultar(conf.getExPapel().getIdPapel(), ExPapel.class, false);
+				if (conf.pessoaObjeto != 0)
+					po = dao().consultar(conf.pessoaObjeto, DpPessoa.class, false);
+				if (conf.lotacaoObjeto != 0)
+					lo = dao().consultar(conf.lotacaoObjeto, DpLotacao.class, false);
+				ExPapel p = dao().consultar(conf.exPapel, ExPapel.class, false);
 				setDepois.add(new MovimentacaoSincronizavel(p, po, lo, null));
 			}
 		}
@@ -4304,12 +4349,12 @@ public class ExBL extends CpBL {
 		if (doc.getDestinatario() != null && !doc.getDestinatario().isFechada())
 			novoDoc.setDestinatario(doc.getDestinatario().getPessoaAtual());
 
-		final Long idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
-				cadastrante, lotaCadastrante, CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO).getIdSitConfiguracao();
+		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
+				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.ELETRONICO);
 
-		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+		if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 			novoDoc.setFgEletronico("S");
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.PROIBIDO) {
 			novoDoc.setFgEletronico("N");
 		} else {
 			novoDoc.setFgEletronico(doc.getFgEletronico());
@@ -4492,7 +4537,7 @@ public class ExBL extends CpBL {
 				// remove a lotação das permissões de acesso e inclui o recebedor
 				if (Ex.getInstance().getConf().podePorConfiguracao(mov.getResp(), mov.getLotaResp(), 
 						null, mob.doc().getExModelo().getExFormaDocumento(), mob.doc().getExModelo(), 
-						CpTipoConfiguracao.TIPO_CONFIG_RESTRINGIR_ACESSO_APOS_RECEBER)) {
+						ExTipoDeConfiguracao.RESTRINGIR_ACESSO_APOS_RECEBER)) {
 					concluirAlteracaoParcial(m, true, mov.getResp(), mov.getLotaResp());
 				} else {
 					concluirAlteracaoParcial(m);
@@ -5576,10 +5621,8 @@ public class ExBL extends CpBL {
 				mov.setDestinoFinal(ultMov.getDestinoFinal());
 		}
 		if (ultMov == null || idtpmov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
-			if (mov.getLotaResp() == null)
-				mov.setLotaResp(lotaCadastrante);
-			if (mov.getResp() == null)
-				mov.setResp(cadastrante);
+			mov.setLotaResp(lotaCadastrante);
+			mov.setResp(cadastrante);
 		}
 		acrescentarCamposDeAuditoria(mov);
 		return mov;
@@ -5990,10 +6033,10 @@ public class ExBL extends CpBL {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal) {
 				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL)) {
+						ExTipoDeConfiguracao.DESPACHAVEL)) {
 					if (!isComposto) {
 						if (getConf().podePorConfiguracao(titular, lotaTitular, null, mod.getExFormaDocumento(), mod,
-								CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_EM_AVULSO)) {
+								ExTipoDeConfiguracao.INCLUIR_EM_AVULSO)) {
 							provSet.add(mod);
 						}
 					} else {
@@ -6007,7 +6050,7 @@ public class ExBL extends CpBL {
 				provSet = new ArrayList<ExModelo>();
 				for (ExModelo mod : modeloSetFinal)
 					if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
-							CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO))
+							ExTipoDeConfiguracao.CRIAR_COMO_NOVO))
 						provSet.add(mod);
 				modeloSetFinal = provSet;
 			}
@@ -6016,14 +6059,14 @@ public class ExBL extends CpBL {
 		if (autuando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)
-				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, CpTipoConfiguracao.TIPO_CONFIG_AUTUAVEL))
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, ExTipoDeConfiguracao.AUTUAVEL))
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}
 		if (protegido) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal) {
-				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, ExTipoDeConfiguracao.CRIAR))
 					provSet.add(mod);
 			}
 			modeloSetFinal = provSet;
@@ -7774,57 +7817,5 @@ public class ExBL extends CpBL {
 		return funcaoCargoPersonalizadoAssinatura.toString();
 
 	}
-
-	public List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, 
-			ExClassificacao classif, DpPessoa titular, DpLotacao lotaTitular) {
-		List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
-		ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-
-		ExConfiguracao config = new ExConfiguracao();
-		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		config.setDpPessoa(titular);
-		config.setLotacao(lotaTitular);
-		config.setExTipoDocumento(exTpDoc);
-		config.setExFormaDocumento(forma);
-		config.setExModelo(exMod);
-		config.setExClassificacao(classif);
-
-		ExConfiguracao exConfiguracaoMin;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		try {
-			exConfiguracaoMin = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
-		} catch (Exception e) {
-			exConfiguracaoMin = null;
-		}
-
-		ExConfiguracao exConfiguracaoMax;
-		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		try {
-			exConfiguracaoMax = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
-		} catch (Exception e) {
-			exConfiguracaoMax = null;
-		}
-
-		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.getExNivelAcesso() != null
-				&& exConfiguracaoMax.getExNivelAcesso() != null) {
-			int nivelMinimo = exConfiguracaoMin.getExNivelAcesso().getGrauNivelAcesso();
-			int nivelMaximo = exConfiguracaoMax.getExNivelAcesso().getGrauNivelAcesso();
-
-			for (ExNivelAcesso nivelAcesso : listaNiveis) {
-				if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo && nivelAcesso.getGrauNivelAcesso() <= nivelMaximo) {
-					niveisFinal.add(nivelAcesso);
-				}
-			}
-		} else {
-			niveisFinal.addAll(listaNiveis);
- 		}
-
-		return niveisFinal;
-	}
-	
-	
 }
 

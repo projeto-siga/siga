@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "gc_arquivo", schema = "sigagc")
+@Table(name = "sigagc.gc_arquivo")
 public class GcArquivo extends Objeto implements Serializable {
 	private static final long serialVersionUID = -1924833226821913592L;
 	public static ActiveRecord<GcArquivo> AR = new ActiveRecord<>(
@@ -45,7 +45,7 @@ public class GcArquivo extends Objeto implements Serializable {
 	@Column(name = "CONTEUDO_TIPO")
 	private String mimeType;
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -174,7 +174,7 @@ public class GcArquivo extends Objeto implements Serializable {
 		return null;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

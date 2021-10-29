@@ -618,7 +618,9 @@ public class Documento {
 					sb.append(numeracao);
 					sb.append("</div>");
 				}
-				if (an.getArquivo().getHtml() != null) {
+
+				if ((an.getArquivo() instanceof ExDocumento && !((ExDocumento)an.getArquivo()).isCapturado()) ||
+						(an.getArquivo() instanceof ExMovimentacao && an.getArquivo().getHtml() != null)) {
 					String sHtml = fixHtml(contextpath, an);				
 					sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();
 							

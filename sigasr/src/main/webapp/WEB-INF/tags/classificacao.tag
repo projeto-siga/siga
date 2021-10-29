@@ -77,8 +77,8 @@
 								
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao && !atividadeLotacao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
-									<c:if test="${atividadeLotacao}"><!-- (${tarefa.conf.atendente.lotacaoAtual.siglaCompleta}) --></c:if>
+									<c:if test="${exibeLotacaoNaAcao && !atividadeLotacao}">(${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${atividadeLotacao}"><!-- (${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta}) --></c:if>
 								</option>
 							</c:forEach>
 						</optgroup>
@@ -93,9 +93,9 @@
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
 						<c:forEach items="${acoesEAtendentes.get(cat)}" var="t" varStatus="tPosition">
 							<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
-							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.siglaCompleta} 
-												- ${t.conf.atendente.lotacaoAtual.descricao}</span>
-							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.idLotacao}</span>
+							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta} 
+												- ${t.conf.lotacaoAtendente.lotacaoAtual.descricao}</span>
+							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.lotacaoAtendente.lotacaoAtual.idLotacao}</span>
 						</c:forEach>
 					</c:forEach>
 			
@@ -244,9 +244,13 @@ function carregarConhecimento(titulo, gcTag, div) {
 	var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty" +
 	"&titulo=" + titulo + gcTag + "&pagina=exibir";
 	
-	Siga.ajax(url, null, "GET", function(response) {
+	/* Siga.ajax(url, null, "GET", function(response) {
+		div.html(response);
+	}); */
+	$.get( url, function(response){
 		div.html(response);
 	});
+
 }
 
 function getLotacaoDaAcao(conteudoAcao) {
@@ -256,10 +260,10 @@ function getLotacaoDaAcao(conteudoAcao) {
 	for (var i = 0; i < matches.length; i++) {
 	    var str = matches[i];
 	    var texto = str.substring(1, str.length - 1);
-	    if (texto.length > 2 && (texto.substring(0, 2) == "ES" || texto.substring(0, 2) == "T2" 
-	        || texto.substring(0, 2) == "RJ")){
+	    /* if (texto.length > 2 && (texto.substring(0, 2) == "ES" || texto.substring(0, 2) == "T2" 
+	        || texto.substring(0, 2) == "RJ")){ */
 	    	lotacoes[i]= texto;
-	    }
+	    /* } */
 	}
 	return lotacoes[lotacoes.length-1];
 }

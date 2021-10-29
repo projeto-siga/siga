@@ -18,7 +18,7 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 /**
@@ -121,7 +121,7 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	 */
 	private void processarConfiguracaoAcesso(ConfiguracaoAcesso cfga, List<String> dados ) {
 		try {dados.add(printSeparadorNivel(cfga.getServico().getNivelHierarquico() ) + printServico(cfga.getServico()));}  catch (Exception e) { dados.add("");}
-		try {dados.add(cfga.getSituacao().getDscSitConfiguracao());}  catch (Exception e) { dados.add("");}
+		try {dados.add(cfga.getSituacao().getDescr());}  catch (Exception e) { dados.add("");}
 		try {dados.add(printOrigem(cfga));}  catch (Exception e) { dados.add("");}
 		try {dados.add(printDate(cfga.getInicio()));}  catch (Exception e) { dados.add("");}
 		try {dados.add(String.valueOf(cfga.getCadastrante().getSesbPessoa() + cfga.getCadastrante().getMatricula()));}  catch (Exception e) { dados.add("");}
@@ -156,14 +156,14 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	private String printOrigem(ConfiguracaoAcesso cfga) {
 		return cfga.printOrigemCurta();
 	}
-	private Long getIdTipoConfiguracao() {
-		return CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO;
+	private Integer getIdTipoConfiguracao() {
+		return CpTipoDeConfiguracao.UTILIZAR_SERVICO.getId();
 	}
-	private CpTipoConfiguracao getTipoConfiguracao() {
-		return dao().consultar(getIdTipoConfiguracao(), CpTipoConfiguracao.class, false);
+	private CpTipoDeConfiguracao getTipoConfiguracao() {
+		return CpTipoDeConfiguracao.UTILIZAR_SERVICO;
 	}
 	private String getDescricaoTipoConfiguracao() {
-		return getTipoConfiguracao().getDscTpConfiguracao();
+		return getTipoConfiguracao().getDescr();
 	}
 	private CpDao dao() {
 		return CpDao.getInstance();

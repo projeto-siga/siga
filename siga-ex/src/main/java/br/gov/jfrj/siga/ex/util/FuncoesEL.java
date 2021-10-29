@@ -45,9 +45,9 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
+import br.gov.jfrj.siga.base.SigaFormats;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -68,6 +68,7 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
@@ -113,7 +114,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REMESSA_PARA_PUBLICACAO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -128,7 +129,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -143,7 +144,7 @@ public class FuncoesEL {
 						titular,
 						lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
 
@@ -155,7 +156,7 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_DEFINIR_PUBLICADORES);
+						ExTipoDeConfiguracao.DEFINIR_PUBLICADORES);
 
 	}
 
@@ -199,8 +200,18 @@ public class FuncoesEL {
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(null, lota, mod,
-						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_EXTENSAO_EDITOR);
+						ExTipoDeConfiguracao.UTILIZAR_EXTENSAO_EDITOR);
 	}
+
+	public static Boolean podeDelegarVisualizacao(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf()
+			.podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO);
+	}
+
+	public static Boolean podeCriarNovoExterno(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO);
+	}
+
 
 	public static List<CpLocalidade> consultarPorUF(String siglaUF) {
 		return dao().consultarLocalidadesPorUF(siglaUF);
@@ -544,24 +555,6 @@ public class FuncoesEL {
 		return diferenca;
 	}
 
-	public static Float monetarioParaFloat(String monetario) {
-		try {
-			return Float.parseFloat(monetario.replace(".", "")
-					.replace(",", "."));
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static BigDecimal monetarioParaBigDecimal(String monetario) {
-        try {
-            return new BigDecimal(monetario.replace(".", "").replace(",", "."));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
 	public static String mesModData(String data) {
 		String split[] = data.split("/");
 		if (split.length < 3)
@@ -569,48 +562,21 @@ public class FuncoesEL {
 		return split[1] + "/" + split[2];
 	}
 
+	public static Float monetarioParaFloat(String monetario) {
+		return SigaFormats.monetarioParaFloat(monetario);
+	}
+	
+	public static BigDecimal monetarioParaBigDecimal(String monetario) {
+		return SigaFormats.monetarioParaBigDecimal(monetario);
+    }
+
+
 	public static String floatParaMonetario(Float valor1) {
-		Float valor2;
-		if (valor1 < 0) {
-			valor2 = Float.parseFloat(valor1.toString().replace("-", ""));
-			DecimalFormat formatter = new DecimalFormat("#,##0.00");
-			String s = formatter.format(valor2);
-			if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-				return s.replace(".", "*").replace(",", ".").replace("*", ",");
-			} else {
-				return "-" + s;
-			}
-		} else {
-			DecimalFormat formatter = new DecimalFormat("#,##0.00");
-			String s = formatter.format(valor1);
-			if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-				return s.replace(".", "*").replace(",", ".").replace("*", ",");
-			} else {
-				return s;
-			}
-		}
+		return SigaFormats.floatParaMonetario(valor1);
 	}
 	
 	public static String bigDecimalParaMonetario(BigDecimal valor1) {
-        BigDecimal valor2;
-        if (valor1.compareTo(BigDecimal.ZERO) < 0) {       // It could be  ... if (valor1.signum() == -1) 
-            valor2 = valor1;
-            DecimalFormat formatter = new DecimalFormat("#,##0.00");
-            String s = formatter.format(valor2);
-            if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-                return s.replace(".", "*").replace(",", ".").replace("*", ",");
-            } else {
-                return "-" + s;
-            }
-        } else {
-            DecimalFormat formatter = new DecimalFormat("#,##0.00");
-            String s = formatter.format(valor1);
-            if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-                return s.replace(".", "*").replace(",", ".").replace("*", ",");
-            } else {
-                return s;
-            }
-        }
+		return SigaFormats.bigDecimalParaMonetario(valor1);
     }
 
 
@@ -766,37 +732,7 @@ public class FuncoesEL {
 	 * @return
 	 */
 	public static String formatarCPF(String cpf) {
-
-		// Se CPF jï¿½ vem formatado, devolve cpf
-		Pattern p = Pattern
-				.compile("[0-9]{2,3}?\\.[0-9]{3}?\\.[0-9]{3}?\\-[0-9]{2}?");
-		Matcher m = p.matcher(cpf);
-
-		if (m.find()) {
-			return cpf;
-		}
-
-		// O texto ï¿½ truncado para 11 caracteres caso seja maior
-		if (cpf.length() > 11) {
-			cpf = cpf.substring(0, 11);
-		}
-
-		// Determina o nï¿½mero de zeros ï¿½ esquerda
-		int numZerosAEsquerda = 11 - cpf.length();
-
-		// aplica os zeros ï¿½ esquerda
-		for (int i = 0; i < numZerosAEsquerda; i++) {
-			cpf = "0" + cpf;
-		}
-
-		// extrai cada termo
-		String termo1, termo2, termo3, termo4;
-		termo1 = cpf.substring(0, 3);
-		termo2 = cpf.substring(3, 6);
-		termo3 = cpf.substring(6, 9);
-		termo4 = cpf.substring(9);
-
-		return termo1 + "." + termo2 + "." + termo3 + "-" + termo4;
+		return SigaFormats.cpf(cpf);
 	}
 
 	/**
@@ -808,16 +744,7 @@ public class FuncoesEL {
 	 * @throws ParseException
 	 */
 	public static String formatarCNPJ(String cnpj) throws ParseException {
-		if (cnpj != null) {
-			cnpj = cnpj.replaceAll("\\.", "").replaceAll("\\/", "")
-					.replaceAll("\\-", "");
-
-			MaskFormatter mf = new MaskFormatter("##.###.###/####-##");
-			mf.setValueContainsLiteralCharacters(false);
-			return mf.valueToString(cnpj);
-		}
-
-		return "";
+		return SigaFormats.cnpj(cnpj);
 	}
 
 	public static String classNivPadr(String s) {
@@ -1168,5 +1095,10 @@ public class FuncoesEL {
 		return Ex.getInstance().getComp()
 				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
 	}
-	
+
+	public static String slugify(String string, Boolean lowercase,
+			Boolean underscore) {
+		return Texto.slugify(string, lowercase, underscore);
+	}
+
 }

@@ -26,6 +26,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
@@ -56,14 +57,17 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_REORDENAC
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
@@ -74,14 +78,13 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
-import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
 	private static final transient String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
@@ -153,7 +156,7 @@ public class ExMovimentacaoVO extends ExVO {
 		descricao = mov.getObs();
 
 		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ANEXACAO))
-			descricao = mov.getNmArqMov();
+			descricao = StringUtils.isNotBlank(mov.getDescrMov()) ? mov.getDescrMov() : mov.getNmArqMov();
 
 		if (mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) || mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)) {
 			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov,false);
@@ -223,10 +226,18 @@ public class ExMovimentacaoVO extends ExVO {
 				descricao += ", prazo final: " + Data.formatDataETempoRelativo(mov.getDtParam2());
 			if (mov.getObs() != null && mov.getObs().trim().length() > 0)
 				descricao += ", obs: " + mov.getObs();
-			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov")
-					.acao("cancelar_movimentacao_gravar").params("sigla", mov.mob().getCodigoCompacto())
-					.params("id", mov.getIdMov().toString()).post(true)
-					.exp(new ExPodeCancelarMarcacao(mov, titular, lotaTitular)).build());
+			String descrUrl = "";
+			try {
+				descrUrl = URLEncoder.encode("Exclusão de marcação: " + mov.getMarcador().getDescrMarcador(), "iso-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				throw new AplicacaoException("Erro ao converter", 0, e);
+			}
+			if (!mov.isCancelada())
+				addAcao(AcaoVO.builder().nome("Excluir Marcador").nameSpace("/app/expediente/mov")
+						.acao("cancelar_movimentacao_gravar").params("sigla", mov.mob().getCodigoCompacto())
+						.params("id", mov.getIdMov().toString())
+						.params("descrMov", descrUrl).post(true)
+						.exp(new ExPodeCancelarMarcacao(mov, titular, lotaTitular)).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
@@ -238,7 +249,7 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(getIcon(), mov.getNmArqMov(), "/app/arquivo", "exibir", mov.getNmArqMov() != null, null,
 					"&arquivo=" + mov.getReferencia(), null, null, null);
 			String pwd = getWebdavPassword();
-			if (pwd != null && (isWord() || isExcel() || isPresentation())) {
+			if (cadastrante != null && pwd != null && (isWord() || isExcel() || isPresentation()) ) {
 				String sApp = "word";
 				String sNome = "Word";
 				if (isExcel()) {
@@ -279,7 +290,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 
 			if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
-				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito() && !mov.mob().isEmTransito()) {
+				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito() && !mov.mob().isEmTransito(titular, lotaTitular)) {
 					addAcao(null, "Excluir", "/app/expediente/mov", "excluir",
 							Ex.getInstance().getComp().podeExcluirAnexo(titular, lotaTitular, mov.mob(), mov));
 					addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
@@ -323,7 +334,7 @@ public class ExMovimentacaoVO extends ExVO {
 									Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
 									"&popup=true&autenticando=true", null, null, null);
 
-					} else if (!(mov.isAssinada() && mov.mob().isEmTransito())) {
+					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
 						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir", true, null, "&popup=true", null,
 								null, null);
 					}
@@ -571,7 +582,7 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 		
 		if (descricao != null && descricao.equals(mov.getObs())) {
-			descricao = ProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
+			descricao = CpProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
 		}
 	}
 

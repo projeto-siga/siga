@@ -19,15 +19,15 @@
 package br.gov.jfrj.siga.cp;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
+import javax.persistence.Convert;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import br.gov.jfrj.siga.cp.converter.CpSituacaoDeConfiguracaoEnumConverter;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
@@ -40,12 +40,9 @@ public class AbstractCpTipoServico extends Objeto {
 	@Column(name = "DESC_TP_SERVICO", length = 60)
 	private String dscTpServico;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
-	private CpSituacaoConfiguracao situacaoDefault;
-
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "cpTiposServicoSet")
-	private Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet;
+//	@Convert(converter = CpSituacaoDeConfiguracaoEnumConverter.class)
+	@Column(name = "ID_SIT_CONFIGURACAO")
+	private CpSituacaoDeConfiguracaoEnum situacaoDefault;
 
 	/**
 	 * @return the idCpTpServico
@@ -80,14 +77,17 @@ public class AbstractCpTipoServico extends Objeto {
 	/**
 	 * @return the cpSituacoesConfiguracaoSet
 	 */
-	public Set<CpSituacaoConfiguracao> getCpSituacoesConfiguracaoSet() {
-		return cpSituacoesConfiguracaoSet;
+	public Set<CpSituacaoDeConfiguracaoEnum> getCpSituacoesConfiguracaoSet() {
+		Set<CpSituacaoDeConfiguracaoEnum> set = new TreeSet<>();
+		set.add(CpSituacaoDeConfiguracaoEnum.PODE);
+		set.add(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
+		return set;
 	}
 
 	/**
 	 * @return the situacaoDefault
 	 */
-	public CpSituacaoConfiguracao getSituacaoDefault() {
+	public CpSituacaoDeConfiguracaoEnum getSituacaoDefault() {
 		return situacaoDefault;
 	}
 
@@ -95,17 +95,17 @@ public class AbstractCpTipoServico extends Objeto {
 	 * @param situacaoDefault
 	 *            the situacaoDefault to set
 	 */
-	public void setSituacaoDefault(CpSituacaoConfiguracao situacaoDefault) {
+	public void setSituacaoDefault(CpSituacaoDeConfiguracaoEnum situacaoDefault) {
 		this.situacaoDefault = situacaoDefault;
 	}
 
-	/**
-	 * @param cpSituacoesConfiguracaoSet
-	 *            the cpSituacoesConfiguracaoSet to set
-	 */
-	public void setCpSituacoesConfiguracaoSet(
-			Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet) {
-		this.cpSituacoesConfiguracaoSet = cpSituacoesConfiguracaoSet;
-	}
+//	/**
+//	 * @param cpSituacoesConfiguracaoSet
+//	 *            the cpSituacoesConfiguracaoSet to set
+//	 */
+//	public void setCpSituacoesConfiguracaoSet(
+//			Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet) {
+//		this.cpSituacoesConfiguracaoSet = cpSituacoesConfiguracaoSet;
+//	}
 
 }

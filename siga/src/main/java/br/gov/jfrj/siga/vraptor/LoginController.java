@@ -34,6 +34,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -70,7 +71,7 @@ public class LoginController extends SigaController {
 	public void login(String cont) throws IOException {
 		Map<String, String> manifest = new HashMap<>();
 		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
-			String m = convertStreamToString(is);
+			String m = convertStreamToString(is); 
 			if (m != null) {
 				m = m.replaceAll("\r\n", "\n");
 				for (String s : m.split("\n")) {
@@ -181,7 +182,7 @@ public class LoginController extends SigaController {
 			if (!usuarioPermitido)
 				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
 				
-			if (!so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
+			if (Prop.isGovSP() && !so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
 				throw new ServletException("Senha do usuário atual não confere com a do usuário da lotação.");
 
 			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());

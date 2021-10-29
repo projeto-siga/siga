@@ -23,8 +23,6 @@
  */
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;

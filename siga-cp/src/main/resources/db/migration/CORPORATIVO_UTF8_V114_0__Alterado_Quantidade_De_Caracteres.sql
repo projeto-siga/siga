@@ -1,0 +1,73 @@
+-- -----------------------------------------------------------------------------------------------
+--  SCRIPT: ALTERA A QUANTIDADE DE CAMPOS SIGLA DE 20 PARA 30.
+-- -----------------------------------------------------------------------------------------------
+
+-- ------------------ PREPARACAO PARA RETIRAR OS INDEX DA COLUNA SIGLA ---------------------------
+BEGIN
+    FOR IDX IN (
+        SELECT
+            INDEX_NAME
+        FROM
+            ALL_IND_EXPRESSIONS
+        WHERE
+                TABLE_OWNER = 'CORPORATIVO'
+            AND TABLE_NAME = 'DP_LOTACAO'
+    ) LOOP
+        EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.' || IDX.INDEX_NAME;
+    END LOOP;
+END;
+/
+
+DECLARE
+    INDEX_COUNT INTEGER;
+BEGIN
+    SELECT
+        COUNT(1)
+    INTO INDEX_COUNT
+    FROM
+        ALL_INDEXES
+    WHERE
+        INDEX_NAME = 'DP_LOTACAO_IDX_006';
+
+    IF INDEX_COUNT > 0 THEN
+        EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.DP_LOTACAO_IDX_006';
+    END IF;
+END;
+/
+
+DECLARE
+    INDEX_COUNT INTEGER;
+BEGIN
+    SELECT
+        COUNT(1)
+    INTO INDEX_COUNT
+    FROM
+        ALL_INDEXES
+    WHERE
+        INDEX_NAME = 'SIGLA_LOTACAO_DP_LOTACAO_UK';
+
+    IF INDEX_COUNT > 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE CORPORATIVO.DP_LOTACAO DROP CONSTRAINT SIGLA_LOTACAO_DP_LOTACAO_UK';
+        EXECUTE IMMEDIATE 'DROP INDEX CORPORATIVO.SIGLA_LOTACAO_DP_LOTACAO_UK';
+    END IF;
+END;
+/
+-- -----------------------------------------------------------
+
+-- ---------------------ALTERACAO--------------------------------------
+ALTER TABLE CORPORATIVO.DP_LOTACAO MODIFY (SIGLA_LOTACAO VARCHAR2(30));
+-- -----------------------------------------------------------
+
+-- ------------------ RECRIACAO DOS INDEDES ---------------------------
+CREATE INDEX CORPORATIVO.DP_LOTACAO_IDX_006 ON
+    CORPORATIVO.DP_LOTACAO (ID_ORGAO_USU ASC, SIGLA_LOTACAO ASC, ID_LOTACAO ASC);
+
+CREATE UNIQUE INDEX CORPORATIVO.SIGLA_LOTACAO_DP_LOTACAO_UK ON
+    CORPORATIVO.DP_LOTACAO (SIGLA_LOTACAO ASC,ID_ORGAO_USU ASC,DATA_FIM_LOT ASC);
+
+ALTER TABLE CORPORATIVO.DP_LOTACAO
+    ADD CONSTRAINT SIGLA_LOTACAO_DP_LOTACAO_UK UNIQUE (SIGLA_LOTACAO,ID_ORGAO_USU,DATA_FIM_LOT) ENABLE;
+
+CREATE INDEX CORPORATIVO.DP_LOTACAO_UPPER_SIGLA ON
+    CORPORATIVO.DP_LOTACAO (UPPER(SIGLA_LOTACAO));
+-- -----------------------------------------------------------

@@ -35,7 +35,6 @@
 
 			if ("${podePesquisarDescricaoLimitada}" === "true") {
 				if ($('#orgaoUsu').val() != 0 && $('#idFormaDoc').find(':selected').val() != "0" 
-						&& $('#idMod').find(':selected').val() != "0" 
 						&& $('#anoEmissaoString').val() != 0) {
 					habilitaDescricao();
 				} else {
@@ -460,7 +459,7 @@
 									</c:if>
 									/>
 									<c:if test="${podePesquisarDescricao && podePesquisarDescricaoLimitada}">
-										<small>Campo "Descrição" habilitado para pesquisa após o preenchimento dos campos "Órgão", "Espécie", "Documento" e "Ano de Emissão"</small>
+										<small>Campo "Descrição" habilitado para pesquisa após o preenchimento dos campos "Órgão", "Espécie" e "Ano de Emissão"</small>
 									</c:if>
 							</div>
 						</div>
@@ -559,14 +558,14 @@
 						</c:if>
 						<div class="form-group col-md-3">
 							<label for="dtDocString">Data Inicial</label> <input
-								class="form-control" type="text" name="dtDocString"
-								id="dtDocString" value="${dtDocString}"
+								class="form-control campoData" placeholder="dd/mm/aaaa" autocomplete="off" 
+								type="text" name="dtDocString" id="dtDocString" value="${dtDocString}"
 								onblur="javascript:verifica_data(this,0);" />
 						</div>
 						<div class="form-group col-md-3">
 							<label for="dtDocFinalString">Data Final</label> <input
-								class="form-control" type="text" name="dtDocFinalString"
-								id="dtDocFinalString" value="${dtDocFinalString}"
+								class="form-control campoData"  placeholder="dd/mm/aaaa" autocomplete="off" 
+								type="text" name="dtDocFinalString"	id="dtDocFinalString" value="${dtDocFinalString}"
 								onblur="javascript:verifica_data(this,0);" />
 						</div>
 					</div>

@@ -14,7 +14,9 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 
 @Startup
 @Singleton
@@ -27,6 +29,8 @@ public class ExStarter {
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO SIGAEX.WAR");
+		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
+		CpTipoDeConfiguracao.mapear(ExTipoDeConfiguracao.values());
 
 		emf = CDI.current().select(EntityManagerFactory.class).get();
 		assert emf != null;

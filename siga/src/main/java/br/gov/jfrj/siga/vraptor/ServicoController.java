@@ -39,11 +39,13 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -59,8 +61,8 @@ public class ServicoController 	extends SigaController {
 	
 	
 	// preparação do ambiente
-	private CpTipoConfiguracao cpTipoConfiguracaoUtilizador;
-	private CpTipoConfiguracao cpTipoConfiguracaoAConfigurar;
+	private CpTipoDeConfiguracao cpTipoConfiguracaoUtilizador;
+	private CpTipoDeConfiguracao cpTipoConfiguracaoAConfigurar;
 	private List<CpServico> cpServicosDisponiveis;
 	/*private CpSituacaoConfiguracao cpSituacaoPadrao;
 	
@@ -73,8 +75,8 @@ public class ServicoController 	extends SigaController {
 	// gravação - parametros
 	private String idPessoaConfiguracao;
 	private String idServicoConfiguracao;
-	private String idSituacaoConfiguracao;
-	private Long idTipoConfiguracao;
+	private Integer idSituacaoConfiguracao;
+	private Integer idTipoConfiguracao;
 	
 	// gravação - retorno
 	private String respostaXMLStringRPC;
@@ -111,16 +113,16 @@ public class ServicoController 	extends SigaController {
 		ConfiguracaoConfManual configuracaoConfManual = new ConfiguracaoConfManual(dao, obterLotacaoEfetiva());
 		setDpPessoasDaLotacao(new ArrayList<DpPessoa>());
 		setCpConfiguracoesAdotadas(new ArrayList<CpConfiguracao>());
-		setCpTipoConfiguracaoUtilizador(obterCpTipoConfiguracaoUtilizador());
-		setCpTipoConfiguracaoAConfigurar(obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO));
+		setCpTipoConfiguracaoUtilizador(CpTipoDeConfiguracao.HABILITAR_SERVICO_DE_DIRETORIO);
+		setCpTipoConfiguracaoAConfigurar(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		setCpServicosDisponiveis(  obterServicosDaLotacaoEfetiva());
 
 		if (seUsuarioPodeExecutar()) {
 			DpLotacao t_dltLotacao = obterLotacaoEfetiva();
-			dpLotacaoConsiderada = t_dltLotacao;
+			dpLotacaoConsiderada = t_dltLotacao.getLotacaoInicial();
 			if (t_dltLotacao != null) {
 				// TODO: _LAGS - verificar opção para sublotações
-				setDpPessoasDaLotacao(dao().pessoasPorLotacao(t_dltLotacao.getIdLotacao(), false,false,SituacaoFuncionalEnum.ATIVOS_E_CEDIDOS));
+				setDpPessoasDaLotacao(dao().pessoasPorLotacao(t_dltLotacao.getLotacaoInicial().getIdLotacao(), false,false,SituacaoFuncionalEnum.ATIVOS_E_CEDIDOS));
 				setCpConfiguracoesAdotadas(obterConfiguracoesDasPessoasDaLotacaoConsiderada());
 			}
 		} else {
@@ -130,12 +132,12 @@ public class ServicoController 	extends SigaController {
 		
 		result.include("configuracaoConfManual", configuracaoConfManual);
 		result.include("cpServicosDisponiveis", cpServicosDisponiveis);
-		result.include("idTpConfUtilizarSvc", CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
-		result.include("idTpConfUtilizarSvcOutraLot", CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
+		result.include("idTpConfUtilizarSvc", CpTipoDeConfiguracao.UTILIZAR_SERVICO.getId());
+		result.include("idTpConfUtilizarSvcOutraLot", CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO.getId());
 		result.include("dpPessoasDaLotacao", dpPessoasDaLotacao);
 		result.include("cpConfiguracoesAdotadas", cpConfiguracoesAdotadas);
 		result.include("cpTipoConfiguracaoAConfigurar", cpTipoConfiguracaoAConfigurar);
-		result.include("dscTpConfiguracao", cpTipoConfiguracaoAConfigurar.getDscTpConfiguracao());
+		result.include("dscTpConfiguracao", cpTipoConfiguracaoAConfigurar.getDescr());
 		result.include("pessoasGrupoSegManual", Cp.getInstance().getConf().getPessoasGrupoSegManual(obterLotacaoEfetiva()));
 	}
 	
@@ -171,7 +173,7 @@ public class ServicoController 	extends SigaController {
 	 *  Retorna a situacao padrão para um dado servico
 	 * 
 	 */
-	private CpSituacaoConfiguracao obterSituacaoPadrao(CpServico p_cpsServico) {
+	private CpSituacaoDeConfiguracaoEnum obterSituacaoPadrao(CpServico p_cpsServico) {
 		return p_cpsServico.getCpTipoServico().getSituacaoDefault();
 	}
 	
@@ -192,7 +194,7 @@ public class ServicoController 	extends SigaController {
 	 */
 	private CpConfiguracao obterConfiguracao(DpLotacao p_dltLotacao,
 											 DpPessoa p_dpsPessoa,
-											 CpTipoConfiguracao p_ctcTipoConfig,
+											 CpTipoDeConfiguracao p_ctcTipoConfig,
 											 CpServico p_cpsServico
 											 ) {
 		CpConfiguracao t_cfgConfigExemplo  = new CpConfiguracao();
@@ -203,8 +205,9 @@ public class ServicoController 	extends SigaController {
 		
 		CpConfiguracao cpConf = null;
 		try {
-			cpConf = Cp.getInstance().getConf().buscaConfiguracao(t_cfgConfigExemplo,
-					new int[] { 0 }, null);
+			CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
+					t_cfgConfigExemplo, new int[0], null);
+			cpConf = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -230,45 +233,20 @@ public class ServicoController 	extends SigaController {
 		this.cpConfiguracoesAdotadas = cpConfiguracoesAdotadas;
 	}
 	
-	/**
-	 *  Retorna o tipo de configuração que o utilizador da interface  
-	 *  tem permissão
-	 */
-	private CpTipoConfiguracao obterCpTipoConfiguracaoUtilizador() {
-		CpTipoConfiguracao t_tcfTipo = dao.consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_HABILITAR_SERVICO_DE_DIRETORIO
-				//CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO
-				, CpTipoConfiguracao.class
-				, false);
-		
-		return t_tcfTipo;
-	}
 	
 	/**
 	* @param cpTipoConfiguracaoUtilizador the cpTipoConfiguracaoUtilizador to set
 	*/
 	private void setCpTipoConfiguracaoUtilizador(
-			CpTipoConfiguracao cpTipoConfiguracaoUtilizador) {
+			CpTipoDeConfiguracao cpTipoConfiguracaoUtilizador) {
 		this.cpTipoConfiguracaoUtilizador = cpTipoConfiguracaoUtilizador;
-	}
-	
-	/**
-	*  Retorna o tipo de configuração a Configurar  
-	*  
-	*/
-	private CpTipoConfiguracao obterCpTipoConfiguracaoAConfigurar(Long idTipoConfiguracao) {
-		CpTipoConfiguracao t_tcfTipo = dao.consultar(
-				idTipoConfiguracao
-				, CpTipoConfiguracao.class
-				, false);
-		return t_tcfTipo;
 	}
 	
 	/**
 	* @param cpTipoConfiguracaoAConfigurar the cpTipoConfiguracaoAConfigurar to set
 	*/
 	private void setCpTipoConfiguracaoAConfigurar(
-			CpTipoConfiguracao cpTipoConfiguracaoAConfigurar) {
+			CpTipoDeConfiguracao cpTipoConfiguracaoAConfigurar) {
 		this.cpTipoConfiguracaoAConfigurar = cpTipoConfiguracaoAConfigurar;
 	}
 	
@@ -283,7 +261,7 @@ public class ServicoController 	extends SigaController {
 			return t_arlServicos;
 		List<CpConfiguracao> t_arlConfigServicos = dao.consultarCpConfiguracoesPorTipoLotacao(t_ctlTipoLotacao.getIdTpLotacao());
 		for (CpConfiguracao t_cfgConfiguracao : t_arlConfigServicos) {
-			t_arlServicos.add(t_cfgConfiguracao.getCpServico());
+			t_arlServicos.add(dao.consultar(t_cfgConfiguracao.getCpServico().getIdServico(),CpServico.class, false));
 		}
 		return t_arlServicos;
 	}
@@ -334,6 +312,8 @@ public class ServicoController 	extends SigaController {
 		}
 		
 		
+		
+		
 		/*
 		 * MELHORAR: Permite a inclusão apenas de pessoas ativas. 
 		 * Isso deve ser melhorado, pois ainda não existe uma referência nem mapeamento no hibernate
@@ -349,8 +329,7 @@ public class ServicoController 	extends SigaController {
 		}
 		
 		
-		CpTipoConfiguracao tpConf =  obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
-		Cp.getInstance().getBL().configurarAcesso(null, pes.getOrgaoUsuario(), obterLotacaoEfetiva(), pes, null, null, tpConf, getIdentidadeCadastrante());
+		Cp.getInstance().getBL().configurarAcesso(null, pes.getOrgaoUsuario(), obterLotacaoEfetiva().getLotacaoInicial(), pes.getPessoaInicial(), null, null, CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO, getIdentidadeCadastrante());
 		result.redirectTo(this).edita();
 	}
 	
@@ -360,18 +339,16 @@ public class ServicoController 	extends SigaController {
 	@Get("/app/gi/servico/excluir-pessoa-extra/{id}")
 	public void excluirPessoaExtra(Long id) throws Exception{
 		DpPessoa pes = dao().consultar(id, DpPessoa.class,false);
-		CpTipoConfiguracao tpConf =  obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
-		Cp.getInstance().getConf().excluirPessoaExtra(pes, obterLotacaoEfetiva(), tpConf, getIdentidadeCadastrante());
+		Cp.getInstance().getConf().excluirPessoaExtra(pes, obterLotacaoEfetiva(), CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO, getIdentidadeCadastrante());
 		
 		result.redirectTo(this).edita();
 	}
 	
-	@Transacional
 	@Get("/app/gi/servico/gravar")
 	public void gravar(String idPessoaConfiguracao, 
 					String idServicoConfiguracao, 
-					String idSituacaoConfiguracao, 
-					Long idTipoConfiguracao,
+					Integer idSituacaoConfiguracao, 
+					Integer idTipoConfiguracao,
 					HttpServletResponse response) throws Exception {
 		this.idPessoaConfiguracao = idPessoaConfiguracao;
 		this.idServicoConfiguracao = idServicoConfiguracao;
@@ -380,29 +357,31 @@ public class ServicoController 	extends SigaController {
 		
 		if (seUsuarioPodeExecutar()) {
 			try {
-				DpLotacao t_dplLotacao = obterLotacaoEfetiva();
+				DpLotacao t_dplLotacao = obterLotacaoEfetiva().getLotacaoInicial();
 				Long t_lngIdPessoa = Long.parseLong(idPessoaConfiguracao);
-				DpPessoa t_dppPessoa = dao().consultar(t_lngIdPessoa,DpPessoa.class,false);
+				DpPessoa t_dppPessoa = dao().consultar(t_lngIdPessoa,DpPessoa.class,false).getPessoaInicial();
 				Long t_lngIdServico = Long.parseLong(idServicoConfiguracao);
+				Integer t_intIdServico = Integer.parseInt(idServicoConfiguracao);
                 CpServico t_cpsServico = dao().consultar(t_lngIdServico, CpServico.class, false);
-                Long t_lngIdSituacao = Long.parseLong(idSituacaoConfiguracao);
-                CpSituacaoConfiguracao t_cstSituacao = dao().consultar(t_lngIdSituacao,CpSituacaoConfiguracao.class, false);
+                CpSituacaoDeConfiguracaoEnum t_cstSituacao = CpSituacaoDeConfiguracaoEnum.getById(idSituacaoConfiguracao);
+                dao.em().getTransaction().begin();
                 CpConfiguracao t_cfgConfigGravada = Cp.getInstance().getBL().configurarAcesso(null,t_dplLotacao.getOrgaoUsuario()
                 											  ,t_dplLotacao
                 											  ,t_dppPessoa
                 											  ,t_cpsServico
                 											  ,t_cstSituacao
-                											  ,obterCpTipoConfiguracaoAConfigurar(idTipoConfiguracao)
+                											  ,CpTipoDeConfiguracao.getById(idTipoConfiguracao)
                 											  ,getIdentidadeCadastrante());
 				HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
 				t_hmpRetorno.put("idpessoa", /*idPessoaConfiguracao*/ String.valueOf(t_cfgConfigGravada.getDpPessoa().getIdPessoa()));
 				t_hmpRetorno.put("idservico", /*idServicoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpServico().getIdServico()));
-				t_hmpRetorno.put("idsituacao", /*idSituacaoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpSituacaoConfiguracao().getIdSitConfiguracao()) );
+				t_hmpRetorno.put("idsituacao", /*idSituacaoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpSituacaoConfiguracao().getId()) );
 				SimpleMethodResponseRPC t_smrResposta = new SimpleMethodResponseRPC();
 				t_smrResposta.setMembersFrom(t_hmpRetorno);
-				setRespostaXMLStringRPC(t_smrResposta.toXMLString());	
+				setRespostaXMLStringRPC(t_smrResposta.toXMLString());
+		        dao.em().getTransaction().commit();
 			} catch (Exception e) {
-				CpDao.rollbackTransacao();
+		        dao.em().getTransaction().rollback();
 				FaultMethodResponseRPC t_fmrRetorno = new FaultMethodResponseRPC();
 				t_fmrRetorno.set(0, e.getMessage());
 				setRespostaXMLStringRPC(t_fmrRetorno.toXMLString());

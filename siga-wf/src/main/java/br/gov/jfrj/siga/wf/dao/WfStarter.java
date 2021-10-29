@@ -14,7 +14,10 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
+import br.gov.jfrj.siga.cp.converter.ITipoDeConfiguracaoConverter;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
 
 @Startup
 @Singleton
@@ -27,6 +30,8 @@ public class WfStarter {
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO SIGAWF.WAR");
+		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
+		CpTipoDeConfiguracao.mapear(WfTipoDeConfiguracao.values());
 
 		emf = CDI.current().select(EntityManagerFactory.class).get();
 		assert emf != null;

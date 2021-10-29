@@ -27,7 +27,6 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
@@ -37,7 +36,9 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
 public class Notificador {
 
@@ -132,14 +133,16 @@ public class Notificador {
 
 		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
 		
-		DpLotacao lotaAtendente = mov.mob().getAtendente().getLotacaoOuLotacaoPrincipalDaPessoa();
-		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) 
-				&& lotaAtendente != null 
-				&& (mov.getLotaTitular() == null || !mov.getLotaTitular().equivale(lotaAtendente))) {
-			try {
-				adicionarDestinatariosEmail(mov, destinatariosEmail, mov, null, lotaAtendente);
-			} catch (Exception e) {
-				throw new RuntimeException("Erro ao enviar email de notificação de movimentação.", e);
+		for (PessoaLotacaoParser atendente : mov.mob().getAtendente()) {
+			DpLotacao lotaAtendente = atendente.getLotacaoOuLotacaoPrincipalDaPessoa();
+			if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR)
+					&& lotaAtendente != null
+					&& (mov.getLotaTitular() == null || !mov.getLotaTitular().equivale(lotaAtendente))) {
+				try {
+					adicionarDestinatariosEmail(mov, destinatariosEmail, mov, null, lotaAtendente);
+				} catch (Exception e) {
+					throw new RuntimeException("Erro ao enviar email de notificação de movimentação.", e);
+				}
 			}
 		}
 		
@@ -180,16 +183,19 @@ public class Notificador {
 					&& !m.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR)) {
 				
 				try {
-					if (m.getSubscritor() != null && !m.getSubscritor().isFechada()) {
+					if (m.getSubscritor() != null) {
+						if (!m.getSubscritor().isFechada()) {
+					
 						/*
 						 * Se a movimentação é um cancelamento de uma
 						 * movimentação que pode ser notificada, adiciona o
 						 * e-mail.
 						 */
-						if (mov.getExMovimentacaoRef() != null)
-							adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação */
-						else
-							adicionarDestinatariosEmail(mov, destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação também */				
+							if (mov.getExMovimentacaoRef() != null)
+								adicionarDestinatariosEmail(mov.getExMovimentacaoRef(), destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação */
+							else
+								adicionarDestinatariosEmail(mov, destinatariosEmail, m, m.getSubscritor().getPessoaAtual(), null); /* verificar ExEmailNotificação também */
+						}
 					} else {
 						if (m.getLotaSubscritor() != null) {
 							/*
@@ -385,7 +391,7 @@ public class Notificador {
 						papel,
 						pessoa,
 						tipoMovimentacao,
-						CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL));
+						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL));
 				
 	}
 	
@@ -393,7 +399,7 @@ public class Notificador {
 		
 			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
 							lotacao, modelo,idTpMov,
-							CpTipoConfiguracao.TIPO_CONFIG_NOTIFICAR_POR_EMAIL));		
+							ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL));		
 				
 	}
 	

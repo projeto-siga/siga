@@ -2,21 +2,22 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <%@ attribute name="propriedadePessoa" required="true"%>
 <%@ attribute name="propriedadeLotacao" required="true"%>
 <%@ attribute name="propriedadeEmail" required="false"%>
 <%@ attribute name="disabled" required="false"%>
 <%@ attribute name="labelPessoaLotacao" required="false"%>
+<%@ attribute name="hideLabels" required="false" type="java.lang.Boolean"%>
 
 
 <c:set var="propriedadePessoaClean"
-	value="${fn:replace(propriedadePessoa,'.','')}" />
+	value="${f:slugify(propriedadePessoa,true,true)}" />
 <c:set var="propriedadeLotacaoClean"
-	value="${fn:replace(propriedadeLotacao,'.','')}" />
+	value="${f:slugify(propriedadeLotacao,true,true)}" />
 <c:set var="propriedadeEmailClean"
-	value="${fn:replace(propriedadeEmail,'.','')}" />
+	value="${f:slugify(propriedadeEmail,true,true)}" />
 
 <c:set var="desativar" value="nao"></c:set>
 <c:if test="${disabled == 'sim'}">
@@ -30,7 +31,9 @@
 <div class="row">
 	<div class="col-sm-3">
 		<div class="form-group">
-			<label>${labelPessoaLotacao}</label>
+			<c:if test="${hideLabels != true}">
+				<label>${not empty labelPessoaLotacao ? labelPessoaLotacao : 'Tipo'}</label>
+			</c:if>
 			<select id="${propriedadePessoaClean}${propriedadeLotacaoClean}"
 				onchange="javascript:alteraAtendente_${propriedadePessoaClean}();" ${pessoaLotaSelecaoDisabled} class="form-control">
 				<option value="1">Pessoa</option>
@@ -44,7 +47,9 @@
 	<div class="col-sm-9">
 		<!-- Matricula -->
 		<div id="spanPessoa${propriedadePessoaClean}" class="form-group">
-			<label>Pessoa</label> 
+			<c:if test="${hideLabels != true}">
+				<label>Pessoa</label> 
+			</c:if>
 			<siga:selecao3
 				tipo="pessoa" propriedade="${propriedadePessoa}" tema="simple"
 				modulo="siga" desativar="${desativar}" />
@@ -52,7 +57,9 @@
 		
 		<!-- Lotacao -->
 		<div id="spanLotacao${propriedadeLotacaoClean}" class="form-group" style="display: none">
-			<label>Lotação</label> 
+			<c:if test="${hideLabels != true}">
+				<label>Lotação</label> 
+			</c:if>
 			<siga:selecao3
 				tipo="lotacao" propriedade="${propriedadeLotacao}" tema="simple"
 				modulo="siga" desativar="${desativar}" />
@@ -149,6 +156,7 @@
 		const idSelect = '${propriedadePessoaClean}${propriedadeLotacaoClean}';
 		const idPessoa = "spanPessoa${propriedadePessoaClean}";
 		const idLotacao = "spanLotacao${propriedadeLotacaoClean}";
+		const idEmail = "spanEmail${propriedadeEmailClean}";
 
 		var objSelecionado = document.getElementById(idSelect);
 	
@@ -169,6 +177,16 @@
 			// Apaga as informacoes da pessoa selecionada:
 			limpa_${propriedadePessoaClean}();
 			break;
-		}
+		case 3:
+			// Exibe as entradas para lotacao e esconde as entradas para pessoa:
+			document.getElementById(idPessoa).style.display = 'none';
+			document.getElementById(idLotacao).style.display = 'none';
+			document.getElementById(idEmail).style.display = '';
+
+			// Apaga as informacoes da pessoa selecionada:
+			limpa_${propriedadePessoaClean}();
+			limpa_${propriedadeLotacaoClean}();
+			break;
+		}	
 	}
 </script>

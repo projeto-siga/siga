@@ -19,7 +19,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
@@ -73,9 +73,7 @@ public class SigaUtil {
 		p_cpsServico.setSiglaServico(CpServico.ACESSO_WEBSERVICE);
 		t_cfgConfigExemplo.setCpServico(p_cpsServico);
 
-		CpTipoConfiguracao cpT = new CpTipoConfiguracao();
-		cpT.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
-		t_cfgConfigExemplo.setCpTipoConfiguracao(cpT);
+		t_cfgConfigExemplo.setCpTipoConfiguracao(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 
 		try {
 			List<CpConfiguracao> ll = CpDao.getInstance().porLotacaoPessoaServicoTipo(t_cfgConfigExemplo);
@@ -195,6 +193,26 @@ public class SigaUtil {
 		return jwt;
 	}
 	
+	//Constroe Token JWT Genérico
+	public static String buildJwtToken(final String tipo, final String sub) {
+		String jwt;
+
+		final JWTSigner signer = new JWTSigner(getJwtPassword());
+		final HashMap<String, Object> claims = new HashMap<String, Object>();
+
+		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
+		final long exp = iat + 1 * 60 * 60L; // token expires in 1 hours
+		claims.put("exp", exp);
+		claims.put("iat", iat);
+
+		claims.put("tipo", tipo);
+		claims.put("sub", sub);
+		
+		jwt = signer.sign(claims);
+
+		return jwt;
+	}
+	
 	
 	public static Map<String, Object> verifyGetJwtToken(String token) {
 		final JWTVerifier verifier = new JWTVerifier(getJwtPassword());
@@ -268,5 +286,43 @@ public class SigaUtil {
 	public static boolean isNumeric(String str) {
         return str != null && str.matches("[0-9]*");
     }
+	
+	public static boolean validacaoFormatoSenha(final String password)    {
+	    boolean result = false;
+	    try {
+	        if (password!=null) {
+	            //_________________________
+	            //Parameteres
+	            final String MIN_LENGHT="6";
+	            final String MAX_LENGHT="20";
+	            final boolean SPECIAL_CHAR_NEEDED=false;
+
+	            //_________________________
+	            //Modules
+	            final String ONE_DIGIT = "(?=.*[0-9])";  //(?=.*[0-9]) a digit must occur at least once
+	            final String LOWER_CASE = "(?=.*[a-z])";  //(?=.*[a-z]) a lower case letter must occur at least once
+	            final String UPPER_CASE = "(?=.*[A-Z])";  //(?=.*[A-Z]) an upper case letter must occur at least once
+	            final String NO_SPACE = "(?=\\S+$)";  //(?=\\S+$) no whitespace allowed in the entire string
+	            //final String MIN_CHAR = ".{" + MIN_LENGHT + ",}";  //.{8,} at least 8 characters
+	            final String MIN_MAX_CHAR = ".{" + MIN_LENGHT + "," + MAX_LENGHT + "}";  //.{5,10} represents minimum of 5 characters and maximum of 10 characters
+
+	            final String SPECIAL_CHAR;
+	            if (SPECIAL_CHAR_NEEDED==true) SPECIAL_CHAR= "(?=.*[@#$%^&+=])"; //(?=.*[@#$%^&+=]) a special character must occur at least once
+	            else SPECIAL_CHAR="";
+	            //_________________________
+	            //Pattern
+	            //String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
+	            final String PATTERN = ONE_DIGIT + LOWER_CASE + UPPER_CASE + SPECIAL_CHAR + NO_SPACE + MIN_MAX_CHAR;
+	            //_________________________
+	            result = password.matches(PATTERN);
+	            //_________________________
+	        }    
+
+	    } catch (Exception ex) {
+	        result=false;
+	    }
+
+	    return result;
+	}        
 
 }

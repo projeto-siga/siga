@@ -16,16 +16,13 @@ import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetRequest;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetResponse;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
+import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
-public class ChangedReferencesGet implements
-		IXjusRecordAPI.IChangedReferencesGet {
+public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGet {
 
 	@Override
-	public void run(ChangedReferencesGetRequest req,
-			ChangedReferencesGetResponse resp) throws Exception {
+	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
 		resp.list = new ArrayList<>();
 
 		if (req.lastdate == null)
@@ -33,15 +30,14 @@ public class ChangedReferencesGet implements
 		if (req.lastid == null)
 			req.lastid = AllReferencesGet.defaultLastId();
 
-		final CountDownLatch responseWaiter = new CountDownLatch(
-				RecordServiceEnum.values().length);
-		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<ChangedReferencesGetResponse>>> map = new HashMap<>();
+		final CountDownLatch responseWaiter = new CountDownLatch(RecordServiceEnum.values().length);
+		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
 
 		// Call Each System
 		for (RecordServiceEnum service : RecordServiceEnum.values()) {
 			String url = AllReferencesGet.serviceUrl(service);
 
-			ChangedReferencesGetRequest q = new ChangedReferencesGetRequest();
+			Request q = new Request();
 			q.max = req.max;
 			String split[] = req.lastid.split("-");
 			String lastid = split[0];
@@ -49,24 +45,20 @@ public class ChangedReferencesGet implements
 				lastid = Utils.formatId(Long.valueOf(lastid) - 1);
 			q.lastdate = req.lastdate;
 			q.lastid = lastid;
-			Future<SwaggerAsyncResponse<ChangedReferencesGetResponse>> future = SwaggerCall
-					.callAsync(service.name().toLowerCase()
-							+ "-changed-references", Prop.get("/xjus.password"), "GET", url, q,
-							ChangedReferencesGetResponse.class);
+			Future<SwaggerAsyncResponse<Response>> future = SwaggerCall.callAsync(
+					service.name().toLowerCase() + "-changed-references", Prop.get("/xjus.password"), "GET", url, q,
+					Response.class);
 			map.put(service, future);
 		}
 
 		Date dt1 = new Date();
 
 		for (RecordServiceEnum service : RecordServiceEnum.values()) {
-			long timeout = AllReferencesGet.TIMEOUT_MILLISECONDS
-					- ((new Date()).getTime() - dt1.getTime());
+			long timeout = AllReferencesGet.TIMEOUT_MILLISECONDS - ((new Date()).getTime() - dt1.getTime());
 			if (timeout < 0L)
 				timeout = 0;
-			SwaggerAsyncResponse<ChangedReferencesGetResponse> futureresponse = map
-					.get(service).get(timeout, TimeUnit.MILLISECONDS);
-			ChangedReferencesGetResponse o = (ChangedReferencesGetResponse) futureresponse
-					.getResp();
+			SwaggerAsyncResponse<Response> futureresponse = map.get(service).get(timeout, TimeUnit.MILLISECONDS);
+			Response o = (Response) futureresponse.getResp();
 
 			SwaggerException ex = futureresponse.getException();
 			if (ex != null)

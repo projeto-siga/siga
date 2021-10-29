@@ -18,7 +18,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.util.WfResp;
 
-public class WfTarefaIncluirDocumento extends
+public class WfTarefaDocAguardarAssinatura extends
 		TaskForm<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp, WfTipoDeTarefa, WfTipoDeResponsavel, WfDefinicaoDeVariavel, WfDefinicaoDeDesvio, WfProcedimento> {
 
 	@Override
@@ -28,7 +28,7 @@ public class WfTarefaIncluirDocumento extends
 
 	@Override
 	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {
-		if (Utils.empty(pi.getPrincipal()) || Service.getExService().isModeloIncluso(pi.getPrincipal(), td.getRefId()))
+		if (Utils.empty(pi.getPrincipal()) || Service.getExService().isAssinado(pi.getPrincipal(), null))
 			return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 		return new TaskResult(TaskResultKind.PAUSE, null, null, getEvent(td, pi), pi.calcResponsible(td));
 	}
@@ -38,4 +38,5 @@ public class WfTarefaIncluirDocumento extends
 			Engine<?, ?, ?> engine) throws Exception {
 		return execute(td, pi, engine);
 	}
+
 }

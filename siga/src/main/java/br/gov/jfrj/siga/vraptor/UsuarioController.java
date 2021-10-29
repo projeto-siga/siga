@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,22 +12,33 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
 
+import com.crivano.swaggerservlet.SwaggerException;
+
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.core.Try.Success;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpPessoaTrocaEmailDTO;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
@@ -81,8 +93,15 @@ public class UsuarioController extends SigaController {
 				try {
 					IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
 				} catch (Exception e) {
-					throw new Exception("Não foi possível alterar o e-mail. "
-							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Email\"");
+					LOG.error("Não foi possível alterar a senha de rede de " + nomeUsuario  + ". "
+							+ "Tente novamente em alguns instantes", e);
+					result.include("mensagem", "Senha do siga alterada com sucesso. Não foi possível alterar a senha de rede e do email. "
+							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Trocar também a senha...\"");
+					result.include("volta", "troca");
+					result.include("titulo", "Troca de Senha");
+					result.redirectTo(UsuarioController.class).trocaSenha();
+					return;
+					
 				}
 			}
 
@@ -293,103 +312,6 @@ public class UsuarioController extends SigaController {
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
 
-	@Get({ "/app/usuario/esqueci_senha", "/public/app/usuario/esqueci_senha" })
-	public void esqueciSenha() {
-		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
-		result.include("titulo", "Esqueci Minha Senha");
-		result.include("proxima_acao", "esqueci_senha_gravar");
-	}
-
-	@Transacional
-	@Post({ "/app/usuario/esqueci_senha_gravar", "/public/app/usuario/esqueci_senha_gravar" })
-	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
-		// caso LDAP, orientar troca pelo Windows / central
-		final CpIdentidade id = dao().consultaIdentidadeCadastrante(usuario.getMatricula(), true);
-		if (id == null)
-			throw new AplicacaoException("O usuário não está cadastrado.");
-		boolean autenticaPeloBanco = Cp.getInstance().getBL().buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu())
-				.equals(GiService._MODO_AUTENTICACAO_BANCO);
-		if (!autenticaPeloBanco)
-			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows "
-					+ "(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')"
-					+ ", ou entrando em contato com a Central de Atendimento.");
-
-		String msgAD = "";
-		String cpfNumerico = null;
-		String cpfNumerico1 = null;
-		String cpfNumerico2 = null;
-		boolean senhaTrocadaAD = false;
-		if (usuario.getCpf() != null && !"".equals(usuario.getCpf())) {
-			cpfNumerico = usuario.getCpf().replace(".", "").replace("-", "");
-		}
-		if (usuario.getCpf1() != null && !"".equals(usuario.getCpf())) {
-			cpfNumerico1 = usuario.getCpf1().replace(".", "").replace("-", "");
-		}
-		if (usuario.getCpf2() != null && !"".equals(usuario.getCpf())) {
-			cpfNumerico2 = usuario.getCpf2().replace(".", "").replace("-", "");
-		}
-
-		switch (usuario.getMetodo()) {
-		case 1:
-//			verificarMetodoIntegracaoAD(usuario.getMatricula());
-
-			if (Prop.isGovSP()) {
-				String msg = Cp.getInstance().getBL().alterarSenha(cpfNumerico, null, usuario.getMatricula());
-				if (msg != "OK") {
-					result.include("mensagemCabec", msg);
-					result.include("msgCabecClass", "alert-danger");
-					result.include("valCpf", usuario.getCpf());
-					result.include("titulo", "Esqueci Minha Senha");
-					result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
-					return;
-				}
-			} else {
-				String[] senhaGerada = new String[1];
-				Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(), cpfNumerico,
-						getIdentidadeCadastrante(), senhaGerada);
-			}
-			break;
-		case 2:
-			if (!Cp.getInstance().getBL().podeAlterarSenha(usuario.getAuxiliar1(), cpfNumerico1, usuario.getSenha1(),
-					usuario.getAuxiliar2(), cpfNumerico2, usuario.getSenha2(), usuario.getMatricula(), cpfNumerico,
-					usuario.getSenhaNova())) {
-				String mensagem = "Não foi possível alterar a senha!<br/>"
-						+ "1) As pessoas informadas não podem ser as mesmas;<br/>"
-						+ "2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>"
-						+ "3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>";
-				result.include("mensagemCabec", mensagem);
-				result.include("msgCabecClass", "alert-danger");
-				result.redirectTo("/app/usuario/esqueci_senha");
-				return;
-			}
-
-			CpIdentidade idAux1 = dao.consultaIdentidadeCadastrante(usuario.getAuxiliar1(), true);
-			Cp.getInstance().getBL().definirSenhaDeIdentidade(usuario.getSenhaNova(), usuario.getSenhaConfirma(),
-					usuario.getMatricula(), usuario.getAuxiliar1(), usuario.getAuxiliar2(), idAux1);
-//			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNovaDefinida,senhaNova);
-			break;
-
-		default:
-			result.include("mensagemCabec", "Método inválido!");
-			result.include("msgCabecClass", "alert-danger");
-			result.redirectTo("/app/usuario/esqueci_senha");
-			return;
-		}
-
-		if (isIntegradoAD(usuario.getMatricula()) && senhaTrocadaAD) {
-			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";
-		}
-
-		if (isIntegradoAD(usuario.getMatricula()) && !senhaTrocadaAD) {
-			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
-		}
-		
-		result.include("mensagem", SigaMessages.getMessage("usuario.esqueciminhasenha.sucesso") + msgAD);
-		result.include("volta", "esqueci");
-		result.include("titulo", "Esqueci Minha Senha");
-		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
-	}
-
 	@Get({ "/app/usuario/integracao_ldap", "/public/app/usuario/integracao_ldap" })
 	public void isIntegradoLdap(String matricula) throws AplicacaoException {
 		try {
@@ -402,18 +324,16 @@ public class UsuarioController extends SigaController {
 
 	private boolean isIntegradoAD(String matricula) throws AplicacaoException {
 		boolean result = false;
-		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
 
 		if (matricula == null || matricula.length() < 2) {
 			LOG.warn("A matrícula informada é nula ou inválida");
 			throw new AplicacaoException("A matrícula informada é nula ou inválida.");
 		}
 
-		orgaoFlt.setSiglaOrgaoUsu(MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula));
-		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
+		String sesbPessoa = MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula);
 
-		if (orgaoUsu != null) {
-			result = IntegracaoLdap.getInstancia().integrarComLdap(orgaoUsu);
+		if (sesbPessoa != null) {
+			result = IntegracaoLdap.getInstancia().integrarComLdap(sesbPessoa);
 		}
 
 		return result;
@@ -482,5 +402,203 @@ public class UsuarioController extends SigaController {
 	    Matcher matcher = pattern.matcher(email);   
 	    return matcher.find();   
 	}
+	
+	/* Reset Senha */
+	@Get
+	@Path({"/app/usuario/senha/reset", "/public/app/usuario/senha/reset" })
+	public void resetSenha() throws Exception {	
+		String recaptchaSiteKey = getRecaptchaSiteKey();
+		String recaptchaSitePassword = getRecaptchaSitePassword();
+		result.include("recaptchaSiteKey", recaptchaSiteKey);
+		
+		result.include("baseTeste", Prop.getBool("/siga.base.teste"));
+	}
+	
+	@Post
+	@Transacional
+	@Path({"/app/usuario/senha/gerar-token-reset", "/public/app/usuario/senha/gerar-token-reset" })
+	public void gerarTokenReset() throws Exception {
 
+		try { 
+			String emailOculto = request.getParameter("emailOculto");
+			String jwt = request.getParameter("jwt");
+			String strCpf = request.getParameter("cpf");
+	
+			if (strCpf != null) {
+				CPFUtils.efetuaValidacaoSimples(request.getParameter("cpf"));
+			} else
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			
+			if (emailOculto == null && "".equals(emailOculto)) {
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			}
+			
+			/* --- Verifica Token gerado na pesquisa de acesso: buscarEmailUsuarioPorCpf */
+			SigaUtil.verifyGetJwtToken(jwt).get("sub").toString();
+			final String TIPO_JWT = "RESET-SENHA";
+			if (!TIPO_JWT.equals(SigaUtil.verifyGetJwtToken(jwt).get("tipo").toString()) || !strCpf.equals(SigaUtil.verifyGetJwtToken(jwt).get("sub").toString())) {
+				throw new RuntimeException("Não é possível gerar código para redefinir a Senha. Token inválido.");
+			}
+			/* End */
+	
+			
+			long cpf = Long.valueOf(request.getParameter("cpf"));
+	
+			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+			dpPessoa.setBuscarFechadas(false);
+			dpPessoa.setCpf(cpf);	
+			dpPessoa.setNome("");
+	
+			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
+			boolean emailLocalizado = false;
+			if (!usuarios.isEmpty()) {
+				for(DpPessoa usuario : usuarios) {
+					if (emailOculto.equals(usuario.getEmailPessoaAtualParcialmenteOculto())) {
+						boolean autenticaPeloBanco = Cp.getInstance().getBL().buscarModoAutenticacao(usuario.getOrgaoUsuario().getSiglaOrgaoUsu()).equals(GiService._MODO_AUTENTICACAO_BANCO);
+						//Autenticação não for via banco
+						if (!autenticaPeloBanco)
+							throw new RuntimeException("O usuário deve modificar sua senha usando a interface do Windows "
+														+ "(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')"
+														+ ", ou entrando em contato com a Central de Atendimento.");
+
+						CpToken token = Cp.getInstance().getBL().gerarTokenResetSenha(cpf);
+						Cp.getInstance().getBL().enviarEmailTokenResetSenha(usuario, "Código para redefinição de SENHA ",token.getToken());
+						emailLocalizado = true;
+						
+						HashMap<String, Object> json = new HashMap<>();
+						json.put("ldapEnable", Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(usuario,usuario.getLotacao(),"SIGA;GI;INT_LDAP"));
+						result.use(Results.json()).withoutRoot().from(json).serialize();
+						
+						break;
+					}
+			    }
+			} 
+			
+			if (!emailLocalizado) {
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			}
+
+		} catch (RuntimeException ex) {
+			result.use(Results.http()).sendError(400, ex.getMessage());
+		} catch (Exception ex) {
+			result.use(Results.http()).sendError(500, ex.getMessage());
+		}
+		
+
+		
+	}
+	
+	@Transacional
+	@Post({ "/app/usuario/senha/reset", "/public/app/usuario/senha/reset" })
+	public void gravarNovaSenha() throws Exception {
+	
+		String strCpf = request.getParameter("cpf");
+		String token = request.getParameter("token");
+		String senhaNova = request.getParameter("senhaNova");
+		String senhaConfirma = request.getParameter("senhaConfirma");
+		String jwt = request.getParameter("jwt");
+		String emailOculto = request.getParameter("emailOculto");
+		String trocarSenhaRede = request.getParameter("trocarSenhaRede");
+		
+		try {
+			/* --- Valida JWT gerado na pesquisa de acesso: buscarEmailUsuarioPorCpf */
+			SigaUtil.verifyGetJwtToken(jwt).get("sub").toString();
+			final String TIPO_JWT = "RESET-SENHA";
+			if (!TIPO_JWT.equals(SigaUtil.verifyGetJwtToken(jwt).get("tipo").toString()) || !strCpf.equals(SigaUtil.verifyGetJwtToken(jwt).get("sub").toString())) {
+				throw new RuntimeException("Não é possível gerar código para redefinir a Senha. Token inválido.");
+			}
+			/* End */
+			
+			if (!senhaNova.equals(senhaConfirma)) {
+				throw new RuntimeException("Repetição da nova senha não confere, favor redigitar.");
+			}
+			
+			long cpf = Long.valueOf(request.getParameter("cpf"));
+			
+			//Prosseguir com redefinição se JWT é válido e Token enviado para email é válido
+			if (Cp.getInstance().getBL().isTokenValido(CpToken.TOKEN_SENHA, cpf, token)) {
+				
+				//Obter Todas as identidade para o CPF e redefinir a senha
+				List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
+				listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(strCpf);
+				
+				Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, strCpf, listaIdentidadesCpf);
+				
+				
+				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_SENHA, cpf, token);
+				
+				
+				//Redefinir senha de rede de todas as matrículas envolvidas
+				if (!listaIdentidadesCpf.isEmpty()) {
+					for(CpIdentidade usuario : listaIdentidadesCpf) {
+						if ("true".equals(trocarSenhaRede) && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(usuario.getPessoaAtual(),usuario.getPessoaAtual().getLotacao(),"SIGA;GI;INT_LDAP")) {
+							String nomeUsuario = usuario.getPessoaAtual().getSiglaCompleta();	
+							try {
+								IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
+							} catch (Exception e) {
+								LOG.error("Não foi possível alterar a senha de rede de " + nomeUsuario  + ". "
+										+ "Tente novamente em alguns instantes", e);
+								throw new RegraNegocioException("Senha do siga alterada com sucesso. Não foi possível alterar a senha de rede e do email. "
+										+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Trocar também a senha...\"");
+							}
+						}
+					}
+				}
+				
+				//Obter email usado e enviar notificação
+				if (!listaIdentidadesCpf.isEmpty()) {
+					for(CpIdentidade usuario : listaIdentidadesCpf) {
+						if (emailOculto.equals(usuario.getDpPessoa().getEmailPessoaAtualParcialmenteOculto())) {
+							Cp.getInstance().getBL().enviarEmailDefinicaoSenha(usuario.getDpPessoa(), "Redefinição de SENHA","Você redefiniu sua Senha.");
+							break;
+						}
+				    }
+				} 
+				
+			} else {
+				throw new RegraNegocioException("Token para redefinição de Senha inválido ou expirado.");
+			}
+			
+			Cp.getInstance().getBL().consisteFormatoSenha(senhaNova);
+					
+
+			result.use(Results.status()).noContent();
+		} catch (RuntimeException ex) {
+			result.use(Results.http()).sendError(400, ex.getMessage());
+		} catch (Exception ex) {
+			result.use(Results.http()).sendError(500, ex.getMessage());
+		}
+		
+		
+	}
+	
+	private static String getRecaptchaSiteKey() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.key");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.key");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.key",
+					0, e);
+		}
+	}
+	
+	private static String getRecaptchaSitePassword() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.pwd",
+					0, e);
+		}
+	}
 }

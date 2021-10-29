@@ -179,9 +179,7 @@ INSERT INTO `cp_complexo` VALUES (1,'Almirante Barroso',15,999999999),
 (21,'Teresópolis',20,999999999),
 (22,'Tres Rios',21,999999999),
 (23,'Venezuela',15,999999999),
-(24,'Volta Redonda',23,999999999),
-(25,'Visconde de Inhaúma',15,3),
-(27,'Campo Grande',671,1);
+(24,'Volta Redonda',23,999999999);
 /*!40000 ALTER TABLE `cp_complexo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2569,8 +2567,8 @@ UNLOCK TABLES;
 
 drop function if exists remove_acento;
 delimiter //
-create function remove_acento( textvalue varchar(20000) )
-returns varchar(20000) DETERMINISTIC
+create function remove_acento( textvalue varchar(16383) )
+returns varchar(16383) DETERMINISTIC
 begin
 
 set @textvalue = textvalue;

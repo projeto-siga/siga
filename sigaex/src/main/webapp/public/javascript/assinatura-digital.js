@@ -163,6 +163,8 @@ var providerAssijusPopup = {
 		var parent = this;
 		window.produzirAssinaturaDigital({
 			ui: 'bootstrap-3',
+			
+			iframePopupUrl: $("#iframePopupUrl").val(),
 
 			docs: this.list,
 			

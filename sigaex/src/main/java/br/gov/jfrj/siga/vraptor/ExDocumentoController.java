@@ -33,22 +33,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -60,8 +56,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -72,23 +66,24 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.GZip;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.DpVisualizacaoAcesso;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -98,21 +93,19 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExProtocolo;
-import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.util.ListaHierarquica;
-import br.gov.jfrj.siga.util.ListaHierarquicaItem;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 
 @Controller
@@ -611,6 +604,11 @@ public class ExDocumentoController extends ExController {
 				throw new RuntimeException(
 						"Não foi possível carregar um modelo chamado 'Despacho'");
 			exDocumentoDTO.setIdMod(despacho.getId());
+			for (ExTipoDocumento tp : despacho.getExFormaDocumento()
+					.getExTipoDocumentoSet()) {
+				exDocumentoDTO.setIdTpDoc(tp.getId());
+				break;
+			}
 		}
 
 		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)
@@ -658,26 +656,25 @@ public class ExDocumentoController extends ExController {
 			isPaiEletronico = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc().isEletronico();
 		}
 		
-		final Long idSit = Ex
+		final CpSituacaoDeConfiguracaoEnum idSit = Ex
 				.getInstance()
 				.getConf()
 				.buscaSituacao(exDocumentoDTO.getModelo(),
 						exDocumentoDTO.getDoc().getExTipoDocumento(),
 						getTitular(), getLotaTitular(),
-						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
-				.getIdSitConfiguracao();
+						ExTipoDeConfiguracao.ELETRONICO);
 
-		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+		if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 			exDocumentoDTO.setEletronico(1);
 			exDocumentoDTO.setEletronicoFixo(true);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.PROIBIDO) {
 			exDocumentoDTO.setEletronico(2);
 			exDocumentoDTO.setEletronicoFixo(true);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.DEFAULT
 				&& exDocumentoDTO.isAlterouModelo()) {
 			exDocumentoDTO.setEletronico(1);
 			exDocumentoDTO.setEletronicoFixo(false);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.NAO_DEFAULT
 				&& exDocumentoDTO.isAlterouModelo()) {
 			exDocumentoDTO.setEletronico(2);
 			exDocumentoDTO.setEletronicoFixo(false);
@@ -1087,10 +1084,10 @@ public class ExDocumentoController extends ExController {
 											 */
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
-								if(mobUlt.isEmTransito()) { /*  em transito */
+								if(mobUlt.isEmTransito(getTitular(), getLotaTitular())) { /*  em transito */
 									Ex.getInstance()
 									.getBL()
-									.receber(getCadastrante(), getLotaTitular(),
+									.receber(getCadastrante(), getTitular(), getLotaTitular(),
 											mobUlt, new Date());
 								}
 								if (mob.doc().isEletronico()
@@ -1161,7 +1158,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDTO.getMob(), new Date());
 		}
 
@@ -1209,7 +1206,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDTO.getMob(), new Date());
 		}
 
@@ -1254,7 +1251,7 @@ public class ExDocumentoController extends ExController {
 		buscarDocumento(false, exDocumentoDto);
 
 		if(!podeVisualizarDocumento(exDocumentoDTO.getMob(), getTitular(), idVisualizacao) || !Cp.getInstance().getConf()
-				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 			assertAcesso(exDocumentoDto);
 		}
 		
@@ -1290,7 +1287,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDto.getMob(), new Date());
 		}
 
@@ -1386,12 +1383,12 @@ public class ExDocumentoController extends ExController {
 		if (recebimentoAutomatico) {				
 			if (Ex.getInstance().getComp().deveReceberEletronico(getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
-				Ex.getInstance().getBL().receber(getCadastrante(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())
-				|| (exDocumentoDto.getDoc() != null && exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada() != null && exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada().getMobilPrincipal() != null 
-				&& Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada().getMobilPrincipal()) 
-				&& exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada().isJuntado())) {
+				&& !exDocumentoDto.getMob().getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).getCadastrante().equivale(getTitular())
+				&& !exDocumentoDto.getMob().isJuntado()) {
 			recebimentoPendente = true;			
 		} 		
 
@@ -1435,6 +1432,32 @@ public class ExDocumentoController extends ExController {
 	@Get("app/expediente/doc/exibirProcesso")
 	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
 			throws Exception {
+		
+		if(Prop.get("pdf.tamanho.maximo.completo") != null) {
+			ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+			exDocumentoDto.setSigla(sigla);
+			buscarDocumento(false, exDocumentoDto);		
+			List<ExArquivoNumerado> ans = exDocumentoDto.getDoc().getArquivosNumerados(exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada());
+			
+			Long tamanho = Long.valueOf(0);
+			Long tamanhoHtml = Long.valueOf(0);			
+			for (ExArquivoNumerado an : ans) {
+				if(an.getArquivo() instanceof ExDocumento && ((ExDocumento)an.getArquivo()).getCpArquivo() != null) {
+					tamanho += Long.valueOf(((ExDocumento)an.getArquivo()).getCpArquivo().getTamanho());
+					if(!((ExDocumento)an.getArquivo()).isCapturado()) {
+						tamanhoHtml += Long.valueOf(((ExDocumento)an.getArquivo()).getCpArquivo().getTamanho());
+					}
+					if(tamanhoHtml > Long.valueOf(Prop.get("pdf.tamanho.maximo.completo"))) {
+						result.include("mensagemCabec", "Agregação de documentos excedeu o tamanho máximo permitido.");
+						result.include("msgCabecClass", "alert-info fade-close");
+						result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
+	 				}
+				}
+			}
+			result.include("excedeuTamanhoMax", (tamanho > Long.valueOf(Prop.get("pdf.tamanho.maximo.completo"))));
+		}
+
+		
 		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao);					
 	}
 
@@ -1461,14 +1484,13 @@ public class ExDocumentoController extends ExController {
 				&& doc.getOrgaoExternoDestinatario() == null
 				&& (doc.getNmOrgaoExterno() == null || doc.getNmOrgaoExterno()
 						.trim().equals(""))) {
-			final Long idSit = Ex
+			final CpSituacaoDeConfiguracaoEnum idSit = Ex
 					.getInstance()
 					.getConf()
 					.buscaSituacao(doc.getExModelo(), getTitular(),
 							getLotaTitular(),
-							CpTipoConfiguracao.TIPO_CONFIG_DESTINATARIO)
-					.getIdSitConfiguracao();
-			if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+							ExTipoDeConfiguracao.DESTINATARIO);
+			if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
 				throw new AplicacaoException("Para documentos do modelo "
 						+ doc.getExModelo().getNmMod()
 						+ ", é necessário definir um destinatário");
@@ -1604,8 +1626,10 @@ public class ExDocumentoController extends ExController {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
 		
-		if(exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null && exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null && 
-					!Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto())) {
+		if(!exDocumentoDTO.getCriandoSubprocesso() 
+				&& (exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
+					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null 
+					&& !Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto()))) {
 			throw new AplicacaoException("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
 				+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
 				+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".");			
@@ -1649,12 +1673,12 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.getDoc().getExModelo(),
 					exDocumentoDTO.getDoc().getExClassificacaoAtual(),
 					exDocumentoDTO.getDoc().getExNivelAcessoAtual(),
-					CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
+					ExTipoDeConfiguracao.CRIAR)) {
 
 				if (!ex.getConf().podePorConfiguracao(getTitular(),
 						getLotaTitular(), null, null, null,
 						exDocumentoDTO.getDoc().getExClassificacao(), null,
-						CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
+						ExTipoDeConfiguracao.CRIAR)) {
 					throw new AplicacaoException(
 							"Usuário não possui permissão de criar documento da classificação "
 									+ exDocumentoDTO.getDoc()
@@ -1800,7 +1824,7 @@ public class ExDocumentoController extends ExController {
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
+							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 

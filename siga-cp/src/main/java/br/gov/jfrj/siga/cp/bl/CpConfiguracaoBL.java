@@ -37,15 +37,17 @@ import org.mvel2.MVEL;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -74,9 +76,9 @@ public class CpConfiguracaoBL {
 	protected Date dtUltimaAtualizacaoCache = null;
 	protected boolean cacheInicializado = false;
 
-	protected Comparator<CpConfiguracao> comparator = null;
+	protected Comparator<CpConfiguracaoCache> comparator = null;
 
-	protected HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+	protected HashMap<ITipoDeConfiguracao, TreeSet<CpConfiguracaoCache>> hashListas = new HashMap<>();
 
 	public static int PESSOA = 1;
 
@@ -110,11 +112,11 @@ public class CpConfiguracaoBL {
 
 	public static int COMPLEXO_OBJETO = 16;
 
-	public Comparator<CpConfiguracao> getComparator() {
+	public Comparator<CpConfiguracaoCache> getComparator() {
 		return comparator;
 	}
 
-	public void setComparator(Comparator<CpConfiguracao> comparator) {
+	public void setComparator(Comparator<CpConfiguracaoCache> comparator) {
 		this.comparator = comparator;
 	}
 
@@ -129,32 +131,33 @@ public class CpConfiguracaoBL {
 	public void reiniciarCache() {
 		cacheInicializado = false;
 		dtUltimaAtualizacaoCache = null;
-		hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+		hashListas = new HashMap<>();
 		inicializarCacheSeNecessario();
 	}
-
+	
 	public synchronized void inicializarCacheSeNecessario() {
 		if (cacheInicializado)
 			return;
 		long inicio = System.currentTimeMillis();
-
-		List<CpConfiguracao> results = (List<CpConfiguracao>) dao().consultarConfiguracoesAtivas();
+		List<CpConfiguracaoCache> results = dao().consultarCacheDeConfiguracoesAtivas();
 
 		long inicioLazy = System.currentTimeMillis();
-		evitarLazy(results);
+//		evitarLazy(results);
 		long fimLazy = System.currentTimeMillis();
 
 		hashListas.clear();
-		for (CpConfiguracao cfg : results) {
-			if (cfg.getCpTipoConfiguracao() == null)
+		for (CpConfiguracaoCache a : results) {
+			atualizarDataDeAtualizacaoDoCache(a);
+			// Verifica se existe o tipo da configuracao
+			if (a.cpTipoConfiguracao == null)
 				continue;
-			Long idTpConfiguracao = cfg.getCpTipoConfiguracao().getIdTpConfiguracao();
-			TreeSet<CpConfiguracao> tree = hashListas.get(idTpConfiguracao);
+			ITipoDeConfiguracao idTpConfiguracao = a.cpTipoConfiguracao;
+			TreeSet<CpConfiguracaoCache> tree = hashListas.get(idTpConfiguracao);
 			if (tree == null) {
-				tree = new TreeSet<CpConfiguracao>(comparator);
+				tree = new TreeSet<CpConfiguracaoCache>(comparator);
 				hashListas.put(idTpConfiguracao, tree);
 			}
-			tree.add(cfg);
+			tree.add(a);
 		}
 		if (hashListas.size() == 0 && results.size() > 0)
 			throw new RuntimeException("Ocorreu um erro na inicialização do cache.");
@@ -169,7 +172,7 @@ public class CpConfiguracaoBL {
 
 	}
 
-	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {
+	public HashMap<ITipoDeConfiguracao, TreeSet<CpConfiguracaoCache>> getHashListas() {
 		if (!cacheInicializado) {
 			inicializarCacheSeNecessario();
 		}
@@ -177,7 +180,7 @@ public class CpConfiguracaoBL {
 		return hashListas;
 	}
 
-	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig) {
+	public TreeSet<CpConfiguracaoCache> getListaPorTipo(ITipoDeConfiguracao idTipoConfig) {
 		return getHashListas().get(idTipoConfig);
 	}
 
@@ -199,22 +202,23 @@ public class CpConfiguracaoBL {
 
 		// sfCpDao.evict(CpConfiguracao.class);
 
-		List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
+		List<CpConfiguracaoCache> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
 
 		Logger.getLogger("siga.conf.cache").fine("Numero de alteracoes no cache: " + alteracoes.size());
 		if (alteracoes.size() > 0) {
-			evitarLazy(alteracoes);
+			// evitarLazy(alteracoes);
 
-			for (CpConfiguracao cpConfiguracao : alteracoes) {
-				Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
-				TreeSet<CpConfiguracao> tree = hashListas.get(idTpConf);
+			for (CpConfiguracaoCache cpConfiguracao : alteracoes) {
+				atualizarDataDeAtualizacaoDoCache(cpConfiguracao);
+				ITipoDeConfiguracao idTpConf = cpConfiguracao.cpTipoConfiguracao;
+				TreeSet<CpConfiguracaoCache> tree = hashListas.get(idTpConf);
 				if (tree == null) {
-					tree = new TreeSet<CpConfiguracao>(comparator);
+					tree = new TreeSet<CpConfiguracaoCache>(comparator);
 					hashListas.put(idTpConf, tree);
 				}
 				if (cpConfiguracao.ativaNaData(dt)) {
 					int i = tree.size();
-					removeById(tree, cpConfiguracao);
+					removeById(tree, cpConfiguracao.idConfiguracao);
 					tree.add(cpConfiguracao);
 					if (tree.size() != i + 1)
 						Logger.getLogger("siga.conf.cache")
@@ -224,7 +228,7 @@ public class CpConfiguracaoBL {
 								.fine("Configuração adicionada: " + cpConfiguracao.toString());
 				} else {
 					int i = tree.size();
-					removeById(tree, cpConfiguracao);
+					removeById(tree, cpConfiguracao.idConfiguracao);
 					if (tree.size() != i - 1)
 						Logger.getLogger("siga.conf.cache")
 								.fine("Configuração previamente removida: " + cpConfiguracao.toString());
@@ -237,12 +241,19 @@ public class CpConfiguracaoBL {
 		dtUltimaAtualizacaoCache = dt;
 	}
 
-	private void removeById(TreeSet<CpConfiguracao> tree, CpConfiguracao cpConfiguracao) {
-		List<CpConfiguracao> found = new ArrayList<>();
-		for (CpConfiguracao cfg : tree)
-			if (cfg.getId().equals(cpConfiguracao.getId()))
+	public void atualizarDataDeAtualizacaoDoCache(CpConfiguracaoCache cpConfiguracao) {
+		if (cpConfiguracao.hisDtIni != null && (dtUltimaAtualizacaoCache == null || cpConfiguracao.hisDtIni.after(dtUltimaAtualizacaoCache)))
+			dtUltimaAtualizacaoCache = cpConfiguracao.hisDtIni;
+		if (cpConfiguracao.hisDtFim != null && cpConfiguracao.hisDtFim.after(dtUltimaAtualizacaoCache))
+			dtUltimaAtualizacaoCache = cpConfiguracao.hisDtFim;
+	}
+
+	private void removeById(TreeSet<CpConfiguracaoCache> tree, long id) {
+		List<CpConfiguracaoCache> found = new ArrayList<>();
+		for (CpConfiguracaoCache cfg : tree)
+			if (cfg.idConfiguracao == id)
 				found.add(cfg);
-		for (CpConfiguracao cfg : found)
+		for (CpConfiguracaoCache cfg : found)
 			tree.remove(cfg);
 	}
 
@@ -255,7 +266,7 @@ public class CpConfiguracaoBL {
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		for (CpConfiguracao cfg : provResults) {
 			if (cfg.getCpSituacaoConfiguracao() != null) {
-				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
+				cfg.getCpSituacaoConfiguracao().getDescr();
 			}
 			if (cfg.getOrgaoUsuario() != null)
 				cfg.getOrgaoUsuario().getDescricao();
@@ -277,7 +288,7 @@ public class CpConfiguracaoBL {
 				// cfg.getDpPessoa().getPessoaAtual().getDescricao();
 			}
 			if (cfg.getCpTipoConfiguracao() != null)
-				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
+				cfg.getCpTipoConfiguracao().getDescr();
 			if (cfg.getCpServico() != null)
 				cfg.getCpServico().getDescricao();
 			if (cfg.getCpIdentidade() != null)
@@ -326,7 +337,7 @@ public class CpConfiguracaoBL {
 	// public void limparCache(CpTipoConfiguracao cpTipoConfig) throws Exception
 	// {
 	//
-	// atualizarCache(cpTipoConfig!=null?cpTipoConfig.getIdTpConfiguracao():null);
+	// atualizarCache(cpTipoConfig!=null?cpTipoConfig.getId():null);
 	//
 	// }
 
@@ -346,8 +357,8 @@ public class CpConfiguracaoBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public CpConfiguracao buscaConfiguracao(CpConfiguracao cpConfiguracaoFiltro, int atributoDesconsideradoFiltro[],
-			Date dtEvn) {
+	public CpConfiguracaoCache buscaConfiguracao(CpConfiguracao cpConfiguracaoFiltro,
+			int atributoDesconsideradoFiltro[], Date dtEvn) {
 		deduzFiltro(cpConfiguracaoFiltro);
 
 		Set<Integer> atributosDesconsiderados = new LinkedHashSet<Integer>();
@@ -357,8 +368,7 @@ public class CpConfiguracaoBL {
 
 		SortedSet<CpPerfil> perfis = null;
 		if (cpConfiguracaoFiltro.isBuscarPorPerfis()
-				|| (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null && cpConfiguracaoFiltro.getCpTipoConfiguracao()
-						.getIdTpConfiguracao().equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO))) {
+				|| (cpConfiguracaoFiltro.getCpTipoConfiguracao() == CpTipoDeConfiguracao.UTILIZAR_SERVICO)) {
 			perfis = consultarPerfisPorPessoaELotacao(cpConfiguracaoFiltro.getDpPessoa(),
 					cpConfiguracaoFiltro.getLotacao(), dtEvn);
 
@@ -385,18 +395,17 @@ public class CpConfiguracaoBL {
 			}
 		}
 
-		TreeSet<CpConfiguracao> lista = null;
+		TreeSet<CpConfiguracaoCache> lista = null;
 		if (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null)
-			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao().getIdTpConfiguracao());
+			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao());
 		if (lista == null)
 			return null;
-
-		for (CpConfiguracao cpConfiguracao : lista) {
-			if ((!cpConfiguracao.ativaNaData(dtEvn))
-					|| (cpConfiguracao.getCpSituacaoConfiguracao() != null
-							&& cpConfiguracao.getCpSituacaoConfiguracao().getIdSitConfiguracao()
-									.equals(CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR))
-					|| !atendeExigencias(cpConfiguracaoFiltro, atributosDesconsiderados, cpConfiguracao, perfis))
+		
+		CpConfiguracaoCache filtroConfiguracaoCache = cpConfiguracaoFiltro.converterParaCache();
+		for (CpConfiguracaoCache cpConfiguracao : lista) {
+			if ((!cpConfiguracao.ativaNaData(dtEvn)) || (cpConfiguracao.situacao != null
+					&& cpConfiguracao.situacao == CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR)
+					|| !atendeExigencias(filtroConfiguracaoCache, atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
 			return cpConfiguracao;
 		}
@@ -410,64 +419,60 @@ public class CpConfiguracaoBL {
 		if (pessoa != null) {
 			Object p = pessoa;
 			if (p instanceof HibernateProxy) {
-				pessoa = (DpPessoa) ((HibernateProxy) p).getHibernateLazyInitializer()
-						.getImplementation();
+				pessoa = (DpPessoa) ((HibernateProxy) p).getHibernateLazyInitializer().getImplementation();
 			}
 		}
-		
+
 		if (lotacao != null) {
 			Object l = lotacao;
 			if (l instanceof HibernateProxy) {
-				lotacao = (DpLotacao) ((HibernateProxy) l).getHibernateLazyInitializer()
-						.getImplementation();
+				lotacao = (DpLotacao) ((HibernateProxy) l).getHibernateLazyInitializer().getImplementation();
 			}
 		}
-		
-		
-		TreeSet<CpConfiguracao> lista = getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
+
+		TreeSet<CpConfiguracaoCache> lista = getListaPorTipo(CpTipoDeConfiguracao.PERTENCER);
 
 		SortedSet<CpPerfil> perfis = new TreeSet<CpPerfil>();
 		if (lista != null && pessoa != null) {
-			for (CpConfiguracao cfg : lista) {
-				if (cfg.getCpGrupo() == null)
-					continue;
-				Object g = cfg.getCpGrupo();
-				if (g instanceof HibernateProxy) {
-					g = ((HibernateProxy) g).getHibernateLazyInitializer().getImplementation();
-				}
-				if (!cfg.ativaNaData(dtEvn) || !(g instanceof CpPerfil))
-					continue;
-				if (cfg.getDpPessoa() != null && !cfg.getDpPessoa().equivale(pessoa))
+			for (CpConfiguracaoCache cfg : lista) {
+				if (cfg.cpGrupo == 0 || cfg.cpPerfil == null || !cfg.ativaNaData(dtEvn))
 					continue;
 
-				if (cfg.getCargo() != null && !cfg.getCargo().equivale(pessoa.getCargo()))
+				if (cfg.dpPessoa != 0 && cfg.dpPessoa != pessoa.getIdInicial())
 					continue;
 
-				if (cfg.getFuncaoConfianca() != null && !cfg.getFuncaoConfianca().equivale(pessoa.getFuncaoConfianca()))
+				if (cfg.cargo != 0 && cfg.cargo != pessoa.getCargo().getIdInicial())
 					continue;
 
-				if (cfg.getLotacao() != null && !cfg.getLotacao().equivale(lotacao))
+				if (cfg.funcaoConfianca != 0 && (pessoa.getFuncaoConfianca() != null && cfg.funcaoConfianca != pessoa.getFuncaoConfianca().getIdInicial()))
 					continue;
 
-				if (cfg.getOrgaoUsuario() != null
-						&& !cfg.getLotacao().getOrgaoUsuario().equivale(lotacao.getOrgaoUsuario()))
+				if (cfg.lotacao != 0 && cfg.lotacao != lotacao.getIdInicial())
 					continue;
 
-				if (g instanceof CpPerfil && cfg.getDscFormula() != null) {
+				if (cfg.orgaoUsuario != 0 && cfg.lotacao != lotacao.getIdInicial())
+					continue;
+
+				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
+				
+				if (g instanceof CpPerfil && cfg.dscFormula != null) {
 					Map<String, DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
 					pessoaMap.put("pessoa", pessoa);
-					if (!(Boolean) MVEL.eval(cfg.getDscFormula(), pessoaMap)) {
+					if (!(Boolean) MVEL.eval(cfg.dscFormula, pessoaMap)) {
 						continue;
 					}
 				}
 
-				do {
-					perfis.add((CpPerfil) g);
-					g = ((CpPerfil) g).getCpGrupoPai();
-					if (g instanceof HibernateProxy) {
-						g = ((HibernateProxy) g).getHibernateLazyInitializer().getImplementation();
-					}
-				} while (g != null);
+				CpPerfil perfil = cfg.cpPerfil;
+				while (perfil != null) {
+					perfis.add(perfil);
+					CpGrupo grp = cfg.cpPerfil.getCpGrupoPai();
+					if (!(grp instanceof CpPerfil))
+						break;
+					perfil = (CpPerfil) grp; 
+					if (perfil != null && perfil instanceof HibernateProxy) 
+						perfil = (CpPerfil) ((HibernateProxy) perfil).getHibernateLazyInitializer().getImplementation();
+				}
 			}
 		}
 		return perfis;
@@ -488,12 +493,13 @@ public class CpConfiguracaoBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public CpSituacaoConfiguracao buscaSituacao(CpConfiguracao cpConfiguracaoFiltro, int atributoDesconsideradoFiltro[],
+	public CpSituacaoDeConfiguracaoEnum buscaSituacao(CpConfiguracao cpConfiguracaoFiltro, int atributoDesconsideradoFiltro[],
 			TreeSet<CpConfiguracao> lista) throws Exception {
-		CpConfiguracao cfg = buscaConfiguracao(cpConfiguracaoFiltro, atributoDesconsideradoFiltro, null);
+		CpConfiguracaoCache cfg = buscaConfiguracao(cpConfiguracaoFiltro, atributoDesconsideradoFiltro, null);
 		if (cfg != null) {
-			return cfg.getCpSituacaoConfiguracao();
+			return cfg.situacao;
 		}
+		
 		return cpConfiguracaoFiltro.getCpTipoConfiguracao().getSituacaoDefault();
 	}
 
@@ -503,91 +509,68 @@ public class CpConfiguracaoBL {
 	 * @param cfg
 	 * @param perfis
 	 */
-	public boolean atendeExigencias(CpConfiguracao cfgFiltro, Set<Integer> atributosDesconsiderados, CpConfiguracao cfg,
-			SortedSet<CpPerfil> perfis) {
-		if (cfg.getCpServico() != null
-				&& ((cfgFiltro.getCpServico() != null && !cfgFiltro.getCpServico().equivale(cfg.getCpServico())
-						|| ((cfgFiltro.getCpServico() == null) && !atributosDesconsiderados.contains(SERVICO)))))
+	public boolean atendeExigencias(CpConfiguracaoCache cfgFiltro, Set<Integer> atributosDesconsiderados,
+			CpConfiguracaoCache cfg, SortedSet<CpPerfil> perfis) {
+		if (cfgFiltro == null)
+			cfgFiltro = new CpConfiguracaoCache();
+
+		if (desigual(cfg.cpServico, cfgFiltro.cpServico, atributosDesconsiderados, SERVICO))
 			return false;
 
-		if (cfg.getCpGrupo() != null
-				&& (cfgFiltro.getCpGrupo() != null && !cfg.getCpGrupo().equivale(cfgFiltro.getCpGrupo())
-						|| ((cfgFiltro.getCpGrupo() == null) && !atributosDesconsiderados.contains(GRUPO))
-								&& (perfis == null || !perfisContemGrupo(cfg, perfis))))
+		if (cfg.cpGrupo != 0 && (cfgFiltro.cpGrupo != 0 && cfg.cpGrupo != cfgFiltro.cpGrupo
+				|| ((cfgFiltro.cpGrupo == 0) && !atributosDesconsiderados.contains(GRUPO))
+						&& (perfis == null || !perfisContemGrupo(cfg, perfis))))
 			return false;
 
-		if (cfg.getCpIdentidade() != null
-				&& ((cfgFiltro.getCpIdentidade() != null && !cfg.getCpIdentidade().equivale(cfgFiltro.getCpIdentidade())
-						|| ((cfgFiltro.getCpIdentidade() == null) && !atributosDesconsiderados.contains(IDENTIDADE)))))
+		if (desigual(cfg.cpIdentidade, cfgFiltro.cpIdentidade, atributosDesconsiderados, IDENTIDADE))
 			return false;
 
-		if (cfg.getDpPessoa() != null
-				&& ((cfgFiltro.getDpPessoa() != null && !cfg.getDpPessoa().equivale(cfgFiltro.getDpPessoa())
-						|| ((cfgFiltro.getDpPessoa() == null) && !atributosDesconsiderados.contains(PESSOA)))))
+		if (desigual(cfg.dpPessoa, cfgFiltro.dpPessoa, atributosDesconsiderados, PESSOA))
 			return false;
 
-		if (cfg.getLotacao() != null
-				&& ((cfgFiltro.getLotacao() != null && !cfg.getLotacao().equivale(cfgFiltro.getLotacao())
-						|| ((cfgFiltro.getLotacao() == null) && !atributosDesconsiderados.contains(LOTACAO)))))
+		if (desigual(cfg.lotacao, cfgFiltro.lotacao, atributosDesconsiderados, LOTACAO))
 			return false;
 
-		if (cfg.getComplexo() != null
-				&& ((cfgFiltro.getComplexo() != null && !cfg.getComplexo().equals(cfgFiltro.getComplexo())
-						|| ((cfgFiltro.getComplexo() == null) && !atributosDesconsiderados.contains(COMPLEXO)))))
+		if (desigual(cfg.complexo, cfgFiltro.complexo, atributosDesconsiderados, COMPLEXO))
 			return false;
 
-		if (cfg.getFuncaoConfianca() != null && ((cfgFiltro.getFuncaoConfianca() != null
-				&& !cfg.getFuncaoConfianca().getIdFuncao().equals(cfgFiltro.getFuncaoConfianca().getIdFuncao()))
-				|| ((cfgFiltro.getFuncaoConfianca() == null) && !atributosDesconsiderados.contains(FUNCAO))))
+		if (desigual(cfg.funcaoConfianca, cfgFiltro.funcaoConfianca, atributosDesconsiderados, FUNCAO))
 			return false;
 
-		if (cfg.getOrgaoUsuario() != null && ((cfgFiltro.getOrgaoUsuario() != null
-				&& !cfg.getOrgaoUsuario().getIdOrgaoUsu().equals(cfgFiltro.getOrgaoUsuario().getIdOrgaoUsu()))
-				|| ((cfgFiltro.getOrgaoUsuario() == null) && !atributosDesconsiderados.contains(ORGAO))))
+		if (desigual(cfg.orgaoUsuario, cfgFiltro.orgaoUsuario, atributosDesconsiderados, ORGAO))
 			return false;
 
-		if (cfg.getCargo() != null && ((cfgFiltro.getCargo() != null
-				&& !cfg.getCargo().getIdCargo().equals(cfgFiltro.getCargo().getIdCargo()))
-				|| ((cfgFiltro.getCargo() == null) && !atributosDesconsiderados.contains(CARGO))))
+		if (desigual(cfg.cargo, cfgFiltro.cargo, atributosDesconsiderados, CARGO))
 			return false;
 
-		if (cfg.getCpTipoLotacao() != null && ((cfgFiltro.getCpTipoLotacao() != null
-				&& !cfg.getCpTipoLotacao().getIdTpLotacao().equals(cfgFiltro.getCpTipoLotacao().getIdTpLotacao()))
-				|| ((cfgFiltro.getCpTipoLotacao() == null) && !atributosDesconsiderados.contains(TIPO_LOTACAO))))
+		if (desigual(cfg.cpTipoLotacao, cfgFiltro.cpTipoLotacao, atributosDesconsiderados, TIPO_LOTACAO))
 			return false;
 
-		if (cfg.getPessoaObjeto() != null && ((cfgFiltro.getPessoaObjeto() != null
-				&& !cfg.getPessoaObjeto().equivale(cfgFiltro.getPessoaObjeto())
-				|| ((cfgFiltro.getPessoaObjeto() == null) && !atributosDesconsiderados.contains(PESSOA_OBJETO)))))
+		if (desigual(cfg.pessoaObjeto, cfgFiltro.pessoaObjeto, atributosDesconsiderados, PESSOA_OBJETO))
 			return false;
 
-		if (cfg.getLotacaoObjeto() != null && ((cfgFiltro.getLotacaoObjeto() != null
-				&& !cfg.getLotacaoObjeto().equivale(cfgFiltro.getLotacaoObjeto())
-				|| ((cfgFiltro.getLotacaoObjeto() == null) && !atributosDesconsiderados.contains(LOTACAO_OBJETO)))))
+		if (desigual(cfg.lotacaoObjeto, cfgFiltro.lotacaoObjeto, atributosDesconsiderados, LOTACAO_OBJETO))
 			return false;
 
-		if (cfg.getComplexoObjeto() != null && ((cfgFiltro.getComplexoObjeto() != null
-				&& !cfg.getComplexoObjeto().equals(cfgFiltro.getComplexoObjeto())
-				|| ((cfgFiltro.getComplexoObjeto() == null) && !atributosDesconsiderados.contains(COMPLEXO_OBJETO)))))
+		if (desigual(cfg.complexoObjeto, cfgFiltro.complexoObjeto, atributosDesconsiderados, COMPLEXO_OBJETO))
 			return false;
 
-		if (cfg.getFuncaoConfiancaObjeto() != null && ((cfgFiltro.getFuncaoConfiancaObjeto() != null && !cfg
-				.getFuncaoConfiancaObjeto().getIdFuncao().equals(cfgFiltro.getFuncaoConfiancaObjeto().getIdFuncao()))
-				|| ((cfgFiltro.getFuncaoConfiancaObjeto() == null)
-						&& !atributosDesconsiderados.contains(FUNCAO_OBJETO))))
+		if (desigual(cfg.funcaoConfiancaObjeto, cfgFiltro.funcaoConfiancaObjeto, atributosDesconsiderados,
+				FUNCAO_OBJETO))
 			return false;
 
-		if (cfg.getOrgaoObjeto() != null && ((cfgFiltro.getOrgaoObjeto() != null
-				&& !cfg.getOrgaoObjeto().getIdOrgaoUsu().equals(cfgFiltro.getOrgaoObjeto().getIdOrgaoUsu()))
-				|| ((cfgFiltro.getOrgaoObjeto() == null) && !atributosDesconsiderados.contains(ORGAO_OBJETO))))
+		if (desigual(cfg.orgaoObjeto, cfgFiltro.orgaoObjeto, atributosDesconsiderados, ORGAO_OBJETO))
 			return false;
 
-		if (cfg.getCargoObjeto() != null && ((cfgFiltro.getCargoObjeto() != null
-				&& !cfg.getCargoObjeto().getIdCargo().equals(cfgFiltro.getCargoObjeto().getIdCargo()))
-				|| ((cfgFiltro.getCargoObjeto() == null) && !atributosDesconsiderados.contains(CARGO_OBJETO))))
+		if (desigual(cfg.cargoObjeto, cfgFiltro.cargoObjeto, atributosDesconsiderados, CARGO_OBJETO))
 			return false;
 
 		return true;
+	}
+
+	protected boolean desigual(long cfg, long filtro, Set<Integer> atributosDesconsiderados, int atributo) {
+		return cfg != 0
+				&& ((filtro != 0 && cfg != filtro) || ((filtro == 0) && !atributosDesconsiderados.contains(atributo)));
 	}
 
 	/**
@@ -598,9 +581,9 @@ public class CpConfiguracaoBL {
 	 * @param perfis - os perfis da pessoa/lotacao
 	 * @return
 	 */
-	private boolean perfisContemGrupo(CpConfiguracao cfg, SortedSet<CpPerfil> perfis) {
+	private boolean perfisContemGrupo(CpConfiguracaoCache cfg, SortedSet<CpPerfil> perfis) {
 		for (CpPerfil cpPerfil : perfis) {
-			if (cpPerfil.equivale(cfg.getCpGrupo())) {
+			if (cpPerfil.getIdInicial() == cfg.cpGrupo) {
 				return true;
 			}
 		}
@@ -629,7 +612,7 @@ public class CpConfiguracaoBL {
 	 */
 	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, DpLotacao dpLotacao, DpCargo cargo,
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa, CpServico cpServico, CpIdentidade cpIdentidade,
-			CpGrupo cpGrupo, CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
+			CpGrupo cpGrupo, CpTipoLotacao cpTpLotacao, ITipoDeConfiguracao idTpConf) throws Exception {
 		try {
 			CpConfiguracao cfgFiltro = createNewConfiguracao();
 
@@ -644,29 +627,33 @@ public class CpConfiguracaoBL {
 			cfgFiltro.setCpGrupo(cpGrupo);
 			cfgFiltro.setCpTipoLotacao(cpTpLotacao);
 
-			cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf, CpTipoConfiguracao.class, false));
+			cfgFiltro.setCpTipoConfiguracao(idTpConf);
 
-			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
+			CpConfiguracaoCache cfg = (CpConfiguracaoCache) buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
-			CpSituacaoConfiguracao situacao;
-
-			if (cfg != null) {
-				situacao = cfg.getCpSituacaoConfiguracao();
-			} else {
-				situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
-			}
-
-			if (situacao != null && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE 
-										||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT 
-										||	situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO)) {
-				return true;
-			}
-			return false;
+			return situacaoPermissiva(cfgFiltro, cfg);
 		} catch (Exception ex) {
 			log.error(ex);
 			ex.printStackTrace();
 			throw ex;
 		}
+	}
+
+	public static boolean situacaoPermissiva(CpConfiguracao cfgFiltro, CpConfiguracaoCache cfg) {
+		CpSituacaoDeConfiguracaoEnum situacao;
+
+		if (cfg != null) {
+			situacao = cfg.situacao;
+		} else {
+			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
+		}
+
+		if (situacao != null && (situacao == CpSituacaoDeConfiguracaoEnum.PODE
+				|| situacao == CpSituacaoDeConfiguracaoEnum.DEFAULT
+				|| situacao == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -679,30 +666,30 @@ public class CpConfiguracaoBL {
 	 * @param idTpConf
 	 * @throws Exception
 	 */
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null, null, null, null, idTpConf);
 
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpServico cpServico, long idTpConf)
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpServico cpServico, ITipoDeConfiguracao idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, cpServico, null, null, null, idTpConf);
 
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, null, dpPessoa, null, null, null, null, idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpLotacao dpLotacao, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(DpLotacao dpLotacao, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, null, null, null, null, null, idTpConf);
 	}
 
-	public boolean podePorConfiguracao(CpIdentidade cpIdentidade, long idTpConf) throws Exception {
+	public boolean podePorConfiguracao(CpIdentidade cpIdentidade, ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null, cpIdentidade, null, null, idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpGrupo cpGrupo, long idTpConf)
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpGrupo cpGrupo, ITipoDeConfiguracao idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null, null, cpGrupo, null, idTpConf);
 	}
@@ -795,7 +782,7 @@ public class CpConfiguracaoBL {
 				}
 			}
 			return Cp.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, srvRecuperado,
-					CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+					CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 		} catch (Exception e) {
 			throw new RuntimeException("Não foi possível calcular acesso ao serviço " + servicoPath, e);
 		}
@@ -813,13 +800,14 @@ public class CpConfiguracaoBL {
 		ArrayList<ConfiguracaoGrupo> aCfgGrp = new ArrayList<ConfiguracaoGrupo>();
 		ConfiguracaoGrupoFabrica fabrica = new ConfiguracaoGrupoFabrica();
 		try {
-			TreeSet<CpConfiguracao> l = Cp.getInstance().getConf()
-					.getListaPorTipo(/* tpCfgPertencer */CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
+			TreeSet<CpConfiguracaoCache> l = Cp.getInstance().getConf()
+					.getListaPorTipo(CpTipoDeConfiguracao.PERTENCER);
 			if (l != null) {
-				for (CpConfiguracao cfg : l) {
-					if (cfg.getCpGrupo() == null || !cfg.getCpGrupo().equivale(grp) || cfg.getHisDtFim() != null)
+				for (CpConfiguracaoCache cfg : l) {
+					if (cfg.cpGrupo == 0 || cfg.cpGrupo != grp.getIdInicial() || cfg.hisDtFim != null)
 						continue;
-					ConfiguracaoGrupo cfgGrp = fabrica.getInstance(cfg);
+					CpConfiguracao c = dao().consultar(cfg.idConfiguracao, CpConfiguracao.class, false);
+					ConfiguracaoGrupo cfgGrp = fabrica.getInstance(c);
 					aCfgGrp.add(cfgGrp);
 				}
 			}
@@ -840,18 +828,20 @@ public class CpConfiguracaoBL {
 		Set<DpPessoa> resultado = new HashSet<DpPessoa>();
 		try {
 			limparCacheSeNecessario();
-			Set<CpConfiguracao> configs = Cp.getInstance().getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
-			for (CpConfiguracao c : configs) {
-				DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.getDpPessoa().getIdInicial());
-				if (c.getDpPessoa().equivale(pesAtual)) {
-					if (c.getHisAtivo() == 1 && pesAtual.getDataFim() == null
-							&& c.getLotacao().getIdInicial().equals(lot.getIdInicial())) {
-						resultado.add(pesAtual);
+			Set<CpConfiguracaoCache> configs = Cp.getInstance().getConf()
+					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
+			if (configs != null) {
+				for (CpConfiguracaoCache c : configs) {
+					DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.dpPessoa);
+					if (pesAtual != null) {
+						if (c.dpPessoa == pesAtual.getIdInicial()) {
+							if (c.hisDtFim == null && pesAtual.getDataFim() == null && c.lotacao == lot.getIdInicial()) {
+								resultado.add(pesAtual);
+							}
+						}
 					}
 				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -864,16 +854,15 @@ public class CpConfiguracaoBL {
 		Set<DpLotacao> resultado = new HashSet<DpLotacao>();
 		try {
 			limparCacheSeNecessario();
-			Set<CpConfiguracao> configs = Cp.getInstance().getConf()
-					.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
-			for (CpConfiguracao c : configs) {
-				DpLotacao lotacaoAtual = c.getLotacao().getLotacaoAtual();
-				if (c.getHisAtivo() == 1 && lotacaoAtual.getDataFim() == null
-						&& c.getDpPessoa().getIdInicial().equals(pes.getIdInicial())) {
+			Set<CpConfiguracaoCache> configs = Cp.getInstance().getConf()
+					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
+			for (CpConfiguracaoCache c : configs) {
+				DpLotacao lotacaoAtual = CpDao.getInstance().consultarPorIdInicial(DpLotacao.class, c.lotacao);
+				System.out.println("Lotação atual : " + lotacaoAtual);
+				if (c.hisDtFim == null && lotacaoAtual.getDataFim() == null && c.dpPessoa == pes.getIdInicial()) {
 					resultado.add(lotacaoAtual);
 				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -882,15 +871,16 @@ public class CpConfiguracaoBL {
 
 	}
 
-	public void excluirPessoaExtra(DpPessoa pes, DpLotacao lot, CpTipoConfiguracao tpConf,
+	public void excluirPessoaExtra(DpPessoa pes, DpLotacao lot, ITipoDeConfiguracao tpConf,
 			CpIdentidade identidadeCadastrante) {
 		ModeloDao.iniciarTransacao();
 		try {
-			Set<CpConfiguracao> configs = getListaPorTipo(tpConf.getIdTpConfiguracao());
-			for (CpConfiguracao c : configs) {
-				if (c.getHisDtFim() == null && c.getDpPessoa().equivale(pes) && c.getLotacao().equivale(lot)) {
-					c.setHisDtFim(dao().consultarDataEHoraDoServidor());
-					dao().gravarComHistorico(c, identidadeCadastrante);
+			Set<CpConfiguracaoCache> configs = getListaPorTipo(tpConf);
+			for (CpConfiguracaoCache c : configs) {
+				if (c.hisDtFim == null && c.dpPessoa == pes.getIdInicial() && c.lotacao == lot.getIdInicial()) {
+					CpConfiguracao cfg = dao().consultar(c.idConfiguracao, CpConfiguracao.class, false);
+					cfg.setHisDtFim(dao().consultarDataEHoraDoServidor());
+					dao().gravarComHistorico(cfg, identidadeCadastrante);
 				}
 			}
 			ModeloDao.commitTransacao();
@@ -913,7 +903,7 @@ public class CpConfiguracaoBL {
 			flt.setIdTpGrupo(idCpTipoGrupo.intValue());
 			CpConfiguracaoBL bl = Cp.getInstance().getConf();
 
-			return bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO);
+			return bl.podePorConfiguracao(titular, lotaTitular, cpGrp, CpTipoDeConfiguracao.GERENCIAR_GRUPO);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,6 +49,10 @@ import br.gov.jfrj.siga.wf.logic.WfPodeEditarDiagrama;
 import br.gov.jfrj.siga.wf.logic.WfPodeIniciarDiagrama;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 
@@ -105,6 +111,14 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "GRUP_ID_EDICAO")
 	private CpPerfil grupoDeEdicao;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DEFP_TP_PRINCIPAL")
+	private WfTipoDePrincipal tipoDePrincipal;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DEFP_TP_VINCULO_PRINCIPAL")
+	private WfTipoDeVinculoComPrincipal tipoDeVinculoComPrincipal;
 
 	@Transient
 	private java.lang.String hisIde;
@@ -429,6 +443,43 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 			i++;
 		}
 		return i;
+	}
+
+	public CpPerfil getGrupoDeEdicao() {
+		return grupoDeEdicao;
+	}
+
+	public void setGrupoDeEdicao(CpPerfil grupoDeEdicao) {
+		this.grupoDeEdicao = grupoDeEdicao;
+	}
+
+	public WfTipoDePrincipal getTipoDePrincipal() {
+		return tipoDePrincipal;
+	}
+
+	public void setTipoDePrincipal(WfTipoDePrincipal tipoDePrincipal) {
+		this.tipoDePrincipal = tipoDePrincipal;
+	}
+
+	public WfTipoDeVinculoComPrincipal getTipoDeVinculoComPrincipal() {
+		return tipoDeVinculoComPrincipal;
+	}
+
+	public void setTipoDeVinculoComPrincipal(WfTipoDeVinculoComPrincipal tipoDeVinculoComPrincipal) {
+		this.tipoDeVinculoComPrincipal = tipoDeVinculoComPrincipal;
+	}
+
+	public String getIdentificadoresDeVariaveis() {
+		Set<String> set = new TreeSet<>();
+		for (WfDefinicaoDeTarefa td : definicaoDeTarefa) {
+			if (td.getDefinicaoDeVariavel() != null)
+				for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel())
+					set.add(vd.getIdentificador());
+			if (td.getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+					|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO)
+				set.add(WfTarefaDocCriar.getIdentificadorDaVariavel(td));
+		}
+		return String.join(", ", set);
 	}
 
 }

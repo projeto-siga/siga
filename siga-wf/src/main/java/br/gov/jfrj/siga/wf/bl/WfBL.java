@@ -28,6 +28,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.crivano.jflow.TaskResult;
+import com.crivano.jflow.model.enm.TaskResultKind;
 import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
@@ -40,6 +42,7 @@ import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
+import br.gov.jfrj.siga.wf.logic.WfPodeRetomar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
@@ -52,6 +55,7 @@ import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -117,8 +121,30 @@ public class WfBL extends CpBL {
 		if (variable.containsKey("doc_document"))
 			principal = (String) variable.get("doc_document");
 
+		if (tipoDePrincipal == null)
+			tipoDePrincipal = WfTipoDePrincipal.NENHUM;
+
 		WfProcedimento pi = new WfProcedimento(pd, variable);
-		pi.setTipoDePrincipal(WfTipoDePrincipal.DOC);
+
+		// Impedir a inicialização de procedimento sem informar o principal, quando este
+		// é obrigatório
+		if (principal == null && tipoDePrincipal != WfTipoDePrincipal.NENHUM
+				&& (pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OBRIGATORIO
+						|| pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OBRIGATORIO_E_EXCLUSIVO))
+			throwErroDeInicializacao(pi, null, "não é permitido instanciar este procedimento sem informar o principal");
+
+		// Impedir que o mesmo documento seja referenciado por 2 procedimentos
+		// diferentes ativos, quando o vínculo é exclusivo
+		if (principal != null && (pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OPCIONAL_E_EXCLUSIVO
+				|| pd.getTipoDeVinculoComPrincipal() == WfTipoDeVinculoComPrincipal.OBRIGATORIO_E_EXCLUSIVO)) {
+			List<WfProcedimento> l = dao().consultarProcedimentosAtivosPorPrincipal(principal);
+			if (l.size() > 0)
+				throwErroDeInicializacao(pi, null,
+						"não é permitido instanciar este procedimento com um principal que já está sendo orquestrado por pelo procedimento ativo "
+								+ l.get(0).getSigla());
+		}
+
+		pi.setTipoDePrincipal(tipoDePrincipal);
 		pi.setPrincipal(principal);
 		pi.setTitular(titular);
 		pi.setLotaTitular(lotaTitular);
@@ -134,17 +160,29 @@ public class WfBL extends CpBL {
 				if (r == null)
 					throwErroDeInicializacao(pi, td, "não foi possível calcular o responsável pela tarefa");
 			}
-			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO) {
+			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO
+					|| td.getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+					|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
 				if (td.getRefId() == null)
-					throwErroDeInicializacao(pi, td,
-							"não foi definido o modelo para a inclusão de documento na tarefa");
+					throwErroDeInicializacao(pi, td, "não foi definido o modelo de documento na tarefa");
 				if (pi.getPrincipal() == null)
 					throwErroDeInicializacao(pi, td,
 							"não foi definido o principal para a inclusão de documento na tarefa");
-				if (pi.getTipoDePrincipal() != WfTipoDePrincipal.DOC)
+				if (pi.getTipoDePrincipal() != WfTipoDePrincipal.DOCUMENTO)
 					throwErroDeInicializacao(pi, td,
 							"o principal não é um documento para a inclusão de documento na tarefa");
+				if (td.getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+						|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
+					if (td.getRefId2() == null)
+						throwErroDeInicializacao(pi, td,
+								"não foi definido o preenchimento automático de documento na tarefa");
+				}
 			}
+		}
+		
+		if (pi.getPrincipal() != null && pi.getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
+			dao().gravar(pi); // Precisa gravar para gerar uma sigla válida para o procedimento
+			Service.getExService().atualizarPrincipal(pi.getPrincipal(), "PROCEDIMENTO", pi.getSigla());
 		}
 
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
@@ -163,7 +201,7 @@ public class WfBL extends CpBL {
 	private String throwErroDeInicializacao(WfProcedimento pi, WfDefinicaoDeTarefa td, String mensagem) {
 		throw new AplicacaoException("Erro na inicialização de um procedimento de workflow do diagrama '"
 				+ pi.getDefinicaoDeProcedimento().getSigla() + "', " + mensagem
-				+ (td.getTitle() != null ? " '" + td.getTitle() + "'" : ""));
+				+ (td != null && td.getTitle() != null ? " '" + td.getTitle() + "'" : ""));
 	}
 
 	public void prosseguir(String event, Integer detourIndex, Map<String, Object> param, DpPessoa titular,
@@ -185,6 +223,10 @@ public class WfBL extends CpBL {
 
 	public List<WfProcedimento> getTaskList(String siglaDoc) {
 		List<WfProcedimento> pis = WfDao.getInstance().consultarProcedimentosAtivosPorEvento(siglaDoc);
+		List<WfProcedimento> pis2 = WfDao.getInstance().consultarProcedimentosAtivosPorPrincipal(siglaDoc);
+		for (WfProcedimento pi : pis2)
+			if (!pis.contains(pi))
+				pis.add(pi);
 		return pis;
 	}
 
@@ -194,7 +236,7 @@ public class WfBL extends CpBL {
 		if (principal == null || tipo == null)
 			return;
 
-		if (tipo != WfTipoDePrincipal.DOC)
+		if (tipo != WfTipoDePrincipal.DOCUMENTO)
 			return;
 
 		if (pi.getResponsible() == null)
@@ -213,7 +255,7 @@ public class WfBL extends CpBL {
 		if (principal == null || tipo == null)
 			return;
 
-		if (tipo != WfTipoDePrincipal.DOC)
+		if (tipo != WfTipoDePrincipal.DOCUMENTO)
 			return;
 
 		ExService service = Service.getExService();
@@ -363,6 +405,13 @@ public class WfBL extends CpBL {
 		gravarMovimentacao(mov);
 		pi.end();
 		dao().gravar(pi);
+	}
+
+	public void retomar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade)
+			throws Exception {
+		assertLogic(new WfPodeRetomar(pi, titular, lotaTitular), "retomar");
+		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
+		engine.resume(pi);
 	}
 
 	private static void assertLogic(Expression expr, String descr) {

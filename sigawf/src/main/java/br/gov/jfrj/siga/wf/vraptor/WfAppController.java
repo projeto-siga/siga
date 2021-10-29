@@ -301,7 +301,7 @@ public class WfAppController extends WfController {
 			desvio = indiceDoDesvio;
 		}
 
-		Wf.getInstance().getBL().prosseguir(pi.getEvent(), desvio, param, getTitular(), getLotaTitular(),
+		Wf.getInstance().getBL().prosseguir(pi.getIdEvent(), desvio, param, getTitular(), getLotaTitular(),
 				getIdentidadeCadastrante());
 
 		// Redireciona para a pagina escolhida quando o procedimento criar uma
@@ -404,6 +404,22 @@ public class WfAppController extends WfController {
 		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class, null);
 
 		Wf.getInstance().getBL().terminar(pi, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
+
+		if (siglaPrincipal != null) {
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);
+			return;
+		}
+		result.redirectTo(this).procedimento(pi.getId());
+	}
+
+	@Transacional
+	@Get
+	@Post
+	@Path("/app/procedimento/{sigla}/retomar")
+	public void retomar(String sigla, String siglaPrincipal) throws Exception {
+		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class, null);
+
+		Wf.getInstance().getBL().retomar(pi, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
 
 		if (siglaPrincipal != null) {
 			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);

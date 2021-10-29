@@ -1,0 +1,12 @@
+SET SQL_SAFE_UPDATES = 0;
+update corporativo.cp_configuracao c inner join corporativo.dp_lotacao o on c.ID_LOTACAO = o.ID_LOTACAO set c.ID_LOTACAO = o.ID_LOTACAO_INI;
+update corporativo.cp_configuracao c inner join corporativo.dp_cargo o on c.ID_CARGO = o.ID_CARGO set c.ID_CARGO = o.ID_CARGO_INICIAL;
+update corporativo.cp_configuracao c inner join corporativo.dp_funcao_confianca o on c.ID_FUNCAO_CONFIANCA = o.ID_FUNCAO_CONFIANCA set c.ID_FUNCAO_CONFIANCA = o.ID_FUN_CONF_INI;
+update corporativo.cp_configuracao c inner join corporativo.dp_pessoa o on c.ID_PESSOA = o.ID_PESSOA set c.ID_PESSOA = o.ID_PESSOA_INICIAL;
+update corporativo.cp_configuracao c inner join corporativo.cp_identidade o on c.ID_IDENTIDADE = o.ID_IDENTIDADE set c.ID_IDENTIDADE = o.HIS_ID_INI;
+update corporativo.cp_configuracao c inner join corporativo.dp_lotacao o on c.ID_LOTACAO_OBJETO = o.ID_LOTACAO set c.ID_LOTACAO_OBJETO = o.ID_LOTACAO_INI;
+update corporativo.cp_configuracao c inner join corporativo.dp_cargo o on c.ID_CARGO_OBJETO = o.ID_CARGO set c.ID_CARGO_OBJETO = o.ID_CARGO_INICIAL;
+update corporativo.cp_configuracao c inner join corporativo.dp_funcao_confianca o on c.ID_FUNCAO_CONFIANCA_OBJETO = o.ID_FUNCAO_CONFIANCA set c.ID_FUNCAO_CONFIANCA_OBJETO = o.ID_FUN_CONF_INI;
+update corporativo.cp_configuracao c inner join corporativo.dp_pessoa o on c.ID_PESSOA_OBJETO = o.ID_PESSOA set c.ID_PESSOA_OBJETO = o.ID_PESSOA_INICIAL;
+update corporativo.cp_configuracao c inner join corporativo.cp_grupo o on c.ID_GRUPO = o.ID_GRUPO set c.ID_GRUPO = o.HIS_ID_INI;
+SET SQL_SAFE_UPDATES = 1;

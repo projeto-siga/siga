@@ -15,6 +15,8 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.api.v1.SigaApiV1Servlet;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
+import br.gov.jfrj.siga.cp.converter.ITipoDeConfiguracaoConverter;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
 
 @Startup
@@ -28,6 +30,8 @@ public class SigaStarter {
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO SIGA.WAR");
+		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
+
 		try {
 			SigaFlyway.migrate("java:/jboss/datasources/SigaCpDS", "classpath:db/mysql/sigacp", false);
 		} catch (NamingException e) {

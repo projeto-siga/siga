@@ -18,7 +18,8 @@
 <%@ attribute name="tamanho" required="false"%>
 <%@ attribute name="checarInput" required="false"%>
 
-<c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
+<c:set var="propriedadeClean"
+	value="${f:slugify(propriedade,true,true)}" />
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
 	<c:set var="p2" value="${fn:split(parametro,'=')}" />
@@ -189,9 +190,12 @@ self.ajax_${propriedadeClean} = function() {
 	if (executarEventos) {
 		var url = '/${modulo}/app/${tipo}/selecionar?propriedade=${propriedade}'+'${selecaoParams}';
 		url = url + '&sigla=' + sigla;
-		Siga.ajax(url, null, "GET", function(response){		
+		/* Siga.ajax(url, null, "GET", function(response){		
 			resposta_ajax_${propriedadeClean}(response);
-		});	
+		}); */	
+		$.get( url, function(response){
+			resposta_ajax_${propriedadeClean}(response);
+		});
 		//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
 	}
 }

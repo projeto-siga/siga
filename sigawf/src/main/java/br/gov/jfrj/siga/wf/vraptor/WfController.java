@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.wf.vraptor;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -103,4 +105,5 @@ public class WfController extends SigaController {
 		}
 		return lotaAtor;
 	}
+	
 }

@@ -58,8 +58,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 		@NamedQuery(name = "consultarPorIdDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacao = :idLotacao"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacao", query = "select lot from DpLotacao lot where"
-				+ "      upper(lot.siglaLotacao) = upper(:siglaLotacao)"
-				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "      ((lot.siglaLotacao = upper(:siglaLotacao)"
+				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu))"
+				+ "      or (:siglaOrgaoLotacao is not null and lot.siglaLotacao = upper(:siglaOrgaoLotacao)))"
 				+ "	     and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
 				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
@@ -119,7 +120,7 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@Column(name = "NOME_LOTACAO", nullable = false, length = 120)
 	private String nomeLotacao;
 
-	@Column(name = "SIGLA_LOTACAO", length = 20)
+	@Column(name = "SIGLA_LOTACAO", length = 30)
 	private String siglaLotacao;
 
 	@Temporal(TemporalType.TIMESTAMP)

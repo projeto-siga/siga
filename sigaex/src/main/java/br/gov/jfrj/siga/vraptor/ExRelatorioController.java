@@ -1566,6 +1566,9 @@ public class ExRelatorioController extends ExController {
 		consistePeriodo(dataInicial, dataFinal);
 
 		parametros.put("orgao", orgaoSelId.toString());
+		parametros.put("lotacaoTitular",
+				getLotaTitular().getSiglaLotacao());
+		parametros.put("idTit", getTitular().getId().toString());
 
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
 				.getNmOrgaoUsu());

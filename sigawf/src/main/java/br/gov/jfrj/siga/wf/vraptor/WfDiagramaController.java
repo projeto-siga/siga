@@ -56,6 +56,8 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
 import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
 import br.gov.jfrj.siga.wf.util.WfUtil;
@@ -235,6 +237,11 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 					throw new AplicacaoException("Já existe um diagrama com este nome: " + pd.getNome());
 			}
 
+			if (pd.getTipoDePrincipal() == null)
+				pd.setTipoDePrincipal(WfTipoDePrincipal.NENHUM);
+			if (pd.getTipoDePrincipal() == WfTipoDePrincipal.NENHUM)
+				pd.setTipoDeVinculoComPrincipal(null);
+
 			if (pd.getOrgaoUsuario() == null)
 				pd.setOrgaoUsuario(getTitular().getOrgaoUsuario());
 
@@ -349,9 +356,16 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 				result.redirectTo("editar?id=" + pd.getId());
 				return;
 			}
-			jsonSuccess("OK");
+			jsonSuccess(new GravarResultado(pd.getId()));
 		} catch (Exception e) {
 			jsonError(e);
+		}
+	}
+	
+	private static class GravarResultado {
+		String id;
+		public GravarResultado(Long id) {
+			this.id = id.toString();
 		}
 	}
 
@@ -408,12 +422,34 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		result.use(Results.json()).from(list, "list").serialize();
 	}
 
+	@Get("app/diagrama/tipo-de-principal/carregar")
+	public void carregarTiposDePrincipal() throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		List<SigaIdStringDescrString> list = new ArrayList<>();
+		for (WfTipoDePrincipal enm : WfTipoDePrincipal.values()) {
+			list.add(new SigaIdStringDescrString(enm.name(), enm.getDescr()));
+		}
+		result.use(Results.json()).from(list, "list").serialize();
+	}
+
+	@Get("app/diagrama/tipo-de-vinculo-com-principal/carregar")
+	public void carregarTiposDeVinculoComPrincipal() throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		List<SigaIdStringDescrString> list = new ArrayList<>();
+		for (WfTipoDeVinculoComPrincipal enm : WfTipoDeVinculoComPrincipal.values()) {
+			list.add(new SigaIdStringDescrString(enm.name(), enm.getDescr()));
+		}
+		result.use(Results.json()).from(list, "list").serialize();
+	}
+
 	@Get("app/diagrama/vazio")
 	public void carregarDiagramaVazio() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		WfDefinicaoDeProcedimento pd = new WfDefinicaoDeProcedimento();
 		pd.setAcessoDeEdicao(WfAcessoDeEdicao.ACESSO_LOTACAO);
 		pd.setAcessoDeInicializacao(WfAcessoDeInicializacao.ACESSO_PUBLICO);
+		pd.setTipoDePrincipal(WfTipoDePrincipal.DOCUMENTO);
+		pd.setTipoDeVinculoComPrincipal(WfTipoDeVinculoComPrincipal.OBRIGATORIO_E_EXCLUSIVO);
 		pd.setResponsavel(getTitular());
 		pd.setResponsavelId(pd.getResponsavel().getId());
 		pd.setLotaResponsavel(getLotaTitular());
@@ -450,7 +486,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			result.use(Results.http()).body("0");
 		}
 	}
-	
+
 	protected void jsonSuccess(final Object resp) {
 		String s = gson.toJson(resp);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);

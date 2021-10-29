@@ -150,7 +150,8 @@ public class ExArquivoNumerado implements Comparable {
 	}
 
 	public String getReferenciaHtml() {
-		if (getArquivo().getHtml() == null)
+		if ((getArquivo() instanceof ExDocumento && ((ExDocumento)getArquivo()).isCapturado()) ||
+				(getArquivo() instanceof ExMovimentacao && getArquivo().getHtml() == null))
 			return null;
 		return getReferencia() + ".html";
 	}

@@ -56,11 +56,15 @@ function sbmt(id) {
 	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
-		var paiSigla = getQueryParameterByName('mobilPaiSel.sigla');
-		var criandoAnexo = getQueryParameterByName('criandoAnexo');
+		var paiSigla = document.getElementsByName('exDocumentoDTO.mobilPaiSel.sigla')[0].value;
+		var criandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value;
+		var criandoSubprocesso = document.getElementsByName('exDocumentoDTO.criandoSubprocesso')[0].value;
 		
-		frm.action = id ? 'recarregar' : 'editar?modelo=' + document.getElementsByName('exDocumentoDTO.idMod')[0].value
-				+ (paiSigla ? '&mobilPaiSel.sigla=' + paiSigla : '') + (criandoAnexo ? '&criandoAnexo=' + criandoAnexo : '');
+		
+		frm.action = id ? 'recarregar' : 'editar?modelo=' + mod.value
+				+ (paiSigla ? '&mobilPaiSel.sigla=' + paiSigla : '') 
+				+ (criandoAnexo ? '&criandoAnexo=' + criandoAnexo : '')
+				+ (criandoSubprocesso ? '&criandoSubprocesso=' + criandoSubprocesso : '');
 		frm.submit();
 	}
 	return;

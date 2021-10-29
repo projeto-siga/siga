@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
+import static org.apache.commons.lang3.math.NumberUtils.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +28,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -34,10 +35,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -56,12 +55,11 @@ import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -69,6 +67,9 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
@@ -174,8 +175,7 @@ public class CpBL {
 
 	public void bloquearIdentidade(CpIdentidade ident, CpIdentidade identidadeCadastrante, boolean fBloquear)
 			throws Exception {
-		CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-				CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
 		Date dt = dao().consultarDataEHoraDoServidor();
 
 		CpConfiguracao confOld = null;
@@ -183,7 +183,9 @@ public class CpBL {
 			CpConfiguracao confFiltro = new CpConfiguracao();
 			confFiltro.setCpIdentidade(ident);
 			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			if (confCacheOld != null) 
+				confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			if (confOld.getCpIdentidade() == null)
 				confOld = null;
 		} catch (Exception e) {
@@ -192,10 +194,8 @@ public class CpBL {
 
 		CpConfiguracao conf = new CpConfiguracao();
 		conf.setCpIdentidade(ident);
-		conf.setCpSituacaoConfiguracao(dao().consultar(
-				fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-						: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-				CpSituacaoConfiguracao.class, false));
+		conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
+						: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
 
@@ -211,8 +211,7 @@ public class CpBL {
 		try {
 			dao().iniciarTransacao();
 
-			CpTipoConfiguracao tpConf = dao().consultar(CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-					CpTipoConfiguracao.class, false);
+			CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
 			Date dt = dao().consultarDataEHoraDoServidor();
 
 			CpConfiguracao confOld = null;
@@ -220,17 +219,17 @@ public class CpBL {
 				CpConfiguracao confFiltro = new CpConfiguracao();
 				confFiltro.setDpPessoa(pes);
 				confFiltro.setCpTipoConfiguracao(tpConf);
-				confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+				CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+				if (confCacheOld != null) 
+					confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 			CpConfiguracao conf = new CpConfiguracao();
 			conf.setDpPessoa(pes);
-			conf.setCpSituacaoConfiguracao(dao().consultar(
-					fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-							: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-					CpSituacaoConfiguracao.class, false));
+			conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
+							: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
 
@@ -250,7 +249,7 @@ public class CpBL {
 	}
 
 	public CpConfiguracao configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao, DpLotacao lotacao, DpPessoa pes,
-			CpServico servico, CpSituacaoConfiguracao situacao, CpTipoConfiguracao tpConf,
+			CpServico servico, CpSituacaoDeConfiguracaoEnum situacao, ITipoDeConfiguracao tpConf,
 			CpIdentidade identidadeCadastrante) throws Exception {
 		Date dt = dao().consultarDataEHoraDoServidor();
 
@@ -263,7 +262,9 @@ public class CpBL {
 			confFiltro.setOrgaoUsuario(orgao);
 			confFiltro.setCpServico(servico);
 			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+			if (confCacheOld != null) 
+				confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
 			if (confOld != null && !confOld.isEspecifica(confFiltro))
 				confOld = null;
 			if (confOld != null) 
@@ -681,11 +682,22 @@ public class CpBL {
 
 	public String buscarModoAutenticacao(String orgao) {
 		String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
-		if (Prop.get("/siga.ldap.orgaos") == null)
+		if (Prop.get("/siga.ldap.orgaos") == null) {
 			return retorno;
-		String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
-		if (modo != null)
-			retorno = modo;
+		}
+		else {
+			for (String sesbPessoa: Prop.get("/siga.ldap.orgaos").split(",")) {
+				if (sesbPessoa.equalsIgnoreCase(orgao)) {
+					String modo = Prop.get("/siga.ldap." + orgao.toLowerCase() + ".modo");
+					if (modo != null) {
+						retorno = modo;
+						break;
+					}
+				}
+			}
+			
+		}
+
 		return retorno;
 	}
 
@@ -857,6 +869,50 @@ public class CpBL {
 					i.setDscSenhaIdentidadeCripto(null);
 					i.setDscSenhaIdentidadeCriptoSinc(null);
 					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
+				}
+
+				dao().commitTransacao();
+				return null;
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
+			}
+		} else {
+			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		}
+	}
+	
+	
+	public CpIdentidade redefinirSenha(String token, String senhaNova, String senhaConfirma,
+			String cpfUsuario, List<CpIdentidade> listaIdentidades)
+			throws NoSuchAlgorithmException, AplicacaoException {
+
+
+		boolean podeTrocar = Boolean.FALSE;
+
+		for (CpIdentidade cpIdentidade : listaIdentidades) {
+			podeTrocar = Boolean.TRUE;
+			break;
+		}
+
+
+		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
+			consisteFormatoSenha(senhaNova);
+			try {
+				Date dt = dao().consultarDataEHoraDoServidor();
+				final String hashNova = GeraMessageDigest.executaHash(senhaNova.getBytes(), "MD5");
+
+				dao().iniciarTransacao();
+				CpIdentidade i = null;
+				for (CpIdentidade cpIdentidade : listaIdentidades) {
+					i = new CpIdentidade();
+					PropertyUtils.copyProperties(i, cpIdentidade);
+					i.setIdIdentidade(null);
+					i.setDtCriacaoIdentidade(dt);
+					i.setDscSenhaIdentidade(hashNova);
+					i.setDscSenhaIdentidadeCripto(null);
+					i.setDscSenhaIdentidadeCriptoSinc(null);
+					dao().gravarComHistorico(i, cpIdentidade, dt, null);
 				}
 
 				dao().commitTransacao();
@@ -1249,8 +1305,6 @@ public class CpBL {
 		}
 		pessoa.setSesbPessoa(ou.getSigla());
 		
-
-
 		// ÓRGÃO / CARGO / FUNÇÃO DE CONFIANÇA / LOTAÇÃO e CPF iguais.
 		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
 		dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
@@ -1270,10 +1324,8 @@ public class CpBL {
 		
 		List<DpPessoa> listaPessoasMesmoCPF = new ArrayList<DpPessoa>();
 		DpPessoa pessoa2 = new DpPessoa();
-		
 	
 		listaPessoasMesmoCPF.addAll(CpDao.getInstance().listarCpfAtivoInativo(pessoa.getCpfPessoa()));
-		
 		
 		try {
 	//		dao().em().getTransaction().begin();
@@ -1351,7 +1403,10 @@ public class CpBL {
 			if(e.getCause() instanceof ConstraintViolationException &&
 					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
 				throw new RegraNegocioException("Ocorreu um problema no cadastro da pessoa");
-			} else {
+			} else if(e.getCause() instanceof ConstraintViolationException &&
+					("CORPORATIVO.SIGA_VALID_UNIQUE".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
+				throw new RegraNegocioException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+			}else {
 		//	dao().em().getTransaction().rollback();
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
@@ -1391,11 +1446,11 @@ public class CpBL {
 	public CpToken gerarUrlPermanente(Long idRef) {
 		try {
 			CpToken sigaUrlPermanente = new CpToken();
-			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(1L,idRef); //Se tem token não expirado, devolve token
+			sigaUrlPermanente = dao().obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE,idRef); //Se tem token não expirado, devolve token
 			if (sigaUrlPermanente == null ) {
 				sigaUrlPermanente = new CpToken();
 				//Seta tipo 1 - Token para URL Permamente
-				sigaUrlPermanente.setIdTpToken(1L);
+				sigaUrlPermanente.setIdTpToken(CpToken.TOKEN_URLPERMANENTE);
 				
 				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
 				sigaUrlPermanente.setIdRef(idRef);
@@ -1448,10 +1503,11 @@ public class CpBL {
 			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO) 
 				cpp++;
 		}
-		
+		Integer qtdMaxPorUnidade = Prop.getInt("/siga.marcadores.qtd.maxima.por.unidade");
 		if (idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
-				&& c > 10) 
-			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
+				&& c > qtdMaxPorUnidade) 
+			throw new AplicacaoException ("Atingiu o limite de " + qtdMaxPorUnidade.toString() 
+				+ " marcadores possíveis para " + msgLotacao);
 		
 		if (idFinalidade == CpMarcadorFinalidadeEnum.PASTA_PADRAO && id == null && cpp > 0) 
 			throw new AplicacaoException ("Só é permitido criar uma pasta padrão");
@@ -1473,7 +1529,7 @@ public class CpBL {
 			marcadorAnt = dao().consultar(id, CpMarcador.class, false);
 			if (marcadorAnt != null) {
 				if (marcadorAnt.getDpLotacaoIni() != null &&
-						marcadorAnt.getDpLotacaoIni().getIdInicial() != cadastrante.getLotacao().getIdInicial())
+						!(marcadorAnt.getDpLotacaoIni().getIdInicial().equals(cadastrante.getLotacao().getIdInicial())))
 					throw new AplicacaoException ("Não é permitida a alteração de marcador de outra " + msgLotacao);
 
 				marcador.setHisIdIni(marcadorAnt.getHisIdIni());
@@ -1510,12 +1566,10 @@ public class CpBL {
 	public void definirPinIdentidade( List<CpIdentidade> listaIdentidades, String pin, CpIdentidade idCadastrante)
 			throws NoSuchAlgorithmException, AplicacaoException {
 
-
-		boolean podeTrocar = Boolean.TRUE;
-
-
-		if (podeTrocar) {
-			try {
+		try {
+			boolean podeTrocar = Cp.getInstance().getComp().podeSegundoFatorPin(idCadastrante.getPessoaAtual(), idCadastrante.getPessoaAtual().getLotacao());
+			
+			if (podeTrocar) {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				final String pinHash = GeraMessageDigest.calcSha256(pin);
 
@@ -1528,12 +1582,11 @@ public class CpBL {
 					i.setPinIdentidade(pinHash);
 					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
 				}
-
-			} catch (final Exception e) {
-				throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
+			} else {
+				throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
 			}
-		} else {
-			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante a gravação", 0, e);
 		}
 	}
 	
@@ -1555,6 +1608,23 @@ public class CpBL {
 		formatoPinIsValido = true;
 		
 		return formatoPinIsValido;
+	}
+	
+	public Boolean consisteFormatoSenha(String senhaNova) throws RegraNegocioException {
+		boolean formatoSenhaValido = false;
+		final int SIZE_MIN_SENHA = 6;
+		
+		if (senhaNova.isEmpty()) {
+			throw new RegraNegocioException("Senha não informada.");
+		}
+
+		if (!SigaUtil.validacaoFormatoSenha(senhaNova)) {
+			throw new RegraNegocioException("Senha inválida. Deve conter pelo menos 6 caracteres sendo eles maiúsculos, minúsculos e números para aumentar a força da senha.");
+		}	
+				
+		formatoSenhaValido = true;
+		
+		return formatoSenhaValido;
 	}
 	
 	public Boolean validaHashPin(String pin, CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
@@ -1594,12 +1664,12 @@ public class CpBL {
 		try {
 			
 			/* Invalidar se existir token ativo */
-			invalidarTokenAtivo(2L,cpf);
+			invalidarTokenAtivo(CpToken.TOKEN_PIN,cpf);
 
 			CpToken tokenResetPin = new CpToken();
 			
 			//Seta tipo 2 - Token para Reset PIN
-			tokenResetPin.setIdTpToken(2L);
+			tokenResetPin.setIdTpToken(CpToken.TOKEN_PIN);
 			tokenResetPin.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
 			tokenResetPin.setIdRef(cpf);
 			
@@ -1628,30 +1698,68 @@ public class CpBL {
 		}
 	}
 	
-	public Boolean isTokenResetPinValido(Long cpf, String token) {
-		Boolean isTokenValido = false;
+	public CpToken gerarTokenResetSenha(Long cpf) {
+		try {
+			
+			/* Invalidar se existir token ativo */
+			invalidarTokenAtivo(CpToken.TOKEN_SENHA,cpf);
+
+			CpToken tokenResetSenha = new CpToken();
+			
+			tokenResetSenha.setIdTpToken(CpToken.TOKEN_SENHA);
+			tokenResetSenha.setToken(SigaUtil.randomAlfanumericoSeletivo(8));
+			tokenResetSenha.setIdRef(cpf);
+			
+			/* HORA ATUAL */
+			GregorianCalendar gc = new GregorianCalendar();
+			Date dt = dao().consultarDataEHoraDoServidor();
+			gc.setTime(dt);
+
+			
+			/* EXP - Expiração do Token */
+			gc.add(Calendar.HOUR, 1);
+			tokenResetSenha.setDtExp(gc.getTime());	
+
+			try {
+				dao().gravar(tokenResetSenha);
+			} catch (final Exception e) {
+
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		
+			return tokenResetSenha;
+
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+		}
+	}
+	
+	/**** Controle de Validade Token ****/
+	public Boolean isTokenValido(Long tipoToken, Long cpf, String token) {
+		Boolean isValido = false;
 		try {
 			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
 			if (tokenResetPin != null ) {
 				if (cpf.equals(tokenResetPin.getIdRef())) {
 					Date dt = dao().consultarDataEHoraDoServidor();
 					LocalDateTime dtNow = LocalDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
 					LocalDateTime dtExp = LocalDateTime.ofInstant(tokenResetPin.getDtExp().toInstant(), ZoneId.systemDefault());
 					
-					isTokenValido = dtNow.isBefore(dtExp);			
+					isValido = dtNow.isBefore(dtExp);			
 				}
 			}
 
-			return isTokenValido;
+			return isValido;
 			
 		} catch (final Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
 	}
 	
-	public void invalidarTokenAtivo(Long tipo, Long idRef) {
-		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipo,idRef);
+	public void invalidarTokenAtivo(Long tipoToken, Long idRef) {
+		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
 		if (tokenResetPin != null) {
 			tokenResetPin.setDtExp(tokenResetPin.getDtIat());
 			try {
@@ -1662,10 +1770,10 @@ public class CpBL {
 		} 
 	}
 	
-	public void invalidarTokenUtilizado(Long cpf, String token) {
+	public void invalidarTokenUtilizado(Long tipoToken, Long cpf, String token) {
 		try {
 			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(2L,token); 
+			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
 			if (tokenResetPin != null ) {
 				tokenResetPin.setDtExp(tokenResetPin.getDtIat());
 				try {
@@ -1679,12 +1787,36 @@ public class CpBL {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
 	}
-	
+	/****  ****/
 	
 	private String textoEmailDefinicaoPin(DpPessoa destinatario, String corpo) {		
 		String conteudo = "";
 		
 		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/novo-pin-definido.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${corpo}", corpo);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
+	
+	private String textoEmailDefinicaoSenha(DpPessoa destinatario, String corpo) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/nova-senha-definida.html"),StandardCharsets.UTF_8))) {			
 			String str;
 			
 			while((str = bfr.readLine()) != null) {
@@ -1717,6 +1849,17 @@ public class CpBL {
 		}
 	}
 	
+	public void enviarEmailDefinicaoSenha(DpPessoa destinatario, String assunto, String corpo) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailDefinicaoSenha(destinatario,corpo);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
 	
 	private String textoEmailTokenResetPin(DpPessoa destinatario,  String tokenPin) {		
 		String conteudo = "";
@@ -1741,6 +1884,30 @@ public class CpBL {
 		}
 			
 	}
+	
+	private String textoEmailTokenResetSenha(DpPessoa destinatario,  String token) {		
+		String conteudo = "";
+		
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/token-senha-reset.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())
+					.replace("${token}", token);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}
+			
+	}
 
 	
 	public void enviarEmailTokenResetPIN(DpPessoa destinatario, String assunto, String tokenPin) {
@@ -1754,9 +1921,208 @@ public class CpBL {
 		}
 	}
 	
+	public void enviarEmailTokenResetSenha(DpPessoa destinatario, String assunto, String token) {
+		String[] destinanarios = { destinatario.getEmailPessoaAtual() };
+		String conteudoHTML = textoEmailTokenResetSenha(destinatario,token);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
 	public DpLotacao criarLotacao(final CpIdentidade identidadeCadastrante, final DpPessoa titular, final DpLotacao lotaTitular, 
-			final Long id, final String nmLotacao, final Long idOrgaoUsu, final String siglaLotacao,
+			final Long idLotacao, final String nmLotacao, final Long idOrgaoUsu, final String siglaLotacao,
 			final String situacao, final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade) {
+		
+		validarCriacaoLotacao(nmLotacao, idOrgaoUsu, siglaLotacao, idLocalidade);
+		
+		CpOrgaoUsuario cpOrgaoUsuario = new CpOrgaoUsuario();
+		cpOrgaoUsuario.setIdOrgaoUsu(idOrgaoUsu);
+		
+		validarSiglaCastradaOutraLotacao(idLotacao, siglaLotacao, cpOrgaoUsuario);
+		
+		List<DpPessoa> listPessoa = null;
+		DpLotacao lotacaoNova = new DpLotacao();
+		DpLotacao lotacao = null;	
+		
+		if(idLotacao != null) {
+			lotacao = dao().consultar(idLotacao, DpLotacao.class, false);
+			lotacaoNova.setIsSuspensa(lotacao.getIsSuspensa());
+		} else {
+			lotacaoNova.setIsSuspensa(INTEGER_ZERO);
+		}
+		
+		Date dataSistema = new Date(System.currentTimeMillis());
+		
+		if(podeGravarLotacao(idLotacao, nmLotacao, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade,
+				lotacao)) {
+			if (idLotacao != null) {			
+				listPessoa = popularInativacaoLotacaoEditada(titular, lotaTitular, idLotacao, nmLotacao, siglaLotacao, situacao,
+						lotacao, lotacaoNova, dataSistema);
+			} else {
+				lotacao = null;
+			}
+			
+			popularLotacaoNova(idLotacao, nmLotacao, siglaLotacao, isExternaLotacao, lotacaoPai, idLocalidade,
+					cpOrgaoUsuario, lotacaoNova, lotacao, dataSistema);
+			
+			try {
+				if(lotacaoNova.getDataFimLotacao() != null) {
+					lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
+					dao().gravarComHistorico(lotacao, identidadeCadastrante);
+				} else {
+					dao().gravarComHistorico(lotacaoNova, lotacao, dataSistema, identidadeCadastrante);
+				}
+				
+				gravarLotacaoPessoaComHistorico(identidadeCadastrante, listPessoa, lotacaoNova, lotacao, dataSistema);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", INTEGER_ZERO, e);
+			}
+		}
+		return lotacaoNova;
+	}
+
+	private boolean podeGravarLotacao(final Long idLotacao, final String nmLotacao, final String siglaLotacao,
+			final String situacao, final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade,
+			DpLotacao lotacao) {
+		return idLotacao == null ||(idLotacao != null && lotacao != null && (!nmLotacao.equals(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
+										|| (lotacao.getDataFim() == null && "false".equals(situacao)) || (lotacao.getDataFim() != null && "true".equals(situacao)) 
+										|| (isExternaLotacao != null && ((lotacao.getIsExternaLotacao() == null) || lotacao.getIsExternaLotacao() == 0))
+										|| (isExternaLotacao == null && ((lotacao.getIsExternaLotacao() != null) && lotacao.getIsExternaLotacao() == 1))
+										|| (isExternaLotacao != null && lotacao.getIsExternaLotacao() != null && !isExternaLotacao.equals(lotacao.getIsExternaLotacao().equals(Integer.valueOf(1)) ? Boolean.TRUE : Boolean.FALSE))
+										|| (lotacaoPai != null && lotacao.getLotacaoPai() == null)
+										|| (lotacaoPai == null && lotacao.getLotacaoPai() != null)
+										|| (lotacaoPai != null && !lotacaoPai.equals(lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getId() : 0L))
+										|| !idLocalidade.equals(lotacao.getLocalidade().getId())));
+	}
+
+	private void gravarLotacaoPessoaComHistorico(final CpIdentidade identidadeCadastrante, List<DpPessoa> listPessoa,
+			DpLotacao lotacaoNova, DpLotacao lotacao, Date dataSistema) {
+		if(lotacao != null && lotacao.getId() != null) {					
+			DpPessoa pessoaNova = null;
+			for (DpPessoa dpPessoa : listPessoa) {
+				pessoaNova = new DpPessoa();
+				if(dpPessoa.getLotacao().getIdInicial().equals(lotacaoNova.getIdLotacaoIni())) {
+					pessoaNova.setLotacao(lotacaoNova);
+				} else {
+					if(dpPessoa.getLotacao().getLotacaoPai() != null && lotacaoNova.getId().equals(dpPessoa.getLotacao().getLotacaoAtual().getLotacaoPai().getId())) {
+						pessoaNova.setLotacao(dpPessoa.getLotacao().getLotacaoAtual());
+					} else {
+						//grava nova lotacao filho e setar na pessoa
+						DpLotacao lotacaoFilhoNova = new DpLotacao();
+						DpLotacao lotacaoFilhoAntiga =  dpPessoa.getLotacao().getLotacaoAtual();
+						
+						lotacaoFilhoNova.setDataInicio(dataSistema);
+						copiaLotacao(lotacaoFilhoAntiga, lotacaoFilhoNova);
+						
+						dao().gravarComHistorico(lotacaoFilhoNova, lotacaoFilhoAntiga, dataSistema, identidadeCadastrante);
+						pessoaNova.setLotacao(lotacaoFilhoNova);
+					}
+				}				
+				copiarPessoa(dpPessoa, pessoaNova);
+				dao().gravarComHistorico(pessoaNova, dpPessoa, dataSistema, identidadeCadastrante);
+			}
+		}
+	}
+
+	private void popularLotacaoNova(final Long idLotacao, final String nmLotacao, final String siglaLotacao,
+			final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade,
+			CpOrgaoUsuario cpOrgaoUsuario, DpLotacao lotacaoNova, DpLotacao lotacao, Date dataSistema) {
+		if(lotacaoPai != null) {
+			validarIdLotacaoPai(idLotacao, lotacaoPai);
+			lotacaoNova.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
+		}
+		lotacaoNova.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
+		lotacaoNova.setSiglaLotacao(siglaLotacao.toUpperCase());
+		
+		CpLocalidade localidade = new CpLocalidade();
+		localidade.setIdLocalidade(idLocalidade);
+		lotacaoNova.setLocalidade(dao().consultarLocalidade(localidade));
+		
+		if(lotacaoNova.getOrgaoUsuario() == null && lotacao != null) {
+			lotacaoNova.setOrgaoUsuario(lotacao.getOrgaoUsuario());
+		} else {
+			lotacaoNova.setOrgaoUsuario(cpOrgaoUsuario);
+		}
+		
+		if (isExternaLotacao != null) {
+			lotacaoNova.setIsExternaLotacao(INTEGER_ONE);
+		} else {
+			lotacaoNova.setIsExternaLotacao(INTEGER_ZERO);	
+		}
+		
+		lotacaoNova.setDataInicioLotacao(dataSistema);
+	}
+
+	private void validarIdLotacaoPai(final Long idLotacao, final Long lotacaoPai) {
+		DpLotacao lotPai = new DpLotacao();
+		lotPai = CpDao.getInstance().consultarLotacaoPorId(lotacaoPai);
+		if(idLotacao != null) {
+			while(lotPai != null) {				
+				if(lotPai.getId().equals(idLotacao)) {
+					throw new AplicacaoException(SigaMessages.getMessage("usuario.lotacao") + " não pode ser selecionada como pai", 0);
+				} else if(lotPai.getLotacaoPai() != null) {
+					lotPai = CpDao.getInstance().consultarLotacaoPorId(lotPai.getLotacaoPai().getId());
+				} else {
+					lotPai = null;
+				}
+			}
+		}
+	}
+
+	private void validarSiglaCastradaOutraLotacao(final Long idLotacao, final String siglaLotacao,
+			CpOrgaoUsuario cpOrgaoUsuario) {
+		DpLotacao lotacaoTemp = consultarLotacaoPorSigla(siglaLotacao, cpOrgaoUsuario);		
+		
+		if(lotacaoTemp != null && lotacaoTemp.getId() != null && !lotacaoTemp.getId().equals(idLotacao)) {
+			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
+		}
+	}
+
+	private List<DpPessoa> popularInativacaoLotacaoEditada(final DpPessoa titular, final DpLotacao lotaTitular,
+			final Long idLotacao, final String nmLotacao, final String siglaLotacao, final String situacao,
+			DpLotacao lotacao, DpLotacao lotacaoNova, Date dataSistema) {
+		List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(idLotacao, Boolean.TRUE, Boolean.FALSE);
+		Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+		
+		if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
+				(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
+			throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
+		}
+						
+		if(podeInativarLotacao(lotacaoNova, listPessoa, qtdeDocumentoCriadosPosse, situacao)) {
+			lotacaoNova.setDataFimLotacao(dataSistema);
+		}
+		lotacaoNova.setIdLotacaoIni(lotacao.getIdLotacaoIni());
+		return listPessoa;
+	}
+	
+	private boolean podeInativarLotacao(final DpLotacao lotacao, final List<DpPessoa> listPessoa, 
+					final Integer qtdeDocumentoCriadosPosse, final String situacao) throws AplicacaoException {
+		if(lotacao.getDataFim() == null && "false".equals(situacao)) {
+	        if(listPessoa.size() > 0 || qtdeDocumentoCriadosPosse > 0) {	        		 
+	        	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa " + SigaMessages.getMessage("usuario.lotacao") , 0);
+	        } else if(dao().listarLotacoesPorPai(lotacao).size() > 0) {
+	        	throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao") , 0);
+	        } else {
+	        	return Boolean.TRUE;
+	        }
+		}
+		return Boolean.FALSE;
+	}
+
+	private DpLotacao consultarLotacaoPorSigla(final String siglaLotacao, CpOrgaoUsuario cpOrgaoUsuario) {
+		DpLotacao lotacaoTemp = new DpLotacao();		
+		lotacaoTemp.setSiglaLotacao(siglaLotacao);		
+		lotacaoTemp.setOrgaoUsuario(cpOrgaoUsuario);
+		DpLotacao lotacao = CpDao.getInstance().consultarPorSigla(lotacaoTemp);
+		return lotacao;
+	}
+
+	private void validarCriacaoLotacao(final String nmLotacao, final Long idOrgaoUsu, final String siglaLotacao,
+			final Long idLocalidade) {
 		if(nmLotacao == null)
 			throw new AplicacaoException("Nome da lotação não informado");
 		
@@ -1774,140 +2140,6 @@ public class CpBL {
 		
 		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) 
 			throw new AplicacaoException("Sigla com caracteres não permitidos");
-		
-		DpLotacao lotacao = new DpLotacao();
-		DpLotacao lotacaoNova = new DpLotacao();
-		lotacao.setSiglaLotacao(siglaLotacao);
-		CpOrgaoUsuario ou = new CpOrgaoUsuario();
-		ou.setIdOrgaoUsu(idOrgaoUsu);
-		lotacao.setOrgaoUsuario(ou);
-		lotacao = CpDao.getInstance().consultarPorSigla(lotacao);
-		Date data = new Date(System.currentTimeMillis());
-		
-		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
-			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
-		}
-		
-		List<DpPessoa> listPessoa = null;
-		
-		lotacao = null;	
-		if(id != null) {
-			lotacao = dao().consultar(id, DpLotacao.class, false);
-			lotacaoNova.setIsSuspensa(lotacao.getIsSuspensa());
-		} else {
-			lotacaoNova.setIsSuspensa(0);
-		}
-		
-		if(id == null ||(id != null && lotacao != null && (!nmLotacao.equals(lotacao.getNomeLotacao()) || !siglaLotacao.equalsIgnoreCase(lotacao.getSiglaLotacao())
-										|| (lotacao.getDataFim() == null && "false".equals(situacao)) || (lotacao.getDataFim() != null && "true".equals(situacao)) 
-										|| (isExternaLotacao != null && ((lotacao.getIsExternaLotacao() == null) || lotacao.getIsExternaLotacao() == 0))
-										|| (isExternaLotacao == null && ((lotacao.getIsExternaLotacao() != null) && lotacao.getIsExternaLotacao() == 1))
-										|| (isExternaLotacao != null && lotacao.getIsExternaLotacao() != null && !isExternaLotacao.equals(lotacao.getIsExternaLotacao().equals(Integer.valueOf(1)) ? Boolean.TRUE : Boolean.FALSE))
-										|| (lotacaoPai != null && lotacao.getLotacaoPai() == null)
-										|| (lotacaoPai == null && lotacao.getLotacaoPai() != null)
-										|| (lotacaoPai != null && !lotacaoPai.equals(lotacao.getLotacaoPai() != null ? lotacao.getLotacaoPai().getId() : 0L))
-										|| !idLocalidade.equals(lotacao.getLocalidade().getId())))) {
-			if (id != null) {			
-				listPessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
-				Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
-				
-				if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
-						(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
-					throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
-				}
-				
-				//valida se pode inativar lotação
-				if(lotacao.getDataFim() == null && "false".equals(situacao)) {
-			        if(listPessoa.size() > 0 || qtdeDocumentoCriadosPosse > 0) {	        		 
-			        	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa " + SigaMessages.getMessage("usuario.lotacao") , 0);
-			        } else if(dao().listarLotacoesPorPai(lotacao).size() > 0) {
-			        	throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao") , 0);
-			        } else {
-			        	lotacaoNova.setDataFimLotacao(data);
-			        }
-				}
-				lotacaoNova.setIdLotacaoIni(lotacao.getIdLotacaoIni());
-			} else {
-				lotacao = null;
-			}
-			
-			if(lotacaoPai != null) {
-				DpLotacao lotPai = new DpLotacao();
-				lotPai = CpDao.getInstance().consultarLotacaoPorId(lotacaoPai);
-				if(id != null) {
-					while(lotPai != null) {				
-						if(lotPai.getId().equals(id)) {
-							throw new AplicacaoException(SigaMessages.getMessage("usuario.lotacao") + " não pode ser selecionada como pai", 0);
-						} else if(lotPai.getLotacaoPai() != null) {
-							lotPai = CpDao.getInstance().consultarLotacaoPorId(lotPai.getLotacaoPai().getId());
-						} else {
-							lotPai = null;
-						}
-					}
-				}
-				lotacaoNova.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
-			}
-			lotacaoNova.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
-			lotacaoNova.setSiglaLotacao(siglaLotacao.toUpperCase());
-			
-			CpLocalidade localidade = new CpLocalidade();
-			localidade.setIdLocalidade(idLocalidade);
-			lotacaoNova.setLocalidade(dao().consultarLocalidade(localidade));
-			
-			if(lotacaoNova.getOrgaoUsuario() == null && lotacao != null) {
-				lotacaoNova.setOrgaoUsuario(lotacao.getOrgaoUsuario());
-			} else {
-				lotacaoNova.setOrgaoUsuario(ou);
-			}
-			
-			if (isExternaLotacao != null) {
-				lotacaoNova.setIsExternaLotacao(1);
-			} else {
-				lotacaoNova.setIsExternaLotacao(0);	
-			}
-			
-			lotacaoNova.setDataInicioLotacao(data);
-			DpLotacao lotacaoFilhoNova = null;
-			DpLotacao lotacaoFilhoAntiga = null;
-			try {
-				if(lotacaoNova.getDataFimLotacao() != null) {
-					lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
-					dao().gravarComHistorico(lotacao, identidadeCadastrante);
-				} else {
-					dao().gravarComHistorico(lotacaoNova, lotacao, data, identidadeCadastrante);
-				}
-				
-				if(lotacao != null && lotacao.getId() != null) {
-					
-					DpPessoa pessoaNova = null;
-					for (DpPessoa dpPessoa : listPessoa) {
-						pessoaNova = new DpPessoa();
-						if(dpPessoa.getLotacao().getIdInicial().equals(lotacaoNova.getIdLotacaoIni())) {
-							pessoaNova.setLotacao(lotacaoNova);
-						} else {
-							if(dpPessoa.getLotacao().getLotacaoPai() != null && lotacaoNova.getId().equals(dpPessoa.getLotacao().getLotacaoAtual().getLotacaoPai().getId())) {
-								pessoaNova.setLotacao(dpPessoa.getLotacao().getLotacaoAtual());
-							} else {
-								//grava nova lotacao filho e setar na pessoa
-								lotacaoFilhoNova = new DpLotacao();
-								lotacaoFilhoAntiga =  dpPessoa.getLotacao().getLotacaoAtual();
-								
-								lotacaoFilhoNova.setDataInicio(data);
-								copiaLotacao(lotacaoFilhoAntiga, lotacaoFilhoNova);
-								
-								dao().gravarComHistorico(lotacaoFilhoNova, lotacaoFilhoAntiga, data, identidadeCadastrante);
-								pessoaNova.setLotacao(lotacaoFilhoNova);
-							}
-						}				
-						copiarPessoa(dpPessoa, pessoaNova);
-						dao().gravarComHistorico(pessoaNova, dpPessoa, data, identidadeCadastrante);
-					}
-				}
-			} catch (final Exception e) {
-				throw new AplicacaoException("Erro na gravação", 0, e);
-			}
-		}
-		return lotacaoNova;
 	}
 	
 	public void copiaLotacao(DpLotacao lotAnt, DpLotacao lotNova) {

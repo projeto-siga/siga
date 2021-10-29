@@ -33,11 +33,13 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -52,7 +54,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
  */
 public class AcessoServicoRelatorio extends RelatorioTemplate {
 	private CpServico cpServico;
-	private ArrayList<CpSituacaoConfiguracao> cpSituacoesConfiguracao;
+	private ArrayList<CpSituacaoDeConfiguracaoEnum> cpSituacoesConfiguracao;
 	private ArrayList<CpOrgaoUsuario> cpOrgaosUsuario;
 
 	@SuppressWarnings("unchecked")
@@ -79,12 +81,11 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 			throw new DJBuilderException("Parâmetro idServico inválido!");
 		}
 		try {
-			ArrayList<CpSituacaoConfiguracao> cpSituacoes = new ArrayList<CpSituacaoConfiguracao>();
+			ArrayList<CpSituacaoDeConfiguracaoEnum> cpSituacoes = new ArrayList<>();
 			String strSits = (String) parametros.get("situacoesSelecionadas");
 			for (String strIdSit : strSits.split(",")) {
-				Long idSit = Long.parseLong(strIdSit);
-				CpSituacaoConfiguracao sit = dao().consultar(idSit,
-						CpSituacaoConfiguracao.class, false);
+				Integer idSit = Integer.parseInt(strIdSit);
+				CpSituacaoDeConfiguracaoEnum sit = CpSituacaoDeConfiguracaoEnum.getById(idSit);
 				cpSituacoes.add(sit);
 			}
 			setCpSituacoesConfiguracao(cpSituacoes);
@@ -141,9 +142,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection processarDados() {
-		CpTipoConfiguracao tipo = CpDao.getInstance().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				CpTipoConfiguracao.class, false);
+		CpTipoDeConfiguracao tipo = CpTipoDeConfiguracao.UTILIZAR_SERVICO;
 		ArrayList<AlteracaoDireitosItem> aldis = new ArrayList<AlteracaoDireitosItem>();
 		ArrayList<String> dados = new ArrayList<String>();
 		try {
@@ -166,7 +165,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 		return dados;
 	}
 
-	private AlteracaoDireitosItem gerar(CpTipoConfiguracao tipo,
+	private AlteracaoDireitosItem gerar(CpTipoDeConfiguracao tipo,
 			CpPerfil perfil, DpPessoa pessoa, DpLotacao lotacao,
 			CpOrgaoUsuario orgao, CpServico servico, Date dtEvn)
 			throws Exception {
@@ -177,8 +176,9 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 		cfgFiltro.setOrgaoUsuario(orgao);
 		cfgFiltro.setCpServico(servico);
 		cfgFiltro.setCpTipoConfiguracao(tipo);
-		CpConfiguracao cfg = Cp.getInstance().getConf().buscaConfiguracao(
+		CpConfiguracaoCache cache = Cp.getInstance().getConf().buscaConfiguracao(
 				cfgFiltro, new int[0], dtEvn);
+		CpConfiguracao cfg = CpDao.getInstance().consultar(cache.idConfiguracao, CpConfiguracao.class, false);
 		AlteracaoDireitosItem itm = new AlteracaoDireitosItem();
 		itm.setServico(servico);
 		itm.setPessoa(pessoa);
@@ -229,13 +229,13 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 				if (c1.getSituacao() == null) {
 					dscSit1 = new String();
 				} else {
-					dscSit1 = c1.getSituacao().getDscSitConfiguracao();
+					dscSit1 = c1.getSituacao().getDescr();
 				}
 				String dscSit2;
 				if (c2.getSituacao() == null) {
 					dscSit2 = new String();
 				} else {
-					dscSit2 = c2.getSituacao().getDscSitConfiguracao();
+					dscSit2 = c2.getSituacao().getDescr();
 				}
 				if (dscSit1.equals(dscSit2)) {
 					String nome1;
@@ -268,7 +268,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	 */
 	private void processarItem(AlteracaoDireitosItem cfga, List<String> dados) {
 		try {
-			dados.add(cfga.getSituacao().getDscSitConfiguracao());
+			dados.add(cfga.getSituacao().getDescr());
 		} catch (Exception e) {
 			dados.add("");
 		}
@@ -314,17 +314,17 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 		return cfga.printOrigemCurta();
 	}
 
-	private Long getIdTipoConfiguracao() {
-		return CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO;
+	private Integer getIdTipoConfiguracao() {
+		return CpTipoDeConfiguracao.UTILIZAR_SERVICO.getId();
 	}
 
-	private CpTipoConfiguracao getTipoConfiguracao() {
+	private CpTipoDeConfiguracao getTipoConfiguracao() {
 		return dao().consultar(getIdTipoConfiguracao(),
-				CpTipoConfiguracao.class, false);
+				CpTipoDeConfiguracao.class, false);
 	}
 
 	private String getDescricaoTipoConfiguracao() {
-		return getTipoConfiguracao().getDscTpConfiguracao();
+		return getTipoConfiguracao().getDescr();
 	}
 
 	private CpDao dao() {
@@ -352,7 +352,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	/**
 	 * @return the cpSituacoesConfiguracao
 	 */
-	public ArrayList<CpSituacaoConfiguracao> getCpSituacoesConfiguracao() {
+	public ArrayList<CpSituacaoDeConfiguracaoEnum> getCpSituacoesConfiguracao() {
 		return cpSituacoesConfiguracao;
 	}
 
@@ -361,7 +361,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	 *            the cpSituacoesConfiguracao to set
 	 */
 	public void setCpSituacoesConfiguracao(
-			ArrayList<CpSituacaoConfiguracao> cpSituacoesConfiguracao) {
+			ArrayList<CpSituacaoDeConfiguracaoEnum> cpSituacoesConfiguracao) {
 		this.cpSituacoesConfiguracao = cpSituacoesConfiguracao;
 	}
 

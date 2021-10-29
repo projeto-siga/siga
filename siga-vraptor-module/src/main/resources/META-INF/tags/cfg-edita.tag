@@ -45,8 +45,8 @@
 								<c:choose>
 									<c:when test="${not empty config.cpTipoConfiguracao}">
 										<input type="hidden" name="idTpConfiguracao"
-											value="${config.cpTipoConfiguracao.idTpConfiguracao}" />
-										<label class="form-control">${config.cpTipoConfiguracao.dscTpConfiguracao}</label>
+											value="${config.cpTipoConfiguracao.id}" />
+										<label class="form-control">${config.cpTipoConfiguracao.descr}</label>
 									</c:when>
 									<c:otherwise>
 										<input type="hidden" name="idTpConfiguracao"
@@ -195,9 +195,11 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="form-group mb-0">
-								<input type="submit" value="Ok" class="btn btn-primary" /> <input
-									type="button" value="Cancelar"
-									onclick="javascript:history.back();" class="btn btn-primary" />
+								<input type="submit" value="Ok" class="btn btn-primary" /> 
+								
+								<input type="button" value="Cancelar"
+									onclick="javascript:window.location.href='listar?idTpConfiguracao=${tipoDeConfiguracao.id}&idOrgaoUsu=${idOrgaoUsu}'" 
+										class="btn btn-primary" />
 							</div>
 						</div>
 					</div>

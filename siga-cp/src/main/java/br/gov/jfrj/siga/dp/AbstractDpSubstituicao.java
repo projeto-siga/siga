@@ -22,8 +22,6 @@
  */
 package br.gov.jfrj.siga.dp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 import java.util.Date;
 

@@ -41,6 +41,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnotar;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 
 public class ExMobilVO extends ExVO {
@@ -86,7 +87,7 @@ public class ExMobilVO extends ExVO {
 	}
 
 	public List<ExMarca> getMarcasAtivas() {
-		return marcasAtivas;
+		return this.marcasAtivas;
 	}
 
 	public void setMarcasAtivas(List<ExMarca> marcasAtivas) {
@@ -121,7 +122,7 @@ public class ExMobilVO extends ExVO {
 
 		long tempoIni = System.currentTimeMillis();
 
-		List<ExMarca> marcasAtivas = new ArrayList<>();
+		this.marcasAtivas = new ArrayList<>();
 		marcasAtivas.addAll(mob.getExMarcaSetAtivas());
 
 		marcadoresEmHtml = getMarcadoresEmHtml(marcasAtivas, titular, lotaTitular);
@@ -421,7 +422,21 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeTransferir(titular, lotaTitular, mob));
 		
-		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
+		addAcao("email_go",
+				"Tramitar em Paralelo",
+				"/app/expediente/mov",
+				"tramitar_paralelo",
+				Ex.getInstance().getComp()
+						.podeTramitarEmParalelo(titular, lotaTitular, mob));
+		
+		addAcao("email_go",
+				"Notificar",
+				"/app/expediente/mov",
+				"notificar",
+				Ex.getInstance().getComp()
+						.podeNotificar(titular, lotaTitular, mob));
+		
+		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotacaoObservacaoModal")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		
 		addAcao(AcaoVO.builder().nome("Definir " + SigaMessages.getMessage("documento.marca")).icone("folder_star").modal("definirMarcaModal")
@@ -447,11 +462,20 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance().getComp()
 							.podeCopiar(titular, lotaTitular, mob));
 		}
-
+		
 		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once  siga-btn-arq-corrente");
+
+		addAcao(AcaoVO.builder().nome("Concluir").nameSpace("/app/expediente/mov").icone("tick")
+				.acao("concluir_gravar").params("sigla", mob.getCodigoCompacto())
+				.post(true).pode(Ex.getInstance().getComp().podeConcluir(titular, lotaTitular, mob))
+				.build());
+
+//		addAcao("tick", "Concluir", "/app/expediente/mov",
+//				"concluir_gravar", , null,
+//				null, null, null, "once  siga-btn-arq-corrente");
 
 		addAcao("building_go",
 				"Indicar para Guarda Permanente",
@@ -546,11 +570,14 @@ public class ExMobilVO extends ExVO {
 		addAcao("link_add", "Apensar", "/app/expediente/mov", "apensar", Ex
 				.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
 
+		addAcao("date_previous", "Atribuir Prazo de Assinatura", "/app/expediente/mov", "definir_prazo_assinatura", Ex
+				.getInstance().getComp().podeDefinirPrazoAssinatura(titular, lotaTitular, mob));
+
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
 		
-		Optional<ExMovimentacao> ultimaMovNaoCancelada = Optional.ofNullable(mob.getUltimaMovimentacaoNaoCancelada());
-		if (mob.getExDocumento().isFinalizado()	&& ultimaMovNaoCancelada.isPresent()) {
+		ExMovimentacao ultimaMovNaoCancelada = mob.getUltimaMovimentacaoNaoCancelada();
+		if (mob.getExDocumento().isFinalizado()	&& ultimaMovNaoCancelada != null) {
 			
 			//Cria lista de Movimentações que não podem ser canceladas
 			List<Long> listaMovimentacoesNaoCancelavel = new ArrayList<Long>();
@@ -563,8 +590,7 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA);
 			
-			
-			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.get().getIdTpMov())) {
+			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getIdTpMov())) {
 				addAcao("arrow_undo",
 						"Desfa_zer "
 								+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
@@ -615,11 +641,8 @@ public class ExMobilVO extends ExVO {
 			//
 			for (ExMarca mar : getMarcasAtivas()) {
 				if (incluirMarcaEmHtml(mar)
-						&& ((mar.getDpLotacaoIni() != null
-								&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
-								|| mar.getDpLotacaoIni() == null)
-						&& (mar.getDpPessoaIni() == null
-								|| pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial()))) {
+						&& marcaNaoTemLotacaoOuEDeDeterminadaLotacao(mar, lota)
+						&& marcaNaoTemPessoaOuEDeDeterminadaPessoa(mar, pess)) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					sb.append(mar.getCpMarcador().getDescrMarcador());
@@ -633,10 +656,8 @@ public class ExMobilVO extends ExVO {
 					if (incluirMarcaEmHtml(mar)) {
 						if (sb.length() > 0)
 							sb.append(", ");
-						if ((mar.getDpLotacaoIni() != null
-								&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
-								&& (mar.getDpPessoaIni() != null
-										&& !pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial()))) {
+						if (marcaEDeDeterminadaLotacao(mar, lota)
+								&& marcaTemPessoaDiferente(mar, pess)) {
 							sb.append(mar.getCpMarcador().getDescrMarcador());
 							sb.append(" [<span title=\"");
 							sb.append(mar.getDpPessoaIni().getNomePessoa());
@@ -653,12 +674,9 @@ public class ExMobilVO extends ExVO {
 		//
 		for (ExMarca mar : getMarcasAtivas()) {
 			if ((sb.length() == 0 && incluirMarcaEmHtml(mar))
-					|| (sb.length() > 0 && incluirMarcaEmHtmlDeOutraPessoaELotacao(mar)
-							&& !((mar.getDpLotacaoIni() != null
-									&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial()))
-									|| mar.getDpLotacaoIni() == null)
-							&& !(mar.getDpPessoaIni() == null
-									|| pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial())))) {
+					|| (incluirMarcaEmHtmlDeOutraPessoaELotacao(mar)
+							&& !(marcaNaoTemLotacaoOuEDeDeterminadaLotacao(mar, lota)
+							&& marcaNaoTemPessoaOuEDeDeterminadaPessoa(mar, pess)))) {
 				if (sb.length() > 0)
 					sb.append(", ");
 				sb.append(mar.getCpMarcador().getDescrMarcador());
@@ -684,6 +702,26 @@ public class ExMobilVO extends ExVO {
 		if (sb.length() == 0)
 			return null;
 		return sb.toString();
+	}
+
+	public boolean marcaTemPessoaDiferente(ExMarca mar, DpPessoa pess) {
+		return mar.getDpPessoaIni() != null
+				&& !pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial());
+	}
+
+	public boolean marcaEDeDeterminadaLotacao(ExMarca mar, DpLotacao lota) {
+		return mar.getDpLotacaoIni() != null
+				&& lota.getIdInicial().equals(mar.getDpLotacaoIni().getIdInicial());
+	}
+
+	public boolean marcaNaoTemPessoaOuEDeDeterminadaPessoa(ExMarca mar, DpPessoa pess) {
+		return mar.getDpPessoaIni() == null
+				|| pess.getIdInicial().equals(mar.getDpPessoaIni().getIdInicial());
+	}
+
+	public boolean marcaNaoTemLotacaoOuEDeDeterminadaLotacao(ExMarca mar, DpLotacao lota) {
+		return marcaEDeDeterminadaLotacao(mar, lota)
+				|| mar.getDpLotacaoIni() == null;
 	}
 
 	public boolean incluirMarcaEmHtml(ExMarca mar) {

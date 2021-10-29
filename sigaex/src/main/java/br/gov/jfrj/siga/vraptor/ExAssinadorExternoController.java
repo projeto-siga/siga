@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -48,7 +49,6 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -62,6 +62,7 @@ import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoSave;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -125,7 +126,7 @@ public class ExAssinadorExternoController extends ExController {
 				throw new Exception("Nenhuma pessoa localizada com o CPF: " + sCpf);
 			List<ExAssinadorExternoListItem> list = new ArrayList<ExAssinadorExternoListItem>();
 			for (DpPessoa pes : pessoas) {
-				boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pes, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+				boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pes, ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 				List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), apenasComSolicitacaoDeAssinatura);
 				for (ExAssinavelDoc ass : assinaveis) {
 					if (ass.isPodeAssinar()) {
@@ -291,6 +292,7 @@ public class ExAssinadorExternoController extends ExController {
 			Boolean autenticar = false;
 			Boolean juntar = null;
 			Boolean tramitar = null;
+			Boolean exibirNoProtocolo = null;
 			if (extra != null) {
 				if (extra.contains("autenticar"))
 					autenticar = true;
@@ -302,6 +304,10 @@ public class ExAssinadorExternoController extends ExController {
 					tramitar = false;
 				else if (extra.contains("tramitar"))
 					tramitar = true;
+				if(extra.contains("nao_exibirNoProtocolo"))
+					exibirNoProtocolo = false;
+				else if(extra.contains("exibirNoProtocolo"))
+					exibirNoProtocolo = true;
 			}
 
 			byte[] assinatura = Base64.decode(envelope);
@@ -317,7 +323,7 @@ public class ExAssinadorExternoController extends ExController {
 
 			DpPessoa cadastrante = obterCadastrante(cpf, mob, mov);
 
-			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
 				throw new Exception("Documento requer solicitação de assinatura. Provavelmente, o documento foi editado após a solicitação.");
 
@@ -337,7 +343,7 @@ public class ExAssinadorExternoController extends ExController {
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar, null, getTitular());
+						null, tpMov, juntar, tramitar == null ? false : tramitar, exibirNoProtocolo, getTitular());
 				if (msg != null)
 					msg = "OK: " + msg;
 				else
@@ -359,6 +365,8 @@ public class ExAssinadorExternoController extends ExController {
 		DpPessoa cadastrante = getCadastrante();
 		if (cadastrante == null && cpf != null) {
 			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
+			SortedSet<ExMovimentacao> movimentacoesMobilGeral = null;
+			
 			for (DpPessoa p : pessoas) {
 				if (mov != null && mov.getResp() != null) {
 					if (p.equivale(mov.getResp())) {
@@ -367,10 +375,24 @@ public class ExAssinadorExternoController extends ExController {
 					}
 				} else if (p.equivale(mob.doc().getSubscritor())) {
 					cadastrante = p;
+				} else {
+					if (movimentacoesMobilGeral == null) {
+						movimentacoesMobilGeral = mob.doc().getMobilGeral().getExMovimentacaoSet();
+					}
+					
+					if (movimentacoesMobilGeral != null ) {
+						for (ExMovimentacao m : movimentacoesMobilGeral) {
+							if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+									&& m.getExMovimentacaoCanceladora() == null &&  p.equivale(m.getSubscritor()) ) {
+								cadastrante = p;
+								break;
+							}
+						}
+					}
 				}
 			}
-			if (cadastrante == null && pessoas.size() >= 1)
-				cadastrante = pessoas.get(0);
+			if (cadastrante == null && pessoas.size() == 1)
+				cadastrante = pessoas.get(0); 
 			if (cadastrante == null && mov == null)
 				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 		}

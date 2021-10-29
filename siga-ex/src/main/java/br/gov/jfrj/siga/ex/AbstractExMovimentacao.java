@@ -478,11 +478,11 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_param1", length = 19)
 	private Date dtParam1;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_param2", length = 19)
 	private Date dtParam2;
 

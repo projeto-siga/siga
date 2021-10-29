@@ -36,6 +36,15 @@
 					<div class="card-header">Dados da Definição de Procedimento</div>
 					<div class="card-body">
 						<p>
+							<b>Tipo de Principal:</b> ${pd.tipoDePrincipal.descr}
+						</p>
+						<c:if test="${pd.tipoDePrincipal != 'NENHUM'}">
+							<p>
+								<b>Vínculo com Principal:</b>
+								${pd.tipoDeVinculoComPrincipal.descr}
+							</p>
+						</c:if>
+						<p>
 							<b>Descrição:</b> ${pd.descr}
 						</p>
 						<p>
@@ -58,6 +67,9 @@
 							<b>Última atualização:</b>
 							<fmt:formatDate value="${pd.hisDtIni}"
 								pattern="dd/MM/yyyy HH:mm:ss" />
+						</p>
+						<p>
+							<b>Variáveis:</b> ${pd.identificadoresDeVariaveis}
 						</p>
 					</div>
 				</div>

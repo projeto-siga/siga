@@ -280,7 +280,7 @@ public class ExArquivoController extends ExController {
 			String token = verifyJwtToken(t).get("token").toString();
 			
 			CpToken cpToken = new CpToken();
-			cpToken = dao().obterCpTokenPorTipoToken(1L, token);
+			cpToken = dao().obterCpTokenPorTipoToken(CpToken.TOKEN_URLPERMANENTE, token);
 			
 			ExDocumento doc = Ex.getInstance().getBL().buscarDocumentoPorLinkPermanente(cpToken);
 	
@@ -492,12 +492,10 @@ public class ExArquivoController extends ExController {
 		try {
 			pwd = Prop.get("/siga.autenticacao.senha");
 			if (pwd == null)
-				throw new AplicacaoException(
-						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
+				throw new AplicacaoException("Erro obtendo propriedade siga.autenticacao.senha");
 			return pwd;
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
+			throw new AplicacaoException("Erro obtendo propriedade siga.autenticacao.senha", 0, e);
 		}
 	}
 

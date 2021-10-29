@@ -5,7 +5,7 @@
 
 <h5>${tipoDeConfiguracao.descr}
 	<span style="float: right; font-size: 70%">(Situação default: </b>
-		${tpConfiguracao.situacaoDefault.dscSitConfiguracao})
+		${tpConfiguracao.situacaoDefault.descr})
 	</span>
 </h5>
 

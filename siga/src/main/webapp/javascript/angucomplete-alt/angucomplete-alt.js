@@ -469,8 +469,9 @@
       }
 
       function getRemoteResults(str) {
-        var params = {},
-            url = scope.remoteUrl + encodeURIComponent(str);
+        var params = {}
+      	str = str.replaceAll(/\//g, '');
+        var url = scope.remoteUrl + encodeURIComponent(str);
         if (scope.remoteUrlRequestFormatter) {
           params = {params: scope.remoteUrlRequestFormatter(str)};
           url = scope.remoteUrl;

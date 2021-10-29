@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.TipoDePainelEnum;
@@ -25,6 +24,7 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marca;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -131,7 +131,7 @@ public class MesaGet implements IMesaGet {
 			r.podeAssinar = comp.podeAssinar(pessoa, unidade, mobil);
 
 			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pessoa,
-					CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+					ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 
 			r.podeAssinarEmLote = apenasComSolicitacaoDeAssinatura
 					? r.podeAssinar && mobil.doc().isAssinaturaSolicitada()

@@ -45,6 +45,7 @@ public class ModelosListaHierarquicaGet implements IModelosListaHierarquicaGet {
 			mi.level = (long) m.getLevel();
 			mi.group = m.getGroup();
 			mi.selected = m.getSelected();
+			mi.keywords = m.getKeywords();
 			resp.list.add(mi);
 		}
 	}

@@ -54,6 +54,8 @@ import javax.persistence.criteria.Root;
 
 import org.jboss.logging.Logger;
 
+import com.google.gson.Gson;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
@@ -101,6 +103,7 @@ import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
+import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
@@ -691,29 +694,44 @@ public class ExDao extends CpDao {
 			DpLotacao lotaTitular) {
 
 		IMontadorQuery montadorQuery = carregarPlugin();
-		boolean isNativeQuery = Prop.getBool("/sigaex.pesquisa.native.query") && !flt.getDescrDocumento().equals("QUERYANTIGA");
+		// Para ser possível pesquisar executando query antiga
+		boolean isQueryAntiga = flt.getDescrDocumento().equals("QUERYANTIGA");
+		if (isQueryAntiga) {
+			flt.setDescrDocumento(null);
+			montadorQuery = new MontadorQuery();
+		}
+			
+		boolean isNativeQuery = Prop.getBool("/sigaex.pesquisa.native.query") && !isQueryAntiga;
 
-		long tempoIni = System.nanoTime();
+//		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
 		Query query = null;
 		
 		if(itemPagina > 0) {
 			if (isNativeQuery) {
-				query = em().createNativeQuery(
-						montadorQuery.montaQueryConsultaporFiltro(flt, false));
+				query = em().createNativeQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false) 
+						+ (offset > 0? " OFFSET " + String.valueOf(offset) + " ROWS " : "")
+						+ (itemPagina > 0? " FETCH " + (offset > 0? "NEXT " : "FIRST ") 
+						+ String.valueOf(itemPagina) + " ROWS ONLY " : ""));
 			} else {
 				query = em().createQuery(
 						montadorQuery.montaQueryConsultaporFiltro(flt, false));
+				if (offset > 0) {
+					query.setFirstResult(offset);
+				}
+				if (itemPagina > 0) {
+					query.setMaxResults(itemPagina);
+				}
 			}
 			preencherParametros(flt, query);
 	
-			if (offset > 0) {
-				query.setFirstResult(offset);
-			}
-			if (itemPagina > 0 && !isNativeQuery) {
-				query.setMaxResults(itemPagina);
-			}
+			long tempoIni = System.nanoTime();
 			List listResult = query.getResultList();
+			long tempoTotal = System.nanoTime() - tempoIni;
+			System.out.println(MontadorQuery.class + "::: " + tempoTotal	/ 1000000 + " ms -> " + query.unwrap(org.hibernate.query.Query.class).getQueryString());
+			Gson gson = new Gson();
+			System.out.println(MontadorQuery.class + "::: " + gson.toJson(flt));
+			
 			List l;
 			if (isNativeQuery) {
 				l = (List<Object[]>) listResult.stream()
@@ -722,7 +740,35 @@ public class ExDao extends CpDao {
 			} else {
 				l = listResult;
 			}
-			 
+
+			// *** Código para testar se query antiga devolve o mesmo resultado
+			IMontadorQuery montadorQueryAntigo = new MontadorQuery(); 
+			Query queryAntiga = em().createQuery(
+					montadorQueryAntigo.montaQueryConsultaporFiltro(flt, false));
+			preencherParametros(flt, queryAntiga);
+			if (offset > 0) 
+				queryAntiga.setFirstResult(offset);
+			if (itemPagina > 0) 
+				queryAntiga.setMaxResults(itemPagina);
+			long tempoIni2 = System.nanoTime();
+			List lAntiga = queryAntiga.getResultList();
+			long tempoTotal2 = System.nanoTime() - tempoIni2;
+			System.out.println("MontadorQueryAntigo::: " + tempoTotal2 / 1000000 + " ms -> " + queryAntiga.unwrap(org.hibernate.query.Query.class).getQueryString());
+			System.out.println("MontadorQueryAntigo::: " + gson.toJson(flt));
+
+			System.out.println("Antiga - Nova");
+			for (Integer i=0; i<lAntiga.size(); i++) {
+				if (lAntiga.get(i).equals(l.get(i))) {
+					System.out.println(i.toString() + "   " + lAntiga.get(i).toString() + " - " + l.get(i).toString());
+				} else {
+					if (l.contains(lAntiga.get(i)))
+						System.out.println(i.toString() + "   "  + lAntiga.get(i).toString() + " - " + l.get(i).toString() + " - *** DIFERENTE ");
+					else
+						System.out.println(i.toString() + "   "  + lAntiga.get(i).toString() + " - " + l.get(i).toString() + " - *** ERRO: NÃO ESTÁ NA LISTA ");
+				}
+			}
+			// *** Fim do código de teste
+			
 			if (l != null && l.size() > 0) {
 				query = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
@@ -740,7 +786,7 @@ public class ExDao extends CpDao {
 			preencherParametros(flt, query);
 			l2 = query.getResultList();
 		}
-		long tempoTotal = System.nanoTime() - tempoIni;
+//		long tempoTotal = System.nanoTime() - tempoIni;
 		
 		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
 		

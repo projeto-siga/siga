@@ -180,7 +180,7 @@
 									value="/sigaex/app/expediente/mov/assinar_gravar" />
 								<input type="hidden"
 									name="ad_url_post_password_${doc.idDoc}"
-									value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
+									value="/sigaex/app/expediente/mov/assinar_senha_gravar?juntar=true" />
 								
 								<input type="hidden" name="ad_id_${doc.idDoc}"
 									value="${doc.codigoCompacto}" />

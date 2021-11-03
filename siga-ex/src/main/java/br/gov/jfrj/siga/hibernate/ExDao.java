@@ -695,7 +695,8 @@ public class ExDao extends CpDao {
 
 		IMontadorQuery montadorQuery = carregarPlugin();
 		// Para ser possível pesquisar executando query antiga
-		boolean isQueryAntiga = flt.getDescrDocumento().equals("QUERYANTIGA");
+		boolean isQueryAntiga = (flt.getDescrDocumento() != null? 
+				flt.getDescrDocumento().equals("QUERYANTIGA") : false);
 		if (isQueryAntiga) {
 			flt.setDescrDocumento(null);
 			montadorQuery = new MontadorQuery();
@@ -757,7 +758,21 @@ public class ExDao extends CpDao {
 			System.out.println("MontadorQueryAntigo::: " + gson.toJson(flt));
 
 			System.out.println("Antiga - Nova");
-			for (Integer i=0; i<lAntiga.size(); i++) {
+			int tamMaior = 0;
+			if (l.size() > lAntiga.size())
+				tamMaior = l.size();
+			else
+				tamMaior = lAntiga.size();
+			
+			for (Integer i=0; i < tamMaior; i++) {
+				if (i >= lAntiga.size()) {
+					System.out.println(i.toString() + "            - " + l.get(i).toString());
+					continue;
+				}
+				if (i >= l.size()) {
+					System.out.println(i.toString() + "   " + lAntiga.get(i).toString() + " -         ");
+					continue;
+				}
 				if (lAntiga.get(i).equals(l.get(i))) {
 					System.out.println(i.toString() + "   " + lAntiga.get(i).toString() + " - " + l.get(i).toString());
 				} else {
@@ -767,6 +782,7 @@ public class ExDao extends CpDao {
 						System.out.println(i.toString() + "   "  + lAntiga.get(i).toString() + " - " + l.get(i).toString() + " - *** ERRO: NÃO ESTÁ NA LISTA ");
 				}
 			}
+				
 			// *** Fim do código de teste
 			
 			if (l != null && l.size() > 0) {

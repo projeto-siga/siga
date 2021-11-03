@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.naming.NamingException;
 
 import org.jboss.logging.Logger;
 

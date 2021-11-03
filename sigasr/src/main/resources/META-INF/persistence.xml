@@ -56,6 +56,7 @@
 
 		<class>br.gov.jfrj.siga.sr.model.DadosRH</class>
 		<class>br.gov.jfrj.siga.sr.model.SrAcao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAcao</class>
 		<class>br.gov.jfrj.siga.sr.model.SrAcordo</class>
 		<class>br.gov.jfrj.siga.sr.model.SrArquivo</class>
 		<class>br.gov.jfrj.siga.sr.model.SrAtributo</class>
@@ -84,7 +85,6 @@
 		<class>br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista</class>
 
 		<properties>
-					<property name="hibernate.jpa.compliance.global_id_generators" value="false" />
 			<property name="hibernate.current_session_context_class"
 				value="thread" />
 			<property name="hibernate.query.substitutions" value="true 1, false 0" />
@@ -99,8 +99,14 @@
 			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
+			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
+			<property name="hibernate.id.new_generator_mappings" value="false"/>
+			<property name="hibernate.enable_lazy_load_no_trans" value="true"/>
+			<property name="hibernate.hql.bulk_id_strategy"
+          		value="org.hibernate.hql.spi.id.inline.InlineIdsInClauseBulkIdStrategy"/>
 			
-						<!-- Cache Region QUERY_CACHE_SECONDS -->
+			
+			<!-- Cache Region QUERY_CACHE_SECONDS -->
 			<property
 				name="hibernate.cache.infinispan.querySeconds.eviction.wake_up_interval"
 				value="2500" />
@@ -173,14 +179,12 @@
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.lifespan"
-				value="5000" />
+				value="300000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
-				value="5000" />
+				value="300000" />
+				
 			
-			
-			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
-			<property name="hibernate.id.new_generator_mappings" value="false"/>
 		</properties>
 	</persistence-unit>
 </persistence>

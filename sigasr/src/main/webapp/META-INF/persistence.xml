@@ -98,6 +98,12 @@
 			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
+			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
+			<property name="hibernate.id.new_generator_mappings" value="false"/>
+			<property name="hibernate.enable_lazy_load_no_trans" value="true"/>
+			<property name="hibernate.hql.bulk_id_strategy"
+          		value="org.hibernate.hql.spi.id.inline.InlineIdsInClauseBulkIdStrategy"/>
+			
 			
 			<!-- Cache Region QUERY_CACHE_SECONDS -->
 			<property
@@ -172,13 +178,11 @@
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.lifespan"
-				value="5000" />
+				value="300000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
-				value="5000" />
+				value="300000" />
 				
-			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
-			<property name="hibernate.id.new_generator_mappings" value="false"/>
 			
 		</properties>
 	</persistence-unit>

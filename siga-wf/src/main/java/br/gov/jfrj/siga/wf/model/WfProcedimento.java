@@ -591,10 +591,18 @@ public class WfProcedimento extends Objeto
 		return status == ProcessInstanceStatus.PAUSED;
 	}
 
+	public boolean isRetomando() {
+		return status == ProcessInstanceStatus.RESUMING;
+	}
+
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
 		if (getDefinicaoDeTarefaCorrente() == null
 				|| getDefinicaoDeTarefaCorrente().getTipoDeTarefa() != WfTipoDeTarefa.FORMULARIO)
 			return true;
+		return !titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao());
+	}
+
+	public boolean isDesabilitarConhecimento(DpPessoa titular, DpLotacao lotaTitular) {
 		return !titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao());
 	}
 
@@ -616,6 +624,11 @@ public class WfProcedimento extends Objeto
 //			this.setConhecimento(c.getDescricao());
 //		}
 
+		if (getStatus() == ProcessInstanceStatus.RESUMING)
+			return "Este workflow está aguardando a realização de uma tarefa de sistema para prosseguir. Isto pode ocorrer porque a tarefa é realmente demorada ou porque ocorreu algum erro no processamento. " + 
+			"Caso deseje que o sistema faça uma nova tentativa, clique <a href=\"/sigawf/app/procedimento/"
+					+ getSiglaCompacta() + "/retomar\">aqui</a>.";
+		
 		if (!titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao())) {
 			if (getEventoPessoa() != null && getEventoLotacao() != null)
 				return "Esta tarefa será desempenhada por " + getEventoPessoa().getSigla() + " na lotação "

@@ -8,9 +8,8 @@ import javax.persistence.Query;
 import br.gov.jfrj.siga.ex.xjus.Utils;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetRequest;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetResponse;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
+import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
@@ -18,8 +17,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void run(AllReferencesGetRequest req, AllReferencesGetResponse resp)
-			throws Exception {
+	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
 		resp.list = new ArrayList<>();
 		if (req.lastid == null)
 			req.lastid = Utils.formatId(0L);

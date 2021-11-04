@@ -3703,6 +3703,42 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * </ul>
 	 */
+//	public boolean podeMovimentar(final DpPessoa titular,
+//			final DpLotacao lotaTitular, final ExMobil mob) {
+//
+//
+//		if (!podeSerMovimentado(mob))
+//			return false;
+//
+//		if (mob.isGeral()) {
+//			if (mob.doc().isProcesso())
+//				return podeMovimentar(titular, lotaTitular, mob.doc().getUltimoVolume());
+//			else {
+//				for (ExMobil m : mob.doc().getExMobilSet()) {
+//					if (!m.isGeral() && podeMovimentar(titular, lotaTitular, m))
+//						return true;
+//				}
+//				return false;
+//			}
+//		}
+//
+//		boolean fAtendente = false;
+//		for (PessoaLotacaoParser atendente : mob.getAtendente()) {
+//			if ((atendente.getLotacaoOuLotacaoPrincipalDaPessoa() != null
+//					&& atendente.getLotacaoOuLotacaoPrincipalDaPessoa().equivale(lotaTitular))
+//					|| (atendente.getPessoa() != null && atendente.getPessoa().equivale(titular))) {
+//				fAtendente = true;
+//				break;
+//			}
+//		}
+//		if (!fAtendente)
+//			return false;
+//
+//		return getConf().podePorConfiguracao(titular, lotaTitular,
+//				ExTipoDeConfiguracao.MOVIMENTAR);
+//	}
+	
+	
 	public boolean podeMovimentar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 
@@ -3722,21 +3758,27 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}
 		}
 
-		boolean fAtendente = false;
-		for (PessoaLotacaoParser atendente : mob.getAtendente()) {
-			if ((atendente.getLotacaoOuLotacaoPrincipalDaPessoa() != null
-					&& atendente.getLotacaoOuLotacaoPrincipalDaPessoa().equivale(lotaTitular))
-					|| (atendente.getPessoa() != null && atendente.getPessoa().equivale(titular))) {
-				fAtendente = true;
-				break;
-			}
-		}
-		if (!fAtendente)
+		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
+		if (exMov == null) {
 			return false;
+		}
+
+		/*
+		 * Orlando: Inclui a condição "&& !exMov.getResp().equivale(titular))"
+		 * no IF ,abaixo, para permitir que um usuário possa transferir quando
+		 * ele for o atendente do documento, mesmo que ele não esteja na lotação
+		 * do documento
+		 */
+
+		if (exMov.getLotaResp() != null
+				&& !exMov.getLotaResp().equivale(lotaTitular)){
+			return false;
+		}
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
+
 
 	public boolean podeSerMovimentado(final ExMobil mob) {
 		if (mob.doc().isSemEfeito())

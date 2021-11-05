@@ -9,9 +9,8 @@ import javax.persistence.Query;
 import br.gov.jfrj.siga.ex.xjus.Utils;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetRequest;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetResponse;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
+import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGet {
 
@@ -19,7 +18,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void run(ChangedReferencesGetRequest req, ChangedReferencesGetResponse resp) throws Exception {
+	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
 		resp.list = new ArrayList<>();
 		if (req.lastdate == null)
 			req.lastdate = new Date(0L);

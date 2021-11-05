@@ -2544,7 +2544,7 @@ public class ExDocumentoController extends ExController {
 			doc.setSubscritor(daoPes(exDocumentoDTO.getSubscritorSel().getId()));
 			doc.setLotaSubscritor(doc.getSubscritor().getLotacao());
 		} else {
-			if(SigaMessages.isSigaSP() && AcessoConsulta.ehPublicoExterno(getTitular()) && !doc.isCapturado()) {
+			if(SigaMessages.isSigaSP() && AcessoConsulta.ehPublicoExterno(getTitular()) && !doc.isExternoCapturado()) {
 				doc.setSubscritor(getTitular());
 				doc.setLotaSubscritor(getTitular().getLotacao());
 			} else {

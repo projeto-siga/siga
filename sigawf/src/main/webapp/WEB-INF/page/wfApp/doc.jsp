@@ -20,7 +20,7 @@
 
 				<!-- Conhecimento -->
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+					test="${!pi.isDesabilitarConhecimento(titular, lotaTitular) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 					<div id="gc-ancora-${pi.id}" />
 					<c:url var="url" value="/../sigagc/app/knowledgeInplaceMinimal"> 
 						<c:param name="tags">${pi.ancora}</c:param>

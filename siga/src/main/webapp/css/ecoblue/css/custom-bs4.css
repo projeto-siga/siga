@@ -737,3 +737,7 @@ table .table-head th {
   border-radius: 0px;
   border: 1px solid #ccc;
 }
+
+.cke_combopanel__strinsert {
+	width: 20em !important;
+}

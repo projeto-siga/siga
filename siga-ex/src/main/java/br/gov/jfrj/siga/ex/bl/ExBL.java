@@ -1751,6 +1751,10 @@ public class ExBL extends CpBL {
 		final String formaAssinaturaSenha = senhaIsPIN ? "PIN" : "Senha";
 		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
 		
+		if (doc.getExMobilPai() != null) {
+			juntar = true;
+		} 
+		
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");
 

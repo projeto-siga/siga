@@ -173,7 +173,7 @@
 								<input type="hidden" name="ad_tramitar_${doc.idDoc}"
 									value="false" />
 								<input type="hidden" name="ad_juntar_${doc.idDoc}"
-									value="false" />
+									value="true" />
 								<input type="hidden" name="ad_descr_${doc.idDoc}"
 									value="${doc.sigla}" />
 								<input type="hidden" name="ad_url_pdf_${doc.idDoc}"

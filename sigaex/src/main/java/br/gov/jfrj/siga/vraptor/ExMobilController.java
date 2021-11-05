@@ -455,7 +455,7 @@ public class ExMobilController extends
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
-		assertAcesso("");
+		assertAcesso("SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar");
 		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 
 		getP().setOffset(paramoffset);

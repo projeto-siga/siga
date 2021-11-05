@@ -172,6 +172,8 @@
 									value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
 								<input type="hidden" name="ad_tramitar_${doc.idDoc}"
 									value="false" />
+								<input type="hidden" name="ad_juntar_${doc.idDoc}"
+									value="false" />
 								<input type="hidden" name="ad_descr_${doc.idDoc}"
 									value="${doc.sigla}" />
 								<input type="hidden" name="ad_url_pdf_${doc.idDoc}"
@@ -180,7 +182,7 @@
 									value="/sigaex/app/expediente/mov/assinar_gravar" />
 								<input type="hidden"
 									name="ad_url_post_password_${doc.idDoc}"
-									value="/sigaex/app/expediente/mov/assinar_senha_gravar?juntar=true" />
+									value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
 								
 								<input type="hidden" name="ad_id_${doc.idDoc}"
 									value="${doc.codigoCompacto}" />

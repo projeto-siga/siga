@@ -32,5 +32,4 @@ Este roteiro tem como objetivo explicar como deve ser realiadas as contribuiçõ
 	Branches de "release" e "master" só podem receber correções!
 	Sempre a pessoa que faz o commit de correção na master ou em uma release é responsável por fazer os merges em develop, ou nas releases posteriores
 	SP vai trabalhar com uma master própria, chamada "master-govsp"
-	Limitar commits na "master" para TRF2 e na "master-govsp" para Prodesp
-	Dinarde vai ver se é possível colocar o número de versão no VERSION.mf do siga-base
+	Limitar commits na "master" para TRF2 e na "master-govsp" para Prodesp	

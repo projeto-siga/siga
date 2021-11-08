@@ -1413,6 +1413,10 @@ public class ExBL extends CpBL {
 		String sNome;
 		Long lCPF = null;
 
+		if (doc.getExMobilPai() != null) {
+			juntar = true;
+		}
+		
 		if (doc.isCancelado())
 			throw new AplicacaoException("não é possível assinar um documento cancelado.");
 
@@ -1750,6 +1754,10 @@ public class ExBL extends CpBL {
 		boolean fSubstituindoCosignatario = false;
 		final String formaAssinaturaSenha = senhaIsPIN ? "PIN" : "Senha";
 		final String concordanciaAssinaturaSenha = senhaIsPIN ? "o" : "a";
+		
+		if (doc.getExMobilPai() != null) {
+			juntar = true;
+		}
 		
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException("Matrícula do Subscritor não foi informada.");

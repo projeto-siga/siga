@@ -624,7 +624,7 @@
 						</div>
 							<div class="form-group col-md-3">
 								<label for="numExpediente">Número</label>
-							    <input type="text" size="7" name="numExpediente" value="${numExpediente}" maxlength="6" class="form-control" />
+							    <input type="text" size="10" name="numExpediente" value="${numExpediente}" maxlength="10" class="form-control" />
 							</div>
 					</div>
 					<div class="form-row">

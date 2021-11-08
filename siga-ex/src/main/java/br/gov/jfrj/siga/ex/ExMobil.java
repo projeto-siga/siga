@@ -2400,17 +2400,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)) {
+				// Recebimento sem movRef limpa todos os pendentes até agora
+				if (mov.getExMovimentacaoRef() == null)
+					p.recebimentosPendentes.clear();
+				else 
+					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
 				p.tramitesPendentes.add(mov);
 			}
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
 				// Recebimento sem movRef limpa todos os pendentes até agora
 				if (mov.getExMovimentacaoRef() == null)
 					p.tramitesPendentes.clear();
-				else { 
-					if (mov.getExMovimentacaoRef() != null)
-						p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
-					p.recebimentosPendentes.add(mov);
-				}
+				else
+					p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
+				p.recebimentosPendentes.add(mov);
 			}
 			if (mov.getExMovimentacaoRef() != null) {
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO) {
@@ -2418,18 +2421,16 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					// normal que cancela um recebimento pendente
 					p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
 					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
-				} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
-					// Também existe a possibilidade de cancelar um recebimento pendente tramitando
-					// serialmente para outro lugar
-					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
-				}
+				} 
 			} else {
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO) 
 					p.fIncluirCadastrante = false;
 			}
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
 					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 
-							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante()))) 
+							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante())
+							|| Utils.equivale(mov.getTitular(), doc().getCadastrante()) 
+							|| Utils.equivale(mov.getLotaTitular(), doc().getLotaCadastrante()))) 
 				p.fIncluirCadastrante = false;
 		}
 		

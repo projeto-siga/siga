@@ -455,7 +455,14 @@ public class ExMobilController extends
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
-		assertAcesso("SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar");
+		
+		assertAcesso("PESQ:Pesquisar");
+		if (getCadastrante().isUsuarioExterno()) {
+			throw new RegraNegocioException("Pesquisa avançada indisponível para Usuários Externos.");
+		}
+		
+		
+		
 		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 
 		getP().setOffset(paramoffset);

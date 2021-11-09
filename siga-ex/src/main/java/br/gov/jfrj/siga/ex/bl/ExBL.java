@@ -4180,7 +4180,7 @@ public class ExBL extends CpBL {
 			atualizarMarcas(false, mob);
 
 			if (idDocEscolha.equals("1")) {
-				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob , dtMov);
+				encerrarVolumeAutomaticoNaJuntada(cadastrante, lotaCadastrante, mob , dtMov);
 			}
 
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
@@ -8019,6 +8019,26 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro na definição de prazo para assinatura do documento.", 0, e);
 		}
 	}
-	
+
+	public void encerrarVolumeAutomaticoNaJuntada(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov) throws AplicacaoException, Exception {
+
+		if (mob.doc().isEletronico()) {
+			
+			dao().em().merge(mob);
+						
+			// Verifica se é Processo e conta o número de páginas para verificar
+			// se tem que encerrar o volume
+			if (mob.doc().isProcesso()) {
+				
+				int totalDePaginasSemAnexosDoMobilGeral = mob.getTotalDePaginasSemAnexosDoMobilGeral();
+				int volumeMaxPaginas = Prop.getInt("volume.max.paginas");
+
+				if ( totalDePaginasSemAnexosDoMobilGeral >= volumeMaxPaginas) {
+					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov, null, null, null, true);
+				}
+			}
+		}
+	}
 }
 

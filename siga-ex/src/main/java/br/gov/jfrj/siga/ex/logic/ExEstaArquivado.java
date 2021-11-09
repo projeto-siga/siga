@@ -14,7 +14,7 @@ public class ExEstaArquivado implements Expression {
 
 	@Override
 	public boolean eval() {
-		return mob.isArquivado();
+		return mob != null && mob.isArquivado();
 	}
 
 	@Override

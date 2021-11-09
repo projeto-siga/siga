@@ -5,6 +5,7 @@ import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -48,6 +49,9 @@ public class ExPodePorConfiguracao implements Expression {
 	private DpCargo cargoObjeto;
 	private DpFuncaoConfianca funcaoConfiancaObjeto;
 	private CpOrgaoUsuario orgaoObjeto;
+	private boolean aceitarPode = true;
+	private boolean aceitarDefault = true;
+	private boolean aceitarObrigatorio = true;
 
 	public ExPodePorConfiguracao(DpPessoa titular, DpLotacao lotaTitular) {
 		super();
@@ -57,10 +61,20 @@ public class ExPodePorConfiguracao implements Expression {
 
 	@Override
 	public boolean eval() {
-		return Ex.getInstance().getConf().podePorConfiguracao(cpServico, exTipoFormaDoc, exPapel, exTpDoc, exFormaDoc,
-				exMod, exClassificacao, exVia, exTpMov, cargo, cpOrgaoUsu, dpFuncaoConfianca, dpLotacao, dpPessoa,
-				nivelAcesso, cpTpLotacao, idTpConf, pessoaObjeto, lotacaoObjeto, complexoObjeto, cargoObjeto,
-				funcaoConfiancaObjeto, orgaoObjeto);
+		CpSituacaoDeConfiguracaoEnum situacao = Ex.getInstance().getConf().situacaoPorConfiguracao(cpServico,
+				exTipoFormaDoc, exPapel, exTpDoc, exFormaDoc, exMod, exClassificacao, exVia, exTpMov, cargo, cpOrgaoUsu,
+				dpFuncaoConfianca, dpLotacao, dpPessoa, nivelAcesso, cpTpLotacao, idTpConf, pessoaObjeto, lotacaoObjeto,
+				complexoObjeto, cargoObjeto, funcaoConfiancaObjeto, orgaoObjeto);
+
+		if (situacao != null)
+			return false;
+		if (aceitarPode && situacao == CpSituacaoDeConfiguracaoEnum.PODE)
+			return true;
+		if (aceitarDefault && situacao == CpSituacaoDeConfiguracaoEnum.DEFAULT)
+			return true;
+		if (aceitarObrigatorio && situacao == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO)
+			return true;
+		return false;
 	}
 
 	@Override
@@ -185,6 +199,21 @@ public class ExPodePorConfiguracao implements Expression {
 
 	public ExPodePorConfiguracao withOrgaoObjeto(CpOrgaoUsuario orgaoObjeto) {
 		this.orgaoObjeto = orgaoObjeto;
+		return this;
+	}
+
+	public ExPodePorConfiguracao withAceitarPode(boolean f) {
+		this.aceitarPode = f;
+		return this;
+	}
+
+	public ExPodePorConfiguracao withAceitarDefault(boolean f) {
+		this.aceitarDefault = f;
+		return this;
+	}
+
+	public ExPodePorConfiguracao withAceitarObrigatorio(boolean f) {
+		this.aceitarObrigatorio = f;
 		return this;
 	}
 };

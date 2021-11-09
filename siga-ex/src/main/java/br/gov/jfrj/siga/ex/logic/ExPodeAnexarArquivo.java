@@ -3,9 +3,9 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
+import com.crivano.jlogic.If;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
-import com.crivano.jlogic.If;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -17,6 +17,12 @@ public class ExPodeAnexarArquivo extends CompositeExpressionSupport {
 	private ExMobil mob;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
+
+	public ExPodeAnexarArquivo(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		this.mob = mob;
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
+	}
 
 	/**
 	 * Retorna se é possível anexar arquivo a um móbil. As condições são as
@@ -37,12 +43,6 @@ public class ExPodeAnexarArquivo extends CompositeExpressionSupport {
 	 * @return
 	 * @throws Exception
 	 */
-	public ExPodeAnexarArquivo(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		this.mob = mob;
-		this.titular = titular;
-		this.lotaTitular = lotaTitular;
-	}
-
 	@Override
 	protected Expression create() {
 		return And.of(If.of(new ExEstaFinalizado(mob.doc()),

@@ -2380,6 +2380,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	/**
+	 * Verifica se um documento é de origem interna.
+	 */
+	public boolean isInternoFolhaDeRosto() {
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO);
+	}
+
+	/**
 	 * Verifica se um documento é capturado de uma fonte externa.
 	 */
 	public boolean isInternoCapturado() {

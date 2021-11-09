@@ -44,6 +44,25 @@ public class ExPodeCopiar extends CompositeExpressionSupport {
 		this.lotaTitular = lotaTitular;
 	}
 
+	/**
+	 * Retorna se é possível incluir uma cópia a um móbil. As condições são as
+	 * seguintes:
+	 * <ul>
+	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Móbil não pode estar juntado</li>
+	 * <li>Móbil não pode estar arquivado</li>
+	 * <li>Volume não pode estar encerrado</li>
+	 * <li>Móbil tem de estar finalizado</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o móbil / usuário</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	protected Expression create() {
 		return And.of(new ExEstaFinalizado(mob.doc()),

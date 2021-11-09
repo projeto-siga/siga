@@ -12,15 +12,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 
 public class ExPodeAnotar extends CompositeExpressionSupport {
 
-//	(!mob.isEmTransitoInterno()
-//		&& !mob.isEliminado()
-//		&& !mob.isGeral())
-//	&& getConf().podePorConfiguracao(titular, lotaTitular,
-//					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO,
-//					CpTipoDeConfiguracao.MOVIMENTAR);
-
 	private ExMobil mob;
-	private long idTpMov;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 
@@ -32,8 +24,15 @@ public class ExPodeAnotar extends CompositeExpressionSupport {
 
 	@Override
 	protected Expression create() {
-		return And.of(Not.of(new ExEstaEmTransitoInterno(mob)), Not.of(new ExEstaEliminado(mob)),
-				Not.of(new ExEMobilGeral(mob)), new ExPodeMovimentarPorConfiguracao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO, titular, lotaTitular));
+		return And.of(
+
+				Not.of(new ExEstaEmTransitoInterno(mob)),
+
+				Not.of(new ExEstaEliminado(mob)),
+
+				Not.of(new ExEMobilGeral(mob)),
+
+				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO, titular,
+						lotaTitular));
 	}
 };

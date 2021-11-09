@@ -3037,24 +3037,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (podeExcluirAnexo(titular, lotaTitular, mob, mov))
 			return false;
 
-		Calendar calMov = new GregorianCalendar();
-		Calendar cal2 = new GregorianCalendar();
-		calMov.setTime(mov.getDtIniMov());
-
-		if (mob.doc().isFinalizado() && !mob.doc().isEletronico()) {
-			cal2.setTime(mob.doc().getDtFinalizacao());
-			if (calMov.before(cal2))
-				return false;
-		}
-
-		if (!mob.doc().isPendenteDeAssinatura()
-				&& mob.doc().getExTipoDocumento().getIdTpDoc() == 1
-				&& mob.doc().isEletronico()) {
-			cal2.setTime(mob.doc().getDtAssinatura());
-			if (calMov.before(cal2))
-				return false;
-		}
-
+	
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
 
@@ -5045,7 +5028,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeDefinirPrazoAssinatura(DpPessoa titular, DpLotacao lotaTitular,
+	public boolean podeDefinirPrazoAssinatura(DpPessoa titular, DpLotacao lotaTitular, 
 			ExMobil mob) {
 
 		return mob.isGeral()

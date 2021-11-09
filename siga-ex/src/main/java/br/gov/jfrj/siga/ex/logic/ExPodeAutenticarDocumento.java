@@ -1,0 +1,78 @@
+package br.gov.jfrj.siga.ex.logic;
+
+import com.crivano.jlogic.And;
+import com.crivano.jlogic.CompositeExpressionSupport;
+import com.crivano.jlogic.Expression;
+import com.crivano.jlogic.If;
+import com.crivano.jlogic.Not;
+import com.crivano.jlogic.Or;
+
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExTipoDocumento;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.hibernate.ExDao;
+
+public class ExPodeAutenticarDocumento extends CompositeExpressionSupport {
+
+	private ExDocumento doc;
+	private DpPessoa titular;
+	private DpLotacao lotaTitular;
+
+	/*
+	 * Retorna se pode autenticar um documento que só foi assinado com senha.
+	 * 
+	 * @param titular
+	 * 
+	 * @param lotaTitular
+	 * 
+	 * @param mob
+	 * 
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public ExPodeAutenticarDocumento(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
+		this.doc = doc;
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
+	}
+
+	@Override
+	protected Expression create() {
+		return And.of(
+
+				new ExEEletronico(doc),
+
+				Not.of(new ExEstaAutenticadoComTokenOuSenha(doc)),
+
+				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(doc.getExModelo())
+						.withExFormaDoc(doc.getExFormaDocumento()).withPessoaObjeto(doc.getSubscritor())
+						.withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO),
+
+				Or.of(
+
+						Not.of(new ExEGovSP()),
+
+						new ExEExterno(doc),
+
+						new ExEInternoFolhaDeRosto(doc)),
+
+				Or.of(
+
+						new ExEExterno(doc),
+
+						new ExEInternoFolhaDeRosto(doc),
+
+						new ExEstaAssinadoComSenha(doc)
+
+				)
+
+		);
+
+	}
+}

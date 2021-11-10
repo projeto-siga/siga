@@ -40,6 +40,9 @@ app
 			$scope.data = {};
 
 			$scope.gravar = function() {
+				if(!validarFormulario($scope.data.workflow))
+					return;
+					
 				var fd = formdata({
 					id: $scope.id,
 					pd: $scope.encode($scope.data.workflow)
@@ -651,6 +654,25 @@ var uuidv4 = function() {
 			v = c == 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
 	});
+};
+
+var validarFormulario = function(data){
+	camposObrigatorios = [];
+	
+	if(!data.nome){
+		camposObrigatorios.push("Nome");
+	} 
+	
+	if(!data.descricao){
+		camposObrigatorios.push("Descrição");
+	} 
+
+	if(camposObrigatorios.length > 0){
+		alert("Favor informar os campos obrigatórios: " + camposObrigatorios.join(", "))
+		return false;
+	}
+	
+	return true;
 };
 
 var formdata = function(obj) {

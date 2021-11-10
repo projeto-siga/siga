@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.text.MaskFormatter;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 public class SigaFormats {
 	/**
@@ -72,6 +73,8 @@ public class SigaFormats {
 	}
 
 	public static BigDecimal bigdecimal(Object o) {
+		if (o == null)
+			return null;
 		String s = null;
 		BigDecimal dec = null;
 		if (o instanceof String) {
@@ -180,11 +183,15 @@ public class SigaFormats {
 	}
 
 	public static Date date(Object o) {
+		if (o == null)
+			return null;
 		Date d = null;
 		if (o instanceof String)
 			d = Data.parse((String) o);
 		else if (o instanceof Date)
 			d = (Date) o;
+		else if (o instanceof XMLGregorianCalendar)
+			d = ((XMLGregorianCalendar)o).toGregorianCalendar().getTime();
 		return d;
 	}
 

@@ -102,14 +102,14 @@ public class SigaFormats {
 		if (dec == null)
 			return null;
 		ReaisPorExtenso r = new ReaisPorExtenso(dec);
-		return "R$" + bigDecimalParaMonetario(dec) + " (" + r.toString() + ")";
+		return "R$ " + bigDecimalParaMonetario(dec) + " (" + r.toString() + ")";
 	}
 
 	public static String reais(Object o) {
 		BigDecimal dec = bigdecimal(o);
 		if (dec == null)
 			return null;
-		return "R$" + bigDecimalParaMonetario(dec);
+		return "R$ " + bigDecimalParaMonetario(dec);
 	}
 
 	public static String monetario(Object o) {

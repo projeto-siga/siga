@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Selenium Automation" parallel="false">
+	<test name="Test1">
+		<classes>
+			<!--
+			<class name="br.gov.pb.codata.selenium.tests.LoginPBDocIT"/>
+			-->
+			<class name="br.gov.pb.codata.selenium.tests.NewDocumentIT"/>
+			<!--
+			<class name="br.gov.pb.codata.selenium.tests.CadastroOrgaoIT"/>
+			-->
+
+			<!-- Testes rodando -->
+			<!--
+			<class name="br.gov.pb.codata.selenium.tests.AcessarQuadrosQuantitativosIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.BuscarDocumentosIT"/>
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarEspecieIT"/>
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarFeriadoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarModeloIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarNovoProcessoCampoAcessoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarNovoProcessoCampoSubstitutoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarNovoProcessoPersonalizarIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarOrgaoExternoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastroCargoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastroClassificacaoDocumentalIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastroDadosDaUnidadeIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastroFuncaoConfiancaIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastroPessoaIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastroProcessoDePessoalIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastroTipoDespachoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.DefinicaoAcompanhamentoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.DefinirMarcadorIT"/>
+			<class name="br.gov.pb.codata.selenium.tests.DocumentosIT"/>
+			<class name="br.gov.pb.codata.selenium.tests.EditarDocumentoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.ExcluirDocumentoExternoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.IdentidadesIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.IncluirdocumentoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.InclusaoCossignatarioIT"/>
+			<class name="br.gov.pb.codata.selenium.tests.MesaVirtualIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.PaginaInicialIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.PrimeiroAcessoIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.TransferirEmLoteIT"/> 
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarEmailNotificacaoIT" />
+			<class name="br.gov.pb.codata.selenium.tests.FinalizarDocumentoExternoIT" />
+			<class name="br.gov.pb.codata.selenium.tests.EnvioEmailNovosUsuariosIT" />
+			<class name="br.gov.pb.codata.selenium.tests.VisualizarDocumentoCompletoIT"/>
+			-->
+
+			<!-- Testes para ajeitar ainda -->
+			<!--
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarEmailNotificacaoIT"/>
+			<class name="br.gov.pb.codata.selenium.tests.CadastrarFinalizarDocumentoIT" />
+			<class name="br.gov.pb.codata.selenium.tests.GerenciarPossiveisSubstitutosIT" />
+			<class name="br.gov.pb.codata.selenium.tests.AnotarEmLoteIT" />
+			<class name="br.gov.pb.codata.selenium.tests.ReclassificacaoIT" />
+			<class name="br.gov.pb.codata.selenium.tests.TramitarDocumentoIT" />
+			<class name="br.gov.pb.codata.selenium.tests.ReceberProcessoIT" />
+			-->
+		</classes>
+	</test>
+</suite>

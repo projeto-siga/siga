@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>siga</groupId>
+	<artifactId>siga-selenium</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<driver-binary-downloader-maven-plugin.version>1.0.18</driver-binary-downloader-maven-plugin.version>
+		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+
+		<!--Configuration Properties -->
+		<overwrite.binaries>false</overwrite.binaries>
+		<read.timeout>30000</read.timeout>
+		<connection.timeout>40000</connection.timeout>
+		<retry.attempts>4</retry.attempts>
+		<browser>firefox</browser>
+		<threads>1</threads>
+		<remote>false</remote>
+		<headless>true</headless>
+		<seleniumGridURL />
+		<platform />
+		<browserVersion />
+		<proxyEnabled>false</proxyEnabled>
+		<proxyHost />
+		<proxyPort />
+		<proxyUsername />
+		<proxyPassword />
+
+		<!-- Test Scope Dependencies -->
+		<selenium.version>3.141.59</selenium.version>
+		<assertj-core.version>3.15.0</assertj-core.version>
+		<testng.version>7.1.0</testng.version>
+		<selenium-query.version>2.0.0-BETA3</selenium-query.version>
+	</properties>
+
+	<dependencies>
+		<!-- Test Scope Dependencies -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-remote-driver</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertj-core.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.lazerycode.selenium</groupId>
+			<artifactId>query</artifactId>
+			<version>${selenium-query.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.lazerycode.selenium</groupId>
+				<artifactId>driver-binary-downloader-maven-plugin</artifactId>
+				<version>${driver-binary-downloader-maven-plugin.version}</version>
+				<configuration>
+					<rootStandaloneServerDirectory>${project.basedir}/src/test/resources/selenium_standalone_binaries</rootStandaloneServerDirectory>
+					<downloadedZipFileDirectory>${project.basedir}/src/test/resources/selenium_standalone_zips</downloadedZipFileDirectory>
+					<customRepositoryMap>${project.basedir}/src/test/resources/RepositoryMap.xml</customRepositoryMap>
+					<overwriteFilesThatExist>${overwrite.binaries}</overwriteFilesThatExist>
+					<onlyGetDriversForHostOperatingSystem>false</onlyGetDriversForHostOperatingSystem>
+					<fileDownloadRetryAttempts>${retry.attempts}</fileDownloadRetryAttempts>
+					<fileDownloadReadTimeout>${read.timeout}</fileDownloadReadTimeout>
+					<operatingSystems>
+						<windows>true</windows>
+						<linux>true</linux>
+						<mac>true</mac>
+					</operatingSystems>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>selenium</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+				<configuration>
+					<parallel>methods</parallel>
+					<threadCount>${threads}</threadCount>
+					<systemPropertyVariables>
+						<browser>${browser}</browser>
+						<screenshotDirectory>${project.build.directory}/screenshots</screenshotDirectory>
+						<remoteDriver>${remote}</remoteDriver>
+						<gridURL>${seleniumGridURL}</gridURL>
+						<desiredPlatform>${platform}</desiredPlatform>
+						<desiredBrowserVersion>${browserVersion}</desiredBrowserVersion>
+						<proxyEnabled>${proxyEnabled}</proxyEnabled>
+						<proxyHost>${proxyHost}</proxyHost>
+						<proxyPort>${proxyPort}</proxyPort>
+						<proxyUsername>${proxyUsername}</proxyUsername>
+						<proxyPassword>${proxyPassword}</proxyPassword>
+						<headless>${headless}</headless>
+	
+						<!--Set properties passed in by the driver binary downloader -->
+						<webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
+						<webdriver.ie.driver>${webdriver.ie.driver}</webdriver.ie.driver>
+						<webdriver.opera.driver>${webdriver.opera.driver}</webdriver.opera.driver>
+						<webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
+						<webdriver.edge.driver>${webdriver.edge.driver}</webdriver.edge.driver>
+					</systemPropertyVariables>
+					<suiteXmlFiles>
+						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<!--This goal makes the build fail if you have test failures -->
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

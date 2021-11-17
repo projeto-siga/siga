@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
@@ -1283,29 +1284,36 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 	}
 
-	public String assertAssinaturaValida() throws Exception {
+	public String assertAssinaturaValida(boolean retornaNome) throws Exception {
 		long l = getExTipoMovimentacao().getId();
 		switch ((int) l) {
 		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
 		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
 			return assertAssinaturaComSenhaValida(this.getExDocumento().getPdf(), this.getAuditHash(),
-					this.getDtIniMov());
+					this.getDtIniMov(), retornaNome);
 		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
 			return assertAssinaturaComSenhaValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getAuditHash(),
-					this.getDtIniMov());
+					this.getDtIniMov(), retornaNome);
 		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
 			return assertAssinaturaDigitalValida(this.getExDocumento().getPdf(), this.getConteudoBlobMov(),
-					this.getDtIniMov());
+					this.getDtIniMov(), retornaNome);
+			
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
+			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getConteudoBlobMov(),
+					this.getDtIniMov(), retornaNome);
 		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
 			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(),
-					this.getConteudoBlobMov(), this.getDtIniMov());
+					this.getConteudoBlobMov(), this.getDtIniMov(), retornaNome);
 		default:
 			throw new AplicacaoException("Não é Assinatura");
 		}
 	}
+	
+	public String assertAssinaturaValida() throws Exception {
+		return this.assertAssinaturaValida(false);
+	}
 
-	private String assertAssinaturaComSenhaValida(byte[] pdf, String jwt, Date dtMov) throws Exception {
+	private String assertAssinaturaComSenhaValida(byte[] pdf, String jwt, Date dtMov, boolean retornaNome) throws Exception {
 		if (dtMov == null || dtMov.before(Prop.getData("data.validar.assinatura.com.senha")))
 			return "OK.";
 		
@@ -1332,10 +1340,18 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		byte[] sha256Pdf = BlucService.calcSha256(pdf);
 		if (!Arrays.equals(sha256Audit, sha256Pdf))
 			throw new AplicacaoException("Inválido (sha256 diferente)");
-		return "OK (sha256)";
+		
+		String sNome =  (String)  payload.get("name");
+		
+		if (sNome != null) {
+			sNome = Texto.maiusculasEMinusculas(sNome);
+		}
+		
+		return retornaNome ? sNome : "OK (sha256)";
 	}
 
-	private String assertAssinaturaDigitalValida(byte[] pdf, byte[] cms, Date dtMov) throws Exception {
+	private String assertAssinaturaDigitalValida(byte[] pdf, byte[] cms, Date dtMov,boolean retornaNome) throws Exception {
+		
 		if (dtMov == null || dtMov.before(Prop.getData("data.validar.assinatura.digital")))
 			return "OK.";
 		
@@ -1353,11 +1369,16 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		String sNome = validateresp.getCn();
 
 		Service.throwExceptionIfError(sNome);
+		
+		if (sNome != null) {
+			sNome = Texto.maiusculasEMinusculas(sNome);
+		}
 
 		String sCPF = validateresp.getCertdetails().get("cpf0");
 		Service.throwExceptionIfError(sCPF);
 
-		return "OK (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
+		String retorno = retornaNome ? sNome : "OK" ;
+		return retorno +" (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
 	}
 	
 	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {

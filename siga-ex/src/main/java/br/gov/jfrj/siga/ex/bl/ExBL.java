@@ -6566,6 +6566,7 @@ public class ExBL extends CpBL {
 		}
 	}
 
+	@Deprecated
 	public String verificarAssinatura(byte[] conteudo, byte[] assinatura, String mimeType, Date dtAssinatura)
 			throws Exception {
 		BlucService bluc = Service.getBlucService();

@@ -15,7 +15,7 @@ public class ExPodeSerMovimentado extends CompositeExpressionSupport {
 	private ExMobil mob;
 
 	public ExPodeSerMovimentado(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		this.mob = mob;
+		this(mob);
 
 		if (mob.doc().isFinalizado() && this.mob.isGeral()) {
 			if (this.mob.doc().isProcesso())
@@ -31,10 +31,22 @@ public class ExPodeSerMovimentado extends CompositeExpressionSupport {
 		}
 	}
 
+	public ExPodeSerMovimentado(ExMobil mob) {
+		this.mob = mob;
+	}
+
 	@Override
 	protected Expression create() {
-		return And.of(Not.of(new ExEstaSemEfeito(mob.doc())), Or.of(new ExEMobilVia(mob), new ExEMobilVolume(mob)),
-				new ExEstaFinalizado(mob.doc()), Not.of(new ExEMobilCancelado(mob)),
+		return And.of(
+
+				Not.of(new ExEstaSemEfeito(mob.doc())),
+
+				Or.of(new ExEMobilVia(mob), new ExEMobilVolume(mob)),
+
+				new ExEstaFinalizado(mob.doc()),
+
+				Not.of(new ExEMobilCancelado(mob)),
+
 				Not.of(new ExEstaEmTransitoExterno(mob)));
 	}
 };

@@ -4,19 +4,25 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
 
 public class ExTemMovimentacaoNaoCanceladaDoTipo implements Expression {
-	private ExDocumento doc;
+	private ExMobil mob;
 	private long tipo;
 
 	public ExTemMovimentacaoNaoCanceladaDoTipo(ExDocumento doc, long tipo) {
-		this.doc = doc;
+		this.mob = doc.getMobilGeral();
+		this.tipo = tipo;
+	}
+
+	public ExTemMovimentacaoNaoCanceladaDoTipo(ExMobil mob, long tipo) {
+		this.mob = mob;
 		this.tipo = tipo;
 	}
 
 	@Override
 	public boolean eval() {
-		return doc.getMobilGeral().getMovsNaoCanceladas(tipo).size() > 0;
+		return mob.getMovsNaoCanceladas(tipo).size() > 0;
 	}
 
 	@Override

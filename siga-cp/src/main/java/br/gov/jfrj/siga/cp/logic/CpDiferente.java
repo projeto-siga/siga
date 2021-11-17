@@ -5,13 +5,13 @@ import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.base.util.Utils;
 
-public class CpIgual implements Expression {
+public class CpDiferente implements Expression {
 	Object obj;
 	String nome;
 	Object obj2;
 	String nome2;
 
-	public CpIgual(Object obj, String nome, Object obj2, String nome2) {
+	public CpDiferente(Object obj, String nome, Object obj2, String nome2) {
 		this.obj = obj;
 		this.nome = nome;
 		this.obj2 = obj2;
@@ -20,15 +20,15 @@ public class CpIgual implements Expression {
 
 	@Override
 	public boolean eval() {
-		return Utils.igual(obj, obj2);
+		return !Utils.igual(obj, obj2);
 	}
 
 	@Override
 	public String explain(boolean result) {
 		if (result)
-			return nome + " igual a " + nome2;
+			return nome + " diferente de " + nome2;
 		else
-			return nome + " " + JLogic.NOT + " igual a " + nome2;
+			return nome + " " + JLogic.NOT + " diferente de " + nome2;
 	}
 
 }

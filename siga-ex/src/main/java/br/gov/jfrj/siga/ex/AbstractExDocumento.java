@@ -1142,9 +1142,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	
 	private boolean orgaoPermiteHcp() {
-		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
 		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
-		if(orgaos != null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
+		if ("*".equals(orgaos.get(0)))
+			return true;
+		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
+		if(orgaos != null && (orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
 			return true;
 		return false;
 	}

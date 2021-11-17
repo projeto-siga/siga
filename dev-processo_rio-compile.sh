@@ -2,7 +2,7 @@
 
 #verify args
 if [ $# -eq 0 ]; then
-        echo "Not found Maven Parameters: eg.:-T 1C -pl '!siga-dump,!siga-ex-gsa,!siga-ex-sinc,!siga-gc-gsa,!sigagc,!sigasr,!sigapp,!siga-ldap-cli,!sigatp,!siga-wf,!sigawf' clean install -DskipTests=true "
+        echo "Not found Maven Parameters: eg.:'-T 1C -pl !siga-dump,!siga-ex-gsa,!siga-ex-sinc,!siga-gc-gsa,!sigagc,!sigasr,!sigapp,!siga-ldap-cli,!sigatp,!siga-wf,!sigawf,!siga-vraptor-module-old install -DskipTests=true' jdevas135.infra.rio.gov.br:9990 -DskipTests=true "
         exit 1
 fi
 
@@ -141,7 +141,7 @@ echo "                              STARTING MAVEN"
 echo "###############################################################################"
 echo ""
 echo ""
-mvn $@
+mvn $1
 echo ""
 echo "###############################################################################"
 echo "                                   END"
@@ -193,7 +193,7 @@ if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext
 fi
 
 
-if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=jdevas135.infra.rio.gov.br:9990 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar"`; then
+if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$2 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar"`; then
         echo "DEPLOY MODULE: siga-ext.jar - OK"
 else
         echo $module_siga_ext

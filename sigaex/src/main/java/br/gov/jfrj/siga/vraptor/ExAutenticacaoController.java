@@ -201,6 +201,7 @@ public class ExAutenticacaoController extends ExController {
  					false);
 			
 			switch ( mov.getExTipoMovimentacao().getId().intValue()) {
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".jwt";
@@ -211,6 +212,7 @@ public class ExAutenticacaoController extends ExController {
 				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);
 				break;
 				
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";

@@ -1,8 +1,11 @@
+
 package br.gov.jfrj.siga.ex.logic;
 
+import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 
+import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -10,10 +13,13 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 
 public class ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao extends CompositeExpressionSupport {
 
+	private ExMobil mob;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 
-	public ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(DpPessoa titular, DpLotacao lotaTitular) {
+	public ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		super();
+		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 	}
@@ -31,9 +37,11 @@ public class ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao extends Composite
 	 */
 	@Override
 	protected Expression create() {
+		return And.of(
 
-		return new ExPodePorConfiguracao(titular, lotaTitular)
-				.withIdTpConf(ExTipoDeConfiguracao.GERENCIAR_PUBLICACAO_BOLETIM);
+				new CpNaoENulo(lotaTitular, "lotação titular"),
 
+				new ExPodePorConfiguracao(titular, lotaTitular)
+						.withIdTpConf(ExTipoDeConfiguracao.GERENCIAR_PUBLICACAO_BOLETIM));
 	}
-}
+};

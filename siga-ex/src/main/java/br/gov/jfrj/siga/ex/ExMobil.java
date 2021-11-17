@@ -1628,7 +1628,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public List<ExDocumento> getDocsFilhosNaoJuntados() {
 		Set<ExMobil> todosOsMeusJuntados = getJuntados();
 		List<ExDocumento> meusFilhosNaoJuntados = new ArrayList<ExDocumento>();
-		for (ExDocumento docFilho : getExDocumentoFilhoSet()) {
+		Set<ExDocumento> filhos = getExDocumentoFilhoSet();
+		for (ExDocumento docFilho : filhos) {
 			if (!docFilho.isExpediente() || docFilho.isCancelado() || docFilho.isArquivado() || docFilho.isSemEfeito())
 				continue;
 			boolean juntado = false, juntadoAOutro = false;
@@ -1642,6 +1643,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			if (!juntado && !juntadoAOutro)
 				meusFilhosNaoJuntados.add(docFilho);
 		}
+		if (isVolume())
+			meusFilhosNaoJuntados.addAll(doc().getMobilGeral().getDocsFilhosNaoJuntados());
 		return meusFilhosNaoJuntados;
 	}
 

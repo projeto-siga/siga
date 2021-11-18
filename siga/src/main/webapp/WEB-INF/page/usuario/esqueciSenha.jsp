@@ -435,7 +435,7 @@ function refreshWindow(){
 												<tr>
 												<td>Guarda Municipal do Rio de Janeiro / GMRIO</td>
 												<td width="53">GM</td>
-												<td width="57">2</td>
+												<td width="57"></td>
 												</tr>
 												<tr>
 												<td>Instituto de Previdência e Assistência do Município do Rio de Janeiro / PREVIRIO</td>

@@ -70,11 +70,11 @@
 											<tr>
 												<th align="left" rowspan="2">Data</th>
 												<th rowspan="2">Evento</th>
-												<th colspan="2" align="left">Cadastrante</th>
+												<th colspan="2" align="left">Origem</th>
 												<c:if test="${ (exibirCompleto == 'true')}">
 													<th colspan="2" align="left">Responsável</th>
 												</c:if>
-												<th colspan="2" align="left">Atendente</th>
+												<th colspan="2" align="left">Destino</th>
 											</tr>
 											<tr>
 												<th colspan="2" align="left">Lotação</th>

@@ -62,9 +62,6 @@
 				<div class="col">
 			
 				<div class="card mb-3" >
-				  <div class="card-header">
-				    <h5>Informações Gerais</h5>
-				  </div>
 				  <div class="card-body">
 				  
 				    <c:if test="${!fn:startsWith(texto1,'???')}">	<p>    ${texto1} </p></c:if>

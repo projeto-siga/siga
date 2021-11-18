@@ -91,8 +91,8 @@
 				</div>
 				<div class="card-body">
 					<div id="dados-assinatura" style="visible: hidden">
-						<input type="hidden" name="ad_url_base" value="" /> <input
-								type="hidden" name="ad_url_next" value="/siga/app/principal" />
+						<input type="hidden" name="ad_url_base" value="" /> 
+						<input type="hidden" name="ad_url_next" value="/siga/app/principal" />
 						<c:set var="botao" value="" />
 							<c:if test="${autenticando}">
 								<c:set var="botao" value="autenticando" />
@@ -172,6 +172,10 @@
 									value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
 								<input type="hidden" name="ad_tramitar_${doc.idDoc}"
 									value="false" />
+								<c:if test="${juntarAtivo == true and doc.exMobilPai != null}">
+									<input type="hidden" name="ad_juntar_${doc.idDoc}"
+										<c:if test="true">checked</c:if>/>
+								</c:if>
 								<input type="hidden" name="ad_descr_${doc.idDoc}"
 									value="${doc.sigla}" />
 								<input type="hidden" name="ad_url_pdf_${doc.idDoc}"

@@ -3164,6 +3164,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/mov/arquivar_permanente_lote");
 	}
 
+	@Transacional
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote() throws Exception {
 		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
@@ -3175,6 +3176,7 @@ public class ExMovimentacaoController extends ExController {
 			if (doc.isFinalizado())
 				itensFinalizados.add(doc);
 		}
+		
 		final List<ExDocumento> documentosQuePodemSerAssinadosComSenha = new ArrayList<ExDocumento>();
 
 		for (final ExDocumento exDocumento : itensFinalizados) {
@@ -3184,6 +3186,15 @@ public class ExMovimentacaoController extends ExController {
 							exDocumento.getMobilGeral())) {
 				documentosQuePodemSerAssinadosComSenha.add(exDocumento);
 			}
+		}
+		
+		for (ExDocumento doc : documentosQuePodemSerAssinadosComSenha) {
+			AtivoEFixo juntarAtivo = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
+			
+			if(doc.getDtPrimeiraAssinatura() == null)
+				doc.setDtPrimeiraAssinatura(dao.dt());
+			
+			result.include("juntarAtivo", juntarAtivo.ativo); 
 		}
 
 		result.include("documentosQuePodemSerAssinadosComSenha",

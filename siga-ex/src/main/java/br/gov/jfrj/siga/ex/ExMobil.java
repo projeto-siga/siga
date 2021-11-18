@@ -2024,17 +2024,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return getReferencia() + ".rtf";
 	};
 
-	/**
-	 * Verifica se o mobil está na mesma lotação de outro
-	 * 
-	 */
-	public boolean estaNaMesmaLotacao(ExMobil outroMobil) {
-		if (getUltimaMovimentacao() != null && outroMobil.getUltimaMovimentacao() != null)
-			return getUltimaMovimentacao().getLotaResp().equivale(outroMobil.getUltimaMovimentacao().getLotaResp());
-
-		return false;
-	}
-
+	
 	/**
 	 * Retorna a destinação final deste móbil conforme o PCTT.
 	 * 

@@ -2449,6 +2449,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			if (mov.getExMovimentacaoRef().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)
 				p.tramitesDeNotificacoesPendentes.add(mov);
 		}
+		
+		// Quando se trata de um novo volume que ainda não sofreu trâmite, retornar os atendentes do volume anterior
+		if (p.fIncluirCadastrante && isVolume()
+				&& ((isUltimoVolume() && getNumSequencia() > 1) || temApensos()))
+			return doc().getVolume(getNumSequencia() - 1).calcularTramitesPendentes();
+		
 		return p;
 	}
 

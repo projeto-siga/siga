@@ -6464,7 +6464,10 @@ public class ExBL extends CpBL {
 					+ "em transito externo, " + "cancelado ou "
 					+ "em local diferente da lotação em que se encontra o documento ao qual se quer apensar");
 
-		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre) || !mob.estaNaMesmaLotacao(mobMestre))
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre))
+			throw new AplicacaoException("não é possível apensar a um documento quando o mestre está em outra lotação");
+		
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mob))
 			throw new AplicacaoException("não é possível apensar a um documento que esteja em outra lotação");
 
 		try {

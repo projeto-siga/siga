@@ -6613,45 +6613,6 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public String verificarAssinatura(byte[] conteudo, byte[] assinatura, String mimeType, Date dtAssinatura)
-			throws Exception {
-		BlucService bluc = Service.getBlucService();
-
-		// Chamar o BluC para validar a assinatura
-		//
-		ValidateRequest validatereq = new ValidateRequest();
-		validatereq.setEnvelope(bluc.bytearray2b64(assinatura));
-		validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(conteudo)));
-		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(conteudo)));
-		validatereq.setTime(dtAssinatura);
-		validatereq.setCrl("true");
-		ValidateResponse validateresp = assertValid(bluc, validatereq);
-
-		String sNome;
-		Long lCPF;
-
-		sNome = validateresp.getCn();
-
-		Service.throwExceptionIfError(sNome);
-
-		if (sNome != null) {
-			sNome = Texto.maiusculasEMinusculas(sNome);
-		}
-
-		String sCPF = validateresp.getCertdetails().get("cpf0");
-		Service.throwExceptionIfError(sCPF);
-
-		lCPF = Long.valueOf(sCPF);
-
-		if (validateresp.getPolicy() == null)
-			return sNome;
-
-		if (validateresp.getPolicyversion() == null)
-			return sNome + " (" + validateresp.getPolicy() + ")";
-
-		return sNome + " (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
-	}
-
 	public void gravarModelo(ExModelo modNovo, ExModelo modAntigo, Date dt, CpIdentidade identidadeCadastrante)
 			throws AplicacaoException {
 		if ("template-file/jsp".equals(modNovo.getConteudoTpBlob())) {

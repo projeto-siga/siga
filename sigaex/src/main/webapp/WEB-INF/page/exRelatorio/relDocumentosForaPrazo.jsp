@@ -21,6 +21,47 @@
 			frmRelatorios.action = a;
 			return false;
 		}
+		
+		var newwindow = '';
+		function visualizarRelatorio(rel) {
+			frmRelatorios.tipoRel.value = "pdf";
+			if (!newwindow.closed && newwindow.location) {
+			} else {
+				var popW = 600;
+				var popH = 400;
+				var winleft = (screen.width - popW) / 2;
+				var winUp = (screen.height - popH) / 2;
+				winProp = 'width=' + popW + ',height=' + popH + ',left='
+						+ winleft + ',top=' + winUp
+						+ ',scrollbars=yes,resizable'
+				newwindow = window.open('', '', winProp);
+				newwindow.name = 'doc';
+			}
+
+			newwindow.opener = self;
+			t = frmRelatorios.target;
+			a = frmRelatorios.action;
+			frmRelatorios.target = newwindow.name;
+			frmRelatorios.action = rel;
+			frmRelatorios.submit();
+			frmRelatorios.target = t;
+			frmRelatorios.action = a;
+
+			if (window.focus) {
+				newwindow.focus()
+			}
+			return false;
+		}
+		
+		function visualizarCVS(rel) {
+			frmRelatorios.tipoRel.value = "cvs";
+			t = frmRelatorios.target;
+			a = frmRelatorios.action;
+			frmRelatorios.action = rel;
+			frmRelatorios.submit();
+			frmRelatorios.action = a;
+
+		}
 	</script>
 
 	<div class="container-fluid">
@@ -34,12 +75,24 @@
 					action="/sigaex/app/expediente/rel/relDocumentosForaPrazo"
 					theme="simple" method="get">
 					<input type="hidden" name="postback" value="1" />
+					<input type="hidden" name="tipoRel" id="tipoRel" />
 					<div class="row">
 						<jsp:include page="relGestaoInput.jsp" />
-						<div class="form-group col-md-4">
+						<div class="form-group col-md-10">
 							<input type="submit" value="Pesquisar" class="btn btn-primary" />
 							<input type="button" value="Voltar"
 								onclick="javascript:history.back();" class="btn btn-primary" />
+						</div>
+						<div class="form-group col-md-2">
+							<div class="btn-group  float-right">	
+								<a href="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/relDocumentosForaPrazoPDF');" class="btn btn-primary float-right" role="button" aria-pressed="true" style="min-width: 80px;">Exportar PDF</a>
+											<button type="button" class="btn btn-primary float-right dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											    <span class="sr-only"></span>
+										    </button>
+									<div class="dropdown-menu">
+									  	<a href="javascript:visualizarCVS('${pageContext.request.contextPath}/app/expediente/rel/relDocumentosForaPrazoPDF');" class="dropdown-item" role="button" aria-pressed="true">Exportar CSV</a>								   
+									  </div>
+							</div>
 						</div>
 					</div>
 					<c:if test="${listModelos != null}">

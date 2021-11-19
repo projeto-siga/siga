@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
+import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
@@ -28,7 +29,6 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 public class RelDocumentosForaPrazo extends RelatorioTemplate {
@@ -55,16 +55,16 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Documentos Fora do Prazo");
 		this.listColunas.add("Unidade");
 		this.listColunas.add("Nome do Documento");
-		this.listColunas.add("Vencido");
+		this.listColunas.add("Data Vencida");
 		this.listColunas.add("Qtde de documentos");
+		this.estiloColuna.setVerticalAlign(VerticalAlign.MIDDLE);
 
 		this.addColuna("Unidade", 25, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Nome do Documento", 45, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Vencido", 25, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Qtde de documentos", 25, RelatorioRapido.ESQUERDA,
+		this.addColuna("Nome do Documento", 50, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Data Vencida", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Qtde de documentos", 20, RelatorioRapido.DIREITA,
 				false);
 		return this;
 
@@ -78,7 +78,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 		Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
 				"from DpLotacao lot " + "where lot.dataFimLotacao is null "
 						+ "and lot.orgaoUsuario = "
-						+ parametros.get("orgaoUsuario")
+						+ parametros.get("orgao")
 						+ " and lot.siglaLotacao = '"
 						+ parametros.get("lotacaoTitular") + "'");
 		DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
@@ -91,7 +91,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 				+ " LOTA.NOME_LOTACAO,"
 				+ " LOTA.ID_LOTACAO,"
 				+ " DOC.ID_MOD,"
-				+ " MOD.NM_MOD,"
+				+ " MD.NM_MOD,"
 				+ " TABELA_TEMP3.DT_FIM_MOV,"
 				+ " COUNT(DOC.ID_DOC)";
 	
@@ -99,7 +99,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 				+ " LOTA.NOME_LOTACAO,"
 				+ " LOTA.ID_LOTACAO,"
 				+ " DOC.ID_MOD,"
-				+ " MOD.NM_MOD,"
+				+ " MD.NM_MOD,"
 				+ " TABELA_TEMP3.DT_FIM_MOV"
 				+ " ORDER BY 1 ASC, 2 ASC, 3 ASC, 4 ASC, 5 ASC";
 		
@@ -108,37 +108,64 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		String lotaAnt = "";
 
+		Object[] obj = null;
+		String lotaDoc = "";
+		String lotaNomeDoc = "";
+		String idLotaResp = "";
+		String idMod = "";
+		ExModelo exModelo = null;
+		String modeloDoc = "";
+		StringBuffer linkModeloDoc = new StringBuffer();
+		List<String> listDados = new ArrayList();
+		Long docs = null;
+		
 		while (it.hasNext()) {
-			Object[] obj = (Object[]) it.next();
-			String lotaDoc = (String) obj[0];
-			String lotaNomeDoc = (String) obj[1];
-			String idLotaResp = new BigDecimal(obj[2].toString()).toString();
-			String idMod = new BigDecimal(obj[3].toString()).toString();
-			ExModelo exModelo = new ExModelo();
+			obj = (Object[]) it.next();
+			lotaDoc = (String) obj[0];
+			lotaNomeDoc = (String) obj[1];
+			idLotaResp = new BigDecimal(obj[2].toString()).toString();
+			idMod = new BigDecimal(obj[3].toString()).toString();
+			exModelo = new ExModelo();
 			exModelo.setIdMod(Long.valueOf(idMod));
 			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
 					 titular, lotaTitular ,ExDao.getInstance().consultar(exModelo.getIdMod(),ExModelo.class, false)
 							)) {
-				String modeloDoc = (String) obj[4];
-				String linkModeloDoc = "<a href='#' class='text-primary' onclick=\"javascript:abreDetalhe('" 
-						+ parametros.get("link_siga") + "','" + modeloDoc + "','" 
-						+ lotaDoc + " / " + lotaNomeDoc + "','"
-						+ formato.format(obj[5]) + "','"
-						+ idMod + "','" + idLotaResp + "');\">" 
-						+ modeloDoc + "</a>";
+				modeloDoc = (String) obj[4];
+				linkModeloDoc = new StringBuffer();
+				if(parametros.get("link_siga") != "") {
+					linkModeloDoc.append("<a href='#' class='text-primary' onclick=\"javascript:abreDetalhe('");
+					linkModeloDoc.append(parametros.get("link_siga"));
+					linkModeloDoc.append( "','");
+					linkModeloDoc.append(modeloDoc);
+					linkModeloDoc.append("','" );
+					linkModeloDoc.append(lotaDoc);
+					linkModeloDoc.append(" / ");
+					linkModeloDoc.append(lotaNomeDoc);
+					linkModeloDoc.append("','");
+					linkModeloDoc.append(formato.format(obj[5]));
+					linkModeloDoc.append("','");
+					linkModeloDoc.append(idMod);
+					linkModeloDoc.append("','");
+					linkModeloDoc.append(idLotaResp);
+					linkModeloDoc.append("');\">");
+					linkModeloDoc.append(modeloDoc);
+					linkModeloDoc.append("</a>");
+				} else {
+					linkModeloDoc.append(modeloDoc);
+				}
 				
-				List<String> listDados = new ArrayList();
+				listDados = new ArrayList();
 				if (!lotaDoc.equals(lotaAnt)) {
 					listDados.add(lotaDoc + " / " + lotaNomeDoc);
 					lotaAnt = lotaDoc;
 				} else {
 					listDados.add("");
 				}
-				listDados.add(linkModeloDoc);
+				listDados.add(linkModeloDoc.toString());
 				listDados.add(formato.format(obj[5]));
 				listDados.add(obj[6].toString());
 				listModelos.add(listDados);
-				Long docs = Long.valueOf(obj[6].toString());
+				docs = Long.valueOf(obj[6].toString());
 				totalDocs = totalDocs + docs;
 			}
 
@@ -191,7 +218,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 			String siglaMob = ExMobil.getSigla(siglaDoc, Integer.valueOf(obj[6].toString()), Long.valueOf(obj[7].toString()));
 			List<String> listDados = new ArrayList();
 			listDados.add(siglaMob);
-			listDados.add(obj[8].toString());
+			listDados.add(obj[8] != null ? obj[8].toString() : "");
 			listDocs.add(listDados);
 			totalDocs = totalDocs + 1;
 		}
@@ -207,13 +234,13 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 		String queryLotacao = "";
 		if (parametros.get("lotacao") != null
 				&& !"".equals(parametros.get("lotacao"))) {
-			queryLotacao = " AND DOC.ID_LOTA_CADASTRANTE IN ( SELECT LOTA.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO LOTA WHERE LOTA.ID_LOTACAO_INI = :lotacao ) ";
+			queryLotacao = " AND DOC.ID_LOTA_CADASTRANTE IN ( SELECT LOTA.ID_LOTACAO FROM corporativo.dp_lotacao LOTA WHERE LOTA.ID_LOTACAO_INI = :lotacao ) ";
 		}
 
 		String queryUsuario = "";
 		if (parametros.get("usuario") != null
 				&& !"".equals(parametros.get("usuario"))) {
-			queryUsuario = " AND DOC.ID_CADASTRANTE IN ( SELECT PES.ID_PESSOA FROM CORPORATIVO.DP_PESSOA PES WHERE PES.ID_PESSOA_INICIAL = :usuario ) ";
+			queryUsuario = " AND DOC.ID_CADASTRANTE IN ( SELECT PES.ID_PESSOA FROM corporativo.dp_pessoa PES WHERE PES.ID_PESSOA_INICIAL = :usuario ) ";
 		}
 
 		String queryModelo = "";
@@ -221,11 +248,11 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 		if (parametros.get("idMod") != null && !"".equals(parametros.get("idMod"))) {
 			queryModelo = " AND DOC.ID_MOD = :idMod "
 					+ " AND DOC.ID_LOTA_CADASTRANTE = :idLotaResp ";
-			queryJoin = " LEFT OUTER JOIN SIGA.EX_FORMA_DOCUMENTO FRM "
+			queryJoin = " LEFT OUTER JOIN siga.ex_forma_documento FRM "
 					+ " ON FRM.ID_FORMA_DOC = DOC.ID_FORMA_DOC "
-					+ " LEFT OUTER JOIN CORPORATIVO.DP_PESSOA RESP"
+					+ " LEFT OUTER JOIN corporativo.dp_pessoa RESP"
 					+ " ON RESP.ID_PESSOA = TABELA_TEMP3.ID_RESP"
-					+ " INNER JOIN CORPORATIVO.CP_ORGAO_USUARIO ORG "
+					+ " INNER JOIN corporativo.cp_orgao_usuario ORG "
 					+ " ON ORG.ID_ORGAO_USU = DOC.ID_ORGAO_USU ";
 		}
 
@@ -238,22 +265,22 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 								+ " 	MOV.ID_CADASTRANTE,"
 								+ " 	MOV.ID_LOTA_RESP,"
 								+ " 	MOV.ID_RESP"
-								+ " 	FROM SIGA.EX_MOVIMENTACAO MOV"
+								+ " 	FROM siga.ex_movimentacao MOV"
 								+ " 	INNER JOIN ( SELECT TABELA_TEMP1.ID_MOBIL, "
 								+ " 		MAX(TABELA_TEMP1.ID_MOV) ID_MOV"
 								+ " 		FROM ( SELECT MOV.ID_MOBIL,"
 								+ " 			MOV.ID_MOV"
-								+ " 			FROM SIGA.EX_MOVIMENTACAO MOV"
+								+ " 			FROM siga.ex_movimentacao MOV"
 								+ " 			WHERE (MOV.ID_TP_MOV = :idTpMov1"
 								+ " 					OR MOV.ID_TP_MOV = :idTpMov2"
 								+ " 					OR MOV.ID_TP_MOV = :idTpMov3"
 								+ " 					OR MOV.ID_TP_MOV = :idTpMov4)"
 								+ " 			AND MOV.ID_MOV_CANCELADORA IS NULL"
 								+ " 			AND MOV.ID_MOBIL IN ( SELECT MOV.ID_MOBIL"
-								+ " 				FROM SIGA.EX_MOVIMENTACAO MOV"
-								+ " 				INNER JOIN SIGA.EX_MOBIL MOB"
+								+ " 				FROM siga.ex_movimentacao MOV"
+								+ " 				INNER JOIN siga.ex_mobil MOB"
 								+ " 				ON MOB.ID_MOBIL = MOV.ID_MOBIL"
-								+ " 				INNER JOIN SIGA.EX_DOCUMENTO DOC"
+								+ " 				INNER JOIN siga.ex_documento DOC"
 								+ " 				ON DOC.ID_DOC = MOB.ID_DOC"
 								+ " 				WHERE MOV.DT_FIM_MOV >= :dtini "
 								+ " 				AND MOV.DT_FIM_MOV < :dtfim "
@@ -269,17 +296,17 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 								+ " 	ON MOV.ID_MOBIL = TABELA_TEMP2.ID_MOBIL"
 								+ " 	AND MOV.ID_MOV = TABELA_TEMP2.ID_MOV"
 								+ " 	WHERE MOV.DT_FIM_MOV IS NOT NULL ) TABELA_TEMP3"
-								+ " INNER JOIN SIGA.EX_MOBIL MOB"
+								+ " INNER JOIN siga.ex_mobil MOB"
 								+ " ON MOB.ID_MOBIL = TABELA_TEMP3.ID_MOBIL"
-								+ " INNER JOIN SIGA.EX_DOCUMENTO DOC"
+								+ " INNER JOIN siga.ex_documento DOC"
 								+ " ON DOC.ID_DOC = MOB.ID_DOC"
-								+ " INNER JOIN SIGA.EX_MODELO MOD"
-								+ " ON MOD.ID_MOD = DOC.ID_MOD"
-								+ " INNER JOIN CORPORATIVO.DP_LOTACAO LOTA"
+								+ " INNER JOIN siga.ex_modelo MD"
+								+ " ON MD.ID_MOD = DOC.ID_MOD"
+								+ " INNER JOIN corporativo.dp_lotacao LOTA"
 								+ " ON LOTA.ID_LOTACAO = DOC.ID_LOTA_CADASTRANTE"
-								+ " INNER JOIN CORPORATIVO.DP_PESSOA PES"
+								+ " INNER JOIN corporativo.dp_pessoa PES"
 								+ " ON PES.ID_PESSOA = TABELA_TEMP3.ID_CADASTRANTE"
-								+ " LEFT OUTER JOIN CORPORATIVO.DP_LOTACAO LOTARESP"
+								+ " LEFT OUTER JOIN corporativo.dp_lotacao LOTARESP"
 								+ " ON LOTARESP.ID_LOTACAO = TABELA_TEMP3.ID_LOTA_RESP"
 								+ queryJoin
 								+ " WHERE DOC.ID_ORGAO_USU = :orgao "

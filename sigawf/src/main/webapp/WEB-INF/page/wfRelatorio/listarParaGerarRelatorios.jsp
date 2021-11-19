@@ -19,7 +19,7 @@
 			<tbody class="table-bordered">
 				<c:forEach var="item" items="${itens}">
 					<tr>
-						<td><a href="${linkTo[WfRelatorioController].medir(item.sigla)}">${item.sigla}</a></td>
+						<td><a href="${linkTo[WfRelatorioController].medir(item.siglaCompacta)}">${item.sigla}</a></td>
 						<td>${item.nome}</td>
 						<td>${item.descr}</td>
 					</tr>

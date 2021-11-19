@@ -981,15 +981,18 @@ public class ExDao extends CpDao {
 						"consultarPorFiltroExPreenchimento");
 				query.setParameter("nomePreenchimento", exPreenchimento
 						.getNomePreenchimento().toUpperCase().replace(' ', '%'));
-			} else {
+			} else if (exPreenchimento.getDpLotacao() != null){
 				query = em().createNamedQuery(
 						"consultarPorLotacaoModeloExPreenchimento");
+				if (exPreenchimento.getDpLotacao() != null)
+					query.setParameter("lotacao", exPreenchimento.getDpLotacao()
+							.getIdLotacao());
+				else
+					query.setParameter("lotacao", 0);
+			} else {
+				query = em().createNamedQuery(
+						"consultarPorModeloExPreenchimento");
 			}
-			if (exPreenchimento.getDpLotacao() != null)
-				query.setParameter("lotacao", exPreenchimento.getDpLotacao()
-						.getIdLotacao());
-			else
-				query.setParameter("lotacao", 0);
 			if (exPreenchimento.getExModelo() != null)
 				query.setParameter("modelo", exPreenchimento.getExModelo()
 						.getHisIdIni());

@@ -1374,42 +1374,47 @@ CKEDITOR.replace( '${var}',
 								CKEDITOR.config.scayt_sLang = 'pt_BR';
 								CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
 								
-								CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
-								        name: 'Título',
-								        element: 'h1',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Subtítulo',
-								        element: 'h2',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Com recuo',
-								        element: 'p',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Marcador',
-								        element: 'span',
-								        styles: {
-								        	'background-color' : '#FFFF00'
-								        }
-								    },
-								    {
-								        name: 'Normal',
-								        element: 'span'
-								    }
-								]);
+								if (CKEDITOR.stylesSet.get('siga_ckeditor_styles') == null) {
+								
+									CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+									        name: 'Título',
+									        element: 'h1',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Subtítulo',
+									        element: 'h2',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Com recuo',
+									        element: 'p',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Marcador',
+									        element: 'span',
+									        styles: {
+									        	'background-color' : '#FFFF00'
+									        }
+									    },
+									    {
+									        name: 'Normal',
+									        element: 'span'
+									    }
+									]);
+								
+								};
+								
 								CKEDITOR.config.toolbar = 'SigaToolbar';
 								
 								CKEDITOR.config.toolbar_SigaToolbar = [{

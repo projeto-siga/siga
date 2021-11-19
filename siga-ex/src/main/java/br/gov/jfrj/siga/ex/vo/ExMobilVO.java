@@ -21,9 +21,6 @@ package br.gov.jfrj.siga.ex.vo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.jboss.logging.Logger;
 
@@ -41,8 +38,11 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnotar;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
+import br.gov.jfrj.siga.ex.logic.ExPodeTramitarEmParalelo;
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 
 public class ExMobilVO extends ExVO {
 	transient Logger log = Logger.getLogger(ExMobilVO.class.getCanonicalName());
@@ -415,26 +415,17 @@ public class ExMobilVO extends ExVO {
 						.podeReceber(titular, lotaTitular, mob), null, null,
 				null, null, "once");
 		
-		addAcao("email_go",
-				"_Tramitar",
-				"/app/expediente/mov",
-				"transferir",
-				Ex.getInstance().getComp()
-						.podeTransferir(titular, lotaTitular, mob));
+		addAcao(AcaoVO.builder().nome("Receber").icone("email_open").nameSpace("/app/expediente/mov").acao("receber")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReceber(mob, titular, lotaTitular)).classe("once").build());
 		
-		addAcao("email_go",
-				"Tramitar em Paralelo",
-				"/app/expediente/mov",
-				"tramitar_paralelo",
-				Ex.getInstance().getComp()
-						.podeTramitarEmParalelo(titular, lotaTitular, mob));
+		addAcao(AcaoVO.builder().nome("_Tramitar").icone("email_go").nameSpace("/app/expediente/mov").acao("transferir")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeTransferir(mob, titular, lotaTitular)).build());
 		
-		addAcao("email_go",
-				"Notificar",
-				"/app/expediente/mov",
-				"notificar",
-				Ex.getInstance().getComp()
-						.podeNotificar(titular, lotaTitular, mob));
+		addAcao(AcaoVO.builder().nome("Tramitar em Paralelo").icone("email_go").nameSpace("/app/expediente/mov").acao("tramitar_paralelo")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeTramitarEmParalelo(mob, titular, lotaTitular)).build());
+		
+		addAcao(AcaoVO.builder().nome("Notificar").icone("email_go").nameSpace("/app/expediente/mov").acao("notificar")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeNotificar(mob, titular, lotaTitular)).build());
 		
 		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotacaoObservacaoModal")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());

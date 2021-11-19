@@ -155,6 +155,7 @@ import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
@@ -3291,7 +3292,7 @@ public class ExBL extends CpBL {
 	public String descricaoConfidencialDoDocumento(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 
 		try {
-			if (!getComp().podeAcessarDocumento(titular, lotaTitular, mob))
+			if (!getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, mob))
 				return "CONFIDENCIAL";
 			else
 				return mob.getExDocumento().getDescrDocumento();
@@ -3337,7 +3338,7 @@ public class ExBL extends CpBL {
 
 	public static boolean mostraDescricaoConfidencial(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		try {
-			return !Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral());
+			return !Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, doc.getMobilGeral());
 		} catch (Exception e) {
 			return true;
 		}
@@ -3345,7 +3346,7 @@ public class ExBL extends CpBL {
 	
 	public static boolean exibirQuemTemAcessoDocumentosLimitados(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		try {
-			if (Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral())) { return true; }
+			if (Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, doc.getMobilGeral())) { return true; }
 			return Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(titular, lotaTitular, doc.getExModelo());
 		} catch (Exception e) {
 			return true;

@@ -26,6 +26,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -116,7 +117,7 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 			String idMod = new BigDecimal(obj[3].toString()).toString();
 			ExModelo exModelo = new ExModelo();
 			exModelo.setIdMod(Long.valueOf(idMod));
-			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+			if (Ex.getInstance().getBL().getComp().pode(ExPodeExibirQuemTemAcessoAoDocumento.class, 
 					 titular, lotaTitular ,ExDao.getInstance().consultar(exModelo.getIdMod(),ExModelo.class, false)
 							)) {
 				String modeloDoc = (String) obj[4];

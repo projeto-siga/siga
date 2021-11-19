@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.DocumentosSiglaArquivoGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
@@ -135,7 +136,7 @@ public class ExArquivoController extends ExController {
 			} else {
 				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
 			}
-			if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)
+			if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mob)
 					&& !podeVisualizarDocumento(mob, getTitular(), idVisualizacao)) {
 				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário "
 						+ getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
@@ -426,7 +427,7 @@ public class ExArquivoController extends ExController {
 			throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
 		}
 
-		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+		if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário "
 					+ getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}

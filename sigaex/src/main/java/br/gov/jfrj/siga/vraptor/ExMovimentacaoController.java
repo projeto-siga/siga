@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -54,7 +53,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.observer.upload.UploadSizeLimit;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
@@ -77,7 +75,6 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -103,6 +100,7 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
@@ -582,7 +580,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		if (!Ex.getInstance()
 				.getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+				.pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(),
 						mov.getExMobilRef())) {
 			throw new AplicacaoException("Não é permitido incluir cópia de documento que o usuário não tenha acesso");
 		}
@@ -652,7 +650,7 @@ public class ExMovimentacaoController extends ExController {
 
 		if (!Ex.getInstance()
 				.getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+				.pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(),
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Acesso permitido a usuários autorizados.");
@@ -1447,7 +1445,7 @@ public class ExMovimentacaoController extends ExController {
 			if (!m.isApensado()
 					&& Ex.getInstance()
 							.getComp()
-							.podeAcessarDocumento(getTitular(),
+							.pode(ExPodeAcessarDocumento.class, getTitular(),
 									getLotaTitular(), m)) {
 				itens.add(m);
 			}
@@ -1504,7 +1502,7 @@ public class ExMovimentacaoController extends ExController {
 
 		if (!Ex.getInstance()
 				.getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+				.pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(),
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Acesso permitido a usuários autorizados.");
@@ -1540,7 +1538,7 @@ public class ExMovimentacaoController extends ExController {
 			if (!m.isApensado()
 					&& Ex.getInstance()
 							.getComp()
-							.podeAcessarDocumento(getTitular(),
+							.pode(ExPodeAcessarDocumento.class, getTitular(),
 									getLotaTitular(), m)) {
 				itens.add(m.isVolume() ? m.doc().getMobilGeral() : m);
 			}
@@ -1596,7 +1594,7 @@ public class ExMovimentacaoController extends ExController {
 
 		if (!Ex.getInstance()
 				.getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+				.pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(),
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Acesso permitido a usuários autorizados.");
@@ -2409,7 +2407,7 @@ public class ExMovimentacaoController extends ExController {
 			if (!m.isApensado()
 					&& Ex.getInstance()
 							.getComp()
-							.podeAcessarDocumento(getTitular(),
+							.pode(ExPodeAcessarDocumento.class, getTitular(),
 									getLotaTitular(), m)) {
 				itens.add(m);
 			}
@@ -2840,7 +2838,7 @@ public class ExMovimentacaoController extends ExController {
 
 				final ExMobil mobil = dao().consultar(idDocumento, ExMobil.class, false);
 
-				if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mobil)) {
+				if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mobil)) {
 					if (msgErroNivelAcessoso == null) {
 						msgErroNivelAcessoso = new AplicacaoException(
 								"O documento não pode ser transferido por estar inacessível ao usuário.");

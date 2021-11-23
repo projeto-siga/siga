@@ -99,7 +99,15 @@ import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
+import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
+import br.gov.jfrj.siga.ex.logic.ExPodeCriarVolume;
+import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarData;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
@@ -413,13 +421,9 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setSigla(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 
-		if (!Ex.getInstance()
-				.getComp()
-				.podeCriarVia(getTitular(), getLotaTitular(),
-						exDocumentoDTO.getMob())) {
-			throw new AplicacaoException(
-					"Não é possível criar vias neste documento");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível criar vias neste documento", ExPodeCriarVia.class, getTitular(), getLotaTitular(),
+				exDocumentoDTO.getMob());
+		
 		Ex.getInstance()
 				.getBL()
 				.criarVia(getCadastrante(), getLotaTitular(),
@@ -436,13 +440,8 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setSigla(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 
-		if (!Ex.getInstance()
-				.getComp()
-				.podeCriarVolume(getTitular(), getLotaTitular(),
-						exDocumentoDTO.getMob())) {
-			throw new AplicacaoException(
-					"Não é possível criar volumes neste documento");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível criar volumes neste documento", ExPodeCriarVolume.class, getTitular(), getLotaTitular(),
+				exDocumentoDTO.getMob());
 
 		Ex.getInstance()
 				.getBL()
@@ -631,12 +630,10 @@ public class ExDocumentoController extends ExController {
 		} else {
 			exDocumentoDTO.setDoc(daoDoc(exDocumentoDTO.getId()));
 
-			if (!Ex.getInstance()
+			Ex.getInstance()
 					.getComp()
-					.podeEditar(getTitular(), getLotaTitular(),
-							exDocumentoDTO.getMob()))
-				throw new AplicacaoException(
-						"Não é permitido editar documento fechado");
+					.afirmar("Não é permitido editar documento fechado", ExPodeEditar.class, getTitular(), getLotaTitular(),
+							exDocumentoDTO.getMob());
 
 			if (isDocNovo) {
 				escreverForm(exDocumentoDTO);
@@ -806,13 +803,13 @@ public class ExDocumentoController extends ExController {
 		boolean podeEditarData = Ex
 				.getInstance()
 				.getComp()
-				.podeEditarData(getTitular(), getLotaTitular(),
+				.pode(ExPodeEditarData.class, getTitular(), getLotaTitular(),
 						exDocumentoDTO.getModelo());
 
 		boolean podeEditarDescricao = Ex
 				.getInstance()
 				.getComp()
-				.podeEditarDescricao(getTitular(), getLotaTitular(),
+				.pode(ExPodeEditarDescricao.class, getTitular(), getLotaTitular(),
 						exDocumentoDTO.getModelo());
 
 		List<String> l = new ArrayList<String>();
@@ -1097,11 +1094,7 @@ public class ExDocumentoController extends ExController {
 									.getBL()
 									.excluirAnexosNaoAssinados(getTitular(), getLotaTitular(), mobUlt);															
 								}
-								if (Ex.getInstance()
-										.getComp()
-										.podeArquivarCorrente(getTitular(),
-												getLotaTitular(), mobArq)) {
-									
+								if (Ex.getInstance().getComp().pode(ExPodeArquivarCorrente.class, getTitular(),	getLotaTitular(), mobArq)) {
 										Ex.getInstance()
 										.getBL()
 										.arquivarCorrenteAutomatico(dest, getLotaTitular(), mobArq);
@@ -1627,14 +1620,13 @@ public class ExDocumentoController extends ExController {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
 		
-		if(!exDocumentoDTO.getCriandoSubprocesso() 
-				&& (exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
-					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null 
-					&& !Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto()))) {
-			throw new AplicacaoException("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
-				+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
-				+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".");			
-		}
+		if (!exDocumentoDTO.getCriandoSubprocesso() 
+				&& exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
+					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null)
+				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
+						+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
+						+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".", 
+						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto());
 		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
@@ -2017,12 +2009,8 @@ public class ExDocumentoController extends ExController {
 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
 		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
-		if (!Ex.getInstance()
-				.getComp()
-				.podeDuplicar(getTitular(), getLotaTitular(),
-						exDocumentoDto.getMob())) {
-			throw new AplicacaoException("Não é possível duplicar o documento");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível duplicar o documento", ExPodeDuplicar.class, getTitular(), getLotaTitular(),
+						exDocumentoDto.getMob());
 		exDocumentoDto.setDoc(Ex
 				.getInstance()
 				.getBL()

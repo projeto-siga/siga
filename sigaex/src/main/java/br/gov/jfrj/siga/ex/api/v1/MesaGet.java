@@ -24,6 +24,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marca;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.MesaItem;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
+import br.gov.jfrj.siga.ex.logic.ExPodeFazerAnotacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
@@ -127,8 +129,8 @@ public class MesaGet implements IMesaGet {
 			r.grupoNome = CpMarcadorGrupoEnum.valueOf(r.grupo).getNome();
 
 			ExCompetenciaBL comp = Ex.getInstance().getComp();
-			r.podeAnotar = comp.podeFazerAnotacao(pessoa, unidade, mobil);
-			r.podeAssinar = comp.podeAssinar(pessoa, unidade, mobil);
+			r.podeAnotar = comp.pode(ExPodeFazerAnotacao.class, pessoa, unidade, mobil);
+			r.podeAssinar = comp.pode(ExPodeAssinar.class, pessoa, unidade, mobil);
 
 			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pessoa,
 					ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);

@@ -67,6 +67,19 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPor;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -1022,58 +1035,39 @@ public class FuncoesEL {
 
 	public static Boolean podeAssinarComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarComSenha(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExPodeAssinarComSenha.class, titular, lotaTitular, mob);
 	}
 
 	public static Boolean podeAssinarPor(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarPor(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExPodeAssinarPor.class, titular, lotaTitular, mob);
 	}
 
 	public static Boolean deveAssinarComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.deveAssinarComSenha(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExDeveAssinarComSenha.class, titular, lotaTitular, mob);
 	}
 			
 	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 	
 	public static Boolean deveAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
-		return Ex.getInstance().getComp()
-				.deveAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+		return Ex.getInstance().getComp().pode(ExDeveAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 
 	public static Boolean podeAutenticarMovimentacaoComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
 			throws Exception {
-		return Ex
-				.getInstance()
-				.getComp()
-				.podeAutenticarMovimentacaoComSenha(titular, lotaTitular,
-						mov);
+		return Ex.getInstance().getComp().pode(ExPodeAutenticarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 	
 	public static Boolean deveAutenticarMovimentacaoComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
 			throws Exception {
-		return Ex
-				.getInstance()
-				.getComp()
-				.deveAutenticarMovimentacaoComSenha(titular, lotaTitular,
-						mov);
-	}
-
-	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
-			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExDeveAutenticarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 
 	public static Boolean podeAutenticarComSenha(
@@ -1082,7 +1076,7 @@ public class FuncoesEL {
 		return Ex
 				.getInstance()
 				.getComp()
-				.podeAutenticarComSenha(titular, lotaTitular,
+				.pode(ExPodeAutenticarComSenha.class, titular, lotaTitular,
 						mob);
 	}
 	
@@ -1092,14 +1086,17 @@ public class FuncoesEL {
 		return Ex
 				.getInstance()
 				.getComp()
-				.deveAutenticarComSenha(titular, lotaTitular,
+				.pode(ExDeveAutenticarComSenha.class, titular, lotaTitular,
 						mob);
 	}
 
 	public static Boolean podeAutenticarDocumento(DpPessoa titular,
 			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAutenticarDocumento(titular, lotaTitular, doc);
+		return Ex
+				.getInstance()
+				.getComp()
+				.pode(ExPodeAutenticarDocumento.class, titular, lotaTitular,
+						doc);
 	}
 
 	public static ExMovimentacao parteUltimaMovimentacao(ExDocumento doc,
@@ -1166,17 +1163,17 @@ public class FuncoesEL {
 	
 	public static Boolean podeUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeUtilizarSegundoFatorPin(pessoa, lotacao);
+				.pode(ExPodeUtilizarSegundoFatorPIN.class, pessoa, lotacao);
 	}
 	
 	public static Boolean deveUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
 		return Ex.getInstance().getComp()
-				.deveUtilizarSegundoFatorPin(pessoa, lotacao);
+				.pode(ExDeveUtilizarSegundoFatorPIN.class, pessoa, lotacao);
 	}
 	
 	public static Boolean defaultUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
 		return Ex.getInstance().getComp()
-				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
+				.pode(ExDefaultUtilizarSegundoFatorPIN.class, pessoa, lotacao);
 	}
 
 	public static String slugify(String string, Boolean lowercase,

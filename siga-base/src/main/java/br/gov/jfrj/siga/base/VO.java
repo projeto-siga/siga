@@ -52,27 +52,27 @@ public class VO {
 		acoes.add(acao);
 	}
 
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode) {
-		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null, null, null, null);
-	}
-
-	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String tooltip, 
-			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
-		TreeMap<String, String> params = new TreeMap<String, String>();
-		if (parametros != null) {
-			if (parametros.startsWith("&"))
-				parametros = parametros.substring(1);
-			else
-				params.clear();
-			try {
-				Utils.mapFromUrlEncodedForm(params, parametros.getBytes("iso-8859-1"));
-			} catch (UnsupportedEncodingException e) {
-			}
-		}
-
-		if (pode) {
-			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, modal);
-			acoes.add(acao);
-		}
-	}
+//	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode) {
+//		addAcao(icone, nome, nameSpace, action, pode, null, null, null, null, null, null, null);
+//	}
+//
+//	public void addAcao(String icone, String nome, String nameSpace, String action, boolean pode, String tooltip, 
+//			String msgConfirmacao, String parametros, String pre, String pos, String classe, String modal) {
+//		TreeMap<String, String> params = new TreeMap<String, String>();
+//		if (parametros != null) {
+//			if (parametros.startsWith("&"))
+//				parametros = parametros.substring(1);
+//			else
+//				params.clear();
+//			try {
+//				Utils.mapFromUrlEncodedForm(params, parametros.getBytes("iso-8859-1"));
+//			} catch (UnsupportedEncodingException e) {
+//			}
+//		}
+//
+//		if (pode) {
+//			AcaoVO acao = new AcaoVO(icone, nome, nameSpace, action, pode, msgConfirmacao, params, pre, pos, classe, modal);
+//			acoes.add(acao);
+//		}
+//	}
 }

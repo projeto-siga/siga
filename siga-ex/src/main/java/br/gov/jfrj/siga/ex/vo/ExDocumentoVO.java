@@ -54,8 +54,10 @@ import br.gov.jfrj.siga.ex.logic.ExEstaFinalizado;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarSubprocesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVolume;
@@ -64,6 +66,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerRestricaoDeAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluir;
+import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirBotaoDeAgendarPublicacaoNoBoletim;
 import br.gov.jfrj.siga.ex.logic.ExPodeFazerAnotacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeFazerVinculacaoDePapel;
@@ -275,7 +278,7 @@ public class ExDocumentoVO extends ExVO {
 			ExMovimentacaoVO movVO = new ExMovimentacaoVO(mobilVO, movCossig, cadastrante, titular,
 					lotaTitular, serializavel);
 			cossignatarios.put(movVO,
-					comp.podeExcluirCosignatario(titular, lotaTitular, doc.getMobilGeral(), movCossig));
+					comp.pode(ExPodeExcluirCossignatario.class, titular, lotaTitular, doc.getMobilGeral(), movCossig));
 		}
 
 		this.forma = doc.getExFormaDocumento() != null ? doc
@@ -301,9 +304,9 @@ public class ExDocumentoVO extends ExVO {
 
 			addAcoes(doc, titular, lotaTitular, exibirAntigo);
 
-			this.podeAssinar = comp.podeAssinar(titular, lotaTitular, mob)
-					&& comp.podeAssinarComSenha(titular, lotaTitular, mob);
-			this.podeCapturarPDF = comp.podeCapturarPDF(titular, lotaTitular, mob);
+			this.podeAssinar = comp.pode(ExPodeAssinar.class, titular, lotaTitular, mob)
+					&& comp.pode(ExPodeAssinarComSenha.class, titular, lotaTitular, mob);
+			this.podeCapturarPDF = comp.pode(ExPodeCapturarPDF.class, titular, lotaTitular, mob);
 
 			ExGraphTramitacao exGraphTramitacao = new ExGraphTramitacao(mob);
 			if (exGraphTramitacao.getNumNodos() > 1) {
@@ -565,35 +568,18 @@ public class ExDocumentoVO extends ExVO {
 		ExVO vo = new ExVO();
 		
 		int numUltMobil = doc.getNumUltimoMobil();
-		vo.addAcao(
-				SigaMessages.getMessage("icon.ver.mais"),
-				SigaMessages.getMessage("documento.ver.mais"),
-				"/app/expediente/doc",
-				SigaMessages.getMessage("documento.acao.exibirAntigo")+ "?sigla="+doc+"&idVisualizacao="+idVisualizacao,
-				Boolean.TRUE, 
-						numUltMobil < 20 ? "" : "Exibir todos os " + numUltMobil + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?", 
-						null, null, null, null);
+		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
+				.params("sigla", doc.toString()).params("idVisualizacao", doc.getSigla()).exp(new CpPodeSempre()).pre(numUltMobil < 20 ? "" : "Exibir todos os " + numUltMobil + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?").classe("once").build());
 		
-		vo.addAcao(
-				SigaMessages.getMessage("icon.ver.impressao"),
-				SigaMessages.getMessage("documento.ver.impressao"),
-				"/app/arquivo",
-				"exibir",
-				Boolean.TRUE,
-				null, "&popup=true&arquivo=" + doc.getReferenciaPDF()+"&idVisualizacao="+idVisualizacao, null,
-				null, null);
+		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
+				.params("popup", "true").params("arquivo", doc.getReferenciaPDF()).params("idVisualizacao", Long.toString(idVisualizacao))
+				.exp(new CpPodeSempre()).build());
 		
-		vo.addAcao(
-				"folder_magnify",
-				SigaMessages.getMessage("documento.ver.dossie"),
-				"/app/expediente/doc",
-				"exibirProcesso?sigla="+doc+"&idVisualizacao="+idVisualizacao,
-				Boolean.TRUE);
+		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify").nameSpace("/app/expediente/doc").acao("exibirProcesso")
+				.params("sigla", doc.toString()).params("idVisualizacao", Long.toString(idVisualizacao))
+				.exp(new CpPodeSempre()).build());
 		
-			
 		docVO.getMobs().get(0).setAcoes(vo.getAcoes());
-		
-		
 	}
 	
 	public String obterDataPrimeiraAssinatura(ExDocumento doc) {

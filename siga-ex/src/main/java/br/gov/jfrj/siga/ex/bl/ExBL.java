@@ -156,8 +156,37 @@ import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPorPorConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelar;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarAnexo;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMovimentacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarOuAlterarPrazoDeAssinatura;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVia;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacaoPapel;
+import br.gov.jfrj.siga.ex.logic.ExPodeCriarSubprocesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeDefinirPrazoAssinatura;
+import br.gov.jfrj.siga.ex.logic.ExPodeDespachar;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
+import br.gov.jfrj.siga.ex.logic.ExPodeExcluir;
+import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeFazerCiencia;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
+import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
+import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
+import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.service.ExService;
@@ -411,7 +440,7 @@ public class ExBL extends CpBL {
 				System.out.println();
 				System.out.println(doc.getCodigo() + " (" + doc.getIdDoc() + ")");
 
-				if (!Ex.getInstance().getComp().podeArquivarCorrente(pess, lota, doc.getMobilGeral()))
+				if (!Ex.getInstance().getComp().pode(ExPodeArquivarCorrente.class, pess, lota, doc.getMobilGeral()))
 					System.out.println("NAO PODE");
 				else if (efetivar)
 					Ex.getInstance().getBL().arquivarCorrente(pess, lota, doc.getMobilGeral(), mov.getDtIniMov(), null,
@@ -1533,7 +1562,7 @@ public class ExBL extends CpBL {
 				}
 				
 				if (!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 			}
@@ -1560,7 +1589,7 @@ public class ExBL extends CpBL {
 					}
 
 				if (!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 				
@@ -1779,10 +1808,9 @@ public class ExBL extends CpBL {
 		if (doc.isCancelado())
 			throw new AplicacaoException("não é possível assinar um documento cancelado.");
 
-		if (!getComp().podeAssinarComSenha(subscritor, subscritor.getLotacao(), doc.getMobilGeral()))
-			throw new AplicacaoException("Usuário não tem permissão de assinar documento com senha.");
+		getComp().afirmar("Usuário não tem permissão de assinar documento com senha.", ExPodeAssinarComSenha.class, subscritor, subscritor.getLotacao(), doc.getMobilGeral());
 
-		// Verifica se a matrícula confere com o subscritor titular ou com um
+			// Verifica se a matrícula confere com o subscritor titular ou com um
 		// cossignatario
 		if (!autenticando) {
 			try {
@@ -1965,7 +1993,7 @@ public class ExBL extends CpBL {
 			throws SQLException {
 		Boolean fSubstituindo = false;
 		if (subscritor.getId() != subscritorOuCosignatarioDoDocumento.getId()) {
-			if (Ex.getInstance().getComp().podeAssinarPor(cadastrante, lotaCadastrante)) {
+			if (Ex.getInstance().getComp().pode(ExPodeAssinarPorPorConfiguracao.class, cadastrante, lotaCadastrante)) {
 				DpSubstituicao dpSubstituicao = new DpSubstituicao();
 				dpSubstituicao.setSubstituto(subscritor);
 				dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
@@ -2038,13 +2066,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("não é possível assinar uma movimentação cancelada.");
 		}
 
-		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
-				&& !getComp().podeAutenticarMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
-			throw new AplicacaoException("Usuário não tem permissão de autenticar documento com senha.");
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+			Ex.getInstance().getComp().afirmar("Usuário não tem permissão de autenticar documento com senha.", ExPodeAutenticarMovimentacaoComSenha.class, cadastrante, lotaCadastrante, movAlvo);
 
-		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
-				&& !getComp().podeAssinarMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
-			throw new AplicacaoException("Usuário não tem permissão de assinar com senha.");
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
+			Ex.getInstance().getComp().afirmar("Usuário não tem permissão de assinar com senha.", ExPodeAssinarMovimentacaoComSenha.class, cadastrante, lotaCadastrante, movAlvo);
 
 		// Verifica se a matrícula confere com o subscritor do Despacho ou
 		// do
@@ -2607,14 +2633,12 @@ public class ExBL extends CpBL {
 
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
 				&& exUltMovNaoCanc.getIdMov() == exUltMov.getIdMov()) {
-			if (!Ex.getInstance().getComp()
-					.podeCancelarVia(titular, lotaTitular, mob)) {
+			if (!Ex.getInstance().getComp().pode(ExPodeCancelarVia.class, titular, lotaTitular, mob)) {
 				throw new AplicacaoException("Não é possível cancelar via");
 			}
 		} else {
 			if (!Ex.getInstance()
-					.getComp()
-					.podeCancelarMovimentacao(titular, lotaTitular,
+					.getComp().pode(ExPodeCancelarMovimentacao.class, titular, lotaTitular,
 							mob)) {
 				throw new AplicacaoException(
 						"Não é possível cancelar movimentação");
@@ -2765,31 +2789,23 @@ public class ExBL extends CpBL {
 		if (movCancelar.mob() != mob) {
 			throw new AplicacaoException("movimentação não é relativa ao mobil informado");
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
-			if (!getComp().podeCancelarAnexo(titular, lotaTitular, mob, movCancelar))
-				throw new AplicacaoException("não é possível cancelar anexo");
+			getComp().afirmar("não é possível cancelar anexo", ExPodeCancelarAnexo.class, titular, lotaTitular, mob, movCancelar);
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
-			if (!getComp().podeAtenderPedidoPublicacao(titular, lotaTitular, mob))
-				throw new AplicacaoException("Usuário não tem permissão de cancelar pedido de publicação no DJE.");
+			Ex.getInstance().getComp()
+			.afirmar("Usuário não tem permissão de cancelar pedido de publicação no DJE.", ExPodeAtenderPedidoPublicacaoNoDiario.class, titular, lotaTitular, mob);
 		} else if (ExTipoMovimentacao.hasDespacho(movCancelar.getIdTpMov())) {
-			if (!getComp().podeCancelarDespacho(titular, lotaTitular, mob, movCancelar))
-				throw new AplicacaoException("não é possível cancelar anexo");
-
+			getComp().afirmar("não é possível cancelar anexo", ExPodeCancelarDespacho.class, titular, lotaTitular, mob, movCancelar);
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
-			if (!Ex.getInstance().getComp().podeCancelarVinculacaoPapel(titular, lotaTitular, mob, movCancelar))
-				throw new AplicacaoException("não é possível cancelar definição de perfil");
-
+			getComp().afirmar("não é possível cancelar definição de perfil", ExPodeCancelarVinculacaoPapel.class, titular, lotaTitular, movCancelar);
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
 			ExPodeCancelarMarcacao.afirmar(movCancelar, titular, lotaTitular);
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
-			if (!Ex.getInstance().getComp().podeCancelarVinculacaoDocumento(titular, lotaTitular, mob, movCancelar))
-				throw new AplicacaoException("não é possível cancelar vinculação de documento");
-
+			getComp().afirmar("não é possível cancelar vinculação de documento", ExPodeCancelarVinculacao.class, titular, lotaTitular, movCancelar);
 		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO
 				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA
 				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA) {
-			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
-				throw new AplicacaoException("não é permitido cancelar esta movimentação.");
+			getComp().afirmar("não é permitido cancelar esta movimentação.", ExPodeCancelar.class, titular, lotaTitular, mob, movCancelar);
 		}
 
 		try {
@@ -3015,9 +3031,9 @@ public class ExBL extends CpBL {
 				&& doc.getExMobilPai().getExDocumento().isEletronico())
 			throw new AplicacaoException("Não é possível criar Subprocesso físico de processo eletrônico.");
 
-		if (!getComp().podeSerSubscritor(doc))
-			throw new AplicacaoException("O usuário não pode ser subscritor do documento");
-
+		
+		getComp().afirmar("O usuário não pode ser subscritor do documento", ExPodeSerSubscritor.class, doc);
+		
 		if (doc.isProcesso() && doc.getMobilGeral().temAnexos())
 			throw new AplicacaoException(
 					"Processos não podem possuir anexos antes da finalização. Exclua todos os anexos para poder finalizar. Os anexos poderão ser incluídos no primeiro volume após a finalização.");
@@ -3067,12 +3083,9 @@ public class ExBL extends CpBL {
 
 			if (doc.getExMobilPai() != null) {
 				if (doc.getExMobilPai().doc().isProcesso() && doc.isProcesso()) {
-					if (getComp().podeCriarSubprocesso(cadastrante, doc.getLotaCadastrante(), doc.getExMobilPai())) {
-						int n = dao().obterProximoNumeroSubdocumento(doc.getExMobilPai());
-						doc.setNumSequencia(n);
-					} else {
-						throw new AplicacaoException("Documento filho não pode ser criado nessas condições.");
-					}
+					getComp().afirmar("Documento filho não pode ser criado nessas condições.", ExPodeCriarSubprocesso.class, cadastrante, doc.getLotaCadastrante(), doc.getExMobilPai());
+					int n = dao().obterProximoNumeroSubdocumento(doc.getExMobilPai());
+					doc.setNumSequencia(n);
 				}
 			}
 
@@ -3347,7 +3360,7 @@ public class ExBL extends CpBL {
 	public static boolean exibirQuemTemAcessoDocumentosLimitados(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		try {
 			if (Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, doc.getMobilGeral())) { return true; }
-			return Ex.getInstance().getComp().podeExibirQuemTemAcessoAoDocumento(titular, lotaTitular, doc.getExModelo());
+			return Ex.getInstance().getComp().pode(ExPodeExibirQuemTemAcessoAoDocumento.class, titular, lotaTitular, doc.getExModelo());
 		} catch (Exception e) {
 			return true;
 		}
@@ -3978,7 +3991,7 @@ public class ExBL extends CpBL {
 			for (ExMobil m : doc.getExMobilSet()) {
 				Set set = m.getExMovimentacaoSet();
 
-				if (!automatico && !Ex.getInstance().getComp().podeExcluir(titular, lotaTitular, m))
+				if (!automatico && !Ex.getInstance().getComp().pode(ExPodeExcluir.class, titular, lotaTitular, m))
 					throw new AplicacaoException("não é possível excluir");
 
 				if (set.size() > 0) {
@@ -4169,7 +4182,7 @@ public class ExBL extends CpBL {
 		final ExMovimentacao mov;
 		
 		Boolean podeRestringir = Boolean.FALSE;
-		if (Ex.getInstance().getComp().podeRestrigirAcesso(cadastrante, lotaCadastrante, mob)) {
+		if (Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mob)) {
 			podeRestringir = Boolean.TRUE;
 		}
 
@@ -4937,10 +4950,10 @@ public class ExBL extends CpBL {
 							"não é permitido fazer despacho com trâmite em um documento que faça parte de um apenso. faça primeiro o despacho e depois tramite o documento.");
 				}
 
-				if (fDespacho && !getComp().podeDespachar(cadastrante, lotaCadastrante, m))
-					throw new AplicacaoException(
-							"não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.");
-
+				if (fDespacho)
+					getComp().afirmar("não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.",
+							ExPodeDespachar.class, cadastrante, lotaCadastrante, m);
+					
 				if (fTranferencia) {
 
 					if (!m.isApensadoAVolumeDoMesmoProcesso()) {
@@ -4954,7 +4967,7 @@ public class ExBL extends CpBL {
 										+ " ID_MOBIL: " + m.getId() + ")");
 						} else {
 							if (tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
-								if (!Ex.getInstance().getComp().podeNotificar(cadastrante, lotaCadastrante, m)) 
+								if (!Ex.getInstance().getComp().pode(ExPodeNotificar.class, cadastrante, lotaCadastrante, m)) 
 									throw new AplicacaoException("Não é possível notificar");			
 							} else if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
 								throw new AplicacaoException(
@@ -5848,7 +5861,7 @@ public class ExBL extends CpBL {
 			throw new RegraNegocioException("Não é possível fazer ciência do documento neste ambiente.");
 		}
 
-		if (!Ex.getInstance().getComp().podeFazerCiencia(responsavel, lotaResponsavel, mob)) {
+		if (!Ex.getInstance().getComp().pode(ExPodeFazerCiencia.class, responsavel, lotaResponsavel, mob)) {
 			throw new RegraNegocioException("Não é possível fazer ciência do documento."			
 					+ " Isso pode ocorrer se o documento não estiver apto a receber ciência ou devido a alguma regra para não permitir esta operação");
 		}
@@ -6804,11 +6817,12 @@ public class ExBL extends CpBL {
 	}
 
 	public void tornarDocumentoSemEfeito(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
-			String motivo) throws Exception {		
+			String motivo) throws Exception {	
 		
-		if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
-			throw new RegraNegocioException(SigaMessages.getMessage("excecao.cancelamento.naopodetornardocumentosemefeito"));
-
+		Ex.getInstance().getComp().afirmar(
+				SigaMessages.getMessage("excecao.cancelamento.naopodetornardocumentosemefeito"),
+				ExPodeTornarDocumentoSemEfeito.class, cadastrante, lotaCadastrante, doc.getMobilGeral());
+		
 		// Verifica se o subscritor pode movimentar todos os mobils
 		// E Também se algum documento diferente está apensado ou juntado a este
 		// documento
@@ -7442,7 +7456,7 @@ public class ExBL extends CpBL {
 			ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
 			ass.setPodeAssinar(true);
 			ass.setPodeSenha(ass.isPodeAssinar()
-					&& Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral()));
+					&& Ex.getInstance().getComp().pode(ExPodeAssinarComSenha.class, titular, lotaTitular, doc.getMobilGeral()));
 		}
 
 		// Acrescenta despachos
@@ -7491,7 +7505,7 @@ public class ExBL extends CpBL {
 			ass.setPodeAssinar(doc.isFinalizado() && doc.isPendenteDeAssinatura()
 					&& !doc.isAssinadoPelaPessoaComTokenOuSenha(titular));
 			ass.setPodeSenha(ass.isPodeAssinar()
-					&& Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral()));
+					&& Ex.getInstance().getComp().pode(ExPodeAssinarComSenha.class, titular, lotaTitular, doc.getMobilGeral()));
 			assinaveis.add(ass);
 		}
 		return ass;
@@ -7503,7 +7517,7 @@ public class ExBL extends CpBL {
 		ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
 		ExAssinavelMov assmov = new ExAssinavelMov();
 		assmov.setMov(mov);
-		assmov.setPodeSenha(Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
+		assmov.setPodeSenha(Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov));
 		assmov.setPodeAutenticar(podeAutenticar);
 		ass.getMovs().add(assmov);
 	}
@@ -7678,14 +7692,14 @@ public class ExBL extends CpBL {
 	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores, boolean viaWS) {
 
 		/* Verificação de autorização - Via WS é feito bypass*/
-		if (!viaWS && !Ex.getInstance().getComp().podePublicarPortalTransparencia(cadastrante, lotaCadastrante,mob)) {
+		if (!viaWS && !Ex.getInstance().getComp().pode(ExPodePublicarPortalDaTransparencia.class, cadastrante, lotaCadastrante,mob)) {
 			throw new AplicacaoException(
 					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
 		}
 		
 		
 		/* 1- Redefinição para Público - Via WS é feito bypass*/	
-		if (!viaWS && !Ex.getInstance().getComp().podeRedefinirNivelAcesso(cadastrante, lotaCadastrante,mob)) {
+		if (!viaWS && !Ex.getInstance().getComp().pode(ExPodeRedefinirNivelDeAcesso.class, cadastrante, lotaCadastrante,mob)) {
 			throw new AplicacaoException(
 					"Não é possível redefinir o nível de acesso");
 		}
@@ -7910,7 +7924,7 @@ public class ExBL extends CpBL {
 			doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
 
 			// Obter a descricao pela macro @entrevista
-		} else if (!Ex.getInstance().getComp().podeEditarDescricao(titular, lotaTitular, doc.getExModelo())) {
+		} else if (!Ex.getInstance().getComp().pode(ExPodeEditarDescricao.class, titular, lotaTitular, doc.getExModelo())) {
 			String s = processarModelo(doc, null, "entrevista", null, null);
 			String descr = extraiTag(s, "descricaoentrevista");
 			doc.setDescrDocumento(descr);
@@ -7928,8 +7942,7 @@ public class ExBL extends CpBL {
 		if (mob == null)
 			throw new AplicacaoException("Não existe via para a disponibilização no acompanhamento do protocolo.");
 		
-		if (!Ex.getInstance().getComp()
-				.podeDisponibilizarNoAcompanhamentoDoProtocolo(cadastrante, lotaCadastrante, mob.getDoc()))
+		if (!Ex.getInstance().getComp().pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, cadastrante, lotaCadastrante, mob.getDoc()))
 			throw new AplicacaoException("Disponibilização no acompanhamento do protocolo só é permitida para despachos.");
 		
 		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoMovimentacao
@@ -8034,13 +8047,12 @@ public class ExBL extends CpBL {
 		}
 		
 		if (!Ex.getInstance().getComp()
-				.podeDefinirPrazoAssinatura(cadastrante, lotaCadastrante, mob))
+				.pode(ExPodeDefinirPrazoAssinatura.class, cadastrante, lotaCadastrante, mob))
 			throw new AplicacaoException("Definição de prazo para assinatura não permitida.");
 		
 		ExMovimentacao mov = doc.getMovPrazoDeAssinatura();
 		if (mov != null 
-				&& !Ex.getInstance().getComp()
-						.podeCancelarOuAlterarPrazoDeAssinatura(cadastrante, lotaCadastrante, mob, mov))
+				&& !Ex.getInstance().getComp().pode(ExPodeCancelarOuAlterarPrazoDeAssinatura.class, cadastrante, lotaCadastrante, mov))
 			throw new AplicacaoException("Usuário não permitido a alterar o prazo de assinatura. Se o documento "
 					+ "estiver assinado, deve ser o subscritor; senão deve ser quem cadastrou o prazo.");
 		

@@ -1356,6 +1356,7 @@ public interface IExApiV1 {
 
 	public interface IDocumentosPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest, ISwaggerRequestFile {
+			public Boolean codigoUnico;
 			public String sigla;
 			public String modelo;
 			public String siglamobilpai;
@@ -1414,6 +1415,7 @@ public interface IExApiV1 {
 
 		public static class Response implements ISwaggerResponse {
 			public String sigladoc;
+			public String codigoUnico;
 		}
 
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;

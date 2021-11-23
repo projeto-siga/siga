@@ -62,6 +62,8 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		}
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false, true);
+		docVO.setCodigoUnico(Ex.getInstance().getBL().obterCodigoUnico(doc, true));
+		
 		// TODO: Resolver o problema declares multiple JSON fields named
 		// serialVersionUID
 		// Usado o Expose temporariamente

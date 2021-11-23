@@ -241,7 +241,8 @@ public class DocumentosPost implements IDocumentosPost {
 		if (req.nivelacesso != null) {
 			ExNivelAcesso nivel;
 			try {
-				nivel = dao().consultarExNidelAcesso(req.nivelacesso);
+				String nivelAcesso = java.net.URLDecoder.decode(req.nivelacesso, StandardCharsets.UTF_8.name());
+				nivel = dao().consultarExNidelAcesso(nivelAcesso);
 			} catch (NoResultException e) {
 				throw new AplicacaoException("Nível de acesso não encontrado.");
 			}
@@ -376,10 +377,15 @@ public class DocumentosPost implements IDocumentosPost {
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);
 		}
+		
+		if(req.codigoUnico) {
+			exBL.finalizar(cadastrante, ctx.getLotaTitular(), doc);
+			resp.codigoUnico = exBL.obterCodigoUnico(doc, true);
+		}
 
 		resp.sigladoc = doc.getSigla();
 	}
-
+	
 	private boolean isNivelAcessoValido(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc, ExNivelAcesso nivel) {
 		List<ExNivelAcesso> lst = NivelDeAcessoUtil.getListaNivelAcesso(doc.getExTipoDocumento(),
 				doc.getExFormaDocumento(), doc.getExModelo(), doc.getExClassificacao(), titular, lotaTitular);

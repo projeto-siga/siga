@@ -57,15 +57,16 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 
 		this.listColunas.add("Unidade");
 		this.listColunas.add("Nome do Documento");
-		this.listColunas.add("Data Vencida");
+		this.listColunas.add(parametros.get("nomeColuna") == null ? "Data Vencida" : parametros.get("nomeColuna").toString());
 		this.listColunas.add("Qtde de documentos");
+		
 		this.estiloColuna.setVerticalAlign(VerticalAlign.MIDDLE);
 
 		this.addColuna("Unidade", 25, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Nome do Documento", 50, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Data Vencida", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Qtde de documentos", 20, RelatorioRapido.DIREITA,
-				false);
+		this.addColuna(parametros.get("nomeColuna") == null ? "Data Vencida" : parametros.get("nomeColuna").toString(),
+				15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Qtde de documentos", 20, RelatorioRapido.DIREITA, false);
 		return this;
 
 	}

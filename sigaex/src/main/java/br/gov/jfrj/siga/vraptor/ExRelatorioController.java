@@ -1576,6 +1576,7 @@ public class ExRelatorioController extends ExController {
 
 		final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(parametros);
 		rel.gerar();
+		parametros.put("totalDocumentos", rel.totalDocs.toString());
 		
 		if("pdf".equalsIgnoreCase(tipoRel)) {
 			rel.setTemplateFile("RelatorioBaseGestao.jrxml");
@@ -1748,6 +1749,93 @@ public class ExRelatorioController extends ExController {
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
+	}
+	
+	@Get
+	@Path("app/expediente/rel/relDocumentosDevolucaoProgramadaPDF")
+	public Download relDocumentosDevolucaoProgramadaPDF(
+			final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, String idMod, String idLotaResp, String unidade, String descrModelo,
+			String dataVencida, String totalDocsVencidos, boolean primeiraVez, String tipoRel) throws Exception {
+		
+		assertAcesso(ACESSO_RELDEVPROGRAMADA);
+		
+		final Map<String, String> parametros = new HashMap<String, String>();
+		CpOrgaoUsuario orgaoUsu = getLotaTitular().getOrgaoUsuario();
+		Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu.getId());
+		parametros.put("orgaoUsuario", orgaoUsu.getNmOrgaoUsu());
+
+		parametros.put("lotacaoTitular", getLotaTitular().getSiglaLotacao());
+		parametros.put("idTit", getTitular().getId().toString());
+
+		if (orgaoUsu.getId() != orgaoSelId) {
+			throw new AplicacaoException(
+					"Não é permitido consultas de outros órgãos.");
+		}
+		
+		if (lotacaoSel.getId() != null) {
+			parametros.put("lotacaoRel", lotacaoSel.getDescricao());
+		} else {
+			parametros.put("lotacaoRel", "Todas");
+		}
+		
+		consistePeriodo(dataInicial, dataFinal);
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		final Date dtIni = df.parse(dataInicial);
+		final Date dtFim = df.parse(dataFinal);
+		Date dataHoje = new Date(System.currentTimeMillis());
+		dataHoje = df.parse(df.format(dataHoje));
+
+		if (dtIni.compareTo(dataHoje) < 0
+				|| dtFim.compareTo(dataHoje) < 0) {
+			throw new AplicacaoException(
+					"Data inicial ou data final não pode ser menor que a data atual.");
+		}
+
+		parametros.put("orgao", orgaoSelId.toString());
+		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
+		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		parametros.put("link_siga", "");
+		parametros.put("nomeColuna", "Data a Vencer");
+		addParametrosPersonalizadosOrgãoString(parametros);
+		parametros.put("subtitulo", "Relatório Gerenciais\nDocumentos por Devolução Programada");
+
+		final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(parametros);
+		
+		rel.gerar();
+		
+		parametros.put("totalDocumentos", rel.totalDocs.toString());
+					
+		if("pdf".equalsIgnoreCase(tipoRel)) {
+			rel.setTemplateFile("RelatorioBaseGestao.jrxml");
+
+			final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
+			return new InputStreamDownload(inputStream, APPLICATION_PDF, "documentos_por_devolucao_programada.pdf");
+
+		} else {
+			InputStream inputStream = null;
+			StringBuffer texto = new StringBuffer();
+			
+			for (String lista : rel.listColunas) {
+				texto.append(lista);
+				texto.append(";");
+			}
+			texto.append(System.lineSeparator());
+			
+			for (List<String> lista : rel.listModelos) {
+				for (String string : lista) {
+					texto.append(string);
+					texto.append(";");
+				}
+				texto.append(System.lineSeparator());
+			}
+			inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));											
+			return new InputStreamDownload(inputStream, "text/csv", "documentos_por_devolucao_programada.csv");	
+		}
 	}
 
 	@Path("app/expediente/rel/emiteRelDocsPorVolumeDetalhes")

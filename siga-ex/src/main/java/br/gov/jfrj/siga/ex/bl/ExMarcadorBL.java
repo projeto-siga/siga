@@ -65,6 +65,39 @@ public class ExMarcadorBL {
 		} else {
 			acrescentarMarcadores();
 		}
+		
+		// retirar marcas incompativeis
+		removerMarcasIncompativeis();
+	}
+
+	private void removerMarcasIncompativeis() {
+		
+		// arquivado e aguardando andamento 
+		// sobrestado e aguardando andamento
+		
+		Long marcadorPrincipal = CpMarcadorEnum.SOBRESTADO.getId();
+		
+		Long marcadorIncompativel = CpMarcadorEnum.EM_ANDAMENTO.getId();
+		
+		List<ExMarca> marcadoresIncompativeis = new ArrayList<ExMarca>();
+		
+		boolean isExistePrincipal = false;
+		
+		for (ExMarca m : set) {
+			if (m.getCpMarcador().getId() == marcadorPrincipal) {
+				isExistePrincipal = true;
+			}
+			
+			if (m.getCpMarcador().getId() == marcadorIncompativel) {
+				marcadoresIncompativeis.add(m);
+			}
+		}
+		
+		if (isExistePrincipal) {
+			
+			set.removeAll(marcadoresIncompativeis);	
+		}
+		
 	}
 
 	/**

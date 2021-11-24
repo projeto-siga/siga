@@ -7,7 +7,7 @@
 	<blockquote>
 		<p>Tipo de movimenta&ccedil;&atilde;o: ${(movimentacao.tipoMov.nome)!}</p>
 		<p>Atendente: <#if (movimentacao.atendente)??> ${(movimentacao.atendente.descricaoIniciaisMaiusculas)!}, </#if>
-                        ${(movimentacao.lotaAtendente.siglaLotacao)!}</p>
+                        ${(movimentacao.lotaAtendente.lotacaoAtual.siglaLotacao)!}</p>
 		<p>Solicitante: ${(sol.solicitante.descricaoIniciaisMaiusculas)!}, ${(sol.lotaSolicitante.siglaLotacao)!} </p>
 		<p>${(sol.descrSolicitacao)!}</p>
 	</blockquote>
@@ -16,7 +16,7 @@
 		<#if (sol.solicitacaoPai.atendente)??>
         	<#assign pessoaOuLotaAtendente = (sol.solicitacaoPai.atendente.descricaoIniciaisMaiusculas)!>
 		<#else>
-			<#assign pessoaOuLotaAtendente = (sol.solicitacaoPai.lotaAtendente.descricao)!> 
+			<#assign pessoaOuLotaAtendente = (sol.solicitacaoPai.lotaAtendente.lotacaoAtual.descricao)!> 
 		</#if>
 		Este email foi enviado porque <b>${pessoaOuLotaAtendente}</b> é atendente atual da solicitação <b>${(sol.solicitacaoPai.codigo)!}</b>,
 		que gerou a solicitação acima através da ação <b>Escalonar</b>.

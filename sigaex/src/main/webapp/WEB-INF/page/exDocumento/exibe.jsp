@@ -1068,6 +1068,13 @@
 							<p>
 								<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>
+							
+							<c:if test="${not empty docVO.tipoDePrincipal and not empty docVO.principal}">
+							<p>
+								<b>${docVO.tipoDePrincipal}:</b> <a href="/sigawf/app/procedimento/${docVO.principalCompacto}">${docVO.principal}</a>
+							</p>
+							</c:if>
+							
 							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
 
 						</tags:collapse>

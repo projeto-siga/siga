@@ -355,7 +355,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									text-no-results="Não encontrei nenhuma Tipologia Documental."
 									match-class="highlight"
 									selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
-									remote-url="{{'/sigaex/app/modelo/buscar-json-para-' + (tarefaItem.tipo == 'CRIAR_DOCUMENTO' ? 'incluir' : 'autuar') + '/'}}"
+									remote-url="{{'/sigaex/app/modelo/buscar-json-para-' + (tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' ? 'incluir' : 'autuar') + '/'}}"
 									angucomplete-alt name="ref"
 									placeholder="Pesquisar Modelo de Documento" id="ref"
 									class="angucomplete-ctrl"

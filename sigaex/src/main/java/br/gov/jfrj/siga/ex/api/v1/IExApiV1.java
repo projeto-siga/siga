@@ -448,6 +448,18 @@ public interface IExApiV1 {
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
 
+	public interface IModelosIdPreenchimentosGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String id;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public List<PreenchimentoItem> list = new ArrayList<>();
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
 	public interface IModelosIdLotacoesIdLotacaoPreenchimentosGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String id;

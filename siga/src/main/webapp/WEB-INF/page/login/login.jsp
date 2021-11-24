@@ -50,9 +50,6 @@
 
 					<c:if test="${not empty loginMensagem}">
 						<div class="login-invalido ">
-							<div class="login-invalido-titulo ${hide_only_GOVSP}">
-								<p class="alert alert-danger ">${loginMensagem}</p>
-							</div>
 
 							<div class="login-invalido-descricao ">	
 								<p class="alert alert-danger">${loginMensagem}</p>

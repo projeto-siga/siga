@@ -101,6 +101,12 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 		EstatisticaGrupoRel estatisticaGrp = new EstatisticaGrupoRel();
 		WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(pdId);
+		if (pd.getDefinicaoDeTarefa() != null && !pd.getDefinicaoDeTarefa().isEmpty()) {
+			if ("-1".equals(grupoIni))
+				grupoIni = pd.getDefinicaoDeTarefa().get(0).getNome();
+			if ("-1".equals(grupoFim))
+				grupoFim = pd.getDefinicaoDeTarefa().get(pd.getDefinicaoDeTarefa().size() - 1).getNome();
+		}
 		Set<Tarefa> tarefas = consultarTarefas(pd, dataInicialDe, dataInicialAte, dataFinalDe, dataFinalAte,
 				incluirAbertos);
 		List<String> dados = new ArrayList<String>();
@@ -250,8 +256,8 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 				tsk.setDataFimProcedimento(buildCalendar(pi.getHisDtFim()));
 				tsk.setNumeroDocumento(pi.getPrincipal());
 				tsk.setNome(t.getDefinicaoDeTarefaDe().getNome());
-				tsk.setDataInicio(buildCalendar(t.getHisDtIni()));
-				tsk.setDataFim(buildCalendar(dtLast));
+				tsk.setDataInicio(buildCalendar(dtLast));
+				tsk.setDataFim(buildCalendar(t.getHisDtIni()));
 				tarefas.add(tsk);
 
 				dtLast = t.getHisDtIni();

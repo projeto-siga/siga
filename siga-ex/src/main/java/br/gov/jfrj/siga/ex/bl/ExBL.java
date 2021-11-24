@@ -6475,7 +6475,10 @@ public class ExBL extends CpBL {
 					+ "em transito externo, " + "cancelado ou "
 					+ "em local diferente da lotação em que se encontra o documento ao qual se quer apensar");
 
-		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre) || !mob.estaNaMesmaLotacao(mobMestre))
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre))
+			throw new AplicacaoException("não é possível apensar a um documento quando o mestre está em outra lotação");
+		
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mob))
 			throw new AplicacaoException("não é possível apensar a um documento que esteja em outra lotação");
 
 		try {
@@ -6617,45 +6620,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao encerrar volume.", e);
 		}
-	}
-
-	public String verificarAssinatura(byte[] conteudo, byte[] assinatura, String mimeType, Date dtAssinatura)
-			throws Exception {
-		BlucService bluc = Service.getBlucService();
-
-		// Chamar o BluC para validar a assinatura
-		//
-		ValidateRequest validatereq = new ValidateRequest();
-		validatereq.setEnvelope(bluc.bytearray2b64(assinatura));
-		validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(conteudo)));
-		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(conteudo)));
-		validatereq.setTime(dtAssinatura);
-		validatereq.setCrl("true");
-		ValidateResponse validateresp = assertValid(bluc, validatereq);
-
-		String sNome;
-		Long lCPF;
-
-		sNome = validateresp.getCn();
-
-		Service.throwExceptionIfError(sNome);
-
-		if (sNome != null) {
-			sNome = Texto.maiusculasEMinusculas(sNome);
-		}
-
-		String sCPF = validateresp.getCertdetails().get("cpf0");
-		Service.throwExceptionIfError(sCPF);
-
-		lCPF = Long.valueOf(sCPF);
-
-		if (validateresp.getPolicy() == null)
-			return sNome;
-
-		if (validateresp.getPolicyversion() == null)
-			return sNome + " (" + validateresp.getPolicy() + ")";
-
-		return sNome + " (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
 	}
 
 	public void gravarModelo(ExModelo modNovo, ExModelo modAntigo, Date dt, CpIdentidade identidadeCadastrante)

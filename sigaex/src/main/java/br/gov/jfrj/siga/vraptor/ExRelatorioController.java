@@ -1098,6 +1098,82 @@ public class ExRelatorioController extends ExController {
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
 	}
+	
+	@Path("app/expediente/rel/relDocsOrgaoInteressadoPDF")
+	public Download relDocsOrgaoInteressadoPDF(final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, final Long orgaoPesqId, boolean primeiraVez, String tipoRel)
+			throws Exception {
+		assertAcesso(ACESSO_ORGAOINT);
+		
+		final Map<String, String> parametros = new HashMap<String, String>();
+		Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+		Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+
+		if (orgaoUsu != orgaoSelId) {
+			throw new AplicacaoException(
+					"Não é permitido consultas de outros órgãos.");
+		}
+		
+		consistePeriodo(dataInicial, dataFinal);
+
+		if (orgaoPesqId == null || "".equals(orgaoPesqId)){
+			throw new AplicacaoException(
+					"Interessado não informado.");
+		}
+		
+		parametros.put("orgao", orgaoSelId.toString());
+		parametros.put("orgaoPesqId", orgaoPesqId.toString());
+		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
+		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		parametros.put("link_siga", "");
+		parametros.put("subtitulo", "Relatório Gerenciais\nToral de Documentos Por Órgão Interessado");
+		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu());
+		if (lotacaoSel.getId() != null) {
+			DpLotacao lota = dao().consultar(lotacaoSel.getId(), DpLotacao.class, false);
+			orgaoSelId = lota.getIdOrgaoUsuario();
+			parametros.put("lotacaoRel", lota.getDescricao());
+		} else {
+			parametros.put("lotacaoRel", "Todas");
+		}
+		addParametrosPersonalizadosOrgãoString(parametros);
+		
+		
+
+		final RelDocsOrgaoInteressado rel = new RelDocsOrgaoInteressado(parametros);
+		rel.gerar();
+		
+		parametros.put("totalDocumentos", rel.totalDocumentos.toString());
+		
+		if("pdf".equalsIgnoreCase(tipoRel)) {
+			rel.setTemplateFile("RelatorioBaseGestao.jrxml");
+			final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
+		
+			return new InputStreamDownload(inputStream, APPLICATION_PDF,"documentos_por_orgao_interessado.pdf");		
+
+		} else {
+			InputStream inputStream = null;
+			StringBuffer texto = new StringBuffer();
+			
+			for (String lista : rel.listColunas) {
+				texto.append(lista);
+				texto.append(";");
+			}
+			texto.append(System.lineSeparator());
+			
+			for (List<String> lista : rel.listLinhas) {
+				for (String string : lista) {
+					texto.append(string);
+					texto.append(";");
+				}
+				texto.append(System.lineSeparator());
+			}
+			inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));											
+			return new InputStreamDownload(inputStream, "text/csv", "documentos_por_orgao_interessado.csv");	
+		}
+	}
 
 	@Get
 	@Path("app/expediente/rel/carregar_lista_orgaos")

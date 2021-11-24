@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.persistence.Query;
 
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
+import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
@@ -61,7 +62,7 @@ import net.sf.jasperreports.engine.JRException;
 		public AbstractRelatorioBaseBuilder configurarRelatorio()
 				throws DJBuilderException, JRException {
 
-			this.setTitle("Relatório de Documentos Por Órgão Interessado");
+			this.estiloColuna.setVerticalAlign(VerticalAlign.MIDDLE);
 			this.listColunas.add("Unidade");
 			this.listColunas.add("Nome do Documento");
 			this.listColunas.add("Número do Documento");
@@ -71,7 +72,7 @@ import net.sf.jasperreports.engine.JRException;
 					
 			this.addColuna("Unidade", 10, RelatorioRapido.ESQUERDA, false);
 			this.addColuna("Nome do Documento", 30, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Número do Documento", 15, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Número do Documento", 25, RelatorioRapido.ESQUERDA, false);
 			this.addColuna("Cadastrante", 15, RelatorioRapido.ESQUERDA, false);
 			this.addColuna("Responsável pela Assinatura", 15, RelatorioRapido.ESQUERDA, false);
 			this.addColuna("Data da Assinatura", 15, RelatorioRapido.CENTRO, false);
@@ -197,9 +198,12 @@ import net.sf.jasperreports.engine.JRException;
 						obj[2].toString(), obj[3].toString(), Long.valueOf(obj[4].toString()),
 						Long.valueOf(obj[5].toString()), null, null, null, null, 
 						null, null, null, null, null, null, null, null);
-				
-				siglaDoc = "<a href=" + parametros.get("link_siga") 
-						+ codigoDoc + ">" + codigoDoc + "</a>";
+				if(!"".equals(parametros.get("link_siga"))) {
+					siglaDoc = "<a href=" + parametros.get("link_siga") 
+							+ codigoDoc + ">" + codigoDoc + "</a>";
+				} else {
+					siglaDoc = codigoDoc;
+				}
 				cadastrante = obj[9].toString() + obj[10].toString(); 
 				if (obj[11] != null) {
 					subscritor = obj[11].toString() + obj[12].toString(); 

@@ -26,6 +26,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
 import br.gov.jfrj.siga.ex.logic.ExPodeFazerAnotacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
@@ -138,7 +139,7 @@ public class MesaGet implements IMesaGet {
 			r.podeAssinarEmLote = apenasComSolicitacaoDeAssinatura
 					? r.podeAssinar && mobil.doc().isAssinaturaSolicitada()
 					: r.podeAssinar;
-			r.podeTramitar = comp.podeTransferir(pessoa, unidade, mobil);
+			r.podeTramitar = comp.pode(ExPodeTransferir.class, pessoa, unidade, mobil);
 
 			r.list = new ArrayList<IExApiV1.Marca>();
 

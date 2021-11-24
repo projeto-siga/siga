@@ -65,7 +65,7 @@ public class ExPodeRedefinirNivelDeAcesso extends CompositeExpressionSupport {
 
 						new ExPodeAtenderPedidoPublicacaoNoDiario(mob, titular, lotaTitular),
 
-						new ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(titular, lotaTitular)),
+						new ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(mob, titular, lotaTitular)),
 
 				And.of(
 

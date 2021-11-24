@@ -13,6 +13,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.logic.ExPodeIncluirEmEditalDeEliminacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExEditalEliminacao {
@@ -176,8 +177,7 @@ public class ExEditalEliminacao {
 				"Documentos a Eliminar Não Disponíveis", false);
 
 		for (ExItemDestinacao o : provisorio) {
-			if (!comp().podeIncluirEmEditalEliminacao(
-					getDoc().getCadastrante(), getDoc().getLotaCadastrante(),
+			if (!comp().pode(ExPodeIncluirEmEditalDeEliminacao.class, getDoc().getCadastrante(), getDoc().getLotaCadastrante(),
 					o.getMob()))
 				indisponiveis.adicionar(o);
 			else if (o.getMob().doc().isEletronico())
@@ -215,9 +215,7 @@ public class ExEditalEliminacao {
 				boolean referenciaEsteDoc = movInclusao != null
 						&& movInclusao.getExMobilRef().equals(
 								getDoc().getMobilGeral());
-				if (!comp().podeIncluirEmEditalEliminacao(
-						getDoc().getCadastrante(),
-						getDoc().getLotaCadastrante(), mob))
+				if (!comp().pode(ExPodeIncluirEmEditalDeEliminacao.class, getDoc().getCadastrante(), getDoc().getLotaCadastrante(), mob))
 					throw new AplicacaoException("O documento "
 							+ mob.getCodigo()
 							+ "não está disponível para eliminação.");

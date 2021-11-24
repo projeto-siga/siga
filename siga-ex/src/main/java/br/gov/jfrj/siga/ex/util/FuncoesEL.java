@@ -79,6 +79,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPor;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
 import br.gov.jfrj.siga.ex.logic.ExPodeUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
@@ -1152,7 +1153,7 @@ public class FuncoesEL {
 	public static Boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(DpPessoa titular,
 			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
+				.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, doc);
 	}
 
 	public static String calculaDiasAPartirDeHoje(Long qtdDias) {

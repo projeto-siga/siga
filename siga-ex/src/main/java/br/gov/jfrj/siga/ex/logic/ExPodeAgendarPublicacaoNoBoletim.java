@@ -59,6 +59,6 @@ public class ExPodeAgendarPublicacaoNoBoletim extends CompositeExpressionSupport
 
 				new ExPodeExibirBotaoDeAgendarPublicacaoNoBoletim(mob, titular, lotaTitular),
 
-				new ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(titular, lotaTitular));
+				new ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(mob, titular, lotaTitular));
 	}
 }

@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeEncerrarVolume;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirBotaoDeArquivarIntermediario;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirBotaoDeArquivarPermanente;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirBotaoDeDesarquivarIntermediario;
+import br.gov.jfrj.siga.ex.logic.ExPodeFazerAnotacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeFazerCiencia;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeIndicarPermanente;
@@ -144,8 +145,8 @@ public class ExMobilVO extends ExVO {
 		this.isGeral = mob.isGeral();
 		this.id = mob.getId();
 
-		this.podeTramitar = Ex.getInstance().getComp().podeTransferir(titular, lotaTitular, mob);
-		this.podeAnotar = Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, mob);
+		this.podeTramitar = Ex.getInstance().getComp().pode(ExPodeTransferir.class, titular, lotaTitular, mob);
+		this.podeAnotar = Ex.getInstance().getComp().pode(ExPodeFazerAnotacao.class, titular, lotaTitular, mob);
 
 		if (!completo || mob.isEliminado())
 			return;

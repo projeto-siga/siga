@@ -94,6 +94,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacaoPapel;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnexo;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnotacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
@@ -280,9 +281,8 @@ public class ExMovimentacaoVO extends ExVO {
 
 				token = getWebdavJwtToken(mov, cadastrante, titular, lotaTitular, pwd);
 
-				addAcao(null, "Editar no " + sNome, sApp
-						+ ":ofe|u|__scheme__://__serverName__:__serverPort____contextPath__/webdav/" + token,
-						mov.getNmArqMov(), true, null, null, null, null, null);
+				addAcao(AcaoVO.builder().nome("Editar no " + sNome).nameSpace(sApp
+						+ ":ofe|u|__scheme__://__serverName__:__serverPort____contextPath__/webdav/" + token).acao(mov.getNmArqMov()).exp(new CpPodeSempre()).build());
 			}
 
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
@@ -438,7 +438,7 @@ public class ExMovimentacaoVO extends ExVO {
 				} else {
 					if (mov.getExMobil().isJuntado()
 							&& Ex.getInstance().getComp()
-								.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, mov.getExDocumento())) {
+								.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, mov.getExDocumento())) {
 						addAcao(AcaoVO.builder().nome("Disponibilizar no Acompanhamento do Protocolo").nameSpace("/app/expediente/mov").acao("exibir_no_acompanhamento_do_protocolo")
 								.params("sigla",mov.getExMobil().getSigla())
 								.exp(new CpPodeSempre()).msgConfirmacao("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "

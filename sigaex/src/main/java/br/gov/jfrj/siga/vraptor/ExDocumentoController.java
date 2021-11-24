@@ -98,16 +98,23 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
+import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVolume;
+import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerConcelamentoDeDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditarData;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
+import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
@@ -240,13 +247,8 @@ public class ExDocumentoController extends ExController {
 		final ExDocumentoDTO dto = new ExDocumentoDTO();
 		dto.setSigla(sigla);
 		buscarDocumento(true, dto);
-		if (!Ex.getInstance()
-				.getComp()
-				.podeDesfazerCancelamentoDocumento(getTitular(),
-						getLotaTitular(), dto.getMob())) {
-			throw new AplicacaoException(
-					"Não é possível desfazer o cancelamento deste documento");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível desfazer o cancelamento deste documento", ExPodeDesfazerConcelamentoDeDocumento.class, getTitular(),
+						getLotaTitular(), dto.getMob());
 
 		Ex.getInstance()
 				.getBL()
@@ -849,8 +851,8 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {
-		return Ex.getInstance().getComp().podeCapturarPDF(so.getTitular(), so.getLotaTitular(),
-				exDocumentoDTO.getMob(), exDocumentoDTO.getIdTpDoc());
+		return new ExPodeCapturarPDF(exDocumentoDTO.getMob(), so.getTitular(), so.getLotaTitular(),
+				exDocumentoDTO.getIdTpDoc()).eval();
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaCriacao() {
@@ -1146,8 +1148,7 @@ public class ExDocumentoController extends ExController {
 		assertAcesso(exDocumentoDTO);
 
 		if (Ex.getInstance()
-				.getComp()
-				.deveReceberEletronico(getTitular(), getLotaTitular(),
+				.getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(),
 						exDocumentoDTO.getMob())) {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
@@ -1195,7 +1196,7 @@ public class ExDocumentoController extends ExController {
 
 		if (Ex.getInstance()
 				.getComp()
-				.deveReceberEletronico(getTitular(), getLotaTitular(),
+				.pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(),
 						exDocumentoDTO.getMob())) {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
@@ -1276,7 +1277,7 @@ public class ExDocumentoController extends ExController {
 
 		if (Ex.getInstance()
 				.getComp()
-				.deveReceberEletronico(getTitular(), getLotaTitular(),
+				.pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(),
 						exDocumentoDto.getMob())) {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
@@ -1375,12 +1376,12 @@ public class ExDocumentoController extends ExController {
 		}		
 
 		if (recebimentoAutomatico) {				
-			if (Ex.getInstance().getComp().deveReceberEletronico(getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
+			if (Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
 				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
-		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())
+		} else if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
 				&& !exDocumentoDto.getMob().getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).getCadastrante().equivale(getTitular())
 				&& !exDocumentoDto.getMob().isJuntado()) {
 			recebimentoPendente = true;			
@@ -1579,12 +1580,7 @@ public class ExDocumentoController extends ExController {
 
 		verificaDocumento(exDocumentoDto.getDoc());
 
-		if (!Ex.getInstance()
-				.getComp()
-				.podeFinalizar(getTitular(), getLotaTitular(),
-						exDocumentoDto.getMob())) {
-			throw new AplicacaoException("Não é possível Finalizar");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível Finalizar", ExPodeFinalizar.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob());
 
 		try {
 			exDocumentoDto.setMsg(Ex
@@ -1811,7 +1807,7 @@ public class ExDocumentoController extends ExController {
 			 * fim da alteracao
 			 */
 			
-			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
+			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
 				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
 			}
 
@@ -1986,11 +1982,8 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setSigla(sigla);
 		this.buscarDocumento(true, exDocumentoDTO);
 
-		if (!Ex.getInstance()
-				.getComp()
-				.podeRefazer(getTitular(), getLotaTitular(),
-						exDocumentoDTO.getMob()))
-			throw new AplicacaoException("Não é possível refazer o documento");
+		Ex.getInstance().getComp().afirmar("Não é possível refazer o documento",  ExPodeRefazer.class, getTitular(), getLotaTitular(),
+						exDocumentoDTO.getMob());
 
 		exDocumentoDTO.setDoc(Ex
 				.getInstance()

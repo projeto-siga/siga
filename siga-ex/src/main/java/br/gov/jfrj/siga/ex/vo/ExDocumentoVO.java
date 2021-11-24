@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.logic.ExEstaFinalizado;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
+import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivoAuxiliar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
@@ -358,8 +359,9 @@ public class ExDocumentoVO extends ExVO {
 		this.originalData = doc.getDtDocOriginalDDMMYYYY();
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
 		
-		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
+		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().pode(ExPodeAnexarArquivoAuxiliar.class, titular, lotaTitular, mob);
 
+		
 		this.dtLimiteDemandaJudicial = doc.getMobilGeral().getExMovimentacaoSet().stream() //
 				.filter(mov -> mov.getExTipoMovimentacao().getId()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
@@ -411,7 +413,7 @@ public class ExDocumentoVO extends ExVO {
 			this.fDigital = false;
 		}
 		
-		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
+		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().pode(ExPodeAnexarArquivoAuxiliar.class, titular, lotaTitular, mob);
 	}
 
 	public void exibe() {

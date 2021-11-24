@@ -72,7 +72,7 @@ public class ExPodeExibirBotaoDeAgendarPublicacaoNoBoletim extends CompositeExpr
 										.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO)
 										.withExMod(mob.doc().getExModelo())),
 
-						new ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(titular, lotaTitular)),
+						new ExPodeGerenciarPublicacaoNoBoletimPorConfiguracao(mob, titular, lotaTitular)),
 
 				Not.of(new ExEstaPublicadoNoBoletim(mob.doc())),
 

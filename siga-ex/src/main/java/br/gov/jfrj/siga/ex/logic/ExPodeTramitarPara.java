@@ -14,18 +14,23 @@ public class ExPodeTramitarPara extends CompositeExpressionSupport {
 	private ExMobil mob;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
+	private DpPessoa destinatario;
+	private DpLotacao lotaDestinatario;
 
-	public ExPodeTramitarPara(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+	public ExPodeTramitarPara(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular, DpPessoa destinatario, DpLotacao lotaDestinatario) {
 		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
+		this.destinatario = destinatario;
+		this.lotaDestinatario = lotaDestinatario;
 	}
 
 	@Override
 	protected Expression create() {
 
 		return new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-				.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).withExMod(mob.doc().getExModelo());
+				.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).withExMod(mob.doc().getExModelo())
+				.withPessoaObjeto(destinatario).withLotacaoObjeto(lotaDestinatario);
 
 	}
 }

@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -362,8 +363,8 @@ public class DocumentosPost implements IDocumentosPost {
 		if (req.titular != null && doc.getTitular() != doc.getSubscritor()) {
 			exBL.geraMovimentacaoSubstituicao(doc, ctx.getCadastrante());
 		}
-
-		if (doc.getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(cadastrante,
+		
+		if (doc.getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante,
 				cadastrante.getLotacao(), doc.getExMobilPai())) {
 			exBL.copiarRestringir(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(), cadastrante,
 					ctx.getTitular(), doc.getData());

@@ -156,6 +156,7 @@ import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeApensar;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
@@ -180,13 +181,20 @@ import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluir;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeFazerCiencia;
+import br.gov.jfrj.siga.ex.logic.ExPodeJuntar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMovimentar;
 import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceberDocumentoSemAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeReiniciarNumeracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeSerJuntado;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
+import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.service.ExService;
@@ -3132,7 +3140,7 @@ public class ExBL extends CpBL {
 		if (num == null) {
 			// Verifica se reiniciar a numeração ou continua com a numeração
 			// anterior
-			if (getComp().podeReiniciarNumeracao(doc)) {
+			if (getComp().pode(ExPodeReiniciarNumeracao.class, doc)) {
 				num = 1L;
 			} else {
 				// Obtém o próximo número considerando os anos anteriores até
@@ -4171,8 +4179,7 @@ public class ExBL extends CpBL {
 			if (mobPai.isArquivado())
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está arquivado");
 
-			if (!getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
-				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
+			Ex.getInstance().getComp().afirmar("A via não pode ser juntada ao documento porque ele não pode ser movimentado.", ExPodeMovimentar.class, docTitular, lotaCadastrante, mobPai);
 			
 			if(mob.getDoc().isComposto() && !mobPai.getDoc().isComposto())
 				throw new RegraNegocioException("Não é permitido realizar a juntada de documento composto em documento avulso.");
@@ -4962,22 +4969,20 @@ public class ExBL extends CpBL {
 							throw new AplicacaoException("não é permitido tramitar documento para lotação fechada");
 
 						if (forcarTransferencia) {
-							if (!getComp().podeSerTransferido(m))
+							if (!new ExPodeSerTransferido(mob).eval())
 								throw new AplicacaoException("Trâmite não pode ser realizado (" + m.getSigla()
 										+ " ID_MOBIL: " + m.getId() + ")");
 						} else {
 							if (tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
 								if (!Ex.getInstance().getComp().pode(ExPodeNotificar.class, cadastrante, lotaCadastrante, m)) 
 									throw new AplicacaoException("Não é possível notificar");			
-							} else if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m))
-								throw new AplicacaoException(
-									"Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
+							} else 
+								getComp().afirmar("Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")", 
+										ExPodeTransferir.class, cadastrante, lotaCadastrante, m);
 						}
 						if (m.getExDocumento().isPendenteDeAssinatura()
-								&& !lotaResponsavel.equivale(m.getExDocumento().getLotaTitular())
-								&& !getComp().podeReceberDocumentoSemAssinatura(responsavel, lotaResponsavel, m))
-							throw new AplicacaoException(
-									"não é permitido tramitar documento que ainda não foi assinado");
+								&& !lotaResponsavel.equivale(m.getExDocumento().getLotaTitular()))
+							getComp().afirmar("não é permitido tramitar documento que ainda não foi assinado", ExPodeReceberDocumentoSemAssinatura.class, responsavel, lotaResponsavel, m);
 
 						if (m.doc().isEletronico()) {
 							if (m.temAnexosNaoAssinados() || m.temDespachosNaoAssinados())
@@ -5743,8 +5748,8 @@ public class ExBL extends CpBL {
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
 
-			if (getComp().podeJuntar(titular, lotaCadastrante, mob) && getComp()
-					.podeSerJuntado(titular, lotaCadastrante, doc.getExMobilPai())) {
+			if (getComp().pode(ExPodeJuntar.class, titular, lotaCadastrante, mob) && getComp()
+					.pode(ExPodeSerJuntado.class, titular, lotaCadastrante, doc.getExMobilPai())) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null, mob,
 						doc.getExMobilPai(), dtMov, null, titular, "1");
 				break;
@@ -5759,8 +5764,8 @@ public class ExBL extends CpBL {
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
-			if (getComp().podeJuntar(titular, lotaCadastrante, doc.getExMobilAutuado())
-					& getComp().podeSerJuntado(titular, lotaCadastrante, mob)) {
+			if (getComp().pode(ExPodeJuntar.class, titular, lotaCadastrante, doc.getExMobilAutuado())
+					& getComp().pode(ExPodeSerJuntado.class, titular, lotaCadastrante, mob)) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null,
 						doc.getExMobilAutuado(), mob, dtMov, null, titular, "1");
 				break;
@@ -6485,12 +6490,11 @@ public class ExBL extends CpBL {
 			}
 		}
 
-		if (!getComp().podeApensar(docTitular, lotaCadastrante, mob))
-			throw new AplicacaoException("A apensação do documento não ser realizada porque ele está" + "em transito, "
-					+ "em transito externo, " + "cancelado ou "
-					+ "em local diferente da lotação em que se encontra o documento ao qual se quer apensar");
+		Ex.getInstance().getComp().afirmar("Não é possível apensar", ExPodeApensar.class, docTitular, lotaCadastrante, mob);
 
-		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre) || !mob.estaNaMesmaLotacao(mobMestre))
+		Ex.getInstance().getComp().afirmar("Não é possível apensar pois não é possível movimentar o mestre", ExPodeMovimentar.class, docTitular, lotaCadastrante, mobMestre);
+		
+		if (!mob.estaNaMesmaLotacao(mobMestre))
 			throw new AplicacaoException("não é possível apensar a um documento que esteja em outra lotação");
 
 		try {
@@ -6830,9 +6834,7 @@ public class ExBL extends CpBL {
 		for (ExMobil m : doc.getExMobilSet()) {
 			if(!m.isGeral() && !m.isCancelada()) { //Retirada as vias que foram canceladas					
 				
-				if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m)) {
-					throw new RegraNegocioException(SigaMessages.getMessage("excecao.cancelamento.naopodemovimentar"));
-				}
+				getComp().afirmar(SigaMessages.getMessage("excecao.cancelamento.naopodemovimentar"), ExPodeMovimentar.class, cadastrante, lotaCadastrante, m);
 				
 				if (m.isJuntado()) {
 					throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento está juntado");

@@ -199,7 +199,7 @@ public class ExController extends SigaController {
 				if(vis.getDelegado().equals(titular)) {
 					if(Ex.getInstance()
 							.getComp()
-							.podeAcessarDocumento(vis.getTitular(), vis.getTitular().getLotacao(),
+							.pode(ExPodeAcessarDocumento.class, vis.getTitular(), vis.getTitular().getLotacao(),
 									mob)) {
 						retorno = Boolean.TRUE;
 					}

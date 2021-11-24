@@ -51,7 +51,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public ExConfiguracaoBL getConf() {
 		return (ExConfiguracaoBL) super.getConfiguracaoBL();
 	}
-	
+
 	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular) {
 		try {
 			return clazz.getDeclaredConstructor(DpPessoa.class, DpLotacao.class).newInstance(titular, lotaTitular);
@@ -63,8 +63,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular) {
 		return exp(clazz, titular, lotaTitular).eval();
 	}
-	
-	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular) {
+
+	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
+			final DpLotacao lotaTitular) {
 		Expression exp = exp(clazz, titular, lotaTitular);
 		boolean res = !exp.eval();
 		if (!res)
@@ -82,7 +83,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean pode(Class<? extends Expression> clazz, final ExDocumento doc) {
 		return exp(clazz, doc).eval();
 	}
-	
+
 	public void afirmar(String msg, Class<? extends Expression> clazz, final ExDocumento doc) {
 		Expression exp = exp(clazz, doc);
 		boolean res = !exp.eval();
@@ -90,98 +91,111 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
 
-
-
-	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExDocumento doc) {
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExDocumento doc) {
 		try {
-			return clazz.getDeclaredConstructor(ExDocumento.class, DpPessoa.class, DpLotacao.class).newInstance(doc, titular, lotaTitular);
+			return clazz.getDeclaredConstructor(ExDocumento.class, DpPessoa.class, DpLotacao.class).newInstance(doc,
+					titular, lotaTitular);
 		} catch (Exception e) {
 			throw new RuntimeException("Erro executando lógica de negócios", e);
 		}
 	}
 
-	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExDocumento doc) {
+	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExDocumento doc) {
 		return exp(clazz, titular, lotaTitular, doc).eval();
 	}
-	
-	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExDocumento doc) {
+
+	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExDocumento doc) {
 		Expression exp = exp(clazz, titular, lotaTitular, doc);
 		boolean res = !exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
 
-	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMobil mob) {
 		try {
-			return clazz.getDeclaredConstructor(ExMobil.class, DpPessoa.class, DpLotacao.class).newInstance(mob, titular, lotaTitular);
+			return clazz.getDeclaredConstructor(ExMobil.class, DpPessoa.class, DpLotacao.class).newInstance(mob,
+					titular, lotaTitular);
 		} catch (Exception e) {
 			throw new RuntimeException("Erro executando lógica de negócios", e);
 		}
 	}
 
-	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMobil mob) {
 		return exp(clazz, titular, lotaTitular, mob).eval();
 	}
 
-	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		Expression exp = exp(clazz, titular, lotaTitular, mob);
 		boolean res = !exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
 
-	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExModelo mod) {
+	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExModelo mod) {
 		try {
-			return clazz.getDeclaredConstructor(ExModelo.class, DpPessoa.class, DpLotacao.class).newInstance(mod, titular, lotaTitular).eval();
-		} catch (Exception e) {
-			throw new RuntimeException("Erro executando lógica de negócios", e);
-		}
-	}
-	
-	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob, final ExMovimentacao mov) {
-		try {
-			return clazz.getDeclaredConstructor(ExMobil.class, ExMovimentacao.class, DpPessoa.class, DpLotacao.class).newInstance(mob, mov, titular, lotaTitular);
+			return clazz.getDeclaredConstructor(ExModelo.class, DpPessoa.class, DpLotacao.class)
+					.newInstance(mod, titular, lotaTitular).eval();
 		} catch (Exception e) {
 			throw new RuntimeException("Erro executando lógica de negócios", e);
 		}
 	}
 
-	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob, final ExMovimentacao mov) {
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMobil mob, final ExMovimentacao mov) {
+		try {
+			return clazz.getDeclaredConstructor(ExMobil.class, ExMovimentacao.class, DpPessoa.class, DpLotacao.class)
+					.newInstance(mob, mov, titular, lotaTitular);
+		} catch (Exception e) {
+			throw new RuntimeException("Erro executando lógica de negócios", e);
+		}
+	}
+
+	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMobil mob, final ExMovimentacao mov) {
 		return exp(clazz, titular, lotaTitular, mob, mov).eval();
 	}
 
-	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob, final ExMovimentacao mov) {
+	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob, final ExMovimentacao mov) {
 		Expression exp = exp(clazz, titular, lotaTitular, mob, mov);
 		boolean res = !exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
 
-
-	
-	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMovimentacao mov) {
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMovimentacao mov) {
 		try {
-			return clazz.getDeclaredConstructor(ExMovimentacao.class, DpPessoa.class, DpLotacao.class).newInstance(mov, titular, lotaTitular);
+			return clazz.getDeclaredConstructor(ExMovimentacao.class, DpPessoa.class, DpLotacao.class).newInstance(mov,
+					titular, lotaTitular);
 		} catch (Exception e) {
 			throw new RuntimeException("Erro executando lógica de negócios", e);
 		}
 	}
 
-	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMovimentacao mov) {
+	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMovimentacao mov) {
 		return exp(clazz, titular, lotaTitular, mov).eval();
 	}
 
-	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, final ExMovimentacao mov) {
+	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMovimentacao mov) {
 		Expression exp = exp(clazz, titular, lotaTitular, mov);
 		boolean res = !exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
 
-
 	/**
-	 * Retorna um configuração existente para a combinação dos dados passados
-	 * como parâmetros, caso exista.
+	 * Retorna um configuração existente para a combinação dos dados passados como
+	 * parâmetros, caso exista.
 	 * 
 	 * @param titularIniciador
 	 * @param lotaTitularIniciador
@@ -192,16 +206,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	private ExConfiguracaoCache preencherFiltroEBuscarConfiguracao(
-			DpPessoa titularIniciador, DpLotacao lotaTitularIniciador,
-			ITipoDeConfiguracao tipoConfig, long tipoMov, ExTipoDocumento exTipoDocumento,
-			ExTipoFormaDoc exTipoFormaDoc, ExFormaDocumento exFormaDocumento,
-			ExModelo exModelo, ExClassificacao exClassificacao, ExVia exVia,
-			ExNivelAcesso exNivelAcesso, ExPapel exPapel, DpPessoa pessoaObjeto, 
-			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
-			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
+	private ExConfiguracaoCache preencherFiltroEBuscarConfiguracao(DpPessoa titularIniciador,
+			DpLotacao lotaTitularIniciador, ITipoDeConfiguracao tipoConfig, long tipoMov,
+			ExTipoDocumento exTipoDocumento, ExTipoFormaDoc exTipoFormaDoc, ExFormaDocumento exFormaDocumento,
+			ExModelo exModelo, ExClassificacao exClassificacao, ExVia exVia, ExNivelAcesso exNivelAcesso,
+			ExPapel exPapel, DpPessoa pessoaObjeto, DpLotacao lotacaoObjeto, CpComplexo complexoObjeto,
+			DpCargo cargoObjeto, DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 		ExConfiguracao cfgFiltro = new ExConfiguracao();
-		
+
 		if (titularIniciador != null) {
 			cfgFiltro.setCargo(titularIniciador.getCargo());
 			cfgFiltro.setFuncaoConfianca(titularIniciador.getFuncaoConfianca());
@@ -213,11 +225,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setLotacao(lotaTitularIniciador);
 		cfgFiltro.setCpTipoConfiguracao(tipoConfig);
 		if (cfgFiltro.getCpTipoConfiguracao() == null)
-			throw new RuntimeException(
-					"Não é permitido buscar uma configuração sem definir seu tipo.");
+			throw new RuntimeException("Não é permitido buscar uma configuração sem definir seu tipo.");
 		if (tipoMov != 0)
-			cfgFiltro.setExTipoMovimentacao(CpDao.getInstance().consultar(
-					tipoMov, ExTipoMovimentacao.class, false));
+			cfgFiltro.setExTipoMovimentacao(CpDao.getInstance().consultar(tipoMov, ExTipoMovimentacao.class, false));
 		cfgFiltro.setExTipoDocumento(exTipoDocumento);
 		cfgFiltro.setExTipoFormaDoc(exTipoFormaDoc);
 		cfgFiltro.setExFormaDocumento(exFormaDocumento);
@@ -232,8 +242,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setCargoObjeto(cargoObjeto);
 		cfgFiltro.setOrgaoObjeto(orgaoObjeto);
 
-		ExConfiguracaoCache cfg = (ExConfiguracaoCache) getConfiguracaoBL()
-				.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
+		ExConfiguracaoCache cfg = (ExConfiguracaoCache) getConfiguracaoBL().buscaConfiguracao(cfgFiltro,
+				new int[] { 0 }, null);
 
 		// Essa linha é necessária porque quando recuperamos um objeto da classe
 		// WfConfiguracao do TreeMap estático que os armazena, este objeto está
@@ -241,10 +251,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		// Portanto, quando vamos acessar alguma propriedade dele que seja do
 		// tipo LazyRead, obtemos um erro. O método lock, attacha ele novamente
 		// na seção atual.
-		
-		// Dasabilitado porque estava dando erro de "Illegal attempt to associate a collection with two open sessions"
-		//if (cfg != null)
-		//	ExDao.getInstance().getSessao().lock(cfg, LockMode.NONE);
+
+		// Dasabilitado porque estava dando erro de "Illegal attempt to associate a
+		// collection with two open sessions"
+		// if (cfg != null)
+		// ExDao.getInstance().getSessao().lock(cfg, LockMode.NONE);
 
 		return cfg;
 	}
@@ -253,5 +264,42 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		// TODO Auto-generated method stub
 		return AcessoConsulta.ehPublicoExterno(titular);
 	}
-	
+
+	private static final Class<?> findClassByName(String classname, String[] searchPackages) {
+		for (int i = 0; i < searchPackages.length; i++) {
+			try {
+				return Class.forName(searchPackages[i] + "." + classname);
+			} catch (ClassNotFoundException e) {
+				// not in this package, try another
+			}
+		}
+		throw new RuntimeException("Classe " + classname + " não encontrada em nenhum pacote");
+	}
+
+	/**
+	 * Método genérico que recebe função por String e concatena com o método de
+	 * checagem de permissão correspondente. Por exemplo, para a função juntar, é
+	 * invocado <i>podeJuntar()</i>
+	 * 
+	 * @param funcao
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 */
+	public static boolean testaCompetencia(final String funcao, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExMobil mob) {
+		final Class[] classes = new Class[] { DpPessoa.class, DpLotacao.class, ExMobil.class };
+		Boolean resposta = false;
+		Class<? extends Expression> classe = (Class<? extends Expression>) findClassByName(
+				"ExPode" + funcao.substring(0, 1).toUpperCase() + funcao.substring(1),
+				new String[] { "br.gov.jfrj.siga.ex.logic" });
+		try {
+			resposta = Ex.getInstance().getComp().pode(classe, titular, lotaTitular, mob);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		return resposta.booleanValue();
+	}
 }

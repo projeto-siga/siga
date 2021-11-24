@@ -28,6 +28,8 @@ import java.util.TreeMap;
 
 import com.crivano.jlogic.Expression;
 
+import br.gov.jfrj.siga.base.util.Texto;
+
 public class AcaoVO {
 	private String icone;
 	private String nome;
@@ -355,12 +357,14 @@ public class AcaoVO {
 		public static String formatarExplicacao(Expression exp, boolean f) {
 			String s = produzirExplicacao(exp, f);
 			s = (f ? "Permitido" : "Proibido") + " porque " + s;
+			s = Texto.removerEspacosExtra(s);
 			return s;
 		};
 		
 		public static String produzirExplicacao(Expression exp, boolean f) {
-			String s = exp.explain(f).replace("_not_", "não");
-			s = s.replace("_and_", "e").replace("_or_", "ou");
+			String s = exp.explain(f).replace("_not_", " não ");
+			s = s.replace("_and_", "e").replace("_or_", " ou ");
+			s = Texto.removerEspacosExtra(s);
 			return s;
 		};
 

@@ -66,7 +66,7 @@ public class ExPodePorConfiguracao implements Expression {
 				dpFuncaoConfianca, dpLotacao, dpPessoa, nivelAcesso, cpTpLotacao, idTpConf, pessoaObjeto, lotacaoObjeto,
 				complexoObjeto, cargoObjeto, funcaoConfiancaObjeto, orgaoObjeto);
 
-		if (situacao != null)
+		if (situacao == null)
 			return false;
 		if (aceitarPode && situacao == CpSituacaoDeConfiguracaoEnum.PODE)
 			return true;

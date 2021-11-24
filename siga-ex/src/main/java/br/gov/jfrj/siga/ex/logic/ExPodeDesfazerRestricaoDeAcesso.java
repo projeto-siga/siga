@@ -11,6 +11,7 @@ import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.cp.logic.CpDiferente;
 import br.gov.jfrj.siga.cp.logic.CpIgual;
+import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -40,8 +41,10 @@ public class ExPodeDesfazerRestricaoDeAcesso extends CompositeExpressionSupport 
 	@Override
 	protected Expression create() {
 		return And.of(
+				
+				new CpNaoENulo(lista, "restrições de acesso"), 
 
-				new CpDiferente(lista.size(), "restrições de acesso", 0, "zero"),
+				new CpDiferente(lista == null ? 0 : lista.size(), "restrições de acesso", 0, "zero"),
 
 				new ExPodeRestringirAcesso(mob, titular, lotaTitular));
 	}

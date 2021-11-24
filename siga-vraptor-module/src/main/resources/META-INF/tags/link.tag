@@ -27,7 +27,14 @@
 		<c:set var="btnClass" value="btn btn-sm btn-light" />
 	</c:when>
 	<c:otherwise>
-		<c:set var="btnClass" value="btn btn-sm btn-info text-white" />
+		<c:choose>
+			<c:when test="${empty test or test}">
+				<c:set var="btnClass" value="btn btn-sm btn-info text-white" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="btnClass" value="btn btn-sm btn-light text-black" />
+			</c:otherwise>
+		</c:choose>
 	</c:otherwise>
 </c:choose>
 
@@ -56,7 +63,7 @@
 			class="mr-1 mb-1" title="${titleImg}">
 	</c:set>
 </c:if>
-<c:if test="${empty test or test}">
+<c:if test="${true or empty test or test}">
 	<c:if test="${!linkBotoes}">
 		<c:if test="${not empty linkSeparator}">
 			<span class="gt-separator"> |</span>

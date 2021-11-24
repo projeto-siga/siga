@@ -53,6 +53,10 @@ public enum CpMarcadorGrupoEnum implements IEnumWithId {
 		this.collapsed = collapsed;
 		this.hide = hide;
 	}
+	
+	public String getName() {
+		return this.name();
+	}
 
 	public String getNome() {
 		return this.nome;

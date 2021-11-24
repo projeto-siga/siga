@@ -70,25 +70,27 @@ public class ExMarcadorBL {
 		removerMarcasIncompativeis();
 	}
 
+
 	private void removerMarcasIncompativeis() {
 		
-		// arquivado e aguardando andamento 
-		// sobrestado e aguardando andamento
+		// this.removerMarcasIncompativeis(CpMarcadorEnum.ARQUIVADO, CpMarcadorEnum.EM_ANDAMENTO);
+		this.removerMarcasIncompativeis(CpMarcadorEnum.SOBRESTADO, CpMarcadorEnum.EM_ANDAMENTO);
+
+	}
 		
-		Long marcadorPrincipal = CpMarcadorEnum.SOBRESTADO.getId();
-		
-		Long marcadorIncompativel = CpMarcadorEnum.EM_ANDAMENTO.getId();
+	
+	private void removerMarcasIncompativeis(CpMarcadorEnum primario, CpMarcadorEnum secundario) {
 		
 		List<ExMarca> marcadoresIncompativeis = new ArrayList<ExMarca>();
 		
 		boolean isExistePrincipal = false;
 		
 		for (ExMarca m : set) {
-			if (m.getCpMarcador().getId() == marcadorPrincipal) {
+			if (m.getCpMarcador().getId() == primario.getId()) {
 				isExistePrincipal = true;
 			}
 			
-			if (m.getCpMarcador().getId() == marcadorIncompativel) {
+			if (m.getCpMarcador().getId() == secundario.getId()) {
 				marcadoresIncompativeis.add(m);
 			}
 		}

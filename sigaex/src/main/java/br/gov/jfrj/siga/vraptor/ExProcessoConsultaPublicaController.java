@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -88,10 +87,10 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			return;
 		}
 
-		if (!isCaptchaValido()) {
-			setDefaultResults();
-			return;
-		}
+//		if (!isCaptchaValido()) {
+//			setDefaultResults();
+//			return;
+//		}
 
 		setDefaultResults();
 		result.forwardTo(this).processoPublicoConsultado(buildJwtToken(n));
@@ -343,8 +342,8 @@ public class ExProcessoConsultaPublicaController extends ExController {
 
 
 	@Get("/public/app/arquivoAnexadoConsultado_stream")
-	public Download arquivoAnexadoConsultado_stream(final String jwt, final String sigla, final String idMov ) throws Exception {
-	
+	public Download arquivoAnexadoConsultado_stream(final String jwt, final String sigla, final Long idMov) throws Exception {
+	  
 		if (jwt == null) {
 			
 			setDefaultResults();
@@ -358,28 +357,29 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		
 		verificarSePodeApresentarDocumento(exDocumentoDTO);
 		
-		 Optional<ExMovimentacao>  exMovimentacao = exDocumentoDTO.getDoc().getExMovimentacaoSet()
-				 .stream()
-				 .filter(m->m.getIdMov().equals(new Long(idMov)))
-				 .findFirst();
-		
+		 ExMovimentacao exMovimentacao = null;
 		 
+		 for (ExMovimentacao mov : exDocumentoDTO.getDoc().getExMovimentacaoSet()) {
+			 if (mov.getIdMov().equals(idMov)) {
+				 exMovimentacao = mov;
+				 break;
+			 }
+		 }
 		 
-		 
-		if (!exMovimentacao.isPresent() || exMovimentacao.get().getConteudoBlobMov() == null) {
+		if (exMovimentacao == null  || exMovimentacao.getConteudoBlobMov() == null) {
 
 			throw new AplicacaoException(	"Arquivo não encontrado para Download.");
 		}
 		
-		String fileName =  exMovimentacao.get().getNmArqMov();
+		String fileName =  exMovimentacao.getNmArqMov();
 		
-		byte[] bytes = exMovimentacao.get().getConteudoBlobMov();
+		byte[] bytes = exMovimentacao.getConteudoBlobMov();
 		
 		final boolean fB64 = getRequest().getHeader("Accept") != null
 				&& getRequest().getHeader("Accept").startsWith(
 						"text/vnd.siga.b64encoded");
 		
-		return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64),	exMovimentacao.get().getConteudoTpMov(), fileName);
+		return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64),	exMovimentacao.getConteudoTpMov(), fileName);
 	}
 
 

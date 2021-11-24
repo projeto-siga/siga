@@ -2,11 +2,10 @@ package br.gov.jfrj.siga.vraptor;
 
  
 import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -18,7 +17,6 @@ import org.json.JSONException;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
- 
 import com.lowagie.text.pdf.codec.Base64;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -33,20 +31,14 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.bluc.service.BlucService;
-import br.gov.jfrj.siga.bluc.service.HashRequest;
-import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -151,7 +143,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		result.include("mob", exDocumentoDTO.getMob());
 		result.include("jwt", jwt);
 	}
-
+	
 	private ExDocumentoDTO consultarDocumento(String n) {
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
 		
@@ -291,7 +283,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 	}
 	
 	@Get("/public/app/arquivoConsultado_stream")
-	public Download arquivoConsultado_stream(final String jwt, final String sigla) throws Exception {
+	public Download arquivoConsultado_stream(final String jwt, final String sigla ) throws Exception {
 		if (jwt == null) {
 			
 			setDefaultResults();
@@ -348,4 +340,47 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		
 		return (new ByteArrayInputStream(conteudo));
 	}
+
+
+	@Get("/public/app/arquivoAnexadoConsultado_stream")
+	public Download arquivoAnexadoConsultado_stream(final String jwt, final String sigla, final String idMov ) throws Exception {
+	
+		if (jwt == null) {
+			
+			setDefaultResults();
+			
+			result.redirectTo(URL_EXIBIR);
+			
+			return null;
+		}
+		
+		final ExDocumentoDTO exDocumentoDTO = consultarDocumento(sigla);
+		
+		verificarSePodeApresentarDocumento(exDocumentoDTO);
+		
+		 Optional<ExMovimentacao>  exMovimentacao = exDocumentoDTO.getDoc().getExMovimentacaoSet()
+				 .stream()
+				 .filter(m->m.getIdMov().equals(new Long(idMov)))
+				 .findFirst();
+		
+		 
+		 
+		 
+		if (!exMovimentacao.isPresent() || exMovimentacao.get().getConteudoBlobMov() == null) {
+
+			throw new AplicacaoException(	"Arquivo não encontrado para Download.");
+		}
+		
+		String fileName =  exMovimentacao.get().getNmArqMov();
+		
+		byte[] bytes = exMovimentacao.get().getConteudoBlobMov();
+		
+		final boolean fB64 = getRequest().getHeader("Accept") != null
+				&& getRequest().getHeader("Accept").startsWith(
+						"text/vnd.siga.b64encoded");
+		
+		return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64),	exMovimentacao.get().getConteudoTpMov(), fileName);
+	}
+
+
 }

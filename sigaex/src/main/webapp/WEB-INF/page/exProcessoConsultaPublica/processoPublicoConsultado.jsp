@@ -97,11 +97,19 @@
 													</c:otherwise>
 												</c:choose>
 												<td align="left">${dt}</td>
-												<td align="left">${mov.descrTipoMovimentacao}<c:if
-														test="${mov.idTpMov == 2 or  mov.idTpMov ==64}">
+												<td align="left">${mov.descrTipoMovimentacao}
+												<c:if 	test="${mov.idTpMov == 2 or  mov.idTpMov ==64}">
 														<span style="font-size: .8rem; color: #9e9e9e;">|
 															${mov.descrMov} ${mov.nmArqMov} </span>
-													</c:if> <c:if test="${mov.idTpMov == 12}">
+															
+															<c:if test="${docVO.doc.exNivelAcessoAtual.grauNivelAcesso == 10 and mov.idTpMov == 2 }">
+												 <a	href="${request.contextPath}/public/app/arquivoAnexadoConsultado_stream?jwt=${jwt}&sigla=${sigla}&idMov=${mov.idMov}"	
+												 	id="linkAnexoDocPdf" target="_blank">
+												 	 <img	src="/siga/css/famfamfam/icons/page_white_acrobat.png"></a>
+											</c:if>
+											
+							 </c:if>
+							 <c:if test="${mov.idTpMov == 12}">
 
 														<c:choose>
 															<c:when test="${mov.exDocumento.sigla == sigla}">

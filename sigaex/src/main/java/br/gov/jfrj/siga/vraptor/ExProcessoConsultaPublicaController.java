@@ -87,10 +87,10 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			return;
 		}
 
-//		if (!isCaptchaValido()) {
-//			setDefaultResults();
-//			return;
-//		}
+		if (!isCaptchaValido()) {
+			setDefaultResults();
+			return;
+		}
 
 		setDefaultResults();
 		result.forwardTo(this).processoPublicoConsultado(buildJwtToken(n));
@@ -357,18 +357,18 @@ public class ExProcessoConsultaPublicaController extends ExController {
 		
 		verificarSePodeApresentarDocumento(exDocumentoDTO);
 		
-		 ExMovimentacao exMovimentacao = null;
-		 
-		 for (ExMovimentacao mov : exDocumentoDTO.getDoc().getExMovimentacaoSet()) {
-			 if (mov.getIdMov().equals(idMov)) {
-				 exMovimentacao = mov;
-				 break;
-			 }
-		 }
+		ExMovimentacao exMovimentacao = null;
+		
+		for (ExMovimentacao mov : exDocumentoDTO.getDoc().getExMovimentacaoSet()) {
+			if (mov.getIdMov().equals(idMov)) {
+				exMovimentacao = mov;
+				break;
+			}
+		}
 		 
 		if (exMovimentacao == null  || exMovimentacao.getConteudoBlobMov() == null) {
 
-			throw new AplicacaoException(	"Arquivo não encontrado para Download.");
+			throw new AplicacaoException("Arquivo não encontrado para Download.");
 		}
 		
 		String fileName =  exMovimentacao.getNmArqMov();
@@ -379,8 +379,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 				&& getRequest().getHeader("Accept").startsWith(
 						"text/vnd.siga.b64encoded");
 		
-		return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64),	exMovimentacao.getConteudoTpMov(), fileName);
+		return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64), exMovimentacao.getConteudoTpMov(), fileName);
 	}
-
 
 }

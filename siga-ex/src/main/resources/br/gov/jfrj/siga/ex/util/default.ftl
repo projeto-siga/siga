@@ -911,7 +911,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [#if !gerar_entrevista!false || gerar_finalizacao!false || gerar_assinatura!false]
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <head>
-                <style type="text/css">
+                <style>
                     @page {
                         margin-left: ${margemEsquerda};
                         margin-right: ${margemDireita};

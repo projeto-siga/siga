@@ -65,7 +65,41 @@ public class ExMarcadorBL {
 		} else {
 			acrescentarMarcadores();
 		}
+		removerMarcasIncompativeis();
 	}
+
+
+	private void removerMarcasIncompativeis() {
+		
+		// this.removerMarcasIncompativeis(CpMarcadorEnum.ARQUIVADO, CpMarcadorEnum.EM_ANDAMENTO);
+		this.removerMarcasIncompativeis(CpMarcadorEnum.SOBRESTADO, CpMarcadorEnum.EM_ANDAMENTO);
+
+	}
+		
+	
+	private void removerMarcasIncompativeis(CpMarcadorEnum primario, CpMarcadorEnum secundario) {
+		
+		List<ExMarca> marcadoresIncompativeis = new ArrayList<ExMarca>();
+		
+		boolean isExistePrincipal = false;
+		
+		for (ExMarca m : set) {
+			if (m.getCpMarcador().getId() == primario.getId()) {
+				isExistePrincipal = true;
+			}
+			
+			if (m.getCpMarcador().getId() == secundario.getId()) {
+				marcadoresIncompativeis.add(m);
+			}
+		}
+		
+		if (isExistePrincipal) {
+			
+			set.removeAll(marcadoresIncompativeis);	
+		}
+		
+	}
+
 
 	/**
 	 * Calcula quais as marcas cada mobil terá com base nas movimentações que foram

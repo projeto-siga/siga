@@ -983,7 +983,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		return sofreuMov(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA,
 
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA },
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA},
 
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO);
 

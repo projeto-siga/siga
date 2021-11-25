@@ -438,8 +438,6 @@ public class CpConfiguracaoBL {
 				if (cfg.cpGrupo == 0 || cfg.cpPerfil == null || !cfg.ativaNaData(dtEvn))
 					continue;
 
-				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
-
 				if (cfg.dpPessoa != 0 && cfg.dpPessoa != pessoa.getIdInicial())
 					continue;
 
@@ -455,6 +453,8 @@ public class CpConfiguracaoBL {
 				if (cfg.orgaoUsuario != 0 && cfg.lotacao != lotacao.getIdInicial())
 					continue;
 
+				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
+				
 				if (g instanceof CpPerfil && cfg.dscFormula != null) {
 					Map<String, DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
 					pessoaMap.put("pessoa", pessoa);
@@ -463,13 +463,16 @@ public class CpConfiguracaoBL {
 					}
 				}
 
-				do {
-					perfis.add(cfg.cpPerfil);
-					g = cfg.cpPerfil.getCpGrupoPai();
-					if (g instanceof HibernateProxy) {
-						g = (CpPerfil) ((HibernateProxy) g).getHibernateLazyInitializer().getImplementation();
-					}
-				} while (g != null);
+				CpPerfil perfil = cfg.cpPerfil;
+				while (perfil != null) {
+					perfis.add(perfil);
+					CpGrupo grp = cfg.cpPerfil.getCpGrupoPai();
+					if (!(grp instanceof CpPerfil))
+						break;
+					perfil = (CpPerfil) grp; 
+					if (perfil != null && perfil instanceof HibernateProxy) 
+						perfil = (CpPerfil) ((HibernateProxy) perfil).getHibernateLazyInitializer().getImplementation();
+				}
 			}
 		}
 		return perfis;
@@ -830,15 +833,15 @@ public class CpConfiguracaoBL {
 			if (configs != null) {
 				for (CpConfiguracaoCache c : configs) {
 					DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.dpPessoa);
-					if (c.dpPessoa == pesAtual.getIdInicial()) {
-						if (c.hisDtFim == null && pesAtual.getDataFim() == null && c.lotacao == lot.getIdInicial()) {
-							resultado.add(pesAtual);
+					if (pesAtual != null) {
+						if (c.dpPessoa == pesAtual.getIdInicial()) {
+							if (c.hisDtFim == null && pesAtual.getDataFim() == null && c.lotacao == lot.getIdInicial()) {
+								resultado.add(pesAtual);
+							}
 						}
 					}
 				}
 			}
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

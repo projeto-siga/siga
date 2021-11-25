@@ -1374,42 +1374,47 @@ CKEDITOR.replace( '${var}',
 								CKEDITOR.config.scayt_sLang = 'pt_BR';
 								CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
 								
-								CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
-								        name: 'Título',
-								        element: 'h1',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Subtítulo',
-								        element: 'h2',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Com recuo',
-								        element: 'p',
-								        styles: {
-								            'text-align': 'justify',
-								            'text-indent': '2cm'
-								        }
-								    },
-								    {
-								        name: 'Marcador',
-								        element: 'span',
-								        styles: {
-								        	'background-color' : '#FFFF00'
-								        }
-								    },
-								    {
-								        name: 'Normal',
-								        element: 'span'
-								    }
-								]);
+								if (CKEDITOR.stylesSet.get('siga_ckeditor_styles') == null) {
+								
+									CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+									        name: 'Título',
+									        element: 'h1',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Subtítulo',
+									        element: 'h2',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Com recuo',
+									        element: 'p',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Marcador',
+									        element: 'span',
+									        styles: {
+									        	'background-color' : '#FFFF00'
+									        }
+									    },
+									    {
+									        name: 'Normal',
+									        element: 'span'
+									    }
+									]);
+								
+								};
+								
 								CKEDITOR.config.toolbar = 'SigaToolbar';
 								
 								CKEDITOR.config.toolbar_SigaToolbar = [{
@@ -1451,22 +1456,57 @@ CKEDITOR.replace( '${var}',
  								// This is open source, can modify it as you wish.
  								// Stuart Sillitoe - stuartsillitoe.co.uk
  								CKEDITOR.config.strinsert_strings =	 [
-											{'name': 'Documento'},
-											{'name': 'Código', 'value': '$' + '{doc.sigla}'},
-											{'name': 'Data', 'value': '$' + '{doc.dtDocDDMMYYYY}'},
-											{'name': 'Nome do Subscritor', 'value': '$' + '{doc.subscritor.descricao}'},
-											{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.subscritor.lotacao.descricao}'},
-											{'name': 'Destinatário', 'value': '$' + '{doc.destinatarioString}'},
-											{'name': 'Campo X da Entrevista', 'value': '$' + '{doc.form.x}'},
-											{'name': 'Campo X da Entrevista do Pai', 'value': '$' + '{doc.pai.form.x}'},
-											{'name': 'Descrição', 'value': '$' + '{doc.descrDocumento}'},
-											{'name': 'Workflow'},
-											{'name': 'Sigla do Procedimento', 'value': '$' + '{wf.sigla}'},
-											{'name': 'Principal', 'value': '$' + '{wf.principal}'},
-											{'name': 'Nome do Titular', 'value': '$' + '{wf.titular}'},
-											{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
-											{'name': 'Variável X', 'value': '$' + '{wf.var.x}'},
-										];
+									{'name': 'Documento em Elaboração'},
+									{'name': 'Número', 'value': '$' + '{doc.sigla}'},
+									{'name': 'Data', 'value': '$' + '{doc.dtDocDDMMYYYY}'},
+									{'name': 'Nome do Subscritor', 'value': '$' + '{doc.subscritor.descricao}'},
+									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.subscritor.lotacao.descricao}'},
+									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{doc.lotaSubscritor.sigla}'},
+									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{doc.lotaCadastrante.sigla}'},
+									{'name': 'Destinatário', 'value': '$' + '{doc.destinatarioString}'},
+									{'name': 'Campo da Entrevista', 'value': '$' + '{doc.form.NOMECAMPO}'},
+									{'name': 'Descrição', 'value': '$' + '{doc.descrDocumento}'},
+									
+									{'name': 'Documento Pai'},
+									{'name': 'Número', 'value': '$' + '{doc.pai.sigla}'},
+									{'name': 'Data', 'value': '$' + '{doc.pai.dtDocDDMMYYYY}'},
+									{'name': 'Nome do Subscritor', 'value': '$' + '{doc.pai.subscritor.descricao}'},
+									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.pai.subscritor.lotacao.descricao}'},
+									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{doc.pai.lotaSubscritor.sigla}'},
+									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{doc.pai.lotaCadastrante.lotacao.sigla}'},
+									{'name': 'Destinatário', 'value': '$' + '{doc.pai.destinatarioString}'},
+									{'name': 'Campo da Entrevista', 'value': '$' + '{doc.pai.form.NOMECAMPO}'},
+									{'name': 'Descrição', 'value': '$' + '{doc.pai.descrDocumento}'},
+									
+									{'name': 'Documento Autuado'},
+									{'name': 'Número', 'value': '$' + '{doc.sigla}'},
+									{'name': 'Data', 'value': '$' + '{ref.pai.autuado.doc.dtDocDDMMYYYY}'},
+									{'name': 'Nome do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.descricao}'},
+									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.lotacao.descricao}'},
+									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.lotaSubscritor.sigla}'},
+									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{ref.pai.autuado.doc.lotaCadastrante.sigla}'},
+									{'name': 'Destinatário', 'value': '$' + '{ref.pai.autuado.doc.destinatarioString}'},
+									{'name': 'Campo da Entrevista do Autuado', 'value': '$' + '{ref.pai.autuado.form.NOMECAMPO}'},
+									{'name': 'Descrição', 'value': '$' + '{ref.pai.autuado.doc.descrDocumento}'},
+									
+									
+									{'name': 'Outros Documentos'},
+									{'name': 'Lista de números por modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO 1','MODELO DESEJADO 2')}"},
+									{'name': 'Número do último modelo juntado', 'value': '$' + "{ref.modelo('MODELO DESEJADO').ultimo}"},
+									{'name': 'Campo do último modelo juntado', 'value': '$' + "{ref.modelo('memorando').form.NOMECAMPO}"},
+									
+									{'name': 'Workflow'},
+									{'name': 'Sigla do Procedimento', 'value': '$' + '{wf.sigla}'},
+									{'name': 'Principal', 'value': '$' + '{wf.principal}'},
+									{'name': 'Nome do Titular', 'value': '$' + '{wf.titular}'},
+									{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
+									{'name': 'Variável', 'value': '$' + '{wf.var.NOMEVARIAVEL}'},
+									{'name': 'Data', 'value': '$' + '{fmt.data(wf.var.NOMEVARIAVEL)}'},
+									{'name': 'Reais', 'value': '$' + '{fmt.reais(wf.var.NOMEVARIAVEL)}'},								
+									{'name': 'Reais por Extenso', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},								
+									{'name': 'Documento Criado', 'value': '$' + '{wf.var.doc_NOMETAREFA}'},								
+									
+								];
 								CKEDITOR.config.strinsert_button_label = 'Variável';
 								CKEDITOR.config.strinsert_button_title = 'Inserir Variável';
 								CKEDITOR.config.strinsert_button_voice = 'Inserir Variável';

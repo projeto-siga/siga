@@ -72,7 +72,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.crivano.jlogic.NOr;
-import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -82,6 +81,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
+import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -100,7 +100,6 @@ import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnexo;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnotacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
-import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 
 public class ExMovimentacaoVO extends ExVO {
 	private static final transient String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
@@ -590,7 +589,7 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 		
 		if (descricao != null && descricao.equals(mov.getObs())) {
-			descricao = ProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
+			descricao = CpProcessadorReferencias.marcarReferenciasParaDocumentos(descricao, null);
 		}
 	}
 

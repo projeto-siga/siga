@@ -265,4 +265,27 @@ public class Texto {
 			return false;
 		return s1.equals(s2);
 	}
+	
+	public static String stringsSeparadarComVirgulaEE(List<String> als) {
+		if (als.size() == 0)
+			return null;
+
+		String retorno = "";
+		int size = als.size();
+		if (size > 0) {
+			for (int i = 0; i < size; i++) {
+				String nome = als.get(0);
+				als.remove(nome);
+				if (i > 0) {
+					if (i == size - 1) {
+						retorno += " e ";
+					} else {
+						retorno += ", ";
+					}
+				}
+				retorno += nome;
+			}
+		}
+		return retorno;
+	}
 }

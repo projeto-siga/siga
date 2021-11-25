@@ -51,25 +51,27 @@
 							</tr>
 							<tr>
 								<td width="25%">Procedimento iniciado de:</td>
+								<jsp:useBean id="now" class="java.util.Date"/>
+								<fmt:formatDate var="ano" value="${now}" pattern="yyyy" />
 								<td><input type="text" name="dataInicialDe"
 									onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe)"
-									size="12" maxlength="10" /> até <input type="text"
+									size="12" maxlength="10" value="01/01/${ano}" /> até <input type="text"
 									name="dataInicialAte"
 									onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe)"
-									size="12" maxlength="10" /></td>
+									size="12" maxlength="10" value="31/12/${ano}" /></td>
 							</tr>
 							<tr>
 								<td>Procedimento finalizado de:</td>
 								<td><input type="text" name="dataFinalDe"
 									onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe);"
-									size="12" maxlength="10" /> até <input type="text"
+									size="12" maxlength="10" value="01/01/${ano}" /> até <input type="text"
 									name="dataFinalAte"
 									onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe);"
-									size="12" maxlength="10" /></td>
+									size="12" maxlength="10" value="31/12/${ano}" /></td>
 							</tr>
 							<tr id="opcoesExtras" style="display: none">
 								<td><input type="checkbox" id="incluirAbertos"

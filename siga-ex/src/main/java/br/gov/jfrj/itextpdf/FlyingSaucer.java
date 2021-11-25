@@ -34,8 +34,7 @@ import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.helper.W3CDom;
-import org.w3c.tidy.Configuration;
-import org.w3c.tidy.Tidy;
+import org.jsoup.nodes.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -53,20 +52,26 @@ public class FlyingSaucer implements ConversorHtml {
 
 	private String cleanHtml(String data) throws UnsupportedEncodingException {
 		logger.fine("transformando HTML em XHTML");
-		Tidy tidy = new Tidy();
-		tidy.setXHTML(true);
-		tidy.setCharEncoding(Configuration.UTF8);
-		// tidy.setInputEncoding("UTF-8");
-		// tidy.setOutputEncoding("UTF-8");
-		tidy.setSmartIndent(true);
-		tidy.setTidyMark(false);
-		// tidy.setShowErrors(0);
-		tidy.setQuiet(true);
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(data.getBytes("UTF-8"));
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		tidy.parseDOM(inputStream, outputStream);
-		logger.fine("retornando XHTML");
-		String s = outputStream.toString("UTF-8");
+	    final Document document = Jsoup.parse(data);
+	    document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);    
+	    document.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+	    String s = document.html();
+
+//		Tidy tidy = new Tidy();
+//		tidy.setXHTML(true);
+//		tidy.setCharEncoding(Configuration.UTF8);
+//		// tidy.setInputEncoding("UTF-8");
+//		// tidy.setOutputEncoding("UTF-8");
+//		tidy.setSmartIndent(true);
+//		tidy.setTidyMark(false);
+//		// tidy.setShowErrors(0);
+//		tidy.setQuiet(true);
+//		ByteArrayInputStream inputStream = new ByteArrayInputStream(data.getBytes("UTF-8"));
+//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//		tidy.parseDOM(inputStream, outputStream);
+//		logger.fine("retornando XHTML");
+//		String s = outputStream.toString("UTF-8");
+	    
 		s = s.replace(
 				" PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"",
 				"");

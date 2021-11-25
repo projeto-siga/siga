@@ -493,8 +493,13 @@ public class Mesa2 {
 				docDados.movUltimaDtFimMov = movUltima.getDtFimMov();
 			}
 			if (movTramite != null) {
-				docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
-				docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
+				if(movTramite.getLotacao() != null) {
+					docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
+					
+					if(movTramite.getLotacao().getOrgaoUsuario() != null) {
+						docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
+					}
+				}
 			}
 		}
 	}

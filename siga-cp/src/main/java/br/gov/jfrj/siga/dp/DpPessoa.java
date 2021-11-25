@@ -537,6 +537,26 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return nomeAbreviado;
 	}
 
+	public String getSobrenomeEIniciais() {
+		if (getNomePessoa() == null)
+			return "";
+		String a[] = getNomePessoa().split(" ");
+
+		String nomeAbreviado = "";
+		for (int i = 0; i < a.length; i++) {
+			String n = a[i];
+			
+			if (n.trim().length() != 0) {
+				if (i == a.length -1)
+					nomeAbreviado += n.substring(0, 1).toUpperCase() + n.substring(1).toLowerCase();
+				else if (!"|DA|DE|DO|DAS|DOS|E|".contains("|" + n + "|"))
+					nomeAbreviado += n.substring(0, 1) + ".";
+			}
+		}
+		return nomeAbreviado;
+	}
+
+	
 	public Long getHisIdIni() {
 		return getIdPessoaIni();
 	}

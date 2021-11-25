@@ -421,10 +421,29 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	@Override
+	public Boolean atualizarPrincipal(String codigoDocumento, String tipoPrincipal,
+			String siglaPrincipal)
+			throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
+			try {
+				ExMobil mob = buscarMobil(codigoDocumento);
+				ExTipoDePrincipal tipo = null;
+				if (tipoPrincipal != null) 
+					tipo = ExTipoDePrincipal.valueOf(tipoPrincipal);
+				Ex.getInstance().getBL().atualizarPrincipal(mob.doc(), tipo, siglaPrincipal);
+				return true;
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
+			}
+		}
+	}
+
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr,
 			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma, String nomeModelo,
 			String nomePreenchimento, String classificacaoStr, String descricaoStr, Boolean eletronico,
-			String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, String tipoPrincipal,
+			String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, String siglaMobilFilho, String tipoPrincipal,
 			String siglaPrincipal, Boolean finalizar) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
@@ -447,6 +466,42 @@ public class ExServiceImpl implements ExService {
 					doc.setTipoDePrincipal(ExTipoDePrincipal.valueOf(tipoPrincipal));
 					doc.setPrincipal(siglaPrincipal);
 				}
+				
+				if (siglaMobilPai != null && !siglaMobilPai.isEmpty()) {
+					final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+					filter.setSigla(siglaMobilPai);
+					ExMobil mobPai = (ExMobil) dao().consultarPorSigla(filter);
+					if (mobPai != null) {
+						ExDocumento docPai = mobPai.getExDocumento();
+
+						if (docPai.getExMobilPai() != null)
+							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
+									+ docPai.getSigla() + ") já é documento filho.");
+
+						doc.setExMobilPai(mobPai);
+					}
+				}
+
+				if (siglaMobilFilho != null && !siglaMobilFilho.isEmpty()) {
+					final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+					filter.setSigla(siglaMobilFilho);
+					ExMobil mobFilho = (ExMobil) dao().consultarPorSigla(filter);
+					if (mobFilho != null) {
+						ExDocumento docFilho = mobFilho.getExDocumento();
+
+						if (docFilho.getExMobilAutuado() != null)
+							throw new AplicacaoException("Não foi possível criar o documento pois o documento filho ("
+									+ docFilho.getSigla() + ") já é autuado.");
+
+						if (docFilho.isPendenteDeAssinatura())
+							throw new AplicacaoException("Não foi possível criar o documento pois o documento filho ("
+									+ docFilho.getSigla() + ") ainda não foi assinado.");
+
+						doc.setExMobilAutuado(mobFilho);
+					}
+				}
+
+
 
 				if (nomePreenchimento != null) {
 					if (nomePreenchimento.matches("^\\d+$")) {
@@ -523,7 +578,7 @@ public class ExServiceImpl implements ExService {
 				lotaCadastrante = cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa();
 
 				if (cadastrante == null && lotaCadastrante != null) {
-					if (subscritor != null && lotaCadastrante.equivale(subscritor.getLotacao()))
+					if (subscritor != null)
 						cadastrante = subscritor;
 					else {
 						List<DpPessoa> pessoas = dao().pessoasPorLotacao(lotaCadastrante.getId(), false, false);
@@ -574,19 +629,23 @@ public class ExServiceImpl implements ExService {
 					throw new AplicacaoException("O documento do tipo " + forma.getDescricao() + " não pode ser "
 							+ tipoDocumento.getDescricao());
 
-				if ((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica())
-					throw new AplicacaoException("A Classificação não foi informada.");
-
-				if (modelo.isClassificacaoAutomatica())
-					classificacao = modelo.getExClassificacao();
-				else
-					classificacao = dao().consultarExClassificacao(classificacaoStr);
-
-				if (classificacao == null)
-					throw new AplicacaoException(
-							"Não foi possível encontrar uma classificação com o código informado.");
-				else
-					classificacao = classificacao.getClassificacaoAtual();
+				if ((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica()) {
+					if (doc.getExMobilPai() != null && doc.getExMobilPai().doc().getExClassificacao() != null)
+						classificacao = doc.getExMobilPai().doc().getExClassificacao();
+					else if (doc.getExMobilAutuado() != null && doc.getExMobilAutuado().doc().getExClassificacao() != null)
+						classificacao = doc.getExMobilAutuado().doc().getExClassificacao();
+					else
+						throw new AplicacaoException("A Classificação não foi informada.");
+				} else {
+					if (modelo.isClassificacaoAutomatica())
+						classificacao = modelo.getExClassificacao();
+					else
+						classificacao = dao().consultarExClassificacao(classificacaoStr);
+					if (classificacao == null)
+						throw new AplicacaoException(
+								"Não foi possível encontrar uma classificação com o código informado.");
+				}
+				classificacao = classificacao.getClassificacaoAtual();
 
 				if (eletronico == null)
 					eletronico = true;
@@ -633,8 +692,10 @@ public class ExServiceImpl implements ExService {
 
 				doc.setCadastrante(cadastrante);
 				doc.setLotaCadastrante(lotaCadastrante);
-//				doc.setTitular(cadastrante);
-//				doc.setLotaTitular(lotaCadastrante);
+				if (subscritor != null && doc.getTitular() == null) {
+					doc.setTitular(subscritor);
+					doc.setLotaTitular(subscritor.getLotacao());
+				}
 
 				if (destinatarioStr != null) {
 					try {
@@ -680,8 +741,14 @@ public class ExServiceImpl implements ExService {
 				doc.setExFormaDocumento(forma);
 				doc.setExModelo(modelo);
 
-				if (!modelo.isDescricaoAutomatica())
-					doc.setDescrDocumento(descricaoStr);
+				if (!modelo.isDescricaoAutomatica()) {
+					if (descricaoStr != null && !descricaoStr.isEmpty())
+						doc.setDescrDocumento(descricaoStr);
+					else if (doc.getExMobilPai() != null && doc.getExMobilPai().doc().getDescrDocumento() != null && !doc.getExMobilPai().doc().getDescrDocumento().isEmpty())
+						doc.setDescrDocumento(doc.getExMobilPai().doc().getDescrDocumento());
+					else if (doc.getExMobilAutuado() != null && doc.getExMobilAutuado().doc().getDescrDocumento() != null && !doc.getExMobilAutuado().doc().getDescrDocumento().isEmpty())
+						doc.setDescrDocumento(doc.getExMobilAutuado().doc().getDescrDocumento());
+				}
 
 				doc.setExClassificacao(classificacao);
 				if (eletronico)
@@ -696,25 +763,6 @@ public class ExServiceImpl implements ExService {
 				mob.setNumSequencia(1);
 				mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 				mob.setExDocumento(doc);
-
-				if (siglaMobilPai != null && !siglaMobilPai.isEmpty()) {
-					final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
-					filter.setSigla(siglaMobilPai);
-					ExMobil mobPai = (ExMobil) dao().consultarPorSigla(filter);
-					if (mobPai != null) {
-						ExDocumento docPai = mobPai.getExDocumento();
-
-						if (docPai.getExMobilPai() != null)
-							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
-									+ docPai.getSigla() + ") já é documento filho.");
-
-						if (docPai.isPendenteDeAssinatura())
-							throw new AplicacaoException("Não foi possível criar o documento pois o documento pai ("
-									+ docPai.getSigla() + ") ainda não foi assinado.");
-
-						doc.setExMobilPai(mobPai);
-					}
-				}
 
 				doc.setExMobilSet(new TreeSet<ExMobil>());
 				doc.getExMobilSet().add(mob);
@@ -1097,6 +1145,11 @@ public class ExServiceImpl implements ExService {
 				return mobFilho.isJuntado();
 			ExMobil mobPai = buscarMobil(siglaMobilPai);
 
+			if (mobPai.isGeralDeExpediente())
+				mobPai = mobPai.doc().getPrimeiraVia();
+			else if (mobPai.isGeralDeProcesso())
+				mobPai = mobPai.doc().getUltimoVolume();
+			
 			return mobFilho.getMobilPrincipal().equals(mobPai)
 					|| mobFilho.getMobilPrincipal().equals(mobPai.doc().getMobilGeral());
 		}

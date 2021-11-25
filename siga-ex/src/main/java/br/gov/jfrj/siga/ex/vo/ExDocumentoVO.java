@@ -119,6 +119,9 @@ public class ExDocumentoVO extends ExVO {
 	String classificacaoDescricaoCompleta;
 	String classificacaoSigla;
 	String classificacaoNome;
+	String tipoDePrincipal;
+	String principal;
+	String principalCompacto;
 	List<String> tags;
 	String destinatarioString;
 	String destinatarioSigla;
@@ -220,6 +223,12 @@ public class ExDocumentoVO extends ExVO {
 			this.classificacaoDescricaoCompleta = classif.getDescricaoCompleta();
 			this.classificacaoSigla = classif.getSigla();
 			this.classificacaoNome = classif.getNome();
+		}
+		
+		if (doc.getTipoDePrincipal() != null && doc.getPrincipal() != null) {
+			this.setPrincipal(doc.getPrincipal());
+			this.setPrincipalCompacto(this.getPrincipal().replace("-", "").replace("/", ""));
+			this.setTipoDePrincipal(doc.getTipoDePrincipal().getDescr());
 		}
 
 		if (doc.getExNivelAcessoAtual() != null)
@@ -999,6 +1008,30 @@ public class ExDocumentoVO extends ExVO {
 
 	public String getDtPrazoDeAssinatura() {
 		return dtPrazoDeAssinatura;
+	}
+
+	public String getTipoDePrincipal() {
+		return tipoDePrincipal;
+	}
+
+	public void setTipoDePrincipal(String tipoDePrincipal) {
+		this.tipoDePrincipal = tipoDePrincipal;
+	}
+
+	public String getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
+
+	public String getPrincipalCompacto() {
+		return principalCompacto;
+	}
+
+	public void setPrincipalCompacto(String principalCompacto) {
+		this.principalCompacto = principalCompacto;
 	}
 
 }

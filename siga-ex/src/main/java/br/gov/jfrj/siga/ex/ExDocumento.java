@@ -3043,6 +3043,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public void setNumeroSequenciaGenerica(String numeroSequenciaGenerica) {
 		this.numeroSequenciaGenerica = numeroSequenciaGenerica;
 	}
-	
-	
+
+	public ExRef getRef() {
+		return new ExRef(this);
+	}
+
 }

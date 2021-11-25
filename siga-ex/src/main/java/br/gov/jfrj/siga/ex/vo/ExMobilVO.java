@@ -520,7 +520,7 @@ public class ExMobilVO extends ExVO {
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarVia(mob, titular, lotaTitular)).msgConfirmacao("Confirma o encerramento da via?").classe("once").build());
 		
 		addAcao(AcaoVO.builder().nome("Autuar").icone("page_white_get").nameSpace("/app/expediente/doc").acao("editar")
-				.params("sigla", mob.getCodigoCompacto()).params("idMobilAutuado", Long.toString(mob.getId())).params("autuando", "true").exp(new ExPodeAutuarDocumento(mob, titular, lotaTitular)).classe("once").build());
+				.params("idMobilAutuado", Long.toString(mob.getId())).params("autuando", "true").exp(new ExPodeAutuarDocumento(mob, titular, lotaTitular)).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("Desfazer Ciência").icone("arrow_undo").nameSpace("/app/expediente/mov").acao("cancelar_ciencia")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarCiencia(mob, titular, lotaTitular)).classe("once").build());

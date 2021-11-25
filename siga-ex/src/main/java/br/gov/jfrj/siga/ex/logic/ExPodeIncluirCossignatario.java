@@ -5,14 +5,12 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.If;
 import com.crivano.jlogic.Not;
-import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 
 public class ExPodeIncluirCossignatario extends CompositeExpressionSupport {
 
@@ -40,6 +38,12 @@ public class ExPodeIncluirCossignatario extends CompositeExpressionSupport {
 	 */
 	public ExPodeIncluirCossignatario(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		this.doc = doc;
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
+	}
+
+	public ExPodeIncluirCossignatario(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		this.doc = mob.doc();
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 	}

@@ -53,13 +53,27 @@ public class ExPodeExibirBotaoDeArquivarPermanente extends CompositeExpressionSu
 
 				Or.of(new ExEMobilVia(mob), new ExEMobilGeralDeProcesso(mob)),
 
-				Not.of(new ExEstaSemEfeito(mob.doc())), Not.of(new ExEstaEliminado(mob)),
+				Not.of(new ExEstaSemEfeito(mob.doc())), 
+				
+				Not.of(new ExEstaEliminado(mob)),
 
-				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())), Not.of(new ExEstaArquivado(mob)),
-				If.of(new ExTemTemporalidadeIntermediario(mob), new ExEstaArquivadoIntermediario(mob),
-						new ExEstaArquivado(mob)),
-				Not.of(new ExEstaArquivadoPermanente(mob)), new ExTemTemporalidadePermanente(mob),
-				Not.of(new ExEstaEmEditalDeEliminacao(mob)), Not.of(new ExEstaEmTramiteParalelo(mob)),
+				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
+
+				If.of(
+
+						new ExTemTemporalidadeIntermediario(mob),
+
+						new ExEstaArquivadoIntermediario(mob),
+
+						new ExEstaArquivadoCorrente(mob)),
+
+				Not.of(new ExEstaArquivadoPermanente(mob)),
+
+				new ExTemTemporalidadePermanente(mob),
+
+				Not.of(new ExEstaEmEditalDeEliminacao(mob)),
+
+				Not.of(new ExEstaEmTramiteParalelo(mob)),
 
 				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
 						titular, lotaTitular));

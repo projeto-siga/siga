@@ -14,12 +14,12 @@ public class ExEstaCancelado implements Expression {
 
 	@Override
 	public boolean eval() {
-		return doc.getExMobilPai() != null;
+		return doc != null && doc.isCancelado();
 	}
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("tem documento pai", result);
+		return JLogic.explain("está cancelado", result);
 	}
 
 }

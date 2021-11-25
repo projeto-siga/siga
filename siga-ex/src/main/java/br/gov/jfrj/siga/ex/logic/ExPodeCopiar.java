@@ -69,10 +69,19 @@ public class ExPodeCopiar extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				Or.of(Not.of(new ExEMobilGeral(mob)), new ExEExterno(mob.doc()), Not.of(new ExEstaJuntado(mob)),
-						Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaEncerrado(mob)),
-						Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaSemEfeito(mob.doc())),
-						new ExPodeMovimentar(mob, titular, lotaTitular)),
+				Or.of(Not.of(new ExEMobilGeral(mob)), new ExEExterno(mob.doc())),
+
+				Not.of(new ExEstaJuntado(mob)),
+
+				Not.of(new ExEstaArquivado(mob)),
+
+				Not.of(new ExEstaEncerrado(mob)),
+
+				Not.of(new ExEstaSobrestado(mob)),
+
+				Not.of(new ExEstaSemEfeito(mob.doc())),
+
+				new ExPodeMovimentar(mob, titular, lotaTitular),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
 						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA).withCargo(titular.getCargo())

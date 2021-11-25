@@ -1054,6 +1054,11 @@ public class FuncoesEL {
 		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 	
+	public static Boolean podeAssinarMovimentacaoDoMobilComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mob);
+	}
+	
 	public static Boolean deveAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
 		return Ex.getInstance().getComp().pode(ExDeveAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);

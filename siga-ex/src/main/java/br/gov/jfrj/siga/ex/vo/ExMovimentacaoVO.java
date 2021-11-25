@@ -72,6 +72,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.crivano.jlogic.NOr;
+import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -317,9 +318,9 @@ public class ExMovimentacaoVO extends ExVO {
 							.params("popup", "true")
 							.exp(new CpPodeSempre()).build());
 					
-					addAcao(AcaoVO.builder().nome("Assinar/Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-							.params("popup", "true").params("autenticando", "true")
-							.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
+//					addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+//							.params("popup", "true").params("autenticando", "true")
+//							.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 				}
 			}
 

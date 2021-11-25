@@ -32,6 +32,9 @@ public class VO {
 	private class NomeAcaoVOComparator implements Comparator<AcaoVO> {
 
 		public int compare(AcaoVO o1, AcaoVO o2) {
+			int i = Boolean.compare(o1.isPode(), o2.isPode());
+			if (i != 0)
+				return -i;
 			return o1.getNome().replace("_", "").compareTo(o2.getNome().replace("_", ""));
 		}
 	}

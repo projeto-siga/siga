@@ -39,8 +39,8 @@ public class ExPodePublicarPortalDaTransparencia extends CompositeExpressionSupp
 				Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(mob.doc(),
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA)),
 
-				new ExPodePorConfiguracao(titular, lotaTitular)
-						.withIdTpConf(ExTipoDeConfiguracao.AUTORIZAR_MOVIMENTACAO_POR_WS));
+				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA));
 
 	}
 };

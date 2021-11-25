@@ -46,7 +46,10 @@ public class ExPodeCancelarDocumento extends CompositeExpressionSupport {
 	protected Expression create() {
 		return And.of(
 
-				Not.of(new ExEstaCancelado(doc)), Not.of(new ExEstaFinalizado(doc)),
+				Not.of(new ExEstaCancelado(doc)), 
+				
+				new ExEstaFinalizado(doc),
+	
 				Or.of(Not.of(new ExEEletronico(doc)), new ExEstaPendenteDeAssinatura(doc)),
 
 				If.of(new ExECapturado(doc),

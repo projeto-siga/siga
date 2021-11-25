@@ -45,16 +45,35 @@ public class ExPodeAnexarArquivo extends CompositeExpressionSupport {
 	 */
 	@Override
 	protected Expression create() {
-		return And.of(If.of(new ExEstaFinalizado(mob.doc()),
+		return And.of(
 
-				And.of(Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
-						Or.of(Not.of(new ExEMobilGeral(mob)), new ExEExterno(mob.doc()),
-								Not.of(new ExJaTransferido(mob.doc()))),
-						Not.of(new ExEstaJuntado(mob)), Not.of(new ExEstaArquivado(mob)),
-						Not.of(new ExEstaEncerrado(mob)), Not.of(new ExEstaSobrestado(mob)),
-						Not.of(new ExEstaSemEfeito(mob.doc())), new ExPodeMovimentar(mob, titular, lotaTitular)),
+				If.of(
 
-				And.of(new ExEMobilGeral(mob), Not.of(new ExEProcesso(mob.doc())))),
+						new ExEstaFinalizado(mob.doc()),
+
+						And.of(
+
+								Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
+
+								Or.of(
+
+										Not.of(new ExEMobilGeral(mob)),
+
+										And.of(new ExEExterno(mob.doc()), Not.of(new ExJaTransferido(mob.doc())))),
+
+								Not.of(new ExEstaJuntado(mob)),
+
+								Not.of(new ExEstaArquivado(mob)),
+
+								Not.of(new ExEstaEncerrado(mob)),
+
+								Not.of(new ExEstaSobrestado(mob)),
+
+								Not.of(new ExEstaSemEfeito(mob.doc())),
+
+								new ExPodeMovimentar(mob, titular, lotaTitular)),
+
+						And.of(new ExEMobilGeral(mob), Not.of(new ExEProcesso(mob.doc())))),
 
 				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, titular,
 						lotaTitular));

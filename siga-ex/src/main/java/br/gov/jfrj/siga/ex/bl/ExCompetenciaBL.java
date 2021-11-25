@@ -67,7 +67,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular) {
 		Expression exp = exp(clazz, titular, lotaTitular);
-		boolean res = !exp.eval();
+		boolean res = exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
@@ -86,7 +86,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 	public void afirmar(String msg, Class<? extends Expression> clazz, final ExDocumento doc) {
 		Expression exp = exp(clazz, doc);
-		boolean res = !exp.eval();
+		boolean res = exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
@@ -109,7 +109,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) {
 		Expression exp = exp(clazz, titular, lotaTitular, doc);
-		boolean res = !exp.eval();
+		boolean res = exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
@@ -132,7 +132,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		Expression exp = exp(clazz, titular, lotaTitular, mob);
-		boolean res = !exp.eval();
+		boolean res = exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
@@ -165,7 +165,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob, final ExMovimentacao mov) {
 		Expression exp = exp(clazz, titular, lotaTitular, mob, mov);
-		boolean res = !exp.eval();
+		boolean res = exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
@@ -188,7 +188,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMovimentacao mov) {
 		Expression exp = exp(clazz, titular, lotaTitular, mov);
-		boolean res = !exp.eval();
+		boolean res = exp.eval();
 		if (!res)
 			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}

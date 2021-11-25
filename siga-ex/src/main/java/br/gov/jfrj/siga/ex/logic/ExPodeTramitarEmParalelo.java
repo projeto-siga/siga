@@ -30,9 +30,9 @@ public class ExPodeTramitarEmParalelo extends CompositeExpressionSupport {
 
 				new ExPodeSerTransferido(mob),
 
-				Not.of(new ExEstaEmTransito(null, titular, lotaTitular)),
+				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				new ExPodeMovimentar(null, titular, lotaTitular),
+				new ExPodeMovimentar(mob, titular, lotaTitular),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
 						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO));

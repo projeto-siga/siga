@@ -49,7 +49,8 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 
 				Or.of(
 
-						Not.of(new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())),
+						Not.of(new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
+								.withIdTpConf(ExTipoDeConfiguracao.INCLUIR_DOCUMENTO)),
 
 						Not.of(new ExTemMobilPai(mob.doc()))),
 

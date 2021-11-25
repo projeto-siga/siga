@@ -21,7 +21,7 @@ public class ExEstaEmTransito implements Expression {
 
 	@Override
 	public boolean eval() {
-		return mob.isAtendente(titular, lotaTitular);
+		return mob.isEmTransito(titular, lotaTitular);
 	}
 
 	@Override

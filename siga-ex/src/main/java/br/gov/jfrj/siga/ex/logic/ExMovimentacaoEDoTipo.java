@@ -16,7 +16,7 @@ public class ExMovimentacaoEDoTipo implements Expression {
 
 	@Override
 	public boolean eval() {
-		return mov.getExTipoMovimentacao().getIdTpMov().equals(tipo);
+		return mov != null && mov.getExTipoMovimentacao().getIdTpMov().equals(tipo);
 	}
 
 	@Override

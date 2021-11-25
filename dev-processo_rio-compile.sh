@@ -2,7 +2,7 @@
 
 #verify args
 if [ $# -eq 0 ]; then
-        echo "Not found Maven Parameters: eg.:'-T 1C -pl !siga-dump,!siga-ex-gsa,!siga-ex-sinc,!siga-gc-gsa,!sigagc,!sigasr,!sigapp,!siga-ldap-cli,!sigatp,!siga-wf,!sigawf,!siga-vraptor-module-old install -DskipTests=true -DskipTests=true' jdevas135.infra.rio.gov.br:9990"
+        echo "Not found Maven Parameters: eg.:'-T 1C -pl !siga-dump,!siga-ex-gsa,!siga-ex-sinc,!siga-gc-gsa,!sigagc,!sigasr,!sigapp,!siga-ldap-cli,!sigatp,!siga-wf,!sigawf,!siga-vraptor-module-old install -DskipTests=true -DskipTests=true' jdevas135.infra.rio.gov.br:9990 ${WORKSPACE}"
         exit 1
 fi
 
@@ -154,10 +154,10 @@ echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
 
-cp -rf /opt/java/jenkins/workspace/processo.rio/target/* /tmp
+cp -rf target/* /tmp
 
 echo "SIGA:"
-if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio/target/siga.war"`; then
+if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace $3/target/siga.war"`; then
         echo "DEPLOY: siga.war - OK"
 else
         echo $deploy_siga
@@ -169,7 +169,7 @@ echo ""
 
 
 echo "SIGAEX:"
-if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace /opt/java/jenkins/workspace/processo.rio/target/sigaex.war"`; then
+if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace $3/target/sigaex.war"`; then
         echo "DEPLOY: sigaex.war - OK"
 else
         echo $deploy_sigaex

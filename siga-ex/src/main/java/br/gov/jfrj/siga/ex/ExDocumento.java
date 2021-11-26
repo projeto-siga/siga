@@ -1499,7 +1499,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	private List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob,
 			List<ExArquivoNumerado> list, int nivel) {
 		
-		List<ExArquivoNumerado> listaInicial = list, listaFinal = new ArrayList<>();		
+		List<ExArquivoNumerado> listaInicial = list, listaFinal = new ArrayList<>();	
+		
+		if (mob == null)
+			return listaFinal;
+		
 		boolean podeAtualizarPaginas = true;
 
 		// Incluir o documento principal

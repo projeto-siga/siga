@@ -827,7 +827,7 @@
 
 						<div class="form-group col-md-3">
 							<label for="matriculaRequerente">Matrícula </label> 
-									<input type="text"	id="matriculaRequerente" name="cnpjRequerente"
+									<input type="text"	id="matriculaRequerente" name="matriculaRequerente"
 											value="${matriculaRequerente}" class="form-control" maxlength="125"   >
 						</div>
 						

@@ -86,7 +86,6 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 							input-class="form-control form-control-small"
 							remote-url-data-field="list" pause="200"
 							text-no-results="Não encontrei nenhuma Unidade."
-							match-class="highlight"
 							selected-object-data="{context: data.workflow, variable: 'lotaResponsavel', full:false}"
 							remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
 							name="lotaResponsavel" placeholder="Pesquisar Unidade"
@@ -107,7 +106,6 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 							input-class="form-control form-control-small"
 							remote-url-data-field="list" pause="200"
 							text-no-results="Não encontrei nenhuma Pessoa."
-							match-class="highlight"
 							selected-object-data="{context: data.workflow, variable: 'responsavel', full:false}"
 							remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
 							name="responsavel" placeholder="Pesquisar Pessoa"
@@ -306,7 +304,6 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									input-class="form-control form-control-small"
 									remote-url-data-field="list" pause="200"
 									text-no-results="Não encontrei nenhuma Unidade."
-									match-class="highlight"
 									selected-object-data="{context:tarefaItem, variable: 'refUnidadeResponsavel', full:false}"
 									remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
 									name="refUnidadeResponsavel" placeholder="Pesquisar Unidade"
@@ -326,7 +323,6 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									input-class="form-control form-control-small"
 									remote-url-data-field="list" pause="200"
 									text-no-results="Não encontrei nenhuma Pessoa."
-									match-class="highlight"
 									selected-object-data="{context:tarefaItem, variable: 'refPessoaResponsavel', full:false}"
 									remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
 									name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
@@ -353,7 +349,6 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									input-class="form-control form-control-small"
 									remote-url-data-field="list" pause="200"
 									text-no-results="Não encontrei nenhuma Tipologia Documental."
-									match-class="highlight"
 									selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
 									remote-url="{{'/sigaex/app/modelo/buscar-json-para-' + (tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' ? 'incluir' : 'autuar') + '/'}}"
 									angucomplete-alt name="ref"
@@ -373,7 +368,6 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									input-class="form-control form-control-small"
 									remote-url-data-field="list" pause="200"
 									text-no-results="Não encontrei nenhuma Tipologia Documental."
-									match-class="highlight"
 									selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
 									remote-url="/sigaex/app/mobil/buscar-json/" angucomplete-alt
 									name="ref" placeholder="Pesquisar Documento" id="ref"

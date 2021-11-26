@@ -794,17 +794,56 @@
 					
 			 
 					
-					
+					<div class="form-row">
+						 
+				<h8>Interessado</h8>
+		 
+					</div>
 				 
 					<div class="form-row">
 
 						<div class="form-group col-md-3">
-							<label for="nomeRequerente">Nome interessado</label> 
+							<label for="nomeRequerente">Nome </label> 
 									<input type="text"	id="nomeRequerente" name="nomeRequerente"
 											value="${nomeRequerente}" class="form-control" maxlength="125"   >
 						</div>
+						
+						<div class="form-group col-md-3">
+							<label for="cpfRequerente">CPF </label> 
+									<input type="text"	id="cpfRequerente" name="cpfRequerente"
+											value="${cpfRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+						<div class="form-group col-md-3">
+							<label for="cnpjRequerente">CNPJ </label> 
+									<input type="text"	id="cnpjRequerente" name="cnpjRequerente"
+											value="${cnpjRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+					
 					</div>
 					
+					<div class="form-row">
+
+						<div class="form-group col-md-3">
+							<label for="matriculaRequerente">Matrícula </label> 
+									<input type="text"	id="matriculaRequerente" name="cnpjRequerente"
+											value="${matriculaRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+						<div class="form-group col-md-3">
+							<label for="bairroRequerente">Bairro </label> 
+									<input type="text"	id="bairroRequerente" name="bairroRequerente"
+											value="${bairroRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+						<div class="form-group col-md-3">
+							<label for="logradouroRequerente">Logradouro </label> 
+									<input type="text"	id="logradouroRequerente" name="logradouroRequerente"
+											value="${logradouroRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+					 </div>
 					
 					
 					

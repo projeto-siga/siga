@@ -129,7 +129,21 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 
 	private Integer ordem;
 
+	// requerente
 	private String nomeRequerente;
+	
+	private Long cpfRequerente;
+	
+	private Long cnpjRequerente;
+
+	private Long matriculaRequerente;
+	
+	private String logradouroRequerente;
+	
+	private String bairroRequerente;
+
+	private String cidadeRequerente;
+
 	
 	public Integer getOrdem() {
 		return ordem;
@@ -388,11 +402,58 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		return nomeRequerente;
 	}
 
-	 
 	public void setNomeRequerente(final String nomeRequerente) {
 		this.nomeRequerente = nomeRequerente;
 	}
 	
+	public Long getCpfRequerente() {
+		return cpfRequerente;
+	}
+
+	public void setCpfRequerente(Long cpfRequerente) {
+		this.cpfRequerente = cpfRequerente;
+	}
+
+	public Long getCnpjRequerente() {
+		return cnpjRequerente;
+	}
+
+	public void setCnpjRequerente(Long cnpjRequerente) {
+		this.cnpjRequerente = cnpjRequerente;
+	}
+
+	public Long getMatriculaRequerente() {
+		return matriculaRequerente;
+	}
+
+	public void setMatriculaRequerente(Long matriculaRequerente) {
+		this.matriculaRequerente = matriculaRequerente;
+	}
+
+	public String getLogradouroRequerente() {
+		return logradouroRequerente;
+	}
+
+	public void setLogradouroRequerente(String logradouroRequerente) {
+		this.logradouroRequerente = logradouroRequerente;
+	}
+
+	public String getBairroRequerente() {
+		return bairroRequerente;
+	}
+
+	public void setBairroRequerente(String bairroRequerente) {
+		this.bairroRequerente = bairroRequerente;
+	}
+
+	public String getCidadeRequerente() {
+		return cidadeRequerente;
+	}
+
+	public void setCidadeRequerente(String cidadeRequerente) {
+		this.cidadeRequerente = cidadeRequerente;
+	}
+
 	public boolean buscarPorCamposMarca() {
 		return (getUltMovIdEstadoDoc() != null && getUltMovIdEstadoDoc() != 0)
 				|| (getUltMovLotaRespSelId() != null && getUltMovLotaRespSelId() != 0)
@@ -426,7 +487,13 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 				|| (getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0)
 				|| (getAnoEmissao() != null && getAnoEmissao() != 0)
 				|| (getNumExpediente() != null && getNumExpediente() != 0)
-				|| (getNomeRequerente() != null && !getNomeRequerente().trim().equals(""));
+				|| (getNomeRequerente() != null && !getNomeRequerente().trim().equals(""))
+				|| (getCpfRequerente() != null && getCpfRequerente() != 0)	
+				|| (getCnpjRequerente() != null && getCnpjRequerente() != 0)	
+				|| (getMatriculaRequerente() != null && getMatriculaRequerente() != 0)
+				|| (getLogradouroRequerente() != null && !getNomeRequerente().trim().equals(""))
+				|| (getBairroRequerente() != null && !getNomeRequerente().trim().equals(""))
+				||( getCidadeRequerente() != null && !getNomeRequerente().trim().equals(""));
 	}
 
 	

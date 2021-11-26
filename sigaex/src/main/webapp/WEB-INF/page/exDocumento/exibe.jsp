@@ -245,6 +245,8 @@
 								explicacao="${acao.explicacao}" post="${acao.post}"
 								test="${acao.pode}" />
 						</c:forEach>
+						<a id="audit" href="javascript:$('.link-tag-hidden').removeClass('d-none');$('.link-tag-no-audit').removeClass('d-none');$('.link-tag-audit').addClass('d-none');" class="btn btn-sm btn-link text-black link-tag link-tag-audit"	data-toggle="tooltip" data-html="true" title="Clique para exibir também os botões inativos." >...</a>
+						<a id="no-audit" href="javascript:$('.link-tag-hidden').addClass('d-none');$('.link-tag-audit').removeClass('d-none');$('.link-tag-no-audit').addClass('d-none');" class="btn btn-sm btn-link text-black link-tag link-tag-no-audit d-none"	data-toggle="tooltip" data-html="true" title="Clique para ocultar os botões inativos." >...</a>
 					</siga:links>
 				</c:if>
 			</div>

@@ -539,11 +539,24 @@ function carregaFromJson(json, appMesa) {
 			}
 		}
 	}
+	
+	appMesa.grupos = removerGruposDuplicados(appMesa.grupos);
 	sessionStorage.setItem(
 		'mesa' + getUser(), JSON.stringify(appMesa.grupos));
 	atualizaGrupos(appMesa.grupos);
 	appMesa.primeiraCarga = false;
 	appMesa.carregando = false;
+}
+
+function removerGruposDuplicados(values) {
+	let concatArray = values.map(eachValue => {
+		return Object.values(eachValue).join('')
+	});
+	let filterValues = values.filter((value, index) => {
+		return concatArray.indexOf(concatArray[index]) === index
+
+	});
+	return filterValues;
 }
 
 function getUser() {

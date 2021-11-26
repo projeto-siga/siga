@@ -300,13 +300,20 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			return new ArrayList<Missao>();
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat(FormatarDataHora.recuperaFormato(PATTERN_DDMMYYYYHHMM,PATTERN_DDMMYYYYHHMM_MYSQL));
+		SimpleDateFormat sdf = new SimpleDateFormat(FormatarDataHora.recuperaFormato("dd/MM/yyyy","yyyy-MM-dd"));
 //		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
 //		String dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime())  + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
 
-		String dataInicioFormatada = dataInicio != null ? FormatarDataHora.retorna_DataeHoraeSegundoInvertido(sdf.format(dataInicio.getTime() + " " + START_00_00_00 )) : "";
-		String dataFimFormatada = dataFim != null ? FormatarDataHora.retorna_DataeHoraeSegundoInvertido(sdf.format(dataFim.getTime() + " " + END_23_59_59 )) : "";
-
+		String dataInicioFormatada;
+		String dataFimFormatada;
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL")) {
+			dataInicioFormatada = dataInicio != null ? "STR_TO_DATE('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', '%Y-%m-%d %H:%i:%s')" : "";
+			dataFimFormatada = dataFim != null ? "STR_TO_DATE('" + sdf.format(dataFim.getTime()) + " " + END_23_59_59 + "', '%Y-%m-%d %H:%i:%s')" : "";
+		} else {
+			dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+			dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime()) + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
+		}
 		
         String qrl = (condutor != null) ? "condutor.id = " + condutor.getId() : "";
         qrl += (!qrl.equals("") && (dataInicio!= null || dataFim!=null)) ? " AND" : "";

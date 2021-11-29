@@ -1129,7 +1129,6 @@ public class ExRelatorioController extends ExController {
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
 		parametros.put("link_siga", "");
-		parametros.put("subtitulo", "Relatório Gerenciais\nToral de Documentos Por Órgão Interessado");
 		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu());
 		if (lotacaoSel.getId() != null) {
 			DpLotacao lota = dao().consultar(lotacaoSel.getId(), DpLotacao.class, false);
@@ -1144,6 +1143,8 @@ public class ExRelatorioController extends ExController {
 
 		final RelDocsOrgaoInteressado rel = new RelDocsOrgaoInteressado(parametros);
 		rel.gerar();
+		
+		parametros.put("subtitulo", "Relatório Gerenciais\nTotal de Documentos Por Órgão Interessado");
 		
 		parametros.put("totalDocumentos", rel.totalDocumentos.toString());
 		
@@ -1284,6 +1285,80 @@ public class ExRelatorioController extends ExController {
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
+	}
+	
+	@Path("app/expediente/rel/relTempoTramitacaoPorEspeciePDF")
+	public Download relTempoTramitacaoPorEspeciePDF(final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, boolean primeiraVez, String tipoRel)
+			throws Exception {
+		assertAcesso(ACESSO_TRAMESP);
+
+		final Map<String, String> parametros = new HashMap<String, String>();
+		CpOrgaoUsuario orgaoUsu = getLotaTitular().getOrgaoUsuario();
+		Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu.getId());
+		parametros.put("lotacaoTitular",getLotaTitular().getSiglaLotacao());
+		parametros.put("idTit", getTitular().getId().toString());
+		parametros.put("orgaoUsuario", orgaoUsu.getNmOrgaoUsu());
+		
+		if (lotacaoSel.getId() != null) {
+			DpLotacao lota = dao().consultar(lotacaoSel.getId(), DpLotacao.class, false);
+			orgaoSelId = lota.getIdOrgaoUsuario();
+			parametros.put("lotacaoRel", lota.getDescricao());
+		} else {
+			parametros.put("lotacaoRel", "Todas");
+		}
+
+		if (orgaoUsu.getId() != orgaoSelId) {
+			throw new AplicacaoException(
+					"Não é permitido consultas de outros órgãos.");
+		}
+		consistePeriodo(dataInicial, dataFinal);
+
+		parametros.put("orgao", orgaoSelId.toString());
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("usuario",
+				getRequest().getParameter("usuarioSel.id"));
+		parametros.put("dataInicial",
+				getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest()
+				.getParameter("dataFinal"));
+		parametros.put("link_especie", "");
+		parametros.put("link_siga", "");
+		addParametrosPersonalizadosOrgãoString(parametros);
+		parametros.put("subtitulo", "Relatório Gerenciais\nTempo Médio de Tramitação Por Espécie Documental");
+
+		final RelTempoTramitacaoPorEspecie rel = new RelTempoTramitacaoPorEspecie(
+				parametros);
+		rel.gerar();
+		
+		if("pdf".equalsIgnoreCase(tipoRel)) {
+			rel.setTemplateFile("RelatorioBaseGestao.jrxml");
+			final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
+		
+			return new InputStreamDownload(inputStream, APPLICATION_PDF,"tempo_tramitacao_por_especie.pdf");		
+
+		} else {
+			InputStream inputStream = null;
+			StringBuffer texto = new StringBuffer();
+			
+			for (String lista : rel.listColunas) {
+				texto.append(lista);
+				texto.append(";");
+			}
+			texto.append(System.lineSeparator());
+			
+			for (List<String> lista : rel.listEspecie) {
+				for (String string : lista) {
+					texto.append(string);
+					texto.append(";");
+				}
+				texto.append(System.lineSeparator());
+			}
+			inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));											
+			return new InputStreamDownload(inputStream, "text/csv", "tempo_tramitacao_por_especie.csv");	
+		}
 	}
 
 	@Get 

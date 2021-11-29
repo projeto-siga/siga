@@ -18,13 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.kxml2.io.KXmlParser;
-import org.w3c.tidy.Configuration;
-import org.w3c.tidy.Tidy;
 import org.xmlpull.v1.XmlPullParser;
 
 public class LuceneUtil {
@@ -46,15 +44,20 @@ public class LuceneUtil {
 
 		KXmlParser parser = new KXmlParser();
 		String sHtml = new String(conteudoHtml);
+		
+	    final Document document = Jsoup.parse(sHtml);
+	    document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);    
+	    document.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+	    sHtml = document.html();
 
-		Tidy tidy = new Tidy();
-		tidy.setCharEncoding(Configuration.LATIN1);
-		tidy.setRawOut(false);
-		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-			tidy.parse(new ByteArrayInputStream(sHtml.getBytes("iso-8859-1")), os);
-			os.flush();
-			sHtml = new String(os.toByteArray(), "iso-8859-1");
-		}
+//		Tidy tidy = new Tidy();
+//		tidy.setCharEncoding(Configuration.LATIN1);
+//		tidy.setRawOut(false);
+//		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+//			tidy.parse(new ByteArrayInputStream(sHtml.getBytes("iso-8859-1")), os);
+//			os.flush();
+//			sHtml = new String(os.toByteArray(), "iso-8859-1");
+//		}
 
 		//String canonHtml = (new ProcessadorHtml()).canonicalizarHtml(sHtml,
 		//		true, true);

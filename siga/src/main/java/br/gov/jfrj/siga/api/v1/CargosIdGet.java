@@ -43,11 +43,12 @@ public class CargosIdGet implements ICargosIdGet {
 	private Cargo cargoToResultadoPesquisa(DpCargo cargo) {
 		Cargo crgo = new Cargo();
 
-		crgo.sigla = cargo.getSigla();
+		crgo.sigla = (cargo.getSigla() != null? cargo.getSigla() : null);
 		crgo.idCargo = cargo.getId().toString();
 		crgo.idCargoIni = cargo.getIdCargoIni().toString();
-		crgo.idExterna = cargo.getIdExterna().toString();
-		crgo.nome = cargo.getNomeCargo();
+		crgo.idExterna = (cargo.getIdExterna() != null? cargo.getIdExterna().toString() : null);
+		crgo.nome = (cargo.getNomeCargo() != null? cargo.getNomeCargo() : null);
+		
 		return crgo;
 	}
 

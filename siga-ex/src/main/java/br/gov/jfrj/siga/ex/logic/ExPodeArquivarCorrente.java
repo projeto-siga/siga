@@ -19,8 +19,6 @@ public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 	private DpLotacao lotaTitular;
 
 	public ExPodeArquivarCorrente(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado())
-			mob = mob.doc().getUltimoVolume();
 		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
@@ -50,19 +48,36 @@ public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 	 */
 	@Override
 	protected Expression create() {
-		return And.of(Or.of(new ExEMobilVia(mob), new ExEMobilUltimoVolume(mob)),
+		return And.of(
+
+				Or.of(new ExEMobilVia(mob), new ExEMobilUltimoVolume(mob)),
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 
-				Or.of(Not.of(new ExEEletronico(mob.doc())),
-						Not.of(Or.of(new ExTemAnexosNaoAssinados(mob), new ExTemDespachosNaoAssinados(mob),
-								new ExTemAnexosNaoAssinados(mob.doc().getMobilGeral()),
-								new ExTemDespachosNaoAssinados(mob.doc().getMobilGeral()))),
+				Or.of(
+
+						Not.of(new ExEEletronico(mob.doc())),
+
+						Not.of(
+
+								Or.of(
+
+										new ExTemAnexosNaoAssinados(mob),
+
+										new ExTemDespachosNaoAssinados(mob),
+
+										new ExTemAnexosNaoAssinados(mob.doc().getMobilGeral()),
+
+										new ExTemDespachosNaoAssinados(mob.doc().getMobilGeral()))),
 
 						Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
+
 						new ExPodeMovimentar(mob, titular, lotaTitular)),
+
 				Not.of(new ExEstaEmTramiteParalelo(mob)), Not.of(new ExEstaArquivado(mob)),
+
 				Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaJuntado(mob)),
+
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)

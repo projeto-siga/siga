@@ -18,8 +18,6 @@ public class ExPodeSobrestar extends CompositeExpressionSupport {
 	private DpLotacao lotaTitular;
 
 	public ExPodeSobrestar(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado())
-			mob = mob.doc().getUltimoVolume();
 		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;

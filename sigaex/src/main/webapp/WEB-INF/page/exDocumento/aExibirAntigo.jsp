@@ -74,7 +74,7 @@
 								url="${pageContext.request.contextPath}${acao.url}"
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 								classe="${acao.classe}" estilo="line-height: 160% !important"
-								atalho="${true}" modal="${acao.modal}"
+								atalho="${true}" modal="${acao.modal}" descr="${acao.descr}" 
 								explicacao="${exibirExplicacao ? acao.explicacao : null}"
 								post="${acao.post}" test="${acao.pode}" />
 					</c:forEach>

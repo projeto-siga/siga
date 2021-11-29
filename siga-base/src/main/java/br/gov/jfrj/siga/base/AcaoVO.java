@@ -33,6 +33,7 @@ import br.gov.jfrj.siga.base.util.Texto;
 public class AcaoVO {
 	private String icone;
 	private String nome;
+	private String descr;
 	private String nameSpace;
 	private String acao;
 	boolean pode;
@@ -66,6 +67,8 @@ public class AcaoVO {
 	}
 
 	public String getNomeNbsp() {
+		if (getNome() == null)
+			return null;
 		return getNome().replace(" ", "&nbsp;");
 	}
 
@@ -225,9 +228,18 @@ public class AcaoVO {
 		return new AcaoVO.Builder();
 	}
 
+	public String getDescr() {
+		return descr;
+	}
+
+	public void setDescr(String descr) {
+		this.descr = descr;
+	}
+
 	public static class Builder {
 		private String icone;
 		private String nome;
+		private String descr;
 		private String nameSpace;
 		private String acao;
 		private boolean pode;
@@ -250,6 +262,12 @@ public class AcaoVO {
 			return this;
 		}
 
+
+		public Builder descr(String descr) {
+			this.descr = descr;
+			return this;
+		}
+		
 		public Builder nameSpace(String nameSpace) {
 			this.nameSpace = nameSpace;
 			return this;
@@ -323,6 +341,7 @@ public class AcaoVO {
 			AcaoVO acaoVO = new AcaoVO();
 			acaoVO.setIcone(icone);
 			acaoVO.setNome(nome);
+			acaoVO.setDescr(descr);
 			acaoVO.setNameSpace(nameSpace);
 			acaoVO.setAcao(acao);
 			acaoVO.setPode(pode);
@@ -336,6 +355,7 @@ public class AcaoVO {
 			acaoVO.setPost(post);
 			return acaoVO;
 		}
+
 	}
 
 	public static class Helper {

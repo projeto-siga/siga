@@ -222,6 +222,7 @@
 		</div>
 	</div>
 	<c:set var="primeiroMobil" value="${true}" />
+	<c:set var="exibirExplicacao" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
 		<div class="row  siga-menu-acoes">
 			<div class="col">
@@ -242,11 +243,14 @@
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 								classe="${acao.classe}" estilo="line-height: 160% !important"
 								atalho="${true}" modal="${acao.modal}"
-								explicacao="${acao.explicacao}" post="${acao.post}"
+								explicacao="${exibirExplicacao ? acao.explicacao : null}" 
+								post="${acao.post}"
 								test="${acao.pode}" />
 						</c:forEach>
-						<a id="audit" href="javascript:$('.link-tag-hidden').removeClass('d-none');$('.link-tag-no-audit').removeClass('d-none');$('.link-tag-audit').addClass('d-none');" class="btn btn-sm btn-link text-black link-tag link-tag-audit"	data-toggle="tooltip" data-html="true" title="Clique para exibir também os botões inativos." >...</a>
-						<a id="no-audit" href="javascript:$('.link-tag-hidden').addClass('d-none');$('.link-tag-audit').removeClass('d-none');$('.link-tag-no-audit').addClass('d-none');" class="btn btn-sm btn-link text-black link-tag link-tag-no-audit d-none"	data-toggle="tooltip" data-html="true" title="Clique para ocultar os botões inativos." >...</a>
+						<c:if test="${exibirExplicacao}">
+							<a id="audit" href="javascript:$('.link-tag-hidden').removeClass('d-none');$('.link-tag-no-audit').removeClass('d-none');$('.link-tag-audit').addClass('d-none');" class="btn btn-sm btn-link text-black link-tag link-tag-audit"	data-toggle="tooltip" data-html="true" title="Clique para exibir também os botões inativos." >...</a>
+							<a id="no-audit" href="javascript:$('.link-tag-hidden').addClass('d-none');$('.link-tag-audit').removeClass('d-none');$('.link-tag-no-audit').addClass('d-none');" class="btn btn-sm btn-link text-black link-tag link-tag-no-audit d-none"	data-toggle="tooltip" data-html="true" title="Clique para ocultar os botões inativos." >...</a>
+						</c:if>
 					</siga:links>
 				</c:if>
 			</div>

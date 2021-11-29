@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -45,6 +46,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
 
@@ -67,9 +69,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular) {
 		Expression exp = exp(clazz, titular, lotaTitular);
+		afirmar(msg, exp, titular, lotaTitular);
+	}
+
+	private void afirmar(String msg, Expression exp, final DpPessoa titular, final DpLotacao lotaTitular) {
 		boolean res = exp.eval();
-		if (!res)
-			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
+		if (!res) {
+			String explicacao = "";
+			if (new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(CpTipoDeConfiguracao.EXIBIR_REGRA_DE_NEGOCIO_EM_MENSAGENS).eval())
+				explicacao = " - " + AcaoVO.Helper.formatarExplicacao(exp, res);
+			throw new AplicacaoException(msg + explicacao);
+		}
 	}
 
 	public Expression exp(Class<? extends Expression> clazz, final ExDocumento doc) {
@@ -82,13 +92,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 	public boolean pode(Class<? extends Expression> clazz, final ExDocumento doc) {
 		return exp(clazz, doc).eval();
-	}
-
-	public void afirmar(String msg, Class<? extends Expression> clazz, final ExDocumento doc) {
-		Expression exp = exp(clazz, doc);
-		boolean res = exp.eval();
-		if (!res)
-			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
 	}
 
 	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
@@ -109,9 +112,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) {
 		Expression exp = exp(clazz, titular, lotaTitular, doc);
-		boolean res = exp.eval();
-		if (!res)
-			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
+		afirmar(msg, exp, titular, lotaTitular);
 	}
 
 	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
@@ -132,9 +133,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		Expression exp = exp(clazz, titular, lotaTitular, mob);
-		boolean res = exp.eval();
-		if (!res)
-			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
+		afirmar(msg, exp, titular, lotaTitular);
 	}
 
 	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
@@ -165,9 +164,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob, final ExMovimentacao mov) {
 		Expression exp = exp(clazz, titular, lotaTitular, mob, mov);
-		boolean res = exp.eval();
-		if (!res)
-			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
+		afirmar(msg, exp, titular, lotaTitular);
 	}
 
 	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
@@ -188,9 +185,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMovimentacao mov) {
 		Expression exp = exp(clazz, titular, lotaTitular, mov);
-		boolean res = exp.eval();
-		if (!res)
-			throw new AplicacaoException(msg + " - " + AcaoVO.Helper.formatarExplicacao(exp, res));
+		afirmar(msg, exp, titular, lotaTitular);
 	}
 
 	/**

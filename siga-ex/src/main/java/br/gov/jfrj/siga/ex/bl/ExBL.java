@@ -3035,7 +3035,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Não é possível criar Subprocesso físico de processo eletrônico.");
 
 		
-		getComp().afirmar("O usuário não pode ser subscritor do documento", ExPodeSerSubscritor.class, doc);
+		getComp().afirmar("O usuário não pode ser subscritor do documento", ExPodeSerSubscritor.class, cadastrante, lotaCadastrante, doc);
 		
 		if (doc.isProcesso() && doc.getMobilGeral().temAnexos())
 			throw new AplicacaoException(

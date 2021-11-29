@@ -4,6 +4,8 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Or;
 
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 
 public class ExPodeSerSubscritor extends CompositeExpressionSupport {
@@ -11,6 +13,10 @@ public class ExPodeSerSubscritor extends CompositeExpressionSupport {
 	private ExDocumento doc;
 
 	public ExPodeSerSubscritor(ExDocumento doc) {
+		this.doc = doc;
+	}
+
+	public ExPodeSerSubscritor(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		this.doc = doc;
 	}
 

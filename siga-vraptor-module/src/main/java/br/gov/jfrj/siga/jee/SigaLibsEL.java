@@ -296,6 +296,13 @@ public class SigaLibsEL {
 				.podePorConfiguracao(titular, lotaTitular, idTpConf);
 	}
 
+	
+	public static Boolean podeExibirRegraDeNegocioEmBotoes(DpPessoa titular,
+			DpLotacao lotaTitular) throws Exception {
+		return Cp.getInstance().getConf()
+				.podePorConfiguracao(titular, lotaTitular, CpTipoDeConfiguracao.EXIBIR_REGRA_DE_NEGOCIO_EM_BOTOES);
+	}
+
 	// public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa
 	// titular,
 	// DpLotacao lotaTitular, String siglaServico) throws Exception {

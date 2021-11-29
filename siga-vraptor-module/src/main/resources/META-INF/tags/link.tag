@@ -64,9 +64,11 @@
 			title="${titleImg}">
 	</c:set>
 </c:if>
-<c:set var="tooltip">
-	<b>${title}</b>
-	<hr />${explicacao}</c:set>
+<c:if test="${not empty explicacao}">
+	<c:set var="tooltip">
+		<b>${title}</b>
+		<hr />${explicacao}</c:set>
+</c:if>
 <c:choose>
 	<c:when test="${empty test or test}">
 		<c:if test="${!linkBotoes}">
@@ -89,7 +91,9 @@
 					<a id="${linkId}"
 						class="${classe} ${linkBotoes ? btnClass : ''} link-tag"
 						<c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
-						data-toggle="modal" data-target="#${modal}" data-toggle="tooltip"
+						data-toggle="modal" data-target="#${modal}"
+						 
+						data-toggle="tooltip"
 						data-html="true" title="${tooltip}"
 						onclick="if (init${modal}) init${modal}()">${img}${title}</a>
 				</c:when>

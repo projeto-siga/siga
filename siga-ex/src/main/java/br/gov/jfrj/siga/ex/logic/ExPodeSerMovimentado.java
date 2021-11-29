@@ -6,6 +6,7 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
+import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -17,7 +18,7 @@ public class ExPodeSerMovimentado extends CompositeExpressionSupport {
 	public ExPodeSerMovimentado(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		this(mob);
 
-		if (mob.doc().isFinalizado() && this.mob.isGeral()) {
+		if (mob != null && mob.doc().isFinalizado() && this.mob.isGeral()) {
 			if (this.mob.doc().isProcesso())
 				this.mob = this.mob.doc().getUltimoVolume();
 			else {
@@ -38,6 +39,8 @@ public class ExPodeSerMovimentado extends CompositeExpressionSupport {
 	@Override
 	protected Expression create() {
 		return And.of(
+				
+				new CpNaoENulo(mob, "via ou volume"),
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 

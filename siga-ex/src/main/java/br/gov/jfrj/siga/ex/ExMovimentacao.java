@@ -1287,21 +1287,36 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public String assertAssinaturaValida(boolean retornaNome) throws Exception {
 		long l = getExTipoMovimentacao().getId();
 		switch ((int) l) {
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA://58 - Assinatura do documento
 			return assertAssinaturaComSenhaValida(this.getExDocumento().getPdf(), this.getAuditHash(),
 					this.getDtIniMov(), retornaNome);
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+			
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA://59 - assinatura do anexo
 			return assertAssinaturaComSenhaValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getAuditHash(),
 					this.getDtIniMov(), retornaNome);
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
+			
+			
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA://60 - autenticacao do anexo  ou do documento
+			return assertAssinaturaComSenhaValida( 
+					this.getExMovimentacaoRef() != null ? this.getExMovimentacaoRef().getConteudoBlobpdf() :
+						this.getExDocumento().getPdf(),
+					this.getAuditHash(),
+					this.getDtIniMov(), retornaNome);
+		
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO://11 Assinatura
 			return assertAssinaturaDigitalValida(this.getExDocumento().getPdf(), this.getConteudoBlobMov(),
 					this.getDtIniMov(), retornaNome);
 			
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
-			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getConteudoBlobMov(),
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO://45 Autenticacao com certificado digital do anexo ou do documento 
+			return assertAssinaturaDigitalValida(
+					
+					this.getExMovimentacaoRef() != null ? this.getExMovimentacaoRef().getConteudoBlobpdf() :
+						this.getExDocumento().getPdf(),
+					
+					this.getConteudoBlobMov(),
 					this.getDtIniMov(), retornaNome);
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+		
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO://22
 			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(),
 					this.getConteudoBlobMov(), this.getDtIniMov(), retornaNome);
 		default:

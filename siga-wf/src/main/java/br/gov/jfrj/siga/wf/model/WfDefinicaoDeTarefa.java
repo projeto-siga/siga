@@ -21,6 +21,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
+import com.crivano.jflow.model.ProcessInstance;
+import com.crivano.jflow.model.Responsible;
 import com.crivano.jflow.model.TaskDefinition;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
@@ -150,7 +152,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	//
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
-
+	
 	@Override
 	public Integer getHisAtivo() {
 		this.hisAtivo = super.getHisAtivo();
@@ -506,7 +508,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 				return lotacao.getSigla();
 		case PESSOA:
 			if (pessoa != null)
-				return pessoa.getSigla();
+				return pessoa.getSobrenomeEIniciais();
 		case RESPONSAVEL:
 			if (definicaoDeResponsavel != null)
 				return definicaoDeResponsavel.getNome();
@@ -517,6 +519,27 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		return s;
 	}
 
+	public String getTooltip() {
+		if (tipoDeResponsavel == null)
+			return null;
+
+		switch (tipoDeResponsavel) {
+		case LOTACAO:
+			if (lotacao != null)
+				return lotacao.getNomeLotacao();
+		case PESSOA:
+			if (pessoa != null)
+				return pessoa.getNomePessoa();
+		case RESPONSAVEL:
+			if (definicaoDeResponsavel != null)
+				return definicaoDeResponsavel.getNome();
+		}
+
+		String s = tipoDeResponsavel.getDescr();
+		s = s.replace("Principal: ", "").replace("Lotação ", "Lota. ");
+		return s;
+	}
+	
 	public java.lang.String getParam() {
 		return param;
 	}
@@ -532,5 +555,4 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	public void setParam2(java.lang.String param2) {
 		this.param2 = param2;
 	}
-
 }

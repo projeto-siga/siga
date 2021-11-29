@@ -66,8 +66,6 @@ public class ExPodeCancelarJuntada extends CompositeExpressionSupport {
 				
 				Not.of(new ExEMobilCancelado(mob)),
 				
-				And.of(null),
-				
 				Or.of(new ExEstaJuntadoExterno(mob), new ExPodeMovimentar(mobPai, titular, lotaTitular)),
 				
 				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM, titular, lotaTitular));

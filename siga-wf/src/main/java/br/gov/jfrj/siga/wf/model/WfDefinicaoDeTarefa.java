@@ -21,8 +21,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
-import com.crivano.jflow.model.ProcessInstance;
-import com.crivano.jflow.model.Responsible;
 import com.crivano.jflow.model.TaskDefinition;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;

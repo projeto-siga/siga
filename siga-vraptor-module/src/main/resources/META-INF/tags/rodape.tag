@@ -88,6 +88,10 @@
 			});
 </script>
 
+<script>
+	$('a[data-html="true"]').tooltip();
+</script>
+
 
 <c:if test="${siga_cliente == 'GOVSP' and popup != true}">
 	<footer class="text-center text-white align-middle" style="background-color: #20313b;">

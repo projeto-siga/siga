@@ -242,7 +242,8 @@
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 								classe="${acao.classe}" estilo="line-height: 160% !important"
 								atalho="${true}" modal="${acao.modal}"
-								explicacao="${acao.explicacao}" post="${acao.post}"
+								descr="${acao.descr}" 
+								post="${acao.post}"
 								test="${acao.pode}" />
 						</c:forEach>
 					</siga:links>

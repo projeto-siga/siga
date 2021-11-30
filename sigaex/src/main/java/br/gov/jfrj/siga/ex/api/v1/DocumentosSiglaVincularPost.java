@@ -6,6 +6,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaVincularPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeVincular;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -21,9 +22,7 @@ public class DocumentosSiglaVincularPost implements IDocumentosSiglaVincularPost
 
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
-		if (!Ex.getInstance().getComp().podeVincular(ctx.getCadastrante(), ctx.getLotaTitular(), mobFilho)) {
-			throw new AplicacaoException("Não é possível fazer vínculo");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível fazer vínculo", ExPodeVincular.class, ctx.getCadastrante(), ctx.getLotaTitular(), mobFilho);
 
 		Ex.getInstance().getBL().referenciarDocumento(ctx.getCadastrante(), ctx.getLotaCadastrante(), mobFilho, mobPai,
 				dt, ctx.getCadastrante(), ctx.getCadastrante());

@@ -14,7 +14,7 @@ public class ExEstaCancelado implements Expression {
 
 	@Override
 	public boolean eval() {
-		return doc.isCancelado();
+		return doc != null && doc.isCancelado();
 	}
 
 	@Override

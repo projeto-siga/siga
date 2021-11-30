@@ -1,10 +1,9 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import com.crivano.swaggerservlet.PresentableUnloggedException;
-
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaDesapensarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeDesapensar;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Transacional
@@ -14,10 +13,10 @@ public class DocumentosSiglaDesapensarPost implements IDocumentosSiglaDesapensar
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Desapensar");
 
-		if (!Ex.getInstance().getComp().podeDesapensar(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
-			throw new PresentableUnloggedException("O documento " + mob.getSigla() + " não pode ser desapensado por "
-					+ ctx.getTitular().getSiglaCompleta() + "/" + ctx.getLotaTitular().getSiglaCompleta());
-		}
+		Ex.getInstance().getComp().afirmar(
+				"O documento " + mob.getSigla() + " não pode ser desapensado por " + ctx.getTitular().getSiglaCompleta()
+						+ "/" + ctx.getLotaTitular().getSiglaCompleta(),
+				ExPodeDesapensar.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
 
 		ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 

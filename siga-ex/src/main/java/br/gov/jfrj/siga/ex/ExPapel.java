@@ -42,13 +42,13 @@ public class ExPapel extends AbstractExPapel {
 	final static public long PAPEL_GESTOR = 1;
 
 	final static public long PAPEL_INTERESSADO = 2;
-	
+
 	final static public long PAPEL_FISCAL_ADMINISTRATIVO = 3;
-	
+
 	final static public long PAPEL_FISCAL_TECNICO = 4;
-	
+
 	final static public long PAPEL_LIQUIDANTE = 5;
-	
+
 	final static public long PAPEL_AUTORIZADOR = 6;
 
 	final static public long PAPEL_REVISOR = 7;
@@ -58,9 +58,9 @@ public class ExPapel extends AbstractExPapel {
 		s = Texto.removeAcento(s);
 		StringBuilder sb = new StringBuilder();
 		for (char ch : s.toCharArray()) {
-			if (ch >='a' && ch <='z') {
+			if (ch >= 'a' && ch <= 'z') {
 				sb.append(ch);
-			} else if (ch == ' ' || ch == '-' || ch == '/'){
+			} else if (ch == ' ' || ch == '-' || ch == '/') {
 				sb.append('_');
 			}
 		}
@@ -72,5 +72,25 @@ public class ExPapel extends AbstractExPapel {
 		if (getDescPapel() == null)
 			return null;
 		return getComoNomeDeVariavel();
+	}
+
+	static public String nomeDoPerfil(long id) {
+		switch ((int) id) {
+		case (int) PAPEL_GESTOR:
+			return "Gestor";
+		case (int) PAPEL_INTERESSADO:
+			return "Interessado";
+		case (int) PAPEL_FISCAL_ADMINISTRATIVO:
+			return "Fiscal Administrativo";
+		case (int) PAPEL_FISCAL_TECNICO:
+			return "Fiscal Técnico";
+		case (int) PAPEL_LIQUIDANTE:
+			return "Liquidante";
+		case (int) PAPEL_AUTORIZADOR:
+			return "Autorizador";
+		case (int) PAPEL_REVISOR:
+			return "Revisor";
+		}
+		return null;
 	}
 }

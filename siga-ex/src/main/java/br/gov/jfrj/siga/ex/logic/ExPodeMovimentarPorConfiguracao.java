@@ -28,6 +28,6 @@ public class ExPodeMovimentarPorConfiguracao implements Expression {
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("pode por configuração", result);
+		return JLogic.explain("pode movimentar por configuração", result);
 	}
 };

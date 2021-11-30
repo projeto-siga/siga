@@ -17,7 +17,7 @@ public class ExEstaResponsavel implements Expression {
 	public ExEstaResponsavel(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		this.mob = mob;
 
-		if (this.mob.isGeral()) {
+		if (this.mob != null && this.mob.isGeral()) {
 			if (this.mob.doc().isProcesso())
 				this.mob = this.mob.doc().getUltimoVolume();
 			else {

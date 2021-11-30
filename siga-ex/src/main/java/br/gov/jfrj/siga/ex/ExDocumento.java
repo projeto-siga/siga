@@ -65,6 +65,7 @@ import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
@@ -1381,7 +1382,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
 		if (Ex.getInstance()
 				.getComp()
-				.podeAcessarDocumento(titular, lotaTitular,
+				.pode(ExPodeAcessarDocumento.class, titular, lotaTitular,
 						getMobilGeral())) {
 			return getForm();
 		} else {
@@ -1498,7 +1499,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	private List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob,
 			List<ExArquivoNumerado> list, int nivel) {
 		
-		List<ExArquivoNumerado> listaInicial = list, listaFinal = new ArrayList<>();		
+		List<ExArquivoNumerado> listaInicial = list, listaFinal = new ArrayList<>();	
+		
+		if (mob == null)
+			return listaFinal;
+		
 		boolean podeAtualizarPaginas = true;
 
 		// Incluir o documento principal
@@ -2377,6 +2382,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (getExTipoDocumento() == null)
 			return false;
 		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
+	}
+
+	/**
+	 * Verifica se um documento é de origem interna.
+	 */
+	public boolean isInternoFolhaDeRosto() {
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO);
 	}
 
 	/**

@@ -9,6 +9,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaAutenticarComSenhaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Transacional
@@ -34,11 +35,8 @@ public class DocumentosSiglaAutenticarComSenhaPost extends DocumentosSiglaAssina
 		}
 
 		// Usuário pode Autenticar o documento?
-		if (!Ex.getInstance().getComp().podeAutenticarComSenha(titular, lotaTitular, mob)) {
-			throw new PresentableUnloggedException(
-					"O documento " + mob.getSigla() + " não pode ser autenticado com senha por "
-							+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
-		}
+		Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser autenticado com senha por "
+				+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), ExPodeAutenticarComSenha.class, titular, lotaTitular, mob);
 	}
 
 	@Override

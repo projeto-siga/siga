@@ -13,6 +13,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
@@ -80,7 +81,7 @@ abstract class DocumentosSiglaAssinarAutenticarComSenhaPost {
 	}
 
 	private void assertAcesso(DpPessoa titular, DpLotacao lotaTitular, final ExMobil mob) throws Exception {
-		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob)) {
+		if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, mob)) {
 			String s = "";
 			s += mob.doc().getListaDeAcessosString();
 			s = "(" + s + ")";

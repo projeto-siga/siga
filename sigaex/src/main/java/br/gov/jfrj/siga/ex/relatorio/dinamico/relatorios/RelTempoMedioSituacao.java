@@ -23,6 +23,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
@@ -89,7 +90,7 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 			Object[] obj = (Object[]) it.next();
 			String lotaDoc = (String) obj[0];
 			String modeloDoc = (String) obj[1];
-			if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+			if (Ex.getInstance().getBL().getComp().pode(ExPodeExibirQuemTemAcessoAoDocumento.class, 
 					 titular, lotaTitular ,ExDao.getInstance().consultarModeloPeloNome(modeloDoc)
 							)) {
 				List<String> listDados = new ArrayList();

@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 
 public class SigaDocPdfUtils {
 	private static final String TEXT_HTML = "text/html";
@@ -77,7 +78,7 @@ public class SigaDocPdfUtils {
 						"A sigla informada não corresponde a um documento da base de dados.");
 			}
 			if (!Ex.getInstance().getComp()
-					.podeAcessarDocumento(titular, lotaTitular, mob)) {
+					.pode(ExPodeAcessarDocumento.class, titular, lotaTitular, mob)) {
 				throw new AplicacaoException("Documento " + mob.getSigla()
 						+ " inacessível ao usuário " + titular.getSigla() + "/"
 						+ lotaTitular.getSiglaCompleta() + ".");

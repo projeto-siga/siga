@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -161,7 +162,7 @@ import net.sf.jasperreports.engine.JRException;
 					qtdTram = Long.valueOf(obj[4].toString());
 				ExModelo exModelo = new ExModelo();
 				exModelo.setIdMod(Long.valueOf(idMod));
-				if (Ex.getInstance().getBL().getComp().podeExibirQuemTemAcessoAoDocumento(
+				if (Ex.getInstance().getBL().getComp().pode(ExPodeExibirQuemTemAcessoAoDocumento.class, 
 						 titular, lotaTitular ,ExDao.getInstance().consultar(exModelo.getIdMod(),ExModelo.class, false)
 									)) {
 					List<String> listDados = new ArrayList();

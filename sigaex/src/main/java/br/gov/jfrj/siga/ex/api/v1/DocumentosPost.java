@@ -38,6 +38,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosPost;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -62,10 +64,14 @@ public class DocumentosPost implements IDocumentosPost {
 		ExDocumento doc;
 		if (req.sigla != null && !req.sigla.trim().isEmpty()) {
 			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Salvar");
-			if (!Ex.getInstance().getComp().podeEditar(ctx.getTitular(), ctx.getLotaTitular(), mob))
-				throw new SwaggerException("Edição do documento " + mob.getSigla() + " não é permitida. ("
-						+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", 403, null,
-						req, resp, null);
+			try {
+				Ex.getInstance()
+				.getComp()
+				.afirmar("Edição do documento " + mob.getSigla() + " não é permitida. ("
+						+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", ExPodeEditar.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
+			} catch (Exception e) {
+				throw new SwaggerException(e.getMessage(), 403, null, req, resp, null);
+			}
 			doc = mob.doc();
 		} else {
 			doc = new ExDocumento();
@@ -357,8 +363,8 @@ public class DocumentosPost implements IDocumentosPost {
 		if (req.titular != null && doc.getTitular() != doc.getSubscritor()) {
 			exBL.geraMovimentacaoSubstituicao(doc, ctx.getCadastrante());
 		}
-
-		if (doc.getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(cadastrante,
+		
+		if (doc.getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante,
 				cadastrante.getLotacao(), doc.getExMobilPai())) {
 			exBL.copiarRestringir(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(), cadastrante,
 					ctx.getTitular(), doc.getData());

@@ -555,4 +555,5 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	public void setParam2(java.lang.String param2) {
 		this.param2 = param2;
 	}
+
 }

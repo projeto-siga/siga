@@ -14,8 +14,10 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 @Startup
 @Singleton
@@ -30,6 +32,7 @@ public class ExStarter {
 		log.info("INICIANDO SIGAEX.WAR");
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		CpTipoDeConfiguracao.mapear(ExTipoDeConfiguracao.values());
+		CpTipoDeMovimentacao.mapear(ExTipoDeMovimentacao.values());
 
 		emf = Persistence.createEntityManagerFactory("default");
 		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_EX);

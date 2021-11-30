@@ -9,7 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeSobrestar extends CompositeExpressionSupport {
 
@@ -56,7 +56,7 @@ public class ExPodeSobrestar extends CompositeExpressionSupport {
 				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaJuntado(mob)),
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR, titular,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.SOBRESTAR, titular,
 						lotaTitular));
 	}
 }

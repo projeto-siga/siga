@@ -22,7 +22,6 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -36,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.text.MaskFormatter;
 
 import org.xml.sax.InputSource;
 
@@ -62,7 +59,6 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
@@ -83,6 +79,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
 import br.gov.jfrj.siga.ex.logic.ExPodeUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
@@ -127,7 +124,7 @@ public class FuncoesEL {
 				.podePorConfiguracao(
 						titular,
 						lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REMESSA_PARA_PUBLICACAO,
+						ExTipoDeMovimentacao.REMESSA_PARA_PUBLICACAO,
 						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
@@ -142,7 +139,7 @@ public class FuncoesEL {
 				.podePorConfiguracao(
 						titular,
 						lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
+						ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE,
 						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
@@ -157,7 +154,7 @@ public class FuncoesEL {
 				.podePorConfiguracao(
 						titular,
 						lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
+						ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO,
 						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
@@ -1026,9 +1023,7 @@ public class FuncoesEL {
 			String idParte) throws Exception {
 		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
 			if (mov.isCancelada()
-					|| !mov.getExTipoMovimentacao()
-							.getIdTpMov()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO))
+					|| mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO)
 				continue;
 
 			ExParte parte = ExParte.create(mov.getDescrMov());
@@ -1060,7 +1055,7 @@ public class FuncoesEL {
 		List<ExMovimentacao> mov;
 		try {
 			if (doc.isFinalizado()) {
-				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72, false);
+				mov = doc.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.ASSINATURA_POR, false);
 				for (ExMovimentacao movAssPor : mov) {
 					retorno = "Documento assinado POR  \"" +  movAssPor.getSubscritor().getNomePessoa() + "\" - \"" + movAssPor.getSubscritor().getSigla()+ "\"";
 				}

@@ -10,7 +10,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeIncluirCossignatario extends CompositeExpressionSupport {
 
@@ -66,7 +66,7 @@ public class ExPodeIncluirCossignatario extends CompositeExpressionSupport {
 
 				new ExECadastrante(doc, lotaTitular),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO,
 						titular, lotaTitular));
 	}
 }

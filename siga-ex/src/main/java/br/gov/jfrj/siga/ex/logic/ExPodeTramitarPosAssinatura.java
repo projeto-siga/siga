@@ -5,16 +5,13 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.If;
 import com.crivano.jlogic.NAnd;
-import com.crivano.jlogic.Not;
-import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.cp.logic.CpENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeTramitarPosAssinatura extends CompositeExpressionSupport {
 
@@ -63,7 +60,7 @@ public class ExPodeTramitarPosAssinatura extends CompositeExpressionSupport {
 				new ExPodeReceberPorConfiguracao(mob, destinatario, lotaDestinatario),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA),
+						.withExTpMov(ExTipoDeMovimentacao.TRANSFERENCIA),
 
 				If.of(
 

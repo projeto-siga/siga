@@ -10,8 +10,8 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeDesapensar extends CompositeExpressionSupport {
 
@@ -76,7 +76,7 @@ public class ExPodeDesapensar extends CompositeExpressionSupport {
 				new ExPodeMovimentar(mobVerif, titular, lotaTitular),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
+						.withExTpMov(ExTipoDeMovimentacao.DESAPENSACAO)
 						.withExMod(mob.doc().getExModelo()));
 
 	}

@@ -7,6 +7,7 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -20,10 +21,8 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExPodePorConfiguracao implements Expression {
 	private CpServico cpServico;
@@ -34,7 +33,7 @@ public class ExPodePorConfiguracao implements Expression {
 	private ExModelo exMod;
 	private ExClassificacao exClassificacao;
 	private ExVia exVia;
-	private ExTipoMovimentacao exTpMov;
+	private ITipoDeMovimentacao exTpMov;
 	private DpCargo cargo;
 	private CpOrgaoUsuario cpOrgaoUsu;
 	private DpFuncaoConfianca dpFuncaoConfianca;
@@ -124,13 +123,8 @@ public class ExPodePorConfiguracao implements Expression {
 		return this;
 	}
 
-	public ExPodePorConfiguracao withExTpMov(ExTipoMovimentacao exTpMov) {
+	public ExPodePorConfiguracao withExTpMov(ITipoDeMovimentacao exTpMov) {
 		this.exTpMov = exTpMov;
-		return this;
-	}
-
-	public ExPodePorConfiguracao withExTpMov(long exTpMov) {
-		this.exTpMov = ExDao.getInstance().consultar(exTpMov, ExTipoMovimentacao.class, false);
 		return this;
 	}
 

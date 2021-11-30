@@ -3,15 +3,14 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
-import com.crivano.jlogic.If;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeCopiar extends CompositeExpressionSupport {
 
@@ -84,10 +83,10 @@ public class ExPodeCopiar extends CompositeExpressionSupport {
 				new ExPodeMovimentar(mob, titular, lotaTitular),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA).withCargo(titular.getCargo())
+						.withExTpMov(ExTipoDeMovimentacao.COPIA).withCargo(titular.getCargo())
 						.withDpFuncaoConfianca(titular.getFuncaoConfianca())
 						.withExFormaDoc(mob.doc().getExFormaDocumento()).withExMod(mob.doc().getExModelo()),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, titular, lotaTitular));
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.COPIA, titular, lotaTitular));
 	}
 }

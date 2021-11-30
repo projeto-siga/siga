@@ -9,8 +9,8 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeAssinar extends CompositeExpressionSupport {
 
@@ -131,7 +131,7 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 										new ExPodeFinalizar(mob.doc(), titular, lotaTitular)),
 
 								new ExPodeMovimentarPorConfiguracao(
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO, titular,
+										ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO, titular,
 										lotaTitular))));
 
 	}

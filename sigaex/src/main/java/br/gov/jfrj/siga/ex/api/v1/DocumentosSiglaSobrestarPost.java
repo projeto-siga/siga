@@ -1,13 +1,10 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import com.crivano.swaggerservlet.PresentableUnloggedException;
-
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaSobrestarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
 import br.gov.jfrj.siga.ex.logic.ExPodeSobrestar;
 import br.gov.jfrj.siga.vraptor.Transacional;
 

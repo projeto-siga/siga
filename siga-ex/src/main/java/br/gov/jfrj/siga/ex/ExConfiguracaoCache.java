@@ -30,7 +30,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.converter.ITipoDeMovimentacaoConverter;
 import br.gov.jfrj.siga.cp.converter.LongNonNullConverter;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -40,9 +42,9 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
 public class ExConfiguracaoCache extends CpConfiguracaoCache {
 	
-	@Convert(converter = LongNonNullConverter.class)
+	@Convert(converter = ITipoDeMovimentacaoConverter.class)
 	@Column(name = "ID_TP_MOV")
-	public long exTipoMovimentacao;
+	public ITipoDeMovimentacao exTipoMovimentacao;
 
 	@Convert(converter = LongNonNullConverter.class)
 	@Column(name = "ID_TP_DOC")
@@ -81,7 +83,7 @@ public class ExConfiguracaoCache extends CpConfiguracaoCache {
 
 	public ExConfiguracaoCache(ExConfiguracao cfg) {
 		super(cfg);
-		this.exTipoMovimentacao = longOrZero(cfg.getExTipoMovimentacao() != null ? cfg.getExTipoMovimentacao().getId() : null);
+		this.exTipoMovimentacao = cfg.getExTipoMovimentacao();
 		this.exTipoDocumento = longOrZero(cfg.getExTipoDocumento() != null ? cfg.getExTipoDocumento().getId() : null);
 		this.exTipoFormaDoc = longOrZero(cfg.getExTipoFormaDoc() != null ? cfg.getExTipoFormaDoc().getId() : null);
 		this.exFormaDocumento = longOrZero(cfg.getExFormaDocumento() != null ? cfg.getExFormaDocumento().getId() : null);

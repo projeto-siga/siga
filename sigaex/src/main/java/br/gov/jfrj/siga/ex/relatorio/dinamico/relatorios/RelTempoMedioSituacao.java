@@ -21,9 +21,9 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
@@ -243,16 +243,16 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 						+ "    MEDIA DESC " 
 					);
 
-		query.setParameter("idTpMovMarcacao", ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO);
+		query.setParameter("idTpMovMarcacao", ExTipoDeMovimentacao.MARCACAO);
 		query.setParameter("idMarcadorUrgente", CpMarcadorEnum.URGENTE.getId());
-		query.setParameter("idTpMovTransf", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-		query.setParameter("idTpMovDespTransf", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-		query.setParameter("idTpMovDespTransfExt", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-		query.setParameter("idTpMovTransfExt", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
-		query.setParameter("idTpMovArqCorrente", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE);
-		query.setParameter("idTpMovRecebimento", ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO);			
-		query.setParameter("idTpMovTornarSemEfeito", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
-		query.setParameter("idTpMovCancelar", ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);			
+		query.setParameter("idTpMovTransf", ExTipoDeMovimentacao.TRANSFERENCIA);
+		query.setParameter("idTpMovDespTransf", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
+		query.setParameter("idTpMovDespTransfExt", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
+		query.setParameter("idTpMovTransfExt", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA);
+		query.setParameter("idTpMovArqCorrente", ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
+		query.setParameter("idTpMovRecebimento", ExTipoDeMovimentacao.RECEBIMENTO);			
+		query.setParameter("idTpMovTornarSemEfeito", ExTipoDeMovimentacao.TORNAR_SEM_EFEITO);			
+		query.setParameter("idTpMovCancelar", ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO);			
 		
 		if (parametros.get("lotacao") != null
 				&& !"".equals(parametros.get("lotacao"))) {

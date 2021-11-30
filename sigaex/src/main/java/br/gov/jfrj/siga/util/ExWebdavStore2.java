@@ -1,21 +1,11 @@
 package br.gov.jfrj.siga.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
-import java.util.Date;
 
-import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 
-import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.bl.Ex;
 import net.sf.webdav.ITransaction;
 import net.sf.webdav.LocalFileSystemStore;
 import net.sf.webdav.StoredObject;

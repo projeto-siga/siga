@@ -9,7 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeIndicarPermanente extends CompositeExpressionSupport {
 
@@ -66,7 +66,7 @@ public class ExPodeIndicarPermanente extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaEmEditalDeEliminacao(mob)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INDICACAO_GUARDA_PERMANENTE,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.INDICACAO_GUARDA_PERMANENTE,
 						titular, lotaTitular));
 	}
 }

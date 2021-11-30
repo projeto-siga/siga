@@ -8,7 +8,7 @@ import com.crivano.jlogic.Not;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeAutenticarMovimentacao extends CompositeExpressionSupport {
 
@@ -32,7 +32,7 @@ public class ExPodeAutenticarMovimentacao extends CompositeExpressionSupport {
 
 				// Não é necessário autenticar movimentação de anexação pois o link para
 				// assinar/autenticar sempre está disponível.
-				new ExMovimentacaoEDoTipo(mov, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO),
+				new ExMovimentacaoEDoTipo(mov, ExTipoDeMovimentacao.ANEXACAO),
 
 				new ExEEletronico(mov.getExDocumento()),
 

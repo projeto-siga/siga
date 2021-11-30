@@ -8,11 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
-
 import com.crivano.swaggerservlet.SwaggerServlet;
+
+import br.gov.jfrj.siga.base.Prop;
+import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 
 public class XjusDocRecordServlet extends SwaggerServlet {
 	private static final long serialVersionUID = 1756711359239182178L;

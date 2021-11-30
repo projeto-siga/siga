@@ -5,7 +5,6 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.cp.logic.CpEquivale;
-import br.gov.jfrj.siga.cp.logic.CpIgual;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;

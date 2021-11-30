@@ -27,6 +27,7 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
@@ -37,6 +38,7 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
@@ -135,7 +137,7 @@ public class Notificador {
 		
 		for (PessoaLotacaoParser atendente : mov.mob().getAtendente()) {
 			DpLotacao lotaAtendente = atendente.getLotacaoOuLotacaoPrincipalDaPessoa();
-			if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR)
+			if (mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR)
 					&& lotaAtendente != null
 					&& (mov.getLotaTitular() == null || !mov.getLotaTitular().equivale(lotaAtendente))) {
 				try {
@@ -146,11 +148,11 @@ public class Notificador {
 			}
 		}
 		
-		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
-				|| ((mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
-						|| mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA))  
-						&& (mov.getExMovimentacaoRef().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA) 
-								|| mov.getExMovimentacaoRef().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)))
+		if (mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.TRANSFERENCIA)
+				|| ((mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO)
+						|| mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA))  
+						&& (mov.getExMovimentacaoRef().getExTipoMovimentacao() ==(ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA) 
+								|| mov.getExMovimentacaoRef().getExTipoMovimentacao() ==(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA)))
 				) {
 			DpLotacao  lotacao;			
 			try {
@@ -177,9 +179,7 @@ public class Notificador {
 		for (ExMovimentacao m : mov.getExDocumento().getMobilGeral()
 				.getExMovimentacaoSet()) {
 			if (!m.isCancelada()
-					&& m.getExTipoMovimentacao()
-							.getIdTpMov()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+					&& m.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL
 					&& !m.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR)) {
 				
 				try {
@@ -288,7 +288,7 @@ public class Notificador {
 										papel, emailNot.getDpPessoa(), mov.getExTipoMovimentacao()))								
 									emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
 							} else {  /* transferência */ 
-								if (temPermissao(emailNot.getDpPessoa(), emailNot.getDpPessoa().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+								if (temPermissao(emailNot.getDpPessoa(), emailNot.getDpPessoa().getLotacao(), mov.getExDocumento().getExModelo(),mov.getExTipoMovimentacao() ))						
 									emailsTemp.add(emailNot.getDpPessoa().getEmailPessoaAtual());
 							}	
 						}
@@ -300,7 +300,7 @@ public class Notificador {
 											papel, pes, mov.getExTipoMovimentacao()))							
 										emailsTemp.add(pes.getEmailPessoaAtual());	
 								} else { /* transferência */
-									if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+									if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getExTipoMovimentacao() ))						
 										emailsTemp.add(pes.getEmailPessoaAtual());
 								}
 							}
@@ -314,7 +314,7 @@ public class Notificador {
 											papel, emailNot.getPessoaEmail(), mov.getExTipoMovimentacao()))							
 										emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());	
 								}else { /* transferência */
-									if (temPermissao(emailNot.getPessoaEmail(), emailNot.getPessoaEmail().getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov()))						
+									if (temPermissao(emailNot.getPessoaEmail(), emailNot.getPessoaEmail().getLotacao(), mov.getExDocumento().getExModelo(),mov.getExTipoMovimentacao()))						
 										emailsTemp.add(emailNot.getPessoaEmail().getEmailPessoaAtual());
 								}
 							}
@@ -327,7 +327,7 @@ public class Notificador {
 													papel, pes, mov.getExTipoMovimentacao()))							
 												emailsTemp.add(pes.getEmailPessoaAtual());	
 										} else /* transferência */
-											if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+											if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getExTipoMovimentacao() ))						
 												emailsTemp.add(pes.getEmailPessoaAtual());	
 									}
 								}
@@ -345,7 +345,7 @@ public class Notificador {
 								papel, pess, mov.getExTipoMovimentacao()))							
 							emailsTemp.add(pess.getEmailPessoaAtual());	
 					} else {/* transferência */
-						if (temPermissao(pess, pess.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+						if (temPermissao(pess, pess.getLotacao(), mov.getExDocumento().getExModelo(),mov.getExTipoMovimentacao() ))						
 							emailsTemp.add(pess.getEmailPessoaAtual());
 					}
 				}
@@ -357,7 +357,7 @@ public class Notificador {
 									papel, pes, mov.getExTipoMovimentacao()))							
 								emailsTemp.add(pes.getEmailPessoaAtual());	
 						} else  {/* transferência */
-							if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getIdTpMov() ))						
+							if (temPermissao(pes, pes.getLotacao(), mov.getExDocumento().getExModelo(),mov.getExTipoMovimentacao() ))						
 								emailsTemp.add(pes.getEmailPessoaAtual());				
 						}
 					}
@@ -382,7 +382,7 @@ public class Notificador {
 	}	
 	
 	private static boolean temPermissao(ExTipoFormaDoc tipoFormaDoc,
-			ExPapel papel, DpPessoa pessoa, ExTipoMovimentacao tipoMovimentacao) throws AplicacaoException, Exception {		
+			ExPapel papel, DpPessoa pessoa, ITipoDeMovimentacao tipoMovimentacao) throws AplicacaoException, Exception {		
 		
 				return (Ex.getInstance()
 						.getConf()
@@ -395,7 +395,7 @@ public class Notificador {
 				
 	}
 	
-	private static boolean temPermissao(DpPessoa pessoa, DpLotacao lotacao, ExModelo modelo, Long idTpMov) throws AplicacaoException, Exception {
+	private static boolean temPermissao(DpPessoa pessoa, DpLotacao lotacao, ExModelo modelo, ITipoDeMovimentacao idTpMov) throws AplicacaoException, Exception {
 		
 			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
 							lotacao, modelo,idTpMov,
@@ -447,7 +447,7 @@ public class Notificador {
 			conteudo.append("\nMovimentação:");
 			if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO
 					|| tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
-				conteudo.append(mov.getExTipoMovimentacao().getDescricao());
+				conteudo.append(mov.getExTipoMovimentacao().getDescr());
 			}
 			if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
 				conteudo.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()+"(Cancelamento)");
@@ -459,8 +459,8 @@ public class Notificador {
 
 			}
 		
-			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
+			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA) {
 				if (mov.getResp() != null) {
 					conteudo.append("Destinatário:  <b>"
 							+ mov.getResp().getNomePessoa()
@@ -507,10 +507,10 @@ public class Notificador {
 			conteudoHTML.append("<p>Movimentação: <b>");		
 
 			if (tipoNotificacao == TIPO_NOTIFICACAO_GRAVACAO)					 {
-				conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + "</b></p>");
+				conteudoHTML.append(mov.getExTipoMovimentacao().getDescr() + "</b></p>");
 			}
 			if (tipoNotificacao == TIPO_NOTIFICACAO_EXCLUSAO) {
-				conteudoHTML.append(mov.getExTipoMovimentacao().getDescricao() + " (Excluída)</b></p>");
+				conteudoHTML.append(mov.getExTipoMovimentacao().getDescr() + " (Excluída)</b></p>");
 			}			
 			if (tipoNotificacao == TIPO_NOTIFICACAO_CANCELAMENTO) {
 				conteudoHTML.append(mov.getExMovimentacaoRef().getDescrTipoMovimentacao()
@@ -522,8 +522,8 @@ public class Notificador {
 						+ mov.getCadastrante().getMatricula() + ")</b></p>");
 			}
 
-			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-					|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) {
+			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA) {
 				if (mov.getResp() != null) {
 					conteudoHTML.append("<p>Destinatário:  <b>"
 							+ mov.getResp().getNomePessoa() + " (Matrícula: "

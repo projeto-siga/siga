@@ -8,7 +8,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExJaEsteveComAPessoa implements Expression {
 
@@ -29,8 +29,7 @@ public class ExJaEsteveComAPessoa implements Expression {
 				if ((mov.getLotaResp() != null && mov.getLotaResp().equivale(lotaTitular) && mov.getResp() == null)
 						|| (mov.getResp() != null && mov.getResp().equivale(titular)))
 					return true;
-				if (mov.getExTipoMovimentacao()
-						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO
+				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO
 						&& ((mov.getLotaCadastrante() != null && mov.getLotaCadastrante().equivale(lotaTitular)
 								&& mov.getCadastrante() == null)
 								|| (mov.getCadastrante() != null && mov.getCadastrante().equivale(titular))))

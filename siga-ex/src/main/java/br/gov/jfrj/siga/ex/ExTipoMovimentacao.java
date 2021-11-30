@@ -32,7 +32,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
@@ -219,16 +221,16 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 
 	final static public long TIPO_MOVIMENTACAO_CONCLUSAO = 84;
 	
-	public static boolean hasDespacho(long id) {
-		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA;
+	public static boolean hasDespacho(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.DESPACHO
+				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO
+				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA;
 	}
 
-	public static boolean hasDocumento(long id) {
-		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO || hasDespacho(id);
+	public static boolean hasDocumento(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.ANEXACAO || hasDespacho(id);
 	}
 
 	/**
@@ -252,17 +254,17 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 		return getDescrTipoMovimentacao();
 	}
 
-	public static boolean hasApensacao(long id) {
-		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO;
+	public static boolean hasApensacao(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.APENSACAO
+				|| id == ExTipoDeMovimentacao.DESAPENSACAO;
 	}
 
-	public static boolean hasTransferencia(long id) {
-		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
+	public static boolean hasTransferencia(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
+				|| id == ExTipoDeMovimentacao.TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
 	}
 
 	/* Add customized code below */

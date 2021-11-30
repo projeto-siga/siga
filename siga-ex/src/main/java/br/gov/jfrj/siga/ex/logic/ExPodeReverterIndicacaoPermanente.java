@@ -9,7 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeReverterIndicacaoPermanente extends CompositeExpressionSupport {
 
@@ -62,7 +62,7 @@ public class ExPodeReverterIndicacaoPermanente extends CompositeExpressionSuppor
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
 				new ExPodeMovimentarPorConfiguracao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVERSAO_INDICACAO_GUARDA_PERMANENTE, titular,
+						ExTipoDeMovimentacao.REVERSAO_INDICACAO_GUARDA_PERMANENTE, titular,
 						lotaTitular));
 	}
 }

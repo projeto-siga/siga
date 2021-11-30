@@ -10,8 +10,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeCancelar extends CompositeExpressionSupport {
 
@@ -53,7 +53,7 @@ public class ExPodeCancelar extends CompositeExpressionSupport {
 				Or.of(
 
 						new ExMovimentacaoEDoTipo(mov,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR),
+								ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR),
 
 						new ExMovimentacaoELotaCadastrante(mov, lotaTitular)),
 

@@ -92,10 +92,9 @@ import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
-import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
@@ -432,8 +431,8 @@ public class ExDao extends CpDao {
 			Join<ExMovimentacao, ExTipoMovimentacao> joinTipoMovimentacao = root.join("exTipoMovimentacao");
 			
 			predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento = builder.and(mobilRef.in(mobils),
-					builder.or(builder.equal(root.get("exTipoMovimentacao"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
-							builder.equal(root.get("exTipoMovimentacao"), ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)),
+					builder.or(builder.equal(root.get("exTipoMovimentacao"), ExTipoDeMovimentacao.JUNTADA),
+							builder.equal(root.get("exTipoMovimentacao"), ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)),
 					builder.isNull(root.get("exMovimentacaoCanceladora"))
 					);
 			
@@ -1059,10 +1058,10 @@ public class ExDao extends CpDao {
 		}
 
 		if (exemplo.getExTipoMovimentacao() != null
-				&& exemplo.getExTipoMovimentacao().getIdTpMov() != null
-				&& exemplo.getExTipoMovimentacao().getIdTpMov() != 0) {
+				&& exemplo.getExTipoMovimentacao() != null
+				&& exemplo.getExTipoMovimentacao().getId() != 0) {
 			sbf.append(" and ex.id_tp_mov = ");
-			sbf.append(exemplo.getExTipoMovimentacao().getIdTpMov());
+			sbf.append(exemplo.getExTipoMovimentacao().getId());
 		}
 
 		if (exemplo.getExFormaDocumento() != null

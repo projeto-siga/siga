@@ -25,12 +25,11 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 	public class RelVolumeTramitacaoPorModelo extends RelatorioTemplate {
@@ -133,10 +132,10 @@ import net.sf.jasperreports.engine.JRException;
 						+ "order by mod.nmMod "
 						);
 
-			query.setParameter("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-			query.setParameter("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-			query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-			query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov1", ExTipoDeMovimentacao.TRANSFERENCIA);
+			query.setParameter("idTpMov2", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
+			query.setParameter("idTpMov3", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov4", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA);
 
 			setQueryParms(query);
 			
@@ -296,10 +295,10 @@ import net.sf.jasperreports.engine.JRException;
 						+ "doc.dtDoc "
 						);
 
-			query.setParameter("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-			query.setParameter("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-			query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-			query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov1", ExTipoDeMovimentacao.TRANSFERENCIA);
+			query.setParameter("idTpMov2", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
+			query.setParameter("idTpMov3", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov4", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA);
 
 			if (parametros.get("idMod") != null && !"".equals(parametros.get("idMod"))) {
 				query.setParameter("idMod", Long.valueOf((String) parametros.get("idMod")));

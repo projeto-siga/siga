@@ -5,6 +5,7 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -13,11 +14,11 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 public class ExPodeMovimentar extends CompositeExpressionSupport {
 
 	private ExMobil mob;
-	private Long idTpMov;
+	private ITipoDeMovimentacao idTpMov;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 
-	public ExPodeMovimentar(ExMobil mob, Long idTpMov, DpPessoa titular, DpLotacao lotaTitular) {
+	public ExPodeMovimentar(ExMobil mob, ITipoDeMovimentacao idTpMov, DpPessoa titular, DpLotacao lotaTitular) {
 		this.mob = mob;
 
 		if (this.mob != null && this.mob.isGeral()) {

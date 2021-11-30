@@ -8,7 +8,7 @@ import com.crivano.jlogic.Not;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeAvaliar extends CompositeExpressionSupport {
 
@@ -50,7 +50,7 @@ public class ExPodeAvaliar extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaEliminado(mob)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO, titular,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.AVALIACAO, titular,
 						lotaTitular));
 	}
 }

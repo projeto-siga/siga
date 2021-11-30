@@ -76,6 +76,7 @@ import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -161,6 +162,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPara;
 import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPosAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -224,7 +226,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false, false);
+				ExTipoDeMovimentacao.ANEXACAO, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true, null, false, false);
 
@@ -253,7 +255,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false, false);
+				ExTipoDeMovimentacao.ANEXACAO, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true, null, false, false);
 
@@ -473,7 +475,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(builder.getMob(), getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true, false);
+				ExTipoDeMovimentacao.ANEXACAO, true, false);
 
 		result.include("mobilVO", mobilVO);
 	}
@@ -584,7 +586,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, false, false);
+				ExTipoDeMovimentacao.COPIA, false, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true, null, false, false);
 
@@ -743,8 +745,8 @@ public class ExMovimentacaoController extends ExController {
 		}
 		if(Prop.isGovSP()
 				&& (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))
-				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA).isEmpty()
-				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO).isEmpty()) {
+				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA).isEmpty()
+				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO).isEmpty()) {
 			Ex.getInstance().getBL().gravar(getCadastrante(), getTitular(), getLotaTitular(), doc);
 		}
 		result.include("sigla", sigla);
@@ -1840,7 +1842,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final DpPessoaSelecao responsavelSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
-			final String obsOrgao, final String protocolo, final Long tipoTramite) {
+			final String obsOrgao, final String protocolo, final Integer tipoTramite) {
 		
 		this.setPostback(postback);
 
@@ -1925,7 +1927,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final DpPessoaSelecao responsavelSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
-			final String obsOrgao, final String protocolo, final Long tipoTramite) throws Exception {
+			final String obsOrgao, final String protocolo, final Integer tipoTramite) throws Exception {
 		this.setPostback(postback);
 
 		if(dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
@@ -1952,7 +1954,7 @@ public class ExMovimentacaoController extends ExController {
 		if(responsavelSel != null) {
 			Boolean podeTramitar = Boolean.FALSE;
 			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
-			listaMov.addAll(builder.getMob().getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+			listaMov.addAll(builder.getMob().getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 		
 			for (ExMovimentacao exMovimentacao : listaMov) {
 				if(exMovimentacao.getSubscritor().equals(responsavelSel.getObjeto())) {
@@ -1977,7 +1979,7 @@ public class ExMovimentacaoController extends ExController {
 				.setResponsavelSel(responsavelSel)
 				.setDtDevolucaoMovString(dtDevolucaoMovString)
 				.setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao);
-
+		ITipoDeMovimentacao tpTramite = ExTipoDeMovimentacao.getById(tipoTramite);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
 		Ex.getInstance().getComp().afirmar("Destinatário não pode receber documentos", ExPodeReceberPorConfiguracao.class, mov.getResp(), mov.getLotaResp());
@@ -2025,7 +2027,7 @@ public class ExMovimentacaoController extends ExController {
     			return;
 			}
 		}
-		if (tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
+		if (tpTramite == ExTipoDeMovimentacao.NOTIFICACAO) {
 			 Ex.getInstance().getComp().afirmar("Não é possível notificar", ExPodeNotificar.class, getTitular(), getLotaTitular(), builder.getMob());			
 		} else 
 			Ex.getInstance()
@@ -2071,7 +2073,7 @@ public class ExMovimentacaoController extends ExController {
 						mov.getSubscritor(), mov.getTitular(),
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
 						movimentacaoBuilder.getConteudo(),
-						mov.getNmFuncaoSubscritor(), false, false, tipoTramite);
+						mov.getNmFuncaoSubscritor(), false, false, tpTramite);
 
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()
@@ -2098,10 +2100,11 @@ public class ExMovimentacaoController extends ExController {
 			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final long idTpDespacho,
 			final long idResp, final List<ExTipoDespacho> tiposDespacho, final String descrMov,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString, final String obsOrgao,
-			final String protocolo, final Long tipoTramite) {
-		if (tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)
+			final String protocolo, final Integer tipoTramite) {
+		ITipoDeMovimentacao tpTramite = ExTipoDeMovimentacao.getById(tipoTramite);
+		if (tpTramite == ExTipoDeMovimentacao.NOTIFICACAO)
 			result.forwardTo(this).aNotificar(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel);
-		else if (tipoTramite == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO)
+		else if (tpTramite == ExTipoDeMovimentacao.TRAMITE_PARALELO)
 			result.forwardTo(this).aNotificar(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel);
 		else
 			result.forwardTo(this).aTransferir(
@@ -2472,7 +2475,7 @@ public class ExMovimentacaoController extends ExController {
 		if(responsavelSel != null) {
 			Boolean podeVincular = Boolean.FALSE;
 			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
-			listaMov.addAll(builder.getMob().getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+			listaMov.addAll(builder.getMob().getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 		
 			for (ExMovimentacao exMovimentacao : listaMov) {
 				if(exMovimentacao.getSubscritor().equals(responsavelSel.getObjeto())) {
@@ -2532,7 +2535,7 @@ public class ExMovimentacaoController extends ExController {
 	private Set<CpMarcador> getListaMarcadoresAtivos(ExMobil mob) {
 		Set<CpMarcador> set = new HashSet<CpMarcador>();
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-			if (mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) && !mov.isCancelada()) {
+			if (mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.MARCACAO) && !mov.isCancelada()) {
 				set.add(mov.getMarcador());
 			}
 		}
@@ -2542,7 +2545,7 @@ public class ExMovimentacaoController extends ExController {
 	private Date getDataLimiteDemanda(ExMobil mob) {
 		Date dataLimite = null;
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-			if (mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
+			if (mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.MARCACAO)
 					&& !mov.isCancelada() && mov.getMarcador().isDemandaJudicial()) {
 				dataLimite = mov.getDtFimMov();
 				break;
@@ -2760,7 +2763,7 @@ public class ExMovimentacaoController extends ExController {
 									mov.getSubscritor(), mov.getTitular(), //
 									tpd, false, txt, null, //
 									mov.getNmFuncaoSubscritor(), false, //
-									false, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+									false, ExTipoDeMovimentacao.TRANSFERENCIA);
 				}
 			} catch (AplicacaoException e) {
 				MapMensagens.put(nmobil, e);
@@ -3129,10 +3132,10 @@ public class ExMovimentacaoController extends ExController {
 				certificado = null;
 			}
 
-			long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
+			ITipoDeMovimentacao tpMovAssinatura = ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO;
 
 			if (copia) {
-				tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+				tpMovAssinatura = ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO;
 			}
 
 			result.include(
@@ -3185,7 +3188,7 @@ public class ExMovimentacaoController extends ExController {
 	public void aAssinarMovSenhaGravar(Long id, String sigla,
 			String tipoAssinaturaMov, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor, final Boolean senhaIsPin, Boolean copia) throws Exception {
-		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+		ITipoDeMovimentacao tpMovAssinatura = ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA;
 		
 		try {
 
@@ -3199,7 +3202,7 @@ public class ExMovimentacaoController extends ExController {
 
 		if (copia
 				|| (tipoAssinaturaMov != null && tipoAssinaturaMov.equals("C")))
-			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
+			tpMovAssinatura = ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA;
 
 		Ex.getInstance()
 				.getBL()
@@ -3226,7 +3229,7 @@ public class ExMovimentacaoController extends ExController {
 		final ExMobil mob = builder.getMob();
 
 		ExMovimentacao movPedidoBI = mob
-				.getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM);
+				.getUltimaMovimentacao(ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM);
 
 		if (movPedidoBI != null && !movPedidoBI.isCancelada()) {
 			Ex.getInstance()
@@ -3313,7 +3316,7 @@ public class ExMovimentacaoController extends ExController {
 					final ExMovimentacao move = doque
 							.getMobilGeral()
 							.getUltimaMovimentacao(
-									ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
+									ExTipoDeMovimentacao.PEDIDO_PUBLICACAO);
 
 					Ex.getInstance().getComp()
 					.afirmar("O documento não está nas condições de ser remetido", ExPodeRemeterParaPublicacaoSolicitadaNoDiario.class, getTitular(), getLotaTitular(),
@@ -3365,7 +3368,7 @@ public class ExMovimentacaoController extends ExController {
 				.afirmar("Usuário não tem permissão de cancelar pedido de publicação no DJE.", ExPodeAtenderPedidoPublicacaoNoDiario.class, getTitular(), getLotaTitular(), mob);
 
 		ExMovimentacao movPedidoDJE = mob
-				.getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
+				.getUltimaMovimentacao(ExTipoDeMovimentacao.PEDIDO_PUBLICACAO);
 
 		if (movPedidoDJE != null && !movPedidoDJE.isCancelada()) {
 			Ex.getInstance()
@@ -3457,7 +3460,7 @@ public class ExMovimentacaoController extends ExController {
 				false);
 
 		if (mov == null 
-				|| !mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) 
+				|| !mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.ANOTACAO) 
 				|| mov.isCancelada()) {
 			throw new AplicacaoException("Não existe a anotação a ser cancelada.");
 		}
@@ -3496,8 +3499,8 @@ public class ExMovimentacaoController extends ExController {
 				.getComp()
 				.afirmar("Usuário não tem permissão de cancelar ciência.", ExPodeCancelarCiencia.class, getTitular(), getLotaTitular(), mob);
 
-		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
-		ExMovimentacao movAss = mob.getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
+		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.CIENCIA);
+		ExMovimentacao movAss = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA);
 
 		if (setMovCiente != null) {
 			for (ExMovimentacao mov : setMovCiente) {
@@ -3613,8 +3616,7 @@ public class ExMovimentacaoController extends ExController {
 		for (ExMovimentacao mov : lista) {
 			if (!mov.isCancelada()
 					&& mov.getExTipoMovimentacao()
-							.getId()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+							.equals(ExTipoDeMovimentacao.VINCULACAO_PAPEL)) {
 				if((idPessoa != null && mov != null && mov.getSubscritor() != null && mov.getSubscritor().getId().equals(idPessoa)) 
 						|| (idLotacao != null && mov != null && mov.getLotaSubscritor() != null && mov.getLotaSubscritor().getId().equals(idLotacao))) {
 					Ex.getInstance()
@@ -3744,19 +3746,19 @@ public class ExMovimentacaoController extends ExController {
 
 	private void validarCancelar(ExMovimentacao mov, ExMobil mob)
 			throws Exception {
-		if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
+		if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ANEXACAO) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar anexo", ExPodeCancelarAnexo.class, getTitular(), getLotaTitular(), mob, mov);
-		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar arquivo auxiliar", ExPodeCancelarArquivoAuxiliar.class, getTitular(), getLotaTitular(), mob, mov);
-		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
+		} else if (ExTipoMovimentacao.hasDespacho(mov.getExTipoMovimentacao())) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar despacho", ExPodeCancelarDespacho.class, getTitular(), getLotaTitular(), mob, mov);
-		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar definição de perfil", ExPodeCancelarVinculacaoPapel.class, getTitular(), getLotaTitular(), mob, mov);
-		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
+		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar o documento vinculado", ExPodeCancelarVinculacao.class, getTitular(), getLotaTitular(), mob, mov);
-		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
+		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO) {
 			ExPodeCancelarMarcacao.afirmar(mov, getTitular(), getLotaTitular());
-		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA) {
+		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.PRAZO_ASSINATURA) {
 			Ex.getInstance().getComp().afirmar("Usuário não permitido a cancelar ou alterar o prazo de assinatura. Se o documento estiver"
 					+ " assinado, deve ser o subscritor; senão deve ser quem cadastrou o prazo.", ExPodeCancelarOuAlterarPrazoDeAssinatura.class, getTitular(), getLotaTitular(), mob, mov);
 		} else {
@@ -3999,7 +4001,7 @@ public class ExMovimentacaoController extends ExController {
 						getLotaTitular(),
 						mov,
 						new Date(),
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO);
+						ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO);
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + mob.getSigla());
 	}
@@ -4819,9 +4821,9 @@ public class ExMovimentacaoController extends ExController {
 			if (b64Applet != null)
 				assinaturaB64 = b64Applet;
 	
-			long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
+			ITipoDeMovimentacao tpMovAssinatura = ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO;
 			if (copia != null && copia)
-				tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+				tpMovAssinatura = ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO;
 	
 			byte[] assinatura = Base64.decode(assinaturaB64);
 			Date dt = dao().consultarDataEHoraDoServidor();
@@ -5069,7 +5071,7 @@ public class ExMovimentacaoController extends ExController {
 				false);
 
 		if (mov == null 
-				|| !mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO) 
+				|| !mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO) 
 				|| mov.isCancelada()) {
 			throw new AplicacaoException("Não existe a disponibilização no acompanhamento do protocolo a ser cancelada.");
 		}

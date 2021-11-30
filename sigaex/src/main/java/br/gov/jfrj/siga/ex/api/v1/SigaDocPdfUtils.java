@@ -22,9 +22,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class SigaDocPdfUtils {
 	private static final String TEXT_HTML = "text/html";
@@ -85,9 +85,7 @@ public class SigaDocPdfUtils {
 			}
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
 			final boolean isArquivoAuxiliar = mov != null
-					&& mov.getExTipoMovimentacao()
-							.getId()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
+					&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR;
 			final boolean imutavel = (mov != null) && !completo && !estampar
 					&& !somenteHash && !pacoteAssinavel;
 			String cacheControl = "private";

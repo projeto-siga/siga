@@ -10,14 +10,13 @@ import com.crivano.jlogic.If;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
-import br.gov.jfrj.siga.cp.logic.CpIgual;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeRedefinirNivelDeAcesso extends CompositeExpressionSupport {
 
@@ -36,7 +35,7 @@ public class ExPodeRedefinirNivelDeAcesso extends CompositeExpressionSupport {
 		listMovJuntada = new ArrayList<ExMovimentacao>();
 		if (mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
 			listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada()
-					.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
+					.getMovsNaoCanceladas(ExTipoDeMovimentacao.JUNTADA));
 		}
 	}
 
@@ -74,7 +73,7 @@ public class ExPodeRedefinirNivelDeAcesso extends CompositeExpressionSupport {
 						 * da transparencia
 						 */
 						Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(mob,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA)),
+								ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA)),
 
 						Not.of(new ExEstaEliminado(mob)),
 
@@ -83,6 +82,6 @@ public class ExPodeRedefinirNivelDeAcesso extends CompositeExpressionSupport {
 						new ExPodeMovimentar(mob, titular, lotaTitular),
 
 						new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-								.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO)));
+								.withExTpMov(ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO)));
 	}
 }

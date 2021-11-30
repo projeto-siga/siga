@@ -50,11 +50,13 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 /**
  * A class that represents a row in the EX_MOVIMENTACAO table. You can customize
@@ -183,25 +185,17 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END = //
 			"AND (" //
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-					+ ") OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TRANSFERENCIA) OR"//
 							// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
-					+ ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-					+ ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
-					+ ")"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.RECEBIMENTO) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.JUNTADA) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) OR"//
+					+ " (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TORNAR_SEM_EFEITO)"//
 					+ ") " //
 					+ "ORDER BY mov.dtTimestamp DESC";
 
@@ -246,8 +240,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 					+ "mov.exMobil.idMobil = :idMobil " //
 					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
 					+ "FROM ExMovimentacao tramitacao "
-					+ "WHERE tramitacao.exMobil.idMobil = :idMobil AND tramitacao.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
+					+ "WHERE tramitacao.exMobil.idMobil = :idMobil AND tramitacao.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TRANSFERENCIA) " //
 					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	/**
@@ -291,8 +284,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 					+ "mov.exMobil.exDocumento = (SELECT mobBase.exDocumento FROM ExMobil mobBase WHERE mobBase.idMobil = :idMobil) "
 					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
 					+ "FROM ExMovimentacao tramitacao "
-					+ "WHERE tramitacao.exMobil.exDocumento = mov.exMobil.exDocumento AND tramitacao.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
+					+ "WHERE tramitacao.exMobil.exDocumento = mov.exMobil.exDocumento AND tramitacao.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TRANSFERENCIA) " //
 					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	@Id
@@ -397,7 +389,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tp_mov", nullable = false)
-	private ExTipoMovimentacao exTipoMovimentacao;
+	private ITipoDeMovimentacao exTipoMovimentacao;
 
 	// private Long idTpMov;
 
@@ -545,7 +537,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		return exClassificacao;
 	}
 
-	public ExTipoMovimentacao getExTipoMovimentacao() {
+	public ITipoDeMovimentacao getExTipoMovimentacao() {
 		return exTipoMovimentacao;
 	}
 
@@ -622,7 +614,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		this.exClassificacao = exClassificacao;
 	}
 
-	public void setExTipoMovimentacao(final ExTipoMovimentacao exTipoMovimentacao) {
+	public void setExTipoMovimentacao(final ITipoDeMovimentacao exTipoMovimentacao) {
 		this.exTipoMovimentacao = exTipoMovimentacao;
 	}
 

@@ -11,7 +11,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeRetirarDeEditalDeEliminacao extends CompositeExpressionSupport {
 
@@ -26,8 +26,8 @@ public class ExPodeRetirarDeEditalDeEliminacao extends CompositeExpressionSuppor
 		this.lotaTitular = lotaTitular;
 
 		ExMovimentacao movInclusao = mob.getUltimaMovimentacaoNaoCancelada(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO);
+				ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
+				ExTipoDeMovimentacao.RETIRADA_DE_EDITAL_DE_ELIMINACAO);
 
 		if (movInclusao != null)
 			this.edital = movInclusao.getExMobilRef().getExDocumento();

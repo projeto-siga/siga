@@ -15,8 +15,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 
@@ -35,7 +35,7 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 		listMovJuntada = new ArrayList<ExMovimentacao>();
 		if (mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
 			listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada()
-					.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));
+					.getMovsNaoCanceladas(ExTipoDeMovimentacao.JUNTADA));
 		}
 	}
 
@@ -44,7 +44,7 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 		return And.of(
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO),
+						.withExTpMov(ExTipoDeMovimentacao.RESTRINGIR_ACESSO),
 
 				Or.of(
 

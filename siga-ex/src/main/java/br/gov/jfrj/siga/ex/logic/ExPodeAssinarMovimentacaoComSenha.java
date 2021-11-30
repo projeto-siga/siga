@@ -7,8 +7,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeAssinarMovimentacaoComSenha extends CompositeExpressionSupport {
 
@@ -38,6 +38,6 @@ public class ExPodeAssinarMovimentacaoComSenha extends CompositeExpressionSuppor
 	protected Expression create() {
 		return new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 				.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-				.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
+				.withExTpMov(ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA);
 	}
 }

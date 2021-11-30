@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.util.Date;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaVincularPost;
 import br.gov.jfrj.siga.ex.bl.Ex;

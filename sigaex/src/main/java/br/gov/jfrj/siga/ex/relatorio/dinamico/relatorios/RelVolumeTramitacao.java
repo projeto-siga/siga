@@ -19,12 +19,11 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 	public class RelVolumeTramitacao extends RelatorioTemplate {
@@ -108,7 +107,7 @@ import net.sf.jasperreports.engine.JRException;
 									+ "order by count(doc.idDoc) desc "
 									);
 
-			query.setParameter("idTpMov", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+			query.setParameter("idTpMov", ExTipoDeMovimentacao.TRANSFERENCIA);
 			if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
 				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}

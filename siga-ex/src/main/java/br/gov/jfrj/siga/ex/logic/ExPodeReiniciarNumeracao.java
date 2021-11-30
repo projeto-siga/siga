@@ -6,11 +6,8 @@ import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 
 public class ExPodeReiniciarNumeracao extends CompositeExpressionSupport {

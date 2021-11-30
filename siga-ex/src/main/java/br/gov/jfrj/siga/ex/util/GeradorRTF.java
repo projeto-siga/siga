@@ -19,19 +19,12 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
-import br.gov.jfrj.itextpdf.ConversorHtml;
-import br.gov.jfrj.itextpdf.FOP;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
@@ -40,6 +33,12 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.rtf.RtfWriter2;
+
+import br.gov.jfrj.itextpdf.ConversorHtml;
+import br.gov.jfrj.itextpdf.FOP;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
 
 public class GeradorRTF {
 

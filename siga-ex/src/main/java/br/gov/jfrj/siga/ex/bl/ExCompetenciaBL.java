@@ -26,12 +26,12 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
@@ -44,7 +44,6 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 
@@ -202,7 +201,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	private ExConfiguracaoCache preencherFiltroEBuscarConfiguracao(DpPessoa titularIniciador,
-			DpLotacao lotaTitularIniciador, ITipoDeConfiguracao tipoConfig, long tipoMov,
+			DpLotacao lotaTitularIniciador, ITipoDeConfiguracao tipoConfig, ITipoDeMovimentacao tipoMov,
 			ExTipoDocumento exTipoDocumento, ExTipoFormaDoc exTipoFormaDoc, ExFormaDocumento exFormaDocumento,
 			ExModelo exModelo, ExClassificacao exClassificacao, ExVia exVia, ExNivelAcesso exNivelAcesso,
 			ExPapel exPapel, DpPessoa pessoaObjeto, DpLotacao lotacaoObjeto, CpComplexo complexoObjeto,
@@ -221,8 +220,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setCpTipoConfiguracao(tipoConfig);
 		if (cfgFiltro.getCpTipoConfiguracao() == null)
 			throw new RuntimeException("Não é permitido buscar uma configuração sem definir seu tipo.");
-		if (tipoMov != 0)
-			cfgFiltro.setExTipoMovimentacao(CpDao.getInstance().consultar(tipoMov, ExTipoMovimentacao.class, false));
+		cfgFiltro.setExTipoMovimentacao(tipoMov);
 		cfgFiltro.setExTipoDocumento(exTipoDocumento);
 		cfgFiltro.setExTipoFormaDoc(exTipoFormaDoc);
 		cfgFiltro.setExFormaDocumento(exFormaDocumento);

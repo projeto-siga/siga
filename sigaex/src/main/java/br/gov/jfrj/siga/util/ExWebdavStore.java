@@ -23,8 +23,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import net.sf.webdav.DavExtensionConfig;
@@ -260,8 +260,8 @@ public class ExWebdavStore implements IWebdavStore {
 		ret.movs = new ArrayList<>();
 		try {
 			for (ExMovimentacao m : ret.mob.getExMovimentacaoSet()) {
-				if (m.getExTipoMovimentacao().getId()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) && !m.isCancelada()
+				if (m.getExTipoMovimentacao()
+						.equals(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) && !m.isCancelada()
 						&& m.getNmArqMov() != null)
 					ret.movs.add(m);
 			}
@@ -320,8 +320,8 @@ public class ExWebdavStore implements IWebdavStore {
 
 	private ExMovimentacao getMov(ExMobil mob, String nmArq) {
 		for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao().getId()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) && !m.isCancelada()
+			if (m.getExTipoMovimentacao()
+					.equals(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) && !m.isCancelada()
 					&& m.getNmArqMov() != null && m.getNmArqMov().equals(nmArq))
 				return m;
 		}

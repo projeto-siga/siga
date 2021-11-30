@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -47,7 +48,6 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -177,7 +177,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
 			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
-			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			ITipoDeMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
 			ITipoDeConfiguracao idTpConf, DpPessoa pessoaObjeto, 
@@ -197,7 +197,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
 			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
-			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			ITipoDeMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
 			ITipoDeConfiguracao idTpConf, DpPessoa pessoaObjeto, 
@@ -248,7 +248,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
 			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
-			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			ITipoDeMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
 			ITipoDeConfiguracao idTpConf) {
@@ -266,7 +266,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
 			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
 			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
-			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			ITipoDeMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
 			ITipoDeConfiguracao idTpConf) {
@@ -310,9 +310,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			long idTpMov, ITipoDeConfiguracao idTpConf) {
-		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
-				ExTipoMovimentacao.class, false);
+			ITipoDeMovimentacao exTpMov, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
 				null, exTpMov, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
@@ -329,9 +327,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, DpCargo cargo, DpFuncaoConfianca funcaoConficanca, ExFormaDocumento tipo, ExModelo modelo,
-			long idTpMov, ITipoDeConfiguracao idTpConf) {
-		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
-				ExTipoMovimentacao.class, false);
+			ITipoDeMovimentacao exTpMov, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, tipo, modelo, null,
 				null, exTpMov, cargo, null, funcaoConficanca, dpLotacao, dpPessoa, null,null,
 				idTpConf);
@@ -342,9 +338,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				null, null, null, null, null, null, null, null, null,idTpConf);
 	}
 
-	public boolean podePorConfiguracao(ExModelo mod, long idTpMov, ITipoDeConfiguracao idTpConf) {
-		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
-				ExTipoMovimentacao.class, false);
+	public boolean podePorConfiguracao(ExModelo mod, ITipoDeMovimentacao exTpMov, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
 				null, exTpMov, null, null, null, null, null, null, null,idTpConf);
 	}
@@ -465,16 +459,14 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExModelo mod, long idTpMov, ITipoDeConfiguracao idTpConf) {
-		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
-				ExTipoMovimentacao.class, false);
+			ExModelo mod, ITipoDeMovimentacao exTpMov, ITipoDeConfiguracao idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
 				null, exTpMov, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}
 
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
-			ExPapel exPapel, ExTipoMovimentacao exTpMov, ITipoDeConfiguracao idTpConf)
+			ExPapel exPapel, ITipoDeMovimentacao exTpMov, ITipoDeConfiguracao idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, null, null, null,null,
@@ -482,7 +474,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	}
 
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
-			ExPapel exPapel, DpPessoa pessoa, ExTipoMovimentacao exTpMov,
+			ExPapel exPapel, DpPessoa pessoa, ITipoDeMovimentacao exTpMov,
 			ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, null, pessoa,
@@ -490,7 +482,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	}
 	
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
-			ExPapel exPapel, DpLotacao lotacao, ExTipoMovimentacao exTpMov,
+			ExPapel exPapel, DpLotacao lotacao, ITipoDeMovimentacao exTpMov,
 			ITipoDeConfiguracao idTpConf) throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, lotacao, null,
@@ -640,7 +632,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				if (cfg.getExTipoFormaDoc() != null)
 					cfg.getExTipoFormaDoc().getDescTipoFormaDoc();
 				if (cfg.getExTipoMovimentacao() != null)
-					cfg.getExTipoMovimentacao().getDescrTipoMovimentacao();
+					cfg.getExTipoMovimentacao().getDescr();
 				if (cfg.getExVia() != null)
 					cfg.getExVia().getObs();
 				

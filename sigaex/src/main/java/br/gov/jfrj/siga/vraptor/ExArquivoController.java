@@ -54,10 +54,10 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.DocumentosSiglaArquivoGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
@@ -142,8 +142,8 @@ public class ExArquivoController extends ExController {
 						+ getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
 			}
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
-			final boolean isArquivoAuxiliar = mov != null && mov.getExTipoMovimentacao().getId()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
+			final boolean isArquivoAuxiliar = mov != null && mov.getExTipoMovimentacao()
+					.equals(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR);
 			final boolean imutavel = (mov != null) && !completo && !estampar && !somenteHash && !pacoteAssinavel;
 			String cacheControl = "private";
 			final Integer grauNivelAcesso = mob.doc().getExNivelAcesso().getGrauNivelAcesso();

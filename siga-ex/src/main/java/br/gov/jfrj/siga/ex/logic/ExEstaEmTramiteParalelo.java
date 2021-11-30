@@ -3,8 +3,6 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 
 public class ExEstaEmTramiteParalelo implements Expression {

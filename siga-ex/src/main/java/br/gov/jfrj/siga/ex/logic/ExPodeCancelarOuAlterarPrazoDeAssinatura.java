@@ -63,6 +63,6 @@ public class ExPodeCancelarOuAlterarPrazoDeAssinatura extends CompositeExpressio
 						new ExMovimentacaoECadastrante(mov, titular)),
 
 				Not.of(new ExMovimentacaoEstaAssinada(mov)), new ExPodePorConfiguracao(titular, lotaTitular)
-						.withIdTpConf(ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO).withExTpMov(mov.getIdTpMov()));
+						.withIdTpConf(ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO).withExTpMov(mov.getExTipoMovimentacao()));
 	}
 }

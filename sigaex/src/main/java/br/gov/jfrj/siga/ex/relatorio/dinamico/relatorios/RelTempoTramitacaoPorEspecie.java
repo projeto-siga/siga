@@ -25,10 +25,9 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
@@ -158,13 +157,13 @@ import net.sf.jasperreports.engine.JRException;
 						+ "mov.idMov "
 						);
 
-			query.setParameter("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-			query.setParameter("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-			query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-			query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
-			query.setParameter("idTpMov5", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE);
-			query.setParameter("idTpMov6", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE);
-			query.setParameter("idTpMov7", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
+			query.setParameter("idTpMov1", ExTipoDeMovimentacao.TRANSFERENCIA);
+			query.setParameter("idTpMov2", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
+			query.setParameter("idTpMov3", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov4", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov5", ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
+			query.setParameter("idTpMov6", ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE);
+			query.setParameter("idTpMov7", ExTipoDeMovimentacao.TORNAR_SEM_EFEITO);			
 			
 			if (parametros.get("especie") != null && !"".equals(parametros.get("especie"))) {
 				query.setParameter("especie", Long.valueOf((String) parametros.get("especie")));
@@ -248,27 +247,27 @@ import net.sf.jasperreports.engine.JRException;
 						ExMovimentacao mov2 = (ExMovimentacao) obj[1];
 						dtMov1 = getOnlyDate(mov1.getDtMov());
 						dtMov2 = getOnlyDate(mov2.getDtMov());
-						if (mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+						if (mov1.getExTipoMovimentacao() == ExTipoDeMovimentacao.TORNAR_SEM_EFEITO) {
 							dtCancel = getOnlyDate(mov1.getDtMov());
 						}
 						
 						if (idDoc1 == idDoc2) {
 							if (idMob1 == idMob2) {
-								if (!(mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-										&& mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
-										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
-										&& ((mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-											&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+								if (!(mov2.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE 
+										&& mov1.getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
+										&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.TORNAR_SEM_EFEITO
+										&& ((mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE 
+											&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
 											|| tramitou)) {
-									if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE) { 
+									if (mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE) { 
 										qtdTram += 1L;
 									}
 									qtdDias += (dtMov2 - dtMov1);
 									tramitou = true;
 								}
 							} else {
-								if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+								if (mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE 
+										&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.TORNAR_SEM_EFEITO) {
 									qtdTram += 1L;
 									if (dtCancel == 0) {
 										qtdDias += (getOnlyDate(new Date()) - dtMov1);
@@ -276,16 +275,16 @@ import net.sf.jasperreports.engine.JRException;
 										qtdDias += (dtCancel - dtMov1);
 									}
 								}
-								if (mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-									|| mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {									
+								if (mov2.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE 
+									|| mov2.getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) {									
 									tramitou = false;
 								} else {
 									tramitou = true;
 								}
 							}
 						} else {
-							if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-								&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+							if (mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE 
+								&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.TORNAR_SEM_EFEITO) {
 								qtdTram += 1L;
 								if (dtCancel == 0) {
 									qtdDias += (getOnlyDate(new Date()) - dtMov1);
@@ -321,7 +320,7 @@ import net.sf.jasperreports.engine.JRException;
 					}
 					ExMovimentacao mov2 = (ExMovimentacao) obj[1];
 					dtMov2 = getOnlyDate(mov2.getDtMov());
-					if (mov2.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {
+					if (mov2.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) {
 						qtdTram += 1L;
 						if (dtCancel == 0) {
 							qtdDias += (getOnlyDate(new Date()) - dtMov2);

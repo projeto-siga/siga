@@ -1497,7 +1497,11 @@ CKEDITOR.replace( '${var}',
 									{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
 									{'name': 'Variável', 'value': '$' + '{wf.var.NOMEVARIAVEL}'},
 									{'name': 'Data', 'value': '$' + '{fmt.data(wf.var.NOMEVARIAVEL)}'},
-									{'name': 'Reais por Extenso', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},								];
+									{'name': 'Reais', 'value': '$' + '{fmt.reais(wf.var.NOMEVARIAVEL)}'},								
+									{'name': 'Reais por Extenso', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},								
+									{'name': 'Documento Criado', 'value': '$' + '{wf.var.doc_NOMETAREFA}'},								
+									
+								];
 								CKEDITOR.config.strinsert_button_label = 'Variável';
 								CKEDITOR.config.strinsert_button_title = 'Inserir Variável';
 								CKEDITOR.config.strinsert_button_voice = 'Inserir Variável';

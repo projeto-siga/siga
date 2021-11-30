@@ -875,7 +875,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			this.conteudoBlobMov = createBlob;
 		} else if(cacheConteudoBlobMov != null){
-			if(orgaoPermiteHcp())
+			if (orgaoPermiteHcp())
 				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
 			else
 				this.conteudoBlobMov = createBlob;
@@ -900,10 +900,12 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 	
 	private boolean orgaoPermiteHcp() {
+		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
+		if ("*".equals(orgaos.get(0)))
+			return true;
 		if(exMobil!=null && exMobil.getDoc()!=null && exMobil.getDoc().getCadastrante()!=null && exMobil.getDoc().getCadastrante().getOrgaoUsuario()!=null) {
-			List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
 			CpOrgaoUsuario orgaoUsuario = exMobil.getDoc().getCadastrante().getOrgaoUsuario();
-			if(orgaos != null && orgaoUsuario!=null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(orgao -> orgao.equals(orgaoUsuario.getSigla()))) )
+			if(orgaos != null && orgaoUsuario!=null && (orgaos.stream().anyMatch(orgao -> orgao.equals(orgaoUsuario.getSigla()))) )
 				return true;
 		}
 		return false;

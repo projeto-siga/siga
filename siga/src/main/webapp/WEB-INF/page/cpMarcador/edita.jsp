@@ -86,8 +86,8 @@
 									class="form-control" id="idGrupo" name="idGrupo"
 									value="${idGrupo}">
 									<c:forEach items="${listaGrupos}" var="item">
-										<option value="${item.name()}" 
-											${(not empty grupoDefault and item.name() eq grupoDefault)
+										<option value="${item.name}" 
+											${(not empty grupoDefault and item.name eq grupoDefault)
 												or (empty grupoDefault and ((item eq marcador.idGrupo)
 													or (empty marcador and item eq 'OUTROS'))) ? 'selected' : ''}>
 											${item.nome}</option>

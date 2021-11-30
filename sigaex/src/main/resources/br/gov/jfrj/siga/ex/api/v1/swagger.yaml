@@ -718,6 +718,29 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /modelos/{id}/preenchimentos:
+    get:
+      summary: Obtem a lista de preenchimentos existentes para determinado modelo.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:  
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PreenchimentoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /modelos/{id}/lotacoes/{idLotacao}/preenchimentos:
     get:
       summary: Obtem a lista de preenchimentos existentes para determinada lotação e modelo.

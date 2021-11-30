@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaTramitarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -44,10 +45,9 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 	private void validarAcesso(ExApiV1Context ctx, Request req, DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
 			throws Exception, PresentableUnloggedException {
 		ctx.assertAcesso(mob, titular, lotaTitular);
-
-		if (!Ex.getInstance().getComp().podeTransferir(titular, lotaTitular, mob))
-			throw new PresentableUnloggedException("O documento " + req.sigla + " não pode ser tramitado por "
-					+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
+		Ex.getInstance().getComp().afirmar("O documento " + req.sigla + " não pode ser tramitado por "
+				+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), 
+				ExPodeTransferir.class, titular, lotaTitular, mob);
 	}
 
 	private CpOrgao getOrgaoExterno(Request req, Response resp) throws SwaggerException {

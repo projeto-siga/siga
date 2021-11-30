@@ -10,6 +10,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaIncluirCossignatarioPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeIncluirCossignatario;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
@@ -39,9 +40,7 @@ public class DocumentosSiglaIncluirCossignatarioPost implements IDocumentosSigla
 		if (pes == null)
 			throw new AplicacaoException("Pessoa deve ser informada.");
 
-		if (!Ex.getInstance().getComp().podeIncluirCosignatario(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
-			throw new AplicacaoException("Não é possível incluir cossignatário");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
 
 		if (req.funcao != null && req.funcao.trim().isEmpty())
 			req.funcao = null;

@@ -71,6 +71,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.crivano.jlogic.NOr;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -78,13 +79,27 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
+import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
 import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExEstaSemEfeito;
+import br.gov.jfrj.siga.ex.logic.ExMovimentacaoEstaCancelada;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarAnexo;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacaoPapel;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
+import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnexo;
+import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnotacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
+import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 
 public class ExMovimentacaoVO extends ExVO {
 	private static final transient String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
@@ -194,8 +209,8 @@ public class ExMovimentacaoVO extends ExVO {
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) {
 			descricao = "";
-			addAcao(null, "Verificar", "/app/expediente/mov", "assinar_verificar", true, null,
-					"&ajax=true&id=" + mov.getIdMov().toString(), null, null, null);
+			addAcao(AcaoVO.builder().nome("Verificar").nameSpace("/app/expediente/mov").acao("assinar_verificar")
+					.params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString()).params("ajax", "true").exp(new CpPodeSempre()).classe("once").build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
@@ -205,13 +220,13 @@ public class ExMovimentacaoVO extends ExVO {
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ANOTACAO) {
 			descricao = mov.getObs();
-			addAcao(null, "Excluir", "/app/expediente/mov", "excluir",
-					Ex.getInstance().getComp().podeExcluirAnotacao(titular, lotaTitular, mov.mob(), mov));
+			addAcao(AcaoVO.builder().nome("Excluir").nameSpace("/app/expediente/mov").acao("excluir")
+					.params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString()).exp(new ExPodeExcluirAnotacao(mov.mob(), mov, titular, lotaTitular)).classe("once").build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
-			addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
-					Ex.getInstance().getComp().podeCancelarVinculacaoPapel(titular, lotaTitular, mov.mob(), mov));
+			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar")
+					.params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString()).exp(new ExPodeCancelarVinculacaoPapel(mov, titular, lotaTitular)).classe("once").build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_MARCACAO) {
@@ -241,13 +256,14 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
-			addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
-					Ex.getInstance().getComp().podeCancelarVinculacaoDocumento(titular, lotaTitular, mov.mob(), mov));
+			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+					.exp(new ExPodeCancelarVinculacao(mov, titular, lotaTitular)).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
-			addAcao(getIcon(), mov.getNmArqMov(), "/app/arquivo", "exibir", mov.getNmArqMov() != null, null,
-					"&arquivo=" + mov.getReferencia(), null, null, null);
+			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).icone(getIcon()).nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+					.params("arquivo", mov.getReferencia())
+					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 			String pwd = getWebdavPassword();
 			if (cadastrante != null && pwd != null && (isWord() || isExcel() || isPresentation()) ) {
 				String sApp = "word";
@@ -265,14 +281,12 @@ public class ExMovimentacaoVO extends ExVO {
 
 				token = getWebdavJwtToken(mov, cadastrante, titular, lotaTitular, pwd);
 
-				addAcao(null, "Editar no " + sNome, sApp
-						+ ":ofe|u|__scheme__://__serverName__:__serverPort____contextPath__/webdav/" + token,
-						mov.getNmArqMov(), true, null, null, null, null, null);
+				addAcao(AcaoVO.builder().nome("Editar no " + sNome).nameSpace(sApp
+						+ ":ofe|u|__scheme__://__serverName__:__serverPort____contextPath__/webdav/" + token).acao(mov.getNmArqMov()).exp(new CpPodeSempre()).build());
 			}
 
-			if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito()) {
-				addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar", true);
-			}
+			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+				.exp(NOr.of(new ExMovimentacaoEstaCancelada(mov), new ExEstaSemEfeito(mov.mob().doc()))).build());
 		}
 
 		if (mov.getNumPaginas() != null || idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
@@ -281,33 +295,38 @@ public class ExMovimentacaoVO extends ExVO {
 			// nome do arquivo.
 			// <c:url var='anexo' value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
 			// tipo="${mov.conteudoTpMov}" />
-			addAcao(null, mov.getNmArqMov(), "/app/arquivo", "exibir", mov.getNmArqMov() != null, null,
-					"&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
+			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+					.params("arquivo", mov.getReferenciaPDF())
+					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 
 			if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
-				addAcao(null, "Excluir", "/app/expediente/mov", "excluir",
-						Ex.getInstance().getComp().podeExcluirCosignatario(titular, lotaTitular, mov.mob(), mov));
+				addAcao(AcaoVO.builder().nome("Excluir").nameSpace("/app/expediente/mov").acao("excluir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+						.exp(new ExPodeExcluirCossignatario(mov, titular, lotaTitular)).build());
 			}
 
 			if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO) {
 				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito() && !mov.mob().isEmTransito(titular, lotaTitular)) {
-					addAcao(null, "Excluir", "/app/expediente/mov", "excluir",
-							Ex.getInstance().getComp().podeExcluirAnexo(titular, lotaTitular, mov.mob(), mov));
-					addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
-							Ex.getInstance().getComp().podeCancelarAnexo(titular, lotaTitular, mov.mob(), mov));
-					addAcao(null, "Assinar/Autenticar", "/app/expediente/mov", "exibir", true, null, "&popup=true",
-							null, null, null);
-
-					addAcao("script_key", "Autenticar", "/app/expediente/mov", "autenticar_mov",
-							Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
-							"&popup=true&autenticando=true", null, null, null);
+					addAcao(AcaoVO.builder().nome("Excluir").nameSpace("/app/expediente/mov").acao("excluir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+							.exp(new ExPodeExcluirAnexo(mov.mob(), mov, titular, lotaTitular)).build());
+					
+					addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+							.params("popup", "true")
+							.exp(new ExPodeCancelarAnexo(mov.mob(), mov, titular, lotaTitular)).build());
+					
+					addAcao(AcaoVO.builder().nome("Assinar/Autenticar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+							.params("popup", "true")
+							.exp(new CpPodeSempre()).build());
+					
+//					addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+//							.params("popup", "true").params("autenticando", "true")
+//							.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 				}
 			}
 
 			if (hasDespacho(idTpMov)) {
 				if (!mov.mob().doc().isSemEfeito())
-					addAcao(null, "Cancelar", "/app/expediente/mov", "cancelar",
-							Ex.getInstance().getComp().podeCancelarDespacho(titular, lotaTitular, mov.mob(), mov));
+					addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+							.exp(new ExPodeCancelarDespacho(mov, titular, lotaTitular)).build());
 			}
 
 			if (idTpMov != TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
@@ -325,18 +344,19 @@ public class ExMovimentacaoVO extends ExVO {
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)
 							&& mov.isAssinada()) {
 
-						addAcao("printer", "Ver", "/app/arquivo", "exibir",
-								Ex.getInstance().getComp().podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
-								null, "&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
+						addAcao(AcaoVO.builder().nome("Ver").icone("printer").nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+								.params("popup", "true").params("arquivo", mov.getReferenciaPDF())
+								.exp(new ExPodeVisualizarImpressao(mov.mob(), titular, lotaTitular)).build());
 
 						if (idTpMov != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA)
-							addAcao("script_key", "Autenticar", "/app/expediente/mov", "autenticar_mov",
-									Ex.getInstance().getComp().podeAutenticarMovimentacao(titular, lotaTitular, mov), null,
-									"&popup=true&autenticando=true", null, null, null);
+							addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+									.params("popup", "true").params("autenticando", "true")
+									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
-						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir", true, null, "&popup=true", null,
-								null, null);
+						addAcao(AcaoVO.builder().nome("Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+								.params("popup", "true")
+								.exp(new CpPodeSempre()).build());
 					}
 			}
 
@@ -375,8 +395,8 @@ public class ExMovimentacaoVO extends ExVO {
 					.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
 				mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
 
-			addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-					"sigla=" + mov.getExMobilRef().getSigla(), "Copia do documento: ", mensagemPos, null);
+			addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+					.exp(new CpPodeSempre()).pre("Copia do documento: ").pos(mensagemPos).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_JUNTADA || idTpMov == TIPO_MOVIMENTACAO_JUNTADA_EXTERNO) {
@@ -390,8 +410,8 @@ public class ExMovimentacaoVO extends ExVO {
 							.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
 						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
 
-					addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-							"sigla=" + mov.getExMobilRef().getSigla(), "Juntado ao documento: ", mensagemPos, null);
+					addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+							.exp(new CpPodeSempre()).pre("Juntado ao documento: ").pos(mensagemPos).build());
 				} else {
 					descricao = "Juntado ao documento: " + mov.getDescrMov();
 				}
@@ -402,31 +422,27 @@ public class ExMovimentacaoVO extends ExVO {
 				if (!mov.getExMobil().getExDocumento().getDescrDocumento()
 						.equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
 					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
-
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobil().getSigla(), "Documento juntado: ", mensagemPos, null);
+				
+				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
+						.exp(new CpPodeSempre()).pre("Documento juntado: ").pos(mensagemPos).build());
 
 				if (mov.getExMobil().podeExibirNoAcompanhamento(titular, lotaTitular)) {
 						Set<ExMovimentacao> movs = mov.getExMobil().getMovsNaoCanceladas(ExTipoMovimentacao
 								.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
 						if (!movs.isEmpty()) {
-							addAcao(null, "Desfazer Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
-									"desfazer_exibir_no_acompanhamento_do_protocolo",
-									true, "Ao clicar em OK o conteúdo deste documento deixará de ficar disponível através do número do " 
-											+ "protocolo de acompanhamento. Deseja continuar?", 
-									"id=" + movs.iterator().next().getIdMov().toString(), null,
-									null, null);
+							addAcao(AcaoVO.builder().nome("Desfazer Disponibilizar no Acompanhamento do Protocolo").nameSpace("/app/expediente/mov").acao("desfazer_exibir_no_acompanhamento_do_protocolo")
+									.params("id", movs.iterator().next().getIdMov().toString())
+									.exp(new CpPodeSempre()).msgConfirmacao("Ao clicar em OK o conteúdo deste documento deixará de ficar disponível através do número do " 
+											+ "protocolo de acompanhamento. Deseja continuar?").build());
 						}
 				} else {
 					if (mov.getExMobil().isJuntado()
 							&& Ex.getInstance().getComp()
-								.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, mov.getExDocumento())) {
-						addAcao(null, "Disponibilizar no Acompanhamento do Protocolo", "/app/expediente/mov", 
-								"exibir_no_acompanhamento_do_protocolo", 
-								true, "Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "
-										+ "protocolo de acompanhamento. Deseja continuar? ",
-								"sigla=" + mov.getExMobil().getSigla(), null,
-								null, null);
+								.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, mov.getExDocumento())) {
+						addAcao(AcaoVO.builder().nome("Disponibilizar no Acompanhamento do Protocolo").nameSpace("/app/expediente/mov").acao("exibir_no_acompanhamento_do_protocolo")
+								.params("sigla",mov.getExMobil().getSigla())
+								.exp(new CpPodeSempre()).msgConfirmacao("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "
+										+ "protocolo de acompanhamento. Deseja continuar?").build());
 					}
 				}
 			}
@@ -448,10 +464,8 @@ public class ExMovimentacaoVO extends ExVO {
 																	
 						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento() + motivo;
 					}
-						
-					addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-							"sigla=" + mov.getExMobilRef().getSigla(), "Desentranhado do documento: ", mensagemPos,
-							null);
+					addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+							.exp(new CpPodeSempre()).pre("Desentranhado do documento: ").pos(mensagemPos).build());
 				} else {
 					descricao = "Desentranhado do documento: " + mov.getDescrMov();
 				}
@@ -463,60 +477,57 @@ public class ExMovimentacaoVO extends ExVO {
 						.equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
 					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
 
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobil().getSigla(), "Documento desentranhado: ", mensagemPos, null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
+						.exp(new CpPodeSempre()).pre("Documento desentranhado: ").pos(mensagemPos).build());
 			}
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_APENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobilRef().getSigla(), "Apensado ao documento: ", null, null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+						.exp(new CpPodeSempre()).pre("Apensado ao documento: ").build());
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobil().getSigla(), "Documento apensado: ", null, null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
+						.exp(new CpPodeSempre()).pre("Documento apensado: ").build());
 			}
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_DESAPENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobilRef().getSigla(), "Desapensado do documento: ", null, null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+						.exp(new CpPodeSempre()).pre("Desapensado do documento: ").build());
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobil().getSigla(), "Documento desapensado: ", null, null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
+						.exp(new CpPodeSempre()).pre("Documento desapensado: ").build());
 			}
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI) {
-			addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-					"sigla=" + mov.getExMobilRef().getSigla(), "Publicado no Boletim Interno: ",
-					" em " + mov.getDtMovDDMMYY(), null);
+			addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+					.exp(new CpPodeSempre()).pre("Publicado no Boletim Interno: ").pos(" em " + mov.getDtMovDDMMYY()).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobilRef().getSigla(), "Ver também: ",
-						" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+						.exp(new CpPodeSempre()).pre("Ver também: ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobil().getSigla(), "Ver também: ",
-						" Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
+						.exp(new CpPodeSempre()).pre("Ver também: ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			}
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
 			descricao = null;
 			if (originadaAqui) {
-				addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobilRef().getSigla(), "", null, null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
+						.exp(new CpPodeSempre()).build());
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc", "exibir", true, null,
-						"sigla=" + mov.getExMobil().getSigla(), "", null, null);
+				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
+						.exp(new CpPodeSempre()).build());
 			}
 		}
 
@@ -531,20 +542,17 @@ public class ExMovimentacaoVO extends ExVO {
 		
 		if(idTpMov == TIPO_MOVIMENTACAO_GERAR_PROTOCOLO) {
 			if (!mov.isCancelada())
-				addAcao(null, "Gerar Protocolo", "/app/expediente/doc", "gerarProtocolo", true,
-						null,  "sigla=" + mov.getExMobil().getSigla()
-							+ "&popup=true",
-						null, null, null);
+				addAcao(AcaoVO.builder().nome("Gerar Protocolo").nameSpace("/app/expediente/doc").acao("gerarProtocolo").params("sigla", mov.getExMobil().getSigla()).params("popup", "true")
+						.exp(new CpPodeSempre()).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/app/expediente/mov", "protocolo_arq_transf", true,
-						null, "sigla=" + (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla())
-								+ "&dt=" + mov.getDtRegMovDDMMYYYYHHMMSS() + "&popup=true&isTransf=false",
-						null, null, null);
+				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
+						.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false")
+						.exp(new CpPodeSempre()).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
@@ -557,28 +565,27 @@ public class ExMovimentacaoVO extends ExVO {
 				pre = "Devolver até " + mov.getDtFimMovDDMMYY() + " | ";
 			}
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/app/expediente/mov", "protocolo_arq_transf", true,
-						null, "sigla=" + (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla())
-								+ "&dt=" + mov.getDtRegMovDDMMYYYYHHMMSS() + "&popup=true&isTransf=true",
-						pre, null, null);
+				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
+						.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false").pre(pre)
+						.exp(new CpPodeSempre()).build());
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
-			addAcao(null, mov.getNmArqMov(), "/app/arquivo", "download", mov.getNmArqMov() != null, null,
-					"arquivo=" + mov.getReferenciaZIP(), null, null, null);
+			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).nameSpace("/app/arquivo").acao("download").params("arquivo", mov.getReferenciaZIP())
+					.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS())
+					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 		}
 		
 		if (idTpMov == TIPO_MOVIMENTACAO_REORDENACAO_DOCUMENTO) {
 			String detalhe = mov.getExMobil().getDoc().temOrdenacao() ? "Ver última reordenação" : "Ver documento completo";
 			String complementoParam = mov.getExMobil().getDoc().temOrdenacao() ? "&exibirReordenacao=true" : "";
-			
-			addAcao(null, detalhe, "/app/expediente/doc", "exibirProcesso", true, null,
-					"sigla=" + mov.getExMobil().getSigla() + complementoParam, "Documento completo reordenado manualmente:", "", null);
+			addAcao(AcaoVO.builder().nome(detalhe).nameSpace("/app/expediente/doc").acao("exibirProcesso").params("sigla", mov.getExMobil().getSigla() + complementoParam).pre("Documento completo reordenado manualmente:")
+					.exp(new CpPodeSempre()).build());
 		}
 		
 		if (idTpMov == TIPO_MOVIMENTACAO_ORDENACAO_ORIGINAL_DOCUMENTO) {								
-			addAcao(null, "Ver documento completo", "/app/expediente/doc", "exibirProcesso", true, null,
-					"sigla=" + mov.getExMobil().getSigla(), "Documento completo reordenado para sua ordem original:", "", null);
+			addAcao(AcaoVO.builder().nome("Ver documento completo").nameSpace("/app/expediente/doc").acao("exibirProcesso").params("sigla", mov.getExMobil().getSigla()).pre("Documento completo reordenado para sua ordem original:")
+					.exp(new CpPodeSempre()).build());
 		}
 		
 		if (descricao != null && descricao.equals(mov.getObs())) {

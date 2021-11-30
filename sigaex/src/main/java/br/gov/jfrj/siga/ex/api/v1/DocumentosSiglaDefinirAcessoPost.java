@@ -8,6 +8,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaDefinirAcessoPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
@@ -21,9 +22,7 @@ public class DocumentosSiglaDefinirAcessoPost implements IDocumentosSiglaDefinir
 
 		ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
-		if (!Ex.getInstance().getComp().podeRedefinirNivelAcesso(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
-			throw new AplicacaoException("Não é possível redefinir o nível de acesso");
-		}
+		Ex.getInstance().getComp().afirmar("Não é possível redefinir o nível de acesso", ExPodeRedefinirNivelDeAcesso.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
 
 		ExNivelAcesso m = dao().consultar(Long.parseLong(req.idAcesso), ExNivelAcesso.class, false);
 		Date dt = dao().consultarDataEHoraDoServidor();

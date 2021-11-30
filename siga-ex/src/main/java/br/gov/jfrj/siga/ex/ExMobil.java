@@ -49,6 +49,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -908,7 +910,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		if (isApensadoAVolumeDoMesmoProcesso() || p.tramitesPendentes.size() == 0)
 			return false;
-		return Ex.getInstance().getComp().podeReceber(titular, lotaTitular, this);
+		return Ex.getInstance().getComp().pode(ExPodeReceber.class, titular, lotaTitular, this);
 
 	}
 	
@@ -2306,7 +2308,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
 		if (!movs.isEmpty())
 			return Ex.getInstance().getComp()
-					.podeDisponibilizarNoAcompanhamentoDoProtocolo(pessoa, lotacao, this.getDoc());			
+					.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, pessoa, lotacao, this.getDoc());			
 		return false;
 	}
 	

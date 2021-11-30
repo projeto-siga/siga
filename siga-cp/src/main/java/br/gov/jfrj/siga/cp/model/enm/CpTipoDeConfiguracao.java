@@ -88,8 +88,28 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.DEFAULT,
 					CpSituacaoDeConfiguracaoEnum.OBRIGATORIO },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 	
 	
+	EXIBIR_REGRA_DE_NEGOCIO_EM_BOTOES(210, "Exibir Regra de Negócio em botões",
+			"Utilizada para ativar exibição dos motivos pelos quais determinada ação está habilitada ou desabilitada.\n"
+					+ "PODE: Exibe.\n"
+					+ "NÃO PODE: Não exibe.",
+			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO },
+			new CpParamCfg[] { CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.PODE, true), 
+
+	EXIBIR_REGRA_DE_NEGOCIO_EM_MENSAGENS(211, "Exibir Regra de Negócio em mensagens",
+			"Utilizada para ativar exibição dos motivos pelos quais determinada ação estava desabilitada quando foi produzido um erro.\n"
+					+ "PODE: Exibe.\n"
+					+ "NÃO PODE: Não exibe.",
+			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO },
+			new CpParamCfg[] { CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.PODE, true), 
+
 	
 	UTILIZAR_COMPLEXO(400, "Utilizar Complexo Padrão",
 			"Selecione órgão, lotação, pessoa, cargo ou função comissionada que tem permissão para utilizar determinado complexo como padrão.",

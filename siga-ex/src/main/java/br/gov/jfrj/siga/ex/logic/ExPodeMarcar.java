@@ -1,7 +1,7 @@
 package br.gov.jfrj.siga.ex.logic;
 
 import com.crivano.jlogic.And;
-import com.crivano.jlogic.CompositeExpressionSuport;
+import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 
-public class ExPodeMarcar extends CompositeExpressionSuport {
+public class ExPodeMarcar extends CompositeExpressionSupport {
 
 //	if (mob.doc().isCancelado() || mob.doc().isSemEfeito()
 //			|| mob.isEliminado())

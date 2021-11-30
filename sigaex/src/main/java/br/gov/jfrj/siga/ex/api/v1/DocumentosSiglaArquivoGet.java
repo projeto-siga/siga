@@ -15,6 +15,7 @@ import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaArquivoGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -39,7 +40,7 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 
 		HttpServletRequest request = SwaggerServlet.getHttpServletRequest();
 		SigaObjects so = new SigaObjects(request);
-		if (!Ex.getInstance().getComp().podeAcessarDocumento(so.getTitular(), so.getLotaTitular(), mob))
+		if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, so.getTitular(), so.getLotaTitular(), mob))
 			throw new AplicacaoException(
 					"Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. ("
 							+ so.getTitular().getSigla() + "/" + so.getLotaTitular().getSiglaCompleta() + ")");

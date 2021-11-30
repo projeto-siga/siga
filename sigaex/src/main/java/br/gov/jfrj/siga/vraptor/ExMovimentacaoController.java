@@ -2060,13 +2060,6 @@ public class ExMovimentacaoController extends ExController {
 				
 			}
 		}
-		
-		String usuarioSiafem = getRequest().getParameter("usuarioSiafem");
-		if (SigaMessages.isSigaSP() && usuarioSiafem != null) {
-			Ex.getInstance()
-				.getBL()
-				.gravarSiafem(usuarioSiafem, getRequest().getParameter("senhaSiafem"), builder.getMob().getExDocumento());
-		}
 
 		Ex.getInstance()
 				.getBL()

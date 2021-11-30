@@ -146,7 +146,6 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	</c:if>
 	
 	document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = sigla;
-	document.getElementsByName('${inputNameTipoSel}.sigla')[0].dispatchEvent(new Event('change', {bubbles: true}));
 	
 	<c:if test="${reler == 'sim'}">
 		document.getElementsByName('req${inputNameTipoSel}')[0].value = "sim";

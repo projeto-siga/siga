@@ -253,8 +253,10 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		
 		addPrivateProperty("debug.default.template.pathname", null);
 		
-		// Modelo Integracao Siafem
+		//Informações Siafem
 		addPrivateProperty("ws.siafem.nome.modelo", null);
+		addPrivateProperty("ws.siafem.url.wsdl", null);
+		addPrivateProperty("ws.siafem.url.namespace", null);
 	}
 
 	@Override

@@ -83,21 +83,6 @@ $(function(){
     $("#formulario_lotaResponsavelSel_sigla").focus();
 });
 
-
-$(document).ready(function() {
-	$(document).on('change', '#formulario_cpOrgaoSel_sigla', function() {		
-		if($("#formulario_cpOrgaoSel_sigla").val() == 'SIAFEM'){
-			$("#dadosSiafem").removeClass('d-none');
-			$("#msgAtencao").addClass('d-none');
-		}
-		else{
-			$("#dadosSiafem").addClass('d-none');
-			$("#msgAtencao").removeClass('d-none');
-		}
-	});
-});
-
-
 </script>
 	<!-- main content -->
 	<div class="container-fluid">
@@ -126,7 +111,7 @@ $(document).ready(function() {
 				</div>
 				</c:if>
 				<c:if test="${tipoResponsavel == 3}">
-				<div class="row" id="msgAtencao">
+				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
 							<span style="color: red"><fmt:message key="tela.tramitar.atencao"/></span>
@@ -164,24 +149,6 @@ $(document).ready(function() {
 						</div>
 					</div>
 				</div>	
-				
-				<c:if test="${siga_cliente == 'GOVSP' && tipoResponsavel == 3}">	
-					<div class="row d-none" id="dadosSiafem">						
-						<div class="col col-6">
-							<div class="form-group">
-								<label>Usuário SIAFEM</label> 
-								<input type="text" size="30" name="usuarioSiafem" value="${usuarioSiafem}" class="form-control"/>			 
-							</div>
-						</div>						
-						<div class="col col-6">
-							<div class="form-group">
-								<label>Senha</label> 
-								<input type="password" size="30" name="senhaSiafem" value="${senhaSiafem}" class="form-control"/>			 
-							</div>
-						</div>						
-					</div>
-				</c:if>
-				
 				<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="row">
 						<div class="col col-3">
@@ -258,9 +225,6 @@ $(document).ready(function() {
 					</div>
 					</c:if>
 				</div>
-				
-				
-				
 				<div class="row">
 					<div class="col col-12">
 						<div class="form-group">

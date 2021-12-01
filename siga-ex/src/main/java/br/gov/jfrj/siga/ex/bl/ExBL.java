@@ -4456,6 +4456,7 @@ public class ExBL extends CpBL {
 		novaMov.setCadastrante(cadastrante);
 		novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
 		novaMov.setConteudoTpMov(mov.getConteudoTpMov());
+		novaMov.setCpArquivo(mov.getCpArquivo());
 		novaMov.setDescrMov(mov.getDescrMov());
 		novaMov.setDtIniMov(dao().dt());
 		novaMov.setDtMov(mov.getDtMov());

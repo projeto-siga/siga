@@ -3750,7 +3750,7 @@ public class ExMovimentacaoController extends ExController {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar anexo", ExPodeCancelarAnexo.class, getTitular(), getLotaTitular(), mob, mov);
 		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar arquivo auxiliar", ExPodeCancelarArquivoAuxiliar.class, getTitular(), getLotaTitular(), mob, mov);
-		} else if (ExTipoMovimentacao.hasDespacho(mov.getExTipoMovimentacao())) {
+		} else if (ExTipoDeMovimentacao.hasDespacho(mov.getExTipoMovimentacao())) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar despacho", ExPodeCancelarDespacho.class, getTitular(), getLotaTitular(), mob, mov);
 		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar definição de perfil", ExPodeCancelarVinculacaoPapel.class, getTitular(), getLotaTitular(), mob, mov);

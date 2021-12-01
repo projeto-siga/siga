@@ -750,7 +750,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * 
 	 */
 	public ExMovimentacao getUltimaMovimentacao() {
-		return getUltimaMovimentacao(null);
+		return getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, new ITipoDeMovimentacao[] {}, this, true, null);
 	}
 
 	/**

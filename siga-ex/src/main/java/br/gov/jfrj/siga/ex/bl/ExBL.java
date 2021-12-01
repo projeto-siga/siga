@@ -2794,7 +2794,7 @@ public class ExBL extends CpBL {
 		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.PEDIDO_PUBLICACAO) {
 			Ex.getInstance().getComp()
 			.afirmar("Usuário não tem permissão de cancelar pedido de publicação no DJE.", ExPodeAtenderPedidoPublicacaoNoDiario.class, titular, lotaTitular, mob);
-		} else if (ExTipoMovimentacao.hasDespacho(movCancelar.getExTipoMovimentacao())) {
+		} else if (ExTipoDeMovimentacao.hasDespacho(movCancelar.getExTipoMovimentacao())) {
 			getComp().afirmar("não é possível cancelar anexo", ExPodeCancelarDespacho.class, titular, lotaTitular, mob, movCancelar);
 		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
 			getComp().afirmar("não é possível cancelar definição de perfil", ExPodeCancelarVinculacaoPapel.class, titular, lotaTitular, movCancelar);
@@ -2819,7 +2819,7 @@ public class ExBL extends CpBL {
 			mov.setExMovimentacaoRef(movCancelar);
 			mov.setDescrMov(textoMotivo);
 
-			if ((ExTipoMovimentacao.hasDocumento(movCancelar.getExTipoMovimentacao()))
+			if ((ExTipoDeMovimentacao.hasDocumento(movCancelar.getExTipoMovimentacao()))
 					&& movCancelar.getExMobil().getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 				List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov.getExMovimentacaoRef(), false);
 				armazenarCertidaoDeDesentranhamento(mov, mob.getMobilPrincipal(), ans, textoMotivo);
@@ -5684,7 +5684,7 @@ public class ExBL extends CpBL {
 			} else if (mov.getExTipoMovimentacao() != null
 					&& (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
 							|| (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO)
-								&& mov.getExMovimentacaoRef() != null && ExTipoMovimentacao.hasDocumento(mov.getExMovimentacaoRef().getExTipoMovimentacao()))) {
+								&& mov.getExMovimentacaoRef() != null && ExTipoDeMovimentacao.hasDocumento(mov.getExMovimentacaoRef().getExTipoMovimentacao()))) {
 				if (SigaMessages.isSigaSP()) {
 					attrs.put("nmArqMod", "certidaoDesentranhamentoGOVSP.jsp");
 				} else {

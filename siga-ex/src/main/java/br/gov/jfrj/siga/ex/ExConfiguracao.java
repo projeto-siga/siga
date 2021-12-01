@@ -24,6 +24,8 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -33,6 +35,7 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.converter.ITipoDeMovimentacaoConverter;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -43,8 +46,8 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
 public class ExConfiguracao extends CpConfiguracao {
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_TP_MOV")
+	@Convert(converter = ITipoDeMovimentacaoConverter.class)
+	@Column(name = "ID_TP_MOV")
 	private ITipoDeMovimentacao exTipoMovimentacao;
 
 	@ManyToOne(fetch = FetchType.LAZY)

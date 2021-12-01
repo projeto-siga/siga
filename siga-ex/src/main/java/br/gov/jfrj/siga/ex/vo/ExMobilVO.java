@@ -288,7 +288,7 @@ public class ExMobilVO extends ExVO {
 			duracaoSpan++;
 
 			if (i == movs.size()
-					|| (movVO.idTpMov == ExTipoDeMovimentacao.RECEBIMENTO && !movVO
+					|| (movVO.exTipoMovimentacao == ExTipoDeMovimentacao.RECEBIMENTO && !movVO
 							.isCancelada())) {
 				if (i == movs.size()) {
 					duracaoSpan++;
@@ -327,7 +327,7 @@ public class ExMobilVO extends ExVO {
 		int span = 0;
 		for (ExMovimentacaoVO movVO : movs) {
 			span++;
-			if (movVO.idTpMov == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO || movVO.isCancelada()) {
+			if (movVO.exTipoMovimentacao == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO || movVO.isCancelada()) {
 				duracoes.get(j).setSpan(duracoes.get(j).getSpan() - 1);
 			}
 			if (span == duracoes.get(j).getSpanExibirCompleto()) {
@@ -340,7 +340,7 @@ public class ExMobilVO extends ExVO {
 		j = 0;
 		span = 0;
 		for (ExMovimentacaoVO movVO : movs) {
-			if (movVO.idTpMov != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO  && !movVO.isCancelada()) {
+			if (movVO.exTipoMovimentacao != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO  && !movVO.isCancelada()) {
 				if (span == 0) {
 					movVO.duracao = duracoes.get(j).getDuracao();
 					movVO.duracaoSpan = duracoes.get(j).getSpan();

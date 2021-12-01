@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -906,6 +907,7 @@ public class ExDao extends CpDao {
 			query.setParameter("idMod", mod.getIdMod());
 			query.setParameter("dataIni", dtAssinaturaIni);
 			query.setParameter("dataFim", dtAssinaturaFim);
+			query.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO, ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO));
 			return query.getResultList();
 		}
 		return null;
@@ -1600,6 +1602,7 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery(
 				"listarAnexoPendenteAssinatura");
 		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		query.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.ANEXACAO));
 		return query.getResultList();
 	}
 
@@ -1607,6 +1610,8 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery(
 				"listarDespachoPendenteAssinatura");
 		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		query.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.DESPACHO, ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, 
+				ExTipoDeMovimentacao.DESPACHO_INTERNO, ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA, ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA));
 		return query.getResultList();
 	}
 
@@ -2150,7 +2155,13 @@ public class ExDao extends CpDao {
 		return em() //
 				.createNamedQuery(AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY,
 						ExMovimentacao.class)
-				.setParameter("idMobil", idMobil) //
+				.setParameter("idMobil", idMobil)
+				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA))
+				// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
+				.setParameter("enumListMovs", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.JUNTADA,
+						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO, 
+						ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO,
+						ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA, ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, ExTipoDeMovimentacao.TORNAR_SEM_EFEITO))
 				.getResultList();
 	}
 
@@ -2196,6 +2207,12 @@ public class ExDao extends CpDao {
 						AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY,
 						ExMovimentacao.class)
 				.setParameter("idMobil", idMobil) //
+				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA))
+				// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
+				.setParameter("enumListMovs", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.JUNTADA,
+						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO, 
+						ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO,
+						ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA, ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, ExTipoDeMovimentacao.TORNAR_SEM_EFEITO))
 				.getResultList();
 	}
 	

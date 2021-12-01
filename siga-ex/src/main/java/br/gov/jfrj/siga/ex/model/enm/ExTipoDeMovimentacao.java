@@ -197,4 +197,30 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 			return null;
 		return CpTipoDeMovimentacao.getById(id);
 	}
+	
+	public static boolean hasDespacho(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.DESPACHO
+				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO
+				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA;
+	}
+
+	public static boolean hasDocumento(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.ANEXACAO || hasDespacho(id);
+	}
+
+	public static boolean hasApensacao(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.APENSACAO
+				|| id == ExTipoDeMovimentacao.DESAPENSACAO;
+	}
+
+	public static boolean hasTransferencia(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
+				|| id == ExTipoDeMovimentacao.TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
+	}
+
 }

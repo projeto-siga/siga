@@ -221,18 +221,6 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 
 	final static public long TIPO_MOVIMENTACAO_CONCLUSAO = 84;
 	
-	public static boolean hasDespacho(ITipoDeMovimentacao id) {
-		return id == ExTipoDeMovimentacao.DESPACHO
-				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO
-				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
-				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
-				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA;
-	}
-
-	public static boolean hasDocumento(ITipoDeMovimentacao id) {
-		return id == ExTipoDeMovimentacao.ANEXACAO || hasDespacho(id);
-	}
-
 	/**
 	 * Simple constructor of ExTipoMovimentacao instances.
 	 */
@@ -254,18 +242,6 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 		return getDescrTipoMovimentacao();
 	}
 
-	public static boolean hasApensacao(ITipoDeMovimentacao id) {
-		return id == ExTipoDeMovimentacao.APENSACAO
-				|| id == ExTipoDeMovimentacao.DESAPENSACAO;
-	}
-
-	public static boolean hasTransferencia(ITipoDeMovimentacao id) {
-		return id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
-				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
-				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-				|| id == ExTipoDeMovimentacao.TRANSFERENCIA
-				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
-	}
 
 	/* Add customized code below */
 

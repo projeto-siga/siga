@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.vo;
 
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -76,7 +74,7 @@ public class ExMovimentacaoVO extends ExVO {
 	boolean desabilitada;
 	boolean cancelada;
 	String descricao;
-	ITipoDeMovimentacao idTpMov;
+	ITipoDeMovimentacao exTipoMovimentacao;
 	String complemento;
 	Map<String, ExParteVO> parte = new TreeMap<String, ExParteVO>();
 	Date dtIniMov;
@@ -104,7 +102,7 @@ public class ExMovimentacaoVO extends ExVO {
 		this.mov = mov;
 		this.mobVO = mobVO;
 		originadaAqui = (mov.getExMobil().getId().equals(getMobVO().id));
-		idTpMov = mov.getExTipoMovimentacao();
+		exTipoMovimentacao = mov.getExTipoMovimentacao();
 		dtIniMov = mov.getDtIniMov();
 
 		mimeType = (mov.getConteudoTpMov() == null) ? "" : mov.getConteudoTpMov();
@@ -170,29 +168,29 @@ public class ExMovimentacaoVO extends ExVO {
 		if (complemento == null)
 			complemento = "";
 
-		if (idTpMov == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO) {
 			descricao = "";
 			addAcao(AcaoVO.builder().nome("Verificar").nameSpace("/app/expediente/mov").acao("assinar_verificar")
 					.params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString()).params("ajax", "true").exp(new CpPodeSempre()).classe("once").build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO
-				|| idTpMov == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO) {
 			descricao = Texto.maiusculasEMinusculas(mov.getObs());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.ANOTACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ANOTACAO) {
 			descricao = mov.getObs();
 			addAcao(AcaoVO.builder().nome("Excluir").nameSpace("/app/expediente/mov").acao("excluir")
 					.params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString()).exp(new ExPodeExcluirAnotacao(mov.mob(), mov, titular, lotaTitular)).classe("once").build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar")
 					.params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString()).exp(new ExPodeCancelarVinculacaoPapel(mov, titular, lotaTitular)).classe("once").build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.MARCACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.MARCACAO) {
 			descricao = mov.getMarcador().getDescrMarcador();
 			if (mov.getSubscritor() != null) 
 				descricao += ", interessado: " + mov.getSubscritor().getPrimeiroNomeEIniciais();
@@ -218,12 +216,12 @@ public class ExMovimentacaoVO extends ExVO {
 						.exp(new ExPodeCancelarMarcacao(mov, titular, lotaTitular)).build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.REFERENCIA) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.REFERENCIA) {
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 					.exp(new ExPodeCancelarVinculacao(mov, titular, lotaTitular)).build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).icone(getIcon()).nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 					.params("arquivo", mov.getReferencia())
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
@@ -252,8 +250,8 @@ public class ExMovimentacaoVO extends ExVO {
 				.exp(NOr.of(new ExMovimentacaoEstaCancelada(mov), new ExEstaSemEfeito(mov.mob().doc()))).build());
 		}
 
-		if (mov.getNumPaginas() != null || idTpMov == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
-				|| idTpMov == ExTipoDeMovimentacao.ANEXACAO) {
+		if (mov.getNumPaginas() != null || exTipoMovimentacao == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.ANEXACAO) {
 			// A acao pode ser melhorada para mostrar o icone do pdf antes do
 			// nome do arquivo.
 			// <c:url var='anexo' value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
@@ -262,12 +260,12 @@ public class ExMovimentacaoVO extends ExVO {
 					.params("arquivo", mov.getReferenciaPDF())
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 
-			if (idTpMov == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO) {
+			if (exTipoMovimentacao == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO) {
 				addAcao(AcaoVO.builder().nome("Excluir").nameSpace("/app/expediente/mov").acao("excluir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 						.exp(new ExPodeExcluirCossignatario(mov, titular, lotaTitular)).build());
 			}
 
-			if (idTpMov == ExTipoDeMovimentacao.ANEXACAO) {
+			if (exTipoMovimentacao == ExTipoDeMovimentacao.ANEXACAO) {
 				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito() && !mov.mob().isEmTransito(titular, lotaTitular)) {
 					addAcao(AcaoVO.builder().nome("Excluir").nameSpace("/app/expediente/mov").acao("excluir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 							.exp(new ExPodeExcluirAnexo(mov.mob(), mov, titular, lotaTitular)).build());
@@ -286,32 +284,32 @@ public class ExMovimentacaoVO extends ExVO {
 				}
 			}
 
-			if (hasDespacho(idTpMov)) {
+			if (ExTipoDeMovimentacao.hasDespacho(exTipoMovimentacao)) {
 				if (!mov.mob().doc().isSemEfeito())
 					addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 							.exp(new ExPodeCancelarDespacho(mov, titular, lotaTitular)).build());
 			}
 
-			if (idTpMov != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO
-					&& idTpMov != ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
-					&& idTpMov != ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-					&& idTpMov != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO && idTpMov != ExTipoDeMovimentacao.ANEXACAO
-					&& idTpMov != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+			if (exTipoMovimentacao != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO
+					&& exTipoMovimentacao != ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
+					&& exTipoMovimentacao != ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
+					&& exTipoMovimentacao != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO && exTipoMovimentacao != ExTipoDeMovimentacao.ANEXACAO
+					&& exTipoMovimentacao != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito())
 
-					if ((idTpMov == ExTipoDeMovimentacao.DESPACHO
-							|| idTpMov == ExTipoDeMovimentacao.DESPACHO_INTERNO
-							|| idTpMov == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
-							|| idTpMov == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
-							|| idTpMov == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-							|| idTpMov == ExTipoDeMovimentacao.CIENCIA)
+					if ((exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO
+							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_INTERNO
+							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
+							|| exTipoMovimentacao == ExTipoDeMovimentacao.CIENCIA)
 							&& mov.isAssinada()) {
 
 						addAcao(AcaoVO.builder().nome("Ver").icone("printer").nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 								.params("popup", "true").params("arquivo", mov.getReferenciaPDF())
 								.exp(new ExPodeVisualizarImpressao(mov.mob(), titular, lotaTitular)).build());
 
-						if (idTpMov != ExTipoDeMovimentacao.CIENCIA)
+						if (exTipoMovimentacao != ExTipoDeMovimentacao.CIENCIA)
 							addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 									.params("popup", "true").params("autenticando", "true")
 									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
@@ -350,7 +348,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.COPIA) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.COPIA) {
 			descricao = null;
 			String mensagemPos = null;
 
@@ -362,7 +360,7 @@ public class ExMovimentacaoVO extends ExVO {
 					.exp(new CpPodeSempre()).pre("Copia do documento: ").pos(mensagemPos).build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.JUNTADA || idTpMov == ExTipoDeMovimentacao.JUNTADA_EXTERNO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA || exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA_EXTERNO) {
 			descricao = null;
 			if (originadaAqui) {
 				if (mov.getExMobilRef() != null) {
@@ -410,7 +408,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
 			descricao = null;
 			if (originadaAqui) {
 				if (mov.getExMobilRef() != null) {
@@ -444,7 +442,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.APENSACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.APENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
@@ -455,7 +453,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.DESAPENSACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.DESAPENSACAO) {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
@@ -466,12 +464,12 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.NOTIFICACAO_PUBL_BI) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.NOTIFICACAO_PUBL_BI) {
 			addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
 					.exp(new CpPodeSempre()).pre("Publicado no Boletim Interno: ").pos(" em " + mov.getDtMovDDMMYY()).build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.REFERENCIA) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.REFERENCIA) {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
@@ -482,7 +480,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
@@ -493,7 +491,7 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.ELIMINACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ELIMINACAO) {
 			descricao = null;
 			if (originadaAqui) {
 				// Não faz nada, pois o documento eliminado nunca é exibido
@@ -502,26 +500,26 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 		
-		if(idTpMov == ExTipoDeMovimentacao.GERAR_PROTOCOLO) {
+		if(exTipoMovimentacao == ExTipoDeMovimentacao.GERAR_PROTOCOLO) {
 			if (!mov.isCancelada())
 				addAcao(AcaoVO.builder().nome("Gerar Protocolo").nameSpace("/app/expediente/doc").acao("gerarProtocolo").params("sigla", mov.getExMobil().getSigla()).params("popup", "true")
 						.exp(new CpPodeSempre()).build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE
-				|| idTpMov == ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO
-				|| idTpMov == ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
 				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
 						.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false")
 						.exp(new CpPodeSempre()).build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
-				|| idTpMov == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
-				|| idTpMov == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-				|| idTpMov == ExTipoDeMovimentacao.TRANSFERENCIA || idTpMov == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
-				|| idTpMov == ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.TRANSFERENCIA || exTipoMovimentacao == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
+				|| exTipoMovimentacao == ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO) {
 			String pre = null;
 			if (mov.getDtFimMovDDMMYY() != "") {
 				pre = "Devolver até " + mov.getDtFimMovDDMMYY() + " | ";
@@ -532,20 +530,20 @@ public class ExMovimentacaoVO extends ExVO {
 						.exp(new CpPodeSempre()).build());
 		}
 
-		if (idTpMov == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO) {
 			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).nameSpace("/app/arquivo").acao("download").params("arquivo", mov.getReferenciaZIP())
 					.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS())
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 		}
 		
-		if (idTpMov == ExTipoDeMovimentacao.REORDENACAO_DOCUMENTO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.REORDENACAO_DOCUMENTO) {
 			String detalhe = mov.getExMobil().getDoc().temOrdenacao() ? "Ver última reordenação" : "Ver documento completo";
 			String complementoParam = mov.getExMobil().getDoc().temOrdenacao() ? "&exibirReordenacao=true" : "";
 			addAcao(AcaoVO.builder().nome(detalhe).nameSpace("/app/expediente/doc").acao("exibirProcesso").params("sigla", mov.getExMobil().getSigla() + complementoParam).pre("Documento completo reordenado manualmente:")
 					.exp(new CpPodeSempre()).build());
 		}
 		
-		if (idTpMov == ExTipoDeMovimentacao.ORDENACAO_ORIGINAL_DOCUMENTO) {								
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ORDENACAO_ORIGINAL_DOCUMENTO) {								
 			addAcao(AcaoVO.builder().nome("Ver documento completo").nameSpace("/app/expediente/doc").acao("exibirProcesso").params("sigla", mov.getExMobil().getSigla()).pre("Documento completo reordenado para sua ordem original:")
 					.exp(new CpPodeSempre()).build());
 		}
@@ -676,8 +674,8 @@ public class ExMovimentacaoVO extends ExVO {
 		return idMov;
 	}
 
-	public ITipoDeMovimentacao getIdTpMov() {
-		return idTpMov;
+	public ITipoDeMovimentacao getExTipoMovimentacao() {
+		return exTipoMovimentacao;
 	}
 
 	public ExMobilVO getMobilVO() {

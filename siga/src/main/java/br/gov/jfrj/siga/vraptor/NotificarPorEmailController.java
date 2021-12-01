@@ -40,11 +40,9 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 	
 	@Override
 	protected DpNotificarPorEmailDaoFiltro createDaoFiltro() {
-		// TODO Auto-generated method stub
 		return null; 
 	}
 	
-	//@Transacional
 	@Get({ "/app/notificarPorEmail/rec_notificacao_por_email", "/public/app/page/usuario/rec_notificacao_por_email" })
 	public void lista(Integer paramoffset) throws Exception {	
 		if(paramoffset == null) {
@@ -119,7 +117,7 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		documentoDeMarcadores.setNaoConfiguravel(0);
 		documentoDeMarcadores.setDpPessoa(dpPessoa);
 		documentoDeMarcadores.setHisAtivo(1);
-		documentoDeMarcadores.setRestringir(1);
+		documentoDeMarcadores.setRestringir(0);
 		documentoDeMarcadores.setNomeDaAcao("Documentos de marcadores");
 		documentoDeMarcadores.setDataFimNotificarPorEmail(data);
 		documentoDeMarcadores.setDataInicioNotificarPorEmail(data);
@@ -139,7 +137,7 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		alteracaoDeEmail.setNaoConfiguravel(0);
 		alteracaoDeEmail.setDpPessoa(dpPessoa);
 		alteracaoDeEmail.setHisAtivo(1);
-		alteracaoDeEmail.setRestringir(1);
+		alteracaoDeEmail.setRestringir(0);
 		alteracaoDeEmail.setNomeDaAcao("Alteração de email");
 		alteracaoDeEmail.setDataFimNotificarPorEmail(data);
 		alteracaoDeEmail.setDataInicioNotificarPorEmail(data);
@@ -158,7 +156,7 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		tramitacaoDeDocumentosMarcados.setNaoConfiguravel(0);
 		tramitacaoDeDocumentosMarcados.setDpPessoa(dpPessoa);
 		tramitacaoDeDocumentosMarcados.setHisAtivo(1);
-		tramitacaoDeDocumentosMarcados.setRestringir(1);
+		tramitacaoDeDocumentosMarcados.setRestringir(0);
 		tramitacaoDeDocumentosMarcados.setNomeDaAcao("Tramitação de documentos marcados");
 		tramitacaoDeDocumentosMarcados.setDataFimNotificarPorEmail(data);
 		tramitacaoDeDocumentosMarcados.setDataInicioNotificarPorEmail(data);
@@ -177,7 +175,7 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		documentoTramitadoParaUnidade.setNaoConfiguravel(0);
 		documentoTramitadoParaUnidade.setDpPessoa(dpPessoa);
 		documentoTramitadoParaUnidade.setHisAtivo(1);
-		documentoTramitadoParaUnidade.setRestringir(1);
+		documentoTramitadoParaUnidade.setRestringir(0);
 		documentoTramitadoParaUnidade.setNomeDaAcao("Documento tramitado para unidade");
 		documentoTramitadoParaUnidade.setDataFimNotificarPorEmail(data);
 		documentoTramitadoParaUnidade.setDataInicioNotificarPorEmail(data);
@@ -196,7 +194,7 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		documentoTramitadoParaOMeuUsuario.setNaoConfiguravel(0);
 		documentoTramitadoParaOMeuUsuario.setDpPessoa(dpPessoa);
 		documentoTramitadoParaOMeuUsuario.setHisAtivo(1);
-		documentoTramitadoParaOMeuUsuario.setRestringir(1);
+		documentoTramitadoParaOMeuUsuario.setRestringir(0);
 		documentoTramitadoParaOMeuUsuario.setNomeDaAcao("Documento tramitado para o meu usuário");
 		documentoTramitadoParaOMeuUsuario.setDataFimNotificarPorEmail(data);
 		documentoTramitadoParaOMeuUsuario.setDataInicioNotificarPorEmail(data);

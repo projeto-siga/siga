@@ -88,7 +88,6 @@ import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
@@ -429,7 +428,6 @@ public class ExDao extends CpDao {
 			Predicate predicate, predicateMobilIgnorandoMovimentacaoDeJuntada, predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento;
 			Expression<Long> mobil = root.get("exMobil");
 			Expression<Long> mobilRef = root.get("exMobilRef");																		
-			Join<ExMovimentacao, ExTipoMovimentacao> joinTipoMovimentacao = root.join("exTipoMovimentacao");
 			
 			predicateMobilRefComoMovimentacaoDeJuntadaEDesentranhamento = builder.and(mobilRef.in(mobils),
 					builder.or(builder.equal(root.get("exTipoMovimentacao"), ExTipoDeMovimentacao.JUNTADA),
@@ -1792,11 +1790,6 @@ public class ExDao extends CpDao {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTipoFormaDoc.class);
 	}
 
-	public List<ExTipoMovimentacao> listarExTiposMovimentacao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
-				ExTipoMovimentacao.class);
-	}
-
 	public List<ExModelo> listarExModelos() {
 		return findByCriteria(ExModelo.class);
 	}
@@ -2095,7 +2088,7 @@ public class ExDao extends CpDao {
 						+ "(select movTramite from ExMovimentacao movTramite"
 						+ " where movTramite.exMobil.idMobil = mob.idMobil and movTramite.dtTimestamp = ("
 						+ " 	select max(movTramite1.dtTimestamp) from ExMovimentacao movTramite1"
-						+ " 		where movTramite1.exTipoMovimentacao.idTpMov = 3 "
+						+ " 		where movTramite1.exTipoMovimentacao = :tpmov "
 						+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
 						+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
 						+ "doc "
@@ -2104,6 +2097,7 @@ public class ExDao extends CpDao {
 						+ (trazerComposto ? "inner join doc.exFormaDocumento frm " : "")
 						+ "where mob.idMobil in (:listIdMobil) "
 				);
+		query.setParameter("tpmov", ExTipoDeMovimentacao.TRANSFERENCIA);
 		if (listIdMobil != null) {
 			query.setParameter("listIdMobil", listIdMobil);
 		}
@@ -2227,10 +2221,10 @@ public class ExDao extends CpDao {
 				+ "left join m.exMobil mb "
 				+ "where mb.exDocumento.idDoc = :idDoc "
 				+ "and m.exMovimentacaoCanceladora is null "
-				+ "and (m.exTipoMovimentacao.idTpMov = :idAssinatura or m.exTipoMovimentacao.idTpMov = :idAssinaturaSenha)", Long.class)
+				+ "and (m.exTipoMovimentacao = :idAssinatura or m.exTipoMovimentacao = :idAssinaturaSenha)", Long.class)
 				.setParameter("idDoc", idDoc)
-				.setParameter("idAssinatura", 11L)
-				.setParameter("idAssinaturaSenha", 58L)
+				.setParameter("idAssinatura", ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO)
+				.setParameter("idAssinaturaSenha", ExTipoDeMovimentacao.ASSINATURA_COM_SENHA)
 				.getSingleResult();
 	}
 

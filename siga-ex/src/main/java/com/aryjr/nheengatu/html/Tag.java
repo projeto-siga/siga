@@ -22,8 +22,8 @@
  */
 package com.aryjr.nheengatu.html;
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.aryjr.nheengatu.css2.Style;

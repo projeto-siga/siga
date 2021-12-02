@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -46,7 +47,6 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
@@ -532,17 +532,17 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("all")
-	private Set<ExTipoMovimentacao> getListaTiposMovimentacao() throws Exception {
-		TreeSet<ExTipoMovimentacao> s = new TreeSet<ExTipoMovimentacao>(new Comparator() {
+	private Set<ExTipoDeMovimentacao> getListaTiposMovimentacao() throws Exception {
+		TreeSet<ExTipoDeMovimentacao> s = new TreeSet<>(new Comparator<ExTipoDeMovimentacao>() {
 
-			public int compare(Object o1, Object o2) {
-				return ((ExTipoMovimentacao) o1).getDescrTipoMovimentacao()
-						.compareTo(((ExTipoMovimentacao) o2).getDescrTipoMovimentacao());
+			@Override
+			public int compare(ExTipoDeMovimentacao o1, ExTipoDeMovimentacao o2) {
+				return o1.getDescr().compareTo(o2.getDescr());
 			}
 
 		});
 
-		s.addAll(dao().listarExTiposMovimentacao());
+		s.addAll(Arrays.asList(ExTipoDeMovimentacao.values()));
 
 		return s;
 	}

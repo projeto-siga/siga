@@ -101,7 +101,7 @@ import net.sf.jasperreports.engine.JRException;
 									+ queryOrgao
 									+ queryLotacao
 									+ queryUsuario
-									+ "and mov.exTipoMovimentacao.idTpMov = :idTpMov "
+									+ "and mov.exTipoMovimentacao = :idTpMov "
 									+ "and mov.exMovimentacaoCanceladora is null "
 									+ "group by doc.exModelo.nmMod "
 									+ "order by count(doc.idDoc) desc "

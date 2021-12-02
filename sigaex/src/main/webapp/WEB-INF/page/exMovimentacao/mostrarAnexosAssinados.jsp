@@ -74,13 +74,13 @@
 											sigla="${mov.parte.resp.nomeAbreviado}"
 											descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" />
 									</td>
-									<td>${mov.descricao}<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if>
+									<td>${mov.descricao}<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'> ${mov.complemento}</c:if>
 										<c:set var="assinadopor" value="${true}" /> <siga:links
 											inline="${true}"
 											separator="${not empty mov.descricao and mov.descricao != null}">
 										<c:forEach var="acao" items="${mov.acoes}">
 											<c:choose>
-												<c:when test='${mov.idTpMov == 32}'>
+												<c:when test='${mov.exTipoMovimentacao == AGENDAMENTO_DE_PUBLICACAO}'>
 													<c:url var="url" value="${acao.nameSpace}/${acao.acao}">
 														<c:forEach var="p" items="${acao.params}">
 															<c:param name="${p.key}" value="${p.value}"/>
@@ -99,7 +99,7 @@
 												pos="${acao.pos}" url="${url}" test="${true}"
 												popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 												ajax="${acao.ajax}" idAjax="${mov.idMov}" />
-											<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
+											<c:if test='${assinadopor and mov.exTipoAnexacao == ANEXACAO}'> ${mov.complemento}
 												<c:set var="assinadopor" value="${false}" />
 											</c:if>
 										</c:forEach>

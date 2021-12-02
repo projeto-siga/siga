@@ -57,7 +57,6 @@
 		<class>br.gov.jfrj.siga.ex.ExTipoFormaDoc</class>
 		<class>br.gov.jfrj.siga.ex.ExVia</class>
 		<class>br.gov.jfrj.siga.ex.ExNivelAcesso</class>
-		<class>br.gov.jfrj.siga.ex.ExTipoMovimentacao</class>
 		<class>br.gov.jfrj.siga.ex.ExEstadoDoc</class>
 		<class>br.gov.jfrj.siga.ex.ExTipoDespacho</class>
 		<class>br.gov.jfrj.siga.ex.ExEmailNotificacao</class>

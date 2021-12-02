@@ -11,20 +11,20 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 
 public class ExPodeCancelarMovimentacaoPorConfiguracao implements Expression {
 
-	private ITipoDeMovimentacao idTpMov;
+	private ITipoDeMovimentacao tpMov;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 
-	public ExPodeCancelarMovimentacaoPorConfiguracao(ITipoDeMovimentacao idTpMov, DpPessoa titular,
+	public ExPodeCancelarMovimentacaoPorConfiguracao(ITipoDeMovimentacao tpMov, DpPessoa titular,
 			DpLotacao lotaTitular) {
-		this.idTpMov = idTpMov;
+		this.tpMov = tpMov;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 	}
 
 	@Override
 	public boolean eval() {
-		return Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, idTpMov,
+		return Ex.getInstance().getConf().podePorConfiguracao(titular, lotaTitular, tpMov,
 				ExTipoDeConfiguracao.MOVIMENTAR);
 	}
 

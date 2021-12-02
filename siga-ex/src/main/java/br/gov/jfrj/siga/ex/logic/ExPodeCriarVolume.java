@@ -66,21 +66,7 @@ public class ExPodeCriarVolume extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
 
-				Not.of(new ExEstaPendenteDeColaboracao(mob)),
-
-				NAnd.of(new ExTemMobilPai(mob.doc()), new ExEstaPendenteDeAssinatura(mob.doc())),
-
-				Not.of(new ExTemNumeroMaximoDeVias(mob.doc())),
-
 				new ExEstaFinalizado(mob.doc()),
-
-				Or.of(
-
-						new ExECadastrante(mob.doc(), lotaTitular),
-
-						new ExESubscritor(mob.doc(), titular, lotaTitular)),
-
-				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.CRIAR_VIA),
 
 				new ExEstaEncerrado(ultVolume),
 

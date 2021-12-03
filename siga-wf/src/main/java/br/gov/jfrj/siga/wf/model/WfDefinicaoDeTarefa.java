@@ -150,7 +150,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	//
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
-
+	
 	@Override
 	public Integer getHisAtivo() {
 		this.hisAtivo = super.getHisAtivo();
@@ -506,7 +506,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 				return lotacao.getSigla();
 		case PESSOA:
 			if (pessoa != null)
-				return pessoa.getSigla();
+				return pessoa.getSobrenomeEIniciais();
 		case RESPONSAVEL:
 			if (definicaoDeResponsavel != null)
 				return definicaoDeResponsavel.getNome();
@@ -517,6 +517,27 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		return s;
 	}
 
+	public String getTooltip() {
+		if (tipoDeResponsavel == null)
+			return null;
+
+		switch (tipoDeResponsavel) {
+		case LOTACAO:
+			if (lotacao != null)
+				return lotacao.getNomeLotacao();
+		case PESSOA:
+			if (pessoa != null)
+				return pessoa.getNomePessoa();
+		case RESPONSAVEL:
+			if (definicaoDeResponsavel != null)
+				return definicaoDeResponsavel.getNome();
+		}
+
+		String s = tipoDeResponsavel.getDescr();
+		s = s.replace("Principal: ", "").replace("Lotação ", "Lota. ");
+		return s;
+	}
+	
 	public java.lang.String getParam() {
 		return param;
 	}

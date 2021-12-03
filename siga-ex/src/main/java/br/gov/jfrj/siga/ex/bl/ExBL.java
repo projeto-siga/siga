@@ -116,6 +116,7 @@ import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -8044,7 +8045,20 @@ public class ExBL extends CpBL {
 		ExDao.getInstance().gravar(doc);
 	}
 
-	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) {
+	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) {
+		try {
+			gravarMovimentacaoSiafem(exDoc, cadastrante, lotacaoTitular);
+			enviarSiafem(usuarioSiafem, senhaSiafem, exDoc);
+		} catch (final AplicacaoException e) {
+			cancelarAlteracao();
+			throw e;
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao enviar documento ao SIAFEM", e);
+		}
+	}
+
+	private void enviarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) {
 		ExDocumento formulario = obterFormularioSiafem(exDoc);
 		
 		if(formulario == null)
@@ -8056,6 +8070,37 @@ public class ExBL extends CpBL {
 		doc.setProcesso(obterCodigoUnico(formulario, false));
 		
 		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
+	}
+
+	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {
+		CpOrgaoSelecao  cpOrgaoSelecao = new CpOrgaoSelecao();
+		cpOrgaoSelecao.setSigla("SIAFEM");
+		
+		if(!cpOrgaoSelecao.buscarPorSigla())
+			throw new AplicacaoException("Órgão com sigla SIAFEM não encontrado");
+		
+		ExMovimentacao mov = new ExMovimentacao();
+		Date dt = dao().dt();
+		final ExTipoMovimentacao tpmov = dao().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENVIO_SIAFEM, ExTipoMovimentacao.class, false);
+		
+		mov.setCadastrante(cadastrante);
+		mov.setDtIniMov(dt);
+		mov.setDtFimMov(dt);
+		mov.setDtMov(dt);
+		mov.setExMobil(exDoc.getMobilGeral());
+		mov.setExTipoMovimentacao(tpmov);
+		mov.setLotaCadastrante(lotacaoTitular);
+		mov.setLotaResp(lotacaoTitular);
+		mov.setLotaSubscritor(lotacaoTitular);
+		mov.setLotaTitular(lotacaoTitular);
+		mov.setOrgaoExterno(cpOrgaoSelecao.buscarObjeto());
+		mov.setResp(cadastrante);
+		mov.setSubscritor(cadastrante);
+		mov.setTitular(cadastrante);
+		
+		acrescentarCamposDeAuditoria(mov);
+		
+		gravarMovimentacao(mov);
 	}
 
 	public ExDocumento obterFormularioSiafem(ExDocumento doc) {

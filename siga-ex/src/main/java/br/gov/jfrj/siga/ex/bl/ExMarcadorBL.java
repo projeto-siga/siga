@@ -15,6 +15,7 @@ import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoExibicaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -25,8 +26,8 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
@@ -47,13 +48,13 @@ public class ExMarcadorBL {
 		}
 	}
 
-	private SortedSet<ExMovimentacao> movs(long... tipoMov) {
+	private SortedSet<ExMovimentacao> movs(ITipoDeMovimentacao... tipoMov) {
 		SortedSet<ExMovimentacao> ss = new TreeSet<>();
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;
 			for (int j = 0; j < tipoMov.length; j++)
-				if (tipoMov[j] == mov.getIdTpMov())
+				if (tipoMov[j] == mov.getExTipoMovimentacao())
 					ss.add(mov);
 		}
 		return ss;
@@ -103,58 +104,58 @@ public class ExMarcadorBL {
 		Date dt = null;
 
 		for (ExMovimentacao mov : movs) {
-			Long t = mov.getIdTpMov();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
+			ITipoDeMovimentacao t = mov.getExTipoMovimentacao();
+			if (t == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO
 					&& mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().getExTipoMovimentacao()
-							.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
+							 == ExTipoDeMovimentacao.CRIACAO)
 				m = CpMarcadorEnum.CANCELADO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
+			if (t == ExTipoDeMovimentacao.PENDENCIA_DE_ANEXACAO)
 				m = CpMarcadorEnum.PENDENTE_DE_ANEXACAO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO)
+			if (t == ExTipoDeMovimentacao.PEDIDO_PUBLICACAO)
 				m = CpMarcadorEnum.PUBLICACAO_SOLICITADA.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
+			if (t == ExTipoDeMovimentacao.DISPONIBILIZACAO)
 				m = CpMarcadorEnum.DISPONIBILIZADO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
+			if (t == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO)
 				m = CpMarcadorEnum.REMETIDO_PARA_PUBLICACAO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR)
+			if (t == ExTipoDeMovimentacao.SOBRESTAR)
 				m = CpMarcadorEnum.SOBRESTADO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+			if (t == ExTipoDeMovimentacao.JUNTADA)
 				m = CpMarcadorEnum.JUNTADO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO)
+			if (t == ExTipoDeMovimentacao.JUNTADA_EXTERNO)
 				m = CpMarcadorEnum.JUNTADO_EXTERNO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO && apensadoAVolumeDoMesmoProcesso)
+			if (t == ExTipoDeMovimentacao.APENSACAO && apensadoAVolumeDoMesmoProcesso)
 				m = CpMarcadorEnum.APENSADO.getId();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA) {
+			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
+					|| t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
 				m = CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId();
 			}
-//			if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-//					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {
+//			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+//					|| t == ExTipoDeMovimentacao.TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {
 //				m = CpMarcadorEnum.CAIXA_DE_ENTRADA.getId();
 //			}
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO && mob.doc().isEletronico() && !mov.isAssinada()) {
+			if (t == ExTipoDeMovimentacao.DESPACHO && mob.doc().isEletronico() && !mov.isAssinada()) {
 				m = CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId();
 			}
 
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO) {
+			if (t == ExTipoDeMovimentacao.CRIACAO
+					|| t == ExTipoDeMovimentacao.RECEBIMENTO
+					|| t == ExTipoDeMovimentacao.DESOBRESTAR
+					|| t == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+					|| t == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
+					|| t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
+					|| t == ExTipoDeMovimentacao.DESAPENSACAO) {
 				m = 0L;
 			}
 
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO && mob.doc().isEletronico() && !mov.isAssinada()) {
+			if (t == ExTipoDeMovimentacao.ANEXACAO && mob.doc().isEletronico() && !mov.isAssinada()) {
 				m = CpMarcadorEnum.ANEXO_PENDENTE_DE_ASSINATURA.getId();
 			}
 
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
+			if (t == ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA) {
 				acrescentarMarca(CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId(), dt, mov.getSubscritor(), null);
 			}
 
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) {
+			if (t == ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA) {
 				acrescentarMarca(CpMarcadorEnum.MOVIMENTACAO_CONFERIDA_COM_SENHA.getId(), dt, mov.getSubscritor(),
 						null);
 			}
@@ -193,7 +194,7 @@ public class ExMarcadorBL {
 					// Nato: acredito que isso não seja mais necessário agora que temos a nova
 					// implementação de marcadores.
 //			if (SigaMessages.isSigaSP() && m == CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
-//					&& ultMovNaoCanc.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
+//					&& ultMovNaoCanc.getIdTpMov() == ExTipoDeMovimentacao.TRANSFERENCIA) {
 //				acrescentarMarcadoresManuaisPorOcorrenciaDeTransferencia(dt);
 //			}
 				}
@@ -213,9 +214,9 @@ public class ExMarcadorBL {
 
 		// Conteplar movimentações gerais e também as da via específica
 		List<ExMovimentacao> marcacoes = new ArrayList<>();
-		marcacoes.addAll(geral.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+		marcacoes.addAll(geral.getMovimentacoesPorTipo(ExTipoDeMovimentacao.MARCACAO, true));
 		if (mob.isVia())
-			marcacoes.addAll(mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true));
+			marcacoes.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.MARCACAO, true));
 
 		Set<PessoaLotacaoParser> atendentes = mob.getAtendente();
 		Set<DpLotacao> lotacoesComMarcaDePasta = new TreeSet<>();
@@ -345,7 +346,7 @@ public class ExMarcadorBL {
 
 	protected boolean acrescentarMarcadoresSemEfeito() {
 		// Sem efeito
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)) {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.TORNAR_SEM_EFEITO)) {
 			acrescentarMarca(CpMarcadorEnum.SEM_EFEITO.getId(), mov.getDtIniMov(), mov.getCadastrante(),
 					mov.getLotaCadastrante());
 			return true;
@@ -371,7 +372,7 @@ public class ExMarcadorBL {
 	public void acrescentarMarcadoresColaboracao() {
 		boolean fDocColaborativoPendencia = false;
 		Date dtDocColaborativo = null;
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)) {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO)) {
 			dtDocColaborativo = mov.getDtIniMov();
 			ExParte parte = ExParte.create(mov.getDescrMov());
 			if (parte.isAtivo() && !parte.isPreenchido()) {
@@ -387,7 +388,7 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadoresPapel() {
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.VINCULACAO_PAPEL)) {
 			Long m = null;
 			DpLotacao lotaPerfil = null;
 			switch ((int) (long) mov.getExPapel().getIdPapel()) {
@@ -417,15 +418,14 @@ public class ExMarcadorBL {
 		ExMovimentacao movDje = null;
 
 		for (ExMovimentacao mov : movs) {
-			Long m = null;
-			Long t = mov.getIdTpMov();
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
+			ITipoDeMovimentacao t = mov.getExTipoMovimentacao();
+			if (t == ExTipoDeMovimentacao.PEDIDO_PUBLICACAO) {
 				mDje = CpMarcadorEnum.PUBLICACAO_SOLICITADA.getId();
 				movDje = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
+			} else if (t == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO) {
 				mDje = CpMarcadorEnum.REMETIDO_PARA_PUBLICACAO.getId();
 				movDje = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO) {
+			} else if (t == ExTipoDeMovimentacao.DISPONIBILIZACAO) {
 				mDje = CpMarcadorEnum.DISPONIBILIZADO.getId();
 				movDje = mov;
 			}
@@ -436,7 +436,7 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadoresPendenciaDeAnexacao() {
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)) {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.PENDENCIA_DE_ANEXACAO)) {
 			acrescentarMarca(CpMarcadorEnum.PENDENTE_DE_ANEXACAO.getId(), mov.getDtIniMov(), mov.getCadastrante(),
 					mov.getLotaCadastrante());
 		}
@@ -478,7 +478,7 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadoresPendenciaDeAssinaturaMovimentacao() {
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)) {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.ANEXACAO)) {
 			Long m = null;
 			if (mob.doc().isEletronico()) {
 				m = CpMarcadorEnum.ANEXO_PENDENTE_DE_ASSINATURA.getId();
@@ -489,13 +489,13 @@ public class ExMarcadorBL {
 				 */
 				for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
 					if ((movAss.getExTipoMovimentacao()
-							.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+							 == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO
 							|| movAss.getExTipoMovimentacao()
-									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+									 == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
 							|| movAss.getExTipoMovimentacao()
-									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+									 == ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA
 							|| movAss.getExTipoMovimentacao()
-									.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+									 == ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA)
 							&& movAss.getExMovimentacaoRef().getIdMov() == mov.getIdMov()) {
 						m = null;
 						break;
@@ -511,7 +511,7 @@ public class ExMarcadorBL {
 		if (!mob.doc().isInternoProduzido() && !mob.doc().isInternoCapturado())
 			return;
 
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)) {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO)) {
 			if (mob.getDoc().isEletronico()) {
 				ExMovimentacao movPrazo = mob.doc().getMovPrazoDeAssinatura();
 				Date dtPrazo = null;
@@ -549,7 +549,7 @@ public class ExMarcadorBL {
 //
 //				Long tpMov = mov.getIdTpMov();
 //				Long idMarcador = mov.getMarcador().getIdMarcador();
-//				boolean temMarcaManual = (tpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO
+//				boolean temMarcaManual = (tpMov == ExTipoDeMovimentacao.MARCACAO
 //						&& (idMarcador == CpMarcadorEnum.URGENTE.getId() || idMarcador == CpMarcadorEnum.IDOSO.getId()
 //								|| idMarcador == CpMarcadorEnum.PRIORITARIO.getId()
 //								|| idMarcador == CpMarcadorEnum.RESTRICAO_ACESSO.getId()
@@ -568,15 +568,15 @@ public class ExMarcadorBL {
 //	}
 
 	public void acrescentarMarcadoresAssinaturaComSenha() {
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
-			Long t = mov.getIdTpMov();
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA)) {
+			ITipoDeMovimentacao t = mov.getExTipoMovimentacao();
 
 			boolean jaAutenticado = false;
 			for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
 				if (movAss.getExTipoMovimentacao()
-						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+						== ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
 						|| movAss.getExTipoMovimentacao()
-								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+								== ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO) {
 					jaAutenticado = true;
 					break;
 				}
@@ -589,7 +589,7 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadorPublicacaoPortalTransparencia() {
-		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA)) {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA)) {
 			acrescentarMarca(CpMarcadorEnum.PORTAL_TRANSPARENCIA.getId(), mov.getDtIniMov(), mov.getCadastrante(),
 					mov.getLotaCadastrante());
 		}
@@ -606,7 +606,7 @@ public class ExMarcadorBL {
 					mob.doc().isEletronico() ? CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
 							: CpMarcadorEnum.EM_TRANSITO.getId(),
 					tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
-			if (tramite.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+			if (tramite.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 					&& mob.doc().isEletronico() && !tramite.isAssinada())
 				acrescentarMarcaTransferencia(CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId(),
 						tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
@@ -635,8 +635,8 @@ public class ExMarcadorBL {
 		long m_aguardando = CpMarcadorEnum.AGUARDANDO.getId();
 		long m_aguardandoFora = CpMarcadorEnum.AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO.getId();
 
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
@@ -710,32 +710,32 @@ public class ExMarcadorBL {
 		int nivelMDest = 0;
 
 		for (ExMovimentacao mov : movs) {
-			Long t = mov.getIdTpMov();
+			ITipoDeMovimentacao t = mov.getExTipoMovimentacao();
 
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {
+			if (t == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) {
 				nivelMDest++;
 				mDest[nivelMDest] = CpMarcadorEnum.ARQUIVADO_CORRENTE.getId();
 				movDest[nivelMDest] = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO) {
+			} else if (t == ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO) {
 				nivelMDest++;
 				mDest[nivelMDest] = CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId();
 				movDest[nivelMDest] = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
+			} else if (t == ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE) {
 				nivelMDest++;
 				mDest[nivelMDest] = CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId();
 				movDest[nivelMDest] = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
+			} else if (t == ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
 				nivelMDest++;
 				mDest[nivelMDest] = CpMarcadorEnum.EM_EDITAL_DE_ELIMINACAO.getId();
 				movDest[nivelMDest] = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO) {
+			} else if (t == ExTipoDeMovimentacao.RETIRADA_DE_EDITAL_DE_ELIMINACAO
+					|| t == ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO) {
 				nivelMDest--;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO) {
+			} else if (t == ExTipoDeMovimentacao.ELIMINACAO) {
 				nivelMDest++;
 				mDest[nivelMDest] = CpMarcadorEnum.ELIMINADO.getId();
 				movDest[nivelMDest] = mov;
-			} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE) {
+			} else if (t == ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE) {
 				nivelMDest = 0;
 			}
 
@@ -827,8 +827,8 @@ public class ExMarcadorBL {
 
 	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob) {
 		ExMovimentacao movRetorno = null;
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3, false);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(6, false));
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, false));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 
 		Iterator it = transferencias.iterator();

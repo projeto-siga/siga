@@ -28,6 +28,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -50,6 +51,8 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.converter.ITipoDeMovimentacaoConverter;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -145,13 +148,12 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                ) order by mar.dtIniMarca desc"),
 		@NamedQuery(name = "listarAnexoPendenteAssinatura", query = "select mov from ExMovimentacao mov join mov.exMobil mobil "
 				+ "					where mobil in (select distinct(mob) from ExMobil mob join mob.exMarcaSet mar"
-				+ "               		where mar.cpMarcador.idMarcador = 30) and (mov.exTipoMovimentacao.idTpMov = 2)"
+				+ "               		where mar.cpMarcador.idMarcador = 30) and (mov.exTipoMovimentacao in :enumList)"
 				+ "					and mov.subscritor.idPessoaIni = :idPessoaIni"
 				+ "					order by mov.dtIniMov desc"),
 		@NamedQuery(name = "listarDespachoPendenteAssinatura", query = "select mov from ExMovimentacao mov join mov.exMobil mobil "
 				+ "					where mobil in (select distinct(mob) from ExMobil mob join mob.exMarcaSet mar"
-				+ "               		where mar.cpMarcador.idMarcador = 29) and (mov.exTipoMovimentacao.idTpMov = 5 or mov.exTipoMovimentacao.idTpMov = 6 "
-				+ "               			or mov.exTipoMovimentacao.idTpMov = 7 or mov.exTipoMovimentacao.idTpMov = 8 or mov.exTipoMovimentacao.idTpMov = 18)"
+				+ "               		where mar.cpMarcador.idMarcador = 29) and (mov.exTipoMovimentacao in :enumList)"
 				+ "					and mov.subscritor.idPessoaIni = :idPessoaIni"
 				+ "					order by mov.dtIniMov desc"),
 		// Somente os "em transferencia", "em transferencia eletronica" ou
@@ -182,28 +184,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_BEGIN = "SELECT mov FROM ExMovimentacao mov WHERE ";
 
 	private static final String CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END = //
-			"AND (" //
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-					+ ") OR"//
-							// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE
-					+ ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-					+ ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO + ") OR"//
-					+ " (mov.exTipoMovimentacao.idTpMov = " + ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
-					+ ")"//
-					+ ") " //
-					+ "ORDER BY mov.dtTimestamp DESC";
+			"AND mov.exTipoMovimentacao = :enumList ORDER BY mov.dtTimestamp DESC";
 
 	/**
 	 * Nome da {@link NamedQuery} usada para a consulta das {@link ExMovimentacao
@@ -246,8 +227,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 					+ "mov.exMobil.idMobil = :idMobil " //
 					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
 					+ "FROM ExMovimentacao tramitacao "
-					+ "WHERE tramitacao.exMobil.idMobil = :idMobil AND tramitacao.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
+					+ "WHERE tramitacao.exMobil.idMobil = :idMobil AND tramitacao.exTipoMovimentacao in :enumList ) " //
 					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	/**
@@ -291,8 +271,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 					+ "mov.exMobil.exDocumento = (SELECT mobBase.exDocumento FROM ExMobil mobBase WHERE mobBase.idMobil = :idMobil) "
 					+ "AND mov.dtTimestamp >= (SELECT MIN(tramitacao.dtTimestamp) " //
 					+ "FROM ExMovimentacao tramitacao "
-					+ "WHERE tramitacao.exMobil.exDocumento = mov.exMobil.exDocumento AND tramitacao.exTipoMovimentacao.idTpMov = "
-					+ ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA + ") " //
+					+ "WHERE tramitacao.exMobil.exDocumento = mov.exMobil.exDocumento AND tramitacao.exTipoMovimentacao in :enumList ) " //
 					+ CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_END;
 
 	@Id
@@ -395,9 +374,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@JoinColumn(name = "id_classificacao")
 	private ExClassificacao exClassificacao;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tp_mov", nullable = false)
-	private ExTipoMovimentacao exTipoMovimentacao;
+	@Convert(converter = ITipoDeMovimentacaoConverter.class)
+	@Column(name = "id_tp_mov", nullable = false)
+	private ITipoDeMovimentacao exTipoMovimentacao;
 
 	// private Long idTpMov;
 
@@ -545,7 +524,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		return exClassificacao;
 	}
 
-	public ExTipoMovimentacao getExTipoMovimentacao() {
+	public ITipoDeMovimentacao getExTipoMovimentacao() {
 		return exTipoMovimentacao;
 	}
 
@@ -622,7 +601,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		this.exClassificacao = exClassificacao;
 	}
 
-	public void setExTipoMovimentacao(final ExTipoMovimentacao exTipoMovimentacao) {
+	public void setExTipoMovimentacao(final ITipoDeMovimentacao exTipoMovimentacao) {
 		this.exTipoMovimentacao = exTipoMovimentacao;
 	}
 

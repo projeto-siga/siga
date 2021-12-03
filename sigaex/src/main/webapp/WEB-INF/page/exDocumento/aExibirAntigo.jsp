@@ -97,7 +97,7 @@
 			<c:set var="dtUlt" value="" />
 			<c:set var="temmov" value="${false}" />
 			<c:forEach var="mov" items="${m.movs}">
-				<c:if test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
+				<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
 					<c:set var="temmov" value="${true}" />
 				</c:if>
 			</c:forEach>
@@ -154,7 +154,7 @@
 						</thead>
 						<c:set var="evenorodd" value="odd" />
 						<c:forEach var="mov" items="${m.movs}">
-							<c:if test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
+							<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
 								<tr class="${mov.classe} ${mov.disabled}">
 									<c:if test="${ (exibirCompleto == 'true')}">
 										<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
@@ -211,7 +211,7 @@
 									</td>
 									<td>
 										${mov.descricao}
-										<c:if test='${mov.idTpMov != 2}'>
+										<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'>
 											${mov.complemento}
 										</c:if>
 										<c:set var="assinadopor" value="${true}" />
@@ -223,7 +223,7 @@
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
 													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" 
 													explicacao="${acao.explicacao}"	test="${acao.pode}" />
-												<c:if test='${assinadopor and mov.idTpMov == 2}'>
+												<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'>
 													${mov.complemento}
 													<c:set var="assinadopor" value="${false}" />
 												</c:if>

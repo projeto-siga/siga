@@ -9,7 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeConcluir extends CompositeExpressionSupport {
 
@@ -42,11 +42,11 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
 				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaJuntado(mob)),
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, titular, lotaTitular),
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.COPIA, titular, lotaTitular),
 
 				Or.of(Not.of(new ExEstaAindaComOCadastrante(mob)),
 						new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular)),
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO, titular,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.RECEBIMENTO, titular,
 						lotaTitular));
 	}
 }

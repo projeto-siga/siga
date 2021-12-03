@@ -6,7 +6,7 @@ import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.ORGAOS;
 import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.PESSOAS;
 import static br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios.UNIDADES;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -39,8 +39,8 @@ import br.gov.jfrj.siga.ex.ExConfiguracaoDTO;
 import br.gov.jfrj.siga.ex.ExConfiguracaoDestinatarios;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 
@@ -120,7 +120,7 @@ public class ExConfiguracao2Controller extends ExController {
 	@Consumes("application/json")
 	@Path("/movimentacoes")
 	public void listarMovimentacoes() throws Exception {				
-		List<ExTipoMovimentacao> tiposMovimentacao = getListaTiposMovimentacao();		
+		Set<ExTipoDeMovimentacao> tiposMovimentacao = getListaTiposMovimentacao();		
 		result.use(Results.json()).from(tiposMovimentacao).serialize();
 	}
 	
@@ -193,19 +193,19 @@ public class ExConfiguracao2Controller extends ExController {
 	}
 	
 	@SuppressWarnings("all")
-	private List<ExTipoMovimentacao> getListaTiposMovimentacao() throws Exception {
-		TreeSet<ExTipoMovimentacao> s = new TreeSet<ExTipoMovimentacao>(new Comparator() {
+	private Set<ExTipoDeMovimentacao> getListaTiposMovimentacao() throws Exception {
+		TreeSet<ExTipoDeMovimentacao> s = new TreeSet<>(new Comparator<ExTipoDeMovimentacao>() {
 
-			public int compare(Object o1, Object o2) {
-				return ((ExTipoMovimentacao) o1).getDescrTipoMovimentacao()
-						.compareTo(((ExTipoMovimentacao) o2).getDescrTipoMovimentacao());
+			@Override
+			public int compare(ExTipoDeMovimentacao o1, ExTipoDeMovimentacao o2) {
+				return o1.getDescr().compareTo(o2.getDescr());
 			}
 
 		});
 
-		s.addAll(dao().listarExTiposMovimentacao());
+		s.addAll(Arrays.asList(ExTipoDeMovimentacao.values()));
 
-		return new ArrayList<>(s);
+		return s;
 	}
 	
 	private void gravarConfiguracaoOrgaos(ExConfiguracaoDTO configuracao, Long idModelo) {

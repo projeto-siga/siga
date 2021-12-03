@@ -28,13 +28,13 @@ import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
@@ -74,6 +74,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTramitarEmParalelo;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 import br.gov.jfrj.siga.ex.logic.ExTemAnexos;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExMobilVO extends ExVO {
 	transient Logger log = Logger.getLogger(ExMobilVO.class.getCanonicalName());
@@ -139,7 +140,7 @@ public class ExMobilVO extends ExVO {
 	}
 
 	public ExMobilVO(ExMobil mob, DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular,
-			boolean completo, Long tpMov, boolean movAssinada, boolean serializavel) {
+			boolean completo, ITipoDeMovimentacao tpMov, boolean movAssinada, boolean serializavel) {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
 		this.isGeral = mob.isGeral();
@@ -213,8 +214,7 @@ public class ExMobilVO extends ExVO {
 
 		if (tpMov == null)
 			for (ExMovimentacao mov : mob.getCronologiaSet()) {
-				if (mov.getExMobil() != mob && mov.getExTipoMovimentacao().getId()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA))
+				if (mov.getExMobil() != mob && mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.COPIA)
 					continue;
 				movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular, lotaTitular, serializavel));
 			}
@@ -288,7 +288,7 @@ public class ExMobilVO extends ExVO {
 			duracaoSpan++;
 
 			if (i == movs.size()
-					|| (movVO.idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO && !movVO
+					|| (movVO.exTipoMovimentacao == ExTipoDeMovimentacao.RECEBIMENTO && !movVO
 							.isCancelada())) {
 				if (i == movs.size()) {
 					duracaoSpan++;
@@ -327,7 +327,7 @@ public class ExMobilVO extends ExVO {
 		int span = 0;
 		for (ExMovimentacaoVO movVO : movs) {
 			span++;
-			if (movVO.idTpMov == 14 || movVO.isCancelada()) {
+			if (movVO.exTipoMovimentacao == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO || movVO.isCancelada()) {
 				duracoes.get(j).setSpan(duracoes.get(j).getSpan() - 1);
 			}
 			if (span == duracoes.get(j).getSpanExibirCompleto()) {
@@ -340,7 +340,7 @@ public class ExMobilVO extends ExVO {
 		j = 0;
 		span = 0;
 		for (ExMovimentacaoVO movVO : movs) {
-			if (movVO.idTpMov != 14 && !movVO.isCancelada()) {
+			if (movVO.exTipoMovimentacao != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO  && !movVO.isCancelada()) {
 				if (span == 0) {
 					movVO.duracao = duracoes.get(j).getDuracao();
 					movVO.duracaoSpan = duracoes.get(j).getSpan();
@@ -490,17 +490,17 @@ public class ExMobilVO extends ExVO {
 		if (mob.getExDocumento().isFinalizado()	&& ultimaMovNaoCancelada != null) {
 			
 			//Cria lista de Movimentações que não podem ser canceladas
-			List<Long> listaMovimentacoesNaoCancelavel = new ArrayList<Long>();
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO);
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO);
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO);
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER);
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR);
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO);
-			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA);
+			List<ITipoDeMovimentacao> listaMovimentacoesNaoCancelavel = new ArrayList<>();
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.CIENCIA);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.RESTRINGIR_ACESSO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.REFAZER);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ASSINATURA_POR);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.GERAR_PROTOCOLO);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA);
 			
-			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getIdTpMov())) {
+			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getExTipoMovimentacao())) {
 				addAcao(AcaoVO.builder().nome("Desfa_zer "
 						+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()).icone("arrow_undo").nameSpace("/app/expediente/mov").acao("cancelarMovimentacao")
 						.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarMovimentacao(mob, titular, lotaTitular)).msgConfirmacao(SigaMessages.getMessage("documento.confirma.cancelamento") + "("

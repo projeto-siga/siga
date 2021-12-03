@@ -9,7 +9,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class AcessoConsulta {
 	Pattern pattern;
@@ -51,12 +51,8 @@ public class AcessoConsulta {
 					.getExMovimentacaoSet()) {
 				if (mov.isCancelada() || mov.isCanceladora())
 					continue;
-				if ((mov.getExTipoMovimentacao()
-								.getIdTpMov()
-								.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL))
-				  || (mov.getExTipoMovimentacao()
-						  		.getIdTpMov()
-						  		.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO))) {
+				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL)
+				  || (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO)) {
 					if (mov.getSubscritor() != null &&  titular != null && mov.getSubscritor() == titular ) {
 						return true;
 					} 
@@ -73,12 +69,8 @@ public class AcessoConsulta {
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
 				if (mov.isCancelada() || mov.isCanceladora())
 					continue;
-				if ((mov.getExTipoMovimentacao()
-						.getIdTpMov()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO))
-		  || (mov.getExTipoMovimentacao()
-				  		.getIdTpMov()
-				  		.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA))) {
+				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.RECEBIMENTO)
+		  || (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA)) {
 			if (mov.getResp() != null &&  titular != null && mov.getResp() == titular ) {
 				return true;
 			} 

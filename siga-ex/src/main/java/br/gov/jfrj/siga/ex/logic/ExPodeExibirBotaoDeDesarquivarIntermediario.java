@@ -9,7 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeExibirBotaoDeDesarquivarIntermediario extends CompositeExpressionSupport {
 
@@ -54,7 +54,7 @@ public class ExPodeExibirBotaoDeDesarquivarIntermediario extends CompositeExpres
 
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO,
 						titular, lotaTitular));
 	}
 }

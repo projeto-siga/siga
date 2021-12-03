@@ -388,7 +388,7 @@ function sbmtDoc() {
 								<tr class="${mov.classe} ${mov.disabled}">
 									<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
 									<td class="text-center">${dt}</td>
-									<td>${mov.idTpMov} - ${mov.descrTipoMovimentacao}</td>
+									<td>${mov.exTipoMovimentacao} - ${mov.descrTipoMovimentacao}</td>
 									<td class="text-left">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}"
  											descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}" 
@@ -412,7 +412,7 @@ function sbmtDoc() {
 									
 									<td>
 										${mov.descricao}
-										<c:if test='${mov.idTpMov != 2}'>
+										<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'>
 											${mov.complemento}
 										</c:if>
 										<c:set var="assinadopor" value="${true}" />
@@ -427,7 +427,7 @@ function sbmtDoc() {
 														pre="${acao.pre}" pos="${acao.pos}"
 														url="${pageContext.request.contextPath}${fn:replace(acao.url, '/doc/exibir?sigla=', 
 														'/painel/exibir?documentoRefSel.sigla=')}" />
-													<c:if test='${assinadopor and mov.idTpMov == 2}'>
+													<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'>
 														${mov.complemento}
 														<c:set var="assinadopor" value="${false}" />
 													</c:if>

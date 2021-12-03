@@ -9,8 +9,8 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 
@@ -81,10 +81,10 @@ public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+						.withExTpMov(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
 						.withCargo(titular.getCargo()).withDpFuncaoConfianca(titular.getFuncaoConfianca())
 						.withExFormaDoc(mob.doc().getExFormaDocumento()).withExMod(mob.doc().getExModelo()),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, titular, lotaTitular));
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.COPIA, titular, lotaTitular));
 	}
 }

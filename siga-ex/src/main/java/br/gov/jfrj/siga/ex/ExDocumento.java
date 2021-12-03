@@ -58,6 +58,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -66,6 +67,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
@@ -158,7 +160,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		ExMobil m = this.getMobilGeral();
 		Date dt = null;
 		for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
-			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO) {
+			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO) {
 				dt = mov.getDtMov();
 			}
 		}
@@ -1214,7 +1216,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
-			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
+			if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO)
 					&& mov.getExMovimentacaoCanceladora() == null) {
 				return true;
 			}
@@ -1229,7 +1231,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
-			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
+			if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO)
 					&& mov.getExMovimentacaoCanceladora() == null) {
 				return true;
 			}
@@ -1244,7 +1246,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
-			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO)
+			if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.PEDIDO_PUBLICACAO)
 					&& mov.getExMovimentacaoCanceladora() == null) {
 				return true;
 			}
@@ -1260,7 +1262,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
-			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM)
+			if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM)
 					&& mov.getExMovimentacaoCanceladora() == null) {
 				return true;
 			}
@@ -1272,8 +1274,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
-			if (((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM || mov
-					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI))
+			if (((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.PUBLICACAO_BOLETIM || mov
+					.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO_PUBL_BI))
 					&& mov.getExMovimentacaoCanceladora() == null) {
 				return true;
 			}
@@ -1288,7 +1290,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
-			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
+			if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DISPONIBILIZACAO)
 					&& mov.getExMovimentacaoCanceladora() == null) {
 				return true;
 			}
@@ -1427,11 +1429,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		for (ExMobil mob : getExMobilSet()) {
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
 				if (m.getExMovimentacaoCanceladora() == null
-						&& (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO
-								|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
-								|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-								|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO || m
-								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)) {
+						&& (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.ANOTACAO
+								|| m.getExTipoMovimentacao() == ExTipoDeMovimentacao.ANEXACAO
+								|| m.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+								|| m.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO || m
+								.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA)) {
 					mSet.add(m);
 				}
 			}
@@ -1626,9 +1628,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean mobilPrincipalPossuiJuntadaOuDesentranhamento(ExMobil mobilPrincipal, List<ExArquivoNumerado> arquivosNumerados) {
 		if (arquivosNumerados != null) {
 			ExMovimentacao movimentacao;
-			long[] tpIdMovs = { ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO,
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA };			
+			ITipoDeMovimentacao[] tpIdMovs = { ExTipoDeMovimentacao.JUNTADA,
+					ExTipoDeMovimentacao.JUNTADA_EXTERNO,
+					ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA };			
 			
 			for (ExArquivoNumerado arquivoNumerado : arquivosNumerados) {				
 				if (arquivoNumerado.getMobil().getId() != mobilPrincipal.getId()) {
@@ -1664,7 +1666,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 					if (an.getArquivo() instanceof ExMovimentacao) {
 						ExMovimentacao mov = (ExMovimentacao) an.getArquivo();
 
-						if (mov.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+						if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
 
 							if (mov.getExMobilRef() != null
 									&& !mov.getExMobilRef()
@@ -1723,14 +1725,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		for (ExMovimentacao m : set) {
 			ExArquivoNumerado an = new ExArquivoNumerado();
 			an.setNivel(nivel);
-			if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
+			if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA) {
 				an.setArquivo(m.getExDocumento());
 				an.setMobil(m.getExMobil());
 				an.setData(m.getData());
 				list.add(an);
 				m.getExDocumento().getAnexosNumerados(m.getExMobil(), list,
 						nivel + 1, copia);
-			} else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
+			} else if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.COPIA) {
 				an.setArquivo(m.getExMobilRef().doc());
 				an.setMobil(m.getExMobilRef());
 				an.setData(m.getData());
@@ -1751,7 +1753,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	private boolean isDesentranhamentoSP(ExMobil mobil, ExMovimentacao movimentacao) {
 		if (SigaMessages.isSigaSP() &&
-				movimentacao.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA &&
+				movimentacao.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA &&
 						movimentacao.getExMobil().getId().equals(mobil.getId())) {
 
 			return this.getIdDocPrincipal() == this.getIdDoc();
@@ -1771,7 +1773,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// Incluir os documentos anexos
 		if (mob.getExMovimentacaoSet() != null) {
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
-				if (!m.isCancelada() && m.isPdf() && m.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+				if (!m.isCancelada() && m.isPdf() && m.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 					set.add(m);
 				}
 			}
@@ -1780,7 +1782,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (mob.getExMovimentacaoSet() != null) {
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
 				if (!m.isCancelada()) {
-					if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
+					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.COPIA) {
 						set.add(m);
 					}
 				}
@@ -1790,9 +1792,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (mob.getExMovimentacaoReferenciaSet() != null)
 			for (ExMovimentacao m : mob.getExMovimentacaoReferenciaSet()) {
 				if (!m.isCancelada()) {
-					if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
+					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA) {
 						set.add(m);
-					} else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+					} else if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
 						set.remove(m.getExMovimentacaoRef());
 						if (m.isPdf())
 							set.add(m);
@@ -1829,7 +1831,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral()
 				.getMovsNaoCanceladas(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO);
+						ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO);
 	}
 
 	/**
@@ -1844,7 +1846,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral()
 				.getMovsNaoCanceladas(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
+						ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO,
 						true);
 	}
 
@@ -1859,14 +1861,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral().getMovsNaoCanceladas(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA);
+				ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
 	}
 	
 	public Set<ExMovimentacao> getAssinaturasPor() {
 		if (getMobilGeral() == null)
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral().getMovsNaoCanceladas(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR);
+				ExTipoDeMovimentacao.ASSINATURA_POR);
 	}
 
 
@@ -1882,7 +1884,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral()
 				.getMovsNaoCanceladas(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
+						ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA,
 						true);
 	}
 
@@ -1891,7 +1893,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral()
 				.getMovsNaoCanceladas(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO);
+						ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO);
 	}
 
 	public Set<ExMovimentacao> getSolicitantesDeAssinatura() {
@@ -1899,7 +1901,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return new TreeSet<ExMovimentacao>();
 		return getMobilGeral()
 				.getMovsNaoCanceladas(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
+						ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA,
 						true);
 	}
 
@@ -1915,8 +1917,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public Set<ExMovimentacao> getAssinaturasComTokenOuSenha() {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 		
-		long[] idTpMovs = {ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO, 
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA};
+		ITipoDeMovimentacao[] idTpMovs = {ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO, 
+				ExTipoDeMovimentacao.ASSINATURA_COM_SENHA};
 		
 		set.addAll(getMobilGeral().getMovsNaoCanceladas(idTpMovs));
 		return set;
@@ -2134,7 +2136,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 		if (movs != null) {
 			for (final ExMovimentacao mov : movs) {
-				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
+				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TORNAR_SEM_EFEITO)
 						&& mov.getExMovimentacaoCanceladora() == null) {
 					return true;
 				}
@@ -2448,7 +2450,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (getMobilGeral() != null
 				&& getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
-				if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+				if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
 						&& m.getExMovimentacaoCanceladora() == null) {
 					cosignatarios.add(m.getSubscritor());
 				}
@@ -2478,7 +2480,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (getMobilGeral() != null
 				&& getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
-				if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+				if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
 						&& m.getExMovimentacaoCanceladora() == null) {
 					cosignatarios.add(m);
 				}
@@ -2497,10 +2499,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 		for (ExMobil mob : getExMobilSet()) {
 			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA || mov
-						.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)
+				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO
+						|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_INTERNO
+						|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA || mov
+						.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA)
 						&& !mov.isCancelada())
 					subscritoresDesp.add(mov.getSubscritor());
 			}
@@ -2515,7 +2517,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean isRecebeuJuntada() {
 		for (ExMobil mob : getExMobilSet()) {
 			for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
-				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
 						&& !mov.isCancelada())
 					return true;
 			}
@@ -2750,7 +2752,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public List<DpResponsavel> getResponsaveisPorPapel(ExPapel papel) {
 		List<DpResponsavel> lista = new ArrayList<DpResponsavel>();
 		List<ExMovimentacao> movs = getMobilGeral().getMovimentacoesPorTipo(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL, true);
+				ExTipoDeMovimentacao.VINCULACAO_PAPEL, true);
 		for (ExMovimentacao mov : movs) {
 			if (!papel.getIdPapel()
 							.equals(mov.getExPapel().getIdPapel()))
@@ -2773,9 +2775,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean temPerfil(DpPessoa titular, DpLotacao lotaTitular, long papel) {
 		for (ExMovimentacao mov : getMobilGeral().getExMovimentacaoSet()) {
 			if (!mov.isCancelada()
-					&& mov.getExTipoMovimentacao()
-							.getId()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+					&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL
 					&& mov.getExPapel().getIdPapel().equals(papel)
 					&& ((mov.getSubscritor() != null && mov.getSubscritor()
 							.equivale(titular)) || (mov.getSubscritor() == null && mov
@@ -2790,9 +2790,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		Map<ExPapel, List<Object>> mapa = new HashMap<ExPapel, List<Object>>();
 		for (ExMovimentacao mov : getMobilGeral().getExMovimentacaoSet())
 			if (!mov.isCancelada()
-					&& mov.getExTipoMovimentacao()
-							.getId()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+					&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
 				if (mapa.get(mov.getExPapel()) == null)
 					mapa.put(mov.getExPapel(), new ArrayList<Object>());
 				mapa.get(mov.getExPapel()).add(
@@ -2878,13 +2876,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean jaTransferido() {
 		for (ExMovimentacao mov : getExMovimentacaoSet()) {
 			if (!mov.isCancelada()
-					&& (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA))
+					&& (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA 
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO 
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA))
 				return true;
 		}
 
@@ -2902,7 +2900,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if(movs != null)
 			for (final ExMovimentacao mov : movs) {
 				if (!mov.isCancelada()
-						&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
+						&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA)
 					return mov;
 			}
 		return null;
@@ -2976,7 +2974,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		boolean b = false;
 		for (ExMovimentacao movRef : getExMovimentacaoSet()) {
 			if (!movRef.isCancelada()
-				&& movRef.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO)
+				&& movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.GERAR_PROTOCOLO)
 					b = true;
 		}
 		return b;
@@ -3017,7 +3015,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if(movs != null)
 			for (final ExMovimentacao mov : movs) {
 				if (!mov.isCancelada()
-						&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA)
+						&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.PRAZO_ASSINATURA)
 					return mov;
 			}
 		return null;

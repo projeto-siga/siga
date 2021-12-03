@@ -21,7 +21,6 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO;
 import static java.util.Objects.nonNull;
 
 import java.io.Serializable;
@@ -61,10 +60,12 @@ import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
@@ -115,7 +116,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	/* Add customized code below */
 
 	public String getDescrTipoMovimentacao() {
-		String s = getExTipoMovimentacao().getSigla();
+		String s = getExTipoMovimentacao().getDescr();
 		if (getCadastrante() == null || getSubscritor() == null)
 			return s;
 		if (!getSubscritor().getId().equals(getCadastrante().getId())
@@ -163,9 +164,9 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	}
 
-	public Long getIdTpMov() {
-		return getExTipoMovimentacao().getIdTpMov();
-	}
+//	public Long getIdTpMov() {
+//		return getExTipoMovimentacao().getIdTpMov();
+//	}
 
 	public void setConteudoBlobMov2(byte[] blob) {
 		if (blob != null)
@@ -405,16 +406,16 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return String.valueOf(getNumVia2());
 	}
 
-	public static Integer tpMovDesempatePosicao(Long idTpMov, Long idTpMov2) {
-		final List<Long> tpMovDesempate = Arrays.asList(new Long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO });
+	public static Integer tpMovDesempatePosicao(ITipoDeMovimentacao idTpMov, ITipoDeMovimentacao idTpMov2) {
+		final List<ITipoDeMovimentacao> tpMovDesempate = Arrays.asList(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.CRIACAO,
+				ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO,
+				ExTipoDeMovimentacao.ASSINATURA_COM_SENHA,
+				ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA,
+				ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO,
+				ExTipoDeMovimentacao.JUNTADA, ExTipoDeMovimentacao.TRANSFERENCIA,
+				ExTipoDeMovimentacao.TRAMITE_PARALELO, ExTipoDeMovimentacao.NOTIFICACAO,
+				ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.CONCLUSAO,
+				ExTipoDeMovimentacao.MARCACAO });
 
 		// Trata o caso de alguma parâmetro ser null
 		if (idTpMov == null && idTpMov2 == null)
@@ -837,9 +838,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	public boolean isCanceladora() {
 		return getExTipoMovimentacao() != null
-				&& getExTipoMovimentacao()
-						.getIdTpMov()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
+				&& getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO;
 	}
 
 	/**
@@ -863,11 +862,11 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		// está calculando os marcadores.
 		for (ExMovimentacao assinatura : this.getExMobil()
 				.getExMovimentacaoSet()) {
-			long l = assinatura.getIdTpMov();
-			if (l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
-					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+			ITipoDeMovimentacao l = assinatura.getExTipoMovimentacao();
+			if (l != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO
+					&& l != ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
+					&& l != ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA
+					&& l != ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA)
 				continue;
 			if (assinatura.getExMovimentacaoRef() == null)
 				continue;
@@ -888,8 +887,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				&& this.getExMovimentacaoReferenciadoraSet() != null) {
 			for (ExMovimentacao movRef : this
 					.getExMovimentacaoReferenciadoraSet()) {
-				if (movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+				if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO
+						|| movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO)
 					return true;
 			}
 		}
@@ -943,8 +942,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || m
-					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
+			if ((m.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO || m
+					.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -962,7 +961,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
+			if ((m.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -980,7 +979,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
+			if ((m.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -998,8 +997,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO || m
-					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+			if ((m.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO || m
+					.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -1017,7 +1016,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+			if ((m.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -1035,7 +1034,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+			if ((m.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -1087,8 +1086,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	@Override
 	public boolean isRascunho() {
 		// TODO Auto-generated method stub
-		if (getExTipoMovimentacao().getIdTpMov().equals(
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)
+		if (getExTipoMovimentacao() == ExTipoDeMovimentacao.ANEXACAO
 				&& mob().doc().isEletronico() && !isAssinada())
 			return true;
 
@@ -1099,7 +1097,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public boolean isSemEfeito() {
 		if (getExDocumento().isSemEfeito()) {
 			// Não gera marca de "Sem Efeito em Folha de Desentranhamento"
-			if (getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)
+			if (getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
 				return false;
 			else
 				return true;
@@ -1129,7 +1127,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return (getExMobil() != null ? getExMobil().getSigla() : "")
 				+ ": "
 				+ (getExTipoMovimentacao() != null ? getExTipoMovimentacao()
-						.getDescricao() : "") + ": " + getDescrMov();
+						.getDescr() : "") + ": " + getDescrMov();
 	}
 
 	/**
@@ -1137,8 +1135,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 *         CANCELAMENTO_DE_MOVIMENTACAO e Falso caso contrário
 	 */
 	public boolean isInserirDocumentoNoDossieDoMobilRef() {
-		return getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
-				|| getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
+		return getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
+				|| getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO;
 	}
 
 	/**
@@ -1171,12 +1169,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	@Override
 	public boolean isInternoProduzido() {
-		switch (getExTipoMovimentacao().getIdTpMov().intValue()) {
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO:
-			return false;
-		}
-		// TODO Auto-generated method stub
-		return true;
+		return getExTipoMovimentacao() != ExTipoDeMovimentacao.ANEXACAO;
 	}
 
 	public boolean isUltimaMovimentacao() {
@@ -1199,14 +1192,17 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	@Override
 	public String getTipoDescr() {
-		switch (getExTipoMovimentacao().getIdTpMov().intValue()) {
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO:
+		if (!(getExTipoMovimentacao() instanceof ExTipoDeMovimentacao))
+			return getExTipoMovimentacao().getDescr();
+		ExTipoDeMovimentacao l = (ExTipoDeMovimentacao) getExTipoMovimentacao();
+		switch (l) {
+		case ANEXACAO:
 			return "Anexo";
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA:
+		case DESPACHO:
+		case DESPACHO_TRANSFERENCIA:
+		case DESPACHO_INTERNO:
+		case DESPACHO_INTERNO_TRANSFERENCIA:
+		case DESPACHO_TRANSFERENCIA_EXTERNA:
 			return "Despacho";
 		}
 		return "Outro";
@@ -1214,7 +1210,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	
 	
 	public boolean podeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
-		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+		if (this.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO) {
 			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
 			return exp.eval();
 		}
@@ -1222,32 +1218,36 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public boolean isAssinatura() {
-		long l = getExTipoMovimentacao().getId();
-		switch ((int) l) {
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
+		if (!(getExTipoMovimentacao() instanceof ExTipoDeMovimentacao))
+			return false;
+		ExTipoDeMovimentacao l = (ExTipoDeMovimentacao) getExTipoMovimentacao();
+		switch (l) {
+		case ASSINATURA_DIGITAL_DOCUMENTO:
+		case ASSINATURA_COM_SENHA:
+		case ASSINATURA_DIGITAL_MOVIMENTACAO:
+		case ASSINATURA_MOVIMENTACAO_COM_SENHA:
+		case CONFERENCIA_COPIA_COM_SENHA:
+		case CONFERENCIA_COPIA_DOCUMENTO:
 			return true;
 		}
 		return false;
 	}
 
 	public boolean isAssinaturaComSenha() {
-		long l = getExTipoMovimentacao().getId();
-		switch ((int) l) {
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
+		if (!(getExTipoMovimentacao() instanceof ExTipoDeMovimentacao))
+			return false;
+		ExTipoDeMovimentacao l = (ExTipoDeMovimentacao) getExTipoMovimentacao();
+		switch (l) {
+		case ASSINATURA_COM_SENHA:
+		case ASSINATURA_MOVIMENTACAO_COM_SENHA:
+		case CONFERENCIA_COPIA_COM_SENHA:
 			return true;
 		}
 		return false;
 	}
 
 	public String expliquePodeCancelar(DpPessoa titular, DpLotacao lotaTitular) {
-		if (this.getIdTpMov().equals(TIPO_MOVIMENTACAO_MARCACAO)) {
+		if (this.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO) {
 			Expression exp = new ExPodeCancelarMarcacao(this, titular, lotaTitular);
 			return AcaoVO.Helper.formatarExplicacao(exp, exp.eval());
 		}
@@ -1271,23 +1271,25 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 
 	public String assertAssinaturaValida(boolean retornaNome) throws Exception {
-		long l = getExTipoMovimentacao().getId();
-		switch ((int) l) {
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
+		if (!(getExTipoMovimentacao() instanceof ExTipoDeMovimentacao))
+			throw new AplicacaoException("Não é Assinatura");
+		ExTipoDeMovimentacao l = (ExTipoDeMovimentacao) getExTipoMovimentacao();
+		switch (l) {
+		case ASSINATURA_COM_SENHA:
+		case CONFERENCIA_COPIA_COM_SENHA:
 			return assertAssinaturaComSenhaValida(this.getExDocumento().getPdf(), this.getAuditHash(),
 					this.getDtIniMov(), retornaNome);
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+		case ASSINATURA_MOVIMENTACAO_COM_SENHA:
 			return assertAssinaturaComSenhaValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getAuditHash(),
 					this.getDtIniMov(), retornaNome);
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
+		case ASSINATURA_DIGITAL_DOCUMENTO:
 			return assertAssinaturaDigitalValida(this.getExDocumento().getPdf(), this.getConteudoBlobMov(),
 					this.getDtIniMov(), retornaNome);
 			
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
+		case CONFERENCIA_COPIA_DOCUMENTO:
 			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getConteudoBlobMov(),
 					this.getDtIniMov(), retornaNome);
-		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+		case ASSINATURA_DIGITAL_MOVIMENTACAO:
 			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(),
 					this.getConteudoBlobMov(), this.getDtIniMov(), retornaNome);
 		default:

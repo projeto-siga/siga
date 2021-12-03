@@ -6,7 +6,7 @@ import com.crivano.jlogic.JLogic;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPessoaEstaVinculadaPorPerfil implements Expression {
 
@@ -21,8 +21,7 @@ public class ExPessoaEstaVinculadaPorPerfil implements Expression {
 	@Override
 	public boolean eval() {
 		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
-			if (!mov.isCancelada() && mov.getExTipoMovimentacao().getIdTpMov()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+			if (!mov.isCancelada() && mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
 				if (mov.getSubscritor() != null)
 					if (mov.getSubscritor().equivale(titular))
 						return true;

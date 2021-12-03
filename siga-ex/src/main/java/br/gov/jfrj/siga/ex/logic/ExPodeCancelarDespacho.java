@@ -59,6 +59,6 @@ public class ExPodeCancelarDespacho extends CompositeExpressionSupport {
 				Not.of(new CpIgual(mov, "movimentação", mob.getUltimaMovimentacao(), "última movimentação")),
 
 				Not.of(new ExMovimentacaoEstaAssinada(mov)), new ExPodePorConfiguracao(titular, lotaTitular)
-						.withIdTpConf(ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO).withExTpMov(mov.getIdTpMov()));
+						.withIdTpConf(ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO).withExTpMov(mov.getExTipoMovimentacao()));
 	}
 }

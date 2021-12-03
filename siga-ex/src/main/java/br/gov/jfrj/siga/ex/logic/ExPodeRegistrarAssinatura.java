@@ -10,8 +10,8 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeRegistrarAssinatura extends CompositeExpressionSupport {
 
@@ -80,7 +80,7 @@ public class ExPodeRegistrarAssinatura extends CompositeExpressionSupport {
 						new ExETitular(mob.doc(), titular)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO)
+						.withExTpMov(ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO)
 						.withExMod(mob.doc().getExModelo()));
 	}
 }

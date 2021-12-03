@@ -141,7 +141,7 @@
 					</td>
 					<c:forEach var="movimentacao" items="${documento.exMovimentacaoSet}">				
 							<c:choose>
-								<c:when test='${movimentacao.exTipoMovimentacao.idTpMov == 38 && 
+								<c:when test='${movimentacao.exTipoMovimentacao == PEDIDO_PUBLICACAO && 
 								!movimentacao.cancelada}'>
 								<td width="44%">${movimentacao.descrPublicacao}</td>
 								<td width="2%" align="left">

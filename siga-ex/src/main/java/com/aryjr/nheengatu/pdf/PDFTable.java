@@ -22,6 +22,7 @@
  */
 package com.aryjr.nheengatu.pdf;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -35,7 +36,6 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import java.awt.Color;
 
 
 /**

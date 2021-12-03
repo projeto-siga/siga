@@ -18,10 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 import br.gov.jfrj.siga.base.SigaCalendar;

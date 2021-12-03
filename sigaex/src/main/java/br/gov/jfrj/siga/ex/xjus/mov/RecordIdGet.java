@@ -7,7 +7,7 @@ import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.PdfToPlainText;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
@@ -100,7 +100,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		addField(resp, "codigo", doc.getCodigo() + ":" + mov.getIdMov());
 		if (doc.getExTipoDocumento() != null) {
 			addFieldAndFacet(resp, "origem",
-					mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) ? "Anexo"
+					mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.ANEXACAO) ? "Anexo"
 							: "Despacho Curto");
 
 		}

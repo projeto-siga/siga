@@ -10,7 +10,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExDeveReceberEletronico extends CompositeExpressionSupport {
 
@@ -47,8 +47,7 @@ public class ExDeveReceberEletronico extends CompositeExpressionSupport {
 					@Override
 					public boolean eval() {
 						ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
-						return !(ultMov.getExTipoMovimentacao()
-								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
+						return !(ultMov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
 								&& ultMov.getCadastrante().equivale(titular)
 								&& ultMov.getLotaResp().equivale(lotaTitular));
 					}

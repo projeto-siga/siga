@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
-import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.dp.DpLotacao;

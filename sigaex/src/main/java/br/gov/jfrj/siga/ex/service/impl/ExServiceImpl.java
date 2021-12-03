@@ -61,9 +61,7 @@ import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExSequencia;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.logic.ExPodeMovimentar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
@@ -71,6 +69,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeReiniciarNumeracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.NivelDeAcessoUtil;
@@ -138,7 +137,7 @@ public class ExServiceImpl implements ExService {
 					Ex.getInstance().getBL().transferir(null, null, cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null, null, destinoParser.getLotacao(),
 							destinoParser.getPessoa(), null, null, null, null, null, false, null, null, null,
-							forcarTransferencia, false, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+							forcarTransferencia, false, ExTipoDeMovimentacao.TRANSFERENCIA);
 				}
 				return true;
 			} catch (Exception ex) {

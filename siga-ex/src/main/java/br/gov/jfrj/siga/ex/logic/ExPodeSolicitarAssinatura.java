@@ -8,8 +8,8 @@ import com.crivano.jlogic.Not;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeSolicitarAssinatura extends CompositeExpressionSupport {
 
@@ -49,7 +49,7 @@ public class ExPodeSolicitarAssinatura extends CompositeExpressionSupport {
 				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(doc.getExModelo())
 						.withExFormaDoc(doc.getExFormaDocumento()).withPessoaObjeto(doc.getSubscritor())
 						.withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
+						.withExTpMov(ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA)
 
 		);
 

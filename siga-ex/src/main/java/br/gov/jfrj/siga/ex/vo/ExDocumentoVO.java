@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.logic.CpPodeBoolean;
 import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
@@ -47,7 +48,6 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.logic.ExEstaFinalizado;
@@ -85,6 +85,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeSolicitarAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 import br.gov.jfrj.siga.ex.logic.ExTemAnexos;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
@@ -373,8 +374,7 @@ public class ExDocumentoVO extends ExVO {
 
 		
 		this.dtLimiteDemandaJudicial = doc.getMobilGeral().getExMovimentacaoSet().stream() //
-				.filter(mov -> mov.getExTipoMovimentacao().getId()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+				.filter(mov -> mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO)
 				.filter(mov -> !mov.isCancelada()) //
 				.filter(mov -> mov.getMarcador().isDemandaJudicial()) //
 				.map(ExMovimentacao::getDtFimMovDDMMYY) //
@@ -427,46 +427,46 @@ public class ExDocumentoVO extends ExVO {
 	}
 
 	public void exibe() {
-		List<Long> movimentacoesPermitidas = new ArrayList<Long>();
+		List<ITipoDeMovimentacao> movimentacoesPermitidas = new ArrayList<>();
 
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
+				.add(ExTipoDeMovimentacao.JUNTADA);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_A_DOCUMENTO_EXTERNO);
+				.add(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO);
+				.add(ExTipoDeMovimentacao.JUNTADA_EXTERNO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA);
+				.add(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO);
+				.add(ExTipoDeMovimentacao.ANEXACAO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
+				.add(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO);
+				.add(ExTipoDeMovimentacao.ANOTACAO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO);
+				.add(ExTipoDeMovimentacao.DESPACHO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO);
+				.add(ExTipoDeMovimentacao.DESPACHO_INTERNO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA);
+				.add(ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
+				.add(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+				.add(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO);
+				.add(ExTipoDeMovimentacao.DISPONIBILIZACAO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM);
+				.add(ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM);
+				.add(ExTipoDeMovimentacao.PUBLICACAO_BOLETIM);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
+				.add(ExTipoDeMovimentacao.PEDIDO_PUBLICACAO);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
+				.add(ExTipoDeMovimentacao.ENCERRAMENTO_DE_VOLUME);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA);
+				.add(ExTipoDeMovimentacao.COPIA);
 		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);		
+				.add(ExTipoDeMovimentacao.CIENCIA);		
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
 		marcasGeralPermitidas.add(CpMarcadorEnum.A_ELIMINAR.getId());
@@ -498,8 +498,8 @@ public class ExDocumentoVO extends ExVO {
 			List<ExMovimentacao> juntadasRevertidas = new ArrayList<ExMovimentacao>();
 
 			for (ExMovimentacaoVO exMovVO : mobVO.getMovs()) {
-				if (!exMovVO.isCancelada() && movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
-					if (exMovVO.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+				if (!exMovVO.isCancelada() && movimentacoesPermitidas.contains(exMovVO.getExTipoMovimentacao())) {
+					if (exMovVO.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
 						juntadasRevertidas.add(exMovVO.getMov()
 								.getExMovimentacaoRef());
 						// Edson: se não gerou peça, nem mostra o
@@ -598,9 +598,9 @@ public class ExDocumentoVO extends ExVO {
 		String retorno = "";
 		
 		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
-		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA));
-		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO));
-		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA));
+		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA));
+		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO));
+		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA));
 		
 		if(lista.isEmpty()) {
 			return retorno;

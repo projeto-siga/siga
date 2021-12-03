@@ -4,7 +4,6 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;

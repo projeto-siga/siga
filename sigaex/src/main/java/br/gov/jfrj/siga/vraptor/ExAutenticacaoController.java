@@ -41,8 +41,8 @@ import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
@@ -161,7 +161,7 @@ public class ExAutenticacaoController extends ExController {
 								dt,
 								assinatura,
 								certificado,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO);
+								ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO);
 			} catch (final Exception e) {
 				throw new AplicacaoException(e.getMessage());
 			}
@@ -200,10 +200,10 @@ public class ExAutenticacaoController extends ExController {
  			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class,
  					false);
 			
-			switch ( mov.getExTipoMovimentacao().getId().intValue()) {
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA:
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+			switch ((ExTipoDeMovimentacao) mov.getExTipoMovimentacao()) {
+			case CONFERENCIA_COPIA_COM_SENHA:
+			case ASSINATURA_COM_SENHA:
+			case ASSINATURA_MOVIMENTACAO_COM_SENHA:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".jwt";
 				contentType = "application/jwt";
 				if (mov.getAuditHash() == null)
@@ -212,9 +212,9 @@ public class ExAutenticacaoController extends ExController {
 				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);
 				break;
 				
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO:
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+			case CONFERENCIA_COPIA_DOCUMENTO:
+			case ASSINATURA_DIGITAL_DOCUMENTO:
+			case ASSINATURA_DIGITAL_MOVIMENTACAO:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
 				contentType = mov.getConteudoTpMov();
 				bytes = mov.getConteudoBlobMov2();

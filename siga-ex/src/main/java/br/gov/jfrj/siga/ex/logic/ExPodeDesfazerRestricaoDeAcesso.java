@@ -6,19 +6,15 @@ import java.util.List;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
-import com.crivano.jlogic.Not;
-import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.cp.logic.CpDiferente;
-import br.gov.jfrj.siga.cp.logic.CpIgual;
 import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeDesfazerRestricaoDeAcesso extends CompositeExpressionSupport {
 
@@ -35,7 +31,7 @@ public class ExPodeDesfazerRestricaoDeAcesso extends CompositeExpressionSupport 
 		this.lotaTitular = lotaTitular;
 
 		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
-		lista.addAll(mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+		lista.addAll(mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 	}
 
 	@Override

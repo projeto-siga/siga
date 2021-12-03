@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeCancelarCiencia extends CompositeExpressionSupport {
 
@@ -32,7 +32,7 @@ public class ExPodeCancelarCiencia extends CompositeExpressionSupport {
 		this.penultMovNaoCancelada = mob.getPenultimaMovimentacaoNaoCancelada();
 		this.ultMov = mob.getUltimaMovimentacao();
 
-		Set<ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
+		Set<ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.CIENCIA);
 		if (setMovCiente != null)
 			for (ExMovimentacao mov : setMovCiente)
 				if (mov.getCadastrante() != null && mov.getCadastrante().equivale(titular)) {
@@ -75,12 +75,12 @@ public class ExPodeCancelarCiencia extends CompositeExpressionSupport {
 
 				Or.of(
 
-						new ExMovimentacaoEDoTipo(penultMovNaoCancelada, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA),
+						new ExMovimentacaoEDoTipo(penultMovNaoCancelada, ExTipoDeMovimentacao.CIENCIA),
 
-						new ExMovimentacaoEDoTipo(penultMovNaoCancelada, ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO),
+						new ExMovimentacaoEDoTipo(penultMovNaoCancelada, ExTipoDeMovimentacao.MARCACAO),
 
 						new ExMovimentacaoEDoTipo(penultMovNaoCancelada,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)),
+								ExTipoDeMovimentacao.VINCULACAO_PAPEL)),
 
 				new CpNaoENulo(movCiencia, "movimentação de ciência"),
 
@@ -88,7 +88,7 @@ public class ExPodeCancelarCiencia extends CompositeExpressionSupport {
 
 				new ExMobEstaCiente(mob, titular),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO,
 						titular, lotaTitular));
 	}
 }

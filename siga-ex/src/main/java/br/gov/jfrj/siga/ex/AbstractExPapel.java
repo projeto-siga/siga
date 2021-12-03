@@ -19,15 +19,10 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.SortedSet;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.model.Objeto;
 

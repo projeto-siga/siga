@@ -7,7 +7,7 @@ import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExMobTemMovimentacaoPosteriorEmQualquerVia implements Expression {
 	ExMobil mob;
@@ -25,7 +25,7 @@ public class ExMobTemMovimentacaoPosteriorEmQualquerVia implements Expression {
 	@Override
 	public boolean eval() {
 		if (exUltMovNaoCanc.getExTipoMovimentacao()
-				.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO) {
+				 == ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO) {
 			Date dt = exUltMovNaoCanc.getDtIniMov();
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				ExMovimentacao move = m.getUltimaMovimentacaoNaoCancelada();

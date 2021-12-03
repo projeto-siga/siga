@@ -19,7 +19,6 @@
 package br.gov.jfrj.siga.hibernate.ext;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
-import br.gov.jfrj.siga.dp.CpMarcador;
 
 public class MontadorQuery implements IMontadorQuery {
 

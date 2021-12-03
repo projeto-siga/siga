@@ -3,9 +3,8 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExMovMobRefRecebeuMovimentacoesPosteriores implements Expression {
 	ExMovimentacao mov;
@@ -27,8 +26,8 @@ public class ExMovMobRefRecebeuMovimentacoesPosteriores implements Expression {
 				break;
 
 			if (!movDoMobilRef.isCancelada()
-					&& movDoMobilRef.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA
-					&& movDoMobilRef.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO
+					&& movDoMobilRef.getExTipoMovimentacao() != ExTipoDeMovimentacao.REFERENCIA
+					&& movDoMobilRef.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANOTACAO
 					&& movDoMobilRef.getDtIniMov().after(mov.getDtIniMov()))
 				return true;
 		}

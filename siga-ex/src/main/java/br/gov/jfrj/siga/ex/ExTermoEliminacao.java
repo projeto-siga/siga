@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -54,7 +55,7 @@ public class ExTermoEliminacao {
 					.getDoc()
 					.getMobilGeral()
 					.getUltimaMovimentacaoNaoCancelada(
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO);
+							ExTipoDeMovimentacao.DISPONIBILIZACAO);
 			;
 			return dispon.getPagPublicacao();
 		} catch (Exception e) {
@@ -68,7 +69,7 @@ public class ExTermoEliminacao {
 					.getDoc()
 					.getMobilGeral()
 					.getUltimaMovimentacaoNaoCancelada(
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO);
+							ExTipoDeMovimentacao.DISPONIBILIZACAO);
 			Date dt = dispon.getDtIniMov();
 			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(dt);
 			return new SimpleDateFormat("dd/MM/yyyy").format(DJE
@@ -113,12 +114,12 @@ public class ExTermoEliminacao {
 		ExMovimentacao assinatura = getDoc()
 				.getMobilGeral()
 				.getUltimaMovimentacaoNaoCancelada(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO);
+						ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO);
 		if (assinatura == null)
 			assinatura = getDoc()
 					.getMobilGeral()
 					.getUltimaMovimentacaoNaoCancelada(
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO);
+							ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO);
 
 		for (ExItemDestinacao o : getEdital().getEfetivamenteInclusosDoPeriodo()) {
 			for (ExMobil mobAEliminar : o.getMob()

@@ -5,7 +5,7 @@ import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExMobHaCancelamentoDeMovimentacaoAnterior implements Expression {
 	ExMobil mob;
@@ -25,9 +25,9 @@ public class ExMobHaCancelamentoDeMovimentacaoAnterior implements Expression {
 	public boolean eval() {
 		return (exUltMovNaoCanc.getIdMov() != exUltMov.getIdMov() && exUltMov.getExMovimentacaoRef() != null
 				&& exUltMov.getExMovimentacaoRef().getExTipoMovimentacao()
-						.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO
+						 != ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO
 				&& exUltMov.getExMovimentacaoRef().getExTipoMovimentacao()
-						.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ATUALIZACAO);
+						 != ExTipoDeMovimentacao.ATUALIZACAO);
 	}
 
 	@Override

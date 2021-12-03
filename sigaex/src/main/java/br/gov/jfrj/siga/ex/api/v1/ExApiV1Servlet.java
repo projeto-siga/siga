@@ -252,6 +252,11 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("consultapublica.exibe.tramitacao.ate.nivelacesso", "-1");
 		
 		addPrivateProperty("debug.default.template.pathname", null);
+		
+		//Informações Siafem
+		addPrivateProperty("ws.siafem.nome.modelo", null);
+		addPrivateProperty("ws.siafem.url.wsdl", null);
+		addPrivateProperty("ws.siafem.url.namespace", null);
 	}
 
 	@Override

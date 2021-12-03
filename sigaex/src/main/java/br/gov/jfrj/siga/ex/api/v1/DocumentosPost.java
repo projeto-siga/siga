@@ -383,6 +383,11 @@ public class DocumentosPost implements IDocumentosPost {
 			throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);
 		}
 
+		if(req.codigoUnico) {
+			exBL.finalizar(cadastrante, ctx.getLotaTitular(), doc);
+			resp.codigoUnico = exBL.obterCodigoUnico(doc, true);
+		}
+		
 		resp.sigladoc = doc.getSigla();
 	}
 
@@ -435,4 +440,5 @@ public class DocumentosPost implements IDocumentosPost {
 	static boolean isNumerico(String str) {
 		return str.matches("^\\d+$");
 	}
+
 }

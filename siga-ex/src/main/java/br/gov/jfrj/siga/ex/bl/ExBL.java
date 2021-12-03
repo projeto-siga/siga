@@ -209,6 +209,8 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
+import br.gov.jfrj.siga.ex.ws.siafem.ServicoSiafemWs;
+import br.gov.jfrj.siga.ex.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
@@ -3198,6 +3200,8 @@ public class ExBL extends CpBL {
 			
 			if (!Utils.empty(tipoSequencia) && !doc.isFinalizado()) {
 				doc.setNumeroSequenciaGenerica(obterSequenciaAno(doc.getAnoEmissao(), tipoSequencia));
+				doc.setCodigoUnico(formatarCodigoUnico(doc.getNumeroSequenciaGenerica()));
+				doc.setDigitoVerificadorCodigoUnico(calcularDigitoVerificador(doc.getCodigoUnico()));
 			}
 		}
 	}
@@ -5523,6 +5527,8 @@ public class ExBL extends CpBL {
 						Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());
 						//gera e adiciona a entrevista o número da sequencia generica
 						form.put("numeroSequenciaGenerica", doc.getNumeroSequenciaGenerica());
+						form.put("codigoUnico", doc.getCodigoUnico());
+						form.put("digitoVerificadorCodigoUnico", doc.getDigitoVerificadorCodigoUnico());
 						//Atualiza Form 
 						doc.setConteudoBlobForm(urlEncodedFormFromMap(form));
 						//Reprocessa Descrição para adição de sequencia se implementado no modelo
@@ -8037,6 +8043,78 @@ public class ExBL extends CpBL {
 		doc.setPrincipal(siglaPrincipal);
 		ExDao.getInstance().gravar(doc);
 	}
+
+	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) {
+		ExDocumento formulario = obterFormularioSiafem(exDoc);
+		
+		if(formulario == null)
+			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + "\" antes de tramitar.");
+		
+		String descricao = formulario.getDescrDocumento();
+		SiafDoc doc = new SiafDoc(descricao.split(";"));
+		
+		doc.setProcesso(obterCodigoUnico(formulario, false));
+		
+		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
+	}
+
+	public ExDocumento obterFormularioSiafem(ExDocumento doc) {
+		String modeloSiafem = Prop.get("ws.siafem.nome.modelo");//"Formulario Integracao Siafem";
+		
+		if(doc.getNmMod().equals(modeloSiafem))
+			return doc;
+		
+		Set<ExMobil> mobilsJuntados = doc.getMobilDefaultParaReceberJuntada().getJuntados();
+		
+		for (ExMobil exMobil : mobilsJuntados) {
+			if(!exMobil.isCancelada() && modeloSiafem.contains(exMobil.getDoc().getNmMod())) {
+				return exMobil.getDoc();
+			}
+		}
+		
+		return null;
+	}
 	
+	private String formatarCodigoUnico(String codigo){
+		String numero = "0000000" + codigo.trim().replaceAll("[^\\d]", "");
+		numero = numero.substring(numero.length() - 10, numero.length());
+		
+		return numero;
+	}
+	
+	public String obterCodigoUnico(ExDocumento doc, boolean comDigitoVerificador) {
+		ExDocumento formulario = obterFormularioSiafem(doc);
+		
+		if(formulario == null)
+			return null;
+		
+		String[] tokens = formulario.getDescrDocumento().split(";");
+		
+		if(tokens.length <= 0 || tokens[0].trim().length() == 0)
+			throw new AplicacaoException("O código único não foi gerado corretamente");
+		
+		String codigo = tokens[0].trim();
+		
+		if(!comDigitoVerificador)
+			codigo = codigo.substring(0,codigo.length()-2);
+		
+		return codigo;
+	}
+	
+	private String calcularDigitoVerificador(String numero) {
+		int soma = 0;
+		for(int i = 0, j = numero.length(); i < numero.length(); i++, j--) {
+			soma += Integer.valueOf(numero.charAt(i) + "")*j;
+		}
+		
+		int resto = soma%11;
+		int digito = 11 - resto;
+		
+		if(digito > 9 || digito == 0)
+			return "1";
+		
+		return digito + "";
+	}
+
 }
 

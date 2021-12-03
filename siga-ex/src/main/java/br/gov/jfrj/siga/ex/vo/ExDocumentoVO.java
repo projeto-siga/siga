@@ -137,6 +137,7 @@ public class ExDocumentoVO extends ExVO {
 	String conteudoBlobHtmlString;
 	String conteudoBlobFormString;
 	String sigla;
+	String codigoUnico;
 	String fisicoOuEletronico;
 	boolean fDigital;
 	Map<ExMovimentacaoVO, Boolean> cossignatarios = new HashMap<ExMovimentacaoVO, Boolean>();
@@ -166,7 +167,7 @@ public class ExDocumentoVO extends ExVO {
 		this.lotaTitular = lotaTitular;
 		this.doc = doc;
 		this.mob = mob;
-		this.sigla = doc.getSigla();
+		this.sigla = doc.getSigla();		
 		this.descrDocumento = doc.getDescrDocumento();
 
 		this.exTipoDocumentoDescricao = doc.getExTipoDocumento().getDescricao();
@@ -1010,6 +1011,14 @@ public class ExDocumentoVO extends ExVO {
 		return dtPrazoDeAssinatura;
 	}
 
+	public void setCodigoUnico(String codigoUnico) {
+		this.codigoUnico = codigoUnico;		
+	}
+	
+	public String getCodigoUnico() {
+		return this.codigoUnico;		
+	}
+	
 	public String getTipoDePrincipal() {
 		return tipoDePrincipal;
 	}

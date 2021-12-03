@@ -105,6 +105,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	@Transient
 	private String numeroSequenciaGenerica;
 
+	@Transient
+	private String codigoUnico;
+	
+	@Transient
+	private String digitoVerificadorCodigoUnico;
+	
 	/**
 	 * Simple constructor of ExDocumento instances.
 	 */
@@ -3046,6 +3052,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	public void setNumeroSequenciaGenerica(String numeroSequenciaGenerica) {
 		this.numeroSequenciaGenerica = numeroSequenciaGenerica;
+	}
+
+	public String getCodigoUnico() {
+		return codigoUnico;
+	}
+
+	public void setCodigoUnico(String codigoUnico) {
+		this.codigoUnico = codigoUnico;
+	}
+
+	public String getDigitoVerificadorCodigoUnico() {
+		return digitoVerificadorCodigoUnico;
+	}
+
+	public void setDigitoVerificadorCodigoUnico(String digitoVerificadorCodigoUnico) {
+		this.digitoVerificadorCodigoUnico = digitoVerificadorCodigoUnico;
 	}
 
 	public ExRef getRef() {

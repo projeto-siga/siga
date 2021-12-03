@@ -59,21 +59,30 @@ import net.sf.jasperreports.engine.JRException;
 		public AbstractRelatorioBaseBuilder configurarRelatorio()
 				throws DJBuilderException, JRException {
 
-			this.listColunas.add("Unidade");
-			this.listColunas.add("Nome do Documento");
-			this.listColunas.add("No. Documento");
-			this.listColunas.add("Tempo Tramitação (dias)");
-			this.listColunas.add("Cadastrante");
-			this.listColunas.add("Resp. Assinatura / Autenticação");
-					
-			this.addColuna(this.listColunas.get(0), 15, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(1), 30, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(2), 20, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(3), 15, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(4), 15, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(5), 15, RelatorioRapido.CENTRO, false);
+			if(!"".equals(parametros.get("link_siga"))) {
+				this.listColunas.add("Unidade");
+				this.listColunas.add("Nome do Documento");
+				this.listColunas.add("No. Documento");
+				this.listColunas.add("Tempo Tramitação (dias)");
+				this.listColunas.add("Cadastrante");
+				this.listColunas.add("Resp. Assinatura / Autenticação");
+						
+				this.addColuna(this.listColunas.get(0), 15, RelatorioRapido.ESQUERDA, false);
+				this.addColuna(this.listColunas.get(1), 30, RelatorioRapido.ESQUERDA, false);
+				this.addColuna(this.listColunas.get(2), 20, RelatorioRapido.CENTRO, false);
+				this.addColuna(this.listColunas.get(3), 15, RelatorioRapido.CENTRO, false);
+				this.addColuna(this.listColunas.get(4), 15, RelatorioRapido.CENTRO, false);
+				this.addColuna(this.listColunas.get(5), 15, RelatorioRapido.CENTRO, false);	
+			} else {
+				this.listColunas.add("Espécie Documental");
+				this.listColunas.add("Total de Documentos Tramitados");
+				this.listColunas.add("Tempo Médio (dias)");
+				
+				this.addColuna(this.listColunas.get(0), 40, RelatorioRapido.ESQUERDA, false);
+				this.addColuna(this.listColunas.get(1), 35, RelatorioRapido.DIREITA, false);
+				this.addColuna(this.listColunas.get(2), 35, RelatorioRapido.DIREITA, false);
+			}
 			return this;
-
 		}
 
 		@Override
@@ -82,7 +91,7 @@ import net.sf.jasperreports.engine.JRException;
 			Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
 					"from DpLotacao lot " + "where lot.dataFimLotacao is null "
 							+ "and lot.orgaoUsuario = "
-							+ parametros.get("orgaoUsuario")
+							+ parametros.get("orgao")
 							+ " and lot.siglaLotacao = '"
 							+ parametros.get("lotacaoTitular") + "'");
 			DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
@@ -340,30 +349,38 @@ import net.sf.jasperreports.engine.JRException;
 			if (listDocs.size() == 0) {
 				throw new AplicacaoException("Não foram encontrados documentos para os dados informados.");
 			}
-			geraListEspecie(listDocs);
+			geraListEspecie(listDocs);			
 			listComparator comparator = new listComparator();
 			Collections.sort(listLinhas, comparator);
 			listEspecieComparator comparatorEspecie = new listEspecieComparator();
 			Collections.sort(listEspecie, comparatorEspecie);
 			String lotaAnt = "";
 			String modeloAnt = "";
-			for (List<String> lin : listLinhas) {
-				if ((lin.get(0)).equals(lotaAnt)) { 
-					lin.set(0, "");
-					if (lin.get(1).equals(modeloAnt)) { 
-						lin.set(1, "");
+			if(!"".equals(parametros.get("link_especie"))) {
+				for (List<String> lin : listLinhas) {
+					if ((lin.get(0)).equals(lotaAnt)) { 
+						lin.set(0, "");
+						if (lin.get(1).equals(modeloAnt)) { 
+							lin.set(1, "");
+						} else {
+							modeloAnt = lin.get(1);
+						}
 					} else {
+						lotaAnt = lin.get(0);
 						modeloAnt = lin.get(1);
 					}
-				} else {
-					lotaAnt = lin.get(0);
-					modeloAnt = lin.get(1);
+					for (String dado : lin) {
+						d.add(dado);
+					}
+					lin.set(2, "<a href=" + parametros.get("link_siga") 
+							+ lin.get(2) + ">" + lin.get(2) + "</a>");
 				}
-				for (String dado : lin) {
-					d.add(dado);
+			} else {
+				for (List<String> l : listEspecie) {
+					for (String string : l) {
+						d.add(string);
+					}
 				}
-				lin.set(2, "<a href=" + parametros.get("link_siga") 
-						+ lin.get(2) + ">" + lin.get(2) + "</a>");
 			}
 			return d;
 		}
@@ -397,10 +414,14 @@ import net.sf.jasperreports.engine.JRException;
 
 		private void addEspecie(String lastIdFormaDoc, String lastEspecie) {
 			List<String> dadosEspecie = new ArrayList(); 
-			dadosEspecie.add("<a href='#' class='text-primary' onclick=\"javascript:visualizarRelatorio('" 
-					+ parametros.get("link_especie") + "','"  
-					+ lastIdFormaDoc + "','" + lastEspecie + "');\">" 
-					+ lastEspecie + "</a>");
+			if(!"".equals(parametros.get("link_especie"))) { 
+				dadosEspecie.add("<a href='#' class='text-primary' onclick=\"javascript:visualizarRelatorio('" 
+						+ parametros.get("link_especie") + "','"  
+						+ lastIdFormaDoc + "','" + lastEspecie + "');\">" 
+						+ lastEspecie + "</a>");
+			} else {
+				dadosEspecie.add(lastEspecie);
+			}
 			dadosEspecie.add(totalEspecieDocs.toString());
 			Long media = (long) ((((double) totalEspecieDias / (double) totalEspecieDocs)) + 0.5);
 			dadosEspecie.add(media.toString());

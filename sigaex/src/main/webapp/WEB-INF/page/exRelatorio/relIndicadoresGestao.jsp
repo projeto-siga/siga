@@ -38,6 +38,14 @@
 			}
 			return false;
 		}
+		function visualizarCVS(rel) {
+			t = frmRelatorios.target;
+			a = frmRelatorios.action;
+			frmRelatorios.action = rel;
+			frmRelatorios.submit();
+			frmRelatorios.action = a;
+
+		}
 	</script>
 
 	<!-- main content -->
@@ -70,9 +78,20 @@
 							<label><fmt:message key="usuario.matricula"/></label>
 							<siga:selecao propriedade="usuario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 						</div>
-						<div class="form-group col-md-4">
+						<div class="form-group col-md-10">
 							<input type="submit" value="Pesquisar" class="btn btn-primary mt-auto" />
 							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2 mt-auto" />
+						</div>
+						<div class="form-group col-md-2">
+							<div class="btn-group  float-right">	
+								<a href="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/relIndicadoresGestaoPDF');" class="btn btn-primary float-right" role="button" aria-pressed="true" style="min-width: 80px;">Exportar PDF</a>
+											<button type="button" class="btn btn-primary float-right dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											    <span class="sr-only"></span>
+										    </button>
+									<div class="dropdown-menu">
+									  	<a href="javascript:visualizarCVS('${pageContext.request.contextPath}/app/expediente/rel/relIndicadoresGestaoCSV');" class="dropdown-item" role="button" aria-pressed="true">Exportar CSV</a>								   
+									  </div>
+							</div>
 						</div>
 					</div>
 					<div class="row">

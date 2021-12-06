@@ -210,9 +210,9 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
-import br.gov.jfrj.siga.ex.ws.siafem.ServicoSiafemWs;
-import br.gov.jfrj.siga.ex.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
+import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
@@ -8109,7 +8109,12 @@ public class ExBL extends CpBL {
 		if(doc.getNmMod().equals(modeloSiafem))
 			return doc;
 		
-		Set<ExMobil> mobilsJuntados = doc.getMobilDefaultParaReceberJuntada().getJuntados();
+		ExMobil mDefault = doc.getMobilDefaultParaReceberJuntada();
+
+		if(mDefault == null)
+			return null;
+		
+		Set<ExMobil> mobilsJuntados = mDefault.getJuntados();
 		
 		for (ExMobil exMobil : mobilsJuntados) {
 			if(!exMobil.isCancelada() && modeloSiafem.contains(exMobil.getDoc().getNmMod())) {

@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.ws.siafem;
+package br.gov.jfrj.siga.integracao.ws.siafem;
 
 import java.util.Calendar;
 import br.gov.jfrj.siga.base.AplicacaoException;

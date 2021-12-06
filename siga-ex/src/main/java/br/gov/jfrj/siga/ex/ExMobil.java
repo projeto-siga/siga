@@ -2343,9 +2343,25 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		// Cadastrante é o atendente quando o móbil ainda não foi movimentado
 		if (fIncluirCadastrante) {
-			set.add(new PessoaLotacaoParser(doc().getCadastrante(), doc().getLotaCadastrante()));
+			set.add(new PessoaLotacaoParser(getTitular(), getLotaTitular()));
 		}
 		return set;
+	}
+	
+	public DpPessoa getTitular() {
+		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
+		if (criacao != null)
+			return criacao.getCadastrante();
+		else
+			return doc().getCadastrante();
+	}
+	
+	public DpLotacao getLotaTitular() {
+		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
+		if (criacao != null)
+			return criacao.getLotaCadastrante();
+		else
+			return doc().getLotaCadastrante();
 	}
 	
 	public boolean isEmTramiteParalelo() {

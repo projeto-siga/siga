@@ -4539,7 +4539,7 @@ public class ExBL extends CpBL {
 							else
 								gravarMovimentacao(mov);
 						}
-						p = mob.calcularTramitesPendentes();
+						p = m.calcularTramitesPendentes();
 					}
 				}
 				
@@ -4903,6 +4903,8 @@ public class ExBL extends CpBL {
 		boolean fDespacho = tpDespacho != null || descrMov != null || conteudo != null;
 
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
+		
+		final DpPessoa titularFinal = titular != null? titular : cadastrante;
 
 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 
@@ -5090,11 +5092,11 @@ public class ExBL extends CpBL {
 					if (automatico)
 						mov.setDescrMov("Transferência automática.");
 					
-					Pendencias p = mob.calcularTramitesPendentes();
+					Pendencias p = m.calcularTramitesPendentes();
 					
 					// Localiza o tramite que será recebido
 					for (ExMovimentacao t : p.recebimentosPendentes) {
-						if (forcarTransferencia || (titular == null && lotaCadastrante == null) || t.isResp(titular, lotaCadastrante)) {
+						if (forcarTransferencia || (titularFinal == null && lotaCadastrante == null) || t.isResp(titularFinal, lotaCadastrante)) {
 							mov.setExMovimentacaoRef(t);
 							break;
 						}

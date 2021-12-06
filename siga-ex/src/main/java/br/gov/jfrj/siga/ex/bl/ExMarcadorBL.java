@@ -622,11 +622,11 @@ public class ExMarcadorBL {
 		}
 		if (p.fIncluirCadastrante)
 			acrescentarMarcaTransferencia(
-					mob.isAtendente(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante())
+					mob.isAtendente(mob.getTitular(), mob.getLotaTitular())
 							? (mob.doc().jaTransferido() ? CpMarcadorEnum.EM_ANDAMENTO.getId()
 									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
-					mob.doc().getDtRegDoc(), null, mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), null);
+					mob.doc().getDtRegDoc(), null, mob.getTitular(), mob.getLotaTitular(), null);
 	}
 
 	public void calcularMarcadoresTransferenciaComData(Date dt) {

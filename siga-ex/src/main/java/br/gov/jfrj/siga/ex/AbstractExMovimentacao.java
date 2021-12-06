@@ -405,6 +405,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	// private Integer numViaDocRef;
 
+	// Aqui era armazenado o atendente, mas com o trâmite paralelo isso 
+	// passou a ser calculado de outra forma. Mesmo assim, o destinatário 
+	// e o recebedor ficam gravados aqui.
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_resp")
 	private DpPessoa resp;

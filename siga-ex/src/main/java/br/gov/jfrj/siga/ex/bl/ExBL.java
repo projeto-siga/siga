@@ -4545,8 +4545,8 @@ public class ExBL extends CpBL {
 				
 				// Se houver outros recebimentos pendentes para o destinatário, em vez de
 				// receber deve concluir direto
-				boolean fConcluirDireto = ! mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.doc().getCadastrante(), titular)
-						|| Utils.equivale(mob.doc().getLotaCadastrante(), lotaTitular));
+				boolean fConcluirDireto = ! mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.getTitular(), titular)
+						|| Utils.equivale(mob.getLotaTitular(), lotaTitular));
 				if (!fConcluirDireto)
 					for (ExMovimentacao r : p.recebimentosPendentes)
 						// Existe um recebimento pendente e não é apenas de notificação
@@ -4644,7 +4644,7 @@ public class ExBL extends CpBL {
 			
 			ExMovimentacao recebimento = null;
 			if (p.fIncluirCadastrante && (Utils.equivale(mob.doc().getLotaCadastrante(), lotaTitular)
-					|| Utils.equivale(mob.doc().getCadastrante(), titular))) {
+					|| Utils.equivale(mob.getTitular(), titular))) {
 				recebimento = null;
 			} else {
 				// Localiza o recebimento que será concluído
@@ -5104,8 +5104,8 @@ public class ExBL extends CpBL {
 					
 					// Titular é a origem e deve sempre ser preenchido
 					if (mov.getExMovimentacaoRef() == null && p.fIncluirCadastrante) {
-						mov.setTitular(mov.mob().doc().getCadastrante());
-						mov.setLotaTitular(mov.mob().doc().getLotaCadastrante());
+						mov.setTitular(mov.mob().getTitular());
+						mov.setLotaTitular(mov.mob().getLotaTitular());
 					}
 					
 					// Cancelar trâmite pendente quando é para forçar para outro destino

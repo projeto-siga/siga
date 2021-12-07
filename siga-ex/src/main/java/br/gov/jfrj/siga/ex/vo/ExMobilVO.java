@@ -444,7 +444,7 @@ public class ExMobilVO extends ExVO {
 		
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
-					"Ane_xar",
+					"Ane_xar PDF",
 					"/app/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()

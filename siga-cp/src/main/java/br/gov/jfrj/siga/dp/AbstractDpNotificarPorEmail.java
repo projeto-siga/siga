@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @NamedQueries({
 @NamedQuery(name = "verificaSeUsuarioJaPossuiConfiguracoesDeNotificacoesPorEmail", query = "select email from DpNotificarPorEmail email where email.dpPessoa.idPessoa = :idPessoa"),
 @NamedQuery(name = "consultarPeloCodigoNotificacaoPoremail", query = "select email from DpNotificarPorEmail email where email.codigo = :codigo AND email.dpPessoa.idPessoa = :idPessoa"),
-@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from DpNotificarPorEmail email where email.dpPessoa.idPessoa = :idPessoa"),
+//@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from DpNotificarPorEmail email where email.dpPessoa.idPessoa = :idPessoa"),
 @NamedQuery(name = "consultarQuantidadeNotificarPorEmail", query = "select count(e) from DpNotificarPorEmail e") })
 public abstract class AbstractDpNotificarPorEmail extends Objeto implements Serializable, HistoricoAuditavel {
 
@@ -36,7 +36,7 @@ public abstract class AbstractDpNotificarPorEmail extends Objeto implements Seri
 	@Column(name = "ID_NOTIFICAR_POR_EMAIL", unique = true, nullable = false)
 	private Long id;
 	
-	@Column(name = "NOME_DA_ACAO", nullable = false, length = 200)
+	@Column(name = "NOME_DA_ACAO", nullable = false, length = 200)  
 	private String nomeDaAcao;
 	
 	@Column(name = "NAO_CONFIGURAVEL", nullable = false)

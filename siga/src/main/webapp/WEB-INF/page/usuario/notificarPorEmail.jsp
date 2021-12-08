@@ -84,15 +84,18 @@
 								      <tbody>
 								      	<c:forEach items="${itens}" var="email">
 										  <tr> 
-										      <td style="width: 70%;">${email.nomeDaAcao}</td>
+										      <td style="width: 70%;">${email.cpServico.dscServico}</td>
 										      
+										      	<!-- 
 										      	<c:url var="url" value="/app/notificarPorEmail/editar">
 													<c:param name="codigo" value="${email.codigo}"></c:param>
 												</c:url>
 												<c:url var="urlHabilitaDesabilitaConfiguravel" value="/app/notificarPorEmail/rec_notificacao_por_email2">
 													<c:param name="codigo" value="${email.codigo}"></c:param>
 												</c:url>
+												-->
 												
+												<!-- 
 												 <c:choose>
 													<c:when test="${!email.isConfiguravel()}">
 														<c:choose>
@@ -130,8 +133,9 @@
 															</c:otherwise>
 														</c:choose>
 													</c:otherwise>
-													</c:choose>
+													</c:choose> -->
 										        
+										        	<!--  
 											        <c:choose>
 													<c:when test="${!email.notConfiguravel()}">
 														<c:choose>
@@ -170,6 +174,7 @@
 														</c:choose>
 													</c:otherwise>
 													</c:choose>
+													-->
 										    	</tr>
 									      	</c:forEach>
 								      </tbody>

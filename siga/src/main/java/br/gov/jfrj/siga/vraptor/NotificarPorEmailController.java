@@ -48,7 +48,8 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		if(paramoffset == null) {
 			paramoffset = 0;
 		}
-		setItens(CpDao.getInstance().consultarNotificaocaoEmail(paramoffset, 15, getTitular().getIdPessoa()));
+		//setItens(CpDao.getInstance().consultarNotificaocaoEmail(paramoffset, 15, getTitular().getIdPessoa()));
+		setItens(CpDao.getInstance().consultarNotificaocaoEmail2(paramoffset, 15, getTitular().getIdPessoa()));
 		result.include("itens", getItens());
 		result.include("tamanho", dao().consultarQuantidadeNotificacaoPorEmail()); 
 		setItemPagina(15); 
@@ -56,29 +57,29 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		result.forwardTo("/WEB-INF/page/usuario/notificarPorEmail.jsp"); 
 	}
 	
-	@Transacional
-	@Get({ "/app/notificarPorEmail/rec_notificacao_por_email_gravar" })
-	public void gravar() throws Exception {
-		List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
-		if (listaNotificarPorEmail.isEmpty()) {
-			Date data = dao().consultarDataEHoraDoServidor();
-			DpPessoa dpPessoa = new DpPessoa();
-			dpPessoa.setIdPessoa(getTitular().getIdPessoa()); 
-				 
-			cadastroDeNovoUsuario(data, dpPessoa);
-			alterarMinhaSenha(data, dpPessoa);
-			esqueciMinhaSenha(data, dpPessoa);
-			responsavelPelaAssinatura(data, dpPessoa); 
-			conssignatario(data, dpPessoa);
-			substituicao(data, dpPessoa);
-			documentoTramitadoParaOMeuUsuario(data, dpPessoa);
-			documentoTramitadoParaUnidade(data, dpPessoa);
-			tramitacaoDeDocumentosMarcados(data, dpPessoa);
-			alteracaoDeEmail(data, dpPessoa);
-			documentoDeMarcadores(data, dpPessoa);
-		}
-		result.redirectTo(NotificarPorEmailController.class).lista(0);
-	} 
+//	@Transacional
+//	@Get({ "/app/notificarPorEmail/rec_notificacao_por_email_gravar" })
+//	public void gravar() throws Exception {
+//		List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+//		if (listaNotificarPorEmail.isEmpty()) {
+//			Date data = dao().consultarDataEHoraDoServidor();
+//			DpPessoa dpPessoa = new DpPessoa();
+//			dpPessoa.setIdPessoa(getTitular().getIdPessoa()); 
+//				 
+//			cadastroDeNovoUsuario(data, dpPessoa);
+//			alterarMinhaSenha(data, dpPessoa);
+//			esqueciMinhaSenha(data, dpPessoa);
+//			responsavelPelaAssinatura(data, dpPessoa); 
+//			conssignatario(data, dpPessoa);
+//			substituicao(data, dpPessoa);
+//			documentoTramitadoParaOMeuUsuario(data, dpPessoa);
+//			documentoTramitadoParaUnidade(data, dpPessoa);
+//			tramitacaoDeDocumentosMarcados(data, dpPessoa);
+//			alteracaoDeEmail(data, dpPessoa);
+//			documentoDeMarcadores(data, dpPessoa);
+//		}
+//		result.redirectTo(NotificarPorEmailController.class).lista(0);
+//	} 
 	
 	@Transacional
 	@Post({ "/app/notificarPorEmail/rec_notificacao_por_email2" })

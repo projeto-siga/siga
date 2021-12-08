@@ -169,6 +169,24 @@ public class CpDao extends ModeloDao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<CpConfiguracao> consultarNotificaocaoEmail2(Integer offset, Integer itemPagina, Long idUsuario) {
+		try {
+			final Query query = em().createNamedQuery("consultarNotificaocaoEmail");
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			} 
+			query.setParameter("idPessoa", idUsuario); 
+			final List<CpConfiguracao> l = query.getResultList();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	public DpNotificarPorEmail consultarNotificaocaoEmailIdEPorUsuario(final Long id, Long idUsuario) {
 		final Query query = em().createNamedQuery("consultarNotificaocaoEmailIdEPorUsuario");
 		query.setParameter("id", id);

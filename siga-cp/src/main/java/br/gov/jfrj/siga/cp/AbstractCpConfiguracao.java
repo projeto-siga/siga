@@ -84,6 +84,16 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "	where (cpcfg.hisDtIni >= :dtInicioVigenciaIni)"
 				+ "	and (cpcfg.hisDtIni <= :dtInicioVigenciaFim) "
 				+ "	order by cpcfg.hisDtIni"),
+//		@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1700 "
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1701"
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1702"
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1703"
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1704"
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1705"
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1706"
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1707"
+//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1708"),  
+		@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1700 "), 
 		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao = :idTpLotacao) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
 				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})

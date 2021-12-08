@@ -1383,7 +1383,7 @@ public class ExDocumentoController extends ExController {
 			}														
 		} else if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
 				&& !exDocumentoDto.getMob().isEmTransitoExterno()
-				&& !exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).getCadastrante().equivale(getTitular())
+				&& !exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA).getCadastrante().equivale(getTitular())
 				&& !exDocumentoDto.getMob().isJuntado()) {
 			recebimentoPendente = true;			
 		} 		

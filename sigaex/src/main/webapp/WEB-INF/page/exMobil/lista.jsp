@@ -149,7 +149,7 @@
 						<th rowspan="2" align="center"><fmt:message key="documento.data.assinatura"/></th>
 						<th colspan="2" align="center"><fmt:message key="documento.subscritor"/></th>
 						<th rowspan="2" align="center">Data</th>
-						<th colspan="2" align="center">Atendente</th>
+						<th colspan="2" align="center">Destino</th>
 						<th rowspan="2" align="center">Situação</th>
 					</tr>
 					<tr>

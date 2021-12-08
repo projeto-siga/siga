@@ -13,7 +13,7 @@
 <input type="hidden" id="podeAssinarPor" value="${podeAssinarPor}"/>
 <input type="hidden" id="cpfUsuarioCadastrante" value="${cadastrante.cpfFormatado}"/>
 
-<c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(24, true)}" var="currentItem" varStatus="stat">
+<c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, true)}" var="currentItem" varStatus="stat">
   <c:set var="cossignatarios" value="${stat.first ? '' : cossignatarios} ${currentItem.subscritor.sigla}" />
 </c:forEach>
 

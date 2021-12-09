@@ -370,7 +370,7 @@ public class ExMobilVO extends ExVO {
 					null, null, null);
 
 			addAcao("page_white_add",
-					"Incluir _Documento",
+					"Incluir _Documento/Despachar",
 					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()

@@ -4,6 +4,7 @@ import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
+import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -27,6 +28,12 @@ public class ExPodeEnviarSiafem extends CompositeExpressionSupport {
 	@Override
 	protected Expression create() {
 		return And.of(
+				
+				Or.of(
+						
+						new ExEstaAssinadoOuAutenticadoComTokenOuSenhaERegistros(doc),
+				
+						new ExEstaAssinadoComSenha(doc)),
 				
 				new ExPodeSerMovimentado(doc.getMobilGeral(), titular, lotaTitular),
 				

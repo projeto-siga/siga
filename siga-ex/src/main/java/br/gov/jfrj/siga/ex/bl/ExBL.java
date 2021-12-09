@@ -8126,10 +8126,13 @@ public class ExBL extends CpBL {
 	}
 	
 	private String formatarCodigoUnico(String codigo){
-		String numero = "0000000" + codigo.trim().replaceAll("[^\\d]", "");
-		numero = numero.substring(numero.length() - 10, numero.length());
+		String numero = codigo.trim().replaceAll("[^\\d]", "");
 		
-		return numero;
+		String ano = numero.substring(numero.length() - 4, numero.length());
+		String sequencia = ("000000" + numero.substring(0, numero.length() - 4));
+		sequencia = sequencia.substring(sequencia.length() - 6, sequencia.length());
+		
+		return ano + sequencia;
 	}
 	
 	public String obterCodigoUnico(ExDocumento doc, boolean comDigitoVerificador) {

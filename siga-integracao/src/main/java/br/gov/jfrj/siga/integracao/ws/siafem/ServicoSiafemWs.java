@@ -13,7 +13,6 @@ public class ServicoSiafemWs {
 			String ret = service.getRecebeMSGSoap().mensagem(usuario, senha, ano, "", doc.getSiafDoc());
 
 			return verificarRetorno(ret);
-
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro na integração com SIAFEM: " + e.getMessage(), 0, e);
 		}

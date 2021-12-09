@@ -107,7 +107,7 @@
 									Evento
 								</th>
 								<th colspan="2" align="left">
-									Cadastrante
+									Origem
 								</th>
 								<c:if test="${ (exibirCompleto == 'true')}">
 									<th colspan="2" align="left">
@@ -115,7 +115,7 @@
 									</th>
 								</c:if>
 								<th colspan="2" align="left">
-									Atendente
+									Destino
 								</th>
 								<th rowspan="2">
 									Descrição

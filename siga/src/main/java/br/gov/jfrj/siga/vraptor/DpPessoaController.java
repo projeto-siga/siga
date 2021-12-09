@@ -62,6 +62,7 @@ import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -626,10 +627,10 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
 					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
 			
-			List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+			List<CpConfiguracao> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
 			if (!listaNotificarPorEmail.isEmpty()) {
 			int codigoDaAcao = 1;
-			DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+			CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
 			if (emailUser.isConfiguravel()) {
 				String[] destinanarios = { email };
 				Correio.enviar(null,destinanarios, 

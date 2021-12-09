@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
@@ -113,10 +114,10 @@ public class UsuarioController extends SigaController {
 		CpIdentidade pessoa = null;
 		pessoa = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
 		
-		List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+		List<CpConfiguracao> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
 		if (!listaNotificarPorEmail.isEmpty()) {
 			int codigoDaAcao = 2;
-			DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+			CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
 			if (emailUser.isConfiguravel()) {
 				String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
 				Correio.enviar(null,destinanarios, 
@@ -131,7 +132,7 @@ public class UsuarioController extends SigaController {
 			}
 		} else {
 			int codigoDaAcao = 2;
-			DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+			CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
 			if (emailUser.isConfiguravel()) {
 				String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
 				Correio.enviar(null,destinanarios, 
@@ -192,10 +193,10 @@ public class UsuarioController extends SigaController {
 				List<DpPessoa> lst = new ArrayList<DpPessoa>(dao().listarPorCpf(so.getCadastrante().getCpfPessoa()));
 				for (DpPessoa p : lst) {
 					try {
-						List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+						List<CpConfiguracao> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
 						if (!listaNotificarPorEmail.isEmpty()) {
 							int codigoDaAcao = 11;
-							DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+							CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
 							if (emailUser.isConfiguravel()) {
 							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
 									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
@@ -214,7 +215,7 @@ public class UsuarioController extends SigaController {
 							}
 						} else {
 							int codigoDaAcao = 11;
-							DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+							CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
 							if (emailUser.isConfiguravel()) {
 							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
 									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
@@ -254,7 +255,7 @@ public class UsuarioController extends SigaController {
 				DpPessoa pessoa = so.getCadastrante();
 				try {
 					int codigoDaAcao = 11;
-					DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
+					CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
 					
 					if (emailUser.isConfiguravel()) {
 					Correio.enviar(pessoa.getEmailPessoaAtual(), "Troca de Email",

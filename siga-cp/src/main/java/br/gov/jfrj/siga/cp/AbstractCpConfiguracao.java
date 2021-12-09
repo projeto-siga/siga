@@ -93,7 +93,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 //				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1706"
 //				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1707"
 //				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1708"),  
-		@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1700 "), 
+		@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = :idServico"), 
 		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao = :idTpLotacao) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
 				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})
@@ -491,6 +491,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setPessoaObjeto(DpPessoa pessoaObjeto) {
 		this.pessoaObjeto = pessoaObjeto;
+	}
+	
+	public boolean isConfiguravel () {
+		if(this.cpSituacaoConfiguracao == this.cpSituacaoConfiguracao.PODE) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

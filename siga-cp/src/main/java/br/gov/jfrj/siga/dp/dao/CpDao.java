@@ -68,6 +68,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -151,7 +152,7 @@ public class CpDao extends ModeloDao {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<DpNotificarPorEmail> consultarNotificaocaoEmail(Integer offset, Integer itemPagina, Long idUsuario) {
+	public List<CpConfiguracao> consultarNotificaocaoEmail(Integer offset, Integer itemPagina, Long idUsuario) {
 		try {
 			final Query query = em().createNamedQuery("consultarNotificaocaoEmail");
 			if (offset > 0) {
@@ -161,7 +162,8 @@ public class CpDao extends ModeloDao {
 				query.setMaxResults(itemPagina);
 			} 
 			query.setParameter("idPessoa", idUsuario); 
-			final List<DpNotificarPorEmail> l = query.getResultList();
+			query.setParameter("idServico", 1700L);
+			final List<CpConfiguracao> l = query.getResultList();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
@@ -202,7 +204,7 @@ public class CpDao extends ModeloDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public DpNotificarPorEmail consultarPeloCodigoNotificacaoPoremail(final int codigo, Long idPessoa) {
+	public CpConfiguracao consultarPeloCodigoNotificacaoPoremail(final int codigo, Long idPessoa) {
 		final Query query = em().createNamedQuery("consultarPeloCodigoNotificacaoPoremail");
 		query.setParameter("codigo", codigo);
 		query.setParameter("idPessoa", idPessoa);
@@ -210,7 +212,7 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
-		final List<DpNotificarPorEmail> l = query.getResultList();
+		final List<CpConfiguracao> l = query.getResultList();
 		if (l.size() != 1)
 			return null;
 		return l.get(0);

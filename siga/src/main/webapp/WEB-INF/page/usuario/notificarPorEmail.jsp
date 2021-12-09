@@ -86,20 +86,18 @@
 										  <tr> 
 										      <td style="width: 70%;">${email.cpServico.dscServico}</td>
 										      
-										      	<!-- 
 										      	<c:url var="url" value="/app/notificarPorEmail/editar">
-													<c:param name="codigo" value="${email.codigo}"></c:param>
+													<c:param name="codigo" value="${email.idConfiguracao}"></c:param>
 												</c:url>
 												<c:url var="urlHabilitaDesabilitaConfiguravel" value="/app/notificarPorEmail/rec_notificacao_por_email2">
 													<c:param name="codigo" value="${email.codigo}"></c:param>
 												</c:url>
-												-->
 												
-												<!-- 
 												 <c:choose>
 													<c:when test="${!email.isConfiguravel()}">
 														<c:choose>
-															<c:when test="${email.restringir()}">
+															<!--<c:when test="${email.restringir()}"> -->
+															<c:when test="false">
 															  	<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																	<div class="form-check form-check-inline">
 																		<a href="return false" class="disabled"  aria-pressed="true"><i class="fas fa-check-square"></i></a>
@@ -117,7 +115,8 @@
 													</c:when>
 													<c:otherwise>
 														<c:choose>
-															<c:when test="${email.restringir()}">
+															<!--<c:when test="${email.restringir()}"> -->
+															<c:when test="false">
 																<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																	<div class="form-check form-check-inline">
 																		<a href="return false" class="disabled" aria-pressed="true"><i class="far fa-square"></i></a>
@@ -133,12 +132,10 @@
 															</c:otherwise>
 														</c:choose>
 													</c:otherwise>
-													</c:choose> -->
 										        
-										        	<!--  
 											        <c:choose>
-													<c:when test="${!email.notConfiguravel()}">
-														<c:choose>
+													<c:when test="${!email.isConfiguravel()}">
+														<c:choose> 
 															<c:when test="${email.restringir()}">
 																	<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																		<div class="form-check form-check-inline">
@@ -157,7 +154,8 @@
 													</c:when>
 													<c:otherwise>
 														<c:choose>
-															<c:when test="${email.restringir()}">
+															<!--<c:when test="${email.restringir()}"> -->
+															<c:when test="false">
 																<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
 																	<div class="form-check form-check-inline">
 																		<a href="return false" class="disabled" aria-pressed="true"><i class="far fa-square"></i></a>
@@ -174,7 +172,7 @@
 														</c:choose>
 													</c:otherwise>
 													</c:choose>
-													-->
+													
 										    	</tr>
 									      	</c:forEach>
 								      </tbody>

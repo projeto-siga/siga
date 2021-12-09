@@ -13,7 +13,9 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -57,11 +59,19 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 		result.forwardTo("/WEB-INF/page/usuario/notificarPorEmail.jsp"); 
 	}
 	
-//	@Transacional
-//	@Get({ "/app/notificarPorEmail/rec_notificacao_por_email_gravar" })
-//	public void gravar() throws Exception {
-//		List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
-//		if (listaNotificarPorEmail.isEmpty()) {
+	@Transacional
+	@Get({ "/app/notificarPorEmail/rec_notificacao_por_email_gravar" })
+	public void gravar() throws Exception {
+		List<CpConfiguracao> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
+		if (listaNotificarPorEmail.isEmpty()) { 
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
+			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
 //			Date data = dao().consultarDataEHoraDoServidor();
 //			DpPessoa dpPessoa = new DpPessoa();
 //			dpPessoa.setIdPessoa(getTitular().getIdPessoa()); 
@@ -77,35 +87,30 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 //			tramitacaoDeDocumentosMarcados(data, dpPessoa);
 //			alteracaoDeEmail(data, dpPessoa);
 //			documentoDeMarcadores(data, dpPessoa);
-//		}
-//		result.redirectTo(NotificarPorEmailController.class).lista(0);
-//	} 
+		}
+		result.redirectTo(NotificarPorEmailController.class).lista(0);
+	} 
 	
 	@Transacional
 	@Post({ "/app/notificarPorEmail/rec_notificacao_por_email2" })
 	public void notificar(final int codigo) throws Exception {
-		DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigo, getTitular().getIdPessoa());
+		CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigo, getTitular().getIdPessoa());
 		
 		emailUser.setId(emailUser.getId());
 		emailUser.setDpPessoa(getTitular()); 
 		
-		int configuravel = emailUser.getConfiguravel();
-		int naoConfiguravel = emailUser.getNaoConfiguravel();
+		boolean configuravel = emailUser.isConfiguravel();
 		
-		if (configuravel == 1 && naoConfiguravel == 0) {
-			emailUser.setConfiguravel(0);
-			emailUser.setNaoConfiguravel(1);
+		if (configuravel) {
+			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.PODE);
 		} else { 
-			emailUser.setConfiguravel(1);
-			emailUser.setNaoConfiguravel(0); 
+			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
 		}
 		
-		if (configuravel == 0 && naoConfiguravel == 1) {
-			emailUser.setConfiguravel(1);
-			emailUser.setNaoConfiguravel(0);
-		} else {
-			emailUser.setConfiguravel(0);
-			emailUser.setNaoConfiguravel(1);
+		if (!configuravel) {
+			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
+		} else { 
+			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.PODE);
 		}
 		
 		result.redirectTo(NotificarPorEmailController.class).lista(0);
@@ -303,22 +308,24 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 	}
 
 	private void cadastroDeNovoUsuario(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail cadastroDeNovoUsuario = new DpNotificarPorEmail();
-		cadastroDeNovoUsuario.setCodigo(1);
-		cadastroDeNovoUsuario.setConfiguravel(1); 
-		cadastroDeNovoUsuario.setNaoConfiguravel(0);
-		cadastroDeNovoUsuario.setDpPessoa(dpPessoa);
-		cadastroDeNovoUsuario.setHisAtivo(1);
-		cadastroDeNovoUsuario.setRestringir(1);
-		cadastroDeNovoUsuario.setNomeDaAcao("Cadastro de novo usuário");
-		cadastroDeNovoUsuario.setDataFimNotificarPorEmail(data);
-		cadastroDeNovoUsuario.setDataInicioNotificarPorEmail(data);
-		cadastroDeNovoUsuario.setDataFim(data);
-		cadastroDeNovoUsuario.setDataInicio(data);
-		cadastroDeNovoUsuario.setHisDtFim(data);
-		cadastroDeNovoUsuario.setHisDtIni(data);
-		cadastroDeNovoUsuario.setCadastrado(1);
-		dao.gravarComHistorico(cadastroDeNovoUsuario, getIdentidadeCadastrante());
+		CpConfiguracao cadastroDeNovoUsuario = new CpConfiguracao();
+//		CpConfiguracao ultimaConfiguracaoCadastrada = dao().consultarPeloCodigoNotificacaoPoremail(codigo, getTitular().getIdPessoa());
+//		
+//		cadastroDeNovoUsuario.setIdConfiguracao(null);
+//		cadastroDeNovoUsuario.setConfiguravel(1); 
+//		cadastroDeNovoUsuario.setNaoConfiguravel(0);
+//		cadastroDeNovoUsuario.setDpPessoa(dpPessoa);
+//		cadastroDeNovoUsuario.setHisAtivo(1);
+//		cadastroDeNovoUsuario.setRestringir(1);
+//		cadastroDeNovoUsuario.setNomeDaAcao("Cadastro de novo usuário");
+//		cadastroDeNovoUsuario.setDataFimNotificarPorEmail(data);
+//		cadastroDeNovoUsuario.setDataInicioNotificarPorEmail(data);
+//		cadastroDeNovoUsuario.setDataFim(data);
+//		cadastroDeNovoUsuario.setDataInicio(data);
+//		cadastroDeNovoUsuario.setHisDtFim(data);
+//		cadastroDeNovoUsuario.setHisDtIni(data);
+//		cadastroDeNovoUsuario.setCadastrado(1);
+//		dao.gravarComHistorico(cadastroDeNovoUsuario, getIdentidadeCadastrante());
 	}
 	
 }

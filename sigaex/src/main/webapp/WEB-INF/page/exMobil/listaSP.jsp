@@ -289,7 +289,7 @@ td.tramitacoes.fa-fw>a.disabled {
 								</c:if>
 								<td class="tramitacoes fa-fw" style="min-width: 120px;">
 									<c:choose>
-										<c:when test="${not empty documento[1].getMovimentacoesPorTipo(3, false)}">
+										<c:when test="${not empty documento[1].getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false)}">
 											<%-- Tem Tramitação? --%>
 											<c:set var="link"
 												value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${documento[1].idMobil}&docCancelado=false" />
@@ -301,7 +301,7 @@ td.tramitacoes.fa-fw>a.disabled {
 											<c:set var="docTemTramitacoes" value="${false }" />
 											<%-- Verifica se algumas das movimentações do documento tem movimentação. --%>
 											<c:forEach var="mobil" items="${documento[0].exMobilSet}">
-												<c:if test="${not empty mobil.getMovimentacoesPorTipo(3, false) }">
+												<c:if test="${not empty mobil.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false) }">
 													<c:set var="docTemTramitacoes" value="${true}" />
 												</c:if>
 											</c:forEach>

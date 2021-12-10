@@ -10,8 +10,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeEnviarSiafem extends CompositeExpressionSupport {
 	
@@ -37,7 +37,7 @@ public class ExPodeEnviarSiafem extends CompositeExpressionSupport {
 				
 				new ExPodeSerMovimentado(doc.getMobilGeral(), titular, lotaTitular),
 				
-				Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(doc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENVIO_SIAFEM)),
+				Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(doc, ExTipoDeMovimentacao.ENVIO_SIAFEM)),
 				
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.INTEGRAR_VIA_WEB_SERVICE_EXTERNO).withExMod(doc.getExModelo()));
 				

@@ -8073,14 +8073,14 @@ public class ExBL extends CpBL {
 		
 		ExMovimentacao mov = new ExMovimentacao();
 		Date dt = dao().dt();
-		final ExTipoMovimentacao tpmov = dao().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENVIO_SIAFEM, ExTipoMovimentacao.class, false);
+		//final ExTipoDeMovimentacao tpmov = dao().consultar(ExTipoDeMovimentacao.ENVIO_SIAFEM, ExTipoDeMovimentacao.class, false);
 		
 		mov.setCadastrante(cadastrante);
 		mov.setDtIniMov(dt);
 		mov.setDtFimMov(dt);
 		mov.setDtMov(dt);
 		mov.setExMobil(exDoc.getMobilGeral());
-		mov.setExTipoMovimentacao(tpmov);
+		mov.setExTipoMovimentacao(ExTipoDeMovimentacao.ENVIO_SIAFEM);
 		mov.setLotaCadastrante(lotacaoTitular);
 		mov.setLotaResp(lotacaoTitular);
 		mov.setLotaSubscritor(lotacaoTitular);

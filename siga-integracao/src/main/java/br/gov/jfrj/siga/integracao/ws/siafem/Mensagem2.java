@@ -1,5 +1,5 @@
 
-package br.gov.jfrj.siga.ex.ws.siafem;
+package br.gov.jfrj.siga.integracao.ws.siafem;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>Classe Java de anonymous complex type.
  * 
- * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
+ * <p>O seguinte fragmento do esquema especifica o conteï¿½do esperado contido dentro desta classe.
  * 
  * <pre>
  * &lt;complexType>
@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="AnoBase" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="UnidadeGestora" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="DocumentoXML" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="sIP_Estimulo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,10 +38,11 @@ import javax.xml.bind.annotation.XmlType;
     "senha",
     "anoBase",
     "unidadeGestora",
-    "documentoXML"
+    "documentoXML",
+    "sipEstimulo"
 })
-@XmlRootElement(name = "Mensagem")
-public class Mensagem {
+@XmlRootElement(name = "Mensagem2")
+public class Mensagem2 {
 
     @XmlElement(name = "Usuario")
     protected String usuario;
@@ -52,9 +54,11 @@ public class Mensagem {
     protected String unidadeGestora;
     @XmlElement(name = "DocumentoXML")
     protected String documentoXML;
+    @XmlElement(name = "sIP_Estimulo")
+    protected String sipEstimulo;
 
     /**
-     * Obtém o valor da propriedade usuario.
+     * Obtï¿½m o valor da propriedade usuario.
      * 
      * @return
      *     possible object is
@@ -78,7 +82,7 @@ public class Mensagem {
     }
 
     /**
-     * Obtém o valor da propriedade senha.
+     * Obtï¿½m o valor da propriedade senha.
      * 
      * @return
      *     possible object is
@@ -102,7 +106,7 @@ public class Mensagem {
     }
 
     /**
-     * Obtém o valor da propriedade anoBase.
+     * Obtï¿½m o valor da propriedade anoBase.
      * 
      * @return
      *     possible object is
@@ -126,7 +130,7 @@ public class Mensagem {
     }
 
     /**
-     * Obtém o valor da propriedade unidadeGestora.
+     * Obtï¿½m o valor da propriedade unidadeGestora.
      * 
      * @return
      *     possible object is
@@ -150,7 +154,7 @@ public class Mensagem {
     }
 
     /**
-     * Obtém o valor da propriedade documentoXML.
+     * Obtï¿½m o valor da propriedade documentoXML.
      * 
      * @return
      *     possible object is
@@ -171,6 +175,30 @@ public class Mensagem {
      */
     public void setDocumentoXML(String value) {
         this.documentoXML = value;
+    }
+
+    /**
+     * Obtï¿½m o valor da propriedade sipEstimulo.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSIPEstimulo() {
+        return sipEstimulo;
+    }
+
+    /**
+     * Define o valor da propriedade sipEstimulo.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSIPEstimulo(String value) {
+        this.sipEstimulo = value;
     }
 
 }

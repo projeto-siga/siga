@@ -114,6 +114,7 @@ import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -208,9 +209,9 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
-import br.gov.jfrj.siga.ex.ws.siafem.ServicoSiafemWs;
-import br.gov.jfrj.siga.ex.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
+import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
@@ -8036,7 +8037,20 @@ public class ExBL extends CpBL {
 		ExDao.getInstance().gravar(doc);
 	}
 
-	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) {
+	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) {
+		try {
+			gravarMovimentacaoSiafem(exDoc, cadastrante, lotacaoTitular);
+			enviarSiafem(usuarioSiafem, senhaSiafem, exDoc);
+		} catch (final AplicacaoException e) {
+			cancelarAlteracao();
+			throw e;
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao enviar documento ao SIAFEM", e);
+		}
+	}
+
+	private void enviarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) {
 		ExDocumento formulario = obterFormularioSiafem(exDoc);
 		
 		if(formulario == null)
@@ -8050,13 +8064,49 @@ public class ExBL extends CpBL {
 		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
 	}
 
+	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {
+		CpOrgaoSelecao  cpOrgaoSelecao = new CpOrgaoSelecao();
+		cpOrgaoSelecao.setSigla("SIAFEM");
+		
+		if(!cpOrgaoSelecao.buscarPorSigla())
+			throw new AplicacaoException("Órgão com sigla SIAFEM não encontrado");
+		
+		ExMovimentacao mov = new ExMovimentacao();
+		Date dt = dao().dt();
+		//final ExTipoDeMovimentacao tpmov = dao().consultar(ExTipoDeMovimentacao.ENVIO_SIAFEM, ExTipoDeMovimentacao.class, false);
+		
+		mov.setCadastrante(cadastrante);
+		mov.setDtIniMov(dt);
+		mov.setDtFimMov(dt);
+		mov.setDtMov(dt);
+		mov.setExMobil(exDoc.getMobilGeral());
+		mov.setExTipoMovimentacao(ExTipoDeMovimentacao.ENVIO_SIAFEM);
+		mov.setLotaCadastrante(lotacaoTitular);
+		mov.setLotaResp(lotacaoTitular);
+		mov.setLotaSubscritor(lotacaoTitular);
+		mov.setLotaTitular(lotacaoTitular);
+		mov.setOrgaoExterno(cpOrgaoSelecao.buscarObjeto());
+		mov.setResp(cadastrante);
+		mov.setSubscritor(cadastrante);
+		mov.setTitular(cadastrante);
+		
+		acrescentarCamposDeAuditoria(mov);
+		
+		gravarMovimentacao(mov);
+	}
+
 	public ExDocumento obterFormularioSiafem(ExDocumento doc) {
 		String modeloSiafem = Prop.get("ws.siafem.nome.modelo");//"Formulario Integracao Siafem";
 		
 		if(doc.getNmMod().equals(modeloSiafem))
 			return doc;
 		
-		Set<ExMobil> mobilsJuntados = doc.getMobilDefaultParaReceberJuntada().getJuntados();
+		ExMobil mDefault = doc.getMobilDefaultParaReceberJuntada();
+
+		if(mDefault == null)
+			return null;
+		
+		Set<ExMobil> mobilsJuntados = mDefault.getJuntados();
 		
 		for (ExMobil exMobil : mobilsJuntados) {
 			if(!exMobil.isCancelada() && modeloSiafem.contains(exMobil.getDoc().getNmMod())) {
@@ -8068,10 +8118,13 @@ public class ExBL extends CpBL {
 	}
 	
 	private String formatarCodigoUnico(String codigo){
-		String numero = "0000000" + codigo.trim().replaceAll("[^\\d]", "");
-		numero = numero.substring(numero.length() - 10, numero.length());
+		String numero = codigo.trim().replaceAll("[^\\d]", "");
 		
-		return numero;
+		String ano = numero.substring(numero.length() - 4, numero.length());
+		String sequencia = ("000000" + numero.substring(0, numero.length() - 4));
+		sequencia = sequencia.substring(sequencia.length() - 6, sequencia.length());
+		
+		return ano + sequencia;
 	}
 	
 	public String obterCodigoUnico(ExDocumento doc, boolean comDigitoVerificador) {

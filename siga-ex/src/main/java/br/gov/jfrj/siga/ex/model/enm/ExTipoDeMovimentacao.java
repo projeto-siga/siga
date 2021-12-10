@@ -174,7 +174,9 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	NOTIFICACAO(83, "Notificação"),
 	//
-	CONCLUSAO(84, "Conclusão de Trâmite");
+	CONCLUSAO(84, "Conclusão de Trâmite"),
+	//
+	ENVIO_SIAFEM(85, "Envio ao SIAFEM");
 
 	private final int id;
 	private final String descr;

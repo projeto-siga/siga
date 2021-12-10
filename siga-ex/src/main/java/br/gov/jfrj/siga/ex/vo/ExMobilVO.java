@@ -525,6 +525,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao(AcaoVO.builder().nome("Desfazer Ciência").icone("arrow_undo").nameSpace("/app/expediente/mov").acao("cancelar_ciencia")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarCiencia(mob, titular, lotaTitular)).classe("once").build());
+		
 	}
 
 	public String getMarcadoresEmHtml(List<ExMarca> marcasAtivas, DpPessoa pess, DpLotacao lota) {

@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.ws.siafem;
+package br.gov.jfrj.siga.integracao.ws.siafem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

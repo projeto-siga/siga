@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.ws.siafem;
+package br.gov.jfrj.siga.integracao.ws.siafem;
 
 import java.util.Calendar;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -13,7 +13,6 @@ public class ServicoSiafemWs {
 			String ret = service.getRecebeMSGSoap().mensagem(usuario, senha, ano, "", doc.getSiafDoc());
 
 			return verificarRetorno(ret);
-
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro na integração com SIAFEM: " + e.getMessage(), 0, e);
 		}

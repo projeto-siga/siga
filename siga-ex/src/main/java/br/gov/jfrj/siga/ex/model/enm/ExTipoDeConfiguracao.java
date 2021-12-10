@@ -537,16 +537,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true),
-	
-	//
-	INTEGRAR_VIA_WEB_SERVICE_EXTERNO(57, "Integrar via Web Service Externo", "Esta configuração define a limitação do modelo para integracao com web services externos",
-			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
-					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
-			new Enum[] { CpParamCfg.SITUACAO }, 
-			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, 
-			true);
+			CpSituacaoDeConfiguracaoEnum.PODE, true);
 	
 	
 	private final int id;

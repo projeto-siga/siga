@@ -463,7 +463,7 @@ public class ExMobilVO extends ExVO {
 							.podeCopiar(titular, lotaTitular, mob));
 		}
 		
-		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
+		addAcao("box_add", "Ar_quivo Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once  siga-btn-arq-corrente");

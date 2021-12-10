@@ -141,6 +141,12 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+			    <groupId>org.apache.logging.log4j</groupId>
+			    <artifactId>log4j-core</artifactId>
+			    <version>2.15.0</version>
+			</dependency>
+			
+			<dependency>
 				<groupId>org.jboss.bom.eap</groupId>
 				<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
 				<version>${version.jboss.bom.eap}</version>
@@ -649,7 +655,7 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>				
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>

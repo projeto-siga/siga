@@ -9,7 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeCancelarJuntada extends CompositeExpressionSupport {
 
@@ -68,6 +68,6 @@ public class ExPodeCancelarJuntada extends CompositeExpressionSupport {
 				
 				Or.of(new ExEstaJuntadoExterno(mob), new ExPodeMovimentar(mobPai, titular, lotaTitular)),
 				
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM, titular, lotaTitular));
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.PUBLICACAO_BOLETIM, titular, lotaTitular));
 	}
 }

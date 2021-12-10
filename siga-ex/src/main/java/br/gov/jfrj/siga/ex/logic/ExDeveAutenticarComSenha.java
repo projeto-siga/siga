@@ -6,8 +6,8 @@ import com.crivano.jlogic.Expression;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExDeveAutenticarComSenha extends CompositeExpressionSupport {
 
@@ -30,6 +30,6 @@ public class ExDeveAutenticarComSenha extends CompositeExpressionSupport {
 	protected Expression create() {
 		return new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 				.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-				.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA).withAceitarPode(false);
+				.withExTpMov(ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA).withAceitarPode(false);
 	}
 }

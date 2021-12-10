@@ -50,7 +50,7 @@
 </c:if>
 <!-- FIM SUBSCRITOR ${doc.subscritor.id} -->
 <c:forEach var="mov" items="${doc.mobilGeral.exMovimentacaoSet}">
-	<c:if test="${mov.exTipoMovimentacao.idTpMov == 24}">
+	<c:if test="${mov.exTipoMovimentacao == INCLUSAO_DE_COSIGNATARIO}">
 		<!-- INICIO SUBSCRITOR ${mov.subscritor.id} -->
 		<br/>
 		<br/>

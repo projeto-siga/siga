@@ -22,10 +22,6 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;

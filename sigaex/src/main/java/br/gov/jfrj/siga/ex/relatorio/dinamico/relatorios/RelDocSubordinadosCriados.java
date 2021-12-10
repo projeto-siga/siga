@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
@@ -228,12 +229,12 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 				listaFinal.add(codigoMobil);
 				//testar se a criação foi cancelada
 				//if (mob.getUltimaMovimentacao(1).isCancelada() == false)
-				listaFinal.add(mob.getUltimaMovimentacao(1).getDtMovDDMMYY().toString());
-				listaFinal.add(mob.getUltimaMovimentacao(1).getLotaCadastrante().getSiglaLotacao().toString());
+				listaFinal.add(mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CRIACAO).getDtMovDDMMYY().toString());
+				listaFinal.add(mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CRIACAO).getLotaCadastrante().getSiglaLotacao().toString());
 				listaFinal.add(descrMarcador);
 				listaFinal.add(mov.getLotaResp().getSigla().toString());
-				if (mob.getUltimaMovimentacao(28)  != null) {
-					listaFinal.add(mob.getUltimaMovimentacao(28).toString());
+				if (mob.getUltimaMovimentacao(ExTipoDeMovimentacao.ANOTACAO)  != null) {
+					listaFinal.add(mob.getUltimaMovimentacao(ExTipoDeMovimentacao.ANOTACAO).toString());
 				} else {
 					listaFinal.add("");
 				}

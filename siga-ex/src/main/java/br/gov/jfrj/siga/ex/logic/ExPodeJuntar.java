@@ -9,8 +9,8 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeJuntar extends CompositeExpressionSupport {
 
@@ -59,8 +59,11 @@ public class ExPodeJuntar extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				new ExPodeMovimentar(mob, titular, lotaTitular),
-
+				Or.of(  And.of(new ExTemMobilPai(mob.doc()), 
+							   new ExESubscritorOuCossignatario(mob.doc(), titular)),
+						
+						new ExPodeMovimentar(mob, titular, lotaTitular)),
+				
 				Or.of(
 
 						Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
@@ -80,7 +83,7 @@ public class ExPodeJuntar extends CompositeExpressionSupport {
 				Not.of(new ExEstaEmTramiteParalelo(mob)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA).withExMod(mob.doc().getExModelo()));
+						.withExTpMov(ExTipoDeMovimentacao.JUNTADA).withExMod(mob.doc().getExModelo()));
 
 	}
 }

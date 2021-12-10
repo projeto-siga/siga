@@ -19,7 +19,6 @@
 package br.gov.jfrj.siga.ex.util.BIE;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;

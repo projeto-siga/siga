@@ -95,7 +95,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "		and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
 				+ "		and doc.numExpediente=:numExpediente" + "		)"),
 		@NamedQuery(name = "consultarPorModeloEAssinatura", query = "from ExDocumento d where d.idDoc in (select doc.idDoc from ExDocumento as doc join doc.exMobilSet as mob join mob.exMovimentacaoSet as mov"
-				+ "			where (mov.exTipoMovimentacao.idTpMov = 11 or mov.exTipoMovimentacao.idTpMov = 25)"
+				+ "			where (mov.exTipoMovimentacao in :enumList)"
 				+ "			and mov.exMovimentacaoCanceladora = null"
 				+ "			and doc.exModelo.idMod = :idMod"
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"

@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA;
-import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 import static br.gov.jfrj.siga.ex.util.ProcessadorHtml.novoHtmlPersonalizado;
 
 import java.io.BufferedWriter;
@@ -67,9 +65,9 @@ import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -182,7 +180,7 @@ public class Documento {
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			StringBuilder s = new StringBuilder();
 			Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
-			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+			if (movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA) {
 				s.append(Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa()));
 			} else {
 				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
@@ -191,8 +189,8 @@ public class Documento {
 
 				/*** Exibe para Documentos Capturados a Funcao / Unidade ***/
 				if (movAssinatura.getExDocumento().isInternoCapturado()
-						&& (movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
-								|| movAssinatura.getIdTpMov().equals(TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO))) {
+						&& (movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
+								|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO)) {
 					/* Interno Exibe Personalização se realizada */
 					s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura,true));
 				} else if (movAssinatura.getExDocumento().isExternoCapturado()
@@ -222,7 +220,7 @@ public class Documento {
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			String s;
 			Date dataDeInicioDeObrigacaoExibirRodapeDeAssinatura=null;
-			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
+			if (movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA) {
 				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 			} else {
 				dataDeInicioDeObrigacaoExibirRodapeDeAssinatura = Prop.getData("rodape.data.assinatura.ativa");
@@ -290,17 +288,13 @@ public class Documento {
 				String nome = als.get(i);
 				for (ExMovimentacao mov : movsAssinatura) {
 					if (mov.getCadastrante().getSigla().equals(nome.split(" - ")[1].split(" ")[0])) {
-						if (mov.getExTipoMovimentacao()
-								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
-							|| mov.getExTipoMovimentacao()
-								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
+						if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA) {
 							nome = "Assinado com senha por " + nome;
 							break;
 						}
-						if (mov.getExTipoMovimentacao()
-								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
-							|| mov.getExTipoMovimentacao()
-								.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
+						if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO) {
 							nome = "Assinado digitalmente por " + nome;
 							break;
 						}
@@ -342,7 +336,7 @@ public class Documento {
 	// if (arq instanceof ExMovimentacao) {
 	// ExMovimentacao mov = (ExMovimentacao) arq;
 	// if (mov.getExTipoMovimentacao().getId() ==
-	// ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+	// ExTipoDeMovimentacao.JUNTADA)
 	// sigla = mov.getExDocumentoVia().getSigla();
 	// } else {
 	// ExDocumentoVia dv = new ExDocumentoVia();
@@ -425,7 +419,7 @@ public class Documento {
 				String sigla = mob.getSigla();
 				if (an.getArquivo() instanceof ExMovimentacao) {
 					ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-					if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
 						sigla = m.getExMobil().getSigla();
 				} else {
 					sigla = an.getMobil().getSigla();

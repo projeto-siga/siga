@@ -13,8 +13,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import com.crivano.swaggerservlet.SwaggerServlet;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;

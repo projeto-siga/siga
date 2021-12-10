@@ -6,8 +6,8 @@ import com.crivano.jlogic.Expression;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeDisponibilizarNoAcompanhamentoDoProtocolo extends CompositeExpressionSupport {
 
@@ -27,6 +27,6 @@ public class ExPodeDisponibilizarNoAcompanhamentoDoProtocolo extends CompositeEx
 		return new ExPodePorConfiguracao(titular, lotaTitular).withExMod(doc.getExModelo())
 				.withExFormaDoc(doc.getExFormaDocumento()).withExTpDoc(doc.getExTipoDocumento())
 				.withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-				.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
+				.withExTpMov(ExTipoDeMovimentacao.EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
 	}
 };

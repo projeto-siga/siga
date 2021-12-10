@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -46,12 +47,12 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
 import br.gov.jfrj.siga.ex.model.enm.ExParamCfg;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 
@@ -89,7 +90,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@Get("app/configuracao/listar_cadastradas")
-	public void listaCadastradas(Integer idTpConfiguracao, Long idOrgaoUsu, Long idTpMov, Long idFormaDoc, Long idMod,
+	public void listaCadastradas(Integer idTpConfiguracao, Long idOrgaoUsu, Integer idTpMov, Long idFormaDoc, Long idMod,
 			String nmTipoRetorno, boolean campoFixo) throws Exception {
 
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -110,7 +111,7 @@ public class ExConfiguracaoController extends ExController {
 			config.setOrgaoUsuario(null);
 
 		if (idTpMov != null && idTpMov != 0) {
-			config.setExTipoMovimentacao(dao().consultar(idTpMov, ExTipoMovimentacao.class, false));
+			config.setExTipoMovimentacao(ExTipoDeMovimentacao.getById(idTpMov));
 		} else
 			config.setExTipoMovimentacao(null);
 
@@ -156,7 +157,7 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@Get("app/configuracao/editar")
-	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
+	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Integer idTpMov, Long idTpDoc, Long idMod,
 			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
@@ -228,7 +229,7 @@ public class ExConfiguracaoController extends ExController {
 	@SuppressWarnings("all")
 	@Transacional
 	@Get("app/configuracao/editar_gravar")
-	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
+	public void editarGravar(Long id, Long idOrgaoUsu, Integer idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
 			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Integer idSituacao, Integer idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel,
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
@@ -255,7 +256,7 @@ public class ExConfiguracaoController extends ExController {
 
 	@Post("app/configuracao/gerenciar_publicacao_boletim_gravar")
 	@Transacional
-	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
+	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Integer idTpMov,
 			Integer idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Integer idSituacao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel) throws Exception {
 
@@ -411,8 +412,8 @@ public class ExConfiguracaoController extends ExController {
 			if (cfg instanceof ExConfiguracaoCache) {
 				ExConfiguracaoCache config = (ExConfiguracaoCache) cfg;
 
-				if (config.exTipoMovimentacao != 0
-						&& config.exTipoMovimentacao == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
+				if (config.exTipoMovimentacao != null
+						&& config.exTipoMovimentacao == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 						&& config.podeAdicionarComoPublicador(getTitular(), getLotaTitular())) {
 					publicadores.add(dao.consultar(config.idConfiguracao, ExConfiguracao.class, false));
 				}
@@ -474,7 +475,7 @@ public class ExConfiguracaoController extends ExController {
 		CpConfiguracaoHelper.escreverForm(c, result);
 
 		if (c.getExTipoMovimentacao() != null)
-			result.include("idTpMov", c.getExTipoMovimentacao().getIdTpMov());
+			result.include("idTpMov", c.getExTipoMovimentacao().getId());
 
 		if (c.getExTipoDocumento() != null)
 			result.include("idTpDoc", c.getExTipoDocumento().getIdTpDoc());
@@ -531,17 +532,17 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("all")
-	private Set<ExTipoMovimentacao> getListaTiposMovimentacao() throws Exception {
-		TreeSet<ExTipoMovimentacao> s = new TreeSet<ExTipoMovimentacao>(new Comparator() {
+	private Set<ExTipoDeMovimentacao> getListaTiposMovimentacao() throws Exception {
+		TreeSet<ExTipoDeMovimentacao> s = new TreeSet<>(new Comparator<ExTipoDeMovimentacao>() {
 
-			public int compare(Object o1, Object o2) {
-				return ((ExTipoMovimentacao) o1).getDescrTipoMovimentacao()
-						.compareTo(((ExTipoMovimentacao) o2).getDescrTipoMovimentacao());
+			@Override
+			public int compare(ExTipoDeMovimentacao o1, ExTipoDeMovimentacao o2) {
+				return o1.getDescr().compareTo(o2.getDescr());
 			}
 
 		});
 
-		s.addAll(dao().listarExTiposMovimentacao());
+		s.addAll(Arrays.asList(ExTipoDeMovimentacao.values()));
 
 		return s;
 	}

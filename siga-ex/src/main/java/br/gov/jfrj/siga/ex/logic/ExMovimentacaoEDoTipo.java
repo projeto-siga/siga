@@ -3,20 +3,21 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 
 public class ExMovimentacaoEDoTipo implements Expression {
 	ExMovimentacao mov;
-	long tipo;
+	ITipoDeMovimentacao tipo;
 
-	public ExMovimentacaoEDoTipo(ExMovimentacao mov, long tipo) {
+	public ExMovimentacaoEDoTipo(ExMovimentacao mov, ITipoDeMovimentacao tipo) {
 		this.mov = mov;
 		this.tipo = tipo;
 	}
 
 	@Override
 	public boolean eval() {
-		return mov != null && mov.getExTipoMovimentacao().getIdTpMov().equals(tipo);
+		return mov != null && mov.getExTipoMovimentacao() == tipo;
 	}
 
 	@Override

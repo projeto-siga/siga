@@ -59,6 +59,6 @@ public class ExPodeCancelarVinculacaoPapel extends CompositeExpressionSupport {
 						new ExMovimentacaoECadastrante(mov, titular, lotaTitular)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO)
-						.withExTpMov(mov.getIdTpMov()));
+						.withExTpMov(mov.getExTipoMovimentacao()));
 	}
 }

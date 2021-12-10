@@ -15,23 +15,18 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
-import net.sf.jasperreports.engine.JRException;
-
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 public class RelDocumentosProduzidos extends RelatorioTemplate {
 
@@ -94,8 +89,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		String addSelect = "doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "count(doc.idDoc) as qtd, "
 				+ "sum(doc.numPaginas) ";
-		String addWhere = " and mov.exTipoMovimentacao.idTpMov = "
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) 
+		String addWhere = " and mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.CRIACAO" 
  				+ " group by doc.lotaCadastrante.siglaLotacao,"
 				+ " doc.exModelo.nmMod" + " order by 1, 3";
 		Iterator it = obtemDados(d, addSelect, addWhere);
@@ -180,8 +174,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		String addSelect = "distinct doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "mob.idMobil, " + "doc.numPaginas ";
 
-		String addWhere = " and mov.exTipoMovimentacao.idTpMov = "
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) 
+		String addWhere = " and mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.CRIACAO " 
  				+ "order by doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "mob.idMobil ";
 
@@ -246,14 +239,10 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		// Total de documentos tramitadas pelo menos uma vez (por lotação ou
 		// usuário)
 		String addSelect = "count(distinct doc.idDoc) ";
-		String addWhere = "and (mov.exTipoMovimentacao.idTpMov = "
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) 
- 				+ " or mov.exTipoMovimentacao.idTpMov = " 
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) 
-				+ " or mov.exTipoMovimentacao.idTpMov = "  
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA) 
-				+ " or mov.exTipoMovimentacao.idTpMov = "  
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA) 
+		String addWhere = "and (mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TRANSFERENCIA" 
+ 				+ " or mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA" 
+				+ " or mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA" 
+				+ " or mov.exTipoMovimentacao = br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA" 
 				+ ") and mov.exMovimentacaoCanceladora is null ";
 		Iterator it = obtemDados(d, addSelect, addWhere);
 

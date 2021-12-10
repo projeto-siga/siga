@@ -8,8 +8,8 @@ import com.crivano.jlogic.Not;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeAssinarComSenha extends CompositeExpressionSupport {
 
@@ -35,7 +35,7 @@ public class ExPodeAssinarComSenha extends CompositeExpressionSupport {
 				Not.of(new ExEstaComPrazoDeAssinaturaVencido(mob.doc())),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA));
+						.withExTpMov(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA));
 
 	}
 

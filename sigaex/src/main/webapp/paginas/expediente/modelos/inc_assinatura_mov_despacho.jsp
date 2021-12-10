@@ -7,7 +7,7 @@
 <!-- INICIO ASSINATURA -->
 <c:forEach var="movim" items="${doc.mobilGeral.exMovimentacaoSet}">
 	<c:if
-		test="${movim.exTipoMovimentacao.idTpMov == 24 && mov.titular.idPessoa == movim.titular.idPessoa && not empty movim.descrMov}">
+		test="${movim.exTipoMovimentacao == INCLUSAO_DE_COSIGNATARIO && mov.titular.idPessoa == movim.titular.idPessoa && not empty movim.descrMov}">
 		<c:set var="funcSubscrDoc" value="${movim.descrMov}" />
 	</c:if>
 </c:forEach>

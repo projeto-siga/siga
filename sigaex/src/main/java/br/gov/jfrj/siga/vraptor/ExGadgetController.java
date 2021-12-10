@@ -23,7 +23,6 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +38,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 

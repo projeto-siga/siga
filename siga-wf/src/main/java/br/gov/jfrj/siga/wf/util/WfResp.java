@@ -25,6 +25,14 @@ public class WfResp implements Responsible {
 			return lotacao.getSiglaCompleta();
 		return null;
 	}
+	
+	public String getTooltip() {
+		if (pessoa != null)
+			return pessoa.getNomePessoa();
+		if (lotacao != null)
+			return lotacao.getNomeLotacao();
+		return null;
+	}
 
 	public String getCodigo() {
 		if (pessoa != null)
@@ -33,6 +41,7 @@ public class WfResp implements Responsible {
 			return "@" + lotacao.getSiglaCompleta();
 		return null;
 	}
+	
 
 	public DpPessoa getPessoa() {
 		return pessoa;

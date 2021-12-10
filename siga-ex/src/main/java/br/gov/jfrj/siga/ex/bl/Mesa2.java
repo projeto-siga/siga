@@ -16,8 +16,9 @@ import com.crivano.swaggerservlet.ISwaggerModel;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.model.enm.TipoDePainelEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -25,7 +26,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa2 {
@@ -212,12 +213,12 @@ public class Mesa2 {
 
 			if (usuarioPosse) {
 				ExMovimentacao ultMov = mobil
-					.getUltimaMovimentacao(new long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA,
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA,
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA,
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
-						}, new long[] {0L}, mobil, false, null);
+					.getUltimaMovimentacao(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.TRANSFERENCIA,
+							ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA,
+							ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA,
+							ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA,
+							ExTipoDeMovimentacao.RECEBIMENTO
+						}, new ITipoDeMovimentacao[] {}, mobil, false, null);
 				if (ultMov != null && ultMov.getCadastrante() != null) {
 					r.nomePessoaPosse = ultMov.getCadastrante().getNomePessoa(); 
 				} else {
@@ -281,8 +282,7 @@ public class Mesa2 {
 				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
 					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
 							.getExMovimentacaoSet().stream() //
-							.filter(mov -> mov.getExTipoMovimentacao().getId()
-									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+							.filter(mov -> mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO)
 							.filter(mov -> !mov.isCancelada()) //
 							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
 							.map(ExMovimentacao::getDtFimMovDDMMYY) //
@@ -292,8 +292,7 @@ public class Mesa2 {
 				if(tag.marca.getCpMarcador().isADevolverForaDoPrazo()) {
 					t.nome += ", atribuído pela unidade " + tag.marca.getExMobil()
 							.getExMovimentacaoSet().stream() //
-							.filter(mov -> mov.getExTipoMovimentacao().getId()
-									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO))
+							.filter(mov -> mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO)
 							.filter(mov -> !mov.isCancelada()) //
 							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
 							.map(ExMovimentacao::getCadastranteString) //

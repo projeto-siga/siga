@@ -25,10 +25,9 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
@@ -59,21 +58,30 @@ import net.sf.jasperreports.engine.JRException;
 		public AbstractRelatorioBaseBuilder configurarRelatorio()
 				throws DJBuilderException, JRException {
 
-			this.listColunas.add("Unidade");
-			this.listColunas.add("Nome do Documento");
-			this.listColunas.add("No. Documento");
-			this.listColunas.add("Tempo Tramitação (dias)");
-			this.listColunas.add("Cadastrante");
-			this.listColunas.add("Resp. Assinatura / Autenticação");
-					
-			this.addColuna(this.listColunas.get(0), 15, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(1), 30, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(2), 20, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(3), 15, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(4), 15, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(5), 15, RelatorioRapido.CENTRO, false);
+			if(!"".equals(parametros.get("link_siga"))) {
+				this.listColunas.add("Unidade");
+				this.listColunas.add("Nome do Documento");
+				this.listColunas.add("No. Documento");
+				this.listColunas.add("Tempo Tramitação (dias)");
+				this.listColunas.add("Cadastrante");
+				this.listColunas.add("Resp. Assinatura / Autenticação");
+						
+				this.addColuna(this.listColunas.get(0), 15, RelatorioRapido.ESQUERDA, false);
+				this.addColuna(this.listColunas.get(1), 30, RelatorioRapido.ESQUERDA, false);
+				this.addColuna(this.listColunas.get(2), 20, RelatorioRapido.CENTRO, false);
+				this.addColuna(this.listColunas.get(3), 15, RelatorioRapido.CENTRO, false);
+				this.addColuna(this.listColunas.get(4), 15, RelatorioRapido.CENTRO, false);
+				this.addColuna(this.listColunas.get(5), 15, RelatorioRapido.CENTRO, false);	
+			} else {
+				this.listColunas.add("Espécie Documental");
+				this.listColunas.add("Total de Documentos Tramitados");
+				this.listColunas.add("Tempo Médio (dias)");
+				
+				this.addColuna(this.listColunas.get(0), 40, RelatorioRapido.ESQUERDA, false);
+				this.addColuna(this.listColunas.get(1), 35, RelatorioRapido.DIREITA, false);
+				this.addColuna(this.listColunas.get(2), 35, RelatorioRapido.DIREITA, false);
+			}
 			return this;
-
 		}
 
 		@Override
@@ -82,7 +90,7 @@ import net.sf.jasperreports.engine.JRException;
 			Query qryLotacaoTitular = ContextoPersistencia.em().createQuery(
 					"from DpLotacao lot " + "where lot.dataFimLotacao is null "
 							+ "and lot.orgaoUsuario = "
-							+ parametros.get("orgaoUsuario")
+							+ parametros.get("orgao")
 							+ " and lot.siglaLotacao = '"
 							+ parametros.get("lotacaoTitular") + "'");
 			DpLotacao lotaTitular = (DpLotacao) qryLotacaoTitular.getSingleResult();
@@ -137,13 +145,13 @@ import net.sf.jasperreports.engine.JRException;
 						+ "left outer join doc.exModelo mod "
 						+ "left outer join doc.cadastrante cad "
 						+ "left outer join doc.subscritor subs "
-						+ "where (mov.exTipoMovimentacao.idTpMov = :idTpMov1 "
-						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov2 "
-						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov3 "
-						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov4 "
-						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov5 "
-						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov6 "
-						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov7) "
+						+ "where (mov.exTipoMovimentacao = :idTpMov1 "
+						+ "		or mov.exTipoMovimentacao = :idTpMov2 "
+						+ "		or mov.exTipoMovimentacao = :idTpMov3 "
+						+ "		or mov.exTipoMovimentacao = :idTpMov4 "
+						+ "		or mov.exTipoMovimentacao = :idTpMov5 "
+						+ "		or mov.exTipoMovimentacao = :idTpMov6 "
+						+ "		or mov.exTipoMovimentacao = :idTpMov7) "
 						+ " 	and mov.exMovimentacaoCanceladora is null "
 						+ "		and doc.dtRegDoc >= :dtini and doc.dtRegDoc < :dtfim "
 						+ "		and doc.dtFinalizacao is not null "
@@ -158,13 +166,13 @@ import net.sf.jasperreports.engine.JRException;
 						+ "mov.idMov "
 						);
 
-			query.setParameter("idTpMov1", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
-			query.setParameter("idTpMov2", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
-			query.setParameter("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
-			query.setParameter("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
-			query.setParameter("idTpMov5", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE);
-			query.setParameter("idTpMov6", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE);
-			query.setParameter("idTpMov7", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
+			query.setParameter("idTpMov1", ExTipoDeMovimentacao.TRANSFERENCIA);
+			query.setParameter("idTpMov2", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
+			query.setParameter("idTpMov3", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov4", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA);
+			query.setParameter("idTpMov5", ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
+			query.setParameter("idTpMov6", ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE);
+			query.setParameter("idTpMov7", ExTipoDeMovimentacao.TORNAR_SEM_EFEITO);			
 			
 			if (parametros.get("especie") != null && !"".equals(parametros.get("especie"))) {
 				query.setParameter("especie", Long.valueOf((String) parametros.get("especie")));
@@ -248,27 +256,27 @@ import net.sf.jasperreports.engine.JRException;
 						ExMovimentacao mov2 = (ExMovimentacao) obj[1];
 						dtMov1 = getOnlyDate(mov1.getDtMov());
 						dtMov2 = getOnlyDate(mov2.getDtMov());
-						if (mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+						if (mov1.getExTipoMovimentacao() == ExTipoDeMovimentacao.TORNAR_SEM_EFEITO) {
 							dtCancel = getOnlyDate(mov1.getDtMov());
 						}
 						
 						if (idDoc1 == idDoc2) {
 							if (idMob1 == idMob2) {
-								if (!(mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-										&& mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
-										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
-										&& ((mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-											&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+								if (!(mov2.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE 
+										&& mov1.getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
+										&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.TORNAR_SEM_EFEITO
+										&& ((mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE 
+											&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
 											|| tramitou)) {
-									if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE) { 
+									if (mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE) { 
 										qtdTram += 1L;
 									}
 									qtdDias += (dtMov2 - dtMov1);
 									tramitou = true;
 								}
 							} else {
-								if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+								if (mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE 
+										&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.TORNAR_SEM_EFEITO) {
 									qtdTram += 1L;
 									if (dtCancel == 0) {
 										qtdDias += (getOnlyDate(new Date()) - dtMov1);
@@ -276,16 +284,16 @@ import net.sf.jasperreports.engine.JRException;
 										qtdDias += (dtCancel - dtMov1);
 									}
 								}
-								if (mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
-									|| mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {									
+								if (mov2.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE 
+									|| mov2.getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) {									
 									tramitou = false;
 								} else {
 									tramitou = true;
 								}
 							}
 						} else {
-							if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-								&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+							if (mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE 
+								&& mov1.getExTipoMovimentacao() != ExTipoDeMovimentacao.TORNAR_SEM_EFEITO) {
 								qtdTram += 1L;
 								if (dtCancel == 0) {
 									qtdDias += (getOnlyDate(new Date()) - dtMov1);
@@ -321,7 +329,7 @@ import net.sf.jasperreports.engine.JRException;
 					}
 					ExMovimentacao mov2 = (ExMovimentacao) obj[1];
 					dtMov2 = getOnlyDate(mov2.getDtMov());
-					if (mov2.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {
+					if (mov2.getExTipoMovimentacao() != ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) {
 						qtdTram += 1L;
 						if (dtCancel == 0) {
 							qtdDias += (getOnlyDate(new Date()) - dtMov2);
@@ -340,30 +348,38 @@ import net.sf.jasperreports.engine.JRException;
 			if (listDocs.size() == 0) {
 				throw new AplicacaoException("Não foram encontrados documentos para os dados informados.");
 			}
-			geraListEspecie(listDocs);
+			geraListEspecie(listDocs);			
 			listComparator comparator = new listComparator();
 			Collections.sort(listLinhas, comparator);
 			listEspecieComparator comparatorEspecie = new listEspecieComparator();
 			Collections.sort(listEspecie, comparatorEspecie);
 			String lotaAnt = "";
 			String modeloAnt = "";
-			for (List<String> lin : listLinhas) {
-				if ((lin.get(0)).equals(lotaAnt)) { 
-					lin.set(0, "");
-					if (lin.get(1).equals(modeloAnt)) { 
-						lin.set(1, "");
+			if(!"".equals(parametros.get("link_especie"))) {
+				for (List<String> lin : listLinhas) {
+					if ((lin.get(0)).equals(lotaAnt)) { 
+						lin.set(0, "");
+						if (lin.get(1).equals(modeloAnt)) { 
+							lin.set(1, "");
+						} else {
+							modeloAnt = lin.get(1);
+						}
 					} else {
+						lotaAnt = lin.get(0);
 						modeloAnt = lin.get(1);
 					}
-				} else {
-					lotaAnt = lin.get(0);
-					modeloAnt = lin.get(1);
+					for (String dado : lin) {
+						d.add(dado);
+					}
+					lin.set(2, "<a href=" + parametros.get("link_siga") 
+							+ lin.get(2) + ">" + lin.get(2) + "</a>");
 				}
-				for (String dado : lin) {
-					d.add(dado);
+			} else {
+				for (List<String> l : listEspecie) {
+					for (String string : l) {
+						d.add(string);
+					}
 				}
-				lin.set(2, "<a href=" + parametros.get("link_siga") 
-						+ lin.get(2) + ">" + lin.get(2) + "</a>");
 			}
 			return d;
 		}
@@ -397,10 +413,14 @@ import net.sf.jasperreports.engine.JRException;
 
 		private void addEspecie(String lastIdFormaDoc, String lastEspecie) {
 			List<String> dadosEspecie = new ArrayList(); 
-			dadosEspecie.add("<a href='#' class='text-primary' onclick=\"javascript:visualizarRelatorio('" 
-					+ parametros.get("link_especie") + "','"  
-					+ lastIdFormaDoc + "','" + lastEspecie + "');\">" 
-					+ lastEspecie + "</a>");
+			if(!"".equals(parametros.get("link_especie"))) { 
+				dadosEspecie.add("<a href='#' class='text-primary' onclick=\"javascript:visualizarRelatorio('" 
+						+ parametros.get("link_especie") + "','"  
+						+ lastIdFormaDoc + "','" + lastEspecie + "');\">" 
+						+ lastEspecie + "</a>");
+			} else {
+				dadosEspecie.add(lastEspecie);
+			}
 			dadosEspecie.add(totalEspecieDocs.toString());
 			Long media = (long) ((((double) totalEspecieDias / (double) totalEspecieDocs)) + 0.5);
 			dadosEspecie.add(media.toString());

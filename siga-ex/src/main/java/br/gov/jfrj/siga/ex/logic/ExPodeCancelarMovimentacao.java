@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 
@@ -60,72 +60,72 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 						new ExEMobilGeral(mob),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO),
+								ExTipoDeMovimentacao.TORNAR_SEM_EFEITO),
 
 						Not.of(new ExMovimentacaoESubscritor(exUltMovNaoCanc, titular))),
 
 				NOr.of(
 
 						// Não deixa cancelar apensação ou desapensação
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO),
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.APENSACAO),
 
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO),
-
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO),
-
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO),
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.DESAPENSACAO),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO),
+								ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO),
 
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO),
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.RECEBIMENTO),
+
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
+								ExTipoDeMovimentacao.PENDENCIA_DE_ANEXACAO),
+
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.RECEBIMENTO),
 
 						// Não deixa cancelar assinatura
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO),
+								ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO),
+								ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA),
+								ExTipoDeMovimentacao.ASSINATURA_COM_SENHA),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO),
+								ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO),
+								ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA),
+								ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA),
+								ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI),
+								ExTipoDeMovimentacao.NOTIFICACAO_PUBL_BI),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_BOLETIM),
+								ExTipoDeMovimentacao.PUBLICACAO_BOLETIM),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO),
+								ExTipoDeMovimentacao.DISPONIBILIZACAO),
 
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)),
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.CRIACAO)),
 
 				// Não deixa cancelar a atualização (por enquanto, só se resultar da assinatura)
 				NAnd.of(
 
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ATUALIZACAO),
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.ATUALIZACAO),
 
 						Or.of(
 
 								new ExMovimentacaoRefEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO),
+										ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO),
 
 								new ExMovimentacaoRefEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO))),
+										ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO))),
 
 				// Não deixa cancelar alguns tipo se não for o cadastrante
 				If.of(
@@ -133,31 +133,31 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 						Or.of(
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA),
+										ExTipoDeMovimentacao.TRANSFERENCIA),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA),
+										ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA),
+										ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA),
+										ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA),
+										ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO),
+										ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO),
+										ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO),
+										ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)),
+										ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA)),
 
 						new ExMovimentacaoELotaTitular(exUltMovNaoCanc, lotaTitular),
 
@@ -167,7 +167,7 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 				// expediente/processo que já sofreu outra movimentação
 				NAnd.of(
 
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ATUALIZACAO),
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.ATUALIZACAO),
 
 						NOr.of(
 
@@ -176,7 +176,7 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 								And.of(
 
 										new ExMovimentacaoEDoTipo(ultimaMovimentacaoDaReferencia,
-												ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO),
+												ExTipoDeMovimentacao.ANOTACAO),
 
 										new ExMovimentacaoEPosterior(ultimaMovimentacaoDaReferencia, exUltMovNaoCanc)),
 
@@ -191,7 +191,7 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 						And.of(
 
 								new ExMovimentacaoEDoTipo(ultimaMovimentacaoDaReferencia,
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO),
+										ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO),
 
 								new ExMobPodeAtenderPedidoPublicacao(mob, titular, lotaTitular)),
 
@@ -205,19 +205,19 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 								NAnd.of(
 
 										new ExMovimentacaoEDoTipo(ultimaMovimentacaoDaReferencia,
-												ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE),
+												ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE),
 
 										new ExPodeDesarquivarCorrente(mob, titular, lotaTitular)),
 
 								NAnd.of(
 
 										new ExMovimentacaoEDoTipo(ultimaMovimentacaoDaReferencia,
-												ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO),
+												ExTipoDeMovimentacao.ANEXACAO),
 
 										new ExPodeCancelarAnexo(mob, exUltMovNaoCanc, titular, lotaTitular)),
 
 								new ExPodeMovimentarPorConfiguracao(
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO, titular,
+										ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, titular,
 										lotaTitular))));
 
 	}

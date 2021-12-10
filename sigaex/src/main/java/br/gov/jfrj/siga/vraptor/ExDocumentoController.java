@@ -94,7 +94,6 @@ import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExProtocolo;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
@@ -116,6 +115,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -1169,7 +1169,7 @@ public class ExDocumentoController extends ExController {
 							+ exDocumentoDTO
 									.getMob()
 									.getUltimaMovimentacaoNaoCancelada(
-											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
+											ExTipoDeMovimentacao.ELIMINACAO)
 									.getExMobilRef());
 		}
 		docVO.calculaSetsDeMarcas();
@@ -1217,7 +1217,7 @@ public class ExDocumentoController extends ExController {
 							+ exDocumentoDTO
 									.getMob()
 									.getUltimaMovimentacaoNaoCancelada(
-											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
+											ExTipoDeMovimentacao.ELIMINACAO)
 									.getExMobilRef());
 		}
 		result.include("msg", exDocumentoDTO.getMsg());
@@ -1382,7 +1382,8 @@ public class ExDocumentoController extends ExController {
 				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
-				&& !exDocumentoDto.getMob().getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).getCadastrante().equivale(getTitular())
+				&& !exDocumentoDto.getMob().isEmTransitoExterno()
+				&& !exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA).getCadastrante().equivale(getTitular())
 				&& !exDocumentoDto.getMob().isJuntado()) {
 			recebimentoPendente = true;			
 		} 		
@@ -1580,7 +1581,7 @@ public class ExDocumentoController extends ExController {
 
 		verificaDocumento(exDocumentoDto.getDoc());
 
-		Ex.getInstance().getComp().afirmar("Não é possível Finalizar", ExPodeFinalizar.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob().getDoc());
+		Ex.getInstance().getComp().afirmar("Não é possível Finalizar", ExPodeFinalizar.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob().doc());
 
 		try {
 			exDocumentoDto.setMsg(Ex
@@ -2862,12 +2863,11 @@ public class ExDocumentoController extends ExController {
 		Map<Long, ExMovimentacao> recebimentos = new HashMap<Long, ExMovimentacao>();
 		ExMovimentacao recebimento = null;
 		for (ExMovimentacao exMovimentacao : movimentacoesMobil) {
-			if (exMovimentacao.getExTipoMovimentacao()
-					.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
+			if (exMovimentacao.getExTipoMovimentacao() == ExTipoDeMovimentacao.RECEBIMENTO) {
 				recebimento = exMovimentacao;
 			} else {
 				if ((exMovimentacao.getExTipoMovimentacao()
-						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) && (recebimento != null)) {
+						== ExTipoDeMovimentacao.TRANSFERENCIA) && (recebimento != null)) {
 					recebimentos.put(exMovimentacao.getIdMov(), recebimento);
 					recebimento = null;
 				}
@@ -2906,11 +2906,11 @@ public class ExDocumentoController extends ExController {
 		Map<ExMobil, ExMovimentacao> recebimentoPorVia = new HashMap<ExMobil, ExMovimentacao>();
 		for (ExMovimentacao exMovimentacao : movimentacoesDocumento) {
 			if (exMovimentacao.getExTipoMovimentacao()
-					.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO) {
+					== ExTipoDeMovimentacao.RECEBIMENTO) {
 				recebimentoPorVia.put(exMovimentacao.getExMobil(), exMovimentacao);
 			} else {
 				if ((exMovimentacao.getExTipoMovimentacao()
-						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
+						== ExTipoDeMovimentacao.TRANSFERENCIA)
 						&& (recebimentoPorVia.containsKey(exMovimentacao.getExMobil()))) {
 					recebimentos.put(exMovimentacao.getIdMov(), recebimentoPorVia.get(exMovimentacao.getExMobil()));
 					recebimentoPorVia.remove(exMovimentacao.getExMobil());

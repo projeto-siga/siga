@@ -24,29 +24,31 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.cp.AbstractCpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.converter.ITipoDeMovimentacaoConverter;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 @Entity
 @Table(name = "siga.ex_configuracao")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
 public class ExConfiguracao extends CpConfiguracao {
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_TP_MOV")
-	private ExTipoMovimentacao exTipoMovimentacao;
+	@Convert(converter = ITipoDeMovimentacaoConverter.class)
+	@Column(name = "ID_TP_MOV")
+	private ITipoDeMovimentacao exTipoMovimentacao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_DOC")
@@ -116,11 +118,11 @@ public class ExConfiguracao extends CpConfiguracao {
 		return;
 	}
 
-	public ExTipoMovimentacao getExTipoMovimentacao() {
+	public ITipoDeMovimentacao getExTipoMovimentacao() {
 		return exTipoMovimentacao;
 	}
 
-	public void setExTipoMovimentacao(ExTipoMovimentacao exTipoMovimentacao) {
+	public void setExTipoMovimentacao(ITipoDeMovimentacao exTipoMovimentacao) {
 		this.exTipoMovimentacao = exTipoMovimentacao;
 	}
 
@@ -190,7 +192,7 @@ public class ExConfiguracao extends CpConfiguracao {
 
 	public boolean isAgendamentoPublicacaoBoletim() {
 		return getExTipoMovimentacao() != null
-				&& getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM;
+				&& getExTipoMovimentacao() == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM;
 	}
 
 	public boolean podeAdicionarComoPublicador(DpPessoa titular,

@@ -11,7 +11,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeCancelarMarcacao extends CompositeExpressionSupport {
 
@@ -58,7 +58,7 @@ public class ExPodeCancelarMarcacao extends CompositeExpressionSupport {
 								new ExMovimentacaoELotaCadastrante(mov, lotaTitular)),
 						And.of(new ExEMarcadorDeAtendente(mov.getMarcador()),
 								new ExEstaResponsavel(mov.mob(), titular, lotaTitular))),
-				new ExPodeCancelarMovimentacaoPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, titular,
+				new ExPodeCancelarMovimentacaoPorConfiguracao(ExTipoDeMovimentacao.MARCACAO, titular,
 						lotaTitular));
 	}
 

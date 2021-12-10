@@ -9,18 +9,16 @@ import java.util.Set;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.ExDependencia;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExGraphColaboracao extends ExGraph {
 
 	public ExGraphColaboracao(ExDocumento doc) {
 		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
 			if (!mov.isCancelada()
-					&& mov.getExTipoMovimentacao()
-							.getIdTpMov()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)) {
+					&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO) {
 
 				ExParte parte = ExParte.create(mov.getDescrMov());
 
@@ -40,9 +38,7 @@ public class ExGraphColaboracao extends ExGraph {
 
 		ArrayList<ExMovimentacao> l = new ArrayList<>();
 		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
-			if (!mov.getExTipoMovimentacao()
-					.getIdTpMov()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO))
+			if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO)
 				continue;
 			l.add(mov);
 		}

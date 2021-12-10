@@ -9,7 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeDesarquivarCorrente extends CompositeExpressionSupport {
 
@@ -65,7 +65,7 @@ public class ExPodeDesarquivarCorrente extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE,
 						titular, lotaTitular));
 	}
 }

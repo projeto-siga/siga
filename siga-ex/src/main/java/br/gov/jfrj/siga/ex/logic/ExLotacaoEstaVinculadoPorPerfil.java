@@ -6,7 +6,7 @@ import com.crivano.jlogic.JLogic;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExLotacaoEstaVinculadoPorPerfil implements Expression {
 
@@ -22,8 +22,7 @@ public class ExLotacaoEstaVinculadoPorPerfil implements Expression {
 	public boolean eval() {
 		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
 			if (!mov.isCancelada()
-					&& mov.getExTipoMovimentacao().getIdTpMov()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+					&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL
 					&& mov.getLotaSubscritor().equivale(lotaTitular))
 				return true;
 		}

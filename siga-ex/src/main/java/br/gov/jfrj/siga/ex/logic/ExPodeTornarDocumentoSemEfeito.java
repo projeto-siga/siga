@@ -10,8 +10,8 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 
@@ -63,7 +63,7 @@ public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 								Or.of(new ExECadastrante(mob.doc(), titular), new ExESubscritor(mob.doc(), titular)),
 								new ExPodePorConfiguracao(titular, lotaTitular)
 										.withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-										.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO)
+										.withExTpMov(ExTipoDeMovimentacao.TORNAR_SEM_EFEITO)
 										.withCargo(titular.getCargo())
 										.withDpFuncaoConfianca(titular.getFuncaoConfianca())
 										.withExFormaDoc(mob.doc().getExFormaDocumento())
@@ -77,7 +77,7 @@ public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 				Not.of(new ExEstaSolicitadaPublicacaoNoDiario(mob.doc())),
 				Not.of(new ExEstaPublicadoNoBoletim(mob.doc())), Not.of(new ExEstaPublicadoNoDiario(mob.doc())),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO, titular,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.TORNAR_SEM_EFEITO, titular,
 						lotaTitular));
 	}
 }

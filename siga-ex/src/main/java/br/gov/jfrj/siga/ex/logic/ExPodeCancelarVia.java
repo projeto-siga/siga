@@ -12,8 +12,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeCancelarVia extends CompositeExpressionSupport {
 
@@ -70,15 +70,15 @@ public class ExPodeCancelarVia extends CompositeExpressionSupport {
 						new ExEGovSP(),
 
 						Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(mob.doc(),
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)),
+								ExTipoDeMovimentacao.ASSINATURA_COM_SENHA)),
 
 						Or.of(
 
 								new ExTemMovimentacaoNaoCanceladaDoTipo(mob.doc(),
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA),
+										ExTipoDeMovimentacao.TRANSFERENCIA),
 
 								new ExTemMovimentacaoNaoCanceladaDoTipo(mob.doc(),
-										ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA),
+										ExTipoDeMovimentacao.JUNTADA),
 
 								new ExTemDocumentosFilhos(mob),
 
@@ -86,7 +86,7 @@ public class ExPodeCancelarVia extends CompositeExpressionSupport {
 
 				Not.of(new ExEMobilCancelado(mob)),
 
-				new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO),
+				new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.CRIACAO),
 
 				new CpIgual(exUltMovNaoCanc, "última movimentação não cancelada", exUltMov, "última movimentação"),
 

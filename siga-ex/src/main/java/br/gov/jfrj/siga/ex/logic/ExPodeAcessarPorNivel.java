@@ -10,7 +10,6 @@ import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExNivelAcesso;
 
 public class ExPodeAcessarPorNivel extends CompositeExpressionSupport {
 

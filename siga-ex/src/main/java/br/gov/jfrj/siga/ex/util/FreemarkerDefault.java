@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.ex.bl.Ex;
 
 public class FreemarkerDefault {
 	public static String getDefaultTemplate() {

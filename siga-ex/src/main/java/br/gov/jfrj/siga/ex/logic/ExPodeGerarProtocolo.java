@@ -8,8 +8,7 @@ import com.crivano.jlogic.Not;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeGerarProtocolo extends CompositeExpressionSupport {
 
@@ -33,7 +32,7 @@ public class ExPodeGerarProtocolo extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaArquivadoDoc(doc)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO, titular,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.GERAR_PROTOCOLO, titular,
 						lotaTitular));
 
 	}

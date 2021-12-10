@@ -4,8 +4,8 @@ import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -26,7 +26,7 @@ public class BoletimInternoBL {
 			if (docPubl
 					.getMobilGeral()
 					.getMovimentacoesPorTipo(
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI, false)
+							ExTipoDeMovimentacao.NOTIFICACAO_PUBL_BI, false)
 					.size() > 0)
 
 				throw new AplicacaoException(

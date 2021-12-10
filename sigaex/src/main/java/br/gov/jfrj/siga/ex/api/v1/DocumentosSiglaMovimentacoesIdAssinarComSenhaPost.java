@@ -2,9 +2,9 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaMovimentacoesIdAssinarComSenhaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Transacional
@@ -17,7 +17,7 @@ public class DocumentosSiglaMovimentacoesIdAssinarComSenhaPost
 
 		Ex.getInstance().getBL().assinarMovimentacaoComSenha(ctx.getCadastrante(), ctx.getLotaTitular(), mov, null,
 				ctx.getCadastrante().getSiglaCompleta(), null, false, false,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA);
+				ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA);
 
 		resp.status = "OK";
 	}

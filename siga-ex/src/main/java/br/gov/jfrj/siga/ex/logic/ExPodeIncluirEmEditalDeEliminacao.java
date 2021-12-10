@@ -10,7 +10,7 @@ import br.gov.jfrj.siga.cp.logic.CpNaoENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeIncluirEmEditalDeEliminacao extends CompositeExpressionSupport {
 
@@ -77,6 +77,6 @@ public class ExPodeIncluirEmEditalDeEliminacao extends CompositeExpressionSuppor
 						new ExEEletronico(mob.doc())),
 
 				new ExPodeMovimentarPorConfiguracao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO, titular, lotaTitular));
+						ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO, titular, lotaTitular));
 	}
 }

@@ -174,7 +174,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 					"origem",
 					mov.getExTipoMovimentacao()
 							.getId()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) ? "Anexo"
+							.equals(ExTipoDeMovimentacao.ANEXACAO) ? "Anexo"
 							: "Despacho Curto");
 
 		}

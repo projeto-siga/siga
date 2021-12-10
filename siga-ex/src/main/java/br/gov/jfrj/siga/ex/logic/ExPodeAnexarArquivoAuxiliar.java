@@ -7,8 +7,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeAnexarArquivoAuxiliar extends CompositeExpressionSupport {
 
@@ -41,6 +41,6 @@ public class ExPodeAnexarArquivoAuxiliar extends CompositeExpressionSupport {
 		return
 
 		new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-				.withExTpMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
+				.withExTpMov(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR);
 	}
 }

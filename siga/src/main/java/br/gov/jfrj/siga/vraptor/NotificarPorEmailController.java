@@ -1,28 +1,27 @@
 package br.gov.jfrj.siga.vraptor;
-
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpNotificarPorEmail;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpNotificarPorEmailDaoFiltro;
+import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 @Controller
-public class NotificarPorEmailController extends SigaSelecionavelControllerSupport<DpNotificarPorEmail, DpNotificarPorEmailDaoFiltro>{
+public class NotificarPorEmailController extends SigaSelecionavelControllerSupport<DpNotificarPorEmail, DaoFiltroSelecionavel>{
 
 	/**
 	 * @deprecated CDI eyes only
@@ -41,19 +40,19 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 	}
 	
 	@Override
-	protected DpNotificarPorEmailDaoFiltro createDaoFiltro() {
-		return null; 
+	protected DaoFiltroSelecionavel createDaoFiltro() {
+		return null;
 	}
 	
+	@Transacional
 	@Get({ "/app/notificarPorEmail/rec_notificacao_por_email", "/public/app/page/usuario/rec_notificacao_por_email" })
 	public void lista(Integer paramoffset) throws Exception {	
 		if(paramoffset == null) {
 			paramoffset = 0;
-		}
-		//setItens(CpDao.getInstance().consultarNotificaocaoEmail(paramoffset, 15, getTitular().getIdPessoa()));
-		setItens(CpDao.getInstance().consultarNotificaocaoEmail2(paramoffset, 15, getTitular().getIdPessoa()));
+		} 
+		setItens(CpDao.getInstance().consultarAcoesParaNotificacoesPorEmail(paramoffset, 15, getTitular().getIdPessoa()));
 		result.include("itens", getItens());
-		result.include("tamanho", dao().consultarQuantidadeNotificacaoPorEmail()); 
+		result.include("tamanho", dao().consultarQuantidadeDeAcoesParaNotificacoesPorEmail()); 
 		setItemPagina(15); 
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		result.forwardTo("/WEB-INF/page/usuario/notificarPorEmail.jsp"); 
@@ -61,271 +60,130 @@ public class NotificarPorEmailController extends SigaSelecionavelControllerSuppo
 	
 	@Transacional
 	@Get({ "/app/notificarPorEmail/rec_notificacao_por_email_gravar" })
-	public void gravar() throws Exception {
-		List<CpConfiguracao> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
-		if (listaNotificarPorEmail.isEmpty()) { 
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-			System.out.println(">>>>>>>>>>>>>>>>>VERIFICOU SE EXISTE CONFIGURAÇÃO....");
-//			Date data = dao().consultarDataEHoraDoServidor();
-//			DpPessoa dpPessoa = new DpPessoa();
-//			dpPessoa.setIdPessoa(getTitular().getIdPessoa()); 
-//				 
-//			cadastroDeNovoUsuario(data, dpPessoa);
-//			alterarMinhaSenha(data, dpPessoa);
-//			esqueciMinhaSenha(data, dpPessoa);
-//			responsavelPelaAssinatura(data, dpPessoa); 
-//			conssignatario(data, dpPessoa);
-//			substituicao(data, dpPessoa);
-//			documentoTramitadoParaOMeuUsuario(data, dpPessoa);
-//			documentoTramitadoParaUnidade(data, dpPessoa);
-//			tramitacaoDeDocumentosMarcados(data, dpPessoa);
-//			alteracaoDeEmail(data, dpPessoa);
-//			documentoDeMarcadores(data, dpPessoa);
+	public void gravar(Integer paramoffset) throws Exception {
+		if(paramoffset == null) {
+			paramoffset = 0;
+		}
+		
+		/*
+		 * Verifica se o usuário possui as 11 ações necessárias. Caso não possua será verificado para adicionar as que faltam.
+		 */
+		
+		List<CpConfiguracao> acoes = dao().consultarAcoesParaNotificacoesPorEmail(paramoffset, 15, getTitular().getIdPessoa());
+		if (acoes.size() < 11) {  
+			verificandoAusenciaDeAcoesParaUsuario();
 		}
 		result.redirectTo(NotificarPorEmailController.class).lista(0);
-	} 
+	}
 	
 	@Transacional
-	@Post({ "/app/notificarPorEmail/rec_notificacao_por_email2" })
-	public void notificar(final int codigo) throws Exception {
-		CpConfiguracao emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigo, getTitular().getIdPessoa());
+	@Post({ "/app/notificarPorEmail/rec_notificacao_por_email_atualiza" })
+	public void atualiza(final Long codigo) throws Exception {
+		CpConfiguracao acao = dao().consultarExistenciaDeAcaoDeNotificacaoPorEmail(codigo, getTitular().getIdPessoa());
+		acao.getDpPessoa().setIdPessoa(getTitular().getIdPessoa());
+		acao.setIdConfiguracao(codigo);  
+		acao.setDpPessoa(getTitular()); 
+		boolean ativar = acao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail();
 		
-		emailUser.setId(emailUser.getId());
-		emailUser.setDpPessoa(getTitular()); 
-		
-		boolean configuravel = emailUser.isConfiguravel();
-		
-		if (configuravel) {
-			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.PODE);
+		if (ativar) {
+			acao.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
 		} else { 
-			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
-		}
-		
-		if (!configuravel) {
-			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
-		} else { 
-			emailUser.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.PODE);
-		}
+			acao.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.PODE);
+		}  
 		
 		result.redirectTo(NotificarPorEmailController.class).lista(0);
 	}
 
-	private void documentoDeMarcadores(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail documentoDeMarcadores = new DpNotificarPorEmail();
-		documentoDeMarcadores.setCodigo(12);
-		documentoDeMarcadores.setConfiguravel(1); 
-		documentoDeMarcadores.setNaoConfiguravel(0);
-		documentoDeMarcadores.setDpPessoa(dpPessoa);
-		documentoDeMarcadores.setHisAtivo(1);
-		documentoDeMarcadores.setRestringir(0);
-		documentoDeMarcadores.setNomeDaAcao("Documentos de marcadores");
-		documentoDeMarcadores.setDataFimNotificarPorEmail(data);
-		documentoDeMarcadores.setDataInicioNotificarPorEmail(data);
-		documentoDeMarcadores.setDataFim(data);
-		documentoDeMarcadores.setDataInicio(data);
-		documentoDeMarcadores.setHisDtFim(data);
-		documentoDeMarcadores.setHisDtIni(data);
-		documentoDeMarcadores.setCadastrado(1);
-		
-		dao.gravarComHistorico(documentoDeMarcadores, getIdentidadeCadastrante());
-	}
-
-	private void alteracaoDeEmail(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail alteracaoDeEmail = new DpNotificarPorEmail();
-		alteracaoDeEmail.setCodigo(11);
-		alteracaoDeEmail.setConfiguravel(1); 
-		alteracaoDeEmail.setNaoConfiguravel(0);
-		alteracaoDeEmail.setDpPessoa(dpPessoa);
-		alteracaoDeEmail.setHisAtivo(1);
-		alteracaoDeEmail.setRestringir(0);
-		alteracaoDeEmail.setNomeDaAcao("Alteração de email");
-		alteracaoDeEmail.setDataFimNotificarPorEmail(data);
-		alteracaoDeEmail.setDataInicioNotificarPorEmail(data);
-		alteracaoDeEmail.setDataFim(data);
-		alteracaoDeEmail.setDataInicio(data);
-		alteracaoDeEmail.setHisDtFim(data);
-		alteracaoDeEmail.setHisDtIni(data);
-		alteracaoDeEmail.setCadastrado(1);
-		dao.gravarComHistorico(alteracaoDeEmail, getIdentidadeCadastrante());
-	}
-
-	private void tramitacaoDeDocumentosMarcados(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail tramitacaoDeDocumentosMarcados = new DpNotificarPorEmail();
-		tramitacaoDeDocumentosMarcados.setCodigo(10);
-		tramitacaoDeDocumentosMarcados.setConfiguravel(1); 
-		tramitacaoDeDocumentosMarcados.setNaoConfiguravel(0);
-		tramitacaoDeDocumentosMarcados.setDpPessoa(dpPessoa);
-		tramitacaoDeDocumentosMarcados.setHisAtivo(1);
-		tramitacaoDeDocumentosMarcados.setRestringir(0);
-		tramitacaoDeDocumentosMarcados.setNomeDaAcao("Tramitação de documentos marcados");
-		tramitacaoDeDocumentosMarcados.setDataFimNotificarPorEmail(data);
-		tramitacaoDeDocumentosMarcados.setDataInicioNotificarPorEmail(data);
-		tramitacaoDeDocumentosMarcados.setDataFim(data);
-		tramitacaoDeDocumentosMarcados.setDataInicio(data);
-		tramitacaoDeDocumentosMarcados.setHisDtFim(data);
-		tramitacaoDeDocumentosMarcados.setHisDtIni(data);
-		tramitacaoDeDocumentosMarcados.setCadastrado(1);
-		dao.gravarComHistorico(tramitacaoDeDocumentosMarcados, getIdentidadeCadastrante());
-	}
-
-	private void documentoTramitadoParaUnidade(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail documentoTramitadoParaUnidade = new DpNotificarPorEmail();
-		documentoTramitadoParaUnidade.setCodigo(9);
-		documentoTramitadoParaUnidade.setConfiguravel(1); 
-		documentoTramitadoParaUnidade.setNaoConfiguravel(0);
-		documentoTramitadoParaUnidade.setDpPessoa(dpPessoa);
-		documentoTramitadoParaUnidade.setHisAtivo(1);
-		documentoTramitadoParaUnidade.setRestringir(0);
-		documentoTramitadoParaUnidade.setNomeDaAcao("Documento tramitado para unidade");
-		documentoTramitadoParaUnidade.setDataFimNotificarPorEmail(data);
-		documentoTramitadoParaUnidade.setDataInicioNotificarPorEmail(data);
-		documentoTramitadoParaUnidade.setDataFim(data);
-		documentoTramitadoParaUnidade.setDataInicio(data);
-		documentoTramitadoParaUnidade.setHisDtFim(data);
-		documentoTramitadoParaUnidade.setHisDtIni(data);
-		documentoTramitadoParaUnidade.setCadastrado(1);
-		dao.gravarComHistorico(documentoTramitadoParaUnidade, getIdentidadeCadastrante());
-	}
-
-	private void documentoTramitadoParaOMeuUsuario(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail documentoTramitadoParaOMeuUsuario = new DpNotificarPorEmail();
-		documentoTramitadoParaOMeuUsuario.setCodigo(8);
-		documentoTramitadoParaOMeuUsuario.setConfiguravel(1); 
-		documentoTramitadoParaOMeuUsuario.setNaoConfiguravel(0);
-		documentoTramitadoParaOMeuUsuario.setDpPessoa(dpPessoa);
-		documentoTramitadoParaOMeuUsuario.setHisAtivo(1);
-		documentoTramitadoParaOMeuUsuario.setRestringir(0);
-		documentoTramitadoParaOMeuUsuario.setNomeDaAcao("Documento tramitado para o meu usuário");
-		documentoTramitadoParaOMeuUsuario.setDataFimNotificarPorEmail(data);
-		documentoTramitadoParaOMeuUsuario.setDataInicioNotificarPorEmail(data);
-		documentoTramitadoParaOMeuUsuario.setDataFim(data);
-		documentoTramitadoParaOMeuUsuario.setDataInicio(data);
-		documentoTramitadoParaOMeuUsuario.setHisDtFim(data);
-		documentoTramitadoParaOMeuUsuario.setHisDtIni(data);
-		documentoTramitadoParaOMeuUsuario.setCadastrado(1);
-		dao.gravarComHistorico(documentoTramitadoParaOMeuUsuario, getIdentidadeCadastrante());
-	}
-
-	private void substituicao(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail substituicao = new DpNotificarPorEmail();
-		substituicao.setCodigo(7);
-		substituicao.setConfiguravel(1); 
-		substituicao.setNaoConfiguravel(0);
-		substituicao.setDpPessoa(dpPessoa);
-		substituicao.setHisAtivo(1);
-		substituicao.setRestringir(1);
-		substituicao.setNomeDaAcao("Substituição");
-		substituicao.setDataFimNotificarPorEmail(data);
-		substituicao.setDataInicioNotificarPorEmail(data);
-		substituicao.setDataFim(data);
-		substituicao.setDataInicio(data);
-		substituicao.setHisDtFim(data);
-		substituicao.setHisDtIni(data);
-		substituicao.setCadastrado(1);
-		dao.gravarComHistorico(substituicao, getIdentidadeCadastrante());
-	}
-
-	private void conssignatario(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail conssignatario = new DpNotificarPorEmail();
-		conssignatario.setCodigo(6);
-		conssignatario.setConfiguravel(1); 
-		conssignatario.setNaoConfiguravel(0);
-		conssignatario.setDpPessoa(dpPessoa);
-		conssignatario.setHisAtivo(1);
-		conssignatario.setRestringir(1);
-		conssignatario.setNomeDaAcao("Consignatário");
-		conssignatario.setDataFimNotificarPorEmail(data);
-		conssignatario.setDataInicioNotificarPorEmail(data);
-		conssignatario.setDataFim(data);
-		conssignatario.setDataInicio(data);
-		conssignatario.setHisDtFim(data);
-		conssignatario.setHisDtIni(data);
-		conssignatario.setCadastrado(1);
-		dao.gravarComHistorico(conssignatario, getIdentidadeCadastrante());
-	}
-
-	private void responsavelPelaAssinatura(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail responsavelPelaAssinatura = new DpNotificarPorEmail();
-		responsavelPelaAssinatura.setCodigo(5);
-		responsavelPelaAssinatura.setConfiguravel(1); 
-		responsavelPelaAssinatura.setNaoConfiguravel(0);
-		responsavelPelaAssinatura.setDpPessoa(dpPessoa);
-		responsavelPelaAssinatura.setHisAtivo(1);
-		responsavelPelaAssinatura.setRestringir(1);
-		responsavelPelaAssinatura.setNomeDaAcao("Responsável pela assinatura");
-		responsavelPelaAssinatura.setDataFimNotificarPorEmail(data);
-		responsavelPelaAssinatura.setDataInicioNotificarPorEmail(data);
-		responsavelPelaAssinatura.setDataFim(data);
-		responsavelPelaAssinatura.setDataInicio(data);
-		responsavelPelaAssinatura.setHisDtFim(data);
-		responsavelPelaAssinatura.setHisDtIni(data);
-		responsavelPelaAssinatura.setCadastrado(1);
-		dao.gravarComHistorico(responsavelPelaAssinatura, getIdentidadeCadastrante());
-	}
-
-	private void esqueciMinhaSenha(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail esqueciMinhaSenha = new DpNotificarPorEmail();
-		esqueciMinhaSenha.setCodigo(3);
-		esqueciMinhaSenha.setConfiguravel(1); 
-		esqueciMinhaSenha.setNaoConfiguravel(0);
-		esqueciMinhaSenha.setDpPessoa(dpPessoa);
-		esqueciMinhaSenha.setHisAtivo(1);
-		esqueciMinhaSenha.setRestringir(1);
-		esqueciMinhaSenha.setNomeDaAcao("Esqueci minha senha");
-		esqueciMinhaSenha.setDataFimNotificarPorEmail(data);
-		esqueciMinhaSenha.setDataInicioNotificarPorEmail(data);
-		esqueciMinhaSenha.setDataFim(data);
-		esqueciMinhaSenha.setDataInicio(data);
-		esqueciMinhaSenha.setHisDtFim(data);
-		esqueciMinhaSenha.setHisDtIni(data);
-		esqueciMinhaSenha.setCadastrado(1);
-		dao.gravarComHistorico(esqueciMinhaSenha, getIdentidadeCadastrante());
-	}
-
-	private void alterarMinhaSenha(Date data, DpPessoa dpPessoa) {
-		DpNotificarPorEmail alterarMinhaSenha = new DpNotificarPorEmail();
-		alterarMinhaSenha.setCodigo(2);
-		alterarMinhaSenha.setConfiguravel(1); 
-		alterarMinhaSenha.setNaoConfiguravel(0);
-		alterarMinhaSenha.setDpPessoa(dpPessoa);
-		alterarMinhaSenha.setHisAtivo(1);
-		alterarMinhaSenha.setRestringir(1);
-		alterarMinhaSenha.setNomeDaAcao("Alterar minha senha");
-		alterarMinhaSenha.setDataFimNotificarPorEmail(data);
-		alterarMinhaSenha.setDataInicioNotificarPorEmail(data);
-		alterarMinhaSenha.setDataFim(data);
-		alterarMinhaSenha.setDataInicio(data);
-		alterarMinhaSenha.setHisDtFim(data);
-		alterarMinhaSenha.setHisDtIni(data);
-		alterarMinhaSenha.setCadastrado(1);
-		dao.gravarComHistorico(alterarMinhaSenha, getIdentidadeCadastrante());
-	}
-
-	private void cadastroDeNovoUsuario(Date data, DpPessoa dpPessoa) {
-		CpConfiguracao cadastroDeNovoUsuario = new CpConfiguracao();
-//		CpConfiguracao ultimaConfiguracaoCadastrada = dao().consultarPeloCodigoNotificacaoPoremail(codigo, getTitular().getIdPessoa());
-//		
-//		cadastroDeNovoUsuario.setIdConfiguracao(null);
-//		cadastroDeNovoUsuario.setConfiguravel(1); 
-//		cadastroDeNovoUsuario.setNaoConfiguravel(0);
-//		cadastroDeNovoUsuario.setDpPessoa(dpPessoa);
-//		cadastroDeNovoUsuario.setHisAtivo(1);
-//		cadastroDeNovoUsuario.setRestringir(1);
-//		cadastroDeNovoUsuario.setNomeDaAcao("Cadastro de novo usuário");
-//		cadastroDeNovoUsuario.setDataFimNotificarPorEmail(data);
-//		cadastroDeNovoUsuario.setDataInicioNotificarPorEmail(data);
-//		cadastroDeNovoUsuario.setDataFim(data);
-//		cadastroDeNovoUsuario.setDataInicio(data);
-//		cadastroDeNovoUsuario.setHisDtFim(data);
-//		cadastroDeNovoUsuario.setHisDtIni(data);
-//		cadastroDeNovoUsuario.setCadastrado(1);
-//		dao.gravarComHistorico(cadastroDeNovoUsuario, getIdentidadeCadastrante());
+	private void verificandoAusenciaDeAcoesParaUsuario() {
+		CpConfiguracao alterEmail = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), getTitular().getIdPessoa());
+		if (alterEmail == null) {
+			Integer restringir = 1;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao alterSenha = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), getTitular().getIdPessoa());
+		if (alterSenha == null) {
+			Integer restringir = 0; 
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao cadUsu = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong(), getTitular().getIdPessoa());
+		if (cadUsu == null) {
+			Integer restringir = 0;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao conssi = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), getTitular().getIdPessoa());
+		if (conssi == null) {
+			Integer restringir = 0;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao docMarc = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), getTitular().getIdPessoa());
+		if (docMarc == null) {
+			Integer restringir = 1;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao docTramiUnidade = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong(), getTitular().getIdPessoa());
+		if (docTramiUnidade == null) {
+			Integer restringir = 1;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao docTramiUsu = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), getTitular().getIdPessoa());
+		if (docTramiUsu == null) {
+			Integer restringir = 1;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao esqSenha = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), getTitular().getIdPessoa());
+		if (esqSenha == null) {
+			Integer restringir = 0;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao respAssi = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong(), getTitular().getIdPessoa());
+		if (respAssi == null) {
+			Integer restringir = 0;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao sub = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), getTitular().getIdPessoa());
+		if (sub == null) {
+			Integer restringir = 0;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong()); 
+			adicionarAcao(servico, restringir);
+		}
+		CpConfiguracao tramiDocMarca = dao().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.TRAMIT_DOC_MARCADOS.getIdLong(), getTitular().getIdPessoa());
+		if (tramiDocMarca == null) {
+			Integer restringir = 1;
+			CpServico servico = new CpServico();
+			servico.setIdServico(CpAcoesDeNotificarPorEmail.TRAMIT_DOC_MARCADOS.getIdLong());
+			adicionarAcao(servico, restringir);
+		}
+	} 
+	
+	public void adicionarAcao (CpServico servico, Integer restringir) {
+		CpConfiguracao config = new CpConfiguracao(); 
+		dao().iniciarTransacao();
+		config.setCpServico(servico);
+		config.setHisDtIni(dao().consultarDataEHoraDoServidor());
+		config.setDpPessoa(getTitular());
+		config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
+		config.setRestringir(restringir);
+		dao().gravarComHistorico(config, getIdentidadeCadastrante());
+		dao().commitTransacao();
 	}
 	
 }

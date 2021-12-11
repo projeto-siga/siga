@@ -43,13 +43,14 @@ import br.gov.jfrj.siga.model.Objeto;
 		@NamedQuery(name = "consultarPorSiglaCpServico", query = "select org from CpServico org "
 				+ "where upper(org.siglaServico) like upper(:siglaServico) "
 				+ "and ((:idServicoPai = 0L and org.cpServicoPai is null) or org.cpServicoPai.idServico = :idServicoPai)"),
+		@NamedQuery(name = "consultarExistenciaDeServico", query = "from CpServico servico where servico.idServico = :idServico"), 
 		@NamedQuery(name = "consultarPorSiglaStringCpServico", query = "select org from CpServico org "
 				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 public abstract class AbstractCpServico extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name = "CP_SERVICO_SEQ", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ")
-	@GeneratedValue(generator = "CP_SERVICO_SEQ")
+	@SequenceGenerator(name = "CP_SERVICO_SEQ", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ") 
+	@GeneratedValue(generator = "CP_SERVICO_SEQ")  
 	@Column(name = "ID_SERVICO", unique = true, nullable = false)
 	private Long idServico;
 

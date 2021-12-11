@@ -76,103 +76,53 @@
 								      <thead class="thead-dark">
 									      <tr>
 									        <th style="width: 70%;">Ações</th>
-									        <th style="text-align: center;">Configurável</th>
-									        <th style="text-align: center;">Não configurável</th>
-									      </tr> 
+									        <th>Receber</th>
+									      </tr>  
 								      </thead>
 								      
 								      <tbody>
 								      	<c:forEach items="${itens}" var="email">
 										  <tr> 
-										      <td style="width: 70%;">${email.cpServico.dscServico}</td>
-										      
-										      	<c:url var="url" value="/app/notificarPorEmail/editar">
+										  
+										  	<c:url var="url" value="/app/notificarPorEmail/editar">
 													<c:param name="codigo" value="${email.idConfiguracao}"></c:param>
 												</c:url>
-												<c:url var="urlHabilitaDesabilitaConfiguravel" value="/app/notificarPorEmail/rec_notificacao_por_email2">
-													<c:param name="codigo" value="${email.codigo}"></c:param>
-												</c:url>
-												
-												 <c:choose>
-													<c:when test="${!email.isConfiguravel()}">
-														<c:choose>
-															<!--<c:when test="${email.restringir()}"> -->
-															<c:when test="false">
-															  	<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
-																	<div class="form-check form-check-inline">
-																		<a href="return false" class="disabled"  aria-pressed="true"><i class="fas fa-check-square"></i></a>
-																	</div>
-																</td>
-															</c:when>
-															<c:otherwise> 
-																<td style="text-align: center;">
-																	<div class="form-check form-check-inline">
-																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="fas fa-check-square"></i></a>
-																	</div>
-																</td>
-															</c:otherwise>
-														</c:choose>
-													</c:when>
-													<c:otherwise>
-														<c:choose>
-															<!--<c:when test="${email.restringir()}"> -->
-															<c:when test="false">
-																<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
-																	<div class="form-check form-check-inline">
-																		<a href="return false" class="disabled" aria-pressed="true"><i class="far fa-square"></i></a>
-																	</div>
-																</td>
-															</c:when>
-															<c:otherwise>
-																<td style="text-align: center;">
-																	<div class="form-check form-check-inline">
-																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="far fa-square"></i></a>
-																	</div>
-																</td>
-															</c:otherwise>
-														</c:choose>
-													</c:otherwise>
-										        
-											        <c:choose>
-													<c:when test="${!email.isConfiguravel()}">
+												<c:url var="urlAtivaOuDesativaAcao" value="/app/notificarPorEmail/rec_notificacao_por_email_atualiza">
+													<c:param name="codigo" value="${email.idConfiguracao}"></c:param>
+											</c:url>
+											
+										      <td style="width: 70%;">${email.cpServico.dscServico}</td>
+										      <c:choose>
+													<c:when test="${!email.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()}">
 														<c:choose> 
-															<c:when test="${email.restringir()}">
-																	<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
-																		<div class="form-check form-check-inline">
-																			<a href="return false" class="disabled" aria-pressed="true"><i class="fas fa-check-square"></i></a>
-																		</div>
-																	</td>
-															</c:when>
-															<c:otherwise>
-																<td style="text-align: center;">
-																	<div class="form-check form-check-inline">
-																			<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="fas fa-check-square"></i></a>
-																		</div>
-																</td>
-															</c:otherwise>
-														</c:choose>
-													</c:when>
-													<c:otherwise>
-														<c:choose>
-															<!--<c:when test="${email.restringir()}"> -->
-															<c:when test="false">
-																<td style="text-align: center;" title="Este item não pode ser alterado pelo usuário">
-																	<div class="form-check form-check-inline">
-																		<a href="return false" class="disabled" aria-pressed="true"><i class="far fa-square"></i></a>
-																	</div>
-																</td>
-															</c:when>
-															<c:otherwise>
-																<td style="text-align: center;">
-																	<div class="form-check form-check-inline">
-																		<a href="javascript:submitPost('${urlHabilitaDesabilitaConfiguravel}')" aria-pressed="true"><i class="far fa-square"></i></a>
-																	</div>
-																</td>
-															</c:otherwise>
-														</c:choose>
-													</c:otherwise>
-													</c:choose>
-													
+															<c:when test="${email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
+												        		<td>
+												        			<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+												        		</td>
+												        	</c:when>
+												        	<c:otherwise>
+												        		<td data-toggle="tooltip" title="Este item não pode ser alterado pelo usuário">
+												        			<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-primary disabled" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+												        		</td>
+											        	</c:otherwise>
+											        	</c:choose>  
+										        	</c:when>  
+										        	<c:otherwise>
+										        	<c:choose>
+										        		<c:when test="${email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
+												        		<td>
+										        					<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
+										        				</td>
+												        	</c:when>
+												        	<c:otherwise>
+												        		<td data-toggle="tooltip" title="Este item não pode ser alterado pelo usuário">
+										        					<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-danger disabled" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
+										        				</td>
+											        	</c:otherwise>
+											        </c:choose>
+										        	</c:otherwise>
+									          </c:choose>
+										      
 										    	</tr>
 									      	</c:forEach>
 								      </tbody>

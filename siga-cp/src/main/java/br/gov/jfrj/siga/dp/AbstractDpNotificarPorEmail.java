@@ -25,7 +25,6 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @MappedSuperclass 
 @NamedQueries({
 @NamedQuery(name = "verificaSeUsuarioJaPossuiConfiguracoesDeNotificacoesPorEmail", query = "select email from DpNotificarPorEmail email where email.dpPessoa.idPessoa = :idPessoa"),
-@NamedQuery(name = "consultarPeloCodigoNotificacaoPoremail", query = "select email from DpNotificarPorEmail email where email.codigo = :codigo AND email.dpPessoa.idPessoa = :idPessoa"),
 //@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from DpNotificarPorEmail email where email.dpPessoa.idPessoa = :idPessoa"),
 @NamedQuery(name = "consultarQuantidadeNotificarPorEmail", query = "select count(e) from DpNotificarPorEmail e") })
 public abstract class AbstractDpNotificarPorEmail extends Objeto implements Serializable, HistoricoAuditavel {

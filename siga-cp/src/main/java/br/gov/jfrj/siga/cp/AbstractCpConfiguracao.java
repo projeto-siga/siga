@@ -84,19 +84,26 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "	where (cpcfg.hisDtIni >= :dtInicioVigenciaIni)"
 				+ "	and (cpcfg.hisDtIni <= :dtInicioVigenciaFim) "
 				+ "	order by cpcfg.hisDtIni"),
-//		@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1700 "
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1701"
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1702"
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1703"
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1704"
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1705"
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1706"
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1707"
-//				+ "			|| email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = 1708"),  
-		@NamedQuery(name = "consultarNotificaocaoEmail", query = "select email from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa AND email.cpServico.idServico = :idServico"), 
+		
+		@NamedQuery(name = "consultarExistenciaDeAcaoDeNotificacaoPorEmail", query = "from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa and email.idConfiguracao = :idConfiguracao "),
+		@NamedQuery(name = "consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail", query = "from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :idServico "), 
+		@NamedQuery(name = "consultarAcoesParaNotificacoesPorEmail", query = "from CpConfiguracao email where"
+				+ " (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :respAssinatura) " 
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :alterSenha) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :alterEmail) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :cadUsu)"
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :conssig) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docMarc) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUnid) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUsu) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :esqueSenha) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :sub)"
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :tramDocMArcado) "), 
+		@NamedQuery(name = "consultarQuantidadeAcoesNotificarPorEmail", query = "select count(email) from CpConfiguracao email" ),
+		  
 		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao = :idTpLotacao) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
-				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})
+				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")}) 
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {
 
@@ -225,6 +232,10 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@JoinColumn(name = "ID_PESSOA_OBJETO")
 	@NaoRecursivo
 	private DpPessoa pessoaObjeto;
+
+	@Column(name = "RESTRINGIR", length = 50)
+	@NaoRecursivo
+	private Integer restringir;
 
 	public Set<CpConfiguracao> getConfiguracoesPosteriores() {
 		return configuracoesPosteriores;
@@ -368,6 +379,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	public void setCpServico(CpServico cpServico) {
 		this.cpServico = cpServico;
 	}
+	
+	public Integer getRestringir() {
+		return restringir;
+	}
+
+	public void setRestringir(Integer restringir) {
+		this.restringir = restringir;
+	}
 
 	/**
 	 * @return the cpGrupo
@@ -493,11 +512,27 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		this.pessoaObjeto = pessoaObjeto;
 	}
 	
-	public boolean isConfiguravel () {
-		if(this.cpSituacaoConfiguracao == this.cpSituacaoConfiguracao.PODE) {
+	public boolean isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail () {
+		if(this.cpSituacaoConfiguracao.getId() == 1) {
+			return true;
+		} else {   
+			return false;
+		}  
+	}
+	
+	public boolean isMandarEmail () {
+		if(this.cpSituacaoConfiguracao.getId() == 1) {
+			return true;
+		} else {   
+			return false;
+		} 
+	}
+	
+	public boolean ishabilitaOuDesabilitaNotificacaoPorEmail () {  
+		if(this.getRestringir() == 1) {
 			return true;
 		} else {
-			return false;
+			return false; 
 		}
 	}
 

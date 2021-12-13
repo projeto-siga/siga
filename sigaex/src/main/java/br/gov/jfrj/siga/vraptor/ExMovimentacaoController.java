@@ -151,6 +151,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeReferenciar;
 import br.gov.jfrj.siga.ex.logic.ExPodeRegistrarAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeRemeterParaPublicacaoSolicitadaNoDiario;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirDefAcompanhamento;
 import br.gov.jfrj.siga.ex.logic.ExPodeRetirarDeEditalDeEliminacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReverterIndicacaoPermanente;
@@ -1381,6 +1382,17 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
 
+		if (!new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), cosignatarioSel.getObjeto(), cosignatarioSel.getObjeto().getLotacao(),
+				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getCargo() : null,
+				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getFuncaoConfianca() : null,
+				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getOrgaoUsuario() : cosignatarioSel.getObjeto().getOrgaoUsuario()).eval()) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário não está disponível para inclusão de Cossignatário / "+ SigaMessages.getMessage("documento.subscritor")+"."));
+			result.forwardTo(this).incluirCosignatario(sigla);
+			
+			return;
+		}
+
+		
 		String funcaoUnidadeCosignatario = funcaoCosignatario;
 		// Efetuar validação e concatenar o conteudo se for implantação GOVSP
 		if(SigaMessages.isSigaSP() && (funcaoCosignatario != null && !funcaoCosignatario.isEmpty()) && (unidadeCosignatario != null && !unidadeCosignatario.isEmpty())) {

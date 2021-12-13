@@ -633,9 +633,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
 		} catch (RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, e.getMessage());
-		} catch (Exception ex) {
-			result.include(SigaModal.ALERTA,  SigaModal.mensagem("Não é permitido cadastrar na mesma unidade, mais de um cargo para o mesmo CPF."));
-		}
+		} 
 		
 		lista(0, null, "", "", null, null, null, "", null);
 	}

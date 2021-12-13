@@ -1,5 +1,5 @@
 
-package br.gov.jfrj.siga.ex.ws.siafem;
+package br.gov.jfrj.siga.integracao.ws.siafem;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>Classe Java de anonymous complex type.
  * 
- * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
+ * <p>O seguinte fragmento do esquema especifica o conteï¿½do esperado contido dentro desta classe.
  * 
  * <pre>
  * &lt;complexType>
@@ -38,7 +38,7 @@ public class MensagemResponse {
     protected String mensagemResult;
 
     /**
-     * Obtém o valor da propriedade mensagemResult.
+     * Obtï¿½m o valor da propriedade mensagemResult.
      * 
      * @return
      *     possible object is

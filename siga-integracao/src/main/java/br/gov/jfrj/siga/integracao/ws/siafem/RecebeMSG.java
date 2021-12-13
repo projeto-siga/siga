@@ -1,5 +1,5 @@
 
-package br.gov.jfrj.siga.ex.ws.siafem;
+package br.gov.jfrj.siga.integracao.ws.siafem;
 
 import java.net.MalformedURLException;
 import java.net.URL;

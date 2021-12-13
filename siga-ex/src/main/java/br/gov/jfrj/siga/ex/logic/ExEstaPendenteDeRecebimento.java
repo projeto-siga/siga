@@ -40,7 +40,7 @@ public class ExEstaPendenteDeRecebimento implements Expression {
 		// Verifica se existe recebimento pendente para titular ou lotaTitular
 		Pendencias p = mob.calcularTramitesPendentes();
 		boolean f = false;
-		for (ExMovimentacao tramite : p.recebimentosPendentes) {
+		for (ExMovimentacao tramite : p.tramitesPendentes) {
 			if (tramite.isResp(titular, lotaTitular))
 				return true;
 		}

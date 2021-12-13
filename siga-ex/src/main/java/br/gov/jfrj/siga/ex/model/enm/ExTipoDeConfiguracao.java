@@ -539,6 +539,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true);
 	
+	
 	private final int id;
 	private final String descr;
 	private final String explicacao;

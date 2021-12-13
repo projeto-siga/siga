@@ -2628,7 +2628,7 @@ Pede deferimento.</span><br/><br/><br/>
         
                 [#if (doc.mobilGeral.exMovimentacaoSet)??]
         [#list doc.mobilGeral.exMovimentacaoSet as mov]
-                    [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
+                    [#if (mov.exTipoMovimentacao.id)! == 24]
                         <br/><br/><br/>
                         [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         [#if mov.nmSubscritor??]
@@ -2677,7 +2677,7 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- INICIO ASSINATURA -->
 <p style="font-family: Arial; font-size: 11pt;" align="center">
     [#list doc.mobilGeral.exMovimentacaoSet as movim]
-        [#if movim.exTipoMovimentacao.idTpMov == 24 && ((mov.titular?? && movim.titular?? && mov.titular.idPessoa == movim.titular.idPessoa) || (mov.subscritor?? && movim.subscritor?? && mov.subscritor.idPessoa == movim.subscritor.idPessoa)) && movim.descrMov??]
+        [#if movim.exTipoMovimentacao.id == 24 && ((mov.titular?? && movim.titular?? && mov.titular.idPessoa == movim.titular.idPessoa) || (mov.subscritor?? && movim.subscritor?? && mov.subscritor.idPessoa == movim.subscritor.idPessoa)) && movim.descrMov??]
             [local funcSubscrDoc = movim.descrMov /]
         [/#if]
     [/#list]

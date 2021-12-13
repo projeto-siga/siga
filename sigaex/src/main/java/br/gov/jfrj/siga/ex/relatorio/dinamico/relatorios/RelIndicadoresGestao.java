@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.awt.Color;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,28 +15,15 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
-import net.sf.jasperreports.engine.JRException;
-
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
-import ar.com.fdvs.dj.domain.constants.Border;
-import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
 
 public class RelIndicadoresGestao extends RelatorioTemplate {
 
@@ -126,14 +112,10 @@ public class RelIndicadoresGestao extends RelatorioTemplate {
 		// Total de documentos tramitadas pelo menos uma vez (por lotação ou
 		// usuário)
 		String addSelect = "count(distinct doc.idDoc) ";
-		String addWhere = "and (mov.exTipoMovimentacao.idTpMov = "
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) 
- 				+ " or mov.exTipoMovimentacao.idTpMov = " 
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) 
-				+ " or mov.exTipoMovimentacao.idTpMov = "  
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA) 
-				+ " or mov.exTipoMovimentacao.idTpMov = "  
-				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA) 
+		String addWhere = "and (mov.exTipoMovimentacao.idTpMov in (br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TRANSFERENCIA," 
+ 				+ " br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA," 
+				+ " br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA," 
+				+ " br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA)" 
 				+ ") and mov.exMovimentacaoCanceladora is null ";
 		Iterator it = obtemDados(d, addSelect, addWhere);
 

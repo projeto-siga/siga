@@ -3263,7 +3263,7 @@ public class ExBL extends CpBL {
 				ContextoPersistencia.flushTransaction();
 				client.criarInstanciaDeProcesso(nomeProcesso,
 						SiglaParser.makeSigla(cadastrante, cadastrante.getLotacao()),
-						SiglaParser.makeSigla(titular, lotaTitular), keys, values);
+						SiglaParser.makeSigla(titular, lotaTitular), keys, values, "DOCUMENTO", doc.getCodigo());
 			}
 		}
 		// atualizarWorkFlow(doc);

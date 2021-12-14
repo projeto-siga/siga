@@ -8099,6 +8099,9 @@ public class ExBL extends CpBL {
 	public ExDocumento obterFormularioSiafem(ExDocumento doc) {
 		String modeloSiafem = Prop.get("ws.siafem.nome.modelo");//"Formulario Integracao Siafem";
 		
+		if(modeloSiafem == null)
+			return null;
+			
 		if(doc.getNmMod().equals(modeloSiafem))
 			return doc;
 		

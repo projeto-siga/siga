@@ -96,8 +96,8 @@ ${meta}
 <link rel="stylesheet" href="/siga/fontawesome/css/all.css"	type="text/css" />
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
- 
-<c:set var="siga_version"  scope="request" value="10.0.21.9-PCRJ-2.4.1HF1322" />
+
+<c:set var="siga_version"  scope="request" value="10.0.21.9-PCRJ-2.4.9" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">

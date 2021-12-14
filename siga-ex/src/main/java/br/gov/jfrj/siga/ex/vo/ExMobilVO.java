@@ -370,7 +370,7 @@ public class ExMobilVO extends ExVO {
 					null, null, null);
 
 			addAcao("page_white_add",
-					"Incluir _Documento",
+					"Incluir _Documento/Despachar",
 					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
@@ -444,7 +444,7 @@ public class ExMobilVO extends ExVO {
 		
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
-					"Ane_xar",
+					"Ane_xar PDF",
 					"/app/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()
@@ -463,7 +463,7 @@ public class ExMobilVO extends ExVO {
 							.podeCopiar(titular, lotaTitular, mob));
 		}
 		
-		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
+		addAcao("box_add", "Ar_quivo Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once  siga-btn-arq-corrente");

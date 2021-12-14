@@ -2460,7 +2460,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					|| t == ExTipoDeMovimentacao.TRAMITE_PARALELO 
 					|| t == ExTipoDeMovimentacao.NOTIFICACAO)) {
 				// Recebimento sem movRef limpa todos os pendentes até agora
-				if (mov.getExMovimentacaoRef() == null)
+				if (mov.getExMovimentacaoRef() == null || !p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
 					p.recebimentosPendentes.clear();
 				else 
 					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
@@ -2468,7 +2468,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			}
 			if (t == ExTipoDeMovimentacao.RECEBIMENTO) {
 				// Recebimento sem movRef limpa todos os pendentes até agora
-				if (mov.getExMovimentacaoRef() == null)
+				if (mov.getExMovimentacaoRef() == null || !p.tramitesPendentes.contains(mov.getExMovimentacaoRef()))
 					p.tramitesPendentes.clear();
 				else
 					p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
@@ -2478,8 +2478,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) {
 					// Existe a conclusão direta, que cancela um trâmite pendente, ou a conclusão
 					// normal que cancela um recebimento pendente
-					p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
-					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+					if (p.tramitesPendentes.contains(mov.getExMovimentacaoRef()))
+						p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
+					else
+						p.tramitesPendentes.clear();
+					if (p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
+						p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+					else
+						p.recebimentosPendentes.clear();
 				} 
 			} else {
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) 
@@ -2489,7 +2495,11 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 
 							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante())
 							|| Utils.equivale(mov.getTitular(), doc().getCadastrante()) 
-							|| Utils.equivale(mov.getLotaTitular(), doc().getLotaCadastrante()))) 
+							|| Utils.equivale(mov.getLotaTitular(), doc().getLotaCadastrante())
+							|| Utils.equivale(mov.getCadastrante(), getTitular()) 
+							|| Utils.equivale(mov.getLotaCadastrante(), getLotaTitular())
+							|| Utils.equivale(mov.getTitular(), getTitular()) 
+							|| Utils.equivale(mov.getLotaTitular(), getLotaTitular()))) 
 				p.fIncluirCadastrante = false;
 		}
 		

@@ -41,6 +41,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.dao.WfStarter;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.service.WfProcedimentoWSTO;
 import br.gov.jfrj.siga.wf.service.WfService;
 import br.gov.jfrj.siga.wf.util.WfEngine;
@@ -117,8 +118,9 @@ public class WfServiceImpl implements WfService {
 	/**
 	 * Inicia um novo procedimento.
 	 */
+	@Override
 	public Boolean criarInstanciaDeProcesso(String nomeProcedimento, String siglaCadastrante, String siglaTitular,
-			ArrayList<String> keys, ArrayList<String> values) throws Exception {
+			ArrayList<String> keys, ArrayList<String> values, String tipoDePrincipal, String principal) throws Exception {
 		try (SoapContext ctx = new WfSoapContext(true)) {
 			try {
 
@@ -145,7 +147,7 @@ public class WfServiceImpl implements WfService {
 				if (l.size() > 0)
 					identidade = l.get(0);
 				WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), null,
-						titularParser.getPessoa(), titularParser.getLotacao(), identidade, null, null, keys, values,
+						titularParser.getPessoa(), titularParser.getLotacao(), identidade, WfTipoDePrincipal.valueOf(tipoDePrincipal), principal, keys, values,
 						false);
 
 				WfBL.transferirDocumentosVinculados(pi, siglaTitular);

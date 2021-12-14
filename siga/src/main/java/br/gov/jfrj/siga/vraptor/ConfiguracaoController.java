@@ -161,7 +161,6 @@ public class ConfiguracaoController extends SigaController {
 				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel)
 				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao).construir();
 
-		config.substituirPorObjetoInicial();
 		CpConfiguracaoHelper.gravarConfiguracao(idTpConfiguracao, idSituacao, config, dao, getIdentidadeCadastrante());
 		result.redirectTo(this).lista(idTpConfiguracao, null);
 	}

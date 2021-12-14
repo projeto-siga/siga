@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -123,8 +124,18 @@ public class FuncoesEL {
 //	}
 
 	public static List<String> listarOpcoes(String nomeVariavel) {
+		List<String> a = new ArrayList<>();
 		String op = nomeVariavel.substring(nomeVariavel.indexOf("(") + 1, nomeVariavel.length() - 1);
-		return Arrays.asList(op.split(";"));
+		if (op.isEmpty())
+			return a;
+		String[] split = op.split(";");
+		for (String s : split) {
+			s = s.trim();
+			if (s.isEmpty())
+				continue;
+			a.add(s);
+		}
+		return a;
 	}
 
 	public static Boolean podePegarTarefa(DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,

@@ -615,7 +615,7 @@ public class ExMarcadorBL {
 		for (ExMovimentacao recebimento : p.recebimentosPendentes) {
 			acrescentarMarcaTransferencia(
 					mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())
-							? (mob.doc().jaTransferido() ? CpMarcadorEnum.EM_ANDAMENTO.getId()
+							? ((mob.getNumSequencia() > 1 || mob.doc().jaTransferido()) ? CpMarcadorEnum.EM_ANDAMENTO.getId()
 									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
 					recebimento.getDtIniMov(), null, recebimento.getResp(), recebimento.getLotaResp(), null);
@@ -623,7 +623,7 @@ public class ExMarcadorBL {
 		if (p.fIncluirCadastrante)
 			acrescentarMarcaTransferencia(
 					mob.isAtendente(mob.getTitular(), mob.getLotaTitular())
-							? (mob.doc().jaTransferido() ? CpMarcadorEnum.EM_ANDAMENTO.getId()
+							? ((mob.getNumSequencia() > 1 || mob.doc().jaTransferido()) ? CpMarcadorEnum.EM_ANDAMENTO.getId()
 									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
 					mob.doc().getDtRegDoc(), null, mob.getTitular(), mob.getLotaTitular(), null);

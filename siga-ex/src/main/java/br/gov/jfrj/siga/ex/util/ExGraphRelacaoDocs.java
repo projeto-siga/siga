@@ -118,17 +118,21 @@ public class ExGraphRelacaoDocs extends ExGraph {
 		}
 
 		// Enquanto o principal não estiver assinado
-		if (mobBase.doc().isPendenteDeAssinatura()) {
-			
+		boolean pendenteDeAssinatura = mobBase.doc().isPendenteDeAssinatura();
+		if (pendenteDeAssinatura) {
 			// Incluir os documentos filhos juntados (ou não) 
 			for (ExMobil m : mobBase.getJuntados()) {
 				adicionar(new NodoMob(m, pessVendo, mobBase.doc()));
 				adicionar(new TransicaoMob(mobBase, m, "juntada"));
 			}
-			
+		}
+
+		if (pendenteDeAssinatura || mobBase.doc().isProcesso()) {
 			// Paternidades
 			for (ExDocumento sub : mobBase.doc().getMobilGeral()
 					.getExDocumentoFilhoSet()) {
+				if (!pendenteDeAssinatura && !sub.isProcesso())
+					continue;
 				boolean jaTemNodo = false;
 				for (Nodo n : getNodos())
 					if (((NodoMob) n).getMob().doc().equals(sub)) {

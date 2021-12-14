@@ -84,8 +84,10 @@
         <property name="sigaex.carimbo.url" value="@@@sigaex.carimbo.url@@@"/>
         <property name="sigaex.carimbo.public.key" value="@@@sigaex.carimbo.public.key@@@"/>
 <!-- novas properties para serem parametrizadas ? Coloque o texto delas aqui abaixo para depois ser parametrizada. -->
-        <property name="volume.max.paginas" value="2000"/>
+ 
 		<property name="sigaex.folha.de.rosto" value="ativa"/>
+        <property name="sigaex.volume.max.paginas" value="2000"/>
+ 
         
     </system-properties>
     <management>

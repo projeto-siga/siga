@@ -19,6 +19,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 
 import javax.annotation.Resource;
@@ -28,6 +29,10 @@ import javax.xml.ws.WebServiceContext;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.service.sei.Andamento;
@@ -64,6 +69,8 @@ import br.gov.jfrj.siga.ex.service.sei.Usuario;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.jee.SoapContext;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @WebService(serviceName = "ExServiceSei", endpointInterface = "br.gov.jfrj.siga.ex.service.impl.ExServiceSei", targetNamespace = "http://impl.sei.service.ex.siga.jfrj.gov.br/")
 public class ExServiceSeiImpl implements ExServiceSei {
@@ -110,8 +117,143 @@ public class ExServiceSeiImpl implements ExServiceSei {
 	@Override
 	public RetornoInclusaoDocumento incluirDocumento(String siglaSistema, String identificacaoServico, String idUnidade,
 			Documento documento) throws RemoteException {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
 
-		return null;
+			// Número do documento, passar null para documentos gerados com numeração
+			// controlada pelo SEI. Para documentos externos informar o número ou nome
+			// complementar a ser exibido na árvore de documentos do processo (o SEI não
+			// controla numeração de documentos externos). Para documentos gerados com
+			// numeração informada, igualmente informar o número por meio deste campo.
+			documento.getNumero();
+
+			// Data do documento, obrigatório para documentos externos. Passar null para
+			// documentos gerados
+			documento.getData();
+
+			// Identificador do tipo de conferência associada com o documento externo
+			documento.getIdTipoConferencia();
+
+			// Obrigatório para documentos externos, passar null para documentos gerados
+			// (ver estrutura Remetente)
+			documento.getRemetente();
+
+			// Informar um conjunto com os dados de interessados (ver estrutura
+			// Interessado). Se não existirem interessados deve ser informado um conjunto
+			// vazio.
+			documento.getInteressados();
+
+			// Informar um conjunto com os dados de destinatários (ver estrutura
+			// Destinatario). Se não existirem destinatários deve ser informado um conjunto
+			// vazio.
+			documento.getDestinatarios();
+
+			// Texto da observação da unidade, passar null se não existir
+			documento.getObservacao();
+
+			// Identificador da hipótese legal associada
+			documento.getIdHipoteseLegal();
+
+			// Identificador do arquivo (ver serviço adicionarArquivo)
+			documento.getIdArquivo();
+
+			// Campos associados com o formulário (ver estrutura Campo)
+			documento.getCampos();
+
+			// S/N - bloqueando o documento não será possível excluí-lo ou alterar seu
+			// conteúdo
+			documento.getSinBloqueado();
+
+			// documento.getData()
+			// documento.getRemetente()
+			// documento.getDestinatarios()
+			String cadastranteStr = null;
+			String subscritorStr = null;
+			String destinatarioStr = null;
+			String destinatarioCampoExtraStr = null;
+			String nomeForma = null;
+
+			// Identificador do tipo de documento no SEI (sugere-se que este id seja
+			// armazenado em uma tabela auxiliar do sistema cliente)
+			String nomeModelo = documento.getIdSerie();
+			String nomePreenchimento = null;
+			String classificacaoStr = null;
+
+			// Descrição do documento para documentos gerados. Passar null para documentos
+			// externos
+			String descricaoStr = documento.getDescricao();
+
+			// 0 - público, 1 - restrito, 2 - sigiloso, Null – o documento assumirá o nível
+			// de acesso e hipótese legal sugeridos para o tipo do processo, conforme
+			// cadastro no SEI.
+			String nomeNivelDeAcesso = documento.getNivelAcesso();
+
+			String conteudo = null;
+			String descricaoTipoDeDocumento = null;
+			// G-Gerado, R-Recebido
+			if ("G".equals(documento.getTipo())) {
+				descricaoTipoDeDocumento = "Interno Produzido";
+				// Conteúdo do arquivo codificado em Base64. Para documentos gerados será o
+				// conteúdo da seção principal do editor HTML e para documentos externos será o
+				// conteúdo do anexo.
+				conteudo = documento.getConteudo();
+			} else if ("R".equals(documento.getTipo())) {
+
+				// Nome do arquivo, obrigatório para documentos externos. Passar null para
+				// documentos gerados.
+				documento.getNomeArquivo();
+
+				// Conteúdo textual ou binário do documento. Este campo somente poderá ser
+				// utilizado para documentos externos. O sistema somente aceitará requisições
+				// com um dos atributos preenchidos: Conteudo ou ConteudoMTOM.
+				documento.getConteudoMTOM();
+
+			}
+
+			String siglaMobilPai = null;
+			if (documento.getIdProcedimento() != null) {
+				// Identificador do processo onde o documento deve ser inserido, passar null
+				// quando na mesma operação estiver sendo gerado o processo. Opcional se
+				// ProtocoloProcedimento informado
+				siglaMobilPai = dao().consultar(Long.parseLong(documento.getIdProcedimento()), ExDocumento.class, false)
+						.getMobilDefaultParaReceberJuntada().getCodigoCompacto();
+			} else if (documento.getProtocoloProcedimento() != null) {
+				// Número do processo onde o documento deve ser inserido, visível para o
+				// usuário, ex: 12.1.000000077-4. Opcional se IdProcedimento informado.
+				siglaMobilPai = documento.getProtocoloProcedimento();
+			}
+
+			Boolean eletronico = true;
+			Boolean finalizar = true;
+
+			String siglaMobilFilho = null;
+			String tipoPrincipal = null;
+			String siglaPrincipal = null;
+
+			String sigla = null;
+			sigla = Service.getExService().criarDocumento(cadastranteStr, subscritorStr, destinatarioStr,
+					destinatarioCampoExtraStr, descricaoTipoDeDocumento, nomeForma, nomeModelo, nomePreenchimento,
+					classificacaoStr, descricaoStr, eletronico, nomeNivelDeAcesso, conteudo, siglaMobilPai,
+					siglaMobilFilho, tipoPrincipal, siglaPrincipal, finalizar);
+
+			ExMobil mob = buscarMobil(sigla);
+			ExDocumento doc = mob.doc();
+			RetornoInclusaoDocumento ret = new RetornoInclusaoDocumento();
+			ret.setIdDocumento(doc.getIdDoc().toString());
+			ret.setDocumentoFormatado(doc.getCodigo());
+			ret.setLinkAcesso(Prop.get("/xjus.permalink.url") + doc.getCodigoCompacto());
+			return ret;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private ExMobil buscarMobil(String codigoDocumentoVia)
+			throws Exception, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		ExMobil mob = null;
+		final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+		filter.setSigla(codigoDocumentoVia);
+		mob = (ExMobil) dao().consultarPorSigla(filter);
+		return mob;
 	}
 
 	@Override

@@ -35,6 +35,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -61,6 +63,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
@@ -387,12 +390,12 @@ public class CpBL {
 					dao().gravarComHistorico(idNova, id, dt, idCadastrante);
 					dao().commitTransacao();
 
-					if (SigaMessages.isSigaSP()) {
-						List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, id.getDpPessoa().getIdPessoa());
-						if (!listaNotificarPorEmail.isEmpty()) {
-							int codigoDaAcao = 3;
-							DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, id.getDpPessoa().getIdPessoa());
-							if (emailUser.isConfiguravel()) {
+					DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+					notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+					CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+											
+					if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+						if (SigaMessages.isSigaSP()) {
 							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
 							Correio.enviar(null, destinanarios,
 									"Esqueci Minha Senha", "",
@@ -418,45 +421,6 @@ public class CpBL {
 											+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
 											+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
 											+ "</td>" + "</tr>" + "</tbody>" + "</table>");
-							}
-						} else {
-							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-							Correio.enviar(null, destinanarios,
-									"Esqueci Minha Senha", "",
-									"<table>" + "<tbody>" + "<tr>"
-											+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-											+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-											+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
-											+ "<td style='background-color: #bbb; padding: 0 20px;'>"
-											+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
-											+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
-											+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
-											+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
-											+ idNova.getDpPessoa().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
-											+ idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>"
-											+ ",</span></h4>"
-											+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua nova senha para acesso "
-											+ "ao Portal SP Sem Papel.</span></p>"
-											+ "<p><span style='color: #808080;'><strong>"
-											+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
-											+ idNova.getDpPessoa().getSigla() + "</strong></span></p>"
-											+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
-											+ novaSenha + "</strong></span></p>" + "</div>" + "</td>" + "</tr>" + "<tr>"
-											+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
-											+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
-											+ "</td>" + "</tr>" + "</tbody>" + "</table>");
-							}
-					} else {
-						List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, id.getDpPessoa().getIdPessoa());
-						if (!listaNotificarPorEmail.isEmpty()) {
-							DpNotificarPorEmail emailNotifica = dao().consultar(3L, DpNotificarPorEmail.class, false);
-							if (emailNotifica.isConfiguravel()) {
-								Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
-										"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
-												+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
-												+ novaSenha + "\n\n Atenção: esta é uma "
-												+ "mensagem automática. Por favor, não responda. ");
-							} 
 						} else {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
 									"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
@@ -542,19 +506,28 @@ public class CpBL {
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
 						dao().commitTransacao();
-
-						if (SigaMessages.isSigaSP()) {
-							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-							String conteudoHTML = pessoaIsUsuarioExterno(pessoa)
-									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
-									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
-							
-							Correio.enviar(null,
-									destinanarios, "Novo Usuário", "", conteudoHTML);
-						} else {
-							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
-									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
+						
+						DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+						notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
+						CpConfiguracao c = new CpConfiguracao();
+						c = notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+								CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong(), pessoa.getIdPessoa());
+						
+						if (c.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+							if (SigaMessages.isSigaSP()) {
+									String[] destinanarios = { pessoa.getEmailPessoaAtual() };  
+									String conteudoHTML = pessoaIsUsuarioExterno(pessoa)
+											? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
+											: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
+										
+									Correio.enviar(null,  
+											destinanarios, "Novo Usuário", "", conteudoHTML);
+							} else {
+								Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
+										textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
+							}
 						}
+						
 						dao().commitTransacao();
 						return idNova;
 					} catch (final Exception e) {
@@ -1976,21 +1949,6 @@ public class CpBL {
 		lotNova.setLotacaoPai(lotAnt.getLotacaoPai() != null ? lotAnt.getLotacaoPai().getLotacaoAtual() : null);
 		lotNova.setOrgaoUsuario(lotAnt.getOrgaoUsuario());
 		lotNova.setIsSuspensa(lotAnt.getIsSuspensa());
-	}
-	
-	public void copiaNotificarPorEmail(DpNotificarPorEmail lotAnt, DpNotificarPorEmail lotNova) {
-		lotNova.setId(lotAnt.getId());
-		lotNova.setNomeDaAcao(lotAnt.getNomeDaAcao());
-		lotNova.setNaoConfiguravel(lotAnt.getNaoConfiguravel());		
-		lotNova.setConfiguravel(lotAnt.getConfiguravel());
-		lotNova.setRestringir(lotAnt.getRestringir());
-		
-		lotNova.setIdNotificarPorEmailIni(lotAnt.getIdNotificarPorEmailIni());
-		lotNova.setHisIdcIni(lotAnt.getHisIdcIni());
-		lotNova.setHisIdcFim(lotAnt.getHisIdcFim());
-		lotNova.setDataInicioNotificarPorEmail(lotAnt.getDataInicioNotificarPorEmail());
-		lotNova.setDataFimNotificarPorEmail(lotAnt.getDataFimNotificarPorEmail());
-		lotNova.setIdeNotificarPorEmail(lotAnt.getIdeNotificarPorEmail());
 	}
 	
 	public void copiarPessoa(DpPessoa pesAnt, DpPessoa pesNova) {

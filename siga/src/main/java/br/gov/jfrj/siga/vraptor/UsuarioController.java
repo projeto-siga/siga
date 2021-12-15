@@ -85,7 +85,40 @@ public class UsuarioController extends SigaController {
 
 			Cp.getInstance().getBL().trocarSenhaDeIdentidadeGovSp(senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
 					getIdentidadeCadastrante(), lista1);
-
+			
+			CpIdentidade pessoa = null;
+			pessoa = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
+			
+			String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
+			DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+			notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+					CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), getTitular().getIdPessoa());
+			if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+				Correio.enviar(null, destinanarios,
+						"Troca de Senha", "",
+						"<table>" + "<tbody>" + "<tr>"
+								+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
+								+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
+								+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
+								+ "<td style='background-color: #bbb; padding: 0 20px;'>"
+								+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
+								+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
+								+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
+								+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
+								+ pessoa.getDpPessoa().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
+								+ pessoa.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>"
+								+ ",</span></h4>"
+								+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua nova senha para acesso "
+								+ "ao Portal SP Sem Papel.</span></p>"
+								+ "<p><span style='color: #808080;'><strong>"
+								+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
+								+ pessoa.getDpPessoa().getSigla() + "</strong></span></p>"
+								+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
+								+ senhaNova + "</strong></span></p>" + "</div>" + "</td>" + "</tr>" + "<tr>"
+								+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
+								+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
+								+ "</td>" + "</tr>" + "</tbody>" + "</table>");
+			}
 		} else {
 			CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(senhaAtual, senhaNova, senhaConfirma,
 					nomeUsuario, getIdentidadeCadastrante());
@@ -105,7 +138,7 @@ public class UsuarioController extends SigaController {
 				}
 			}
 
-		}			
+		}	
 
 		result.include("mensagem", "A senha foi alterada com sucesso." + 
 				(("on".equals(usuario.getTrocarSenhaRede())) ?  " OBS: As senhas de rede e e-mail também foram alteradas." : ""));
@@ -115,38 +148,14 @@ public class UsuarioController extends SigaController {
 		CpIdentidade pessoa = null;
 		pessoa = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
 		
-//		List<CpConfiguracao> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
-//		if (!listaNotificarPorEmail.isEmpty()) {
-//			Long codigoDaAcao = 2L;
-//			CpConfiguracao emailUser = dao().consultarExistenciaDeAcaoDeNotificacaoPorEmail(codigoDaAcao, getTitular().getIdPessoa());
-//			if (emailUser.isVerificaOuAtivaDesativaNotificacaoPorEmail()) {
-//				String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
-//				Correio.enviar(null,destinanarios, 
-//						"Troca de Senha: ", 
-//						"",    
-//						"Prezado usuário, <b>"+ pessoa.getDpPessoa().getNomePessoa() +"</b> "
-//								+ "<br>"
-//								+ "<br>"
-//								+ "Sua senha foi alterada com sucesso!."
-//								+ "<br>"
-//								+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a>");
-//			}
-//		} else {
-//			Long codigoDaAcao = 2L;
-//			CpConfiguracao emailUser = dao().consultarExistenciaDeAcaoDeNotificacaoPorEmail(codigoDaAcao, getTitular().getIdPessoa());
-//			if (emailUser.isVerificaOuAtivaDesativaNotificacaoPorEmail()) {
-//				String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
-//				Correio.enviar(null,destinanarios, 
-//						"Troca de Senha: ", 
-//						"",    
-//						"Prezado usuário, <b>"+ pessoa.getDpPessoa().getNomePessoa() +"</b> "
-//								+ "<br>"
-//								+ "<br>"
-//								+ "Sua senha foi alterada com sucesso!."
-//								+ "<br>"
-//								+ "Você já pode está logando com a sua nova senha <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>aqui</a>");
-//			}
-//		}
+		CpConfiguracao notificarPorEmail = new CpConfiguracao();
+		notificarPorEmail = new CpConfiguracao();
+		notificarPorEmail = dao.consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+		CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong(), getTitular().getIdPessoa());
+		if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) { 
+			
+		}
+
 		result.redirectTo(UsuarioController.class).trocaSenha();
 	}
 
@@ -194,7 +203,8 @@ public class UsuarioController extends SigaController {
 				List<DpPessoa> lst = new ArrayList<DpPessoa>(dao().listarPorCpf(so.getCadastrante().getCpfPessoa()));
 				for (DpPessoa p : lst) {
 					try { 
-						CpConfiguracao notificarPorEmail = CpDao.getInstance().consultarExistenciaDeAcaoDeNotificacaoPorEmail(
+						DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+						notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
 								CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), getTitular().getIdPessoa());
 						if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
@@ -233,9 +243,9 @@ public class UsuarioController extends SigaController {
 			} else {
 				DpPessoa pessoa = so.getCadastrante();
 				try {
-					CpConfiguracao notificarPorEmail = new CpConfiguracao();
-					notificarPorEmail = dao.consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
-						CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), getTitular().getIdPessoa());
+					DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+					notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+							CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), getTitular().getIdPessoa());
 					
 					if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 						Correio.enviar(pessoa.getEmailPessoaAtual(), "Troca de Email",

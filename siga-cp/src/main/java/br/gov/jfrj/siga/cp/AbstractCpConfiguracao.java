@@ -519,15 +519,15 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 			return false;
 		}  
 	}
-	
-	public boolean isMandarEmail () {
-		if(this.cpSituacaoConfiguracao.getId() == 1) {
-			return true;
-		} else {   
-			return false;
-		} 
-	}
-	
+//	
+//	public boolean isMandarEmail () {
+//		if(this.cpSituacaoConfiguracao.getId() == 1) {
+//			return true;
+//		} else {   
+//			return false;
+//		} 
+//	}
+//	
 	public boolean ishabilitaOuDesabilitaNotificacaoPorEmail () {  
 		if(this.getRestringir() == 1) {
 			return true;

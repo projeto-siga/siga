@@ -118,6 +118,7 @@ import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -3865,33 +3866,14 @@ public class ExBL extends CpBL {
 
 		mov.getExMobil().getExMovimentacaoSet().add(mov);
 
+		DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+			notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+			CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), mov.getSubscritor().getIdPessoa());
+		
 		if (!mov.getExTipoMovimentacao().getIdTpMov()
-				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)) {
-			
-			for (int i = 0; i < mov.getExDocumento().getCosignatarios().size(); i ++) {
-				List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
-				if (!listaNotificarPorEmail.isEmpty()) {
-					int codigoDaAcao = 8;
-					DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
-					if (emailUser.isConfiguravel() && emailUser.getCodigo() == codigoDaAcao) {
-						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
-					}
-				} else {
-					Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
-				}
-			} 
-			
-			for (int i = 0; i < mov.getExDocumento().getCosignatarios().size(); i ++) {
-					List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
-					if (!listaNotificarPorEmail.isEmpty()) {
-					int codigoDaAcao = 9;
-					DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, mov.getExDocumento().getCosignatarios().get(i).getIdPessoa());
-					if (emailUser.isConfiguravel() && emailUser.getCodigo() == codigoDaAcao) {
-						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
-					} else {
-						Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
-					}
-				}
+				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO) ) {
+			if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) { 
+				Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
 			}
 		}
 		

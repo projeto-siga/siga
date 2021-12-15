@@ -1803,72 +1803,30 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
-			List<DpNotificarPorEmail> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
-			if (!listaNotificarPorEmail.isEmpty()) {
-				int codigoDaAcao = 5;
-				DpNotificarPorEmail emailUser = dao().consultarPeloCodigoNotificacaoPoremail(codigoDaAcao, getTitular().getIdPessoa());
-				if (emailUser.isConfiguravel()) {
-					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
-					Correio.enviar(null,destinanarios,  
-							"Usuário marcado: ", 
-							"",    
-							"Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + "</b> "
-									+ "<br>"
-									+ "<br>"
-									+ "Você foi marcado como, responsável pela assinatura do (<b>"+ exDocumentoDTO.getDoc().getCodigo() +"</b>), "
-									+ "pelo usuário (<b>"+ getTitular().getNomePessoa() +"</b>) "
-									+ "<br>"
-									+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-									+ "	>clique aqui.</a>"
-									+ "<br>"
-									+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
-									+ "	>clique aqui</a> para descadastrar.");
-				}
-			} else {
-				String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
-				Correio.enviar(null,destinanarios,  
-						"Usuário marcado: ", 
-						"",    
-						"Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + "</b> "
-								+ "<br>"
-								+ "<br>"
-								+ "Você foi marcado como, responsável pela assinatura do (<b>"+ exDocumentoDTO.getDoc().getCodigo() +"</b>), "
-								+ "pelo usuário (<b>"+ getTitular().getNomePessoa() +"</b>) "
-								+ "<br>"
-								+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-								+ "	>clique aqui.</a>"
-								+ "<br>"
-								+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
-								+ "	>clique aqui</a> para descadastrar.");
+			String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
 				
-			}
-			
+			Correio.enviar(null, destinanarios,
+					"Usuário marcado", "",
+					"<table>" + "<tbody>" + "<tr>"
+							+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
+							+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
+							+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
+							+ "<td style='background-color: #bbb; padding: 0 20px;'>"
+							+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
+							+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
+							+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
+							+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
+							+ getTitular().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
+							+ ",</span></h4>"
+							+ "<p>Você foi marcado como responsável pela assinatura do documento <b>"+ exDocumentoDTO.getDoc().getCodigo() +"</b>, "
+							+ "pelo usuário (<b>"+ getTitular().getNomePessoa() +"</b>) </p>) "
+							+ "</td>" + "</tr>" + "</tbody>" + "</table>");
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */
 
 			if(exDocumentoDTO.isSubstituicao() && exDocumentoDTO.getDoc().getTitular() != exDocumentoDTO.getDoc().getSubscritor()) {
 				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc(), so.getCadastrante());
-				
-				DpNotificarPorEmail emailNotificaSubstituto = dao().consultar(7L, DpNotificarPorEmail.class, false);
-				
-				if (emailNotificaSubstituto.isConfiguravel()) {
-					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
-					 
-					Correio.enviar(null,destinanarios, 
-							"Usuário marcado: ", 
-							"",   
-							"Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + "</b> "
-									+ "<br>"
-									+ "Você foi marcado como, substituto do (<b>"+ exDocumentoDTO.getDoc().getCodigo() +"</b>), "
-									+ "pelo usuário (<b>"+ getTitular().getNomePessoa() + "</b>) "
-									+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-									+ "	>clique aqui.</a>" 
-									+ "<br>"
-									+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
-									+ "	>clique aqui</a>"
-									+ "para descadastrar."); 
-				}
 			}
 
 //				exBL.geraMovimentacaoSubstituicao(exDocumentoDTO.getDoc(), so.getCadastrante());

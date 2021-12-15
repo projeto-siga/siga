@@ -36,8 +36,6 @@ public class ExPodeCapturarPDF extends CompositeExpressionSupport {
 	protected Expression create() {
 		return And.of(
 
-				new ExECapturado(mob.doc()),
-
 				Or.of(
 
 						new CpIgual(idTpDoc, "tipo do documento", ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO,

@@ -22,7 +22,7 @@ public class ExEstaResponsavel implements Expression {
 				this.mob = this.mob.doc().getUltimoVolume();
 			else {
 				for (ExMobil m : this.mob.doc().getExMobilSet()) {
-					if (!m.isGeral() && isResponsavel(titular, lotaTitular, m)) {
+					if (!m.isGeral() && m.isAtendente(titular, lotaTitular)) {
 						this.mob = m;
 						break;
 					}
@@ -36,23 +36,7 @@ public class ExEstaResponsavel implements Expression {
 
 	@Override
 	public boolean eval() {
-		return isResponsavel(titular, lotaTitular, mob);
-	}
-
-	public static boolean isResponsavel(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) {
-		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
-		if (exMov == null) {
-			return false;
-		}
-
-		if (exMov.getResp() != null && exMov.getResp().equivale(titular)) {
-			return true;
-		}
-
-		if (exMov.getLotaResp() != null && exMov.getLotaResp().equivale(lotaTitular)) {
-			return true;
-		}
-		return false;
+		return mob.isAtendente(titular, lotaTitular);
 	}
 
 	@Override

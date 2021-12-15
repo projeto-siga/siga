@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.relatorio.RelEstatisticaProcedimento;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDoc;
 import br.gov.jfrj.siga.wf.relatorio.RelTempoDocDetalhado;
@@ -79,7 +80,7 @@ public class WfRelatorioController extends WfController {
 
 	@Get
 	@Path("/app/rel/relatorio")
-	public Download relatorio(Long pdId, Integer grpIni, Integer grpFim, String incluirAbertos) throws Exception {
+	public Download relatorio(Long pdId, Long grpIni, Long grpFim, String incluirAbertos) throws Exception {
 		WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(pdId);
 		Map<String, Object> parametrosRelatorio = new HashMap<String, Object>();
 
@@ -92,9 +93,9 @@ public class WfRelatorioController extends WfController {
 		parametrosRelatorio.put("nomeProcedimento", pd.getNome());
 		parametrosRelatorio.put("incluirAbertos", incluirAbertos == null ? false : incluirAbertos);
 		parametrosRelatorio.put("inicioGrupo",
-				(grpIni == null || grpIni < 0) ? null : pd.getDefinicaoDeTarefa().get(grpIni).getNome());
+				(grpIni == null || grpIni < 0) ? null : WfDefinicaoDeTarefa.AR.findById(grpIni).getNome());
 		parametrosRelatorio.put("fimGrupo",
-				(grpFim == null || grpFim < 0) ? null : pd.getDefinicaoDeTarefa().get(grpFim).getNome());
+				(grpFim == null || grpFim < 0) ? null : WfDefinicaoDeTarefa.AR.findById(grpFim).getNome());
 
 		addParametrosPersonalizadosOrgao(parametrosRelatorio);
 

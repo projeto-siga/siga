@@ -249,6 +249,11 @@ public class Mesa2 {
 				if (mar != null) {
 					t.nome = mar.getNome();
 					t.icone = mar.getIcone();
+					if(mar.getId() == CpMarcadorEnum.SEM_EFEITO.id) {
+						t.nome = SigaMessages.getMessage("marcador.semEfeito.label");
+					} else if(mar.getId() == CpMarcadorEnum.CANCELADO.id) {
+						t.nome = SigaMessages.getMessage("marcador.cancelado.label");
+					}
 				} else {
 					t.nome = tag.marcador.getDescrMarcador();
 					t.icone = tag.marcador.getIdIcone().getCodigoFontAwesome();
@@ -488,8 +493,13 @@ public class Mesa2 {
 				docDados.movUltimaDtFimMov = movUltima.getDtFimMov();
 			}
 			if (movTramite != null) {
-				docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
-				docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
+				if(movTramite.getLotacao() != null) {
+					docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
+					
+					if(movTramite.getLotacao().getOrgaoUsuario() != null) {
+						docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
+					}
+				}
 			}
 		}
 	}

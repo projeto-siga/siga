@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,6 +79,9 @@ public class ExDocumentoVO extends ExVO {
 	String classificacaoDescricaoCompleta;
 	String classificacaoSigla;
 	String classificacaoNome;
+	String tipoDePrincipal;
+	String principal;
+	String principalCompacto;
 	List<String> tags;
 	String destinatarioString;
 	String destinatarioSigla;
@@ -114,6 +118,7 @@ public class ExDocumentoVO extends ExVO {
 	String exTipoDocumentoDescricao;
 	boolean podeAnexarArquivoAuxiliar;
 	String dtLimiteDemandaJudicial;
+	String dtPrazoDeAssinatura;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel) {
@@ -178,6 +183,12 @@ public class ExDocumentoVO extends ExVO {
 			this.classificacaoDescricaoCompleta = classif.getDescricaoCompleta();
 			this.classificacaoSigla = classif.getSigla();
 			this.classificacaoNome = classif.getNome();
+		}
+		
+		if (doc.getTipoDePrincipal() != null && doc.getPrincipal() != null) {
+			this.setPrincipal(doc.getPrincipal());
+			this.setPrincipalCompacto(this.getPrincipal().replace("-", "").replace("/", ""));
+			this.setTipoDePrincipal(doc.getTipoDePrincipal().getDescr());
 		}
 
 		if (doc.getExNivelAcessoAtual() != null)
@@ -326,6 +337,8 @@ public class ExDocumentoVO extends ExVO {
 				.filter(mov -> mov.getMarcador().isDemandaJudicial()) //
 				.map(ExMovimentacao::getDtFimMovDDMMYY) //
 				.findFirst().orElse(null);
+		
+		this.dtPrazoDeAssinatura = doc.getDtPrazoDeAssinaturaDDMMYYYYHHMM();
 		if (serializavel) {
 			this.titular = null;
 			this.lotaTitular = null;
@@ -497,14 +510,19 @@ public class ExDocumentoVO extends ExVO {
 	}
 
 	public void calculaSetsDeMarcas() {
+		Date now = dao().consultarDataEHoraDoServidor(); 
+	
 		for (ExMobil cadaMobil : doc.getExMobilSet()) {
 			SortedSet<ExMarca> setSistema = new TreeSet<>();
 			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
 			for (ExMarca m : set) {
-				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
-					setSistema.add(m);
-				if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
-					getMarcasDoMobil().add(m);
+				if ((m.getDtIniMarca() == null || !m.getDtIniMarca().after(now))
+						&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(now))) {
+					if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+						setSistema.add(m);
+					if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
+						getMarcasDoMobil().add(m);
+				}
 			}
 			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
 			marcasPorMobil.put(cadaMobil, set);
@@ -1184,6 +1202,34 @@ public class ExDocumentoVO extends ExVO {
 
 	public void setMarcasDeSistemaPorMobil(Map<ExMobil, Set<ExMarca>> marcasDeSistemaPorMobil) {
 		this.marcasDeSistemaPorMobil = marcasDeSistemaPorMobil;
+	}
+
+	public String getDtPrazoDeAssinatura() {
+		return dtPrazoDeAssinatura;
+	}
+
+	public String getTipoDePrincipal() {
+		return tipoDePrincipal;
+	}
+
+	public void setTipoDePrincipal(String tipoDePrincipal) {
+		this.tipoDePrincipal = tipoDePrincipal;
+	}
+
+	public String getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
+
+	public String getPrincipalCompacto() {
+		return principalCompacto;
+	}
+
+	public void setPrincipalCompacto(String principalCompacto) {
+		this.principalCompacto = principalCompacto;
 	}
 
 }

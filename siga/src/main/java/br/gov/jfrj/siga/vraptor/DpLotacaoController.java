@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -81,7 +82,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if (sigla == null)
 			sigla = "";
 
-		aBuscar(sigla, "");
+		aBuscar(sigla, "", false);
 
 		try {
 			RetornoJson l = new RetornoJson();
@@ -92,6 +93,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				i.secondLine = s.getDescricao();
 				l.list.add(i);
 			}
+			Collections.sort(l.list);
 			jsonSuccess(l);
 		} catch (Exception e) {
 			jsonError(e);
@@ -135,6 +137,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		 * flt.setIdOrgaoUsu(paramInteger("orgaoUsu"));
 		 */
 		flt.setIdOrgaoUsu(orgaoUsu);
+		if (flt.getIdOrgaoUsu() == null && getLotaTitular() != null ) {
+			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
+		}
 
 		String buscarFechadas = param("buscarFechadas");
 		flt.setBuscarFechadas(buscarFechadas != null ? Boolean.valueOf(buscarFechadas) : false);

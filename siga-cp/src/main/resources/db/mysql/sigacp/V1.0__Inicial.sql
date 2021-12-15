@@ -1699,7 +1699,12 @@ INSERT INTO `cp_servico` VALUES
 (312,'SIGA-SR-EMAILATEND','Receber Notificação Atendente',4,2,NULL),
 (313,'SIGA-SR-OPENSAVE','Salvar Solicitação Ao Abrir',4,2,NULL),
 (314,'SIGA-SR-OPENPRIOR','Priorizar ao Abrir',4,2,NULL),
-(315,'SIGA-SR-VER_GESTOR_I','Ver gestor do item de configuração ao abrir solicitação',4,2,NULL);
+(315,'SIGA-SR-VER_GESTOR_I','Ver gestor do item de configuração ao abrir solicitação',4,2,NULL),
+(400,'SIGA-GI-CAD_ORGAO_USUARIO','Cadastrar Orgãos Usuário',15,2,NULL),
+(401,'SIGA-GI-CAD_CARGO','Cadastrar Cargo',15,2,NULL),
+(402,'SIGA-GI-CAD_LOTACAO','Cadastrar Lotação',15,2,NULL),
+(403,'SIGA-GI-CAD_FUNCAO','Cadastrar Função de Confiança',15,2,NULL),
+(404,'SIGA-GI-CAD_PESSOA','Cadastrar Pessoa',15,2,NULL);
 /*!40000 ALTER TABLE `cp_servico` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -1081,7 +1081,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 	    [#if !gerar_formulario!false]    	
     		[#if titulo != ""]    			
-    			<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+    			<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${titulo}</label>
     		[/#if]
     		
        		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""}${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control" [#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"[#else]${jlargura!""}${jmaxcaracteres!""}[/#if]/>
@@ -1175,7 +1175,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 		        <input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
 		               [#if v=='Sim']checked[/#if] 
 		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '${default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
-		        <label class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+		        <label title="campo: ${var}" class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 		        [#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]		       
@@ -1215,7 +1215,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 	    [#if !gerar_formulario!false]        	
 			<div class="custom-control custom-radio">
 	        	<input class="custom-control-input" type="radio" id="${id}" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; ${onclique}; ${jreler!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
-				<label class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+				<label title="campo: ${var}" class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 				[#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]						
@@ -1347,7 +1347,7 @@ CKEDITOR.replace( '${var}',
 
         <div>
         [#if titulo != ""]
-                        <b>${titulo}</b>
+                        <span title="campo: ${var}"><b>${titulo}</b></span>
         [/#if]
 
         [#if !gerar_formulario!false]
@@ -1363,16 +1363,12 @@ CKEDITOR.replace( '${var}',
                 <tr>
                     <td></td>
                     <td colspan="3">
-
-                        
-                         
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
                              <input type="hidden" id="${var}" name="${var}" value="${v?html}">
                             [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
                         [#else]
                             <script type="text/javascript">
-
 								CKEDITOR.config.disableNativeSpellChecker = false;
 								CKEDITOR.config.scayt_autoStartup = false;
 								CKEDITOR.config.scayt_sLang = 'pt_BR';
@@ -1444,9 +1440,136 @@ CKEDITOR.replace( '${var}',
 								    {
 								        name: 'document',
 								        items: ['Source']
+								    },
+								    {
+								        name: 'extra',
+								        items: ['strinsert']
 								    }
 								];
-								CKEDITOR.config.extraPlugins = 'footnotes';
+								
+								// @license Copyright © 2013 Stuart Sillitoe <stuart@vericode.co.uk>
+ 								// This is open source, can modify it as you wish.
+ 								// Stuart Sillitoe - stuartsillitoe.co.uk
+ 								CKEDITOR.config.strinsert_strings =	 [
+									{'name': 'Documento em Elaboração'},
+									{'name': 'Número', 'value': '$' + '{doc.sigla}'},
+									{'name': 'Data', 'value': '$' + '{doc.dtDocDDMMYYYY}'},
+									{'name': 'Nome do Subscritor', 'value': '$' + '{doc.subscritor.descricao}'},
+									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.subscritor.lotacao.descricao}'},
+									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{doc.lotaSubscritor.sigla}'},
+									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{doc.lotaCadastrante.sigla}'},
+									{'name': 'Destinatário', 'value': '$' + '{doc.destinatarioString}'},
+									{'name': 'Campo da Entrevista', 'value': '$' + '{doc.form.NOMECAMPO}'},
+									{'name': 'Descrição', 'value': '$' + '{doc.descrDocumento}'},
+									
+									{'name': 'Documento Pai'},
+									{'name': 'Número', 'value': '$' + '{doc.pai.sigla}'},
+									{'name': 'Data', 'value': '$' + '{doc.pai.dtDocDDMMYYYY}'},
+									{'name': 'Nome do Subscritor', 'value': '$' + '{doc.pai.subscritor.descricao}'},
+									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{doc.pai.subscritor.lotacao.descricao}'},
+									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{doc.pai.lotaSubscritor.sigla}'},
+									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{doc.pai.lotaCadastrante.lotacao.sigla}'},
+									{'name': 'Destinatário', 'value': '$' + '{doc.pai.destinatarioString}'},
+									{'name': 'Campo da Entrevista', 'value': '$' + '{doc.pai.form.NOMECAMPO}'},
+									{'name': 'Descrição', 'value': '$' + '{doc.pai.descrDocumento}'},
+									
+									{'name': 'Documento Autuado'},
+									{'name': 'Número', 'value': '$' + '{doc.sigla}'},
+									{'name': 'Data', 'value': '$' + '{ref.pai.autuado.doc.dtDocDDMMYYYY}'},
+									{'name': 'Nome do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.descricao}'},
+									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.lotacao.descricao}'},
+									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.lotaSubscritor.sigla}'},
+									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{ref.pai.autuado.doc.lotaCadastrante.sigla}'},
+									{'name': 'Destinatário', 'value': '$' + '{ref.pai.autuado.doc.destinatarioString}'},
+									{'name': 'Campo da Entrevista do Autuado', 'value': '$' + '{ref.pai.autuado.form.NOMECAMPO}'},
+									{'name': 'Descrição', 'value': '$' + '{ref.pai.autuado.doc.descrDocumento}'},
+									
+									
+									{'name': 'Outros Documentos'},
+									{'name': 'Lista de números por modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO 1','MODELO DESEJADO 2')}"},
+									{'name': 'Número do último modelo juntado', 'value': '$' + "{ref.modelo('MODELO DESEJADO').ultimo}"},
+									{'name': 'Campo do último modelo juntado', 'value': '$' + "{ref.modelo('memorando').form.NOMECAMPO}"},
+									
+									{'name': 'Workflow'},
+									{'name': 'Sigla do Procedimento', 'value': '$' + '{wf.sigla}'},
+									{'name': 'Principal', 'value': '$' + '{wf.principal}'},
+									{'name': 'Nome do Titular', 'value': '$' + '{wf.titular}'},
+									{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
+									{'name': 'Variável', 'value': '$' + '{wf.var.NOMEVARIAVEL}'},
+									{'name': 'Data', 'value': '$' + '{fmt.data(wf.var.NOMEVARIAVEL)}'},
+									{'name': 'Reais', 'value': '$' + '{fmt.reais(wf.var.NOMEVARIAVEL)}'},								
+									{'name': 'Reais por Extenso', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},								
+									{'name': 'Documento Criado', 'value': '$' + '{wf.var.doc_NOMETAREFA}'},								
+									
+								];
+								CKEDITOR.config.strinsert_button_label = 'Variável';
+								CKEDITOR.config.strinsert_button_title = 'Inserir Variável';
+								CKEDITOR.config.strinsert_button_voice = 'Inserir Variável';
+								
+								CKEDITOR.plugins.add('strinsert',
+								{
+									requires : ['richcombo'],
+									init : function( editor )
+									{
+										var config = editor.config;
+								
+										// Gets the list of insertable strings from the settings.
+										var strings = config.strinsert_strings;
+								
+										// add the menu to the editor
+										editor.ui.addRichCombo('strinsert',
+										{
+											label: 		config.strinsert_button_label,
+											title: 		config.strinsert_button_title,
+											voiceLabel: config.strinsert_button_voice,
+											toolbar: 'insert',
+											className: 	'cke_format',
+											multiSelect:false,
+											panel:
+											{
+												css: [ editor.config.contentsCss, CKEDITOR.skin.getPath('editor') ],
+												voiceLabel: editor.lang.panelVoiceLabel
+											},
+								
+											init: function()
+											{
+												var lastgroup = '';
+												for(var i=0, len=strings.length; i < len; i++)
+												{
+													string = strings[i];
+													// If there is no value, make a group header using the name.
+													if (!string.value) {
+														this.startGroup( string.name );
+													}
+													// If we have a value, we have a string insert row.
+													else {
+														// If no name provided, use the value for the name.
+														if (!string.name) {
+															string.name = string.value;
+														}
+														// If no label provided, use the name for the label.
+														if (!string.label) {
+															string.label = string.name;
+														}
+														this.add(string.value, string.name, string.label);
+													}
+												}
+											},
+								
+											onClick: function( value )
+											{
+												editor.focus();
+												editor.fire( 'saveSnapshot' );
+												editor.insertHtml(value);
+												editor.fire( 'saveSnapshot' );
+											},
+								
+										});
+									}
+								});
+
+								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
+								
 								window.onload = function() {
 								    $("textarea.editor").each(function(index) {
 								        CKEDITOR.replace(this, {
@@ -1486,7 +1609,7 @@ CKEDITOR.replace( '${var}',
 
     [#if !gerar_formulario!false]    
     	<div class="form-group" style="margin-bottom:0">
-    		[#if titulo?? && titulo != ""]<label for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
+    		[#if titulo?? && titulo != ""]<label title="campo: ${var}" for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
     		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
     			[#if opcaoNeutra?? && opcaoNeutra != "" && obrigatorio]
     				<option id="opcaoNeutra" value="${opcaoNeutra}" [#if !(temValor??)]selected[/#if]>${opcaoNeutra}</option>
@@ -1575,7 +1698,7 @@ CKEDITOR.replace( '${var}',
         [/#if]
         
         [#if titulo != ""]                         
-        	<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+        	<label title="campo: ${var}" for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
         [/#if]
 
         [#if !gerar_formulario!false]
@@ -2173,7 +2296,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false exibeRodapeEnderecamento=false]
 	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
 	    cellspacing="0" bgcolor="#FFFFFF">
 	    <tr bgcolor="#FFFFFF">
@@ -2210,6 +2333,9 @@ Pede deferimento.</span><br/><br/><br/>
 	        </td>
 	    </tr>
 	</table>
+	[#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 [#macro cabecalhoCentralizado orgaoCabecalho=true]
@@ -2318,7 +2444,7 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro cabecalhoDireitaGenerico width="65" height="65" exibirOrgao=false]
+[#macro cabecalhoDireitaGenerico width="65" height="65" exibirOrgao=false exibeRodapeEnderecamento=false]
 <table width="100%" border="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
         <td width="100%">
@@ -2334,6 +2460,9 @@ Pede deferimento.</span><br/><br/><br/>
         </td>
     </tr>
 </table>
+[#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 [#macro cabecalhoDireita]
@@ -2399,6 +2528,26 @@ Pede deferimento.</span><br/><br/><br/>
 [#if !somenteTR]
 </table>
 [/#if]
+[/#macro]
+
+
+[#macro rodapeEnderecamento]
+	<!-- INICIO ENDERECAMENTO -->
+	    <style>
+	    	.texto-enderecamento {
+	        	font-family: Verdana; 
+	            font-size: 13px;
+	            text-align: left;             
+	        }
+	    </style>     
+	  	<p class="texto-enderecamento">
+	      [#if (Vocativo!"") != ""]<b>${Vocativo!}<b><br />[/#if]
+	      [#if (Orgao!"") != ""]${Orgao!}[/#if]<br />
+	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
+	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
+	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}[/#if]    
+	    </p>
+    <!-- FIM ENDERECAMENTO -->
 [/#macro]
 
 [#macro rodapeNumeracaoADireita texto=""]
@@ -2557,7 +2706,7 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- FIM ASSINATURA -->
 [/#macro]
 
-[#macro estiloBrasaoAEsquerda tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto=""]
+[#macro estiloBrasaoAEsquerda tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto="" exibeRodapeEnderecamento=false]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoEsquerdaPrimeiraPagina width=width height=height exibirOrgao=exibirOrgao/]
@@ -2613,9 +2762,12 @@ Pede deferimento.</span><br/><br/><br/>
     [@rodape]
     [@rodapeNumeracaoADireita texto=texto/]
     [/@rodape]
+    [#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
- [#macro estiloBrasaoADireita tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=false texto=""]
+ [#macro estiloBrasaoADireita tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=false texto="" exibeRodapeEnderecamento=false]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoDireitaGenerico width=65 height=65 exibirOrgao=true/]
@@ -2657,10 +2809,13 @@ Pede deferimento.</span><br/><br/><br/>
    	[@rodapeClassificacaoDocumental align="right" texto=texto/]
     [@rodapeNumeracaoADireita texto="" /]
     [/@rodape]
+    [#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true exibeRodapeEnderecamento=false]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
@@ -2740,10 +2895,15 @@ Pede deferimento.</span><br/><br/><br/>
 	   [#if exibeClassificacaoDocumental]
 	   		[@rodapeClassificacaoDocumental/]
 	   [/#if]
+	   
    [/@primeiroRodape]
    [@rodape]
-   [@rodapeNumeracaoADireita/]
+   		[@rodapeNumeracaoADireita/]
    [/@rodape]
+   [#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
+  
 [/#macro]
 
 [#macro processo]
@@ -2892,7 +3052,7 @@ Pede deferimento.</span><br/><br/><br/>
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=true incluirMioloDJE=true]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=true incluirMioloDJE=true exibeRodapeEnderecamento=false]
             [#if dispoe_sobre != ""]     
               <table style="float:none;" width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
                   <tr>
@@ -2919,6 +3079,9 @@ Pede deferimento.</span><br/><br/><br/>
                 </center></span></p>
             </div>            
      [/@estiloBrasaoCentralizado]
+     [#if exibeRodapeEnderecamento]
+   		[@rodapeEnderecamento/]
+   [/#if]
 [/#macro]
 
 [#macro quebraPagina]

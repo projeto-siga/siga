@@ -83,6 +83,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.DpVisualizacaoAcesso;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -1083,10 +1084,10 @@ public class ExDocumentoController extends ExController {
 											 */
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
-								if(mobUlt.isEmTransito()) { /*  em transito */
+								if(mobUlt.isEmTransito(getTitular(), getLotaTitular())) { /*  em transito */
 									Ex.getInstance()
 									.getBL()
-									.receber(getCadastrante(), getLotaTitular(),
+									.receber(getCadastrante(), getTitular(), getLotaTitular(),
 											mobUlt, new Date());
 								}
 								if (mob.doc().isEletronico()
@@ -1157,7 +1158,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDTO.getMob(), new Date());
 		}
 
@@ -1205,7 +1206,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDTO.getMob(), new Date());
 		}
 
@@ -1286,7 +1287,7 @@ public class ExDocumentoController extends ExController {
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 			Ex.getInstance()
 					.getBL()
-					.receber(getCadastrante(), getLotaTitular(),
+					.receber(getCadastrante(), getTitular(), getLotaTitular(),
 							exDocumentoDto.getMob(), new Date());
 		}
 
@@ -1382,9 +1383,12 @@ public class ExDocumentoController extends ExController {
 		if (recebimentoAutomatico) {				
 			if (Ex.getInstance().getComp().deveReceberEletronico(getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
-				Ex.getInstance().getBL().receber(getCadastrante(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
+				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else if (Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(),exDocumentoDto.getMob())
+				&& !exDocumentoDto.getMob().isEmTransitoExterno()
+				&& !exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA).getCadastrante().equivale(getTitular())
 				&& !exDocumentoDto.getMob().isJuntado()) {
 			recebimentoPendente = true;			
 		} 		
@@ -1429,6 +1433,32 @@ public class ExDocumentoController extends ExController {
 	@Get("app/expediente/doc/exibirProcesso")
 	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
 			throws Exception {
+		
+		if(Prop.get("pdf.tamanho.maximo.completo") != null) {
+			ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+			exDocumentoDto.setSigla(sigla);
+			buscarDocumento(false, exDocumentoDto);		
+			List<ExArquivoNumerado> ans = exDocumentoDto.getDoc().getArquivosNumerados(exDocumentoDto.getDoc().getMobilDefaultParaReceberJuntada());
+			
+			Long tamanho = Long.valueOf(0);
+			Long tamanhoHtml = Long.valueOf(0);			
+			for (ExArquivoNumerado an : ans) {
+				if(an.getArquivo() instanceof ExDocumento && ((ExDocumento)an.getArquivo()).getCpArquivo() != null) {
+					tamanho += Long.valueOf(((ExDocumento)an.getArquivo()).getCpArquivo().getTamanho());
+					if(!((ExDocumento)an.getArquivo()).isCapturado()) {
+						tamanhoHtml += Long.valueOf(((ExDocumento)an.getArquivo()).getCpArquivo().getTamanho());
+					}
+					if(tamanhoHtml > Long.valueOf(Prop.get("pdf.tamanho.maximo.completo"))) {
+						result.include("mensagemCabec", "Agregação de documentos excedeu o tamanho máximo permitido.");
+						result.include("msgCabecClass", "alert-info fade-close");
+						result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
+	 				}
+				}
+			}
+			result.include("excedeuTamanhoMax", (tamanho > Long.valueOf(Prop.get("pdf.tamanho.maximo.completo"))));
+		}
+
+		
 		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao);					
 	}
 
@@ -2662,7 +2692,7 @@ public class ExDocumentoController extends ExController {
 		boolean isCriandoSubprocesso = exDocumentoDTO.getCriandoSubprocesso();
 		
 		if (exDocumentoDTO.getDoc().getExMobilPai() != null) {
-				if (exDocumentoDTO.getDoc().getExMobilPai().isGeral()) {
+				if (exDocumentoDTO.getDoc().getExMobilPai().isGeral() && exDocumentoDTO.getDoc().getExMobilPai().doc().isProcesso() && exDocumentoDTO.getDoc().isProcesso()) {
 					isCriandoSubprocesso = true;
 					exDocumentoDTO.setCriandoSubprocesso(true);
 				} else {

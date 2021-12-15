@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -291,6 +292,7 @@ public class ExAssinadorExternoController extends ExController {
 			Boolean autenticar = false;
 			Boolean juntar = null;
 			Boolean tramitar = null;
+			Boolean exibirNoProtocolo = null;
 			if (extra != null) {
 				if (extra.contains("autenticar"))
 					autenticar = true;
@@ -302,6 +304,10 @@ public class ExAssinadorExternoController extends ExController {
 					tramitar = false;
 				else if (extra.contains("tramitar"))
 					tramitar = true;
+				if(extra.contains("nao_exibirNoProtocolo"))
+					exibirNoProtocolo = false;
+				else if(extra.contains("exibirNoProtocolo"))
+					exibirNoProtocolo = true;
 			}
 
 			byte[] assinatura = Base64.decode(envelope);
@@ -337,7 +343,7 @@ public class ExAssinadorExternoController extends ExController {
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar, null, getTitular());
+						null, tpMov, juntar, tramitar == null ? false : tramitar, exibirNoProtocolo, getTitular());
 				if (msg != null)
 					msg = "OK: " + msg;
 				else
@@ -359,6 +365,8 @@ public class ExAssinadorExternoController extends ExController {
 		DpPessoa cadastrante = getCadastrante();
 		if (cadastrante == null && cpf != null) {
 			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
+			SortedSet<ExMovimentacao> movimentacoesMobilGeral = null;
+			
 			for (DpPessoa p : pessoas) {
 				if (mov != null && mov.getResp() != null) {
 					if (p.equivale(mov.getResp())) {
@@ -367,10 +375,24 @@ public class ExAssinadorExternoController extends ExController {
 					}
 				} else if (p.equivale(mob.doc().getSubscritor())) {
 					cadastrante = p;
+				} else {
+					if (movimentacoesMobilGeral == null) {
+						movimentacoesMobilGeral = mob.doc().getMobilGeral().getExMovimentacaoSet();
+					}
+					
+					if (movimentacoesMobilGeral != null ) {
+						for (ExMovimentacao m : movimentacoesMobilGeral) {
+							if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+									&& m.getExMovimentacaoCanceladora() == null &&  p.equivale(m.getSubscritor()) ) {
+								cadastrante = p;
+								break;
+							}
+						}
+					}
 				}
 			}
-			if (cadastrante == null && pessoas.size() >= 1)
-				cadastrante = pessoas.get(0);
+			if (cadastrante == null && pessoas.size() == 1)
+				cadastrante = pessoas.get(0); 
 			if (cadastrante == null && mov == null)
 				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 		}

@@ -619,9 +619,24 @@
 										<c:if test="${marca.cpMarcador.idFinalidade.idTpInteressado != 'ATENDENTE'}">
 											- <c:if test="${not empty pessoaAtual}"><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
 											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
-											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if><c:if test="${not empty lotacaoAtual}"><c:if test="${not empty pessoaAtual}">/</c:if><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
-											descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
-											lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></c:if>
+											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if>
+											<c:choose>
+												<c:when test="${not empty lotacaoAtual}">
+													<c:if test="${not empty pessoaAtual}">/</c:if>
+													<siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+														descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+														lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" />
+												</c:when>
+												<c:otherwise>
+													<c:if test="${empty pessoaAtual}">
+														<siga:selecionado 
+															isVraptor="true" 
+															sigla="${marca.exMovimentacao.lotaSubscritor.sigla} (Sem acesso ao documento - A marca não será mostrada)"
+															descricao="${marca.exMovimentacao.lotaSubscritor.descricaoAmpliada}"
+															lotacaoParam="${marca.exMovimentacao.lotaSubscritor.siglaCompleta}" />
+													</c:if>												
+												</c:otherwise>
+											</c:choose>
 										</c:if>
 										</td>
 										<c:choose>
@@ -634,7 +649,8 @@
 										</c:choose>
 										<c:choose>
 											<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
-												<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${marca.exMovimentacao.exMobil.sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+												<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${marca.exMovimentacao.exMobil.sigla}&descrMov=' + encodeURIComponent('Exclusão de marcador: ${marca.cpMarcador.descrMarcador}'))" 
+													title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
 											</c:when>
 											<c:otherwise>
 												<td style="padding-left:.25em; padding-right: 0"><a title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt text-secondary"></i></a></td>
@@ -1052,6 +1068,13 @@
 							<p>
 								<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>
+							
+							<c:if test="${not empty docVO.tipoDePrincipal and not empty docVO.principal}">
+							<p>
+								<b>${docVO.tipoDePrincipal}:</b> <a href="/sigawf/app/procedimento/${docVO.principalCompacto}">${docVO.principal}</a>
+							</p>
+							</c:if>
+							
 							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
 
 						</tags:collapse>
@@ -1074,6 +1097,14 @@
 								 		- ${m.tamanhoDeArquivo}
 									</c:if>
 								</p>
+								<c:if test="${not empty docVO.dtPrazoDeAssinatura}">
+									<div>
+										<span>Prazo de Assinatura: ${docVO.dtPrazoDeAssinatura}</span>
+										<a class="float-right ${marca.exMovimentacao.podeCancelarOuAlterarPrazoDeAssinatura(titular, lotaTitular, m.mob, docVO.doc.movPrazoDeAssinatura)? '' : 'disabled' }" 
+										href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${docVO.doc.movPrazoDeAssinatura.idMov}&sigla=${docVO.doc.movPrazoDeAssinatura.exMobil.sigla}')" 
+											><i class="far fa-trash-alt"></i></a>
+									</div>
+								</c:if>
 							</tags:collapse>
 						</div>
 					</c:if>

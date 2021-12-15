@@ -26,6 +26,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
@@ -97,6 +100,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	@Transient
 	private Long idDocPrincipal;
+	
+	@Transient
+	private String numeroSequenciaGenerica;
 
 	/**
 	 * Simple constructor of ExDocumento instances.
@@ -1897,8 +1903,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public Set<ExMovimentacao> getAssinaturasComTokenOuSenha() {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
-		set.addAll(getAssinaturasComSenha());
-		set.addAll(getAssinaturasComToken());
+		
+		long[] idTpMovs = {ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO, 
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA};
+		
+		set.addAll(getMobilGeral().getMovsNaoCanceladas(idTpMovs));
 		return set;
 	}
 
@@ -2852,8 +2861,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 					&& (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
 							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || mov
-							.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA))
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO
+							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA))
 				return true;
 		}
 
@@ -2964,5 +2975,67 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return this.getExFormaDocumento()
 				.getDescricao().contains("Despacho");
 	}
+
+	/**
+	 * Verifica se o prazo para todos assinarem o documento está vencido.
+	 */
+	public boolean isPrazoDeAssinaturaVencido() {
+		Date dtNow = ExDao.getInstance().consultarDataEHoraDoServidor();
+		ExMovimentacao mov = getMovPrazoDeAssinatura();
+
+		if (mov != null && mov.getDtParam1().before(dtNow)) 
+			return true;
+		return false;
+	}
+
+	/**
+	 * Obtem a movimentação de definição de prazo de assinatura.
+	 */
+	public ExMovimentacao getMovPrazoDeAssinatura() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		if(movs != null)
+			for (final ExMovimentacao mov : movs) {
+				if (!mov.isCancelada()
+						&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA)
+					return mov;
+			}
+		return null;
+	}
 	
+	/**
+	 * Retorna a data do prazo de assinatura no formato dd/mm/aaaa hh:mm.
+	 */
+	public Date getDtPrazoDeAssinatura() {
+		ExMovimentacao mov = getMovPrazoDeAssinatura();
+		if (mov != null) {
+			return new Date(mov.getDtParam1().getTime());
+		}
+		return null;
+	}
+	/**
+	 * Retorna a data do prazo de assinatura no formato dd/mm/aaaa hh:mm.
+	 */
+	public String getDtPrazoDeAssinaturaDDMMYYYYHHMM() {
+		Date dt = getDtPrazoDeAssinatura();
+		if (dt != null) {
+	        LocalDateTime localDateTime = LocalDateTime.ofInstant(dt.toInstant(), ZoneId.systemDefault());
+			DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+			return localDateTime.format(fmt);
+		}
+		return "";
+	}
+
+	public String getNumeroSequenciaGenerica() {
+		return numeroSequenciaGenerica;
+	}
+
+	public void setNumeroSequenciaGenerica(String numeroSequenciaGenerica) {
+		this.numeroSequenciaGenerica = numeroSequenciaGenerica;
+	}
+
+	public ExRef getRef() {
+		return new ExRef(this);
+	}
+
 }

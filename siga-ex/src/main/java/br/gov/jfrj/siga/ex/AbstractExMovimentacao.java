@@ -426,6 +426,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	// private Integer numViaDocRef;
 
+	// Aqui era armazenado o atendente, mas com o trâmite paralelo isso 
+	// passou a ser calculado de outra forma. Mesmo assim, o destinatário 
+	// e o recebedor ficam gravados aqui.
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_resp")
 	private DpPessoa resp;
@@ -478,11 +481,11 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_param1", length = 19)
 	private Date dtParam1;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dt_param2", length = 19)
 	private Date dtParam2;
 
@@ -875,7 +878,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			this.conteudoBlobMov = createBlob;
 		} else if(cacheConteudoBlobMov != null){
-			if(orgaoPermiteHcp())
+			if (orgaoPermiteHcp())
 				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
 			else
 				this.conteudoBlobMov = createBlob;
@@ -900,10 +903,12 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 	
 	private boolean orgaoPermiteHcp() {
+		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
+		if ("*".equals(orgaos.get(0)))
+			return true;
 		if(exMobil!=null && exMobil.getDoc()!=null && exMobil.getDoc().getCadastrante()!=null && exMobil.getDoc().getCadastrante().getOrgaoUsuario()!=null) {
-			List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
 			CpOrgaoUsuario orgaoUsuario = exMobil.getDoc().getCadastrante().getOrgaoUsuario();
-			if(orgaos != null && orgaoUsuario!=null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(orgao -> orgao.equals(orgaoUsuario.getSigla()))) )
+			if(orgaos != null && orgaoUsuario!=null && (orgaos.stream().anyMatch(orgao -> orgao.equals(orgaoUsuario.getSigla()))) )
 				return true;
 		}
 		return false;

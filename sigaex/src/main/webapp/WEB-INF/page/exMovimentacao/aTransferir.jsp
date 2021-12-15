@@ -98,6 +98,7 @@ $(function(){
 				<input type="hidden" name="sigla" value="${sigla}" id="transferir_gravar_sigla" />
 				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
 				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
+				<input type="hidden" name="tipoTramite" value="3"/>
 
 				<c:if test="${not doc.eletronico}">
 				<div class="row">
@@ -147,7 +148,7 @@ $(function(){
 							</c:choose></td>
 						</div>
 					</div>
-				</div>				
+				</div>	
 				<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="row">
 						<div class="col col-3">

@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -55,8 +56,10 @@ import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
+import br.gov.jfrj.siga.wf.model.enm.WfTarefaDocCriarParam2;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -554,7 +557,7 @@ public class WfProcedimento extends Objeto
 		if (d.id != null) {
 			info = AR.findById(d.id);
 		} else if (d.numero != null) {
-			info = AR.find("ano = ?1 and numero = ?2 and ou.idOrgaoUsu = ?3", d.ano, d.numero, d.orgaoUsuario.getId())
+			info = AR.find("ano = ?1 and numero = ?2 and orgaoUsuario.idOrgaoUsu = ?3", d.ano, d.numero, d.orgaoUsuario.getId())
 					.first();
 		}
 
@@ -584,9 +587,12 @@ public class WfProcedimento extends Objeto
 		return set;
 	}
 
-	public boolean isFormulario() {
-		return status == ProcessInstanceStatus.PAUSED
-				&& getCurrentTaskDefinition().getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO;
+	public boolean isPausado() {
+		return status == ProcessInstanceStatus.PAUSED;
+	}
+
+	public boolean isRetomando() {
+		return status == ProcessInstanceStatus.RESUMING;
 	}
 
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
@@ -596,17 +602,33 @@ public class WfProcedimento extends Objeto
 		return !titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao());
 	}
 
+	public boolean isDesabilitarConhecimento(DpPessoa titular, DpLotacao lotaTitular) {
+		return !titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao());
+	}
+
 	public Object obterValorDeVariavel(WfDefinicaoDeVariavel vd) {
 		return getVariavelMap().get(vd.getIdentificador());
 	}
-
+	
 	public String getMsgAviso(DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		String s = getMsgAvisoSemReferencias(titular, lotaTitular);
+		if (s == null) 
+			return s;
+		return CpProcessadorReferencias.marcarReferenciasParaDocumentos(s, null);
+	}
+
+	public String getMsgAvisoSemReferencias(DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 //		WfConhecimento c = WfDao.getInstance().consultarConhecimento(ti.getDefinicaoDeTarefa().getId());
 //		if (c != null) {
 //			this.setDescricao(WfWikiParser.renderXHTML(c.getDescricao()));
 //			this.setConhecimento(c.getDescricao());
 //		}
 
+		if (getStatus() == ProcessInstanceStatus.RESUMING)
+			return "Este workflow está aguardando a realização de uma tarefa de sistema para prosseguir. Isto pode ocorrer porque a tarefa é realmente demorada ou porque ocorreu algum erro no processamento. " + 
+			"Caso deseje que o sistema faça uma nova tentativa, clique <a href=\"/sigawf/app/procedimento/"
+					+ getSiglaCompacta() + "/retomar\">aqui</a>.";
+		
 		if (!titular.equivale(getEventoPessoa()) && !lotaTitular.equivale(getEventoLotacao())) {
 			if (getEventoPessoa() != null && getEventoLotacao() != null)
 				return "Esta tarefa será desempenhada por " + getEventoPessoa().getSigla() + " na lotação "
@@ -672,6 +694,26 @@ public class WfProcedimento extends Objeto
 					+ " estiver assinado. Clique <a href=\"/sigaex/app/expediente/mov/assinar?sigla=" + getPrincipal()
 					+ "\">aqui</a> para assinar.";
 		}
+		if (getDefinicaoDeTarefaCorrente() != null
+				&& (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+						|| getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO)) {
+			String siglaDoDocumentoCriado = WfTarefaDocCriar.getSiglaDoDocumentoCriado(this);
+			if (WfTarefaDocCriarParam2.AGUARDAR_ASSINATURA.name().equals(getDefinicaoDeTarefaCorrente().getParam2())) {
+				return "Este workflow prosseguirá automaticamente quando o documento " + siglaDoDocumentoCriado
+						+ " estiver assinado. Clique <a href=\"/sigaex/app/expediente/mov/assinar?sigla="
+						+ siglaDoDocumentoCriado + "\">aqui</a> para assinar.";
+			} else if (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+					&& WfTarefaDocCriarParam2.AGUARDAR_JUNTADA.name()
+							.equals(getDefinicaoDeTarefaCorrente().getParam2())) {
+				return "Este workflow prosseguirá automaticamente quando o documento " + siglaDoDocumentoCriado
+						+ " for juntado ao documento " + getPrincipal() + ".";
+			} else if (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO
+					&& WfTarefaDocCriarParam2.AGUARDAR_JUNTADA.name()
+						.equals(getDefinicaoDeTarefaCorrente().getParam2())) {
+				return "Este workflow prosseguirá automaticamente quando o documento " + getPrincipal()
+						+ " for juntado ao documento " + siglaDoDocumentoCriado + ".";
+			}
+		}
 		return null;
 	}
 
@@ -691,7 +733,8 @@ public class WfProcedimento extends Objeto
 		if (getProcessDefinition().getNome() != null && getCurrentTaskDefinition() != null
 				&& getCurrentTaskDefinition().getNome() != null)
 			return "^wf:" + Texto.slugify(
-					getProcessDefinition().getSiglaCompacta() + "-" + getCurrentTaskDefinition().getNome(), true, false);
+					getProcessDefinition().getSiglaCompacta() + "-" + getCurrentTaskDefinition().getNome(), true,
+					false);
 		return null;
 	}
 
@@ -773,7 +816,7 @@ public class WfProcedimento extends Objeto
 	}
 
 	@Override
-	public String getEvent() {
+	public String getIdEvent() {
 		return getEventoNome();
 	}
 

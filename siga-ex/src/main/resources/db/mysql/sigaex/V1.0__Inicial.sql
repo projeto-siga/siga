@@ -1402,6 +1402,8 @@ INSERT INTO `ex_tipo_movimentacao` VALUES (1,'Criação'),
 (62,'Marcação'),
 (63,'Inclusão de Cópia'),
 (64,'Anexação de Arquivo Auxiliar'),
+(65,'Solicitação de Assinatura'),
+(66,'Ciência'),
 (67,'Autuar');
 /*!40000 ALTER TABLE `ex_tipo_movimentacao` ENABLE KEYS */;
 UNLOCK TABLES;

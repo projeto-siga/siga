@@ -310,10 +310,22 @@ parameters:
     description: Identificador da Pessoa Inicial
     required: true
     type: string    
+  idPessoa:
+    name: idPessoa
+    in: path
+    description: Identificador da Pessoa
+    required: true
+    type: string    
   idLotacaoIni:
     name: idLotacaoIni
     in: path
     description: Identificador da Lotação Inicial
+    required: true
+    type: string            
+  idLotacao:
+    name: idLotacao
+    in: path
+    description: Identificador da Lotação
     required: true
     type: string            
   autenticar:
@@ -701,6 +713,77 @@ paths:
             Content-Disposition:
               type: string
               description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/preenchimentos:
+    get:
+      summary: Obtem a lista de preenchimentos existentes para determinado modelo.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:  
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PreenchimentoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/lotacoes/{idLotacao}/preenchimentos:
+    get:
+      summary: Obtem a lista de preenchimentos existentes para determinada lotação e modelo.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:  
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/idLotacao"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PreenchimentoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/pessoas/{idPessoa}/preenchimentos:
+    get:
+      summary: Obtem a lista de preenchimentos existentes para determinada pessoa e modelo.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:  
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/idPessoa"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PreenchimentoItem"
         500:
           description: Error ocurred
           schema:
@@ -2618,6 +2701,17 @@ definitions:
     type: object
     properties:
       idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+
+  PreenchimentoItem:
+    description: Lista preenchimentos disponíveis.
+    type: object
+    properties:
+      idPreenchimento:
         type: string
       nome:
         type: string

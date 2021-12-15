@@ -56,6 +56,7 @@ import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
@@ -64,6 +65,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
+import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
@@ -402,48 +404,33 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return String.valueOf(getNumVia2());
 	}
 
-	public static Integer tpMovDesempatePosicao(Long idTpMov) {
-		final List<Long> tpMovDesempate = Arrays.asList(new Long[] {ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
+	public static Integer tpMovDesempatePosicao(Long idTpMov, Long idTpMov2) {
+		final List<Long> tpMovDesempate = Arrays.asList(new Long[] { ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO});
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO });
 
-		if (idTpMov == null)
+		// Trata o caso de alguma parâmetro ser null
+		if (idTpMov == null && idTpMov2 == null)
+			return 0;
+		if (idTpMov == null && idTpMov2 != null)
 			return Integer.MAX_VALUE;
+		if (idTpMov != null && idTpMov2 == null)
+			return Integer.MIN_VALUE;
 		
 		int i = tpMovDesempate.indexOf(idTpMov);
-		if (i == -1)
-			return Integer.MAX_VALUE;
-		return i;
+		int i2 = tpMovDesempate.indexOf(idTpMov2);
+		
+		return i - i2;
 	}
 
 	public int compareTo(final ExMovimentacao mov) {
-		try {
-			int i = 0;
-			if (this.getDtTimestamp() != null) {
-				i = this.getDtTimestamp().compareTo(mov.getDtTimestamp());
-			} else if(this.getDtIniMov() != null) {
-				i = this.getDtIniMov().compareTo(mov.getDtIniMov());
-			}	
-			
-			if (i != 0)
-				return i;
-			
-			if (getExTipoMovimentacao() != null && mov.getExTipoMovimentacao() != null) {
-				i = tpMovDesempatePosicao(getExTipoMovimentacao().getId()).compareTo(
-						tpMovDesempatePosicao(mov.getExTipoMovimentacao().getId()));
-				if (i != 0)
-					return i;
-			}
-			
-			i = getIdMov().compareTo(mov.getIdMov());
-			return i;
-		} catch (final Exception ex) {
-			return 0;
-		}
+		return CronologiaComparator.INSTANCE.compare(mov, this);
 	}
 
 	/**
@@ -829,6 +816,16 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	public boolean isCancelada() {
 		return getExMovimentacaoCanceladora() != null;
+	}
+
+	/**
+	 * verifica se uma movimentação tem referência a alguma outra.
+	 * 
+	 * @return Verdadeiro se a movimentação está cancelada e Falso caso
+	 *         contrário.
+	 */
+	public boolean isReferenciando() {
+		return getExMovimentacaoRef() != null;
 	}
 
 	/**
@@ -1347,5 +1344,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Service.throwExceptionIfError(sCPF);
 
 		return "OK (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
+	}
+	
+	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
+		return Utils.equivale(getLotaResp(), lotaTitular)
+				|| Utils.equivale(getResp(),titular)
+				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
+				|| Utils.equivale(getDestinoFinal(),titular);
 	}
 }

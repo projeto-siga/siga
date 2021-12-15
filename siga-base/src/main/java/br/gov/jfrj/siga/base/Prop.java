@@ -254,11 +254,19 @@ public class Prop {
 		 * Se false, não permite.
 		 * */
 		provider.addPublicProperty("/siga.marcadores.permite.data.retroativa", "true");
+		/* Cadastro de marcadores: Indica a quantidade de marcadores permitidos para uma unidade. 
+		 * - Default: 10 marcadores.
+		 * */
+		provider.addPublicProperty("/siga.marcadores.qtd.maxima.por.unidade", "10");		
 		/* Tela de Pesquisa, combos de espécies e modelos: 
 		 * - True: Confere se a espécie tem modelos no combo da tela de pesquisa.  
 		 * - False ou inexistente: Não confere, evitando leitura dos modelos.
 		 * */
 		provider.addPublicProperty("/siga.pesquisa.confere.modelos", "true");
+		/* Tela de Pesquisa, só funciona se permissão de acesso SIGA;DOC;PESQ;DTLIMITADA estiver permitida. Será a qtd máxima 
+		 * de dias que poderá ser pesquisada na pesquisa avançada.
+		 * */
+		provider.addPublicProperty("/siga.pesquisa.limite.dias", "31");
 		/* Tela de Criar/Editar Documentos: Qtde de minutos para recarregar o combo de modelos que fica 
 		 * armazenado em session storage no browser do usuário.
 		 * */

@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -56,6 +57,8 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+import br.gov.jfrj.siga.ex.converter.ExTipoDePrincipalConverter;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
@@ -105,12 +108,12 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				:descrDocumento = null or :descrDocumento = '' or ("
 				+ "					doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
 				+ "				) or ( "
-				+ "					:lotaTitular!=null and :lotaTitular!=0 and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)"
-				+ "					or (:titular!=null and :titular!=0 and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
-				+ "					or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
-				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					:lotaTitular!=null and :lotaTitular!=0L and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)"
+				+ "					or (:titular!=null and :titular!=0L and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					or (:titular!=null and :titular!=0L and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					or (:lotaTitular!=null and :lotaTitular!=0L and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "					or (:lotaTitular!=null and :lotaTitular!=0L and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "					or (:titular!=null and :titular!=0L and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "				)"
 				+ "			)"
 				+ "			"
@@ -156,12 +159,12 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					:descrDocumento = null or :descrDocumento = '' or ("
 				+ "						doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
 				+ "					) or ( "
-				+ "						:lotaTitular!=null and :lotaTitular!=0 and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)"
-				+ "						or (:titular!=null and :titular!=0 and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
-				+ "						or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
-				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
-				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "						:lotaTitular!=null and :lotaTitular!=0L and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)"
+				+ "						or (:titular!=null and :titular!=0L and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "						or (:titular!=null and :titular!=0L and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "						or (:lotaTitular!=null and :lotaTitular!=0L and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "						or (:lotaTitular!=null and :lotaTitular!=0L and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "						or (:titular!=null and :titular!=0L and label.dpPessoaIni.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
 				+ "					)"
 				+ "				)"
 				+ "				"
@@ -433,6 +436,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
 	
+	@Column(name = "CD_PRINCIPAL")
+	private String principal;
+
+	@Convert(converter = ExTipoDePrincipalConverter.class)
+	@Column(name = "TP_PRINCIPAL")
+	private ExTipoDePrincipal tipoDePrincipal;
+
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -1132,9 +1142,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	
 	private boolean orgaoPermiteHcp() {
-		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
 		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
-		if(orgaos != null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
+		if ("*".equals(orgaos.get(0)))
+			return true;
+		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
+		if(orgaos != null && (orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
 			return true;
 		return false;
 	}
@@ -1164,6 +1176,22 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 			this.descrDocumentoAI = Texto.removeAcentoMaiusculas(descrDocumentoAI).substring(0, descrDocumentoAI.length() < LENGTH_DESCR_DOCUMENTO_AI ? descrDocumentoAI.length() : LENGTH_DESCR_DOCUMENTO_AI );
 		else
 			this.descrDocumentoAI = descrDocumentoAI;
+	}
+
+	public String getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
+
+	public ExTipoDePrincipal getTipoDePrincipal() {
+		return tipoDePrincipal;
+	}
+
+	public void setTipoDePrincipal(ExTipoDePrincipal tipoDePrincipal) {
+		this.tipoDePrincipal = tipoDePrincipal;
 	}
 	
 }

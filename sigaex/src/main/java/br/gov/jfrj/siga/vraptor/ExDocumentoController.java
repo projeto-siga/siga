@@ -1803,24 +1803,6 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
-			String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
-				
-			Correio.enviar(null, destinanarios,
-					"Usuário marcado", "",
-					"<table>" + "<tbody>" + "<tr>"
-							+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-							+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-							+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
-							+ "<td style='background-color: #bbb; padding: 0 20px;'>"
-							+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
-							+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
-							+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
-							+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
-							+ getTitular().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
-							+ ",</span></h4>"
-							+ "<p>Você foi marcado como responsável pela assinatura do documento <b>"+ exDocumentoDTO.getDoc().getCodigo() +"</b>, "
-							+ "pelo usuário (<b>"+ getTitular().getNomePessoa() +"</b>) </p>) "
-							+ "</td>" + "</tr>" + "</tbody>" + "</table>");
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto
 			 */

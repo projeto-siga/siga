@@ -1445,7 +1445,7 @@ public class ExMovimentacaoController extends ExController {
 						"",   
 						"Prezado usuário, <b>" + cosignatarioSel.getObjeto().getNomePessoa() +"</b> "
 								+ "<br>"
-								+ "Você foi marcado como, cossignatário do (<b>"+ sigla +"</b>), "
+								+ "Você foi marcado como, cossignatário do documento <b>"+ sigla +"</b>, "
 								+ "pelo usuário (<b>"+ getTitular().getNomePessoa() + "</b>) "
 								+ "<br>"
 								+ "<br>"
@@ -2166,6 +2166,25 @@ public class ExMovimentacaoController extends ExController {
     			return;
 				
 			}
+			
+			CpConfiguracao cpConfiguracao = new CpConfiguracao();
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+					CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong(), getTitular().getIdPessoa());
+			if (lotaResponsavelSel.getDescricao() != null && cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+				String[] destinanarios = { getCadastrante().getEmailPessoa() };
+				
+				Correio.enviar(null,destinanarios,   
+						"Documento transferido para unidade " + lotaResponsavelSel.getDescricao() + "", 
+						"",   
+						""
+							+ "<br>"
+							+ "O documento <b>" + sigla + "</b>, "
+							+ "foi transferido para a unidade <b>" + lotaResponsavelSel.getDescricao() + "</b> e aguarda recebimento. "
+							+ "<br>"
+							+ "<br>"
+							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "	>clique aqui.</a>");  
+			}  
 		}
 
 		Ex.getInstance()
@@ -2183,19 +2202,19 @@ public class ExMovimentacaoController extends ExController {
 		CpConfiguracao cpConfiguracao = new CpConfiguracao();
 		cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
 				CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), getTitular().getIdPessoa());
-		if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
-			String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() };
-			Correio.enviar(null,destinanarios,  
-					"Usuário marcado ", 
+		if (responsavelSel.getDescricao() != null && cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+			String[] destinanarios = { getCadastrante().getEmailPessoa() };
+			Correio.enviar(null,destinanarios,   
+					"Documento transferido para o usuário " + getCadastrante().getNomePessoa() + "", 
 					"",   
-					"Prezado usuário, <b>" + responsavelSel.getDescricao() + "</b> "
-							+ "<br>"
-							+ "<br>"
-							+ "Você recebeu o documento <b>"+ sigla +"</b> "
-							+ "pelo usuário <b>"+ getTitular().getNomePessoa() +"</b> "
-							+ "<br>"
-							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-							+ "	>clique aqui.</a>");
+					""
+						+ "<br>" 
+						+ "O documento <b>" + sigla + "</b>, "
+						+ "foi transferido para o usuário <b>" + responsavelSel.getDescricao() + "</b> e aguarda recebimento. "
+						+ "<br>"
+						+ "<br>"
+						+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+						+ "	>clique aqui.</a>"); 
 		}  
 
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {

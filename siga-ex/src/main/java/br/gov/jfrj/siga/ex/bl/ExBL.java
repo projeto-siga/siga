@@ -60,6 +60,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.ObjectNotFoundException;
@@ -3840,7 +3841,7 @@ public class ExBL extends CpBL {
 		// if (mov.getNumVia() != null && mov.getNumVia() == 0)
 		// mov.setNumVia(null);
 		//
-		// if (ultMov == null)
+		// if (ultMov == null)  
 		// ultMov = mov.getExDocumento()
 		// .getUltimaMovimentacao(mov.getNumVia());
 		//
@@ -3866,32 +3867,25 @@ public class ExBL extends CpBL {
 
 		mov.getExMobil().getExMovimentacaoSet().add(mov);
 
-		DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
-			notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
-			CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), mov.getSubscritor().getIdPessoa());
-		
 		if (!mov.getExTipoMovimentacao().getIdTpMov()
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO) ) {
-			if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) { 
-				Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
-			}
+			enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), mov.getSubscritor());  
 		}
-		
+		 
 		if (SigaMessages.isSigaSP()) {
 			if (mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) &&
 					usuarioExternoTemQueAssinar(mov.getExDocumento(), mov.getSubscritor())) {
 				enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), mov.getSubscritor());
-				
 			} else if (mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) ||
 					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) ||
 					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) ||
 					mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)) {	
-				
-				if (!mov.getExDocumento().getCosignatarios().isEmpty() && 
+				  
+				if (!mov.getExDocumento().getCosignatarios().isEmpty() &&  
 						!mov.getExDocumento().isCossignatario(mov.getSubscritor())) {
-					for (DpPessoa cossignatario : mov.getExDocumento().getCosignatarios()) {
+					for (DpPessoa cossignatario : mov.getExDocumento().getCosignatarios()) {   
 						if (usuarioExternoTemQueAssinar(mov.getExDocumento(), cossignatario)) {
-							enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), cossignatario);
+							enviarEmailParaUsuarioExternoAssinarDocumento(mov.getExDocumento(), cossignatario);  
 						}
 					}
 				}

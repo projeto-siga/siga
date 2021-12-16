@@ -70,6 +70,7 @@ import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -1433,6 +1434,7 @@ public class ExMovimentacaoController extends ExController {
 				.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
 						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
    
+			int codigoDaAcao = 6;
 			DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
 			notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
 			CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), getTitular().getIdPessoa());
@@ -2182,6 +2184,27 @@ public class ExMovimentacaoController extends ExController {
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
 						movimentacaoBuilder.getConteudo(),
 						mov.getNmFuncaoSubscritor(), false, false, tipoTramite);
+		
+		DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+		notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+		CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), responsavelSel.getId());
+		if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+			String[] destinanarios = { responsavelSel.get };
+			Correio.enviar(null,destinanarios,  
+					"Usuário marcado: ", 
+					"",   
+					"Prezado usuário, <b>" + responsavelSel.getDescricao() + "</b> "
+							+ "<br>"
+							+ "<br>"
+							+ "O documento <b>"+ descrMov +"</b>, "
+							+ "pelo usuário (<b>"+ getTitular().getNomePessoa() +"</b>) "
+							+ "<br>"
+							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "	>clique aqui.</a>"
+							+ "<br>"
+							+ "Caso não deseje mais receber notificações desse documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fmov%2Fcancelar%3Fid%3D47995'"
+							+ "	>clique aqui</a> para descadastrar.");
+		}
 
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()

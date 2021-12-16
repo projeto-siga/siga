@@ -119,13 +119,6 @@ public class ExDocumentoVO extends ExVO {
 	String dtLimiteDemandaJudicial;
 	String dtPrazoDeAssinatura;
 	
-	
-//	Long cpfRequerente;
-//	Long cnpjRequerente;
-//	Long matriculaRequerente;
-//	String nomeRequerente;
-//	String enderecoRequerente;
-
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel) {
 		this.titular = titular;
@@ -1211,56 +1204,6 @@ public class ExDocumentoVO extends ExVO {
 		return dtPrazoDeAssinatura;
 	}
 
-//	public Long getCpfRequerente() {
-//		return cpfRequerente;
-//	}
-//
-//	public void setCpfRequerente(Long cpfRequerente) {
-//		this.cpfRequerente = cpfRequerente;
-//	}
-//
-//	public Long getCnpjRequerente() {
-//		return cnpjRequerente;
-//	}
-//
-//	public void setCnpjRequerente(Long cnpjRequerente) {
-//		this.cnpjRequerente = cnpjRequerente;
-//	}
-//
-//	public String getNomeRequerente() {
-//		return nomeRequerente;
-//	}
-//
-//	public void setNomeRequerente(String nomeRequerente) {
-//		this.nomeRequerente = nomeRequerente;
-//	}
-//
-//	public String getEnderecoRequerente() {
-//		return enderecoRequerente;
-//	}
-//
-//	public void setEnderecoRequerente(String enderecoRequerente) {
-//		this.enderecoRequerente = enderecoRequerente;
-//	}
-//
-//	public Long getMatriculaRequerente() {
-//		return matriculaRequerente;
-//	}
-//
-//	public void setMatriculaRequerente(Long matriculaRequerente) {
-//		this.matriculaRequerente = matriculaRequerente;
-//	}
-//	
-//	
-//	public void atualizarRequerente() {
-//	 
-//		this.cpfRequerente =this.doc.getCpfRequerente();
-//		this.cnpjRequerente =this.doc.getCnpjRequerente();
-//		this.matriculaRequerente = this.doc.getMatriculaRequerente();
-//		this.nomeRequerente = this.doc.getNomeRequerente();
-//		this.enderecoRequerente =this.doc.getEnderecoRequerente();		
-//	}
-	
 	public boolean isPossuiRequerente() {
 		return this.doc.getCpfRequerente() != null ||
 				this.doc.getCnpjRequerente() != null ||

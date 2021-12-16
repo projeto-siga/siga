@@ -183,10 +183,63 @@ public class MontadorQuery implements IMontadorQuery {
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
 			sbf.append(" and doc.exModelo.hisIdIni = :hisIdIni");
 		}
- 
+
+
+		
+		if (flt.getCnpjRequerente() != null && flt.getCnpjRequerente() != 0) {
+			sbf.append(" and doc.cnpjRequerente = :cnpjRequerente");
+		}
+
+
+		if (flt.getCpfRequerente() != null && flt.getCpfRequerente() != 0) {
+			sbf.append(" and doc.cpfRequerente = :cpfRequerente");
+		}
+
+		if (flt.getMatriculaRequerente() != null && flt.getMatriculaRequerente() != 0) {
+			sbf.append(" and doc.matriculaRequerente = :matriculaRequerente");
+		}
+		 
+		
+		
 		if (flt.getNomeRequerente()  != null && !flt.getNomeRequerente().trim().equals("")) {
 			sbf.append(" and upper(doc.nomeRequerente) like upper('%' || :nomeRequerente || '%')");
 		}
+
+		if (flt.getTipoLogradouroRequerente()  != null && !flt.getTipoLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.tipoLogradouroRequerente) like upper('%' || :tipoLogradouroRequerente || '%')");
+		}
+
+		
+		if (flt.getLogradouroRequerente()  != null && !flt.getLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.logradouroRequerente) like upper('%' || :logradouroRequerente || '%')");
+		}
+		
+		
+		if (flt.getNumeroLogradouroRequerente()  != null && !flt.getNumeroLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.numeroLogradouroRequerente) like upper('%' || :numeroLogradouroRequerente || '%')");
+		}
+		
+		
+		if (flt.getComplementoLogradouroRequerente()  != null && !flt.getComplementoLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.complementoLogradouroRequerente) like upper('%' || :complementoLogradouroRequerente || '%')");
+		}
+		
+		if (flt.getBairroRequerente()  != null && !flt.getBairroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.bairroRequerente) like upper('%' || :bairroRequerente || '%')");
+		}
+
+		if (flt.getCidadeRequerente()  != null && !flt.getCidadeRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.cidadeRequerente) like upper('%' || :cidadeRequerente || '%')");
+		}
+
+		if (flt.getUfRequerente()  != null && !flt.getUfRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.ufRequerente) like upper('%' || :ufRequerente || '%')");
+		}
+		
+		if (flt.getCepRequerente()  != null && !flt.getCepRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.cepRequerente) like upper('%' || :cepRequerente || '%')");
+		}
+		
 
 		if (!apenasCount) {
 			if (flt.getOrdem() == null || flt.getOrdem() == 0)

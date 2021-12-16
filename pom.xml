@@ -631,6 +631,18 @@
 				<scope>provided</scope>
 			</dependency>
 
+			<dependency>
+				<groupId>com.crivano</groupId>
+				<artifactId>jlogic</artifactId>
+				<version>1.0.3</version>
+
+			</dependency>
+			<dependency>
+				<groupId>com.crivano</groupId>
+				<artifactId>jflow</artifactId>
+				<version>1.0.11</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

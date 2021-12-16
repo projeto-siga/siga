@@ -33,7 +33,8 @@ public class SiafDoc {
 		try {
 			int i = 0;
 			this.processo = dados[i++].trim();
-			this.unidadeGestora = dados[i++].trim();
+			this.unidadeGestora = "00000" + (dados[i++].trim().split(" ")[0]);
+			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
 			this.gestao = dados[i++].trim();
 			this.objetoProcesso = URLDecoder.decode(dados[i++].trim(), "UTF-8");
 			this.tipoLicitacao = Integer.valueOf(dados[i++].split("-")[0].trim()) + "";

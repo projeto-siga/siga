@@ -179,11 +179,4 @@ public class DpNotificarPorEmail extends CpConfiguracao implements Serializable,
 		CpDao.getInstance().gravar(config);
 		CpDao.getInstance().commitTransacao();
 	}
-	
-	public CpConfiguracao verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail (Long servicoId ,Long usuarioId) {
-		CpConfiguracao cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
-				servicoId, usuarioId);
-		return cpConfiguracao;
-	}
-	
 }

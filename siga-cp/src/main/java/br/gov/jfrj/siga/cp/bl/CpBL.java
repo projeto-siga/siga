@@ -390,11 +390,10 @@ public class CpBL {
 					dao().gravarComHistorico(idNova, id, dt, idCadastrante);
 					dao().commitTransacao();
 
-					DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
-					notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
-					CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
-											
-					if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+					CpConfiguracao cpConfiguracao = new CpConfiguracao();
+					cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+							CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+					if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 						if (SigaMessages.isSigaSP()) {
 							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
 							Correio.enviar(null, destinanarios,
@@ -507,13 +506,12 @@ public class CpBL {
 						dao().gravarComHistorico(idNova, idCadastrante);
 						dao().commitTransacao();
 						
+						CpConfiguracao cpConfiguracao = new CpConfiguracao();
 						DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
 						notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
-						CpConfiguracao c = new CpConfiguracao();
-						c = notificarPorEmail.verificaExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
 								CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong(), pessoa.getIdPessoa());
-						
-						if (c.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 							if (SigaMessages.isSigaSP()) {
 									String[] destinanarios = { pessoa.getEmailPessoaAtual() };  
 									String conteudoHTML = pessoaIsUsuarioExterno(pessoa)

@@ -6108,7 +6108,7 @@ public class ExBL extends CpBL {
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("Erro ao tentar atualizar estado do workflow", e);
-		}
+		} 
 	}
 
 	/**

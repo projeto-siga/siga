@@ -2390,9 +2390,57 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		public boolean fIncluirCadastrante = true;
 	}
 	 
-	 public Pendencias calcularTramitesPendentes() {
-		Pendencias p = new Pendencias();
+	
+	public boolean contemAlgumTramite() {
 		for (ExMovimentacao mov : getExMovimentacaoSet()) {
+			if (mov.isCancelada())
+				continue;
+			long t = mov.getIdTpMov();
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
+					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONCLUSAO
+									)
+				return true;
+		}
+		return false;
+	}
+	
+	
+	 public Pendencias calcularTramitesPendentes() {
+
+	 	SortedSet<ExMovimentacao> movs = new TreeSet<>();
+		if (isVolume()) {
+			ExMobil mob = this;
+		
+			// Se o volume acabou de ser criado e ainda não tem nenhum tramite, 
+			// buscar as informações no volume anterior
+			if (mob.isUltimoVolume() && mob.getNumSequencia() > 1 && !mob.contemAlgumTramite())
+				mob = mob.doc().getVolume(mob.getNumSequencia() - 1);
+		
+			// Primeiro localiza o último volume do apenso
+			while (mob.isApensadoAVolumeDoMesmoProcesso())
+				mob = mob.getMestre();
+		
+			// Obtem a lista completa de mobils, incluindo o grande mestre
+			SortedSet<ExMobil> mobs = mob.getApensos(true, true);
+			mobs.add(mob);
+		
+			// Acumula todas as movimentações de todos os volumes deste processo
+			for (ExMobil m : mobs) {
+				// Despreza móbiles que não sejam desse processo
+				if (!m.doc().equals(this.doc()))
+					continue;
+				movs.addAll(m.getExMovimentacaoSet());
+			}
+		} else {
+			movs.addAll(getExMovimentacaoSet());
+		}
+		
+		Pendencias p = new Pendencias();
+		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada())
 				continue;
 			long t = mov.getIdTpMov();

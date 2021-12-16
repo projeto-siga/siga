@@ -693,7 +693,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"attach",
-				"Ane_xar",
+				"Ane_xar PDF",
 				"/app/expediente/mov",
 				"anexar",
 				Ex.getInstance().getComp()

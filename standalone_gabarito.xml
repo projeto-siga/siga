@@ -37,52 +37,58 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
     <system-properties>
-        <property name="controlar.numeracao.expediente" value="true"/>
-        <property name="sigawf.ativo" value="false"/>
-        <property name="modelo.processo.administrativo" value="980"/>
-        <property name="modelo.interno.importado" value="2214"/>
-        <property name="siga.base.url" value="https://acessodes.processo.rio"/>
-        <property name="vizservice.url" value="https://acessodes.processo.rio/vizservice/svg"/>
-        <property name="siga.local" value="PCRJ"/>
-
+		<property name="sigaex.data.validar.assinatura.com.senha" value="@@@sigaex.data.validar.assinatura.com.senha@@@"/>
+        <property name="siga.session.modelos.tempo.expiracao" value="@@@siga.session.modelos.tempo.expiracao@@@"/>
+        <property name="sigaex.consultapublica.exibe.tramitacao.ate.nivelacesso" value="@@@sigaex.consultapublica.exibe.tramitacao.ate.nivelacesso@@@"/>
+        <property name="sigaex.pdf.tamanho.maximo" value="@@@sigaex.pdf.tamanho.maximo@@@"/>
+        <property name="sigaex.qtd.max.arquivo.anexado.upload" value="@@@sigaex.qtd.max.arquivo.anexado.upload@@@"/>
+        <property name="siga.base.teste" value="@@@siga.base.teste@@@"/>
+        <property name="siga.ex.autenticacao.pwd" value="@@@siga.ex.autenticacao.pwd@@@"/>
+        <property name="siga.ambiente" value="@@@siga.ambiente@@@"/>
+        <property name="controlar.numeracao.expediente" value="@@@controlar.numeracao.expediente@@@"/>
+        <property name="sigawf.ativo" value="@@@sigawf.ativo@@@"/>
+        <property name="modelo.processo.administrativo" value="@@@modelo.processo.administrativo@@@"/>
+        <property name="modelo.interno.importado" value="@@@modelo.interno.importado@@@"/>
+        <property name="siga.base.url" value="@@@siga.base.url@@@"/>
+        <property name="vizservice.url" value="@@@vizservice.url@@@"/>
+        <property name="siga.local" value="@@@siga.local@@@"/>
         <property name="siga.jwt.secret" value="@@@siga.jwt.secret@@@"/>
         <property name="siga.sinc.password" value="@@@siga.sinc.password@@@"/>
-        <property name="sigaex.webdav.senha" value="@@@sigaex.webdav.senha@@@"/>
-
         <property name="siga.recaptcha.key" value="@@@siga.recaptcha.key@@@"/>
-        <property name="siga.recaptcha.pwd" value="@@@siga.recaptcha.pwd@@@"/
-		
-        <property name="siga.cabecalho.titulo" value="Prefeitura da Cidade do Rio de Janeiro"/>
-        <property name="siga.cabecalho.logo" value="/siga/imagens/imgBrasao@2x.png"/>
-        <property name="sigaex.modelos.cabecalho.brasao" value="contextpath/imagens/BrasaoPCRJ.png"/>
+        <property name="siga.recaptcha.pwd" value="@@@siga.recaptcha.pwd@@@"/>
+        <property name="siga.cabecalho.titulo" value="@@@siga.cabecalho.titulo@@@"/>
+        <property name="siga.cabecalho.logo" value="@@@siga.cabecalho.logo@@@"/>
+        <property name="sigaex.modelos.cabecalho.brasao" value="@@@sigaex.modelos.cabecalho.brasao@@@"/>
         <property name="sigaex.modelos.cabecalho.titulo" value="PREFEITURA DA CIDADE DO RIO DE JANEIRO"/>
         <property name="sigaex.modelos.cabecalho.subtitulo" value="Comitê Técnico do Processo.rio"/>
         <property name="siga.relat.brasao" value="BrasaoPCRJ.png"/>
         <property name="siga.relat.titulo" value="PREFEITURA DA CIDADE DO RIO DE JANEIRO"/>
         <property name="siga.relat.subtitulo" value="Comitê Técnico do Processo.rio"/>
         <property name="sigaex.carimbo.texto.superior" value="processo.rio"/>
-        <property name="sigaex.redis.database" value="1"/>
-        <property name="sigaex.redis.master.host" value="localhost"/>
-        <property name="sigaex.redis.master.port" value="6379"/>
+        <property name="sigaex.redis.database" value="@@@sigaex.redis.database@@@"/>
+        <property name="sigaex.redis.master.host" value="@@@sigaex.redis.master.host@@@"/>
+        <property name="sigaex.redis.master.port" value="@@@sigaex.redis.master.port@@@"/>
         <property name="siga.smtp" value="localhost"/>
         <property name="siga.smtp.porta" value="25"/>
         <property name="siga.smtp.auth" value="false"/>
         <property name="siga.smtp.auth.usuario" value="siga"/>
-        <property name="siga.smtp.auth.senha" value="siga"/>
+        <property name="siga.smtp.auth.senha" value="@@@siga.smtp.auth.senha@@@"/>
         <property name="siga.smtp.debug" value="false"/>
-        <property name="siga.smtp.usuario.remetente" value="Processo.Rio&lt;processorio@rio.rj.gov.br>"/>
-        <property name="siga.armazenamento.arquivo.tipo" value="BLOB"/>
-        <property name="http.proxyHost" value="proxy.rio.rj.gov.br"/>
-        <property name="http.proxyPort" value="8080"/>
-        <property name="https.proxyPort" value="8080"/>
-        <property name="https.proxyHost" value="proxy.rio.rj.gov.br"/>
-        <property name="http.nonProxyHosts" value="localhost|127.0.0.1|187.111.98.248|acessodes.processo.rio"/>
-        <property name="sigaex.upload.dir.temp" value="/tmp"/>
-        <property name="siga.hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect"/>
-        <property name="sigaex.assinador.externo.popup.url" value="https://ittrufusion.appspot.com"/>
-        <property name="sigaex.carimbo.sistema" value="processo.rio"/>
-        <property name="sigaex.carimbo.url" value="https://ittrufusion.appspot.com/api/v1"/>
-        <property name="sigaex.carimbo.public.key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllav1+eJ3w5Idge/vQ1zZSziGiuOUBviZhcw0JZ9Bg90zG7Uz3wFGQeKnG0DNTBKwjC3MHI7AZy4G+ji35J+gp+0aZLDkuwx17JDuJfuJe6gHRlfcm50McuLL0vaU5gQ2InAo7FssjuOuLp9c3FGBGmiDFK1vUhKwdvY14inYzrZaHSVsppSYX9zjnhQiQxRnLzFzkZsZkl/Orz2O9rvmJx048lcmnOiLvm3ge7Jq2KZHIYzdsw5F3VGtlhLFBZ49g6Rmp4ClgPtpwDOGj78oyJVxLW3XXN1VP1JnActFkNlmBNi+8cUZ8IX15j+FDOL9+tQR+FMC7wtHypshR5zVQIDAQAB"/>
+        <property name="siga.smtp.usuario.remetente" value="@@@siga.smtp.usuario.remetente@@@>"/>
+        <property name="siga.armazenamento.arquivo.tipo" value="@@@siga.armazenamento.arquivo.tipo@@@"/>
+        <property name="sigaex.upload.dir.temp" value="@@@sigaex.upload.dir.temp@@@"/>
+        <property name="siga.hibernate.dialect" value="@@@siga.hibernate.dialect@@@"/>
+        <property name="sigaex.assinador.externo.password" value="@@@sigaex.assinador.externo.password@@@"/>
+        <property name="sigaex.assinador.externo.popup.url" value="@@@sigaex.assinador.externo.popup.url@@@"/>
+        <property name="sigaex.carimbo.sistema" value="@@@sigaex.carimbo.sistema@@@"/>
+        <property name="sigaex.carimbo.url" value="@@@sigaex.carimbo.url@@@"/>
+        <property name="sigaex.carimbo.public.key" value="@@@sigaex.carimbo.public.key@@@"/>
+<!-- novas properties para serem parametrizadas ? Coloque o texto delas aqui abaixo para depois ser parametrizada. -->
+ 
+		<property name="sigaex.folha.de.rosto" value="ativa"/>
+        <property name="sigaex.volume.max.paginas" value="2000"/>
+ 
+        
     </system-properties>
     <management>
         <security-realms>
@@ -159,13 +165,13 @@
                 <level name="WARN"/>
             </logger>
             <logger category="org.jboss.as.config">
-                <level name="DEBUG"/>
+                <level name="INFO"/>
             </logger>
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
             <logger category="jboss.jdbc.spy">
-                <level name="TRACE"/>
+                <level name="ERROR"/>
             </logger>
             <root-logger>
                 <level name="INFO"/>
@@ -198,7 +204,7 @@
             <datasources>
                 <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true">
                     <connection-url>@@@string_db_corporativo@@@</connection-url>
-                    <driver>ojdbc8.jar</driver>
+					<driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>1</min-pool-size>
                         <max-pool-size>10</max-pool-size>
@@ -206,6 +212,8 @@
                     <security>
                         <user-name>@@@db_username_corporativo@@@</user-name>
                         <password>@@@db_pwd_corporativo@@@</password>
+						
+						
                     </security>
                     <timeout>
                         <idle-timeout-minutes>5</idle-timeout-minutes>
@@ -556,7 +564,7 @@
         <subsystem xmlns="urn:jboss:domain:undertow:7.0" default-server="default-server" default-virtual-host="default-host" default-servlet-container="default" default-security-domain="other">
             <buffer-cache name="default"/>
             <server name="default-server">
-                <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true"/>
+                <http-listener name="default" socket-binding="http" max-post-size="21585760" redirect-socket="https" proxy-address-forwarding="true" enable-http2="true"/>
                 <https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>
                 <host name="default-host" alias="localhost">
                     <location name="/" handler="welcome-redirect"/>

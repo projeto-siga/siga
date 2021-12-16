@@ -4468,7 +4468,7 @@ public class ExBL extends CpBL {
 			for (ExMobil m : set) {
 				final ExMobil geral = mob.doc().getMobilGeral();
 				
-				Pendencias p = mob.calcularTramitesPendentes();
+				Pendencias p = m.calcularTramitesPendentes();
 				
 				// Concluir trâmites ou recebimentos de notificação pendentes quando já é atendente.
 				{
@@ -6566,6 +6566,7 @@ public class ExBL extends CpBL {
 		}
 	}
 
+	@Deprecated
 	public String verificarAssinatura(byte[] conteudo, byte[] assinatura, String mimeType, Date dtAssinatura)
 			throws Exception {
 		BlucService bluc = Service.getBlucService();

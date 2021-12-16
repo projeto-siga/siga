@@ -65,7 +65,10 @@ public class ExMarcadorBL {
 		} else {
 			acrescentarMarcadores();
 		}
+		
+		 
 	}
+
 
 	/**
 	 * Calcula quais as marcas cada mobil terá com base nas movimentações que foram
@@ -166,7 +169,7 @@ public class ExMarcadorBL {
 		}
 
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
-				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado())
+				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado())
 			calcularMarcadoresDeTramite();
 
 		if (!mob.isArquivado())

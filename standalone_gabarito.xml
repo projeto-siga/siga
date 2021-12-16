@@ -202,7 +202,7 @@
         <subsystem xmlns="urn:jboss:domain:core-management:1.0"/>
         <subsystem xmlns="urn:jboss:domain:datasources:5.0">
             <datasources>
-                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true">
+                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true" statistics-enabled="true">
                     <connection-url>@@@string_db_corporativo@@@</connection-url>
 					<driver>ojdbc8.jar</driver>
                     <pool>
@@ -219,7 +219,7 @@
                         <idle-timeout-minutes>5</idle-timeout-minutes>
                     </timeout>
                 </datasource>
-                <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true">
+                <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true" statistics-enabled="true">
                     <connection-url>@@@string_db_siga@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
@@ -234,7 +234,7 @@
                         <idle-timeout-minutes>5</idle-timeout-minutes>
                     </timeout>
                 </datasource>
-                <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true">
+                <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true" statistics-enabled="true">
                     <connection-url>@@@string_db_sigawf@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>

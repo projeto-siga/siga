@@ -335,9 +335,21 @@ public class WfBL extends CpBL {
 
 	private void gravarMovimentacao(final WfMov mov) throws AplicacaoException {
 		dao().gravar(mov);
-		if (mov.getProcedimento().getMovimentacoes() == null)
-			mov.getProcedimento().setMovimentacoes(new TreeSet<WfMov>());
-		mov.getProcedimento().getMovimentacoes().add(mov);
+		WfProcedimento pi = mov.getProcedimento();
+		if (pi.getMovimentacoes() == null)
+			pi.setMovimentacoes(new TreeSet<WfMov>());
+		pi.getMovimentacoes().add(mov);
+	}
+
+	private void atualizarResponsavel(WfProcedimento pi) {
+		WfResp atual = pi.localizarResponsavelAtual(pi.getCurrentTaskDefinition());
+		if (atual == null)
+			return;
+		if (!atual.equals(pi.getResponsible())) {
+			pi.setEventoPessoa(atual.getPessoa());
+			pi.setEventoLotacao(atual.getLotacao());
+			dao().gravarInstanciaDeProcedimento(pi);
+		}
 	}
 
 	public void anotar(WfProcedimento pi, String descrMov, DpPessoa titular, DpLotacao lotaTitular,
@@ -381,13 +393,8 @@ public class WfBL extends CpBL {
 		WfMovDesignacao mov = new WfMovDesignacao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
 				identidade, pi.getEventoPessoa(), pi.getEventoLotacao(), titular, lotaTitular);
 		gravarMovimentacao(mov);
-
-		if (pi.getEventoPessoa() != null || pi.getEventoLotacao() != null) {
-			WfResp resp = pi.calcResponsible(pi.getCurrentTaskDefinition());
-			pi.setEventoPessoa(resp.getPessoa());
-			pi.setEventoLotacao(resp.getLotacao());
-			dao().gravarInstanciaDeProcedimento(pi);
-		}
+		
+		atualizarResponsavel(pi);
 	}
 
 	public void redirecionar(WfProcedimento pi, int para, DpPessoa titular, DpLotacao lotaTitular,

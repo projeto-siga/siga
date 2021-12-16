@@ -204,7 +204,25 @@ public class MontadorQuery implements IMontadorQuery {
 		if (flt.getNomeRequerente()  != null && !flt.getNomeRequerente().trim().equals("")) {
 			sbf.append(" and upper(doc.nomeRequerente) like upper('%' || :nomeRequerente || '%')");
 		}
+
+		if (flt.getTipoLogradouroRequerente()  != null && !flt.getTipoLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.tipoLogradouroRequerente) like upper('%' || :tipoLogradouroRequerente || '%')");
+		}
+
 		
+		if (flt.getLogradouroRequerente()  != null && !flt.getLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.logradouroRequerente) like upper('%' || :logradouroRequerente || '%')");
+		}
+		
+		
+		if (flt.getNumeroLogradouroRequerente()  != null && !flt.getNumeroLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.numeroLogradouroRequerente) like upper('%' || :numeroLogradouroRequerente || '%')");
+		}
+		
+		
+		if (flt.getComplementoLogradouroRequerente()  != null && !flt.getComplementoLogradouroRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.complementoLogradouroRequerente) like upper('%' || :complementoLogradouroRequerente || '%')");
+		}
 		
 		if (flt.getBairroRequerente()  != null && !flt.getBairroRequerente().trim().equals("")) {
 			sbf.append(" and upper(doc.bairroRequerente) like upper('%' || :bairroRequerente || '%')");
@@ -214,10 +232,13 @@ public class MontadorQuery implements IMontadorQuery {
 			sbf.append(" and upper(doc.cidadeRequerente) like upper('%' || :cidadeRequerente || '%')");
 		}
 
-		if (flt.getLogradouroRequerente()  != null && !flt.getLogradouroRequerente().trim().equals("")) {
-			sbf.append(" and upper(doc.logradouroRequerente) like upper('%' || :logradouroRequerente || '%')");
+		if (flt.getUfRequerente()  != null && !flt.getUfRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.ufRequerente) like upper('%' || :ufRequerente || '%')");
 		}
 		
+		if (flt.getCepRequerente()  != null && !flt.getCepRequerente().trim().equals("")) {
+			sbf.append(" and upper(doc.cepRequerente) like upper('%' || :cepRequerente || '%')");
+		}
 		
 
 		if (!apenasCount) {

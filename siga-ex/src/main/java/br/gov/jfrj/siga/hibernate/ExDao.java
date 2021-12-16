@@ -677,8 +677,6 @@ public class ExDao extends CpDao {
 		}
 		
 		
-		
-		
 		if (flt.getCpfRequerente() != null && flt.getCpfRequerente() != 0) {
 			query.setParameter("cpfRequerente", flt.getCpfRequerente());
 		}
@@ -691,9 +689,24 @@ public class ExDao extends CpDao {
 			query.setParameter("matriculaRequerente", flt.getMatriculaRequerente());
 		}
 		
+		
+		if (flt.getTipoLogradouroRequerente()   != null && !flt.getTipoLogradouroRequerente().trim().equals("")) {
+			query.setParameter("tipoLogradouroRequerente", "%" +flt.getTipoLogradouroRequerente()+ "%" );
+		}
+		
 		if (flt.getLogradouroRequerente()  != null && !flt.getLogradouroRequerente().trim().equals("")) {
 			query.setParameter("logradouroRequerente", "%" +flt.getLogradouroRequerente()+ "%" );
 		}
+		
+		
+		if (flt.getNumeroLogradouroRequerente()   != null && !flt.getNumeroLogradouroRequerente().trim().equals("")) {
+			query.setParameter("numeroLogradouroRequerente", "%" +flt.getNumeroLogradouroRequerente()+ "%" );
+		}
+		
+		if (flt.getComplementoLogradouroRequerente()   != null && !flt.getComplementoLogradouroRequerente().trim().equals("")) {
+			query.setParameter("complementoLogradouroRequerente", "%" +flt.getComplementoLogradouroRequerente()+ "%" );
+		}
+		
 		
 		if (flt.getBairroRequerente()  != null && !flt.getBairroRequerente().trim().equals("")) {
 			query.setParameter("bairroRequerente", "%" +flt.getBairroRequerente()+ "%" );
@@ -701,6 +714,14 @@ public class ExDao extends CpDao {
 		
 		if (flt.getCidadeRequerente()  != null && !flt.getCidadeRequerente().trim().equals("")) {
 			query.setParameter("cidadeRequerente", "%" +flt.getCidadeRequerente()+ "%" );
+		}
+		
+		if (flt.getUfRequerente()   != null && !flt.getUfRequerente().trim().equals("")) {
+			query.setParameter("ufRequerente", "%" +flt.getUfRequerente()+ "%" );
+		}
+		
+		if (flt.getCepRequerente()   != null && !flt.getCepRequerente().trim().equals("")) {
+			query.setParameter("cepRequerente", "%" +flt.getCepRequerente()+ "%" );
 		}
 		
 	}

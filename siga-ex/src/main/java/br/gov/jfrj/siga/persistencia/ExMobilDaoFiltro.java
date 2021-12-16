@@ -138,12 +138,21 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 
 	private Long matriculaRequerente;
 	
+	private String tipoLogradouroRequerente;
+	
 	private String logradouroRequerente;
+	
+	private String numeroLogradouroRequerente;
+
+	private String complementoLogradouroRequerente;
 	
 	private String bairroRequerente;
 
 	private String cidadeRequerente;
-
+	
+	private String ufRequerente;
+	
+	private String cepRequerente;
 	
 	public Integer getOrdem() {
 		return ordem;
@@ -429,6 +438,14 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 	public void setMatriculaRequerente(Long matriculaRequerente) {
 		this.matriculaRequerente = matriculaRequerente;
 	}
+	
+	public String getTipoLogradouroRequerente() {
+		return tipoLogradouroRequerente;
+	}
+
+	public void setTipoLogradouroRequerente(String tipoLogradouroRequerente) {
+		this.tipoLogradouroRequerente = tipoLogradouroRequerente;
+	}
 
 	public String getLogradouroRequerente() {
 		return logradouroRequerente;
@@ -437,6 +454,23 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 	public void setLogradouroRequerente(String logradouroRequerente) {
 		this.logradouroRequerente = logradouroRequerente;
 	}
+	
+	public String getNumeroLogradouroRequerente() {
+		return numeroLogradouroRequerente;
+	}
+
+	public void setNumeroLogradouroRequerente(String numeroLogradouroRequerente) {
+		this.numeroLogradouroRequerente = numeroLogradouroRequerente;
+	}
+
+	public String getComplementoLogradouroRequerente() {
+		return complementoLogradouroRequerente;
+	}
+
+	public void setComplementoLogradouroRequerente(String complementoLogradouroRequerente) {
+		this.complementoLogradouroRequerente = complementoLogradouroRequerente;
+	}
+
 
 	public String getBairroRequerente() {
 		return bairroRequerente;
@@ -454,6 +488,22 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		this.cidadeRequerente = cidadeRequerente;
 	}
 
+	public String getUfRequerente() {
+		return ufRequerente;
+	}
+
+	public void setUfRequerente(String ufRequerente) {
+		this.ufRequerente = ufRequerente;
+	}
+
+	public String getCepRequerente() {
+		return cepRequerente;
+	}
+
+	public void setCepRequerente(String cepRequerente) {
+		this.cepRequerente = cepRequerente;
+	}
+	
 	public boolean buscarPorCamposMarca() {
 		return (getUltMovIdEstadoDoc() != null && getUltMovIdEstadoDoc() != 0)
 				|| (getUltMovLotaRespSelId() != null && getUltMovLotaRespSelId() != 0)
@@ -491,10 +541,22 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 				|| (getCpfRequerente() != null && getCpfRequerente() != 0)	
 				|| (getCnpjRequerente() != null && getCnpjRequerente() != 0)	
 				|| (getMatriculaRequerente() != null && getMatriculaRequerente() != 0)
-				|| (getLogradouroRequerente() != null && !getNomeRequerente().trim().equals(""))
-				|| (getBairroRequerente() != null && !getNomeRequerente().trim().equals(""))
-				||( getCidadeRequerente() != null && !getNomeRequerente().trim().equals(""));
+				
+				|| (getTipoLogradouroRequerente() != null && !getTipoLogradouroRequerente().trim().equals(""))
+				|| (getLogradouroRequerente() != null && !getLogradouroRequerente().trim().equals(""))
+				
+				|| (getNumeroLogradouroRequerente() != null && !getNumeroLogradouroRequerente().trim().equals(""))
+				|| (getComplementoLogradouroRequerente() != null && !getComplementoLogradouroRequerente().trim().equals(""))
+
+				
+				|| (getBairroRequerente() != null && !getBairroRequerente().trim().equals(""))
+				||( getCidadeRequerente() != null && !getCidadeRequerente().trim().equals(""))
+				
+				
+				|| (getUfRequerente() != null && !getUfRequerente().trim().equals(""))	
+				|| (getCepRequerente() != null && !getCepRequerente().trim().equals(""));
 	}
+
 
 	
 }

@@ -41,9 +41,22 @@ public interface IExMobilDaoFiltro {
 	public abstract void setMatriculaRequerente(final Long matriculaRequerente) ;
 	
 
+	public abstract String getTipoLogradouroRequerente();
+
+	public abstract void  setTipoLogradouroRequerente(final String tipoLogradouroRequerente);
+	
 	public abstract String getLogradouroRequerente();
 
 	public abstract void  setLogradouroRequerente(final String logradouroRequerente);
+	
+	
+	public abstract String getNumeroLogradouroRequerente();
+
+	public abstract void  setNumeroLogradouroRequerente(final String numeroLogradouroRequerente);
+	
+	public abstract String getComplementoLogradouroRequerente();
+
+	public abstract void  setComplementoLogradouroRequerente(final String complementoLogradouroRequerente);
 	
 
 	public abstract String getBairroRequerente();
@@ -54,6 +67,15 @@ public interface IExMobilDaoFiltro {
 	public abstract String getCidadeRequerente();
 
 	public abstract void setCidadeRequerente(final String cidadeRequerente);
+	
+	
+	public abstract String getUfRequerente();
+
+	public abstract void  setUfRequerente(final String ufRequerente);
+	
+	public abstract String getCepRequerente();
+
+	public abstract void  setCepRequerente(final String cepRequerente);
 	
 
 	public abstract void setSigla(final String nome);

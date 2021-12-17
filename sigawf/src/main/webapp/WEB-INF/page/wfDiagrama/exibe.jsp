@@ -108,6 +108,7 @@
 									href="$1">aqui</a> para contribuir.</c:param>
 							<c:param name="titulo">${pd.nome} - ${td.nome}</c:param>
 							<c:param name="ts">${currentTimeMillis}</c:param>
+							<c:param name="label">Passo a Passo</c:param>
 						</c:url>
 						<script type="text/javascript">
 							$.ajax({

@@ -23,7 +23,7 @@
 							</c:otherwise>
 						</c:choose>
 					</c:if>
-					Conhecimento Específico
+					${label}
 					<!-- ${conhecimento[1]} -->
 				</div>
 				<div class="card-body bg-light pb-0">${conhecimento[2]}</div>
@@ -38,7 +38,7 @@
 					<a style="float: right;" title="Registrar um novo conhecimento"
 						href="${url}" ${popup?'target="_blank"':''}> <img
 						src="/siga/css/famfamfam/icons/add.png">
-					</a> Conhecimento Específico
+					</a> ${label}
 					<!-- ${conhecimento[1]} -->
 				</div>
 				<div class="card-body bg-light pb-0">

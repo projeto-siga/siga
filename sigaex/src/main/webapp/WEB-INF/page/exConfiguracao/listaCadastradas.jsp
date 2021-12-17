@@ -29,7 +29,7 @@
 	<td style="${tipoDeConfiguracao.style('NIVEL_DE_ACESSO')}"><c:if
 			test="${not empty cfg.exNivelAcesso}">${cfg.exNivelAcesso.nmNivelAcesso}(${cfg.exNivelAcesso.grauNivelAcesso})</c:if></td>
 	<td style="${tipoDeConfiguracao.style('TIPO_MOVIMENTACAO')}"><c:if
-			test="${not empty cfg.exTipoMovimentacao}">${cfg.exTipoMovimentacao.descrTipoMovimentacao}</c:if></td>
+			test="${not empty cfg.exTipoMovimentacao}">${cfg.exTipoMovimentacao.descr}</c:if></td>
 	<td style="${tipoDeConfiguracao.style('TIPO_DOCUMENTO')}"><c:if
 			test="${not empty cfg.exTipoDocumento}">${cfg.exTipoDocumento.descrTipoDocumento}</c:if></td>
 	<td style="${tipoDeConfiguracao.style('TIPO_FORMA_DOCUMENTO')}"><c:if

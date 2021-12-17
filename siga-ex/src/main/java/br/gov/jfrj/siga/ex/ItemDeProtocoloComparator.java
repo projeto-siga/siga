@@ -2,8 +2,6 @@ package br.gov.jfrj.siga.ex;
 
 import java.util.Comparator;
 
-import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
-
 public class ItemDeProtocoloComparator implements Comparator<ItemDeProtocolo>{
 	
 	public int compare(ItemDeProtocolo obj1, ItemDeProtocolo obj2) {

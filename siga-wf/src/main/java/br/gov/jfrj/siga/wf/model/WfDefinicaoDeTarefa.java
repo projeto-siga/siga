@@ -26,6 +26,7 @@ import com.crivano.jflow.model.TaskDefinition;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
@@ -41,6 +42,8 @@ import br.gov.jfrj.siga.wf.util.NaoSerializar;
 public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		implements TaskDefinition<WfTipoDeTarefa, WfTipoDeResponsavel, WfDefinicaoDeVariavel, WfDefinicaoDeDesvio>,
 		Sincronizavel, Comparable<Sincronizavel> {
+	public static ActiveRecord<WfDefinicaoDeTarefa> AR = new ActiveRecord<>(WfDefinicaoDeTarefa.class);
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "DEFT_ID", unique = true, nullable = false)
@@ -147,7 +150,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	//
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
-
+	
 	@Override
 	public Integer getHisAtivo() {
 		this.hisAtivo = super.getHisAtivo();
@@ -503,7 +506,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 				return lotacao.getSigla();
 		case PESSOA:
 			if (pessoa != null)
-				return pessoa.getSigla();
+				return pessoa.getSobrenomeEIniciais();
 		case RESPONSAVEL:
 			if (definicaoDeResponsavel != null)
 				return definicaoDeResponsavel.getNome();
@@ -514,6 +517,27 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		return s;
 	}
 
+	public String getTooltip() {
+		if (tipoDeResponsavel == null)
+			return null;
+
+		switch (tipoDeResponsavel) {
+		case LOTACAO:
+			if (lotacao != null)
+				return lotacao.getNomeLotacao();
+		case PESSOA:
+			if (pessoa != null)
+				return pessoa.getNomePessoa();
+		case RESPONSAVEL:
+			if (definicaoDeResponsavel != null)
+				return definicaoDeResponsavel.getNome();
+		}
+
+		String s = tipoDeResponsavel.getDescr();
+		s = s.replace("Principal: ", "").replace("Lotação ", "Lota. ");
+		return s;
+	}
+	
 	public java.lang.String getParam() {
 		return param;
 	}

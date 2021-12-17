@@ -265,6 +265,10 @@ public class FreemarkerIndent {
 			String sResult = new String(os.toByteArray(), "iso-8859-1");
 			return sResult;
 		}
+		
+//	    final Document document = Jsoup.parse(s);
+//	    document.outputSettings().prettyPrint(true);    
+//	    return document.html();
 	}
 
 	public static String indent(String s) throws IOException {

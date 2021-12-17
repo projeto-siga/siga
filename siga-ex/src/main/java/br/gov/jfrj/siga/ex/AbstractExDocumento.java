@@ -95,7 +95,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "		and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
 				+ "		and doc.numExpediente=:numExpediente" + "		)"),
 		@NamedQuery(name = "consultarPorModeloEAssinatura", query = "from ExDocumento d where d.idDoc in (select doc.idDoc from ExDocumento as doc join doc.exMobilSet as mob join mob.exMovimentacaoSet as mov"
-				+ "			where (mov.exTipoMovimentacao.idTpMov = 11 or mov.exTipoMovimentacao.idTpMov = 25)"
+				+ "			where (mov.exTipoMovimentacao in :enumList)"
 				+ "			and mov.exMovimentacaoCanceladora = null"
 				+ "			and doc.exModelo.idMod = :idMod"
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
@@ -1142,9 +1142,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	
 	private boolean orgaoPermiteHcp() {
-		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
 		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");
-		if(orgaos != null && ("*".equals(orgaos.get(0)) || orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
+		if ("*".equals(orgaos.get(0)))
+			return true;
+		final String sigla = this.orgaoUsuario!=null?this.orgaoUsuario.getSigla():(this.getCadastrante()!=null?this.getCadastrante().getOrgaoUsuario().getSigla():null);
+		if(orgaos != null && (orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla))) )
 			return true;
 		return false;
 	}

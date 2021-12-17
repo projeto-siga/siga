@@ -11,6 +11,7 @@
 	<script type="text/javascript" language="Javascript1.1">
 		var newwindow = '';
 		function visualizarRelatorio(rel, idFormaDoc, descrFormaDoc) {
+			frmRelatorios.tipoRel.value = "pdf";
 			if (!newwindow.closed && newwindow.location) {
 			} else {
 				var popW = 1000;
@@ -40,6 +41,16 @@
 			}
 			return false;
 		}
+		
+		function visualizarCVS(rel) {
+			frmRelatorios.tipoRel.value = "cvs";
+			t = frmRelatorios.target;
+			a = frmRelatorios.action;
+			frmRelatorios.action = rel;
+			frmRelatorios.submit();
+			frmRelatorios.action = a;
+
+		}
 	</script>
 
 	<!-- main content -->
@@ -52,16 +63,29 @@
 			</div>
 			<div class="card-body d-flex">
 				<form name="frmRelatorios" id="frmRel" action="/sigaex/app/expediente/rel/relTempoTramitacaoPorEspecie" theme="simple" method="get">
+					<input type="hidden" name="tipoRel" id="tipoRel" />
+					<input type="hidden" name="descrFormaDoc" id="descrFormaDoc" />
+					<input type="hidden" name="idFormaDoc" id="idFormaDoc" />
 					<div class="row">
 						<jsp:include page="relGestaoInput.jsp" />
-						<div class="form-group col-md-4">
-							<input type="submit" value="Pesquisar" class="btn btn-primary mt-auto" />
-							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2 mt-auto" />
+						<div class="form-group col-md-10">
+							<input type="submit" value="Pesquisar" class="btn btn-primary" />
+							<input type="button" value="Voltar"
+								onclick="javascript:history.back();" class="btn btn-primary" />
+						</div>
+						<div class="form-group col-md-2">
+							<div class="btn-group  float-right">	
+								<a href="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/relTempoTramitacaoPorEspeciePDF', '0', '0');" class="btn btn-primary float-right" role="button" aria-pressed="true" style="min-width: 80px;">Exportar PDF</a>
+											<button type="button" class="btn btn-primary float-right dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											    <span class="sr-only"></span>
+										    </button>
+									<div class="dropdown-menu">
+									  	<a href="javascript:visualizarCVS('${pageContext.request.contextPath}/app/expediente/rel/relTempoTramitacaoPorEspeciePDF');" class="dropdown-item" role="button" aria-pressed="true">Exportar CSV</a>								   
+									  </div>
+							</div>
 						</div>
 					</div>
 					<c:if test="${listLinhas != null}">
-						<input type="hidden" name="descrFormaDoc" id="descrFormaDoc" />
-						<input type="hidden" name="idFormaDoc" id="idFormaDoc" />
 						<table class="table table-sm table-hover">
 							<thead class="thead-light">
 								<tr>

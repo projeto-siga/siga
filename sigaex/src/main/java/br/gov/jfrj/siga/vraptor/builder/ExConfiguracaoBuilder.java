@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.CpConfiguracaoBuilder;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
@@ -23,7 +23,7 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 	public static final Integer ORGAO_INTEGRADO = 2;
 	public static final Integer MATRICULA = 1;
 
-	private Long idTpMov;
+	private Integer idTpMov;
 	private Long idTpDoc;
 	private Long idMod;
 	private Long idFormaDoc;
@@ -51,7 +51,7 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 		ExDao dao = ExDao.getInstance();
 
 		if (idTpMov != null && idTpMov != 0) {
-			config.setExTipoMovimentacao(dao.consultar(idTpMov, ExTipoMovimentacao.class, false));
+			config.setExTipoMovimentacao(ExTipoDeMovimentacao.getById(idTpMov));
 		} else {
 			config.setExTipoMovimentacao(null);
 		}
@@ -123,7 +123,7 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 		return ORGAO_INTEGRADO.equals(tipo);
 	}
 
-	public Long getIdTpMov() {
+	public Integer getIdTpMov() {
 		return idTpMov;
 	}
 
@@ -155,7 +155,7 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 		return classificacaoSel;
 	}
 
-	public ExConfiguracaoBuilder setIdTpMov(Long idTpMov) {
+	public ExConfiguracaoBuilder setIdTpMov(Integer idTpMov) {
 		this.idTpMov = idTpMov;
 		return this;
 	}

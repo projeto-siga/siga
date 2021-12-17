@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
-import java.util.Comparator;
-
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
 import br.gov.jfrj.siga.ex.ExConfiguracao;

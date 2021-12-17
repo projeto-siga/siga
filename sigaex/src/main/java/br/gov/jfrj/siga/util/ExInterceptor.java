@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.directwebremoting.guice.RequestScoped;
 
 import br.com.caelum.vraptor.AroundCall;
-import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;

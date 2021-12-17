@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
@@ -93,9 +94,10 @@ public class RelTipoDoc extends RelatorioTemplate {
 						+ "inner join mob.exDocumento doc "
 						+ "where mov.dtIniMov between :dtini and :dtfim "
 						+ "and mov.lotaResp.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :id) "
-						+ "and mov.exTipoMovimentacao.idTpMov =  1 "
+						+ "and mov.exTipoMovimentacao =  :tpmov "
 						+ "group by doc.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
 						+ "doc.exFormaDocumento.descrFormaDoc");
+		query.setParameter("tpmov", ExTipoDeMovimentacao.CRIACAO);
 		
 		// Obtém a lotação com o id passado...
 		Query qrySetor = ContextoPersistencia.em().createQuery(

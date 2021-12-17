@@ -6,7 +6,6 @@ import com.crivano.jlogic.JLogic;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
 
 public class ExEstaResponsavel implements Expression {
 
@@ -17,7 +16,7 @@ public class ExEstaResponsavel implements Expression {
 	public ExEstaResponsavel(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		this.mob = mob;
 
-		if (this.mob.isGeral()) {
+		if (this.mob != null && this.mob.isGeral()) {
 			if (this.mob.doc().isProcesso())
 				this.mob = this.mob.doc().getUltimoVolume();
 			else {

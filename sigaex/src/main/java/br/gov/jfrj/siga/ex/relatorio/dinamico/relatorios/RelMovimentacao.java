@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.persistence.Query;
 
-import ar.com.fdvs.dj.domain.AutoText;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;

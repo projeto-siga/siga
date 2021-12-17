@@ -39,8 +39,7 @@
 		<!-- <module>siga-relarmaz</module> -->
 		<module>siga-oidc</module>
 		<!-- Desativado do Deploy por Enquanto <module>siga-le</module> !-->
-		
-		
+		<module>siga-integracao</module>
 	</modules>
 
 
@@ -84,7 +83,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.4</version>
+				<version>3.3.1</version>
 				<configuration>
 				</configuration>
 			</plugin>
@@ -140,6 +139,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+			    <groupId>org.apache.logging.log4j</groupId>
+			    <artifactId>log4j-core</artifactId>
+			    <version>2.15.0</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>org.jboss.bom.eap</groupId>
 				<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
@@ -301,6 +306,11 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-oidc</artifactId>
+				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
+				<artifactId>siga-integracao</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
@@ -621,6 +631,18 @@
 				<scope>provided</scope>
 			</dependency>
 
+			<dependency>
+				<groupId>com.crivano</groupId>
+				<artifactId>jlogic</artifactId>
+				<version>1.0.3</version>
+
+			</dependency>
+			<dependency>
+				<groupId>com.crivano</groupId>
+				<artifactId>jflow</artifactId>
+				<version>1.0.11</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -649,7 +671,7 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>				
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>

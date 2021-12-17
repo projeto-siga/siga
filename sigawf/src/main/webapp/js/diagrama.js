@@ -386,15 +386,13 @@ app
 						// Atualizar lista de preenchimentos automáticos da tarefa
 						for (var i = 0; i < $scope.data.workflow.tarefa.length; i++) {
 							var t = $scope.data.workflow.tarefa[i];
-							if ((t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref
-								&& ((t.tipoResponsavel == 'LOTACAO' && t.refUnidadeResponsavel && t.refUnidadeResponsavel.originalObject && t.refUnidadeResponsavel.originalObject.key && t.preenchimentoLotacaoId !== t.refUnidadeResponsavel.originalObject.key)
-									|| (t.tipoResponsavel == 'PESSOA' && t.refPessoaResponsavel && t.refPessoaResponsavel.originalObject && t.refPessoaResponsavel.originalObject.key && t.preenchimentoPessoaId !== t.refPessoaResponsavel.originalObject.key))) {
+							if ((t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref) {
 								t.preenchimentoModelo = t.ref;
 								t.preenchimentoLotacaoId = undefined;
-								if (t.tipoResponsavel == 'LOTACAO')
+								if (t.tipoResponsavel == 'LOTACAO' && t.refUnidadeResponsavel && t.refUnidadeResponsavel.originalObject && t.refUnidadeResponsavel.originalObject.key && t.preenchimentoLotacaoId !== t.refUnidadeResponsavel.originalObject.key)
 									t.preenchimentoLotacaoId = t.refUnidadeResponsavel.originalObject.key;
 								t.preenchimentoPessoaId = undefined;
-								if (t.tipoResponsavel == 'PESSOA')
+								if (t.tipoResponsavel == 'PESSOA' && t.refPessoaResponsavel && t.refPessoaResponsavel.originalObject && t.refPessoaResponsavel.originalObject.key && t.preenchimentoPessoaId !== t.refPessoaResponsavel.originalObject.key)
 									t.preenchimentoPessoaId = t.refPessoaResponsavel.originalObject.key;
 								$scope.atualizarPreenchimentos(t);
 							}
@@ -406,7 +404,7 @@ app
 					}, true);
 
 			$scope.atualizarPreenchimentos = function(t) {
-				$http({ url: '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : '/lotacoes/' + t.preenchimentoLotacaoId) + '/preenchimentos', method: "GET" }).then(
+				$http({ url: '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : t.tipoResponsavel == 'LOTACAO' ? '/lotacoes/' + t.preenchimentoLotacaoId : '') + '/preenchimentos', method: "GET" }).then(
 					function(response) {
 						t.preenchimentos = response.data.list;
 					},

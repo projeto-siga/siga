@@ -165,18 +165,22 @@ public class WfBL extends CpBL {
 					|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
 				if (td.getRefId() == null)
 					throwErroDeInicializacao(pi, td, "não foi definido o modelo de documento na tarefa");
+			}
+			
+			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO
+					|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
 				if (pi.getPrincipal() == null)
 					throwErroDeInicializacao(pi, td,
 							"não foi definido o principal para a inclusão de documento na tarefa");
 				if (pi.getTipoDePrincipal() != WfTipoDePrincipal.DOCUMENTO)
 					throwErroDeInicializacao(pi, td,
 							"o principal não é um documento para a inclusão de documento na tarefa");
-				if (td.getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
-						|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
-					if (td.getRefId2() == null)
-						throwErroDeInicializacao(pi, td,
-								"não foi definido o preenchimento automático de documento na tarefa");
-				}
+//				if (td.getTipoDeTarefa() == WfTipoDeTarefa.CRIAR_DOCUMENTO
+//						|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
+//					if (td.getRefId2() == null)
+//						throwErroDeInicializacao(pi, td,
+//								"não foi definido o preenchimento automático de documento na tarefa");
+//				}
 			}
 		}
 		

@@ -242,7 +242,8 @@
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 								classe="${acao.classe}" estilo="line-height: 160% !important"
 								atalho="${true}" modal="${acao.modal}"
-								explicacao="${acao.explicacao}" post="${acao.post}"
+								descr="${acao.descr}" 
+								post="${acao.post}"
 								test="${acao.pode}" />
 						</c:forEach>
 					</siga:links>
@@ -251,10 +252,10 @@
 		</div>
 		<c:set var="temmov" value="${false}" />
 		<c:forEach var="mov" items="${m.movs}">
-			<c:if test="${ (mov.idTpMov != 14 and not mov.cancelada)}">
+			<c:if test="${ (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
 				<c:set var="temmov" value="${true}" />
 			</c:if>
-			<c:if test="${ (mov.idTpMov == 66 and not mov.cancelada and 
+			<c:if test="${ (mov.exTipoMovimentacao == CIENCIA and not mov.cancelada and 
 				mov.mov.cadastrante == cadastrante and mov.mov.lotaCadastrante == lotaTitular)}">
 				<c:set var="descrCiencia" value="${mov.descricao}" />
 			</c:if>
@@ -321,17 +322,17 @@
 								<c:set var="evenorodd" value="odd" />
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
-										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
+										test="${ (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and mov.exTipoMovimentacao != ANEXACAO_DE_ARQUIVO_AUXILIAR and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
 											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
-											<td class="text-left" >${mov.mov.exTipoMovimentacao.sigla}</td>
+											<td class="text-left" >${mov.mov.exTipoMovimentacao.descr}</td>
 											<td class="text-left" 
-													<c:if test="${mov.idTpMov == 43}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
+													<c:if test="${mov.exTipoMovimentacao == ENCERRAMENTO_DE_VOLUME}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
 													</c:if>>
 												${mov.descricao}
-												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
+												<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
 												<siga:links
 														buttons="${false}"
@@ -344,7 +345,7 @@
 																test="${acao.pode}" explicacao="${acao.explicacao}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
-															<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
+															<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'> ${mov.complemento}
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
 														</c:forEach>
@@ -1068,6 +1069,13 @@
 							<p>
 								<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>
+							
+							<c:if test="${not empty docVO.tipoDePrincipal and not empty docVO.principal}">
+							<p>
+								<b>${docVO.tipoDePrincipal}:</b> <a href="/sigawf/app/procedimento/${docVO.principalCompacto}">${docVO.principal}</a>
+							</p>
+							</c:if>
+							
 							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
 
 						</tags:collapse>
@@ -1222,7 +1230,7 @@
 									</p>
 								</c:if>								
 								<c:forEach var="mov" items="${m.movs}">
-									<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">										
+									<c:if test="${mov.exTipoMovimentacao == ANEXACAO_DE_ARQUIVO_AUXILIAR and not mov.cancelada}">										
 										<div class="files">
 											<siga:links buttons="${false}" inline="${true}" separator="${false}">
 												<c:forEach var="acao" items="${mov.acoes}">

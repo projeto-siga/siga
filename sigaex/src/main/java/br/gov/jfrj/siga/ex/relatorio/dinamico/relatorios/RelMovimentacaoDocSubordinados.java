@@ -43,6 +43,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
@@ -256,31 +257,33 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 				long identificador = movimentacao.getExMobil().getId();
 				datatual = System.currentTimeMillis();
 				movimentacao.getExMobil().getId();
-				if ((mob.getUltimaMovimentacao(3) == null) || (mob.getUltimaMovimentacao(8) == null)) {
-					dataant = mob.getUltimaMovimentacao(1).getData().getTime();
+				ExMovimentacao ultimaTransferencia = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.TRANSFERENCIA);
+				ExMovimentacao ultimaDespachoInternoTransferencia = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA);
+				if ((ultimaTransferencia == null) || (ultimaDespachoInternoTransferencia == null)) {
+					dataant = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CRIACAO).getData().getTime();
 					durentrelots = (((datatual - dataant)/86400000L)+1);
 				}
 				else
 				{
-					if (mob.getUltimaMovimentacao(3).getData().getTime() > mob.getUltimaMovimentacao(8).getData().getTime()){
-						dataant = mob.getUltimaMovimentacao(3).getData().getTime();
+					if (ultimaTransferencia.getData().getTime() > ultimaDespachoInternoTransferencia.getData().getTime()){
+						dataant = ultimaTransferencia.getData().getTime();
 						durentrelots = (((datatual - dataant)/86400000L)+1);
 					}
 					else{
-						dataant = mob.getUltimaMovimentacao(8).getData().getTime();
+						dataant = ultimaDespachoInternoTransferencia.getData().getTime();
 						durentrelots = (((datatual - dataant)/86400000L)+1);
 					}
 						
 				}
-				mob.getUltimaMovimentacao(28);
+				mob.getUltimaMovimentacao(ExTipoDeMovimentacao.ANOTACAO);
 				listaFinal.add(nomeLotacao);
 				listaFinal.add(codigoMobil);
 				listaFinal.add(mov.getDtRegMovDDMMYY().toString());
 				listaFinal.add(mov.getLotaResp().getSigla().toString());
 				listaFinal.add(descrMarcador);
 				listaFinal.add(descricao);
-				if (mob.getUltimaMovimentacao(28)  != null) {
-					listaFinal.add(mob.getUltimaMovimentacao(28).toString());
+				if (mob.getUltimaMovimentacao(ExTipoDeMovimentacao.ANOTACAO)  != null) {
+					listaFinal.add(mob.getUltimaMovimentacao(ExTipoDeMovimentacao.ANOTACAO).toString());
 				} else {
 					listaFinal.add("");
 				}

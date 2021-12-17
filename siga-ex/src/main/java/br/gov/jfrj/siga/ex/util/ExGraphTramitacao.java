@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
 public class ExGraphTramitacao extends ExGraph {
@@ -35,12 +36,12 @@ public class ExGraphTramitacao extends ExGraph {
 		for (ExMovimentacao mov : listMov) {
 			if (mov.isCancelada())
 				continue;
-			long t = mov.getIdTpMov();
+			ITipoDeMovimentacao t = mov.getExTipoMovimentacao();
 
-			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO) {
+			if (t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+					|| t == ExTipoDeMovimentacao.TRANSFERENCIA
+					|| t == ExTipoDeMovimentacao.TRAMITE_PARALELO
+					|| t == ExTipoDeMovimentacao.NOTIFICACAO) {
 
 				PessoaLotacaoParser remetente = new PessoaLotacaoParser(mov.getTitular(), mov.getLotaTitular());
 				if (remetente.getPessoa() == null && remetente.getLotacao() == null && mov.getExMovimentacaoRef() != null)
@@ -53,20 +54,20 @@ public class ExGraphTramitacao extends ExGraph {
 				Transicao transicao = new Transicao(remetente.getSiglaCompleta(), destinatario.getSiglaCompleta())
 						.setDirected(true).setLabel(String.valueOf(numTransicao))
 						.setTooltip("Tramitado em " + mov.getDtRegMovDDMMYY());
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO)
+				if (t == ExTipoDeMovimentacao.TRAMITE_PARALELO)
 					transicao.setEstilo(ESTILO_TRACEJADO);
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO)
+				if (t == ExTipoDeMovimentacao.NOTIFICACAO)
 					transicao.setEstilo(ESTILO_PONTILHADO);
 				adicionar(transicao);
 
 				Nodo nodo = localizarNodoPorNome(destinatario.getSiglaCompleta());
-				if (nodo == null || (t != ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO
+				if (nodo == null || (t != ExTipoDeMovimentacao.NOTIFICACAO
 						&& ESTILO_PONTILHADO.equals(nodo.getEstilo()))) {
 					boolean atendente = mob.isAtendente(destinatario.getPessoa(), destinatario.getLotacao());
 					boolean notificado = mob.isNotificado(destinatario.getPessoa(), destinatario.getLotacao());
 					adicionar(new Nodo(destinatario.getSiglaCompleta()).setLabel(destinatario.getSigla())
 							.setShape("rectangle").setDestacar(atendente || notificado)
-							.setEstilo((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO && !atendente)
+							.setEstilo((t == ExTipoDeMovimentacao.NOTIFICACAO && !atendente)
 									? ESTILO_PONTILHADO
 									: null)
 							.setTooltip(destinatario.getNome()));

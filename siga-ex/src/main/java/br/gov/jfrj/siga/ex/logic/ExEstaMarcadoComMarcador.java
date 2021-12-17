@@ -6,7 +6,7 @@ import com.crivano.jlogic.JLogic;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExEstaMarcadoComMarcador implements Expression {
 
@@ -26,7 +26,7 @@ public class ExEstaMarcadoComMarcador implements Expression {
 
 	@Override
 	public boolean eval() {
-		for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO, true)) {
+		for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.MARCACAO, true)) {
 			if (this.marcador.equivale(mov.getMarcador()))
 				return true;
 		}

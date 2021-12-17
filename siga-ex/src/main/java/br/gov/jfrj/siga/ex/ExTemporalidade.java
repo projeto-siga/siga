@@ -28,10 +28,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.BatchSize;
-
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**

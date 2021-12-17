@@ -2,10 +2,10 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import java.util.Date;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaIncluirCopiaPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeCopiar;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -21,9 +21,7 @@ public class DocumentosSiglaIncluirCopiaPost implements IDocumentosSiglaIncluirC
 
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
-		if (!Ex.getInstance().getComp().podeCopiar(ctx.getCadastrante(), ctx.getLotaTitular(), mob)) {
-			throw new AplicacaoException("Não é possível copiar");
-		}
+		Ex.getInstance().getComp().afirmar("Não é permitido incluir cópia", ExPodeCopiar.class, ctx.getCadastrante(), ctx.getLotaTitular(), mob);
 
 		Ex.getInstance().getBL().copiar(ctx.getCadastrante(), ctx.getLotaCadastrante(), mob, mobCopia, dt, null,
 				ctx.getTitular());

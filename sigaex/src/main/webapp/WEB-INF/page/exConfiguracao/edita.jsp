@@ -63,12 +63,12 @@
 							<c:when
 								test="${campoFixo && not empty config.exTipoMovimentacao}">
 								<input type="hidden" name="idTpMov"
-									value="${config.exTipoMovimentacao.idTpMov}" />
-												${config.exTipoMovimentacao.descrTipoMovimentacao}
+									value="${config.exTipoMovimentacao.id}" />
+												${config.exTipoMovimentacao.descr}
 											</c:when>
 							<c:otherwise>
 								<siga:select name="idTpMov" list="listaTiposMovimentacao"
-									listKey="idTpMov" listValue="descrTipoMovimentacao"
+									listKey="id" listValue="descr"
 									theme="simple" headerValue="[Indefinido]" headerKey="0"
 									value="${idTpMov}" />
 							</c:otherwise>

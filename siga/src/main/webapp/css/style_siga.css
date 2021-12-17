@@ -93,6 +93,21 @@ table.table {
 p.gt-table-action-list a.link-tag {
 	margin-top: 0.4em;
 }
+
+.link-tag-hidden {
+}
+
+div.tooltip hr {
+	margin: 0.5em 0 0.5em 0;
+	border-top: 1px solid white;
+}
+
+.tooltip-inner {
+    max-width: 350px;
+    /* If max-width does not work, try using width instead */
+    width: 350px; 
+}
+
 .disabled {
 	opacity: 0.6;
 	filter: alpha(opacity=60); /* For IE8 and earlier */

@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
@@ -52,7 +53,7 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
 		// Recebimento automático
 		if (Prop.getBool("recebimento.automatico") 
-				&& Ex.getInstance().getComp().deveReceberEletronico(titular, lotaTitular, mob)) {
+				&& Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob)) {
 			try {
 				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());
 			} catch (Exception e) {
@@ -62,6 +63,8 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		}
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false, true);
+		docVO.setCodigoUnico(Ex.getInstance().getBL().obterCodigoUnico(doc, true));
+		
 		// TODO: Resolver o problema declares multiple JSON fields named
 		// serialVersionUID
 		// Usado o Expose temporariamente

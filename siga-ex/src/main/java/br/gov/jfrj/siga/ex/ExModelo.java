@@ -21,7 +21,6 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 

@@ -91,7 +91,7 @@
 								<c:set var="temmov" value="${false}" />
 								<c:forEach var="mov" items="${movs}">
 									<c:if
-										test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
+										test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
 										<c:set var="temmov" value="${true}" />
 									</c:if>
 								</c:forEach>
@@ -130,10 +130,10 @@
 												</c:choose>
 												<td align="left">${dt}</td>
 												<td align="left">${mov.descrTipoMovimentacao}<c:if
-														test="${mov.idTpMov == 2 or  mov.idTpMov ==64}">
+														test="${mov.exTipoMovimentacao == ANEXACAO or mov.exTipoMovimentacao == ANEXACAO_DE_ARQUIVO_AUXILIAR}">
 														<span style="font-size: .8rem; color: #9e9e9e;">|
 															${mov.descrMov} ${mov.nmArqMov} </span>
-													</c:if> <c:if test="${mov.idTpMov == 12}">
+													</c:if> <c:if test="${mov.exTipoMovimentacao == JUNTADA}">
 
 														<c:choose>
 															<c:when test="${mov.exDocumento.sigla == sigla}">

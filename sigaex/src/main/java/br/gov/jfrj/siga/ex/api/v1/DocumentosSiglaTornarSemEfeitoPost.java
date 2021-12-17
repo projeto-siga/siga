@@ -5,6 +5,7 @@ import com.crivano.swaggerservlet.PresentableUnloggedException;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaTornarSemEfeitoPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Transacional
@@ -14,11 +15,10 @@ public class DocumentosSiglaTornarSemEfeitoPost implements IDocumentosSiglaTorna
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Tornar Sem Efeito");
 
-		if (!Ex.getInstance().getComp().podeTornarDocumentoSemEfeito(ctx.getTitular(), ctx.getLotaTitular(), mob)) {
-			throw new PresentableUnloggedException(
-					"O documento " + mob.getSigla() + " não pode ser tornado sem efeito por "
-							+ ctx.getTitular().getSiglaCompleta() + "/" + ctx.getLotaTitular().getSiglaCompleta());
-		}
+		Ex.getInstance().getComp().afirmar(
+				"O documento " + mob.getSigla() + " não pode ser tornado sem efeito por "
+						+ ctx.getTitular().getSiglaCompleta() + "/" + ctx.getLotaTitular().getSiglaCompleta(),
+				ExPodeTornarDocumentoSemEfeito.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
 
 		if (req.motivo == null || req.motivo.isEmpty())
 			throw new PresentableUnloggedException("Favor informar o motivo");

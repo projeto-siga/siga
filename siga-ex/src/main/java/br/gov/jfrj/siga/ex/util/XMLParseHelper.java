@@ -22,7 +22,6 @@ import java.io.StringReader;
 
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 public class XMLParseHelper {
 

@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.kxml2.io.KXmlParser;
 import org.kxml2.io.KXmlSerializer;
 import org.xmlpull.v1.XmlPullParser;
@@ -168,7 +170,12 @@ public class ProcessadorReferencias {
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 
-			parser.setInput(new StringReader(sHtml));
+		    final Document document = Jsoup.parse(sHtml);
+		    document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);    
+		    document.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+		    String html = document.html();
+		    
+			parser.setInput(new StringReader(html));
 			serializer.setOutput(os, "utf-8");
 
 			while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {

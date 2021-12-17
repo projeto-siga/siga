@@ -3292,7 +3292,7 @@ public class ExBL extends CpBL {
 				ContextoPersistencia.flushTransaction();
 				client.criarInstanciaDeProcesso(nomeProcesso,
 						SiglaParser.makeSigla(cadastrante, cadastrante.getLotacao()),
-						SiglaParser.makeSigla(titular, lotaTitular), keys, values);
+						SiglaParser.makeSigla(titular, lotaTitular), keys, values, "DOCUMENTO", doc.getCodigo());
 			}
 		}
 		// atualizarWorkFlow(doc);
@@ -4481,9 +4481,10 @@ public class ExBL extends CpBL {
 			throws AplicacaoException {
 		ExMovimentacao novaMov = new ExMovimentacao();
 		novaMov.setCadastrante(cadastrante);
-		novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
-		novaMov.setConteudoTpMov(mov.getConteudoTpMov());
-		novaMov.setCpArquivo(mov.getCpArquivo());
+		if (mov.getConteudoTpMov() != null && mov.getConteudoBlobMov() != null) {
+			novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
+			novaMov.setConteudoTpMov(mov.getConteudoTpMov());
+		}
 		novaMov.setDescrMov(mov.getDescrMov());
 		novaMov.setDtIniMov(dao().dt());
 		novaMov.setDtMov(mov.getDtMov());
@@ -8065,12 +8066,6 @@ public class ExBL extends CpBL {
 	}
 
 	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {
-		CpOrgaoSelecao  cpOrgaoSelecao = new CpOrgaoSelecao();
-		cpOrgaoSelecao.setSigla("SIAFEM");
-		
-		if(!cpOrgaoSelecao.buscarPorSigla())
-			throw new AplicacaoException("Órgão com sigla SIAFEM não encontrado");
-		
 		ExMovimentacao mov = new ExMovimentacao();
 		Date dt = dao().dt();
 		//final ExTipoDeMovimentacao tpmov = dao().consultar(ExTipoDeMovimentacao.ENVIO_SIAFEM, ExTipoDeMovimentacao.class, false);
@@ -8085,7 +8080,6 @@ public class ExBL extends CpBL {
 		mov.setLotaResp(lotacaoTitular);
 		mov.setLotaSubscritor(lotacaoTitular);
 		mov.setLotaTitular(lotacaoTitular);
-		mov.setOrgaoExterno(cpOrgaoSelecao.buscarObjeto());
 		mov.setResp(cadastrante);
 		mov.setSubscritor(cadastrante);
 		mov.setTitular(cadastrante);
@@ -8098,6 +8092,9 @@ public class ExBL extends CpBL {
 	public ExDocumento obterFormularioSiafem(ExDocumento doc) {
 		String modeloSiafem = Prop.get("ws.siafem.nome.modelo");//"Formulario Integracao Siafem";
 		
+		if(modeloSiafem == null)
+			return null;
+			
 		if(doc.getNmMod().equals(modeloSiafem))
 			return doc;
 		

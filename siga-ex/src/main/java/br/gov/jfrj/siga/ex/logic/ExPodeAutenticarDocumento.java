@@ -54,15 +54,15 @@ public class ExPodeAutenticarDocumento extends CompositeExpressionSupport {
 
 						Not.of(new ExEGovSP()),
 
-						new ExEExterno(doc),
-
-						new ExEInternoFolhaDeRosto(doc)),
+						new ExEExternoCapturado(doc),            				
+						
+						new ExEInternoCapturado(doc)),
 
 				Or.of(
 
-						new ExEExterno(doc),
+						new ExEExternoCapturado(doc),
 
-						new ExEInternoFolhaDeRosto(doc),
+						new ExEInternoCapturado(doc),
 
 						new ExEstaAssinadoComSenha(doc)
 

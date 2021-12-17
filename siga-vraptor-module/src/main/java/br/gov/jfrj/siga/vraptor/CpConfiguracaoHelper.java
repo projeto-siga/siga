@@ -96,6 +96,7 @@ public class CpConfiguracaoHelper {
 		if (idSituacao == null || idSituacao == 0)
 			throw new AplicacaoException("Situação de Configuracao não informada");
 
+		config.substituirPorObjetoInicial();
 		config.setHisDtIni(dao.consultarDataEHoraDoServidor());
 		dao.gravarComHistorico(config, idc);
 	}

@@ -15,7 +15,6 @@
 		<dependency>
 			<groupId>com.crivano</groupId>
 			<artifactId>jlogic</artifactId>
-			<version>1.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.enterprise</groupId>

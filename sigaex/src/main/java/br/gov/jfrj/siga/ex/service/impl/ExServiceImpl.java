@@ -301,10 +301,12 @@ public class ExServiceImpl implements ExService {
 	public String getAtendente(String codigoDocumento, String siglaTitular) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
 			try {
-				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
+				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular); 
 				ExMobil mob = buscarMobil(codigoDocumento);
 
-				if (mob.getDoc().isProcesso())
+				if (mob.isGeralDeExpediente() && mob.doc().isFinalizado())
+					mob = mob.doc().getPrimeiraVia();
+				else if (mob.getDoc().isProcesso())
 					mob = mob.getDoc().getUltimoVolume();
 
 				Set<PessoaLotacaoParser> l = mob.getAtendente();

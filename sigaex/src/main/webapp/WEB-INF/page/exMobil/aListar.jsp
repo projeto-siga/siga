@@ -793,12 +793,9 @@
 					</div>
 					
 			 
-					
-					<div class="form-row">
-						 
-				<h8>Interessado</h8>
-		 
-					</div>
+					 <fieldset>
+    				<legend>Interessado:</legend>
+					 
 				 
 					<div class="form-row">
 
@@ -878,6 +875,7 @@
 						</div>
 					</div>
 					
+					</fieldset>
 					
 					<button id="btnBuscar" type="button" value="Buscar" class="btn btn-primary" onclick="submitBusca('${siga_cliente}')">
 						<span id="buscandoSpinner" class="spinner-border d-none" role="status"></span> Buscar

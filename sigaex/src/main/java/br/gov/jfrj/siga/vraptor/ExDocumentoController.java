@@ -574,15 +574,6 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.setIdTpDoc(tp.getId());
 					break;
 				}
-
-				// Preencher automaticamente o subscritor quando se tratar de
-				// novo documento
-				if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO
-						&& !postback) {
-					DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
-					subscritorSel.buscarPorObjeto(getCadastrante());
-					exDocumentoDTO.setSubscritorSel(subscritorSel);
-				}
 			}
 
 			if (exDocumentoDTO.getNivelAcesso() == null) {
@@ -600,17 +591,24 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
-				&& isDocNovo && !postback && modelo == null) {
+		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null && isDocNovo && !postback && modelo == null) {
 			ExModelo despacho = dao().consultarExModelo(null, "Despacho");
 			if (despacho == null)
-				throw new RuntimeException(
-						"Não foi possível carregar um modelo chamado 'Despacho'");
+				throw new RuntimeException("Não foi possível carregar um modelo chamado 'Despacho'");
 			exDocumentoDTO.setIdMod(despacho.getId());
 			for (ExTipoDocumento tp : despacho.getExFormaDocumento()
 					.getExTipoDocumentoSet()) {
 				exDocumentoDTO.setIdTpDoc(tp.getId());
 				break;
+			}
+		}
+		
+		// Preencher automaticamente o subscritor quando se tratar de novo documento
+		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
+			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO && !postback) {
+				DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+				subscritorSel.buscarPorObjeto(getCadastrante());
+				exDocumentoDTO.setSubscritorSel(subscritorSel);
 			}
 		}
 
@@ -643,6 +641,7 @@ public class ExDocumentoController extends ExController {
 				lerEntrevista(exDocumentoDTO);
 			}
 		}
+		
 
 		if (exDocumentoDTO.getTipoDocumento() != null
 				&& exDocumentoDTO.getTipoDocumento().equals("externo")) {

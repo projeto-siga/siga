@@ -631,7 +631,7 @@
 					<div class="form-row">
 						<div class="form-group col-md-3" id="trNumOrigDoc"
 							style="display:${idTpDoc == 2 || idTpDoc == 3 ? '' : 'none'}">
-							<label for="numExtDoc">Nº Original do Documento</label> <input
+							<label for="numExtDoc">Número Original</label> <input
 								class="form-control" type="text" name="numExtDoc" size="16"
 								id="numExtDoc" value="${numExtDoc}" />
 						</div>
@@ -643,7 +643,7 @@
 								titulo="Órgão Externo" tema="simple" />
 						</div>
 
-						<div class="form-group col-md-3" id="trNumDocSistAntigo"
+						<div class="form-group col-md-3 d-none" id="trNumDocSistAntigo"
 							style="display:${idTpDoc == 3 ? '' : 'none'}">
 							<label for="numAntigoDoc">Nº do Documento no Sistema
 								Antigo</label> <input class="form-control" type="text"

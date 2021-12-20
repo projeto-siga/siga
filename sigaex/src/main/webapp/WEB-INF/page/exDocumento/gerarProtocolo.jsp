@@ -46,7 +46,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row d-none">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
 					<!-- <label>N&uacute;mero do Protocolo: <b>${protocolo.numero} / ${ano}</b></label> -->
@@ -66,9 +66,9 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="form-group text-center">
-					<label><b>Aten&ccedil;&atilde;o: </b>Para consultar o andamento do seu documento acesse  </label>
+					<label><b>Aten&ccedil;&atilde;o: </b>Para consultar o seu documento, acesse 
+ <a href="https://processo.rio/">https://processo.rio/</a>, escolha a opção Consultar Processo e digite o número do documento no campo correspondente.  </label>
 					<br />
-					<a href="${url}" target="_blank">${url}</a>
 				</div>
 			</div>
 		</div>

@@ -114,6 +114,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -573,15 +574,6 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.setIdTpDoc(tp.getId());
 					break;
 				}
-
-				// Preencher automaticamente o subscritor quando se tratar de
-				// novo documento
-				if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO
-						&& !postback) {
-					DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
-					subscritorSel.buscarPorObjeto(getCadastrante());
-					exDocumentoDTO.setSubscritorSel(subscritorSel);
-				}
 			}
 
 			if (exDocumentoDTO.getNivelAcesso() == null) {
@@ -599,17 +591,24 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
-				&& isDocNovo && !postback && modelo == null) {
+		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null && isDocNovo && !postback && modelo == null) {
 			ExModelo despacho = dao().consultarExModelo(null, "Despacho");
 			if (despacho == null)
-				throw new RuntimeException(
-						"Não foi possível carregar um modelo chamado 'Despacho'");
+				throw new RuntimeException("Não foi possível carregar um modelo chamado 'Despacho'");
 			exDocumentoDTO.setIdMod(despacho.getId());
 			for (ExTipoDocumento tp : despacho.getExFormaDocumento()
 					.getExTipoDocumentoSet()) {
 				exDocumentoDTO.setIdTpDoc(tp.getId());
 				break;
+			}
+		}
+		
+		// Preencher automaticamente o subscritor quando se tratar de novo documento
+		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
+			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO && !postback) {
+				DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+				subscritorSel.buscarPorObjeto(getCadastrante());
+				exDocumentoDTO.setSubscritorSel(subscritorSel);
 			}
 		}
 
@@ -642,6 +641,7 @@ public class ExDocumentoController extends ExController {
 				lerEntrevista(exDocumentoDTO);
 			}
 		}
+		
 
 		if (exDocumentoDTO.getTipoDocumento() != null
 				&& exDocumentoDTO.getTipoDocumento().equals("externo")) {
@@ -1629,6 +1629,22 @@ public class ExDocumentoController extends ExController {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null) {
 				exDocumentoDTO.setDoc(new ExDocumento());
+			}
+			
+			if (!new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), exDocumentoDTO.getSubscritorSel().getObjeto(), exDocumentoDTO.getSubscritorSel().getObjeto().getLotacao(),
+					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getCargo() : null,
+					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getFuncaoConfianca() : null,
+					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getOrgaoUsuario() : exDocumentoDTO.getSubscritorSel().getObjeto().getOrgaoUsuario()).eval()) {
+				result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário não está disponível para inclusão de Cossignatário / "+ SigaMessages.getMessage("documento.subscritor")+"."));
+				result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+						exDocumentoDTO.getMobilPaiSel(),
+						exDocumentoDTO.isCriandoAnexo(),
+						exDocumentoDTO.getAutuando(),
+						exDocumentoDTO.getIdMobilAutuado(),
+						exDocumentoDTO.getCriandoSubprocesso(),
+						null, null, null, null);
+
+				return;
 			}
 
 			long tempoIni = System.currentTimeMillis();

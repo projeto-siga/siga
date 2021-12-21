@@ -336,7 +336,6 @@
   margin: 0;
   overflow: hidden;
   padding: 0;
-  width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 1rem;
@@ -664,11 +663,10 @@
 }
 
 .input-group > .select2-container--bootstrap {
-  display: table;
+  display: inline-block;
   table-layout: fixed;
   position: relative;
   z-index: 2;
-  width: 100%;
   margin-bottom: 0;
   /**
    * Adjust z-index like Bootstrap does to show the focus-box-shadow

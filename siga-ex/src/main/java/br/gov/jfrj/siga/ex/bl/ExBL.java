@@ -3600,6 +3600,34 @@ public class ExBL extends CpBL {
 				+ doc.getSubscritor().getSiglaCompleta() + " em substituição de " + doc.getTitular().getNomePessoa()
 				+ " - " + doc.getTitular().getSiglaCompleta());
 		gravarMovimentacao(mov_substituto);
+		
+		try {
+		CpConfiguracao cpConfiguracao = new CpConfiguracao();
+		DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+		notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(doc.getTitular());
+		cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+				CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
+		if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+			System.out.println("Possui um substituo.");
+			String[] destinanarios = { doc.getTitular().getEmailPessoa() }; 
+			
+				Correio.enviar(null, destinanarios,
+					"Usuário marcado ", 
+					"",   
+					""    
+						+ "<br>" 
+						+ "Prezado usuário, <b>" + doc.getTitular().getNomePessoa() + "</b>, "
+						+ "Você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
+						+ "pelo usuário <b>" + doc.getSubscritor().getNomePessoa() + "</b> (<b>" + doc.getSubscritor().getSiglaCompleta() + "</b>)."
+						+ "<br>"
+						+ "<br>"
+						+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+						+ "	>clique aqui.</a>");
+		}
+		} catch (Exception e) {
+			e.printStackTrace(); 
+			System.out.println("Falha ao enviar email"); 
+		} 
 	}
 
 	private class MovimentacaoSincronizavel extends SincronizavelSuporte

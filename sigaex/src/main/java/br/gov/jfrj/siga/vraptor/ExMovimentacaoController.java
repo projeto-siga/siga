@@ -77,6 +77,7 @@ import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -92,6 +93,7 @@ import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExItemDestinacao;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -2215,7 +2217,39 @@ public class ExMovimentacaoController extends ExController {
 						+ "<br>"
 						+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
 						+ "	>clique aqui.</a>"); 
-		}  
+		}
+		
+		List<CpMarcador> listMar = null;
+		listMar = dao.listarCpMarcadoresGerais(true);
+		Set<ExMarca> exMarcas = mov.getExMobil().getExMarcaSet();
+		for (int i = 0; i < listMar.size(); i++) { 
+			for (ExMarca exMarca : exMarcas) { 
+				if (listMar.get(i).getDescrMarcador() == exMarca.getCpMarcador().getDescrMarcador()) {
+					cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+							CpAcoesDeNotificarPorEmail.TRAMIT_DOC_MARCADOS.getIdLong(), lotaResponsavelSel.getId());
+					if (responsavelSel.getDescricao() != null && cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+						String[] destinanarios = { getTitular().getNomePessoa() };
+						Correio.enviar(null,destinanarios,   
+								
+								"Documento transferido para a unidade " + lotaResponsavelSel.getDescricao() + "", 
+								"",   
+								""
+									+ "<br>" 
+									+ "Prezado usuário, <b>" + getTitular().getNomePessoa() + " (" +getTitular().getSiglaCompleta()+ ")" + "</b>. "
+									+ "Você transferiu o documento <b>" + sigla + "</b>, com o alerta, tramitação de documentos marcados,  "
+									+ "para a unidade <b>" + lotaResponsavelSel.getDescricao() + " (" +lotaResponsavelSel.getSigla()+ ")" + "</b>. "
+									+ "<br>"
+									+ "<br>"
+									+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+									+ "	>clique aqui.</a>");  
+					} 
+					
+				}
+			}
+			break;
+		} 
+		
+		
 
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()
@@ -2788,23 +2822,19 @@ public class ExMovimentacaoController extends ExController {
 		cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
 				CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), getTitular().getIdPessoa());
 			if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
-			String[] destinanarios = { getCadastrante().getEmailPessoa() };
+			String[] destinanarios = { getTitular().getEmailPessoa() }; 
 			Correio.enviar(null, destinanarios,
-					"Usuário marcado", "",
-					"<table>" + "<tbody>" + "<tr>"
-							+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-							+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-							+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
-							+ "<td style='background-color: #bbb; padding: 0 20px;'>"
-							+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
-							+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
-							+ "<td style='height: 310px; padding: 10px 20px;'>" + "<div>"
-							+ "<h4><span style='color: #808080;'>Prezado Servidor(a) " + "<strong>"
-							+ getTitular().getNomePessoa() + "</strong>" + " do(a) " + "<strong>"
-							+ ",</span></h4>"
-							+ "<p>Você recebeu o documento <b> " + buscarDocumento(builder).getCodigo() + " </b> com o alerta, <b> marcador </b></p>) "
-							+ "</td>" + "</tr>" + "</tbody>" + "</table>");
-			
+					"Usuário marcado ", 
+					"",   
+					""
+						+ "<br>" 
+						+ "Prezado usuário, <b>" + subscritorSel.getDescricao() + "</b>, "
+						+ "Você recebeu o documento " + buscarDocumento(builder).getCodigo() + " com o Alerta, marcador, "
+						+ "enviado pelo usuário " + getTitular().getNomePessoa() + "."
+						+ "<br>"
+						+ "<br>"
+						+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+						+ "	>clique aqui.</a>"); 		
 			}
 		
 		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());

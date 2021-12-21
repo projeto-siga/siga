@@ -114,6 +114,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -1628,6 +1629,22 @@ public class ExDocumentoController extends ExController {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null) {
 				exDocumentoDTO.setDoc(new ExDocumento());
+			}
+			
+			if (!new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), exDocumentoDTO.getSubscritorSel().getObjeto(), exDocumentoDTO.getSubscritorSel().getObjeto().getLotacao(),
+					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getCargo() : null,
+					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getFuncaoConfianca() : null,
+					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getOrgaoUsuario() : exDocumentoDTO.getSubscritorSel().getObjeto().getOrgaoUsuario()).eval()) {
+				result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário não está disponível para inclusão de Cossignatário / "+ SigaMessages.getMessage("documento.subscritor")+"."));
+				result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+						exDocumentoDTO.getMobilPaiSel(),
+						exDocumentoDTO.isCriandoAnexo(),
+						exDocumentoDTO.getAutuando(),
+						exDocumentoDTO.getIdMobilAutuado(),
+						exDocumentoDTO.getCriandoSubprocesso(),
+						null, null, null, null);
+
+				return;
 			}
 
 			long tempoIni = System.currentTimeMillis();

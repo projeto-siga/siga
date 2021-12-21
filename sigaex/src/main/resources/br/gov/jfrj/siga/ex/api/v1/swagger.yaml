@@ -500,7 +500,7 @@ parameters:
     default: false
     type: boolean
 
-formadoc:
+  formadoc:
     name: formadoc
     in: query
     description: Informa a sigla da forma do documento, por exemplo 'PRC'
@@ -518,8 +518,8 @@ formadoc:
   tiposequencia:
     name: tiposequencia
     in: query
-    description: Informa o tipo de sequencia a ser utilizado, por exemplo '123' 
-    required: true
+    description: Informa o tipo de sequencia a ser utilizado, por exemplo '123'. Caso não seja informado, não é gerada a sequência genérica
+    required: false
     type: string
     
 ################################################################################

@@ -27,10 +27,6 @@ public class NumeracaoPost implements INumeracaoPost {
 			throw new AplicacaoException("Forma do documento não informada.");
 		}
 
-		if (req.tiposequencia == null || req.tiposequencia.isEmpty()) {
-			throw new AplicacaoException("Tipo de Sequencia não informada.");
-		}
-
 		if (req.anoemissao == null || req.anoemissao.isEmpty()) {
 			throw new AplicacaoException("Ano não informado.");
 		}
@@ -56,19 +52,26 @@ public class NumeracaoPost implements INumeracaoPost {
 
 		Integer numrTipoSequencia = null;
 		try {
-			numrTipoSequencia = Integer.parseInt(req.tiposequencia);
+			if(req.tiposequencia != null && !req.tiposequencia.trim().isEmpty())
+				numrTipoSequencia = Integer.parseInt(req.tiposequencia);
 		} catch (NumberFormatException e) {
 			throw new AplicacaoException("Tipo de sequência inválida: " + req.tiposequencia);
 		}
 
 		String numeracaoExpediente = exBL.obterNumeracaoExpediente(idOrgaoUsuario, exFormaDocumento.getId(), numrAnoEmissao);
-		String numrSequencia = "000000" + exBL.obterSequencia(numrAnoEmissao, numrTipoSequencia, "1");
-		numrSequencia = numrSequencia.substring(numrSequencia.length() - 6, numrSequencia.length());
-		numrSequencia = numrAnoEmissao + numrSequencia;
+		
+		String numrSequencia = null;
+		if(numrTipoSequencia != null) {
+			numrSequencia = "000000" + exBL.obterSequencia(numrAnoEmissao, numrTipoSequencia, "1");
+			numrSequencia = numrSequencia.substring(numrSequencia.length() - 6, numrSequencia.length());
+			numrSequencia = numrAnoEmissao + numrSequencia;
+			resp.sequenciagenerica = numrSequencia;
+		}
 
 		resp.sigladoc = ctx.getCadastrante().getOrgaoUsuario().getSigla() + "-" + exFormaDocumento.getSigla() + "-" + numrAnoEmissao + "/" + numeracaoExpediente;
-		resp.sequenciagenerica = numrSequencia;
-		resp.digitoverificador = exBL.calcularDigitoVerificador(numrSequencia);
+		
+		if(numrSequencia != null)
+			resp.digitoverificador = exBL.calcularDigitoVerificador(numrSequencia);
 	}
 
 	protected ExDao dao() {

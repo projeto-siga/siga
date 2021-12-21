@@ -8143,7 +8143,7 @@ public class ExBL extends CpBL {
 		return codigo;
 	}
 	
-	private String calcularDigitoVerificador(String numero) {
+	public String calcularDigitoVerificador(String numero) {
 		int soma = 0;
 		for(int i = 0, j = numero.length(); i < numero.length(); i++, j--) {
 			soma += Integer.valueOf(numero.charAt(i) + "")*j;
@@ -8156,6 +8156,11 @@ public class ExBL extends CpBL {
 			return "1";
 		
 		return digito + "";
+	}
+
+
+	public String obterNumeracaoExpediente(Long idOrgaoUsuario, Long idFormaDocumento, Long anoEmissao) throws Exception {
+		return Service.getExService().obterNumeracaoExpediente(idOrgaoUsuario, idFormaDocumento, anoEmissao);
 	}
 
 }

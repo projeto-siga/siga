@@ -1400,12 +1400,13 @@ public class CpBL {
 			return pessoa;
 		//	dao().em().getTransaction().commit();
 		} catch (final Exception e) {
-			if(e.getCause() instanceof ConstraintViolationException &&
-					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
-				throw new RegraNegocioException("Ocorreu um problema no cadastro da pessoa");
-			} else if(e.getCause() instanceof ConstraintViolationException &&
-					("CORPORATIVO.SIGA_VALID_UNIQUE".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
-				throw new RegraNegocioException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+			if (e.getCause() instanceof ConstraintViolationException 
+					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
+				throw new AplicacaoException("Ocorreu um problema no cadastro da pessoa.");
+			} else if (e.getCause() instanceof ConstraintViolationException 
+					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("SIGA_VALID_UNIQUE")) {
+				throw new AplicacaoException(
+						"Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 			}else {
 		//	dao().em().getTransaction().rollback();
 				throw new AplicacaoException("Erro na gravação", 0, e);

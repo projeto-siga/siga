@@ -3253,14 +3253,17 @@ Pede deferimento.</span><br/><br/><br/>
 	          ${doc.numExtDoc!}
 	        </td>
 	      </tr>
-	      <tr>
-	        <td>
-	          Número no Sistema Antigo:
-	        </td>
-	        <td>
-	          ${doc.numAntigoDoc!}
-	        </td>
-	      </tr>
+	       [#if (doc.numAntigoDoc)! != '']
+	        <tr>
+	          <td>
+	            Número no Sistema Antigo:
+	          </td>
+	          <td>
+	            ${(doc.numAntigoDoc)!}
+	          </td>
+	        </tr>
+	      [/#if]
+	      
 	      <tr>
 	        <td>
 	          Forma:

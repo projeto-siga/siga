@@ -383,7 +383,7 @@ public class DocumentosPost implements IDocumentosPost {
 			throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);
 		}
 
-		if(req.codigoUnico) {
+		if(req.codigounico) {
 			exBL.finalizar(cadastrante, ctx.getLotaTitular(), doc);
 			resp.codigoUnico = exBL.obterCodigoUnico(doc, true);
 		}

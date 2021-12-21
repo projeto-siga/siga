@@ -499,6 +499,28 @@ parameters:
     required: false
     default: false
     type: boolean
+
+formadoc:
+    name: formadoc
+    in: query
+    description: Informa a sigla da forma do documento, por exemplo 'PRC'
+    required: true
+    type: string  
+    
+  anoemissao:
+    name: anoemissao
+    in: query
+    description: Informa o ano de emissão no formato 'aaaa'
+    pattern: ^\d{4}
+    required: true
+    type: string
+          
+  tiposequencia:
+    name: tiposequencia
+    in: query
+    description: Informa o tipo de sequencia a ser utilizado, por exemplo '123' 
+    required: true
+    type: string
     
 ################################################################################
 #                                           Paths                              #
@@ -2373,6 +2395,44 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /numeracao:
+    post:
+      description: Utilize este método para gerar numeração de expediente e sequência genérica.
+      consumes: 
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:        
+        - $ref: "#/parameters/formadoc"
+        - $ref: "#/parameters/tiposequencia"
+        - $ref: "#/parameters/anoemissao"
+      summary: Gerar Sigla e Sequência Genérica
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigladoc:
+                description: Sigla do documento
+                type: string
+              sequenciaGenerica:
+                description: Sequência genérica (também chamado de código único)
+                type: string
+              digitoVerificador:
+                description: Digito verificador da sequência genérica
+                type: string
+        403:
+          description: Geração não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
 ################################################################################
 #                                     Definitions                              #
 ################################################################################

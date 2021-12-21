@@ -1365,10 +1365,26 @@ public interface IExApiV1 {
 
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
+	
+	public interface INumeracaoPost extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {			
+			public String formadoc;
+			public String tiposequencia;
+			public String anoemissao;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public String sigladoc;
+			public String sequenciagenerica;
+			public String digitoverificador;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
 
 	public interface IDocumentosPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest, ISwaggerRequestFile {
-			public Boolean codigoUnico;
+			public Boolean codigounico;
 			public String sigla;
 			public String modelo;
 			public String siglamobilpai;

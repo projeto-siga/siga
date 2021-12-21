@@ -499,6 +499,13 @@ parameters:
     required: false
     default: false
     type: boolean
+    
+  siglaorgao:
+    name: siglaorgao
+    in: query
+    description: Sigla do órgão, por exemplo 'ZZ'
+    required: true
+    type: string
 
   formadoc:
     name: formadoc
@@ -518,8 +525,15 @@ parameters:
   tiposequencia:
     name: tiposequencia
     in: query
-    description: Informa o tipo de sequencia a ser utilizado, por exemplo '123'. Caso não seja informado, não é gerada a sequência genérica
-    required: false
+    description: Informa o ID da sequência a ser utilizado.
+    required: true
+    type: string
+    
+  zerarinicioano:
+    name: zerarinicioano
+    in: query
+    description: Informa se a sequência será zerada a cada início de ano.
+    required: true
     type: string
     
 ################################################################################
@@ -2395,20 +2409,20 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /numeracao:
+  /numeracao-expediente:
     post:
-      description: Utilize este método para gerar numeração de expediente e sequência genérica.
+      description: Utilize este método para gerar numeração de expediente.
       consumes: 
         - multipart/form-data
         - application/x-www-form-urlencoded
       tags: [acao]
       security:
         - Bearer: []      
-      parameters:        
+      parameters:
+        - $ref: "#/parameters/siglaorgao"
         - $ref: "#/parameters/formadoc"
-        - $ref: "#/parameters/tiposequencia"
         - $ref: "#/parameters/anoemissao"
-      summary: Gerar Sigla e Sequência Genérica
+      summary: Gerar Sigla Sem Papel
       responses:
         200:
           description: Successful response
@@ -2418,10 +2432,39 @@ paths:
               sigladoc:
                 description: Sigla do documento
                 type: string
-              sequenciaGenerica:
+        403:
+          description: Geração não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /numeracao-generica:
+    post:
+      description: Utilize este método para gerar numeração de uma sequência genérica.
+      consumes: 
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/tiposequencia"
+        - $ref: "#/parameters/anoemissao"
+        - $ref: "#/parameters/zerarinicioano"
+      summary: Gerar Sequência Genérica
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sequenciagenerica:
                 description: Sequência genérica (também chamado de código único)
                 type: string
-              digitoVerificador:
+              digitoverificador:
                 description: Digito verificador da sequência genérica
                 type: string
         403:

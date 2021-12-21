@@ -1138,6 +1138,7 @@
 												<c:catch var="exception">
 													${pessoaOuLota.nomePessoa}
 													<c:if test="${siga_cliente == 'GOVSP'}">
+														 - ${pessoaOuLota.sigla}
 														&nbsp;&nbsp;&nbsp;
 														<a class="btn btn-sm btn-secondary mb-2 " href="javascript:if(confirm('Tem certeza que deseja exluir acompanhamento?')) location.href='/sigaex/app/expediente/mov/cancelarPerfil?sigla=${docVO.sigla}&idPessoa=${pessoaOuLota.id }';" >
 															Excluir Acompanhamento
@@ -1147,6 +1148,7 @@
 												<c:if test="${not empty exception}">
 													${pessoaOuLota.nomeLotacao}
 													<c:if test="${siga_cliente == 'GOVSP'}">
+														 - ${pessoaOuLota.sigla}
 														&nbsp;&nbsp;&nbsp;
 														<a class="btn btn-sm btn-secondary mb-2 " href="javascript:if(confirm('Tem certeza que deseja exluir acompanhamento?')) location.href='/sigaex/app/expediente/mov/cancelarPerfil?sigla=${docVO.sigla}&idLotacao=${pessoaOuLota.id }';" >
 															Excluir Acompanhamento

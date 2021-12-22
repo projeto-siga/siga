@@ -4593,7 +4593,7 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
-[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false org=""]
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
 	<tr>
 		<td  valign="middle" width="12%" height="65" align="right"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>

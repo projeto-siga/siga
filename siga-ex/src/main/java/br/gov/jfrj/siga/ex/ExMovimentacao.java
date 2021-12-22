@@ -1275,25 +1275,24 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			throw new AplicacaoException("Não é Assinatura");
 		ExTipoDeMovimentacao l = (ExTipoDeMovimentacao) getExTipoMovimentacao();
 		switch (l) {
-		case ASSINATURA_COM_SENHA:
-		case CONFERENCIA_COPIA_COM_SENHA:
-			return assertAssinaturaComSenhaValida(this.getExDocumento().getPdf(), this.getAuditHash(),
-					this.getDtIniMov(), retornaNome);
-		case ASSINATURA_MOVIMENTACAO_COM_SENHA:
-			return assertAssinaturaComSenhaValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getAuditHash(),
-					this.getDtIniMov(), retornaNome);
-		case ASSINATURA_DIGITAL_DOCUMENTO:
-			return assertAssinaturaDigitalValida(this.getExDocumento().getPdf(), this.getConteudoBlobMov(),
-					this.getDtIniMov(), retornaNome);
-			
-		case CONFERENCIA_COPIA_DOCUMENTO:
-			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getConteudoBlobMov(),
-					this.getDtIniMov(), retornaNome);
-		case ASSINATURA_DIGITAL_MOVIMENTACAO:
-			return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(),
-					this.getConteudoBlobMov(), this.getDtIniMov(), retornaNome);
-		default:
-			throw new AplicacaoException("Não é Assinatura");
+			case ASSINATURA_COM_SENHA:
+			case CONFERENCIA_COPIA_COM_SENHA:
+				return assertAssinaturaComSenhaValida(this.getExDocumento().getPdf(), this.getAuditHash(),
+						this.getDtIniMov(), retornaNome);
+				
+			case ASSINATURA_DIGITAL_DOCUMENTO:
+			case CONFERENCIA_COPIA_DOCUMENTO:
+				return assertAssinaturaDigitalValida(this.getExDocumento().getPdf(), this.getConteudoBlobMov(),
+						this.getDtIniMov(), retornaNome);
+				
+			case ASSINATURA_MOVIMENTACAO_COM_SENHA:
+				return assertAssinaturaComSenhaValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getAuditHash(),
+						this.getDtIniMov(), retornaNome);
+			case ASSINATURA_DIGITAL_MOVIMENTACAO:
+				return assertAssinaturaDigitalValida(this.getExMovimentacaoRef().getConteudoBlobpdf(), this.getConteudoBlobMov(), 
+						this.getDtIniMov(), retornaNome);
+			default:
+				throw new AplicacaoException("Não é Assinatura");
 		}
 	}
 	

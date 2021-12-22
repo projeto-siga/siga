@@ -4601,9 +4601,15 @@ ${texto}
 		<td valign="middle" align="left" nowrap >
 		${_tituloGeralParteI}<br>
 		${_tituloGeralParteII}<br>		
-		[#if org??][#-- tratando null  --]  
-		  ${org}
-		[/#if]
+		  
+		   
+		[#if (doc.nmLotacao)??]
+            ${doc.nmLotacao}
+        [#else]
+            ${(doc.titular.lotacao.nomeLotacao)!}
+        [/#if]
+		
+		 
 	  </td>
   </tr>
 </table>

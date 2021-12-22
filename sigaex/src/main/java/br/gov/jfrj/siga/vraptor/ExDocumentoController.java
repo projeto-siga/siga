@@ -1631,10 +1631,12 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.setDoc(new ExDocumento());
 			}
 			
-			if (!new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), exDocumentoDTO.getSubscritorSel().getObjeto(), exDocumentoDTO.getSubscritorSel().getObjeto().getLotacao(),
-					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getCargo() : null,
-					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getFuncaoConfianca() : null,
-					exDocumentoDTO.getSubscritorSel().getObjeto() != null ? exDocumentoDTO.getSubscritorSel().getObjeto().getOrgaoUsuario() : exDocumentoDTO.getSubscritorSel().getObjeto().getOrgaoUsuario()).eval()) {
+			DpPessoa subscritor = exDocumentoDTO.getSubscritorSel().getObjeto();
+			
+			if (subscritor != null && !new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), subscritor, subscritor.getLotacao(),
+					subscritor.getCargo(),
+					subscritor.getFuncaoConfianca(),
+					subscritor.getOrgaoUsuario()).eval()) {
 				result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário não está disponível para inclusão de Cossignatário / "+ SigaMessages.getMessage("documento.subscritor")+"."));
 				result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 						exDocumentoDTO.getMobilPaiSel(),

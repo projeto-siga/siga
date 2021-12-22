@@ -146,49 +146,48 @@
 						</div>
 
 					<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
-							<div class="col col-12 col-lg-4">
-								<div class="form-group">
-									<label><fmt:message
-											key="documento.preenchimento.automatico" /></label>
-									<div class="input-group">
-										
-  
-										<select id="preenchimento" name="exDocumentoDTO.preenchimento"
-											onchange="javascript:carregaPreench()"
-											class="xform-control xsiga-select2 custom-select">
-											<c:forEach items="${exDocumentoDTO.preenchimentos}"
-												var="item">
-												<option value="${item.idPreenchimento}"
-													${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
-													${item.nomePreenchimento}</option>
-											</c:forEach>
-										</select>
-									<div class="input-group-append">
-											<c:if
-												test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
-												<c:set var="desabilitaBtn">d-none</c:set>
-											</c:if>
-											<button type="button" name="btnAlterar"
-												onclick="javascript:alteraPreench()"
-												class="btn btn-sm btn-secondary p-2 ${desabilitaBtn}" title="Gravar alterações">
-												<i class="far fa-edit"></i> 
-											</button>
-											<button type="button" name="btnRemover"
-												onclick="javascript:removePreench()"
-												class="btn btn-sm btn-secondary p-2 ${desabilitaBtn}" title="Remover este item">
-												<i class="far fa-trash-alt"></i> 
-											</button>
-											<button type="button" name="btnAdicionar"
-												onclick="javascript:adicionaPreench()"
-												class="btn btn-sm btn-secondary p-2" title="Criar um novo">
-												<i class="fas fa-plus"></i> 
-											</button>
-										</div>
+						<div class="col col-12 col-lg-4">
+							<div class="form-group">
+								<label><fmt:message
+										key="documento.preenchimento.automatico" /></label>
+								<div class="input-group">
+									
+ 
+									<select id="preenchimento" name="exDocumentoDTO.preenchimento"
+										onchange="javascript:carregaPreench()"
+										class="xform-control xsiga-select2 custom-select">
+										<c:forEach items="${exDocumentoDTO.preenchimentos}"
+											var="item">
+											<option value="${item.idPreenchimento}"
+												${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
+												${item.nomePreenchimento}</option>
+										</c:forEach>
+									</select>
+								<div class="input-group-append">
+										<c:if
+											test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
+											<c:set var="desabilitaBtn">d-none</c:set>
+										</c:if>
+										<button type="button" name="btnAlterar"
+											onclick="javascript:alteraPreench()"
+											class="btn btn-sm btn-secondary p-2 ${desabilitaBtn}" title="Gravar alterações">
+											<i class="far fa-edit"></i> 
+										</button>
+										<button type="button" name="btnRemover"
+											onclick="javascript:removePreench()"
+											class="btn btn-sm btn-secondary p-2 ${desabilitaBtn}" title="Remover este item">
+											<i class="far fa-trash-alt"></i> 
+										</button>
+										<button type="button" name="btnAdicionar"
+											onclick="javascript:adicionaPreench()"
+											class="btn btn-sm btn-secondary p-2" title="Criar um novo">
+											<i class="fas fa-plus"></i> 
+										</button>
 									</div>
-
 								</div>
+
 							</div>
-						
+						</div>
 					</c:if>
 					</div>
 					<div

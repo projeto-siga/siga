@@ -8074,7 +8074,7 @@ public class ExBL extends CpBL {
 		mov.setDtIniMov(dt);
 		mov.setDtFimMov(dt);
 		mov.setDtMov(dt);
-		mov.setExMobil(exDoc.getMobilGeral());
+		mov.setExMobil(exDoc.getPrimeiraVia());
 		mov.setExTipoMovimentacao(ExTipoDeMovimentacao.ENVIO_SIAFEM);
 		mov.setLotaCadastrante(lotacaoTitular);
 		mov.setLotaResp(lotacaoTitular);
@@ -8095,7 +8095,7 @@ public class ExBL extends CpBL {
 		if(modeloSiafem == null)
 			return null;
 			
-		if(doc.getNmMod().equals(modeloSiafem))
+		if(doc.getNmMod().equals(modeloSiafem)) 
 			return doc;
 		
 		ExMobil mDefault = doc.getMobilDefaultParaReceberJuntada();

@@ -775,7 +775,7 @@ public class ExDocumentoVO extends ExVO {
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {
-		return Ex.getInstance().getBL().obterFormularioSiafem(doc) != null;
+		return Ex.getInstance().getBL().obterFormularioSiafem(doc) != null && doc.getPrimeiraVia() != null;
 	}
 
 	public void addDadosComplementares() {

@@ -38,87 +38,44 @@ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.el7_9.x86_64/
 export JBOSS_HOME=/opt/java/jboss-eap-7.2
 
 
-#Verifying requirements
-echo ""
-echo ""
-echo "################################################################################"
-echo "                            VERIFYING REQUIREMENTS"
-echo "################################################################################"
-echo ""
-echo "JAVAC VERSION:"
-if j_version=`javac -version 2>&1 |cut -d "\"" -f2|head -n 1`; then
-        echo "$j_version"
-        echo "OK"
-
-else
-        echo $j_version
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
-echo ""
-echo "JBOSS VERSION:"
-if jboss_version=`$JBOSS_HOME/bin/standalone.sh -version`; then
-        echo $jboss_version
-        echo "OK"
-else
-        echo $jboss_version
-        echo "FAIL"
-        echo "ABORTING..."
-        exit 1
-fi
-echo ""
-echo "GRAPHVIZ VERSION:"
-if graphviz=`rpm -qa graphviz`; then
-        echo "$graphviz - OK"
-else
-        echo $graphviz
-        echo "FAIL"
-        echo "PLEASE INSTALL graphviz"
-        echo "eg. sudo apk add --update --no-cache graphviz ttf-freefont or sudo yum -y install graphviz"
-        echo "ABORTING..."
-        exit 1
-fi
-echo ""
-echo "###############################################################################"
-echo "                                   END"
-echo "###############################################################################"
-echo ""
 
 echo "###############################################################################"
-echo "                              STARTING SCP"
+echo "                              SYNCHRONIZING DEPLOY"
 echo "###############################################################################"
 echo ""
 echo "COPYING DEPENDENCIES FROM $origin_server_artifacts"
-
-for t in ${dependencies[@]}; do
-        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
-                echo $copy_war_jar
-                echo "$t - OK"
-        else
-                echo $copy_war_jar
-                echo "FAIL"
-                echo "ABORTING..."
-                exit 1
-        fi
+for s in ${servers[@]}; do
+  echo "SYNC DEPENDENCIES WITH SERVER: $s"
+        for t in ${dependencies[@]}; do
+                if copy_war_jar=`scp /tmp/$t $s:/opt/java/jboss-eap-7.2/standalone/deployments/`; then                        
+                        echo $copy_war_jar
+                        echo "$t - OK"
+                else
+                        echo $copy_war_jar
+                        echo "FAIL"
+                        echo "ABORTING..."
+                        exit 1
+                fi
+        done
 done
 
 echo ""
 echo ""
 echo "COPYING TARGETS FROM $origin_server_artifacts"
-
-for t in ${targets[@]}; do
-        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /tmp`; then
-                echo $copy_war_jar
-                echo "$t - OK"
-        else
-                echo $copy_war_jar
-                echo "FAIL"
-                echo "ABORTING..."
-                exit 1
-        fi
+for s in ${servers[@]}; do
+echo "SYNC TARGETS WITH SERVER: $s"
+        for t in ${targets[@]}; do
+                if copy_war_jar=`scp /tmp/$t $s:/tmp`; then
+                        echo $copy_war_jar
+                        echo "$t - OK"
+                else
+                        echo $copy_war_jar
+                        echo "FAIL"
+                        echo "ABORTING..."
+                        exit 1
+                fi
+        done
 done
-
 
 echo ""
 

@@ -4593,12 +4593,12 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
-[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false org=""]
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
 	<tr>
-		<td width="12%" align="right" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+		<td  valign="middle" width="12%" height="65" align="right"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
 		<td width="2%">&nbsp;</td>
-		<td align="left" nowrap >
+		<td valign="middle" align="left" nowrap >
 		${_tituloGeralParteI}<br>
 		${_tituloGeralParteII}<br>		
 		[#if org??][#-- tratando null  --]  

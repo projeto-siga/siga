@@ -3603,12 +3603,16 @@ public class ExBL extends CpBL {
 		
 		try {
 		CpConfiguracao cpConfiguracao = new CpConfiguracao();
-		DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
-		notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(doc.getTitular());
 		cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
 				CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
+		if (cpConfiguracao != null) {
+			DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+			notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(doc.getTitular());
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+					CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
+		}
+		
 		if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
-			System.out.println("Possui um substituo.");
 			String[] destinanarios = { doc.getTitular().getEmailPessoa() }; 
 			
 				Correio.enviar(null, destinanarios,

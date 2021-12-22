@@ -69,6 +69,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -627,37 +628,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
 					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
 			
-//			List<CpConfiguracao> listaNotificarPorEmail = CpDao.getInstance().consultarNotificaocaoEmail(0, 15, getTitular().getIdPessoa());
-//			if (!listaNotificarPorEmail.isEmpty()) {
-//			Long codigoDaAcao = 1L;
-//			CpConfiguracao emailUser = dao().consultarExistenciaDeAcaoDeNotificacaoPorEmail(codigoDaAcao, getTitular().getIdPessoa());
-//			if (emailUser.isVerificaOuAtivaDesativaNotificacaoPorEmail()) {
-//				String[] destinanarios = { email };
-//				Correio.enviar(null,destinanarios, 
-//						"Novo usuário: ", 
-//						"",  
-//						"<h2>Prezado usuário, " + nmPessoa + " </h2> "
-//								+ "</br>"
-//								+ "</br>"
-//								+ "<p>O seu endereço de e-mail foi indicado no cadastramento de novo usuário. "
-//								+ "Para confirmar o cadastramento automaticamente e começar a utilizar, "
-//								+ "clique aqui: "
-//								+ "</p><a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>Acessar minha conta</a>");
-//			}
-//			} else {
-//				String[] destinanarios = { email }; 
-//				Correio.enviar(null,destinanarios, 
-//						"Novo usuário: ", 
-//						"",  
-//						"<h2>Prezado usuário, " + nmPessoa + " </h2> "
-//								+ "</br>"
-//								+ "</br>"
-//								+ "<p>O seu endereço de e-mail foi indicado no cadastramento de novo usuário. "
-//								+ "Para confirmar o cadastramento automaticamente e começar a utilizar, "
-//								+ "clique aqui: "
-//								+ "</p><a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?'>Acessar minha conta</a>");
-//			}
-			
 		} catch (RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, e.getMessage());
 		}
@@ -666,7 +636,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	
-	@Get({"/app/pessoa/check_nome_por_cpf"})
+	@Get({"/app/pessoa/check_nome_por_cpf"})  
 	public void checkNome(String nome, String cpf, String id) throws AplicacaoException {
 		Long idd = 0L;
 		if(id != null && !"".equals(id.trim())) {

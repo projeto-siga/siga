@@ -393,6 +393,14 @@ public class CpBL {
 					CpConfiguracao cpConfiguracao = new CpConfiguracao();
 					cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
 							CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+					
+					if (cpConfiguracao == null) {
+						DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+						notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+								CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+					}
+					
 					if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 						if (SigaMessages.isSigaSP()) {
 							String[] destinanarios = { pessoa.getEmailPessoaAtual() };

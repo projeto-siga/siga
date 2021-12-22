@@ -93,7 +93,14 @@ public class UsuarioController extends SigaController {
 			
 			CpConfiguracao cpConfiguracao = new CpConfiguracao();
 			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
-					CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), getTitular().getIdPessoa());
+					CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), pessoa.getDpPessoa().getIdPessoa());
+			if (cpConfiguracao == null) {
+				DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+				notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa.getDpPessoa());
+				cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+						CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), pessoa.getDpPessoa().getIdPessoa());
+			}
+			
 			if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 				Correio.enviar(null, destinanarios,
 						"Troca de Senha", "",
@@ -148,15 +155,6 @@ public class UsuarioController extends SigaController {
 		
 		CpIdentidade pessoa = null;
 		pessoa = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
-		
-		CpConfiguracao notificarPorEmail = new CpConfiguracao();
-		notificarPorEmail = new CpConfiguracao();
-		notificarPorEmail = dao.consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
-		CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong(), getTitular().getIdPessoa());
-		if (notificarPorEmail.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) { 
-			
-		}
-
 		result.redirectTo(UsuarioController.class).trocaSenha();
 	}
 
@@ -206,7 +204,14 @@ public class UsuarioController extends SigaController {
 					try { 
 						CpConfiguracao cpConfiguracao = new CpConfiguracao();
 						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
-								CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), getTitular().getIdPessoa());
+								CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), p.getIdPessoa());
+						if (cpConfiguracao == null) {
+							DpNotificarPorEmail notificarPorEmail = new DpNotificarPorEmail();
+							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(p);
+							cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+									CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), p.getIdPessoa());
+						}
+						
 						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
 									"O Administrador do sistema removeu este endereço de email do seguinte usuário "

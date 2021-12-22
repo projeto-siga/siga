@@ -145,8 +145,7 @@
 							</c:if>
 						</div>
 
-					<c:if
-						test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
+					<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
 							<div class="col col-12 col-lg-4">
 								<div class="form-group">
 									<label><fmt:message
@@ -189,9 +188,9 @@
 
 								</div>
 							</div>
-						</div>
+						
 					</c:if>
-
+					</div>
 					<div
 						class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
 						<div

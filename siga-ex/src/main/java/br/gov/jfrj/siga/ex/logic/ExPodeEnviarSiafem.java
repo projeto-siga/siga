@@ -37,7 +37,7 @@ public class ExPodeEnviarSiafem extends CompositeExpressionSupport {
 				
 				new ExPodeSerMovimentado(doc.getMobilGeral(), titular, lotaTitular),
 				
-				Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(doc, ExTipoDeMovimentacao.ENVIO_SIAFEM)),
+				Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(doc.getPrimeiraVia(), ExTipoDeMovimentacao.ENVIO_SIAFEM)),
 				
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR).withExTpMov(ExTipoDeMovimentacao.ENVIO_SIAFEM).withExMod(doc.getExModelo()).withAceitarPode(false) );
 				

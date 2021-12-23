@@ -62,7 +62,7 @@
 	<script type="text/javascript" language="Javascript1.1">
         function visualizarImpressao() {
             window.open(
-                    "/sigaex/app/arquivo/exibir?${mov == CANCELAMENTO_JUNTADA ? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
+                    "/sigaex/app/arquivo/exibir?${mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA' ? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
                     "_blank");
         }
     </script>

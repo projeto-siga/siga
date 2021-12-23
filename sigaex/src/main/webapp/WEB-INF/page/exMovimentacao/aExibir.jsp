@@ -70,7 +70,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>${mov.exTipoMovimentacao.descricao}:
+				<h5>${mov.exTipoMovimentacao.descr}:
 					${doc.codigo}:${mov.idMov}</h5>
 			</div>
 			<form name="frm" action="exibir" theme="simple" method="post">
@@ -291,7 +291,7 @@
 								value="${fn:replace(mov.referencia, ':', '_')}" /> <input
 								type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
 								type="hidden" name="ad_kind_0"
-								value="${mov.exTipoMovimentacao.sigla}" />
+								value="${mov.exTipoMovimentacao.descr}" />
 		
 							<c:if test="${not autenticando}">
 								<c:choose>

@@ -2296,6 +2296,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return false;
 	}
+	
+	public boolean isAuxiliarIncluso(Date depoisDaData) {
+		for (ExMovimentacao m : getExMovimentacaoSet()) {
+			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (depoisDaData != null && depoisDaData.after(m.getDtIniMov()))
+				continue;
+			if (m.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR)
+				continue;
+			
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo

@@ -227,7 +227,7 @@
 								<td class="text-center">${assmov.mov.dtRegMovDDMMYY}</td>
 								<td class="text-center">${assmov.mov.lotaCadastrante.siglaLotacao}</td>
 								<td class="text-center">${assmov.mov.cadastrante.sigla}</td>
-								<td class="text-center">${assmov.mov.exTipoMovimentacao.descrs}</td>
+								<td class="text-center">${assmov.mov.exTipoMovimentacao.descr}</td>
 								<td class="text-center">${assmov.mov.obs}</td>
 								<td></td>
 								<td></td>

@@ -3350,6 +3350,7 @@ public class ExBL extends CpBL {
 	private static String atualizarDnmAnotacao(ExMobil mob) {
 		String s;
 		s = "";
+	/*
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;
@@ -3360,6 +3361,11 @@ public class ExBL extends CpBL {
 		// vazia e gravando nulo.
 		if (s == null || s.length() == 0)
 			s = " ";
+			*/
+		
+		ExMovimentacao mov = mob.getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO);
+		s=  mov != null  ? mov.getDescrMov() :  " ";
+			
 		mob.setDnmUltimaAnotacao(s);
 		ExDao.getInstance().gravar(mob);
 		return s;

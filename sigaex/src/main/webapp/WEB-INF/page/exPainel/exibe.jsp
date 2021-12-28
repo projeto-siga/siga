@@ -412,7 +412,7 @@ function sbmtDoc() {
 									
 									<td>
 										${mov.descricao}
-										<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'>
+										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
 										</c:if>
 										<c:set var="assinadopor" value="${true}" />
@@ -427,7 +427,7 @@ function sbmtDoc() {
 														pre="${acao.pre}" pos="${acao.pos}"
 														url="${pageContext.request.contextPath}${fn:replace(acao.url, '/doc/exibir?sigla=', 
 														'/painel/exibir?documentoRefSel.sigla=')}" />
-													<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'>
+													<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}">
 														${mov.complemento}
 														<c:set var="assinadopor" value="${false}" />
 													</c:if>

@@ -217,7 +217,7 @@
 
 						<c:set var="pendencias" value="${false}" />
 						<c:forEach var="mov" items="${mobilCompletoVO.movs}">
-							<c:if test="${(not mov.cancelada) and (mov.exTipoMovimentacao eq PENDENCIA_DE_ANEXACAO)}">
+							<c:if test="${(not mov.cancelada) and (mov.exTipoMovimentacao eq 'PENDENCIA_DE_ANEXACAO')}">
 								<c:set var="pendencias" value="${true}" />
 							</c:if>
 						</c:forEach>
@@ -231,7 +231,7 @@
 										<label>A anexação deste arquivo resolve as seguintes
 											pendências:</label>
 										<c:forEach var="mov" items="${mobilCompletoVO.movs}">
-											<c:if test="${(not mov.cancelada) and (mov.exTipoMovimentacao eq PENDENCIA_DE_ANEXACAO)}">
+											<c:if test="${(not mov.cancelada) and (mov.exTipoMovimentacao eq 'PENDENCIA_DE_ANEXACAO')}">
 												<label class="gt-form-element-label"><input
 													type="checkbox" class="gt-form-checkbox"
 													name="pendencia_de_anexacao" value="${mov.idMov}">
@@ -333,14 +333,14 @@
 									<td align="left"><siga:selecionado
 											sigla="${mov.parte.resp.nomeAbreviado}"
 											descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" /></td>
-									<td>${mov.descricao}<c:if test='${mov.exTipoMovimentacao != PENDENCIA_DE_ANEXACAO}'> ${mov.complemento}</c:if>
+									<td>${mov.descricao}<c:if test="${mov.exTipoMovimentacao != 'PENDENCIA_DE_ANEXACAO'}"> ${mov.complemento}</c:if>
 										<c:set var="assinadopor" value="${true}" /> <siga:links
 											buttons="${false}"
 											inline="${true}"
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
 												<c:choose>
-													<c:when test='${mov.exTipoMovimentacao eq AGENDAMENTO_DE_PUBLICACAO}'>
+													<c:when test="${mov.exTipoMovimentacao eq 'AGENDAMENTO_DE_PUBLICACAO'}">
 														<c:url var="url" value="${acao.nameSpace}/${acao.acao}">
 															<c:forEach var="p" items="${acao.params}">
 																<c:param name="${p.key}" value="${p.value}" />
@@ -376,7 +376,7 @@
 													</c:otherwise>
 												</c:choose>
 
-												<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'> ${mov.complemento}
+												<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}
 															    <c:set var="assinadopor" value="${false}" />
 												</c:if>
 											</c:forEach>
@@ -393,7 +393,7 @@
 										type="hidden" name="ad_description_${mov.idMov}"
 										value="${mov.mov.obs}" /> <input type="hidden"
 										name="ad_kind_${mov.idMov}"
-										value="${mov.mov.exTipoMovimentacao.sigla}" />
+										value="${mov.mov.exTipoMovimentacao.descr}" />
 									</td>
 								</tr>
 							</c:if>

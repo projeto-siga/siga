@@ -80,7 +80,7 @@
 										value="${fn:replace(mov.referencia, ':', '_')}" /> <input
 										type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
 										type="hidden" name="ad_kind_0"
-										value="${mov.exTipoMovimentacao.sigla}" />
+										value="${mov.exTipoMovimentacao.descr}" />
 				
 								</div>
 								<c:if test="${mostrarBotaoAssinarExterno}">

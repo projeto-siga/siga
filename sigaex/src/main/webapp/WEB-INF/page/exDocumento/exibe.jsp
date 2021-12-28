@@ -252,10 +252,10 @@
 		</div>
 		<c:set var="temmov" value="${false}" />
 		<c:forEach var="mov" items="${m.movs}">
-			<c:if test="${ (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
+			<c:if test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
 				<c:set var="temmov" value="${true}" />
 			</c:if>
-			<c:if test="${ (mov.exTipoMovimentacao == CIENCIA and not mov.cancelada and 
+			<c:if test="${ (mov.exTipoMovimentacao == 'CIENCIA' and not mov.cancelada and 
 				mov.mov.cadastrante == cadastrante and mov.mov.lotaCadastrante == lotaTitular)}">
 				<c:set var="descrCiencia" value="${mov.descricao}" />
 			</c:if>
@@ -322,17 +322,17 @@
 								<c:set var="evenorodd" value="odd" />
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
-										test="${ (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and mov.exTipoMovimentacao != ANEXACAO_DE_ARQUIVO_AUXILIAR and
+										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
 											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td class="text-left" >${mov.mov.exTipoMovimentacao.descr}</td>
 											<td class="text-left" 
-													<c:if test="${mov.exTipoMovimentacao == ENCERRAMENTO_DE_VOLUME}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
+													<c:if test="${mov.exTipoMovimentacao == 'ENCERRAMENTO_DE_VOLUME'}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
 													</c:if>>
 												${mov.descricao}
-												<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'> ${mov.complemento} </c:if>
+												<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}"> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
 												<siga:links
 														buttons="${false}"
@@ -345,7 +345,7 @@
 																test="${acao.pode}" explicacao="${acao.explicacao}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
-															<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'> ${mov.complemento}
+															<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
 														</c:forEach>
@@ -1232,7 +1232,7 @@
 									</p>
 								</c:if>								
 								<c:forEach var="mov" items="${m.movs}">
-									<c:if test="${mov.exTipoMovimentacao == ANEXACAO_DE_ARQUIVO_AUXILIAR and not mov.cancelada}">										
+									<c:if test="${mov.exTipoMovimentacao == 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and not mov.cancelada}">										
 										<div class="files">
 											<siga:links buttons="${false}" inline="${true}" separator="${false}">
 												<c:forEach var="acao" items="${mov.acoes}">

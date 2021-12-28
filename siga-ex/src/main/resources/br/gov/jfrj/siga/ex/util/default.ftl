@@ -4593,7 +4593,7 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
-[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false org1="" org2=""]
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
 	<tr>
 		<td  valign="middle" width="12%" height="65" align="right"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
@@ -4601,15 +4601,12 @@ ${texto}
 		<td valign="middle" align="left" nowrap >
 		${_tituloGeralParteI}<br>
 		${_tituloGeralParteII}<br>		
-		  
-		   
-		[#if (doc.nmLotacao)??]
-            ${doc.nmLotacao}
-        [#else]
-            ${(doc.titular.lotacao.nomeLotacao)!}
-        [/#if]
-		
-		 
+		[#if org1??][#-- tratando null  --]  
+		  ${org1}
+		[/#if]<br>
+		[#if org2??][#-- tratando null  --]  
+		  ${org2}
+		[/#if]
 	  </td>
   </tr>
 </table>

@@ -664,7 +664,7 @@
 						</div>
 					</div>
 					<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
-						<div class="col-sm-2">
+						<div class="col-sm-2  d-none">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="numAntigoDoc" />
 								<label>Nº antigo</label>

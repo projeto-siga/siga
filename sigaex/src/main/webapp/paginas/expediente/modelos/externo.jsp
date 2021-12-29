@@ -26,7 +26,7 @@
 				<td width="100%"> 
 					<table width="100%" border="0" cellpadding="2">
 						<tr> 
-							<td width="100%" align="center"><img src="contextpath/imagens/brasao2.png" width="50" height="50"/></td>
+							<td width="100%" align="center"><img src="contextpath/imagens/BrasaoPCRJ.png" width="50" height="50"/></td>
 						</tr>
 						<tr>
 							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:11pt;">${f:resource('modelos.cabecalho.titulo')}</td>

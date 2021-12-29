@@ -269,8 +269,8 @@
 		</form>
 		
 		<c:choose>
-		    <c:when test="${siga_cliente == 'GOVSP' && mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA' && mov.isAssinada()}">
-		        <span style="display:none">Termo de desentranhamento é assinado uma única vez para usuários de SP</span>	        
+		    <c:when test="${siga_cliente == 'GOVSP' && mov.isAssinada()}">
+		        <span style="display:none">Os termos (Encerramento de Volume, Desentranhamento...) são assinados uma única vez para usuários de SP.</span>	        
 		    </c:when>    
 		    <c:otherwise>
 		    	<div class="card">

@@ -62,7 +62,7 @@
 	<script type="text/javascript" language="Javascript1.1">
         function visualizarImpressao() {
             window.open(
-                    "/sigaex/app/arquivo/exibir?${mov == CANCELAMENTO_JUNTADA ? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
+                    "/sigaex/app/arquivo/exibir?${mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA' ? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
                     "_blank");
         }
     </script>
@@ -70,7 +70,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>${mov.exTipoMovimentacao.descricao}:
+				<h5>${mov.exTipoMovimentacao.descr}:
 					${doc.codigo}:${mov.idMov}</h5>
 			</div>
 			<form name="frm" action="exibir" theme="simple" method="post">
@@ -291,7 +291,7 @@
 								value="${fn:replace(mov.referencia, ':', '_')}" /> <input
 								type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
 								type="hidden" name="ad_kind_0"
-								value="${mov.exTipoMovimentacao.sigla}" />
+								value="${mov.exTipoMovimentacao.descr}" />
 		
 							<c:if test="${not autenticando}">
 								<c:choose>

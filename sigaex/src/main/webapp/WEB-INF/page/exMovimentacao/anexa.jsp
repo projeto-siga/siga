@@ -362,7 +362,7 @@
 														<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 															pos="${acao.pos}"
 															url="${pageContext.request.contextPath}${acao.url}continuarTela=TRUE"
-															test="${true}" popup="${acao.popup}"
+															test="${acao.pode}" popup="${acao.popup}"
 															confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 															idAjax="${mov.idMov}" />
 													</c:when>
@@ -370,7 +370,7 @@
 														<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 															pos="${acao.pos}"
 															url="${pageContext.request.contextPath}${acao.url}"
-															test="${true}" popup="${acao.popup}"
+															test="${acao.pode}" popup="${acao.popup}"
 															confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 															idAjax="${mov.idMov}" />
 													</c:otherwise>

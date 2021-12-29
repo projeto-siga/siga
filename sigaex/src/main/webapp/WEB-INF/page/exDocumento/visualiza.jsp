@@ -140,7 +140,7 @@
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 								pre="${acao.pre}" pos="${acao.pos}"
 								url="${pageContext.request.contextPath}${acao.url}"
-								test="${true}" popup="${acao.popup}"
+								test="${acao.pode}" popup="${acao.popup}"
 								confirm="${acao.msgConfirmacao}" classe="${acao.classe}"
 								estilo="line-height: 160% !important" atalho="${true}" />
 						</c:forEach>
@@ -225,7 +225,7 @@
 															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 																pos="${acao.pos}"
 																url="${pageContext.request.contextPath}${acao.url}"
-																test="${true}" popup="${acao.popup}"
+																test="${acao.pode}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" />
 															<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}
@@ -985,13 +985,13 @@
 													</c:if>
 													<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 														pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
-														test="${true}" popup="${acao.popup}"
+														test="${acao.pode}" popup="${acao.popup}"
 														confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 														idAjax="${mov.idMov}" classe="${acao.classe}" />
 												</c:forEach>
 												<div class="row ml-4 mb-3">
 													<small class="form-text text-muted mt-0">
-														<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />
+														<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${acao.pode}" classe="${acao.classe}" />
 													</small>
 												</div>
 											</siga:links>

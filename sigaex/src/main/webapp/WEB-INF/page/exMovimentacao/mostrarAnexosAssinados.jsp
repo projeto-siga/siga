@@ -96,7 +96,7 @@
 												</c:otherwise>
 											</c:choose>
 											<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
-												pos="${acao.pos}" url="${url}" test="${true}"
+												pos="${acao.pos}" url="${url}" test="${acao.pode}"
 												popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 												ajax="${acao.ajax}" idAjax="${mov.idMov}" />
 											<c:if test='${assinadopor and mov.exTipoAnexacao == ANEXACAO}'> ${mov.complemento}

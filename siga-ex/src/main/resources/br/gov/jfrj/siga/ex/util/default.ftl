@@ -2178,7 +2178,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false tipo=""]
 	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
 	    cellspacing="0" bgcolor="#FFFFFF">
 	    <tr bgcolor="#FFFFFF">
@@ -2206,7 +2206,11 @@ Pede deferimento.</span><br/><br/><br/>
 		                [#if mov??]
 		                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
 		                [#else]
-		                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                	[#if tipo=="DOCUMENTO EXTERNO"]
+		                  		${(doc.lotaCadastrante.orgaoUsuario.descricaoMaiusculas)!}
+		                  	 [#else]
+		                    	${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                    [/#if]
 		                [/#if]</p>
 		                </td>
 		            </tr>
@@ -2667,7 +2671,7 @@ Pede deferimento.</span><br/><br/><br/>
 
 [#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
-    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho tipo/]
     [/@primeiroCabecalho]
     [@cabecalho]
     [@cabecalhoCentralizado orgaoCabecalho/]
@@ -4593,7 +4597,7 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
-[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false org1="" org2=""]
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
 	<tr>
 		<td  valign="middle" width="12%" height="65" align="right"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
@@ -4601,15 +4605,12 @@ ${texto}
 		<td valign="middle" align="left" nowrap >
 		${_tituloGeralParteI}<br>
 		${_tituloGeralParteII}<br>		
-		  
-		   
-		[#if (doc.nmLotacao)??]
-            ${doc.nmLotacao}
-        [#else]
-            ${(doc.titular.lotacao.nomeLotacao)!}
-        [/#if]
-		
-		 
+		[#if org1??][#-- tratando null  --]  
+		  ${org1}
+		[/#if]<br>
+		[#if org2??][#-- tratando null  --]  
+		  ${org2}
+		[/#if]
 	  </td>
   </tr>
 </table>

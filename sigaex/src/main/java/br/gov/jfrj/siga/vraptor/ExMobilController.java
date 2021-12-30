@@ -149,6 +149,9 @@ public class ExMobilController extends
 		
 		assertAcesso("");
 		
+		if (Prop.getBool("atualiza.anotacao.pesquisa"))
+			SigaTransacionalInterceptor.upgradeParaTransacional();
+
 		getP().setOffset(offset);
 		this.setSigla(sigla);
 		this.setPostback(postback);

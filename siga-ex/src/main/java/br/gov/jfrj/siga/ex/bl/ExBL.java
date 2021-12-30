@@ -3338,12 +3338,22 @@ public class ExBL extends CpBL {
 	}
 
 	public static String anotacaoConfidencial(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		if (mob.isGeral())
+			return "";
+
+		
 		if (mostraDescricaoConfidencial(mob.doc(), titular, lotaTitular))
 			return "CONFIDENCIAL";
+		
 		String s = mob.getDnmUltimaAnotacao();
 		if (s != null)
 			return s;
-		s = atualizarDnmAnotacao(mob);
+//		s = atualizarDnmAnotacao(mob);
+
+		//Trata mobiles sem última anotação registrada. Passivo anterior a 24/07/2014
+		if (Prop.getBool("atualiza.anotacao.pesquisa"))
+			s = atualizarDnmAnotacao(mob);
+
 		return s;
 	}
 

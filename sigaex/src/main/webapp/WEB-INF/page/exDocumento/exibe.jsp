@@ -1466,19 +1466,20 @@
 	      <div class="modal-body text-center">Deseja receber o documento?</div>
 	      <div class="modal-footer text-center">
 	      	<div class="row" style="margin: 0 auto;">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
-	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
+		        <button id="button_receber_cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
+	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" onclick="sigaSpinner.mostrar();" 
+	        		class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
 		    </div>    
 	      </div>
 	    </div>
 	  </div>
 	</div>	
-	<button type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
+	<button id="button_receber_ok" type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
 		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
 	</button>
 	<c:if test="${!docVO.mob.isJuntado() and !origemRedirectTransferirGravar}">
 	<script>
-		$(function() {						
+		$(function() {
 			var modalReceberDocumento = $('#modalReceberDocumento');				
 			var btnReceberDocumento = $('.siga-btn-receber-doc');
 			

@@ -64,7 +64,6 @@
 				 </c:if>
 			</h3>
 			<c:set var="ocultarCodigo" value="${true}" />
-			<c:set var="exibirExplicacao" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
 			<c:if test='${popup!="true"}'>
 				<c:set var="acoes" value="${m.acoesOrdenadasPorNome}" />
 				<siga:links>
@@ -75,7 +74,7 @@
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 								classe="${acao.classe}" estilo="line-height: 160% !important"
 								atalho="${true}" modal="${acao.modal}" descr="${acao.descr}" 
-								explicacao="${exibirExplicacao ? acao.explicacao : null}"
+								explicacao="${acao.explicacao}"
 								post="${acao.post}" test="${acao.pode}" />
 					</c:forEach>
 					<c:if test="${exibirExplicacao}">

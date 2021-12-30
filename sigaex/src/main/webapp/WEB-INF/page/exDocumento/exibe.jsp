@@ -584,7 +584,7 @@
 											</c:choose>
 											<c:choose>
 												<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
-													<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+													<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${exibirExplicacao ? marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular) : ''}"><i class="far fa-trash-alt"></i></a></td>
 												</c:when>
 												<c:otherwise>
 													<td style="padding-left:0; padding-right: 0"></td>
@@ -651,10 +651,10 @@
 										<c:choose>
 											<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
 												<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${marca.exMovimentacao.exMobil.sigla}&descrMov=' + encodeURIComponent('Exclusão de marcador: ${marca.cpMarcador.descrMarcador}'))" 
-													title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+													title="${exibirExplicacao ? marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular) : ''}"><i class="far fa-trash-alt"></i></a></td>
 											</c:when>
 											<c:otherwise>
-												<td style="padding-left:.25em; padding-right: 0"><a title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt text-secondary"></i></a></td>
+												<td style="padding-left:.25em; padding-right: 0"><a title="${exibirExplicacao ? marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular) : ''}"><i class="far fa-trash-alt text-secondary"></i></a></td>
 											</c:otherwise>
 										</c:choose>
 										<td style="padding-left:0; padding-right: 1.25rem"></td>

@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
@@ -25,8 +25,8 @@
 							<div class="row">
 								<div class="col">
 									<div class="form-group">
-										<label>Código do Protocolo</label> 
-										<input type="text" id="id_number" name="n" placeholder="Informe o código do Protocolo" class="form-control" value="${n}"/>
+										<label><fmt:message key="usuario.mesavirtual.codigo"/> do Protocolo</label> 
+										<input type="text" id="id_number" name="n" placeholder="Informe o <fmt:message key="usuario.mesavirtual.codigo"/> do Protocolo" class="form-control" value="${n}"/>
 									</div>
 								</div>
 							</div>
@@ -55,9 +55,9 @@
 				  </div>
 				  <div class="card-body">
 				    <p>Para utilizar a Confirmação da Autenticidade do Protocolo é
-					obrigatório informar o código do Protocolo.</p>
+					obrigatório informar o <fmt:message key="usuario.mesavirtual.codigo"/> do Protocolo.</p>
 					<p>
-						<u>Preenchimento do campo Código do Protocolo</u>
+						<u>Preenchimento do campo <fmt:message key="usuario.mesavirtual.codigo"/> do Protocolo</u>
 					</p>
 					<ul>
 						<li>O campo deve ser preenchido com todos os números e letras
@@ -66,7 +66,7 @@
 					</ul>
 					<br />
 					<p>
-						<u>Ao preencher o código do protocolo, favor clicar na caixa em "Verificação"</u>
+						<u>Ao preencher o <fmt:message key="usuario.mesavirtual.codigo"/> do Protocolo, favor clicar na caixa em "Verificação"</u>
 					</p>
 				  </div>
 				</div>

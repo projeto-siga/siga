@@ -2477,7 +2477,11 @@ public class ExBL extends CpBL {
 				final Object[] aMovimentacao = set.toArray();
 				for (int i = 0; i < set.size(); i++) {
 					final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
-					if (!movimentacao.isCancelada()) {
+					if (!movimentacao.isCancelada()
+						&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
+						&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO
+						&& !(movimentacao.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA 
+							&& movimentacao.getExMobil().sofreuMov(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA))) {
 						Ex.getInstance().getBL().cancelar(cadastrante, lotaCadastrante, movimentacao.getExMobil(),
 								movimentacao, null, cadastrante, cadastrante, "");
 					}

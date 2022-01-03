@@ -932,6 +932,13 @@ LINHA  VARIÁVEL / CONTEÚDO
 						color: #000;
 						text-decoration: none;
 					}
+					p {
+					    display: block;
+					    margin-block-start: 0;
+					    margin-block-end: 0;
+					    margin-inline-start: 0px;
+					    margin-inline-end: 0px;
+					}
 					                    
                 </style>
             </head>
@@ -3120,16 +3127,16 @@ Pede deferimento.</span><br/><br/><br/>
                 <tr>
                     <td align="left">
                         <table align="left" width="100%" border="0" cellpadding="2" cellspacing="0" style="font-family: Arial">
-                            <tr><td>[@letra tamanho=tl]<p>${enderecamento_dest!}</p>[/@letra]</td></tr>
-                            <tr><td>[@letra tamanho=tl]<p>${nome_dest!}</p>[/@letra]</td></tr>
+                            <tr><td>[@letra tamanho=tl]${enderecamento_dest!}[/@letra]</td></tr>
+                            <tr><td>[@letra tamanho=tl]${nome_dest!}[/@letra]</td></tr>
                             [#if cargo_dest??]
-                                <tr><td>[@letra tamanho=tl]<p>${cargo_dest!}</p>[/@letra]</td></tr>
+                                <tr><td>[@letra tamanho=tl]${cargo_dest!}[/@letra]</td></tr>
                             [/#if]
                             [#if orgao_dest??]
-                                <tr><td>[@letra tamanho=tl]<p>${orgao_dest!}</p>[/@letra]</td></tr>
+                                <tr><td>[@letra tamanho=tl]${orgao_dest!}[/@letra]</td></tr>
                             [/#if]
                             [#if endereco_dest??]
-                                <tr><td>[@letra tamanho=tl]<p>[@fixcrlf var=endereco_dest! /]</p>[/@letra]</td></tr>
+                                <tr><td>[@letra tamanho=tl][@fixcrlf var=endereco_dest! /][/@letra]</td></tr>
                             [/#if]
                             [#if (doc.exClassificacao.descrClassificacao)??]
                                 <tr><td>[@letra tamanho=tl]<p><br/>Assunto: ${(doc.exClassificacao.descrClassificacao)!}</p>[/@letra]</td></tr>

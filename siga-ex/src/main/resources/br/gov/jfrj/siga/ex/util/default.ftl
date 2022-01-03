@@ -3119,7 +3119,7 @@ Pede deferimento.</span><br/><br/><br/>
             <table width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
                 <tr>
                     <td align="left">
-                        <table align="left" width="100%" border="0" cellpadding="2" cellspacing="0">
+                        <table align="left" width="100%" border="0" cellpadding="2" cellspacing="0" style="font-family: Arial">
                             <tr><td>[@letra tamanho=tl]<p>${enderecamento_dest!}</p>[/@letra]</td></tr>
                             <tr><td>[@letra tamanho=tl]<p>${nome_dest!}</p>[/@letra]</td></tr>
                             [#if cargo_dest??]

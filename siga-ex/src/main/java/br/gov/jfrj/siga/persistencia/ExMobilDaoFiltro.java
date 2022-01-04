@@ -129,7 +129,30 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 
 	private Integer ordem;
 
+	// requerente
 	private String nomeRequerente;
+	
+	private Long cpfRequerente;
+	
+	private Long cnpjRequerente;
+
+	private Long matriculaRequerente;
+	
+	private String tipoLogradouroRequerente;
+	
+	private String logradouroRequerente;
+	
+	private String numeroLogradouroRequerente;
+
+	private String complementoLogradouroRequerente;
+	
+	private String bairroRequerente;
+
+	private String cidadeRequerente;
+	
+	private String ufRequerente;
+	
+	private String cepRequerente;
 	
 	public Integer getOrdem() {
 		return ordem;
@@ -388,9 +411,97 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		return nomeRequerente;
 	}
 
-	 
 	public void setNomeRequerente(final String nomeRequerente) {
 		this.nomeRequerente = nomeRequerente;
+	}
+	
+	public Long getCpfRequerente() {
+		return cpfRequerente;
+	}
+
+	public void setCpfRequerente(Long cpfRequerente) {
+		this.cpfRequerente = cpfRequerente;
+	}
+
+	public Long getCnpjRequerente() {
+		return cnpjRequerente;
+	}
+
+	public void setCnpjRequerente(Long cnpjRequerente) {
+		this.cnpjRequerente = cnpjRequerente;
+	}
+
+	public Long getMatriculaRequerente() {
+		return matriculaRequerente;
+	}
+
+	public void setMatriculaRequerente(Long matriculaRequerente) {
+		this.matriculaRequerente = matriculaRequerente;
+	}
+	
+	public String getTipoLogradouroRequerente() {
+		return tipoLogradouroRequerente;
+	}
+
+	public void setTipoLogradouroRequerente(String tipoLogradouroRequerente) {
+		this.tipoLogradouroRequerente = tipoLogradouroRequerente;
+	}
+
+	public String getLogradouroRequerente() {
+		return logradouroRequerente;
+	}
+
+	public void setLogradouroRequerente(String logradouroRequerente) {
+		this.logradouroRequerente = logradouroRequerente;
+	}
+	
+	public String getNumeroLogradouroRequerente() {
+		return numeroLogradouroRequerente;
+	}
+
+	public void setNumeroLogradouroRequerente(String numeroLogradouroRequerente) {
+		this.numeroLogradouroRequerente = numeroLogradouroRequerente;
+	}
+
+	public String getComplementoLogradouroRequerente() {
+		return complementoLogradouroRequerente;
+	}
+
+	public void setComplementoLogradouroRequerente(String complementoLogradouroRequerente) {
+		this.complementoLogradouroRequerente = complementoLogradouroRequerente;
+	}
+
+
+	public String getBairroRequerente() {
+		return bairroRequerente;
+	}
+
+	public void setBairroRequerente(String bairroRequerente) {
+		this.bairroRequerente = bairroRequerente;
+	}
+
+	public String getCidadeRequerente() {
+		return cidadeRequerente;
+	}
+
+	public void setCidadeRequerente(String cidadeRequerente) {
+		this.cidadeRequerente = cidadeRequerente;
+	}
+
+	public String getUfRequerente() {
+		return ufRequerente;
+	}
+
+	public void setUfRequerente(String ufRequerente) {
+		this.ufRequerente = ufRequerente;
+	}
+
+	public String getCepRequerente() {
+		return cepRequerente;
+	}
+
+	public void setCepRequerente(String cepRequerente) {
+		this.cepRequerente = cepRequerente;
 	}
 	
 	public boolean buscarPorCamposMarca() {
@@ -426,8 +537,26 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 				|| (getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0)
 				|| (getAnoEmissao() != null && getAnoEmissao() != 0)
 				|| (getNumExpediente() != null && getNumExpediente() != 0)
-				|| (getNomeRequerente() != null && !getNomeRequerente().trim().equals(""));
+				|| (getNomeRequerente() != null && !getNomeRequerente().trim().equals(""))
+				|| (getCpfRequerente() != null && getCpfRequerente() != 0)	
+				|| (getCnpjRequerente() != null && getCnpjRequerente() != 0)	
+				|| (getMatriculaRequerente() != null && getMatriculaRequerente() != 0)
+				
+				|| (getTipoLogradouroRequerente() != null && !getTipoLogradouroRequerente().trim().equals(""))
+				|| (getLogradouroRequerente() != null && !getLogradouroRequerente().trim().equals(""))
+				
+				|| (getNumeroLogradouroRequerente() != null && !getNumeroLogradouroRequerente().trim().equals(""))
+				|| (getComplementoLogradouroRequerente() != null && !getComplementoLogradouroRequerente().trim().equals(""))
+
+				
+				|| (getBairroRequerente() != null && !getBairroRequerente().trim().equals(""))
+				||( getCidadeRequerente() != null && !getCidadeRequerente().trim().equals(""))
+				
+				
+				|| (getUfRequerente() != null && !getUfRequerente().trim().equals(""))	
+				|| (getCepRequerente() != null && !getCepRequerente().trim().equals(""));
 	}
+
 
 	
 }

@@ -120,6 +120,8 @@ public class ExDocumentoController extends ExController {
 	
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
 
+	private static final String MODELO_DOCUMENTO_EXTERNO = "Documento Externo";
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -652,10 +654,12 @@ public class ExDocumentoController extends ExController {
 
 		if (exDocumentoDTO.getTipoDocumento() != null
 				&& exDocumentoDTO.getTipoDocumento().equals("externo")) {
-			exDocumentoDTO.setIdMod(((ExModelo) dao()
-					.consultarAtivoPorIdInicial(ExModelo.class, 28L))
-					.getIdMod());
+			
+//			exDocumentoDTO.setIdMod(((ExModelo) dao().consultarAtivoPorIdInicial(ExModelo.class, 28L)).getIdMod());
+			exDocumentoDTO.setIdMod( 	obterModeloExternoFolhaRosto(exDocumentoDTO).getIdMod() );
+			
 		}
+		
 		carregarBeans(exDocumentoDTO, mobilPaiSel);
 
 		if (exDocumentoDTO.getMobilPaiSel().getId() != null) {
@@ -858,6 +862,17 @@ public class ExDocumentoController extends ExController {
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
+	}
+
+	private ExModelo obterModeloExternoFolhaRosto(ExDocumentoDTO exDocumentoDTO) {
+		
+		ExModelo modExterno = dao().consultarExModelo(null, MODELO_DOCUMENTO_EXTERNO);
+	
+		if (modExterno == null ){
+			throw new AplicacaoException("O modelo  " + MODELO_DOCUMENTO_EXTERNO + " não foi encontrado! ");
+		}
+		
+		return  modExterno;
 	}
 
 	private Object podeTrocarPdfCapturado(ExDocumentoDTO exDocumentoDTO) {

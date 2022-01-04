@@ -932,6 +932,13 @@ LINHA  VARIÁVEL / CONTEÚDO
 						color: #000;
 						text-decoration: none;
 					}
+					p {
+					    display: block;
+					    margin-block-start: 0;
+					    margin-block-end: 0;
+					    margin-inline-start: 0px;
+					    margin-inline-end: 0px;
+					}
 					                    
                 </style>
             </head>
@@ -2178,7 +2185,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=false tipo=""]
 	<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
 	    cellspacing="0" bgcolor="#FFFFFF">
 	    <tr bgcolor="#FFFFFF">
@@ -2206,7 +2213,11 @@ Pede deferimento.</span><br/><br/><br/>
 		                [#if mov??]
 		                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
 		                [#else]
-		                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                	[#if tipo=="DOCUMENTO EXTERNO"]
+		                  		${(doc.lotaCadastrante.orgaoUsuario.descricaoMaiusculas)!}
+		                  	 [#else]
+		                    	${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+		                    [/#if]
 		                [/#if]</p>
 		                </td>
 		            </tr>
@@ -2667,7 +2678,7 @@ Pede deferimento.</span><br/><br/><br/>
 
 [#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
-    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho tipo/]
     [/@primeiroCabecalho]
     [@cabecalho]
     [@cabecalhoCentralizado orgaoCabecalho/]
@@ -3115,17 +3126,17 @@ Pede deferimento.</span><br/><br/><br/>
             <table width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
                 <tr>
                     <td align="left">
-                        <table align="left" width="100%" border="0" cellpadding="2" cellspacing="0">
-                            <tr><td>[@letra tamanho=tl]<p>${enderecamento_dest!}</p>[/@letra]</td></tr>
-                            <tr><td>[@letra tamanho=tl]<p>${nome_dest!}</p>[/@letra]</td></tr>
+                        <table align="left" width="100%" border="0" cellpadding="2" cellspacing="0" style="font-family: Arial">
+                            <tr><td>[@letra tamanho=tl]${enderecamento_dest!}[/@letra]</td></tr>
+                            <tr><td>[@letra tamanho=tl]${nome_dest!}[/@letra]</td></tr>
                             [#if cargo_dest??]
-                                <tr><td>[@letra tamanho=tl]<p>${cargo_dest!}</p>[/@letra]</td></tr>
+                                <tr><td>[@letra tamanho=tl]${cargo_dest!}[/@letra]</td></tr>
                             [/#if]
                             [#if orgao_dest??]
-                                <tr><td>[@letra tamanho=tl]<p>${orgao_dest!}</p>[/@letra]</td></tr>
+                                <tr><td>[@letra tamanho=tl]${orgao_dest!}[/@letra]</td></tr>
                             [/#if]
                             [#if endereco_dest??]
-                                <tr><td>[@letra tamanho=tl]<p>[@fixcrlf var=endereco_dest! /]</p>[/@letra]</td></tr>
+                                <tr><td>[@letra tamanho=tl][@fixcrlf var=endereco_dest! /][/@letra]</td></tr>
                             [/#if]
                             [#if (doc.exClassificacao.descrClassificacao)??]
                                 <tr><td>[@letra tamanho=tl]<p><br/>Assunto: ${(doc.exClassificacao.descrClassificacao)!}</p>[/@letra]</td></tr>
@@ -3253,14 +3264,17 @@ Pede deferimento.</span><br/><br/><br/>
 	          ${doc.numExtDoc!}
 	        </td>
 	      </tr>
-	      <tr>
-	        <td>
-	          Número no Sistema Antigo:
-	        </td>
-	        <td>
-	          ${doc.numAntigoDoc!}
-	        </td>
-	      </tr>
+	       [#if (doc.numAntigoDoc)! != '']
+	        <tr>
+	          <td>
+	            Número no Sistema Antigo:
+	          </td>
+	          <td>
+	            ${(doc.numAntigoDoc)!}
+	          </td>
+	        </tr>
+	      [/#if]
+	      
 	      <tr>
 	        <td>
 	          Forma:
@@ -4590,16 +4604,19 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
-[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false]
+[#macro cabecalhoBrasaoEsquerdaEspecial _widthBrasao="65" _heightBrasao="65" exibirOrgao=false org1="" org2=""]
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" >
 	<tr>
-		<td width="12%" align="right" valign="bottom"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
+		<td  valign="middle" width="12%" height="65" align="right"><img src="${_pathBrasao}" width="${_widthBrasao}" height="${_heightBrasao}" /></td>
 		<td width="2%">&nbsp;</td>
-		<td align="left" nowrap >
+		<td valign="middle" align="left" nowrap >
 		${_tituloGeralParteI}<br>
 		${_tituloGeralParteII}<br>		
-		[#if org??][#-- tratando null  --]  
-		  ${org}
+		[#if org1??][#-- tratando null  --]  
+		  ${org1}
+		[/#if]<br>
+		[#if org2??][#-- tratando null  --]  
+		  ${org2}
 		[/#if]
 	  </td>
   </tr>

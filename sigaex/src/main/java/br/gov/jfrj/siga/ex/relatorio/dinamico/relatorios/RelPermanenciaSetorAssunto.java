@@ -63,7 +63,7 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		
 		this.addColuna("Dt.Movimento", 15, RelatorioRapido.ESQUERDA, false); 	// DATA DESPACHO
 		
-		this.addColuna("Despacho", 25, RelatorioRapido.ESQUERDA, false); 		// COD. DESPACHO + DESCR.  DESPACHO
+		this.addColuna("Movimento", 25, RelatorioRapido.ESQUERDA, false); 		// COD. DESPACHO + DESCR.  DESPACHO
 		
 		this.addColuna("Assunto", 30, RelatorioRapido.ESQUERDA, true); 			// COD.  ASSUNTO +  DESCR.  ASSUNTO,
 		

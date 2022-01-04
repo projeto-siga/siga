@@ -631,7 +631,7 @@
 					<div class="form-row">
 						<div class="form-group col-md-3" id="trNumOrigDoc"
 							style="display:${idTpDoc == 2 || idTpDoc == 3 ? '' : 'none'}">
-							<label for="numExtDoc">Nº Original do Documento</label> <input
+							<label for="numExtDoc">Número Original</label> <input
 								class="form-control" type="text" name="numExtDoc" size="16"
 								id="numExtDoc" value="${numExtDoc}" />
 						</div>
@@ -643,7 +643,7 @@
 								titulo="Órgão Externo" tema="simple" />
 						</div>
 
-						<div class="form-group col-md-3" id="trNumDocSistAntigo"
+						<div class="form-group col-md-3 d-none" id="trNumDocSistAntigo"
 							style="display:${idTpDoc == 3 ? '' : 'none'}">
 							<label for="numAntigoDoc">Nº do Documento no Sistema
 								Antigo</label> <input class="form-control" type="text"
@@ -793,20 +793,89 @@
 					</div>
 					
 			 
-					
-					
+					 <fieldset>
+    				<legend>Interessado:</legend>
+					 
 				 
 					<div class="form-row">
 
 						<div class="form-group col-md-3">
-							<label for="nomeRequerente">Nome interessado</label> 
+							<label for="cpfRequerente">CPF </label> 
+									<input type="text"	id="cpfRequerente" name="cpfRequerente"
+											value="${cpfRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+						<div class="form-group col-md-3">
+							<label for="cnpjRequerente">CNPJ </label> 
+									<input type="text"	id="cnpjRequerente" name="cnpjRequerente"
+											value="${cnpjRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+							<div class="form-group col-md-2">
+							<label for="matriculaRequerente">Matrícula </label> 
+									<input type="text"	id="matriculaRequerente" name="matriculaRequerente"
+											value="${matriculaRequerente}" class="form-control" maxlength="125"   >
+						</div>
+					
+					</div>
+					
+					<div class="form-row">
+
+						<div class="form-group col-md-6">
+							<label for="nomeRequerente">Nome </label> 
 									<input type="text"	id="nomeRequerente" name="nomeRequerente"
 											value="${nomeRequerente}" class="form-control" maxlength="125"   >
 						</div>
+						
+					 </div>
+					
+					<div class="form-row">
+					
+						<div class=" form-group col-sm-2">
+							<label for="tipoLogradouroRequerente">Tipo Logradouro</label>
+							<input type="text" id="tipoLogradouroRequerente" name="tipoLogradouroRequerente" value="${tipoLogradouroRequerente}" class="form-control"  maxlength="30" >
+						</div>
+							
+						<div class="form-group col-sm-6">
+							<label for="logradouroRequerente">Logradouro </label> 
+							<input type="text"	id="logradouroRequerente" name="logradouroRequerente"	value="${logradouroRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+						<div class="form-group col-sm-2">
+							<label for="numeroLogradouroRequerente">Número</label>
+							<input type="text" id="numeroLogradouroRequerente" name="numeroLogradouroRequerente" value="${numeroLogradouroRequerente}" class="form-control">
+						</div>
+						
+						<div class="form-group col-sm-2">
+							<label for="complementoLogradouroRequerente">Complemento</label>
+							<input type="text"	id="complementoLogradouroRequerente"  name="complementoLogradouroRequerente"  value="${complementoLogradouroRequerente}" class="form-control">
+						</div>
+							
+					</div>
+							
+							
+						
+					<div class="form-row">		
+						<div class="form-group col-ms-4">
+							<label for="bairroRequerente">Bairro </label> 
+							<input type="text"	id="bairroRequerente" name="bairroRequerente"	value="${bairroRequerente}" class="form-control" maxlength="125"   >
+						</div>
+						
+						<div class="form-group col-sm-5">
+							<label for="cidadeRequerente">Cidade</label>
+							<input type="text" 	id="cidadeRequerente" name="cidadeRequerente" value="${cidadeRequerente}" class="form-control" maxlength="125">
+						</div>
+                        <div class="form-group col-sm-1">
+							<label for="ufRequerente">UF</label>
+							<input type="text" 	id="ufRequerente" name="ufRequerente" value="${ufRequerente}" class="form-control" maxlength="2">
+						</div>
+						<div class="form-group col-sm-2">
+							<label for="cepRequerente">CEP</label>
+							<input type="text" 	id="cepRequerente" name="cepRequerente"  value="${cepRequerente}" class="form-control"   maxlength="8" >
+						</div>
 					</div>
 					
-					
-					
+					</fieldset>
 					
 					<button id="btnBuscar" type="button" value="Buscar" class="btn btn-primary" onclick="submitBusca('${siga_cliente}')">
 						<span id="buscandoSpinner" class="spinner-border d-none" role="status"></span> Buscar

@@ -202,11 +202,11 @@
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="form-group">
-							<label for="exDocumentoDTO.numExtDoc">Nº original</label>
+							<label for="exDocumentoDTO.numExtDoc">Número Original</label>
 							<input type="text" name="exDocumentoDTO.numExtDoc" size="16" maxLength="32" value="${exDocumentoDTO.numExtDoc}" class="form-control"/>
 						</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-4 d-none">
 						<div class="form-group">
 							<label for="exDocumentoDTO.numAntigoDoc">Nº antigo</label>
 							<input type="text" name="exDocumentoDTO.numAntigoDoc" size="16" maxLength="32" value="${exDocumentoDTO.numAntigoDoc}" class="form-control" />
@@ -664,7 +664,7 @@
 						</div>
 					</div>
 					<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
-						<div class="col-sm-2">
+						<div class="col-sm-2  d-none">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="numAntigoDoc" />
 								<label>Nº antigo</label>

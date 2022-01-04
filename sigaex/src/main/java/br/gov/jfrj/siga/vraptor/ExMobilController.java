@@ -140,9 +140,18 @@ public class ExMobilController extends
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText, final Long ultMovEstadoDoc,
-			final Integer offset, final String nomeRequerente) {
+			final Integer offset, 
+			final String nomeRequerente,final Long cpfRequerente,final Long cnpjRequerente,
+			final Long matriculaRequerente,final String bairroRequerente,final String cidadeRequerente, final String logradouroRequerente,
+			final String tipoLogradouroRequerente, final String numeroLogradouroRequerente, final String complementoLogradouroRequerente,
+			final String ufRequerente, final String cepRequerente
+			) {
+		
 		assertAcesso("");
 		
+		if (Prop.getBool("atualiza.anotacao.pesquisa"))
+			SigaTransacionalInterceptor.upgradeParaTransacional();
+
 		getP().setOffset(offset);
 		this.setSigla(sigla);
 		this.setPostback(postback);
@@ -233,7 +242,25 @@ public class ExMobilController extends
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);	
 		
+
+		// interessado
 		result.include("nomeRequerente", nomeRequerente);
+		result.include("cpfRequerente", cpfRequerente);
+		result.include("cnpjRequerente", cnpjRequerente);
+		result.include("matriculaRequerente", matriculaRequerente);
+		
+		result.include("tipoLogradouroRequerente", tipoLogradouroRequerente);
+		result.include("logradouroRequerente", logradouroRequerente);
+		result.include("numeroLogradouroRequerente", numeroLogradouroRequerente);
+		result.include("complementoLogradouroRequerente", complementoLogradouroRequerente);
+		
+		result.include("bairroRequerente", bairroRequerente);
+		result.include("cidadeRequerente", cidadeRequerente);
+		
+		result.include("ufRequerente", ufRequerente);
+		result.include("cepRequerente", cepRequerente);
+
+
 	}
 
 	private List<ExTipoDocumento> getTiposDocumentoParaConsulta() {
@@ -260,7 +287,14 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset, final String nomeRequerente) throws UnsupportedEncodingException {
+			final Long ultMovEstadoDoc, final Integer paramoffset, 
+			final String nomeRequerente, final Long cpfRequerente,final Long cnpjRequerente,
+			final Long matriculaRequerente,final String bairroRequerente,final String cidadeRequerente,
+			final String logradouroRequerente,
+			final String tipoLogradouroRequerente, final String numeroLogradouroRequerente, final String complementoLogradouroRequerente,
+			final String ufRequerente, final String cepRequerente
+			
+			) throws UnsupportedEncodingException {
 			
 		
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -416,7 +450,15 @@ public class ExMobilController extends
 
 		} catch (final RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
-			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset,nomeRequerente);
+			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh,
+					ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString,
+					dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel,
+					nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel,
+					nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset,
+					nomeRequerente,  cpfRequerente, cnpjRequerente,		 matriculaRequerente,  bairroRequerente,  cidadeRequerente,
+					  logradouroRequerente,	
+					   tipoLogradouroRequerente,   numeroLogradouroRequerente,   complementoLogradouroRequerente,	  ufRequerente,   cepRequerente
+					);
 		}
 		return null;	
 	}
@@ -430,7 +472,14 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset, final String nomeRequerente) {
+			final Long ultMovEstadoDoc, final Integer paramoffset,
+			final String nomeRequerente, final Long cpfRequerente,final Long cnpjRequerente,
+			final Long matriculaRequerente,final String bairroRequerente,final String cidadeRequerente,
+			final String logradouroRequerente,	
+			final String tipoLogradouroRequerente, final String numeroLogradouroRequerente, final String complementoLogradouroRequerente,
+			final String ufRequerente, final String cepRequerente
+			
+			) {
 		assertAcesso("");
 
 		getP().setOffset(paramoffset);
@@ -520,7 +569,20 @@ public class ExMobilController extends
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);		
 		
+		
+		// interessado
 		result.include("nomeRequerente", nomeRequerente);
+		result.include("cpfRequerente", cpfRequerente);
+		result.include("cnpjRequerente", cnpjRequerente);
+		result.include("matriculaRequerente", matriculaRequerente);
+		result.include("tipoLogradouroRequerente", tipoLogradouroRequerente);
+		result.include("logradouroRequerente", logradouroRequerente);
+		result.include("numeroLogradouroRequerente", numeroLogradouroRequerente);
+		result.include("complementoLogradouroRequerente", complementoLogradouroRequerente);
+		result.include("bairroRequerente", bairroRequerente);
+		result.include("cidadeRequerente", cidadeRequerente);
+		result.include("ufRequerente", ufRequerente);
+		result.include("cepRequerente", cepRequerente);
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();
@@ -760,7 +822,21 @@ public class ExMobilController extends
 		flt.setIdMod(paramLong("idMod"));
 		flt.setOrdem(paramInteger("ordem"));
 
+		// interessado
 		flt.setNomeRequerente(param("nomeRequerente"));
+		flt.setCpfRequerente(paramLong("cpfRequerente"));
+		flt.setCnpjRequerente(paramLong("cnpjRequerente"));
+		flt.setMatriculaRequerente(paramLong("matriculaRequerente"));
+		flt.setTipoLogradouroRequerente(param("tipoLogradouroRequerente"));
+		flt.setLogradouroRequerente(param("logradouroRequerente"));
+		flt.setNumeroLogradouroRequerente(param("numeroLogradouroRequerente"));
+		flt.setComplementoLogradouroRequerente(param("complementoLogradouroRequerente"));
+		flt.setBairroRequerente(param("bairroRequerente"));
+		flt.setCidadeRequerente(param("cidadeRequerente"));
+		flt.setUfRequerente(param("ufRequerente"));
+		flt.setCepRequerente(param("cepRequerente"));
+
+		
 		return flt;
 	}
 

@@ -8064,12 +8064,12 @@ public class ExBL extends CpBL {
 		ExDocumento formulario = obterFormularioSiafem(exDoc);
 		
 		if(formulario == null)
-			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + "\" antes de tramitar.");
+			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + ".");
 		
 		String descricao = formulario.getDescrDocumento();
 		SiafDoc doc = new SiafDoc(descricao.split(";"));
 		
-		doc.setProcesso(obterCodigoUnico(formulario, false));
+		doc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
 		
 		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
 	}

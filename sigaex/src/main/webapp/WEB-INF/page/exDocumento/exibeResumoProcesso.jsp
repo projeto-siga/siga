@@ -68,7 +68,7 @@
 									request.setAttribute("mov", (ExMovimentacao) arq);
 						%>
 						<c:if
-							test="${mov.exTipoMovimentacao.id == 2 && !empty mov.descrMov}">
+							test="${mov.exTipoMovimentacao == 'ANEXACAO' && !empty mov.descrMov}">
 							<tr>
 								<td><a
 									href="javascript:exibir('./${arqNumerado.referenciaPDF}')">${arqNumerado.nome}</a>

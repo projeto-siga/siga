@@ -445,22 +445,12 @@
 					</c:forEach>
 				</div></li>
 		</c:if>
-
-		<li><c:choose>
-				<c:when test="${f:resource('/siga.local') eq 'GOVSP'}">
-					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;MA:Manual')}">
-							<a class="dropdown-item" id="apostilaSiga"
-								href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf"
-								target="_blank">Manual</a>
-					</c:if>
-				</c:when>
-				<c:otherwise>
-					<a class="dropdown-item" id="apostilaSiga"
-						href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila
-						SIGA-Doc</a>
-
-				</c:otherwise>
-			</c:choose></li>
+				
+		<c:if test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;MANUAL:Não exibir Manual de Operações')}">
+			<li>
+				<a class="dropdown-item" id="apostilaSiga" href="${f:resource('/siga.manual.url')}" target="_blank">Manual</a>
+			</li>
+		</c:if>
 
 		<li><a class="dropdown-item" href="/siga/public/app/logout">Logoff</a></li>
 	</ul></li>

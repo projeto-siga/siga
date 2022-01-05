@@ -272,5 +272,10 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 		
+		/* Indica onde está armazenado o Manual de Operações do SIGA
+		 * */
+		provider.addPublicProperty("/siga.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
+		
+		
 	}
 }

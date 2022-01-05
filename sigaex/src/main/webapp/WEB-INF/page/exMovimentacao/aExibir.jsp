@@ -44,13 +44,13 @@
 		value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=true">
 	</c:url>
 	<c:choose>
-		<c:when test="${mov.exTipoMovimentacao == ANEXACAO}">
+		<c:when test="${mov.exTipoMovimentacao == 'ANEXACAO'}">
 			<c:set var="msgScript" value="anexo" />
 		</c:when>
-		<c:when test="${mov.exTipoMovimentacao == CANCELAMENTO_JUNTADA}">
+		<c:when test="${mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA'}">
 			<c:set var="msgScript" value="desentranhamento" />
 		</c:when>
-		<c:when test="${mov.exTipoMovimentacao == CANCELAMENTO_DE_MOVIMENTACAO}">
+		<c:when test="${mov.exTipoMovimentacao == 'CANCELAMENTO_DE_MOVIMENTACAO'}">
 			<c:set var="msgScript" value="cancelamento" />
 		</c:when>
 		<c:otherwise>
@@ -84,17 +84,17 @@
 												var="exibemovvariante" scope="request" value="" /> <c:if
 												test='${empty mov.exMovimentacaoCanceladora}'>
 												<c:if test="${(doc.idDoc == mov.exDocumento.idDoc)}">
-													<c:if test='${mov.exTipoMovimentacao == ANEXACAO}'>
+													<c:if test="${mov.exTipoMovimentacao == 'ANEXACAO'}">
 														<c:set var="exibemov" scope="request" value="anexacao" />
 													</c:if>
 												</c:if>
-												<c:if test='${mov.exTipoMovimentacao == JUNTADA}'>
+												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA'}">
 													<c:set var="exibemov" scope="request" value="juntada" />
 												</c:if>
-												<c:if test='${mov.exTipoMovimentacao == COPIA}'>
+												<c:if test="${mov.exTipoMovimentacao == 'COPIA'}">
 													<c:set var="exibemov" scope="request" value="copia" />
 												</c:if>
-												<c:if test='${mov.exTipoMovimentacao == REFERENCIA}'>
+												<c:if test="${mov.exTipoMovimentacao == 'REFERENCIA'}">
 													<c:set var="exibemov" scope="request" value="vinculo" />
 													<c:if test="${mov.exDocumento.idDoc == doc.idDoc}">
 														<c:set var="exibemovvariante" scope="request"
@@ -103,17 +103,17 @@
 												</c:if>
 												<c:if test="${(doc.idDoc == mov.exDocumento.idDoc)}">
 													<c:if
-														test='${(mov.exTipoMovimentacao == DESPACHO) || (mov.exTipoMovimentacao == DESPACHO_TRANSFERENCIA) || (mov.exTipoMovimentacao == DESPACHO_TRANSFERENCIA_EXTERNA)}'>
+														test="${(mov.exTipoMovimentacao == 'DESPACHO') || (mov.exTipoMovimentacao == 'DESPACHO_TRANSFERENCIA') || (mov.exTipoMovimentacao == 'DESPACHO_TRANSFERENCIA_EXTERNA')}">
 														<c:set var="exibemov" scope="request" value="despacho" />
 													</c:if>
-													<c:if test='${(mov.exTipoMovimentacao == CANCELAMENTO_JUNTADA)}'>
+													<c:if test="${(mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA')}">
 														<c:set var="exibemov" scope="request"
 															value="desentranhamento" />
 													</c:if>
-													<c:if test='${(mov.exTipoMovimentacao == ENCERRAMENTO_DE_VOLUME)}'>
+													<c:if test="${(mov.exTipoMovimentacao == 'ENCERRAMENTO_DE_VOLUME')}">
 														<c:set var="exibemov" scope="request" value="encerramento" />
 													</c:if>
-													<c:if test='${(mov.exTipoMovimentacao == CANCELAMENTO_DE_MOVIMENTACAO)}'>
+													<c:if test="${(mov.exTipoMovimentacao == 'CANCELAMENTO_DE_MOVIMENTACAO')}">
 														<c:set var="exibemov" scope="request" value="cancelamento" />
 													</c:if>
 												</c:if>
@@ -222,7 +222,7 @@
 								<i class="fa fa-print"></i> ${doc.codigo}
 							</button>
 						</c:if>
-						<c:if test="${mov.exTipoMovimentacao != ANEXACAO}">
+						<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 							<button type="button" class="btn btn-info"
 								onclick="javascript:visualizarImpressao();">
 								<i class="fa fa-print"></i> Visualizar
@@ -269,8 +269,8 @@
 		</form>
 		
 		<c:choose>
-		    <c:when test="${siga_cliente == 'GOVSP' && mov.exTipoMovimentacao == CANCELAMENTO_JUNTADA && mov.isAssinada()}">
-		        <span style="display:none">Termo de desentranhamento é assinado uma única vez para usuários de SP</span>	        
+		    <c:when test="${siga_cliente == 'GOVSP' && mov.isAssinada()}">
+		        <span style="display:none">Os termos (Encerramento de Volume, Desentranhamento...) são assinados uma única vez para usuários de SP.</span>	        
 		    </c:when>    
 		    <c:otherwise>
 		    	<div class="card">
@@ -295,7 +295,7 @@
 		
 							<c:if test="${not autenticando}">
 								<c:choose>
-									<c:when test="${mov.exTipoMovimentacao == ANEXACAO}">
+									<c:when test="${mov.exTipoMovimentacao == 'ANEXACAO'}">
 										<c:set var="botao" value="ambos" />
 									</c:when>
 									<c:otherwise>
@@ -319,7 +319,7 @@
 						<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
 						
 						<tags:assinatura_botoes assinar="true"
-							autenticar="${mov.exTipoMovimentacao == ANEXACAO}"
+							autenticar="${mov.exTipoMovimentacao == 'ANEXACAO'}"
 							
 								assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
 							    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			

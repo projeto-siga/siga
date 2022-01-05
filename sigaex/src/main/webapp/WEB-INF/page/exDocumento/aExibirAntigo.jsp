@@ -64,7 +64,6 @@
 				 </c:if>
 			</h3>
 			<c:set var="ocultarCodigo" value="${true}" />
-			<c:set var="exibirExplicacao" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
 			<c:if test='${popup!="true"}'>
 				<c:set var="acoes" value="${m.acoesOrdenadasPorNome}" />
 				<siga:links>
@@ -75,7 +74,7 @@
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 								classe="${acao.classe}" estilo="line-height: 160% !important"
 								atalho="${true}" modal="${acao.modal}" descr="${acao.descr}" 
-								explicacao="${exibirExplicacao ? acao.explicacao : null}"
+								explicacao="${acao.explicacao}"
 								post="${acao.post}" test="${acao.pode}" />
 					</c:forEach>
 					<c:if test="${exibirExplicacao}">
@@ -97,7 +96,7 @@
 			<c:set var="dtUlt" value="" />
 			<c:set var="temmov" value="${false}" />
 			<c:forEach var="mov" items="${m.movs}">
-				<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
+				<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
 					<c:set var="temmov" value="${true}" />
 				</c:if>
 			</c:forEach>
@@ -154,7 +153,7 @@
 						</thead>
 						<c:set var="evenorodd" value="odd" />
 						<c:forEach var="mov" items="${m.movs}">
-							<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
+							<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
 								<tr class="${mov.classe} ${mov.disabled}">
 									<c:if test="${ (exibirCompleto == 'true')}">
 										<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
@@ -211,7 +210,7 @@
 									</td>
 									<td>
 										${mov.descricao}
-										<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'>
+										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
 										</c:if>
 										<c:set var="assinadopor" value="${true}" />
@@ -223,7 +222,7 @@
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
 													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" 
 													explicacao="${acao.explicacao}"	test="${acao.pode}" />
-												<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'>
+												<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}">
 													${mov.complemento}
 													<c:set var="assinadopor" value="${false}" />
 												</c:if>

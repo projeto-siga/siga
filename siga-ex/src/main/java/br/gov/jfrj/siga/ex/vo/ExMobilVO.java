@@ -418,7 +418,7 @@ public class ExMobilVO extends ExVO {
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeNotificar(mob, titular, lotaTitular)).build());
 		
 		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add")
-				.descr("Inserire uma pequena observação ao documento. A anotação será exibida nas movimentações do documento, podendo ser excluída a qualquer tempo pela pessoa que a criou.")
+				.descr("Insere uma pequena observação ao documento. A anotação será exibida nas movimentações do documento, podendo ser excluída a qualquer tempo pela pessoa que a criou.")
 				.modal("anotacaoObservacaoModal").params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		
 		addAcao(AcaoVO.builder().nome("Definir " + SigaMessages.getMessage("documento.marca")).icone("folder_star").modal("definirMarcaModal")

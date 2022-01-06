@@ -65,7 +65,8 @@
 			title="${titleImg}">
 	</c:set>
 </c:if>
-<c:if test="${not empty explicacao or not empty descr}">
+
+<c:if test="${exibirExplicacao and (not empty explicacao or not empty descr)}">
 	<c:set var="tooltip">
 		<b>${title}</b>
 		<c:if test="${not empty descr}">

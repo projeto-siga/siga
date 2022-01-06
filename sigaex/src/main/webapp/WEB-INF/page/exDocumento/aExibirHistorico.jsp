@@ -137,7 +137,7 @@
 									</td>
 									<td> 
 										${mov.descricao}
-										<c:if test='${mov.exTipoMovimentacao != ANEXACAO}'>
+										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
 										</c:if>
 										<c:set var="assinadopor" value="${true}" />
@@ -145,10 +145,10 @@
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
-													url="${pageContext.request.contextPath}${acao.url}" test="${true}" popup="${acao.popup}" 
+													url="${pageContext.request.contextPath}${acao.url}" test="${acao.pode}" popup="${acao.popup}" 
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
 													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}"/>
-												<c:if test='${assinadopor and mov.exTipoMovimentacao == ANEXACAO}'>
+												<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}">
 													${mov.complemento}
 													<c:set var="assinadopor" value="${false}" />
 												</c:if>

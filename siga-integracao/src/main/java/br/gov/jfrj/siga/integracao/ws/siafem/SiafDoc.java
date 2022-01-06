@@ -15,24 +15,14 @@ public class SiafDoc {
 	private String convenio;
 	private String finalidade;
 	private String processo;
+	private String codUnico;
+	private String codSemPapel;
+	private String desdobramento;
 	
-	// processo = código único
-	public SiafDoc(String unidadeGestora, String gestao, String objetoProcesso, String tipoLicitacao, String id,
-			String ata, String convenio, String finalidade) {
-		this.unidadeGestora = unidadeGestora;
-		this.gestao = gestao;
-		this.objetoProcesso = objetoProcesso;
-		this.tipoLicitacao = tipoLicitacao;
-		this.id = id;
-		this.ata = ata;
-		this.convenio = convenio;
-		this.finalidade = finalidade;
-	}
-
 	public SiafDoc(String[] dados) {
 		try {
 			int i = 0;
-			this.processo = dados[i++].trim();
+			this.codUnico = dados[i++].trim().replace("-", "");
 			this.unidadeGestora = "00000" + (dados[i++].trim().split(" ")[0]);
 			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
 			this.gestao = dados[i++].trim();
@@ -42,36 +32,38 @@ public class SiafDoc {
 			this.ata = dados[i++].trim().matches("[1Ss]") ? "S" : "N";
 			this.convenio = dados[i++].trim().matches("[1Ss]") ? "S" : "N";
 			this.finalidade = URLDecoder.decode(dados[i++].trim(), "UTF-8");
+			this.processo = dados[i++].trim();
+			this.desdobramento = dados[i++].trim();
 		} catch (UnsupportedEncodingException e) {
 			throw new AplicacaoException("Falha ao realizar a leitura da entrevista: " + e.getMessage());
 		}
 	}
 
-	public void setProcesso(String processo) {
-		this.processo = processo;
+	public void setCodUnico(String codUnico) {
+		this.codUnico = codUnico;
+	}
+	
+	public void setCodSemPapel(String codSemPapel) {
+		this.codSemPapel = codSemPapel;
 	}
 
 	public String getSiafDoc() {
-		String[] parametros = new String[] { unidadeGestora, gestao, processo, objetoProcesso, tipoLicitacao, id, ata, convenio, finalidade };
+		String[] parametros = new String[] { unidadeGestora, gestao, processo, desdobramento, codUnico, codSemPapel, objetoProcesso, tipoLicitacao, id, ata, convenio, finalidade };
 
-		StringBuilder xml = new StringBuilder();
-		if (id == null || id.isEmpty())
-			xml.append(SIAFDOC.replace("<ID/>", "<ID/>"));
-		else
-			xml.append(SIAFDOC.replace("<ID/>", "<ID>?6</ID>"));
+		String xml = SIAFDOC;
+		if (id != null && !id.isEmpty())
+			xml = xml.replace("<ID/>", "<ID>?9</ID>");
+		if (processo != null && !processo.isEmpty())
+			xml = xml.replace("<Processo/>", "<Processo>?3</Processo>");
+		if (desdobramento != null && !desdobramento.isEmpty())
+			xml = xml.replace("<Desdobramento/>", "<Desdobramento>?4</Desdobramento>");
 
 		for (int i = 0; i < parametros.length; i++) {
-			incluirParametro(xml, "?" + (i + 1), parametros[i]);
+			if(parametros[i] != null)
+				xml = xml.replaceFirst("\\?" + (i+1), parametros[i]);
 		}
 
 		return xml.toString();
-	}
-
-	private void incluirParametro(StringBuilder xml, String posicao, String parametro) {
-		int index = xml.indexOf(posicao);
-
-		if (index >= 0)
-			xml.replace(index, index + posicao.length(), parametro);
 	}
 
 	private String SIAFDOC = "<SIAFDOC>\n" +
@@ -80,14 +72,16 @@ public class SiafDoc {
 			"	  <documento>\n" +
 			"		 <UG>?1</UG>\n" +
 			"		 <Gestao>?2</Gestao>\n" +
-			"		 <Processo>?3</Processo>\n" +
+			"		 <Processo/>\n" +
 			"		 <Desdobramento/>\n" +
-			"		 <Objeto>?4</Objeto>\n" +
-			"		 <TipoLicitacao>?5</TipoLicitacao>\n" +
+			"		 <CodUnico>?5</CodUnico>\n" +
+			"		 <CodSemPapel>?6</CodSemPapel>\n" +
+			"		 <Objeto>?7</Objeto>\n" +
+			"		 <TipoLicitacao>?8</TipoLicitacao>\n" +
 			"		 <ID/>\n" +
 			"		 <DigitoID/>\n" +
-			"		 <ATA>?7</ATA>\n" +
-			"		 <Convenio>?8</Convenio>\n" +
+			"		 <ATA>?10</ATA>\n" +
+			"		 <Convenio>?11</Convenio>\n" +
 			"		 <FlagPresencial/>\n" +
 			"		 <FlagEletronico>X</FlagEletronico>\n" +
 			"		 <ObjetoConvenio/>\n" +
@@ -110,14 +104,10 @@ public class SiafDoc {
 			"	  <finalidade>\n" +
 			"		 <Repeticao>\n" +
 			"			<desc ID=\"1\">\n" +
-			"			   <Finalidade>?9</Finalidade>\n" +
+			"			   <Finalidade>?12</Finalidade>\n" +
 			"			</desc>\n" +
 			"		 </Repeticao>\n" +
 			"	  </finalidade>\n" +
 			"	</SiafemDocProcesso>\n" +
 			"</SIAFDOC>";
-
-	public String getProcesso() {
-		return processo;
-	}
 }

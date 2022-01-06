@@ -3391,18 +3391,27 @@ public class ExBL extends CpBL {
 	}
 
 	public static String anotacaoConfidencial(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		if (mob.isGeral())
+			return "";
+		
 		if (mostraDescricaoConfidencial(mob.doc(), titular, lotaTitular))
 			return "CONFIDENCIAL";
+				
 		String s = mob.getDnmUltimaAnotacao();
 		if (s != null)
 			return s;
-		s = atualizarDnmAnotacao(mob);
+		
+		//Trata mobiles sem última anotação registrada. Passivo anterior a 24/07/2014
+		if (Prop.getBool("atualiza.anotacao.pesquisa"))
+			s = atualizarDnmAnotacao(mob);
+		
 		return s;
 	}
 
 	private static String atualizarDnmAnotacao(ExMobil mob) {
 		String s;
 		s = "";
+		
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;
@@ -8055,12 +8064,12 @@ public class ExBL extends CpBL {
 		ExDocumento formulario = obterFormularioSiafem(exDoc);
 		
 		if(formulario == null)
-			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + "\" antes de tramitar.");
+			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + ".");
 		
 		String descricao = formulario.getDescrDocumento();
 		SiafDoc doc = new SiafDoc(descricao.split(";"));
 		
-		doc.setProcesso(obterCodigoUnico(formulario, false));
+		doc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
 		
 		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
 	}

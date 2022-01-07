@@ -1795,10 +1795,17 @@ public class ExDocumentoController extends ExController {
 
 				Integer numPaginas = d.getContarNumeroDePaginas();
 				if (numPaginas == null || d.getArquivoComStamp() == null) {
-					throw new AplicacaoException(
-							MessageFormat
-									.format("O arquivo {0} está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar.",
-											arquivo.getFileName()));
+					result.include(SigaModal.ALERTA, SigaModal.mensagem("O arquivo " + arquivo.getFileName() + " está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar."));
+					result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+							exDocumentoDTO.getMobilPaiSel(),
+							exDocumentoDTO.isCriandoAnexo(),
+							exDocumentoDTO.getAutuando(),
+							exDocumentoDTO.getIdMobilAutuado(),
+							exDocumentoDTO.getCriandoSubprocesso(),
+							null, null, null, null);
+
+					return;
+
 				}
 
 				// if (numPaginas != null && numBytes != null &&

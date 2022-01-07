@@ -43,8 +43,7 @@
 				</div>
 				<div class="col col-12 col-sm-4 col-md-auto mb-2">
 					<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-						<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
-					</a>
+						<i class="fas fa-search mr-1"></i>Pesquisar</a>
 				</div>
 			</c:if>
 			<div class="col col-12 col-sm-4 col-md-auto" v-if="carregando || (!errormsg &amp;&amp; filtrados.length >= 0)">

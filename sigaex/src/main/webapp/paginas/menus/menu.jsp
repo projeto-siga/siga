@@ -16,7 +16,7 @@
 				href="/sigaex/app/expediente/doc/editar">Novo</a></li>
 			<c:if test="${!ehPublicoExterno && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
                 <li><a class="dropdown-item"
-                    href="/sigaex/app/expediente/doc/listar?primeiraVez=sim"><fmt:message key="documento.pesquisar"/></a></li>
+                    href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
             </c:if>
 			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
 					Virtual </a></li>

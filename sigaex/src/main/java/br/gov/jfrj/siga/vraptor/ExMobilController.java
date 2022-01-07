@@ -142,6 +142,9 @@ public class ExMobilController extends
 		assertAcesso("");
 		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 		
+		if (Prop.getBool("atualiza.anotacao.pesquisa"))
+			SigaTransacionalInterceptor.upgradeParaTransacional();
+		
 		getP().setOffset(paramoffset);
 		this.setSigla(sigla);
 		this.setPostback(postback);
@@ -463,7 +466,11 @@ public class ExMobilController extends
 		if (getCadastrante().isUsuarioExterno()) {
 			throw new RegraNegocioException("Pesquisa indisponível para Usuários Externos.");
 		}
-		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
+		
+		if (Prop.getBool("atualiza.anotacao.pesquisa"))
+			SigaTransacionalInterceptor.upgradeParaTransacional();
+
+    Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 		
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);

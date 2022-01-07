@@ -243,16 +243,16 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 						+ "    MEDIA DESC " 
 					);
 
-		query.setParameter("idTpMovMarcacao", ExTipoDeMovimentacao.MARCACAO);
+		query.setParameter("idTpMovMarcacao", ExTipoDeMovimentacao.MARCACAO.getId());
 		query.setParameter("idMarcadorUrgente", CpMarcadorEnum.URGENTE.getId());
-		query.setParameter("idTpMovTransf", ExTipoDeMovimentacao.TRANSFERENCIA);
-		query.setParameter("idTpMovDespTransf", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
-		query.setParameter("idTpMovDespTransfExt", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
-		query.setParameter("idTpMovTransfExt", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA);
-		query.setParameter("idTpMovArqCorrente", ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
-		query.setParameter("idTpMovRecebimento", ExTipoDeMovimentacao.RECEBIMENTO);			
-		query.setParameter("idTpMovTornarSemEfeito", ExTipoDeMovimentacao.TORNAR_SEM_EFEITO);			
-		query.setParameter("idTpMovCancelar", ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO);			
+		query.setParameter("idTpMovTransf", ExTipoDeMovimentacao.TRANSFERENCIA.getId());
+		query.setParameter("idTpMovDespTransf", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA.getId());
+		query.setParameter("idTpMovDespTransfExt", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA.getId());
+		query.setParameter("idTpMovTransfExt", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA.getId());
+		query.setParameter("idTpMovArqCorrente", ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE.getId());
+		query.setParameter("idTpMovRecebimento", ExTipoDeMovimentacao.RECEBIMENTO.getId());			
+		query.setParameter("idTpMovTornarSemEfeito", ExTipoDeMovimentacao.TORNAR_SEM_EFEITO.getId());			
+		query.setParameter("idTpMovCancelar", ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO.getId());			
 		
 		if (parametros.get("lotacao") != null
 				&& !"".equals(parametros.get("lotacao"))) {

@@ -318,10 +318,10 @@ public class RelDocumentosForaPrazo extends RelatorioTemplate {
 								+ queryGroupBy
 								);
 
-		query.setParameter("idTpMov1", ExTipoDeMovimentacao.TRANSFERENCIA);
-		query.setParameter("idTpMov2", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA);
-		query.setParameter("idTpMov3", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA);
-		query.setParameter("idTpMov4", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA);
+		query.setParameter("idTpMov1", ExTipoDeMovimentacao.TRANSFERENCIA.getId());
+		query.setParameter("idTpMov2", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA.getId());
+		query.setParameter("idTpMov3", ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA.getId());
+		query.setParameter("idTpMov4", ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA.getId());
 
 		if (parametros.get("orgao") != null && !"".equals(parametros.get("orgao"))) {
 			query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));

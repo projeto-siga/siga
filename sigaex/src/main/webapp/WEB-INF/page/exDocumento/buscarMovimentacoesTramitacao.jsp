@@ -55,7 +55,7 @@ td.juntado.fa-fw>a.disabled {
 				<tbody>
 					<c:forEach var="movimentacao" items="${movimentacoes}">
 						<c:set var="isTramitacao"
-							value="${movimentacao.exTipoMovimentacao.id == 3}" />
+							value="${movimentacao.exTipoMovimentacao == 'TRANSFERENCIA'}" />
 						<c:set var="movimentacaoRecebimento"
 							value="${isTramitacao? recebimentos[movimentacao.idMov]: null}" />
 						<tr id="movimentacao_${movimentacao.idMov}">
@@ -114,16 +114,16 @@ Então só saberei quem foi o usuário que recebeu depois que alguém da unidade
 								--%>
 							</td>
 							<td class="evento">
-								${movimentacao.exTipoMovimentacao.descrTipoMovimentacao}</td>
+								${movimentacao.exTipoMovimentacao.descr}</td>
 							<td class="juntado fa-fw">
 								<%-- 
 								--%> <c:if
-									test="${(movimentacao.exTipoMovimentacao.id == 12) and (not empty movimentacao.exMobilRef)}">
+									test="${(movimentacao.exTipoMovimentacao == 'JUNTADA') and (not empty movimentacao.exMobilRef)}">
 									<%-- É Juntada? Tem documento Pai? --%>
 									<div class="text-nowrap">${movimentacao.exMobilRef.sigla}</div>
 									<c:choose>
 										<c:when
-											test="${empty movimentacao.exMobilRef.getMovimentacoesPorTipo(3, false)}">
+											test="${empty movimentacao.exMobilRef.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false)}">
 											<c:set var="link" value="javascript:void(0)" />
 											<c:set var="title" value="Não tem Histórico de Tramitação" />
 											<c:set var="classDisabled" value="disabled" />

@@ -85,7 +85,7 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 
 						new ExEExternoCapturado(mob.doc()),
 
-						new ExEstaAutenticadoComTokenOuSenha(mob.doc()))),
+						Not.of(new ExEstaAutenticadoComTokenOuSenha(mob.doc())))),
 
 				Or.of(
 

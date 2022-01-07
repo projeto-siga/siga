@@ -68,12 +68,15 @@ public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 
 										new ExTemAnexosNaoAssinados(mob.doc().getMobilGeral()),
 
-										new ExTemDespachosNaoAssinados(mob.doc().getMobilGeral()))),
+										new ExTemDespachosNaoAssinados(mob.doc().getMobilGeral()))
+								)
 
-						Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
+						),
 
-						new ExPodeMovimentar(mob, titular, lotaTitular)),
-
+				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
+				
+				new ExPodeMovimentar(mob, titular, lotaTitular),
+				
 				Not.of(new ExEstaEmTramiteParalelo(mob)), Not.of(new ExEstaArquivado(mob)),
 
 				Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaJuntado(mob)),
@@ -83,8 +86,6 @@ public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
 						.withExTpMov(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
 						.withCargo(titular.getCargo()).withDpFuncaoConfianca(titular.getFuncaoConfianca())
-						.withExFormaDoc(mob.doc().getExFormaDocumento()).withExMod(mob.doc().getExModelo()),
-
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.COPIA, titular, lotaTitular));
+						.withExFormaDoc(mob.doc().getExFormaDocumento()).withExMod(mob.doc().getExModelo()));
 	}
 }

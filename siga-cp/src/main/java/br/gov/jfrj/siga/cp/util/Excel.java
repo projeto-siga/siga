@@ -967,7 +967,7 @@ public class Excel {
 				}
 				
 				if(problemas == null || "".equals(problemas.toString())) {
-					pe.setNomeExibicao(nomeExibicao);
+					pe.setNomeExibicao(StringUtils.trimToNull(nomeExibicao));
 					pe.setDataNascimento(date);
 					pe.setCpfPessoa(Long.valueOf(cpf));
 					pe.setOrgaoUsuario(orgaoUsuario);
@@ -978,9 +978,9 @@ public class Excel {
 					pe.setDataInicio(data);
 					pe.setSesbPessoa(orgaoUsuario.getSigla());					
 					
-					pe.setIdentidade(rg);
-					pe.setOrgaoIdentidade(orgexp);
-					pe.setUfIdentidade(ufexp);
+					pe.setIdentidade(StringUtils.trimToNull(rg));
+					pe.setOrgaoIdentidade(StringUtils.trimToNull(orgexp));
+					pe.setUfIdentidade(StringUtils.trimToNull(ufexp));
 					pe.setDataExpedicaoIdentidade(dateExp);
 					
 					pe.setMatricula(Long.valueOf(0));
@@ -997,7 +997,7 @@ public class Excel {
 	    			CpDao.getInstance().gravarComHistorico(dpPessoa, identidade);
 
 	    			dpPessoa.setMatricula(10000 + dpPessoa.getId());
-					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
+					dpPessoa.setIdePessoa(dpPessoa.getMatricula().toString());
 					CpDao.getInstance().gravar(dpPessoa);
 								
     				lista1.clear();

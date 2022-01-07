@@ -141,8 +141,8 @@
 					</td>
 					<c:forEach var="movimentacao" items="${documento.exMovimentacaoSet}">				
 							<c:choose>
-								<c:when test='${movimentacao.exTipoMovimentacao == PEDIDO_PUBLICACAO && 
-								!movimentacao.cancelada}'>
+								<c:when test="${movimentacao.exTipoMovimentacao == 'PEDIDO_PUBLICACAO' && 
+								!movimentacao.cancelada}">
 								<td width="44%">${movimentacao.descrPublicacao}</td>
 								<td width="2%" align="left">
 									<input type="radio" name="tpm_${documento.idDoc}" id="tm1" value="J" 

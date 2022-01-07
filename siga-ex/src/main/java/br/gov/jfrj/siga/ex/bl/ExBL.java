@@ -1671,6 +1671,12 @@ public class ExBL extends CpBL {
 				// }
 	
 				mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " [Digital]");
+				
+				if (doc.getDtPrimeiraAssinatura() == null) {
+					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
+					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
+				}
+				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -1927,6 +1933,11 @@ public class ExBL extends CpBL {
 				String cpf = Long.toString(assinante.getCpfPessoa());
 				acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
 	
+				if (doc.getDtPrimeiraAssinatura() == null) {
+					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
+					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
+				}
+				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);

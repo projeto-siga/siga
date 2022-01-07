@@ -21,6 +21,7 @@
 <%@ attribute name="explicacao"%>
 <%@ attribute name="post"%>
 
+<c:set var="exibirExplicacao" scope="request" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">

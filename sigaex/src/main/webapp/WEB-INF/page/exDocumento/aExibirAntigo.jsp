@@ -11,6 +11,8 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 
+<c:set var="exibirExplicacao" scope="request" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
+
 <c:if test="${not docVO.digital}">
 	<script type="text/javascript">
 		$("html").addClass("fisico");

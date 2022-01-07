@@ -99,8 +99,6 @@ ${meta}
 
 <c:set var="siga_version"  scope="request" value="10.2.0.10" />
 
-<c:set var="exibirExplicacao" value="${f:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
-
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">

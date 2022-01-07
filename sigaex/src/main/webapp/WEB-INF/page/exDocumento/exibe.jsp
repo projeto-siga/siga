@@ -12,6 +12,9 @@
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
+
+<c:set var="exibirExplicacao" scope="request" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
+
 <siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
 <style>									

@@ -33,7 +33,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -969,21 +971,30 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			dpPessoa.setNome("");
 	
 			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
-			List<String> emails = new ArrayList<String>();
-		    
+			Set<String> emailsOculto = new HashSet<String>();
+			
 			if (!usuarios.isEmpty()) {
+				Set<String> emailsDistintos = new HashSet<String>();
+				//Adiciona email normal de forma distinta
 				for(DpPessoa usuario : usuarios) {
-					emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
+					emailsDistintos.add(usuario.getEmailPessoaAtual());
 			    }
-				
+				//Troca emails distintos por Email estenografado
+				for (String email : emailsDistintos) {
+					emailsOculto.add(SigaUtil.ocultaParcialmenteEmail(email));
+				}
+				emailsDistintos = null;
 			} else {
 				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
 			}
 			
+
+			
+			
 			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf.toString());
 			HashMap<String, Object> json = new HashMap<>();
 			
-			json.put("emails", emails);
+			json.put("emails", emailsOculto);
 			json.put("jwt", jwt);
 			
 			result.use(Results.json()).withoutRoot().from(json).serialize();

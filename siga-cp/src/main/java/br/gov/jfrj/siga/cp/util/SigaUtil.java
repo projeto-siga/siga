@@ -7,8 +7,12 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
@@ -324,5 +328,17 @@ public class SigaUtil {
 
 	    return result;
 	}        
+	
+	public static boolean validaEmail(String email) {
+		Pattern pattern = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$");   
+	    Matcher matcher = pattern.matcher(email);   
+	    return matcher.find();   
+	}
+	
+	public static String ocultaParcialmenteEmail(String emailPlano) {
+		if (StringUtils.isNotEmpty(emailPlano) && validaEmail(emailPlano))
+			return emailPlano.substring(0,4) + "*********@***" + emailPlano.substring(emailPlano.length()-6,emailPlano.length());
+		return null;
+	}
 
 }

@@ -108,7 +108,7 @@
 				<c:set var="exibirOpcoes" scope="request" value="d-block" />
 			</c:if>
 			<c:if test="${not empty exibirNoProtocoloAtivo}">
-				<div class="custom-control custom-checkbox ">
+				<div class="custom-control custom-checkbox d-none">
 					<input class="form-check-input" type="checkbox" name="ad_exibirNoProtocolo_0"
 						id="ad_exibirNoProtocolo_0" onchange="confirmaExibirNoProtocolo(this)" <c:if test="${exibirNoProtocoloAtivo}">checked</c:if>
 						<c:if test="${exibirNoProtocoloFixo}">disabled</c:if> /> <label 

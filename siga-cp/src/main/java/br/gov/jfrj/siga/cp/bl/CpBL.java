@@ -63,6 +63,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
@@ -77,6 +78,7 @@ import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpConfiguracaoNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -388,6 +390,16 @@ public class CpBL {
 					dao().commitTransacao();
 
 					if (SigaMessages.isSigaSP()) {
+						CpConfiguracao cpConfiguracao = new CpConfiguracao();
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+								CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+						if (cpConfiguracao == null) {
+							DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
+							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
+							cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+									CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+						}
+						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
 						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
@@ -413,12 +425,24 @@ public class CpBL {
 										+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
 										+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
 										+ "</td>" + "</tr>" + "</tbody>" + "</table>");
+						}
 					} else {
+						CpConfiguracao cpConfiguracao = new CpConfiguracao();
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+								CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+						if (cpConfiguracao == null) {
+							DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
+							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
+							cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+									CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
+						}
+						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 						Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
 								"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
 										+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
 										+ novaSenha + "\n\n Atenção: esta é uma "
 										+ "mensagem automática. Por favor, não responda. ");
+						}
 					}
 
 					return idNova;
@@ -498,18 +522,27 @@ public class CpBL {
 						dao().gravarComHistorico(idNova, idCadastrante);
 						dao().commitTransacao();
 
-						if (SigaMessages.isSigaSP()) {
-							String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-							String conteudoHTML = pessoaIsUsuarioExterno(pessoa)
-									? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
-									: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
-							
-							Correio.enviar(null,
-									destinanarios, "Novo Usuário", "", conteudoHTML);
-						} else {
-							Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
-									textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
+						DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
+						notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
+						CpConfiguracao cpConfiguracao = new CpConfiguracao();
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+								CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), pessoa.getIdPessoa());
+						
+						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+							if (SigaMessages.isSigaSP()) {
+									String[] destinanarios = { pessoa.getEmailPessoaAtual() };  
+									String conteudoHTML = pessoaIsUsuarioExterno(pessoa)
+											? textoEmailNovoUsuarioExternoSP(idNova, matricula, novaSenha)
+											: textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco);
+
+									Correio.enviar(null,  
+											destinanarios, "Novo Usuário", "", conteudoHTML);
+							} else {
+								Correio.enviar(pessoa.getEmailPessoaAtual(), "Novo Usuário",
+										textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
+							}
 						}
+						
 						dao().commitTransacao();
 						return idNova;
 					} catch (final Exception e) {

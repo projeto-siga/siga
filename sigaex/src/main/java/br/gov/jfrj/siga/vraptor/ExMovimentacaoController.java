@@ -68,16 +68,21 @@ import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.DpConfiguracaoNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
@@ -87,6 +92,7 @@ import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExItemDestinacao;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -1413,6 +1419,35 @@ public class ExMovimentacaoController extends ExController {
 				.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
 						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
 
+		try {
+			CpConfiguracao cpConfiguracao = new CpConfiguracao();
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+					CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), cosignatarioSel.getObjeto().getIdPessoa());
+										
+			if (cpConfiguracao == null) {
+				DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
+				notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular());
+				cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+						CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), cosignatarioSel.getObjeto().getIdPessoa());
+			}
+			
+			if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) { 
+				String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
+				Correio.enviar(null,destinanarios, 
+						"Usuário marcado ", 
+						"",   
+						"Prezado usuário, <b>" + cosignatarioSel.getObjeto().getNomePessoa() +"</b>, "
+								+ "Você foi marcado como, consignatário do documento <b>"+ sigla +"</b>, "
+								+ "pelo usuário <b>"+ getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b> "
+								+ "<br>" 
+								+ "<br>"
+								+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+								+ "	>clique aqui.</a>");
+			}
+		} catch (Exception e) {
+			throw new RegraNegocioException("Falha ao enviar notificação por email."); 
+		}
+		
 		ExDocumentoController.redirecionarParaExibir(result, mov
 				.getExDocumento().getSigla());
 	}
@@ -2073,6 +2108,27 @@ public class ExMovimentacaoController extends ExController {
 				
 			}
 		}
+		
+		CpConfiguracao cpConfiguracao = new CpConfiguracao();
+		cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+				CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong(), getTitular().getIdPessoa());
+		if (cpConfiguracao != null) {
+			if (lotaResponsavelSel.getDescricao() != null && cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+				String[] destinanarios = { getCadastrante().getEmailPessoa() };
+				
+				Correio.enviar(null,destinanarios,   
+						"Documento transferido para unidade " + lotaResponsavelSel.getDescricao() + "", 
+						"",   
+						""
+							+ "<br>"
+							+ "O documento <b>" + sigla + "</b>, "
+							+ "foi transferido para a unidade <b>" + lotaResponsavelSel.getDescricao() + "</b> e aguarda recebimento. "
+							+ "<br>"
+							+ "<br>"
+							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "	>clique aqui.</a>");  
+			}
+		}
 
 		Ex.getInstance()
 				.getBL()
@@ -2086,6 +2142,57 @@ public class ExMovimentacaoController extends ExController {
 						movimentacaoBuilder.getConteudo(),
 						mov.getNmFuncaoSubscritor(), false, false, tpTramite);
 
+		cpConfiguracao = new CpConfiguracao();
+		cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+				CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), getTitular().getIdPessoa());
+		if (cpConfiguracao != null) {
+			if (responsavelSel.getDescricao() != null && cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+				String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() };
+				Correio.enviar(null,destinanarios,   
+						"Documento transferido para o usuário " + responsavelSel.getDescricao() + "", 
+						"",   
+						""  
+							+ "<br>" 
+							+ "O documento <b>" + sigla + "</b>, "
+							+ "foi transferido para o usuário <b>" + responsavelSel.getDescricao() + " (" + responsavelSel.getSigla() + ")</b> e aguarda recebimento. "
+							+ "<br>"
+							+ "<br>"
+							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "	>clique aqui.</a>"); 
+			
+				List<CpMarcador> listMar = null;
+				listMar = dao.listarCpMarcadoresGerais(true);
+				
+				Set<ExMarca> exMarcas = mov.getExMobil().getExMarcaSet();
+				for (int i = 0; i < listMar.size(); i++) { 
+					for (ExMarca exMarca : exMarcas) { 
+						if (listMar.get(i).getDescrMarcador() == exMarca.getCpMarcador().getDescrMarcador() || 
+								exMarca.getCpMarcador().getFinalidadeGrupo().getNome() != null) {
+							cpConfiguracao = new CpConfiguracao();
+							cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+									CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), responsavelSel.getId());
+							if (responsavelSel.getDescricao() != null && cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+								Correio.enviar(null, destinanarios,
+										"Usuário marcado ", 
+										"",   
+										""
+											+ "<br>" 
+											+ "Prezado Usuário, <b>" + responsavelSel.getDescricao() + " (" + responsavelSel.getSigla() + ")</b>, "
+											+ "você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
+											+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
+											+ "<br>"
+											+ "<br>"
+											+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+											+ "	>clique aqui.</a>"); 	
+							}
+						}
+						break; 
+					}
+					break; 
+				} 	
+			}
+		}
+		
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()
 					.getUltimaMovimentacao();
@@ -2644,6 +2751,7 @@ public class ExMovimentacaoController extends ExController {
 						mov.getSubscritor(), mov.getLotaSubscritor(),
 						mov.getDescrMov(), 
 						mov.getMarcador(), dtPlanejada, dtLimite, true);
+		
 		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla());
 	}
 

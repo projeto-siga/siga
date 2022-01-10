@@ -102,6 +102,8 @@ import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 
 public class CpDao extends ModeloDao {
 
@@ -122,6 +124,76 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> consultarPorFiltro(final CpOrgaoDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpConfiguracao> consultarAcoesParaNotificacoesPorEmail(Integer offset, Integer itemPagina, Long idUsuario) {
+		try {
+			final Query query = em().createNamedQuery("consultarAcoesParaNotificacoesPorEmail");
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			} 
+			query.setParameter("idPessoa", idUsuario); 
+			query.setParameter("respAssinatura", CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong());
+			query.setParameter("alterSenha", CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong());
+			query.setParameter("alterEmail", CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong());
+			query.setParameter("cadUsu", CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong());
+			query.setParameter("conssig", CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong());
+			query.setParameter("docMarc", CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong());
+			query.setParameter("docTramUnid", CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong());
+			query.setParameter("docTramUsu", CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong());
+			query.setParameter("esqueSenha", CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong());
+			query.setParameter("sub", CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong());
+			query.setParameter("tramDocMArcado", CpAcoesDeNotificarPorEmail.TRAMIT_DOC_MARCADOS.getIdLong());
+			final List<CpConfiguracao> l = query.getResultList();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CpConfiguracao consultarExistenciaDeAcaoDeNotificacaoPorEmail(final Long codigo, Long idPessoa) {
+		final Query query = em().createNamedQuery("consultarExistenciaDeAcaoDeNotificacaoPorEmail");
+		query.setParameter("idConfiguracao", codigo);
+		query.setParameter("idPessoa", idPessoa);
+		
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<CpConfiguracao> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CpConfiguracao consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(final Long codigo, Long idPessoa) {
+		final Query query = em().createNamedQuery("consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail");
+		query.setParameter("idServico", codigo);
+		query.setParameter("idPessoa", idPessoa);
+		
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<CpConfiguracao> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	public int consultarQuantidadeDeAcoesParaNotificacoesPorEmail() {
+		try {
+			final Query query = em().createNamedQuery("consultarQuantidadeAcoesNotificarPorEmail");
+
+			final int l = ((Long) query.getSingleResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

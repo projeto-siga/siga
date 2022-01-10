@@ -208,11 +208,12 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-ext</artifactId>
 		</dependency>
+		<!--  
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-integracao</artifactId>
 		</dependency>
-
+		-->
 		<!-- CDI -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>

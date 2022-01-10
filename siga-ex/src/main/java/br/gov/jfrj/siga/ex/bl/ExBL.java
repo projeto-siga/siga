@@ -115,6 +115,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -123,6 +124,7 @@ import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpConfiguracaoNotificarPorEmail;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
@@ -210,8 +212,8 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
-import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
+//import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
+//import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
@@ -3650,6 +3652,37 @@ public class ExBL extends CpBL {
 				+ doc.getSubscritor().getSiglaCompleta() + " em substituição de " + doc.getTitular().getNomePessoa()
 				+ " - " + doc.getTitular().getSiglaCompleta());
 		gravarMovimentacao(mov_substituto);
+		try {
+			CpConfiguracao cpConfiguracao = new CpConfiguracao();
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+					CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
+			if (cpConfiguracao == null) {
+				DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
+				notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(doc.getTitular());
+				cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+						CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
+			}
+			
+			if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+				String[] destinanarios = { doc.getTitular().getEmailPessoa() }; 
+				
+					Correio.enviar(null, destinanarios,
+						"Usuário marcado ", 
+						"",   
+						""    
+							+ "<br>"  
+							+ "Prezado usuário, <b>" + doc.getTitular().getNomePessoa() + "</b>, "
+							+ "Você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
+							+ "pelo usuário <b>" + doc.getSubscritor().getNomePessoa() + "</b> (<b>" + doc.getSubscritor().getSiglaCompleta() + "</b>)."
+							+ "<br>"
+							+ "<br>"
+							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "	>clique aqui.</a>");
+			}
+			} catch (Exception e) {
+				e.printStackTrace(); 
+				System.out.println("Falha ao enviar email"); 
+			} 
 	}
 
 	private class MovimentacaoSincronizavel extends SincronizavelSuporte
@@ -8058,11 +8091,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + "\" antes de tramitar.");
 		
 		String descricao = formulario.getDescrDocumento();
-		SiafDoc doc = new SiafDoc(descricao.split(";"));
+		//SiafDoc doc = new SiafDoc(descricao.split(";"));
 		
-		doc.setProcesso(obterCodigoUnico(formulario, false));
+		//doc.setProcesso(obterCodigoUnico(formulario, false));
 		
-		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
+		//ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
 	}
 
 	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {

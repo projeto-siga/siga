@@ -86,7 +86,22 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "	order by cpcfg.hisDtIni"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao.idTpLotacao = :idTpLotacao) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
-				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})
+				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null"),
+		@NamedQuery(name = "consultarExistenciaDeAcaoDeNotificacaoPorEmail", query = "from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa and email.idConfiguracao = :idConfiguracao "),
+		@NamedQuery(name = "consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail", query = "from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :idServico "), 
+		@NamedQuery(name = "consultarAcoesParaNotificacoesPorEmail", query = "from CpConfiguracao email where"
+				+ " (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :respAssinatura) " 
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :alterSenha) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :alterEmail) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :cadUsu)"
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :conssig) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docMarc) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUnid) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUsu) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :esqueSenha) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :sub)"
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :tramDocMArcado) "), 
+		@NamedQuery(name = "consultarQuantidadeAcoesNotificarPorEmail", query = "select count(email) from CpConfiguracao email" )})
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {
 
@@ -215,6 +230,10 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@JoinColumn(name = "ID_PESSOA_OBJETO")
 	@NaoRecursivo
 	private DpPessoa pessoaObjeto;
+	
+	@Column(name = "RESTRINGIR", length = 50)
+	@NaoRecursivo
+	private Integer restringir;
 
 	public Set<CpConfiguracao> getConfiguracoesPosteriores() {
 		return configuracoesPosteriores;
@@ -481,6 +500,38 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setPessoaObjeto(DpPessoa pessoaObjeto) {
 		this.pessoaObjeto = pessoaObjeto;
+	}
+	
+	public Integer getRestringir() {
+		return restringir;
+	}
+
+	public void setRestringir(Integer restringir) {
+		this.restringir = restringir;
+	}
+	
+	public boolean isMandarEmail () {
+		if(this.cpSituacaoConfiguracao.getId() == 1) {
+			return true;
+		} else {   
+			return false;
+		} 
+	}
+
+	public boolean ishabilitaOuDesabilitaNotificacaoPorEmail () {  
+		if(this.getRestringir() == 1) {
+			return true;
+		} else {
+			return false; 
+		}
+	}
+	
+	public boolean isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail () {
+		if(this.cpSituacaoConfiguracao.getId() == 1) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

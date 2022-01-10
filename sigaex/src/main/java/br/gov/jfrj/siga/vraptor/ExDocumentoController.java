@@ -65,6 +65,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -72,9 +73,11 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -1850,6 +1853,28 @@ public class ExDocumentoController extends ExController {
 				throw new AplicacaoException(
 						"Erro ao tentar incluir os cosignatários deste documento",
 						0, e);
+			}
+			
+			CpConfiguracao cpConfiguracao = new CpConfiguracao();
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+					CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong(), exDocumentoDTO.getSubscritorSel().getObjeto().getIdPessoa());
+			
+			if (cpConfiguracao != null) {
+				if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
+					Correio.enviar(null, destinanarios, 
+							"Usuário marcado ",  
+							"",   
+							""   
+								+ "<br>" 
+								+ "Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + " (" + exDocumentoDTO.getSubscritorSel().getObjeto().getSigla() + ")</b>, "
+								+ "Você recebeu o documento <b>" + exDocumentoDTO.getDoc().getCodigo() + "</b> com o Alerta, responsável pela assinatura, "
+								+ "enviado pelo usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSigla() + ")</b>."
+								+ "<br>"
+								+ "<br>"
+								+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+								+ "	>clique aqui.</a>"); 		
+				}
 			}
 
 		} catch (final Exception e) {

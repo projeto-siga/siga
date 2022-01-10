@@ -232,6 +232,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("descricao.documento.ai.length", "4000");
 
 		addPublicProperty("exibe.nome.acesso", "false");
+		addPublicProperty("atualiza.anotacao.pesquisa", "false");
 
 		addPublicProperty("modelos.cabecalho.brasao", "contextpath/imagens/brasaoColoridoTRF2.png");
 		addPublicProperty("modelos.cabecalho.brasao.width", "auto");
@@ -254,9 +255,9 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPrivateProperty("debug.default.template.pathname", null);
 		
 		//Informações Siafem
-		addPrivateProperty("ws.siafem.nome.modelo", null);
-		addPrivateProperty("ws.siafem.url.wsdl", null);
-		addPrivateProperty("ws.siafem.url.namespace", null);
+		addPublicProperty("ws.siafem.nome.modelo", null);
+		addPublicProperty("ws.siafem.url.wsdl", null);
+		addPublicProperty("ws.siafem.url.namespace", null);
 	}
 
 	@Override

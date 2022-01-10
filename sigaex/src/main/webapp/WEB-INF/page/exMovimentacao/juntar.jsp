@@ -17,7 +17,7 @@
 				<h5>Juntada de Documento - ${mob.siglaEDescricaoCompleta}</h5>
 			</div>
 			<div class="card-body">
-            <form action="juntar_gravar" enctype="multipart/form-data" cssClass="form" method="POST">
+            <form id="frm" action="juntar_gravar" enctype="multipart/form-data" cssClass="form" method="POST">
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="sigla" value="${sigla}"/>
 				<c:choose>
@@ -76,8 +76,8 @@
 				</div>
 				<div class="row">
 					<div class="form-group col-md-4">
-						<button type="submit" class="btn btn-primary mt-auto" >Ok</button>						
-						<a href="${linkTo[ExDocumentoController].exibe()}?sigla=${sigla}" class="btn btn-cancel ml-2">Cancela</a>
+						<button id="button_ok" class="btn btn-primary mt-auto" onclick="sbmt();">Ok</button>
+						<a href="${linkTo[ExDocumentoController].exibe()}?sigla=${sigla}" class="btn btn-light ml-2">Cancela</a>
 					</div>
 				</div>
 			</form>
@@ -86,5 +86,10 @@
 	</div>
 <script>  
 	muda_escolha(document.getElementById("idDocumentoEscolha"));
+
+	function sbmt() {
+		sigaSpinner.mostrar();
+		document.getElementById('frm').submit();
+	}
 </script>
 </siga:pagina>

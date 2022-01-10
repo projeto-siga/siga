@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.model.enm;
 
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 
@@ -191,7 +192,12 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	}
 
 	public String getDescr() {
-		return this.descr;
+        String descricaoi18n = SigaMessages.getMessage("enum.extipodemovimentacao." 
+        										+ this.toString().toLowerCase().replaceAll("_", "."));
+        if (descricaoi18n.startsWith("???."))
+            return this.descr;
+	 	else
+	 		return descricaoi18n;
 	}
 
 	public static ITipoDeMovimentacao getById(Integer id) {

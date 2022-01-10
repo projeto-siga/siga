@@ -114,6 +114,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -573,15 +574,6 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.setIdTpDoc(tp.getId());
 					break;
 				}
-
-				// Preencher automaticamente o subscritor quando se tratar de
-				// novo documento
-				if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO
-						&& !postback) {
-					DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
-					subscritorSel.buscarPorObjeto(getCadastrante());
-					exDocumentoDTO.setSubscritorSel(subscritorSel);
-				}
 			}
 
 			if (exDocumentoDTO.getNivelAcesso() == null) {
@@ -599,17 +591,24 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
-				&& isDocNovo && !postback && modelo == null) {
+		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null && isDocNovo && !postback && modelo == null) {
 			ExModelo despacho = dao().consultarExModelo(null, "Despacho");
 			if (despacho == null)
-				throw new RuntimeException(
-						"Não foi possível carregar um modelo chamado 'Despacho'");
+				throw new RuntimeException("Não foi possível carregar um modelo chamado 'Despacho'");
 			exDocumentoDTO.setIdMod(despacho.getId());
 			for (ExTipoDocumento tp : despacho.getExFormaDocumento()
 					.getExTipoDocumentoSet()) {
 				exDocumentoDTO.setIdTpDoc(tp.getId());
 				break;
+			}
+		}
+		
+		// Preencher automaticamente o subscritor quando se tratar de novo documento
+		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
+			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO && !postback) {
+				DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+				subscritorSel.buscarPorObjeto(getCadastrante());
+				exDocumentoDTO.setSubscritorSel(subscritorSel);
 			}
 		}
 
@@ -642,6 +641,7 @@ public class ExDocumentoController extends ExController {
 				lerEntrevista(exDocumentoDTO);
 			}
 		}
+		
 
 		if (exDocumentoDTO.getTipoDocumento() != null
 				&& exDocumentoDTO.getTipoDocumento().equals("externo")) {
@@ -1630,6 +1630,24 @@ public class ExDocumentoController extends ExController {
 			if (exDocumentoDTO.getDoc() == null) {
 				exDocumentoDTO.setDoc(new ExDocumento());
 			}
+			
+			DpPessoa subscritor = exDocumentoDTO.getSubscritorSel().getObjeto();
+			
+			if (subscritor != null && !new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), subscritor, subscritor.getLotacao(),
+					subscritor.getCargo(),
+					subscritor.getFuncaoConfianca(),
+					subscritor.getOrgaoUsuario()).eval()) {
+				result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário não está disponível para inclusão de Cossignatário / "+ SigaMessages.getMessage("documento.subscritor")+"."));
+				result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+						exDocumentoDTO.getMobilPaiSel(),
+						exDocumentoDTO.isCriandoAnexo(),
+						exDocumentoDTO.getAutuando(),
+						exDocumentoDTO.getIdMobilAutuado(),
+						exDocumentoDTO.getCriandoSubprocesso(),
+						null, null, null, null);
+
+				return;
+			}
 
 			long tempoIni = System.currentTimeMillis();
 
@@ -1777,10 +1795,17 @@ public class ExDocumentoController extends ExController {
 
 				Integer numPaginas = d.getContarNumeroDePaginas();
 				if (numPaginas == null || d.getArquivoComStamp() == null) {
-					throw new AplicacaoException(
-							MessageFormat
-									.format("O arquivo {0} está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar.",
-											arquivo.getFileName()));
+					result.include(SigaModal.ALERTA, SigaModal.mensagem("O arquivo " + arquivo.getFileName() + " está corrompido ou protegido por senha. Favor gera-lo novamente antes de anexar."));
+					result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+							exDocumentoDTO.getMobilPaiSel(),
+							exDocumentoDTO.isCriandoAnexo(),
+							exDocumentoDTO.getAutuando(),
+							exDocumentoDTO.getIdMobilAutuado(),
+							exDocumentoDTO.getCriandoSubprocesso(),
+							null, null, null, null);
+
+					return;
+
 				}
 
 				// if (numPaginas != null && numBytes != null &&

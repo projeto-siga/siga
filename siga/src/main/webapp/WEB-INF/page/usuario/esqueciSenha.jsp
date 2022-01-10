@@ -395,7 +395,7 @@ function refreshWindow(){
 												<tr>
 												<td>Empresa Pública de Saúde do Rio de Janeiro S/A / RIOSAUDE</td>
 												<td width="53">RSU</td>
-												<td width="57"></td>
+												<td width="57">4</td>
 												</tr>
 												<tr>
 												<td>Fundação Cidade das Artes / CIDADE DAS ARTES</td>

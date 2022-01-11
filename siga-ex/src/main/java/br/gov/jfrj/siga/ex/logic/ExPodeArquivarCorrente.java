@@ -50,7 +50,7 @@ public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 	protected Expression create() {
 		return And.of(
 
-				Or.of(new ExEMobilVia(mob), new ExEMobilUltimoVolume(mob)),
+				Or.of(new ExEMobilVia(mob), new ExEMobilGeralDeProcesso(mob)),
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 

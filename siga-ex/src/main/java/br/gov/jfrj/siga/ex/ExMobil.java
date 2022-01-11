@@ -2540,7 +2540,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @param intervalo
 	 * @return Set de movimentações duplicadas
 	 */
-	public java.util.Set<ExMovimentacao> getMovsDuplicadas(long intervalo) {
+	public java.util.Set<ExMovimentacao> getMovsDuplicadas(long intervalo, ITipoDeMovimentacao[] tpMovs) {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		if (getExMovimentacaoSet() == null)
@@ -2550,8 +2550,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		movs.addAll(this.getExMovimentacaoReferenciaSet());
 
 		for (ExMovimentacao m : movs) {
-			if (m.getExMovimentacaoCanceladora() != null)
+			if (m.getExMovimentacaoCanceladora() != null )
 				continue;
+			
 			for (ExMovimentacao m2 : movs) {
 				long mResp = (m.getResp() != null? m.getResp().getId():0);
 				long m2Resp = (m2.getResp() != null? m2.getResp().getId():0);
@@ -2560,7 +2561,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				long mExMobilRef = (m.getExMobilRef() != null? m.getExMobilRef().getId():0);
 				long m2ExMobilRef = (m2.getExMobilRef() != null? m2.getExMobilRef().getId():0);
 				
-				if (!m.equals(m2)
+				if (!m.equals(m2) 
 						&& m2.getExMovimentacaoCanceladora() == null
 						&& Math.abs(m.getDtTimestamp().getTime() - m2.getDtTimestamp().getTime()) < intervalo 
 						&& m.getExTipoMovimentacao().equals(m2.getExTipoMovimentacao())
@@ -2569,8 +2570,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 						&& mResp == m2Resp
 						&& mLotaResp == m2LotaResp
 						&& m.getExMobil().equals(m2.getExMobil())
-						&& mExMobilRef == m2ExMobilRef)
-					set.add(m);
+						&& mExMobilRef == m2ExMobilRef) {
+					for (ITipoDeMovimentacao t : tpMovs) {
+						if (m.getExTipoMovimentacao() == t) {
+							set.add(m);
+							break;
+						}
+					}
+				}
 			}
 		}
 		return set;

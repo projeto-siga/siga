@@ -604,7 +604,7 @@ public class ExMarcadorBL {
 					tramite.getDtIniMov(), null, tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
-							: CpMarcadorEnum.EM_TRANSITO.getId(),
+							: CpMarcadorEnum.A_RECEBER.getId(),
 					tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
 			if (tramite.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 					&& mob.doc().isEletronico() && !tramite.isAssinada())

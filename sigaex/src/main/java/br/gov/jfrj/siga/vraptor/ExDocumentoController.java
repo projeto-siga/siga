@@ -2111,7 +2111,7 @@ public class ExDocumentoController extends ExController {
 
 		String servidor = Prop.get("/sigaex.url");
 		
-		String caminho = url + "/public/app/processoautenticar?n=" + prot.getCodigo();
+		String caminho = servidor + "/public/app/processoautenticar?n=" + prot.getCodigo();
 		
 		result.include("url", caminho);
 		result.include("ano", c.get(Calendar.YEAR));

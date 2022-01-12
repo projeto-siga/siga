@@ -661,7 +661,7 @@ public class WfProcedimento extends Objeto
 			DpPessoa resp = plWF.getPessoa();
 			DpLotacao lotaResp = plWF.getLotacao();
 			boolean estaComTarefa = (resp != null && titular.equivale(resp))
-					|| (lotaResp != null && lotaTitular.equals(lotaResp));
+					|| (lotaResp != null && lotaTitular.equivale(lotaResp));
 			respEX = service.getAtendente(getPrincipal(), siglaTitular);
 			lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
 

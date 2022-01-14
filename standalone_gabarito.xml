@@ -207,7 +207,7 @@
 					<driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>5</min-pool-size>
-                        <max-pool-size>20</max-pool-size>
+                        <max-pool-size>30</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_corporativo@@@</user-name>
@@ -224,7 +224,7 @@
                     <driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>5</min-pool-size>
-                        <max-pool-size>20</max-pool-size>
+                        <max-pool-size>30</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_siga@@@</user-name>
@@ -239,7 +239,7 @@
                     <driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>5</min-pool-size>
-                        <max-pool-size>20</max-pool-size>
+                        <max-pool-size>30</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_sigawf@@@</user-name>

@@ -206,8 +206,8 @@
                     <connection-url>@@@string_db_corporativo@@@</connection-url>
 					<driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>1</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
+                        <min-pool-size>5</min-pool-size>
+                        <max-pool-size>20</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_corporativo@@@</user-name>
@@ -223,8 +223,8 @@
                     <connection-url>@@@string_db_siga@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>1</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
+                        <min-pool-size>5</min-pool-size>
+                        <max-pool-size>20</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_siga@@@</user-name>
@@ -238,8 +238,8 @@
                     <connection-url>@@@string_db_sigawf@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>1</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
+                        <min-pool-size>5</min-pool-size>
+                        <max-pool-size>20</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_sigawf@@@</user-name>

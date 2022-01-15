@@ -3670,13 +3670,13 @@ public class ExBL extends CpBL {
 						"Usuário marcado ", 
 						"",   
 						""    
-							+ "<br>"  
+							+ "<br>"   
 							+ "Prezado usuário, <b>" + doc.getTitular().getNomePessoa() + "</b>, "
 							+ "Você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
 							+ "pelo usuário <b>" + doc.getSubscritor().getNomePessoa() + "</b> (<b>" + doc.getSubscritor().getSiglaCompleta() + "</b>)."
 							+ "<br>"
 							+ "<br>"
-							+ "Para visualizar o documento, <a href='https://www.documentos.homologacao.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
 							+ "	>clique aqui.</a>");
 			}
 			} catch (Exception e) {

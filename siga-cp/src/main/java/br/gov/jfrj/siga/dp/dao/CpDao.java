@@ -147,7 +147,6 @@ public class CpDao extends ModeloDao {
 			query.setParameter("docTramUsu", CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong());
 			query.setParameter("esqueSenha", CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong());
 			query.setParameter("sub", CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong());
-			query.setParameter("tramDocMArcado", CpAcoesDeNotificarPorEmail.TRAMIT_DOC_MARCADOS.getIdLong());
 			final List<CpConfiguracao> l = query.getResultList();
 			return l;
 		} catch (final NullPointerException e) {

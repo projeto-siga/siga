@@ -212,21 +212,21 @@ public class UsuarioController extends SigaController {
 									CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), p.getIdPessoa());
 						}
 						
-						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {  
 							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
-									"O Administrador do sistema removeu este endereÃ§o de email do seguinte usuÃ¡rio "
+									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
 											+ p.getSigla() + "\n - Novo email: " + emailNovo
 											+ "\n\n Em caso de dÃºvidas, favor entrar em contato com o administrador "
-											+ "\n\n AtenÃ§Ã£o: esta Ã© uma "
-											+ "mensagem automÃ¡tica. Por favor, nÃ£o responda.");
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda.");
 							Correio.enviar(emailNovo, "Troca de Email",
-										"O Administrador do sistema inseriu este endereÃ§o de email como seguinte usuÃ¡rio "
+										"O Administrador do sistema inseriu este endereço de email como seguinte usuário "
 											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
 											+ p.getSigla() + "\n - Novo email: " + emailNovo
-											+ "\n\n Em caso de dÃºvidas, favor entrar em contato com o administrador "
-											+ "\n\n AtenÃ§Ã£o: esta Ã© uma "
-											+ "mensagem automÃ¡tica. Por favor, nÃ£o responda."); 
+											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda."); 
 						}
 
 					} catch (Exception e) {
@@ -256,19 +256,19 @@ public class UsuarioController extends SigaController {
 					if (cpConfiguracao != null) { 
 						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Troca de Email",
-									"O Administrador do sistema removeu este endereÃ§o de email do seguinte usuÃ¡rio "
+									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 											+ "\n" + "\n - Nome: " + pessoa.getNomePessoa() + "\n - Matricula: "
 											+ pessoa.getSigla() + "\n - Novo email: " + emailNovo
-											+ "\n\n Em caso de dÃºvidas, favor entrar em contato com o administrador "
-											+ "\n\n AtenÃ§Ã£o: esta Ã© uma "
-											+ "mensagem automÃ¡tica. Por favor, nÃ£o responda.");
+											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, nÃ£o responda.");
 							Correio.enviar(emailNovo, "Troca de Email",
-									"O Administrador do sistema inseriu este endereÃ§o de email como seguinte usuÃ¡rio " 
+									"O Administrador do sistema inseriu este endereço de email como seguinte usuário " 
 											+ "\n" + "\n - Nome: " + pessoa.getNomePessoa() + "\n - Matricula: "
 											+ pessoa.getSigla() + "\n - Novo email: " + emailNovo
-											+ "\n\n Em caso de dÃºvidas, favor entrar em contato com o administrador "
-											+ "\n\n AtenÃ§Ã£o: esta Ã© uma "
-											+ "mensagem automÃ¡tica. Por favor, nÃ£o responda.");
+											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
+											+ "\n\n Atenção: esta é uma "
+											+ "mensagem automática. Por favor, não responda.");
 						}
 					}
 

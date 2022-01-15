@@ -204,17 +204,15 @@
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
 				</c:if>
-				<c:if test="${(!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;DEMAIL:Definir Email do Usuário') || titular.orgaoUsuario.sigla == 'ZZ')}">
 					<li><a class="dropdown-item"
 						href="/siga/app/configuracaoNotificacaoPorEmail/rec_notificacao_por_email_gravar">Receber notificações por email</a></li>
-				</c:if> 
 				<c:if test="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }">
 					<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
 						<ul class="dropdown-menu">
 						<c:choose>
 							<c:when test="${(empty identidadeCadastrante.pinIdentidade)}">
 								<li><a class="dropdown-item" href="/siga/app/pin/cadastro">Cadastrar novo PIN</a>
-							</c:when>
+							</c:when> 
 							<c:otherwise>	
 								<li><a class="dropdown-item" href="/siga/app/pin/troca">Alterar PIN</a>
 								<li><a class="dropdown-item" href="/siga/app/pin/reset">Esqueci meu PIN</a>

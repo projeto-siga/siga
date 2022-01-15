@@ -1190,6 +1190,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			return null;
 		return sb.toString();
 	}
+	
+	public String getMarcadoresLocalGeral() {
+		String nome = "";
+		for (ExMarca mar : getExMarcaSetAtivas()) {
+			nome  = mar.getCpMarcador().getDescrMarcador();
+		}
+		return nome;
+	}
 
 	/**
 	 * Retorna a descrição completa (descrição, lotação, pessoa e datas de

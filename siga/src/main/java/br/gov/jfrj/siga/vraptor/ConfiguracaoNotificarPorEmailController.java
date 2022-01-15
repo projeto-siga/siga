@@ -61,16 +61,16 @@ public class ConfiguracaoNotificarPorEmailController
 	public void gravar(Integer paramoffset) throws Exception {
 		if(paramoffset == null) {
 			paramoffset = 0;
-		}
+		} 
 		
 		/*
-		 * Verifica se o usuário possui as 11 ações necessárias. Caso não possua será verificado para adicionar as que faltam.
+		 * Verifica se o usuário possui as 10 ações necessárias. Caso não possua será verificado para adicionar as que faltam.
 		 */
 		
 		List<CpConfiguracao> acoes = dao().consultarAcoesParaNotificacoesPorEmail(paramoffset, 15, getTitular().getIdPessoa());
-		if (acoes.size() < 11) {  
+		if (acoes.size() < 10) {  
 			DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-			notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular());
+			notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular(), getLotaTitular());
 		}
 		result.redirectTo(ConfiguracaoNotificarPorEmailController.class).lista(0);
 	}
@@ -85,9 +85,9 @@ public class ConfiguracaoNotificarPorEmailController
 		boolean ativar = acao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail();
 		
 		if (ativar) {
-			acao.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
+			acao.setReceberEmail(0);
 		} else { 
-			acao.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.PODE);
+			acao.setReceberEmail(1);
 		}  
 		
 		result.redirectTo(ConfiguracaoNotificarPorEmailController.class).lista(0);

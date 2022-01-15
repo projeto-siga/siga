@@ -99,8 +99,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUnid) "
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUsu) "
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :esqueSenha) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :sub)"
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :tramDocMArcado) "), 
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :sub) "), 
 		@NamedQuery(name = "consultarQuantidadeAcoesNotificarPorEmail", query = "select count(email) from CpConfiguracao email" )})
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {
@@ -234,6 +233,18 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Column(name = "RESTRINGIR", length = 50)
 	@NaoRecursivo
 	private Integer restringir;
+	
+	@Column(name = "RECEBER_EMAIL", length = 50)
+	@NaoRecursivo
+	private Integer receberEmail;
+
+	public Integer getReceberEmail() {
+		return receberEmail;
+	}
+
+	public void setReceberEmail(Integer receberEmail) {
+		this.receberEmail = receberEmail;
+	}
 
 	public Set<CpConfiguracao> getConfiguracoesPosteriores() {
 		return configuracoesPosteriores;
@@ -527,7 +538,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	}
 	
 	public boolean isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail () {
-		if(this.cpSituacaoConfiguracao.getId() == 1) {
+		if(this.getReceberEmail() == 1) {
 			return true;
 		} else {
 			return false;

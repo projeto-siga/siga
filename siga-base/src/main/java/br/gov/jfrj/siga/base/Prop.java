@@ -83,13 +83,13 @@ public class Prop {
 		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
 		final String sigaBaseUrl = get("/siga.base.url");
 
-		provider.addPublicProperty("/sigaex.base.url", "http://localhost:8080");
+		provider.addPublicProperty("/sigaex.base.url", sigaBaseUrl);
 		final String sigaExBaseUrl = get("/sigaex.base.url");
 
-		provider.addPublicProperty("/sigagc.base.url", "http://localhost:8080");
+		provider.addPublicProperty("/sigagc.base.url", sigaBaseUrl);
 		final String sigaGcBaseUrl = get("/sigagc.base.url");
 
-		provider.addPublicProperty("/sigawf.base.url", "http://localhost:8080");
+		provider.addPublicProperty("/sigawf.base.url", sigaBaseUrl);
 		final String sigaWfBaseUrl = get("/sigawf.base.url");
 
 		provider.addPublicProperty("/siga.hibernate.dialect");

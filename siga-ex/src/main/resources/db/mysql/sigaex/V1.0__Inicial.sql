@@ -331,7 +331,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `EX_DOCUMENTO_BLOCK_UPD` BEFORE UPDATE ON `ex_documento` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /* 50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `EX_DOCUMENTO_BLOCK_UPD` BEFORE UPDATE ON `ex_documento` FOR EACH ROW BEGIN
 
     DECLARE QTD_DOC_VAR  BIGINT;
     DECLARE Conteudo_blob_var blob;
@@ -473,7 +473,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `EX_DOCUMENTO_BLOCK_DEL` BEFORE DELETE ON `ex_documento` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /* 50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `EX_DOCUMENTO_BLOCK_DEL` BEFORE DELETE ON `ex_documento` FOR EACH ROW BEGIN
 
 	if OLD.dt_finalizacao is not null then
 		signal sqlstate value '20101' set message_text = 'Não é permitido excluir: data de finalização existente.';

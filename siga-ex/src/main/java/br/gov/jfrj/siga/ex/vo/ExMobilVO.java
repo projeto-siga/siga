@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AcaoVO;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
@@ -436,9 +437,13 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeNotificar(titular, lotaTitular, mob));
 		
-		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotacaoObservacaoModal")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
-		
+		if (!Prop.isGovSP()) {
+			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		} else {
+			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotacaoObservacaoModal")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		}
 		addAcao(AcaoVO.builder().nome("Definir " + SigaMessages.getMessage("documento.marca")).icone("folder_star").modal("definirMarcaModal")
 				.exp(new ExPodeMarcar(mob, titular, lotaTitular)).build());
 		

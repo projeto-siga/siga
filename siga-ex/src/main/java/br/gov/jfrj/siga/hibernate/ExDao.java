@@ -457,9 +457,10 @@ public class ExDao extends CpDao {
 		/*
 		 * Funcao para geracao de codigos alfanumericos randomicos
 		 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+		 * retirado o I, l, 1, 0 e O pois causa confusão na hora do usuário digitar
 		 */
 		public static String randomAlfanumerico(int contador) {
-			final String STRING_ALFANUMERICA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			final String STRING_ALFANUMERICA = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 			StringBuilder sb = new StringBuilder();
 			while (contador-- != 0) {	
 				int caracteres = (int)(Math.random()*STRING_ALFANUMERICA.length());	

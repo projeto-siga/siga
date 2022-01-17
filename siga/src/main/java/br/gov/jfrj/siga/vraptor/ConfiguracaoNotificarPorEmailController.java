@@ -70,11 +70,11 @@ public class ConfiguracaoNotificarPorEmailController
 		List<CpConfiguracao> acoes = dao().consultarAcoesParaNotificacoesPorEmail(paramoffset, 15, getTitular().getIdPessoa());
 		if (acoes.size() < 10) {  
 			DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-			notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular(), getLotaTitular());
+			notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular());
 		}
 		result.redirectTo(ConfiguracaoNotificarPorEmailController.class).lista(0);
 	}
-	
+	 
 	@Transacional
 	@Post({ "/app/notificarPorEmail/rec_notificacao_por_email_atualiza" })
 	public void atualiza(final Long codigo) throws Exception {
@@ -82,7 +82,7 @@ public class ConfiguracaoNotificarPorEmailController
 		acao.getDpPessoa().setIdPessoa(getTitular().getIdPessoa());
 		acao.setIdConfiguracao(codigo);  
 		acao.setDpPessoa(getTitular()); 
-		boolean ativar = acao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail();
+		boolean ativar = acao.enviarNotificao();
 		
 		if (ativar) {
 			acao.setReceberEmail(0);

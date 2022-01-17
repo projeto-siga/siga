@@ -1856,11 +1856,11 @@ public class ExDocumentoController extends ExController {
 			}
 			
 			CpConfiguracao cpConfiguracao = new CpConfiguracao();
-			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 					CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong(), exDocumentoDTO.getSubscritorSel().getObjeto().getIdPessoa());
 			
 			if (cpConfiguracao != null) {
-				if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+				if (cpConfiguracao.enviarNotificao()) {
 					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
 					Correio.enviar(null, destinanarios, 
 							"Usuário marcado ",  

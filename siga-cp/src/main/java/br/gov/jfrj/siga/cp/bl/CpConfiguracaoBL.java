@@ -31,6 +31,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.mvel2.MVEL;
@@ -45,6 +47,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
@@ -794,6 +797,69 @@ public class CpConfiguracaoBL {
 		} catch (Exception e) {
 			throw new RuntimeException("Não foi possível calcular acesso ao serviço " + servicoPath, e);
 		}
+	}
+	
+	@SuppressWarnings("static-access")
+	public CpConfiguracao podeAdicionarServicoEConfiguracao(DpPessoa titular, DpLotacao lotaTitular, String servicoPath, 
+			Integer restringir, Integer receberEmail) {
+		try {
+			if (titular == null || lotaTitular == null)
+				return null;
+
+			CpServico srv = null;
+			CpServico srvPai = null;
+			CpServico srvRecuperado = null;
+
+			srvRecuperado = dao().consultarCpServicoPorChave(servicoPath);
+			if (srvRecuperado == null) {
+				// Constroi uma linha completa, tipo full path
+				for (String s : servicoPath.split(";")) {
+					String[] asParts = s.split(":"); // Separa a sigla da
+														// descrição
+					String sSigla = asParts[0];
+					srv = new CpServico();
+					srv.setSiglaServico(srvPai != null ? srvPai.getSigla() + "-" + sSigla : sSigla);
+					srv.setCpServicoPai(srvPai);
+					srvRecuperado = dao().consultarPorSigla(srv);
+					if (srvRecuperado == null) {
+						CpTipoServico tpsrv = dao().consultar(CpTipoServico.TIPO_CONFIG_SISTEMA, CpTipoServico.class,
+								false);
+						String sDesc = (asParts.length > 1 ? asParts[1] : "");
+						srv.setDscServico(sDesc);
+						srv.setCpServicoPai(srvPai);
+						srv.setCpTipoServico(tpsrv);
+						ContextoPersistencia.begin();
+						dao().acrescentarServico(srv);
+						adicionaNovaConfiguracao(srv, restringir, receberEmail, titular);
+						ContextoPersistencia.commit();
+					}
+					srvPai = srvRecuperado;
+				}
+			}
+			return adicionaNovaConfiguracao(srv, restringir, receberEmail, titular);
+		} catch (Exception e) {
+			throw new RuntimeException("Não foi possível calcular acesso ao serviço " + servicoPath, e);
+		}
+	}
+	
+	@Transactional
+	public static CpConfiguracao adicionaNovaConfiguracao(CpServico servicoExistente, Integer restringir,  Integer receberEmail, 
+			DpPessoa pessoa) {
+		CpServico servico = new CpServico();
+		CpConfiguracao config = new CpConfiguracao(); 
+		servico = CpDao.getInstance().consultarServicoPorSigla(servicoExistente.getSigla()); 
+		config = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(servico.getIdServico(), pessoa.getIdPessoa());
+		if (config == null) {
+			CpDao.getInstance().iniciarTransacao();
+			config.setCpServico(servico);
+			config.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
+			config.setDpPessoa(pessoa);
+			config.setReceberEmail(receberEmail); 
+			config.setRestringir(restringir);
+			CpDao.getInstance().gravar(config);
+			CpDao.getInstance().commitTransacao();
+		}
+		return config;
 	}
 
 	/**

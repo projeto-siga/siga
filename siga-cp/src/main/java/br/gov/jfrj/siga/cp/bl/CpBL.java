@@ -391,15 +391,15 @@ public class CpBL {
 
 					if (SigaMessages.isSigaSP()) {
 						CpConfiguracao cpConfiguracao = new CpConfiguracao();
-						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 								CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
 						if (cpConfiguracao == null) {
 							DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
 							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
-							cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+							cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 									CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
 						}
-						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+						if (cpConfiguracao.enviarNotificao()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
 						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
@@ -428,15 +428,15 @@ public class CpBL {
 						}
 					} else {
 						CpConfiguracao cpConfiguracao = new CpConfiguracao();
-						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 								CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
 						if (cpConfiguracao == null) {
 							DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
 							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
-							cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+							cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 									CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
 						}
-						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+						if (cpConfiguracao.enviarNotificao()) {
 						Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
 								"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
 										+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
@@ -525,10 +525,10 @@ public class CpBL {
 						DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
 						notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
 						CpConfiguracao cpConfiguracao = new CpConfiguracao();
-						cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+						cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 								CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), pessoa.getIdPessoa());
 						
-						if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+						if (cpConfiguracao.enviarNotificao()) {
 							if (SigaMessages.isSigaSP()) {
 									String[] destinanarios = { pessoa.getEmailPessoaAtual() };  
 									String conteudoHTML = pessoaIsUsuarioExterno(pessoa)

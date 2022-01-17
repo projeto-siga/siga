@@ -184,7 +184,8 @@ public class ExMovimentacaoController extends ExController {
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class); 
-	private static final String SIGA_CEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;";
+
+	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla()+":"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getDescricao();
 	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCMARC:Documentos de marcadores";
 	
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
@@ -1423,17 +1424,17 @@ public class ExMovimentacaoController extends ExController {
 
 		try {
 			CpConfiguracao cpConfiguracao = new CpConfiguracao();
-			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 					CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), cosignatarioSel.getObjeto().getIdPessoa());
 										
 			if (cpConfiguracao == null) {
 				DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
 				notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular());
-				cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+				cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 						CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), cosignatarioSel.getObjeto().getIdPessoa());
 			}
 			
-			if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) { 
+			if (cpConfiguracao.enviarNotificao()) { 
 				String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
 				Correio.enviar(null,destinanarios, 
 						"Usuário marcado ", 
@@ -2115,10 +2116,10 @@ public class ExMovimentacaoController extends ExController {
 			Set<DpPessoa> s = lotaResponsavelSel.getObjeto().getDpPessoaLotadosSet();
 			for (DpPessoa pessoa: s) {
 				CpConfiguracao cpConfiguracao = new CpConfiguracao();
-				cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+				cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 						CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong(), pessoa.getIdPessoa());
 				if (cpConfiguracao != null) {
-					if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+					if (cpConfiguracao.enviarNotificao()) {
 						String[] destinanarios = { pessoa.getEmailPessoa() }; 
 							
 						Correio.enviar(null,destinanarios,   
@@ -2148,20 +2149,19 @@ public class ExMovimentacaoController extends ExController {
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
 						movimentacaoBuilder.getConteudo(),
 						mov.getNmFuncaoSubscritor(), false, false, tpTramite);
-
-		Boolean conf = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
-				SIGA_CEMAIL_DOCMARC );
-		if (conf != null) { 
-			System.out.println(">>>>>>>>>>>>>> POSSUI TEM SERVIÇO");
-		} else {
-			System.out.println(">>>>>>>>>>>>>> NAO TEM SERVIÇO");
-		}
-		
+		CpConfiguracao configuracao = Cp.getInstance().getConf().podeAdicionarServicoEConfiguracao(getTitular(), getLotaTitular(),
+				SIGA_CEMAIL_SUB, 1, 1 ); 
+		if (configuracao != null) {  
+			if (configuracao.enviarNotificao()) {
+				System.out.println(">>>>>>>>>>>>>EMAIL ENVIADO COM SUCESSO!");
+			}    
+		} 
+		  
 		CpConfiguracao cpConfiguracao = new CpConfiguracao();
-		cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+		cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 				CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), getTitular().getIdPessoa());
 		if (cpConfiguracao != null) {
-			if (responsavelSel.getDescricao() != null && cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+			if (responsavelSel.getDescricao() != null && cpConfiguracao.enviarNotificao()) {
 				String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() };
 				Correio.enviar(null,destinanarios,   
 						"Documento transferido para o usuário " + responsavelSel.getDescricao() + "", 
@@ -2188,16 +2188,16 @@ public class ExMovimentacaoController extends ExController {
 					for (int j = 0; j < mainList.size(); j++) { 
 						if (listMar.get(i).getDescrMarcador() == mainList.get(j).getMarcadoresLocalGeral()) {
 							cpConfiguracao = new CpConfiguracao(); 
-							cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+							cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 									CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), responsavelSel.getId());
-							if (conf == null) {  
+							if (false) {  
 								DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
 								notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(responsavelSel.getObjeto());
-								cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+								cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 										CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), responsavelSel.getId());
 							} 
 							
-							if (responsavelSel.getDescricao() != null && conf) {
+							if (responsavelSel.getDescricao() != null && false) { 
 								Correio.enviar(null, destinanarios,  
 										"Usuário marcado ",    
 										"",   

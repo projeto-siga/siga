@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
 public class DpConfiguracaoNotificarPorEmail extends CpConfiguracao implements Serializable, 
@@ -23,18 +24,19 @@ Selecionavel, Historico, Sincronizavel, DpConvertableEntity {
 
 	public DpConfiguracaoNotificarPorEmail() { }
 	private static final String SIGA_CEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email";
-	private static final String SIGA_CEMAIL_ALTEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;ALTEMAIL:Alteração de email";
-	private static final String SIGA_CEMAIL_ALTSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;ALTSENHA:Alterar minha senha";
-	private static final String SIGA_CEMAIL_CADUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;CADUSU:Cadastro de novo usuário";
-	private static final String SIGA_CEMAIL_CONSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;CONSSIG:Conssignatário";
-	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCMARC:Documentos de marcadores";
-	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUN:Documento tramitado para unidade";
-	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUSU:Documento tramitado para meu usuário";
-	private static final String SIGA_CEMAIL_ESQSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;ESQSENHA:Esqueci minha senha";
-	private static final String SIGA_CEMAIL_RESPASSI = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;RESPASSI:Responsável pela assinatura";
-	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;SUB:Substituição";
-	Integer receberEmail;
+	private static final String SIGA_CEMAIL_ALTEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;" +CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getSigla()+ ":"+CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getDescricao();
+	private static final String SIGA_CEMAIL_ALTSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getSigla()+":"+CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getDescricao();
+	private static final String SIGA_CEMAIL_CADUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getSigla()+":"+CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getDescricao();
+	private static final String SIGA_CEMAIL_CONSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getSigla()+":"+CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getDescricao();
+	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getDescricao();
+	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getDescricao();
+	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getDescricao();
+	private static final String SIGA_CEMAIL_ESQSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getSigla()+":"+CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getDescricao();
+	private static final String SIGA_CEMAIL_RESPASSI = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getSigla()+":"+CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getDescricao();
+	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla()+":"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla();
 	
+	Integer receberEmail;
+	Integer restringir;
 	@Override
 	public String getIdExterna() {
 		return null;
@@ -93,35 +95,137 @@ Selecionavel, Historico, Sincronizavel, DpConvertableEntity {
 		return null;
 	}
 	
-	public void verificandoAusenciaDeAcoesParaUsuario (DpPessoa pessoa, DpLotacao lotacao) {
+	public CpConfiguracao adicionarConfiguracao (DpPessoa pessoa, DpLotacao lotacao, String servicoSigla) {
+		CpServico servico = new CpServico();
+		CpConfiguracao config = new CpConfiguracao();
+		String sigla = "";
 		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
 				SIGA_CEMAIL );
-		
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_ALTSENHA );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_CADUSU );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_CONSSIG );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_DOCMARC );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_DOCTUN );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_DOCTUSU );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_ESQSENHA );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_RESPASSI );
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_SUB );
-		
-		
-		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL_ALTEMAIL )) {
-			
-			CpConfiguracao alterEmail = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), pessoa.getIdPessoa());
+		sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + servicoSigla;
+		servico = CpDao.getInstance().consultarServicoPorSigla(sigla);  
+		config = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(servico.getIdServico(), pessoa.getIdPessoa());
+		if (config == null) { 
+			receberEmail = 1;  
+			restringir = 1;
+			//config = Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
 		}
+		return config; 
+		
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_ALTEMAIL )) {
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_ALTSENHA )) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_CADUSU)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_CONSSIG)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_DOCMARC)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_DOCTUN)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_DOCTUSU)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_ESQSENHA)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_RESPASSI)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+//				SIGA_CEMAIL_SUB)) {
+//			servico = new CpServico();
+//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla();
+//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
+//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
+//				receberEmail = 1;
+//				restringir = 1;
+//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+//			}
+//		}
+		
+	}
+	
+	public void verificandoAusenciaDeAcoesParaUsuario (DpPessoa pessoa) {
+		
+		
 //		CpConfiguracao alterEmail = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), pessoa.getIdPessoa());
 //		if (alterEmail == null) {
 //			receberEmail = 0;
@@ -202,19 +306,6 @@ Selecionavel, Historico, Sincronizavel, DpConvertableEntity {
 //			servico.setIdServico(CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong()); 
 //			adicionarServico(servico, restringir, pessoa, receberEmail);  
 //		}
-	}
-	
-	@Transactional
-	public void adicionarServico (CpServico servico, Integer restringir, DpPessoa pessoa, Integer receberEmail) {
-		CpConfiguracao config = new CpConfiguracao(); 
-		CpDao.getInstance().iniciarTransacao();
-		config.setCpServico(servico);
-		config.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
-		config.setDpPessoa(pessoa);
-		config.setReceberEmail(receberEmail); 
-		config.setRestringir(restringir);
-		CpDao.getInstance().gravar(config);
-		CpDao.getInstance().commitTransacao();
 	}
 	
 }

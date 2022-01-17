@@ -3654,16 +3654,16 @@ public class ExBL extends CpBL {
 		gravarMovimentacao(mov_substituto);
 		try {
 			CpConfiguracao cpConfiguracao = new CpConfiguracao();
-			cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+			cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 					CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
 			if (cpConfiguracao == null) {
 				DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
 				notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(doc.getTitular());
-				cpConfiguracao = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(
+				cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
 						CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
 			}
 			
-			if (cpConfiguracao.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()) {
+			if (cpConfiguracao.enviarNotificao()) {
 				String[] destinanarios = { doc.getTitular().getEmailPessoa() }; 
 				
 					Correio.enviar(null, destinanarios,

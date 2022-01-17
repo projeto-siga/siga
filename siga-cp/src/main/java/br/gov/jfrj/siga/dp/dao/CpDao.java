@@ -170,7 +170,7 @@ public class CpDao extends ModeloDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public CpConfiguracao consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(final Long codigo, Long idPessoa) {
+	public CpConfiguracao consultarExistenciaServicoEmConfiguracao(final Long codigo, Long idPessoa) {
 		final Query query = em().createNamedQuery("consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail");
 		query.setParameter("idServico", codigo);
 		query.setParameter("idPessoa", idPessoa);
@@ -184,9 +184,38 @@ public class CpDao extends ModeloDao {
 		return l.get(0);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Boolean consultarExistenciaServicoEmConfiguracao2(final Long codigo, Long idPessoa) {
+		final Query query = em().createNamedQuery("consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail");
+		query.setParameter("idServico", codigo);
+		query.setParameter("idPessoa", idPessoa);
+		
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<CpConfiguracao> l = query.getResultList();
+		if (l.size() != 1)
+			return false;
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CpServico consultarServicoPorSigla(final String sigla) {
+		final Query query = em().createNamedQuery("consultarServicoPorSigla");
+		query.setParameter("sigla", sigla);
+		
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<CpServico> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
 	public int consultarQuantidadeDeAcoesParaNotificacoesPorEmail() {
 		try {
-			final Query query = em().createNamedQuery("consultarQuantidadeAcoesNotificarPorEmail");
+			final Query query = em().createNamedQuery("consultarQuantidadeAcoesNotificarPorEmail");  
 
 			final int l = ((Long) query.getSingleResult()).intValue();
 			return l;

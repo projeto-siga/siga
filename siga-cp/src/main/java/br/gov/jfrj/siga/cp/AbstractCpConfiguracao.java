@@ -537,7 +537,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		}
 	}
 	
-	public boolean isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail () {
+	public boolean enviarNotificao () {
 		if(this.getReceberEmail() == 1) {
 			return true;
 		} else {

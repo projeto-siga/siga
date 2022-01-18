@@ -548,6 +548,17 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.PODE, true),
+	
+	RESTRINGIR_TRAMITACAO(58, "Restringir Tramitação", "Esta configuração define a exceção de Pessoa, Cargo, Função de Confiança, Unidade e Órgão na Restrição de Tramitação de documento," +
+			" “Pode”, ou seja, após a configuração realizada, o Usuário estará apto para tramitar para um Usuário, Unidade ou Órgão restrito.<br>" +
+			"Os campos com objeto define a Pessoa, Cargo, Função de Confiança, Lotação e Órgão alvo.<br>" +
+			"Os campos sem objeto define a Pessoa, Cargo, Função de Confiança, Lotação e Órgão o acesso a realizar a ação, “Pode”.",
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
+					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
+					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
+			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true);
 	
 	

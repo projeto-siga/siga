@@ -1864,7 +1864,7 @@ public class ExDocumentoController extends ExController {
 							"",   
 							""   
 								+ "<br>" 
-								+ "Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + " (" + exDocumentoDTO.getSubscritorSel().getObjeto().getSigla() + ")</b>, "
+								+ "Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + " (" + exDocumentoDTO.getSubscritorSel().getObjeto().getSigla() + ")</b>. "
 								+ "Você recebeu o documento <b>" + exDocumentoDTO.getDoc().getCodigo() + "</b> com o Alerta, responsável pela assinatura, "
 								+ "enviado pelo usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSigla() + ")</b>."
 								+ "<br>"

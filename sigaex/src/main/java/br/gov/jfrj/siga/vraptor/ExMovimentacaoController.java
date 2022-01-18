@@ -2186,7 +2186,7 @@ public class ExMovimentacaoController extends ExController {
 											""
 												+ "<br>" 
 												+ "Prezado Usuário, <b>" + pessoa.getNomePessoa() + " (" + pessoa.getSigla() + ")</b>. "
-												+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
+												+ "você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
 												+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
 												+ "<br>"
 												+ "<br>"

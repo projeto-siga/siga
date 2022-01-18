@@ -3667,8 +3667,8 @@ public class ExBL extends CpBL {
 						"",   
 						""    
 							+ "<br>"   
-							+ "Prezado usuário, <b>" + doc.getTitular().getNomePessoa() + "</b>, "
-							+ "você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
+							+ "Prezado usuário, <b>" + doc.getTitular().getNomePessoa() + "</b>. "
+							+ "Você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
 							+ "pelo usuário <b>" + doc.getSubscritor().getNomePessoa() + "</b> (<b>" + doc.getSubscritor().getSiglaCompleta() + "</b>)."
 							+ "<br>"
 							+ "<br>"

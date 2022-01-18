@@ -1,3 +1,3 @@
 ALTER TABLE cp_configuracao 
-ADD (receber_email int, 
-     restringir int);
+ADD (RECEBER_EMAIL int, 
+     RESTRINGIR int);

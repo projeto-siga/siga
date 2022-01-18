@@ -46,8 +46,7 @@ import br.gov.jfrj.siga.model.Objeto;
 		@NamedQuery(name = "consultarPorSiglaStringCpServico", query = "select org from CpServico org "
 				+ "where upper(org.siglaServico) like upper(:siglaServico)"),  
 		@NamedQuery(name = "consultarServicoPorSigla", query = "select org from CpServico org "
-				+ "where upper(org.siglaServico) like upper(:sigla)"),
-		@NamedQuery(name = "consultarExistenciaDeServico", query = "from CpServico servico where servico.idServico = :idServico")})
+				+ "where upper(org.siglaServico) like upper(:sigla)")})
 public abstract class AbstractCpServico extends Objeto implements Serializable {
 
 	@Id

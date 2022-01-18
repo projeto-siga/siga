@@ -172,6 +172,7 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public CpConfiguracao consultarExistenciaServicoEmConfiguracao(final Long codigo, Long idPessoa) {
 		final Query query = em().createNamedQuery("consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail");
+		query.setParameter("idServico", codigo);
 		query.setParameter("idPessoa", idPessoa);
 		
 		query.setHint("org.hibernate.cacheable", true);

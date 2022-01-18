@@ -8,7 +8,7 @@ public enum CpAcoesDeNotificarPorEmail {
 	ALTERAR_MINHA_SENHA ("Alterar minha senha" , "ALTSENHA"), 
 	ESQUECI_MINHA_SENHA ("Esqueci minha senha", "ESQSENHA"),
 	RESPONS_ASSINATURA ("Responsável pela assinatura", "RESPASSI"),
-	CONSSIGNATARIO ("Conssignatário", "CONSSIG"),
+	CONSIGNATARIO ("Consignatário", "CONSIG"),
 	SUBSTITUICAO ("Substituição", "SUB"),
 	DOC_TRAMIT_PARA_MEU_USU ("Tramitar para o meu usuário", "DOCTUSU"),
 	DOC_TRAMIT_PARA_M_UNIDADE ("Tramitar para minha unidade", "DOCTUN"),

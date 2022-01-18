@@ -135,13 +135,13 @@ public class CpDao extends ModeloDao {
 			}
 			if (itemPagina > 0) {   
 				query.setMaxResults(itemPagina);
-			} 
+			}   
 			query.setParameter("idPessoa", idUsuario); 
 			query.setParameter("respAssinatura", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getSigla());
 			query.setParameter("alterSenha", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getSigla());
 			query.setParameter("alterEmail", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getSigla());
 			query.setParameter("cadUsu", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getSigla());
-			query.setParameter("conssig", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getSigla());
+			query.setParameter("conssig", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.CONSIGNATARIO.getSigla());
 			query.setParameter("docMarc", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getSigla());
 			query.setParameter("docTramUnid", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getSigla());
 			query.setParameter("docTramUsu", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getSigla());

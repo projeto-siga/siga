@@ -90,16 +90,16 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 		@NamedQuery(name = "consultarExistenciaDeAcaoDeNotificacaoPorEmail", query = "from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa and email.idConfiguracao = :idConfiguracao "),
 		@NamedQuery(name = "consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail", query = "from CpConfiguracao email where email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :idServico "), 
 		@NamedQuery(name = "consultarAcoesParaNotificacoesPorEmail", query = "from CpConfiguracao email where"
-				+ " (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :respAssinatura) " 
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :alterSenha) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :alterEmail) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :cadUsu)"
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :conssig) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docMarc) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUnid) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :docTramUsu) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :esqueSenha) "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :sub) "), 
+				+ " (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :respAssinatura) " 
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :alterSenha) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :alterEmail) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :cadUsu)"
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :conssig) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :docMarc) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :docTramUnid) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :docTramUsu) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :esqueSenha) "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :sub) "),   
 		@NamedQuery(name = "consultarQuantidadeAcoesNotificarPorEmail", query = "select count(email) from CpConfiguracao email" )})
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		implements Serializable, CpConvertableEntity {

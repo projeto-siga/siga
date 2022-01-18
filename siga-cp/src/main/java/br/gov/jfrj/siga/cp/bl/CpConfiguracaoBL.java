@@ -75,6 +75,8 @@ public class CpConfiguracaoBL {
 	public static final long ID_ORGAO_ROOT = 999999999L;
 	public static final String SIGLA_ORGAO_ROOT = "ZZ";
 
+	private static final String SIGA_CEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email";
+	
 	private final static org.jboss.logging.Logger log = org.jboss.logging.Logger.getLogger(CpConfiguracaoBL.class);
 
 	protected Date dtUltimaAtualizacaoCache = null;
@@ -800,9 +802,11 @@ public class CpConfiguracaoBL {
 	}
 	
 	@SuppressWarnings("static-access")
-	public CpConfiguracao podeAdicionarServicoEConfiguracao(DpPessoa titular, DpLotacao lotaTitular, String servicoPath, 
+	public CpConfiguracao podeUtilizarOuAdicionarServicoPorConfiguracao(DpPessoa titular, DpLotacao lotaTitular, String servicoPath, 
 			Integer restringir, Integer receberEmail) {
 		try {
+			Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,
+					SIGA_CEMAIL );
 			if (titular == null || lotaTitular == null)
 				return null;
 
@@ -830,8 +834,8 @@ public class CpConfiguracaoBL {
 						srv.setCpTipoServico(tpsrv);
 						ContextoPersistencia.begin();
 						dao().acrescentarServico(srv);
-						adicionaNovaConfiguracao(srv, restringir, receberEmail, titular);
 						ContextoPersistencia.commit();
+						adicionaNovaConfiguracao(srv, restringir, receberEmail, titular);
 					}
 					srvPai = srvRecuperado;
 				}
@@ -842,23 +846,23 @@ public class CpConfiguracaoBL {
 		}
 	}
 	
-	@Transactional
 	public static CpConfiguracao adicionaNovaConfiguracao(CpServico servicoExistente, Integer restringir,  Integer receberEmail, 
-			DpPessoa pessoa) {
+			DpPessoa pessoa) {  
 		CpServico servico = new CpServico();
 		CpConfiguracao config = new CpConfiguracao(); 
 		servico = CpDao.getInstance().consultarServicoPorSigla(servicoExistente.getSigla()); 
 		config = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(servico.getIdServico(), pessoa.getIdPessoa());
 		if (config == null) {
-			CpDao.getInstance().iniciarTransacao();
+			config = new CpConfiguracao(); 
 			config.setCpServico(servico);
 			config.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
 			config.setDpPessoa(pessoa);
 			config.setReceberEmail(receberEmail); 
 			config.setRestringir(restringir);
+			ContextoPersistencia.begin();
 			CpDao.getInstance().gravar(config);
-			CpDao.getInstance().commitTransacao();
-		}
+			ContextoPersistencia.commit();
+		}  
 		return config;
 	}
 

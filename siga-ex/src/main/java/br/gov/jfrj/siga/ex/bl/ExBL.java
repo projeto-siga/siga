@@ -212,8 +212,8 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
 import br.gov.jfrj.siga.hibernate.ExDao;
-//import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
-//import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
+import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
+import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
@@ -237,6 +237,10 @@ public class ExBL extends CpBL {
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
+	
+	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"
+			+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla()+":"
+			+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getDescricao();
 	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();
@@ -3653,26 +3657,18 @@ public class ExBL extends CpBL {
 				+ " - " + doc.getTitular().getSiglaCompleta());
 		gravarMovimentacao(mov_substituto);
 		try {
-			CpConfiguracao cpConfiguracao = new CpConfiguracao();
-			cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-					CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
-			if (cpConfiguracao == null) {
-				DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-				notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(doc.getTitular());
-				cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-						CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), doc.getTitular().getIdPessoa());
-			}
-			
-			if (cpConfiguracao.enviarNotificao()) {
+			CpConfiguracao configuracao = new CpConfiguracao(); 
+			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(doc.getTitular(), doc.getLotaTitular(),
+					SIGA_CEMAIL_SUB, 1, 1 );   
+			if (configuracao != null && configuracao.enviarNotificao()) {
 				String[] destinanarios = { doc.getTitular().getEmailPessoa() }; 
-				
 					Correio.enviar(null, destinanarios,
-						"Usuário marcado ", 
+						"Usuário marcado ",  
 						"",   
 						""    
 							+ "<br>"   
 							+ "Prezado usuário, <b>" + doc.getTitular().getNomePessoa() + "</b>, "
-							+ "Você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
+							+ "você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
 							+ "pelo usuário <b>" + doc.getSubscritor().getNomePessoa() + "</b> (<b>" + doc.getSubscritor().getSiglaCompleta() + "</b>)."
 							+ "<br>"
 							+ "<br>"
@@ -8091,11 +8087,11 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + "\" antes de tramitar.");
 		
 		String descricao = formulario.getDescrDocumento();
-		//SiafDoc doc = new SiafDoc(descricao.split(";"));
+		SiafDoc doc = new SiafDoc(descricao.split(";"));
 		
-		//doc.setProcesso(obterCodigoUnico(formulario, false));
+		doc.setProcesso(obterCodigoUnico(formulario, false));  
 		
-		//ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
+		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
 	}
 
 	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {

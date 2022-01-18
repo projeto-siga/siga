@@ -61,6 +61,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -68,6 +69,7 @@ import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -631,8 +633,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 		DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
 				orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
-
-
+		
 		lista(0, null, "", "", null, null, null, "", null);
 	}
 

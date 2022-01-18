@@ -138,7 +138,7 @@ public class ExDocumentoController extends ExController {
 	private String url = null;
 	
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
-
+	private static final String SIGA_CEMAIL_RESPASSI = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getSigla()+":"+CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getDescricao();
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1853,14 +1853,11 @@ public class ExDocumentoController extends ExController {
 				throw new AplicacaoException(
 						"Erro ao tentar incluir os cosignatários deste documento",
 						0, e);
-			}
-			
-			CpConfiguracao cpConfiguracao = new CpConfiguracao();
-			cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-					CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong(), exDocumentoDTO.getSubscritorSel().getObjeto().getIdPessoa());
-			
-			if (cpConfiguracao != null) {
-				if (cpConfiguracao.enviarNotificao()) {
+			}	
+			CpConfiguracao configuracao = new CpConfiguracao(); 
+			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(exDocumentoDTO.getSubscritorSel().getObjeto(), getLotaTitular(),
+					SIGA_CEMAIL_RESPASSI, 1, 1 );   
+			if (configuracao != null && configuracao.enviarNotificao()) {
 					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
 					Correio.enviar(null, destinanarios, 
 							"Usuário marcado ",  
@@ -1875,7 +1872,6 @@ public class ExDocumentoController extends ExController {
 								+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
 								+ "	>clique aqui.</a>"); 		
 				}
-			}
 
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro na gravação", e);

@@ -91,6 +91,14 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 public class CpBL {
 	CpCompetenciaBL comp;
 
+	private static final String SIGA_CEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email";
+	private static final String SIGA_CEMAIL_CADUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"
+		+CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getSigla()
+		+":"+CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getDescricao();
+	private static final String SIGA_CEMAIL_ESQSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"
+			+CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getSigla()
+			+":"+CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getDescricao();
+	
 	public CpCompetenciaBL getComp() {
 		return comp;
 	}
@@ -388,18 +396,12 @@ public class CpBL {
 					dao().iniciarTransacao();
 					dao().gravarComHistorico(idNova, id, dt, idCadastrante);
 					dao().commitTransacao();
-
+					
 					if (SigaMessages.isSigaSP()) {
-						CpConfiguracao cpConfiguracao = new CpConfiguracao();
-						cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-								CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
-						if (cpConfiguracao == null) {
-							DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
-							cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-									CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
-						}
-						if (cpConfiguracao.enviarNotificao()) {
+						CpConfiguracao configuracao = new CpConfiguracao(); 
+						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
+								SIGA_CEMAIL_ESQSENHA, 1, 1 ); 
+						if (configuracao != null && configuracao.enviarNotificao()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
 						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
@@ -427,16 +429,10 @@ public class CpBL {
 										+ "</td>" + "</tr>" + "</tbody>" + "</table>");
 						}
 					} else {
-						CpConfiguracao cpConfiguracao = new CpConfiguracao();
-						cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-								CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
-						if (cpConfiguracao == null) {
-							DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
-							cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-									CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
-						}
-						if (cpConfiguracao.enviarNotificao()) {
+						CpConfiguracao configuracao = new CpConfiguracao(); 
+						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
+								SIGA_CEMAIL_ESQSENHA, 1, 1 ); 
+						if (configuracao != null && configuracao.enviarNotificao()) {
 						Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
 								"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
 										+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
@@ -521,14 +517,10 @@ public class CpBL {
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
 						dao().commitTransacao();
-
-						DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-						notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa);
-						CpConfiguracao cpConfiguracao = new CpConfiguracao();
-						cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-								CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), pessoa.getIdPessoa());
-						
-						if (cpConfiguracao.enviarNotificao()) {
+						CpConfiguracao configuracao = new CpConfiguracao(); 
+						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
+								SIGA_CEMAIL_CADUSU, 1, 1 ); 
+						if (configuracao != null && configuracao.enviarNotificao()) {
 							if (SigaMessages.isSigaSP()) {
 									String[] destinanarios = { pessoa.getEmailPessoaAtual() };  
 									String conteudoHTML = pessoaIsUsuarioExterno(pessoa)

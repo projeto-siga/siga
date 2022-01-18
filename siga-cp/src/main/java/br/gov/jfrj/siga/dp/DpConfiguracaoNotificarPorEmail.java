@@ -95,217 +95,87 @@ Selecionavel, Historico, Sincronizavel, DpConvertableEntity {
 		return null;
 	}
 	
-	public CpConfiguracao adicionarConfiguracao (DpPessoa pessoa, DpLotacao lotacao, String servicoSigla) {
-		CpServico servico = new CpServico();
-		CpConfiguracao config = new CpConfiguracao();
-		String sigla = "";
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-				SIGA_CEMAIL );
-		sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + servicoSigla;
-		servico = CpDao.getInstance().consultarServicoPorSigla(sigla);  
-		config = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(servico.getIdServico(), pessoa.getIdPessoa());
-		if (config == null) { 
-			receberEmail = 1;  
-			restringir = 1;
-			//config = Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
+	public void adicionarConfiguracao (DpPessoa pessoa, DpLotacao lotacao) {
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_ALTEMAIL )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_ALTEMAIL, 0, 0 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_ALTEMAIL, 0, 0 ); 
 		}
-		return config; 
-		
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_ALTEMAIL )) {
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_ALTSENHA )) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_CADUSU)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_CONSSIG)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_DOCMARC)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_DOCTUN)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_DOCTUSU)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_ESQSENHA)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_RESPASSI)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-//		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
-//				SIGA_CEMAIL_SUB)) {
-//			servico = new CpServico();
-//			sigla = CpAcoesDeNotificarPorEmail.SIGA_CEMAIL.getSigla() + CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla();
-//			servico = CpDao.getInstance().consultarServicoPorSigla(sigla);
-//			if (!CpDao.getInstance().consultarExistenciaServicoEmConfiguracao2(servico.getIdServico(), pessoa.getIdPessoa())) { 
-//				receberEmail = 1;
-//				restringir = 1;
-//				Cp.getInstance().getConf().adicionaNovaConfiguracao(servico, restringir, receberEmail, pessoa);
-//			}
-//		}
-		
-	}
-	
-	public void verificandoAusenciaDeAcoesParaUsuario (DpPessoa pessoa) {
-		
-		
-//		CpConfiguracao alterEmail = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), pessoa.getIdPessoa());
-//		if (alterEmail == null) {
-//			receberEmail = 0;
-//			Integer restringir = 1;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao alterSenha = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
-//		if (alterSenha == null) {
-//			receberEmail = 1;
-//			Integer restringir = 0; 
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao cadUsu = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong(), pessoa.getIdPessoa());
-//		if (cadUsu == null) {
-//			receberEmail = 1;
-//			Integer restringir = 0;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao conssi = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), pessoa.getIdPessoa());
-//		if (conssi == null) {
-//			receberEmail = 1;
-//			Integer restringir = 0;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao docMarc = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), pessoa.getIdPessoa());
-//		if (docMarc == null) {
-//			receberEmail = 0;
-//			Integer restringir = 1;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao docTramiUnidade = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong(), pessoa.getIdPessoa());
-//		if (docTramiUnidade == null) {
-//			receberEmail = 0;
-//			Integer restringir = 1;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao docTramiUsu = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), pessoa.getIdPessoa());
-//		if (docTramiUsu == null) {
-//			receberEmail = 0;
-//			Integer restringir = 1;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao esqSenha = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong(), pessoa.getIdPessoa());
-//		if (esqSenha == null) {
-//			receberEmail = 1;
-//			Integer restringir = 0;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao respAssi = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong(), pessoa.getIdPessoa());
-//		if (respAssi == null) {
-//			receberEmail = 1;
-//			Integer restringir = 0;
-//			CpServico servico = new CpServico();  
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong());
-//			adicionarServico(servico, restringir, pessoa, receberEmail);
-//		}
-//		CpConfiguracao sub = CpDao.getInstance().consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail(CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong(), pessoa.getIdPessoa());
-//		if (sub == null) {
-//			receberEmail = 1;
-//			Integer restringir = 0;
-//			CpServico servico = new CpServico();
-//			servico.setIdServico(CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong()); 
-//			adicionarServico(servico, restringir, pessoa, receberEmail);  
-//		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_ALTSENHA )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa,lotacao,
+					SIGA_CEMAIL_ALTSENHA, 1, 1 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_ALTSENHA, 1, 1 ); 
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_CADUSU )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_CADUSU, 1, 1 );  
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_CADUSU, 1, 1 );  
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_CONSSIG )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_CONSSIG, 1, 1 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_CONSSIG, 1, 1 ); 
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_DOCMARC )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_DOCMARC, 0, 0 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_DOCMARC, 0, 0 ); 
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_DOCTUN )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_DOCTUN, 0, 0 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_DOCTUN, 0, 0 ); 
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_DOCTUSU )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa,lotacao,
+					SIGA_CEMAIL_DOCTUSU, 0, 0 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_DOCTUSU, 0, 0 ); 
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_ESQSENHA )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_ESQSENHA, 1, 1 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_ESQSENHA, 1, 1 ); 
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_RESPASSI )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_RESPASSI, 1, 1 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_RESPASSI, 1, 1 ); 
+		}
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, lotacao,
+				SIGA_CEMAIL_SUB )) {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_SUB, 1, 1 ); 
+		} else {
+			Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, lotacao,
+					SIGA_CEMAIL_SUB, 1, 1 );  
+		}		
 	}
 	
 }

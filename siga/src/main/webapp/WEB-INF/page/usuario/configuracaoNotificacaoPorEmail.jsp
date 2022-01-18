@@ -93,9 +93,9 @@
 											
 										      <td style="width: 70%;">${email.cpServico.dscServico}</td>
 										      <c:choose>
-													<c:when test="${!email.isVerificaSeEstaAtivadoOuDesativadoNotificacaoPorEmail()}">
+													<c:when test="${!email.enviarNotificao()}">
 														<c:choose> 
-															<c:when test="${email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
+															<c:when test="${!email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
 												        		<td>
 												        			<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
 												        		</td>
@@ -104,12 +104,12 @@
 												        		<td data-toggle="tooltip" title="Este item não pode ser alterado pelo usuário">
 												        			<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-primary disabled" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
 												        		</td>
-											        	</c:otherwise>
+											        	</c:otherwise>  
 											        	</c:choose>  
 										        	</c:when>  
 										        	<c:otherwise>
 										        	<c:choose>
-										        		<c:when test="${email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
+										        		<c:when test="${!email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
 												        		<td>
 										        					<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
 										        				</td>

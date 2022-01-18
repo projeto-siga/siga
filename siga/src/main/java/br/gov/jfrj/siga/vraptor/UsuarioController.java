@@ -50,7 +50,12 @@ import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
-
+	private static final String SIGA_CEMAIL_ALTEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;" 
+			+CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getSigla() 
+			+ ":"+CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getDescricao();
+	private static final String SIGA_CEMAIL_ALTSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"
+			+CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getSigla()
+			+":"+CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getDescricao();
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -115,16 +120,10 @@ public class UsuarioController extends SigaController {
 		
 		String[] destinanarios = { pessoa.getDpPessoa().getEmailPessoa() };
 		
-		CpConfiguracao cpConfiguracao = new CpConfiguracao();
-		cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-				CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), pessoa.getDpPessoa().getIdPessoa());
-		if (cpConfiguracao == null) {
-			DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-			notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(pessoa.getDpPessoa());
-			cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-					CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong(), pessoa.getDpPessoa().getIdPessoa());
-		}
-		if (cpConfiguracao.enviarNotificao()) {
+		CpConfiguracao configuracao = new CpConfiguracao(); 
+		configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa.getDpPessoa(), getLotaTitular(),
+				SIGA_CEMAIL_ALTSENHA , 1, 1 ); 
+		if (configuracao != null && configuracao.enviarNotificao()) {
 			Correio.enviar(null, destinanarios,
 					"Troca de Senha", "",
 					"<table>" + "<tbody>" + "<tr>"
@@ -202,17 +201,10 @@ public class UsuarioController extends SigaController {
 				List<DpPessoa> lst = new ArrayList<DpPessoa>(dao().listarPorCpf(so.getCadastrante().getCpfPessoa()));
 				for (DpPessoa p : lst) {
 					try {
-						CpConfiguracao cpConfiguracao = new CpConfiguracao();
-						cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-								CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), p.getIdPessoa());
-						if (cpConfiguracao == null) {
-							DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-							notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(p);
-							cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-									CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), p.getIdPessoa());
-						}
-						
-						if (cpConfiguracao.enviarNotificao()) {  
+						CpConfiguracao configuracao = new CpConfiguracao();
+						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(p, getLotaTitular(),
+								SIGA_CEMAIL_ALTEMAIL, 0, 0 );
+						if (configuracao != null && configuracao.enviarNotificao()) {  
 							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
 									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
@@ -250,11 +242,11 @@ public class UsuarioController extends SigaController {
 			} else {
 				DpPessoa pessoa = so.getCadastrante();
 				try {
-					CpConfiguracao cpConfiguracao = new CpConfiguracao();
-					cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-							CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong(), pessoa.getIdPessoa());
-					if (cpConfiguracao != null) { 
-						if (cpConfiguracao.enviarNotificao()) {
+					CpConfiguracao configuracao = new CpConfiguracao();
+					configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, getLotaTitular(),
+							SIGA_CEMAIL_ALTEMAIL, 0, 0 );
+					
+					if (configuracao != null && configuracao.enviarNotificao()) { 
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Troca de Email",
 									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 											+ "\n" + "\n - Nome: " + pessoa.getNomePessoa() + "\n - Matricula: "
@@ -269,7 +261,6 @@ public class UsuarioController extends SigaController {
 											+ "\n\n Em caso de dúvidas, favor entrar em contato com o administrador "
 											+ "\n\n Atenção: esta é uma "
 											+ "mensagem automática. Por favor, não responda.");
-						}
 					}
 
 				} catch (Exception e) {

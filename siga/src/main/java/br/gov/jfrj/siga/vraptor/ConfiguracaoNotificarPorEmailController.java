@@ -12,6 +12,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpConfiguracaoNotificarPorEmail;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -21,6 +22,18 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 public class ConfiguracaoNotificarPorEmailController 
 	extends SigaSelecionavelControllerSupport<DpConfiguracaoNotificarPorEmail, DaoFiltroSelecionavel> {
 
+	private static final String SIGA_CEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email";
+	private static final String SIGA_CEMAIL_ALTEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;" +CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getSigla()+ ":"+CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getDescricao();
+	private static final String SIGA_CEMAIL_ALTSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getSigla()+":"+CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getDescricao();
+	private static final String SIGA_CEMAIL_CADUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getSigla()+":"+CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getDescricao();
+	private static final String SIGA_CEMAIL_CONSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getSigla()+":"+CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getDescricao();
+	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getDescricao();
+	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getDescricao();
+	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getDescricao();
+	private static final String SIGA_CEMAIL_ESQSENHA = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getSigla()+":"+CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getDescricao();
+	private static final String SIGA_CEMAIL_RESPASSI = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getSigla()+":"+CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getDescricao();
+	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla()+":"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getDescricao();
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -60,18 +73,10 @@ public class ConfiguracaoNotificarPorEmailController
 	@Get({ "/app/configuracaoNotificacaoPorEmail/rec_notificacao_por_email_gravar" })
 	public void gravar(Integer paramoffset) throws Exception {
 		if(paramoffset == null) {
-			paramoffset = 0;
+			paramoffset = 0;   
 		} 
-		
-		/*
-		 * Verifica se o usuário possui as 10 ações necessárias. Caso não possua será verificado para adicionar as que faltam.
-		 */
-		
-		List<CpConfiguracao> acoes = dao().consultarAcoesParaNotificacoesPorEmail(paramoffset, 15, getTitular().getIdPessoa());
-		if (acoes.size() < 10) {  
-			DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-			notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular());
-		}
+		DpConfiguracaoNotificarPorEmail configuracaoEmail = new DpConfiguracaoNotificarPorEmail();
+		configuracaoEmail.adicionarConfiguracao(getCadastrante(), getLotaCadastrante());
 		result.redirectTo(ConfiguracaoNotificarPorEmailController.class).lista(0);
 	}
 	 

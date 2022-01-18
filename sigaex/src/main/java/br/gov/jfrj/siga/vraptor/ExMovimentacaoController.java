@@ -185,9 +185,10 @@ public class ExMovimentacaoController extends ExController {
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class); 
 
-	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla()+":"+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getDescricao();
+	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getDescricao();
 	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCMARC:Documentos de marcadores";
-	
+	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getSigla()+":"+CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getDescricao();
+	private static final String SIGA_CEMAIL_CONSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"+CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getSigla()+":"+CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getDescricao();
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
 	
 	/**
@@ -1423,24 +1424,16 @@ public class ExMovimentacaoController extends ExController {
 						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
 
 		try {
-			CpConfiguracao cpConfiguracao = new CpConfiguracao();
-			cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-					CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), cosignatarioSel.getObjeto().getIdPessoa());
-										
-			if (cpConfiguracao == null) {
-				DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-				notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(getTitular());
-				cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-						CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong(), cosignatarioSel.getObjeto().getIdPessoa());
-			}
-			
-			if (cpConfiguracao.enviarNotificao()) { 
+			CpConfiguracao configuracao = new CpConfiguracao(); 
+			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(cosignatarioSel.getObjeto(), getLotaTitular(),
+					SIGA_CEMAIL_CONSSIG, 1, 1 ); 
+			if (configuracao != null && configuracao.enviarNotificao()) {
 				String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
 				Correio.enviar(null,destinanarios, 
 						"Usuário marcado ", 
 						"",   
 						"Prezado usuário, <b>" + cosignatarioSel.getObjeto().getNomePessoa() +"</b>, "
-								+ "Você foi marcado como, consignatário do documento <b>"+ sigla +"</b>, "
+								+ "você foi marcado como <b>consignatário</b> do documento <b>"+ sigla +"</b>, "
 								+ "pelo usuário <b>"+ getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b> "
 								+ "<br>" 
 								+ "<br>"
@@ -2111,15 +2104,14 @@ public class ExMovimentacaoController extends ExController {
 				
 			}
 		}
-		
+		 
 		if (lotaResponsavelSel.getDescricao() != null) { 
 			Set<DpPessoa> s = lotaResponsavelSel.getObjeto().getDpPessoaLotadosSet();
 			for (DpPessoa pessoa: s) {
-				CpConfiguracao cpConfiguracao = new CpConfiguracao();
-				cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-						CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong(), pessoa.getIdPessoa());
-				if (cpConfiguracao != null) {
-					if (cpConfiguracao.enviarNotificao()) {
+				CpConfiguracao configuracao = new CpConfiguracao();
+				configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, getLotaTitular(),
+						SIGA_CEMAIL_DOCTUN, 0, 0 ); 
+				if (configuracao != null && configuracao.enviarNotificao()) {
 						String[] destinanarios = { pessoa.getEmailPessoa() }; 
 							
 						Correio.enviar(null,destinanarios,   
@@ -2133,8 +2125,7 @@ public class ExMovimentacaoController extends ExController {
 									+ "<br>"
 									+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
 									+ "	>clique aqui.</a>");  
-					}
-				}
+				}  
 			}
 		}
 
@@ -2149,74 +2140,81 @@ public class ExMovimentacaoController extends ExController {
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
 						movimentacaoBuilder.getConteudo(),
 						mov.getNmFuncaoSubscritor(), false, false, tpTramite);
-		CpConfiguracao configuracao = Cp.getInstance().getConf().podeAdicionarServicoEConfiguracao(getTitular(), getLotaTitular(),
-				SIGA_CEMAIL_SUB, 1, 1 ); 
-		if (configuracao != null) {  
-			if (configuracao.enviarNotificao()) {
-				System.out.println(">>>>>>>>>>>>>EMAIL ENVIADO COM SUCESSO!");
-			}    
-		} 
-		  
-		CpConfiguracao cpConfiguracao = new CpConfiguracao();
-		cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-				CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong(), getTitular().getIdPessoa());
-		if (cpConfiguracao != null) {
-			if (responsavelSel.getDescricao() != null && cpConfiguracao.enviarNotificao()) {
-				String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() };
-				Correio.enviar(null,destinanarios,   
-						"Documento transferido para o usuário " + responsavelSel.getDescricao() + "", 
-						"",   
-						""  
-							+ "<br>" 
-							+ "O documento <b>" + sigla + "</b>, "
-							+ "foi transferido para o usuário <b>" + responsavelSel.getDescricao() + " (" + responsavelSel.getSigla() + ")</b> e aguarda recebimento. "
-							+ "<br>"
-							+ "<br>"
-							+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-							+ "	>clique aqui.</a>"); 
-			
-				
-				List<CpMarcador> listMar = null;
-				try {
-					listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true, true);
-				} catch (AplicacaoException e) {
-					listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true, true);
-				}   
-				Set<ExMobil> exMarcas = mov.getExDocumento().getExMobilSet();
-				List<ExMobil> mainList = new ArrayList<>(exMarcas);
-				for (int i = 0; i < listMar.size(); i++) { 
-					for (int j = 0; j < mainList.size(); j++) { 
-						if (listMar.get(i).getDescrMarcador() == mainList.get(j).getMarcadoresLocalGeral()) {
-							cpConfiguracao = new CpConfiguracao(); 
-							cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-									CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), responsavelSel.getId());
-							if (false) {  
-								DpConfiguracaoNotificarPorEmail notificarPorEmail = new DpConfiguracaoNotificarPorEmail();
-								notificarPorEmail.verificandoAusenciaDeAcoesParaUsuario(responsavelSel.getObjeto());
-								cpConfiguracao = CpDao.getInstance().consultarExistenciaServicoEmConfiguracao(
-										CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong(), responsavelSel.getId());
-							} 
-							
-							if (responsavelSel.getDescricao() != null && false) { 
-								Correio.enviar(null, destinanarios,  
-										"Usuário marcado ",    
-										"",   
-										""
-											+ "<br>" 
-											+ "Prezado Usuário, <b>" + responsavelSel.getDescricao() + " (" + responsavelSel.getSigla() + ")</b>. "
-											+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
-											+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
-											+ "<br>"
-											+ "<br>"
-											+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-											+ "	>clique aqui.</a>"); 	
+		
+		CpConfiguracao configuracao = new CpConfiguracao();
+		configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(responsavelSel.getObjeto(), getLotaTitular(),
+				SIGA_CEMAIL_DOCTUSU, 0, 0 );
+		if (configuracao != null && configuracao.enviarNotificao() && responsavelSel.getDescricao() != null) {
+			String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() };
+			Correio.enviar(null,destinanarios,    
+					"Documento transferido para o usuário " + responsavelSel.getDescricao() + "", 
+					"",   
+					""    
+						+ "<br>" 
+						+ "O documento <b>" + sigla + "</b>, "
+						+ "foi transferido para o usuário <b>" + responsavelSel.getDescricao() + " (" + responsavelSel.getSigla() + ")</b> e aguarda recebimento. "
+						+ "<br>"
+						+ "<br>"
+						+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+						+ "	>clique aqui.</a>"); 
+		}    
+		
+		configuracao = new CpConfiguracao ();
+		configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(responsavelSel.getObjeto(), getLotaTitular(),
+				SIGA_CEMAIL_DOCMARC, 0, 0 ); 
+		if (configuracao != null) {
+			List<CpMarcador> listMar = null;
+			try {
+				listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true, true);
+			} catch (AplicacaoException e) {
+				listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true, true);
+			}   
+			Set<ExMobil> exMarcas = mov.getExDocumento().getExMobilSet();
+			List<ExMobil> mainList = new ArrayList<>(exMarcas);
+			for (int i = 0; i < listMar.size(); i++) { 
+				for (int j = 0; j < mainList.size(); j++) { 
+					if (listMar.get(i).getDescrMarcador() == mainList.get(j).getMarcadoresLocalGeral()) {
+						if (configuracao.enviarNotificao() && responsavelSel.getDescricao() != null ||
+								configuracao.enviarNotificao() && lotaResponsavelSel.getDescricao() != null) {
+							if (lotaResponsavelSel.getDescricao() != null) {
+								Set<DpPessoa> s = lotaResponsavelSel.getObjeto().getDpPessoaLotadosSet();
+								for (DpPessoa pessoa: s) {
+									String[] destinanarios = { pessoa.getEmailPessoa() };
+									Correio.enviar(null, destinanarios,  
+											"Usuário marcado ",     
+											"",   
+											""
+												+ "<br>" 
+												+ "Prezado Usuário, <b>" + pessoa.getNomePessoa() + " (" + pessoa.getSigla() + ")</b>. "
+												+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
+												+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
+												+ "<br>"
+												+ "<br>"
+												+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+												+ "	>clique aqui.</a>"); 	
+								}
 							}
-							break;
-						}  
-						
-					}   
-				} 	
-			}
+							if (responsavelSel.getDescricao() != null) {
+								String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() };
+							Correio.enviar(null, destinanarios,  
+									"Usuário marcado ",     
+									"",   
+									""
+										+ "<br>" 
+										+ "Prezado Usuário, <b>" + responsavelSel.getDescricao() + " (" + responsavelSel.getSigla() + ")</b>. "
+										+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
+										+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
+										+ "<br>"
+										+ "<br>"
+										+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+										+ "	>clique aqui.</a>"); 
+							}
+						}
+						break;
+					}  
+					
+				}   
+			} 
 		}
 		
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {

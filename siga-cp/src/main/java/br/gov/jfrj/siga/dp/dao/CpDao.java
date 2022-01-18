@@ -133,20 +133,20 @@ public class CpDao extends ModeloDao {
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
-			if (itemPagina > 0) {
+			if (itemPagina > 0) {   
 				query.setMaxResults(itemPagina);
 			} 
 			query.setParameter("idPessoa", idUsuario); 
-			query.setParameter("respAssinatura", CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getIdLong());
-			query.setParameter("alterSenha", CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getIdLong());
-			query.setParameter("alterEmail", CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getIdLong());
-			query.setParameter("cadUsu", CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getIdLong());
-			query.setParameter("conssig", CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getIdLong());
-			query.setParameter("docMarc", CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getIdLong());
-			query.setParameter("docTramUnid", CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getIdLong());
-			query.setParameter("docTramUsu", CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getIdLong());
-			query.setParameter("esqueSenha", CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getIdLong());
-			query.setParameter("sub", CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getIdLong());
+			query.setParameter("respAssinatura", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.RESPONS_ASSINATURA.getSigla());
+			query.setParameter("alterSenha", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.ALTERAR_MINHA_SENHA.getSigla());
+			query.setParameter("alterEmail", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.ALTERACAO_EMAIL.getSigla());
+			query.setParameter("cadUsu", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.CADASTRO_USUARIO.getSigla());
+			query.setParameter("conssig", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.CONSSIGNATARIO.getSigla());
+			query.setParameter("docMarc", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.DOC_MARCADORES.getSigla());
+			query.setParameter("docTramUnid", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_M_UNIDADE.getSigla());
+			query.setParameter("docTramUsu", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.DOC_TRAMIT_PARA_MEU_USU.getSigla());
+			query.setParameter("esqueSenha", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.ESQUECI_MINHA_SENHA.getSigla());
+			query.setParameter("sub", "SIGA-CEMAIL-" + CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla());
 			final List<CpConfiguracao> l = query.getResultList();
 			return l;
 		} catch (final NullPointerException e) {
@@ -172,7 +172,6 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public CpConfiguracao consultarExistenciaServicoEmConfiguracao(final Long codigo, Long idPessoa) {
 		final Query query = em().createNamedQuery("consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail");
-		query.setParameter("idServico", codigo);
 		query.setParameter("idPessoa", idPessoa);
 		
 		query.setHint("org.hibernate.cacheable", true);
@@ -182,21 +181,6 @@ public class CpDao extends ModeloDao {
 		if (l.size() != 1)
 			return null;
 		return l.get(0);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Boolean consultarExistenciaServicoEmConfiguracao2(final Long codigo, Long idPessoa) {
-		final Query query = em().createNamedQuery("consultarExistenciaDeServicosEmAcoesDeNotificacaoPorEmail");
-		query.setParameter("idServico", codigo);
-		query.setParameter("idPessoa", idPessoa);
-		
-		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
-
-		final List<CpConfiguracao> l = query.getResultList();
-		if (l.size() != 1)
-			return false;
-		return true;
 	}
 	
 	@SuppressWarnings("unchecked")

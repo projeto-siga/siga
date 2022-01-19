@@ -286,6 +286,11 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
 		
+		/* Habilita que Usuários distintos inclusos como Cossignatários ou Responsáveis pela Assinatura,
+		 * possam visualizar o “Documento Composto (completo) no SIGA”
+		 * */
+		provider.addPublicProperty("/siga.usuarios.distintos.visualiza.doc.composto", "false");
+		
 		
 
 		// CKEditor

@@ -2336,4 +2336,60 @@ public class ExDao extends CpDao {
 		}
 	}
 	
+	public List<ExDocumento> obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(Long idDoc){
+		
+		String query = queryListaHierarquicaExDocPaiFilhoPorIdDoc();		
+		Query sql = em().createNativeQuery(query);
+		sql.setParameter("ID_DOC", idDoc);
+		
+		List<Object[]> results = sql.getResultList();
+		
+		List<ExDocumento> listExDoc = new ArrayList<>();
+		if(results.size() > 0) {
+			Object[] result = coverterListaBigDecimalParaObject(results);
+			listExDoc = consultarEmLotePorId(result);
+		}		
+		return listExDoc;
+	}
+
+	private static String queryListaHierarquicaExDocPaiFilhoPorIdDoc() {
+		StringBuffer  query = new StringBuffer();
+		query.append("WITH RESULTADO (ID_DOC_FILHO, ID_DOC_PAI) AS ( ");
+		query.append("	SELECT ed.ID_DOC ID_DOC_FILHO , em.ID_DOC ID_DOC_PAI ");
+		query.append("	FROM siga.EX_DOCUMENTO ed ");
+		query.append("	JOIN siga.EX_MOBIL em ON em.ID_MOBIL = ed.ID_MOB_PAI ");
+		query.append("	WHERE ed.ID_DOC = :ID_DOC ");
+		query.append("	UNION ALL ");
+		query.append("	SELECT ed1.ID_DOC ID_DOC_FILHO, em1.ID_DOC ID_DOC_PAI ");
+		query.append("	FROM siga.EX_DOCUMENTO ed1 ");
+		query.append("	JOIN siga.EX_MOBIL em1 ON em1.ID_MOBIL = ed1.ID_MOB_PAI ");
+		query.append("	JOIN RESULTADO r ON r.ID_DOC_PAI = ed1.ID_DOC ");
+		query.append("), RESULTADO_FILHO (ID_DOC_FILHO, ID_DOC_PAI) AS ( ");
+		query.append("	SELECT ed.ID_DOC ID_DOC_FILHO , em.ID_DOC ID_DOC_PAI ");
+		query.append("	FROM siga.EX_DOCUMENTO ed ");
+		query.append("	LEFT JOIN siga.EX_MOBIL em ON em.ID_MOBIL = ed.ID_MOB_PAI ");
+		query.append("	WHERE ed.ID_DOC = :ID_DOC ");
+		query.append("	UNION ALL ");
+		query.append("	SELECT ed1.ID_DOC ID_DOC_FILHO, em1.ID_DOC ID_DOC_PAI ");
+		query.append("	FROM siga.EX_DOCUMENTO ed1 ");
+		query.append("	JOIN siga.EX_MOBIL em1 ON em1.ID_MOBIL = ed1.ID_MOB_PAI ");
+		query.append("	JOIN RESULTADO_FILHO r ON em1.ID_DOC = r.ID_DOC_FILHO ");
+		query.append(") ");
+		query.append("SELECT  ID_DOC_PAI ");
+		query.append("FROM    RESULTADO ");
+		query.append("UNION ");
+		query.append("SELECT DISTINCT ID_DOC_FILHO ");
+		query.append("FROM    RESULTADO_FILHO ");
+		query.append("ORDER BY 1");
+		return query.toString();
+	}
+
+	private Object[] coverterListaBigDecimalParaObject(List<Object[]> results) {
+		Object[] result = new Object[results.size()];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = (Object) results.get(i);
+		}
+		return result;
+	}
+	
 }

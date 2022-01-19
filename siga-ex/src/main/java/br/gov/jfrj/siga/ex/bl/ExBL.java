@@ -38,6 +38,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -54,6 +55,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -3875,6 +3877,92 @@ public class ExBL extends CpBL {
 			doc.setDnmDtAcesso(dt);
 			ExDao.getInstance().gravar(doc);
 		}
+		
+		if(Prop.getBool("/siga.usuarios.distintos.visualiza.doc.composto")
+							&& doc.isFinalizado() && possuiCossignatarioSubscritor(doc)) {
+//			if(doc.isAssinadoDigitalmente() && !doc.isPendenteDeAssinatura()) {
+//				
+//				if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
+//					for (ExMovimentacao mov : doc.getMobilGeral()
+//							.getExMovimentacaoSet()) {
+//						if (mov.isCancelada())
+//							continue;
+//						if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
+//								&& mov.getExMovimentacaoCanceladora() == null) 
+//								&& !mov.getCadastrante().equals(mov.getResp())) {
+//							//temCossigSubscr = Boolean.TRUE;
+//							break;
+//						}
+//					}
+//				}
+//				if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
+//								&& !doc.getCadastrante().equals(doc.getSubscritor())) {
+//					//temCossigSubscr = Boolean.TRUE;
+//				}
+//				
+//			}
+			
+			incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(doc, dt, acessoRecalculado);
+		}
+		
+	}
+	
+	private boolean possuiCossignatarioSubscritor(ExDocumento doc) {
+		boolean temCossigSubscr = Boolean.FALSE;
+		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
+			for (ExMovimentacao mov : doc.getMobilGeral()
+					.getExMovimentacaoSet()) {
+				if (mov.isCancelada())
+					continue;
+				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
+						&& mov.getExMovimentacaoCanceladora() == null) {
+					temCossigSubscr = Boolean.TRUE;
+					break;
+				}
+			}
+		}
+		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
+						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
+			temCossigSubscr = Boolean.TRUE;
+		}
+		return temCossigSubscr;
+	}
+	
+	private void incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(ExDocumento doc, Date dt, String acessoRecalculado) {
+		
+		List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferentePessoa(
+								converterStringParaList(acessoRecalculado, ","));
+		
+		List<ExDocumento> listaTodosDocPais = ExDao.getInstance()
+								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc()); 
+		for (ExDocumento docPai : listaTodosDocPais) {
+			List<String> listaDmnDocPai = converterStringParaList(docPai.getDnmAcesso(), ",");
+			//Adcionar DnmAcesso Recalculado para Dnm acesso doc Pai
+			listaDmnDocPai.addAll(listaAcessoRecalculadoPessoas);
+			//Remover DnmAcesso duplicados e Ordernar Lista
+			List<String> listaDmnDocPaiFinal = listaDmnDocPai.stream().distinct().sorted().collect(Collectors.toList());
+			//Coverter Lista de String para String com virgula
+			String listString = String.join(",", listaDmnDocPaiFinal);
+			
+			docPai.setDnmAcesso(listString);
+			docPai.setDnmDtAcesso(dt);
+			ExDao.getInstance().gravar(docPai);
+		}	
+		
+	}
+	
+	private List<String> removerDnmAcessoDiferentePessoa(List<String> listaDnmAcesso) {
+		List<String> listaDnmAcessoFinal = new ArrayList<>();
+		for (String string : listaDnmAcesso) {
+			if(string.contains("P")) {
+				listaDnmAcessoFinal.add(string);
+			}
+		}
+		return listaDnmAcessoFinal;
+	}
+	
+	private List<String> converterStringParaList(String s, String regex) {
+		return new ArrayList<String>(Arrays.asList(s.split(regex)));
 	}
 
 	public void bCorrigirDataFimMov(final ExMovimentacao mov) throws Exception {

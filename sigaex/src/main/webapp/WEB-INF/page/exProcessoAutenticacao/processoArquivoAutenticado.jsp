@@ -88,7 +88,7 @@
 							<c:set var="dtUlt" value="" />
 							<c:set var="temmov" value="${false}" />
 							<c:forEach var="mov" items="${movs}">
-								<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
+								<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
 									<c:set var="temmov" value="${true}" />
 								</c:if>
 							</c:forEach>
@@ -129,7 +129,7 @@
 											</c:choose>
 											<td align="left">${dt}</td>
 											<td align="left">${mov.descrTipoMovimentacao} 
-												<c:if test="${mov.exTipoMovimentacao == JUNTADA}">
+												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA'}">
 													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado&nbsp
 														<c:choose>
 															<c:when test="${m.sigla ne mov.exMobil.sigla}">
@@ -152,7 +152,7 @@
 														</c:choose>
 													</span>
 												</c:if>
-												<c:if test="${mov.exTipoMovimentacao == JUNTADA_EXTERNO}">
+												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA_EXTERNO'}">
 													<span style="font-size: .8rem;color: #9e9e9e;"
 														>| documento desentranhado ${mov.exMobil}
 													</span>

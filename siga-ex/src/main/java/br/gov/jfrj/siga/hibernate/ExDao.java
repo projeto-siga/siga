@@ -457,9 +457,10 @@ public class ExDao extends CpDao {
 		/*
 		 * Funcao para geracao de codigos alfanumericos randomicos
 		 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+		 * retirado o I, l, 1, 0 e O pois causa confusão na hora do usuário digitar
 		 */
 		public static String randomAlfanumerico(int contador) {
-			final String STRING_ALFANUMERICA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			final String STRING_ALFANUMERICA = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 			StringBuilder sb = new StringBuilder();
 			while (contador-- != 0) {	
 				int caracteres = (int)(Math.random()*STRING_ALFANUMERICA.length());	
@@ -1459,18 +1460,14 @@ public class ExDao extends CpDao {
 	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
 
 		if (pes == null || dt == null) {
-			log.error("[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentaï¿½ï¿½es nï¿½o podem ser nulos.");
 			throw new IllegalStateException(
-					"A pessoa e/ou a data informada para a realizaï¿½ï¿½o da consulta ï¿½ nula.");
+					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		final Query query = em().createNamedQuery("consultarMovimentacoes");
-		ExMovimentacao mov = consultar(1122650L, ExMovimentacao.class, false);
 
 		query.setParameter("pessoaIni", pes.getIdPessoaIni());
-		// query.setParameter("data", dt);
-		query.setParameter("data", df.format(dt));
+		query.setParameter("data", dt);
 		return query.getResultList();
 	}
 

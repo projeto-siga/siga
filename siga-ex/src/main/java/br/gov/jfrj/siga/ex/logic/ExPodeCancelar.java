@@ -57,7 +57,6 @@ public class ExPodeCancelar extends CompositeExpressionSupport {
 
 						new ExMovimentacaoELotaCadastrante(mov, lotaTitular)),
 
-				new ExPodePorConfiguracao(titular, lotaTitular)
-						.withIdTpConf(ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO));
+				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.CANCELAR_MOVIMENTACAO).withExTpMov(mov.getExTipoMovimentacao()));
 	}
 }

@@ -871,6 +871,19 @@ public class ExServiceImpl implements ExService {
 			}
 		}
 	}
+	
+	public Boolean isAuxiliarIncluso(String codigoDocumento, Date depoisDaData) throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(true)) {
+			try {
+				ExMobil mob = buscarMobil(codigoDocumento).getDoc().getMobilGeral();
+
+				return mob.isAuxiliarIncluso(depoisDaData);
+			} catch (Exception ex) {
+				ctx.rollback(ex);
+				throw ex;
+			}
+		}
+	}
 
 	public String obterNumeracaoExpediente(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {

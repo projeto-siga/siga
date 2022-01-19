@@ -1677,6 +1677,12 @@ public class ExBL extends CpBL {
 				// }
 	
 				mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " [Digital]");
+				
+				if (doc.getDtPrimeiraAssinatura() == null) {
+					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
+					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
+				}
+				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -1933,6 +1939,11 @@ public class ExBL extends CpBL {
 				String cpf = Long.toString(assinante.getCpfPessoa());
 				acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
 	
+				if (doc.getDtPrimeiraAssinatura() == null) {
+					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
+					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
+				}
+				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -2483,7 +2494,11 @@ public class ExBL extends CpBL {
 				final Object[] aMovimentacao = set.toArray();
 				for (int i = 0; i < set.size(); i++) {
 					final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
-					if (!movimentacao.isCancelada()) {
+					if (!movimentacao.isCancelada()
+						&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
+						&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO
+						&& !(movimentacao.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA 
+							&& movimentacao.getExMobil().sofreuMov(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA))) {
 						Ex.getInstance().getBL().cancelar(cadastrante, lotaCadastrante, movimentacao.getExMobil(),
 								movimentacao, null, cadastrante, cadastrante, "");
 					}
@@ -3397,18 +3412,27 @@ public class ExBL extends CpBL {
 	}
 
 	public static String anotacaoConfidencial(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		if (mob.isGeral())
+			return "";
+		
 		if (mostraDescricaoConfidencial(mob.doc(), titular, lotaTitular))
 			return "CONFIDENCIAL";
+				
 		String s = mob.getDnmUltimaAnotacao();
 		if (s != null)
 			return s;
-		s = atualizarDnmAnotacao(mob);
+		
+		//Trata mobiles sem última anotação registrada. Passivo anterior a 24/07/2014
+		if (Prop.getBool("atualiza.anotacao.pesquisa"))
+			s = atualizarDnmAnotacao(mob);
+		
 		return s;
 	}
 
 	private static String atualizarDnmAnotacao(ExMobil mob) {
 		String s;
 		s = "";
+		
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;
@@ -8084,12 +8108,12 @@ public class ExBL extends CpBL {
 		ExDocumento formulario = obterFormularioSiafem(exDoc);
 		
 		if(formulario == null)
-			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + "\" antes de tramitar.");
+			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + ".");
 		
 		String descricao = formulario.getDescrDocumento();
 		SiafDoc doc = new SiafDoc(descricao.split(";"));
 		
-		doc.setProcesso(obterCodigoUnico(formulario, false));  
+		doc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
 		
 		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
 	}

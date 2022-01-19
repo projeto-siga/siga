@@ -74,7 +74,7 @@ function popitup_movimentacao() {
 }	
 
 function submeter() {
-
+	sigaSpinner.mostrar();
 	document.getElementById("button_ok").onclick = function(){console.log("Aguarde requisição")};	
 	document.getElementById('frm').submit();
 }
@@ -228,7 +228,7 @@ $(function(){
 				<div class="row">
 					<div class="col col-12">
 						<div class="form-group">
-							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="btn btn-primary"><u>O</u>k</a>																			
+							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="btn btn-primary text-white"><u>O</u>k</a>																			
 							<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" class="btn btn-light ml-2">Cancela</a>
 						</div>
 					</div>

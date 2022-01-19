@@ -219,6 +219,9 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										<option value="ARQUIVAR_PRINCIPAL"
 											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 											Arquivar</option>
+										<option value="INCLUIR_AUXILIAR"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Incluir Auxiliar</option>
 									</optgroup>
 								</select></section>
 								<section class="col col-12 col-md-2 col-lg-2 form-group">
@@ -237,7 +240,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="form-control"><option value="">[Próxima]</option></select>
 								<i></i> </section>
 								<section
-									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL'"
+									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="tipoResponsavel" title="" class="label mb-0">Tipo
 									Resp.<i title="Preenchimento obrigatório"
@@ -292,7 +295,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									</optgroup>
 								</select> </section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refUnidadeResponsavel" title="" class="label mb-0">Lotação
 									Resp.</label>
@@ -311,7 +314,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'PESSOA'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refPessoaResponsavel" title="" class="label mb-0">Pessoa
 									Resp.</label>
@@ -330,7 +333,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refResponsavel" title="" class="label mb-0">Responsável</label>
 								<select ng-model="tarefaItem.refResponsavel"

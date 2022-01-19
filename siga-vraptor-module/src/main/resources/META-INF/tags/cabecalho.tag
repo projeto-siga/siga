@@ -97,7 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.2.0.5" />
+<c:set var="siga_version"  scope="request" value="10.2.1.1" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -169,7 +169,7 @@ ${meta}
 
 <body onload="${onLoad}" class="${body_color}">
 	<c:if test="${popup!='true'}">
-   		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
+   		<nav id="siga-top-menu" class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
 				src="${navbar_logo}" height="${navbar_logo_size}">
 			</a>

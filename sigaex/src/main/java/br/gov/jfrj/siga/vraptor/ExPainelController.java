@@ -22,6 +22,8 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
@@ -32,9 +34,12 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -42,6 +47,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 @Controller
 public class ExPainelController extends ExController {
 	private static final String CORRIGEMOBIL = "CORRIGEMOBIL:Corrige Documento sem Mobil de Via ou Volume";
+	private static final int TEMPO_MAX_MILISEG = 5000;
 	
 	/**
      * @deprecated CDI eyes only
@@ -76,23 +82,47 @@ public class ExPainelController extends ExController {
 		ExDocumentoVO docVO = null;
 		try {
 			buscarDocumento(false, exDocumentoDTO);
+			// Verifica se algum doc juntado está sem a descrição
 			for (ExDocumento docFilho : exDocumentoDTO.getDoc().getExDocumentoFilhoSet()) {
 				if(docFilho.getDescrDocumento() == null) {
-					result.include("erroFilhoSemDescricao", true);
-					result.include("siglaFilho",docFilho.getSigla());
+					result.include("erroDocLink", "corrigeDocSemDescricao?documentoRefSel.sigla=" + docFilho.getSigla());
+					result.include("erroDocBtn", "Corrige Falta de Descri&ccedil;&atilde;o");
+					result.include("erroDocMsg", "Atenção: O documento juntado " + docFilho.getSigla() +  " está sem a descri&ccedil;&atilde;o.");
 					return;
 				}
 			}
 			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
 					getLotaTitular(), true, true, false);
+			// Verifica se doc só tem o mobil geral
 			if (exDocumentoDTO.getDoc().isFinalizado() 
 					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
-				result.include("erroSemMobil", true);
+				result.include("erroDocLink", "corrigeDocSemMobil?documentoRefSel.sigla=" + documentoRefSel.getSigla());
+				result.include("erroDocBtn", "Corrige Falta de Via ou Volume");
+				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() + "está corrompido (faltando mobil de via ou volume)");
 			}
+			// Verifica se há descrição no doc
 			if (exDocumentoDTO.getDoc().getDescrDocumento() == null) {
-				result.include("erroSemDescricao", true);
+				result.include("erroDocLink", "corrigeDocSemDescricao?documentoRefSel.sigla=" + documentoRefSel.getSigla());
+				result.include("erroDocBtn", "Corrige Falta de Descri&ccedil;&atilde;o");
+				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() +  " está sem a descri&ccedil;&atilde;o.");
 			}
+			// Verifica se ha movs duplicadas no documento
+			Set<ExMovimentacao> setDuplicadas = new java.util.TreeSet<ExMovimentacao>();
+			ITipoDeMovimentacao[] tpMovs = {ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.JUNTADA};			
+			for (ExMobil mob : exDocumentoDTO.getDoc().getExMobilSet()) {
+				setDuplicadas.addAll(mob.getMovsDuplicadas(TEMPO_MAX_MILISEG, tpMovs));
+			}			
+			
+			if (!setDuplicadas.isEmpty()) {
+				String idMovDup = setDuplicadas.iterator().next().getIdMov().toString();
+				result.include("erroDocLink", "corrigeMovDuplicada?documentoRefSel.sigla=" + documentoRefSel.getSigla() 
+					+ "&idMovDuplicada=" + idMovDup);
+				result.include("erroDocBtn", "Cancela Movimenta&ccedil;&atilde;o Duplicada");
+				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() 
+					+  " provavelmente tem a movimenta&ccedil;&atilde;o " + idMovDup + " duplicada, CONFIRA COM ATENÇÃO.");
+			}
+			
 		} catch (AplicacaoException e) {
 			result.include("mensagemCabec", "Documento não encontrado." );
 			result.include("msgCabecClass", "alert-danger");
@@ -102,11 +132,11 @@ public class ExPainelController extends ExController {
 					&& exDocumentoDTO.getDoc() != null
 					&& exDocumentoDTO.getDoc().isFinalizado() 
 					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
-				result.include("erroSemMobil", true);
+				result.include("erroDocLink", "corrigeDocSemMobil?documentoRefSel.sigla=" + documentoRefSel.getSigla());
+				result.include("erroDocBtn", "Corrige Falta de Via ou Volume");
+				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() + "está corrompido (faltando mobil de via ou volume)");
 			}
-			result.include("mensagemCabec", "Erro ao tentar obter o documento: " + e);
-			result.include("msgCabecClass", "alert-danger");
-			return;
+			throw e;
 		}
 		result.include("msg", exDocumentoDTO.getMsg());
 		result.include("docVO", docVO);
@@ -151,6 +181,60 @@ public class ExPainelController extends ExController {
 				.corrigeDocSemMobil(
 						exDocumentoDTO.getDoc());
 
+		} catch (final Throwable t) {
+			throw new AplicacaoException("Erro ao tentar corrigir documento sem mobil.", 0, t);
+		}
+		result.redirectTo(this).exibe(documentoRefSel);
+	}
+
+	@Transacional
+	@Get("app/expediente/painel/corrigeMovDuplicada")
+	public void corrigeMovDuplicada(final ExMobilSelecao documentoRefSel, final long idMovDuplicada) throws Exception {
+		assertAcesso(CORRIGEMOBIL);
+		
+		result.include("postback", true);
+
+		if (idMovDuplicada == 0) {
+			result.include("mensagemCabec", "Informe o id da movimentação duplicada.");
+			result.include("msgCabecClass", "alert-warning");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		exDocumentoDTO.setSigla(documentoRefSel.getSigla());
+		ExDocumentoVO docVO;
+		buscarDocumento(false, exDocumentoDTO);
+		docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
+				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
+				getLotaTitular(), true, true, false);
+		
+		ExMovimentacao mov = dao().consultar(idMovDuplicada, ExMovimentacao.class, false);
+
+		ITipoDeMovimentacao[] tpMovs = {ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.JUNTADA}; 
+		java.util.Set<ExMovimentacao> setDuplicadas = mov.getExMobil().getMovsDuplicadas(TEMPO_MAX_MILISEG, tpMovs);
+		
+		if (!setDuplicadas.contains(mov)) {
+			result.include("mensagemCabec", "A movimentação informada não está duplicada.");
+			result.include("msgCabecClass", "alert-warning");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+		
+		if (!(mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.RECEBIMENTO
+				|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
+				|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)) {
+			result.include("mensagemCabec", "O cancelamento só é possível para recebimento, trâmite ou juntada duplicada.");
+			result.include("msgCabecClass", "alert-warning");
+			result.redirectTo(this).exibe(documentoRefSel);
+			return;
+		}
+
+		try {
+			mov.setExMovimentacaoCanceladora(mov);
+			String descrAnterior = (mov.getDescrMov() != null? mov.getDescrMov() + " ":"");
+			mov.setDescrMov(descrAnterior + "Cancelado pelo suporte (" 
+					+ getCadastrante().getSigla() + "/" + getCadastrante().getNomePessoa() 
+					+ ") por estar duplicado.");
 		} catch (final Throwable t) {
 			throw new AplicacaoException("Erro ao tentar corrigir documento sem mobil.", 0, t);
 		}

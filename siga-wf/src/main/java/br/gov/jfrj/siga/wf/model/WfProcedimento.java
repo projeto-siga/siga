@@ -698,6 +698,12 @@ public class WfProcedimento extends Objeto
 					+ "\">aqui</a> para incluir.";
 		}
 		if (getDefinicaoDeTarefaCorrente() != null
+				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_AUXILIAR) {
+			return "Este workflow prosseguirá automaticamente quando for anexado um arquivo auxilar ao documento " + getPrincipal()
+					+ ". Clique <a href=\"/sigaex/app/expediente/mov/anexar_arquivo_auxiliar?sigla=" + getPrincipal()
+					+ "\">aqui</a> para incluir.";
+		}
+		if (getDefinicaoDeTarefaCorrente() != null
 				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AGUARDAR_ASSINATURA_PRINCIPAL) {
 			return "Este workflow prosseguirá automaticamente quando o documento " + getPrincipal()
 					+ " estiver assinado. Clique <a href=\"/sigaex/app/expediente/mov/assinar?sigla=" + getPrincipal()

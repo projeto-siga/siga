@@ -33,7 +33,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,6 +69,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -916,7 +919,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	@Consumes("application/json")
 	@Get("/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/{cpf}")
-	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") Long cpf) {	
+	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") String cpf) {	
 		
 		String recaptchaSiteKey = Prop.get("/siga.recaptcha.key");
 		String recaptchaSitePassword =  Prop.get("/siga.recaptcha.pwd");
@@ -933,9 +936,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				result.include("request", getRequest());
 				return;
 			}
-	
-	
 			
+			CPFUtils.efetuaValidacaoSimples(cpf);
+
 			String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 			boolean success = false;
 			if (gRecaptchaResponse != null) {
@@ -965,26 +968,33 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
 			
+			
 			dpPessoa.setBuscarFechadas(false);
-			dpPessoa.setCpf(cpf);	
+			dpPessoa.setCpf(Long.valueOf(cpf));	
 			dpPessoa.setNome("");
 	
 			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
-			List<String> emails = new ArrayList<String>();
-		    
+			Set<String> emailsOculto = new HashSet<String>();
+			
 			if (!usuarios.isEmpty()) {
+				Set<String> emailsDistintos = new HashSet<String>();
+				//Adiciona email normal de forma distinta
 				for(DpPessoa usuario : usuarios) {
-					emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
+					emailsDistintos.add(usuario.getEmailPessoaAtual());
 			    }
-				
+				//Troca emails distintos por Email estenografado
+				for (String email : emailsDistintos) {
+					emailsOculto.add(SigaUtil.ocultaParcialmenteEmail(email));
+				}
+				emailsDistintos = null;
 			} else {
 				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
 			}
 			
-			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf.toString());
+			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf);
 			HashMap<String, Object> json = new HashMap<>();
 			
-			json.put("emails", emails);
+			json.put("emails", emailsOculto);
 			json.put("jwt", jwt);
 			
 			result.use(Results.json()).withoutRoot().from(json).serialize();

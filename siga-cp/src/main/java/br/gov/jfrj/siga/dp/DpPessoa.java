@@ -599,7 +599,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 	
 	public String getEmailPessoaAtualParcialmenteOculto() {
-		return getEmailPessoaAtual().substring(0,4) + "*********@***" + getEmailPessoaAtual().substring(getEmailPessoaAtual().length()-5,getEmailPessoaAtual().length());
+		return getEmailPessoaAtual().substring(0,4) + "*********@***" + getEmailPessoaAtual().substring(getEmailPessoaAtual().length()-6,getEmailPessoaAtual().length());
 	}
 
 	/**

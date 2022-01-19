@@ -1603,7 +1603,6 @@ public class ExDocumentoController extends ExController {
 							exDocumentoDto.getDoc());
 				}
 			}
-			System.out.println(">>>>>>>>>>>>>RESP. ASSINATURA: " + exDocumentoDto.getDoc().getSubscritor().getSigla());
 			CpConfiguracao configuracao = new CpConfiguracao(); 
 			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(exDocumentoDto.getDoc().getSubscritor(), getLotaTitular(),
 					SIGA_CEMAIL_RESPASSI, 1, 1 );   

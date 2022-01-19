@@ -238,10 +238,6 @@ public class ExBL extends CpBL {
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
 	
-	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"
-			+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla()+":"
-			+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getDescricao();
-	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();
 
@@ -3679,30 +3675,7 @@ public class ExBL extends CpBL {
 		mov_substituto.setDescrMov("Responsável pela assinatura: " + doc.getSubscritor().getNomePessoa() + " - "
 				+ doc.getSubscritor().getSiglaCompleta() + " em substituição de " + doc.getTitular().getNomePessoa()
 				+ " - " + doc.getTitular().getSiglaCompleta());
-		gravarMovimentacao(mov_substituto);
-		try {
-			CpConfiguracao configuracao = new CpConfiguracao(); 
-			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(doc.getTitular(), doc.getLotaTitular(),
-					SIGA_CEMAIL_SUB, 1, 1 );   
-			if (configuracao != null && configuracao.enviarNotificacao()) {
-				String[] destinanarios = { doc.getTitular().getEmailPessoa() }; 
-					Correio.enviar(null, destinanarios,
-						"Usuário marcado ",  
-						"",   
-						""    
-							+ "<br>"   
-							+ "Prezado usuário, <b>" + doc.getTitular().getNomePessoa() + "</b>. "
-							+ "Você foi marcado como substituto do documento <b>" + doc.getCodigo() + "</b> "
-							+ "pelo usuário <b>" + doc.getSubscritor().getNomePessoa() + "</b> (<b>" + doc.getSubscritor().getSiglaCompleta() + "</b>)."
-							+ "<br>"
-							+ "<br>"
-							+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-							+ "	>clique aqui.</a>");
-			}
-			} catch (Exception e) {
-				e.printStackTrace(); 
-				System.out.println("Falha ao enviar email"); 
-			} 
+		gravarMovimentacao(mov_substituto);  
 	}
 
 	private class MovimentacaoSincronizavel extends SincronizavelSuporte

@@ -26,9 +26,11 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpAcoesDeNotificarPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -38,6 +40,10 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Controller
 public class SubstituicaoController extends SigaController {
+	
+	private static final String SIGA_CEMAIL_SUB = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;"
+			+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getSigla()+":"
+			+CpAcoesDeNotificarPorEmail.SUBSTITUICAO.getDescricao();
 	
 	private Integer tipoTitular;
 	private Integer tipoSubstituto;
@@ -353,13 +359,17 @@ public class SubstituicaoController extends SigaController {
 					
 			String assunto = "Cadastro de Substituição";
 					
+			CpConfiguracao configuracao = new CpConfiguracao(); 
 			List<String> listaDeEmails= new ArrayList<String>();
 			listaDeEmails.add(getCadastrante().getEmailPessoa());
 			for (DpPessoa pessoa : pessoasParaEnviarEmail)	{
 				listaDeEmails.add(pessoa.getEmailPessoa()); 
+				configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
+						SIGA_CEMAIL_SUB, 1, 1 );   
 			}
-			
-			Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, textoEmail);
+			if (configuracao != null && configuracao.enviarNotificacao()) {
+				Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, textoEmail);
+			}
 			
 			result.redirectTo(this).lista();
 

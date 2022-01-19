@@ -80,7 +80,8 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 						<div class="card-deck">
-							<span id="gc-ancora-descr-${td.id}"></span> <span id="gc-ancora-${td.id}"></span> <span id="gc-${td.id}"></span>
+							<span id="gc-ancora-descr-${td.id}"></span> <span
+								id="gc-ancora-${td.id}"></span> <span id="gc-${td.id}"></span>
 						</div>
 
 						<c:url var="url" value="/../sigagc/app/knowledgeInplace">
@@ -121,23 +122,25 @@
 				            });
 						</script>
 
-						<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
-							<c:param name="tags">@workflow</c:param>
-							<c:forEach var="tag" items="${td.tags}">
-								<c:param name="tags">${tag}</c:param>
-							</c:forEach>
-							<c:param name="ts">${currentTimeMillis}</c:param>
-						</c:url>
-						<script type="text/javascript">
-							$.ajax({
-				                type: "GET",
-				                url: "${url}",
-				                cache: false,
-				                success: function(response) {
-				                    $('#gc-${td.id}').replaceWith(response);
-				                }
-				            });
-						</script>
+						<c:if test="${false}">
+							<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
+								<c:param name="tags">@workflow</c:param>
+								<c:forEach var="tag" items="${td.tags}">
+									<c:param name="tags">${tag}</c:param>
+								</c:forEach>
+								<c:param name="ts">${currentTimeMillis}</c:param>
+							</c:url>
+							<script type="text/javascript">
+								$.ajax({
+					                type: "GET",
+					                url: "${url}",
+					                cache: false,
+					                success: function(response) {
+					                    $('#gc-${td.id}').replaceWith(response);
+					                }
+					            });
+							</script>
+						</c:if>
 					</c:if>
 				</c:forEach>
 			</div>

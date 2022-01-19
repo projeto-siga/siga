@@ -71,7 +71,7 @@ public class ConfiguracaoNotificarPorEmailController
 		acao.getDpPessoa().setIdPessoa(getTitular().getIdPessoa());
 		acao.setIdConfiguracao(codigo);  
 		acao.setDpPessoa(getTitular()); 
-		boolean ativar = acao.enviarNotificao();
+		boolean ativar = acao.enviarNotificacao();
 		
 		if (ativar) {
 			acao.setReceberEmail(0);

@@ -520,16 +520,8 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	public void setRestringir(Integer restringir) {
 		this.restringir = restringir;
 	}
-	
-	public boolean isMandarEmail () {
-		if(this.cpSituacaoConfiguracao.getId() == 1) {
-			return true;
-		} else {   
-			return false;
-		} 
-	}
 
-	public boolean ishabilitaOuDesabilitaNotificacaoPorEmail () {  
+	public boolean restringir () {  
 		if(this.getRestringir() == 1) {
 			return true;
 		} else {
@@ -537,7 +529,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		}
 	}
 	
-	public boolean enviarNotificao () {
+	public boolean enviarNotificacao () {
 		if(this.getReceberEmail() == 1) {
 			return true;
 		} else {

@@ -93,9 +93,9 @@
 											
 										      <td style="width: 70%;">${email.cpServico.dscServico}</td>
 										      <c:choose>
-													<c:when test="${!email.enviarNotificao()}">
+													<c:when test="${!email.enviarNotificacao()}">
 														<c:choose> 
-															<c:when test="${!email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
+															<c:when test="${!email.restringir()}">
 												        		<td>
 												        			<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
 												        		</td>
@@ -109,7 +109,7 @@
 										        	</c:when>  
 										        	<c:otherwise>
 										        	<c:choose>
-										        		<c:when test="${!email.ishabilitaOuDesabilitaNotificacaoPorEmail()}">
+										        		<c:when test="${!email.restringir()}">
 												        		<td>
 										        					<a href="javascript:submitPost('${urlAtivaOuDesativaAcao}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
 										        				</td>

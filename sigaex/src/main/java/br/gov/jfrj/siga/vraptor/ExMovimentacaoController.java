@@ -1427,7 +1427,7 @@ public class ExMovimentacaoController extends ExController {
 			CpConfiguracao configuracao = new CpConfiguracao(); 
 			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(cosignatarioSel.getObjeto(), getLotaTitular(),
 					SIGA_CEMAIL_CONSSIG, 1, 1 ); 
-			if (configuracao != null && configuracao.enviarNotificao()) {
+			if (configuracao != null && configuracao.enviarNotificacao()) {
 				String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
 				Correio.enviar(null,destinanarios, 
 						"Usuário marcado ", 
@@ -2123,7 +2123,7 @@ public class ExMovimentacaoController extends ExController {
 							configuracao = new CpConfiguracao ();
 							configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
 									SIGA_CEMAIL_DOCMARC, 0, 0 ); 
-							if (configuracao.enviarNotificao()) {
+							if (configuracao.enviarNotificacao()) {
 									String[] destinanarios = { pessoa.getEmailPessoa() };
 									Correio.enviar(null, destinanarios,  
 										"Usuário marcado ",     
@@ -2147,7 +2147,7 @@ public class ExMovimentacaoController extends ExController {
 				configuracao = new CpConfiguracao();
 				configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, getLotaTitular(),
 						SIGA_CEMAIL_DOCTUN, 0, 0 ); 
-				if (configuracao != null && configuracao.enviarNotificao()) {
+				if (configuracao != null && configuracao.enviarNotificacao()) {
 						String[] destinanarios = { pessoa.getEmailPessoa() }; 
 							
 						Correio.enviar(null,destinanarios,   
@@ -2181,7 +2181,7 @@ public class ExMovimentacaoController extends ExController {
 			CpConfiguracao configuracao = new CpConfiguracao();
 			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(responsavelSel.getObjeto(), responsavelSel.getObjeto().getLotacao(),
 					SIGA_CEMAIL_DOCTUSU, 0, 0 );
-			if (configuracao != null && configuracao.enviarNotificao()) {
+			if (configuracao != null && configuracao.enviarNotificacao()) {
 				String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() };
 				Correio.enviar(null,destinanarios,    
 						"Documento transferido para o usuário " + responsavelSel.getDescricao() + "", 
@@ -2209,7 +2209,7 @@ public class ExMovimentacaoController extends ExController {
 				for (int i = 0; i < listMar.size(); i++) { 
 					for (int j = 0; j < mainList.size(); j++) { 
 						if (listMar.get(i).getDescrMarcador() == mainList.get(j).getMarcadoresLocalGeral()) {
-							if (configuracao.enviarNotificao()) {
+							if (configuracao.enviarNotificacao()) {
 								if (responsavelSel.getDescricao() != null) {
 								Correio.enviar(null, destinanarios,  
 										"Usuário marcado ",     

@@ -401,7 +401,7 @@ public class CpBL {
 						CpConfiguracao configuracao = new CpConfiguracao(); 
 						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
 								SIGA_CEMAIL_ESQSENHA, 1, 1 ); 
-						if (configuracao != null && configuracao.enviarNotificao()) {
+						if (configuracao != null && configuracao.enviarNotificacao()) {
 						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
 						Correio.enviar(null, destinanarios,
 								"Esqueci Minha Senha", "",
@@ -432,7 +432,7 @@ public class CpBL {
 						CpConfiguracao configuracao = new CpConfiguracao(); 
 						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
 								SIGA_CEMAIL_ESQSENHA, 1, 1 ); 
-						if (configuracao != null && configuracao.enviarNotificao()) {
+						if (configuracao != null && configuracao.enviarNotificacao()) {
 						Correio.enviar(pessoa.getEmailPessoaAtual(), "Alteração de senha ",
 								"\n" + idNova.getDpPessoa().getNomePessoa() + "\nMatricula: "
 										+ idNova.getDpPessoa().getSigla() + "\n" + "\nSua senha foi alterada para: "
@@ -520,7 +520,7 @@ public class CpBL {
 						CpConfiguracao configuracao = new CpConfiguracao(); 
 						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, pessoa.getLotacao(),
 								SIGA_CEMAIL_CADUSU, 1, 1 ); 
-						if (configuracao != null && configuracao.enviarNotificao()) {
+						if (configuracao != null && configuracao.enviarNotificacao()) {
 							if (SigaMessages.isSigaSP()) {
 									String[] destinanarios = { pessoa.getEmailPessoaAtual() };  
 									String conteudoHTML = pessoaIsUsuarioExterno(pessoa)

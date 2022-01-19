@@ -3684,7 +3684,7 @@ public class ExBL extends CpBL {
 			CpConfiguracao configuracao = new CpConfiguracao(); 
 			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(doc.getTitular(), doc.getLotaTitular(),
 					SIGA_CEMAIL_SUB, 1, 1 );   
-			if (configuracao != null && configuracao.enviarNotificao()) {
+			if (configuracao != null && configuracao.enviarNotificacao()) {
 				String[] destinanarios = { doc.getTitular().getEmailPessoa() }; 
 					Correio.enviar(null, destinanarios,
 						"Usuário marcado ",  

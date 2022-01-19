@@ -1603,6 +1603,25 @@ public class ExDocumentoController extends ExController {
 							exDocumentoDto.getDoc());
 				}
 			}
+			System.out.println(">>>>>>>>>>>>>RESP. ASSINATURA: " + exDocumentoDto.getDoc().getSubscritor().getSigla());
+			CpConfiguracao configuracao = new CpConfiguracao(); 
+			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(exDocumentoDto.getDoc().getSubscritor(), getLotaTitular(),
+					SIGA_CEMAIL_RESPASSI, 1, 1 );   
+			if (configuracao != null && configuracao.enviarNotificacao()) {
+					String[] destinanarios = { exDocumentoDto.getDoc().getSubscritor().getEmailPessoa() };
+					Correio.enviar(null, destinanarios, 
+						"Usuário marcado ",  
+						"",    
+						""   
+						+ "<br>" 
+						+ "Prezado usuário, <b>" + exDocumentoDto.getDoc().getSubscritor().getNomePessoa() + " (" + exDocumentoDto.getDoc().getSubscritor().getSigla() + ")</b>. "
+						+ "Você recebeu o documento <b>" + exDocumentoDto.getDoc().getCodigo() + "</b> com o Alerta, responsável pela assinatura, "
+						+ "enviado pelo usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSigla() + ")</b>."
+						+ "<br>"
+						+ "<br>"  
+						+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+						+ "	>clique aqui.</a>"); 		
+			}
 
 		} catch (final Throwable t) {
 			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
@@ -1861,24 +1880,6 @@ public class ExDocumentoController extends ExController {
 						"Erro ao tentar incluir os cosignatários deste documento",
 						0, e);
 			}	
-			CpConfiguracao configuracao = new CpConfiguracao(); 
-			configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(exDocumentoDTO.getSubscritorSel().getObjeto(), getLotaTitular(),
-					SIGA_CEMAIL_RESPASSI, 1, 1 );   
-			if (configuracao != null && configuracao.enviarNotificao()) {
-					String[] destinanarios = { exDocumentoDTO.getSubscritorSel().getObjeto().getEmailPessoa() };
-					Correio.enviar(null, destinanarios, 
-							"Usuário marcado ",  
-							"",   
-							""   
-								+ "<br>" 
-								+ "Prezado usuário, <b>" + exDocumentoDTO.getSubscritorSel().getObjeto().getNomePessoa() + " (" + exDocumentoDTO.getSubscritorSel().getObjeto().getSigla() + ")</b>. "
-								+ "Você recebeu o documento <b>" + exDocumentoDTO.getDoc().getCodigo() + "</b> com o Alerta, responsável pela assinatura, "
-								+ "enviado pelo usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSigla() + ")</b>."
-								+ "<br>"
-								+ "<br>"
-								+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-								+ "	>clique aqui.</a>"); 		
-				}
 
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro na gravação", e);

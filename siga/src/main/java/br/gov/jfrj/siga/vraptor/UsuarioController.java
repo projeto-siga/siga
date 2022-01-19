@@ -123,7 +123,7 @@ public class UsuarioController extends SigaController {
 		CpConfiguracao configuracao = new CpConfiguracao(); 
 		configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa.getDpPessoa(), getLotaTitular(),
 				SIGA_CEMAIL_ALTSENHA , 1, 1 ); 
-		if (configuracao != null && configuracao.enviarNotificao()) {
+		if (configuracao != null && configuracao.enviarNotificacao()) {
 			Correio.enviar(null, destinanarios,
 					"Troca de Senha", "",
 					"<table>" + "<tbody>" + "<tr>"
@@ -204,7 +204,7 @@ public class UsuarioController extends SigaController {
 						CpConfiguracao configuracao = new CpConfiguracao();
 						configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(p, getLotaTitular(),
 								SIGA_CEMAIL_ALTEMAIL, 0, 0 );
-						if (configuracao != null && configuracao.enviarNotificao()) {  
+						if (configuracao != null && configuracao.enviarNotificacao()) {  
 							Correio.enviar(p.getEmailPessoaAtual(), "Troca de Email",
 									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 											+ "\n" + "\n - Nome: " + p.getNomePessoa() + "\n - Matricula: "
@@ -246,7 +246,7 @@ public class UsuarioController extends SigaController {
 					configuracao = Cp.getInstance().getConf().podeUtilizarOuAdicionarServicoPorConfiguracao(pessoa, getLotaTitular(),
 							SIGA_CEMAIL_ALTEMAIL, 0, 0 );
 					
-					if (configuracao != null && configuracao.enviarNotificao()) { 
+					if (configuracao != null && configuracao.enviarNotificacao()) { 
 							Correio.enviar(pessoa.getEmailPessoaAtual(), "Troca de Email",
 									"O Administrador do sistema removeu este endereço de email do seguinte usuário "
 											+ "\n" + "\n - Nome: " + pessoa.getNomePessoa() + "\n - Matricula: "

@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -228,5 +229,20 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 	public void setHisAtivo(Integer hisAtivo) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	
+	/**
+	 * Retorna a Função de Confiança atual (última) no historico desta Função de Confiança
+	 * 
+	 * @return DpFuncaoConfianca
+	 * @throws SQLException
+	 */
+	public DpFuncaoConfianca getFuncaoConfiancaAtual() {
+
+		if (this.getDataFim() != null)
+			return CpDao.getInstance().consultarPorIdInicialDpFuncaoConfiancaAtual(this.getIdFuncaoIni());
+
+		return this;
 	}
 }

@@ -3880,52 +3880,59 @@ public class ExBL extends CpBL {
 		
 		if(Prop.getBool("/siga.usuarios.distintos.visualiza.doc.composto")
 							&& doc.isFinalizado() && possuiCossignatarioSubscritor(doc)) {
-//			if(doc.isAssinadoDigitalmente() && !doc.isPendenteDeAssinatura()) {
-//				
-//				if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
-//					for (ExMovimentacao mov : doc.getMobilGeral()
-//							.getExMovimentacaoSet()) {
-//						if (mov.isCancelada())
-//							continue;
-//						if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
-//								&& mov.getExMovimentacaoCanceladora() == null) 
-//								&& !mov.getCadastrante().equals(mov.getResp())) {
-//							//temCossigSubscr = Boolean.TRUE;
-//							break;
-//						}
-//					}
-//				}
-//				if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
-//								&& !doc.getCadastrante().equals(doc.getSubscritor())) {
-//					//temCossigSubscr = Boolean.TRUE;
-//				}
-//				
-//			}
-			
+			if(doc.isAssinadoDigitalmente()) {
+				
+				//Pegar Lista de DnmAcesso do doc atual, para remover para Lista de Pais e Filhos
+//				List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferentePessoa(
+//													converterStringParaList(acessoRecalculado, ","));				
+				List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, 
+													ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);				
+				List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, 
+													ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
+				List<String> listCommon = listaIdSubscritorAssinado.stream()
+							                        .filter(e -> listaIdSubscritor.contains(e)) 
+							                        .collect(Collectors.toList());
+				System.out.println(listCommon);
+				
+			}
 			incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(doc, dt, acessoRecalculado);
 		}
-		
 	}
 	
-	private boolean possuiCossignatarioSubscritor(ExDocumento doc) {
-		boolean temCossigSubscr = Boolean.FALSE;
-		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
-			for (ExMovimentacao mov : doc.getMobilGeral()
-					.getExMovimentacaoSet()) {
+	private boolean possuiCossignatarioSubscritor(ExDocumento doc){
+		return !getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO).isEmpty();
+	}
+	
+	private List<String> getListaIdDPpessoaSubscritor(ExDocumento doc, ExTipoDeMovimentacao tipoDeMovimentacao) {
+		//boolean temCossigSubscr = Boolean.FALSE;
+		
+		List<String> listaIdSubscritor = new ArrayList<>();
+		
+		SortedSet<ExMovimentacao> listMovimentacao = doc.getMobilGeral().getExMovimentacaoSet();
+		if (listMovimentacao != null) {
+			for (ExMovimentacao mov : listMovimentacao) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
+				if (mov.getExTipoMovimentacao() == tipoDeMovimentacao//ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
 						&& mov.getExMovimentacaoCanceladora() == null) {
-					temCossigSubscr = Boolean.TRUE;
-					break;
+					if(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(tipoDeMovimentacao)
+							&& !mov.getCadastrante().equals(mov.getSubscritor()))
+						listaIdSubscritor.add(mov.getSubscritor().getIdPessoaIni().toString());
+					if(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA.equals(tipoDeMovimentacao)
+							&& !mov.getCadastrante().equals(mov.getResp()))
+						listaIdSubscritor.add(mov.getSubscritor().getIdPessoaIni().toString());
+					
+//					temCossigSubscr = Boolean.TRUE;
+//					break;
 				}
 			}
 		}
 		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
 						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
-			temCossigSubscr = Boolean.TRUE;
+			listaIdSubscritor.add(doc.getSubscritor().getIdPessoa().toString());
+//			temCossigSubscr = Boolean.TRUE;
 		}
-		return temCossigSubscr;
+		return listaIdSubscritor;
 	}
 	
 	private void incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(ExDocumento doc, Date dt, String acessoRecalculado) {

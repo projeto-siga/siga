@@ -62,6 +62,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu))"
 				+ "      or (:siglaOrgaoLotacao is not null and lot.siglaLotacao = upper(:siglaOrgaoLotacao)))"
 				+ "	     and lot.dataFimLotacao = null"),
+		@NamedQuery(name = "consultarPorSiglaInclusiveFechadasDpLotacao", query = "select lotacao from DpLotacao lotacao where"
+				+ "      ((lotacao.siglaLotacao = upper(:siglaLotacao)"
+				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu))"
+				+ "      or (:siglaOrgaoLotacao is not null and lotacao.siglaLotacao = upper(:siglaOrgaoLotacao)))"
+				+ "		 and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni"
+				+ "			group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
 				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
 				+ "        and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"

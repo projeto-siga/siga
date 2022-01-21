@@ -171,7 +171,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			dscCpTipoGrupo = tpGrp.getDscTpGrupo();
 			try {
 				configuracoesGrupo = Cp.getInstance().getConf()
-						.obterCfgGrupo(grp);
+						.obterCfgGrupo(dao().consultar(grp.getHisIdIni(),CpGrupo.class,false));
 				for (ConfiguracaoGrupo t_cfgConfiguracaoGrupo : configuracoesGrupo) {
 					CpConfiguracao t_cpcConfiguracaoCorrente = t_cfgConfiguracaoGrupo
 							.getCpConfiguracao();
@@ -220,9 +220,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				t_cpcConfiguracao = dao().carregar(t_cpcConfiguracao);
 				dao().gravarComHistorico(t_cpcConfiguracao,
 						getIdentidadeCadastrante());
-			}
-			grp.setHisDtFim(dt);
+			}			
 			grp = dao().carregar(grp);
+			grp.setHisDtFim(dt);
 			dao().gravarComHistorico(grp, getIdentidadeCadastrante());
 			ModeloDao.commitTransacao();
 		} catch (Exception e) {
@@ -298,6 +298,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				grp = (CpGrupo) Objeto.getImplementation(daoGrupo(idCpGrupo));
 				PropertyUtils.copyProperties(grpNovo, grp);
 				grpNovo.setIdGrupo(null);
+				grpNovo.setHisIdIni(grp.getHisIdIni());
 			}
 			grpNovo.setCpGrupoPai(grupoPaiSel != null ? grupoPaiSel.getObjeto()
 					: null);
@@ -307,6 +308,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			dao().iniciarTransacao();
 			grp = (CpGrupo) dao().gravarComHistorico(grpNovo, grp, dt,
 					getIdentidadeCadastrante());
+			CpGrupo grupoInicial = null;
 			idCpGrupo = grp.getIdGrupo();
 
 			// Fabrica
@@ -341,7 +343,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				cfg.setCpTipoConfiguracao(tipoConfiguracao);
 				cfg.setHisDtIni(dt);
 				cfgGrp.setCpConfiguracao(cfg);
-				cfgGrp.setCpGrupo(grp);
+				grupoInicial = dao().consultar(grp.getHisIdIni(),CpGrupo.class,false);
+				cfgGrp.setCpGrupo(grupoInicial);
 				cfgGrp.atualizarCpConfiguracao();
 				dao().gravarComHistorico(cfg, getIdentidadeCadastrante());
 			}
@@ -369,9 +372,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 												+ ". Por favor, entre em contato com o suporte técnico para realizar tal configuração.");
 							}
 
-							CpConfiguracao t_cpcConfiguracao = cfgGrpGravada.getCpConfiguracao();
-								t_cpcConfiguracao.setHisDtFim(dt);
+							CpConfiguracao t_cpcConfiguracao = cfgGrpGravada.getCpConfiguracao();								
 							t_cpcConfiguracao = dao().carregar(t_cpcConfiguracao);
+							t_cpcConfiguracao.setHisDtFim(dt);
 							dao().gravarComHistorico(t_cpcConfiguracao,getIdentidadeCadastrante());
 						} else {
 							String cfgConteudo = conteudoConfiguracao.get(i);

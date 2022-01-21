@@ -20,9 +20,9 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import net.sf.jasperreports.engine.JRException;
 
 	public class RelCobranca extends RelatorioTemplate {
@@ -105,13 +105,14 @@ import net.sf.jasperreports.engine.JRException;
 //							+ "	and (:dtFim is null or doc.dtDoc <= :dtfim) "
 							+ queryOrgao
 							+ queryLotacao
-							+ "	and mov.exTipoMovimentacao.idTpMov = '1' "
+							+ "	and mov.exTipoMovimentacao = :tpmov "
 //							+ "		or mov.exTipoMovimentacao.idTpMov = '64') "
 							+ "order by doc.lotaCadastrante.siglaLotacao, "
 							+ "doc.exModelo.nmMod, "
 							+ "mob.idMobil "
 							);
-			
+			query.setParameter("tpmov", ExTipoDeMovimentacao.CRIACAO);
+
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
 				query.setParameter("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}

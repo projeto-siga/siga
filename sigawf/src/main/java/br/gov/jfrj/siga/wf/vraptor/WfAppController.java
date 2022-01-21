@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 import com.crivano.jflow.model.enm.VariableEditingKind;
@@ -20,7 +23,6 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -30,7 +32,6 @@ import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.StringQualquer;
 import br.gov.jfrj.siga.vraptor.Transacional;
-import br.gov.jfrj.siga.wf.api.v1.AtivosGet;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -85,7 +86,11 @@ public class WfAppController extends WfController {
 	@Get
 	@Path("/app/inbox")
 	public void inbox() throws Exception {
-		SortedSet<WfTarefa> tis = AtivosGet.obterTarefasAtivas(getTitular(), getLotaTitular());
+		SortedSet<WfTarefa> tis = new TreeSet<>();
+		List<WfProcedimento> pis = dao().consultarProcedimentosPorPessoaOuLotacao(getTitular(), getLotaTitular());
+		for (WfProcedimento pi : pis) {
+			tis.add(new WfTarefa(pi));
+		}
 		result.include("tarefas", tis);
 	}
 
@@ -201,7 +206,7 @@ public class WfAppController extends WfController {
 
 		List<WfProcedimento> taskInstances = Wf.getInstance().getBL().getTaskList(sigla);
 		for (WfProcedimento pi : taskInstances) {
-			if (pi.getStatus() != ProcessInstanceStatus.PAUSED)
+			if (pi.getStatus() != ProcessInstanceStatus.PAUSED && pi.getStatus() != ProcessInstanceStatus.RESUMING)
 				continue;
 			String principal = pi.getPrincipal();
 			if (principal == null)
@@ -268,6 +273,7 @@ public class WfAppController extends WfController {
 		WfProcedimento piAlterado = WfBL.converterVariaveisEProsseguir(pi, params, indiceDoDesvio, getTitular(),
 				getLotaTitular(), getIdentidadeCadastrante());
 
+
 		// Redireciona para a pagina escolhida quando o procedimento criar uma
 		// variavel pre-definida
 		//
@@ -300,6 +306,28 @@ public class WfAppController extends WfController {
 		}
 
 		result.redirectTo(this).procedimento(piAlterado.getId());
+	}
+
+	private Boolean converterParaBoolean(StringQualquer campo) {
+		if (campo == null)
+			return null;
+		String s = campo.toString().trim();
+		if (s.length() == 0)
+			return null;
+		return "1".equals(s) || "true".equals(s);
+	}
+
+	private Double converterParaDouble(StringQualquer campo) {
+		if (campo == null)
+			return null;
+		String s = campo.toString().trim();
+		if (s.length() == 0)
+			return null;
+		if (s.contains("."))
+			s = s.replace(".", "");
+		if (s.contains(","))
+			s = s.replace(",", ".");
+		return Double.parseDouble(s);
 	}
 
 	@Transacional
@@ -346,6 +374,22 @@ public class WfAppController extends WfController {
 		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class, null);
 
 		Wf.getInstance().getBL().terminar(pi, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
+
+		if (siglaPrincipal != null) {
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);
+			return;
+		}
+		result.redirectTo(this).procedimento(pi.getId());
+	}
+
+	@Transacional
+	@Get
+	@Post
+	@Path("/app/procedimento/{sigla}/retomar")
+	public void retomar(String sigla, String siglaPrincipal) throws Exception {
+		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class, null);
+
+		Wf.getInstance().getBL().retomar(pi, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
 
 		if (siglaPrincipal != null) {
 			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);

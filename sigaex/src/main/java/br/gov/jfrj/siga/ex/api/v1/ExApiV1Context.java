@@ -21,6 +21,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.hibernate.ExStarter;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -55,7 +56,7 @@ public class ExApiV1Context extends ApiContextSupport {
 	}
 
 	static void assertAcesso(final ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob)) {
+		if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, mob)) {
 			String s = "";
 			s += mob.doc().getListaDeAcessosString();
 			s = "(" + s + ")";
@@ -123,7 +124,7 @@ public class ExApiV1Context extends ApiContextSupport {
 		if (isNull(mob)) {
 			throw new SwaggerException("Número do " + descricaoDocumento + " não existe", 404, null, req, resp, null);
 		}
-		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob))
+		if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mob))
 			throw new SwaggerException("Acesso ao " + descricaoDocumento + " " + mob.getSigla()
 					+ " permitido somente a usuários autorizados. (" + getTitular().getSigla() + "/"
 					+ getLotaTitular().getSiglaCompleta() + ")", 403, null, req, resp, null);

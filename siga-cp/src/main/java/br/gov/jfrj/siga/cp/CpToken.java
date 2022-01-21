@@ -18,6 +18,10 @@ import javax.persistence.Table;
 })
 
 public class CpToken extends AbstractCpToken {
+	
+	final static public long TOKEN_URLPERMANENTE = 1;
+	final static public long TOKEN_PIN = 2;
+	final static public long TOKEN_SENHA = 3;
 
 	public CpToken() {
 	}

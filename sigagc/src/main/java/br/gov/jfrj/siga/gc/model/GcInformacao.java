@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -62,43 +62,29 @@ import br.gov.jfrj.siga.model.Objeto;
 		@NamedQuery(name = "buscarConhecimentoAlgumIgualNenhumDiferente", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*), (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 28 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as interessado, (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 70 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as executor from GcInformacao i inner join i.tags t where t in (:tags) and i not in (select i2 from GcInformacao i2 inner join i2.tags t2 where t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by interessado desc, executor desc, count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "buscarConhecimentoExatoOuNada", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni having count(*) = :numeroDeTags order by count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null order by i.hisDtIni desc"),
-		// @NamedQuery(name = "maisRecentesLotacao", query =
-		// "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacao = :idLotacao order by i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentesLotacao", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial order by i.hisDtIni desc"),
 		@NamedQuery(name = "maisVisitados", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.elaboracaoFim is not null group by i order by count(*) desc"),
 		@NamedQuery(name = "maisVisitadosLotacao", query = "select (select j from GcInformacao j where j = i) from GcInformacao i inner join i.movs m where m.tipo.id = 11 and i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial group by i order by count(*) desc"),
-		// @NamedQuery(name = "principaisAutores", query =
-		// "select (select p from DpPessoa p where p = i.autor) from GcInformacao i where i.hisDtFim is null group by i.autor order by count(*) desc"),
 		@NamedQuery(name = "principaisAutores", query = "select p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.elaboracaoFim is not null group by p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni order by count(*) desc"),
 		@NamedQuery(name = "principaisAutoresLotacao", query = "select p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni, count(*) from GcInformacao i inner join i.autor p where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial group by p.nomePessoa, p.idPessoaIni, i.lotacao.siglaLotacao, i.lotacao.idLotacaoIni order by count(*) desc"),
-		// @NamedQuery(name = "principaisLotacoes", query =
-		// "select (select l from DpLotacao l where l = i.lotacao) from GcInformacao i where i.hisDtFim is null group by i.lotacao order by count(*) desc"),
 		@NamedQuery(name = "principaisLotacoes", query = "select l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao, count(*) from GcInformacao i inner join i.lotacao l where i.hisDtFim is null and i.elaboracaoFim is not null group by l.nomeLotacao, l.idLotacaoIni, l.siglaLotacao order by count(*) desc"),
-		// @NamedQuery(name = "principaisTags", query =
-		// "select (select tt from GcTag tt where tt = t) from GcInformacao i inner join i.tags t where i.hisDtFim is null and t.tipo.id in (1,2) group by t order by count(*) desc"),
 		@NamedQuery(name = "principaisTags", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.elaboracaoFim is not null and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),
 		@NamedQuery(name = "principaisTagsLotacao", query = "select (select distinct tt.titulo from GcTag tt where tt.titulo = t.titulo), count(*) from GcInformacao i inner join i.tags t where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacaoIni = :idlotacaoInicial and t.tipo.id in (1,2) group by t.titulo order by count(*) desc"),
 		@NamedQuery(name = "evolucaoNovos", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
 		@NamedQuery(name = "evolucaoNovosLotacao", query = "select month(inf.elaboracaoFim) as mes, year(inf.elaboracaoFim) as ano, count(*) as novas from GcInformacao inf where inf.elaboracaoFim is not null and inf.lotacao.idLotacaoIni = :idlotacaoInicial group by month(inf.elaboracaoFim), year(inf.elaboracaoFim)"),
-		// @NamedQuery(name = "evolucaoVisitados", query =
-		// "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
 		@NamedQuery(name = "evolucaoVisitados", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.elaboracaoFim < mov.hisDtIni group by month(mov.hisDtIni), year(mov.hisDtIni)"),
-		// @NamedQuery(name = "evolucaoVisitadosLotacao", query =
-		// "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.lotacao.idLotacaoIni = :idlotacaoInicial and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
 		@NamedQuery(name = "evolucaoVisitadosLotacao", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.elaboracaoFim < mov.hisDtIni and inf.lotacao.idLotacaoIni = :idlotacaoInicial group by month(mov.hisDtIni), year(mov.hisDtIni)"),
 		@NamedQuery(name = "dadosParaRecuperacaoDeInformacao", query = "select inf, arq,  mov.hisDtIni, mov.id, (mov.tipo.id) as ativo from GcInformacao as inf join inf.arq as arq join inf.movs mov where ((mov.tipo in (1, 10) and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null and ((mov.hisDtIni > :dt) or (mov.hisDtIni = :dt and mov.id > :desempate)) order by mov.hisDtIni, mov.id"),
+		@NamedQuery(name = "postloadgcmarcas", query = "SELECT m FROM GcMarca m where m.inf.id = :idInf and (m.dtFimMarca is null or m.dtFimMarca > 	:dbDatetime) order by dtIniMarca, cpMarcador.descrMarcador"),
 		@NamedQuery(name = "pontosDeEntrada", query = "select inf, arq from GcInformacao as inf join inf.arq as arq where inf.tipo.id = 4 and inf.elaboracaoFim is not null and inf.hisDtFim is null and arq.titulo like :texto order by arq.titulo") })
-// select GcInformacao as i, i.arq as a, mov.hisDtIni as dt from GcInformacao
-// inf join inf.movs mov where ((mov.tipo in {1, 10} and mov.arq = inf.arq) or
-// (mov.tipo = 3)) and inf.elaboracaoFim is not null
-// select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
-// inf.tags tag where tag in (:tags)
+
 public class GcInformacao extends Objeto {
 	public static ActiveRecord<GcInformacao> AR = new ActiveRecord<>(
 			GcInformacao.class);
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcInformacaoSeq")
+	@GeneratedValue(generator = "gcInformacaoSeq")
 	@Column(name = "ID_INFORMACAO")
 	private Long id;
 
@@ -149,7 +135,7 @@ public class GcInformacao extends Objeto {
 	@Column(name = "NUMERO")
 	private Integer numero;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(cascade=CascadeType.PERSIST,optional = false)
 	@JoinColumn(name = "ID_ARQUIVO")
 	private GcArquivo arq;
 
@@ -250,7 +236,7 @@ public class GcInformacao extends Objeto {
 
 	@PostLoad
 	private void onLoad() {
-		Query query = em().createQuery("SELECT m FROM GcMarca m where m.inf.id = :idInf and (m.dtFimMarca is null or m.dtFimMarca > 	:dbDatetime) order by dtIniMarca, cpMarcador.descrMarcador");
+		Query query = em().createNamedQuery("postloadgcmarcas");
 		query.setParameter("idInf", this.id);
 		query.setParameter("dbDatetime", CpDao.getInstance().consultarDataEHoraDoServidor());
 		marcas = query.getResultList();

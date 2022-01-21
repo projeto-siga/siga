@@ -130,11 +130,10 @@
 								<fmt:message key="documento.novo"/></a>
 						</div>
 					</c:if>
-					<c:if test="${!ehPublicoExterno}">
+					<c:if test="${!ehPublicoExterno && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
 						<div class="col col-12 col-sm-4 col-md-auto pl-md-0 mb-2">
 							<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-								<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
-							</a>
+								<i class="fas fa-search mr-1"></i>Pesquisar</a> 
 						</div>
 					</c:if>
 				</c:if>

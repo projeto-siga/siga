@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaMarcadoresDisponiveisGet;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.Marcador;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcarComMarcador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -38,7 +39,7 @@ public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSigla
 		HttpServletRequest request = SwaggerServlet.getHttpServletRequest();
 		DpPessoa titular = ctx.getTitular();
 		DpLotacao lotaTitular = ctx.getLotaTitular();
-		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob))
+		if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, mob))
 			throw new AplicacaoException(
 					"Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. ("
 							+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + ")");

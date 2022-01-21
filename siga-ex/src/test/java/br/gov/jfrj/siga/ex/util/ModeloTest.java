@@ -190,7 +190,6 @@ public class ModeloTest extends TestCase {
 		d.addClass(br.gov.jfrj.siga.ex.ExEstadoDoc.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExPreenchimento.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExTipoFormaDoc.class, fI);
-		d.addClass(br.gov.jfrj.siga.ex.ExTipoMovimentacao.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExVia.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExMovimentacao.class, fI);
 		d.addClass(br.gov.jfrj.siga.ex.ExTpDocPublicacao.class, fI);

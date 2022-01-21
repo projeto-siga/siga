@@ -42,7 +42,7 @@
 								<td>${r.orgaoSigla}</td>
 								<td><input type="hidden"
 									name="itens[${loop.index}].orgaoId" value="${r.orgaoId}" />
-								<siga:pessoaLotaSelecao2
+								<siga:pessoaLotaSelecao2 hideLabels="${false}" labelPessoaLotacao="Tipo"
 										propriedadeLotacao="itens[${loop.index}].lotacao"
 										propriedadePessoa="itens[${loop.index}].pessoa" /></td>
 							</tr>

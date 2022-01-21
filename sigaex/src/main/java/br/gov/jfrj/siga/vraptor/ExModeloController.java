@@ -48,9 +48,9 @@ public class ExModeloController extends ExSelecionavelController {
 	private static final String SUBDIRETORIO = "-subdiretorio-";
 	private static final String VERIFICADOR_ACESSO = "MOD:Gerenciar modelos";
 	private static final String UTF8 = "utf-8";
-	private static final Logger LOGGER = Logger
-			.getLogger(ExModeloController.class);
+	private static final Logger LOGGER = Logger.getLogger(ExModeloController.class);
 	private boolean paraIncluir;
+	private boolean paraAutuar;
 
 	/**
 	 * @deprecated CDI eyes only
@@ -60,30 +60,35 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Inject
-	public ExModeloController(HttpServletRequest request, Result result,
-			CpDao dao, SigaObjects so, EntityManager em) {
+	public ExModeloController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 	}
 
 	@Get
-	@Path({"/app/modelo/buscar-json/{sigla}"})
-	public void busca(String sigla) throws Exception{
+	@Path({ "/app/modelo/buscar-json/{sigla}" })
+	public void busca(String sigla) throws Exception {
 		aBuscarJson(sigla);
 	}
-	
+
 	@Get
-	@Path({"/app/modelo/buscar-json-para-incluir/{sigla}"})
-	public void buscaParaIncluir(String sigla) throws Exception{
-		this.paraIncluir  = true;
+	@Path({ "/app/modelo/buscar-json-para-incluir/{sigla}" })
+	public void buscaParaIncluir(String sigla) throws Exception {
+		this.paraIncluir = true;
 		aBuscarJson(sigla);
 	}
-	
+
+	@Get
+	@Path({ "/app/modelo/buscar-json-para-autuar/{sigla}" })
+	public void buscaParaAutuar(String sigla) throws Exception {
+		this.paraAutuar = true;
+		aBuscarJson(sigla);
+	}
+
 	@Get("app/modelo/listar")
 	public void lista(final String script) throws Exception {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
-			List<ExModelo> modelos = dao().listarTodosModelosOrdenarPorNome(null, 
-					script);
+			List<ExModelo> modelos = dao().listarTodosModelosOrdenarPorNome(null, script);
 			result.include("itens", modelos);
 			result.include("script", script);
 		} catch (AplicacaoException e) {
@@ -95,8 +100,7 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Get("app/modelo/editar")
-	public void edita(final Long id, final Integer postback)
-			throws UnsupportedEncodingException {
+	public void edita(final Long id, final Integer postback) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (postback == null) {
 			ExModelo modelo = buscarModelo(id);
@@ -110,21 +114,18 @@ public class ExModeloController extends ExSelecionavelController {
 			final ExClassificacaoSelecao classificacaoCriacaoViasSel = new ExClassificacaoSelecao();
 
 			classificacaoSel.buscarPorObjeto(modelo.getExClassificacao());
-			classificacaoCriacaoViasSel.buscarPorObjeto(modelo
-					.getExClassCriacaoVia());
+			classificacaoCriacaoViasSel.buscarPorObjeto(modelo.getExClassCriacaoVia());
 
-			final String conteudo = modelo.getConteudoBlobMod() != null ? new String(
-					modelo.getConteudoBlobMod2(), UTF8) : null;
-			final Long forma = modelo.getExFormaDocumento() != null ? modelo
-					.getExFormaDocumento().getIdFormaDoc() : null;
-			final Long nivel = modelo.getExNivelAcesso() != null ? modelo
-					.getExNivelAcesso().getIdNivelAcesso() : null;
+			final String conteudo = modelo.getConteudoBlobMod() != null ? new String(modelo.getConteudoBlobMod2(), UTF8)
+					: null;
+			final Long forma = modelo.getExFormaDocumento() != null ? modelo.getExFormaDocumento().getIdFormaDoc()
+					: null;
+			final Long nivel = modelo.getExNivelAcesso() != null ? modelo.getExNivelAcesso().getIdNivelAcesso() : null;
 
 			result.include("id", id);
 			result.include("nome", modelo.getNmMod());
 			result.include("classificacaoSel", classificacaoSel);
-			result.include("classificacaoCriacaoViasSel",
-					classificacaoCriacaoViasSel);
+			result.include("classificacaoCriacaoViasSel", classificacaoCriacaoViasSel);
 			result.include("pessoaSel", new DpPessoaSelecao());
 			result.include("lotacaoSel", new DpLotacaoSelecao());
 			result.include("cargoSel", new DpCargoSelecao());
@@ -145,20 +146,16 @@ public class ExModeloController extends ExSelecionavelController {
 
 	@Transacional
 	@Post("app/modelo/gravar")
-	public void editarGravar(final Long id, final String nome,
-			final String tipoModelo, final String conteudo,
-			final ExClassificacaoSelecao classificacaoSel,
-			final ExClassificacaoSelecao classificacaoCriacaoViasSel,
-			final String descricao, final Long forma, final Long nivel,
-			final String arquivo, final String diretorio, final String uuid, 
-			final String marcaDagua, final Integer postback) throws Exception {
+	public void editarGravar(final Long id, final String nome, final String tipoModelo, final String conteudo,
+			final ExClassificacaoSelecao classificacaoSel, final ExClassificacaoSelecao classificacaoCriacaoViasSel,
+			final String descricao, final Long forma, final Long nivel, final String arquivo, final String diretorio,
+			final String uuid, final String marcaDagua, final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		ExModelo modelo = copiarModeloAtual(id);
 		if (postback != null) {
 			modelo.setNmMod(nome);
 			modelo.setExClassificacao(classificacaoSel.buscarObjeto());
-			modelo.setExClassCriacaoVia(classificacaoCriacaoViasSel
-					.buscarObjeto());
+			modelo.setExClassCriacaoVia(classificacaoCriacaoViasSel.buscarObjeto());
 			modelo.setConteudoTpBlob(tipoModelo);
 			modelo.setDescMod(descricao);
 			modelo.setNmArqMod(arquivo);
@@ -169,24 +166,19 @@ public class ExModeloController extends ExSelecionavelController {
 				modelo.setConteudoBlobMod2(conteudo.getBytes(UTF8));
 			}
 			if (forma != null && forma != 0) {
-				modelo.setExFormaDocumento(dao().consultar(forma,
-						ExFormaDocumento.class, false));
+				modelo.setExFormaDocumento(dao().consultar(forma, ExFormaDocumento.class, false));
 			}
 			if (nivel != null && nivel != 0) {
-				modelo.setExNivelAcesso(dao().consultar(nivel,
-						ExNivelAcesso.class, false));
+				modelo.setExNivelAcesso(dao().consultar(nivel, ExNivelAcesso.class, false));
 			}
 		}
 
 		final ExModelo modAntigo = buscarModeloAntigo(modelo.getIdInicial());
-		Ex.getInstance()
-				.getBL()
-				.gravarModelo(modelo, modAntigo, null,
-						getIdentidadeCadastrante());
+		Ex.getInstance().getBL().gravarModelo(modelo, modAntigo, null, getIdentidadeCadastrante());
 		if ("Ok".equals(param("ok"))) {
 			result.redirectTo(ExModeloController.class).lista(null);
 		} else {
-			result.redirectTo("editar?id=" + (modelo.getId()!=null?modelo.getId():id));
+			result.redirectTo("editar?id=" + (modelo.getId() != null ? modelo.getId() : id));
 		}
 	}
 
@@ -199,8 +191,7 @@ public class ExModeloController extends ExSelecionavelController {
 			throw new AplicacaoException("ID não informada");
 		}
 		final ExModelo modelo = dao().consultar(id, ExModelo.class, false);
-		dao().excluirComHistorico(modelo, dao().consultarDataEHoraDoServidor(),
-				getIdentidadeCadastrante());
+		dao().excluirComHistorico(modelo, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
 		ModeloDao.commitTransacao();
 
 		result.redirectTo(ExModeloController.class).lista(null);
@@ -210,14 +201,14 @@ public class ExModeloController extends ExSelecionavelController {
 	public Download exportar(HttpServletResponse response) throws Exception {
 		final String modelo = "modelo";
 		Map<String, Integer> mapNomes = new HashMap<>();
-		
+
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				ZipOutputStream zos = new ZipOutputStream(baos)) {
 
 			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null, null);
-	
+
 			for (final ExModelo m : l) {
 				final KXmlSerializer serializer = new KXmlSerializer();
 				try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
@@ -225,8 +216,7 @@ public class ExModeloController extends ExSelecionavelController {
 					serializer.startDocument(null, null);
 					serializer.startTag(null, "modelo");
 					if (m.getExFormaDocumento() != null) {
-						serializer.attribute(null, "especie", m.getExFormaDocumento()
-								.getDescricao());
+						serializer.attribute(null, "especie", m.getExFormaDocumento().getDescricao());
 					}
 					if (m.getNmMod() != null) {
 						serializer.attribute(null, "nome", m.getNmMod());
@@ -235,16 +225,13 @@ public class ExModeloController extends ExSelecionavelController {
 						serializer.attribute(null, "descricao", m.getDescMod());
 					}
 					if (m.getExClassificacao() != null) {
-						serializer.attribute(null, "classificacao", m
-								.getExClassificacao().getSigla());
+						serializer.attribute(null, "classificacao", m.getExClassificacao().getSigla());
 					}
 					if (m.getExClassCriacaoVia() != null) {
-						serializer.attribute(null, "classCriacaoVia", m
-								.getExClassCriacaoVia().getSigla());
+						serializer.attribute(null, "classCriacaoVia", m.getExClassCriacaoVia().getSigla());
 					}
 					if (m.getExNivelAcesso() != null) {
-						serializer.attribute(null, "nivel", m.getExNivelAcesso()
-								.getNmNivelAcesso());
+						serializer.attribute(null, "nivel", m.getExNivelAcesso().getNmNivelAcesso());
 					}
 					if (m.getNmArqMod() != null) {
 						serializer.attribute(null, "arquivo", m.getNmArqMod());
@@ -254,7 +241,7 @@ public class ExModeloController extends ExSelecionavelController {
 					}
 					if (m.getUuid() == null) {
 						m.setUuid(UUID.randomUUID().toString());
-				        SigaTransacionalInterceptor.upgradeParaTransacional();
+						SigaTransacionalInterceptor.upgradeParaTransacional();
 						dao().gravar(m);
 					}
 					if (m.getUuid() != null) {
@@ -263,7 +250,7 @@ public class ExModeloController extends ExSelecionavelController {
 					if (m.getNmDiretorio() != null) {
 						serializer.attribute(null, "diretorio", m.getNmDiretorio());
 					}
-		
+
 					final byte[] template = m.getConteudoBlobMod2();
 					if (template != null) {
 						serializer.flush();
@@ -276,11 +263,11 @@ public class ExModeloController extends ExSelecionavelController {
 					serializer.endDocument();
 					serializer.flush();
 					byte[] arq = os.toByteArray();
-	
+
 					String filename = Texto.slugify(
-							(m.getNmDiretorio() != null ? m.getNmDiretorio().replace(
-									"/", SUBDIRETORIO)
-									+ SUBDIRETORIO : ""), true, false);
+							(m.getNmDiretorio() != null ? m.getNmDiretorio().replace("/", SUBDIRETORIO) + SUBDIRETORIO
+									: ""),
+							true, false);
 					if (filename == null)
 						filename = "";
 					filename = filename.replace(SUBDIRETORIO, "/");
@@ -291,10 +278,9 @@ public class ExModeloController extends ExSelecionavelController {
 						mapNomes.put(filename, mapNomes.get(filename) + 1);
 					else
 						mapNomes.put(filename, 0);
-		
+
 					ZipEntry entry = new ZipEntry(filename
-							+ (mapNomes.get(filename) == 0 ? "" : " ("
-									+ mapNomes.get(filename) + ")") + ".mod.xml");
+							+ (mapNomes.get(filename) == 0 ? "" : " (" + mapNomes.get(filename) + ")") + ".mod.xml");
 					zos.putNextEntry(entry);
 					zos.write(arq);
 					zos.closeEntry();
@@ -302,9 +288,8 @@ public class ExModeloController extends ExSelecionavelController {
 			}
 			zos.flush();
 			byte[] zipfile = baos.toByteArray();
-	
-			return new ByteArrayDownload(zipfile, "application/zip",
-					"siga-doc-modelos.zip", true);
+
+			return new ByteArrayDownload(zipfile, "application/zip", "siga-doc-modelos.zip", true);
 		}
 	}
 
@@ -315,7 +300,7 @@ public class ExModeloController extends ExSelecionavelController {
 		final String modelo = "modelo";
 
 		assertAcesso(VERIFICADOR_ACESSO);
-		
+
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 
 			final KXmlSerializer serializer = new KXmlSerializer();
@@ -332,8 +317,7 @@ public class ExModeloController extends ExSelecionavelController {
 			for (final CpModelo m : lCp) {
 				serializer.startTag(null, modeloGeral);
 				if (m.getCpOrgaoUsuario() != null) {
-					serializer.attribute(null, "orgao", m.getCpOrgaoUsuario()
-							.getSigla());
+					serializer.attribute(null, "orgao", m.getCpOrgaoUsuario().getSigla());
 				}
 				final String template = m.getConteudoBlobString();
 				if (template != null) {
@@ -353,14 +337,12 @@ public class ExModeloController extends ExSelecionavelController {
 			os.write('\n');
 			os.write('\n');
 
-			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null, 
-					null);
+			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null, null);
 
 			for (final ExModelo m : l) {
 				serializer.startTag(null, modelo);
 				if (m.getExFormaDocumento() != null) {
-					serializer.attribute(null, "especie", m
-							.getExFormaDocumento().getDescricao());
+					serializer.attribute(null, "especie", m.getExFormaDocumento().getDescricao());
 				}
 				if (m.getNmMod() != null) {
 					serializer.attribute(null, "nome", m.getNmMod());
@@ -369,16 +351,13 @@ public class ExModeloController extends ExSelecionavelController {
 					serializer.attribute(null, "descricao", m.getDescMod());
 				}
 				if (m.getExClassificacao() != null) {
-					serializer.attribute(null, "classificacao", m
-							.getExClassificacao().getSigla());
+					serializer.attribute(null, "classificacao", m.getExClassificacao().getSigla());
 				}
 				if (m.getExClassCriacaoVia() != null) {
-					serializer.attribute(null, "classCriacaoVia", m
-							.getExClassCriacaoVia().getSigla());
+					serializer.attribute(null, "classCriacaoVia", m.getExClassCriacaoVia().getSigla());
 				}
 				if (m.getExNivelAcesso() != null) {
-					serializer.attribute(null, "nivel", m.getExNivelAcesso()
-							.getNmNivelAcesso());
+					serializer.attribute(null, "nivel", m.getExNivelAcesso().getNmNivelAcesso());
 				}
 				if (m.getNmArqMod() != null) {
 					serializer.attribute(null, "arquivo", m.getNmArqMod());
@@ -387,9 +366,9 @@ public class ExModeloController extends ExSelecionavelController {
 					serializer.attribute(null, "tipo", m.getConteudoTpBlob());
 				}
 				if (m.getUuid() == null) {
-			        m.setUuid(UUID.randomUUID().toString());
-			        SigaTransacionalInterceptor.upgradeParaTransacional();
-			        dao().gravar(m);
+					m.setUuid(UUID.randomUUID().toString());
+					SigaTransacionalInterceptor.upgradeParaTransacional();
+					dao().gravar(m);
 				}
 				if (m.getUuid() != null) {
 					serializer.attribute(null, "uuid", m.getUuid());
@@ -413,7 +392,7 @@ public class ExModeloController extends ExSelecionavelController {
 			serializer.endDocument();
 
 			serializer.flush();
-			
+
 			return new ByteArrayDownload(os.toByteArray(), "application/xml", "dadosrh.xml");
 
 		} catch (Exception e) {
@@ -423,30 +402,27 @@ public class ExModeloController extends ExSelecionavelController {
 
 	private ExModelo buscarModelo(final Long id) {
 		if (id != null) {
-			return Ex.getInstance().getBL()
-					.getCopia(dao().consultar(id, ExModelo.class, false));
+			return Ex.getInstance().getBL().getCopia(dao().consultar(id, ExModelo.class, false));
 		}
 		return new ExModelo();
 	}
 
 	private ExModelo copiarModeloAtual(final Long id) {
 		ExModelo modelo = buscarModelo(id);
-		if(modelo.getIdInicial()!=null) {
-			return Ex.getInstance().getBL().getCopia(
-					dao().consultar(modelo.getIdInicial(), ExModelo.class, false).getModeloAtual()
-					);
-		} else 
+		if (modelo.getIdInicial() != null) {
+			return Ex.getInstance().getBL()
+					.getCopia(dao().consultar(modelo.getIdInicial(), ExModelo.class, false).getModeloAtual());
+		} else
 			return modelo;
 	}
-	
+
 	private ExModelo buscarModeloAntigo(final Long idInicial) {
 		if (idInicial != null) {
-			return dao().consultar(idInicial, ExModelo.class, false)
-					.getModeloAtual();
+			return dao().consultar(idInicial, ExModelo.class, false).getModeloAtual();
 		}
 		return null;
 	}
-	
+
 	private List<ExNivelAcesso> getListaNivelAcesso() {
 		return dao().listarOrdemNivel();
 	}
@@ -459,25 +435,32 @@ public class ExModeloController extends ExSelecionavelController {
 	protected DaoFiltroSelecionavel createDaoFiltro() {
 		ExModeloDaoFiltro flt = new ExModeloDaoFiltro();
 		flt.setSigla(getNome());
-		flt.setParaIncluir(this.paraIncluir);
 		return flt;
 	}
-	
+
 	@Override
 	protected String aBuscar(String sigla, String postback) throws Exception {
 		String s = super.aBuscar(sigla, postback);
-		
+
 		if (paraIncluir) {
 			List<ExModelo> lExcluir = new ArrayList<>();
-			for (ExModelo mod : (List<ExModelo>)getItens()) {
+			for (ExModelo mod : (List<ExModelo>) getItens()) {
 				if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), mod,
-				ExTipoDeConfiguracao.DESPACHAVEL)) {
+						ExTipoDeConfiguracao.DESPACHAVEL)) {
+					lExcluir.add(mod);
+				}
+			}
+			getItens().removeAll(lExcluir);
+		} else if (paraAutuar) {
+			List<ExModelo> lExcluir = new ArrayList<>();
+			for (ExModelo mod : (List<ExModelo>) getItens()) {
+				if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), mod,
+						ExTipoDeConfiguracao.AUTUAVEL)) {
 					lExcluir.add(mod);
 				}
 			}
 			getItens().removeAll(lExcluir);
 		}
-		
 		return s;
 	}
 }

@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
-<siga:pagina titulo="${pi.sigla}">
+<siga:pagina titulo="${pi.sigla}"
+	incluirJs="/siga/javascript/svg-pan-zoom/svg-pan-zoom.min.js">
 
 
 	<div class="container-fluid content" id="page">
@@ -25,9 +26,26 @@
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
 				<c:if test="${not empty dot}">
-					<div class="card bg-light mb-3 bg-white p-3">
-						<div id="output" class="graph-svg"
-							style="border: 0px; padding: 0px; text-align: center;"></div>
+					<div class="card bg-light mb-3 bg-white">
+						<div class="card-header">
+							<div class="row justify-content-center align-self-center">
+								<div class="col">&nbsp;</div>
+								<div class="col-auto align-self-center">
+									<i class="fa fa-search-minus pan-zoom-controls"
+										style="display: none; opacity: .5"
+										onclick="window.panZoom.zoomOut()"></i> <i
+										class="far fa-window-maximize ml-1 mr-1 pan-zoom-controls"
+										style="display: none; opacity: .5"
+										onclick="window.panZoom.reset()"></i> <i
+										class="fa fa-search-plus" style="opacity: .5"
+										onclick="window.panZoom.zoomIn(); $('.pan-zoom-controls').show()"></i>
+								</div>
+							</div>
+						</div>
+						<div class="card-body bg-white p-2">
+							<div id="output" class="graph-svg"
+								style="border: 0px; padding: 0px; text-align: center;"></div>
+						</div>
 					</div>
 				</c:if>
 			</div>
@@ -67,6 +85,9 @@
 							<b>Última atualização:</b>
 							<fmt:formatDate value="${pd.hisDtIni}"
 								pattern="dd/MM/yyyy HH:mm:ss" />
+						</p>
+						<p>
+							<b>Variáveis:</b> ${pd.identificadoresDeVariaveis}
 						</p>
 					</div>
 				</div>
@@ -108,6 +129,23 @@
 					    $(data).width("100%");
 				        $("#" + id).html(data);
 				        updateContainer();
+				        var svgElement = document.getElementById(id).firstElementChild;
+						window.panZoom = svgPanZoom(svgElement, {
+								   panEnabled: true
+								  , controlIconsEnabled: false
+								  , zoomEnabled: true
+								  , dblClickZoomEnabled: true
+								  , mouseWheelZoomEnabled: true
+								  , preventMouseEventsDefault: true
+								  , zoomScaleSensitivity: 0.2
+								  , minZoom: 1
+								  , maxZoom: 10
+								  , beforeZoom: function() {
+									  $('.pan-zoom-controls').show()
+								  }, beforePan: function() {
+									  $('.pan-zoom-controls').show()
+								  }})
+
 				    }
 				});
 			} else if (window.VizWorker) {
@@ -165,7 +203,7 @@
 				var width = smallwidth;
 				var height = smallwidth * baseVal.height / baseVal.width;
 				if (height > smallheight) {
-					width = width * smallheight / height;
+					//width = width * smallheight / height;
 					height = smallheight;
 				}
 				smallsvg.attr('width', width);

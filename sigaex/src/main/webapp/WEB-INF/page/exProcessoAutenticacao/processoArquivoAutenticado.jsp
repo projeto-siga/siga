@@ -88,7 +88,7 @@
 							<c:set var="dtUlt" value="" />
 							<c:set var="temmov" value="${false}" />
 							<c:forEach var="mov" items="${movs}">
-								<c:if test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
+								<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
 									<c:set var="temmov" value="${true}" />
 								</c:if>
 							</c:forEach>
@@ -129,14 +129,14 @@
 											</c:choose>
 											<td align="left">${dt}</td>
 											<td align="left">${mov.descrTipoMovimentacao} 
-												<c:if test="${mov.idTpMov == 12}">
+												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA'}">
 													<span style="font-size: .8rem;color: #9e9e9e;">| documento juntado&nbsp
 														<c:choose>
 															<c:when test="${m.sigla ne mov.exMobil.sigla}">
 																${mov.exMobil}
 																<c:if test="${(((not isProtocoloFilho) 
 																			or (mov.exMobil.doc.descricaoEspecieDespacho)) 
-																		and (mov.exMobil.exibirNoAcompanhamento))}">
+																		and (mov.exMobil.exibirNoAcompanhamento) and mov.exMobil.juntado)}">
 																	&nbsp<a class="showConteudoDoc link-btn btn btn-sm btn-light" href="#" 
 																		onclick="popitup('/sigaex/public/app/processoArquivoAutenticado_stream?sigla=${mov.exMobil}');"
 																		rel="popover" data-title="${mov.exMobil}" 
@@ -152,7 +152,7 @@
 														</c:choose>
 													</span>
 												</c:if>
-												<c:if test="${mov.idTpMov == 13}">
+												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA_EXTERNO'}">
 													<span style="font-size: .8rem;color: #9e9e9e;"
 														>| documento desentranhado ${mov.exMobil}
 													</span>

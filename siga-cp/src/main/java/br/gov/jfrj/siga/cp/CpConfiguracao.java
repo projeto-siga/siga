@@ -29,17 +29,21 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
@@ -207,15 +211,15 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	}
 
 	public void substituirPorObjetoInicial() {
-		setLotacao(getLotacao() != null ? getLotacao().getLotacaoInicial() : null);
+		setLotacao(inicial(getLotacao()));
 		setCargo(inicial(getCargo()));
 		setFuncaoConfianca(inicial(getFuncaoConfianca()));
-		setDpPessoa(getDpPessoa() != null ? getDpPessoa().getPessoaInicial() : null);
+		setDpPessoa(inicial(getDpPessoa()));
 		setCpIdentidade(inicial(getCpIdentidade()));
-		setLotacaoObjeto(getLotacaoObjeto() != null ? getLotacaoObjeto().getLotacaoInicial() : null);
+		setLotacaoObjeto(inicial(getLotacaoObjeto()));
 		setCargoObjeto(inicial(getCargoObjeto()));
 		setFuncaoConfiancaObjeto(inicial(getFuncaoConfiancaObjeto()));
-		setPessoaObjeto(getPessoaObjeto() != null ? getPessoaObjeto().getPessoaInicial() : null);
+		setPessoaObjeto(inicial(getPessoaObjeto()));
 		setCpGrupo(inicial(getCpGrupo()));
 	}
 
@@ -228,11 +232,42 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	public <T extends Historico> T inicial(final T antigo) {
 		if (antigo == null)
 			return null;
-		return CpDao.getInstance().obterInicial(antigo);
+		Long id = null;
+		GenericClass<T> tclass = new GenericClass(antigo.getClass());
+		EntityManager em = ContextoPersistencia.em();
+		
+        if (antigo.getId().equals(antigo.getHisIdIni())) {
+            id = antigo.getId();
+        	return antigo;
+        } else if (antigo instanceof DpPessoa) {
+        	id = ((DpPessoa) antigo).getPessoaInicial().getIdInicial();
+        	return (T) em.getReference(DpPessoa.class, id);
+        } else if (antigo instanceof DpLotacao) {
+        	id = ((DpLotacao) antigo).getLotacaoInicial().getIdInicial();
+        	return (T) em.getReference(DpLotacao.class, id);
+        } else if (antigo instanceof DpFuncaoConfianca) { 
+        	id = ((DpFuncaoConfianca) antigo).getIdFuncaoIni();
+        	return (T) em.getReference(DpFuncaoConfianca.class, id);
+        } else if (antigo instanceof DpCargo) { 
+        	id = ((DpCargo) antigo).getIdCargoIni();
+        	return (T) em.getReference(DpCargo.class, id);
+        } else {
+        	id = antigo.getHisIdIni();
+        	return em.getReference(tclass.getType(), id);
+        }
 	}
 	
 	public CpConfiguracaoCache converterParaCache() {
 		return new CpConfiguracaoCache(this);
 	}
 
+	public class GenericClass<T> {
+	     private final Class<T> type;
+	     public GenericClass(Class<T> type) {
+	          this.type = type;
+	     }
+	     public Class<T> getType() {
+	         return this.type;
+	     }
+	}	
 }

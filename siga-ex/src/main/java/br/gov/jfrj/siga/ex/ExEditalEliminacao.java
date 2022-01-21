@@ -13,6 +13,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
+import br.gov.jfrj.siga.ex.logic.ExPodeIncluirEmEditalDeEliminacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExEditalEliminacao {
@@ -96,8 +98,8 @@ public class ExEditalEliminacao {
 					getDoc().getOrgaoUsuario(), null, null))
 				if (o.getMob()
 						.getUltimaMovimentacaoNaoCancelada(
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO)
+								ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
+								ExTipoDeMovimentacao.RETIRADA_DE_EDITAL_DE_ELIMINACAO)
 						.getExMobilRef().equals(getDoc().getMobilGeral()))
 					listaFinal.add(o);
 		return listaFinal;
@@ -111,8 +113,8 @@ public class ExEditalEliminacao {
 					getDtFimEntrevista()))
 				if (o.getMob()
 						.getUltimaMovimentacaoNaoCancelada(
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO)
+								ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
+								ExTipoDeMovimentacao.RETIRADA_DE_EDITAL_DE_ELIMINACAO)
 						.getExMobilRef().equals(getDoc().getMobilGeral()))
 					listaFinal.add(o);
 		return listaFinal;
@@ -176,8 +178,7 @@ public class ExEditalEliminacao {
 				"Documentos a Eliminar Não Disponíveis", false);
 
 		for (ExItemDestinacao o : provisorio) {
-			if (!comp().podeIncluirEmEditalEliminacao(
-					getDoc().getCadastrante(), getDoc().getLotaCadastrante(),
+			if (!comp().pode(ExPodeIncluirEmEditalDeEliminacao.class, getDoc().getCadastrante(), getDoc().getLotaCadastrante(),
 					o.getMob()))
 				indisponiveis.adicionar(o);
 			else if (o.getMob().doc().isEletronico())
@@ -210,14 +211,12 @@ public class ExEditalEliminacao {
 			if (form.get(chave).equals("Sim")) {
 				ExMovimentacao movInclusao = mob
 						.getUltimaMovimentacaoNaoCancelada(
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO);
+								ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
+								ExTipoDeMovimentacao.RETIRADA_DE_EDITAL_DE_ELIMINACAO);
 				boolean referenciaEsteDoc = movInclusao != null
 						&& movInclusao.getExMobilRef().equals(
 								getDoc().getMobilGeral());
-				if (!comp().podeIncluirEmEditalEliminacao(
-						getDoc().getCadastrante(),
-						getDoc().getLotaCadastrante(), mob))
+				if (!comp().pode(ExPodeIncluirEmEditalDeEliminacao.class, getDoc().getCadastrante(), getDoc().getLotaCadastrante(), mob))
 					throw new AplicacaoException("O documento "
 							+ mob.getCodigo()
 							+ "não está disponível para eliminação.");
@@ -246,8 +245,8 @@ public class ExEditalEliminacao {
 		for (ExMobil m : aRetirar) {
 			ExMovimentacao movInclusao = m
 					.getUltimaMovimentacaoNaoCancelada(
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO);
+							ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO,
+							ExTipoDeMovimentacao.RETIRADA_DE_EDITAL_DE_ELIMINACAO);
 			bl().excluirMovimentacao(getDoc().getCadastrante(),
 					getDoc().getLotaCadastrante(), m, movInclusao.getIdMov());
 		}

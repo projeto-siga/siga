@@ -44,13 +44,13 @@
 		value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=true">
 	</c:url>
 	<c:choose>
-		<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
+		<c:when test="${mov.exTipoMovimentacao == 'ANEXACAO'}">
 			<c:set var="msgScript" value="anexo" />
 		</c:when>
-		<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
+		<c:when test="${mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA'}">
 			<c:set var="msgScript" value="desentranhamento" />
 		</c:when>
-		<c:when test="${mov.exTipoMovimentacao.idTpMov==14}">
+		<c:when test="${mov.exTipoMovimentacao == 'CANCELAMENTO_DE_MOVIMENTACAO'}">
 			<c:set var="msgScript" value="cancelamento" />
 		</c:when>
 		<c:otherwise>
@@ -62,7 +62,7 @@
 	<script type="text/javascript" language="Javascript1.1">
         function visualizarImpressao() {
             window.open(
-                    "/sigaex/app/arquivo/exibir?${mov.idTpMov == 13? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
+                    "/sigaex/app/arquivo/exibir?${mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA' ? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
                     "_blank");
         }
     </script>
@@ -70,7 +70,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>${mov.exTipoMovimentacao.descricao}:
+				<h5>${mov.exTipoMovimentacao.descr}:
 					${doc.codigo}:${mov.idMov}</h5>
 			</div>
 			<form name="frm" action="exibir" theme="simple" method="post">
@@ -84,17 +84,17 @@
 												var="exibemovvariante" scope="request" value="" /> <c:if
 												test='${empty mov.exMovimentacaoCanceladora}'>
 												<c:if test="${(doc.idDoc == mov.exDocumento.idDoc)}">
-													<c:if test='${mov.exTipoMovimentacao.idTpMov == 2}'>
+													<c:if test="${mov.exTipoMovimentacao == 'ANEXACAO'}">
 														<c:set var="exibemov" scope="request" value="anexacao" />
 													</c:if>
 												</c:if>
-												<c:if test='${mov.exTipoMovimentacao.idTpMov == 12}'>
+												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA'}">
 													<c:set var="exibemov" scope="request" value="juntada" />
 												</c:if>
-												<c:if test='${mov.exTipoMovimentacao.idTpMov == 63}'>
+												<c:if test="${mov.exTipoMovimentacao == 'COPIA'}">
 													<c:set var="exibemov" scope="request" value="copia" />
 												</c:if>
-												<c:if test='${mov.exTipoMovimentacao.idTpMov == 16}'>
+												<c:if test="${mov.exTipoMovimentacao == 'REFERENCIA'}">
 													<c:set var="exibemov" scope="request" value="vinculo" />
 													<c:if test="${mov.exDocumento.idDoc == doc.idDoc}">
 														<c:set var="exibemovvariante" scope="request"
@@ -103,17 +103,17 @@
 												</c:if>
 												<c:if test="${(doc.idDoc == mov.exDocumento.idDoc)}">
 													<c:if
-														test='${(mov.exTipoMovimentacao.idTpMov == 5) || (mov.exTipoMovimentacao.idTpMov == 6) || (mov.exTipoMovimentacao.idTpMov == 18)}'>
+														test="${(mov.exTipoMovimentacao == 'DESPACHO') || (mov.exTipoMovimentacao == 'DESPACHO_TRANSFERENCIA') || (mov.exTipoMovimentacao == 'DESPACHO_TRANSFERENCIA_EXTERNA')}">
 														<c:set var="exibemov" scope="request" value="despacho" />
 													</c:if>
-													<c:if test='${(mov.exTipoMovimentacao.idTpMov == 13)}'>
+													<c:if test="${(mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA')}">
 														<c:set var="exibemov" scope="request"
 															value="desentranhamento" />
 													</c:if>
-													<c:if test='${(mov.exTipoMovimentacao.idTpMov == 43)}'>
+													<c:if test="${(mov.exTipoMovimentacao == 'ENCERRAMENTO_DE_VOLUME')}">
 														<c:set var="exibemov" scope="request" value="encerramento" />
 													</c:if>
-													<c:if test='${(mov.exTipoMovimentacao.idTpMov == 14)}'>
+													<c:if test="${(mov.exTipoMovimentacao == 'CANCELAMENTO_DE_MOVIMENTACAO')}">
 														<c:set var="exibemov" scope="request" value="cancelamento" />
 													</c:if>
 												</c:if>
@@ -222,7 +222,7 @@
 								<i class="fa fa-print"></i> ${doc.codigo}
 							</button>
 						</c:if>
-						<c:if test="${mov.exTipoMovimentacao.idTpMov!=2}">
+						<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 							<button type="button" class="btn btn-info"
 								onclick="javascript:visualizarImpressao();">
 								<i class="fa fa-print"></i> Visualizar
@@ -269,8 +269,8 @@
 		</form>
 		
 		<c:choose>
-		    <c:when test="${siga_cliente == 'GOVSP' && mov.idTpMov == 13 && mov.isAssinada()}">
-		        <span style="display:none">Termo de desentranhamento é assinado uma única vez para usuários de SP</span>	        
+		    <c:when test="${siga_cliente == 'GOVSP' && mov.isAssinada()}">
+		        <span style="display:none">Os termos (Encerramento de Volume, Desentranhamento...) são assinados uma única vez para usuários de SP.</span>	        
 		    </c:when>    
 		    <c:otherwise>
 		    	<div class="card">
@@ -291,11 +291,11 @@
 								value="${fn:replace(mov.referencia, ':', '_')}" /> <input
 								type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
 								type="hidden" name="ad_kind_0"
-								value="${mov.exTipoMovimentacao.sigla}" />
+								value="${mov.exTipoMovimentacao.descr}" />
 		
 							<c:if test="${not autenticando}">
 								<c:choose>
-									<c:when test="${mov.exTipoMovimentacao.idTpMov == 2}">
+									<c:when test="${mov.exTipoMovimentacao == 'ANEXACAO'}">
 										<c:set var="botao" value="ambos" />
 									</c:when>
 									<c:otherwise>
@@ -319,7 +319,7 @@
 						<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
 						
 						<tags:assinatura_botoes assinar="true"
-							autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
+							autenticar="${mov.exTipoMovimentacao == 'ANEXACAO'}"
 							
 								assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
 							    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			

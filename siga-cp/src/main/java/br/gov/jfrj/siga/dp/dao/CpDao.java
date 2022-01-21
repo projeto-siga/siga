@@ -25,6 +25,7 @@ package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,6 +139,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			final List<CpOrgao> l = query.getResultList();
@@ -306,6 +309,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			final int l = ((Long) query.getSingleResult()).intValue();
@@ -343,6 +348,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -373,6 +380,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -439,6 +448,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -473,6 +484,9 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
+			
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -536,6 +550,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -573,6 +589,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -654,6 +672,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
@@ -719,13 +739,21 @@ public class CpDao extends ModeloDao {
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
 		final Query query = em().createNamedQuery("consultarPorSiglaDpLotacao");
 		query.setParameter("siglaLotacao", o.getSiglaLotacao());
-		if (o.getOrgaoUsuario() != null)
-			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
+		if (o.getOrgaoUsuario() != null) {
+			// O argumento siglaOrgaoLotacao preve a situação onde a sigla pesquisada contem um prefixo coincidente à 
+			// sigla de um orgão existente que o setSigla() do DpLotacao retirou
+			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) {
 				query.setParameter("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
-			else
-				query.setParameter("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());
-		else
+				query.setParameter("siglaOrgaoLotacao", o.getOrgaoUsuario().getSigla() + o.getSigla());
+			} else {
+				CpOrgaoUsuario org = consultarPorSigla(o.getOrgaoUsuario());
+				query.setParameter("idOrgaoUsu", org.getId());
+				query.setParameter("siglaOrgaoLotacao", org.getSigla() + o.getSigla());
+			}
+		} else {
 			query.setParameter("idOrgaoUsu", 0L);
+			query.setParameter("siglaOrgaoLotacao", null);
+		}
 
 		query.setHint("org.hibernate.cacheable", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
@@ -774,10 +802,22 @@ public class CpDao extends ModeloDao {
 	}
 	
 	public List<DpLotacao> listarLotacoesPorPai(DpLotacao lotacaoPai) {
+		return listarLotacoesPorPai(lotacaoPai, Boolean.TRUE);
+	}
+	
+	public List<DpLotacao> listarLotacoesPorPai(DpLotacao lotacaoPai, boolean dtFimLotacaoIsNull) {
 		CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 		Root<DpLotacao> c = q.from(DpLotacao.class);
 		q.select(c);
-		q.where(cb().equal(c.get("lotacaoPai"), lotacaoPai),cb().isNull(c.get("dataFimLotacao")));
+		
+		List<Predicate> whereList = new LinkedList<Predicate>();
+		whereList.add(cb().equal(c.get("lotacaoPai"), lotacaoPai));
+		if (dtFimLotacaoIsNull) {
+			whereList.add(cb().isNull(c.get("dataFimLotacao")));
+		}
+		
+		q.where(whereList.toArray(new Predicate[whereList.size()]));
+		
 		return em().createQuery(q).getResultList();
 	}
 
@@ -1085,7 +1125,7 @@ public class CpDao extends ModeloDao {
 
 	public CpLocalidade consultarLocalidadesPorNomeUF(final CpLocalidade localidade) {
 		Query query = em().createQuery("from CpLocalidade lot where "
-				+ "      upper(TRANSLATE(lot.nmLocalidade,'âàãáÁÂÀÃéêÉÊíÍóôõÓÔÕüúÜÚçÇ''','AAAAAAAAEEEEIIOOOOOOUUUUCC ')) = upper(:nome) and lot.UF.id = :idUf");
+				+ "      upper(REMOVE_ACENTO(lot.nmLocalidade)) = upper(:nome) and lot.UF.id = :idUf");
 		query.setParameter("idUf", localidade.getUF().getId());
 		query.setParameter("nome", localidade.getNmLocalidade());
 
@@ -1746,37 +1786,37 @@ public class CpDao extends ModeloDao {
 		if (id == null || id == 0)
 			return null;
 
-		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
-
 		DpLotacao lotacao = consultar(id, DpLotacao.class, false);
-
 		lotacao = lotacao.getLotacaoAtual();
 
-		if (lotacao == null)
-			return lstCompleta;
-
-		List<DpLotacao> sublotacoes = new ArrayList<DpLotacao>();
-		sublotacoes.add(lotacao);
-		if (incluirSublotacoes) {
-			List<DpLotacao> lotacoes = listarLotacoes();
-			boolean continuar = true;
-			while (continuar) {
-				continuar = false;
-				for (DpLotacao lot : lotacoes) {
-					if (sublotacoes.contains(lot))
+		if (lotacao == null) {
+			return new ArrayList<DpPessoa>();		
+		} else {
+			
+			List<DpLotacao> sublotacoes = new ArrayList<DpLotacao>();
+			sublotacoes.add(lotacao);
+			if (incluirSublotacoes) {
+				List<DpLotacao> listaLotacaoPai = listarLotacoesPorPai(lotacao, Boolean.FALSE);
+				for (DpLotacao lotaPai : listaLotacaoPai) {
+					if (sublotacoes.contains(lotaPai))
 						continue;
-					if (sublotacoes.contains(lot.getLotacaoPai())) {
-						if (!lot.isSubsecretaria()) {
-							sublotacoes.add(lot);
-							continuar = true;
-						}
-					}
+					if (!lotaPai.isSubsecretaria()) {
+						sublotacoes.add(lotaPai);
+					}					
 				}
+				
 			}
+			
+			return obterListaPessoaPorLotacoes(somenteServidor, situacoesFuncionais, sublotacoes);
 		}
+	}
 
+	private List<DpPessoa> obterListaPessoaPorLotacoes(Boolean somenteServidor, 
+			SituacaoFuncionalEnum situacoesFuncionais, List<DpLotacao> sublotacoes) {
+		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>(); 
+		
 		for (DpLotacao lot : sublotacoes) {
-			final String[] values = new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO", "JUIZ FEDERAL" };
+			final String[] values = new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO", "JUIZ FEDERAL", "DESEMBARGADOR FEDERAL" };
 			CriteriaQuery<DpPessoa> q = cb().createQuery(DpPessoa.class);
 			Root<DpPessoa> c = q.from(DpPessoa.class);
 			q.select(c);
@@ -1786,7 +1826,7 @@ public class CpDao extends ModeloDao {
 			whereList.add(cb().equal(joinLotacao.get("idLotacao"), lot.getId()));
 			if (somenteServidor) { 
 				Join<DpPessoa, DpCargo> joinCargo = c.join("cargo", JoinType.LEFT);
-				whereList.add(joinCargo.get("nomeCargo").in(values));
+				whereList.add(joinCargo.get("nomeCargo").in(values).not());
 			}
 			whereList.add(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
 			whereList.add(cb().isNull(c.get("dataFimPessoa")));
@@ -2002,11 +2042,12 @@ public class CpDao extends ModeloDao {
 		}
 		return entidade;
 	}
-
+ 
 	public <T> T gravar(final T entidade) {
 		if (entidade instanceof CarimboDeTempo)
 			((CarimboDeTempo) entidade).setHisDtAlt(this.dt());
 		super.gravar(entidade);
+		
 		invalidarCache(entidade);
 		return entidade;
 	}
@@ -2512,10 +2553,26 @@ public class CpDao extends ModeloDao {
 //		TypedQuery typedQuery = em().createQuery(query);
 //		thisAntigo = (HistoricoSuporte) typedQuery.getSingleResult();
 		
+		if (u instanceof DpPessoa)
+			return (T) ((DpPessoa) u).getPessoaAtual();
+
+		if (u instanceof DpLotacao)
+			return (T) ((DpLotacao) u).getLotacaoAtual();
+		
+		String queryHisDtIni = "hisDtIni";
+		String queryHisIdIni = "hisIdIni";
+		if (u instanceof DpFuncaoConfianca) {
+			queryHisDtIni = "dataFimFuncao";
+			queryHisIdIni = "idFuncaoIni";
+		} else if (u instanceof DpCargo) {
+			queryHisDtIni = "dataFimCargo";
+			queryHisIdIni = "idCargoIni";
+		}
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
-		String sql = "from " + clazz + " u where u.hisDtIni = "
-			+ "		(select max(p.hisDtIni) from " + clazz + " p where p.hisIdIni = :idIni)"
+		String sql = "from " + clazz + " u where u." + queryHisDtIni + " = "
+			+ "		(select max(p." + queryHisDtIni + ") from " + clazz + " p where p." + queryHisIdIni + " = :idIni)"
 			+ "		 and u.hisIdIni = :idIni";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
@@ -2528,11 +2585,25 @@ public class CpDao extends ModeloDao {
 	}
 
 	public <T extends Historico> T obterInicial(final T u) {
-		if (u.getId() == u.getHisIdIni())
+		if (u.getId().equals(u.getHisIdIni()))
 			return u;
+
+		if (u instanceof DpPessoa)
+			return (T) ((DpPessoa) u).getPessoaInicial();
+
+		if (u instanceof DpLotacao)
+			return (T) ((DpLotacao) u).getLotacaoInicial();
+		
+		String queryHisIdIni = "hisIdIni";
+		if (u instanceof DpFuncaoConfianca) {
+			queryHisIdIni = "idFuncaoIni";
+		} else if (u instanceof DpCargo) {
+			queryHisIdIni = "idCargoIni";
+		}
+		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];
-		String sql = "from " + clazz + " u where u.hisIdIni = :idIni";		
+		String sql = "from " + clazz + " u where u." + queryHisIdIni + " = :idIni order by 1";		
 		javax.persistence.Query qry = ContextoPersistencia.em().createQuery(sql);
 		qry.setParameter("idIni", u.getHisIdIni());
 		qry.setFirstResult(0);
@@ -2686,8 +2757,8 @@ public class CpDao extends ModeloDao {
 			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
 
 			sql.setParameter("idLotacao", idLotacao);
-			List result = sql.getResultList();
-			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
+			
+			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
 			return l;
 		} catch (final NullPointerException e) {
 			return null;

@@ -146,7 +146,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			break;
 		}
 		long fim = System.currentTimeMillis();
-		log.info("### Tempo: " + (fim-ini) + " Tamanho: " + this.getConteudo().length);
+		log.debug("Tempo para persistir o arquivo: " + (fim-ini) + " Tamanho: " + (this.getConteudo() != null ? this.getConteudo().length : "nulo"));
 	}
 
 	@PostPersist

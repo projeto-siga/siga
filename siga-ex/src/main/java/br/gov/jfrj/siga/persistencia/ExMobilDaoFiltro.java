@@ -128,7 +128,7 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 	private Long ultMovRespSelId;
 
 	private Integer ordem;
-
+	
 	public Integer getOrdem() {
 		return ordem;
 	}

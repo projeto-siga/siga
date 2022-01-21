@@ -25,6 +25,7 @@ package com.aryjr.nheengatu.util;
 import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+
 import com.aryjr.nheengatu.css2.Style;
 import com.aryjr.nheengatu.css2.StyleSheet;
 import com.aryjr.nheengatu.html.Tag;

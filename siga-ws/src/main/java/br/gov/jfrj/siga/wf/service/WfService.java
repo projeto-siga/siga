@@ -18,11 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.service;
 
-import br.gov.jfrj.siga.Remote;
+import java.util.ArrayList;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import java.util.ArrayList;
+
+import br.gov.jfrj.siga.Remote;
 
 @WebService(targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public interface WfService extends Remote {
@@ -43,7 +44,19 @@ public interface WfService extends Remote {
     @WebMethod
 	Boolean criarInstanciaDeProcesso(String nomeProcesso,
 			String siglaCadastrante, String siglaTitular,
-			ArrayList<String> keys, ArrayList<String> values) throws Exception;
+			ArrayList<String> keys, ArrayList<String> values, 
+			String tipoDePrincipal, String principal) throws Exception;
+    
+	/**
+	 * Método que obtem informações sobre um procedimento.
+	 * 
+	 * @param siglaProcedimento
+	 *            Sigla do procedimento a ser consultado
+	 * @return Retorna um objeto complexo se tudo ocorrer corretamente.
+	 * @throws Exception
+	 */
+    @WebMethod
+    WfProcedimentoWSTO consultarProcedimento(String siglaProcedimento) throws Exception;
 
 	/**
 	 * Varre todas as instancias de todos os Workflows, procurando um tarefa que

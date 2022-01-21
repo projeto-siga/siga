@@ -8,6 +8,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaAnexarPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -20,11 +21,13 @@ public class DocumentosSiglaAnexarPost implements IDocumentosSiglaAnexarPost {
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento que Receberá o Anexo");
-		if (!Ex.getInstance().getComp().podeAnexarArquivo(ctx.getTitular(), ctx.getLotaTitular(), mob))
-			throw new SwaggerException("Anexação no documento " + mob.getSigla() + " não é permitida. ("
-					+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", 403, null, req,
-					resp, null);
-
+		try {
+			Ex.getInstance().getComp().afirmar("Anexação no documento " + mob.getSigla() + " não é permitida. ("
+					+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", ExPodeAnexarArquivo.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
+		} catch (Exception ex) {
+			throw new SwaggerException(ex.getMessage(), 403, null, req,	resp, null);
+		}
+		
 		// Insere PDF de documento capturado
 		//
 		if (req.content == null)

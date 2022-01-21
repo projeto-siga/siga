@@ -1793,3 +1793,101 @@ function getUserLocalStorage(nomeParm) {
 		val = false;
 	return val
 }
+
+function isCpfValido(cpf) {	
+	cpf = cpf.replace(/[^\d]+/g,'');	
+    if(cpf == '') return false;	
+    // Elimina CPFs invalidos conhecidos	
+    if (cpf.length != 11 || 
+        cpf == "00000000000" || 
+        cpf == "11111111111" || 
+        cpf == "22222222222" || 
+        cpf == "33333333333" || 
+        cpf == "44444444444" || 
+        cpf == "55555555555" || 
+        cpf == "66666666666" || 
+        cpf == "77777777777" || 
+        cpf == "88888888888" || 
+        cpf == "99999999999")
+      return false;		
+    // Valida 1o digito	
+    add = 0;	
+    for (i=0; i < 9; i ++)		
+      add += parseInt(cpf.charAt(i)) * (10 - i);	
+    rev = 11 - (add % 11);	
+    if (rev == 10 || rev == 11)		
+      rev = 0;	
+    if (rev != parseInt(cpf.charAt(9)))		
+      return false;		
+    // Valida 2o digito	
+    add = 0;	
+    for (i = 0; i < 10; i ++)		
+      add += parseInt(cpf.charAt(i)) * (11 - i);	
+    rev = 11 - (add % 11);	
+    if (rev == 10 || rev == 11)	
+      rev = 0;	
+    if (rev != parseInt(cpf.charAt(10)))
+      return false;		
+    return true;   
+}
+
+// Restricts input for the given textbox to the given inputFilter.
+function setInputFilter(textbox, inputFilter) {
+  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+    textbox.addEventListener(event, function() {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  });
+}
+
+//Verificador de força de senha
+function passwordStrength(password) {
+		var desc = new Array();
+		desc[0] = "Inaceitável";
+		desc[1] = "Muito Fraca";
+		desc[2] = "Fraca";
+		desc[3] = "Razoável";
+		desc[4] = "Boa";
+		desc[5] = "Forte";
+		var score = 0;
+
+		//if password bigger than 6 give 1 point
+		if (password.length >= 6)
+			score++;
+
+		//if password has both lower and uppercase characters give 1 point      
+		if ((password.match(/[a-z]/)) && (password.match(/[A-Z]/)))
+			score++;
+
+		//if password has at least one number give 1 point
+		if ((password.match(/[a-z]/) || password.match(/[A-Z]/))
+				&& (password.match(/\d+/)))
+			score++;
+
+		//if password has at least one special caracther give 1 point
+		if (password.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/))
+			score++;
+
+		//if password bigger than 12 give another 1 point
+		if (password.length >= 12)
+			score++;
+
+		//mininum requirements to be accepted by the AD
+		if (score > 2
+				&& (password.length < 6 || !password.match(/[a-z]/)
+						|| !password.match(/[A-Z]/) || !password.match(/\d+/)))
+			score = 2;
+
+		document.getElementById("passwordDescription").innerHTML = desc[score];
+		document.getElementById("passwordStrength").className = "strength"
+				+ score;
+	}

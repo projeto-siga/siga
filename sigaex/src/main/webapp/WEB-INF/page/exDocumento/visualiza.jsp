@@ -140,7 +140,7 @@
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 								pre="${acao.pre}" pos="${acao.pos}"
 								url="${pageContext.request.contextPath}${acao.url}"
-								test="${true}" popup="${acao.popup}"
+								test="${acao.pode}" popup="${acao.popup}"
 								confirm="${acao.msgConfirmacao}" classe="${acao.classe}"
 								estilo="line-height: 160% !important" atalho="${true}" />
 						</c:forEach>
@@ -150,10 +150,10 @@
 		</div>
 		<c:set var="temmov" value="${false}" />
 		<c:forEach var="mov" items="${m.movs}">
-			<c:if test="${ (mov.idTpMov != 14 and not mov.cancelada)}">
+			<c:if test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
 				<c:set var="temmov" value="${true}" />
 			</c:if>
-			<c:if test="${ (mov.idTpMov == 66 and not mov.cancelada and 
+			<c:if test="${ (mov.exTipoMovimentacao == 'CIENCIA' and not mov.cancelada and 
 				mov.mov.cadastrante == cadastrante and mov.mov.lotaCadastrante == lotaTitular)}">
 				<c:set var="descrCiencia" value="${mov.descricao}" />
 			</c:if>
@@ -205,15 +205,15 @@
 								<c:set var="evenorodd" value="odd" />
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
-										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
+										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
 											<td class="align-top" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
 											<td class="align-top" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
-											<td class="align-top" >${mov.mov.exTipoMovimentacao.sigla}</td>
+											<td class="align-top" >${mov.mov.exTipoMovimentacao.descr}</td>
 											<td class="align-top" style="word-break: break-all;">
 												<span class="align-top">${mov.descricao}</span>
-												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
+												<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}"> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
 											</td>
 											<td class="align-top" style="word-break: break-all;">
@@ -225,10 +225,10 @@
 															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 																pos="${acao.pos}"
 																url="${pageContext.request.contextPath}${acao.url}"
-																test="${true}" popup="${acao.popup}"
+																test="${acao.pode}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" />
-															<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
+															<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
 														</c:forEach>
@@ -964,7 +964,7 @@
 									</p>
 								</c:if>
 								<c:forEach var="mov" items="${m.movs}">
-									<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
+									<c:if test="${mov.exTipoMovimentacao == 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and not mov.cancelada}">
 										<p>
 											<siga:links inline="${true}" separator="${false}">
 												<c:forEach var="acao" items="${mov.acoes}">
@@ -985,13 +985,13 @@
 													</c:if>
 													<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
 														pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
-														test="${true}" popup="${acao.popup}"
+														test="${acao.pode}" popup="${acao.popup}"
 														confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 														idAjax="${mov.idMov}" classe="${acao.classe}" />
 												</c:forEach>
 												<div class="row ml-4 mb-3">
 													<small class="form-text text-muted mt-0">
-														<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />
+														<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${acao.pode}" classe="${acao.classe}" />
 													</small>
 												</div>
 											</siga:links>

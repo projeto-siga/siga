@@ -317,10 +317,22 @@ parameters:
     description: Identificador da Pessoa Inicial
     required: true
     type: string    
+  idPessoa:
+    name: idPessoa
+    in: path
+    description: Identificador da Pessoa
+    required: true
+    type: string    
   idLotacaoIni:
     name: idLotacaoIni
     in: path
     description: Identificador da Lotação Inicial
+    required: true
+    type: string            
+  idLotacao:
+    name: idLotacao
+    in: path
+    description: Identificador da Lotação
     required: true
     type: string            
   autenticar:
@@ -494,6 +506,42 @@ parameters:
     required: false
     default: false
     type: boolean
+    
+  siglaorgao:
+    name: siglaorgao
+    in: query
+    description: Sigla do órgão, por exemplo 'ZZ'
+    required: true
+    type: string
+
+  formadoc:
+    name: formadoc
+    in: query
+    description: Informa a sigla da forma do documento, por exemplo 'PRC'
+    required: true
+    type: string  
+    
+  anoemissao:
+    name: anoemissao
+    in: query
+    description: Informa o ano de emissão no formato 'aaaa'
+    pattern: ^\d{4}
+    required: true
+    type: string
+          
+  tiposequencia:
+    name: tiposequencia
+    in: query
+    description: Informa o ID da sequência a ser utilizado.
+    required: true
+    type: string
+    
+  zerarinicioano:
+    name: zerarinicioano
+    in: query
+    description: Informa se a sequência será zerada a cada início de ano.
+    required: true
+    type: string
     
 ################################################################################
 #                                           Paths                              #
@@ -708,6 +756,77 @@ paths:
             Content-Disposition:
               type: string
               description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/preenchimentos:
+    get:
+      summary: Obtem a lista de preenchimentos existentes para determinado modelo.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:  
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PreenchimentoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/lotacoes/{idLotacao}/preenchimentos:
+    get:
+      summary: Obtem a lista de preenchimentos existentes para determinada lotação e modelo.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:  
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/idLotacao"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PreenchimentoItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/pessoas/{idPessoa}/preenchimentos:
+    get:
+      summary: Obtem a lista de preenchimentos existentes para determinada pessoa e modelo.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:  
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/idPessoa"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PreenchimentoItem"
         500:
           description: Error ocurred
           schema:
@@ -2298,6 +2417,73 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /numeracao-expediente:
+    post:
+      description: Utilize este método para gerar numeração de expediente.
+      consumes: 
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/siglaorgao"
+        - $ref: "#/parameters/formadoc"
+        - $ref: "#/parameters/anoemissao"
+      summary: Gerar Sigla Sem Papel
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigladoc:
+                description: Sigla do documento
+                type: string
+        403:
+          description: Geração não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /numeracao-generica:
+    post:
+      description: Utilize este método para gerar numeração de uma sequência genérica.
+      consumes: 
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/tiposequencia"
+        - $ref: "#/parameters/anoemissao"
+        - $ref: "#/parameters/zerarinicioano"
+      summary: Gerar Sequência Genérica
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sequenciagenerica:
+                description: Sequência genérica (também chamado de código único)
+                type: string
+              digitoverificador:
+                description: Digito verificador da sequência genérica
+                type: string
+        403:
+          description: Geração não permitida
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
 ################################################################################
 #                                     Definitions                              #
 ################################################################################
@@ -2626,6 +2812,17 @@ definitions:
     type: object
     properties:
       idModelo:
+        type: string
+      nome:
+        type: string
+      descr:
+        type: string
+
+  PreenchimentoItem:
+    description: Lista preenchimentos disponíveis.
+    type: object
+    properties:
+      idPreenchimento:
         type: string
       nome:
         type: string

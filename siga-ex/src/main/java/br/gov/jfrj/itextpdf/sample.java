@@ -18,9 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
-import com.swetake.util.Qrcode;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
 
-import java.awt.*;
+import com.swetake.util.Qrcode;
 
 /**
  * QRcode¥¯¥é¥¹¥é¥¤¥Ö¥é¥êÍÑsample

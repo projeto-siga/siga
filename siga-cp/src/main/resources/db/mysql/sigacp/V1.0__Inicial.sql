@@ -1699,7 +1699,12 @@ INSERT INTO `cp_servico` VALUES
 (312,'SIGA-SR-EMAILATEND','Receber Notificação Atendente',4,2,NULL),
 (313,'SIGA-SR-OPENSAVE','Salvar Solicitação Ao Abrir',4,2,NULL),
 (314,'SIGA-SR-OPENPRIOR','Priorizar ao Abrir',4,2,NULL),
-(315,'SIGA-SR-VER_GESTOR_I','Ver gestor do item de configuração ao abrir solicitação',4,2,NULL);
+(315,'SIGA-SR-VER_GESTOR_I','Ver gestor do item de configuração ao abrir solicitação',4,2,NULL),
+(400,'SIGA-GI-CAD_ORGAO_USUARIO','Cadastrar Orgãos Usuário',15,2,NULL),
+(401,'SIGA-GI-CAD_CARGO','Cadastrar Cargo',15,2,NULL),
+(402,'SIGA-GI-CAD_LOTACAO','Cadastrar Lotação',15,2,NULL),
+(403,'SIGA-GI-CAD_FUNCAO','Cadastrar Função de Confiança',15,2,NULL),
+(404,'SIGA-GI-CAD_PESSOA','Cadastrar Pessoa',15,2,NULL);
 /*!40000 ALTER TABLE `cp_servico` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2202,7 +2207,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_CARGO_INSERT_TRG` BEFORE INSERT ON `dp_cargo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_CARGO_INSERT_TRG` BEFORE INSERT ON `dp_cargo` FOR EACH ROW BEGIN
     if NEW.id_cargo_inicial is null then
         SET NEW.ID_cargo = NEW.id_cargo_inicial;
     end if;
@@ -2291,7 +2296,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_FUNC_CONF_INSERT_TRG` BEFORE INSERT ON `dp_funcao_confianca` FOR EACH ROW begin
+/*!50003 CREATE*/ /*50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_FUNC_CONF_INSERT_TRG` BEFORE INSERT ON `dp_funcao_confianca` FOR EACH ROW begin
 if NEW.id_fun_conf_ini is null then
     SET NEW.ID_funcao_confianca = NEW.id_fun_conf_ini;
 end if;
@@ -2355,7 +2360,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_LOTACAO_INSERT_TRG` BEFORE INSERT ON `dp_lotacao` FOR EACH ROW begin
+/*!50003 CREATE*/ /*50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_LOTACAO_INSERT_TRG` BEFORE INSERT ON `dp_lotacao` FOR EACH ROW begin
 if NEW.id_lotacao_ini is null then
     SET NEW.ID_lotacao = NEW.id_lotacao_ini;
 end if;
@@ -2491,7 +2496,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_PESSOA_INSERT_TRG` BEFORE INSERT ON `dp_pessoa` FOR EACH ROW begin
+/*!50003 CREATE*/ /*50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `DP_PESSOA_INSERT_TRG` BEFORE INSERT ON `dp_pessoa` FOR EACH ROW begin
 if NEW.id_pessoa_inicial is null then
     SET NEW.ID_pessoa = NEW.id_pessoa_inicial;
 end if;

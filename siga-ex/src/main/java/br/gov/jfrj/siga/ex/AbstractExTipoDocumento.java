@@ -24,11 +24,8 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.model.Objeto;

@@ -32,17 +32,25 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.PathParam;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.logging.Logger;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -56,9 +64,11 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -67,6 +77,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -80,6 +91,7 @@ import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
 
 @Controller
 public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPessoa, DpPessoaDaoFiltro> {
@@ -309,8 +321,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					dao().gravar(pessoaAnt);
 					dao().commitTransacao();
 				} catch (final Exception e) {
-					if(e.getCause() instanceof ConstraintViolationException &&
-	    					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
+					if (e.getCause() instanceof ConstraintViolationException 
+							&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
 						result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
 	    			} else {
 	    				throw new AplicacaoException("Erro na gravação", 0, e);
@@ -339,6 +351,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 							"Já existe outro usuário ativo com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 				}
 				
+				DpLotacao lotacaoAtual = dpPessoa.getLotacao().getLotacaoAtual();				
+				if ((lotacaoAtual == null) || (lotacaoAtual != null && lotacaoAtual.getDataFim() != null)) {
+					throw new AplicacaoException(
+							"Não é possível ativar pessoa. Lotação inexistente ou inativada.");
+				}
+				pessoa.setLotacao(lotacaoAtual);
+				
 				DpCargo cargoAtual= new DpCargo();				
 				cargoAtual = CpDao.getInstance().consultarPorIdInicialDpCargoAtual(pessoaAnt.getCargo().getIdCargoIni());
 				if ((cargoAtual == null) || (cargoAtual != null && cargoAtual.getDataFim() != null)) {
@@ -360,7 +379,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				
 				pessoa.setNomePessoa(pessoaAnt.getNomePessoa());
 				pessoa.setCpfPessoa(pessoaAnt.getCpfPessoa());
-				pessoa.setLotacao(pessoaAnt.getLotacao());
 				pessoa.setOrgaoUsuario(pessoaAnt.getOrgaoUsuario());
 				pessoa.setDataNascimento(pessoaAnt.getDataNascimento());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
@@ -372,8 +390,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				try {
 					dao().gravarComHistorico(pessoa, pessoaAnt,dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
 				} catch (Exception e) {
-					if(e.getCause() instanceof ConstraintViolationException &&
-	    					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
+					if (e.getCause() instanceof ConstraintViolationException 
+							&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
 						result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
 	    			} else {
 	    				LOG.error("Erro ao ativar pessoa " + pessoa + ": " + e.getMessage(), e);
@@ -426,17 +444,20 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				if (pessoa.getDataNascimento() != null) {
 					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
 				}
-				if (pessoa.getCargo() != null) {
-					result.include("idCargo", pessoa.getCargo().getId());
-				}
+				
 				if (pessoa.getNomeExibicao() != null) {
 					result.include("nomeExibicao", pessoa.getNomeExibicao());
 				}
+				
+				if (pessoa.getCargo() != null) {
+					result.include("idCargo", pessoa.getCargo().getCargoAtual().getId());
+				}
+
 				if (pessoa.getFuncaoConfianca() != null) {
-					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
+					result.include("idFuncao", pessoa.getFuncaoConfianca().getFuncaoConfiancaAtual().getId());
 				}
 				if (pessoa.getLotacao() != null) {
-					result.include("idLotacao", pessoa.getLotacao().getId());
+					result.include("idLotacao", pessoa.getLotacao().getLotacaoAtual().getId());
 				}
 				
 				if(pessoa.getUfIdentidade() != null) {
@@ -619,13 +640,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 		
-		try {
-			DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
-					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
-		} catch (RegraNegocioException e) {
-			result.include(SigaModal.ALERTA, e.getMessage());
-		}
-		
+
+		DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
+				orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
+
+
 		lista(0, null, "", "", null, null, null, "", null);
 	}
 
@@ -906,4 +925,96 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	protected DpPessoa getUsuario() {
 		return so.getCadastrante();
 	}
+	@Consumes("application/json")
+	@Get("/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/{cpf}")
+	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") String cpf) {	
+		
+		String recaptchaSiteKey = Prop.get("/siga.recaptcha.key");
+		String recaptchaSitePassword =  Prop.get("/siga.recaptcha.pwd");
+		result.include("recaptchaSiteKey", recaptchaSiteKey);
+		
+		try { 
+		
+			if (recaptchaSiteKey == null || recaptchaSitePassword == null ) {
+				throw new RuntimeException("Google ReCaptcha não definido");
+			}
+			
+	
+			if (cpf == null ) {
+				result.include("request", getRequest());
+				return;
+			}
+			
+			CPFUtils.efetuaValidacaoSimples(cpf);
+
+			String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+			boolean success = false;
+			if (gRecaptchaResponse != null) {
+				JsonNode body = null;
+				if (GoogleRecaptcha.isProxySetted()) {
+					body = GoogleRecaptcha.validarRecaptcha(recaptchaSitePassword, gRecaptchaResponse, request.getRemoteAddr());
+				} else {
+	    			HttpResponse<JsonNode> result = Unirest
+	    					.post("https://www.google.com/recaptcha/api/siteverify")
+	    					.header("accept", "application/json")
+	    					.header("Content-Type", "application/json")
+	    					.queryString("secret", recaptchaSitePassword)
+	    					.queryString("response", gRecaptchaResponse)
+	    					.queryString("remoteip", request.getRemoteAddr()).asJson();
+		
+					body = result.getBody();
+				}
+				String hostname = request.getServerName();
+				if (body.getObject().getBoolean("success")) {
+					String retHostname = body.getObject().getString("hostname");
+					success = retHostname.equals(hostname);
+				}
+			}
+			if (!success) {
+				throw new RuntimeException("Não é possível realizar a verificação de segurança com o Google ReCaptcha.");
+			}
+
+			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+			
+			
+			dpPessoa.setBuscarFechadas(false);
+			dpPessoa.setCpf(Long.valueOf(cpf));	
+			dpPessoa.setNome("");
+	
+			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
+			Set<String> emailsOculto = new HashSet<String>();
+			
+			if (!usuarios.isEmpty()) {
+				Set<String> emailsDistintos = new HashSet<String>();
+				//Adiciona email normal de forma distinta
+				for(DpPessoa usuario : usuarios) {
+					emailsDistintos.add(usuario.getEmailPessoaAtual());
+			    }
+				//Troca emails distintos por Email estenografado
+				for (String email : emailsDistintos) {
+					emailsOculto.add(SigaUtil.ocultaParcialmenteEmail(email));
+				}
+				emailsDistintos = null;
+			} else {
+				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+			}
+			
+			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf);
+			HashMap<String, Object> json = new HashMap<>();
+			
+			json.put("emails", emailsOculto);
+			json.put("jwt", jwt);
+			
+			result.use(Results.json()).withoutRoot().from(json).serialize();
+		} catch (RuntimeException ex) {
+			result.use(Results.http()).sendError(400, ex.getMessage());
+		} catch (Exception ex) {
+			result.use(Results.http()).sendError(500, ex.getMessage());
+		}
+
+		
+		
+	}
+	
+	
 }

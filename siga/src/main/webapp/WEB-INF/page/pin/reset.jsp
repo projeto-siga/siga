@@ -6,7 +6,7 @@
 <siga:pagina titulo="Redefinição do PIN">	
 
 	<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
-	<link rel="stylesheet" href="/siga/css/siga-pin.css" type="text/css" media="screen, projection"/>
+	<link rel="stylesheet" href="/siga/css/siga-steps.css" type="text/css" media="screen, projection"/>
  	
  	<div class="container-fluid">
  		<c:if test="${baseTeste}">

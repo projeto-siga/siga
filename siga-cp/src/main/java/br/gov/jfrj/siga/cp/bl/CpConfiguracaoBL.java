@@ -48,6 +48,7 @@ import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -400,11 +401,12 @@ public class CpConfiguracaoBL {
 			lista = getListaPorTipo(cpConfiguracaoFiltro.getCpTipoConfiguracao());
 		if (lista == null)
 			return null;
-
+		
+		CpConfiguracaoCache filtroConfiguracaoCache = cpConfiguracaoFiltro.converterParaCache();
 		for (CpConfiguracaoCache cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn)) || (cpConfiguracao.situacao != null
 					&& cpConfiguracao.situacao == CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR)
-					|| !atendeExigencias(cpConfiguracaoFiltro.converterParaCache(), atributosDesconsiderados, cpConfiguracao, perfis))
+					|| !atendeExigencias(filtroConfiguracaoCache, atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
 			return cpConfiguracao;
 		}
@@ -437,8 +439,6 @@ public class CpConfiguracaoBL {
 				if (cfg.cpGrupo == 0 || cfg.cpPerfil == null || !cfg.ativaNaData(dtEvn))
 					continue;
 
-				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
-
 				if (cfg.dpPessoa != 0 && cfg.dpPessoa != pessoa.getIdInicial())
 					continue;
 
@@ -454,6 +454,8 @@ public class CpConfiguracaoBL {
 				if (cfg.orgaoUsuario != 0 && cfg.lotacao != lotacao.getIdInicial())
 					continue;
 
+				Object g = dao().consultar(cfg.cpGrupo,CpPerfil.class,false);
+				
 				if (g instanceof CpPerfil && cfg.dscFormula != null) {
 					Map<String, DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
 					pessoaMap.put("pessoa", pessoa);
@@ -462,13 +464,16 @@ public class CpConfiguracaoBL {
 					}
 				}
 
-				do {
-					perfis.add(cfg.cpPerfil);
-					g = cfg.cpPerfil.getCpGrupoPai();
-					if (g instanceof HibernateProxy) {
-						g = (CpPerfil) ((HibernateProxy) g).getHibernateLazyInitializer().getImplementation();
-					}
-				} while (g != null);
+				CpPerfil perfil = cfg.cpPerfil;
+				while (perfil != null) {
+					perfis.add(perfil);
+					CpGrupo grp = cfg.cpPerfil.getCpGrupoPai();
+					if (!(grp instanceof CpPerfil))
+						break;
+					perfil = (CpPerfil) grp; 
+					if (perfil != null && perfil instanceof HibernateProxy) 
+						perfil = (CpPerfil) ((HibernateProxy) perfil).getHibernateLazyInitializer().getImplementation();
+				}
 			}
 		}
 		return perfis;
@@ -567,6 +572,13 @@ public class CpConfiguracaoBL {
 	protected boolean desigual(long cfg, long filtro, Set<Integer> atributosDesconsiderados, int atributo) {
 		return cfg != 0
 				&& ((filtro != 0 && cfg != filtro) || ((filtro == 0) && !atributosDesconsiderados.contains(atributo)));
+	}
+
+
+	protected boolean desigual(ITipoDeMovimentacao cfg, ITipoDeMovimentacao filtro,
+			Set<Integer> atributosDesconsiderados, int atributo) {
+		return cfg != null
+				&& ((filtro != null && cfg != filtro) || ((filtro == null) && !atributosDesconsiderados.contains(atributo)));
 	}
 
 	/**
@@ -826,15 +838,18 @@ public class CpConfiguracaoBL {
 			limparCacheSeNecessario();
 			Set<CpConfiguracaoCache> configs = Cp.getInstance().getConf()
 					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
-			for (CpConfiguracaoCache c : configs) {
-				DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.dpPessoa);
-				if (c.dpPessoa == pesAtual.getIdInicial()) {
-					if (c.hisDtFim == null && pesAtual.getDataFim() == null && c.lotacao == lot.getIdInicial()) {
-						resultado.add(pesAtual);
+			if (configs != null) {
+				for (CpConfiguracaoCache c : configs) {
+					DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.dpPessoa);
+					if (pesAtual != null) {
+						if (c.dpPessoa == pesAtual.getIdInicial()) {
+							if (c.hisDtFim == null && pesAtual.getDataFim() == null && c.lotacao == lot.getIdInicial()) {
+								resultado.add(pesAtual);
+							}
+						}
 					}
 				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

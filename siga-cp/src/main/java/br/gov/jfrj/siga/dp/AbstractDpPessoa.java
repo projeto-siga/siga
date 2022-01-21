@@ -190,7 +190,6 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@Column(name = "DATA_FIM_PESSOA", length = 19)
 	@Temporal(TemporalType.TIMESTAMP)
-	@Desconsiderar
 	private Date dataFimPessoa;
 
 	@Column(name = "DATA_INI_PESSOA", length = 19)
@@ -223,7 +222,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@Column(name = "MATRICULA")
 	private Long matricula;
 
-	@Column(name = "SESB_PESSOA", length = 2)
+	@Column(name = "SESB_PESSOA", length = 10)
 	private String sesbPessoa;
 
 	@Column(name = "EMAIL_PESSOA", length = 60)

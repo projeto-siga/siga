@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.CpConfiguracaoBuilder;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
@@ -23,7 +23,7 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 	public static final Integer ORGAO_INTEGRADO = 2;
 	public static final Integer MATRICULA = 1;
 
-	private Long idTpMov;
+	private Integer idTpMov;
 	private Long idTpDoc;
 	private Long idMod;
 	private Long idFormaDoc;
@@ -51,14 +51,16 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 		ExDao dao = ExDao.getInstance();
 
 		if (idTpMov != null && idTpMov != 0) {
-			config.setExTipoMovimentacao(dao.consultar(idTpMov, ExTipoMovimentacao.class, false));
-		} else
+			config.setExTipoMovimentacao(ExTipoDeMovimentacao.getById(idTpMov));
+		} else {
 			config.setExTipoMovimentacao(null);
+		}
 
 		if (idTpDoc != null && idTpDoc != 0) {
 			config.setExTipoDocumento(dao.consultar(idTpDoc, ExTipoDocumento.class, false));
-		} else
+		} else {
 			config.setExTipoDocumento(null);
+		}
 
 		if (idMod != null && idMod != 0) {
 			config.setExModelo(dao.consultar(idMod, ExModelo.class, false));
@@ -80,30 +82,35 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 
 		if (idNivelAcesso != null && idNivelAcesso != 0) {
 			config.setExNivelAcesso(dao.consultar(idNivelAcesso, ExNivelAcesso.class, false));
-		} else
+		} else {
 			config.setExNivelAcesso(null);
+		}
 
 		if (idPapel != null && idPapel != 0) {
 			config.setExPapel(dao.consultar(idPapel, ExPapel.class, false));
-		} else
-			config.setExNivelAcesso(null);
+		} else {
+			config.setExPapel(null);
+		}
 
 		if (classificacaoSel != null && classificacaoSel.getId() != null) {
 			config.setExClassificacao(dao.consultar(classificacaoSel.getId(), ExClassificacao.class, false));
-		} else
+		} else {
 			config.setExClassificacao(null);
+		}
 
 		if (getPessoaSel() != null && getPessoaSel().getId() != null
 				&& (tipoPublicador == null || ExConfiguracaoBuilder.isTipoMatricula(tipoPublicador))) {
 			config.setDpPessoa(dao.consultar(getPessoaSel().getId(), DpPessoa.class, false));
-		} else
+		} else {
 			config.setDpPessoa(null);
+		}
 
 		if (getLotacaoSel() != null && getLotacaoSel().getId() != null
 				&& (tipoPublicador == null || ExConfiguracaoBuilder.isTipoOrgaoIntegrado(tipoPublicador))) {
 			config.setLotacao(dao.consultar(getLotacaoSel().getId(), DpLotacao.class, false));
-		} else
+		} else {
 			config.setLotacao(null);
+		}
 
 		return config;
 	}
@@ -116,7 +123,7 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 		return ORGAO_INTEGRADO.equals(tipo);
 	}
 
-	public Long getIdTpMov() {
+	public Integer getIdTpMov() {
 		return idTpMov;
 	}
 
@@ -148,7 +155,7 @@ public final class ExConfiguracaoBuilder extends CpConfiguracaoBuilder<ExConfigu
 		return classificacaoSel;
 	}
 
-	public ExConfiguracaoBuilder setIdTpMov(Long idTpMov) {
+	public ExConfiguracaoBuilder setIdTpMov(Integer idTpMov) {
 		this.idTpMov = idTpMov;
 		return this;
 	}

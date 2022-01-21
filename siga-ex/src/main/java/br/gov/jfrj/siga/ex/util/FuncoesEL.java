@@ -22,7 +22,6 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -37,14 +36,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.text.MaskFormatter;
-
 import org.xml.sax.InputSource;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
+import br.gov.jfrj.siga.base.SigaFormats;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -61,13 +59,27 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPor;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
+import br.gov.jfrj.siga.ex.logic.ExPodeUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
@@ -112,7 +124,7 @@ public class FuncoesEL {
 				.podePorConfiguracao(
 						titular,
 						lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REMESSA_PARA_PUBLICACAO,
+						ExTipoDeMovimentacao.REMESSA_PARA_PUBLICACAO,
 						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
@@ -127,7 +139,7 @@ public class FuncoesEL {
 				.podePorConfiguracao(
 						titular,
 						lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE,
+						ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE,
 						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
@@ -142,7 +154,7 @@ public class FuncoesEL {
 				.podePorConfiguracao(
 						titular,
 						lotaTitular,
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO,
+						ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO,
 						ExTipoDeConfiguracao.MOVIMENTAR);
 
 	}
@@ -554,24 +566,6 @@ public class FuncoesEL {
 		return diferenca;
 	}
 
-	public static Float monetarioParaFloat(String monetario) {
-		try {
-			return Float.parseFloat(monetario.replace(".", "")
-					.replace(",", "."));
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static BigDecimal monetarioParaBigDecimal(String monetario) {
-        try {
-            return new BigDecimal(monetario.replace(".", "").replace(",", "."));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
 	public static String mesModData(String data) {
 		String split[] = data.split("/");
 		if (split.length < 3)
@@ -579,48 +573,21 @@ public class FuncoesEL {
 		return split[1] + "/" + split[2];
 	}
 
+	public static Float monetarioParaFloat(String monetario) {
+		return SigaFormats.monetarioParaFloat(monetario);
+	}
+	
+	public static BigDecimal monetarioParaBigDecimal(String monetario) {
+		return SigaFormats.monetarioParaBigDecimal(monetario);
+    }
+
+
 	public static String floatParaMonetario(Float valor1) {
-		Float valor2;
-		if (valor1 < 0) {
-			valor2 = Float.parseFloat(valor1.toString().replace("-", ""));
-			DecimalFormat formatter = new DecimalFormat("#,##0.00");
-			String s = formatter.format(valor2);
-			if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-				return s.replace(".", "*").replace(",", ".").replace("*", ",");
-			} else {
-				return "-" + s;
-			}
-		} else {
-			DecimalFormat formatter = new DecimalFormat("#,##0.00");
-			String s = formatter.format(valor1);
-			if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-				return s.replace(".", "*").replace(",", ".").replace("*", ",");
-			} else {
-				return s;
-			}
-		}
+		return SigaFormats.floatParaMonetario(valor1);
 	}
 	
 	public static String bigDecimalParaMonetario(BigDecimal valor1) {
-        BigDecimal valor2;
-        if (valor1.compareTo(BigDecimal.ZERO) < 0) {       // It could be  ... if (valor1.signum() == -1) 
-            valor2 = valor1;
-            DecimalFormat formatter = new DecimalFormat("#,##0.00");
-            String s = formatter.format(valor2);
-            if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-                return s.replace(".", "*").replace(",", ".").replace("*", ",");
-            } else {
-                return "-" + s;
-            }
-        } else {
-            DecimalFormat formatter = new DecimalFormat("#,##0.00");
-            String s = formatter.format(valor1);
-            if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
-                return s.replace(".", "*").replace(",", ".").replace("*", ",");
-            } else {
-                return s;
-            }
-        }
+		return SigaFormats.bigDecimalParaMonetario(valor1);
     }
 
 
@@ -776,37 +743,7 @@ public class FuncoesEL {
 	 * @return
 	 */
 	public static String formatarCPF(String cpf) {
-
-		// Se CPF jï¿½ vem formatado, devolve cpf
-		Pattern p = Pattern
-				.compile("[0-9]{2,3}?\\.[0-9]{3}?\\.[0-9]{3}?\\-[0-9]{2}?");
-		Matcher m = p.matcher(cpf);
-
-		if (m.find()) {
-			return cpf;
-		}
-
-		// O texto ï¿½ truncado para 11 caracteres caso seja maior
-		if (cpf.length() > 11) {
-			cpf = cpf.substring(0, 11);
-		}
-
-		// Determina o nï¿½mero de zeros ï¿½ esquerda
-		int numZerosAEsquerda = 11 - cpf.length();
-
-		// aplica os zeros ï¿½ esquerda
-		for (int i = 0; i < numZerosAEsquerda; i++) {
-			cpf = "0" + cpf;
-		}
-
-		// extrai cada termo
-		String termo1, termo2, termo3, termo4;
-		termo1 = cpf.substring(0, 3);
-		termo2 = cpf.substring(3, 6);
-		termo3 = cpf.substring(6, 9);
-		termo4 = cpf.substring(9);
-
-		return termo1 + "." + termo2 + "." + termo3 + "-" + termo4;
+		return SigaFormats.cpf(cpf);
 	}
 
 	/**
@@ -818,16 +755,7 @@ public class FuncoesEL {
 	 * @throws ParseException
 	 */
 	public static String formatarCNPJ(String cnpj) throws ParseException {
-		if (cnpj != null) {
-			cnpj = cnpj.replaceAll("\\.", "").replaceAll("\\/", "")
-					.replaceAll("\\-", "");
-
-			MaskFormatter mf = new MaskFormatter("##.###.###/####-##");
-			mf.setValueContainsLiteralCharacters(false);
-			return mf.valueToString(cnpj);
-		}
-
-		return "";
+		return SigaFormats.cnpj(cnpj);
 	}
 
 	public static String classNivPadr(String s) {
@@ -1022,58 +950,44 @@ public class FuncoesEL {
 
 	public static Boolean podeAssinarComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarComSenha(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExPodeAssinarComSenha.class, titular, lotaTitular, mob);
 	}
 
 	public static Boolean podeAssinarPor(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarPor(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExPodeAssinarPor.class, titular, lotaTitular, mob);
 	}
 
 	public static Boolean deveAssinarComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.deveAssinarComSenha(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExDeveAssinarComSenha.class, titular, lotaTitular, mob);
 	}
 			
 	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);
+	}
+	
+	public static Boolean podeAssinarMovimentacaoDoMobilComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mob);
 	}
 	
 	public static Boolean deveAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
-		return Ex.getInstance().getComp()
-				.deveAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+		return Ex.getInstance().getComp().pode(ExDeveAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 
 	public static Boolean podeAutenticarMovimentacaoComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
 			throws Exception {
-		return Ex
-				.getInstance()
-				.getComp()
-				.podeAutenticarMovimentacaoComSenha(titular, lotaTitular,
-						mov);
+		return Ex.getInstance().getComp().pode(ExPodeAutenticarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 	
 	public static Boolean deveAutenticarMovimentacaoComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
 			throws Exception {
-		return Ex
-				.getInstance()
-				.getComp()
-				.deveAutenticarMovimentacaoComSenha(titular, lotaTitular,
-						mov);
-	}
-
-	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
-			DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mob);
+		return Ex.getInstance().getComp().pode(ExDeveAutenticarMovimentacaoComSenha.class, titular, lotaTitular, mov);
 	}
 
 	public static Boolean podeAutenticarComSenha(
@@ -1082,7 +996,7 @@ public class FuncoesEL {
 		return Ex
 				.getInstance()
 				.getComp()
-				.podeAutenticarComSenha(titular, lotaTitular,
+				.pode(ExPodeAutenticarComSenha.class, titular, lotaTitular,
 						mob);
 	}
 	
@@ -1092,23 +1006,24 @@ public class FuncoesEL {
 		return Ex
 				.getInstance()
 				.getComp()
-				.deveAutenticarComSenha(titular, lotaTitular,
+				.pode(ExDeveAutenticarComSenha.class, titular, lotaTitular,
 						mob);
 	}
 
 	public static Boolean podeAutenticarDocumento(DpPessoa titular,
 			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
-		return Ex.getInstance().getComp()
-				.podeAutenticarDocumento(titular, lotaTitular, doc);
+		return Ex
+				.getInstance()
+				.getComp()
+				.pode(ExPodeAutenticarDocumento.class, titular, lotaTitular,
+						doc);
 	}
 
 	public static ExMovimentacao parteUltimaMovimentacao(ExDocumento doc,
 			String idParte) throws Exception {
 		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
 			if (mov.isCancelada()
-					|| !mov.getExTipoMovimentacao()
-							.getIdTpMov()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO))
+					|| mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO)
 				continue;
 
 			ExParte parte = ExParte.create(mov.getDescrMov());
@@ -1140,7 +1055,7 @@ public class FuncoesEL {
 		List<ExMovimentacao> mov;
 		try {
 			if (doc.isFinalizado()) {
-				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72, false);
+				mov = doc.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.ASSINATURA_POR, false);
 				for (ExMovimentacao movAssPor : mov) {
 					retorno = "Documento assinado POR  \"" +  movAssPor.getSubscritor().getNomePessoa() + "\" - \"" + movAssPor.getSubscritor().getSigla()+ "\"";
 				}
@@ -1155,7 +1070,7 @@ public class FuncoesEL {
 	public static Boolean podeDisponibilizarNoAcompanhamentoDoProtocolo(DpPessoa titular,
 			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeDisponibilizarNoAcompanhamentoDoProtocolo(titular, lotaTitular, doc);
+				.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, doc);
 	}
 
 	public static String calculaDiasAPartirDeHoje(Long qtdDias) {
@@ -1166,17 +1081,22 @@ public class FuncoesEL {
 	
 	public static Boolean podeUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
 		return Ex.getInstance().getComp()
-				.podeUtilizarSegundoFatorPin(pessoa, lotacao);
+				.pode(ExPodeUtilizarSegundoFatorPIN.class, pessoa, lotacao);
 	}
 	
 	public static Boolean deveUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
 		return Ex.getInstance().getComp()
-				.deveUtilizarSegundoFatorPin(pessoa, lotacao);
+				.pode(ExDeveUtilizarSegundoFatorPIN.class, pessoa, lotacao);
 	}
 	
 	public static Boolean defaultUtilizarSegundoFatorPin(DpPessoa pessoa,DpLotacao lotacao) throws Exception {
 		return Ex.getInstance().getComp()
-				.defaultUtilizarSegundoFatorPin(pessoa, lotacao);
+				.pode(ExDefaultUtilizarSegundoFatorPIN.class, pessoa, lotacao);
 	}
-	
+
+	public static String slugify(String string, Boolean lowercase,
+			Boolean underscore) {
+		return Texto.slugify(string, lowercase, underscore);
+	}
+
 }

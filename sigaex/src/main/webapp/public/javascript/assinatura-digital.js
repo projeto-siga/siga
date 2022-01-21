@@ -163,6 +163,8 @@ var providerAssijusPopup = {
 		var parent = this;
 		window.produzirAssinaturaDigital({
 			ui: 'bootstrap-3',
+			
+			iframePopupUrl: $("#iframePopupUrl").val(),
 
 			docs: this.list,
 			
@@ -937,7 +939,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 
 		if (( ($('#podeAssinarPor').val() == "true" && $('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuTitular').val()) )
 				&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) && Copia != 'true') {
-			if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS (" + $('#siglaUsuCossignatarios').val() + " )\"")) {
+			if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\" OU POR UM DOS COSIGNATARIOS " + $('#siglaUsuCossignatarios').val() + "?")) {
 				gAssinando = false;
 				$(this).dialog('destroy').remove();				
 			}

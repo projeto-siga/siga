@@ -58,8 +58,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 		@NamedQuery(name = "consultarPorIdDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacao = :idLotacao"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacao", query = "select lot from DpLotacao lot where"
-				+ "      upper(lot.siglaLotacao) = upper(:siglaLotacao)"
-				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "      ((lot.siglaLotacao = upper(:siglaLotacao)"
+				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu))"
+				+ "      or (:siglaOrgaoLotacao is not null and lot.siglaLotacao = upper(:siglaOrgaoLotacao)))"
 				+ "	     and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
 				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
@@ -67,14 +68,19 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "        and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "listarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni"),
+		
+		// Encontra a lotação se like a sigla, o nome e o órgão é o mesmo do usuário atual, ou se like a sigla prefixada pelo acrônimo ou pela sigla do órgão. Ou seja,
+		// se sou do TRF2 e buscar "SG", deve retornar apenas T2-SG. Sem a especificação do órgão, retornaria as SGs de todos os órgãos. Se eu sou do TRF2 e
+		// prefixar aconsulta com com JFRJSG, deve retornar apenas RJ-SG.
 		@NamedQuery(name = "consultarPorFiltroDpLotacao", query = "from DpLotacao lot "
 				+ "  where "
-				+ "     ( (upper(lot.siglaLotacao) like upper('%' || :nome || '%') or upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
+				+ "     ( (upper(lot.siglaLotacao) like upper(:nome || '%') or upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
 				+ "	       and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "          or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
 				+ "          or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and lot.dataFimLotacao = null"
 				+ "	order by lot.nomeLotacao"),
+		
 		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
@@ -119,7 +125,7 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@Column(name = "NOME_LOTACAO", nullable = false, length = 120)
 	private String nomeLotacao;
 
-	@Column(name = "SIGLA_LOTACAO", length = 20)
+	@Column(name = "SIGLA_LOTACAO", length = 30)
 	private String siglaLotacao;
 
 	@Temporal(TemporalType.TIMESTAMP)

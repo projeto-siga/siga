@@ -88,6 +88,10 @@
 			});
 </script>
 
+<script>
+	$('a[data-html="true"]').tooltip();
+</script>
+
 
 <c:if test="${siga_cliente == 'GOVSP' and popup != true}">
 	<footer class="text-center text-white align-middle" style="background-color: #20313b;">
@@ -102,7 +106,7 @@
 							</a>
 						</div>
 						<div class="col-md-4  pb-4">		
-							<a href="http://www.prodesp.sp.gov.br/" role="link" target="_Blank"><img class="mx-auto d-block" src="/siga/imagens/logo-prodesp-branco-e-azul.png" style="width:50%"></a>
+							<a href="http://www.prodesp.sp.gov.br/" role="link" target="_Blank"><img class="mx-auto d-block" src="/siga/imagens/logo-prodesp-web-novo-assinado-branco.png" style="width:80%"></a>
 						</div>
 						<div class="col-md-4  pb-4">
 							<a href="http://www.saopaulo.sp.gov.br/" role="link" target="_Blank"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="Governo do Estado de São Paulo" width="50%"></a></p>

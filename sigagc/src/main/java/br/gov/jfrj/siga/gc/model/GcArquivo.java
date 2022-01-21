@@ -27,9 +27,10 @@ public class GcArquivo extends Objeto implements Serializable {
 	public static ActiveRecord<GcArquivo> AR = new ActiveRecord<>(
 			GcArquivo.class);
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcArquivoSeq")
+	@GeneratedValue(generator = "gcArquivoSeq")
 	@Column(name = "ID_CONTEUDO")
-	private Long id;
+	private long id;
 
 	@Column(name = "TITULO")
 	private String titulo;

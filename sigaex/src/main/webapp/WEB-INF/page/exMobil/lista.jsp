@@ -8,126 +8,130 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-
-<script type="text/javascript" language="Javascript1.1">
-	function csv(id, action) {
-		var frm = document.getElementById(id);
-		frm.method = "POST";
-		document.getElementById("exportar").disabled = true;
-		sbmtAction(id, action);
-		frm.action = 'listar';
-		frm.method = "GET";
-	}
-</script>
-<div id="inicio" class="row mb-3">
-	<div class="col">		
-		<button type="button" class="btn btn-outline-success" id="exportar" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
+<c:if test="${formOrigem eq 'lista'}">
+	<script type="text/javascript" language="Javascript1.1">
+		function csv(id, action) {
+			var frm = document.getElementById(id);
+			frm.method = "POST";
+			document.getElementById("exportar").disabled = true;
+			sbmtAction(id, action);
+			frm.action = 'listar';
+			frm.method = "GET";
+		}
+	</script>
+	<div id="inicio" class="row mb-3">
+		<div class="col">		
+			<button type="button" class="btn btn-outline-success" id="exportar" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
+		</div>
 	</div>
-</div>
-
-<c:choose>
-	<c:when test="${visualizacao == 2 or visualizacao == 4}">
-		<div id="pivot" style="margin: 30px;"></div>
-
-
-		<link rel="stylesheet" type="text/css"
-			href="/siga/javascript/pivottable/pivot.css" />
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<script type="text/javascript"
-			src="/siga/javascript/pivottable/pivot.min.js"></script>
-		<script type="text/javascript"
-			src="/siga/javascript/pivottable/gchart_renderers.js"></script>
-		<script>
-			var data = [ 
-				<c:forEach var="documento" items="${itens}">
-					{
-						"data": '<c:out value="${documento[0].dtDocDDMMYYYY}" />',
-						"situação": '<c:out value="${documento[2].cpMarcador.descrMarcador}" />',
-						"situação data": '<c:out value="${documento[0].dtDocDDMMYYYY}" />',
-						"órgão": '<c:out value="${documento[0].orgaoUsuario.sigla}" />',
-						"tipo": '<c:out value="${documento[0].exFormaDocumento.exTipoFormaDoc.descricao}" />',
-						"espécie": '<c:out value="${documento[0].exFormaDocumento.descricao}" />',
-						"modelo": '<c:out value="${documento[0].exModelo.nmMod}" />',
-						"classificacao": '<c:out value="${documento[0].exClassificacao.sigla}" />',
-						"origem": '<c:out value="${documento[0].exTipoDocumento.sigla}" />',
-						"sigla": '<c:out value="${documento[1].codigo}" />',
-						"subscritor sigla": '<c:out value="${documento[0].subscritor.sigla}" />',
-						"subscritor nome": '<c:out value="${documento[0].subscritor.descricao}" />',
-						"subscritor lotação sigla": '<c:out value="${documento[0].lotaSubscritor.sigla}" />',
-						"subscritor lotação nome": '<c:out value="${documento[0].lotaSubscritor.descricao}" />',
-						"atendente sigla": '<c:out value="${documento[2].dpPessoaIni.sigla}" />',
-						"atendente nome": '<c:out value="${documento[2].dpPessoaIni.descricao}" />',
-						"atendente lotação sigla": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}" />',
-						"atendente lotação nome": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />';
-						<c:if test="${visualizacao == 4}">
-							<c:forEach var="campo" items="${campos.keySet()}">
-								,"${campos.get(campo)}": '<c:out value="${documento[0].getFormConfidencial(titular, lotaTitular)[campo]}" />'
-							</c:forEach>
-						</c:if>
-					},
-				</c:forEach>								
-			];
-
-			 google.load("visualization", "1", {packages:["corechart", "charteditor"]});
-	            $(function(){
-	                var derivers = $.pivotUtilities.derivers;
-	                var renderers = $.extend($.pivotUtilities.renderers, 
-	                    $.pivotUtilities.gchart_renderers);
-
-	        		var conf;
-	        		try {
-	        			conf = JSON.parse(localStorage.getItem('siga-doc-pivot'));
-	        		} catch (e) {
-		        	}
-	        		if (conf == null) {
-		        		conf = {
-		        			rows : [],
-		        			cols : []
-		        		};
-	        		}
-
-                    $("#pivot").pivotUI(data, {
-                        renderers: renderers,
-                        cols: conf.cols, rows: conf.rows,
-                        derivedAttributes : {
-            				"ano" : function(record) {
-            					return record.data.substring(6, 10);
-            				},
-            				"mês" : function(record) {
-            					return record.data.substring(3, 5);
-            				},
-            				"dia" : function(record) {
-            					return record.data.substring(0, 2);
-            				},
-            				"situação ano" : function(record) {
-            					return record["situação data"].substring(6, 10);
-            				},
-            				"situação mês" : function(record) {
-            					return record["situação data"].substring(3, 5);
-            				},
-            				"situação dia" : function(record) {
-            					return record["situação data"].substring(0, 2);
-            				}
-            			},
-            			hiddenAttributes : [ "data", "situação data" ],
-            			onRefresh : function(config) {
-            				var config_copy = JSON.parse(JSON.stringify(config));
-            				// delete some values which are functions
-            				delete config_copy["aggregators"];
-            				delete config_copy["renderers"];
-            				delete config_copy["derivedAttributes"];
-            				// delete some bulky default values
-            				delete config_copy["rendererOptions"];
-            				delete config_copy["localeStrings"];
-            				localStorage.setItem('siga-doc-pivot', JSON.stringify(config_copy));
-            			}
-                    });
-	             });
-			</script>
-	</c:when>
-	<c:otherwise>
-		<div class="gt-content-box gt-for-table">
-			<table class="gt-table table table-sm table-hover">
+</c:if>
+<c:if test="${not empty msgPesqErro}">
+	<div id="msgPesqErro" class="alert alert-danger alert-dismissible fade show m-3" role="alert">${msgPesqErro}</div>
+</c:if>
+<c:if test="${empty msgPesqErro and (empty tamanho or tamanho == 0)}">
+	<div id="msgPesqNaoEncontrou" class="alert alert-warning alert-dismissible fade show m-3" role="alert">A pesquisa não retornou resultados.</div>
+</c:if>
+<c:if test="${not empty tamanho and tamanho > 0}">
+	<c:choose>
+		<c:when test="${visualizacao == 2 or visualizacao == 4}">
+			<div id="pivot" style="margin: 30px;"></div>
+			<link rel="stylesheet" type="text/css"
+				href="/siga/javascript/pivottable/pivot.css" />
+			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+			<script type="text/javascript"
+				src="/siga/javascript/pivottable/pivot.min.js"></script>
+			<script type="text/javascript"
+				src="/siga/javascript/pivottable/gchart_renderers.js"></script>
+			<script>
+				var data = [ 
+					<c:forEach var="documento" items="${itens}">
+						{
+							"data": '<c:out value="${documento[0].dtDocDDMMYYYY}" />',
+							"situação": '<c:out value="${documento[2].cpMarcador.descrMarcador}" />',
+							"situação data": '<c:out value="${documento[0].dtDocDDMMYYYY}" />',
+							"órgão": '<c:out value="${documento[0].orgaoUsuario.sigla}" />',
+							"tipo": '<c:out value="${documento[0].exFormaDocumento.exTipoFormaDoc.descricao}" />',
+							"espécie": '<c:out value="${documento[0].exFormaDocumento.descricao}" />',
+							"modelo": '<c:out value="${documento[0].exModelo.nmMod}" />',
+							"classificacao": '<c:out value="${documento[0].exClassificacao.sigla}" />',
+							"origem": '<c:out value="${documento[0].exTipoDocumento.sigla}" />',
+							"sigla": '<c:out value="${documento[1].codigo}" />',
+							"subscritor sigla": '<c:out value="${documento[0].subscritor.sigla}" />',
+							"subscritor nome": '<c:out value="${documento[0].subscritor.descricao}" />',
+							"subscritor lotação sigla": '<c:out value="${documento[0].lotaSubscritor.sigla}" />',
+							"subscritor lotação nome": '<c:out value="${documento[0].lotaSubscritor.descricao}" />',
+							"atendente sigla": '<c:out value="${documento[2].dpPessoaIni.sigla}" />',
+							"atendente nome": '<c:out value="${documento[2].dpPessoaIni.descricao}" />',
+							"atendente lotação sigla": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}" />',
+							"atendente lotação nome": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />';
+							<c:if test="${visualizacao == 4}">
+								<c:forEach var="campo" items="${campos.keySet()}">
+									,"${campos.get(campo)}": '<c:out value="${documento[0].getFormConfidencial(titular, lotaTitular)[campo]}" />'
+								</c:forEach>
+							</c:if>
+						},
+					</c:forEach>								
+				];
+	
+				 google.load("visualization", "1", {packages:["corechart", "charteditor"]});
+		            $(function(){
+		                var derivers = $.pivotUtilities.derivers;
+		                var renderers = $.extend($.pivotUtilities.renderers, 
+		                    $.pivotUtilities.gchart_renderers);
+	
+		        		var conf;
+		        		try {
+		        			conf = JSON.parse(localStorage.getItem('siga-doc-pivot'));
+		        		} catch (e) {
+			        	}
+		        		if (conf == null) {
+			        		conf = {
+			        			rows : [],
+			        			cols : []
+			        		};
+		        		}
+	
+	                    $("#pivot").pivotUI(data, {
+	                        renderers: renderers,
+	                        cols: conf.cols, rows: conf.rows,
+	                        derivedAttributes : {
+	            				"ano" : function(record) {
+	            					return record.data.substring(6, 10);
+	            				},
+	            				"mês" : function(record) {
+	            					return record.data.substring(3, 5);
+	            				},
+	            				"dia" : function(record) {
+	            					return record.data.substring(0, 2);
+	            				},
+	            				"situação ano" : function(record) {
+	            					return record["situação data"].substring(6, 10);
+	            				},
+	            				"situação mês" : function(record) {
+	            					return record["situação data"].substring(3, 5);
+	            				},
+	            				"situação dia" : function(record) {
+	            					return record["situação data"].substring(0, 2);
+	            				}
+	            			},
+	            			hiddenAttributes : [ "data", "situação data" ],
+	            			onRefresh : function(config) {
+	            				var config_copy = JSON.parse(JSON.stringify(config));
+	            				// delete some values which are functions
+	            				delete config_copy["aggregators"];
+	            				delete config_copy["renderers"];
+	            				delete config_copy["derivedAttributes"];
+	            				// delete some bulky default values
+	            				delete config_copy["rendererOptions"];
+	            				delete config_copy["localeStrings"];
+	            				localStorage.setItem('siga-doc-pivot', JSON.stringify(config_copy));
+	            			}
+	                    });
+		             });
+				</script>
+		</c:when>
+		<c:otherwise>
+			<table class="table table-sm table-hover">
 				<thead class="${thead_color}">
 					<tr>
 						<th rowspan="3" align="right">Número</th>
@@ -146,7 +150,14 @@
 						</c:if>
 					</tr>
 					<tr>
-						<th rowspan="2" align="center"><fmt:message key="documento.data.assinatura"/></th>
+						<c:choose>
+							<c:when test="${formOrigem eq 'lista'}">
+								<th rowspan="2" align="center"><fmt:message key="documento.data.assinatura"/></th>
+							</c:when>
+							<c:otherwise>
+								<th rowspan="2" align="center">Data</th>
+							</c:otherwise>
+						</c:choose>
 						<th colspan="2" align="center"><fmt:message key="documento.subscritor"/></th>
 						<th rowspan="2" align="center">Data</th>
 						<th colspan="2" align="center">Atendente</th>
@@ -154,9 +165,23 @@
 					</tr>
 					<tr>
 						<th align="center"><fmt:message key="usuario.lotacao"/></th>
-						<th align="center"><fmt:message key="usuario.pessoa"/></th>
+						<c:choose>
+							<c:when test="${formOrigem eq 'lista'}">
+								<th align="center"><fmt:message key="usuario.pessoa"/></th>
+							</c:when>
+							<c:otherwise>
+								<th align="center"><fmt:message key="usuario.pessoa2"/></th>
+							</c:otherwise>
+						</c:choose>
 						<th align="center"><fmt:message key="usuario.lotacao"/></th>
-						<th align="center"><fmt:message key="usuario.pessoa"/></th>
+						<c:choose>
+							<c:when test="${formOrigem eq 'lista'}">
+								<th align="center"><fmt:message key="usuario.pessoa"/></th>
+							</c:when>
+							<c:otherwise>
+								<th align="center"><fmt:message key="usuario.pessoa2"/></th>
+							</c:otherwise>
+						</c:choose>
 					</tr>
 
 				</thead>
@@ -175,7 +200,9 @@
 					<tr class="${exibedoc}">
 						<c:set var="podeAcessar"
 							value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular, documento[1])}" />
-						<c:set var="podeAcessar" value="true" />
+						<c:if test="${formOrigem eq 'lista'}">
+							<c:set var="podeAcessar" value="true" />
+						</c:if>
 						<td width="11.5%" align="right"><c:choose>
 								<c:when test='${popup!="true"}'>
 									<c:choose>
@@ -190,9 +217,15 @@
 									</c:choose>
 								</c:when>
 								<c:otherwise>
-									<a
-										href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
-										${documento[1].codigo} </a>
+									<c:choose>
+										<c:when test="${formOrigem eq 'lista'}">
+											<a href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
+										</c:when>
+										<c:otherwise>
+											<a href="javascript:parent.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
+										</c:otherwise>
+									</c:choose>
+												${documento[1].codigo} </a>
 								</c:otherwise>
 							</c:choose></td>
 						<c:if test="${documento[1].numSequencia != 0}">
@@ -251,7 +284,9 @@
 						<c:set var="acessivel" value="" />
 						<c:set var="acessivel"
 							value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />
-						<c:set var="acessivel" value="true" />
+						<c:if test="${formOrigem eq 'lista'}">
+							<c:set var="acessivel" value="true" />
+						</c:if>
 						<c:choose>
 							<c:when test="${acessivel eq true}">
 								<c:set var="estilo" value="" />
@@ -270,12 +305,25 @@
 
 							</c:when>
 							<c:otherwise>
-								<a
-									href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
-									${documento[1].codigo} </a>
+								<c:choose>
+									<c:when test="${formOrigem eq 'lista'}">
+										<a
+											href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
+											${documento[1].codigo} </a>
+									</c:when>
+									<c:otherwise>
+										<td>
+											CONFIDENCIAL
+										</td>
+										<c:if test="${visualizacao == 1}"> 
+											<td>
+												CONFIDENCIAL
+											</td>
+										</c:if>
+									</c:otherwise>
+								</c:choose>
 							</c:otherwise>
 						</c:choose>
-						</td>
 						<c:if test="${visualizacao == 3}">
 							<c:forEach var="campo" items="${campos.keySet()}">
 								<td>${documento[0].getFormConfidencial(titular, lotaTitular)[campo]}</td>
@@ -283,8 +331,15 @@
 						</c:if>
 					</tr>
 				</siga:paginador>
-				</tbody>
 			</table>
-		</div>
-	</c:otherwise>
-</c:choose>
+		</c:otherwise>
+	</c:choose>
+	<div id="final" class="col">
+		<div class="d-inline position-fixed fixed-bottom" style="left:auto">
+			<div class="float-right mr-3 opacity-80">
+				<p><a class="btn btn-light btn-circle" href="#inicio"><i class="fas fa-chevron-up h6"></i></a></p>
+				<p><a class="btn btn-light btn-circle" href="#final"><i class="fas fa-chevron-down h6"></i></a></p>
+			</div>
+		</div>				
+	</div>		
+</c:if>

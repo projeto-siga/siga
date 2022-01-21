@@ -40,6 +40,9 @@ app
 			$scope.data = {};
 
 			$scope.gravar = function() {
+				if(!validarFormulario($scope.data.workflow))
+					return;
+					
 				var fd = formdata({
 					id: $scope.id,
 					pd: $scope.encode($scope.data.workflow)
@@ -52,7 +55,7 @@ app
 						'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 					}
 				}).then(function(response) {
-					window.location = '/sigawf/app/diagrama/listar';
+					window.location = '/sigawf/app/diagrama/exibir?id=' + response.data.id;
 				}, function(response) {
 					alert(response.data.errormsg)
 				});
@@ -117,9 +120,19 @@ app
 						if (t.tipoResponsavel == 'RESPONSAVEL')
 							td.definicaoDeResponsavelId = t.refResponsavel;
 
-						if (t.tipo == 'INCLUIR_DOCUMENTO' && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
+						if ((t.tipo == 'INCLUIR_DOCUMENTO' || t.tipo == 'INCLUIR_COPIA' || t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
 							td.refId = t.ref.originalObject.key;
 							td.refSigla = t.ref.originalObject.firstLine;
+						}
+
+						if ((t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref2) {
+							td.refId2 = t.ref2;
+						}
+
+						if (t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') {
+							td.param = t.param;
+							if (t.param == 'FINALIZAR')
+								td.param2 = t.param2;
 						}
 
 						pd.definicaoDeTarefa.push(td);
@@ -213,6 +226,15 @@ app
 							}
 						}
 
+						if (t.refId2)
+							td.ref2 = '' + t.refId2
+
+						if (t.param)
+							td.param = '' + t.param
+
+						if (t.param2)
+							td.param2 = '' + t.param2
+
 						pd.tarefa.push(td);
 
 						if (d.definicaoDeTarefa[i].definicaoDeVariavel) {
@@ -246,13 +268,13 @@ app
 
 			$scope.carregar = function(id) {
 				$http({
-						url: '/sigawf/app/diagrama/' + id + '/carregar',
-						method: "GET"
-					})
+					url: '/sigawf/app/diagrama/' + id + '/carregar',
+					method: "GET"
+				})
 					.then(
 						function(response) {
 							var duplicar = new URLSearchParams(
-									window.location.search)
+								window.location.search)
 								.get('duplicar') == 'true';
 							if (duplicar) {
 								delete $scope.id;
@@ -267,43 +289,43 @@ app
 							$scope.data.workflow = $scope
 								.decode(response.data);
 						},
-						function(response) {});
+						function(response) { });
 
 			}
 
 			$scope.carregarRecursos = function(cont) {
 				$http({
-						url: '/sigawf/app/diagrama/acesso-de-inicializacao/carregar',
-						method: "GET"
-					})
+					url: '/sigawf/app/diagrama/acesso-de-inicializacao/carregar',
+					method: "GET"
+				})
 					.then(
 						function(response) {
 							$scope.acessosDeInicializacao = response.data.list;
 							$http({
-									url: '/sigawf/app/diagrama/acesso-de-edicao/carregar',
-									method: "GET"
-								})
+								url: '/sigawf/app/diagrama/acesso-de-edicao/carregar',
+								method: "GET"
+							})
 								.then(
 									function(response) {
 										$scope.acessosDeEdicao = response.data.list;
 										$http({
-												url: '/sigawf/app/diagrama/tipo-de-principal/carregar',
-												method: "GET"
-											})
+											url: '/sigawf/app/diagrama/tipo-de-principal/carregar',
+											method: "GET"
+										})
 											.then(
 												function(response) {
 													$scope.tiposDePrincipal = response.data.list;
 													$http({
-															url: '/sigawf/app/diagrama/tipo-de-vinculo-com-principal/carregar',
-															method: "GET"
-														})
+														url: '/sigawf/app/diagrama/tipo-de-vinculo-com-principal/carregar',
+														method: "GET"
+													})
 														.then(
 															function(response) {
 																$scope.tiposDeVinculoComPrincipal = response.data.list;
 																$http({
-																		url: '/sigawf/app/responsavel/carregar',
-																		method: "GET"
-																	})
+																	url: '/sigawf/app/responsavel/carregar',
+																	method: "GET"
+																})
 																	.then(
 																		function(
 																			response) {
@@ -321,8 +343,8 @@ app
 				p2.context[p2.variable] = p1;
 				if (p2.full)
 					$scope
-					.loadRef(p2.variable,
-						p2.context[p2.variable]);
+						.loadRef(p2.variable,
+							p2.context[p2.variable]);
 			}
 
 			$scope.insert = function() {
@@ -342,8 +364,9 @@ app
 							$scope.tarefas = undefined;
 							return;
 						}
-						var tarefas = [];
 
+						// Atualizar lista de tarefas
+						var tarefas = [];
 						for (var i = 0; i < $scope.data.workflow.tarefa.length; i++) {
 							var t = $scope.data.workflow.tarefa[i];
 							if (!t.id)
@@ -358,11 +381,35 @@ app
 							id: "fim",
 							nome: "[Fim]"
 						})
-
 						$scope.tarefas = tarefas;
+
+						// Atualizar lista de preenchimentos automáticos da tarefa
+						for (var i = 0; i < $scope.data.workflow.tarefa.length; i++) {
+							var t = $scope.data.workflow.tarefa[i];
+							if ((t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref) {
+								t.preenchimentoModelo = t.ref;
+								t.preenchimentoLotacaoId = undefined;
+								if (t.tipoResponsavel == 'LOTACAO' && t.refUnidadeResponsavel && t.refUnidadeResponsavel.originalObject && t.refUnidadeResponsavel.originalObject.key && t.preenchimentoLotacaoId !== t.refUnidadeResponsavel.originalObject.key)
+									t.preenchimentoLotacaoId = t.refUnidadeResponsavel.originalObject.key;
+								t.preenchimentoPessoaId = undefined;
+								if (t.tipoResponsavel == 'PESSOA' && t.refPessoaResponsavel && t.refPessoaResponsavel.originalObject && t.refPessoaResponsavel.originalObject.key && t.preenchimentoPessoaId !== t.refPessoaResponsavel.originalObject.key)
+									t.preenchimentoPessoaId = t.refPessoaResponsavel.originalObject.key;
+								$scope.atualizarPreenchimentos(t);
+							}
+						}
+
+						// Redesenha o gráfico
 						console.log('graphDrawDebounced')
 						$scope.graphDrawDebounced();
 					}, true);
+
+			$scope.atualizarPreenchimentos = function(t) {
+				$http({ url: '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : t.tipoResponsavel == 'LOTACAO' ? '/lotacoes/' + t.preenchimentoLotacaoId : '') + '/preenchimentos', method: "GET" }).then(
+					function(response) {
+						t.preenchimentos = response.data.list;
+					},
+					function(response) { });
+			}
 
 			$scope.getResponsavelNome = function(s) {
 				if (!$scope.responsaveis)
@@ -382,7 +429,7 @@ app
 						return $scope.tiposDePrincipal[i].descr;
 				}
 				return s;
-			} 
+			}
 
 			$scope.graphDraw = function() {
 				console.log('graphDraw')
@@ -428,7 +475,7 @@ app
 					case 'RESPONSAVEL':
 						if (n.refResponsavel)
 							resp = $scope
-							.getResponsavelNome(n.refResponsavel)
+								.getResponsavelNome(n.refResponsavel)
 						else
 							resp = n.tipoResponsavel
 						break;
@@ -572,7 +619,7 @@ app
 				name = name.replace(/[\[\]]/g, '\\$&');
 				var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
 					results = regex
-					.exec(url);
+						.exec(url);
 				if (!results)
 					return;
 				if (!results[2])
@@ -594,7 +641,7 @@ app
 							$scope.data.workflow = $scope
 								.decode(response.data);
 						},
-						function(response) {});
+						function(response) { });
 				}
 			})
 		});
@@ -605,6 +652,25 @@ var uuidv4 = function() {
 			v = c == 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
 	});
+};
+
+var validarFormulario = function(data){
+	camposObrigatorios = [];
+	
+	if(!data.nome){
+		camposObrigatorios.push("Nome");
+	} 
+	
+	if(!data.descricao){
+		camposObrigatorios.push("Descrição");
+	} 
+
+	if(camposObrigatorios.length > 0){
+		alert("Favor informar os campos obrigatórios: " + camposObrigatorios.join(", "))
+		return false;
+	}
+	
+	return true;
 };
 
 var formdata = function(obj) {

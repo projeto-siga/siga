@@ -1,5 +1,7 @@
 /*Identidade Visual do SIGA.doc para todos locais */
-
+#siga-top-menu {
+	z-index: 1040;
+}
 .text-size-5 {
 	font-size: 16px;
 	font-weight: 400;
@@ -38,7 +40,7 @@
 .card-header a {
     text-decoration: none;
 }
-/* Bot�o circular */
+/* Botao circular */
 .btn-circle {
     width: 30px;
     height: 30px;
@@ -93,9 +95,26 @@ table.table {
 p.gt-table-action-list a.link-tag {
 	margin-top: 0.4em;
 }
+
+.link-tag-hidden {
+}
+
+div.tooltip hr {
+	margin: 0.5em 0 0.5em 0;
+	border-top: 1px solid white;
+}
+
+.tooltip-inner {
+    max-width: 350px;
+    /* If max-width does not work, try using width instead */
+    width: 350px; 
+}
+
 .disabled {
 	opacity: 0.6;
 	filter: alpha(opacity=60); /* For IE8 and earlier */
+    pointer-events: none;
+    cursor: default;
 }
 .grey-light {
 	background-color: #adb5bd  !important;
@@ -419,3 +438,39 @@ article p em {
 .div-width-min0 { 
     min-width: 0px !important;
 } 
+
+#passwordStrength {
+	height: 5px;
+	display: block;
+	float: left;
+}
+
+.strength0 {
+	width: 100%;
+	background: #cccccc;
+}
+
+.strength1 {
+	width: 20%;
+	background: #ff0000;
+}
+
+.strength2 {
+	width: 40%;
+	background: #ff5f5f;
+}
+
+.strength3 {
+	width: 60%;
+	background: #56e500;
+}
+
+.strength4 {
+	background: #4dcd00;
+	width: 80%;
+}
+
+.strength5 {
+	background: #399800;
+	width: 100%;
+}

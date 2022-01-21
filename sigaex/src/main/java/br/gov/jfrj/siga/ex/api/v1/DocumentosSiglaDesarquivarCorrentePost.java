@@ -1,12 +1,12 @@
-package br.gov.jfrj.siga.ex.api.v1;
 
-import com.crivano.swaggerservlet.PresentableUnloggedException;
+package br.gov.jfrj.siga.ex.api.v1;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaDesarquivarCorrentePost;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeDesarquivarCorrente;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Transacional
@@ -15,17 +15,16 @@ public class DocumentosSiglaDesarquivarCorrentePost implements IDocumentosSiglaD
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		DpPessoa cadastrante = ctx.getCadastrante();
-		DpLotacao lotaCadastrante = ctx.getLotaCadastrante();
-		DpPessoa titular = ctx.getTitular();
+		DpPessoa titular = cadastrante;
+		DpLotacao lotaCadastrante = cadastrante.getLotacao();
 		DpLotacao lotaTitular = ctx.getLotaTitular();
 
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Desarquivar");
 
-		if (!Ex.getInstance().getComp().podeDesarquivarCorrente(titular, lotaTitular, mob)) {
-			throw new PresentableUnloggedException(
-					"O documento " + mob.getSigla() + " não pode ser desarquivado do corrente por "
-							+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta());
-		}
+		Ex.getInstance().getComp().afirmar(
+				"O documento " + mob.getSigla() + " não pode ser desarquivado do corrente por "
+						+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(),
+				ExPodeDesarquivarCorrente.class, titular, lotaTitular, mob);
 
 		ctx.assertAcesso(mob, titular, lotaTitular);
 

@@ -227,7 +227,7 @@
 								<td class="text-center">${assmov.mov.dtRegMovDDMMYY}</td>
 								<td class="text-center">${assmov.mov.lotaCadastrante.siglaLotacao}</td>
 								<td class="text-center">${assmov.mov.cadastrante.sigla}</td>
-								<td class="text-center">${assmov.mov.exTipoMovimentacao.sigla}</td>
+								<td class="text-center">${assmov.mov.exTipoMovimentacao.descr}</td>
 								<td class="text-center">${assmov.mov.obs}</td>
 								<td></td>
 								<td></td>
@@ -251,7 +251,7 @@
 								name="ad_description_mov${assmov.mov.idMov}"
 								value="${assmov.mov.obs}" />
 							<input type="hidden" name="ad_kind_mov${assmov.mov.idMov}"
-								value="${assmov.mov.exTipoMovimentacao.sigla}" />
+								value="${assmov.mov.exTipoMovimentacao.descr}" />
 						</c:forEach>
 					</c:forEach>
 				</tbody>

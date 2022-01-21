@@ -1,9 +1,7 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ExGraph {
 
@@ -13,7 +11,7 @@ public class ExGraph {
 
 	protected class Nodo {
 
-		private String nome, shape, label, URL, tooltip, color;
+		private String nome, shape, estilo, label, URL, tooltip, color;
 
 		public String getNome() {
 			return nome;
@@ -40,6 +38,11 @@ public class ExGraph {
 			return this;
 		}
 
+		protected Nodo setEstilo(String estilo) {
+			this.estilo = estilo;
+			return this;
+		}
+
 		protected Nodo setCor(String cor) {
 			this.color = cor;
 			return this;
@@ -54,16 +57,22 @@ public class ExGraph {
 			this.tooltip = tooltip;
 			return this;
 		}
+		
+		protected String getEstilo() {
+			return this.estilo;
+		}
 
 		@Override
 		public String toString() {
 			String toString = "\"" + nome + "\"";
 			if (shape != null)
-				toString += "[shape=\"" + shape + "\"]";
+				toString += "[shape=\"" + shape + "\", fillcolor=\"white\"]";
 			if (label != null)
 				toString += "[label=\"" + label + "\"]";
 			if (destacar)
-				toString += "[color=\"red\"]";
+				toString += "[color=\"red\", fontcolor=\"red\"]";
+			if (estilo != null)
+				toString += "[style=\"filled," + estilo + "\"]";
 			if (color != null)
 				toString += "[color=\"" + color + "\"]";
 			if (URL != null)
@@ -158,20 +167,25 @@ public class ExGraph {
 		for (Nodo nodo : nodos)
 			toString += "\n" + nodo + ";";
 		for (Transicao t : trans)
-				toString += "\n" + t + ";";
+			toString += "\n" + t + ";";
 		return toString.replace("\n", " ").replace("\r", " ");
 	}
 
 	public void adicionar(Nodo nodoAIncluir) {
-		Nodo nodoAExcluir = null;
-		for (Nodo n : nodos)
-			if (n.nome.equals(nodoAIncluir.nome)) {
-				nodoAExcluir = n;
-				break;
-			}
+		Nodo nodoAExcluir = localizarNodoPorNome(nodoAIncluir.nome);
 		if (nodoAExcluir != null)
 			nodos.remove(nodoAExcluir);
 		nodos.add(nodoAIncluir);
+	}
+
+	public Nodo localizarNodoPorNome(String nome) {
+		Nodo nodoAExcluir = null;
+		for (Nodo n : nodos)
+			if (n.nome.equals(nome)) {
+				nodoAExcluir = n;
+				break;
+			}
+		return nodoAExcluir;
 	}
 
 	public void adicionar(Transicao transicao) {

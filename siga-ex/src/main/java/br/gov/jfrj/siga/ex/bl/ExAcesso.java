@@ -19,7 +19,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExAcesso {
@@ -124,9 +124,7 @@ public class ExAcesso {
 					.getExMovimentacaoSet()) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.getExTipoMovimentacao()
-						.getIdTpMov()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
+				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
 						&& mov.getExMovimentacaoCanceladora() == null)
 					add(mov.getSubscritor());
 			}
@@ -139,9 +137,7 @@ public class ExAcesso {
 					.getExMovimentacaoSet()) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.getExTipoMovimentacao()
-						.getIdTpMov()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
+				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO
 						&& mov.getExMovimentacaoCanceladora() == null) {
 					ExParte parte = ExParte.create(mov.getDescrMov());
 					String as[] = parte.getResponsavel().split(";");
@@ -170,9 +166,7 @@ public class ExAcesso {
 			for (ExMovimentacao mov : doc.getMobilGeral()
 					.getExMovimentacaoSet()) {
 				if (!mov.isCancelada()
-						&& mov.getExTipoMovimentacao()
-								.getIdTpMov()
-								.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+						&& mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL) {
 					if (mov.getSubscritor() != null) {
 						add(mov.getSubscritor());
 					} else {
@@ -250,7 +244,7 @@ public class ExAcesso {
 		if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) 									
 			listaMov = doc.getListaMovimentacaoPorRestricaoAcesso();
 		else
-			listaMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+			listaMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 		
 		if(listaMov.isEmpty()) {
 
@@ -373,15 +367,15 @@ public class ExAcesso {
 			}
 		} else {
 			List<ExMovimentacao> listaAcomp =  new ArrayList<ExMovimentacao>();
-			listaAcomp.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL));
+			listaAcomp.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.VINCULACAO_PAPEL));
 			
 			for(ExMobil exMobil : doc.getExMobilSet()) {
-				listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA));
+				listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoDeMovimentacao.TRANSFERENCIA));
 			}
 			
 			if(doc.getPai() != null) {
 				for (ExMobil exMobil : doc.getPai().getExMobilSet()) {
-					listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA));
+					listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoDeMovimentacao.TRANSFERENCIA));
 				}				
 			}
 			
@@ -427,10 +421,10 @@ public class ExAcesso {
 
 		for (ExMobil mob : getMobilesAVarrer(doc)) {
 			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO
-						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA || mov
-						.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA)
+				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO
+						|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_INTERNO
+						|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA || mov
+						.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA)
 						&& !mov.isCancelada())
 					add(mov.getSubscritor());
 			}

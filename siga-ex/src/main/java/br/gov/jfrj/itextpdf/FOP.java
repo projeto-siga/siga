@@ -20,7 +20,6 @@ package br.gov.jfrj.itextpdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 import javax.xml.transform.Result;

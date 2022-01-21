@@ -203,7 +203,7 @@
 		</div>
 	</div>
 
-	<script src="/ckeditor/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="${f:resource('/ckeditor.url')}?v=4.15.0.L0FJ.c71958523b"></script>
 	<script type="text/javascript">
 		function postback() {
 			var frm = document.getElementById('frm');

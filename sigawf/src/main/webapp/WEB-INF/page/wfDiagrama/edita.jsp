@@ -76,42 +76,42 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				</div>
 				<div class="col col-md-3">
 					<div class="form-group" id="lotaResponsavel">
-						<label for="lotaResponsavel" title="" class="label w-100">Lotação
-							Resp.
-							<div minlength="1" selected-object="selectedObject"
-								focus-first="true" text-searching="Pesquisando Unidades..."
-								initial-value="data.workflow.lotaResponsavel.originalObject"
-								title-field="firstLine" description-field="secondLine"
-								input-class="form-control form-control-small"
-								remote-url-data-field="list" pause="200"
-								text-no-results="Não encontrei nenhuma Unidade."
-								match-class="highlight"
-								selected-object-data="{context: data.workflow, variable: 'lotaResponsavel', full:false}"
-								remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
-								name="lotaResponsavel" placeholder="Pesquisar Unidade"
-								id="lotaResponsavel" class="angucomplete-ctrl p-0"
-								template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
-						</label>
+						<label for="lotaResponsavel" title="" class="label">Lotação
+							Resp.</label>
+						<div minlength="1" selected-object="selectedObject"
+							focus-first="true" text-searching="Pesquisando Unidades..."
+							focus-out="$broadcast(!data.workflow.lotaResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
+							initial-value="data.workflow.lotaResponsavel.originalObject"
+							title-field="firstLine" description-field="secondLine"
+							input-class="form-control form-control-small"
+							remote-url-data-field="list" pause="200"
+							text-no-results="Não encontrei nenhuma Unidade."
+							selected-object-data="{context: data.workflow, variable: 'lotaResponsavel', full:false}"
+							remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
+							name="lotaResponsavel" placeholder="Pesquisar Unidade"
+							id="lotaResponsavel" class="angucomplete-ctrl p-0"
+							template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+
 					</div>
 				</div>
 				<div class="col col-md-3">
 					<div class="form-group" id="responsavel">
-						<label for="responsavel" title="" class="label w-100">Pessoa
-							Resp.
-							<div minlength="1" selected-object="selectedObject"
-								focus-first="true" text-searching="Pesquisando Pessoas..."
-								initial-value="data.workflow.responsavel.originalObject"
-								title-field="firstLine" description-field="secondLine"
-								input-class="form-control form-control-small"
-								remote-url-data-field="list" pause="200"
-								text-no-results="Não encontrei nenhuma Pessoa."
-								match-class="highlight"
-								selected-object-data="{context: data.workflow, variable: 'responsavel', full:false}"
-								remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
-								name="responsavel" placeholder="Pesquisar Pessoa"
-								id="responsavel" class="angucomplete-ctrl p-0"
-								template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
-						</label>
+						<label for="responsavel" title="" class="label">Pessoa
+							Resp.</label>
+						<div minlength="1" selected-object="selectedObject"
+							focus-first="true" text-searching="Pesquisando Pessoas..."
+							focus-out="$broadcast(!data.workflow.responsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
+							initial-value="data.workflow.responsavel.originalObject"
+							title-field="firstLine" description-field="secondLine"
+							input-class="form-control form-control-small"
+							remote-url-data-field="list" pause="200"
+							text-no-results="Não encontrei nenhuma Pessoa."
+							selected-object-data="{context: data.workflow, variable: 'responsavel', full:false}"
+							remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
+							name="responsavel" placeholder="Pesquisar Pessoa"
+							id="responsavel" class="angucomplete-ctrl p-0"
+							template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+
 					</div>
 				</div>
 			</div>
@@ -154,202 +154,248 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 					</header>
 					<div ng-repeat="tarefaItem in data.workflow.tarefa" class="row">
 						<div class="col col-auto">
-							<section> <label class="label" for="ddm">&nbsp;
-								<div id="ddm" role="group" class="form-controlx btn-group"
-									style="padding: 0 !important; display: block;">
-									<div role="group" class="btn-group dropright">
-										<button data-toggle="dropdown" aria-expanded="false"
-											aria-haspopup="true" id="dropBtn"
-											class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
-										<div aria-labelledby="dropBtn" class="dropdown-menu pt-0 pb-0">
-											<button
-												ng-click="data.workflow.tarefa.splice($index + 1, 0, {});"
-												class="btn btn-link p-2" ng-disabled>
-												<i class="fa fa-fa fa-plus"></i>
-											</button>
-											<button
-												ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index - 1, 1, data.workflow.tarefa[$index])[0]"
-												class="btn btn-link p-2" ng-disabled="$index === 0">
-												<i class="fa fa-fa fa-arrow-up"></i>
-											</button>
-											<button
-												ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index + 1, 1, data.workflow.tarefa[$index])[0]"
-												class="btn btn-link p-2"
-												ng-disabled="$index === data.workflow.tarefa.length - 1">
-												<i class="fa fa-fa fa-arrow-down"></i>
-											</button>
-											<button ng-click="data.workflow.tarefa.splice($index, 1);"
-												class="btn btn-link p-2" ng-disabled>
-												<i class="fa fa-fa fa-trash"></i>
-											</button>
-										</div>
+							<section> <label class="label mb-0" for="ddm">&nbsp;</label>
+							<div id="ddm" role="group" class="form-controlx btn-group"
+								style="padding: 0 !important; display: block;">
+								<div role="group" class="btn-group dropright">
+									<button data-toggle="dropdown" aria-expanded="false"
+										aria-haspopup="true" id="dropBtn"
+										class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
+									<div aria-labelledby="dropBtn" class="dropdown-menu pt-0 pb-0">
+										<button
+											ng-click="data.workflow.tarefa.splice($index + 1, 0, {});"
+											class="btn btn-link p-2" ng-disabled>
+											<i class="fa fa-fa fa-plus"></i>
+										</button>
+										<button
+											ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index - 1, 1, data.workflow.tarefa[$index])[0]"
+											class="btn btn-link p-2" ng-disabled="$index === 0">
+											<i class="fa fa-fa fa-arrow-up"></i>
+										</button>
+										<button
+											ng-click="data.workflow.tarefa[$index] = data.workflow.tarefa.splice($index + 1, 1, data.workflow.tarefa[$index])[0]"
+											class="btn btn-link p-2"
+											ng-disabled="$index === data.workflow.tarefa.length - 1">
+											<i class="fa fa-fa fa-arrow-down"></i>
+										</button>
+										<button ng-click="data.workflow.tarefa.splice($index, 1);"
+											class="btn btn-link p-2" ng-disabled>
+											<i class="fa fa-fa fa-trash"></i>
+										</button>
 									</div>
 								</div>
-							</label> </section>
+							</div>
+							</section>
 						</div>
 						<div class="col">
 							<div class="row">
 								<section class="col col-12 col-md-2 col-lg-2 form-group">
-								<label for="tipo" title="" class="label">Tipo<i
+								<label for="tipo" title="" class="label mb-0">Tipo<i
 									title="Preenchimento obrigatório"
-									class="label-clue fa fa-asterisk"></i><select
+									class="label-clue fa fa-asterisk"></i></label> <select
 									ng-model="tarefaItem.tipo" ng-required="true"
 									class="form-control"><option value="FORMULARIO">Formulário</option>
-										<option value="DECISAO">Decisão</option>
-										<option value="EMAIL">E-mail</option>
-										<option value="EXECUTAR">Executar</option>
-										<optgroup label="{{getPrincipalNome()}}"
-											ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
-											<option value="AGUARDAR_ASSINATURA_PRINCIPAL"
-												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
-												Aguardar Assinatura</option>
-											<option value="TRAMITAR_PRINCIPAL"
-												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
-												Tramitar</option>
-											<option value="ARQUIVAR_PRINCIPAL"
-												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
-												Arquivar</option>
-											<option value="INCLUIR_DOCUMENTO"
-												ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
-												Incluir Documento</option>
-										</optgroup>
-								</select></label> <i></i> </section>
+									<option value="DECISAO">Decisão</option>
+									<option value="EMAIL">E-mail</option>
+									<option value="EXECUTAR">Executar</option>
+									<option value="CRIAR_DOCUMENTO">Criar Documento</option>
+									<optgroup label="{{getPrincipalNome()}}"
+										ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
+										<option value="AGUARDAR_ASSINATURA_PRINCIPAL"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Aguardar Assinatura</option>
+										<option value="INCLUIR_DOCUMENTO"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Aguardar Juntada</option>
+										<option value="INCLUIR_COPIA"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Incluir Cópia</option>
+										<option value="AUTUAR_DOCUMENTO"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Autuar Documento</option>
+										<option value="TRAMITAR_PRINCIPAL"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Tramitar</option>
+										<option value="ARQUIVAR_PRINCIPAL"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Arquivar</option>
+										<option value="INCLUIR_AUXILIAR"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Incluir Auxiliar</option>
+									</optgroup>
+								</select></section>
 								<section class="col col-12 col-md-2 col-lg-2 form-group">
-								<label for="titulo" title="" class="label">Título<i
+								<label for="titulo" title="" class="label mb-0">Título<i
 									title="Preenchimento obrigatório"
-									class="label-clue fa fa-asterisk"></i><input
+									class="label-clue fa fa-asterisk"></i></label> <input
 									ng-model="tarefaItem.titulo" name="titulo" ng-required="true"
-									id="titulo" type="text" class="form-control"></label> </section>
+									id="titulo" type="text" class="form-control"></section>
 								<section
 									ng-show="tarefaItem.tipo != 'FORMULARIO' && tarefaItem.tipo != 'DECISAO'"
 									class="col col-12 col-md-2 col-lg-2 form-group"> <label
-									for="depois" title="" class="label">Depois<select
+									for="depois" title="" class="label mb-0">Depois</label> <select
 									ng-selected="desvioItem.tarefa" ng-model="tarefaItem.depois"
 									ng-init=""
 									ng-options="item.id as item.nome disable when item.id === tarefaItem.id for item in tarefas"
-									class="form-control"><option value="">[Próxima]</option></select></label>
+									class="form-control"><option value="">[Próxima]</option></select>
 								<i></i> </section>
 								<section
-									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL'"
-									class="col col-12 col-md-2 col-lg-2 form-group"> <label
-									for="tipoResponsavel" title="" class="label">Tipo Resp.<i
-									title="Preenchimento obrigatório"
-									class="label-clue fa fa-asterisk"></i><select
-									ng-model="tarefaItem.tipoResponsavel" ng-required="true"
-									class="form-control">
-										<option value="RESPONSAVEL">Tabelado</option>
-										<option value="LOTACAO">Lotação</option>
-										<option value="PESSOA">Pessoa</option>
-										<optgroup label="Procedimento">
-											<option value="PROCEDIMENTO_TITULAR">Titular</option>
-											<option value="PROCEDIMENTO_LOTA_TITULAR">Lotação do
-												Titular</option>
-										</optgroup>
-										<optgroup label="{{getPrincipalNome()}}"
-											ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
-											<option value="PRINCIPAL_CADASTRANTE">Cadastrante</option>
-											<option value="PRINCIPAL_LOTA_CADASTRANTE">Lotação
-												do Cadastrante</option>
-											<option value="PRINCIPAL_TITULAR">Titular</option>
-											<option value="PRINCIPAL_LOTA_TITULAR">Lotação do
-												Titular</option>
-											<option value="PRINCIPAL_SUBSCRITOR">Subscritor</option>
-											<option value="PRINCIPAL_LOTA_SUBSCRITOR">Lotação do
-												Subscritor</option>
-											<option value="PRINCIPAL_DESTINATARIO">Destinatário</option>
-											<option value="PRINCIPAL_LOTA_DESTINATARIO">Lotação
-												do Destinatário</option>
-											<option value="PRINCIPAL_GESTOR">Gestor</option>
-											<option value="PRINCIPAL_LOTA_GESTOR">Lotação do
-												Gestor</option>
-											<option value="PRINCIPAL_FISCAL_TECNICO">Fiscal
-												Técnico</option>
-											<option value="PRINCIPAL_LOTA_FISCAL_TECNICO">
-												Lotação do Fiscal Técnico</option>
-											<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO">
-												Fiscal Administrativo</option>
-											<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO">
-												Lotação do Fiscal Administrativo</option>
-											<option value="PRINCIPAL_INTERESSADO">Interessado</option>
-											<option value="PRINCIPAL_LOTA_INTERESSADO">Lotação
-												do Interessado</option>
-											<option value="PRINCIPAL_AUTORIZADOR">Interessado</option>
-											<option value="PRINCIPAL_LOTA_AUTORIZADOR">Lotação
-												do Autorizador</option>
-											<option value="PRINCIPAL_REVISOR">Interessado</option>
-											<option value="PRINCIPAL_LOTA_REVISOR">Lotação do
-												Revisor</option>
-											<option value="PRINCIPAL_LIQUIDANTE">Interessado</option>
-											<option value="PRINCIPAL_LOTA_LIQUIDANTE">Lotação do
-												Liquidante</option>
-										</optgroup>
-								</select>
-								</label> <i></i> </section>
-								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'LOTACAO'"
+									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refUnidadeResponsavel" title="" class="label">Lotação
-									Resp.
-									<div minlength="1" selected-object="selectedObject"
-										focus-first="true" text-searching="Pesquisando Unidades..."
-										initial-value="tarefaItem.refUnidadeResponsavel.originalObject"
-										title-field="firstLine" description-field="secondLine"
-										input-class="form-control form-control-small"
-										remote-url-data-field="list" pause="200"
-										text-no-results="Não encontrei nenhuma Unidade."
-										match-class="highlight"
-										selected-object-data="{context:tarefaItem, variable: 'refUnidadeResponsavel', full:false}"
-										remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
-										name="refUnidadeResponsavel" placeholder="Pesquisar Unidade"
-										id="refUnidadeResponsavel" class="angucomplete-ctrl p-0"
-										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
-								</label> </section>
+									for="tipoResponsavel" title="" class="label mb-0">Tipo
+									Resp.<i title="Preenchimento obrigatório"
+									class="label-clue fa fa-asterisk"></i>
+								</label> <select ng-model="tarefaItem.tipoResponsavel"
+									ng-required="true" class="form-control">
+									<option value="RESPONSAVEL">Tabelado</option>
+									<option value="LOTACAO">Lotação</option>
+									<option value="PESSOA">Pessoa</option>
+									<optgroup label="Procedimento">
+										<option value="PROCEDIMENTO_TITULAR">Titular</option>
+										<option value="PROCEDIMENTO_LOTA_TITULAR">Lotação do
+											Titular</option>
+									</optgroup>
+									<optgroup label="{{getPrincipalNome()}}"
+										ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
+										<option value="PRINCIPAL_CADASTRANTE">Cadastrante</option>
+										<option value="PRINCIPAL_LOTA_CADASTRANTE">Lotação do
+											Cadastrante</option>
+										<option value="PRINCIPAL_TITULAR">Titular</option>
+										<option value="PRINCIPAL_LOTA_TITULAR">Lotação do
+											Titular</option>
+										<option value="PRINCIPAL_SUBSCRITOR">Subscritor</option>
+										<option value="PRINCIPAL_LOTA_SUBSCRITOR">Lotação do
+											Subscritor</option>
+										<option value="PRINCIPAL_DESTINATARIO">Destinatário</option>
+										<option value="PRINCIPAL_LOTA_DESTINATARIO">Lotação
+											do Destinatário</option>
+										<option value="PRINCIPAL_GESTOR">Gestor</option>
+										<option value="PRINCIPAL_LOTA_GESTOR">Lotação do
+											Gestor</option>
+										<option value="PRINCIPAL_FISCAL_TECNICO">Fiscal
+											Técnico</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_TECNICO">
+											Lotação do Fiscal Técnico</option>
+										<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO">
+											Fiscal Administrativo</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO">
+											Lotação do Fiscal Administrativo</option>
+										<option value="PRINCIPAL_INTERESSADO">Interessado</option>
+										<option value="PRINCIPAL_LOTA_INTERESSADO">Lotação do
+											Interessado</option>
+										<option value="PRINCIPAL_AUTORIZADOR">Interessado</option>
+										<option value="PRINCIPAL_LOTA_AUTORIZADOR">Lotação do
+											Autorizador</option>
+										<option value="PRINCIPAL_REVISOR">Interessado</option>
+										<option value="PRINCIPAL_LOTA_REVISOR">Lotação do
+											Revisor</option>
+										<option value="PRINCIPAL_LIQUIDANTE">Interessado</option>
+										<option value="PRINCIPAL_LOTA_LIQUIDANTE">Lotação do
+											Liquidante</option>
+									</optgroup>
+								</select> </section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'PESSOA'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refPessoaResponsavel" title="" class="label">Pessoa
-									Resp.
-									<div minlength="1" selected-object="selectedObject"
-										focus-first="true" text-searching="Pesquisando Pessoas..."
-										initial-value="tarefaItem.refPessoaResponsavel.originalObject"
-										title-field="firstLine" description-field="secondLine"
-										input-class="form-control form-control-small"
-										remote-url-data-field="list" pause="200"
-										text-no-results="Não encontrei nenhuma Pessoa."
-										match-class="highlight"
-										selected-object-data="{context:tarefaItem, variable: 'refPessoaResponsavel', full:false}"
-										remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
-										name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
-										id="refPessoaResponsavel" class="angucomplete-ctrl p-0"
-										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
-								</label> </section>
+									for="refUnidadeResponsavel" title="" class="label mb-0">Lotação
+									Resp.</label>
+								<div minlength="1" selected-object="selectedObject"
+									focus-first="true" text-searching="Pesquisando Unidades..."
+									focus-out="$broadcast(!tarefaItem.refUnidadeResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
+									initial-value="tarefaItem.refUnidadeResponsavel.originalObject"
+									title-field="firstLine" description-field="secondLine"
+									input-class="form-control form-control-small"
+									remote-url-data-field="list" pause="200"
+									text-no-results="Não encontrei nenhuma Unidade."
+									selected-object-data="{context:tarefaItem, variable: 'refUnidadeResponsavel', full:false}"
+									remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
+									name="refUnidadeResponsavel" placeholder="Pesquisar Unidade"
+									id="refUnidadeResponsavel" class="angucomplete-ctrl p-0"
+									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+								</section>
 								<section
-									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'PESSOA'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refResponsavel" title="" class="label">Responsável
-									<select ng-model="tarefaItem.refResponsavel"
+									for="refPessoaResponsavel" title="" class="label mb-0">Pessoa
+									Resp.</label>
+								<div minlength="1" selected-object="selectedObject"
+									focus-first="true" text-searching="Pesquisando Pessoas..."
+									focus-out="$broadcast(!tarefaItem.refPessoaResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
+									initial-value="tarefaItem.refPessoaResponsavel.originalObject"
+									title-field="firstLine" description-field="secondLine"
+									input-class="form-control form-control-small"
+									remote-url-data-field="list" pause="200"
+									text-no-results="Não encontrei nenhuma Pessoa."
+									selected-object-data="{context:tarefaItem, variable: 'refPessoaResponsavel', full:false}"
+									remote-url="/siga/app/pessoa/buscar-json/" angucomplete-alt
+									name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
+									id="refPessoaResponsavel" class="angucomplete-ctrl p-0"
+									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+								</section>
+								<section
+									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="refResponsavel" title="" class="label mb-0">Responsável</label>
+								<select ng-model="tarefaItem.refResponsavel"
 									ng-options="item.hisIdIni as item.nome for item in responsaveis"
-									class="form-control"></select>
-								</label> </section>
-								<section ng-show="tarefaItem.tipo == 'INCLUIR_DOCUMENTO'"
+									class="form-control"></select> </section>
+								<section
+									ng-show="tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="ref" title="" class="label">Modelo
-									<div minlength="1" selected-object="selectedObject"
-										focus-first="true"
-										text-searching="Pesquisando Modelo Documental..."
-										initial-value="tarefaItem.ref.originalObject"
-										title-field="firstLine" description-field="secondLine"
-										input-class="form-control form-control-small"
-										remote-url-data-field="list" pause="200"
-										text-no-results="Não encontrei nenhuma Tipologia Documental."
-										match-class="highlight"
-										selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
-										remote-url="/sigaex/app/modelo/buscar-json-para-incluir/"
-										angucomplete-alt name="ref"
-										placeholder="Pesquisar Tipologia Documental" id="ref"
-										class="angucomplete-ctrl"
-										template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
-								</label> </section>
+									for="ref" title="" class="label mb-0">Modelo</label>
+								<div minlength="1" selected-object="selectedObject"
+									focus-first="true"
+									focus-out="$broadcast(!tarefaItem.ref.originalObject ? 'angucomplete-alt:clearInput' : '');"
+									text-searching="Pesquisando Modelo Documental..."
+									initial-value="tarefaItem.ref.originalObject"
+									title-field="firstLine" description-field="secondLine"
+									input-class="form-control form-control-small"
+									remote-url-data-field="list" pause="200"
+									text-no-results="Não encontrei nenhuma Tipologia Documental."
+									selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
+									remote-url="{{'/sigaex/app/modelo/buscar-json-para-' + (tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' ? 'incluir' : 'autuar') + '/'}}"
+									angucomplete-alt name="ref"
+									placeholder="Pesquisar Modelo de Documento" id="ref"
+									class="angucomplete-ctrl"
+									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+								</section>
+								<section ng-show="tarefaItem.tipo == 'INCLUIR_COPIA'"
+									class="col col-12 col-md-6 col-lg-6 form-group"> <label
+									for="ref" title="" class="label mb-0">Documento</label>
+								<div minlength="1" selected-object="selectedObject"
+									focus-first="true"
+									focus-out="$broadcast(!tarefaItem.ref.originalObject ? 'angucomplete-alt:clearInput' : '');"
+									text-searching="Pesquisando Documento..."
+									initial-value="tarefaItem.ref.originalObject"
+									title-field="firstLine" description-field="secondLine"
+									input-class="form-control form-control-small"
+									remote-url-data-field="list" pause="200"
+									text-no-results="Não encontrei nenhuma Tipologia Documental."
+									selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
+									remote-url="/sigaex/app/mobil/buscar-json/" angucomplete-alt
+									name="ref" placeholder="Pesquisar Documento" id="ref"
+									class="angucomplete-ctrl"
+									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+								</section>
+								<section ng-if="tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
+									ng-if="tarefaItem.preenchimentos"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="ref2" title="" class="label mb-0">Preenchimento</label> <select
+									ng-model="tarefaItem.ref2"
+									ng-options="item.idPreenchimento as item.nome for item in tarefaItem.preenchimentos"
+									class="form-control"></select> </section>
+								<section ng-if="tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="param" title="" class="label mb-0">Finalizar</label> <select
+									ng-model="tarefaItem.param"
+									ng-options="item.id as item.nome for item in [{id: 'NAO_FINALIZAR', nome: 'Não Finalizar'},{id: 'FINALIZAR', nome: 'Finalizar'}]"
+									class="form-control"></select> </section>
+								<section ng-if="(tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO') && tarefaItem.param == 'FINALIZAR'"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="param2" title="" class="label mb-0">Aguardar</label>
+								<select ng-model="tarefaItem.param2"
+									ng-options="item.id as item.nome for item in [{id: 'NAO_AGUARDAR', nome: 'Não Aguardar'},{id: 'AGUARDAR_ASSINATURA', nome: 'Aguardar Assinatura'},{id: 'AGUARDAR_JUNTADA', nome: 'Aguardar Juntada ao Principal'}]"
+									class="form-control"></select> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"
 									title="Variáveis" class="col col-12">
 									<header class="form-group juia">
@@ -368,75 +414,76 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									<div ng-repeat="variavelItem in tarefaItem.variavel"
 										class="row">
 										<div class="col col-auto">
-											<section> <label title="" class="label">&nbsp;</label>
-											<label class="input float-right"><div role="group"
-													class="btn-group">
-													<div role="group" class="btn-group dropright">
-														<button data-toggle="dropdown" aria-expanded="false"
-															aria-haspopup="true" id="dropBtn"
-															class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
-														<div aria-labelledby="dropBtn"
-															class="dropdown-menu pt-0 pb-0">
-															<button
-																ng-click="tarefaItem.variavel.splice($index + 1, 0, {});"
-																class="btn btn-link p-2" ng-disabled>
-																<i class="fa fa-fa fa-plus"></i>
-															</button>
-															<button
-																ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index - 1, 1, tarefaItem.variavel[$index])[0]"
-																class="btn btn-link p-2" ng-disabled="$index === 0">
-																<i class="fa fa-fa fa-arrow-up"></i>
-															</button>
-															<button
-																ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index + 1, 1, tarefaItem.variavel[$index])[0]"
-																class="btn btn-link p-2"
-																ng-disabled="$index === tarefaItem.variavel.length - 1">
-																<i class="fa fa-fa fa-arrow-down"></i>
-															</button>
-															<button ng-click="tarefaItem.variavel.splice($index, 1);"
-																class="btn btn-link p-2" ng-disabled>
-																<i class="fa fa-fa fa-trash"></i>
-															</button>
-														</div>
+											<section> <label title="" class="label mb-0">&nbsp;</label>
+											<label class="input float-right"></label>
+											<div role="group" class="btn-group">
+												<div role="group" class="btn-group dropright">
+													<button data-toggle="dropdown" aria-expanded="false"
+														aria-haspopup="true" id="dropBtn"
+														class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
+													<div aria-labelledby="dropBtn"
+														class="dropdown-menu pt-0 pb-0">
+														<button
+															ng-click="tarefaItem.variavel.splice($index + 1, 0, {});"
+															class="btn btn-link p-2" ng-disabled>
+															<i class="fa fa-fa fa-plus"></i>
+														</button>
+														<button
+															ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index - 1, 1, tarefaItem.variavel[$index])[0]"
+															class="btn btn-link p-2" ng-disabled="$index === 0">
+															<i class="fa fa-fa fa-arrow-up"></i>
+														</button>
+														<button
+															ng-click="tarefaItem.variavel[$index] = tarefaItem.variavel.splice($index + 1, 1, tarefaItem.variavel[$index])[0]"
+															class="btn btn-link p-2"
+															ng-disabled="$index === tarefaItem.variavel.length - 1">
+															<i class="fa fa-fa fa-arrow-down"></i>
+														</button>
+														<button ng-click="tarefaItem.variavel.splice($index, 1);"
+															class="btn btn-link p-2" ng-disabled>
+															<i class="fa fa-fa fa-trash"></i>
+														</button>
 													</div>
-												</div></label> </section>
+												</div>
+											</div>
+											</section>
 										</div>
 										<div class="col">
 											<div class="row">
 												<section class="col col-12 col-md-3 form-group"> <label
-													for="titulo" title="" class="label">Título<i
+													for="titulo" title="" class="label mb-0">Título<i
 													title="Preenchimento obrigatório"
-													class="label-clue fa fa-asterisk"></i><input
+													class="label-clue fa fa-asterisk"></i></label> <input
 													ng-model="variavelItem.titulo" name="titulo"
 													ng-required="true" id="titulo" type="text"
-													class="form-control"></label> </section>
+													class="form-control"></section>
 												<section class="col col-12 col-md-3 form-group"> <label
-													for="identificador" title="" class="label">Identificador<i
+													for="identificador" title="" class="label mb-0">Identificador<i
 													title="Preenchimento obrigatório"
-													class="label-clue fa fa-asterisk"></i><input
+													class="label-clue fa fa-asterisk"></i></label> <input
 													ng-model="variavelItem.identificador" name="identificador"
 													ng-required="true" id="identificador" type="text"
-													class="form-control"></label> </section>
+													class="form-control"></section>
 												<section class="col col-12 col-md-3 form-group"> <label
-													for="tipo" title="" class="label">Tipo<i
+													for="tipo" title="" class="label mb-0">Tipo<i
 													title="Preenchimento obrigatório"
-													class="label-clue fa fa-asterisk"></i><select
+													class="label-clue fa fa-asterisk"></i></label> <select
 													ng-model="variavelItem.tipo" ng-required="true"
 													class="form-control">
-														<c:forEach items="${tipoDeVariavel}" var="val">
-															<option value="${val.name()}">${val.descr}</option>
-														</c:forEach>
-												</select></label> <i></i> </section>
+													<c:forEach items="${tipoDeVariavel}" var="val">
+														<option value="${val.name()}">${val.descr}</option>
+													</c:forEach>
+												</select></section>
 												<section class="col col-12 col-md-3 form-group"> <label
-													for="tipoDeEdicao" title="" class="label">Edição<i
+													for="tipoDeEdicao" title="" class="label mb-0">Edição<i
 													title="Preenchimento obrigatório"
-													class="label-clue fa fa-asterisk"></i><select
+													class="label-clue fa fa-asterisk"></i></label> <select
 													ng-model="variavelItem.tipoDeEdicao" ng-required="true"
 													class="form-control">
-														<c:forEach items="${tipoDeAcesso}" var="val">
-															<option value="${val.name()}">${val.descr}</option>
-														</c:forEach>
-												</select></label> <i></i> </section>
+													<c:forEach items="${tipoDeAcesso}" var="val">
+														<option value="${val.name()}">${val.descr}</option>
+													</c:forEach>
+												</select></section>
 											</div>
 										</div>
 									</div>
@@ -459,70 +506,71 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									</header>
 									<div ng-repeat="desvioItem in tarefaItem.desvio" class="row">
 										<div class="col col-auto">
-											<section> <label title="" class="label">&nbsp;</label>
-											<label class="input float-right"><div role="group"
-													class="btn-group">
-													<div role="group" class="btn-group dropright">
-														<button data-toggle="dropdown" aria-expanded="false"
-															aria-haspopup="true" id="dropBtn"
-															class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
-														<div aria-labelledby="dropBtn"
-															class="dropdown-menu pt-0 pb-0">
-															<button
-																ng-click="tarefaItem.desvio.splice($index + 1, 0, {});"
-																class="btn btn-link p-2" ng-disabled>
-																<i class="fa fa-fa fa-plus"></i>
-															</button>
-															<button
-																ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index - 1, 1, tarefaItem.desvio[$index])[0]"
-																class="btn btn-link p-2" ng-disabled="$index === 0">
-																<i class="fa fa-fa fa-arrow-up"></i>
-															</button>
-															<button
-																ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index + 1, 1, tarefaItem.desvio[$index])[0]"
-																class="btn btn-link p-2"
-																ng-disabled="$index === tarefaItem.desvio.length - 1">
-																<i class="fa fa-fa fa-arrow-down"></i>
-															</button>
-															<button ng-click="tarefaItem.desvio.splice($index, 1);"
-																class="btn btn-link p-2" ng-disabled>
-																<i class="fa fa-fa fa-trash"></i>
-															</button>
-														</div>
+											<section> <label title="" class="label mb-0">&nbsp;</label>
+											<label class="input float-right"></label>
+											<div role="group" class="btn-group">
+												<div role="group" class="btn-group dropright">
+													<button data-toggle="dropdown" aria-expanded="false"
+														aria-haspopup="true" id="dropBtn"
+														class="btn btn-secondary dropdown-toggle">{{$index+1}}</button>
+													<div aria-labelledby="dropBtn"
+														class="dropdown-menu pt-0 pb-0">
+														<button
+															ng-click="tarefaItem.desvio.splice($index + 1, 0, {});"
+															class="btn btn-link p-2" ng-disabled>
+															<i class="fa fa-fa fa-plus"></i>
+														</button>
+														<button
+															ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index - 1, 1, tarefaItem.desvio[$index])[0]"
+															class="btn btn-link p-2" ng-disabled="$index === 0">
+															<i class="fa fa-fa fa-arrow-up"></i>
+														</button>
+														<button
+															ng-click="tarefaItem.desvio[$index] = tarefaItem.desvio.splice($index + 1, 1, tarefaItem.desvio[$index])[0]"
+															class="btn btn-link p-2"
+															ng-disabled="$index === tarefaItem.desvio.length - 1">
+															<i class="fa fa-fa fa-arrow-down"></i>
+														</button>
+														<button ng-click="tarefaItem.desvio.splice($index, 1);"
+															class="btn btn-link p-2" ng-disabled>
+															<i class="fa fa-fa fa-trash"></i>
+														</button>
 													</div>
-												</div></label> </section>
+												</div>
+											</div>
+											</section>
 										</div>
 										<div class="col">
 											<div class="row">
 												<section class="col col-12 col-md-4 form-group"> <label
-													for="titulo" title="" class="label">Título<i
+													for="titulo" title="" class="label mb-0">Título<i
 													title="Preenchimento obrigatório"
-													class="label-clue fa fa-asterisk"></i><input
+													class="label-clue fa fa-asterisk"></i></label> <input
 													ng-model="desvioItem.titulo" name="titulo"
 													ng-required="true" id="titulo" type="text"
-													class="form-control"></label> </section>
+													class="form-control"></section>
 												<section class="col col-12 col-md-4 form-group"> <label
-													for="tarefa" title="" class="label">Tarefa<select
+													for="tarefa" title="" class="label mb-0">Tarefa</label> <select
 													ng-selected="desvioItem.tarefa"
 													ng-model="desvioItem.tarefa" ng-init=""
 													ng-options="item.id as item.nome disable when item.id === tarefaItem.id for item in tarefas"
-													class="form-control"><option value="">[Nenhum]</option></select></label>
+													class="form-control"><option value="">[Nenhum]</option></select>
 												<i></i> </section>
 												<section class="col col-12 col-md-4 form-group"> <label
-													for="condicao" title="" class="label">Condição<input
-													ng-model="desvioItem.condicao" name="condicao"
-													id="condicao" type="text" class="form-control"></label> </section>
+													for="condicao" title="" class="label mb-0">Condição</label>
+												<input ng-model="desvioItem.condicao" name="condicao"
+													id="condicao" type="text" class="form-control"></section>
 											</div>
 										</div>
 									</div>
 								</fieldset>
 								<section ng-show="tarefaItem.tipo == 'EMAIL'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="assunto" title="" class="label">Assunto<i
+									for="assunto" title="" class="label mb-0">Assunto<i
 									title="Preenchimento obrigatório"
-									class="label-clue fa fa-asterisk"></i><input
+									class="label-clue fa fa-asterisk"></i></label> <input
 									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
-									id="assunto" type="text" class="form-control"></label> </section>
+									id="assunto" type="text" class="form-control"></section>
 								<section
 									ng-show="tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'EXECUTAR'"
 									class="col col-12 form-group"> <label for="texto"

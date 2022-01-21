@@ -220,6 +220,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("modelo.processo.administrativo", null);
 		addPublicProperty("montador.query", "br.gov.jfrj.siga.hibernate.ext.MontadorQuery");
 		addPublicProperty("pdf.tamanho.maximo", "5000000");
+		addPublicProperty("pdf.tamanho.maximo.completo", null);
 		addPublicProperty("relarmaz.qtd.bytes.pagina", "51200");
 		addPublicProperty("reordenacao.ativo", null);
 		addPublicProperty("rodape.data.assinatura.ativa", "31/12/2099");
@@ -231,6 +232,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("descricao.documento.ai.length", "4000");
 
 		addPublicProperty("exibe.nome.acesso", "false");
+		addPublicProperty("atualiza.anotacao.pesquisa", "false");
 
 		addPublicProperty("modelos.cabecalho.brasao", "contextpath/imagens/brasaoColoridoTRF2.png");
 		addPublicProperty("modelos.cabecalho.brasao.width", "auto");
@@ -249,7 +251,13 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("qtd.max.arquivo.anexado.upload", "1");
 		
 		addPublicProperty("consultapublica.exibe.tramitacao.ate.nivelacesso", "-1");
-
+		
+		addPrivateProperty("debug.default.template.pathname", null);
+		
+		//Informações Siafem
+		addPublicProperty("ws.siafem.nome.modelo", null);
+		addPublicProperty("ws.siafem.url.wsdl", null);
+		addPublicProperty("ws.siafem.url.namespace", null);
 	}
 
 	@Override

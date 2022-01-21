@@ -50,9 +50,6 @@
 
 					<c:if test="${not empty loginMensagem}">
 						<div class="login-invalido ">
-							<div class="login-invalido-titulo ${hide_only_GOVSP}">
-								<p class="alert alert-danger ">${loginMensagem}</p>
-							</div>
 
 							<div class="login-invalido-descricao ">	
 								<p class="alert alert-danger">${loginMensagem}</p>
@@ -100,7 +97,7 @@
 											<a href="/siga/public/app/usuario/incluir_usuario"
 												class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> 
 										</c:if>
-										<a href="/siga/public/app/usuario/esqueci_senha" class="btn btn-link btn-block"><strong>Esqueci minha senha</strong></a>
+										<a href="/siga/public/app/usuario/senha/reset" class="btn btn-link btn-block"><strong>Esqueci minha senha</strong></a>
 									</div>
 									
 									<c:choose>

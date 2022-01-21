@@ -80,7 +80,7 @@
 										value="${fn:replace(mov.referencia, ':', '_')}" /> <input
 										type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
 										type="hidden" name="ad_kind_0"
-										value="${mov.exTipoMovimentacao.sigla}" />
+										value="${mov.exTipoMovimentacao.descr}" />
 				
 								</div>
 								<c:if test="${mostrarBotaoAssinarExterno}">
@@ -135,7 +135,7 @@
 									<c:set var="temmov" value="${false}" />
 									<c:forEach var="mov" items="${m.movs}">
 										<c:if
-											test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
+											test="${ (exibirCompleto == true) or (mov != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
 											<c:set var="temmov" value="${true}" />
 										</c:if>
 									</c:forEach>
@@ -168,7 +168,7 @@
 												<c:set var="evenorodd" value="odd" />
 												<c:forEach var="mov" items="${m.movs}">
 													<c:if
-														test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
+														test="${ (exibirCompleto == true) or (mov != CANCELAMENTO_DE_MOVIMENTACAO and not mov.cancelada)}">
 														<tr class="${mov.classe} ${mov.disabled}">
 															<c:if test="${ (exibirCompleto == 'true')}">
 																<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />

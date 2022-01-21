@@ -21,8 +21,6 @@ package br.gov.jfrj.siga.ex;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.gov.jfrj.siga.dp.DpLotacao;
-
 public class ExTratamento extends AbstractExTratamento {
 	
 	ExTratamento(String autoridade, String genero, String formaDeTratamento, String abreviatura, 

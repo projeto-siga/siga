@@ -161,6 +161,12 @@ public interface IExApiV1 {
 		public String descr;
 	}
 
+	public static class PreenchimentoItem implements ISwaggerModel {
+		public String idPreenchimento;
+		public String nome;
+		public String descr;
+	}
+
 	public static class ModeloListaHierarquicaItem implements ISwaggerModel {
 		public String idModelo;
 		public String nome;
@@ -285,7 +291,6 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
-
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -342,7 +347,6 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
-
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -399,7 +403,6 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
-
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -445,6 +448,44 @@ public interface IExApiV1 {
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
 
+	public interface IModelosIdPreenchimentosGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String id;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public List<PreenchimentoItem> list = new ArrayList<>();
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
+	public interface IModelosIdLotacoesIdLotacaoPreenchimentosGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String id;
+			public String idLotacao;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public List<PreenchimentoItem> list = new ArrayList<>();
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
+	public interface IModelosIdPessoasIdPessoaPreenchimentosGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String id;
+			public String idPessoa;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public List<PreenchimentoItem> list = new ArrayList<>();
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
 	public interface IClassificacoesGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String idClassificacaoIni;
@@ -474,7 +515,6 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
-
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -551,7 +591,6 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
-
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -664,7 +703,6 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
-
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -1196,7 +1234,6 @@ public interface IExApiV1 {
 			public String contenttype = "application/pdf";
 			public Object content;
 			public Map<String, List<String>> headerFields;
-
 			public String getFilename() {
 				return filename;
 			}
@@ -1329,6 +1366,35 @@ public interface IExApiV1 {
 
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
+	
+	public interface INumeracaoExpedientePost extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {			
+			public String siglaorgao;
+			public String formadoc;
+			public String anoemissao;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public String sigladoc;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+	
+	public interface INumeracaoGenericaPost extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String tiposequencia;
+			public String anoemissao;
+			public String zerarinicioano;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public String sequenciagenerica;
+			public String digitoverificador;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
 
 	public interface IDocumentosPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest, ISwaggerRequestFile {
@@ -1352,7 +1418,6 @@ public interface IExApiV1 {
 			public String contenttype = "application/pdf";
 			public Object content;
 			public Map<String, List<String>> headerFields;
-
 			public String getFilename() {
 				return filename;
 			}
@@ -1397,3 +1462,4 @@ public interface IExApiV1 {
 	}
 
 }
+

@@ -76,6 +76,7 @@ import br.gov.jfrj.siga.sr.util.SrViewUtil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -621,7 +622,7 @@ public class SolicitacaoController extends SrController {
 				solicitacao.setCadastrante(null);
 			if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
 				solicitacao.setInterlocutor(null);
-			if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
+			if (solicitacao.getItemConfiguracao() != null && (solicitacao.getItemConfiguracao().getSigla() == null || solicitacao.getItemConfiguracao().getSigla().isEmpty()))
 				solicitacao.setItemConfiguracao(null);
 		}
 	}
@@ -679,6 +680,7 @@ public class SolicitacaoController extends SrController {
 				try {
 					so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
 					solicitacao.setRascunho(true);
+					SigaTransacionalInterceptor.upgradeParaTransacional();
 					solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
 					solicitacao.setRascunho(false);
 
@@ -695,14 +697,14 @@ public class SolicitacaoController extends SrController {
 					solicitacao.setLotaTitular(getLotaTitular());
 					solicitacao.completarPreenchimento();
 				}
-
+				
 				if (item != null && !item.equals(""))
 					solicitacao.setItemConfiguracao((SrItemConfiguracao) SrItemConfiguracao.AR
 							.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
 				if (acao != null && !acao.equals(""))
 					solicitacao.setAcao((SrAcao) SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 
-				forcarCargaDoItemEDaAcao(solicitacao);
+		 	//	forcarCargaDoItemEDaAcao(solicitacao);
 
 				if (descricao != null && !descricao.equals(""))
 					solicitacao.setDescricao(descricao);
@@ -757,13 +759,22 @@ public class SolicitacaoController extends SrController {
 
 	@Path("/listarSolicitacoesRelacionadas")
 	public void listarSolicitacoesRelacionadas(SrSolicitacao solicitacao, SrSolicitacaoFiltro filtro) throws Exception {
-		forcarCargaDoItemEDaAcao(solicitacao);
+		//forcarCargaDoItemEDaAcao(solicitacao);
 		if (filtro == null && solicitacao != null) {
 			filtro = new SrSolicitacaoFiltro();
 			filtro.setSolicitante(solicitacao.getSolicitante());
 			filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
 			filtro.setAcao(solicitacao.getAcao());
+		} else if (filtro != null) {
+			if (filtro.getItemConfiguracao() != null && filtro.getItemConfiguracao().getId() != null) {
+				filtro.setItemConfiguracao(SrItemConfiguracao.AR.findById(filtro.getItemConfiguracao().getId()));
+			}
+			
+			if (filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
+				filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));
+			}	
 		}
+		
 		if (solicitacao.getAcao() != null && solicitacao.getAcao().getTituloAcao() == null
 				&& solicitacao.getAcao().getIdAcao() != null) {
 			solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getIdAcao()));

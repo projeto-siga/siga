@@ -12,6 +12,9 @@
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
+
+<c:set var="exibirExplicacao" scope="request" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
+
 <siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
 <style>									
@@ -242,7 +245,8 @@
 								popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 								classe="${acao.classe}" estilo="line-height: 160% !important"
 								atalho="${true}" modal="${acao.modal}"
-								explicacao="${acao.explicacao}" post="${acao.post}"
+								descr="${acao.descr}" 
+								post="${acao.post}"
 								test="${acao.pode}" />
 						</c:forEach>
 					</siga:links>
@@ -251,10 +255,10 @@
 		</div>
 		<c:set var="temmov" value="${false}" />
 		<c:forEach var="mov" items="${m.movs}">
-			<c:if test="${ (mov.idTpMov != 14 and not mov.cancelada)}">
+			<c:if test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
 				<c:set var="temmov" value="${true}" />
 			</c:if>
-			<c:if test="${ (mov.idTpMov == 66 and not mov.cancelada and 
+			<c:if test="${ (mov.exTipoMovimentacao == 'CIENCIA' and not mov.cancelada and 
 				mov.mov.cadastrante == cadastrante and mov.mov.lotaCadastrante == lotaTitular)}">
 				<c:set var="descrCiencia" value="${mov.descricao}" />
 			</c:if>
@@ -321,17 +325,17 @@
 								<c:set var="evenorodd" value="odd" />
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
-										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
+										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
 											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
-											<td class="text-left" >${mov.mov.exTipoMovimentacao.sigla}</td>
+											<td class="text-left" >${mov.mov.exTipoMovimentacao.descr}</td>
 											<td class="text-left" 
-													<c:if test="${mov.idTpMov == 43}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
+													<c:if test="${mov.exTipoMovimentacao == 'ENCERRAMENTO_DE_VOLUME'}">data-toggle="tooltip"  data-placement="top" title="O sistema encerra automaticamente um volume após a inclusão de ${f:resource('volume.max.paginas')} páginas para evitar lentidão no processamento e geração de PDF."
 													</c:if>>
 												${mov.descricao}
-												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
+												<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}"> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
 												<siga:links
 														buttons="${false}"
@@ -344,7 +348,7 @@
 																test="${acao.pode}" explicacao="${acao.explicacao}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
-															<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
+															<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
 														</c:forEach>
@@ -583,7 +587,7 @@
 											</c:choose>
 											<c:choose>
 												<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
-													<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+													<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${sigla}')" title="${exibirExplicacao ? marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular) : ''}"><i class="far fa-trash-alt"></i></a></td>
 												</c:when>
 												<c:otherwise>
 													<td style="padding-left:0; padding-right: 0"></td>
@@ -619,9 +623,24 @@
 										<c:if test="${marca.cpMarcador.idFinalidade.idTpInteressado != 'ATENDENTE'}">
 											- <c:if test="${not empty pessoaAtual}"><siga:selecionado isVraptor="true" sigla="${pessoaAtual.nomeAbreviado}"
 											descricao="${pessoaAtual.descricao} - ${pessoaAtual.sigla}"
-											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if><c:if test="${not empty lotacaoAtual}"><c:if test="${not empty pessoaAtual}">/</c:if><siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
-											descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
-											lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" /></c:if>
+											pessoaParam="${pessoaAtual.siglaCompleta}" /></c:if>
+											<c:choose>
+												<c:when test="${not empty lotacaoAtual}">
+													<c:if test="${not empty pessoaAtual}">/</c:if>
+													<siga:selecionado isVraptor="true" sigla="${marca.dpLotacaoIni.lotacaoAtual.sigla}"
+														descricao="${marca.dpLotacaoIni.lotacaoAtual.descricaoAmpliada}"
+														lotacaoParam="${marca.dpLotacaoIni.lotacaoAtual.siglaCompleta}" />
+												</c:when>
+												<c:otherwise>
+													<c:if test="${empty pessoaAtual}">
+														<siga:selecionado 
+															isVraptor="true" 
+															sigla="${marca.exMovimentacao.lotaSubscritor.sigla} (Sem acesso ao documento - A marca não será mostrada)"
+															descricao="${marca.exMovimentacao.lotaSubscritor.descricaoAmpliada}"
+															lotacaoParam="${marca.exMovimentacao.lotaSubscritor.siglaCompleta}" />
+													</c:if>												
+												</c:otherwise>
+											</c:choose>
 										</c:if>
 										</td>
 										<c:choose>
@@ -634,10 +653,11 @@
 										</c:choose>
 										<c:choose>
 											<c:when test="${marca.exMovimentacao.podeCancelar(titular, lotaTitular)}">
-												<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${marca.exMovimentacao.exMobil.sigla}')" title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt"></i></a></td>
+												<td style="padding-left:.25em; padding-right: 0"><a href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${marca.exMovimentacao.idMov}&sigla=${marca.exMovimentacao.exMobil.sigla}&descrMov=' + encodeURIComponent('Exclusão de marcador: ${marca.cpMarcador.descrMarcador}'))" 
+													title="${exibirExplicacao ? marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular) : ''}"><i class="far fa-trash-alt"></i></a></td>
 											</c:when>
 											<c:otherwise>
-												<td style="padding-left:.25em; padding-right: 0"><a title="${marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular)}"><i class="far fa-trash-alt text-secondary"></i></a></td>
+												<td style="padding-left:.25em; padding-right: 0"><a title="${exibirExplicacao ? marca.exMovimentacao.expliquePodeCancelar(titular, lotaTitular) : ''}"><i class="far fa-trash-alt text-secondary"></i></a></td>
 											</c:otherwise>
 										</c:choose>
 										<td style="padding-left:0; padding-right: 1.25rem"></td>
@@ -1052,6 +1072,13 @@
 							<p>
 								<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>
+							
+							<c:if test="${not empty docVO.tipoDePrincipal and not empty docVO.principal}">
+							<p>
+								<b>${docVO.tipoDePrincipal}:</b> <a href="/sigawf/app/procedimento/${docVO.principalCompacto}">${docVO.principal}</a>
+							</p>
+							</c:if>
+							
 							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
 
 						</tags:collapse>
@@ -1074,6 +1101,14 @@
 								 		- ${m.tamanhoDeArquivo}
 									</c:if>
 								</p>
+								<c:if test="${not empty docVO.dtPrazoDeAssinatura}">
+									<div>
+										<span>Prazo de Assinatura: ${docVO.dtPrazoDeAssinatura}</span>
+										<a class="float-right ${marca.exMovimentacao.podeCancelarOuAlterarPrazoDeAssinatura(titular, lotaTitular, m.mob, docVO.doc.movPrazoDeAssinatura)? '' : 'disabled' }" 
+										href="javascript:postToUrl('/sigaex/app/expediente/mov/cancelar_movimentacao_gravar?id=${docVO.doc.movPrazoDeAssinatura.idMov}&sigla=${docVO.doc.movPrazoDeAssinatura.exMobil.sigla}')" 
+											><i class="far fa-trash-alt"></i></a>
+									</div>
+								</c:if>
 							</tags:collapse>
 						</div>
 					</c:if>
@@ -1106,6 +1141,7 @@
 												<c:catch var="exception">
 													${pessoaOuLota.nomePessoa}
 													<c:if test="${siga_cliente == 'GOVSP'}">
+														 - ${pessoaOuLota.sigla}
 														&nbsp;&nbsp;&nbsp;
 														<a class="btn btn-sm btn-secondary mb-2 " href="javascript:if(confirm('Tem certeza que deseja exluir acompanhamento?')) location.href='/sigaex/app/expediente/mov/cancelarPerfil?sigla=${docVO.sigla}&idPessoa=${pessoaOuLota.id }';" >
 															Excluir Acompanhamento
@@ -1115,6 +1151,7 @@
 												<c:if test="${not empty exception}">
 													${pessoaOuLota.nomeLotacao}
 													<c:if test="${siga_cliente == 'GOVSP'}">
+														 - ${pessoaOuLota.sigla}
 														&nbsp;&nbsp;&nbsp;
 														<a class="btn btn-sm btn-secondary mb-2 " href="javascript:if(confirm('Tem certeza que deseja exluir acompanhamento?')) location.href='/sigaex/app/expediente/mov/cancelarPerfil?sigla=${docVO.sigla}&idLotacao=${pessoaOuLota.id }';" >
 															Excluir Acompanhamento
@@ -1198,7 +1235,7 @@
 									</p>
 								</c:if>								
 								<c:forEach var="mov" items="${m.movs}">
-									<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">										
+									<c:if test="${mov.exTipoMovimentacao == 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and not mov.cancelada}">										
 										<div class="files">
 											<siga:links buttons="${false}" inline="${true}" separator="${false}">
 												<c:forEach var="acao" items="${mov.acoes}">
@@ -1432,19 +1469,20 @@
 	      <div class="modal-body text-center">Deseja receber o documento?</div>
 	      <div class="modal-footer text-center">
 	      	<div class="row" style="margin: 0 auto;">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
-	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
+		        <button id="button_receber_cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>		        	       
+	        	<a href="${linkTo[ExMovimentacaoController].aReceber()}?sigla=${docVO.mob.sigla}" onclick="sigaSpinner.mostrar();" 
+	        		class="btn btn-primary btn-acao" role="button" aria-pressed="true" style="margin-left: .5rem;">Sim</a>		        
 		    </div>    
 	      </div>
 	    </div>
 	  </div>
 	</div>	
-	<button type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
+	<button id="button_receber_ok" type="button" class="btn btn-primary siga-btn-receber-doc" data-placement="left" title="Receber" data-siga-modal-abrir="modalReceberDocumento">
 		<i class="fas fa-envelope-open-text icone-receber-doc"></i>
 	</button>
 	<c:if test="${!docVO.mob.isJuntado() and !origemRedirectTransferirGravar}">
 	<script>
-		$(function() {						
+		$(function() {
 			var modalReceberDocumento = $('#modalReceberDocumento');				
 			var btnReceberDocumento = $('.siga-btn-receber-doc');
 			

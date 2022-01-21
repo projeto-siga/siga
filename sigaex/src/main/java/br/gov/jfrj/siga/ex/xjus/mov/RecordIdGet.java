@@ -5,23 +5,20 @@ import java.util.Date;
 
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.PdfToPlainText;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Facet;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Field;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetRequest;
-import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetResponse;
+import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 	@Override
-	public void run(RecordIdGetRequest req, RecordIdGetResponse resp)
-			throws Exception {
+	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
 		try {
 			long primaryKey;
 			try {
@@ -29,8 +26,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			} catch (NumberFormatException nfe) {
 				throw new RuntimeException("REMOVED");
 			}
-			ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey,
-					ExMovimentacao.class, false);
+			ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey, ExMovimentacao.class, false);
 
 			if (mov == null || mov.isCancelada()) {
 				throw new RuntimeException("REMOVED");
@@ -47,8 +43,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 				dt = mov.getDtIniMov();
 
 			resp.id = req.id;
-			resp.url = Prop.get("/xjus.permalink.url")
-					+ doc.getCodigoCompacto() + "/" + mov.getIdMov();
+			resp.url = Prop.get("/xjus.permalink.url") + doc.getCodigoCompacto() + "/" + mov.getIdMov();
 			resp.acl = "PUBLIC";
 			resp.refresh = "NEVER";
 			resp.code = doc.getCodigo();
@@ -78,7 +73,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 	}
 
-	public void addField(RecordIdGetResponse resp, String name, String value) {
+	public void addField(Response resp, String name, String value) {
 		Field fld = new Field();
 		fld.kind = "TEXT";
 		fld.name = name;
@@ -86,7 +81,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		resp.field.add(fld);
 	}
 
-	public void addFacet(RecordIdGetResponse resp, String name, String value) {
+	public void addFacet(Response resp, String name, String value) {
 		Facet facet = new Facet();
 		facet.kind = "KEYWORD";
 		facet.name = name;
@@ -94,39 +89,30 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		resp.facet.add(facet);
 	}
 
-	public void addFieldAndFacet(RecordIdGetResponse resp, String name,
-			String value) {
+	public void addFieldAndFacet(Response resp, String name, String value) {
 		addField(resp, name, value);
 		addFacet(resp, name, value);
 	}
 
-	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov,
-			RecordIdGetResponse resp) {
+	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov, Response resp) {
 		addFacet(resp, "tipo", "Documento");
-		addFieldAndFacet(resp, "orgao", doc.getOrgaoUsuario()
-				.getAcronimoOrgaoUsu());
+		addFieldAndFacet(resp, "orgao", doc.getOrgaoUsuario().getAcronimoOrgaoUsu());
 		addField(resp, "codigo", doc.getCodigo() + ":" + mov.getIdMov());
 		if (doc.getExTipoDocumento() != null) {
-			addFieldAndFacet(
-					resp,
-					"origem",
-					mov.getExTipoMovimentacao()
-							.getId()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) ? "Anexo"
+			addFieldAndFacet(resp, "origem",
+					mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.ANEXACAO) ? "Anexo"
 							: "Despacho Curto");
 
 		}
 		if (doc.getDnmExNivelAcesso() != null)
-			addField(resp, "acesso", doc.getDnmExNivelAcesso()
-					.getNmNivelAcesso());
+			addField(resp, "acesso", doc.getDnmExNivelAcesso().getNmNivelAcesso());
 		if (mov.getDtMovYYYYMMDD() != null) {
 			addField(resp, "data", mov.getDtMovYYYYMMDD());
 			addFacet(resp, "ano", mov.getDtMovYYYYMMDD().substring(0, 4));
 			addFacet(resp, "mes", mov.getDtMovYYYYMMDD().substring(5, 7));
 		}
 		if (mov.getLotaSubscritor() != null)
-			addFieldAndFacet(resp, "subscritor_lotacao", mov
-					.getLotaSubscritor().getSiglaLotacao());
+			addFieldAndFacet(resp, "subscritor_lotacao", mov.getLotaSubscritor().getSiglaLotacao());
 		if (mov.getSubscritor() != null)
 			addField(resp, "subscritor", mov.getSubscritor().getNomePessoa());
 

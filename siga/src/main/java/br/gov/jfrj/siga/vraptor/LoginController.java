@@ -71,7 +71,7 @@ public class LoginController extends SigaController {
 	public void login(String cont) throws IOException {
 		Map<String, String> manifest = new HashMap<>();
 		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
-			String m = convertStreamToString(is);
+			String m = convertStreamToString(is); 
 			if (m != null) {
 				m = m.replaceAll("\r\n", "\n");
 				for (String s : m.split("\n")) {

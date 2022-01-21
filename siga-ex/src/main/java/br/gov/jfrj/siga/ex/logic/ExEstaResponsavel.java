@@ -6,7 +6,6 @@ import com.crivano.jlogic.JLogic;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
 
 public class ExEstaResponsavel implements Expression {
 
@@ -17,12 +16,12 @@ public class ExEstaResponsavel implements Expression {
 	public ExEstaResponsavel(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		this.mob = mob;
 
-		if (this.mob.isGeral()) {
+		if (this.mob != null && this.mob.isGeral()) {
 			if (this.mob.doc().isProcesso())
 				this.mob = this.mob.doc().getUltimoVolume();
 			else {
 				for (ExMobil m : this.mob.doc().getExMobilSet()) {
-					if (!m.isGeral() && isResponsavel(titular, lotaTitular, m)) {
+					if (!m.isGeral() && m.isAtendente(titular, lotaTitular)) {
 						this.mob = m;
 						break;
 					}
@@ -36,23 +35,7 @@ public class ExEstaResponsavel implements Expression {
 
 	@Override
 	public boolean eval() {
-		return isResponsavel(titular, lotaTitular, mob);
-	}
-
-	public static boolean isResponsavel(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) {
-		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
-		if (exMov == null) {
-			return false;
-		}
-
-		if (exMov.getResp() != null && exMov.getResp().equivale(titular)) {
-			return true;
-		}
-
-		if (exMov.getLotaResp() != null && exMov.getLotaResp().equivale(lotaTitular)) {
-			return true;
-		}
-		return false;
+		return mob.isAtendente(titular, lotaTitular);
 	}
 
 	@Override

@@ -13,14 +13,13 @@
 <input type="hidden" id="podeAssinarPor" value="${podeAssinarPor}"/>
 <input type="hidden" id="cpfUsuarioCadastrante" value="${cadastrante.cpfFormatado}"/>
 
-<c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(24, true)}" var="currentItem" varStatus="stat">
+<c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, true)}" var="currentItem" varStatus="stat">
   <c:set var="cossignatarios" value="${stat.first ? '' : cossignatarios} ${currentItem.subscritor.sigla}" />
 </c:forEach>
 
 <input type="hidden" id="siglaUsuCossignatarios" value="${cossignatarios}"/>
 
-<c:if
-	test="${not empty f:resource('assinador.externo.popup.url')}">
-	<script
-		src="${f:resource('assinador.externo.popup.url')}/popup-api.js"></script>
+<c:if test="${not empty f:resource('assinador.externo.popup.url')}">
+	<input type="hidden" id="iframePopupUrl" value="${f:resource('assinador.externo.popup.url')}/popup.html"/>
+	<script src="${f:resource('assinador.externo.popup.url')}/popup-api.js"></script>
 </c:if>

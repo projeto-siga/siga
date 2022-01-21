@@ -96,7 +96,7 @@
 					<div class="col-sm-2">
 						<div class="form-group">
 							<label for="siglaLotacao">Sigla</label>
-							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" style="text-transform:uppercase" onkeyup="validarSigla(this)" class="form-control"/>
+							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="30" style="text-transform:uppercase" onkeyup="validarSigla(this)" class="form-control"/>
 							<small id="emailHelp" class="form-text text-muted">(Sigla: Letras maiúsculas).</small>
 							
 						</div>

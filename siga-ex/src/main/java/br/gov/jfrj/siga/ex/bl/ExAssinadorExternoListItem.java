@@ -1,10 +1,5 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import br.gov.jfrj.siga.ex.ExDocumento;
-
 public class ExAssinadorExternoListItem {
 	private String id;
 	private String secret;

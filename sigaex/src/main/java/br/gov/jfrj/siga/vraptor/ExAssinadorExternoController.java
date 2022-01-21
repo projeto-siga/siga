@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -48,12 +49,12 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoList;
@@ -62,6 +63,7 @@ import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoSave;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -291,6 +293,7 @@ public class ExAssinadorExternoController extends ExController {
 			Boolean autenticar = false;
 			Boolean juntar = null;
 			Boolean tramitar = null;
+			Boolean exibirNoProtocolo = null;
 			if (extra != null) {
 				if (extra.contains("autenticar"))
 					autenticar = true;
@@ -302,6 +305,10 @@ public class ExAssinadorExternoController extends ExController {
 					tramitar = false;
 				else if (extra.contains("tramitar"))
 					tramitar = true;
+				if(extra.contains("nao_exibirNoProtocolo"))
+					exibirNoProtocolo = false;
+				else if(extra.contains("exibirNoProtocolo"))
+					exibirNoProtocolo = true;
 			}
 
 			byte[] assinatura = Base64.decode(envelope);
@@ -325,19 +332,19 @@ public class ExAssinadorExternoController extends ExController {
 
 			DpLotacao lotaCadastrante = cadastrante != null ? cadastrante.getLotacao() : null;
 			if (mov != null) {
-				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
+				ITipoDeMovimentacao tpMov = autenticar ? ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
+						: ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO;
 
 				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, mov.getLotaTitular(), mov, dt, assinatura, null,
 						tpMov);
 				msg = "OK";
 			} else if (mob != null) {
-				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
+				ITipoDeMovimentacao tpMov = autenticar ? ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
+						: ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO;
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar, null, getTitular());
+						null, tpMov, juntar, tramitar == null ? false : tramitar, exibirNoProtocolo, getTitular());
 				if (msg != null)
 					msg = "OK: " + msg;
 				else
@@ -359,6 +366,8 @@ public class ExAssinadorExternoController extends ExController {
 		DpPessoa cadastrante = getCadastrante();
 		if (cadastrante == null && cpf != null) {
 			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
+			SortedSet<ExMovimentacao> movimentacoesMobilGeral = null;
+			
 			for (DpPessoa p : pessoas) {
 				if (mov != null && mov.getResp() != null) {
 					if (p.equivale(mov.getResp())) {
@@ -367,10 +376,24 @@ public class ExAssinadorExternoController extends ExController {
 					}
 				} else if (p.equivale(mob.doc().getSubscritor())) {
 					cadastrante = p;
+				} else {
+					if (movimentacoesMobilGeral == null) {
+						movimentacoesMobilGeral = mob.doc().getMobilGeral().getExMovimentacaoSet();
+					}
+					
+					if (movimentacoesMobilGeral != null ) {
+						for (ExMovimentacao m : movimentacoesMobilGeral) {
+							if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO
+									&& m.getExMovimentacaoCanceladora() == null &&  p.equivale(m.getSubscritor()) ) {
+								cadastrante = p;
+								break;
+							}
+						}
+					}
 				}
 			}
-			if (cadastrante == null && pessoas.size() >= 1)
-				cadastrante = pessoas.get(0);
+			if (cadastrante == null && pessoas.size() == 1)
+				cadastrante = pessoas.get(0); 
 			if (cadastrante == null && mov == null)
 				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 		}
@@ -413,7 +436,7 @@ public class ExAssinadorExternoController extends ExController {
 			for (ExMovimentacao m : mob.doc().getAssinaturasDigitais()) {
 				Signature signature = new Signature();
 				signature.ref = makeId(m.getReferencia());
-				signature.kind = m.getExTipoMovimentacao().getDescricao();
+				signature.kind = m.getExTipoMovimentacao().getDescr();
 				signature.signer = m.getObs();
 				resp.signature.add(signature);
 			}
@@ -432,7 +455,7 @@ public class ExAssinadorExternoController extends ExController {
 					Movement movement = new Movement();
 					movement.time = m.getDtIniMov();
 					movement.department = m.getLotaCadastrante().getSigla();
-					movement.kind = m.getExTipoMovimentacao().getDescricao();
+					movement.kind = m.getExTipoMovimentacao().getDescr();
 					resp.movement.add(movement);
 				}
 			}
@@ -459,10 +482,10 @@ public class ExAssinadorExternoController extends ExController {
 				throw new Exception("Ref. não informada.");
 			ExMovimentacao mov = ExDao.getInstance().consultar(Long.parseLong(ref.split("_")[1]), ExMovimentacao.class,
 					false);
-			if (!(mov.getExTipoMovimentacao().getId()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
-					|| mov.getExTipoMovimentacao().getId()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO))) {
+			if (!(mov.getExTipoMovimentacao()
+					.equals(ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO)
+					|| mov.getExTipoMovimentacao()
+					.equals(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO))) {
 				throw new Exception("Não é assinatura digital");
 			}
 			SignRefGetResponse resp = new SignRefGetResponse();

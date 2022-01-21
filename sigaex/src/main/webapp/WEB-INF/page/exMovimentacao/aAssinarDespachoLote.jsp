@@ -153,7 +153,7 @@
 			            <td width="7%" align="left">${mov.dtRegMovDDMMYY}</td>
 			            <td width="8%" align="left">${mov.lotaCadastrante.sigla}</td>
 			            <td width="7%" align="left">${mov.cadastrante.sigla}</td>
-			            <td width="18%" align="left">${mov.exTipoMovimentacao.sigla}</td>
+			            <td width="18%" align="left">${mov.exTipoMovimentacao.descr}</td>
 			            <td width="40%"align="left">${mov.obs}</td>
 			        </tr>
 					<input type="hidden" name="pdf${x}" value="${mov.referencia}" />

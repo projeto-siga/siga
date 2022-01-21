@@ -229,4 +229,12 @@ public class WfResponsavel extends HistoricoAuditavelSuporte
 				+ Long.toString(this.getOrgaoUsuario().getId());
 	}
 
+	public String getTooltip() {
+		if (pessoa != null)
+			return pessoa.getNomePessoa();
+		if (lotacao != null)
+			return lotacao.getNomeLotacao();
+		return null;
+	}
+
 }

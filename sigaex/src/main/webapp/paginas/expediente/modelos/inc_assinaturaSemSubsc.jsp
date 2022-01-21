@@ -7,7 +7,7 @@
 <p style="font-family: Arial; font-size: 11pt; font-weight: bold;"
 	align="center">
 <c:forEach var="mov" items="${doc.mobilGeral.exMovimentacaoSet}">
-	<c:if test="${mov.exTipoMovimentacao.idTpMov == 24}">
+	<c:if test="${mov.exTipoMovimentacao == 'INCLUSAO_DE_COSIGNATARIO'}">
 		<!-- INICIO SUBSCRITOR ${mov.subscritor.id} -->
 		<br />
 		<c:choose>

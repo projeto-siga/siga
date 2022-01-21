@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -211,6 +212,20 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 	public void setHisAtivo(Integer hisAtivo) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * Retorna o Cargo atual (última) no historico deste Cargo
+	 * 
+	 * @return DpCargo
+	 * @throws SQLException
+	 */
+	public DpCargo getCargoAtual() {
+
+		if (this.getDataFim() != null)
+			return CpDao.getInstance().consultarPorIdInicialDpCargoAtual(this.getIdCargoIni());
+
+		return this;
 	}
 
 }

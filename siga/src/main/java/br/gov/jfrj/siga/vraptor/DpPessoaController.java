@@ -351,6 +351,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 							"Já existe outro usuário ativo com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 				}
 				
+				DpLotacao lotacaoAtual = dpPessoa.getLotacao().getLotacaoAtual();				
+				if ((lotacaoAtual == null) || (lotacaoAtual != null && lotacaoAtual.getDataFim() != null)) {
+					throw new AplicacaoException(
+							"Não é possível ativar pessoa. Lotação inexistente ou inativada.");
+				}
+				pessoa.setLotacao(lotacaoAtual);
+				
 				DpCargo cargoAtual= new DpCargo();				
 				cargoAtual = CpDao.getInstance().consultarPorIdInicialDpCargoAtual(pessoaAnt.getCargo().getIdCargoIni());
 				if ((cargoAtual == null) || (cargoAtual != null && cargoAtual.getDataFim() != null)) {
@@ -372,7 +379,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				
 				pessoa.setNomePessoa(pessoaAnt.getNomePessoa());
 				pessoa.setCpfPessoa(pessoaAnt.getCpfPessoa());
-				pessoa.setLotacao(pessoaAnt.getLotacao());
 				pessoa.setOrgaoUsuario(pessoaAnt.getOrgaoUsuario());
 				pessoa.setDataNascimento(pessoaAnt.getDataNascimento());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
@@ -438,17 +444,20 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				if (pessoa.getDataNascimento() != null) {
 					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
 				}
-				if (pessoa.getCargo() != null) {
-					result.include("idCargo", pessoa.getCargo().getId());
-				}
+				
 				if (pessoa.getNomeExibicao() != null) {
 					result.include("nomeExibicao", pessoa.getNomeExibicao());
 				}
+				
+				if (pessoa.getCargo() != null) {
+					result.include("idCargo", pessoa.getCargo().getCargoAtual().getId());
+				}
+
 				if (pessoa.getFuncaoConfianca() != null) {
-					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
+					result.include("idFuncao", pessoa.getFuncaoConfianca().getFuncaoConfiancaAtual().getId());
 				}
 				if (pessoa.getLotacao() != null) {
-					result.include("idLotacao", pessoa.getLotacao().getId());
+					result.include("idLotacao", pessoa.getLotacao().getLotacaoAtual().getId());
 				}
 				
 				if(pessoa.getUfIdentidade() != null) {

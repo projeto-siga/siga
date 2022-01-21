@@ -70,7 +70,7 @@ public class ListaGet implements IListaGet {
 			r.documentoLotaSubscritor = doc.getLotaSubscritor() != null ? doc.getLotaSubscritor().getSigla() : null;
 			r.documentoEspecie = doc.getExFormaDocumento().getDescricao();
 			r.documentoModelo = doc.getExModelo().getNmMod();
-			if (Ex.getInstance().getBL().mostraDescricaoConfidencial(doc, ctx.getTitular(), ctx.getLotaTitular())) {
+			if (!Ex.getInstance().getBL().mostraDescricaoConfidencial(doc, ctx.getTitular(), ctx.getLotaTitular())) {
 				r.documentoDescricao = doc.getDescrDocumento();
 				r.mobilUltimaAnotacao = mob.getDnmUltimaAnotacao();
 			} else {

@@ -284,6 +284,12 @@ parameters:
     description: Sigla do órgão
     required: false
     type: string
+  substituicaoId:
+    name: substituicaoId
+    in: formData
+    description: Id da substituição para ser efetivada
+    required: false
+    type: string
     
 
 ################################################################################
@@ -929,38 +935,25 @@ paths:
           schema:
             type: object
             properties:
-              identidadeId:
-                type: string
-              cadastranteId:
-                type: string
-              cadastranteSigla:
-                type: string
-              cadastranteNome:
-                type: string
-              lotaCadastranteId:
-                type: string
-              lotaCadastranteSigla:
-                type: string
-              lotaCadastranteNome:
-                type: string
-              titularId:
-                type: string
-              titularSigla:
-                type: string
-              titularNome:
-                type: string
-              lotaTitularId:
-                type: string
-              lotaTitularSigla:
-                type: string
-              lotaTitularNome:
-                type: string
-              substituicaoId:
-                type: string
-              substituicoesPermitidas:
-                type: array
-                items:
-                  $ref: "#/definitions/SubstituicaoItem"
+              usuario:
+                $ref: "#/definitions/Usuario"  
+
+  /usuario/substituir:
+    post:
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/substituicaoId"
+      description: Enviar sugestões
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string  
 
 ################################################################################
 #                                     Definitions                              #
@@ -1181,7 +1174,43 @@ definitions:
         type: boolean
         description: true se notificação não for dispensável. false se notificação for dispensável
         
-            
+  Usuario:
+    description: Lista modelos disponíveis.
+    type: object
+    properties:
+      identidadeId:
+        type: string
+      cadastranteId:
+        type: string
+      cadastranteSigla:
+        type: string
+      cadastranteNome:
+        type: string
+      lotaCadastranteId:
+        type: string
+      lotaCadastranteSigla:
+        type: string
+      lotaCadastranteNome:
+        type: string
+      titularId:
+        type: string
+      titularSigla:
+        type: string
+      titularNome:
+        type: string
+      lotaTitularId:
+        type: string
+      lotaTitularSigla:
+        type: string
+      lotaTitularNome:
+        type: string
+      substituicaoId:
+        type: string
+      substituicoesPermitidas:
+        type: array
+        items:
+          $ref: "#/definitions/SubstituicaoItem"
+
   SubstituicaoItem:
     description: Lista modelos disponíveis.
     type: object

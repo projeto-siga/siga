@@ -102,6 +102,24 @@ public interface ISigaApiV1 {
 		public Boolean sempreMostrar;
 	}
 
+	public static class Usuario implements ISwaggerModel {
+		public String identidadeId;
+		public String cadastranteId;
+		public String cadastranteSigla;
+		public String cadastranteNome;
+		public String lotaCadastranteId;
+		public String lotaCadastranteSigla;
+		public String lotaCadastranteNome;
+		public String titularId;
+		public String titularSigla;
+		public String titularNome;
+		public String lotaTitularId;
+		public String lotaTitularSigla;
+		public String lotaTitularNome;
+		public String substituicaoId;
+		public List<SubstituicaoItem> substituicoesPermitidas = new ArrayList<>();
+	}
+
 	public static class SubstituicaoItem implements ISwaggerModel {
 		public String substituicaoId;
 		public Date substituicaoDataFim;
@@ -418,25 +436,22 @@ public interface ISigaApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
-			public String identidadeId;
-			public String cadastranteId;
-			public String cadastranteSigla;
-			public String cadastranteNome;
-			public String lotaCadastranteId;
-			public String lotaCadastranteSigla;
-			public String lotaCadastranteNome;
-			public String titularId;
-			public String titularSigla;
-			public String titularNome;
-			public String lotaTitularId;
-			public String lotaTitularSigla;
-			public String lotaTitularNome;
+			public Usuario usuario;
+		}
+
+		public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+	}
+
+	public interface IUsuarioSubstituirPost extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
 			public String substituicaoId;
-			public List<SubstituicaoItem> substituicoesPermitidas = new ArrayList<>();
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public String status;
 		}
 
 		public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
 	}
 
 }
-

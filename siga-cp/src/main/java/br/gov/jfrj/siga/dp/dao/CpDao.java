@@ -69,6 +69,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.enm.CpConfiguracaoNotificarEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -332,6 +333,40 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> consultarPorFiltro(final CpOrgaoUsuarioDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);
+	}
+	
+	public int consultarQuantidadeDeAcoesParaNotificacoesPorEmail() {
+		try {
+			final Query query = em().createNamedQuery("consultarQuantidadeAcoesNotificarPorEmail");
+
+			final int l = ((Long) query.getSingleResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpConfiguracao> consultarConfiguracaoNotificarEmailPorUsuario(Integer offset, Integer itemPagina, Long idPessoa) {
+		try {
+			final Query query = em().createNamedQuery("consultarAcoesParaNotificacoesPorEmail");
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			} 
+			query.setParameter("idPessoa", idPessoa); 
+			query.setParameter("respass", CpConfiguracaoNotificarEmail.RESPASS.getSigla());
+			query.setParameter("consig", CpConfiguracaoNotificarEmail.CONSIG.getSigla());
+			query.setParameter("docmarc", CpConfiguracaoNotificarEmail.DOCMARC.getSigla()); 
+			query.setParameter("doctun", CpConfiguracaoNotificarEmail.DOCTUN.getSigla());
+			query.setParameter("doctusu", CpConfiguracaoNotificarEmail.DOCTUSU.getSigla());
+			final List<CpConfiguracao> l = query.getResultList();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

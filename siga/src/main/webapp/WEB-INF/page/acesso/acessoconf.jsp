@@ -82,7 +82,7 @@
 	
 
 		<c:if test="${not empty itensHTML}">
-			<h3 class="gt-table-head">Permissões</h3>
+			<h3 class="gt-table-head">Permissões GABRIEL</h3>
 			<table class="table table-sm table-striped">
 				<colgroup>
 					<col width="15%" />

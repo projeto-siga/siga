@@ -289,9 +289,7 @@ public class Prop {
 		/* Habilita que Usuários distintos inclusos como Cossignatários ou Responsáveis pela Assinatura,
 		 * possam visualizar o “Documento Composto (completo) no SIGA”
 		 * */
-		provider.addPublicProperty("/siga.usuarios.distintos.visualiza.doc.composto", "false");
-		
-		
+		provider.addPublicProperty("/siga.usuarios.distintos.visualizar.doc.pai.filho", "false");
 
 		// CKEditor
 		provider.addPublicProperty("/ckeditor.url", sigaBaseUrl + "/ckeditor/ckeditor/ckeditor.js");

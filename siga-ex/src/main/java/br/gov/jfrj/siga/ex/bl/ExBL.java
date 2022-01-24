@@ -3876,7 +3876,7 @@ public class ExBL extends CpBL {
 			persistirGravacaoDnmAcessoExDoc(acessoRecalculado, doc, dt);
 		}
 		
-		if(Prop.getBool("/siga.usuarios.distintos.visualiza.doc.composto")
+		if(Prop.getBool("/siga.usuarios.distintos.visualizar.doc.pai.filho")
 							&& doc.isFinalizado() && possuiCossignatarioSubscritor(doc)) {			
 			
 			if(doc.isAssinadoDigitalmente()) {
@@ -3922,39 +3922,51 @@ public class ExBL extends CpBL {
 		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
 		
-		List<String> listaDnmRemocao = obterListaFinalRemocaoDnmAcessoDocsPaiFilho(listaIdSubscritor, listaIdSubscritorAssinado);
+		//Obter Lista DnmAcesso para remocao no ExDoc Pai Filho
+		List<String> listaDnmRemocao = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
 
 		if (!listaDnmRemocao.isEmpty()) {
 			List<ExDocumento> listaTodosDocPais = ExDao.getInstance()
 					.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc());
+			
 			for (ExDocumento docPaiFilho : listaTodosDocPais) {
-				//Se o Doc possuir Cossignatário presente na listaDnmRemocao, não pode remover 
-				//if(possuiCossignatarioSubscritor(docPaiFilho)) {
-					List<String> listaDmnDocPaiFilho = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
-					//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-					listaDmnDocPaiFilho.removeAll(listaDnmRemocao);
-	
-					String acessoRecalculadoPaiFilho = prepararAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilho);
-					persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, docPaiFilho, dt);
-				//}
+				
+				List<String> listaDnmRemocaoFinal = obterListaIdPessoaSubscritorCossignatarioExDoc(docPaiFilho, listaDnmRemocao);
+				
+				List<String> listaDmnDocPaiFilho = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
+				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
+				listaDmnDocPaiFilho.removeAll(concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(listaDnmRemocaoFinal, "P"));
+
+				String acessoRecalculadoPaiFilho = prepararAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilho);
+				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, docPaiFilho, dt);
 			}
 		}
 	}
 	
-	private List<String> obterListaFinalRemocaoDnmAcessoDocsPaiFilho(
-											List<String> listaIdSubscritor, List<String> listaIdSubscritorAssinado) {
-		List<String> listaDnmRemocao = listaIdSubscritorAssinado.stream().filter(e -> listaIdSubscritor.contains(e))
-				.collect(Collectors.toList());
-
-		//Concatenação "P" + IdPessoa
+	private List<String> obterListaIdPessoaSubscritorCossignatarioExDoc(ExDocumento docPaiFilho, List<String> listaDnmRemocao) {
+		List<String> listaIdSubscritorPaiFilho = getListaIdDPpessoaSubscritor(docPaiFilho, 
+																	ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
+		//Lista DnmAcesso que nao podera ser removido do ExDoc Devido o IdPessoa ser Subscritor | Cossignatario
+		List<String> listaDnmAcessoNaoRemover = obterListaComumEntreDuasListas(listaIdSubscritorPaiFilho, listaDnmRemocao);
+		listaDnmRemocao.removeAll(listaDnmAcessoNaoRemover);
+		return listaDnmRemocao;
+	}
+	
+	private static List<String> concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(List<String> listaDnmRemocao, String letra) {
+		//Concatenação "letra" + IdPessoa
 		List<String> listaDnmRemocaoFinal = new ArrayList<>();
 		for (String string : listaDnmRemocao) {
-			string = "P" + string;
+			string = letra + string;
 			listaDnmRemocaoFinal.add(string);
 		}
 		return listaDnmRemocaoFinal;
 	}
-
+	
+	private List<String> obterListaComumEntreDuasListas(
+											List<String> listaIdSubscritor, List<String> listaIdSubscritorAssinado) {
+		return listaIdSubscritorAssinado.stream().filter(e -> listaIdSubscritor.contains(e))
+				.collect(Collectors.toList());
+	}
 	private void incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(ExDocumento doc, Date dt, String acessoRecalculado) {
 		
 		//Remover da lista DnmAcesso diferentes de IdPessoas e coverter para List<String>

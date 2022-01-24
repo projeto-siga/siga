@@ -153,6 +153,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeRemeterParaPublicacaoSolicitadaNoDiario;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirDefAcompanhamento;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirTramitacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeRetirarDeEditalDeEliminacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReverterIndicacaoPermanente;
 import br.gov.jfrj.siga.ex.logic.ExPodeSobrestar;
@@ -1940,6 +1941,19 @@ public class ExMovimentacaoController extends ExController {
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
 			final String obsOrgao, final String protocolo, final Integer tipoTramite) throws Exception {
 		this.setPostback(postback);
+			
+		if ((responsavelSel.getObjeto() != null || lotaResponsavelSel.getObjeto() != null) && !new ExPodeRestringirTramitacao(getTitular(), getLotaTitular(), 
+				responsavelSel.getObjeto(), lotaResponsavelSel.getObjeto(),
+				responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getCargo() : null,
+				responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getFuncaoConfianca() : null,
+				responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getOrgaoUsuario() : lotaResponsavelSel.getObjeto().getOrgaoUsuario()).eval()) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário / unidade não está apto para tramite de documento."));
+			forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, postback, dtMovString,
+					subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp, tiposDespacho,
+					descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo, tipoTramite);
+			
+			return;
+		}
 
 		if(dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

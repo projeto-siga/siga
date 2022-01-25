@@ -79,9 +79,7 @@
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 	
 	<div id="inicio" class="container-fluid content mb-3">
-		<c:if test="${pesquisaLimitadaPorData}">
-			<h5 id="pesqTitle">Pesquisar Documentos</h5>
-		</c:if>
+		<h5 id="pesqTitle">Pesquisar Documentos</h5>
 		<c:set var="formOrigem" value="lista" scope="request"/>
 		<c:if
 			test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1)) and !pesquisaLimitadaPorData}">

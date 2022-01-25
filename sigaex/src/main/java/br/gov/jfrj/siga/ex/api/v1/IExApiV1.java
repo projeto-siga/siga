@@ -46,9 +46,12 @@ public interface IExApiV1 {
 	}
 
 	public static class QuadroItem implements ISwaggerModel {
+		public String finalidadeId;
+		public String tipoId;
+		public String tipoNome;
 		public String grupoId;
 		public String grupoNome;
-		public String finalidadeId;
+		public String marcadorEnum;
 		public String marcadorId;
 		public String marcadorNome;
 		public String marcadorIcone;
@@ -668,6 +671,7 @@ public interface IExApiV1 {
 	public interface IQuadroGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String filtroExpedienteProcesso;
+			public String estilo;
 		}
 
 		public static class Response implements ISwaggerResponse {

@@ -202,7 +202,7 @@
         <subsystem xmlns="urn:jboss:domain:core-management:1.0"/>
         <subsystem xmlns="urn:jboss:domain:datasources:5.0">
             <datasources>
-                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true" tracking="true" statistics-enabled="true">
+                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true" tracking="true" statistics-enabled="true" >
                     <connection-url>@@@string_db_corporativo@@@</connection-url>
 					<driver>ojdbc8.jar</driver>
                     <pool>
@@ -212,12 +212,21 @@
                     <security>
                         <user-name>@@@db_username_corporativo@@@</user-name>
                         <password>@@@db_pwd_corporativo@@@</password>
-						
-						
                     </security>
                     <timeout>
                         <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
+
+                 <validation>
+                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
+                    <validate-on-match>false</validate-on-match>
+                    <background-validation-millis>62000</background-validation-millis>
+                 </validation>
+                 <statement>
+                      <share-prepared-statements>false</share-prepared-statements>
+                </statement>   
+
+
                 </datasource>
                 <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true" tracking="true" statistics-enabled="true">
                     <connection-url>@@@string_db_siga@@@</connection-url>
@@ -233,6 +242,17 @@
                     <timeout>
                         <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
+
+                 <validation>
+                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
+                    <validate-on-match>false</validate-on-match>
+                    <background-validation-millis>62000</background-validation-millis>
+                 </validation>
+                 <statement>
+                      <share-prepared-statements>false</share-prepared-statements>
+                </statement>  
+
+
                 </datasource>
                 <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true" tracking="true" statistics-enabled="true">
                     <connection-url>@@@string_db_sigawf@@@</connection-url>
@@ -248,6 +268,17 @@
                     <timeout>
                         <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
+
+                 <validation>
+                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
+                    <validate-on-match>false</validate-on-match>
+                    <background-validation-millis>62000</background-validation-millis>
+                 </validation>
+                 <statement>
+                      <share-prepared-statements>false</share-prepared-statements>
+                </statement>  
+
+
                 </datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">

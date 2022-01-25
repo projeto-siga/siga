@@ -138,6 +138,8 @@ public class FOP implements ConversorHtml {
 			html = html.replace("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"", "\"xhtml.dtd\"");
 			html = html.replace("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"", "\"xhtml.dtd\"");
 			html = Jsoup.parse(html, "", Parser.xmlParser()).toString();
+			html = html.replace("</br>", "");
+			html = html.replace("<br>", "<br/>");
 			Source src = new StreamSource(new ByteArrayInputStream(html
 					.getBytes("UTF-8")));
 

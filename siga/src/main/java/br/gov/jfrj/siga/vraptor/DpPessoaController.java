@@ -975,19 +975,30 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
 			Set<String> emailsOculto = new HashSet<String>();
 			
+			final String mensagemUsuarioOuIdentidadeInexistente = "Usuário não localizado ou não possui um acesso ativo. "
+					+ "Verifique os dados informados e caso necessite, entre em contato com o Administrador Local";
+			
 			if (!usuarios.isEmpty()) {
-				Set<String> emailsDistintos = new HashSet<String>();
-				//Adiciona email normal de forma distinta
-				for(DpPessoa usuario : usuarios) {
-					emailsDistintos.add(usuario.getEmailPessoaAtual());
-			    }
-				//Troca emails distintos por Email estenografado
-				for (String email : emailsDistintos) {
-					emailsOculto.add(SigaUtil.ocultaParcialmenteEmail(email));
+				
+				List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
+				listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(cpf);
+				
+				if (!listaIdentidadesCpf.isEmpty()) {				
+					Set<String> emailsDistintos = new HashSet<String>();
+					//Adiciona email normal de forma distinta
+					for(DpPessoa usuario : usuarios) {
+						emailsDistintos.add(usuario.getEmailPessoaAtual());
+				    }
+					//Troca emails distintos por Email estenografado
+					for (String email : emailsDistintos) {
+						emailsOculto.add(SigaUtil.ocultaParcialmenteEmail(email));
+					}
+					emailsDistintos = null;
+				} else {
+					throw new RuntimeException(mensagemUsuarioOuIdentidadeInexistente);
 				}
-				emailsDistintos = null;
 			} else {
-				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+				throw new RuntimeException(mensagemUsuarioOuIdentidadeInexistente);
 			}
 			
 			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf);

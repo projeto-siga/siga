@@ -890,6 +890,10 @@ public class CpBL {
 
 		boolean podeTrocar = Boolean.FALSE;
 
+		if (listaIdentidades.isEmpty()) {
+			throw new RuntimeException("Usuário não possui um acesso ativo para que seja redefinida a Senha.");
+		}
+		
 		for (CpIdentidade cpIdentidade : listaIdentidades) {
 			podeTrocar = Boolean.TRUE;
 			break;

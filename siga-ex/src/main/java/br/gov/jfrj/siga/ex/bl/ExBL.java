@@ -3910,6 +3910,7 @@ public class ExBL extends CpBL {
 				}
 			}
 		}
+		//Caso o usuario cadastrante do ExDoc for diferente do usuario subscritor
 		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
 						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
 			listaIdSubscritor.add(doc.getSubscritor().getIdPessoa().toString());
@@ -3921,23 +3922,23 @@ public class ExBL extends CpBL {
 		
 		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
-		
 		//Obter Lista DnmAcesso para remocao no ExDoc Pai Filho
 		List<String> listaDnmRemocao = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
 
 		if (!listaDnmRemocao.isEmpty()) {
+			//Lista hierarquica completa em x
 			List<ExDocumento> listaTodosDocPais = ExDao.getInstance()
-					.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc());
-			
-			for (ExDocumento docPaiFilho : listaTodosDocPais) {
-				
+											.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc());
+			//Lista hierarquica completa em x e z
+			List<ExDocumento> listaHierarquiaCompletaDocPaisFilhos = obterTodosHierarquiaCompletaPaiFilho(listaTodosDocPais);
+			for (ExDocumento docPaiFilho : listaHierarquiaCompletaDocPaisFilhos) {
+				//lista final para ser removido do DnmAcessoPaiFilho
 				List<String> listaDnmRemocaoFinal = obterListaIdPessoaSubscritorCossignatarioExDoc(docPaiFilho, listaDnmRemocao);
-				
-				List<String> listaDmnDocPaiFilho = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
+				List<String> listaDmnDocPaiFilhoFinal = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
 				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-				listaDmnDocPaiFilho.removeAll(concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(listaDnmRemocaoFinal, "P"));
+				listaDmnDocPaiFilhoFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(listaDnmRemocaoFinal, "P"));
 
-				String acessoRecalculadoPaiFilho = prepararAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilho);
+				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilhoFinal);
 				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, docPaiFilho, dt);
 			}
 		}
@@ -3948,8 +3949,9 @@ public class ExBL extends CpBL {
 																	ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 		//Lista DnmAcesso que nao podera ser removido do ExDoc Devido o IdPessoa ser Subscritor | Cossignatario
 		List<String> listaDnmAcessoNaoRemover = obterListaComumEntreDuasListas(listaIdSubscritorPaiFilho, listaDnmRemocao);
-		listaDnmRemocao.removeAll(listaDnmAcessoNaoRemover);
-		return listaDnmRemocao;
+		List<String> listaIdPessoaSubsCossigExDoc = new ArrayList<String>(listaDnmRemocao);
+		listaIdPessoaSubsCossigExDoc.removeAll(listaDnmAcessoNaoRemover);
+		return listaIdPessoaSubsCossigExDoc;
 	}
 	
 	private static List<String> concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(List<String> listaDnmRemocao, String letra) {
@@ -3967,25 +3969,50 @@ public class ExBL extends CpBL {
 		return listaIdSubscritorAssinado.stream().filter(e -> listaIdSubscritor.contains(e))
 				.collect(Collectors.toList());
 	}
+	
 	private void incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(ExDocumento doc, Date dt, String acessoRecalculado) {
 		
 		//Remover da lista DnmAcesso diferentes de IdPessoas e coverter para List<String>
+		//Exemplo: acessoRecalculado = O12,L23,P22; Remover O12,L23, Manter P22
 		List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferentePessoa(
 								converterStringParaList(acessoRecalculado, ","));
-		
+		//Lista hierarquica completa em x
 		List<ExDocumento> listaTodosDocPaisFilhos = ExDao.getInstance()
-								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc()); 
-		for (ExDocumento docPaiFilho : listaTodosDocPaisFilhos) {
+								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc()); 		
+		//Lista hierarquica completa em x e z
+		List<ExDocumento> listaHierarquiaCompletaDocPaisFilhos = obterTodosHierarquiaCompletaPaiFilho(listaTodosDocPaisFilhos);
+		for (ExDocumento docPaiFilho : listaHierarquiaCompletaDocPaisFilhos) {
 			List<String> listaDmnDocPaiFilho = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
 			//Adicionar DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
 			listaDmnDocPaiFilho.addAll(listaAcessoRecalculadoPessoas);
 						
-			String acessoRecalculadoPaiFilho = prepararAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilho);
+			String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilho);
 			persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, docPaiFilho, dt);
 		}	
 	}
 	
-	private String prepararAcessoDnmRecalculadoPaiFilho(List<String> listaDmnDocPaiFilho) {
+	/*
+	 * Metodo synchronized afim de evitar concorrencia de Threads, List<ExDocumento> 
+	 * listaTodosDocPaisFilhos atualizada em tempo de execucao
+	 */
+	private synchronized List<ExDocumento> obterTodosHierarquiaCompletaPaiFilho(List<ExDocumento> listaTodosDocPaisFilhos){
+		for(int i = 0; i < listaTodosDocPaisFilhos.size(); i++) {
+			ExDocumento exDocumento = listaTodosDocPaisFilhos.get(i);
+			//Lista hierarquica completa em x
+			List<ExDocumento> listaTodosDocPaisFilhosHorizontal = ExDao.getInstance()
+								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(exDocumento.getIdDoc());
+			if(listaTodosDocPaisFilhosHorizontal != null) {
+				List<ExDocumento> listaRemoverExDocDuplicados = listaTodosDocPaisFilhos.stream().filter(
+								e -> listaTodosDocPaisFilhosHorizontal.contains(e)).collect(Collectors.toList());
+				listaTodosDocPaisFilhosHorizontal.removeAll(listaRemoverExDocDuplicados);
+				//Cuidado: atualizada em tempo de execucao
+				listaTodosDocPaisFilhos.addAll(listaTodosDocPaisFilhosHorizontal); 
+			}
+		}
+		return listaTodosDocPaisFilhos;
+	}
+	
+	private String prepararStrAcessoDnmRecalculadoPaiFilho(List<String> listaDmnDocPaiFilho) {
 		//Remover DnmAcesso duplicados e Ordernar Lista
 		List<String> listaDmnDocPaiFinal = listaDmnDocPaiFilho.stream().distinct().sorted().collect(Collectors.toList());
 		//Coverter Lista de String para String com virgula

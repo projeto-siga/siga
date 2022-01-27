@@ -4,13 +4,14 @@ import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum CpConfiguracaoNotificarEmail {
 
-	DOCMARC ("Notificações de marcadores destinados a minha unidade", "docmarc"),
-	DOCTUN ("Documento foi tramitado para a minha unidade", "doctun"),
-	DOCTUSU ("Documento foi tramitado para o meu usuário", "doctusu"),
-	CONSIG ("Fui incluído como consignatário de um documento", "consig"),
-	RESPASS ("Fui incluído como responsável pela assinatura", "respass");
+	SIGACEMAIL ("Módulo de notificação por email", "SIGA-CEMAIL-"),
+	DOCMARC ("Notificações de marcadores destinados a minha unidade", SIGACEMAIL.getSigla() + "DOCMARC"),
+	DOCTUN ("Documento foi tramitado para a minha unidade", SIGACEMAIL.getSigla() + "DOCTUN"),
+	DOCTUSU ("Documento foi tramitado para o meu usuário", SIGACEMAIL.getSigla() + "DOCTUSU"),
+	CONSIG ("Fui incluído como consignatário de um documento", SIGACEMAIL.getSigla() + "CONSIG"),
+	RESPASS ("Fui incluído como responsável pela assinatura", SIGACEMAIL.getSigla() + "RESPASSI");
 	
-	private String descricao;
+	private String descricao; 
 	private String sigla;
 	
 	private CpConfiguracaoNotificarEmail(String descricao, String sigla) {

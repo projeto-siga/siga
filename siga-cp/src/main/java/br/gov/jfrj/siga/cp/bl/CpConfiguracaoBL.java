@@ -31,6 +31,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.mvel2.MVEL;
@@ -795,6 +797,20 @@ public class CpConfiguracaoBL {
 			throw new RuntimeException("Não foi possível calcular acesso ao serviço " + servicoPath, e);
 		}
 	}
+	
+	public void adicionarServicoEmConfiguracao (CpServico servico, DpPessoa pessoa) {
+		CpConfiguracao config = new CpConfiguracao(); 
+		config = dao().consultarConfiguracoesPorServicoEPessoa(servico.getIdServico(), pessoa.getIdPessoa());
+		if (config == null) {
+			CpDao.getInstance().iniciarTransacao();
+			config.setCpServico(servico);
+			config.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
+			config.setDpPessoa(pessoa);
+			config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE); 
+			CpDao.getInstance().gravar(config);
+			CpDao.getInstance().commitTransacao(); 
+		}
+	} 
 
 	/**
 	 * Localiza as ConfiguracaoGrupoEmail pertencentes a um determinado grupo

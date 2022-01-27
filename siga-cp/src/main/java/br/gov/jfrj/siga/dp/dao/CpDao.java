@@ -238,6 +238,20 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CpServico consultarPorSigla(final String sigla) {
+		final Query query = em().createNamedQuery("consultarPorSiglaServico");
+		query.setParameter("sigla", sigla);
+
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<CpServico> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpServico consultarCpServicoPorChave(String chave) {
@@ -347,6 +361,21 @@ public class CpDao extends ModeloDao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public CpConfiguracao consultarConfiguracoesPorServicoEPessoa(final Long codigo, Long idPessoa) {
+		final Query query = em().createNamedQuery("consultarConfiguracoesPorServicoEPessoa");
+		query.setParameter("idServico", codigo);
+		query.setParameter("idPessoa", idPessoa);
+		
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+
+		final List<CpConfiguracao> l = query.getResultList();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<CpConfiguracao> consultarConfiguracaoNotificarEmailPorUsuario(Integer offset, Integer itemPagina, Long idPessoa) {
 		try {
 			final Query query = em().createNamedQuery("consultarAcoesParaNotificacoesPorEmail");
@@ -359,10 +388,33 @@ public class CpDao extends ModeloDao {
 			query.setParameter("idPessoa", idPessoa); 
 			query.setParameter("respass", CpConfiguracaoNotificarEmail.RESPASS.getSigla());
 			query.setParameter("consig", CpConfiguracaoNotificarEmail.CONSIG.getSigla());
-			query.setParameter("docmarc", CpConfiguracaoNotificarEmail.DOCMARC.getSigla()); 
+			query.setParameter("docmarc", CpConfiguracaoNotificarEmail.DOCMARC.getSigla());  
 			query.setParameter("doctun", CpConfiguracaoNotificarEmail.DOCTUN.getSigla());
 			query.setParameter("doctusu", CpConfiguracaoNotificarEmail.DOCTUSU.getSigla());
+			
+			//Adicionando nomes de serviços estaticos.
+			CpServico emailAlterado = new CpServico();
+			CpServico substituto = new CpServico();
+			CpServico esqSenha = new CpServico();
+			CpServico altSenha = new CpServico();
+			emailAlterado.setDscServico("Meu email foi alterado");	
+			substituto.setDscServico("Foi cadastrada uma pessoa ou unidade para me substituir");
+			esqSenha.setDscServico("Foi usada a opção 'Esqueci minha senha'");
+			altSenha.setDscServico("Minha senha foi alterada");
+			CpConfiguracao emailAlteradoC = new CpConfiguracao();
+			CpConfiguracao substitutoC = new CpConfiguracao();
+			CpConfiguracao esqSenhaC = new CpConfiguracao();
+			CpConfiguracao altSenhaC = new CpConfiguracao();
+			emailAlteradoC.setCpServico(emailAlterado);
+			substitutoC.setCpServico(substituto);
+			esqSenhaC.setCpServico(esqSenha);
+			altSenhaC.setCpServico(altSenha);
+			
 			final List<CpConfiguracao> l = query.getResultList();
+			l.add(emailAlteradoC);
+			l.add(substitutoC);
+			l.add(esqSenhaC);
+			l.add(altSenhaC);
 			return l;
 		} catch (final NullPointerException e) {
 			return null;

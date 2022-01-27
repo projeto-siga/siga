@@ -262,7 +262,6 @@ public class AcessoController extends GiControllerSupport {
 		Cp.getInstance().getBL().configurarAcesso(perfil, orgao, lotacao,pessoa, servico, situacao,tpConf, getIdentidadeCadastrante());
 		
 		ConfiguracaoAcesso ac = ConfiguracaoAcesso.gerar(perfil, pessoa,lotacao, orgao, servico,null);
-		
 		StringBuilder sb = new StringBuilder();
 		acessoHTML(sb, ac);
 		this.itemHTML = sb.toString();

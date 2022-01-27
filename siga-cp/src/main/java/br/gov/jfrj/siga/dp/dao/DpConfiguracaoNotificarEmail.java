@@ -3,7 +3,12 @@ package br.gov.jfrj.siga.dp.dao;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.dp.DpConvertableEntity;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -15,7 +20,7 @@ public class DpConfiguracaoNotificarEmail extends CpConfiguracao implements Seri
 Selecionavel, Historico, Sincronizavel, DpConvertableEntity {
 
 public DpConfiguracaoNotificarEmail() { }
-	
+
 	@Override
 	public String getIdExterna() {
 		return null;

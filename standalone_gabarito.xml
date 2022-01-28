@@ -208,6 +208,7 @@
                     <pool>
                         <min-pool-size>10</min-pool-size>
                         <max-pool-size>40</max-pool-size>
+                        <flush-strategy>IdleConnections</flush-stategy>  
                     </pool>
                     <security>
                         <user-name>@@@db_username_corporativo@@@</user-name>
@@ -220,6 +221,7 @@
                  <validation>
                     <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
                     <validate-on-match>false</validate-on-match>
+                    <background-validation>true</background-validation>
                     <background-validation-millis>62000</background-validation-millis>
                  </validation>
                  <statement>
@@ -234,6 +236,7 @@
                     <pool>
                         <min-pool-size>10</min-pool-size>
                         <max-pool-size>40</max-pool-size>
+                        <flush-strategy>IdleConnections</flush-stategy> 
                     </pool>
                     <security>
                         <user-name>@@@db_username_siga@@@</user-name>
@@ -246,6 +249,7 @@
                  <validation>
                     <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
                     <validate-on-match>false</validate-on-match>
+                    <background-validation>true</background-validation>
                     <background-validation-millis>62000</background-validation-millis>
                  </validation>
                  <statement>
@@ -258,8 +262,9 @@
                     <connection-url>@@@string_db_sigawf@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>10</min-pool-size>
+                        <min-pool-size>1</min-pool-size>
                         <max-pool-size>40</max-pool-size>
+                        <flush-strategy>IdleConnections</flush-stategy> 
                     </pool>
                     <security>
                         <user-name>@@@db_username_sigawf@@@</user-name>
@@ -272,6 +277,7 @@
                  <validation>
                     <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
                     <validate-on-match>false</validate-on-match>
+                    <background-validation>true</background-validation>
                     <background-validation-millis>62000</background-validation-millis>
                  </validation>
                  <statement>

@@ -141,6 +141,58 @@ public interface ISigaApiV1 {
 		public String lotaTitularNome;
 	}
 
+	public static class PainelQuadroItem implements ISwaggerModel {
+		public String finalidadeId;
+		public String tipoId;
+		public String tipoNome;
+		public String grupoId;
+		public String grupoNome;
+		public String marcadorEnum;
+		public String marcadorId;
+		public String marcadorNome;
+		public String marcadorIcone;
+		public String marcadorCor;
+		public String qtdAtendente;
+		public String qtdLotaAtendente;
+	}
+
+	public static class PainelListaItem implements ISwaggerModel {
+		public String marcaId;
+		public Date dataIni;
+		public Date dataFim;
+		public String marcaTipo;
+		public String moduloId;
+		public String refId;
+		public String movId;
+		public String tipo;
+		public String sigla;
+		public String descricao;
+		public String origem;
+		public String ultimaAnotacao;
+		public List<Marca> marcas = new ArrayList<>();
+		public List<Acao> acoes = new ArrayList<>();
+	}
+
+	public static class Marca implements ISwaggerModel {
+		public String pessoa;
+		public String lotacao;
+		public String nome;
+		public String icone;
+		public String titulo;
+		public String marcaId;
+		public Date inicio;
+		public Date termino;
+		public Boolean daPessoa;
+		public Boolean deOutraPessoa;
+		public Boolean daLotacao;
+	}
+
+	public static class Acao implements ISwaggerModel {
+		public String nome;
+		public String icone;
+		public Boolean ativa;
+	}
+
 	public interface IAutenticarPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 		}
@@ -403,6 +455,34 @@ public interface ISigaApiV1 {
 
 		public static class Response implements ISwaggerResponse {
 			public List<Uf> list = new ArrayList<>();
+		}
+
+		public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+	}
+
+	public interface IPainelQuadroGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String estilo;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public List<PainelQuadroItem> list = new ArrayList<>();
+		}
+
+		public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+	}
+
+	public interface IPainelListaGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String idMarcador;
+			public String idGrupo;
+			public String filtroPessoaLotacao;
+			public String itensPorPagina;
+			public String pagina;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public List<PainelListaItem> list = new ArrayList<>();
 		}
 
 		public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;

@@ -299,6 +299,12 @@ parameters:
     description: Identificador do Marcador
     required: true
     type: string            
+  idMarcasQuery:
+    name: idMarcas
+    in: query
+    description: Identificadores de marcas separados por vírgula
+    required: true
+    type: string            
   idPerfil:
     name: idPerfil
     in: formData
@@ -1074,6 +1080,29 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /painel/lista:
+    get:
+      summary: Listar móbiles por marcas
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcasQuery"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PainelListaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
   /documentos/{sigla}:
     get:
       description: "<h3>Exibir um documento</h3>
@@ -1111,6 +1140,7 @@ paths:
       parameters:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/completo"
+        - $ref: "#/parameters/auditar"
       responses:
         200:
           description: Successful response
@@ -2630,6 +2660,45 @@ definitions:
       marcaLotaResponsavel:
         type: string
 
+  PainelListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      marcaId:
+        type: string
+      dataIni:
+        type: string
+        format: date-time
+      dataFim:
+        type: string
+        format: date-time
+      marcaTipo:
+        type: string
+      moduloId:
+        type: string
+      refId:
+        type: string
+      movId:
+        type: string
+      tipo:
+        type: string
+      sigla:
+        type: string
+      descricao:
+        type: string
+      origem:
+        type: string
+      ultimaAnotacao:
+        type: string
+      marcas:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acoes:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"
+          
   Marca:
     description: Etiquetas relacionadas a um documento
     type: object

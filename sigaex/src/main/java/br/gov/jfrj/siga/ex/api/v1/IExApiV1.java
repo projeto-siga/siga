@@ -78,6 +78,23 @@ public interface IExApiV1 {
 		public String marcaLotaResponsavel;
 	}
 
+	public static class PainelListaItem implements ISwaggerModel {
+		public String marcaId;
+		public Date dataIni;
+		public Date dataFim;
+		public String marcaTipo;
+		public String moduloId;
+		public String refId;
+		public String movId;
+		public String tipo;
+		public String sigla;
+		public String descricao;
+		public String origem;
+		public String ultimaAnotacao;
+		public List<Marca> marcas = new ArrayList<>();
+		public List<Acao> acoes = new ArrayList<>();
+	}
+
 	public static class Marca implements ISwaggerModel {
 		public String pessoa;
 		public String lotacao;
@@ -294,6 +311,7 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
+
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -350,6 +368,7 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
+
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -406,6 +425,7 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
+
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -518,6 +538,7 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
+
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -594,6 +615,7 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
+
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -695,9 +717,22 @@ public interface IExApiV1 {
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
 
+	public interface IPainelListaGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String idMarcas;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public List<PainelListaItem> list = new ArrayList<>();
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
 	public interface IDocumentosSiglaGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String sigla;
+			public Boolean completo;
 			public Boolean auditar;
 		}
 
@@ -707,6 +742,7 @@ public interface IExApiV1 {
 			public Long contentlength;
 			public InputStream inputstream;
 			public Map<String, List<String>> headerFields;
+
 			public String getContenttype() {
 				return contenttype;
 			}
@@ -1238,6 +1274,7 @@ public interface IExApiV1 {
 			public String contenttype = "application/pdf";
 			public Object content;
 			public Map<String, List<String>> headerFields;
+
 			public String getFilename() {
 				return filename;
 			}
@@ -1370,35 +1407,6 @@ public interface IExApiV1 {
 
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
-	
-	public interface INumeracaoExpedientePost extends ISwaggerMethod {
-		public static class Request implements ISwaggerRequest {			
-			public String siglaorgao;
-			public String formadoc;
-			public String anoemissao;
-		}
-
-		public static class Response implements ISwaggerResponse {
-			public String sigladoc;
-		}
-
-		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
-	}
-	
-	public interface INumeracaoGenericaPost extends ISwaggerMethod {
-		public static class Request implements ISwaggerRequest {
-			public String tiposequencia;
-			public String anoemissao;
-			public String zerarinicioano;
-		}
-
-		public static class Response implements ISwaggerResponse {
-			public String sequenciagenerica;
-			public String digitoverificador;
-		}
-
-		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
-	}
 
 	public interface IDocumentosPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest, ISwaggerRequestFile {
@@ -1422,6 +1430,7 @@ public interface IExApiV1 {
 			public String contenttype = "application/pdf";
 			public Object content;
 			public Map<String, List<String>> headerFields;
+
 			public String getFilename() {
 				return filename;
 			}
@@ -1465,5 +1474,33 @@ public interface IExApiV1 {
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
 
-}
+	public interface INumeracaoExpedientePost extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String siglaorgao;
+			public String formadoc;
+			public String anoemissao;
+		}
 
+		public static class Response implements ISwaggerResponse {
+			public String sigladoc;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
+	public interface INumeracaoGenericaPost extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String tiposequencia;
+			public String anoemissao;
+			public String zerarinicioano;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public String sequenciagenerica;
+			public String digitoverificador;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
+}

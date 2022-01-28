@@ -1,21 +1,20 @@
-package br.gov.jfrj.siga.ex.api.v1;
+package br.gov.jfrj.siga.api.v1;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPainelQuadroGet;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PainelQuadroItem;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IQuadroGet;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.QuadroItem;
-import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
-public class QuadroGet implements IQuadroGet {
+public class PainelQuadroGet implements IPainelQuadroGet {
 
 	private static class QuadroItemVO {
 		public CpMarcadorFinalidadeEnum finalidadeId;
@@ -58,21 +57,8 @@ public class QuadroGet implements IQuadroGet {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-		Integer idTpFormaDoc = 0;
-		if (req.filtroExpedienteProcesso != null) {
-			switch (req.filtroExpedienteProcesso) {
-			case "Expediente":
-				idTpFormaDoc = 1;
-				break;
-			case "Processo":
-				idTpFormaDoc = 2;
-				break;
-			}
-		}
-
-		List<Object[]> listEstados = ExDao.getInstance().consultarPaginaInicial(ctx.getTitular(), ctx.getLotaTitular(),
-				idTpFormaDoc);
+	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+		List<Object[]> listEstados = CpDao.getInstance().consultarPainelQuadro(ctx.getTitular(), ctx.getLotaTitular());
 
 		List<QuadroItemVO> items = new ArrayList<>();
 		for (Object[] i : listEstados) {
@@ -85,7 +71,8 @@ public class QuadroGet implements IQuadroGet {
 				@Override
 				public int compare(QuadroItemVO o1, QuadroItemVO o2) {
 					int i = 0;
-					i = br.gov.jfrj.siga.base.util.Utils.comparar(o2.finalidadeId.getGrupo(), o1.finalidadeId.getGrupo());
+					i = br.gov.jfrj.siga.base.util.Utils.comparar(o2.finalidadeId.getGrupo(),
+							o1.finalidadeId.getGrupo());
 					if (i != 0)
 						return i;
 					i = br.gov.jfrj.siga.base.util.Utils.comparar(o1.grupoId, o2.grupoId);
@@ -99,7 +86,7 @@ public class QuadroGet implements IQuadroGet {
 		}
 
 		for (QuadroItemVO i : items) {
-			QuadroItem r = new QuadroItem();
+			PainelQuadroItem r = new PainelQuadroItem();
 			r.marcadorId = i.marcadorId.toString();
 			r.marcadorNome = i.marcadorNome;
 			r.marcadorEnum = i.marcadorEnum != null ? i.marcadorEnum.name() : null;
@@ -129,7 +116,7 @@ public class QuadroGet implements IQuadroGet {
 
 	@Override
 	public String getContext() {
-		return "obter quadro quantitativo";
+		return "obter quadro do painel";
 	}
 
 }

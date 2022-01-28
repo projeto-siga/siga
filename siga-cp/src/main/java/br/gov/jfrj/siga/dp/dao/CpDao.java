@@ -24,8 +24,6 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +40,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -77,6 +76,7 @@ import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -2960,5 +2960,43 @@ public class CpDao extends ModeloDao {
 		query.where(predicateAnd);
 		return em().createQuery(query).getResultList();
 	}
+
 	
+	public List consultarPainelQuadro(DpPessoa pes, DpLotacao lot) {
+		Query sql = em().createNamedQuery(
+				"consultarPainelQuadro");
+		Date dt = consultarDataEHoraDoServidor();
+		Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+		sql.setParameter("amanha", amanha, TemporalType.DATE);
+		sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
+		sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
+		return sql.getResultList();
+	}
+
+	public List<CpMarca> consultarPainelLista(List<Long> idMarcadorIni, DpPessoa pes, DpLotacao lot, Integer itensPorPagina, Integer pagina) {
+		Query sql = em().createNamedQuery(
+				"consultarPainelLista");
+		Date dt = consultarDataEHoraDoServidor();
+		Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+		sql.setParameter("amanha", amanha, TemporalType.DATE);
+		sql.setParameter("idPessoaIni", pes != null ? pes.getIdPessoaIni() : null);
+		sql.setParameter("idLotacaoIni", lot != null ? lot.getIdLotacaoIni() : null);
+		sql.setParameter("idMarcadorIni", idMarcadorIni);
+
+		if (itensPorPagina == null || itensPorPagina == 0)
+			itensPorPagina = 10;		
+		if (itensPorPagina > 100)
+			itensPorPagina = 100;
+		if (itensPorPagina > 0) 
+			sql.setMaxResults(itensPorPagina);
+
+		if (pagina == null)
+			pagina = 0;
+		
+		if (pagina > 0) 
+			sql.setFirstResult(pagina);
+
+		return sql.getResultList();
+	}
+
 }

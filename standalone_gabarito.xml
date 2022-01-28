@@ -207,7 +207,7 @@
 					<driver>ojdbc8.jar</driver>
                     <pool>
                         <min-pool-size>10</min-pool-size>
-                        <max-pool-size>40</max-pool-size>
+                        <max-pool-size>80</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_corporativo@@@</user-name>
@@ -223,7 +223,9 @@
                     <background-validation-millis>62000</background-validation-millis>
                  </validation>
                  <statement>
-                      <share-prepared-statements>false</share-prepared-statements>
+                     <track-statements>true</track-statements>
+                        <prepared-statement-cache-size>10</prepared-statement-cache-size>
+                        <share-prepared-statements>false</share-prepared-statements>
                 </statement>   
 
 
@@ -249,7 +251,9 @@
                     <background-validation-millis>62000</background-validation-millis>
                  </validation>
                  <statement>
-                      <share-prepared-statements>false</share-prepared-statements>
+                        <track-statements>true</track-statements>
+                        <prepared-statement-cache-size>20</prepared-statement-cache-size>
+                        <share-prepared-statements>false</share-prepared-statements>
                 </statement>  
 
 
@@ -258,8 +262,8 @@
                     <connection-url>@@@string_db_sigawf@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>1</min-pool-size>
-                        <max-pool-size>40</max-pool-size>
+                        <min-pool-size>10</min-pool-size>
+                        <max-pool-size>80</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_sigawf@@@</user-name>
@@ -275,7 +279,9 @@
                     <background-validation-millis>62000</background-validation-millis>
                  </validation>
                  <statement>
-                      <share-prepared-statements>false</share-prepared-statements>
+                        <track-statements>true</track-statements>
+                        <prepared-statement-cache-size>10</prepared-statement-cache-size>
+                        <share-prepared-statements>false</share-prepared-statements>
                 </statement>  
 
 

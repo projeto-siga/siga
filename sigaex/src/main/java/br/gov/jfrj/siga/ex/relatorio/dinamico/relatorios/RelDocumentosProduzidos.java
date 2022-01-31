@@ -19,6 +19,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -117,7 +118,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 
 		}
 		if (d.size() == 0) {
-			throw new Exception(
+			throw new AplicacaoException(
 					"Não foram encontrados documentos para os dados informados.");
 		}
 
@@ -130,7 +131,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		if (dados != null && dados.size() > 0) {
 			relatorio.setDados(dados);
 		} else {
-			throw new Exception("Não há dados para gerar o relatório!");
+			throw new AplicacaoException("Não há dados para gerar o relatório!");
 		}
 
 	}

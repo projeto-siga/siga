@@ -821,10 +821,16 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
-		final Query query = em().createNamedQuery("consultarPorSiglaDpLotacao");
+		return consultarPorSigla(o, false);
+	}
+	
+	public DpLotacao consultarPorSigla(final DpLotacao o, final boolean buscarFechadas) {
+		final Query query = buscarFechadas ? 
+					em().createNamedQuery("consultarPorSiglaInclusiveFechadasDpLotacao") :
+					em().createNamedQuery("consultarPorSiglaDpLotacao");
+		
 		query.setParameter("siglaLotacao", o.getSiglaLotacao());
 		if (o.getOrgaoUsuario() != null) {
 			// O argumento siglaOrgaoLotacao preve a situação onde a sigla pesquisada contem um prefixo coincidente à 
@@ -915,15 +921,15 @@ public class CpDao extends ModeloDao {
 			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
-		DpLotacao lotacao = consultarPorSigla(o);
+		DpLotacao lotacao = consultarPorSigla(o,flt.isBuscarFechadas());
 		if(lotacao == null && flt.getSigla() != null) {
 			o.setSigla(flt.getSigla().replaceFirst("-", ""));
-			lotacao = consultarPorSigla(o);
+			lotacao = consultarPorSigla(o,flt.isBuscarFechadas());
 		}
 		if (lotacao == null) {
 			o.setSiglaLotacao(flt.getSigla());
 			o.setOrgaoUsuario(null);
-			return consultarPorSigla(o);
+			return consultarPorSigla(o,flt.isBuscarFechadas());
 		}
 		return lotacao;
 	}
@@ -1111,16 +1117,16 @@ public class CpDao extends ModeloDao {
 		return l;
 	}
 
-	@SuppressWarnings("unchecked")
 	public DpPessoa consultarPorSigla(final DpPessoa o) {
+		return consultarPorSigla(o, false);
+	}
+	public DpPessoa consultarPorSigla(final DpPessoa o, final boolean buscarFechadas) {
 		try {
-			final Query query = em().createNamedQuery("consultarPorSiglaDpPessoa");
+			final Query query = buscarFechadas ?
+					em().createNamedQuery("consultarPorSiglaInclusiveFechadasDpPessoa") :
+					em().createNamedQuery("consultarPorSiglaDpPessoa");
 			query.setParameter("sesb", o.getSesbPessoa());
 			query.setParameter("matricula", o.getMatricula());
-			/*
-			 * if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) query.setParameter("idOrgaoUsu",
-			 * o.getOrgaoUsuario().getIdOrgaoUsu()); else query.setParameter("idOrgaoUsu", 0);
-			 */
 
 			final List<DpPessoa> l = query.getResultList();
 			if (l.size() != 1)
@@ -1130,7 +1136,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-
+	
 	/**
 	 * retorna a pessoa pelo sesb+matricula
 	 * 
@@ -1639,11 +1645,9 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpPessoaDaoFiltro flt) {
 		final DpPessoa o = new DpPessoa();
 		o.setSigla(flt.getSigla());
-		/*
-		 * CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
-		 * cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu()); o.setOrgaoUsuario(cpOrgao);
-		 */
-		return consultarPorSigla(o);
+		
+		return consultarPorSigla(o, flt.isBuscarFechadas());
+
 	}
 
 	@SuppressWarnings("unchecked")

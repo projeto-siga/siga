@@ -349,17 +349,6 @@ public class CpDao extends ModeloDao {
 		return consultarPorFiltro(o, 0, 0);
 	}
 	
-	public int consultarQuantidadeDeAcoesParaNotificacoesPorEmail() {
-		try {
-			final Query query = em().createNamedQuery("consultarQuantidadeAcoesNotificarPorEmail");
-			
-			final int l = ((Long) query.getSingleResult()).intValue();
-			return l;
-		} catch (final NullPointerException e) {
-			return 0;
-		}
-	}
-	
 	@SuppressWarnings("unchecked")
 	public CpConfiguracao consultarConfiguracoesPorServicoEPessoa(final Long codigo, Long idPessoa) {
 		final Query query = em().createNamedQuery("consultarConfiguracoesPorServicoEPessoa");

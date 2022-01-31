@@ -90,16 +90,10 @@
 										  	<c:url var="ativar" value="editar">   
 												<c:param name="id" value="${email.idConfiguracao}"></c:param>
 												<c:param name="idSituacao" value="1"></c:param>
-												<c:param name="idTpConfiguracao" value="200"></c:param>
-												<c:param name="pessoaSel.id" value="${email.dpPessoa.idPessoa}"></c:param>
-												<c:param name="idServico" value="${email.cpServico.idServico}"></c:param>
 											</c:url> 
 											<c:url var="inativar" value="editar">
 												<c:param name="id" value="${email.idConfiguracao}"></c:param>
 												<c:param name="idSituacao" value="2"></c:param>
-												<c:param name="idTpConfiguracao" value="200"></c:param>
-												<c:param name="pessoaSel.id" value="${email.dpPessoa.idPessoa}"></c:param>
-												<c:param name="idServico" value="${email.cpServico.idServico}"></c:param>
 											</c:url> 
 											
 											<td style="width: 70%;">

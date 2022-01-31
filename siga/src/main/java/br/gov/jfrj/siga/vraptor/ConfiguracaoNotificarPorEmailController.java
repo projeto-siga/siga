@@ -14,13 +14,10 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpConfiguracaoNotificarEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.DpConfiguracaoNotificarEmail;
-import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 @Controller
 public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport{
@@ -50,16 +47,14 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 			paramoffset = 0;
 		} 
 		result.include("itens", CpDao.getInstance().consultarConfiguracaoNotificarEmailPorUsuario(paramoffset, 15, getTitular().getIdPessoa()));
-		result.include("tamanho", dao().consultarQuantidadeDeAcoesParaNotificacoesPorEmail()); 
 		result.forwardTo("/WEB-INF/page/usuario/configuracaoNotificarEmail.jsp"); 
 	}
 	
 	@SuppressWarnings("all")
 	@Transacional
 	@Post({"/app/notificarPorEmail/editar"})
-	public void editar(Long id, Integer idSituacao, Integer idTpConfiguracao,
-			DpPessoaSelecao pessoaSel, Long idServico) throws Exception {
-		CpConfiguracao cpConfiguracao = new CpConfiguracao();
+	public void editar(Long id, Integer idSituacao) throws Exception {
+		CpConfiguracao cpConfiguracao = new CpConfiguracao(); 
 		cpConfiguracao = dao().consultar(id, CpConfiguracao.class, false);
 		CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.getById(idSituacao);
 		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.UTILIZAR_SERVICO;

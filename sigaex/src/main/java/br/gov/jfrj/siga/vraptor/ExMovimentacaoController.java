@@ -88,6 +88,7 @@ import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExItemDestinacao;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -2134,25 +2135,26 @@ public class ExMovimentacaoController extends ExController {
 				List<ExMobil> mainList = new ArrayList<>(exMarcas);
 				for (int i = 0; i < listMar.size(); i++) { 
 					for (int j = 0; j < mainList.size(); j++) {  
-						if (listMar.get(i).getDescrMarcador() == mainList.get(j).getMarcadores()) {
-								if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-										pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) {
-									String[] destinanarios = { pessoa.getEmailPessoa() };
-									Correio.enviar(null, destinanarios,  
-										"Usuário marcado ",     
-										"",   
-										""  
-										+ "<br>"  
-										+ "Prezado Usuário, <b>" + pessoa.getNomePessoa() + " (" + pessoa.getSigla() + ")</b>. "
-										+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
-										+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
-										+ "<br>"
-										+ "<br>"
-										+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-										+ "	>clique aqui.</a>"); 
-							}
-							break;
-						}  
+						for (ExMarca marca: mainList.get(j).getExMarcaSet()) {
+							if (listMar.get(i).getDescrMarcador() == marca.getCpMarcador().getDescrMarcador()) {
+									if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+											pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) {
+										String[] destinanarios = { pessoa.getEmailPessoa() };
+										Correio.enviar(null, destinanarios,  
+											"Usuário marcado ",     
+											"",   
+											""  
+											+ "<br>"  
+											+ "Prezado Usuário, <b>" + pessoa.getNomePessoa() + " (" + pessoa.getSigla() + ")</b>. "
+											+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
+											+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
+											+ "<br>"
+											+ "<br>"
+											+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+											+ "	>clique aqui.</a>"); 
+								}
+							}  
+						}
 						
 					}   
 				} 

@@ -180,6 +180,8 @@ public class ExMovimentacaoController extends ExController {
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
 	
+	private static final String SIGA_CEMAIL_COSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;COSSIG:Fui incluído como cossignatário de um documento";
+	
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
 	
 	/**
@@ -1375,7 +1377,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) throws AplicacaoException, Exception {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -1413,7 +1415,21 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
 						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
-
+		
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cosignatarioSel.getObjeto(),cosignatarioSel.getObjeto().getLotacao(), SIGA_CEMAIL_COSSIG)) {
+			String[] destinanarios = { cosignatarioSel.getObjeto().getEmailPessoa() };
+			 Correio.enviar(null,destinanarios, 
+			     "Usuário marcado ",  
+			     "",   
+			     "Prezado usuário, <b>" + cosignatarioSel.getObjeto().getNomePessoa() +"</b>, "
+			     + "você foi marcado como <b>cossignatário</b> do documento <b>"+ sigla +"</b>, "
+			     + "pelo usuário <b>"+ getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b> "
+			     + "<br>"  
+			     + "<br>"
+			     + "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+			     + ">clique aqui.</a>");
+		}
+		 
 		ExDocumentoController.redirecionarParaExibir(result, mov
 				.getExDocumento().getSigla());
 	}

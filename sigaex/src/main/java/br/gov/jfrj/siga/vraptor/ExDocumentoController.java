@@ -65,6 +65,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -136,6 +137,8 @@ public class ExDocumentoController extends ExController {
 	
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
 
+	private static final String SIGA_CEMAIL_RESPASSI = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;RESPASSI:Fui incluído como responsável pela assinatura";
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1599,6 +1602,23 @@ public class ExDocumentoController extends ExController {
 									.get("acaoFinalizar"),
 							exDocumentoDto.getDoc());
 				}
+			}
+			
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(exDocumentoDto.getDoc().getSubscritor(), 
+					exDocumentoDto.getDoc().getSubscritor().getLotacao(), SIGA_CEMAIL_RESPASSI)) {
+				String[] destinanarios = { exDocumentoDto.getDoc().getSubscritor().getEmailPessoa() };
+				   Correio.enviar(null, destinanarios, 
+					"Usuário marcado ",  
+					"",    
+					""   
+					+ "<br>" 
+					+ "Prezado usuário, <b>" + exDocumentoDto.getDoc().getSubscritor().getNomePessoa() + " (" + exDocumentoDto.getDoc().getSubscritor().getSigla() + ")</b>. "
+					+ "Você recebeu o documento <b>" + exDocumentoDto.getDoc().getCodigo() + "</b> com o Alerta, responsável pela assinatura, "
+					+ "enviado pelo usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSigla() + ")</b>."
+					+ "<br>"
+					+ "<br>"  
+					+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+					+ "	>clique aqui.</a>"); 
 			}
 
 		} catch (final Throwable t) {

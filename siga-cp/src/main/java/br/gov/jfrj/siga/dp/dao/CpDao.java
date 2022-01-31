@@ -387,7 +387,7 @@ public class CpDao extends ModeloDao {
 			} 
 			query.setParameter("idPessoa", idPessoa); 
 			query.setParameter("respass", CpConfiguracaoNotificarEmail.RESPASS.getSigla());
-			query.setParameter("consig", CpConfiguracaoNotificarEmail.CONSIG.getSigla());
+			query.setParameter("consig", CpConfiguracaoNotificarEmail.COSSIG.getSigla());
 			query.setParameter("docmarc", CpConfiguracaoNotificarEmail.DOCMARC.getSigla());  
 			query.setParameter("doctun", CpConfiguracaoNotificarEmail.DOCTUN.getSigla());
 			query.setParameter("doctusu", CpConfiguracaoNotificarEmail.DOCTUSU.getSigla());
@@ -399,7 +399,7 @@ public class CpDao extends ModeloDao {
 			CpServico altSenha = new CpServico();
 			emailAlterado.setDscServico("Meu email foi alterado");
 			substituto.setDscServico("Foi cadastrada uma pessoa ou unidade para me substituir");
-			esqSenha.setDscServico("Foi usada a opção 'Esqueci minha senha'");
+			esqSenha.setDscServico("Foi usada a opção \"Esqueci minha senha\"");
 			altSenha.setDscServico("Minha senha foi alterada");
 			CpConfiguracao emailAlteradoC = new CpConfiguracao();
 			CpConfiguracao substitutoC = new CpConfiguracao();

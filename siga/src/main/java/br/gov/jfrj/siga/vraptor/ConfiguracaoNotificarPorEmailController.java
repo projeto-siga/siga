@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.dp.dao.DpConfiguracaoNotificarEmail;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 @Controller
-public class ConfiguracaoNotificarPorEmailController extends SigaSelecionavelControllerSupport<DpConfiguracaoNotificarEmail, DaoFiltroSelecionavel>{
+public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport{
 
 	private Integer totalDeServicos = 9;
 	
@@ -43,22 +43,14 @@ public class ConfiguracaoNotificarPorEmailController extends SigaSelecionavelCon
 		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_CARGO;EXP_DADOS"));
 	}
 	
-	@Override
-	protected DaoFiltroSelecionavel createDaoFiltro() {
-		return null;
-	}
-	
 	@Transacional
 	@Get({ "/app/notificarPorEmail/listar", "/public/app/page/usuario/listar" })
 	public void lista(Integer paramoffset) throws Exception {	
 		if(paramoffset == null) { 
 			paramoffset = 0;
 		} 
-		setItens(CpDao.getInstance().consultarConfiguracaoNotificarEmailPorUsuario(paramoffset, 15, getTitular().getIdPessoa()));
-		result.include("itens", getItens());
+		result.include("itens", CpDao.getInstance().consultarConfiguracaoNotificarEmailPorUsuario(paramoffset, 15, getTitular().getIdPessoa()));
 		result.include("tamanho", dao().consultarQuantidadeDeAcoesParaNotificacoesPorEmail()); 
-		setItemPagina(15); 
-		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		result.forwardTo("/WEB-INF/page/usuario/configuracaoNotificarEmail.jsp"); 
 	}
 	

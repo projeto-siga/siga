@@ -108,7 +108,7 @@
 										      <c:choose>  
 													<c:when test="${email.cpSituacaoConfiguracao.getId() == 1}">
 												        <td>
-												        	<a href="javascript:submitPost('${inativar}')" class="btn btn-primary btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+												        	<a href="javascript:submitPost('${inativar}')" class="btn btn-danger btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
 												        	<button type="button" class="btn btn-secondary btnD" style="display: none;" disabled>Aguarde</button>
 												        </td> 
 										        	</c:when>   
@@ -116,7 +116,7 @@
 									          <c:choose>  
 									          	<c:when test="${email.cpSituacaoConfiguracao.getId() == 2}">  
 												        <td> 
-										        			<a href="javascript:submitPost('${ativar}')" onclick="this.disabled=true" class="btn btn-danger btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
+										        			<a href="javascript:submitPost('${ativar}')" class="btn btn-primary btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
 										        			<button type="button" class="btn btn-secondary btnD" style="display: none;" disabled>Aguarde</button>
 										        		</td>
 										        </c:when> 

@@ -9,7 +9,7 @@ public enum CpConfiguracaoNotificarEmail {
 	DOCMARC ("Notificações de marcadores destinados a minha unidade", SIGACEMAIL.getSigla() + "DOCMARC"),
 	DOCTUN ("Documento foi tramitado para a minha unidade", SIGACEMAIL.getSigla() + "DOCTUN"),
 	DOCTUSU ("Documento foi tramitado para o meu usuário", SIGACEMAIL.getSigla() + "DOCTUSU"),
-	CONSIG ("Fui incluído como consignatário de um documento", SIGACEMAIL.getSigla() + "CONSIG"),
+	COSSIG ("Fui incluído como cossignatário de um documento", SIGACEMAIL.getSigla() + "COSSIG"),
 	RESPASS ("Fui incluído como responsável pela assinatura", SIGACEMAIL.getSigla() + "RESPASSI");
 	
 	private String descricao; 
@@ -20,7 +20,7 @@ public enum CpConfiguracaoNotificarEmail {
 		this.sigla = sigla;
 	}
 	
-	public String getDescricao() {
+	public String getDescricao() {  
 		return descricao;
 	}
 	

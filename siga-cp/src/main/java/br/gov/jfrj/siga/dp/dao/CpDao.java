@@ -352,7 +352,7 @@ public class CpDao extends ModeloDao {
 	public int consultarQuantidadeDeAcoesParaNotificacoesPorEmail() {
 		try {
 			final Query query = em().createNamedQuery("consultarQuantidadeAcoesNotificarPorEmail");
-
+			
 			final int l = ((Long) query.getSingleResult()).intValue();
 			return l;
 		} catch (final NullPointerException e) {
@@ -397,7 +397,7 @@ public class CpDao extends ModeloDao {
 			CpServico substituto = new CpServico();
 			CpServico esqSenha = new CpServico();
 			CpServico altSenha = new CpServico();
-			emailAlterado.setDscServico("Meu email foi alterado");	
+			emailAlterado.setDscServico("Meu email foi alterado");
 			substituto.setDscServico("Foi cadastrada uma pessoa ou unidade para me substituir");
 			esqSenha.setDscServico("Foi usada a opção 'Esqueci minha senha'");
 			altSenha.setDscServico("Minha senha foi alterada");

@@ -282,7 +282,7 @@ public class CpBL {
 		conf.setCpSituacaoConfiguracao(situacao);
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
-
+		
 		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 

@@ -330,7 +330,7 @@ public class AcessoController extends GiControllerSupport {
 							+ ac.getOrgao().getSigla() + "</a>");
 		
 		if (ac.getPerfil() != null)
-			sb.append(" - origem: <a  style=\"color:gray;\" href=\"?idAbrangencia=4&perfilSel.id="
+			sb.append(" - origem: <a  style=\"color:gray;\" href=\"?idAbrangencia=4&perfilSel.id="  
 							+ ac.getPerfil().getId()
 							+ "&perfilSel.descricao="
 							+ ac.getPerfil().getDescricao()

@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.cp.model.enm;
 
+
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum CpConfiguracaoNotificarEmail {

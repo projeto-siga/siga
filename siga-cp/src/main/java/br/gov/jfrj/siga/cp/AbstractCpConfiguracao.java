@@ -90,7 +90,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :consig) and hisDtFim is null "
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :docmarc) and hisDtFim is null "
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :doctun) and hisDtFim is null "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :doctusu) and hisDtFim is null ORDER BY email.cpServico.dscServico"), 
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :doctusu) and hisDtFim is null ORDER BY email.cpServico.dscServico "), 
 		@NamedQuery(name = "consultarQuantidadeAcoesNotificarPorEmail", query = "select count(email) from CpConfiguracao email " ),
 		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
 				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})

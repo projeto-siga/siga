@@ -7,8 +7,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mensagem" prefix="siga-mensagem"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
-
 <style>
 #passwordStrength {
 	height: 10px;
@@ -66,11 +64,11 @@
 
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Receber notificação por email</h5>
+				<h5 id="et">Receber notificação por email</h5>
 			</div>
 
 			<div class="card-body">
-				<form name="frm" id="rec_notificacao_por_email" action="rec_notificacao_por_email" method="GET">
+				<form name="frm" id="listar" action="listar" method="GET">
 					<input type="hidden" name="page" value="1" />
 					<siga-mensagem:sucesso texto="${mensagem}"></siga-mensagem:sucesso>		 
 					<div class="row">
@@ -86,35 +84,40 @@
 								      </thead>
 								      
 								      <tbody>
-								      	<c:forEach items="${itens}" var="email" varStatus="movieLoopCount">
+								      	<c:forEach items="${itens}" var="email" >
 										  <tr> 
-										  	<c:url var="inativar" value="gravar">
-												<c:param name="idServico" value="${email.cpServico.idServico}"></c:param>
+										    
+										  	<c:url var="ativar" value="editar">   
+												<c:param name="id" value="${email.idConfiguracao}"></c:param>
 												<c:param name="idSituacao" value="1"></c:param>
-												<c:param name="servicoPai" value=""></c:param>
-												<c:param name="pessoa.IdPessoa" value="${email.dpPessoa.idPessoa}"></c:param>
-											</c:url>
-											<c:url var="ativar" value="gravar">
+												<c:param name="idTpConfiguracao" value="200"></c:param>
+												<c:param name="pessoaSel.id" value="${email.dpPessoa.idPessoa}"></c:param>
 												<c:param name="idServico" value="${email.cpServico.idServico}"></c:param>
+											</c:url> 
+											<c:url var="inativar" value="editar">
+												<c:param name="id" value="${email.idConfiguracao}"></c:param>
 												<c:param name="idSituacao" value="2"></c:param>
-												<c:param name="servicoPai" value=""></c:param>
-												<c:param name="pessoa.IdPessoa" value="${email.dpPessoa.idPessoa}"></c:param>
-											</c:url>  
-											 
+												<c:param name="idTpConfiguracao" value="200"></c:param>
+												<c:param name="pessoaSel.id" value="${email.dpPessoa.idPessoa}"></c:param>
+												<c:param name="idServico" value="${email.cpServico.idServico}"></c:param>
+											</c:url> 
+											
 											<td style="width: 70%;">
 										      	${email.cpServico.dscServico} 
 										    </td>    
 										      <c:choose>  
 													<c:when test="${email.cpSituacaoConfiguracao.getId() == 1}">
 												        <td>
-												        	<button onclick="javascript:submitPost('${ativar}')" class="btn btn-primary btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</button>
+												        	<a href="javascript:submitPost('${inativar}')" class="btn btn-primary btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+												        	<button type="button" class="btn btn-secondary btnD" style="display: none;" disabled>Aguarde</button>
 												        </td> 
 										        	</c:when>   
 									          </c:choose> 
 									          <c:choose>  
 									          	<c:when test="${email.cpSituacaoConfiguracao.getId() == 2}">  
 												        <td> 
-										        			<button onclick="javascript:submitPost('${inativar}')" class="btn btn-danger btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</button>
+										        			<a href="javascript:submitPost('${ativar}')" onclick="this.disabled=true" class="btn btn-danger btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
+										        			<button type="button" class="btn btn-secondary btnD" style="display: none;" disabled>Aguarde</button>
 										        		</td>
 										        </c:when> 
 									          </c:choose>
@@ -145,31 +148,23 @@
 		if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
 	});
 	
-	function csv(codigo, action) {
-		var frm = document.getElementById(codigo);
-		frm.method = "POST";
-		sbmtAction(codigo, action);
-		
-		$('.mensagem-pesquisa').alert('close');
-		 
-		frm.action = 'rec_notificacao_por_email';
-		frm.method = "GET";
-	}
-	
 	function sbmtAction(codigo, action) {
 		var frm = document.getElementById(codigo);
 		frm.action = action;
 		frm.submit();
-		return;
+		return ;
 	}
 	
 	function submitPost(url) {
+		$(".btnD").show();
+		$('.btnAcao').hide()
 		var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Aguarde'
-		$('.btnAcao').attr("disabled",true);
-		$(".btnAcao").html(spinner);
-		var frm = document.getElementById('rec_notificacao_por_email');
-		frm.method = "POST";
-		sbmtAction('rec_notificacao_por_email',url);
+		$(".btnD").html(spinner);
+		setTimeout(function () {
+			var frm = document.getElementById('listar'); 
+			frm.method = "POST";
+			sbmtAction('listar',url);
+		}, 1000)
 	}
 	
 </script>

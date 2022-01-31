@@ -798,20 +798,6 @@ public class CpConfiguracaoBL {
 		}
 	}
 	
-	public void adicionarServicoEmConfiguracao (CpServico servico, DpPessoa pessoa) {
-		CpConfiguracao config = new CpConfiguracao(); 
-		config = dao().consultarConfiguracoesPorServicoEPessoa(servico.getIdServico(), pessoa.getIdPessoa());
-		if (config == null) {
-			CpDao.getInstance().iniciarTransacao();
-			config.setCpServico(servico);
-			config.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
-			config.setDpPessoa(pessoa);
-			config.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE); 
-			CpDao.getInstance().gravar(config);
-			CpDao.getInstance().commitTransacao(); 
-		}
-	} 
-
 	/**
 	 * Localiza as ConfiguracaoGrupoEmail pertencentes a um determinado grupo
 	 * 

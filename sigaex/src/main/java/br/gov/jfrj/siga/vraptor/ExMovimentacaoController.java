@@ -68,6 +68,7 @@ import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -181,6 +182,10 @@ public class ExMovimentacaoController extends ExController {
 			.getLogger(ExMovimentacaoController.class);
 	
 	private static final String SIGA_CEMAIL_COSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;COSSIG:Fui incluído como cossignatário de um documento";
+	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCMARC:Notificações de marcadores destinados a minha unidade";
+	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUN:Documento foi tramitado para a minha unidade";
+	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUSU:Tramitar para o meu usuário";
+	
 	
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
 	
@@ -1421,8 +1426,8 @@ public class ExMovimentacaoController extends ExController {
 			 Correio.enviar(null,destinanarios, 
 			     "Usuário marcado ",  
 			     "",   
-			     "Prezado usuário, <b>" + cosignatarioSel.getObjeto().getNomePessoa() +"</b>, "
-			     + "você foi marcado como <b>cossignatário</b> do documento <b>"+ sigla +"</b>, "
+			     "Prezado usuário, <b>" + cosignatarioSel.getObjeto().getNomePessoa() +"</b>. "
+			     + "Você foi marcado como, cossignatário, do documento <b>"+ sigla +"</b>, "
 			     + "pelo usuário <b>"+ getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b> "
 			     + "<br>"  
 			     + "<br>"
@@ -2115,6 +2120,78 @@ public class ExMovimentacaoController extends ExController {
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
 						movimentacaoBuilder.getConteudo(),
 						mov.getNmFuncaoSubscritor(), false, false, tpTramite);
+		
+		if (lotaResponsavelSel.getDescricao() != null) { 
+			Set<DpPessoa> s = lotaResponsavelSel.getObjeto().getDpPessoaLotadosSet();
+			for (DpPessoa pessoa: s) {
+				List<CpMarcador> listMar = null;
+				try {
+					listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true, true);
+				} catch (AplicacaoException e) {
+					listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true, true);
+				} 
+				Set<ExMobil> exMarcas = mov.getExDocumento().getExMobilSet();
+				List<ExMobil> mainList = new ArrayList<>(exMarcas);
+				for (int i = 0; i < listMar.size(); i++) { 
+					for (int j = 0; j < mainList.size(); j++) {  
+						if (listMar.get(i).getDescrMarcador() == mainList.get(j).getMarcadores()) {
+								if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+										pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) {
+									String[] destinanarios = { pessoa.getEmailPessoa() };
+									Correio.enviar(null, destinanarios,  
+										"Usuário marcado ",     
+										"",   
+										""  
+										+ "<br>"  
+										+ "Prezado Usuário, <b>" + pessoa.getNomePessoa() + " (" + pessoa.getSigla() + ")</b>. "
+										+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
+										+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
+										+ "<br>"
+										+ "<br>"
+										+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+										+ "	>clique aqui.</a>"); 
+							}
+							break;
+						}  
+						
+					}   
+				} 
+					
+				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+						pessoa.getLotacao(), SIGA_CEMAIL_DOCTUN)) {
+						String[] destinanarios = { pessoa.getEmailPessoa() }; 
+						Correio.enviar(null,destinanarios,   
+								"Documento tramitado para unidade " + lotaResponsavelSel.getDescricao() + "", 
+								"",   
+								""
+								+ "<br>"
+								+ "O documento <b>" + sigla + "</b>, "
+								+ "foi transferido para a unidade <b>" + lotaResponsavelSel.getDescricao() + " (" + lotaResponsavelSel.getSigla() + ")</b> e aguarda recebimento. "
+								+ "<br>" 
+								+ "<br>"
+								+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+								+ "	>clique aqui.</a>");  
+				}  
+			}
+		}
+		
+		if (responsavelSel.getDescricao() != null) {
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(responsavelSel.getObjeto(), 
+					responsavelSel.getObjeto().getLotacao(), SIGA_CEMAIL_DOCTUSU)) {
+					String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() }; 
+					Correio.enviar(null,destinanarios,   
+							"Documento tramitado para " + responsavelSel.getDescricao() + "", 
+							"",    
+							""
+							+ "<br>"		
+							+ "Prezado usuário, " + responsavelSel.getDescricao() + ". Você recebeu o documento <b>" + sigla + "</b> com o alerta, "
+							+ "documento tramitado, enviado pelo usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSigla() + ")</b>. "
+							+ "<br>" 
+							+ "<br>"
+							+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
+							+ "	>clique aqui.</a>"); 
+			}  
+		}
 
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()

@@ -411,7 +411,7 @@ ${meta}
 					 						</strong>
 										<c:if test="${cadastrante.lotacoes[1] != null}">
 											</button>
-											<div class="dropdown-menu" aria-labelledby="dropdownLotaMenuButton">
+											<div class="dropdown-menu" style="z-index: 1040" aria-labelledby="dropdownLotaMenuButton">
 												<c:forEach var="lota" items="${cadastrante.lotacoes}">
 													<c:if test="${!(lota[0]==cadastrante.sigla || lota[1]==cadastrante.lotacao)}">
 														<a class="dropdown-item" href="/siga/app/swapUser?username=${lota[0]}">

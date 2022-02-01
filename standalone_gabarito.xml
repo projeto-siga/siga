@@ -202,52 +202,89 @@
         <subsystem xmlns="urn:jboss:domain:core-management:1.0"/>
         <subsystem xmlns="urn:jboss:domain:datasources:5.0">
             <datasources>
-                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true" statistics-enabled="true">
+                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true" tracking="true" statistics-enabled="true" >
                     <connection-url>@@@string_db_corporativo@@@</connection-url>
 					<driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>1</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
+                        <min-pool-size>10</min-pool-size>
+                        <max-pool-size>80</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_corporativo@@@</user-name>
                         <password>@@@db_pwd_corporativo@@@</password>
-						
-						
                     </security>
                     <timeout>
-                        <idle-timeout-minutes>5</idle-timeout-minutes>
+                        <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
+
+                 <validation>
+                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
+                    <validate-on-match>false</validate-on-match>
+                    <background-validation-millis>62000</background-validation-millis>
+                 </validation>
+                 <statement>
+                     <track-statements>true</track-statements>
+                        <prepared-statement-cache-size>10</prepared-statement-cache-size>
+                        <share-prepared-statements>false</share-prepared-statements>
+                </statement>   
+
+
                 </datasource>
-                <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true" statistics-enabled="true">
+                <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true" tracking="true" statistics-enabled="true">
                     <connection-url>@@@string_db_siga@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>1</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
-                    </pool>
+                        <min-pool-size>10</min-pool-size>
+                        <max-pool-size>80</max-pool-size>
+                     </pool>
                     <security>
                         <user-name>@@@db_username_siga@@@</user-name>
                         <password>@@@db_pwd_siga@@@</password>
                     </security>
                     <timeout>
-                        <idle-timeout-minutes>5</idle-timeout-minutes>
+                        <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
+
+                 <validation>
+                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
+                    <validate-on-match>false</validate-on-match>
+                    <background-validation-millis>62000</background-validation-millis>
+                 </validation>
+                 <statement>
+                        <track-statements>true</track-statements>
+                        <prepared-statement-cache-size>20</prepared-statement-cache-size>
+                        <share-prepared-statements>false</share-prepared-statements>
+                </statement>  
+
+
                 </datasource>
-                <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true" statistics-enabled="true">
+                <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true" tracking="true" statistics-enabled="true">
                     <connection-url>@@@string_db_sigawf@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
-                        <min-pool-size>1</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
+                        <min-pool-size>10</min-pool-size>
+                        <max-pool-size>80</max-pool-size>
                     </pool>
                     <security>
                         <user-name>@@@db_username_sigawf@@@</user-name>
                         <password>@@@db_pwd_sigawf@@@</password>
                     </security>
                     <timeout>
-                        <idle-timeout-minutes>5</idle-timeout-minutes>
+                        <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
+
+                 <validation>
+                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
+                    <validate-on-match>false</validate-on-match>
+                    <background-validation-millis>62000</background-validation-millis>
+                 </validation>
+                 <statement>
+                        <track-statements>true</track-statements>
+                        <prepared-statement-cache-size>10</prepared-statement-cache-size>
+                        <share-prepared-statements>false</share-prepared-statements>
+                </statement>  
+
+
                 </datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
@@ -450,7 +487,7 @@
             </cache-container>
             <cache-container name="hibernate" module="org.infinispan.hibernate-cache">
                 <local-cache name="entity">
-                    <transaction mode="NON_XA"/>
+                    <transaction mode="NONE"/>
                     <object-memory size="10000"/>
                     <expiration max-idle="100000"/>
                 </local-cache>

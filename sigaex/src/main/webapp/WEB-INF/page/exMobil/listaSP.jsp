@@ -295,8 +295,8 @@ td.tramitacoes.fa-fw>a.disabled {
 										</td>
 								</c:if>
 								<td class="tramitacoes fa-fw" style="min-width: 120px;">
-									<c:choose>                                                         
-										<c:when test="${not empty documento[1].getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false)}">
+									<c:choose>                                                     
+										<c:when test="${not empty documento[1].getNomeTipoMovimentacao('TRANSFERENCIA')}">
 											<%-- Tem Tramitação? --%>
 											<c:set var="link"
 												value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${documento[1].idMobil}&docCancelado=false" />
@@ -304,12 +304,12 @@ td.tramitacoes.fa-fw>a.disabled {
 												<c:set var="classDisabled" value="" />
 										</c:when>
 										
-										<c:when test="${(documento[1].exTipoMobil.idTipoMobil == 2) and (documento[2].cpMarcador.idMarcador == 24)}">
+										<c:when test="${(documento[1].exTipoMobil.idTipoMobil == 1) and (documento[2].cpMarcador.idMarcador == 32)}">
 											<%-- É a via principal? Ela foi cancelada (sem efeito)? --%>
 											<c:set var="docTemTramitacoes" value="${false }" />
 											<%-- Verifica se algumas das movimentações do documento tem movimentação. --%>
 											<c:forEach var="mobil" items="${documento[0].exMobilSet}">
-												<c:if test="${not empty mobil.getTiposMovimentacoes(3)}">
+												<c:if test="${not empty mobil.getNomeTipoMovimentacao('TRANSFERENCIA')}">
 													<c:set var="docTemTramitacoes" value="${true}" />
 												</c:if>
 											</c:forEach>

@@ -152,8 +152,12 @@ public interface ISigaApiV1 {
 		public String marcadorNome;
 		public String marcadorIcone;
 		public String marcadorCor;
-		public String qtdAtendente;
-		public String qtdLotaAtendente;
+		public List<PainelQuadroQtdItem> qtds = new ArrayList<>();
+	}
+
+	public static class PainelQuadroQtdItem implements ISwaggerModel {
+		public String filtro;
+		public String qtd;
 	}
 
 	public static class PainelListaItem implements ISwaggerModel {

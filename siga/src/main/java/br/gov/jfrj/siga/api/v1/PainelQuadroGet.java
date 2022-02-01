@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPainelQuadroGet;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.PainelQuadroItem;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.PainelQuadroQtdItem;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
@@ -16,6 +17,16 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class PainelQuadroGet implements IPainelQuadroGet {
 
+	private static class QuadroItemQtdVO {
+		public String filtro;
+		public long qtd;
+
+		public QuadroItemQtdVO(String filtro, long qtd) {
+			this.filtro = filtro;
+			this.qtd = qtd;
+		}
+	}
+
 	private static class QuadroItemVO {
 		public CpMarcadorFinalidadeEnum finalidadeId;
 		public CpTipoMarcadorEnum tipoId;
@@ -25,13 +36,13 @@ public class PainelQuadroGet implements IPainelQuadroGet {
 		public String marcadorNome;
 		public CpMarcadorIconeEnum marcadorIcone;
 		public CpMarcadorCorEnum marcadorCor;
-		public Long qtdAtendente;
+		public List<QuadroItemQtdVO> qtds = new ArrayList<>();
 		public Long qtdLotaAtendente;
 
 		public QuadroItemVO(CpMarcadorFinalidadeEnum finalidadeId, CpTipoMarcadorEnum tipoId,
 				CpMarcadorGrupoEnum grupoId, CpMarcadorEnum marcadorEnum, Long marcadorId, String marcadorNome,
-				CpMarcadorIconeEnum marcadorIcone, CpMarcadorCorEnum marcadorCor, Long qtdAtendente,
-				Long qtdLotaAtendente) {
+				CpMarcadorIconeEnum marcadorIcone, CpMarcadorCorEnum marcadorCor, Long qtdTotal, Long qtdAtendente,
+				Long qtdLotaAtendente, Long qtdNaoAtribuido) {
 			super();
 			this.finalidadeId = finalidadeId;
 			this.tipoId = tipoId;
@@ -41,17 +52,24 @@ public class PainelQuadroGet implements IPainelQuadroGet {
 			this.marcadorNome = marcadorNome;
 			this.marcadorIcone = marcadorIcone;
 			this.marcadorCor = marcadorCor;
-			this.qtdAtendente = qtdAtendente;
-			this.qtdLotaAtendente = qtdLotaAtendente;
+			if (qtdAtendente != null && qtdTotal != 0L)
+				this.qtds.add(new QuadroItemQtdVO("TOTAL", qtdTotal));
+			if (qtdAtendente != null && qtdAtendente != 0L)
+				this.qtds.add(new QuadroItemQtdVO("PESSOA", qtdAtendente));
+			if (qtdAtendente != null && qtdLotaAtendente != 0L)
+				this.qtds.add(new QuadroItemQtdVO("LOTACAO", qtdLotaAtendente));
+			if (qtdAtendente != null && qtdNaoAtribuido != 0L)
+				this.qtds.add(new QuadroItemQtdVO("NAO_ATRIBUIDO", qtdNaoAtribuido));
 		}
 
 		public static QuadroItemVO fromObjectArray(Object[] i) {
-			CpMarcadorFinalidadeEnum finalidade = (CpMarcadorFinalidadeEnum) i[4];
+			CpMarcadorFinalidadeEnum finalidade = (CpMarcadorFinalidadeEnum) i[2];
 			Long marcadorId = (Long) i[0];
 			CpMarcadorEnum marcadorEnum = CpMarcadorEnum.getById(marcadorId != null ? marcadorId.intValue() : null);
 			return new QuadroItemVO(finalidade, finalidade.getIdTpMarcador(),
 					marcadorEnum != null ? marcadorEnum.getGrupo() : null, marcadorEnum, marcadorId, (String) i[1],
-					(CpMarcadorIconeEnum) i[7], (CpMarcadorCorEnum) i[6], (Long) i[2], (Long) i[3]);
+					(CpMarcadorIconeEnum) i[5], (CpMarcadorCorEnum) i[4], (Long) i[6], (Long) i[7], (Long) i[8],
+					(Long) i[9]);
 		}
 	}
 
@@ -107,9 +125,14 @@ public class PainelQuadroGet implements IPainelQuadroGet {
 				r.grupoId = i.marcadorEnum.getGrupo().name();
 				r.grupoNome = i.marcadorEnum.getGrupo().getNome();
 			}
-			r.qtdAtendente = i.qtdAtendente.toString();
-			r.qtdLotaAtendente = i.qtdLotaAtendente.toString();
-
+			for (QuadroItemQtdVO q : i.qtds) {
+				if (q.qtd != 0L) {
+					PainelQuadroQtdItem qtd = new PainelQuadroQtdItem();
+					qtd.filtro = q.filtro;
+					qtd.qtd = Long.toString(q.qtd);
+					r.qtds.add(qtd);
+				}
+			}
 			resp.list.add(r);
 		}
 	}

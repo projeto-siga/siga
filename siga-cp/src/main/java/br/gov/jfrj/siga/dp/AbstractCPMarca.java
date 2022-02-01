@@ -40,8 +40,13 @@ import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-@NamedQueries({ @NamedQuery(name = "consultarPainelQuadro", query = "SELECT mard.idMarcador, "+
+@NamedQueries({ @NamedQuery(name = "consultarPainelQuadro", query = "SELECT mard.hisIdIni, "+
 		"               mard.descrMarcador, "+
+		"               mard.idFinalidade, "+
+		"               mard.ordem, "+
+		"               mard.idCor, "+
+		"               mard.idIcone, "+
+		"               Sum(1) as cont_total, "+
 		"               Sum(CASE "+
 		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
 		"                     ELSE 0 "+
@@ -50,10 +55,10 @@ import br.gov.jfrj.siga.model.Objeto;
 		"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
 		"                     ELSE 0 "+
 		"                   END) as cont_lota, "+
-		"               mard.idFinalidade, "+
-		"               mard.ordem, "+
-		"               mard.idCor, "+
-		"               mard.idIcone "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpPessoaIni.idPessoa is null and marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_nao_atrib "+
 		"        FROM   CpMarca marca "+
 		"               JOIN marca.cpMarcador marcador "+
 		"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+

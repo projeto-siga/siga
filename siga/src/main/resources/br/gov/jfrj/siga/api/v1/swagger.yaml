@@ -1375,9 +1375,18 @@ definitions:
         type: string
       marcadorCor:
         type: string
-      qtdAtendente:
+      qtds:
+        type: array
+        items:
+          $ref: "#/definitions/PainelQuadroQtdItem"
+
+  PainelQuadroQtdItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      filtro:
         type: string
-      qtdLotaAtendente:
+      qtd:
         type: string
 
   PainelListaItem:

@@ -122,8 +122,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return movsTp;
 	}
 	
-	public List<ExMovimentacao> getNomeTipoMovimentacao(String nomeTipoMovimentacao) {
-		return getMovimentacoesPorTipo(ExTipoDeMovimentacao.valueOf(nomeTipoMovimentacao), false);
+	public List<ExMovimentacao> getMovimentacoesPorNome (String descr, boolean somenteAtivas) {
+		return getMovimentacoesPorTipo(ExTipoDeMovimentacao.valueOf(descr), somenteAtivas); 
 	}
 
 	/**

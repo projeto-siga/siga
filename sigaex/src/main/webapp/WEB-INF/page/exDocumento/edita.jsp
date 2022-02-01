@@ -362,6 +362,7 @@
 						<div class="row">
 							<div class="col-sm-3">
 								<div class="form-group form-check form-check-inline">
+									
 									<input type="radio" id="tipoDocumentoCPF"
 										name="exdocumentoDTO.tipoDocumentoRequerente" value="1"
 										onclick="alterarDocumentoRequerente(1);"
@@ -375,106 +376,105 @@
 										${not empty  exDocumentoDTO.cnpjRequerente  ? 'checked' : ''} />
 									<label class="form-check-label" for="tipoDocumentoCNPJ">CNPJ</label>
 
-
 								</div>
 							</div>
+							
 							<div class="col-sm-2">
 								<div class="form-group">
-
 									 
-										<input type="text" id="cpfRequerente"
-											name="exDocumentoDTO.cpfRequerente"
-											style="display: ${not empty exDocumentoDTO.cpfRequerente ? '': 'none'};"
-											value="${exDocumentoDTO.cpfRequerente}" class="form-control"
-											maxlength="11" />
-								 
+									<input type="text" id="cpfRequerente"
+										name="exDocumentoDTO.cpfRequerente"
+										style="display: ${not empty exDocumentoDTO.cpfRequerente ? '': 'none'};"
+										value="${exDocumentoDTO.cpfRequerente}" class="form-control"
+										onblur="validarCpf(this.value)" onkeypress="cpf_mask(this.value)"
+										maxlength="11" />
 							 
 									<input type="text" id="cnpjRequerente"
 										name="exDocumentoDTO.cnpjRequerente"
 										style="display: ${not empty exDocumentoDTO.cnpjRequerente ? '': 'none'};"
 										value="${exDocumentoDTO.cnpjRequerente}" class="form-control"
+										onblur="validarCnpj(this.value)" onkeypress="cnpj_mask(this.value)"
 										maxlength="14" />
-							 
 							</div>
 						</div>
 					</div>
 
-						<div class="row">
-							
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label id="lblNomeRequerente">Nome</label> 
-									<input type="text"	id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"
-											value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"   >
-								</div>
-							</div>
-							
-							<div class="col-sm-2">
-								<div class="form-group">
-									<label id="lblMatriculaRequerente"
-									style="display: ${exdocumentoDTO.tipoDocumentoRequerente eq 1 or not empty exDocumentoDTO.matriculaRequerente ? '': 'none'};" 
-									>Matrícula</label> 
-									<input type="text" id="matriculaRequerente"	name="exDocumentoDTO.matriculaRequerente"
-										value="${exDocumentoDTO.matriculaRequerente}" 
-										style="display: ${exdocumentoDTO.tipoDocumentoRequerente eq 1 or not empty exDocumentoDTO.matriculaRequerente ? '': 'none'};"
-										class="form-control" maxlength="8">
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-sm-2">
-								<div class="form-group">
-									<label id="lblTipoLogradouroRequerente">Tipo Logradouro</label>
-									<input type="text" id="tipoLogradouroRequerente" name="exDocumentoDTO.tipoLogradouroRequerente" value="${exDocumentoDTO.tipoLogradouroRequerente}" class="form-control" >
-								</div>
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label id="lblLogradouro">Logradouro</label>
-									<input type="text" id="logradouroRequerente" name="exDocumentoDTO.logradouroRequerente" value="${exDocumentoDTO.logradouroRequerente}" class="form-control" maxlength="300">
-								</div>
-							</div>
-		     				<div class="col-sm-2">
-								<div class="form-group">
-									<label id="lblNumeroLogradouroRequerente">Número</label>
-									<input type="text" id="numeroLogradouroRequerente" name="exDocumentoDTO.numeroLogradouroRequerente" value="${exDocumentoDTO.numeroLogradouroRequerente}" class="form-control">
-								</div>
-							</div>
-							<div class="col-sm-2">
-								<div class="form-group" >
-									<label id="lblComplementoLogradouroRequerente">Complemento</label>
-									<input type="text"	id="complementoLogradouroRequerente"  name="exDocumentoDTO.complementoLogradouroRequerente"  value="${exDocumentoDTO.complementoLogradouroRequerente}" class="form-control">
-								</div>
+					<div class="row">
+						
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label id="lblNomeRequerente">Nome</label> 
+								<input type="text"	id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"
+										value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"   >
 							</div>
 						</div>
 						
-						<div class="row">
-							<div class="col-sm-4">
-								<div class="form-group">
-									<label id="lblBairroRequerente">Bairro</label>
-									<input type="text" 	id="bairroRequerente" name="exDocumentoDTO.bairroRequerente" value="${exDocumentoDTO.bairroRequerente}" class="form-control" maxlength="125">
-								</div>
-							</div>
-							<div class="col-sm-5">
-								<div class="form-group">
-									<label id="lblCidadeRequerente">Cidade</label>
-									<input type="text" 	id="cidadeRequerente" name="exDocumentoDTO.cidadeRequerente" value="${exDocumentoDTO.cidadeRequerente}" class="form-control" maxlength="125">
-								</div>
-							</div>
-                            <div class="col-sm-1">
-								<div class="form-group">
-									<label id="lblUfRequerente">UF</label>
-									<input type="text" 	id="ufRequerente" name="exDocumentoDTO.ufRequerente" value="${exDocumentoDTO.ufRequerente}" class="form-control" maxlength="2">
-								</div>
-							</div>
-							<div class="col-sm-2">
-								<div class="form-group" >
-									<label id="lblCepRequerente">CEP</label>
-									<input type="text" 	id="cepRequerente" name="exDocumentoDTO.cepRequerente"  value="${exDocumentoDTO.cepRequerente}" class="form-control"   maxlength="8" >
-								</div>
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label id="lblMatriculaRequerente"
+								style="display: ${exdocumentoDTO.tipoDocumentoRequerente eq 1 or not empty exDocumentoDTO.matriculaRequerente ? '': 'none'};" 
+								>Matrícula</label> 
+								<input type="text" id="matriculaRequerente"	name="exDocumentoDTO.matriculaRequerente"
+									value="${exDocumentoDTO.matriculaRequerente}" 
+									style="display: ${exdocumentoDTO.tipoDocumentoRequerente eq 1 or not empty exDocumentoDTO.matriculaRequerente ? '': 'none'};"
+									class="form-control" maxlength="8">
 							</div>
 						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label id="lblTipoLogradouroRequerente">Tipo Logradouro</label>
+								<input type="text" id="tipoLogradouroRequerente" name="exDocumentoDTO.tipoLogradouroRequerente" value="${exDocumentoDTO.tipoLogradouroRequerente}" class="form-control" >
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label id="lblLogradouro">Logradouro</label>
+								<input type="text" id="logradouroRequerente" name="exDocumentoDTO.logradouroRequerente" value="${exDocumentoDTO.logradouroRequerente}" class="form-control" maxlength="300">
+							</div>
+						</div>
+	     				<div class="col-sm-2">
+							<div class="form-group">
+								<label id="lblNumeroLogradouroRequerente">Número</label>
+								<input type="text" id="numeroLogradouroRequerente" name="exDocumentoDTO.numeroLogradouroRequerente" value="${exDocumentoDTO.numeroLogradouroRequerente}" class="form-control">
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="form-group" >
+								<label id="lblComplementoLogradouroRequerente">Complemento</label>
+								<input type="text"	id="complementoLogradouroRequerente"  name="exDocumentoDTO.complementoLogradouroRequerente"  value="${exDocumentoDTO.complementoLogradouroRequerente}" class="form-control">
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label id="lblBairroRequerente">Bairro</label>
+								<input type="text" 	id="bairroRequerente" name="exDocumentoDTO.bairroRequerente" value="${exDocumentoDTO.bairroRequerente}" class="form-control" maxlength="125">
+							</div>
+						</div>
+						<div class="col-sm-5">
+							<div class="form-group">
+								<label id="lblCidadeRequerente">Cidade</label>
+								<input type="text" 	id="cidadeRequerente" name="exDocumentoDTO.cidadeRequerente" value="${exDocumentoDTO.cidadeRequerente}" class="form-control" maxlength="125">
+							</div>
+						</div>
+                           <div class="col-sm-1">
+							<div class="form-group">
+								<label id="lblUfRequerente">UF</label>
+								<input type="text" 	id="ufRequerente" name="exDocumentoDTO.ufRequerente" value="${exDocumentoDTO.ufRequerente}" class="form-control" maxlength="2">
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="form-group" >
+								<label id="lblCepRequerente">CEP</label>
+								<input type="text" 	id="cepRequerente" name="exDocumentoDTO.cepRequerente"  value="${exDocumentoDTO.cepRequerente}" class="form-control"   maxlength="8" >
+							</div>
+						</div>
+					</div>
 						
 				</div>
 		 	
@@ -931,7 +931,7 @@
 		v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
 
 		if(v.length == 14) {
-	    	validarCPF(v);
+			validarCpf(v.toString());
 	    }
 		return v;
 		}
@@ -943,7 +943,7 @@
 	    v=v.replace(/(\d{4})(\d)/,"$1-$2")
 	    
 	    if(v.length == 18) {
-	    	validarCNPJ(v);
+	    	validarCnpj(v);
 	    }
 	    return v;
 	}
@@ -951,16 +951,20 @@
 	function validarTexto(campo) {
 		campo.value = campo.value.replace(/[^a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]/g,'');
 	}
-
+	
 	function validarCpf(elemento) {
-		if (!isCpfValido(elemento.val())) {
-			alert(elemento, 'Favor informar um CPF válido');
-		}		
+		if (!isCpfValido(elemento)) {
+			alert("Favor informar um CPF válido");
+			document.getElementById("cpfRequerente").value = '';
+			return false;
+		}
 	}
-
+	
 	function validarCnpj(elemento) {
-		if (!isCnpjValido(elemento.val())) {
-			alert(elemento, 'Favor informar um CNPJ válido');
+		if (!isCnpjValido(elemento)) {
+			alert("Favor informar um CNPJ válido");
+			document.getElementById("cnpjRequerente").value = '';
+			return false;
 		}				
 	}
 	

@@ -45,7 +45,7 @@
         <property name="siga.base.teste" value="@@@siga.base.teste@@@"/>
         <property name="siga.ex.autenticacao.pwd" value="@@@siga.ex.autenticacao.pwd@@@"/>
         <property name="siga.ambiente" value="@@@siga.ambiente@@@"/>
-        <property name="controlar.numeracao.expediente" value="@@@controlar.numeracao.expediente@@@"/>
+        <property name="sigaex.controlar.numeracao.expediente" value="false"/>
         <property name="sigawf.ativo" value="@@@sigawf.ativo@@@"/>
         <property name="modelo.processo.administrativo" value="@@@modelo.processo.administrativo@@@"/>
         <property name="modelo.interno.importado" value="@@@modelo.interno.importado@@@"/>

@@ -87,7 +87,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 		@NamedQuery(name = "consultarConfiguracoesPorServicoEPessoa", query = "from CpConfiguracao email where (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :idServico) and hisDtFim is null"),
 		@NamedQuery(name = "consultarAcoesParaNotificacoesPorEmail", query = "from CpConfiguracao email where"
 				+ " (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :respass) and hisDtFim is null " 
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :consig) and hisDtFim is null "
+				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :cossig) and hisDtFim is null "
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :docmarc) and hisDtFim is null "
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :doctun) and hisDtFim is null "
 				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :doctusu) and hisDtFim is null ORDER BY email.cpServico.dscServico "), 

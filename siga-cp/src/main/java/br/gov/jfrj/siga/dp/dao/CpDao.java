@@ -376,35 +376,26 @@ public class CpDao extends ModeloDao {
 			} 
 			query.setParameter("idPessoa", idPessoa); 
 			query.setParameter("respass", CpConfiguracaoNotificarEmail.RESPASS.getSigla());
-			query.setParameter("consig", CpConfiguracaoNotificarEmail.COSSIG.getSigla());
+			query.setParameter("cossig", CpConfiguracaoNotificarEmail.COSSIG.getSigla());
 			query.setParameter("docmarc", CpConfiguracaoNotificarEmail.DOCMARC.getSigla());  
 			query.setParameter("doctun", CpConfiguracaoNotificarEmail.DOCTUN.getSigla());
 			query.setParameter("doctusu", CpConfiguracaoNotificarEmail.DOCTUSU.getSigla());
-			
-			//Adicionando nomes de serviços estaticos.
-			CpServico emailAlterado = new CpServico();
-			CpServico substituto = new CpServico();
-			CpServico esqSenha = new CpServico();
-			CpServico altSenha = new CpServico();
-			emailAlterado.setDscServico("Meu email foi alterado");
-			substituto.setDscServico("Foi cadastrada uma pessoa ou unidade para me substituir");
-			esqSenha.setDscServico("Foi usada a opção \"Esqueci minha senha\"");
-			altSenha.setDscServico("Minha senha foi alterada");
-			CpConfiguracao emailAlteradoC = new CpConfiguracao();
-			CpConfiguracao substitutoC = new CpConfiguracao();
-			CpConfiguracao esqSenhaC = new CpConfiguracao();
-			CpConfiguracao altSenhaC = new CpConfiguracao();
-			emailAlteradoC.setCpServico(emailAlterado);
-			substitutoC.setCpServico(substituto);
-			esqSenhaC.setCpServico(esqSenha);
-			altSenhaC.setCpServico(altSenha);
-			
 			final List<CpConfiguracao> l = query.getResultList();
-			l.add(emailAlteradoC);
-			l.add(substitutoC);
-			l.add(esqSenhaC);
-			l.add(altSenhaC);
-			return l;
+			for (CpConfiguracaoNotificarEmail c : CpConfiguracaoNotificarEmail.values()) {
+				CpServico servico = new CpServico();
+				CpConfiguracao cpConfiguracao = new CpConfiguracao();
+				if (c.getSigla() != CpConfiguracaoNotificarEmail.SIGACEMAIL.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.RESPASS.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.COSSIG.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.DOCMARC.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.DOCTUN.getSigla() && 
+						c.getSigla() != CpConfiguracaoNotificarEmail.DOCTUSU.getSigla()) {
+					servico.setDscServico(c.getDescricao());
+					cpConfiguracao.setCpServico(servico);
+					l.add(cpConfiguracao);		
+				}
+			}
+			return l;  
 		} catch (final NullPointerException e) {
 			return null;
 		}

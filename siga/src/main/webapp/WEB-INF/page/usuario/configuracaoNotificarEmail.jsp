@@ -85,8 +85,16 @@
 								      
 								      <tbody>
 								      	<c:forEach items="${itens}" var="email" >
+									      	<c:choose> 
+									      	<!-- Existem 4 configurações estáticas por padrão. Caso tenha recarregue página inicial 
+									      	para adicionar as 5 configuração restantes. -->
+									      	<c:when test="${quantidade == 4}"> 
+									      		<script>
+									      			window.location.href = 'inicial?paramoffset=0';
+									      		</script>
+									      	</c:when>
+								      	</c:choose> 
 										  <tr> 
-										    
 										  	<c:url var="ativar" value="editar">   
 												<c:param name="id" value="${email.idConfiguracao}"></c:param>
 												<c:param name="idSituacao" value="1"></c:param>

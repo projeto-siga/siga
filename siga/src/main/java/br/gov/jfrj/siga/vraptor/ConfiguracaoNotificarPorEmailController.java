@@ -23,6 +23,12 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport{
 
 	private Integer totalDeServicos = 9;
+	private static final String SIGA_CEMAIL = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email";
+	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCMARC:Notificações de marcadores destinados a minha unidade";
+	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUN:Documento foi tramitado para a minha unidade";
+	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUSU:Tramitar para o meu usuário";
+	private static final String SIGA_CEMAIL_COSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;COSSIG:Fui incluído como consignatário de um documento";
+	private static final String SIGA_CEMAIL_RESPASSI = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;RESPASSI:Fui incluído como responsável pela assinatura";
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -47,6 +53,7 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 			paramoffset = 0;
 		} 
 		result.include("itens", CpDao.getInstance().consultarConfiguracaoNotificarEmailPorUsuario(paramoffset, 15, getTitular().getIdPessoa()));
+		result.include("quantidade", CpDao.getInstance().consultarConfiguracaoNotificarEmailPorUsuario(paramoffset, 15, getTitular().getIdPessoa()).size());
 		result.forwardTo("/WEB-INF/page/usuario/configuracaoNotificarEmail.jsp"); 
 	}
 	
@@ -81,19 +88,33 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 		CpDao.getInstance().commitTransacao();
 	}  
 	
+	public void verificaExistenciaServicos () {
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), SIGA_CEMAIL);
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), SIGA_CEMAIL_COSSIG);
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), SIGA_CEMAIL_DOCMARC);
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), SIGA_CEMAIL_DOCTUN);
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), SIGA_CEMAIL_DOCTUSU);
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), SIGA_CEMAIL_RESPASSI);
+	}
+	
 	@Transacional
 	@Get({ "/app/notificarPorEmail/inicial" })
 	public void inicial(Integer paramoffset) throws Exception {
+		verificaExistenciaServicos ();
 		if(paramoffset == null) { 
 			paramoffset = 0;
-		} 
+		}
 		List<CpConfiguracao> configuracoes =  
 				CpDao.getInstance().consultarConfiguracaoNotificarEmailPorUsuario(paramoffset, 15, getTitular().getIdPessoa());
 		if (configuracoes.size() < totalDeServicos) {
 			for (CpConfiguracaoNotificarEmail c : CpConfiguracaoNotificarEmail.values()) {
-				CpServico servico = new CpServico(); 
+				CpServico servico = new CpServico();
 				CpConfiguracao conf = new CpConfiguracao();
-				if (c.getSigla() != CpConfiguracaoNotificarEmail.SIGACEMAIL.getSigla()) {
+				if (c.getSigla() != CpConfiguracaoNotificarEmail.SIGACEMAIL.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.EMAILALT.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.SUB.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.ESQSENHA.getSigla() &&
+						c.getSigla() != CpConfiguracaoNotificarEmail.ALTSENHA.getSigla()) {
 					servico = dao().consultarPorSigla(c.getSigla());
 					conf = dao().consultarConfiguracoesPorServicoEPessoa(servico.getIdServico(), getTitular().getIdPessoa());
 					if (conf == null) 

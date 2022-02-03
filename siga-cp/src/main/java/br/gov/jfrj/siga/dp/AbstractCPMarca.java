@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.model.Objeto;
 		"               mard.ordem, "+
 		"               mard.idCor, "+
 		"               mard.idIcone, "+
+		"               marca.cpTipoMarca, "+
 		"               Sum(1) as cont_total, "+
 		"               Sum(CASE "+
 		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
@@ -62,13 +63,14 @@ import br.gov.jfrj.siga.model.Objeto;
 		"        FROM   CpMarca marca "+
 		"               JOIN marca.cpMarcador marcador "+
 		"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
-		"        WHERE  ( marca.dtIniMarca IS NULL "+
-		"                  OR marca.dtIniMarca < :amanha ) "+
+		"        WHERE  ( marca.dtIniMarca IS NULL OR marca.dtIniMarca < :amanha ) "+
+		"               AND (:idTipoMarca = 0L OR marca.cpTipoMarca.idTpMarca = :idTipoMarca)"+
 		"               AND ( marca.dtFimMarca IS NULL "+
 		"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
 		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
-		"        GROUP  BY mard.idMarcador, "+
+		"        GROUP  BY marca.cpTipoMarca, "+
+		"                  mard.hisIdIni, "+
 		"                  mard.descrMarcador, "+
 		"                  mard.idFinalidade, "+
 		"                  mard.ordem, "+
@@ -82,7 +84,8 @@ import br.gov.jfrj.siga.model.Objeto;
 				"        FROM   CpMarca marca "+
 				"               JOIN marca.cpMarcador marcador "+
 				"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
-				"        WHERE  marcador.hisIdIni in :idMarcadorIni"+ 
+				"        WHERE  (0L in :idMarcadorIni or marcador.hisIdIni in :idMarcadorIni)"+ 
+				"               AND (:idTipoMarca = 0L OR marca.cpTipoMarca.idTpMarca = :idTipoMarca)"+
 				"               AND ( marca.dtIniMarca IS NULL "+
 				"                  OR marca.dtIniMarca < :amanha ) "+
 				"               AND ( marca.dtFimMarca IS NULL "+

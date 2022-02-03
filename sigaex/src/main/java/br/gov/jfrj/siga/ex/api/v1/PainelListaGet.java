@@ -41,8 +41,12 @@ public class PainelListaGet implements IPainelListaGet {
 			r.moduloId = marca.getCpTipoMarca().getIdTpMarca().toString();
 
 			r.tipo = mobil.doc().getExFormaDocumento().getExTipoFormaDoc().getDescricao();
+			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
+			if (mobil.doc().getSubscritor() != null && mobil.doc().getSubscritor().getLotacao() != null)
+				r.origem = mobil.doc().getSubscritor().getLotacao().getSigla();
 			r.descricao = mobil.doc().getDescrCurta();
+			r.ultimaAnotacao = mobil.getDnmUltimaAnotacao();
 
 			resp.list.add(r);
 		}

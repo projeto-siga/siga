@@ -2962,7 +2962,7 @@ public class CpDao extends ModeloDao {
 	}
 
 	
-	public List consultarPainelQuadro(DpPessoa pes, DpLotacao lot) {
+	public List consultarPainelQuadro(DpPessoa pes, DpLotacao lot, CpTipoMarca tipoMarca) {
 		Query sql = em().createNamedQuery(
 				"consultarPainelQuadro");
 		Date dt = consultarDataEHoraDoServidor();
@@ -2970,10 +2970,11 @@ public class CpDao extends ModeloDao {
 		sql.setParameter("amanha", amanha, TemporalType.DATE);
 		sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 		sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
+		sql.setParameter("idTipoMarca", tipoMarca != null ? tipoMarca.getIdTpMarca() : 0L);
 		return sql.getResultList();
 	}
 
-	public List<CpMarca> consultarPainelLista(List<Long> idMarcadorIni, DpPessoa pes, DpLotacao lot, Integer itensPorPagina, Integer pagina) {
+	public List<CpMarca> consultarPainelLista(List<Long> idMarcadorIni, DpPessoa pes, DpLotacao lot, CpTipoMarca tipoMarca, Integer itensPorPagina, Integer pagina) {
 		Query sql = em().createNamedQuery(
 				"consultarPainelLista");
 		Date dt = consultarDataEHoraDoServidor();
@@ -2981,6 +2982,9 @@ public class CpDao extends ModeloDao {
 		sql.setParameter("amanha", amanha, TemporalType.DATE);
 		sql.setParameter("idPessoaIni", pes != null ? pes.getIdPessoaIni() : null);
 		sql.setParameter("idLotacaoIni", lot != null ? lot.getIdLotacaoIni() : null);
+		sql.setParameter("idTipoMarca", tipoMarca != null ? tipoMarca.getIdTpMarca() : 0L);
+		if (idMarcadorIni.size() == 0)
+			idMarcadorIni.add(0L);
 		sql.setParameter("idMarcadorIni", idMarcadorIni);
 
 		if (itensPorPagina == null || itensPorPagina == 0)
@@ -2994,7 +2998,7 @@ public class CpDao extends ModeloDao {
 			pagina = 0;
 		
 		if (pagina > 0) 
-			sql.setFirstResult(pagina);
+			sql.setFirstResult((pagina - 1) * itensPorPagina);
 
 		return sql.getResultList();
 	}

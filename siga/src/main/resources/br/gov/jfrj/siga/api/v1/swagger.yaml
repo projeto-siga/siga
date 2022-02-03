@@ -299,11 +299,23 @@ parameters:
     default: Agrupados
     enum:
       - Agrupados
-  idMarcadorQuery:
-    name: idMarcador
+  tipoMarca:
+    name: tipoMarca
     in: query
-    description: Identificador do Marcador
+    description: Informa se deseja filtrar por um tipo de marca
     required: false
+    type: string
+    default: 
+    enum:
+      - SIGA_EX
+      - SIGA_WF
+      - SIGA_SR
+      - SIGA_GC
+  idMarcadoresQuery:
+    name: idMarcadores
+    in: query
+    description: Identificadores iniciais dos Marcadores separados por vírgula
+    required: true
     type: string            
   idGrupoQuery:
     name: idGrupo
@@ -929,6 +941,7 @@ paths:
         - Bearer: []      
       parameters: 
         - $ref: "#/parameters/estilo"
+        - $ref: "#/parameters/tipoMarca"
       responses:
         200:
           description: Successful response
@@ -951,9 +964,9 @@ paths:
       security:
         - Bearer: []      
       parameters: 
-        - $ref: "#/parameters/idMarcadorQuery"
-        - $ref: "#/parameters/idGrupoQuery"
+        - $ref: "#/parameters/idMarcadoresQuery"
         - $ref: "#/parameters/filtroPessoaLotacao"
+        - $ref: "#/parameters/tipoMarca"
         - $ref: "#/parameters/itensPorPaginaQuery"
         - $ref: "#/parameters/paginaQuery"
       responses:
@@ -1384,6 +1397,8 @@ definitions:
     description: Lista quantidade de documentos na mesa
     type: object
     properties:
+      tipo:
+        type: string
       filtro:
         type: string
       qtd:
@@ -1395,14 +1410,18 @@ definitions:
     properties:
       marcaId:
         type: string
+      marcaTipo:
+        type: string
+      marcaTexto:
+        type: string
+      marcaIcone:
+        type: string
       dataIni:
         type: string
         format: date-time
       dataFim:
         type: string
         format: date-time
-      marcaTipo:
-        type: string
       moduloId:
         type: string
       refId:
@@ -1410,6 +1429,8 @@ definitions:
       movId:
         type: string
       tipo:
+        type: string
+      codigo:
         type: string
       sigla:
         type: string

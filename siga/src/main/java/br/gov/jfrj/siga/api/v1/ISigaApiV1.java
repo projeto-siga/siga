@@ -156,19 +156,23 @@ public interface ISigaApiV1 {
 	}
 
 	public static class PainelQuadroQtdItem implements ISwaggerModel {
+		public String tipo;
 		public String filtro;
 		public String qtd;
 	}
 
 	public static class PainelListaItem implements ISwaggerModel {
 		public String marcaId;
+		public String marcaTipo;
+		public String marcaTexto;
+		public String marcaIcone;
 		public Date dataIni;
 		public Date dataFim;
-		public String marcaTipo;
 		public String moduloId;
 		public String refId;
 		public String movId;
 		public String tipo;
+		public String codigo;
 		public String sigla;
 		public String descricao;
 		public String origem;
@@ -467,6 +471,7 @@ public interface ISigaApiV1 {
 	public interface IPainelQuadroGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String estilo;
+			public String tipoMarca;
 		}
 
 		public static class Response implements ISwaggerResponse {
@@ -478,8 +483,8 @@ public interface ISigaApiV1 {
 
 	public interface IPainelListaGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
-			public String idMarcador;
-			public String idGrupo;
+			public String idMarcadores;
+			public String tipoMarca;
 			public String filtroPessoaLotacao;
 			public String itensPorPagina;
 			public String pagina;

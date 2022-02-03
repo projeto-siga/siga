@@ -80,13 +80,16 @@ public interface IExApiV1 {
 
 	public static class PainelListaItem implements ISwaggerModel {
 		public String marcaId;
+		public String marcaTipo;
+		public String marcaTexto;
+		public String marcaIcone;
 		public Date dataIni;
 		public Date dataFim;
-		public String marcaTipo;
 		public String moduloId;
 		public String refId;
 		public String movId;
 		public String tipo;
+		public String codigo;
 		public String sigla;
 		public String descricao;
 		public String origem;

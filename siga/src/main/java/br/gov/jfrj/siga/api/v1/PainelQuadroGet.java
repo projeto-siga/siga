@@ -13,15 +13,18 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
+import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class PainelQuadroGet implements IPainelQuadroGet {
 
 	private static class QuadroItemQtdVO {
+		public CpTipoMarca tipo;
 		public String filtro;
 		public long qtd;
 
-		public QuadroItemQtdVO(String filtro, long qtd) {
+		public QuadroItemQtdVO(CpTipoMarca tipo, String filtro, long qtd) {
+			this.tipo = tipo;
 			this.filtro = filtro;
 			this.qtd = qtd;
 		}
@@ -41,8 +44,7 @@ public class PainelQuadroGet implements IPainelQuadroGet {
 
 		public QuadroItemVO(CpMarcadorFinalidadeEnum finalidadeId, CpTipoMarcadorEnum tipoId,
 				CpMarcadorGrupoEnum grupoId, CpMarcadorEnum marcadorEnum, Long marcadorId, String marcadorNome,
-				CpMarcadorIconeEnum marcadorIcone, CpMarcadorCorEnum marcadorCor, Long qtdTotal, Long qtdAtendente,
-				Long qtdLotaAtendente, Long qtdNaoAtribuido) {
+				CpMarcadorIconeEnum marcadorIcone, CpMarcadorCorEnum marcadorCor) {
 			super();
 			this.finalidadeId = finalidadeId;
 			this.tipoId = tipoId;
@@ -52,35 +54,56 @@ public class PainelQuadroGet implements IPainelQuadroGet {
 			this.marcadorNome = marcadorNome;
 			this.marcadorIcone = marcadorIcone;
 			this.marcadorCor = marcadorCor;
-			if (qtdAtendente != null && qtdTotal != 0L)
-				this.qtds.add(new QuadroItemQtdVO("TOTAL", qtdTotal));
-			if (qtdAtendente != null && qtdAtendente != 0L)
-				this.qtds.add(new QuadroItemQtdVO("PESSOA", qtdAtendente));
-			if (qtdAtendente != null && qtdLotaAtendente != 0L)
-				this.qtds.add(new QuadroItemQtdVO("LOTACAO", qtdLotaAtendente));
-			if (qtdAtendente != null && qtdNaoAtribuido != 0L)
-				this.qtds.add(new QuadroItemQtdVO("NAO_ATRIBUIDO", qtdNaoAtribuido));
 		}
 
-		public static QuadroItemVO fromObjectArray(Object[] i) {
+		public void addQtd(CpTipoMarca tipo, String filtro, long qtd) {
+			this.qtds.add(new QuadroItemQtdVO(tipo, filtro, qtd));
+		}
+
+		public static QuadroItemVO fromObjectArray(Object[] i, QuadroItemVO previous) {
 			CpMarcadorFinalidadeEnum finalidade = (CpMarcadorFinalidadeEnum) i[2];
 			Long marcadorId = (Long) i[0];
 			CpMarcadorEnum marcadorEnum = CpMarcadorEnum.getById(marcadorId != null ? marcadorId.intValue() : null);
-			return new QuadroItemVO(finalidade, finalidade.getIdTpMarcador(),
-					marcadorEnum != null ? marcadorEnum.getGrupo() : null, marcadorEnum, marcadorId, (String) i[1],
-					(CpMarcadorIconeEnum) i[5], (CpMarcadorCorEnum) i[4], (Long) i[6], (Long) i[7], (Long) i[8],
-					(Long) i[9]);
+
+			QuadroItemVO item = previous;
+			if (item == null || !marcadorId.equals(previous.marcadorId))
+				item = new QuadroItemVO(finalidade, finalidade.getIdTpMarcador(),
+						marcadorEnum != null ? marcadorEnum.getGrupo() : null, marcadorEnum, marcadorId, (String) i[1],
+						(CpMarcadorIconeEnum) i[5], (CpMarcadorCorEnum) i[4]);
+			CpTipoMarca tipoMarca = (CpTipoMarca) i[6];
+
+			Long qtdTotal = (Long) i[7];
+			Long qtdAtendente = (Long) i[8];
+			Long qtdLotaAtendente = (Long) i[9];
+			Long qtdNaoAtribuido = (Long) i[10];
+
+			if (qtdTotal != null && qtdTotal != 0L)
+				item.qtds.add(new QuadroItemQtdVO(tipoMarca, "TOTAL", qtdTotal));
+			if (qtdAtendente != null && qtdAtendente != 0L)
+				item.qtds.add(new QuadroItemQtdVO(tipoMarca, "PESSOA", qtdAtendente));
+			if (qtdLotaAtendente != null && qtdLotaAtendente != 0L)
+				item.qtds.add(new QuadroItemQtdVO(tipoMarca, "LOTACAO", qtdLotaAtendente));
+			if (qtdNaoAtribuido != null && qtdNaoAtribuido != 0L)
+				item.qtds.add(new QuadroItemQtdVO(tipoMarca, "NAO_ATRIBUIDO", qtdNaoAtribuido));
+			return item;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
-		List<Object[]> listEstados = CpDao.getInstance().consultarPainelQuadro(ctx.getTitular(), ctx.getLotaTitular());
+		CpTipoMarca cpTipoMarca = CpTipoMarca.findByName(req.tipoMarca);
+
+		List<Object[]> listEstados = CpDao.getInstance().consultarPainelQuadro(ctx.getTitular(), ctx.getLotaTitular(),
+				cpTipoMarca);
 
 		List<QuadroItemVO> items = new ArrayList<>();
+		QuadroItemVO previous = null;
 		for (Object[] i : listEstados) {
-			items.add(QuadroItemVO.fromObjectArray(i));
+			QuadroItemVO item = QuadroItemVO.fromObjectArray(i, previous);
+			if (item != previous)
+				items.add(item);
+			previous = item;
 		}
 
 		if (req.estilo != null && "AGRUPADOS".equals(req.estilo.toUpperCase())) {
@@ -128,6 +151,7 @@ public class PainelQuadroGet implements IPainelQuadroGet {
 			for (QuadroItemQtdVO q : i.qtds) {
 				if (q.qtd != 0L) {
 					PainelQuadroQtdItem qtd = new PainelQuadroQtdItem();
+					qtd.tipo = q.tipo.getDescrTipoMarca().replace("-", "_");
 					qtd.filtro = q.filtro;
 					qtd.qtd = Long.toString(q.qtd);
 					r.qtds.add(qtd);

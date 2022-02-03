@@ -1492,7 +1492,7 @@
 					descricaoBotaoFechaModalDoRodape="Não" descricaoBotaoDeAcao="Sim" 
 					linkBotaoDeAcao="${linkTo[ExMovimentacaoController].aArquivarCorrenteGravar()}?sigla=${docVO.sigla}">
 				<div class="modal-body">
-		       		 Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
+		       		 O documento só poderá ser arquivado mediante despacho assinado por servidor competente, nos termos do Decreto nº 2477/80. Deseja continuar com o arquivamento?
 		     	</div>	     	
 			</siga:siga-modal>	
 		</c:when>
@@ -1502,7 +1502,7 @@
 					descricaoBotaoFechaModalDoRodape="Não" descricaoBotaoDeAcao="Sim" 
 					linkBotaoDeAcao="${linkTo[ExMovimentacaoController].aArquivarCorrenteGravar()}?sigla=${mob.sigla}">
 				<div class="modal-body">
-		       		 Verifique se há necessidade de incluir o Termo de Encerramento para este documento. Deseja continuar com o arquivamento?
+		       		 O documento só poderá ser arquivado mediante despacho assinado por servidor competente, nos termos do Decreto nº 2477/80. Deseja continuar com o arquivamento?
 		     	</div>	     	
 			</siga:siga-modal>			
 		</c:otherwise>

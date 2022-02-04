@@ -2148,11 +2148,6 @@ public class ExDao extends CpDao {
 						ExMovimentacao.class)
 				.setParameter("idMobil", idMobil)
 				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA))
-				// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
-				.setParameter("enumListMovs", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.JUNTADA,
-						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO, 
-						ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO,
-						ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA, ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, ExTipoDeMovimentacao.TORNAR_SEM_EFEITO))
 				.getResultList();
 	}
 
@@ -2192,20 +2187,14 @@ public class ExDao extends CpDao {
 	 * @param idMobil ID da Mobilização
 	 * @return As Movimentações dos tipos relacionados acima.
 	 */
-	public List<ExMovimentacao> consultarTramitacoesPorMovimentacaoDocumentoCancelado(Long idMobil) {
+	public List<ExMovimentacao> consultarTramitacoesPorMovimentacaoDocumentoCancelado(Long idMobil) { 
 		return em() //
 				.createNamedQuery(
 						AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY,
 						ExMovimentacao.class)
 				.setParameter("idMobil", idMobil) //
-				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA))
-				// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
-				.setParameter("enumListMovs", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.JUNTADA,
-						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO, 
-						ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO,
-						ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA, ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, ExTipoDeMovimentacao.TORNAR_SEM_EFEITO))
-				.getResultList();
-	}
+				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA)).getResultList();
+	}  
 	
 	/**
 	 * Conta o total de movimentações assinadas

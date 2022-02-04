@@ -121,6 +121,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			}
 		return movsTp;
 	}
+	
+	public List<ExMovimentacao> getMovimentacoesPorNome (String descr, boolean somenteAtivas) {
+		return getMovimentacoesPorTipo(ExTipoDeMovimentacao.valueOf(descr), somenteAtivas); 
+	}
 
 	/**
 	 * Verifica se um Mobil é do tipo Geral.

@@ -92,7 +92,7 @@ import br.gov.jfrj.siga.model.Objeto;
 				"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
 				"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 				"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
-				"ORDER  BY marca.dtIniMarca")
+				"ORDER  BY marca.dtIniMarca desc")
 })
 
 @MappedSuperclass

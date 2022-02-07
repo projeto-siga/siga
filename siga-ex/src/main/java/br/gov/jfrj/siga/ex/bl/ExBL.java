@@ -237,6 +237,8 @@ public class ExBL extends CpBL {
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
+	private static final boolean PROP_BUSCAR_TODOS_DOC_PAI_FILHO = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.composto.completo");
+	private static final boolean BUSCAR_SOMENTE_DOC_COMPOSTO = Boolean.TRUE;
 	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();
@@ -3876,7 +3878,7 @@ public class ExBL extends CpBL {
 			persistirGravacaoDnmAcessoExDoc(acessoRecalculado, doc, dt);
 		}
 		
-		if(Prop.getBool("/siga.usuarios.distintos.visualizar.doc.pai.filho")
+		if(Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.composto")
 							&& doc.isFinalizado() && possuiCossignatarioSubscritor(doc)) {			
 			
 			if(doc.isAssinadoDigitalmente()) {
@@ -3928,7 +3930,8 @@ public class ExBL extends CpBL {
 		if (!listaDnmRemocao.isEmpty()) {
 			//Lista hierarquica completa em x
 			List<ExDocumento> listaTodosDocPais = ExDao.getInstance()
-											.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc());
+											.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(
+													doc.getIdDoc(), PROP_BUSCAR_TODOS_DOC_PAI_FILHO, BUSCAR_SOMENTE_DOC_COMPOSTO);
 			//Lista hierarquica completa em x e z
 			List<ExDocumento> listaHierarquiaCompletaDocPaisFilhos = obterTodosHierarquiaCompletaPaiFilho(listaTodosDocPais);
 			for (ExDocumento docPaiFilho : listaHierarquiaCompletaDocPaisFilhos) {
@@ -3978,7 +3981,8 @@ public class ExBL extends CpBL {
 								converterStringParaList(acessoRecalculado, ","));
 		//Lista hierarquica completa em x
 		List<ExDocumento> listaTodosDocPaisFilhos = ExDao.getInstance()
-								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(doc.getIdDoc()); 		
+								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(
+										doc.getIdDoc(), PROP_BUSCAR_TODOS_DOC_PAI_FILHO, BUSCAR_SOMENTE_DOC_COMPOSTO); 		
 		//Lista hierarquica completa em x e z
 		List<ExDocumento> listaHierarquiaCompletaDocPaisFilhos = obterTodosHierarquiaCompletaPaiFilho(listaTodosDocPaisFilhos);
 		for (ExDocumento docPaiFilho : listaHierarquiaCompletaDocPaisFilhos) {
@@ -4000,7 +4004,8 @@ public class ExBL extends CpBL {
 			ExDocumento exDocumento = listaTodosDocPaisFilhos.get(i);
 			//Lista hierarquica completa em x
 			List<ExDocumento> listaTodosDocPaisFilhosHorizontal = ExDao.getInstance()
-								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(exDocumento.getIdDoc());
+								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(
+										exDocumento.getIdDoc(), PROP_BUSCAR_TODOS_DOC_PAI_FILHO, !BUSCAR_SOMENTE_DOC_COMPOSTO);
 			if(listaTodosDocPaisFilhosHorizontal != null) {
 				List<ExDocumento> listaRemoverExDocDuplicados = listaTodosDocPaisFilhos.stream().filter(
 								e -> listaTodosDocPaisFilhosHorizontal.contains(e)).collect(Collectors.toList());

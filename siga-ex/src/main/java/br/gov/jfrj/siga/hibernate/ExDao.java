@@ -51,6 +51,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -2325,9 +2326,10 @@ public class ExDao extends CpDao {
 		}
 	}
 	
-	public List<ExDocumento> obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(Long idDoc){
+	public List<ExDocumento> obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(
+										Long idDoc, boolean buscarTodosDocPaisFilhos, boolean buscarSomenteDocComposto){
 		
-		String query = queryListaHierarquicaExDocPaiFilhoPorIdDoc();		
+		String query = queryListaHierarquicaExDocPaiFilhoPorIdDoc(buscarTodosDocPaisFilhos, buscarSomenteDocComposto);		
 		Query sql = em().createNativeQuery(query);
 		sql.setParameter("ID_DOC", idDoc);
 		
@@ -2341,19 +2343,32 @@ public class ExDao extends CpDao {
 		return listExDoc;
 	}
 
-	private static String queryListaHierarquicaExDocPaiFilhoPorIdDoc() {
+	private static String queryListaHierarquicaExDocPaiFilhoPorIdDoc(
+								boolean buscarTodosDocPaisFilhos, boolean buscarSomenteDocComposto) {
 		StringBuffer  query = new StringBuffer();
 		query.append("SELECT ID_DOC_PAI_FILHO FROM ( ");
 		query.append("	WITH RESULTADO (ID_DOC_FILHO, ID_DOC_PAI) AS ( ");
 		query.append("		SELECT ed.ID_DOC ID_DOC_FILHO , em.ID_DOC ID_DOC_PAI ");
 		query.append("		FROM siga.EX_DOCUMENTO ed ");
 		query.append("		JOIN siga.EX_MOBIL em ON em.ID_MOBIL = ed.ID_MOB_PAI ");
+		
+		if(!buscarTodosDocPaisFilhos) {
+			query.append("  JOIN siga.EX_DOCUMENTO ed2 ON ed2.ID_DOC = em.ID_DOC ");
+			query.append(queryAppendBuscarSomenteDocComposto(buscarSomenteDocComposto));
+		}
+		
 		query.append("		WHERE ed.ID_DOC = :ID_DOC ");
 		query.append("		UNION ALL ");
 		query.append("		SELECT ed1.ID_DOC ID_DOC_FILHO, em1.ID_DOC ID_DOC_PAI ");
 		query.append("		FROM siga.EX_DOCUMENTO ed1 ");
 		query.append("		JOIN siga.EX_MOBIL em1 ON em1.ID_MOBIL = ed1.ID_MOB_PAI ");
 		query.append("		JOIN RESULTADO r ON r.ID_DOC_PAI = ed1.ID_DOC ");
+		
+		if(!buscarTodosDocPaisFilhos) {
+			query.append("	JOIN siga.EX_DOCUMENTO ed2 ON ed2.ID_DOC = r.ID_DOC_PAI");
+			query.append(queryAppendBuscarSomenteDocComposto(buscarSomenteDocComposto));
+		}
+		
 		query.append("	), RESULTADO_FILHO (ID_DOC_FILHO, ID_DOC_PAI) AS ( ");
 		query.append("		SELECT ed.ID_DOC ID_DOC_FILHO , em.ID_DOC ID_DOC_PAI ");
 		query.append("		FROM siga.EX_DOCUMENTO ed ");
@@ -2364,6 +2379,12 @@ public class ExDao extends CpDao {
 		query.append("		FROM siga.EX_DOCUMENTO ed1 ");
 		query.append("		JOIN siga.EX_MOBIL em1 ON em1.ID_MOBIL = ed1.ID_MOB_PAI ");
 		query.append("		JOIN RESULTADO_FILHO r ON em1.ID_DOC = r.ID_DOC_FILHO ");
+		
+		if(!buscarTodosDocPaisFilhos) {
+			query.append(" 	JOIN siga.EX_DOCUMENTO ed2 ON ed2.ID_DOC = em1.ID_DOC ");
+			query.append(queryAppendBuscarSomenteDocComposto(buscarSomenteDocComposto));
+		}
+		
 		query.append("	) ");
 		query.append("	SELECT  ID_DOC_PAI AS ID_DOC_PAI_FILHO ");
 		query.append("	FROM    RESULTADO ");
@@ -2374,6 +2395,17 @@ public class ExDao extends CpDao {
 		query.append(") ");
 		query.append("WHERE ID_DOC_PAI_FILHO <> :ID_DOC");
 		return query.toString();
+	}
+	
+	private static StringBuffer queryAppendBuscarSomenteDocComposto(boolean buscarSomenteDocComposto) {
+		StringBuffer query = new StringBuffer();
+		query.append("	JOIN siga.EX_FORMA_DOCUMENTO efd ON ( ");
+		if (buscarSomenteDocComposto) {
+			query.append("				ed2.ID_FORMA_DOC = efd.ID_FORMA_DOC AND efd.IS_COMPOSTO = 1) ");
+		} else {
+			query.append("				ed2.ID_FORMA_DOC = efd.ID_FORMA_DOC	AND efd.IS_COMPOSTO IS NULL OR efd.IS_COMPOSTO = 0 ) ");
+		}
+		return query;
 	}
 
 	private Object[] coverterListaBigDecimalParaObject(List<Object[]> results) {

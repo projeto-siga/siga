@@ -46,7 +46,7 @@ import br.gov.jfrj.siga.model.Objeto;
 		"               mard.ordem, "+
 		"               mard.idCor, "+
 		"               mard.idIcone, "+
-		"               marca.cpTipoMarca, "+
+		"               tipoMarca, "+
 		"               Sum(1) as cont_total, "+
 		"               Sum(CASE "+
 		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
@@ -61,6 +61,7 @@ import br.gov.jfrj.siga.model.Objeto;
 		"                     ELSE 0 "+
 		"                   END) as cont_nao_atrib "+
 		"        FROM   CpMarca marca "+
+		"               JOIN marca.cpTipoMarca tipoMarca "+
 		"               JOIN marca.cpMarcador marcador "+
 		"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
 		"        WHERE  ( marca.dtIniMarca IS NULL OR marca.dtIniMarca < :amanha ) "+
@@ -69,7 +70,7 @@ import br.gov.jfrj.siga.model.Objeto;
 		"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
 		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
-		"        GROUP  BY marca.cpTipoMarca, "+
+		"        GROUP  BY tipoMarca.idTpMarca, tipoMarca.descrTipoMarca, "+
 		"                  mard.hisIdIni, "+
 		"                  mard.descrMarcador, "+
 		"                  mard.idFinalidade, "+

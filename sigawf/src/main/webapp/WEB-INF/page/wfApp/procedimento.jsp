@@ -70,6 +70,7 @@
 							<thead>
 								<tr>
 									<th align="center">Tempo</th>
+									<th>Cadastrante</th>
 									<th>Lotação</th>
 									<th>Evento</th>
 									<th>Descrição</th>
@@ -80,7 +81,8 @@
 								<tr class="${mov.classeVO}">
 									<td class="align-top" title="${mov.dtIniVO}">${mov.tempoRelativoVO}</td>
 									<td class="align-top"
-										title="${mov.hisIdcIni.dpPessoa.descricao} - ${mov.hisIdcIni.dpPessoa.lotacao.descricao}">${mov.lotaTitular.sigla}</td>
+										title="${mov.hisIdcIni.dpPessoa.descricao} - ${mov.hisIdcIni.dpPessoa.lotacao.descricao}">${mov.hisIdcIni.dpPessoa.sigla}</td>
+									<td class="align-top" title="${mov.lotaTitular.descricao}">${mov.lotaTitular.siglaCompleta}</td>
 									<td class="align-top">${mov.evento}</td>
 									<td class="align-top" style="word-break: break-all;"><span
 										class="align-top">${mov.descricaoEvento}</span></td>

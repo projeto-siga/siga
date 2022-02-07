@@ -138,6 +138,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			final List<CpOrgao> l = query.getResultList();
@@ -306,6 +308,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			final int l = ((Long) query.getSingleResult()).intValue();
@@ -343,6 +347,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -373,6 +379,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -439,7 +447,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
-			query.setParameter("nome", s);
+			else
+				s = "";
 
 			query.setHint("org.hibernate.cacheable", true);
 			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
@@ -473,6 +482,9 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
+			
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -536,6 +548,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -573,6 +587,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -654,6 +670,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());

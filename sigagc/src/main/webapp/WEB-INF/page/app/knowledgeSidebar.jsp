@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
-<div class="card bg-light mb-3 mt-3">
+<div class="card bg-light mb-3 mt-3" style="max-height: 20em;">
 	<div class="card-header">
 		<a title="Registrar um novo conhecimento" style="float: right;"
 			href="${linkTo[AppController].novo}?classificacao=${classificacao}"
@@ -8,7 +8,7 @@
 			src="/siga/css/famfamfam/icons/add.png">
 		</a> Conhecimentos Relacionados
 	</div>
-	<div class="card-body">
+	<div class="card-body" style="overflow-y: auto;">
 		<c:choose>
 			<c:when test="${not empty conhecimentos}">
 				<ul class="ml-0">

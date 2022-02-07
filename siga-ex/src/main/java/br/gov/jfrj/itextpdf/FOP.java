@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -15,12 +15,11 @@
  * 
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
+ **************************/
 package br.gov.jfrj.itextpdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 import javax.xml.transform.Result;
@@ -38,6 +37,8 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 import org.xml.sax.SAXException;
 
 public class FOP implements ConversorHtml {
@@ -136,6 +137,9 @@ public class FOP implements ConversorHtml {
 			html = substituiComentarios(html);
 			html = html.replace("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"", "\"xhtml.dtd\"");
 			html = html.replace("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"", "\"xhtml.dtd\"");
+			html = Jsoup.parse(html, "", Parser.xmlParser()).toString();
+			html = html.replace("</br>", "");
+			html = html.replace("<br>", "<br/>");
 			Source src = new StreamSource(new ByteArrayInputStream(html
 					.getBytes("UTF-8")));
 

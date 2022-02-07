@@ -172,7 +172,8 @@ public class ProcessadorReferencias {
 
 		    final Document document = Jsoup.parse(sHtml);
 		    document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);    
-		    document.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+		    // document.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+		    document.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.extended);
 		    String html = document.html();
 		    
 			parser.setInput(new StringReader(html));

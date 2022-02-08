@@ -19,7 +19,10 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
 import org.jboss.logging.Logger;
+import org.json.JSONObject;
+import org.json.XML;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -36,13 +39,17 @@ public class ArmazenamentoHCP {
 	private static final String ERRO_RECUPERAR_ARQUIVO = "Erro ao recuperar o arquivo";
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
+	private static final String ERRO_RECUPERAR_ESTATISTICAS = "Erro ao recuperar as estatísticas de armazenamento do HCP";
+	private static final String END_POINT_NAMESPACE_STATISTICS = "proc/statistics";
 	
 	private static final String AUTHORIZATION = "Authorization";
 	private CloseableHttpClient client;
 	private String uri = Prop.get("/siga.armazenamento.arquivo.url");
+	private String uriRest = uri + "rest/";
 	private String usuario = Prop.get("/siga.armazenamento.arquivo.usuario");
 	private String senha = Prop.get("/siga.armazenamento.arquivo.senha");
 	private String token = null;
+
 	
 	private ArmazenamentoHCP() {}
 	
@@ -71,7 +78,7 @@ public class ArmazenamentoHCP {
 
 	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
 		try {
-			HttpPut request = new HttpPut(uri+cpArquivo.getCaminho());
+			HttpPut request = new HttpPut(uriRest+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
 			ByteArrayEntity requestEntity = new ByteArrayEntity(conteudo);
 			request.setEntity(requestEntity);
@@ -87,7 +94,7 @@ public class ArmazenamentoHCP {
 		
 	public void apagar(CpArquivo cpArquivo) {
 		try {
-			HttpDelete request = new HttpDelete(uri+cpArquivo.getCaminho());
+			HttpDelete request = new HttpDelete(uriRest+cpArquivo.getCaminho());
 			request.addHeader(AUTHORIZATION, token);
 			try(CloseableHttpResponse response = client.execute(request)){
 				if(!(response.getStatusLine().getStatusCode()==200 || response.getStatusLine().getStatusCode()==404))
@@ -103,7 +110,7 @@ public class ArmazenamentoHCP {
 		if(cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
 			return null;
 		try {
-			HttpGet httpGet = new HttpGet(uri+cpArquivo.getCaminho());
+			HttpGet httpGet = new HttpGet(uriRest+cpArquivo.getCaminho());
 			httpGet.addHeader(AUTHORIZATION, token);
 			try(CloseableHttpResponse response = client.execute(httpGet)){
 				if (response.getStatusLine().getStatusCode() == 200 ) {
@@ -122,6 +129,27 @@ public class ArmazenamentoHCP {
 		} catch (Exception e) {
 			log.error(ERRO_RECUPERAR_ARQUIVO, cpArquivo.getIdArq(), e);
 			throw new AplicacaoException(ERRO_RECUPERAR_ARQUIVO);
+		}
+	}
+	
+	public JSONObject estatistica() {
+		try {
+			HttpGet httpGet = new HttpGet(uri+END_POINT_NAMESPACE_STATISTICS);
+			httpGet.addHeader(AUTHORIZATION, token);
+			try(CloseableHttpResponse response = client.execute(httpGet)){
+				if (response.getStatusLine().getStatusCode() == 200 ) {
+		           String XMLString = EntityUtils.toString(response.getEntity(), "UTF-8");
+		           
+		           JSONObject hcpStatJson = XML.toJSONObject(XMLString);
+
+		           return hcpStatJson;
+
+				} else {
+					throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+				}
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException(ERRO_RECUPERAR_ESTATISTICAS);
 		}
 	}
 

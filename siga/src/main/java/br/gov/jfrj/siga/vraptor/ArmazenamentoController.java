@@ -82,7 +82,7 @@ public class ArmazenamentoController extends SigaController {
 		if (CpArquivoTipoArmazenamentoEnum.HCP.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
 			jsonEstatistica = a.estatistica().getJSONObject("statistics");
-			convertJsonToResult(jsonEstatistica);	
+			convertHCPJsonToResult(jsonEstatistica);	
 		}
 		
 		if(totalCapacityBytes > 0) {
@@ -105,7 +105,7 @@ public class ArmazenamentoController extends SigaController {
 	}
 	
 	
-	private void convertJsonToResult(JSONObject jsonEstatistica) throws JSONException {
+	private void convertHCPJsonToResult(JSONObject jsonEstatistica) throws JSONException {
 		totalCapacityBytes = jsonEstatistica.getLong("totalCapacityBytes");
 	    usedCapacityBytes = jsonEstatistica.getLong("usedCapacityBytes");
 		softQuotaPercent = jsonEstatistica.getInt("softQuotaPercent");

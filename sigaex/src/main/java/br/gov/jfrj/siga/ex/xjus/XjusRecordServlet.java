@@ -19,6 +19,7 @@ public class XjusRecordServlet extends SwaggerServlet {
 	@Override
 	public void initialize(ServletConfig config) throws ServletException {
 		setAPI(IXjusRecordAPI.class);
+		setApiContextClass(XjusRecordAPIContext.class);
 
 		setActionPackage("br.gov.jfrj.siga.ex.xjus");
 

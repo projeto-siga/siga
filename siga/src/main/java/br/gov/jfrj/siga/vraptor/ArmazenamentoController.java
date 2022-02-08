@@ -73,7 +73,7 @@ public class ArmazenamentoController extends SigaController {
 	public void estatistica() throws Exception {
 		assertAcesso(ACESSO_ESTATISTICA);
 		final Integer PERCENT_WARN = 70;
-		final Integer PERCENT_DANGER = 90;
+		final Integer PERCENT_DANGER = 95;
 		JSONObject jsonEstatistica = new JSONObject();
 		
 		if (CpArquivoTipoArmazenamentoEnum.HCP.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {

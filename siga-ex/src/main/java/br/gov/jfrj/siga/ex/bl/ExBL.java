@@ -3268,7 +3268,7 @@ public class ExBL extends CpBL {
 				ContextoPersistencia.flushTransaction();
 				client.criarInstanciaDeProcesso(nomeProcesso,
 						SiglaParser.makeSigla(cadastrante, cadastrante.getLotacao()),
-						SiglaParser.makeSigla(titular, lotaTitular), keys, values);
+						SiglaParser.makeSigla(titular, lotaTitular), keys, values, "DOCUMENTO", doc.getCodigo());
 			}
 		}
 		// atualizarWorkFlow(doc);
@@ -4459,9 +4459,10 @@ public class ExBL extends CpBL {
 			throws AplicacaoException {
 		ExMovimentacao novaMov = new ExMovimentacao();
 		novaMov.setCadastrante(cadastrante);
-		novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
-		novaMov.setConteudoTpMov(mov.getConteudoTpMov());
-		novaMov.setCpArquivo(mov.getCpArquivo());
+		if (mov.getConteudoTpMov() != null && mov.getConteudoBlobMov() != null) {
+			novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
+			novaMov.setConteudoTpMov(mov.getConteudoTpMov());
+		}
 		novaMov.setDescrMov(mov.getDescrMov());
 		novaMov.setDtIniMov(dao().dt());
 		novaMov.setDtMov(mov.getDtMov());

@@ -204,7 +204,10 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id != null) {
 			WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(id);
-			pd.assertAcessoDeEditar(getTitular(), getLotaTitular());
+			if (duplicar)
+				pd.assertAcessoDeDuplicar(getTitular(), getLotaTitular());
+			else
+				pd.assertAcessoDeEditar(getTitular(), getLotaTitular());
 			result.include("pd", pd);
 		}
 	}

@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
-<siga:pagina titulo="${pi.sigla}">
+<siga:pagina titulo="${pi.sigla}"
+	incluirJs="/siga/javascript/svg-pan-zoom/svg-pan-zoom.min.js">
 
 
 	<div class="container-fluid content" id="page">
@@ -69,6 +70,7 @@
 							<thead>
 								<tr>
 									<th align="center">Tempo</th>
+									<th>Cadastrante</th>
 									<th>Lotação</th>
 									<th>Evento</th>
 									<th>Descrição</th>
@@ -79,7 +81,8 @@
 								<tr class="${mov.classeVO}">
 									<td class="align-top" title="${mov.dtIniVO}">${mov.tempoRelativoVO}</td>
 									<td class="align-top"
-										title="${mov.hisIdcIni.dpPessoa.descricao} - ${mov.hisIdcIni.dpPessoa.lotacao.descricao}">${mov.lotaTitular.sigla}</td>
+										title="${mov.hisIdcIni.dpPessoa.descricao} - ${mov.hisIdcIni.dpPessoa.lotacao.descricao}">${mov.hisIdcIni.dpPessoa.sigla}</td>
+									<td class="align-top" title="${mov.lotaTitular.descricao}">${mov.lotaTitular.siglaCompleta}</td>
 									<td class="align-top">${mov.evento}</td>
 									<td class="align-top" style="word-break: break-all;"><span
 										class="align-top">${mov.descricaoEvento}</span></td>
@@ -108,7 +111,21 @@
 			<div class="col col-sm-12 col-md-4">
 				<c:if test="${not empty dot}">
 					<div class="card-sidebar card bg-light mb-3">
-						<div class="card-header">Diagrama</div>
+						<div class="card-header">
+							<div class="row justify-content-center align-self-center">
+								<div class="col">Diagrama</div>
+								<div class="col-auto align-self-center">
+									<i class="fa fa-search-minus pan-zoom-controls"
+										style="display: none; opacity: .5"
+										onclick="window.panZoom.zoomOut()"></i> <i
+										class="far fa-window-maximize ml-1 mr-1 pan-zoom-controls"
+										style="display: none; opacity: .5"
+										onclick="window.panZoom.reset()"></i> <i
+										class="fa fa-search-plus" style="opacity: .5"
+										onclick="window.panZoom.zoomIn(); $('.pan-zoom-controls').show()"></i>
+								</div>
+							</div>
+						</div>
 						<div class="card-body bg-white p-2">
 							<div id="output" class="graph-svg"
 								style="border: 0px; padding: 0px; text-align: center;"></div>
@@ -150,8 +167,8 @@
 						</c:if>
 						<p>
 							<b>Diagrama:</b> <a
-								href="/sigawf/app/diagrama/exibir?id=${pi.definicaoDeProcedimento.id}">${pi.definicaoDeProcedimento.nome}</a>
-							(${pi.definicaoDeProcedimento.sigla})
+								href="/sigawf/app/diagrama/exibir?id=${pi.definicaoDeProcedimento.id}">${pi.definicaoDeProcedimento.sigla}</a>
+							(${pi.definicaoDeProcedimento.nome})
 						</p>
 						<p>
 							<b>Prioridade:</b> ${pi.prioridade.descr}
@@ -217,6 +234,7 @@
 								href="$1">aqui</a> para contribuir.</c:param>
 						<c:param name="titulo">${pi.definicaoDeProcedimento.nome} - ${pi.currentTaskDefinition.nome}</c:param>
 						<c:param name="ts">${currentTimeMillis}</c:param>
+						<c:param name="label">Passo a Passo</c:param>
 					</c:url>
 					<script type="text/javascript">
 					$.ajax({
@@ -286,6 +304,20 @@
 					    $(data).width("100%");
 				        $("#" + id).html(data);
 				        updateContainer();
+				        var svgElement = document.getElementById(id).firstElementChild;
+						window.panZoom = svgPanZoom(svgElement, {
+								   panEnabled: true
+								  , controlIconsEnabled: false
+								  , zoomEnabled: true
+								  , dblClickZoomEnabled: true
+								  , mouseWheelZoomEnabled: true
+								  , preventMouseEventsDefault: true
+								  , zoomScaleSensitivity: 0.2
+								  , minZoom: 1
+								  , maxZoom: 10
+								  , beforeZoom: function() {
+									 // window.panZoom.enableControlIcons();
+								  }})
 				    }
 				});
 			} else if (window.VizWorker) {
@@ -309,6 +341,7 @@
 		function smallmap() {
 			var input = 'digraph G { graph[size="3,3"]; ${dot} }';
 			buildSvg('output', input, updateContainer);
+			
 		}
 
 		function showBig() {
@@ -348,7 +381,7 @@
 				var width = smallwidth;
 				var height = smallwidth * baseVal.height / baseVal.width;
 				if (height > smallheight) {
-					width = width * smallheight / height;
+					//width = width * smallheight / height;
 					height = smallheight;
 				}
 				smallsvg.attr('width', width);

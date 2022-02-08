@@ -118,11 +118,12 @@
 			<url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
 		</repository>
 
-		<!-- repositorio adicionado para a swetake -->
+		<!-- repositorio adicionado para a swetake
 		<repository>
 			<id>swetake</id>
 			<url>https://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/</url>
 		</repository>
+		 -->
 
 		<!-- repositorio adicionado para a simplecaptcha -->
 		<!-- Edson: removendo pois está quebrado -->
@@ -141,6 +142,12 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+			    <groupId>org.apache.logging.log4j</groupId>
+			    <artifactId>log4j-core</artifactId>
+			    <version>2.15.0</version>
+			</dependency>
+			
+			<dependency>
 				<groupId>org.jboss.bom.eap</groupId>
 				<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
 				<version>${version.jboss.bom.eap}</version>
@@ -158,13 +165,13 @@
 			<dependency>
 			    <groupId>com.crivano</groupId>
 			    <artifactId>swaggerservlet</artifactId>
-			    <version>2.0.0</version>
+			    <version>2.0.3</version>
 			</dependency>
 			
 			<dependency>
 				<groupId>br.jus.trf2.xjus</groupId>
 				<artifactId>x-jus-record-api</artifactId>
-				<version>1.1.0</version>
+				<version>1.1.1</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.crivano</groupId>
@@ -649,7 +656,7 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>				
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>

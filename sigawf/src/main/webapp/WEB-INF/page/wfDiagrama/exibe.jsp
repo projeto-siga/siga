@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
-<siga:pagina titulo="${pi.sigla}">
+<siga:pagina titulo="${pi.sigla}"
+	incluirJs="/siga/javascript/svg-pan-zoom/svg-pan-zoom.min.js">
 
 
 	<div class="container-fluid content" id="page">
@@ -25,11 +26,123 @@
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
 				<c:if test="${not empty dot}">
-					<div class="card bg-light mb-3 bg-white p-3">
-						<div id="output" class="graph-svg"
-							style="border: 0px; padding: 0px; text-align: center;"></div>
+					<div class="card bg-light mb-3 bg-white">
+						<div class="card-header">
+							<div class="row justify-content-center align-self-center">
+								<div class="col">&nbsp;</div>
+								<div class="col-auto align-self-center">
+									<i class="fa fa-search-minus pan-zoom-controls"
+										style="display: none; opacity: .5"
+										onclick="window.panZoom.zoomOut()"></i> <i
+										class="far fa-window-maximize ml-1 mr-1 pan-zoom-controls"
+										style="display: none; opacity: .5"
+										onclick="window.panZoom.reset()"></i> <i
+										class="fa fa-search-plus" style="opacity: .5"
+										onclick="window.panZoom.zoomIn(); $('.pan-zoom-controls').show()"></i>
+								</div>
+							</div>
+						</div>
+						<div class="card-body bg-white p-2">
+							<div id="output" class="graph-svg"
+								style="border: 0px; padding: 0px; text-align: center;"></div>
+						</div>
 					</div>
 				</c:if>
+
+
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+					<span id="gc-ancora"></span>
+					<c:url var="url" value="/../sigagc/app/knowledgeInplace">
+						<c:param name="tags">${pd.ancora}</c:param>
+						<c:param name="msgvazio">Ainda não existe uma descrição deste procedimento. Por favor, clique <a
+								href="$1">aqui</a> para contribuir.</c:param>
+						<c:param name="titulo">${pd.nome}</c:param>
+						<c:param name="ts">${currentTimeMillis}</c:param>
+						<c:param name="label">Documentação do Procedimento</c:param>
+					</c:url>
+					<script type="text/javascript">
+					$.ajax({
+		                type: "GET",
+		                url: "${url}",
+		                cache: false,
+		                success: function(response) {
+		                    $('#gc-ancora').replaceWith(response);
+		                }
+		            });
+					</script>
+				</c:if>
+
+				<c:forEach items="${pd.definicaoDeTarefa}" var="td" varStatus="loop">
+					<h6 class="mt-2" style="margin-bottom: -.8em;">${loop.count})&nbsp;${td.nome}</h6>
+
+					<!-- Conhecimento -->
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
+						<div class="card-deck">
+							<span id="gc-ancora-descr-${td.id}"></span> <span
+								id="gc-ancora-${td.id}"></span> <span id="gc-${td.id}"></span>
+						</div>
+
+						<c:url var="url" value="/../sigagc/app/knowledgeInplace">
+							<c:param name="tags">${td.ancoraDescr}</c:param>
+							<c:param name="msgvazio">Ainda não existe uma descrição desta tarefa. Por favor, clique <a
+									href="$1">aqui</a> para contribuir.</c:param>
+							<c:param name="titulo">${pd.nome} - ${td.nome}</c:param>
+							<c:param name="ts">${currentTimeMillis}</c:param>
+							<c:param name="label">Descrição da Tarefa</c:param>
+						</c:url>
+						<script type="text/javascript">
+							$.ajax({
+				                type: "GET",
+				                url: "${url}",
+				                cache: false,
+				                success: function(response) {
+				                    $('#gc-ancora-descr-${td.id}').replaceWith(response);
+				                }
+				            });
+						</script>
+
+						<c:url var="url" value="/../sigagc/app/knowledgeInplace">
+							<c:param name="tags">${td.ancora}</c:param>
+							<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
+									href="$1">aqui</a> para contribuir.</c:param>
+							<c:param name="titulo">${pd.nome} - ${td.nome}</c:param>
+							<c:param name="ts">${currentTimeMillis}</c:param>
+							<c:param name="label">Passo a Passo</c:param>
+						</c:url>
+						<script type="text/javascript">
+							$.ajax({
+				                type: "GET",
+				                url: "${url}",
+				                cache: false,
+				                success: function(response) {
+				                    $('#gc-ancora-${td.id}').replaceWith(response);
+				                }
+				            });
+						</script>
+
+						<c:if test="${false}">
+							<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
+								<c:param name="tags">@workflow</c:param>
+								<c:forEach var="tag" items="${td.tags}">
+									<c:param name="tags">${tag}</c:param>
+								</c:forEach>
+								<c:param name="ts">${currentTimeMillis}</c:param>
+							</c:url>
+							<script type="text/javascript">
+								$.ajax({
+					                type: "GET",
+					                url: "${url}",
+					                cache: false,
+					                success: function(response) {
+					                    $('#gc-${td.id}').replaceWith(response);
+					                }
+					            });
+							</script>
+						</c:if>
+					</c:if>
+				</c:forEach>
 			</div>
 			<div class="col col-sm-12 col-md-4">
 				<div class="card-sidebar card bg-light mb-3">
@@ -111,6 +224,23 @@
 					    $(data).width("100%");
 				        $("#" + id).html(data);
 				        updateContainer();
+				        var svgElement = document.getElementById(id).firstElementChild;
+						window.panZoom = svgPanZoom(svgElement, {
+								   panEnabled: true
+								  , controlIconsEnabled: false
+								  , zoomEnabled: true
+								  , dblClickZoomEnabled: true
+								  , mouseWheelZoomEnabled: true
+								  , preventMouseEventsDefault: true
+								  , zoomScaleSensitivity: 0.2
+								  , minZoom: 1
+								  , maxZoom: 10
+								  , beforeZoom: function() {
+									  $('.pan-zoom-controls').show()
+								  }, beforePan: function() {
+									  $('.pan-zoom-controls').show()
+								  }})
+
 				    }
 				});
 			} else if (window.VizWorker) {
@@ -168,7 +298,7 @@
 				var width = smallwidth;
 				var height = smallwidth * baseVal.height / baseVal.width;
 				if (height > smallheight) {
-					width = width * smallheight / height;
+					//width = width * smallheight / height;
 					height = smallheight;
 				}
 				smallsvg.attr('width', width);

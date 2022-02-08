@@ -27,6 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 import org.kxml2.io.KXmlParser;
 import org.kxml2.io.KXmlSerializer;
 import org.xmlpull.v1.XmlPullParser;
@@ -335,7 +337,7 @@ public class ProcessadorHtml {
 		// else
 		// s = htmlc.getPrettyXmlAsString();
 		
-		s = Jsoup.parse(s).toString();
+		s = parseAndFormat(s);
 
 //		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 //			tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
@@ -352,7 +354,7 @@ public class ProcessadorHtml {
 //				os2.flush();
 //				s = new String(os2.toByteArray(), "iso-8859-1");
 //			}
-			s = Jsoup.parse(s).toString();
+			s = parseAndFormat(s);
 		}
 
 		if (fRemoverEspacos)
@@ -404,6 +406,19 @@ public class ProcessadorHtml {
 		// System.out.println(System.currentTimeMillis()
 		// + " - FIM canonicalizarHtml");
 		return s;
+	}
+
+	private String parseAndFormat(String s) {
+		Document doc = Jsoup.parse(s);
+
+		Document.OutputSettings settings = doc.outputSettings();
+
+		settings.escapeMode(Entities.EscapeMode.extended);
+		settings.charset("ASCII");
+
+		String modifiedFileHtmlStr = doc.html();
+
+		 return modifiedFileHtmlStr;
 	}
 
 	public static String bodyOnly(String s) {

@@ -513,7 +513,7 @@
 <script>
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
 	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
-	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}';
+	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&iframe=true';
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			

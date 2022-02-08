@@ -121,6 +121,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			}
 		return movsTp;
 	}
+	
+	public List<ExMovimentacao> getMovimentacoesPorNome (String descr, boolean somenteAtivas) {
+		return getMovimentacoesPorTipo(ExTipoDeMovimentacao.valueOf(descr), somenteAtivas); 
+	}
 
 	/**
 	 * Verifica se um Mobil é do tipo Geral.
@@ -2505,7 +2509,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) 
 					p.fIncluirCadastrante = false;
 			}
-			if (t == ExTipoDeMovimentacao.TRANSFERENCIA 
+			if ((t == ExTipoDeMovimentacao.TRANSFERENCIA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA)
 					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 
 							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante())
 							|| Utils.equivale(mov.getTitular(), doc().getCadastrante()) 

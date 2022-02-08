@@ -1434,6 +1434,9 @@ public class ExRelatorioController extends ExController {
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
 
+			parametros.put("lotacaoTitular",getLotaTitular().getSiglaLotacao());
+			parametros.put("idTit", getTitular().getId().toString());
+
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
 					throw new AplicacaoException(

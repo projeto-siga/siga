@@ -1374,18 +1374,22 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 		}		
-
+		
 		if (recebimentoAutomatico) {				
 			if (Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
 				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
-		} else if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
-				&& !exDocumentoDto.getMob().isEmTransitoExterno()
-				&& !exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA).getCadastrante().equivale(getTitular())
+		} else {
+			ExMovimentacao mov = exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA);
+		
+			if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
+				&& !exDocumentoDto.getMob().isEmTransitoExterno()				
+				&& (mov.getCadastrante() == null || !mov.getCadastrante().equivale(getTitular()))
 				&& !exDocumentoDto.getMob().isJuntado()) {
-			recebimentoPendente = true;			
+				recebimentoPendente = true;		
+			}
 		} 		
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),

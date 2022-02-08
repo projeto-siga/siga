@@ -3,7 +3,7 @@
 <c:choose>
 	<c:when test="${not empty conhecimentos}">
 		<c:forEach var="conhecimento" items="${conhecimentos}">
-			<div class="card bg-light mb-3 mt-3">
+			<div class="card bg-light mb-3 mt-3" style="max-height: 20em;">
 				<div class="card-header">
 					<c:if test="${cadastrante!=null}">
 						<c:choose>
@@ -23,25 +23,25 @@
 							</c:otherwise>
 						</c:choose>
 					</c:if>
-					Conhecimento Específico
+					${label}
 					<!-- ${conhecimento[1]} -->
 				</div>
-				<div class="card-body bg-light pb-0">${conhecimento[2]}</div>
+				<div class="card-body bg-light pb-0" style="overflow-y: auto;">${conhecimento[2]}</div>
 			</div>
 		</c:forEach>
 	</c:when>
 	<c:otherwise>
 		<c:if test="${podeCriar}">
-			<div class="card bg-light mb-3 mt-3">
+			<div class="card bg-light mb-3 mt-3" style="max-height: 20em;">
 				<div class="card-header">
 					<c:set var="url" scope="request">${linkTo[AppController].novo}?classificacao=${classificacao}&inftitulo=${f:urlEncode(titulo)}&origem=${referer}</c:set>
 					<a style="float: right;" title="Registrar um novo conhecimento"
 						href="${url}" ${popup?'target="_blank"':''}> <img
 						src="/siga/css/famfamfam/icons/add.png">
-					</a> Conhecimento Específico
+					</a> ${label}
 					<!-- ${conhecimento[1]} -->
 				</div>
-				<div class="card-body bg-light pb-0">
+				<div class="card-body bg-light pb-0" style="overflow-y: auto;">
 					<c:choose>
 						<c:when test="${msgvazio != null}">
 							<%-- Edson: isto foi necessário porque strings vazias são transformadas em null num dos interceptors --%>

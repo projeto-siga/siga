@@ -80,7 +80,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>
+				<h5 class="mb-0">
 					Anotação - ${mob.siglaEDescricaoCompleta}
 				</h5>
 			</div>

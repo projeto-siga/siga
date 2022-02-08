@@ -175,50 +175,55 @@ public class AppController extends GcController {
 	}
 
 	@Path("/public/app/knowledge")
-	public void publicKnowledge(Long id, String[] tags, String msgvazio, String urlvazio, String titulo, boolean popup,
+	public void publicKnowledge(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo, boolean popup,
 			String estiloBusca, Boolean podeCriar, String pagina) throws Exception {
-		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, true, popup, estiloBusca, podeCriar, pagina);
+		renderKnowledge(id, tags, label, null, msgvazio, urlvazio, titulo, true, popup, estiloBusca, podeCriar, pagina);
 	}
 
-	public void knowledge(Long id, String[] tags, String msgvazio, String urlvazio, String titulo, boolean testarAcesso,
+	public void knowledge(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo, boolean testarAcesso,
 			boolean popup, String estiloBusca, Boolean podeCriar, String pagina) throws Exception {
-		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
+		renderKnowledge(id, tags, label, null, msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
 				pagina);
 	}
 
 	@Path("/app/knowledgeInplace")
-	public void knowledgeInplace(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
+	public void knowledgeInplace(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
+		renderKnowledge(id, tags, label, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
 				pagina);
 	}
 
 	@Path("/app/knowledgeInplaceMinimal")
-	public void knowledgeInplaceMinimal(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
+	public void knowledgeInplaceMinimal(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
+		renderKnowledge(id, tags, label, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
 				pagina);
 	}
 
-	public void knowledgeSidebar(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
+	public void knowledgeSidebar(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
+		renderKnowledge(id, tags, label, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
 				pagina);
 	}
 
-	public void knowledgeSidebarSr(Long id, String[] tags, String msgvazio, String urlvazio, String titulo,
+	public void knowledgeSidebarSr(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
+		renderKnowledge(id, tags, label, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
 				pagina);
 	}
 
-	private void renderKnowledge(Long id, String[] tags, String estilo, String msgvazio, String urlvazio, String titulo,
+	private void renderKnowledge(Long id, String[] tags, String label, String estilo, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws UnsupportedEncodingException, Exception {
+		if (label == null || label.isEmpty()) {
+			if ("inplace".equals(estilo))
+				label = "Conhecimento Específico";
+		}
+			
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
@@ -320,6 +325,7 @@ public class AppController extends GcController {
 		result.include("popup", popup);
 		result.include("podeCriar", podeCriar);
 		result.include("pagina", pagina);
+		result.include("label", label);
 	}
 
 	@Transacional

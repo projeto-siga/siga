@@ -76,14 +76,18 @@ public class ArmazenamentoController extends SigaController {
 		final Integer PERCENT_DANGER = 95;
 		JSONObject jsonEstatistica = new JSONObject();
 		
+		double percentualUsed = 0;
+		DecimalFormat formato = new DecimalFormat ("#,##0.00", new DecimalFormatSymbols (new Locale ("en", "US"))); 
+		
 		if (CpArquivoTipoArmazenamentoEnum.HCP.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
 			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
 			jsonEstatistica = a.estatistica().getJSONObject("statistics");
-			convertJsonToResult(jsonEstatistica);
+			convertJsonToResult(jsonEstatistica);	
 		}
 		
-		DecimalFormat formato = new DecimalFormat ("#,##0.00", new DecimalFormatSymbols (new Locale ("en", "US"))); 
-		double percentualUsed = ((double) usedCapacityBytes/totalCapacityBytes) * 100;  
+		if(totalCapacityBytes > 0) {
+			percentualUsed = ((double) usedCapacityBytes/totalCapacityBytes) * 100;  
+		}
 		
 		result.include("totalCapacityBytes", totalCapacityBytes);
 		result.include("usedCapacityBytes", usedCapacityBytes);

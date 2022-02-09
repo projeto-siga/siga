@@ -133,7 +133,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return null;
 		return getExMobilPai().getExDocumento();
 	}
-
+	
+	public ExMobil getGrandeExMobilPai() {
+		ExMobil m = getExMobilPai();
+		
+		while (m != null) {
+			ExMobil m2 = m.doc().getExMobilPai();
+			if (m2 == null)
+				return m;
+			else
+				m = m2;
+		}
+		return this.getMobilGeral();
+	}
+	
 	/**
 	 * Retorna o nível de acesso (não a descrição) do documento definido no
 	 * momento da criação do documento, desconsiderando as redefinições de

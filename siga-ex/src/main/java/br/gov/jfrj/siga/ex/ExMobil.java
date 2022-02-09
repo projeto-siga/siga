@@ -1104,6 +1104,22 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return m;
 	}
+	
+	public ExMobil getGrandeMestreJuntada() {
+		ExMobil m = getExMobilPai();
+		if (m == null) {
+			if (temDocumentosJuntados())
+				return this;
+		}
+		while (m != null) {
+			ExMobil m2 = m.getExMobilPai();
+			if (m2 == null)
+				return m;
+			else
+				m = m2;
+		}
+		return null;
+	}
 
 	public ExMovimentacao anexoPendente(final String descrMov, final boolean fIncluirCancelados) {
 		if (getExMovimentacaoSet() == null)

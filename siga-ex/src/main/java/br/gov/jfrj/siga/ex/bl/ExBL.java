@@ -237,8 +237,6 @@ public class ExBL extends CpBL {
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
-	private static final boolean PROP_BUSCAR_TODOS_DOC_PAI_FILHO = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.composto.completo");
-	private static final boolean BUSCAR_SOMENTE_DOC_COMPOSTO = Boolean.TRUE;
 	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();
@@ -3870,6 +3868,7 @@ public class ExBL extends CpBL {
 	public void atualizarDnmAcesso(ExDocumento doc) {
 		atualizarDnmAcesso(doc, null, null);
 	}
+	
 	public void atualizarDnmAcesso(ExDocumento doc, Object incluirAcesso, Object excluirAcesso) {
 		Date dt = ExDao.getInstance().dt();
 		String acessoRecalculado = new ExAcesso().getAcessosString(doc, dt, incluirAcesso, excluirAcesso);
@@ -3879,12 +3878,14 @@ public class ExBL extends CpBL {
 		}
 		
 		if(Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.composto")
+				//TODO Arrumar essa lógica (possuiCossignatarioSubscritor) antes de entregar
+				//TODO Validar o inclusao de cossignatario e remocao de cossignatario no movimento
 							&& doc.isFinalizado() && possuiCossignatarioSubscritor(doc)) {			
 			
 			if(doc.isAssinadoDigitalmente()) {
-				removerPermissaoDnmAcessoTodosOsDocsPaiFilho(doc, dt, acessoRecalculado);
+				removerPermissaoTempDnmAcessoArvoreDocComposto(doc, dt, acessoRecalculado);
 			} else {
-				incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(doc, dt, acessoRecalculado);
+				incluirPermissaoTempDnmAcessoArvoreDocComposto(doc, dt, acessoRecalculado);
 			}
 		}
 	}
@@ -3920,28 +3921,23 @@ public class ExBL extends CpBL {
 		return listaIdSubscritor;
 	}
 	
-	private void removerPermissaoDnmAcessoTodosOsDocsPaiFilho(ExDocumento doc, Date dt, String acessoRecalculado) {
+	private void removerPermissaoTempDnmAcessoArvoreDocComposto(ExDocumento doc, Date dt, String acessoRecalculado) {
 		
 		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
-		//Obter Lista DnmAcesso para remocao no ExDoc Pai Filho
+		//Obter Lista DnmAcesso para remocao para Arvore Doc Composto
 		List<String> listaDnmRemocao = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
 
-		if (!listaDnmRemocao.isEmpty()) {
-			//Lista hierarquica completa em x
-			List<ExDocumento> listaTodosDocPais = ExDao.getInstance()
-											.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(
-													doc.getIdDoc(), PROP_BUSCAR_TODOS_DOC_PAI_FILHO, BUSCAR_SOMENTE_DOC_COMPOSTO);
-			//Lista hierarquica completa em x e z
-			List<ExDocumento> listaHierarquiaCompletaDocPaisFilhos = obterTodosHierarquiaCompletaPaiFilho(listaTodosDocPais);
-			for (ExDocumento docPaiFilho : listaHierarquiaCompletaDocPaisFilhos) {
+		if (!listaDnmRemocao.isEmpty()) {			
+			List<ExDocumento> listaTodosExDocFinal = getListaArvoreDocComposto(doc);
+			for (ExDocumento docPaiFilho : listaTodosExDocFinal) {
 				//lista final para ser removido do DnmAcessoPaiFilho
 				List<String> listaDnmRemocaoFinal = obterListaIdPessoaSubscritorCossignatarioExDoc(docPaiFilho, listaDnmRemocao);
 				List<String> listaDmnDocPaiFilhoFinal = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
 				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
 				listaDmnDocPaiFilhoFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(listaDnmRemocaoFinal, "P"));
 
-				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilhoFinal);
+				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaDmnDocPaiFilhoFinal);
 				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, docPaiFilho, dt);
 			}
 		}
@@ -3973,51 +3969,49 @@ public class ExBL extends CpBL {
 				.collect(Collectors.toList());
 	}
 	
-	private void incluirPermissaoDnmAcessoTodosOsDocsPaiFilho(ExDocumento doc, Date dt, String acessoRecalculado) {
+	private void incluirPermissaoTempDnmAcessoArvoreDocComposto(ExDocumento doc, Date dt, String acessoRecalculado) {
 		
 		//Remover da lista DnmAcesso diferentes de IdPessoas e coverter para List<String>
 		//Exemplo: acessoRecalculado = O12,L23,P22; Remover O12,L23, Manter P22
-		List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferentePessoa(
-								converterStringParaList(acessoRecalculado, ","));
-		//Lista hierarquica completa em x
-		List<ExDocumento> listaTodosDocPaisFilhos = ExDao.getInstance()
-								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(
-										doc.getIdDoc(), PROP_BUSCAR_TODOS_DOC_PAI_FILHO, BUSCAR_SOMENTE_DOC_COMPOSTO); 		
-		//Lista hierarquica completa em x e z
-		List<ExDocumento> listaHierarquiaCompletaDocPaisFilhos = obterTodosHierarquiaCompletaPaiFilho(listaTodosDocPaisFilhos);
-		for (ExDocumento docPaiFilho : listaHierarquiaCompletaDocPaisFilhos) {
-			List<String> listaDmnDocPaiFilho = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
+		List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferenteTipoPessoa(
+																converterStringParaList(acessoRecalculado, ","));
+		List<ExDocumento> listaArvoreDocCompostoFinal = getListaArvoreDocComposto(doc);
+		
+		for (ExDocumento exDoc : listaArvoreDocCompostoFinal) {
+			List<String> listaStrDmnDocAtual = converterStringParaList(exDoc.getDnmAcesso(), ",");
 			//Adicionar DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-			listaDmnDocPaiFilho.addAll(listaAcessoRecalculadoPessoas);
+			listaStrDmnDocAtual.addAll(listaAcessoRecalculadoPessoas);
 						
-			String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoPaiFilho(listaDmnDocPaiFilho);
-			persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, docPaiFilho, dt);
+			String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaStrDmnDocAtual);
+			persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, exDoc, dt);
 		}	
 	}
 	
-	/*
-	 * Metodo synchronized afim de evitar concorrencia de Threads, List<ExDocumento> 
-	 * listaTodosDocPaisFilhos atualizada em tempo de execucao
-	 */
-	private synchronized List<ExDocumento> obterTodosHierarquiaCompletaPaiFilho(List<ExDocumento> listaTodosDocPaisFilhos){
-		for(int i = 0; i < listaTodosDocPaisFilhos.size(); i++) {
-			ExDocumento exDocumento = listaTodosDocPaisFilhos.get(i);
-			//Lista hierarquica completa em x
-			List<ExDocumento> listaTodosDocPaisFilhosHorizontal = ExDao.getInstance()
-								.obterListaHierarquicaPaiFilhoExDocumentosPorIdDoc(
-										exDocumento.getIdDoc(), PROP_BUSCAR_TODOS_DOC_PAI_FILHO, !BUSCAR_SOMENTE_DOC_COMPOSTO);
-			if(listaTodosDocPaisFilhosHorizontal != null) {
-				List<ExDocumento> listaRemoverExDocDuplicados = listaTodosDocPaisFilhos.stream().filter(
-								e -> listaTodosDocPaisFilhosHorizontal.contains(e)).collect(Collectors.toList());
-				listaTodosDocPaisFilhosHorizontal.removeAll(listaRemoverExDocDuplicados);
-				//Cuidado: atualizada em tempo de execucao
-				listaTodosDocPaisFilhos.addAll(listaTodosDocPaisFilhosHorizontal); 
+	private List<ExDocumento> getListaArvoreDocComposto (ExDocumento doc){
+		List<ExDocumento> listaTodosExDocFinal = new ArrayList<>();
+		List<ExDocumento> listaExDocTodosJuntadosCompostos = new ArrayList<>();
+		
+		ExMobil exMobilGrandeJunatada = doc.getGrandeExMobilPai().getGrandeMestreJuntada();
+		if (exMobilGrandeJunatada != null ) {
+			Set<ExMobil> setRecursivo = exMobilGrandeJunatada.getMobilETodosOsJuntados();
+			for (ExMobil exMobil : setRecursivo) {
+				//if(exMobil.getExDocumento().isComposto()) {
+					listaExDocTodosJuntadosCompostos.add(exMobil.getExDocumento());
+				//}
 			}
 		}
-		return listaTodosDocPaisFilhos;
+		List<ExDocumento> listaExDocFilhosNaoJuntados = new ArrayList<>();
+		for (ExDocumento docPaiFilho : listaExDocTodosJuntadosCompostos) {
+			listaExDocFilhosNaoJuntados.addAll(docPaiFilho.getExDocumentoFilhoSet());
+		}
+		
+		listaTodosExDocFinal.addAll(listaExDocTodosJuntadosCompostos);
+		listaTodosExDocFinal.addAll(listaExDocFilhosNaoJuntados);
+		
+		return listaTodosExDocFinal;
 	}
 	
-	private String prepararStrAcessoDnmRecalculadoPaiFilho(List<String> listaDmnDocPaiFilho) {
+	private String prepararStrAcessoDnmRecalculadoDoc(List<String> listaDmnDocPaiFilho) {
 		//Remover DnmAcesso duplicados e Ordernar Lista
 		List<String> listaDmnDocPaiFinal = listaDmnDocPaiFilho.stream().distinct().sorted().collect(Collectors.toList());
 		//Coverter Lista de String para String com virgula
@@ -4031,7 +4025,7 @@ public class ExBL extends CpBL {
 		
 	}
 	
-	private List<String> removerDnmAcessoDiferentePessoa(List<String> listaDnmAcesso) {
+	private List<String> removerDnmAcessoDiferenteTipoPessoa(List<String> listaDnmAcesso) {
 		List<String> listaDnmAcessoFinal = new ArrayList<>();
 		for (String string : listaDnmAcesso) {
 			if(string.contains("P")) {

@@ -238,20 +238,6 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
-	
-	@SuppressWarnings("unchecked")
-	public CpServico consultarPorSigla(final String sigla) {
-		final Query query = em().createNamedQuery("consultarPorSiglaServico");
-		query.setParameter("sigla", sigla);
-
-		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
-
-		final List<CpServico> l = query.getResultList();
-		if (l.size() != 1)
-			return null;
-		return l.get(0);
-	}
 
 	@SuppressWarnings("unchecked")
 	public CpServico consultarCpServicoPorChave(String chave) {

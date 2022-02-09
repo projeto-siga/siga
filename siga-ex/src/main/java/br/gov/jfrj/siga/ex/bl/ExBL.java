@@ -236,9 +236,11 @@ public class ExBL extends CpBL {
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
 	
+	private static final String SIGA_CEMAIL_COSSIG = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;COSSIG:Fui incluído como cossignatário de um documento";
 	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCMARC:Notificações de marcadores destinados a minha unidade";
 	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUSU:Tramitar para o meu usuário";
 	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUN:Documento foi tramitado para a minha unidade";
+	private static final String SIGA_CEMAIL_RESPASSI = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;RESPASSI:Fui incluído como responsável pela assinatura";
 	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();
@@ -3147,6 +3149,11 @@ public class ExBL extends CpBL {
 					&& Ex.getInstance().getComp().pode(ExPodeJuntar.class, cadastrante, lotaCadastrante, doc.getExMobilAutuado()))
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
 			
+			if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
+					doc.getSubscritor().getLotacao(), SIGA_CEMAIL_RESPASSI)) { 
+				Cp.getInstance().getBL().enviarEmailResponsavelPelaAssinatura(cadastrante, doc.getSubscritor(), doc.getSigla());
+			}
+			
 			return s;
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao finalizar o documento: " + e.getMessage(), e);
@@ -4140,6 +4147,11 @@ public class ExBL extends CpBL {
 			processar(doc, true, false);
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
+			
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), SIGA_CEMAIL_COSSIG)) {
+				Cp.getInstance().getBL().enviarEmailAoCossignatario(mov.getTitular(), mov.getSubscritor(), mov.getExDocumento().getSigla());
+			}
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao incluir Cossignatário.", e);
@@ -5183,8 +5195,7 @@ public class ExBL extends CpBL {
 							for (ExMobil exMobil: exMobils) {
 								for (ExMarca exMarca: exMobil.getExMarcaSet()) {
 									if (exMarca.getCpMarcador().isInteressadoPessoa() || exMarca.getCpMarcador().isInteressadoLotacao())
-										Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuario(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());
-									break;
+										Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());									
 								}
 							}
 						}
@@ -5200,7 +5211,7 @@ public class ExBL extends CpBL {
 								for (ExMobil exMobil: exMobils) {
 									for (ExMarca exMarca: exMobil.getExMarcaSet()) {
 										if (exMarca.getCpMarcador().isInteressadoPessoa() || exMarca.getCpMarcador().isInteressadoLotacao())
-										Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuariosDaUnidade(mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());
+											Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(pessoa, mov.getTitular(), mov.getExDocumento().getSigla());
 									}
 								}
 							} 

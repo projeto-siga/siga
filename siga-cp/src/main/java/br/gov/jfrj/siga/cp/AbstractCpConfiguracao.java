@@ -84,14 +84,6 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "	and (cpcfg.hisDtIni <= :dtInicioVigenciaFim) "
 				+ "	order by cpcfg.hisDtIni"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao.idTpLotacao = :idTpLotacao) and hisDtFim is null"),
-		@NamedQuery(name = "consultarConfiguracoesPorServicoEPessoa", query = "from CpConfiguracao email where (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.idServico = :idServico) and hisDtFim is null"),
-		@NamedQuery(name = "consultarAcoesParaNotificacoesPorEmail", query = "from CpConfiguracao email where"
-				+ " (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :respass) and hisDtFim is null " 
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :cossig) and hisDtFim is null "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :docmarc) and hisDtFim is null "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :doctun) and hisDtFim is null "
-				+ "or (email.dpPessoa.idPessoa = :idPessoa and email.cpServico.siglaServico = :doctusu) and hisDtFim is null ORDER BY email.cpServico.dscServico "), 
-		@NamedQuery(name = "consultarQuantidadeAcoesNotificarPorEmail", query = "select count(email) from CpConfiguracao email " ),
 		@NamedQuery(name = "consultarCacheDeConfiguracoesAtivas", query = " from "
 				+ "CpConfiguracaoCache cpcfg where cpTipoConfiguracao in :tipos and hisDtFim is null")})
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte

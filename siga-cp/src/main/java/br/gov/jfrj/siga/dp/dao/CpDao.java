@@ -69,7 +69,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
-import br.gov.jfrj.siga.cp.model.enm.CpConfiguracaoNotificarEmail;
+import br.gov.jfrj.siga.cp.model.enm.CpServicosNotificacaoPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -347,58 +347,6 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> consultarPorFiltro(final CpOrgaoUsuarioDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public CpConfiguracao consultarConfiguracoesPorServicoEPessoa(final Long codigo, Long idPessoa) {
-		final Query query = em().createNamedQuery("consultarConfiguracoesPorServicoEPessoa");
-		query.setParameter("idServico", codigo);
-		query.setParameter("idPessoa", idPessoa);
-		
-		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
-
-		final List<CpConfiguracao> l = query.getResultList();
-		if (l.size() != 1)
-			return null;
-		return l.get(0);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<CpConfiguracao> consultarConfiguracaoNotificarEmailPorUsuario(Integer offset, Integer itemPagina, Long idPessoa) {
-		try {
-			final Query query = em().createNamedQuery("consultarAcoesParaNotificacoesPorEmail");
-			if (offset > 0) {
-				query.setFirstResult(offset);
-			}
-			if (itemPagina > 0) {
-				query.setMaxResults(itemPagina);
-			} 
-			query.setParameter("idPessoa", idPessoa); 
-			query.setParameter("respass", CpConfiguracaoNotificarEmail.RESPASS.getSigla());
-			query.setParameter("cossig", CpConfiguracaoNotificarEmail.COSSIG.getSigla());
-			query.setParameter("docmarc", CpConfiguracaoNotificarEmail.DOCMARC.getSigla());  
-			query.setParameter("doctun", CpConfiguracaoNotificarEmail.DOCTUN.getSigla());
-			query.setParameter("doctusu", CpConfiguracaoNotificarEmail.DOCTUSU.getSigla());
-			final List<CpConfiguracao> l = query.getResultList();
-			for (CpConfiguracaoNotificarEmail c : CpConfiguracaoNotificarEmail.values()) {
-				CpServico servico = new CpServico();
-				CpConfiguracao cpConfiguracao = new CpConfiguracao();
-				if (c.getSigla() != CpConfiguracaoNotificarEmail.SIGACEMAIL.getSigla() &&
-						c.getSigla() != CpConfiguracaoNotificarEmail.RESPASS.getSigla() &&
-						c.getSigla() != CpConfiguracaoNotificarEmail.COSSIG.getSigla() &&
-						c.getSigla() != CpConfiguracaoNotificarEmail.DOCMARC.getSigla() &&
-						c.getSigla() != CpConfiguracaoNotificarEmail.DOCTUN.getSigla() && 
-						c.getSigla() != CpConfiguracaoNotificarEmail.DOCTUSU.getSigla()) {
-					servico.setDscServico(c.getDescricao());
-					cpConfiguracao.setCpServico(servico);
-					l.add(cpConfiguracao);		
-				}
-			}
-			return l;  
-		} catch (final NullPointerException e) {
-			return null;
-		}
 	}
 
 	@SuppressWarnings("unchecked")

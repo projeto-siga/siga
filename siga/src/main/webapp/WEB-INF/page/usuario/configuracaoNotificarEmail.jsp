@@ -7,167 +7,93 @@
 <%@ taglib tagdir="/WEB-INF/tags/mensagem" prefix="siga-mensagem"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<style>
-#passwordStrength {
-	height: 10px;
-	display: block;
-	float: left;
-}
-
-.strength0 {
-	width: 250px;
-	background: #cccccc;
-}
-
-.strength1 {
-	width: 50px;
-	background: #ff0000;
-}
-
-.strength2 {
-	width: 100px;
-	background: #ff5f5f;
-}
-
-.strength3 {
-	width: 150px;
-	background: #56e500;
-}
-
-.strength4 {
-	background: #4dcd00;
-	width: 200px;
-}
-
-.strength5 {
-	background: #399800;
-	width: 250px;
-}
-
-.tabela-senha td {
-	padding: 3px 5px 3px 5px;
-}
-
-</style>
- 
 <siga:pagina popup="false" titulo="Receber notificação por email">
-	<!-- main content bootstrap -->
 	<div class="container-fluid">
-		<c:if test="${baseTeste}">
-			<div id="msgSenha"
-				style="font-size: 12pt; color: red; font-weight: bold;">ATENÇÃO:
-				Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma
-				senha da versão de PRODUÇÃO.</div>
-		</c:if>
-
-		<h1 class="gt-form-head">${param.titulo}</h1>	
-
 		<div class="card bg-light mb-3">
-			<div class="card-header">
+			<div class="card-header"> 
 				<h5 id="et">Receber notificação por email</h5>
-			</div>
-
-			<div class="card-body">
+			</div> <!-- card-header -->
+			<div class="card-body"> 
 				<form name="frm" id="listar" action="listar" method="GET">
-					<input type="hidden" name="page" value="1" />
-					<siga-mensagem:sucesso texto="${mensagem}"></siga-mensagem:sucesso>		 
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">  
-								 <div class="table-responsive">
+								<div class="table-responsive">
 								    <table border="0" class="table table-sm table-striped">
 								      <thead class="thead-dark">
 									      <tr>
 									        <th style="width: 70%;">Ações</th>
 									        <th>Receber</th>
 									      </tr>  
-								      </thead>
-								      
+								      </thead><!-- thead-dark -->
 								      <tbody>
-								      	<c:forEach items="${itens}" var="email" >
-									      	<c:choose> 
-									      	<!-- Existem 4 configurações estáticas por padrão. Caso tenha recarregue página inicial 
-									      	para adicionar as 5 configuração restantes. -->
-									      	<c:when test="${quantidade == 4}"> 
-									      		<script>
-									      			window.location.href = 'inicial?paramoffset=0';
-									      		</script>
-									      	</c:when>
-								      	</c:choose> 
+								      	<c:forEach items="${ITENS}" var="conf" >
 										  <tr> 
 										  	<c:url var="ativar" value="editar">   
-												<c:param name="id" value="${email.idConfiguracao}"></c:param>
+												<c:param name="siglaServ" value="${conf.cpServico.siglaServico}"></c:param>
 												<c:param name="idSituacao" value="1"></c:param>
 											</c:url> 
 											<c:url var="inativar" value="editar">
-												<c:param name="id" value="${email.idConfiguracao}"></c:param>
+												<c:param name="siglaServ" value="${conf.cpServico.siglaServico}"></c:param>
 												<c:param name="idSituacao" value="2"></c:param>
 											</c:url> 
-											
-											<td style="width: 70%;">
-										      	${email.cpServico.dscServico} 
-										    </td>    
-										      <c:choose>  
-													<c:when test="${email.cpSituacaoConfiguracao.getId() == 1}">
-												        <td>
-												        	<a href="javascript:submitPost('${inativar}')" class="btn btn-danger btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
-												        	<button type="button" class="btn btn-secondary btnD" style="display: none;" disabled>Aguarde</button>
-												        </td> 
-										        	</c:when>   
-									          </c:choose> 
-									          <c:choose>  
-									          	<c:when test="${email.cpSituacaoConfiguracao.getId() == 2}">  
-												        <td> 
-										        			<a href="javascript:submitPost('${ativar}')" class="btn btn-primary btnAcao" role="button" aria-pressed="true" style="min-width: 80px;">Desativar</a>
-										        			<button type="button" class="btn btn-secondary btnD" style="display: none;" disabled>Aguarde</button>
-										        		</td>
+											<c:if test="${conf.cpServico.siglaServico != SERV_PAI}"> 
+												<td style="width: 70%;">
+										      		${conf.cpServico.dscServico}  
+										    	</td> 
+											</c:if>
+										    <c:choose>   
+											    <c:when test="${conf.cpSituacaoConfiguracao.getId() == PODE and conf.cpServico.siglaServico != SERV_PAI}">
+												   <td> 
+												   	  <button class="btn btn-danger btnAcao" style="min-width: 100px;" type="button" onclick="javascript:submitPost('${inativar}')">Ativar</button>
+												   </td> 
+										        </c:when>   
+									        </c:choose> 
+									        <c:choose>  
+									          	<c:when test="${conf.cpSituacaoConfiguracao.getId() == NAO_PODE and conf.cpServico.siglaServico != SERV_PAI}">  
+												   <td>  				        			
+										              <button class="btn btn-primary btnAcao" style="min-width: 100px;" type="button" onclick="javascript:submitPost('${ativar}')">Inativar</button>
+										           </td>
 										        </c:when> 
-									          </c:choose>
-									          <c:choose>   
-									          	<c:when test="${email.cpSituacaoConfiguracao.getId() == null}">
-												        <td>
-												        	<p style="font-size: 12px; color: grey;">Recebimento obrigatório</p> 
-												        </td> 
-										        	</c:when>  
-									          </c:choose>
-										    	</tr> 
+									        </c:choose>
+									        <c:choose>   
+									            <c:when test="${conf.cpSituacaoConfiguracao.getId() == RECB_OBRIGATORIO and conf.cpServico.siglaServico != SERV_PAI}">
+												   <td>
+												      <p style="font-size: 12px; color: grey;">Recebimento obrigatório</p>  
+												   </td> 
+										        </c:when>  
+									        </c:choose>
+										    	</tr><!-- tr -->
 									      	</c:forEach>
-									      	  
-								      </tbody>
-								    </table>
-									  
-								  </div>
-							</div>
-						</div>
-						
-					</div>
-				</form>	
-			</div>
-		</div>		
-	</div>
+								      	</tbody><!-- body -->
+								    </table><!-- table -->
+								</div><!-- table-responsive -->
+							</div><!-- form-group -->
+						</div><!-- col-sm -->
+					</div><!-- row -->
+				</form><!-- form -->
+			</div><!-- card-body -->
+		</div><!-- card bg-light mb-3 -->	
+	</div><!-- container-fluid -->
 	<script type="text/javascript">
-	$(document).ready(function() {	
-		if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
-	});
-	
-	function sbmtAction(codigo, action) {
-		var frm = document.getElementById(codigo);
-		frm.action = action;
-		frm.submit();
-		return ;
-	}
-	
-	function submitPost(url) {
-		$(".btnD").show();
-		$('.btnAcao').hide()
-		var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Aguarde'
-		$(".btnD").html(spinner);
-		setTimeout(function () {
-			var frm = document.getElementById('listar'); 
-			frm.method = "POST";
-			sbmtAction('listar',url);
-		}, 1000)
-	}
-	
-</script>
+		$(document).ready(function() {	
+			if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
+		});
+		function sbmtAction(codigo, action) {
+			var frm = document.getElementById(codigo);
+			frm.action = action;
+			frm.submit();
+			return ;
+		}
+		function submitPost(url) {
+			$(".btnAcao").attr("disabled", true);
+			var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Aguarde'
+			$(".btnAcao").html(spinner);
+			setTimeout(function () {
+				var frm = document.getElementById('listar');    
+				frm.method = "POST";
+				sbmtAction('listar',url);
+			}, 1000)
+		}
+	</script>
 </siga:pagina>

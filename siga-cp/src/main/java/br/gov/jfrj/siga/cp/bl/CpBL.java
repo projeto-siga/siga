@@ -35,6 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -1841,6 +1842,48 @@ public class CpBL {
 		}
 			
 	}
+	
+	private String docTramitadoParaUsuario(DpPessoa destinatario, String corpo) {		 
+		String conteudo = "";
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/doc-tramitado-para-usuario.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())  
+					.replace("${corpo}", corpo);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}	
+	}
+	
+	private String docTramitadoParaUnidade(DpPessoa destinatario, String corpo) {		 
+		String conteudo = "";
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/doc-tramitado-para-usuario.html"),StandardCharsets.UTF_8))) {			
+			String str;
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeUsuario}", destinatario.getNomePessoa())  
+					.replace("${corpo}", corpo);
+			
+			return conteudo;
+			
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
+		}	
+	}
 
 	
 	public void enviarEmailDefinicaoPIN(DpPessoa destinatario, String assunto, String corpo) {
@@ -1865,6 +1908,33 @@ public class CpBL {
 		}
 	}
 	
+	public void enviarEmailAoTramitarDocParaUsuario(DpPessoa pessoaDest, DpPessoa titular, String sigla) {
+		String assunto = "Documento tramitado para " + pessoaDest.getDescricao();
+		String corpo = "Prezado usuário, " + pessoaDest.getDescricao() + ". Você recebeu o documento <b>" + sigla + "</b> com o alerta, documento tramitado, enviado pelo usuário <b>" + titular.getNomePessoa() + " (" + titular.getSigla() + ")</b>.";
+		
+		String[] destinanarios = { pessoaDest.getEmailPessoaAtual() };
+		String conteudoHTML = docTramitadoParaUsuario(pessoaDest, corpo);
+		
+		try {
+			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
+	
+	public void enviarEmailAoTramitarDocParaUsuariosDaUnidade(DpLotacao lotaDest, DpPessoa pessoa, String sigla) {
+		String assunto = "Documento tramitado para unidade " + lotaDest.getDescricao();
+		String corpo = "O documento <b>" + sigla + "</b>, foi transferido para a unidade <b>" + lotaDest.getDescricao() + " (<b>" + lotaDest.getSigla() + "</b>) e aguarda recebimento <br/> "
+				+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484>clique aqui.</a>";
+		
+			String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+			String conteudoHTML = docTramitadoParaUnidade(pessoa, corpo);
+			try {
+				Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
+			} catch (Exception e) {
+				throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+			}
+	}
 	
 	private String textoEmailTokenResetPin(DpPessoa destinatario,  String tokenPin) {		
 		String conteudo = "";

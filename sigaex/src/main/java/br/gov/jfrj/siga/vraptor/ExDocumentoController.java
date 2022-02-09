@@ -1604,7 +1604,7 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 			
-			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(exDocumentoDto.getDoc().getSubscritor(), 
+			if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(exDocumentoDto.getDoc().getSubscritor(), 
 					exDocumentoDto.getDoc().getSubscritor().getLotacao(), SIGA_CEMAIL_RESPASSI)) {
 				String[] destinanarios = { exDocumentoDto.getDoc().getSubscritor().getEmailPessoa() };
 				   Correio.enviar(null, destinanarios, 

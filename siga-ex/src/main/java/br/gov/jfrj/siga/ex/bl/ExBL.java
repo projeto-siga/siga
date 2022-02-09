@@ -236,6 +236,10 @@ public class ExBL extends CpBL {
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
 	
+	private static final String SIGA_CEMAIL_DOCMARC = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCMARC:Notificações de marcadores destinados a minha unidade";
+	private static final String SIGA_CEMAIL_DOCTUSU = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUSU:Tramitar para o meu usuário";
+	private static final String SIGA_CEMAIL_DOCTUN = "Siga:Sistema Integrado de Gestão Administrativa;CEMAIL:Módulo de notificação por email;DOCTUN:Documento foi tramitado para a minha unidade";
+	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();
 
@@ -4960,7 +4964,7 @@ public class ExBL extends CpBL {
 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 
 		Date dtUltReceb = null;
-
+		
 		// Edson: apagar isto? A verificação já é feita no for abaixo...
 		if (fDespacho && mob.isApensadoAVolumeDoMesmoProcesso())
 			throw new AplicacaoException("não é possível fazer despacho em um documento que faça parte de um apenso");
@@ -5170,6 +5174,42 @@ public class ExBL extends CpBL {
 					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
 					listaMovimentacao.addAll(m.doc().getMobilGeral()
 							.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
+					Set<ExMobil> exMobils = mov.getExDocumento().getExMobilSet();
+					Set<DpPessoa> pessoasLota = mov.getLotaResp().getDpPessoaLotadosSet();
+					
+					if (mov.getResp() != null) { 
+						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+								mov.getResp().getLotacao(), SIGA_CEMAIL_DOCMARC)) { 
+							for (ExMobil exMobil: exMobils) {
+								for (ExMarca exMarca: exMobil.getExMarcaSet()) {
+									if (exMarca.getCpMarcador().isInteressadoPessoa() || exMarca.getCpMarcador().isInteressadoLotacao())
+										Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuario(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());
+									break;
+								}
+							}
+						}
+						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+									mov.getResp().getLotacao(), SIGA_CEMAIL_DOCTUSU))  
+							Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuario(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());
+					}
+					
+					if (mov.getLotaResp() != null) {
+						for (DpPessoa pessoa: pessoasLota) { 
+							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+									pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) { 
+								for (ExMobil exMobil: exMobils) {
+									for (ExMarca exMarca: exMobil.getExMarcaSet()) {
+										if (exMarca.getCpMarcador().isInteressadoPessoa() || exMarca.getCpMarcador().isInteressadoLotacao())
+										Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuariosDaUnidade(mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());
+									}
+								}
+							} 
+							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+									pessoa.getLotacao(), SIGA_CEMAIL_DOCTUN)) 
+									Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuariosDaUnidade(mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());
+						}
+					}
+					
 					if (!listaMovimentacao.isEmpty()) {
 						List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();
 						listaDocumentos.addAll(mob.getDoc().getExDocumentoFilhoSet());
@@ -5186,7 +5226,7 @@ public class ExBL extends CpBL {
 				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni);
 
 			concluirAlteracao();
-
+			
 		} catch (final AplicacaoException e) {
 			cancelarAlteracao();
 			throw e;

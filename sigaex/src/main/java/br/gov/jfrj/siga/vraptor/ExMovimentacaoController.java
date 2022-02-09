@@ -2121,82 +2121,9 @@ public class ExMovimentacaoController extends ExController {
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
 						movimentacaoBuilder.getConteudo(),
 						mov.getNmFuncaoSubscritor(), false, false, tpTramite);
-		
-		if (lotaResponsavelSel.getDescricao() != null) { 
-			Set<DpPessoa> s = lotaResponsavelSel.getObjeto().getDpPessoaLotadosSet();
-			for (DpPessoa pessoa: s) {
-				List<CpMarcador> listMar = null;
-				try {
-					listMar = dao.listarCpMarcadoresPorLotacaoEGeral(getLotaTitular(), true, true);
-				} catch (AplicacaoException e) {
-					listMar = dao.listarCpMarcadoresPorLotacao(getLotaTitular(), true, true);
-				} 
-				Set<ExMobil> exMarcas = mov.getExDocumento().getExMobilSet();
-				List<ExMobil> mainList = new ArrayList<>(exMarcas);
-				for (int i = 0; i < listMar.size(); i++) { 
-					for (int j = 0; j < mainList.size(); j++) {  
-						for (ExMarca marca: mainList.get(j).getExMarcaSet()) {
-							if (listMar.get(i).getDescrMarcador() == marca.getCpMarcador().getDescrMarcador()) {
-									if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-											pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) {
-										String[] destinanarios = { pessoa.getEmailPessoa() };
-										Correio.enviar(null, destinanarios,  
-											"Usuário marcado ",     
-											"",   
-											""  
-											+ "<br>"  
-											+ "Prezado Usuário, <b>" + pessoa.getNomePessoa() + " (" + pessoa.getSigla() + ")</b>. "
-											+ "Você recebeu o documento (<b>" + sigla + "</b>) com o Alerta, marcador, "
-											+ "enviado pelo Usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSiglaCompleta() + ")</b>."
-											+ "<br>"
-											+ "<br>"
-											+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-											+ "	>clique aqui.</a>"); 
-								}
-							}  
-						}
-						
-					}   
-				} 
-					
-				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-						pessoa.getLotacao(), SIGA_CEMAIL_DOCTUN)) {
-						String[] destinanarios = { pessoa.getEmailPessoa() }; 
-						Correio.enviar(null,destinanarios,   
-								"Documento tramitado para unidade " + lotaResponsavelSel.getDescricao() + "", 
-								"",   
-								""
-								+ "<br>"
-								+ "O documento <b>" + sigla + "</b>, "
-								+ "foi transferido para a unidade <b>" + lotaResponsavelSel.getDescricao() + " (" + lotaResponsavelSel.getSigla() + ")</b> e aguarda recebimento. "
-								+ "<br>" 
-								+ "<br>"
-								+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-								+ "	>clique aqui.</a>");  
-				}  
-			}
-		}
-		
-		if (responsavelSel.getDescricao() != null) {
-			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(responsavelSel.getObjeto(), 
-					responsavelSel.getObjeto().getLotacao(), SIGA_CEMAIL_DOCTUSU)) {
-					String[] destinanarios = { responsavelSel.getObjeto().getEmailPessoa() }; 
-					Correio.enviar(null,destinanarios,   
-							"Documento tramitado para " + responsavelSel.getDescricao() + "", 
-							"",    
-							""
-							+ "<br>"		
-							+ "Prezado usuário, " + responsavelSel.getDescricao() + ". Você recebeu o documento <b>" + sigla + "</b> com o alerta, "
-							+ "documento tramitado, enviado pelo usuário <b>" + getTitular().getNomePessoa() + " (" + getTitular().getSigla() + ")</b>. "
-							+ "<br>" 
-							+ "<br>"
-							+ "Para visualizar o documento, <a href='https://www.documentos.spsempapel.sp.gov.br/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.homologacao.spsempapel.sp.gov.br%2Fsigaex%2Fapp%2Fexpediente%2Fdoc%2Fexibir%3Fsigla%3DPD-MEM-2020%2F00484'"
-							+ "	>clique aqui.</a>"); 
-			}  
-		}
 
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
-			ExMovimentacao ultimaMovimentacao = builder.getMob()
+			ExMovimentacao ultimaMovimentacao = builder.getMob() 
 					.getUltimaMovimentacao();
 			
 			if (SigaMessages.isSigaSP()) {

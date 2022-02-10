@@ -696,11 +696,16 @@ function toaster(_notificacoes) {
 	toastContainer.empty();
 	
 	/* Create Toast*/
-	_notificacoes.forEach(createToast);
+	if (_notificacoes != null)
+		_notificacoes.forEach(createToast);
 
 
 	function createToast(item) {
 		var id = item.idNotificacao;
+		
+		if (id === undefined)
+			return;
+			
 		var icone = item.icone;
 		var titulo = item.titulo;
 		var conteudo = item.conteudo;

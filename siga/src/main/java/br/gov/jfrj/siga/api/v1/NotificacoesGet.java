@@ -33,7 +33,9 @@ public class NotificacoesGet implements INotificacoesGet {
 		}
 		
 		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(ctx.getTitular(),ctx.getLotaTitular(),"SIGA;FE;ARMAZ;ARMAZ_ESTAT")) {
-			resp.list.add(criaNotificacaoArmazenanentoCritico());
+			Notificacao notificacaoArmazenamento = criaNotificacaoArmazenanentoCritico();
+			if (notificacaoArmazenamento != null)
+				resp.list.add(notificacaoArmazenamento);
 		}
 		
 	}
@@ -55,7 +57,7 @@ public class NotificacoesGet implements INotificacoesGet {
 	}
 	
 	private Notificacao criaNotificacaoArmazenanentoCritico() throws JSONException {
-		Notificacao notificacao = new Notificacao();
+		
 		JSONObject jsonEstatistica = new JSONObject();
 		double percentualUsed = 0;
 		
@@ -70,6 +72,7 @@ public class NotificacoesGet implements INotificacoesGet {
 		}
 		
 		if (percentualUsed > softQuotaPercent) {
+			Notificacao notificacao = new Notificacao();
 			DecimalFormat formato = new DecimalFormat ("#,##0.00", new DecimalFormatSymbols (new Locale ("en", "US"))); 
 			
 			notificacao.idNotificacao = "2";
@@ -85,8 +88,11 @@ public class NotificacoesGet implements INotificacoesGet {
 					+ " </div><br />"
 					+ "<p class=\"text-center\">Clique <strong><a href='/siga/app/armazenamento/estatistica'>aqui</a></strong> para ir para painel.</p>";
 			notificacao.sempreMostrar = false;
-		}
-		return notificacao;
+			
+			return notificacao;
+		} else
+			return null;
+		
 
 	}
 	

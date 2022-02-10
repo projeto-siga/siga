@@ -147,6 +147,26 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return this.getMobilGeral();
 	}
 	
+	public List<ExDocumento> getListaArvoreDocs () {
+		List<ExDocumento> listaTodosExDocFinal = new ArrayList<>();
+		List<ExDocumento> listaExDocTodosJuntados = new ArrayList<>();
+		List<ExDocumento> listaExDocFilhosNaoJuntados = new ArrayList<>();
+		
+		ExMobil exMobilGrandeJunatada = this.getGrandeExMobilPai().getGrandeMestreJuntada();
+		if (exMobilGrandeJunatada != null ) {
+			Set<ExMobil> setRecursivo = exMobilGrandeJunatada.getMobilETodosOsJuntados();
+			for (ExMobil exMobil : setRecursivo) {
+				listaExDocTodosJuntados.add(exMobil.getExDocumento());
+				listaExDocFilhosNaoJuntados.addAll(exMobil.getExDocumento().getExDocumentoFilhoSet());
+			}
+		}
+		
+		listaTodosExDocFinal.addAll(listaExDocTodosJuntados);
+		listaTodosExDocFinal.addAll(listaExDocFilhosNaoJuntados);
+		
+		return listaTodosExDocFinal;
+	}
+	
 	/**
 	 * Retorna o nível de acesso (não a descrição) do documento definido no
 	 * momento da criação do documento, desconsiderando as redefinições de

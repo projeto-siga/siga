@@ -3883,9 +3883,9 @@ public class ExBL extends CpBL {
 							&& doc.isFinalizado() && possuiCossignatarioSubscritor(doc)) {			
 			
 			if(doc.isAssinadoDigitalmente()) {
-				removerPermissaoTempDnmAcessoArvoreDocComposto(doc, dt, acessoRecalculado);
+				removerPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
 			} else {
-				incluirPermissaoTempDnmAcessoArvoreDocComposto(doc, dt, acessoRecalculado);
+				incluirPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
 			}
 		}
 	}
@@ -3921,7 +3921,7 @@ public class ExBL extends CpBL {
 		return listaIdSubscritor;
 	}
 	
-	private void removerPermissaoTempDnmAcessoArvoreDocComposto(ExDocumento doc, Date dt, String acessoRecalculado) {
+	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, Date dt, String acessoRecalculado) {
 		
 		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
@@ -3929,13 +3929,13 @@ public class ExBL extends CpBL {
 		List<String> listaDnmRemocao = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
 
 		if (!listaDnmRemocao.isEmpty()) {			
-			List<ExDocumento> listaTodosExDocFinal = getListaArvoreDocComposto(doc);
+			List<ExDocumento> listaTodosExDocFinal = doc.getListaArvoreDocs();
 			for (ExDocumento docPaiFilho : listaTodosExDocFinal) {
 				//lista final para ser removido do DnmAcessoPaiFilho
 				List<String> listaDnmRemocaoFinal = obterListaIdPessoaSubscritorCossignatarioExDoc(docPaiFilho, listaDnmRemocao);
 				List<String> listaDmnDocPaiFilhoFinal = converterStringParaList(docPaiFilho.getDnmAcesso(), ",");
 				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-				listaDmnDocPaiFilhoFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(listaDnmRemocaoFinal, "P"));
+				listaDmnDocPaiFilhoFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoArvoreDocs(listaDnmRemocaoFinal, "P"));
 
 				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaDmnDocPaiFilhoFinal);
 				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, docPaiFilho, dt);
@@ -3953,7 +3953,7 @@ public class ExBL extends CpBL {
 		return listaIdPessoaSubsCossigExDoc;
 	}
 	
-	private static List<String> concatenarLetraEmListaFinalDnmAcessoDocsPaiFilho(List<String> listaDnmRemocao, String letra) {
+	private static List<String> concatenarLetraEmListaFinalDnmAcessoArvoreDocs(List<String> listaDnmRemocao, String letra) {
 		//Concatenação "letra" + IdPessoa
 		List<String> listaDnmRemocaoFinal = new ArrayList<>();
 		for (String string : listaDnmRemocao) {
@@ -3969,15 +3969,15 @@ public class ExBL extends CpBL {
 				.collect(Collectors.toList());
 	}
 	
-	private void incluirPermissaoTempDnmAcessoArvoreDocComposto(ExDocumento doc, Date dt, String acessoRecalculado) {
+	private void incluirPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, Date dt, String acessoRecalculado) {
 		
 		//Remover da lista DnmAcesso diferentes de IdPessoas e coverter para List<String>
 		//Exemplo: acessoRecalculado = O12,L23,P22; Remover O12,L23, Manter P22
 		List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferenteTipoPessoa(
 																converterStringParaList(acessoRecalculado, ","));
-		List<ExDocumento> listaArvoreDocCompostoFinal = getListaArvoreDocComposto(doc);
+		List<ExDocumento> listaArvoreDocsFinal = doc.getListaArvoreDocs();
 		
-		for (ExDocumento exDoc : listaArvoreDocCompostoFinal) {
+		for (ExDocumento exDoc : listaArvoreDocsFinal) {
 			List<String> listaStrDmnDocAtual = converterStringParaList(exDoc.getDnmAcesso(), ",");
 			//Adicionar DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
 			listaStrDmnDocAtual.addAll(listaAcessoRecalculadoPessoas);
@@ -3985,30 +3985,6 @@ public class ExBL extends CpBL {
 			String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaStrDmnDocAtual);
 			persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, exDoc, dt);
 		}	
-	}
-	
-	private List<ExDocumento> getListaArvoreDocComposto (ExDocumento doc){
-		List<ExDocumento> listaTodosExDocFinal = new ArrayList<>();
-		List<ExDocumento> listaExDocTodosJuntadosCompostos = new ArrayList<>();
-		
-		ExMobil exMobilGrandeJunatada = doc.getGrandeExMobilPai().getGrandeMestreJuntada();
-		if (exMobilGrandeJunatada != null ) {
-			Set<ExMobil> setRecursivo = exMobilGrandeJunatada.getMobilETodosOsJuntados();
-			for (ExMobil exMobil : setRecursivo) {
-				//if(exMobil.getExDocumento().isComposto()) {
-					listaExDocTodosJuntadosCompostos.add(exMobil.getExDocumento());
-				//}
-			}
-		}
-		List<ExDocumento> listaExDocFilhosNaoJuntados = new ArrayList<>();
-		for (ExDocumento docPaiFilho : listaExDocTodosJuntadosCompostos) {
-			listaExDocFilhosNaoJuntados.addAll(docPaiFilho.getExDocumentoFilhoSet());
-		}
-		
-		listaTodosExDocFinal.addAll(listaExDocTodosJuntadosCompostos);
-		listaTodosExDocFinal.addAll(listaExDocFilhosNaoJuntados);
-		
-		return listaTodosExDocFinal;
 	}
 	
 	private String prepararStrAcessoDnmRecalculadoDoc(List<String> listaDmnDocPaiFilho) {

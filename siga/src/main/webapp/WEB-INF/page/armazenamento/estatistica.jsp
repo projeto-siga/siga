@@ -85,7 +85,7 @@
 										<div class="col-md-6 col-lg-6">
 											<small id="ultima-atualizacao" class="my-auto text-muted float-right"></small>
 											<br />
-											Tecnologia de Armazenamento de Objetos: <strong>${f:resource('/siga.armazenamento.arquivo.tipo')}</strong>
+											Plataforma de Armazenamento de Objetos: <strong>${f:resource('/siga.armazenamento.arquivo.tipo')}</strong>
 											<hr />
 											<h2>${namespaceName}</h2>
 											<div class="progress" style="height: 30px;">
@@ -105,11 +105,13 @@
 												        <option value="TB">TB</option>
 												    </select>
 													<p>
-														<span><strong>Total Usado: </strong></span>
+														<i class="far fa-hdd"></i>
+														<span><strong>Usado: </strong></span>
 														<span id="spanUsedCapacityBytes">${usedCapacityBytes}MB</span>
 														<input type="hidden" id="usedCapacityBytes" value="${usedCapacityBytes}" />
 													</p>
 													<p>
+														<i class="fas fa-hdd"></i> 
 														<span><strong>Capacidade Total: </strong></span>
 														<span id="spanTotalCapacityBytes">${totalCapacityBytes}MB</span>
 														<input type="hidden" id="totalCapacityBytes" value="${totalCapacityBytes}" />
@@ -121,7 +123,7 @@
 											<div class="row mt-4">
 												<div class="col">
 													<p>
-														<span><strong><i class="fa fa-file"></i> Total de Objetos Armazenados: </strong></span>
+														<span><strong><i class="far fa-file"></i> Objetos Armazenados: </strong></span>
 														<span>${objectCount} objetos </span>
 													</p>
 												</div>

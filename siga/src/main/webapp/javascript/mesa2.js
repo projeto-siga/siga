@@ -255,6 +255,7 @@ var appMesa = new Vue({
 			localStorage.removeItem('qtdPag' + getUser());
 			this.recarregarMesa();
 			this.selQtdPag = 15;
+			sessionStorage.removeItem('listaNotificacaoSilenciada' + getUser());
 			
 			resetCacheLotacaoPessoaAtual();
 		},
@@ -703,51 +704,61 @@ function toaster(_notificacoes) {
 		var icone = item.icone;
 		var titulo = item.titulo;
 		var conteudo = item.conteudo;
+		var silenciarNotificacao = item.sempreMostrar;
 		
+		let listaNotificacaoSilenciada = sessionStorage.getItem('listaNotificacaoSilenciada' + getUser());
 		
-		$('<div>', {
-		    id: 'toastNotificacao_'+id,
-		    class: 'toast',
-		    role: 'alert',
-			'aria-live': 'assertive',
-			'aria-atomic': 'true',
-			'data-autohide': 'false'
-		}).appendTo(toastContainer);
-		
-		/* Create Toast Header*/
-		$('<div>', {
-		    id: 'toastNotificacaoHeader_'+id,
-		    class: 'toast-header '
-		}).appendTo('#toastNotificacao_'+id);
-		
-
-		
-		$('#toastNotificacaoHeader_'+id).html(mountToastHeader(icone,titulo));
+		if (listaNotificacaoSilenciada == null || !listaNotificacaoSilenciada.includes(id)) {
+			$('<div>', {
+			    id: 'toastNotificacao_'+id,
+			    class: 'toast',
+			    role: 'alert',
+				'aria-live': 'assertive',
+				'aria-atomic': 'true',
+				'data-autohide': 'false'
+			}).appendTo(toastContainer);
 			
-
-		$('<button>', {
-		    id: 'toastNotificacaoHeaderButton_'+id,
-			type: 'button',
-		    class: 'ml-2 mb-1 close',
-			'data-dismiss': 'toast',
-			'aria-label':'Close'
-		}).appendTo('toastNotificacaoHeader_'+id);
-		
-		$('<div>', {
-		    id: 'toastNotificacaoBody_'+id,
-		    class: 'toast-body'
-		}).appendTo('#toastNotificacao_'+id);
-		
-		
-		$('#toastNotificacaoBody_'+id).html(conteudo);
-		
-		$('#toastNotificacao_'+id).on('shown.bs.toast', function () {
-		  /* TODO: mostrado notificação */
-		})
-		
-		$('#toastNotificacao_'+id).on('hidden.bs.toast', function () {
-		  /* TODO: dispensado notificacao */
-		})
+			/* Create Toast Header*/
+			$('<div>', {
+			    id: 'toastNotificacaoHeader_'+id,
+			    class: 'toast-header '
+			}).appendTo('#toastNotificacao_'+id);
+			
+	
+			
+			$('#toastNotificacaoHeader_'+id).html(mountToastHeader(icone,titulo));
+				
+	
+			$('<button>', {
+			    id: 'toastNotificacaoHeaderButton_'+id,
+				type: 'button',
+			    class: 'ml-2 mb-1 close',
+				'data-dismiss': 'toast',
+				'aria-label':'Close'
+			}).appendTo('toastNotificacaoHeader_'+id);
+			
+			$('<div>', {
+			    id: 'toastNotificacaoBody_'+id,
+			    class: 'toast-body'
+			}).appendTo('#toastNotificacao_'+id);
+			
+			
+			$('#toastNotificacaoBody_'+id).html(conteudo);
+			
+			$('#toastNotificacao_'+id).on('shown.bs.toast', function () {
+			  /* TODO: mostrado notificação */
+			})
+			
+			$('#toastNotificacao_'+id).on('hidden.bs.toast', function () {
+			  if (!silenciarNotificacao) {
+			  	let sessionArray = sessionStorage.getItem('listaNotificacaoSilenciada' + getUser());
+			  	if (sessionArray == null)
+			  		sessionArray = [];
+			  	sessionArray.push(id);
+			  	sessionStorage.setItem('listaNotificacaoSilenciada' + getUser(), sessionArray);	
+			  }
+			})
+		}
 		
 	}
 

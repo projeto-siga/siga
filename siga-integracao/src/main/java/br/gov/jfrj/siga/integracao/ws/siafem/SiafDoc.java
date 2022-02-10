@@ -13,12 +13,13 @@ public class SiafDoc {
 	private String id;
 	private String ata;
 	private String convenio;
+	private String flagEletronico;
 	private String finalidade;
 	private String processo;
 	private String codUnico;
 	private String codSemPapel;
 	private String desdobramento;
-	
+
 	public SiafDoc(String[] dados) {
 		try {
 			int i = 0;
@@ -34,6 +35,16 @@ public class SiafDoc {
 			this.finalidade = URLDecoder.decode(dados[i++].trim(), "UTF-8");
 			this.processo = dados[i++].trim();
 			this.desdobramento = dados[i++].trim();
+			this.flagEletronico = "X";
+
+//			Quando for Legado o usuário deve preencher SOMENTE os campos
+//			- UG/Gestão
+//			- número do processo legado (10 posições alfanumérico)
+//			- desdobramento (1 posição)
+			if (this.processo != null && !this.processo.isEmpty()) {
+				this.objetoProcesso = this.tipoLicitacao = this.id = this.ata = this.convenio = this.finalidade = this.flagEletronico = "";
+			}
+
 		} catch (UnsupportedEncodingException e) {
 			throw new AplicacaoException("Falha ao realizar a leitura da entrevista: " + e.getMessage());
 		}
@@ -42,72 +53,76 @@ public class SiafDoc {
 	public void setCodUnico(String codUnico) {
 		this.codUnico = codUnico;
 	}
-	
+
 	public void setCodSemPapel(String codSemPapel) {
 		this.codSemPapel = codSemPapel;
 	}
 
 	public String getSiafDoc() {
-		String[] parametros = new String[] { unidadeGestora, gestao, processo, desdobramento, codUnico, codSemPapel, objetoProcesso, tipoLicitacao, id, ata, convenio, finalidade };
+		String[] parametros = new String[] { unidadeGestora, gestao, processo, desdobramento, codUnico, codSemPapel, objetoProcesso, tipoLicitacao, id, ata, convenio, flagEletronico, finalidade };
 
 		String xml = SIAFDOC;
-		if (id != null && !id.isEmpty())
-			xml = xml.replace("<ID/>", "<ID>?9</ID>");
-		if (processo != null && !processo.isEmpty())
-			xml = xml.replace("<Processo/>", "<Processo>?3</Processo>");
-		if (desdobramento != null && !desdobramento.isEmpty())
-			xml = xml.replace("<Desdobramento/>", "<Desdobramento>?4</Desdobramento>");
 
-		for (int i = 0; i < parametros.length; i++) {
-			if(parametros[i] != null)
-				xml = xml.replaceFirst("\\?" + (i+1), parametros[i]);
-		}
+		for (int i = 0; i < parametros.length; i++)
+			xml = inserirValor(xml, i, parametros[i]);
 
 		return xml.toString();
 	}
 
+	private String inserirValor(String xml, int i, String valor) {
+		String tagVazia = "<" + TAGS[i] + "/>";
+		String tagValor = "<" + TAGS[i] + ">" + valor + "</" + TAGS[i] + ">";
+
+		if (valor != null && !valor.isEmpty())
+			xml = xml.replace(tagVazia, tagValor);
+
+		return xml;
+	}
+
+	private String[] TAGS = { "UG", "Gestao", "Processo", "Desdobramento", "CodUnico", "CodSemPapel", "Objeto", "TipoLicitacao", "ID", "ATA", "Convenio", "FlagEletronico", "Finalidade" };
+
 	private String SIAFDOC = "<SIAFDOC>\n" +
-			"	<cdMsg>SIAFPROCESSO001</cdMsg>\n" +
-			"	<SiafemDocProcesso>\n" +
-			"	  <documento>\n" +
-			"		 <UG>?1</UG>\n" +
-			"		 <Gestao>?2</Gestao>\n" +
-			"		 <Processo/>\n" +
-			"		 <Desdobramento/>\n" +
-			"		 <CodUnico>?5</CodUnico>\n" +
-			"		 <CodSemPapel>?6</CodSemPapel>\n" +
-			"		 <Objeto>?7</Objeto>\n" +
-			"		 <TipoLicitacao>?8</TipoLicitacao>\n" +
-			"		 <ID/>\n" +
-			"		 <DigitoID/>\n" +
-			"		 <ATA>?10</ATA>\n" +
-			"		 <Convenio>?11</Convenio>\n" +
-			"		 <FlagPresencial/>\n" +
-			"		 <FlagEletronico>X</FlagEletronico>\n" +
-			"		 <ObjetoConvenio/>\n" +
-			"		 <CNPJ/>\n" +
-			"		 <CodMunicipio/>\n" +
-			"		 <SignatarioCedente/>\n" +
-			"		 <SignatarioConvenente/>\n" +
-			"		 <NaturezaDespesa/>\n" +
-			"		 <DataVigenciaInicial/>\n" +
-			"		 <DataVigenciaFinal/>\n" +
-			"		 <DataCelebracao/>\n" +
-			"		 <DataPublicacao/>\n" +
-			"		 <ValorContrapartida/>\n" +
-			"		 <ValorTotal/>\n" +
-			"		 <Situacao/>\n" +
-			"		 <ObjetoResumido1/>\n" +
-			"		 <ObjetoResumido2/>\n" +
-			"		 <ObjetoResumido3/>\n" +
-			"	  </documento>\n" +
-			"	  <finalidade>\n" +
-			"		 <Repeticao>\n" +
-			"			<desc ID=\"1\">\n" +
-			"			   <Finalidade>?12</Finalidade>\n" +
-			"			</desc>\n" +
-			"		 </Repeticao>\n" +
-			"	  </finalidade>\n" +
-			"	</SiafemDocProcesso>\n" +
+			"   <cdMsg>SIAFPROCESSO001</cdMsg>\n" +
+			"   <SiafemDocProcesso>\n" +
+			"      <documento>\n" +
+			"         <UG/>\n" +
+			"         <Gestao/>\n" +
+			"         <Processo/>\n" +
+			"         <Desdobramento/>\n" +
+			"         <CodUnico/>\n" +
+			"         <CodSemPapel/>\n" +
+			"         <Objeto/>\n" +
+			"         <TipoLicitacao/>\n" +
+			"         <ID/>\n" +
+			"         <DigitoID/>\n" +
+			"         <ATA/>\n" +
+			"         <Convenio/>\n" +
+			"         <FlagPresencial/>\n" +
+			"         <FlagEletronico/>\n" +
+			"         <ObjetoConvenio/>\n" +
+			"         <CNPJ/>\n" +
+			"         <CodMunicipio/>\n" +
+			"         <SignatarioCedente/>\n" +
+			"         <SignatarioConvenente/>\n" +
+			"         <NaturezaDespesa/>\n" +
+			"         <DataVigenciaInicial/>\n" +
+			"         <DataVigenciaFinal/>\n" +
+			"         <DataCelebracao/>\n" +
+			"         <DataPublicacao/>\n" +
+			"         <ValorContrapartida/>\n" +
+			"         <ValorTotal/>\n" +
+			"         <Situacao/>\n" +
+			"         <ObjetoResumido1/>\n" +
+			"         <ObjetoResumido2/>\n" +
+			"         <ObjetoResumido3/>\n" +
+			"      </documento>\n" +
+			"      <finalidade>\n" +
+			"         <Repeticao>\n" +
+			"            <desc ID='1'>\n" +
+			"               <Finalidade/>\n" +
+			"            </desc>\n" +
+			"         </Repeticao>\n" +
+			"      </finalidade>\n" +
+			"   </SiafemDocProcesso>\n" +
 			"</SIAFDOC>";
 }

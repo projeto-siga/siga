@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.ex.xjus.XjusRecordAPIContext;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 
 public class XjusMovRecordServlet extends SwaggerServlet {
@@ -19,7 +20,7 @@ public class XjusMovRecordServlet extends SwaggerServlet {
 	@Override
 	public void initialize(ServletConfig config) throws ServletException {
 		setAPI(IXjusRecordAPI.class);
-
+		setApiContextClass(XjusRecordAPIContext.class);
 		setActionPackage("br.gov.jfrj.siga.ex.xjus.mov");
 
 		String xjusPassword = null;

@@ -9,6 +9,7 @@
 <%@ attribute name="onLoad"%>
 <%@ attribute name="desabilitarbusca"%>
 <%@ attribute name="desabilitarmenu"%>
+<%@ attribute name="iframe"%>
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
 <%@ attribute name="desabilitarComplementoHEAD"%>
@@ -22,13 +23,24 @@
 
 <c:set var="titulo_pagina" scope="request">${titulo}</c:set>
 
-<siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
-	onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
-	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}"
-	compatibilidade="${compatibilidade}"
-	desabilitarComplementoHEAD="${desabilitarComplementoHEAD}"
-	incluirBS="${incluirBS}" />
+
+<c:if test="${iframe == 'sim'}">
+	<c:if test="${empty incluirBS or incluirBS}" >
+	 	<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+	</c:if>
+</c:if>
+
+<c:if test="${iframe != 'sim'}">
+	<siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
+		onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
+		desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}"
+		compatibilidade="${compatibilidade}"
+		desabilitarComplementoHEAD="${desabilitarComplementoHEAD}"
+		incluirBS="${incluirBS}" />
+</c:if>
 
 <jsp:doBody />
 
-<siga:rodape popup="${popup}" incluirJs="${incluirJs}" incluirBS="${incluirBS}" />
+<c:if test="${iframe != 'sim'}">
+	<siga:rodape popup="${popup}" incluirJs="${incluirJs}" incluirBS="${incluirBS}" />
+</c:if>

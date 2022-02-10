@@ -54,7 +54,7 @@
 	</c:if>
 </c:catch>
 <c:catch var="catchException">
-	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim"	desabilitarmenu="sim" desabilitarComplementoHEAD="sim">
+	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim"	desabilitarmenu="sim" desabilitarComplementoHEAD="sim" iframe="${iframe}">
 		<c:set var="hasMessage" scope="request" value="${not empty exceptionStackGeral or not empty exceptionMsg}" />
 		<c:choose>
 			<c:when test="${exceptionApp}">
@@ -98,14 +98,16 @@
 				    	&nbsp;<strong>Versão </strong>SIGA <c:out value="${siga_version}" />
 				    </li>
 				  </ul>
-				  <div class="card-footer text-center pt-2">
-				   	<c:if test="${newWindow != 1}">
-						<input type="button" value="Voltar"	onclick="javascript:history.back();" class="btn btn-primary" />
-					</c:if>
-					<c:if test="${newWindow eq 1}">
-						<input type="button" value="Fechar"	onclick="javascript:window.close();" class="btn btn-primary" />
-					</c:if>
-				  </div>
+				  <c:if test="${iframe != 'sim'}">
+					  <div class="card-footer text-center pt-2">
+					   	<c:if test="${newWindow != 1}">
+							<input type="button" value="Voltar"	onclick="javascript:history.back();" class="btn btn-primary" />
+						</c:if>
+						<c:if test="${newWindow eq 1}">
+							<input type="button" value="Fechar"	onclick="javascript:window.close();" class="btn btn-primary" />
+						</c:if>
+					  </div>
+				  </c:if>
 				</div> 
 			</c:if> 
 		</div>

@@ -165,7 +165,7 @@ public class ExDocumentoVO extends ExVO {
 	String dtPrazoDeAssinatura;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
-			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel) {
+			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel, boolean exibe) {
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 		this.doc = doc;
@@ -383,6 +383,10 @@ public class ExDocumentoVO extends ExVO {
 				.findFirst().orElse(null);
 		
 		this.dtPrazoDeAssinatura = doc.getDtPrazoDeAssinaturaDDMMYYYYHHMM();
+		
+		if (exibe)
+			exibe();
+		
 		if (serializavel) {
 			this.titular = null;
 			this.lotaTitular = null;
@@ -535,10 +539,11 @@ public class ExDocumentoVO extends ExVO {
 			mobilEspecifico.getMovs().addAll(mobilGeral.getMovs());
 			mobilEspecifico.anexosNaoAssinados
 					.addAll(mobilGeral.anexosNaoAssinados);
-			for (ExMarca m : mobilGeral.getMarcasAtivas())
-				if (marcasGeralPermitidas.contains(m.getCpMarcador()
-						.getIdMarcador()))
-					mobilEspecifico.getMarcasAtivas().add(m);
+			if (mobilGeral.getMarcasAtivas() != null)
+				for (ExMarca m : mobilGeral.getMarcasAtivas())
+					if (marcasGeralPermitidas.contains(m.getCpMarcador()
+							.getIdMarcador()))
+						mobilEspecifico.getMarcasAtivas().add(m);
 //			for (ExMarca m : mobilGeral.getMob().getExMarcaSet())
 //				if (marcasGeralPermitidas.contains(m.getCpMarcador()
 //						.getIdMarcador()))
@@ -554,6 +559,7 @@ public class ExDocumentoVO extends ExVO {
 	}
  
 	public void calculaSetsDeMarcas() {
+		marcas = new ArrayList<ExMarcaVO>();
 		Date now = dao().consultarDataEHoraDoServidor(); 
 	
 		for (ExMobil cadaMobil : doc.getExMobilSet()) {
@@ -567,6 +573,7 @@ public class ExDocumentoVO extends ExVO {
 					if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
 						getMarcasDoMobil().add(m);
 				}
+				marcas.add(new ExMarcaVO(m, titular, lotaTitular));
 			}
 			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
 			marcasPorMobil.put(cadaMobil, set);

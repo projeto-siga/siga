@@ -1377,6 +1377,18 @@ public interface IExApiV1 {
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
 
+	public interface IDadosEstaticosGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public String enumsAsJson;
+			public String tabelasAsJson;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
 	public interface ISugestaoPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String nome;

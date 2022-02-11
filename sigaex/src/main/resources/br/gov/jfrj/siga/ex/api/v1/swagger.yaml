@@ -2289,6 +2289,26 @@ paths:
             $ref: "#/definitions/Error"
 
 
+  /dados-estaticos:
+    get:
+      tags: [utils]
+      parameters: []
+      description: Obter valores dos enums
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              enumsAsJson:
+                type: string
+              tabelasAsJson:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"         
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]

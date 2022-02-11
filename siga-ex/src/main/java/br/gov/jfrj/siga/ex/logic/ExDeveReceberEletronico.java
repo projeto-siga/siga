@@ -48,7 +48,9 @@ public class ExDeveReceberEletronico extends CompositeExpressionSupport {
 					public boolean eval() {
 						ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 						return !(ultMov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
+								&& ultMov.getCadastrante() != null
 								&& ultMov.getCadastrante().equivale(titular)
+								&& ultMov.getLotaResp() != null
 								&& ultMov.getLotaResp().equivale(lotaTitular));
 					}
 				});

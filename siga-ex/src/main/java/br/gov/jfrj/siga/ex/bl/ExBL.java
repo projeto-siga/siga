@@ -5207,7 +5207,7 @@ public class ExBL extends CpBL {
 							marcas.forEach(marc -> {
 								marcasDoDoc.add(marc.getDescrMarcador());
 							});
-							Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc);
+							Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");	
 						}
 						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
 									mov.getResp().getLotacao(), SIGA_CEMAIL_DOCTUSU))  
@@ -5215,7 +5215,6 @@ public class ExBL extends CpBL {
 					}
 					
 					if (mov.getLotaResp() != null) {
-						Set<String> marcadores = new HashSet<>();
 						for (DpPessoa pessoa: pessoasLota) {
 							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 									pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) { 
@@ -5227,12 +5226,13 @@ public class ExBL extends CpBL {
 										}
 									}
 								}
-								marcas.forEach(marc -> {
-									marcasDoDoc.add(marc.getDescrMarcador());
-								});
-								Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(pessoa, mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc);
+								if (marcasDoDoc.length() == 0) {
+									marcas.forEach(marc -> {
+										marcasDoDoc.add(marc.getDescrMarcador());
+									}); 
+								}
+								Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(pessoa, mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");		
 							} 
-							
 							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 									pessoa.getLotacao(), SIGA_CEMAIL_DOCTUN)) 
 									Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuariosDaUnidade(mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());

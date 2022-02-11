@@ -1867,7 +1867,7 @@ public class CpBL {
 		}	
 	}
 	
-	private String docMarcadoTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String docSigla, StringJoiner marcador) {		 
+	private String docMarcadoTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String docSigla, String marcador) {		 
 		String conteudo = "";
 		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/doc-marcado-tramitado-para-unidade.html"),StandardCharsets.UTF_8))) {			
 			String str;
@@ -1882,7 +1882,7 @@ public class CpBL {
 					.replace("${nomeCadastrante}", cadastrante.getNomePessoa())
 					.replace("${siglaCadastrante}", cadastrante.getSigla())
 					.replace("${docSigla}", docSigla)
-					.replace("${marcador}", String.valueOf(marcador)); 
+					.replace("${marcador}", marcador); 
 			
 			return conteudo;
 			
@@ -2004,11 +2004,12 @@ public class CpBL {
 		}
 	}
 	
-	public void enviarEmailAoTramitarDocMarcado(DpPessoa pessoaDest, DpPessoa titular, String sigla, StringJoiner marcador) {
+	public void enviarEmailAoTramitarDocMarcado(DpPessoa pessoaDest, DpPessoa titular, String sigla, String marcador) {
 		String assunto = "Documento tramitado para " + pessoaDest.getDescricao();
 		String[] destinanarios = { pessoaDest.getEmailPessoaAtual() };
 		String conteudoHTML = docMarcadoTramitadoParaUsuario(pessoaDest, titular, sigla, marcador);
 		try {
+			if (!marcador.equals(""))
 			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
 		} catch (Exception e) {
 			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);

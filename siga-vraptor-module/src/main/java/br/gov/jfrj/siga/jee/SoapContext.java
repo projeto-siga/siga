@@ -87,4 +87,18 @@ public abstract class SoapContext implements Closeable {
 			ContextoPersistencia.removeAll();
 		}
 	}
+	
+	
+	// Isso deve ser utilizado no webservice SOAP, já que ele não repassa o stacktrace do erro para o chamador
+	public Exception exceptionWithMessageFileAndLine(final Exception e) {
+		String errmsg = e.getMessage();
+		if (errmsg == null)
+			if (e instanceof NullPointerException)
+				errmsg = "null pointer.";
+			else
+				errmsg = e.getClass().getSimpleName();
+		StackTraceElement frame = e.getStackTrace()[0];
+		errmsg += " (" + frame.getFileName() + ":" + frame.getLineNumber() + ")";
+		return new RuntimeException(errmsg, e);
+	}
 }

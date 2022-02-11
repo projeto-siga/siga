@@ -412,6 +412,14 @@
 							href="/siga/app/marcador/listar">Cadastro de 
 								Marcadores</a></li>
 					</c:if>
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;ARMAZ: Armazenamento de Arquivos')}">
+						<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Armazenamento ${f:resource('/siga.armazenamento.arquivo.tipo')}</a>
+							<ul class="dropdown-menu">
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;ARMAZ;ARMAZ_ESTAT:Estatística de Armazenamento;')}">
+									<li><a class="dropdown-item" href="/siga/app/armazenamento/estatistica">Estatísticas</a></li>
+								</c:if>
+							</ul>
+					</c:if>
 				</ul></li>
 		</c:if>
 

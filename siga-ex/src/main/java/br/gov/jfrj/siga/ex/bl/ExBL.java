@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -109,6 +110,7 @@ import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -5188,16 +5190,24 @@ public class ExBL extends CpBL {
 							.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 					Set<ExMobil> exMobils = mov.getExDocumento().getExMobilSet();
 					Set<DpPessoa> pessoasLota = mov.getLotaResp().getDpPessoaLotadosSet();
+					Set<CpMarcador> marcas = new HashSet<>();
+					StringJoiner marcasDoDoc = new StringJoiner(", ");  
 					
 					if (mov.getResp() != null) { 
 						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
 								mov.getResp().getLotacao(), SIGA_CEMAIL_DOCMARC)) { 
 							for (ExMobil exMobil: exMobils) {
 								for (ExMarca exMarca: exMobil.getExMarcaSet()) {
-									if (exMarca.getCpMarcador().isInteressadoPessoa() || exMarca.getCpMarcador().isInteressadoLotacao())
-										Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());									
+									if (exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO 
+											|| exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {
+										marcas.add(exMarca.getCpMarcador());
+									}
 								}
 							}
+							marcas.forEach(marc -> {
+								marcasDoDoc.add(marc.getDescrMarcador());
+							});
+							Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc);
 						}
 						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
 									mov.getResp().getLotacao(), SIGA_CEMAIL_DOCTUSU))  
@@ -5205,16 +5215,24 @@ public class ExBL extends CpBL {
 					}
 					
 					if (mov.getLotaResp() != null) {
-						for (DpPessoa pessoa: pessoasLota) { 
+						Set<String> marcadores = new HashSet<>();
+						for (DpPessoa pessoa: pessoasLota) {
 							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 									pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) { 
 								for (ExMobil exMobil: exMobils) {
 									for (ExMarca exMarca: exMobil.getExMarcaSet()) {
-										if (exMarca.getCpMarcador().isInteressadoPessoa() || exMarca.getCpMarcador().isInteressadoLotacao())
-											Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(pessoa, mov.getTitular(), mov.getExDocumento().getSigla());
+										if (exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO 
+												|| exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {
+											marcas.add(exMarca.getCpMarcador());
+										}
 									}
 								}
+								marcas.forEach(marc -> {
+									marcasDoDoc.add(marc.getDescrMarcador());
+								});
+								Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(pessoa, mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc);
 							} 
+							
 							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 									pessoa.getLotacao(), SIGA_CEMAIL_DOCTUN)) 
 									Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuariosDaUnidade(mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());

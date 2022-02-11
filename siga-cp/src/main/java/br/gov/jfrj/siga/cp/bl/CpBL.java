@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -1866,7 +1867,7 @@ public class CpBL {
 		}	
 	}
 	
-	private String docMarcadoTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
+	private String docMarcadoTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String docSigla, StringJoiner marcador) {		 
 		String conteudo = "";
 		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/doc-marcado-tramitado-para-unidade.html"),StandardCharsets.UTF_8))) {			
 			String str;
@@ -1880,7 +1881,8 @@ public class CpBL {
 					.replace("${nomeDestinatario}", destinatario.getNomePessoa())  
 					.replace("${nomeCadastrante}", cadastrante.getNomePessoa())
 					.replace("${siglaCadastrante}", cadastrante.getSigla())
-					.replace("${siglaDoc}", siglaDoc);
+					.replace("${docSigla}", docSigla)
+					.replace("${marcador}", String.valueOf(marcador)); 
 			
 			return conteudo;
 			
@@ -2002,10 +2004,10 @@ public class CpBL {
 		}
 	}
 	
-	public void enviarEmailAoTramitarDocMarcado(DpPessoa pessoaDest, DpPessoa titular, String sigla) {
+	public void enviarEmailAoTramitarDocMarcado(DpPessoa pessoaDest, DpPessoa titular, String sigla, StringJoiner marcador) {
 		String assunto = "Documento tramitado para " + pessoaDest.getDescricao();
 		String[] destinanarios = { pessoaDest.getEmailPessoaAtual() };
-		String conteudoHTML = docMarcadoTramitadoParaUsuario(pessoaDest, titular, sigla);
+		String conteudoHTML = docMarcadoTramitadoParaUsuario(pessoaDest, titular, sigla, marcador);
 		try {
 			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);
 		} catch (Exception e) {

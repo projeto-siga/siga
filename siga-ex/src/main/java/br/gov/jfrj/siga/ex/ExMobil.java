@@ -1105,7 +1105,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return m;
 	}
 	
-	public ExMobil getGrandeMestreJuntada() {
+	public ExMobil getGrandeMestreMobilJuntada() {
 		ExMobil m = getExMobilPai();
 		if (m == null) {
 			if (temDocumentosJuntados())
@@ -1121,18 +1121,18 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return null;
 	}
 	
-	public SortedSet<ExMobil> getArvoreMobilETodosOsJuntadosDocNaoCompostos() {
+	public SortedSet<ExMobil> getDocsArvoreVerticalParcialJuntados() {
 		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
 		ExMobil m = this;
 		if(m != null) {
-			setFinal.addAll(m.getMobilETodosOsJuntadosDocNaoCompostos());
+			setFinal.addAll(m.getMobilDocsJuntadosNaoCompostos());
 			while (m != null) {
 				ExMobil m2 = m.getExMobilPai();
 				if (m2 == null)
 					return setFinal;
 				else {
 					m = m2;
-					setFinal.addAll(m.getMobilETodosOsJuntadosDocNaoCompostos());
+					setFinal.addAll(m.getMobilDocsJuntadosNaoCompostos());
 				}
 			} 
 		}
@@ -1405,7 +1405,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			for (ExMobil mob : set) {
 				setRecursivo.add(mob);
 				if(validarIsComposto)
-					setRecursivo.addAll(mob.getJuntadosRecursivoDocNaoCompostos());
+					setRecursivo.addAll(mob.getDocsJuntadosRecursivoNaoCompostos());
 				else 
 					setRecursivo.addAll(mob.getJuntadosRecursivo());
 			}
@@ -1456,7 +1456,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return getJuntados(true);
 	}
 	
-	public Set<ExMobil> getJuntadosRecursivoDocNaoCompostos() {
+	public Set<ExMobil> getDocsJuntadosRecursivoNaoCompostos() {
 		return getJuntados(true, true);
 	}
 
@@ -1474,10 +1474,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	}
 	
-	public SortedSet<ExMobil> getMobilETodosOsJuntadosDocNaoCompostos() {
+	public SortedSet<ExMobil> getMobilDocsJuntadosNaoCompostos() {
 		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
 		setFinal.add(this);
-		setFinal.addAll(getJuntadosRecursivoDocNaoCompostos());
+		setFinal.addAll(getDocsJuntadosRecursivoNaoCompostos());
 		return setFinal;
 
 	}

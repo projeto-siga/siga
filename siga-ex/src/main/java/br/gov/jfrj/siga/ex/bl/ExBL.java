@@ -3932,7 +3932,7 @@ public class ExBL extends CpBL {
 
 		if (!listaDnmRemocao.isEmpty()) {			
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
-									? doc.getListaArvoreTodosDocs() : doc.getListaArvoreParcialDocs();
+									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
 				//lista final para ser removido do DnmAcessoPaiFilho
 				List<String> listaDnmRemocaoFinal = obterListaIdPessoaSubscritorCossignatarioExDoc(exDoc, listaDnmRemocao);
@@ -3979,7 +3979,7 @@ public class ExBL extends CpBL {
 		List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferenteTipoPessoa(
 																converterStringParaList(acessoRecalculado, ","));
 		List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
-									? doc.getListaArvoreTodosDocs() : doc.getListaArvoreParcialDocs();
+									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
 		
 		for (ExDocumento exDoc : listaArvoreDocsFinal) {
 			List<String> listaStrDmnDocAtual = converterStringParaList(exDoc.getDnmAcesso(), ",");

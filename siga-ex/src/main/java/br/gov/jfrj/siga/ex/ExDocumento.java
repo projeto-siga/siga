@@ -136,7 +136,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	public ExMobil getGrandeExMobilPai() {
 		ExMobil m = getExMobilPai();
-		
 		while (m != null) {
 			ExMobil m2 = m.doc().getExMobilPai();
 			if (m2 == null)
@@ -147,18 +146,36 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return this.getMobilGeral();
 	}
 	
-	public List<ExDocumento> getListaArvoreDocs () {
+	public List<ExDocumento> getListaArvoreTodosDocs () {
 		List<ExDocumento> listaTodosExDocFinal = new ArrayList<>();
 		List<ExDocumento> listaExDocTodosJuntados = new ArrayList<>();
 		List<ExDocumento> listaExDocFilhosNaoJuntados = new ArrayList<>();
 		
-		ExMobil exMobilGrandeJunatada = this.getGrandeExMobilPai().getGrandeMestreJuntada();
-		if (exMobilGrandeJunatada != null ) {
-			Set<ExMobil> setRecursivo = exMobilGrandeJunatada.getMobilETodosOsJuntados();
+		ExMobil exMobilGrandeJuntada = this.getGrandeExMobilPai().getGrandeMestreJuntada();
+		if (exMobilGrandeJuntada != null ) {
+			Set<ExMobil> setRecursivo = exMobilGrandeJuntada.getMobilETodosOsJuntados();
 			for (ExMobil exMobil : setRecursivo) {
 				listaExDocTodosJuntados.add(exMobil.getExDocumento());
 				listaExDocFilhosNaoJuntados.addAll(exMobil.getExDocumento().getExDocumentoFilhoSet());
 			}
+		}
+		
+		listaTodosExDocFinal.addAll(listaExDocTodosJuntados);
+		listaTodosExDocFinal.addAll(listaExDocFilhosNaoJuntados);
+		
+		return listaTodosExDocFinal;
+	}
+	
+	
+	public List<ExDocumento> getListaArvoreParcialDocs () {
+		List<ExDocumento> listaTodosExDocFinal = new ArrayList<>();
+		List<ExDocumento> listaExDocTodosJuntados = new ArrayList<>();
+		List<ExDocumento> listaExDocFilhosNaoJuntados = new ArrayList<>();
+		
+		Set<ExMobil> setRecursivo = this.getGrandeExMobilPai().getArvoreMobilETodosOsJuntadosDocNaoCompostos();
+		for (ExMobil exMobil : setRecursivo) {
+			listaExDocTodosJuntados.add(exMobil.getExDocumento());
+			listaExDocFilhosNaoJuntados.addAll(exMobil.getExDocumento().getExDocumentoFilhoSet());
 		}
 		
 		listaTodosExDocFinal.addAll(listaExDocTodosJuntados);

@@ -1120,6 +1120,24 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return null;
 	}
+	
+	public SortedSet<ExMobil> getArvoreMobilETodosOsJuntadosDocNaoCompostos() {
+		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
+		ExMobil m = this;
+		if(m != null) {
+			setFinal.addAll(m.getMobilETodosOsJuntadosDocNaoCompostos());
+			while (m != null) {
+				ExMobil m2 = m.getExMobilPai();
+				if (m2 == null)
+					return setFinal;
+				else {
+					m = m2;
+					setFinal.addAll(m.getMobilETodosOsJuntadosDocNaoCompostos());
+				}
+			} 
+		}
+		return setFinal;
+	}
 
 	public ExMovimentacao anexoPendente(final String descrMov, final boolean fIncluirCancelados) {
 		if (getExMovimentacaoSet() == null)
@@ -1362,11 +1380,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @return
 	 */
 	public Set<ExMobil> getJuntados(boolean recursivo) {
+		return getJuntados(recursivo, Boolean.FALSE);
+
+	}
+	
+	public Set<ExMobil> getJuntados(boolean recursivo, boolean validarIsComposto) {
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
 		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet())
 			if (!mov.isCancelada()) {
-				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-					set.add(mov.getExMobil());
+				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA) {
+					if (validarIsComposto) {
+						if (!mov.getExDocumento().isComposto())
+							set.add(mov.getExMobil());
+					} else 
+						set.add(mov.getExMobil());
+				}
 				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
 					set.remove(mov.getExMobil());
 			}
@@ -1376,7 +1404,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			Set<ExMobil> setRecursivo = new LinkedHashSet<ExMobil>();
 			for (ExMobil mob : set) {
 				setRecursivo.add(mob);
-				setRecursivo.addAll(mob.getJuntadosRecursivo());
+				if(validarIsComposto)
+					setRecursivo.addAll(mob.getJuntadosRecursivoDocNaoCompostos());
+				else 
+					setRecursivo.addAll(mob.getJuntadosRecursivo());
 			}
 			return setRecursivo;
 		}
@@ -1424,6 +1455,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public Set<ExMobil> getJuntadosRecursivo() {
 		return getJuntados(true);
 	}
+	
+	public Set<ExMobil> getJuntadosRecursivoDocNaoCompostos() {
+		return getJuntados(true, true);
+	}
 
 	/**
 	 * Retorna um Set contendo este móbil e todos os que foram juntados a ele,
@@ -1435,6 +1470,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
 		setFinal.add(this);
 		setFinal.addAll(getJuntadosRecursivo());
+		return setFinal;
+
+	}
+	
+	public SortedSet<ExMobil> getMobilETodosOsJuntadosDocNaoCompostos() {
+		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
+		setFinal.add(this);
+		setFinal.addAll(getJuntadosRecursivoDocNaoCompostos());
 		return setFinal;
 
 	}

@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.hibernate.ext;
 
 import java.util.Date;
+import java.util.List;
 
 public interface IExMobilDaoFiltro {
 
@@ -156,4 +157,8 @@ public interface IExMobilDaoFiltro {
 	public abstract boolean buscarPorCamposMarca();
 
 	public abstract boolean buscarPorCamposDoc();
+	
+	public abstract List<Long> getListaIdDoc();
+	
+	public abstract void setListaIdDoc(final List<Long> lista);
 }

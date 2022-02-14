@@ -19,6 +19,8 @@
 package br.gov.jfrj.siga.hibernate.ext;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
+import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 
 public class MontadorQuery implements IMontadorQuery {
 
@@ -182,6 +184,10 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
 			sbf.append(" and exMod.hisIdIni = :hisIdIni");
+		}
+		
+		if(flt.getListaIdDoc() != null && !flt.getListaIdDoc().isEmpty()) {
+			sbf.append(" and doc.idDoc in (:listaIdDoc)");
 		}
 
 		if (!apenasCount) {

@@ -35,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.auth0.jwt.JWTSigner;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -54,11 +61,13 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
@@ -67,6 +76,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -79,6 +89,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -498,7 +509,7 @@ public class ExMobilController extends
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
 			try {
 				validarFiltrosPesquisa(flt);
-
+				pesquisarXjus(flt);
 				listarItensPesquisa(flt, builder);				
 			} catch (RegraNegocioException | AplicacaoException e) {
 				result.include("msgPesqErro", e.getMessage());
@@ -578,6 +589,28 @@ public class ExMobilController extends
 			result.include("campos", campos);
 		}
 
+	}
+
+	private void pesquisarXjus(ExMobilDaoFiltro flt) {
+		if(flt.getDescrPesquisaXjus() == null || flt.getDescrPesquisaXjus().isEmpty() )
+			return;
+		
+		flt.setDescrDocumento(null);
+		
+		String filter = flt.getDescrPesquisaXjus();
+		
+		String acronimoOrgaoUsu = dao().consultarOrgaoUsuarioPorId(flt.getIdOrgaoUsu()).getAcronimoOrgaoUsu();
+				
+		String acl = "PUBLIC;O" + getTitular().getOrgaoUsuario().getId() + ";L"
+				+ getTitular().getLotacao().getIdInicial() + ";P"
+				+ getTitular().getIdInicial();
+		
+		try {
+			flt.setListaIdDoc(Ex.getInstance().getBL().pesquisarXjus(filter, acronimoOrgaoUsu, acl, 1, 1000));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Falha ao consultar XJUS: " + e.getMessage());			
+		}
 	}
 
 	private void listarItensPesquisa(final ExMobilDaoFiltro flt, final ExMobilBuilder builder) {
@@ -726,6 +759,9 @@ public class ExMobilController extends
 					.getIdInicial());
 		flt.setDescrDocumento(Texto
 				.removeAcentoMaiusculas(param("descrDocumento")));
+		if (new ExPodePorConfiguracao(getTitular(), getLotaTitular()).withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_XJUS).eval()) {
+			flt.setDescrPesquisaXjus(flt.getDescrDocumento());			
+		}
 		String paramFullText = param("fullText");
 		if (paramFullText != null) {
 			paramFullText = paramFullText.trim();

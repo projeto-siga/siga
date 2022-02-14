@@ -681,6 +681,10 @@ public class ExDao extends CpDao {
 					ExModelo.class, false);
 			query.setParameter("hisIdIni", mod.getHisIdIni());
 		}
+		
+		if (flt.getListaIdDoc() != null && !flt.getListaIdDoc().isEmpty()) {
+			query.setParameter("listaIdDoc", flt.getListaIdDoc());
+		}
 	}
 
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
@@ -2323,6 +2327,21 @@ public class ExDao extends CpDao {
 		} catch (Exception ne) {
 			return null;
 		}
+	}
+
+	public List<Long> consultarDocumentosPorSiglas(List<String> siglas) {
+		String sql = "SELECT X.ID_DOC \n" + 
+				"FROM SIGA.EX_DOCUMENTO X, \n" + 
+				"	SIGA.EX_FORMA_DOCUMENTO Y,\n" + 
+				"	CORPORATIVO.CP_ORGAO_USUARIO Z\n" + 
+				"WHERE X.ID_FORMA_DOC  = Y.ID_FORMA_DOC \n" + 
+				"	AND X.ID_ORGAO_USU = Z.ID_ORGAO_USU\n" + 
+				"	AND Z.SIGLA_ORGAO_USU || Y.SIGLA_FORMA_DOC || X.ANO_EMISSAO || LPAD(X.NUM_EXPEDIENTE, 5, '0')\n" + 
+				"	 IN ( :siglas )";
+		final Query query = em().createNativeQuery(sql);
+		query.setParameter("siglas", siglas);
+		
+		return query.getResultList();
 	}
 	
 }

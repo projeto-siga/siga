@@ -2402,6 +2402,9 @@ public class ExDocumentoController extends ExController {
 		final String[] aVars = vars;
 		final String[] aCampos = campos;
 		final ArrayList<String> aFinal = new ArrayList<String>();
+		String descrDocumento = param("exDocumentoDTO.descrDocumento");
+		if (descrDocumento != null && !descrDocumento.trim().isEmpty())
+			aFinal.add("descrDocumento");
 		if (aVars != null && aVars.length > 0) {
 			for (final String str : aVars) {
 				aFinal.add(str);

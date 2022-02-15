@@ -134,6 +134,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return getExMobilPai().getExDocumento();
 	}
 	
+	/**
+	 * Retorna o primeiro documento pai da arvore
+	 */
 	public ExMobil getGrandeExMobilPai() {
 		ExMobil m = getExMobilPai();
 		while (m != null) {
@@ -146,6 +149,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return this.getMobilGeral();
 	}
 	
+
+	/**
+	 * Retorna lista com todos documentos da arvores hierarquica
+	 * tendo como base documentos juntados e viculados ao exMobilPai
+	 */
 	public List<ExDocumento> getListaArvoreTodosDocs () {
 		List<ExDocumento> listaTodosExDocFinal = new ArrayList<>();
 		List<ExDocumento> listaExDocTodosJuntados = new ArrayList<>();
@@ -166,7 +174,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return listaTodosExDocFinal;
 	}
 	
-	
+	/**
+	 * Retorna lista parcial com documentos da arvores hierarquica
+	 * tendo como base documentos juntados e viculados ao exMobilPai
+	 */
 	public List<ExDocumento> getListaDocsArvoreVerticalParcial () {
 		List<ExDocumento> listaTodosExDocFinal = new ArrayList<>();
 		List<ExDocumento> listaExDocTodosJuntados = new ArrayList<>();

@@ -1105,6 +1105,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return m;
 	}
 	
+	/**
+	 * Retorna primeiro ExMobil na lista hierarquica 
+	 * tendo referencia documentos juntados.
+	 */
 	public ExMobil getGrandeMestreMobilJuntada() {
 		ExMobil m = getExMobilPai();
 		if (m == null) {
@@ -1121,6 +1125,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return null;
 	}
 	
+	/**
+	 * Retorna lista parcial de Mobils na arvore hierarquica
+	 * tendo como base documentos juntados
+	 */
 	public SortedSet<ExMobil> getDocsArvoreVerticalParcialJuntados() {
 		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
 		ExMobil m = this;
@@ -1456,6 +1464,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return getJuntados(true);
 	}
 	
+	/**
+	 * Retorna um Set contendo este móbil e os que foram juntados a ele,
+	 * de modo recursivo, trazendo apenas Mobils de documentos  não compostoss.
+	 */
 	public Set<ExMobil> getDocsJuntadosRecursivoNaoCompostos() {
 		return getJuntados(true, true);
 	}
@@ -1474,6 +1486,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	}
 	
+	/**
+	 * Retorna um Set contendo este móbil e os que foram juntados a ele,
+	 * de modo recursivo, trazendo apenas Mobils de documentos  não compostoss.
+	 */
 	public SortedSet<ExMobil> getMobilDocsJuntadosNaoCompostos() {
 		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
 		setFinal.add(this);

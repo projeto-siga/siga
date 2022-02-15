@@ -26,6 +26,8 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
 
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
@@ -55,7 +57,9 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		if (Prop.getBool("recebimento.automatico") 
 				&& Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob)) {
 			try {
+				ctx.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());
+				ExDao.getInstance().em().refresh(mob);
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 				throw e;

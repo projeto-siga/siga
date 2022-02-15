@@ -46,8 +46,8 @@ public class PainelListaGet implements IPainelListaGet {
 			r.marcaId = marca.getIdMarca().toString();
 
 			CpMarcadorEnum enmMarcador = CpMarcadorEnum.getById(marca.getCpMarcador().getId().intValue());
-			r.marcaTexto = enmMarcador != null ? enmMarcador.getNome() : marca.getCpMarcador().getDescrMarcador();
-			r.marcaIcone = enmMarcador != null ? enmMarcador.getIcone()
+			r.marcaTexto = enmMarcador != null && !enmMarcador.getNome().startsWith("???") ? enmMarcador.getNome() : marca.getCpMarcador().getDescrMarcador();
+			r.marcaIcone = enmMarcador != null ? enmMarcador.getIcone() 
 					: marca.getCpMarcador().getIdIcone().getCodigoFontAwesome();
 			r.dataIni = marca.getDtIniMarca();
 			r.dataFim = marca.getDtFimMarca();

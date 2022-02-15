@@ -64,6 +64,13 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		if (this.transacional)
 			em.getTransaction().begin();
 	}
+	
+	public void upgradeParaTransacional() {
+		if (this.transacional) 
+			return;
+		this.transacional = true;
+		em.getTransaction().begin();
+	}
 
 	abstract public void atualizarCacheDeConfiguracoes() throws Exception;
 

@@ -68,7 +68,9 @@ public class PainelQuadroGet implements IPainelQuadroGet {
 			QuadroItemVO item = previous;
 			if (item == null || !marcadorId.equals(previous.marcadorId))
 				item = new QuadroItemVO(finalidade, finalidade.getIdTpMarcador(),
-						marcadorEnum != null ? marcadorEnum.getGrupo() : null, marcadorEnum, marcadorId, (String) i[1],
+						marcadorEnum != null ? marcadorEnum.getGrupo() : null, marcadorEnum, marcadorId,
+						marcadorEnum != null && !marcadorEnum.getNome().startsWith("???") ? marcadorEnum.getNome()
+								: (String) i[1],
 						(CpMarcadorIconeEnum) i[5], (CpMarcadorCorEnum) i[4]);
 			CpTipoMarca tipoMarca = (CpTipoMarca) i[6];
 

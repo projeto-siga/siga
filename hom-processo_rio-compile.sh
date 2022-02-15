@@ -1,5 +1,5 @@
 #!/bin/bash
-#script
+# script
 #verify args
 if [ $# -eq 0 ]; then
         echo "Not found Maven Parameters: eg.:'-T 1C -pl !siga-dump,!siga-ex-gsa,!siga-ex-sinc,!siga-gc-gsa,!sigagc,!sigasr,!sigapp,!siga-ldap-cli,!sigatp,!siga-wf,!sigawf,!siga-vraptor-module-old install -DskipTests=true -DskipTests=true' jhomas135.infra.rio.gov.br:9990 ${WORKSPACE}"

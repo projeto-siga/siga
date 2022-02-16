@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -54,6 +55,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -8192,14 +8194,31 @@ public class ExBL extends CpBL {
 		return Service.getExService().obterNumeracaoExpediente(idOrgaoUsuario, idFormaDocumento, anoEmissao);
 	}
 
-	public List<Long> pesquisarXjus(String filter, String acronimoOrgaoUsu, String acl, int page, int perpage) throws Exception {
+	public List<Long> pesquisarXjus(
+			String filter, 
+			String acronimoOrgaoUsu, 
+			String descEspecie,
+			String descModelo,
+			String dataInicial, 
+			String dataFinal, 
+			String acl, 
+			int page, 
+			int perpage) throws Exception {
+		
 		final SigaHTTP http = new SigaHTTP();
 		String url = Prop.get("/xjus.url");
 		
-		String facets = "facet_orgao:"+acronimoOrgaoUsu;
-		facets = URLEncoder.encode(facets, "UTF-8");
+		String facets = (acronimoOrgaoUsu == null ? "" : ("facet_orgao:" + acronimoOrgaoUsu)) +
+						(descEspecie == null ? "" : (",facet_especie:" + descEspecie)) +
+						(descModelo == null ? "" : (",facet_modelo:" + descModelo));
 		
-		url += "?filter=" + filter + "&facets=" + facets + "&page=" + page + "&perpage=" + perpage;
+		if(dataInicial != null || dataFinal != null)
+			facets = facets + ",field_data:" + (dataInicial == null ? "" : dataInicial) + ":" + (dataFinal == null ? "" : dataFinal);
+		
+		url += "?filter=" + URLEncoder.encode(filter, "UTF-8") + 
+			   "&facets=" + URLEncoder.encode(facets, "UTF-8") + 
+			   "&page=" + page + 
+			   "&perpage=" + perpage;
 
 		final JWTSigner signer = new JWTSigner(Prop.get("/xjus.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
@@ -8225,10 +8244,17 @@ public class ExBL extends CpBL {
 		    siglas.add(code.replaceAll("[-/]", ""));
 		}
 		
-		if(siglas.isEmpty())
-			return null;
+		List<Long> ret =  new ArrayList<Long>();
 		
-		return dao().consultarDocumentosPorSiglas(siglas);
+		if(siglas.isEmpty())
+			return ret;
+		
+		List<BigDecimal> listaIdDoc = dao().consultarDocumentosPorSiglas(siglas);
+		
+		if(listaIdDoc != null && !listaIdDoc.isEmpty())
+			ret = listaIdDoc.stream().map(n -> n.longValue()).collect(Collectors.toList());
+		
+		return ret;
 	}
 
 }

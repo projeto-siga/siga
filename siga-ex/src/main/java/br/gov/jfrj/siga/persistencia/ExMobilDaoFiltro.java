@@ -25,7 +25,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
+import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements

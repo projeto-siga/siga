@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.hibernate;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,8 +97,8 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
-import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
+import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
+import br.gov.jfrj.siga.hibernate.query.ext.IMontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
@@ -601,11 +602,8 @@ public class ExDao extends CpDao {
 			query.setParameter("classificacaoSelId", flt.getClassificacaoSelId());
 		}
 
-		if (flt.getDescrDocumento() != null
-
-		&& !flt.getDescrDocumento().trim().equals("")) {
-			query.setParameter("descrDocumento", "%"
-					+ flt.getDescrDocumento().toUpperCase() + "%");
+		if (flt.getDescrDocumento() != null && !flt.getDescrDocumento().trim().equals("") && flt.getListaIdDoc() == null) {
+			query.setParameter("descrDocumento", "%" + flt.getDescrDocumento().toUpperCase() + "%");
 		}
 
 		if (flt.getDtDoc() != null) {
@@ -2329,7 +2327,7 @@ public class ExDao extends CpDao {
 		}
 	}
 
-	public List<Long> consultarDocumentosPorSiglas(List<String> siglas) {
+	public List<BigDecimal> consultarDocumentosPorSiglas(List<String> siglas) {
 		String sql = "SELECT X.ID_DOC \n" + 
 				"FROM SIGA.EX_DOCUMENTO X, \n" + 
 				"	SIGA.EX_FORMA_DOCUMENTO Y,\n" + 

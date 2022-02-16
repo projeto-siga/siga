@@ -118,7 +118,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new CpParamCfg[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true),
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 
 	UTILIZAR_COMPLEXO(400, "Utilizar Complexo Padrão",
 			"Selecione órgão, lotação, pessoa, cargo ou função comissionada que tem permissão para utilizar determinado complexo como padrão.",

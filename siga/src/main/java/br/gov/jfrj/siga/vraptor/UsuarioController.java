@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Controller;
@@ -252,6 +253,9 @@ public class UsuarioController extends SigaController {
 	@Transacional
 	@Post({ "/app/usuario/incluir_usuario_gravar", "/public/app/usuario/incluir_usuario_gravar" })
 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
+		
+		criticarMatriculaCpfVazios(usuario);
+		
 		String msgComplemento = "";
 		String[] senhaGerada = new String[1];
 		boolean isIntegradoAoAD = isIntegradoAD(usuario.getMatricula());
@@ -315,6 +319,9 @@ public class UsuarioController extends SigaController {
 	@Post({ "/app/usuario/esqueci_senha_gravar", "/public/app/usuario/esqueci_senha_gravar" })
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
 		// caso LDAP, orientar troca pelo Windows / central
+		
+		criticarMatriculaCpfVazios(usuario);
+		
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(usuario.getMatricula(), true);
 		if (id == null)
 			throw new AplicacaoException("O usuário não está cadastrado.");
@@ -407,6 +414,12 @@ public class UsuarioController extends SigaController {
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
 		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
+	}
+
+	private void criticarMatriculaCpfVazios(UsuarioAction usuario) {
+		if(StringUtils.isBlank(usuario.getMatricula()) || StringUtils.isBlank(usuario.getCpf())) {
+			throw new AplicacaoException("Os campos Login e CPF devem ser informados");
+		}
 	}
 
 	@Get({ "/app/usuario/integracao_ldap", "/public/app/usuario/integracao_ldap" })

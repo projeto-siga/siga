@@ -17,6 +17,8 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpServicosNotificacaoPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Controller
@@ -70,16 +72,20 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 		return configuracoes;
 	}
 	
-	@SuppressWarnings("all")
+	@SuppressWarnings("all") 
 	@Transacional 
 	@Post({"/app/notificarPorEmail/editar"})
 	public void editar (String siglaServ, Integer idSituacao) throws Exception {
 		CpServico servico = null;
+		DpPessoa pessoa = null;
+		DpLotacao lotacao = null;
+		pessoa = daoPes(getCadastrante().getId()).getPessoaInicial();
+		lotacao = daoLot(getLotaCadastrante().getId()).getLotacaoInicial(); 
 		servico = dao().consultarCpServicoPorChave(siglaServ);
 		CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.getById(idSituacao);
 		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.UTILIZAR_SERVICO; 
 		Cp.getInstance().getBL().configurarAcesso(null, getCadastrante().getOrgaoUsuario(), 
-				getLotaCadastrante(), getCadastrante(), servico, situacao, tpConf, getIdentidadeCadastrante());
+				lotacao, pessoa, servico, situacao, tpConf, getIdentidadeCadastrante());
 		result.redirectTo(ConfiguracaoNotificarPorEmailController.class).listar();
 	}   
  

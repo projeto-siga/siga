@@ -1916,7 +1916,7 @@ public class CpBL {
 	
 	private String incluirCossignatario(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
 		String conteudo = "";
-		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/usuario-responsavel-pela-assinatura.html"),StandardCharsets.UTF_8))) {			
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/incluido-como-cossignatario.html"),StandardCharsets.UTF_8))) {			
 			String str;
 			while((str = bfr.readLine()) != null) {
 				conteudo += str;

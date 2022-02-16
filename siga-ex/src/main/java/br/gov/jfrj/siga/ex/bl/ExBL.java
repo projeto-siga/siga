@@ -4150,7 +4150,7 @@ public class ExBL extends CpBL {
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 			
-			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), SIGA_CEMAIL_COSSIG)) {
+			if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), SIGA_CEMAIL_COSSIG)) {
 				Cp.getInstance().getBL().enviarEmailAoCossignatario(mov.getTitular(), mov.getSubscritor(), mov.getExDocumento().getSigla());
 			}
 			
@@ -5195,7 +5195,7 @@ public class ExBL extends CpBL {
 					
 					if (mov.getResp() != null) { 
 						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
-								mov.getResp().getLotacao(), SIGA_CEMAIL_DOCMARC)) { 
+								mov.getResp().getLotacao(), SIGA_CEMAIL_DOCMARC)) {
 							for (ExMobil exMobil: exMobils) {
 								for (ExMarca exMarca: exMobil.getExMarcaSet()) {
 									if (exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO 
@@ -5204,9 +5204,11 @@ public class ExBL extends CpBL {
 									}
 								}
 							}
-							marcas.forEach(marc -> {
-								marcasDoDoc.add(marc.getDescrMarcador());
-							});
+							if (marcasDoDoc.length() == 0) {
+								marcas.forEach(marc -> {
+									marcasDoDoc.add(marc.getDescrMarcador());
+								});
+							}
 							Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");	
 						}
 						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
@@ -5214,7 +5216,7 @@ public class ExBL extends CpBL {
 							Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuario(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());
 					}
 					
-					if (mov.getLotaResp() != null) {
+					if (mov.getResp() == null) {
 						for (DpPessoa pessoa: pessoasLota) {
 							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 									pessoa.getLotacao(), SIGA_CEMAIL_DOCMARC)) { 

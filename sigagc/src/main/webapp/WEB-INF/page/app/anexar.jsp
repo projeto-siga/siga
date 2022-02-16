@@ -41,7 +41,7 @@
 						mime_types : [
 								{
 									title : "Todos os arquivos",
-									extensions : "jpg,bmp,png,doc,docx,xls,xlsx,ppt,pptx,pdf,txt"
+									extensions : "bpm,jpg,bmp,png,doc,docx,xls,xlsx,ppt,pptx,pdf,txt"
 								},
 								{
 									title : "Arquivos de imagem",

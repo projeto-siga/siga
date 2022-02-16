@@ -601,7 +601,7 @@
         <subsystem xmlns="urn:jboss:domain:undertow:7.0" default-server="default-server" default-virtual-host="default-host" default-servlet-container="default" default-security-domain="other">
             <buffer-cache name="default"/>
             <server name="default-server">
-                <http-listener name="default" socket-binding="http" max-post-size="21585760" redirect-socket="https" proxy-address-forwarding="true" enable-http2="true"/>
+                <http-listener name="default" socket-binding="http" max-post-size="21585760" redirect-socket="https" proxy-address-forwarding="true" enable-http2="true" max-parameters="2000"/>
                 <https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>
                 <host name="default-host" alias="localhost">
                     <location name="/" handler="welcome-redirect"/>

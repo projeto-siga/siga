@@ -1110,9 +1110,15 @@ public class ExServiceImpl implements ExService {
 				if (siglaMobilPai == null)
 					throw new Exception("Informe a sigla do móbil pai");
 				ExMobil mobPai = buscarMobil(siglaMobilPai);
+				if (mobPai == null)
+					throw new Exception("Móbil pai inexistente");
+				if (mobPai.isGeral())
+					mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
 				if (siglaMobilFilho == null)
 					throw new Exception("Informe a sigla do móbil filho");
 				ExMobil mobFilho = buscarMobil(siglaMobilFilho);
+				if (mobFilho == null)
+					throw new Exception("Móbil filho inexistente");
 
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 //				if (cadastranteParser.getLotacao() == null && cadastranteParser.getPessoa() == null)

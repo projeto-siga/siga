@@ -3918,7 +3918,7 @@ public class ExBL extends CpBL {
 		//Caso o usuario cadastrante do ExDoc for diferente do usuario subscritor
 		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
 						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
-			listaIdSubscritor.add(doc.getSubscritor().getIdPessoa().toString());
+			listaIdSubscritor.add(doc.getSubscritor().getIdPessoaIni().toString());
 		}
 		return listaIdSubscritor;
 	}

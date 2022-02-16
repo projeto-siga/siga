@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Controller;
@@ -315,6 +316,11 @@ public class UsuarioController extends SigaController {
 	@Post({ "/app/usuario/esqueci_senha_gravar", "/public/app/usuario/esqueci_senha_gravar" })
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
 		// caso LDAP, orientar troca pelo Windows / central
+		
+		if(StringUtils.isBlank(usuario.getMatricula()) || StringUtils.isBlank(usuario.getCpf())) {
+			throw new AplicacaoException("Os campos Login e CPF devem ser informados");
+		}
+		
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(usuario.getMatricula(), true);
 		if (id == null)
 			throw new AplicacaoException("O usuário não está cadastrado.");

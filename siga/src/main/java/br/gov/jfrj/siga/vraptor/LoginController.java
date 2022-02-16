@@ -96,7 +96,7 @@ public class LoginController extends SigaController {
 	@Transacional
 	public void auth(String username, String password, String cont) throws IOException {
 		try {
-			if (loginSenhaVazios(username, password)) {
+			if (isCamposLoginSenhaVazios(username, password)) {
 				StringBuffer mensagem = new StringBuffer();
 				mensagem.append(SigaMessages.getMessage("usuario.informarlogin"));
 				throw new RuntimeException(mensagem.toString());
@@ -138,8 +138,8 @@ public class LoginController extends SigaController {
 		}
 	}
 	
-	private boolean loginSenhaVazios(String username, String password) {
-		return ((username == null || username.trim().isEmpty()) || (password == null || password.trim().isEmpty()));
+	private boolean isCamposLoginSenhaVazios(String username, String password) {
+		return (StringUtils.isBlank(username) || StringUtils.isBlank(password));
 	}
 
 	@Get("public/app/logout")

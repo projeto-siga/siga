@@ -3928,30 +3928,30 @@ public class ExBL extends CpBL {
 		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
 		//Obter Lista DnmAcesso para remocao para Arvore Doc Composto
-		List<String> listaDnmRemocao = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
+		List<String> listaDnmRemocaoPermissaoTemp = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
 
-		if (!listaDnmRemocao.isEmpty()) {			
+		if (!listaDnmRemocaoPermissaoTemp.isEmpty()) {			
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
 									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
 				//lista final para ser removido do DnmAcessoPaiFilho
-				List<String> listaDnmRemocaoFinal = obterListaIdPessoaSubscritorCossignatarioExDoc(exDoc, listaDnmRemocao);
-				List<String> listaDmnDocPaiFilhoFinal = converterStringParaList(exDoc.getDnmAcesso(), ",");
+				List<String> listaIdPessoaSubsCossigExDoc = obterListaIdPessoaSubscritorCossignatarioExDoc(exDoc, listaDnmRemocaoPermissaoTemp);
+				List<String> listaDmnDocFinal = converterStringParaList(exDoc.getDnmAcesso(), ",");
 				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-				listaDmnDocPaiFilhoFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoArvoreDocs(listaDnmRemocaoFinal, "P"));
+				listaDmnDocFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoArvoreDocs(listaIdPessoaSubsCossigExDoc, "P"));
 
-				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaDmnDocPaiFilhoFinal);
+				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaDmnDocFinal);
 				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, exDoc, dt);
 			}
 		}
 	}
 	
-	private List<String> obterListaIdPessoaSubscritorCossignatarioExDoc(ExDocumento docPaiFilho, List<String> listaDnmRemocao) {
+	private List<String> obterListaIdPessoaSubscritorCossignatarioExDoc(ExDocumento docPaiFilho, List<String> listaDnmRemocaoPermissaoTemp) {
 		List<String> listaIdSubscritorPaiFilho = getListaIdDPpessoaSubscritor(docPaiFilho, 
 																	ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 		//Lista DnmAcesso que nao podera ser removido do ExDoc Devido o IdPessoa ser Subscritor | Cossignatario
-		List<String> listaDnmAcessoNaoRemover = obterListaComumEntreDuasListas(listaIdSubscritorPaiFilho, listaDnmRemocao);
-		List<String> listaIdPessoaSubsCossigExDoc = new ArrayList<String>(listaDnmRemocao);
+		List<String> listaDnmAcessoNaoRemover = obterListaComumEntreDuasListas(listaIdSubscritorPaiFilho, listaDnmRemocaoPermissaoTemp);
+		List<String> listaIdPessoaSubsCossigExDoc = new ArrayList<String>(listaDnmRemocaoPermissaoTemp);
 		listaIdPessoaSubsCossigExDoc.removeAll(listaDnmAcessoNaoRemover);
 		return listaIdPessoaSubsCossigExDoc;
 	}

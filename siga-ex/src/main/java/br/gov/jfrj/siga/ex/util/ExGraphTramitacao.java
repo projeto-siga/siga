@@ -18,14 +18,18 @@ public class ExGraphTramitacao extends ExGraph {
 		listMov.addAll(mob.getExMovimentacaoSet());
 		Collections.sort(listMov);
 
-		PessoaLotacaoParser cadastrante = new PessoaLotacaoParser(mob.doc().getCadastrante(),
-				mob.doc().getLotaCadastrante());
-
 		// Incluí o cadastrante
 		{
+			PessoaLotacaoParser cadastrante = new PessoaLotacaoParser(mob.doc().getCadastrante(),
+					mob.doc().getLotaCadastrante());
+
+			ExMovimentacao criacao = mob.getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
+			if (criacao != null) 
+				cadastrante = new PessoaLotacaoParser(criacao.getCadastrante(), criacao.getLotaCadastrante());
+
 			boolean atendente = mob.isAtendente(cadastrante.getPessoa(), cadastrante.getLotacao());
 			boolean notificado = mob.isNotificado(cadastrante.getPessoa(), cadastrante.getLotacao());
-
+			
 			adicionar(new Nodo(cadastrante.getSiglaCompleta()).setLabel(cadastrante.getSigla()).setShape("oval")
 					.setDestacar(atendente || notificado)
 					.setEstilo((notificado && !atendente) ? ESTILO_PONTILHADO : null)

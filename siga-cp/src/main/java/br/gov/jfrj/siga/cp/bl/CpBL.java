@@ -1856,6 +1856,7 @@ public class CpBL {
 					.replace("${logo}", Prop.get("/siga.email.logo"))
 					.replace("${titulo}", Prop.get("/siga.email.titulo"))
 					.replace("${nomeDestinatario}", destinatario.getNomePessoa())  
+					.replace("${siglaDestinatario}", destinatario.getSiglaCompleta())
 					.replace("${nomeCadastrante}", cadastrante.getNomePessoa())
 					.replace("${siglaCadastrante}", cadastrante.getSigla())
 					.replace("${siglaDoc}", siglaDoc);
@@ -1879,6 +1880,7 @@ public class CpBL {
 					.replace("${logo}", Prop.get("/siga.email.logo"))
 					.replace("${titulo}", Prop.get("/siga.email.titulo"))
 					.replace("${nomeDestinatario}", destinatario.getNomePessoa())  
+					.replace("${siglaDestinatario}", destinatario.getSiglaCompleta())
 					.replace("${nomeCadastrante}", cadastrante.getNomePessoa())
 					.replace("${siglaCadastrante}", cadastrante.getSigla())
 					.replace("${docSigla}", docSigla)
@@ -1903,6 +1905,7 @@ public class CpBL {
 					.replace("${logo}", Prop.get("/siga.email.logo"))
 					.replace("${titulo}", Prop.get("/siga.email.titulo"))
 					.replace("${nomeDestinatario}", destinatario.getNomePessoa())  
+					.replace("${siglaDestinatario}", destinatario.getSiglaCompleta())
 					.replace("${nomeCadastrante}", cadastrante.getNomePessoa())
 					.replace("${siglaCadastrante}", cadastrante.getSigla())
 					.replace("${siglaDoc}", siglaDoc);
@@ -1926,8 +1929,9 @@ public class CpBL {
 					.replace("${logo}", Prop.get("/siga.email.logo"))
 					.replace("${titulo}", Prop.get("/siga.email.titulo"))
 					.replace("${nomeDestinatario}", destinatario.getNomePessoa())  
+					.replace("${siglaDestinatario}", destinatario.getSiglaCompleta())
 					.replace("${nomeCadastrante}", cadastrante.getNomePessoa())
-					.replace("${siglaCadastrante}", cadastrante.getSigla())
+					.replace("${siglaCadastrante}", cadastrante.getSigla()) 
 					.replace("${siglaDoc}", siglaDoc);
 			
 			return conteudo;

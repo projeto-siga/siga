@@ -4151,7 +4151,7 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 			
 			if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), SIGA_CEMAIL_COSSIG)) {
-				Cp.getInstance().getBL().enviarEmailAoCossignatario(mov.getTitular(), mov.getSubscritor(), mov.getExDocumento().getSigla());
+				Cp.getInstance().getBL().enviarEmailAoCossignatario(mov.getSubscritor(), mov.getCadastrante(), mov.getExDocumento().getSigla());
 			}
 			
 		} catch (final Exception e) {

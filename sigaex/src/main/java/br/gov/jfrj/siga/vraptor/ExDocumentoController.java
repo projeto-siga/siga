@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -2725,7 +2726,22 @@ public class ExDocumentoController extends ExController {
 			return exDocumentoDTO.getPreenchSet();
 		}
 
-		exDocumentoDTO.setPreenchSet(new TreeSet<ExPreenchimento>());
+		exDocumentoDTO.setPreenchSet(new TreeSet<ExPreenchimento>(new Comparator<ExPreenchimento>() {
+
+			@Override
+			public int compare(ExPreenchimento o1, ExPreenchimento o2) {
+				if (o1.getIdPreenchimento() != 0L && o2.getIdPreenchimento() == 0L)
+					return 1;
+				if (o1.getIdPreenchimento() == 0L && o2.getIdPreenchimento() != 0L)
+					return -1;
+				if (Utils.equivale(getLotaTitular(), o1.getDpLotacao()) && !Utils.equivale(getLotaTitular(), o2.getDpLotacao()))
+					return -1;
+				if (!Utils.equivale(getLotaTitular(), o1.getDpLotacao()) && Utils.equivale(getLotaTitular(), o2.getDpLotacao()))
+					return 1;
+				return o1.descricaoNaLista(getLotaTitular()).compareTo(o2.descricaoNaLista(getLotaTitular()));
+			}
+			
+		}));
 
 		ExPreenchimento preench = new ExPreenchimento();
 		if (exDocumentoDTO.getIdMod() != null
@@ -2740,15 +2756,19 @@ public class ExDocumentoController extends ExController {
 				new ExPreenchimento(0, null, " [Em branco] ", null));
 
 		if (exDocumentoDTO.getIdMod() != null && exDocumentoDTO.getIdMod() != 0) {
-			for (final DpLotacao lotacao : lotacaoSet) {
-				preench.setDpLotacao(lotacao);
-				try {
-					exDocumentoDTO.getPreenchSet().addAll(
-							dao().consultar(preench));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			try {
+				if (Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), 
+						ExTipoDeConfiguracao.EXIBIR_PREENCHIMENTOS_AUTOMATICOS_DE_OUTRAS_LOTACOES)) {
+					exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+				} else {
+					for (final DpLotacao lotacao : lotacaoSet) {
+						preench.setDpLotacao(lotacao);
+						exDocumentoDTO.getPreenchSet().addAll(
+								dao().consultar(preench));
+					}
 				}
+			} catch (Exception e) {
+				throw new RuntimeException("Erro listando preenchimentos automáticos", e);
 			}
 		}
 

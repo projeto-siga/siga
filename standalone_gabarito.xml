@@ -88,7 +88,8 @@
 		<property name="sigaex.folha.de.rosto" value="ativa"/>
         <property name="sigaex.volume.max.paginas" value="2000"/>
  
-        
+        <property name="siga.selecao.consulta.acesso" value="false"/>
+
     </system-properties>
     <management>
         <security-realms>

@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
@@ -115,8 +116,14 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 		final DaoFiltroT flt = createDaoFiltro();
 
-		tamanho = dao().consultarQuantidade(flt);
-		itens = dao().consultarPorFiltro(flt, offset, itemPagina);
+		boolean primeiraVez = getP().getOffset() == null;
+
+		if ( !primeiraVez   ||  Prop.getBool("/siga.selecao.consulta.acesso")){
+		
+			tamanho = dao().consultarQuantidade(flt);
+			itens = dao().consultarPorFiltro(flt, offset, itemPagina);
+		}
+		
 		
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		return "busca";

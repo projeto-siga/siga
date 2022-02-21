@@ -263,5 +263,10 @@ public class Prop {
 		 * armazenado em session storage no browser do usuário.
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
+		
+		/*indica se será realizada uma consulta ao BD 
+		 * logo que for acessado componente de siga:selecao (login, lotacao, classificacao, ...)
+		 */
+		provider.addPublicProperty("/siga.selecao.consulta.acesso", "true");
 	}
 }

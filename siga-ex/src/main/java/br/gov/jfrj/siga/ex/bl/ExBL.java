@@ -3096,9 +3096,7 @@ public class ExBL extends CpBL {
 			String s = processarComandosEmTag(doc, "finalizacao");
 			
 			ExMobil mob = doc.getMobilDefaultParaReceberJuntada();
-			if (doc.getExMobilAutuado() != null 
-					&& Ex.getInstance().getComp().podeSerJuntado(cadastrante, lotaCadastrante, mob)
-					&& Ex.getInstance().getComp().podeJuntar(cadastrante, lotaCadastrante, doc.getExMobilAutuado()))
+			if (doc.getExMobilAutuado() != null)
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
 			
 			return s;
@@ -4155,7 +4153,7 @@ public class ExBL extends CpBL {
 			if (mobPai.isArquivado())
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está arquivado");
 
-			if (!getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
+			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mob, mobPai) && !getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
 			
 			if(mob.getDoc().isComposto() && !mobPai.getDoc().isComposto())
@@ -5736,7 +5734,7 @@ public class ExBL extends CpBL {
 		for (final ExMobil mob : doc.getExMobilSet()) {
 
 			if (getComp().podeJuntar(titular, lotaCadastrante, mob) && getComp()
-					.podeSerJuntado(titular, lotaCadastrante, doc.getExMobilPai())) {
+					.podeSerJuntado(titular, lotaCadastrante, mob, doc.getExMobilPai())) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null, mob,
 						doc.getExMobilPai(), dtMov, null, titular, "1");
 				break;
@@ -5751,7 +5749,7 @@ public class ExBL extends CpBL {
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
 			if (getComp().podeJuntar(titular, lotaCadastrante, doc.getExMobilAutuado())
-					& getComp().podeSerJuntado(titular, lotaCadastrante, mob)) {
+					& getComp().podeSerJuntado(titular, lotaCadastrante, doc.getExMobilAutuado(), mob)) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null,
 						doc.getExMobilAutuado(), mob, dtMov, null, titular, "1");
 				break;

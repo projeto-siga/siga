@@ -803,7 +803,10 @@ public class ExDocumentoController extends ExController {
 		parFreeMarker.put("sigla_lota_titular", new String[] { getLotaTitular()
 				.getSiglaCompleta() });
 		
-		if(new ExPodePorConfiguracao(getTitular(), getLotaTitular()).withIdTpConf(ExTipoDeConfiguracao.HERDAR_PREENCHIMENTO).withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
+		if(new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(ExTipoDeConfiguracao.HERDAR_PREENCHIMENTO)
+				.withExMod(exDocumentoDTO.getModelo())
+				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
 			ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
 			Map<String, String> form = new TreeMap<String, String>();
 			Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());

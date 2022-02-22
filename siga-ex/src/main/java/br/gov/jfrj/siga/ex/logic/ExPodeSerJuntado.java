@@ -7,6 +7,7 @@ import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
+import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -17,21 +18,21 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExPodeSerJuntado extends CompositeExpressionSupport {
 
-	private ExMobil mob;
-	private ExDocumento doc;
+	private ExDocumento docFilho;
+	private ExMobil mobPai;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 	private List<ExMovimentacao> listMovJuntada;
 
-	public ExPodeSerJuntado(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		this.mob = mob;
-		this.doc = mob.doc();
+	public ExPodeSerJuntado(ExDocumento docFilho, ExMobil mobPai, DpPessoa titular, DpLotacao lotaTitular) {
+		this.docFilho = docFilho;
+		this.mobPai = mobPai;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 
 		listMovJuntada = new ArrayList<ExMovimentacao>();
-		if (mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
-			listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada()
+		if (mobPai.getDoc().getMobilDefaultParaReceberJuntada() != null) {
+			listMovJuntada.addAll(mobPai.getDoc().getMobilDefaultParaReceberJuntada()
 					.getMovsNaoCanceladas(ExTipoDeMovimentacao.JUNTADA));
 		}
 	}
@@ -50,7 +51,7 @@ public class ExPodeSerJuntado extends CompositeExpressionSupport {
 	 * 
 	 * @param titular
 	 * @param lotaTitular
-	 * @param mob
+	 * @param mobPai
 	 * @return
 	 * @throws Exception
 	 */
@@ -58,16 +59,20 @@ public class ExPodeSerJuntado extends CompositeExpressionSupport {
 	protected Expression create() {
 		return And.of(
 
-				Not.of(new ExEMobilCancelado(mob)),
+				Not.of(new ExEMobilCancelado(mobPai)),
 
-				Not.of(new ExEMobilVolumeEncerrado(mob)),
+				Not.of(new ExEMobilVolumeEncerrado(mobPai)),
 
-				Not.of(new ExEstaJuntado(mob)),
+				Not.of(new ExEstaJuntado(mobPai)),
 
-				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
+				Not.of(new ExEstaEmTransito(mobPai, titular, lotaTitular)),
 
-				Not.of(new ExEstaArquivado(mob)),
+				Not.of(new ExEstaArquivado(mobPai)),
 
-				new ExPodeMovimentar(mob, titular, lotaTitular));
+				Or.of(
+
+						new ExPodeMovimentar(mobPai, titular, lotaTitular),
+
+						new ExEDocFilho(docFilho, mobPai)));
 	}
 }

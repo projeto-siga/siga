@@ -141,8 +141,9 @@ public class ExServiceImpl implements ExService {
 				}
 				return true;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -172,8 +173,9 @@ public class ExServiceImpl implements ExService {
 						mob, null, null, destinoParser.getPessoa(), false);
 				return true;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -193,8 +195,9 @@ public class ExServiceImpl implements ExService {
 						destinoParser.getPessoa(), "1");
 				return true;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -205,8 +208,9 @@ public class ExServiceImpl implements ExService {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return !mob.getExDocumento().isPendenteDeAssinatura();
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -219,8 +223,9 @@ public class ExServiceImpl implements ExService {
 					return null;
 				return mob.getExDocumento().isSemEfeito();
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -235,8 +240,9 @@ public class ExServiceImpl implements ExService {
 								: cadastranteParser.getLotacao(),
 						mob);
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -292,8 +298,9 @@ public class ExServiceImpl implements ExService {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return isAtendente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), mob);
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -319,8 +326,9 @@ public class ExServiceImpl implements ExService {
 				}
 				return null;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -330,8 +338,9 @@ public class ExServiceImpl implements ExService {
 			try {
 				return Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(num);
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -347,8 +356,9 @@ public class ExServiceImpl implements ExService {
 					return s;
 				return null;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -366,8 +376,9 @@ public class ExServiceImpl implements ExService {
 						cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa(), mob.doc());
 				return mob.doc().getUltimaVia().getSigla();
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -380,8 +391,9 @@ public class ExServiceImpl implements ExService {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return mob.doc().getForm().get(variavel);
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -398,8 +410,9 @@ public class ExServiceImpl implements ExService {
 						descricaoDoAnexo);
 				return true;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -416,8 +429,9 @@ public class ExServiceImpl implements ExService {
 					return "";
 				}
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -435,8 +449,9 @@ public class ExServiceImpl implements ExService {
 				Ex.getInstance().getBL().atualizarPrincipal(mob.doc(), tipo, siglaPrincipal);
 				return true;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -736,8 +751,10 @@ public class ExServiceImpl implements ExService {
 				}
 
 				doc.setSubscritor(subscritor);
-				doc.setLotaSubscritor(subscritor.getLotacao());
-				doc.setOrgaoUsuario(subscritor.getOrgaoUsuario());
+				if (subscritor != null) {
+					doc.setLotaSubscritor(subscritor.getLotacao());
+					doc.setOrgaoUsuario(subscritor.getOrgaoUsuario());
+				}
 				doc.setExTipoDocumento(tipoDocumento);
 				doc.setExFormaDocumento(forma);
 				doc.setExModelo(modelo);
@@ -784,8 +801,9 @@ public class ExServiceImpl implements ExService {
 
 				return doc.getSigla();
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}
@@ -866,9 +884,9 @@ public class ExServiceImpl implements ExService {
 					mob = mob.getDoc().getPrimeiroMobil();
 				return mob.isModeloIncluso(idModelo, depoisDaData);
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
-			}
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;			}
 		}
 	}
 
@@ -1109,9 +1127,15 @@ public class ExServiceImpl implements ExService {
 				if (siglaMobilPai == null)
 					throw new Exception("Informe a sigla do móbil pai");
 				ExMobil mobPai = buscarMobil(siglaMobilPai);
+				if (mobPai == null)
+					throw new Exception("Móbil pai inexistente");
+				if (mobPai.isGeral())
+					mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
 				if (siglaMobilFilho == null)
 					throw new Exception("Informe a sigla do móbil filho");
 				ExMobil mobFilho = buscarMobil(siglaMobilFilho);
+				if (mobFilho == null)
+					throw new Exception("Móbil filho inexistente");
 
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 //				if (cadastranteParser.getLotacao() == null && cadastranteParser.getPessoa() == null)
@@ -1121,8 +1145,9 @@ public class ExServiceImpl implements ExService {
 						cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa(), mobPai, mobFilho, null, null, null);
 				return;
 			} catch (Exception ex) {
-				ctx.rollback(ex);
-				throw ex;
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
 			}
 		}
 	}

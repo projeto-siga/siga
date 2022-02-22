@@ -2336,6 +2336,24 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return calcularAtendentes(setMov, false); 
 	}
 
+	public Set<PessoaLotacaoParser> getRecebidos() {
+		Pendencias p = calcularTramitesPendentes();
+		
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.recebimentosPendentes);
+		
+		return calcularAtendentes(setMov, false); 
+	}
+
+	public Set<PessoaLotacaoParser> getAReceber() {
+		Pendencias p = calcularTramitesPendentes();
+		
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.tramitesPendentes);
+		
+		return calcularAtendentes(setMov, false); 
+	}
+
 	public Set<PessoaLotacaoParser> calcularAtendentes(Set<ExMovimentacao> setMov, boolean fIncluirCadastrante) {
 		Set<PessoaLotacaoParser> set = new HashSet<>();
 		for (ExMovimentacao mov : setMov) {
@@ -2382,11 +2400,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return equivalePessoaOuLotacao(pessoa, lotacao, set);
 	}
 	
+	public boolean isRecebido(DpPessoa pessoa, DpLotacao lotacao) {
+		Set<PessoaLotacaoParser> set = getRecebidos();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+	
+	public boolean isAReceber(DpPessoa pessoa, DpLotacao lotacao) {
+		Set<PessoaLotacaoParser> set = getAReceber();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+	
 	private boolean equivalePessoaOuLotacao(DpPessoa pessoa, DpLotacao lotacao, Set<PessoaLotacaoParser> set) {
 		for (PessoaLotacaoParser pl : set) {
-			if (Utils.equivale(pl.getPessoa(), pessoa))
+			if (pessoa != null && Utils.equivale(pl.getPessoa(), pessoa))
 				return true;
-			if (Utils.equivale(pl.getLotacao(), lotacao))
+			if (lotacao != null && Utils.equivale(pl.getLotacao(), lotacao))
 				return true;
 		}
 		return false;

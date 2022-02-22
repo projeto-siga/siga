@@ -1477,7 +1477,7 @@ CKEDITOR.replace( '${var}',
 									{'name': 'Campo de cadastro do doc', 'value': '$' + '{doc.pai.form.NOMECAMPO}'},
 									{'name': 'Descrição', 'value': '$' + '{doc.pai.descrDocumento}'},
 									{'name': 'Documento Autuado'},
-									{'name': 'Número', 'value': '$' + '{doc.sigla}'},
+									{'name': 'Número', 'value': '$' + '{ref.pai.autuado.mob.sigla}'},
 									{'name': 'Data', 'value': '$' + '{ref.pai.autuado.doc.dtDocDDMMYYYY}'},
 									{'name': 'Nome do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.descricao}'},
 									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.lotacao.descricao}'},
@@ -1488,7 +1488,7 @@ CKEDITOR.replace( '${var}',
 									{'name': 'Descrição', 'value': '$' + '{ref.pai.autuado.doc.descrDocumento}'},
 									{'name': 'Outros Documentos'},
 									{'name': 'Relação de docs juntados do modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO 1','MODELO DESEJADO 2')}"},
-									{'name': 'Último doc juntado do modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO').ultimo}"},
+									{'name': 'Último doc juntado do modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO').ultimo.mob.sigla}"},
 									{'name': 'Campo do último doc juntado do modelo', 'value': '$' + "{ref.modelo('memorando').form.NOMECAMPO}"},
 									{'name': 'Workflow'},
 									{'name': 'Número do Procedimento', 'value': '$' + '{wf.sigla}'},
@@ -1501,9 +1501,9 @@ CKEDITOR.replace( '${var}',
 									{'name': 'Variável (Reais por Extenso)', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},
 									{'name': 'Documento Criado por uma tarefa', 'value': '$' + '{wf.var.doc_NOMETAREFA}'},								
 								];
-								CKEDITOR.config.strinsert_button_label = 'Variável';
-								CKEDITOR.config.strinsert_button_title = 'Inserir Variável';
-								CKEDITOR.config.strinsert_button_voice = 'Inserir Variável';
+								CKEDITOR.config.strinsert_button_label = 'Parâmetro';
+								CKEDITOR.config.strinsert_button_title = 'Inserir Parâmetro';
+								CKEDITOR.config.strinsert_button_voice = 'Inserir Parâmetro';
 								
 								CKEDITOR.plugins.add('strinsert',
 								{

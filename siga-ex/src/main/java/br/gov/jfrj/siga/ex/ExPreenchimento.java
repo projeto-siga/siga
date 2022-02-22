@@ -28,6 +28,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 
 /**
@@ -91,6 +92,13 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 				return i;
 		}
 		return this.getIdPreenchimento().compareTo(o.getIdPreenchimento());
+	}
+	
+	public String descricaoNaLista(DpLotacao lotCorrente) {
+		if (Utils.equivale(lotCorrente, getDpLotacao()))
+			return getNomePreenchimento();
+		else
+			return (getDpLotacao() != null ? getDpLotacao().getSiglaCompleta() + ": " : "") + getNomePreenchimento();
 	}
 
 }

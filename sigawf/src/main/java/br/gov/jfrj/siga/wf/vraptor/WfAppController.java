@@ -263,7 +263,7 @@ public class WfAppController extends WfController {
 							&& (variable.getEditingKind() == VariableEditingKind.READ_WRITE
 									|| variable.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED)) {
 						Object value;
-						StringQualquer campo = campoValor[c];
+						StringQualquer campo = c < campoValor.length ? campoValor[c] : null; 
 						if (variable.getTipo() == WfTipoDeVariavel.DOC_MOBIL) {
 							value = param(variable.getIdentifier() + "_expedienteSel.sigla");
 						} else if (variable.getTipo() == WfTipoDeVariavel.PESSOA) {

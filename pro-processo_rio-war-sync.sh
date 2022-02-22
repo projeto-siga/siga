@@ -46,7 +46,7 @@ echo "                            VERIFYING REQUIREMENTS"
 echo "################################################################################"
 echo ""
 echo "JAVAC VERSION:"
-if j_version=`javac -version 2>&1 |cut -d "\"" -f2|head -n 1`; then
+if j_version=`pgrep -f org.jboss.as`; then
         echo "$j_version"
         echo "OK"
 
@@ -89,38 +89,45 @@ echo "##########################################################################
 echo "                              STARTING SCP"
 echo "###############################################################################"
 echo ""
-echo "COPYING DEPENDENCIES FROM $origin_server_artifacts"
-
-for t in ${dependencies[@]}; do
-        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
-                echo $copy_war_jar
-                echo "$t - OK"
-        else
-                echo $copy_war_jar
-                echo "FAIL"
-                echo "ABORTING..."
-                exit 1
-        fi
+for s in ${servers[@]}; do
+        echo ""
+        echo "COPYING DEPENDENCIES FROM $origin_server_artifacts TO $s"
+        echo ""
+                for t in ${dependencies[@]}; do
+                        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t $scp_user@$s:/opt/java/jboss-eap-7.2/standalone/deployments/`; then
+                                echo $copy_war_jar
+                                echo "$t - OK"
+                        else
+                                echo $copy_war_jar
+                                echo "FAIL"
+                                echo "ABORTING..."
+                                exit 1
+                        fi      
+                done
+        echo ""
 done
 
 echo ""
 echo ""
-echo "COPYING TARGETS FROM $origin_server_artifacts"
+for s in ${servers[@]}; do
+        echo ""
+        echo "COPYING TARGETS FROM $origin_server_artifacts TO $s"
 
-for t in ${targets[@]}; do
-        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /tmp`; then
-                echo $copy_war_jar
-                echo "$t - OK"
-        else
-                echo $copy_war_jar
-                echo "FAIL"
-                echo "ABORTING..."
-                exit 1
-        fi
+                for t in ${targets[@]}; do
+                        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t $scp_user@$s:/tmp`; then
+                                echo $copy_war_jar
+                                echo "$t - OK"
+                        else
+                                echo $copy_war_jar
+                                echo "FAIL"
+                                echo "ABORTING..."
+                                exit 1
+                        fi
+                done
+
+
+        echo ""
 done
-
-
-echo ""
 
 echo "###############################################################################"
 echo "                              STARTING DEPLOY"
@@ -166,7 +173,7 @@ for s in ${servers[@]}; do
                 echo "ABORTING..."
                 exit 1
         fi        
-echo ""
+echo "" 
 
 echo "DEPLOY WAR TARGETS:"
         #DEPLOY TARGETS

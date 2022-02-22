@@ -61,7 +61,7 @@ public class ExRef {
 		List<ExArquivoNumerado> res = new ArrayList<>();
 		for (ExArquivoNumerado an : getAns()) {
 			if (an.getMobil() != null) {
-				String descMod = Texto.slugify(an.getMobil().doc().getExModelo().getDescMod(), true, true);
+				String descMod = Texto.slugify(an.getMobil().doc().getExModelo().getNmMod(), true, true);
 				for (int i = 0; i < mod.length; i++)
 					if (descMod.contains(mod[i]))
 						res.add(an);
@@ -99,13 +99,13 @@ public class ExRef {
 	}
 
 	public ExRef getPai() {
-		if (doc.getExMobilPai() == null)
+		if (doc == null || doc.getExMobilPai() == null)
 			return new ExRef();
 		return new ExRef(doc.getExMobilPai());
 	}
 
 	public ExRef getAutuado() {
-		if (doc.getExMobilAutuado() == null)
+		if (doc == null || doc.getExMobilAutuado() == null)
 			return new ExRef();
 		return new ExRef(doc.getExMobilAutuado());
 	}

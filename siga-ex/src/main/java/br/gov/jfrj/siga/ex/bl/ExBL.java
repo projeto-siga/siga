@@ -4545,9 +4545,9 @@ public class ExBL extends CpBL {
 				
 				// Se houver outros recebimentos pendentes para o destinatário, em vez de
 				// receber deve concluir direto
-				boolean fConcluirDireto = ! mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.getTitular(), titular)
+				boolean fConcluirDireto = !mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.getTitular(), titular)
 						|| Utils.equivale(mob.getLotaTitular(), lotaTitular));
-				if (!fConcluirDireto)
+				if (!mob.isEmTransitoExterno() && !fConcluirDireto)
 					for (ExMovimentacao r : p.recebimentosPendentes)
 						// Existe um recebimento pendente e não é apenas de notificação
 						if (r.isResp(titular, lotaTitular) && !p.recebimentosDeNotificacoesPendentes.contains(r))
@@ -5627,8 +5627,15 @@ public class ExBL extends CpBL {
 			attrs.put("ref", doc.getRef());
 		
 		// Incluir um atributo chamado "wf" que contém os dados do procedimento vinculado
-		if (doc.getTipoDePrincipal() != null && doc.getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getPrincipal() != null) {
-			WfProcedimentoWSTO wf = Service.getWfService().consultarProcedimento(doc.getPrincipal());
+		String principal = null;
+		if (doc.getTipoDePrincipal() != null && doc.getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getPrincipal() != null) 
+			principal = doc.getPrincipal();
+		else if (doc.getExMobilPai() != null && doc.getExMobilPai().doc().getTipoDePrincipal() != null && doc.getExMobilPai().doc().getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getExMobilPai().doc().getPrincipal() != null) 
+			principal = doc.getExMobilPai().doc().getPrincipal();
+		else if (doc.getExMobilAutuado() != null && doc.getExMobilAutuado().doc().getTipoDePrincipal() != null && doc.getExMobilAutuado().doc().getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getExMobilAutuado().doc().getPrincipal() != null) 
+			principal = doc.getExMobilAutuado().doc().getPrincipal();
+		if (principal != null) {
+			WfProcedimentoWSTO wf = Service.getWfService().consultarProcedimento(principal);
 			Map<String, Object> vars = wf.getVar();
 			
 			// Converter boolean em Sim/Não

@@ -94,7 +94,7 @@ for s in ${servers[@]}; do
         echo "COPYING DEPENDENCIES FROM $origin_server_artifacts TO $s"
         echo ""
                 for t in ${dependencies[@]}; do
-                        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t $scp_user@$s:/opt/java/jboss-eap-7.2/standalone/deployments/`; then
+                        if copy_war_jar=`scp $origin_server_artifacts:/tmp/$t $s:/opt/java/jboss-eap-7.2/standalone/deployments/`; then
                                 echo $copy_war_jar
                                 echo "$t - OK"
                         else
@@ -114,7 +114,7 @@ for s in ${servers[@]}; do
         echo "COPYING TARGETS FROM $origin_server_artifacts TO $s"
 
                 for t in ${targets[@]}; do
-                        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t $scp_user@$s:/tmp`; then
+                        if copy_war_jar=`scp $origin_server_artifacts:/tmp/$t $s:/tmp`; then
                                 echo $copy_war_jar
                                 echo "$t - OK"
                         else

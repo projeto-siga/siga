@@ -4,9 +4,9 @@
 #
 
 #verify parameters 
-if [ $# -lt 5 ]; then
+if [ $# -lt 4 ]; then
    echo "ARGS NOT FOUND:  FAIL"
-   echo "ARGS: JBOSS_USER JBOSS_PASS SCP_USER SERVERS_ARRAY ORIGIN_SERVER_ARTIFACTS"
+   echo "ARGS: JBOSS_USER JBOSS_PASS SERVERS_ARRAY ORIGIN_SERVER_ARTIFACTS"
    echo "E.G: ./processo_rio-war-sync.sh jboss 12343 root ´jhomas456.infra.rio.gov.br jhomas987.infra.rio.gov.br´ jdevas323"
    echo "ABORTING..."
    exit 1
@@ -16,9 +16,6 @@ fi
 jboss_user=$1
 jboss_pass=$2
 
-#DECLARE SCP USER
-scp_user=$3
-
 ## DECLARE DEPENDENCIES ARRAY
 dependencies=(blucservice.war ckeditor.war vizservice.war)
 
@@ -27,11 +24,11 @@ targets=(siga-ext.jar sigaex.war siga.war)
 
 ## DECLARE SERVERS ARRAY
 ##e.g jdevasxxx.infra.rio.gov.br jdevaszzz.infra.rio.gov.br jdevasyyy.infra.rio.gov.br
-servers=($4)
+servers=($3)
 
 ## DECLARE ORIGIN SERVER ARTIFACTS VARIABLE
 ##e.g jdevasxxx
-origin_server_artifacts=($5)
+origin_server_artifacts=($4)
 
 #set variables
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.el7_9.x86_64/

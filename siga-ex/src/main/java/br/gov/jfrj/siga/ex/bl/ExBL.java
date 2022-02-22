@@ -3101,9 +3101,7 @@ public class ExBL extends CpBL {
 			String s = processarComandosEmTag(doc, "finalizacao");
 			
 			ExMobil mob = doc.getMobilDefaultParaReceberJuntada();
-			if (doc.getExMobilAutuado() != null 
-					&& Ex.getInstance().getComp().podeSerJuntado(cadastrante, lotaCadastrante, mob)
-					&& Ex.getInstance().getComp().podeJuntar(cadastrante, lotaCadastrante, doc.getExMobilAutuado()))
+			if (doc.getExMobilAutuado() != null)
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
 			
 			return s;
@@ -3268,7 +3266,8 @@ public class ExBL extends CpBL {
 				ContextoPersistencia.flushTransaction();
 				client.criarInstanciaDeProcesso(nomeProcesso,
 						SiglaParser.makeSigla(cadastrante, cadastrante.getLotacao()),
-						SiglaParser.makeSigla(titular, lotaTitular), keys, values, "DOCUMENTO", doc.getCodigo());
+						SiglaParser.makeSigla(titular, lotaTitular), keys, values, "DOCUMENTO", 
+						(doc.isExpediente() && doc.isFinalizado()) ? doc.getPrimeiraVia().getSigla() : doc.getCodigo());
 			}
 		}
 		// atualizarWorkFlow(doc);
@@ -4159,7 +4158,7 @@ public class ExBL extends CpBL {
 			if (mobPai.isArquivado())
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está arquivado");
 
-			if (!getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
+			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mob, mobPai) && !getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
 			
 			if(mob.getDoc().isComposto() && !mobPai.getDoc().isComposto())
@@ -4551,9 +4550,9 @@ public class ExBL extends CpBL {
 				
 				// Se houver outros recebimentos pendentes para o destinatário, em vez de
 				// receber deve concluir direto
-				boolean fConcluirDireto = ! mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.getTitular(), titular)
+				boolean fConcluirDireto = !mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.getTitular(), titular)
 						|| Utils.equivale(mob.getLotaTitular(), lotaTitular));
-				if (!fConcluirDireto)
+				if (!mob.isEmTransitoExterno() && !fConcluirDireto)
 					for (ExMovimentacao r : p.recebimentosPendentes)
 						// Existe um recebimento pendente e não é apenas de notificação
 						if (r.isResp(titular, lotaTitular) && !p.recebimentosDeNotificacoesPendentes.contains(r))
@@ -5633,8 +5632,15 @@ public class ExBL extends CpBL {
 			attrs.put("ref", doc.getRef());
 		
 		// Incluir um atributo chamado "wf" que contém os dados do procedimento vinculado
-		if (doc.getTipoDePrincipal() != null && doc.getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getPrincipal() != null) {
-			WfProcedimentoWSTO wf = Service.getWfService().consultarProcedimento(doc.getPrincipal());
+		String principal = null;
+		if (doc.getTipoDePrincipal() != null && doc.getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getPrincipal() != null) 
+			principal = doc.getPrincipal();
+		else if (doc.getExMobilPai() != null && doc.getExMobilPai().doc().getTipoDePrincipal() != null && doc.getExMobilPai().doc().getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getExMobilPai().doc().getPrincipal() != null) 
+			principal = doc.getExMobilPai().doc().getPrincipal();
+		else if (doc.getExMobilAutuado() != null && doc.getExMobilAutuado().doc().getTipoDePrincipal() != null && doc.getExMobilAutuado().doc().getTipoDePrincipal() == ExTipoDePrincipal.PROCEDIMENTO && doc.getExMobilAutuado().doc().getPrincipal() != null) 
+			principal = doc.getExMobilAutuado().doc().getPrincipal();
+		if (principal != null) {
+			WfProcedimentoWSTO wf = Service.getWfService().consultarProcedimento(principal);
 			Map<String, Object> vars = wf.getVar();
 			
 			// Converter boolean em Sim/Não
@@ -5740,7 +5746,7 @@ public class ExBL extends CpBL {
 		for (final ExMobil mob : doc.getExMobilSet()) {
 
 			if (getComp().podeJuntar(titular, lotaCadastrante, mob) && getComp()
-					.podeSerJuntado(titular, lotaCadastrante, doc.getExMobilPai())) {
+					.podeSerJuntado(titular, lotaCadastrante, mob, doc.getExMobilPai())) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null, mob,
 						doc.getExMobilPai(), dtMov, null, titular, "1");
 				break;
@@ -5755,7 +5761,7 @@ public class ExBL extends CpBL {
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
 			if (getComp().podeJuntar(titular, lotaCadastrante, doc.getExMobilAutuado())
-					& getComp().podeSerJuntado(titular, lotaCadastrante, mob)) {
+					& getComp().podeSerJuntado(titular, lotaCadastrante, doc.getExMobilAutuado(), mob)) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null,
 						doc.getExMobilAutuado(), mob, dtMov, null, titular, "1");
 				break;

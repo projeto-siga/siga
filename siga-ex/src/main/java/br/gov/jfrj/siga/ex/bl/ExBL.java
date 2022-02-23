@@ -116,6 +116,8 @@ import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -3133,6 +3135,7 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
+			concluirAlteracaoDocComRecalculoAcessoArvore(doc);
 
 			if (setVias == null || setVias.size() == 0)
 				criarVia(cadastrante, lotaCadastrante, doc, null);
@@ -3146,6 +3149,28 @@ public class ExBL extends CpBL {
 			return s;
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao finalizar o documento: " + e.getMessage(), e);
+		}
+	}
+	
+	private void concluirAlteracaoDocComRecalculoAcessoArvore(ExDocumento doc) {
+		if (Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore") && doc.isFinalizado()
+				&& possuiInclusaoCossignatarioSubscritor(doc)) {
+			Date dt = ExDao.getInstance().dt();
+			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL ? doc.getListaArvoreTodosDocs()
+					: doc.getListaDocsArvoreVerticalParcial();
+			List<DpPessoa> listaCossigDoc = getListaIdDPpessoaSubscritor(doc,
+					ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
+			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_REVISOR_SUBSCRITOR, ExPapel.class, false);
+
+			for (ExDocumento exDoc : listaArvoreDocsFinal) {
+				for (DpPessoa dpPessoaResp : listaCossigDoc) {
+					if (podeAdicionarMovVincPapel(exDoc, dpPessoaResp)){
+						String descrMov = exPapel.getDescPapel() + ":" + dpPessoaResp.getDescricaoIniciaisMaiusculas();
+						vincularPapel(doc.getCadastrante(), doc.getLotaCadastrante(), exDoc.getMobilGeral(), dt,
+								dpPessoaResp.getLotacao(), dpPessoaResp, null, null, descrMov, null, exPapel);
+					}
+				}
+			}
 		}
 	}
 
@@ -3876,23 +3901,23 @@ public class ExBL extends CpBL {
 			persistirGravacaoDnmAcessoExDoc(acessoRecalculado, doc, dt);
 		}
 		
-		if (Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore")
-							&& doc.isFinalizado() && possuiInclusaoCossignatarioSubscritor(doc)) {			
-			if (doc.isAssinadoDigitalmente()) {
-				removerPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
-			} else {
-				incluirPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
-			}
-		}
+//		if (Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore")
+//							&& doc.isFinalizado() && possuiInclusaoCossignatarioSubscritor(doc)) {			
+//			if (doc.isAssinadoDigitalmente()) {
+//				removerPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
+//			} else {
+//				incluirPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
+//			}
+//		}
 	}
 	
 	private boolean possuiInclusaoCossignatarioSubscritor(ExDocumento doc) {
 		return !getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO).isEmpty();
 	}
 	
-	private List<String> getListaIdDPpessoaSubscritor(
+	private List<DpPessoa> getListaIdDPpessoaSubscritor(
 			ExDocumento doc, ExTipoDeMovimentacao tipoDeMovimentacao) {
-		List<String> listaIdSubscritor = new ArrayList<>();
+		List<DpPessoa> listaIdSubscritor = new ArrayList<>();
 		
 		SortedSet<ExMovimentacao> listMovimentacao = doc.getMobilGeral().getExMovimentacaoSet();
 		if (listMovimentacao != null) {
@@ -3902,7 +3927,7 @@ public class ExBL extends CpBL {
 				if (mov.getExTipoMovimentacao() == tipoDeMovimentacao
 						&& mov.getExMovimentacaoCanceladora() == null) {
 					
-					String idSubscritor = mov.getSubscritor().getIdPessoaIni().toString();
+					DpPessoa idSubscritor = mov.getSubscritor();
 					if (ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(tipoDeMovimentacao)
 							&& !mov.getCadastrante().equals(mov.getSubscritor())) {
 						listaIdSubscritor.add(idSubscritor);
@@ -3917,42 +3942,64 @@ public class ExBL extends CpBL {
 		//Caso o usuario cadastrante do ExDoc for diferente do usuario subscritor
 		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
 						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
-			listaIdSubscritor.add(doc.getSubscritor().getIdPessoaIni().toString());
+			listaIdSubscritor.add(doc.getSubscritor());
 		}
 		return listaIdSubscritor;
 	}
 	
-	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, Date dt, String acessoRecalculado) {
+	
+	private static boolean podeAdicionarMovVincPapel(ExDocumento doc, DpPessoa dpPessoaResp) {
+		boolean podeAddMov = Boolean.TRUE;
 		
-		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
-		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
-		//Obter Lista DnmAcesso para remocao para Arvore Doc Composto
-		List<String> listaDnmRemocaoPermissaoTemp = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
-
-		if (!listaDnmRemocaoPermissaoTemp.isEmpty()) {			
-			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
-									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
-			for (ExDocumento exDoc : listaArvoreDocsFinal) {
-				//lista final para ser removido do DnmAcessoPaiFilho
-				List<String> listaIdPessoaSubsCossigExDoc = obterListaIdPessoaSubscritorCossignatarioExDoc(exDoc, listaDnmRemocaoPermissaoTemp);
-				List<String> listaDmnDocFinal = converterStringParaList(exDoc.getDnmAcesso(), ",");
-				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-				listaDmnDocFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoArvoreDocs(listaIdPessoaSubsCossigExDoc, "P"));
-
-				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaDmnDocFinal);
-				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, exDoc, dt);
+		SortedSet<ExMovimentacao> listMovimentacao = doc.getMobilGeral().getExMovimentacaoSet();
+		if (listMovimentacao != null) {
+			for (ExMovimentacao mov : listMovimentacao) {
+				if (mov.isCancelada())
+					continue;
+				if (mov.getExMovimentacaoCanceladora() == null) {
+					if (ExTipoDeMovimentacao.VINCULACAO_PAPEL.equals(mov.getExTipoMovimentacao())
+							&& mov.getSubscritor().equals(dpPessoaResp)) {
+						podeAddMov = Boolean.FALSE;
+						break;
+					}
+				}
 			}
 		}
+		return podeAddMov;
+	}
+	
+	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, Date dt, String acessoRecalculado) {
+		
+//		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
+//		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
+//		//Obter Lista DnmAcesso para remocao para Arvore Doc Composto
+//		List<String> listaDnmRemocaoPermissaoTemp = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
+//
+//		if (!listaDnmRemocaoPermissaoTemp.isEmpty()) {			
+//			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
+//									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
+//			for (ExDocumento exDoc : listaArvoreDocsFinal) {
+//				//lista final para ser removido do DnmAcessoPaiFilho
+//				List<String> listaIdPessoaSubsCossigExDoc = obterListaIdPessoaSubscritorCossignatarioExDoc(exDoc, listaDnmRemocaoPermissaoTemp);
+//				List<String> listaDmnDocFinal = converterStringParaList(exDoc.getDnmAcesso(), ",");
+//				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
+//				listaDmnDocFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoArvoreDocs(listaIdPessoaSubsCossigExDoc, "P"));
+//
+//				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaDmnDocFinal);
+//				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, exDoc, dt);
+//			}
+//		}
 	}
 	
 	private List<String> obterListaIdPessoaSubscritorCossignatarioExDoc(ExDocumento docPaiFilho, List<String> listaDnmRemocaoPermissaoTemp) {
-		List<String> listaIdSubscritorPaiFilho = getListaIdDPpessoaSubscritor(docPaiFilho, 
-																	ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
-		//Lista DnmAcesso que nao podera ser removido do ExDoc Devido o IdPessoa ser Subscritor | Cossignatario
-		List<String> listaDnmAcessoNaoRemover = obterListaComumEntreDuasListas(listaIdSubscritorPaiFilho, listaDnmRemocaoPermissaoTemp);
-		List<String> listaIdPessoaSubsCossigExDoc = new ArrayList<String>(listaDnmRemocaoPermissaoTemp);
-		listaIdPessoaSubsCossigExDoc.removeAll(listaDnmAcessoNaoRemover);
-		return listaIdPessoaSubsCossigExDoc;
+//		List<String> listaIdSubscritorPaiFilho = getListaIdDPpessoaSubscritor(docPaiFilho, 
+//																	ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
+//		//Lista DnmAcesso que nao podera ser removido do ExDoc Devido o IdPessoa ser Subscritor | Cossignatario
+//		List<String> listaDnmAcessoNaoRemover = obterListaComumEntreDuasListas(listaIdSubscritorPaiFilho, listaDnmRemocaoPermissaoTemp);
+//		List<String> listaIdPessoaSubsCossigExDoc = new ArrayList<String>(listaDnmRemocaoPermissaoTemp);
+//		listaIdPessoaSubsCossigExDoc.removeAll(listaDnmAcessoNaoRemover);
+//		return listaIdPessoaSubsCossigExDoc;
+		return null;
 	}
 	
 	private static List<String> concatenarLetraEmListaFinalDnmAcessoArvoreDocs(List<String> listaDnmRemocao, String letra) {
@@ -4277,6 +4324,7 @@ public class ExBL extends CpBL {
 			processar(doc, true, false);
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
+			concluirAlteracaoDocComRecalculoAcessoArvore(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao incluir Cossignatário.", e);

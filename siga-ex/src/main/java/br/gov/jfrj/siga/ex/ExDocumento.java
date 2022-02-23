@@ -160,6 +160,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		List<ExDocumento> listaExDocFilhosNaoJuntados = new ArrayList<>();
 		
 		ExMobil exMobilGrandeJuntada = this.getGrandeExMobilPai().getGrandeMestreMobilJuntada();
+		if (exMobilGrandeJuntada == null)
+			exMobilGrandeJuntada = this.getGrandeExMobilPai();
+		
 		if (exMobilGrandeJuntada != null ) {
 			Set<ExMobil> setRecursivo = exMobilGrandeJuntada.getMobilETodosOsJuntados();
 			for (ExMobil exMobil : setRecursivo) {
@@ -170,6 +173,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 		listaTodosExDocFinal.addAll(listaExDocTodosJuntados);
 		listaTodosExDocFinal.addAll(listaExDocFilhosNaoJuntados);
+		listaTodosExDocFinal.remove(this);
 		
 		return listaTodosExDocFinal;
 	}
@@ -191,6 +195,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		
 		listaTodosExDocFinal.addAll(listaExDocTodosJuntados);
 		listaTodosExDocFinal.addAll(listaExDocFilhosNaoJuntados);
+		listaTodosExDocFinal.remove(this);
 		
 		return listaTodosExDocFinal;
 	}

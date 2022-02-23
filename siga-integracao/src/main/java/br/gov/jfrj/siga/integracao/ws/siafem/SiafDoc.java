@@ -22,19 +22,19 @@ public class SiafDoc {
 
 	public SiafDoc(String[] dados) {
 		try {
-			int i = 0;
-			this.codUnico = dados[i++].trim().replace("-", "");
-			this.unidadeGestora = "00000" + (dados[i++].trim().split(" ")[0]);
+			int i = -1;
+			this.codUnico = dados[++i].trim().replace("-", "");
+			this.unidadeGestora = "00000" + (dados[++i].trim().split(" ")[0]);
 			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
-			this.gestao = dados[i++].trim();
-			this.objetoProcesso = URLDecoder.decode(dados[i++].trim(), "UTF-8");
-			this.tipoLicitacao = Integer.valueOf(dados[i++].split("-")[0].trim()) + "";
-			this.id = dados[i++].trim();
-			this.ata = dados[i++].trim().matches("[1Ss]") ? "S" : "N";
-			this.convenio = dados[i++].trim().matches("[1Ss]") ? "S" : "N";
-			this.finalidade = URLDecoder.decode(dados[i++].trim(), "UTF-8");
-			this.processo = dados[i++].trim();
-			this.desdobramento = dados[i++].trim();
+			this.gestao = dados[++i].trim();
+			this.objetoProcesso = URLDecoder.decode(dados[++i].trim(), "UTF-8");
+			this.tipoLicitacao = dados[++i].split("-")[0].trim().matches("\\d+") ? (Integer.valueOf(dados[i].split("-")[0].trim()) + "") : "";
+			this.id = dados[++i].trim();
+			this.ata = dados[++i].trim().matches("[1Ss]") ? "S" : "N";
+			this.convenio = dados[++i].trim().matches("[1Ss]") ? "S" : "N";
+			this.finalidade = URLDecoder.decode(dados[++i].trim(), "UTF-8");
+			this.processo = dados[++i].trim();
+			this.desdobramento = dados[++i].trim();
 			this.flagEletronico = "X";
 
 //			Quando for Legado o usuário deve preencher SOMENTE os campos

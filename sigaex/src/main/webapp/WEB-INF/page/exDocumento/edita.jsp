@@ -533,8 +533,8 @@
 					</div>
 				</div>
 				</c:if>	
-				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
 				<div class="row inline">					
+				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
 					<div class="col-sm-12">
 				  		<div class="form-group">
 				    		<label><fmt:message key="documento.preenchimento.automatico"/></label>

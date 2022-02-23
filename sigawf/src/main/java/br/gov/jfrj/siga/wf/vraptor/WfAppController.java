@@ -2,8 +2,10 @@ package br.gov.jfrj.siga.wf.vraptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -241,12 +243,111 @@ public class WfAppController extends WfController {
 	@Path("/app/procedimento/{piId}/continuar")
 	public void continuar(Long piId, String[] campoIdentificador, StringQualquer[] campoValor, Integer indiceDoDesvio,
 			String sigla) throws Exception {
+		if (indiceDoDesvio != null && indiceDoDesvio == -1) {
+			// redireciona para o método salvar quando o desvio é -1
+			result.forwardTo(this).salvar(piId, campoIdentificador, campoValor, sigla);
+			return;
+		}
+		
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
 		WfProcedimento pi = loadTaskInstance(piId);
 
 		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
 
+		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
+		
+		Integer desvio = null;
+		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
+			desvio = indiceDoDesvio;
+		}
+
+		Wf.getInstance().getBL().prosseguir(pi.getIdEvent(), desvio, param, getTitular(), getLotaTitular(),
+				getIdentidadeCadastrante());
+
+		// Redireciona para a pagina escolhida quando o procedimento criar uma
+		// variavel pre-definida
+		//
+//		String redirectTo = (String) taskInstance.getVariable(WF_REDIRECT_TO);
+//		if (redirectTo != null) {
+//			// taskInstance.deleteVariable(WF_REDIRECT_TO);
+//			WfDao.getInstance().getSessao().flush();
+//			taskInstance.getProcessInstance().getContextInstance().deleteVariable(WF_REDIRECT_TO);
+//			WfDao.getInstance().getSessao().flush();
+//			result.redirectTo(redirectTo);
+//			return;
+//		}
+
+		// Apresenta a pagina do documento quando a sigla for fornecida
+		//
+		if (sigla != null) {
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + sigla);
+			return;
+		}
+
+		// Verificar se um novo task foi criado para o process instance em
+		// questão. Se esse
+		// task existir e for designado para o mesmo ator, então a próxima
+		// página a ser exibida será a página de apresentação do task, e não a
+		// página inicial.
+		if (pi.getStatus() == ProcessInstanceStatus.PAUSED && pi.getEventoLotacao() != null
+				&& pi.getEventoLotacao().equivale(getLotaTitular())) {
+			result.redirectTo(this).procedimento(pi.getId().toString());
+			return;
+		}
+
+		result.redirectTo(this).procedimento(pi.getId().toString());
+	}
+	
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{piId}/salvar")
+	public void salvar(Long piId, String[] campoIdentificador, StringQualquer[] campoValor, 
+			String sigla) throws Exception {
+		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
+
+		WfProcedimento pi = loadTaskInstance(piId);
+
+		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
+
+		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
+
+		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(),
+				getIdentidadeCadastrante());
+
+		if (sigla != null) 
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + sigla);
+		else
+			result.redirectTo(this).procedimento(pi.getId().toString());
+	}
+
+	@Path("/app/procedimento/{piId}/editar-variaveis")
+	public void editarVariaveis(String piId) throws Exception {
+		WfProcedimento pi;
+		if (StringUtils.isNumeric(piId))
+			pi = loadTaskInstance(Long.valueOf(piId));
+		else
+			pi = WfProcedimento.findBySigla(piId);
+		WfDefinicaoDeTarefa tdSuper = pi.getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
+		result.include("piId", pi.getId());
+		result.include("pi", pi);
+		result.include("td", tdSuper);
+	}
+
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{piId}/salvar-variaveis")
+	public void salvarVariaveis(Long piId, String[] campoIdentificador, StringQualquer[] campoValor) throws Exception {
+		WfProcedimento pi = loadTaskInstance(piId);
+		WfDefinicaoDeTarefa td = pi.getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
+		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
+		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(),
+				getIdentidadeCadastrante());
+		result.redirectTo(this).procedimento(pi.getId().toString());
+	}
+
+	private Map<String, Object> carregarVariaveis(WfDefinicaoDeTarefa td, String[] campoIdentificador,
+			StringQualquer[] campoValor) {
 		// TODO Pegar automaticamente
 
 		// WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
@@ -301,47 +402,7 @@ public class WfAppController extends WfController {
 				}
 			}
 		}
-
-		Integer desvio = null;
-		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
-			desvio = indiceDoDesvio;
-		}
-
-		Wf.getInstance().getBL().prosseguir(pi.getIdEvent(), desvio, param, getTitular(), getLotaTitular(),
-				getIdentidadeCadastrante());
-
-		// Redireciona para a pagina escolhida quando o procedimento criar uma
-		// variavel pre-definida
-		//
-//		String redirectTo = (String) taskInstance.getVariable(WF_REDIRECT_TO);
-//		if (redirectTo != null) {
-//			// taskInstance.deleteVariable(WF_REDIRECT_TO);
-//			WfDao.getInstance().getSessao().flush();
-//			taskInstance.getProcessInstance().getContextInstance().deleteVariable(WF_REDIRECT_TO);
-//			WfDao.getInstance().getSessao().flush();
-//			result.redirectTo(redirectTo);
-//			return;
-//		}
-
-		// Apresenta a pagina do documento quando a sigla for fornecida
-		//
-		if (sigla != null) {
-			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + sigla);
-			return;
-		}
-
-		// Verificar se um novo task foi criado para o process instance em
-		// questão. Se esse
-		// task existir e for designado para o mesmo ator, então a próxima
-		// página a ser exibida será a página de apresentação do task, e não a
-		// página inicial.
-		if (pi.getStatus() == ProcessInstanceStatus.PAUSED && pi.getEventoLotacao() != null
-				&& pi.getEventoLotacao().equivale(getLotaTitular())) {
-			result.redirectTo(this).procedimento(pi.getId().toString());
-			return;
-		}
-
-		result.redirectTo(this).procedimento(pi.getId().toString());
+		return param;
 	}
 
 	private Boolean converterParaBoolean(StringQualquer campo) {

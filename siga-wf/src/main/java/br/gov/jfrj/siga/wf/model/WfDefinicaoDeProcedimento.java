@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.wf.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -51,8 +52,10 @@ import br.gov.jfrj.siga.wf.logic.WfPodeEditarDiagrama;
 import br.gov.jfrj.siga.wf.logic.WfPodeIniciarDiagrama;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeAcessoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
@@ -501,5 +504,37 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 			return "^wf:" + Texto.slugify(getSiglaCompacta(), true, false);
 		return null;
 	}
+	
+	public WfDefinicaoDeTarefa gerarDefinicaoDeTarefaComTodasAsVariaveis() {
+		WfDefinicaoDeTarefa tdSuper = new WfDefinicaoDeTarefa();
+		Set<String> identificadores = new HashSet<>();
+		for (WfDefinicaoDeTarefa td : getDefinicaoDeTarefa()) {
+			switch (td.getKind()) {
+			case FORMULARIO:
+				for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel())
+					if (!identificadores.contains(vd.getIdentificador())) {
+						WfDefinicaoDeVariavel vdSuper = new WfDefinicaoDeVariavel(vd);
+						tdSuper.getDefinicaoDeVariavel().add(vdSuper);
+						identificadores.add(vd.getIdentificador());
+					}
+				break;
+			case CRIAR_DOCUMENTO:
+				String identificador = WfTarefaDocCriar.getIdentificadorDaVariavel(td);
+				if (!identificadores.contains(identificador)) {
+					WfDefinicaoDeVariavel vdSuper = new WfDefinicaoDeVariavel();
+					vdSuper.setIdentificador(identificador);
+					vdSuper.setNome(td.getNome());
+					vdSuper.setTipo(WfTipoDeVariavel.DOC_MOBIL);
+					vdSuper.setAcesso(WfTipoDeAcessoDeVariavel.READ_WRITE);
+					tdSuper.getDefinicaoDeVariavel().add(vdSuper);
+					identificadores.add(vdSuper.getIdentificador());
+				}
+			default:
+			}
+		}
+		return tdSuper;
+	}
+	
+
 
 }

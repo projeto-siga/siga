@@ -808,13 +808,16 @@ public class ExDocumentoController extends ExController {
 				.withIdTpConf(ExTipoDeConfiguracao.HERDAR_PREENCHIMENTO)
 				.withExMod(exDocumentoDTO.getModelo())
 				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
-			ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
-			Map<String, String> form = new TreeMap<String, String>();
-			Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());
 			
-			for(Entry<String,String> entry : form.entrySet()) {
-				if(!parFreeMarker.containsKey(entry.getKey()))
-					parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
+			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
+				ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
+				Map<String, String> form = new TreeMap<String, String>();
+				Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());
+				
+				for(Entry<String,String> entry : form.entrySet()) {
+					if(!parFreeMarker.containsKey(entry.getKey()))
+						parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
+				}
 			}
 		}
 

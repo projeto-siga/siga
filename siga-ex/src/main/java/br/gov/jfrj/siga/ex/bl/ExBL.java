@@ -38,7 +38,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -55,7 +54,6 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -116,8 +114,6 @@ import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
-import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
-import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -3902,7 +3898,9 @@ public class ExBL extends CpBL {
 		String acessoRecalculado = new ExAcesso().getAcessosString(doc, dt, incluirAcesso, excluirAcesso);
 
 		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acessoRecalculado)) {
-			persistirGravacaoDnmAcessoExDoc(acessoRecalculado, doc, dt);
+			doc.setDnmAcesso(acessoRecalculado);
+			doc.setDnmDtAcesso(dt);
+			ExDao.getInstance().gravar(doc);
 		}
 	}
 	
@@ -4001,13 +3999,6 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	private void persistirGravacaoDnmAcessoExDoc(String acessoRecalculado, ExDocumento exDoc, Date dt) {
-		exDoc.setDnmAcesso(acessoRecalculado);
-		exDoc.setDnmDtAcesso(dt);
-		ExDao.getInstance().gravar(exDoc);
-		
-	}
-
 	public void bCorrigirDataFimMov(final ExMovimentacao mov) throws Exception {
 		try {
 			iniciarAlteracao();

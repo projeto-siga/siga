@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.hibernate;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -2323,4 +2324,5 @@ public class ExDao extends CpDao {
 			return null;
 		}
 	}
+	
 }

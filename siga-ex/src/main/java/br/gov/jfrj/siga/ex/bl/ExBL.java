@@ -1759,6 +1759,11 @@ public class ExBL extends CpBL {
 		try {
 			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
+			
+			if (Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore") && doc.isFinalizado()
+					&& possuiInclusaoCossignatarioSubscritor(doc) && doc.isAssinadoDigitalmente()) {
+				removerPermissaoTempDnmAcessoArvoreDocs(doc);
+			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
 		}
@@ -3158,8 +3163,7 @@ public class ExBL extends CpBL {
 			Date dt = ExDao.getInstance().dt();
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL ? doc.getListaArvoreTodosDocs()
 					: doc.getListaDocsArvoreVerticalParcial();
-			List<DpPessoa> listaCossigDoc = getListaIdDPpessoaSubscritor(doc,
-					ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
+			List<DpPessoa> listaCossigDoc = getListaIdDPpessoaSubscritor(doc);
 			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_REVISOR_SUBSCRITOR, ExPapel.class, false);
 
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
@@ -3900,23 +3904,13 @@ public class ExBL extends CpBL {
 		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acessoRecalculado)) {
 			persistirGravacaoDnmAcessoExDoc(acessoRecalculado, doc, dt);
 		}
-		
-//		if (Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore")
-//							&& doc.isFinalizado() && possuiInclusaoCossignatarioSubscritor(doc)) {			
-//			if (doc.isAssinadoDigitalmente()) {
-//				removerPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
-//			} else {
-//				incluirPermissaoTempDnmAcessoArvoreDocs(doc, dt, acessoRecalculado);
-//			}
-//		}
 	}
 	
 	private boolean possuiInclusaoCossignatarioSubscritor(ExDocumento doc) {
-		return !getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO).isEmpty();
+		return !getListaIdDPpessoaSubscritor(doc).isEmpty();
 	}
 	
-	private List<DpPessoa> getListaIdDPpessoaSubscritor(
-			ExDocumento doc, ExTipoDeMovimentacao tipoDeMovimentacao) {
+	private List<DpPessoa> getListaIdDPpessoaSubscritor(ExDocumento doc) {
 		List<DpPessoa> listaIdSubscritor = new ArrayList<>();
 		
 		SortedSet<ExMovimentacao> listMovimentacao = doc.getMobilGeral().getExMovimentacaoSet();
@@ -3924,16 +3918,10 @@ public class ExBL extends CpBL {
 			for (ExMovimentacao mov : listMovimentacao) {
 				if (mov.isCancelada())
 					continue;
-				if (mov.getExTipoMovimentacao() == tipoDeMovimentacao
-						&& mov.getExMovimentacaoCanceladora() == null) {
-					
+				if (mov.getExMovimentacaoCanceladora() == null) {					
 					DpPessoa idSubscritor = mov.getSubscritor();
-					if (ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(tipoDeMovimentacao)
+					if (ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(mov.getExTipoMovimentacao())
 							&& !mov.getCadastrante().equals(mov.getSubscritor())) {
-						listaIdSubscritor.add(idSubscritor);
-					}
-					if (ExTipoDeMovimentacao.ASSINATURA_COM_SENHA.equals(tipoDeMovimentacao)
-							&& !mov.getCadastrante().equals(mov.getResp())) {
 						listaIdSubscritor.add(idSubscritor);
 					}
 				}
@@ -3944,6 +3932,33 @@ public class ExBL extends CpBL {
 						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
 			listaIdSubscritor.add(doc.getSubscritor());
 		}
+		return listaIdSubscritor;
+	}
+	
+	
+	private List<DpPessoa> getListaDPpessoaAssinadorSubscritor(ExDocumento doc, DpPessoa dpPessoaSubscr) {
+		List<DpPessoa> listaIdSubscritor = new ArrayList<>();
+		
+		SortedSet<ExMovimentacao> listMovimentacao = doc.getMobilGeral().getExMovimentacaoSet();
+		if (listMovimentacao != null) {
+			for (ExMovimentacao mov : listMovimentacao) {
+				if (mov.isCancelada())
+					continue;
+				if (mov.getExMovimentacaoCanceladora() == null) {
+					DpPessoa idSubscritor = mov.getSubscritor();
+					if (ExTipoDeMovimentacao.ASSINATURA_COM_SENHA.equals(mov.getExTipoMovimentacao())
+							&& mov.getResp().equals(dpPessoaSubscr)) {
+						listaIdSubscritor.add(idSubscritor);
+						break;
+					}
+				}
+			}
+		}
+//		//Caso o usuario cadastrante do ExDoc for diferente do usuario subscritor
+//		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
+//						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
+//			listaIdSubscritor.add(doc.getSubscritor());
+//		}
 		return listaIdSubscritor;
 	}
 	
@@ -3968,80 +3983,22 @@ public class ExBL extends CpBL {
 		return podeAddMov;
 	}
 	
-	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, Date dt, String acessoRecalculado) {
+	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc) {
 		
-//		List<String> listaIdSubscritor = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
-//		List<String> listaIdSubscritorAssinado = getListaIdDPpessoaSubscritor(doc, ExTipoDeMovimentacao.ASSINATURA_COM_SENHA);
-//		//Obter Lista DnmAcesso para remocao para Arvore Doc Composto
-//		List<String> listaDnmRemocaoPermissaoTemp = obterListaComumEntreDuasListas(listaIdSubscritor, listaIdSubscritorAssinado);
-//
-//		if (!listaDnmRemocaoPermissaoTemp.isEmpty()) {			
-//			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
-//									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
-//			for (ExDocumento exDoc : listaArvoreDocsFinal) {
-//				//lista final para ser removido do DnmAcessoPaiFilho
-//				List<String> listaIdPessoaSubsCossigExDoc = obterListaIdPessoaSubscritorCossignatarioExDoc(exDoc, listaDnmRemocaoPermissaoTemp);
-//				List<String> listaDmnDocFinal = converterStringParaList(exDoc.getDnmAcesso(), ",");
-//				//Remover DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-//				listaDmnDocFinal.removeAll(concatenarLetraEmListaFinalDnmAcessoArvoreDocs(listaIdPessoaSubsCossigExDoc, "P"));
-//
-//				String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaDmnDocFinal);
-//				persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, exDoc, dt);
-//			}
-//		}
-	}
-	
-	private List<String> obterListaIdPessoaSubscritorCossignatarioExDoc(ExDocumento docPaiFilho, List<String> listaDnmRemocaoPermissaoTemp) {
-//		List<String> listaIdSubscritorPaiFilho = getListaIdDPpessoaSubscritor(docPaiFilho, 
-//																	ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
-//		//Lista DnmAcesso que nao podera ser removido do ExDoc Devido o IdPessoa ser Subscritor | Cossignatario
-//		List<String> listaDnmAcessoNaoRemover = obterListaComumEntreDuasListas(listaIdSubscritorPaiFilho, listaDnmRemocaoPermissaoTemp);
-//		List<String> listaIdPessoaSubsCossigExDoc = new ArrayList<String>(listaDnmRemocaoPermissaoTemp);
-//		listaIdPessoaSubsCossigExDoc.removeAll(listaDnmAcessoNaoRemover);
-//		return listaIdPessoaSubsCossigExDoc;
-		return null;
-	}
-	
-	private static List<String> concatenarLetraEmListaFinalDnmAcessoArvoreDocs(List<String> listaDnmRemocao, String letra) {
-		//Concatenação "letra" + IdPessoa
-		List<String> listaDnmRemocaoFinal = new ArrayList<>();
-		for (String string : listaDnmRemocao) {
-			string = letra + string;
-			listaDnmRemocaoFinal.add(string);
+		List<DpPessoa> listaSubscrDoc = getListaIdDPpessoaSubscritor(doc);
+		List<DpPessoa> listaDpPessoaCancelMovPapel = new ArrayList<DpPessoa>();
+		for (DpPessoa dpPessoaSubscr : listaSubscrDoc) {
+			listaDpPessoaCancelMovPapel.addAll(getListaDPpessoaAssinadorSubscritor(doc, dpPessoaSubscr));
 		}
-		return listaDnmRemocaoFinal;
-	}
-	
-	private List<String> obterListaComumEntreDuasListas(
-											List<String> listaIdSubscritor, List<String> listaIdSubscritorAssinado) {
-		return listaIdSubscritorAssinado.stream().filter(e -> listaIdSubscritor.contains(e))
-				.collect(Collectors.toList());
-	}
-	
-	private void incluirPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, Date dt, String acessoRecalculado) {
-		
-		//Remover da lista DnmAcesso diferentes de IdPessoas e coverter para List<String>
-		//Exemplo: acessoRecalculado = O12,L23,P22; Remover O12,L23, Manter P22
-		List<String> listaAcessoRecalculadoPessoas = removerDnmAcessoDiferenteTipoPessoa(
-																converterStringParaList(acessoRecalculado, ","));
-		List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
+
+		if (!listaDpPessoaCancelMovPapel.isEmpty()) {			
+			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
 									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
-		
-		for (ExDocumento exDoc : listaArvoreDocsFinal) {
-			List<String> listaStrDmnDocAtual = converterStringParaList(exDoc.getDnmAcesso(), ",");
-			//Adicionar DnmAcesso Recalculado para Dnm acesso doc Pai/Filho
-			listaStrDmnDocAtual.addAll(listaAcessoRecalculadoPessoas);
-						
-			String acessoRecalculadoPaiFilho = prepararStrAcessoDnmRecalculadoDoc(listaStrDmnDocAtual);
-			persistirGravacaoDnmAcessoExDoc(acessoRecalculadoPaiFilho, exDoc, dt);
-		}	
-	}
-	
-	private String prepararStrAcessoDnmRecalculadoDoc(List<String> listaDmnDocPaiFilho) {
-		//Remover DnmAcesso duplicados e Ordernar Lista
-		List<String> listaDmnDocPaiFinal = listaDmnDocPaiFilho.stream().distinct().sorted().collect(Collectors.toList());
-		//Coverter Lista de String para String com virgula
-		return String.join(",", listaDmnDocPaiFinal);
+			for (ExDocumento exDoc : listaArvoreDocsFinal) {
+				//chamar servico cancelamento mov
+				//cancelar(null, null, null, null, null, null, null, ERRO_EXCLUIR_ARQUIVO);
+			}
+		}
 	}
 	
 	private void persistirGravacaoDnmAcessoExDoc(String acessoRecalculado, ExDocumento exDoc, Date dt) {
@@ -4049,20 +4006,6 @@ public class ExBL extends CpBL {
 		exDoc.setDnmDtAcesso(dt);
 		ExDao.getInstance().gravar(exDoc);
 		
-	}
-	
-	private List<String> removerDnmAcessoDiferenteTipoPessoa(List<String> listaDnmAcesso) {
-		List<String> listaDnmAcessoFinal = new ArrayList<>();
-		for (String string : listaDnmAcesso) {
-			if(string.contains("P")) {
-				listaDnmAcessoFinal.add(string);
-			}
-		}
-		return listaDnmAcessoFinal;
-	}
-	
-	private List<String> converterStringParaList(String s, String regex) {
-		return new ArrayList<String>(Arrays.asList(s.split(regex)));
 	}
 
 	public void bCorrigirDataFimMov(final ExMovimentacao mov) throws Exception {

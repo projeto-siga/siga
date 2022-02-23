@@ -32,7 +32,7 @@ public class NotificacoesGet implements INotificacoesGet {
 			
 		}
 		
-		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(ctx.getTitular(),ctx.getLotaTitular(),"SIGA;FE;ARMAZ;ARMAZ_ESTAT")) {
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(ctx.getTitular(),ctx.getLotaTitular(),"SIGA;FE;ARMAZ:Armazenamento de Arquivos;ARMAZ_ESTAT:Estatística de Armazenamento")) {
 			Notificacao notificacaoArmazenamento = criaNotificacaoArmazenanentoCritico();
 			if (notificacaoArmazenamento != null)
 				resp.list.add(notificacaoArmazenamento);

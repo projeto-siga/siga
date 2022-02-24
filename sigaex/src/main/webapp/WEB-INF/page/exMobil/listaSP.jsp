@@ -318,15 +318,14 @@ td.tramitacoes.fa-fw>a.disabled {
 											</c:forEach>
 	
 											<c:choose>
-												<c:when test="${docTemTramitacoes}">
-													<a class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"
-														title="${title}" href="${link}">
-												    </a>
-													<c:set var="link"
+												<c:when test="${docTemTramitacoes}"><c:set var="link" 
 														value="${pageContext.request.contextPath}/app/expediente/doc/exibirMovimentacoesTramitacao?idMobil=${documento[1].idMobil}&docCancelado=true" />
 													<c:set var="title" value="Ver Histórico de Tramitação" />
 														<c:set var="classDisabled" value="" />
-													</c:when>
+													<a class="fa fa-search btn btn-default btn-sm xrp-label ${classDisabled}"
+														title="${title}" href="${link}">
+												    </a>
+												</c:when>
 											</c:choose>
 	
 											</c:when>

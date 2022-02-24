@@ -345,7 +345,7 @@
 															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 																pos="${acao.pos}"
 																url="${pageContext.request.contextPath}${acao.url}"
-																test="${acao.pode}" popup="${acao.popup}"
+																test="${acao.pode}" explicacao="${exibirExplicacao ? acao.explicacao : ''}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
 															<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}

@@ -128,8 +128,7 @@ app
 
 						if (t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') {
 							td.param = t.param;
-							if (t.param == 'FINALIZAR')
-								td.param2 = t.param2;
+							td.param2 = t.param2;
 						}
 
 						pd.definicaoDeTarefa.push(td);

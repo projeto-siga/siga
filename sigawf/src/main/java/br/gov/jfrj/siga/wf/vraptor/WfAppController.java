@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.logic.WfPodeEditarVariaveis;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
@@ -328,6 +329,7 @@ public class WfAppController extends WfController {
 			pi = loadTaskInstance(Long.valueOf(piId));
 		else
 			pi = WfProcedimento.findBySigla(piId);
+		WfPodeEditarVariaveis.afirmar(pi, getTitular(), getLotaTitular());
 		WfDefinicaoDeTarefa tdSuper = pi.getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
 		result.include("piId", pi.getId());
 		result.include("pi", pi);
@@ -339,6 +341,7 @@ public class WfAppController extends WfController {
 	@Path("/app/procedimento/{piId}/salvar-variaveis")
 	public void salvarVariaveis(Long piId, String[] campoIdentificador, StringQualquer[] campoValor) throws Exception {
 		WfProcedimento pi = loadTaskInstance(piId);
+		WfPodeEditarVariaveis.afirmar(pi, getTitular(), getLotaTitular());
 		WfDefinicaoDeTarefa td = pi.getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
 		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
 		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(),

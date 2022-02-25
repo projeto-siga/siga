@@ -167,6 +167,27 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExDocumento doc, final ExMobil mob) {
+		try {
+			return clazz.getDeclaredConstructor(ExMovimentacao.class, DpPessoa.class, DpLotacao.class).newInstance(doc, mob,
+					titular, lotaTitular);
+		} catch (Exception e) {
+			throw new RuntimeException("Erro executando lógica de negócios", e);
+		}
+	}
+
+	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, 
+			final ExDocumento doc, final ExMobil mob) {
+		return exp(clazz, titular, lotaTitular, doc, mob).eval();
+	}
+
+	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExDocumento doc, final ExMobil mob) {
+		Expression exp = exp(clazz, titular, lotaTitular, doc, mob);
+		afirmar(msg, exp, titular, lotaTitular);
+	}
+
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
 			final ExMovimentacao mov) {
 		try {
 			return clazz.getDeclaredConstructor(ExMovimentacao.class, DpPessoa.class, DpLotacao.class).newInstance(mov,
@@ -296,3 +317,4 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return resposta.booleanValue();
 	}
 }
+

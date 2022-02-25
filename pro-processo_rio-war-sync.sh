@@ -43,7 +43,7 @@ echo "                            VERIFYING REQUIREMENTS"
 echo "################################################################################"
 echo ""
 echo "JAVAC VERSION:"
-if j_version=`pgrep -f org.jboss.as`; then
+if j_version=`java -version 2>&1 |cut -d "\"" -f2|head -n 1`; then
         echo "$j_version"
         echo "OK"
 
@@ -55,7 +55,7 @@ else
 fi
 echo ""
 echo "JBOSS VERSION:"
-if jboss_version=`$JBOSS_HOME/bin/standalone.sh -version`; then
+if jboss_version=`pgrep -f org.jboss.as`; then
         echo $jboss_version
         echo "OK"
 else

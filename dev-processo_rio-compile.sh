@@ -33,7 +33,7 @@ else
 fi
 echo ""
 echo "JBOSS VERSION:"
-if jboss_version=`$JBOSS_HOME/bin/standalone.sh -version`; then
+if jboss_version=`pgrep -f org.jboss.as`; then
         echo $jboss_version
         echo "OK"
 else

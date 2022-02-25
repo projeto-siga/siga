@@ -91,7 +91,7 @@ for s in ${servers[@]}; do
         echo "COPYING DEPENDENCIES FROM $origin_server_artifacts TO $s"
         echo ""
                 for t in ${dependencies[@]}; do
-                        if copy_war_jar=`scp $origin_server_artifacts:/tmp/$t $s:/opt/java/jboss-eap-7.2/standalone/deployments/`; then
+                        if copy_war_jar=`scp $origin_server_artifacts:~/$t $s:/opt/java/jboss-eap-7.2/standalone/deployments/`; then
                                 echo $copy_war_jar
                                 echo "$t - OK"
                         else
@@ -111,7 +111,7 @@ for s in ${servers[@]}; do
         echo "COPYING TARGETS FROM $origin_server_artifacts TO $s"
 
                 for t in ${targets[@]}; do
-                        if copy_war_jar=`scp $origin_server_artifacts:/tmp/$t $s:/tmp`; then
+                        if copy_war_jar=`scp $origin_server_artifacts:~/$t $s:~/`; then
                                 echo $copy_war_jar
                                 echo "$t - OK"
                         else
@@ -162,7 +162,7 @@ for s in ${servers[@]}; do
         fi
 
 
-        if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar" --user=$jboss_user --password=$jboss_pass`; then
+        if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module add --name=sigadoc.ext --resources=~/siga-ext.jar" --user=$jboss_user --password=$jboss_pass`; then
                 echo "DEPLOY MODULE: siga-ext.jar - OK"
         else
                 echo $module_siga_ext
@@ -175,7 +175,7 @@ echo ""
 echo "DEPLOY WAR TARGETS:"
         #DEPLOY TARGETS
         for t in ${targets[@]}; do
-	        if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace /tmp/$t" --user=$jboss_user --password=$jboss_pass`; then
+	        if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace ~/$t" --user=$jboss_user --password=$jboss_pass`; then
                         echo "DEPLOY: $t - OK"
 	        else
                         echo $deploy_siga

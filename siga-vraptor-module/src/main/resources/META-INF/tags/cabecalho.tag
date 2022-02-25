@@ -234,6 +234,7 @@ ${meta}
 									        var src = 'https://vimeopro.com/fcav/spsempapel';
 									        $('#tutorialModal').modal('show');
 									        $('#tutorialModal iframe').attr('src', src);
+									        $(".modal-backdrop").removeClass();  
 									    });
 									
 									    $('#tutorialModal button').click(function () {

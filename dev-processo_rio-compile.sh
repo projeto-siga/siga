@@ -32,7 +32,7 @@ else
         exit 1
 fi
 echo ""
-echo "JBOSS VERSION:"
+echo "JBOSS PID:"
 if jboss_version=`pgrep -f org.jboss.as`; then
         echo $jboss_version
         echo "OK"

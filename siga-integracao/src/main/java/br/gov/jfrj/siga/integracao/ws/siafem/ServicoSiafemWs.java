@@ -34,9 +34,22 @@ public class ServicoSiafemWs {
 				msgErro = "Retorno vazio";
 		
 		if((statusOperacao != null && statusOperacao.equals("false")) || !msgErro.isEmpty() || !mensagemResult.isEmpty() || !msgRetornoSemPapel.isEmpty())
-			throw new AplicacaoException(msgErro + msgRetorno + mensagemResult + msgRetornoSemPapel);
+			throw new AplicacaoException(formatarRetorno(msgErro, msgRetorno, mensagemResult, msgRetornoSemPapel));
 		
 		return true;
+	}
+	
+	private static String formatarRetorno(String ... mensagens) {
+		String ret = "";
+		
+		for(int i = 0; i < mensagens.length; i++) {
+			if(ret.isEmpty())
+				ret = mensagens[i];
+			else if(!mensagens[i].isEmpty())
+				ret = ret + " | " + mensagens[i];				
+		}
+		
+		return ret;
 	}
 	
 	private static String extrairValor(String xml, String atributo) {

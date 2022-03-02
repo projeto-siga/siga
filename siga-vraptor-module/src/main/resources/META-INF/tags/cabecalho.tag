@@ -232,9 +232,8 @@ ${meta}
 									<script>
 									    $('#btnTutorial').click(function () {
 									        var src = 'https://vimeopro.com/fcav/spsempapel';
-									        $('#tutorialModal').modal('show');
+									        $('#tutorialModal').appendTo("body").modal('show');
 									        $('#tutorialModal iframe').attr('src', src);
-									        $(".modal-backdrop").css("z-index", "0");
 									    });
 									
 									    $('#tutorialModal button').click(function () {

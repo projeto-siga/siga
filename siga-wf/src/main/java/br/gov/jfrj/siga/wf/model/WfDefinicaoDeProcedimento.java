@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -302,12 +303,11 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 		return getSigla().replace("-", "").replace("/", "");
 	}
 
-	public static WfDefinicaoDeProcedimento findBySigla(String sigla) throws NumberFormatException, Exception {
+	public static WfDefinicaoDeProcedimento findBySigla(String sigla) {
 		return findBySigla(sigla, null);
 	}
 
-	public static WfDefinicaoDeProcedimento findBySigla(String sigla, CpOrgaoUsuario ouDefault)
-			throws NumberFormatException, Exception {
+	public static WfDefinicaoDeProcedimento findBySigla(String sigla, CpOrgaoUsuario ouDefault) {
 		SiglaDecodificada d = SiglaUtils.parse(sigla, "DP", null);
 
 		WfDefinicaoDeProcedimento info = null;
@@ -324,6 +324,12 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 					+ sigla + ". Favor verificá-lo.");
 		} else
 			return info;
+	}
+	
+	public WfDefinicaoDeProcedimento getAtual() {
+		if (this.getDataFim() != null)
+			return CpDao.getInstance().obterAtual(this);
+		return this;
 	}
 
 	public static WfDefinicaoDeProcedimento findByNome(String titulo) throws Exception {

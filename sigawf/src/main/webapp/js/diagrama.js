@@ -291,28 +291,28 @@ app
 
 			$scope.carregarRecursos = function(cont) {
 				$http({
-					url: '/sigawf/app/diagrama/acesso-de-inicializacao/carregar',
+					url: '/sigawf/app/diagrama/carregar-acesso-de-inicializacao',
 					method: "GET"
 				})
 					.then(
 						function(response) {
 							$scope.acessosDeInicializacao = response.data.list;
 							$http({
-								url: '/sigawf/app/diagrama/acesso-de-edicao/carregar',
+								url: '/sigawf/app/diagrama/carregar-acesso-de-edicao',
 								method: "GET"
 							})
 								.then(
 									function(response) {
 										$scope.acessosDeEdicao = response.data.list;
 										$http({
-											url: '/sigawf/app/diagrama/tipo-de-principal/carregar',
+											url: '/sigawf/app/diagrama/carregar-tipo-de-principal',
 											method: "GET"
 										})
 											.then(
 												function(response) {
 													$scope.tiposDePrincipal = response.data.list;
 													$http({
-														url: '/sigawf/app/diagrama/tipo-de-vinculo-com-principal/carregar',
+														url: '/sigawf/app/diagrama/carregar-tipo-de-vinculo-com-principal',
 														method: "GET"
 													})
 														.then(

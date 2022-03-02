@@ -96,6 +96,14 @@ public class LoginController extends SigaController {
 	@Transacional
 	public void auth(String username, String password, String cont) throws IOException {
 		try {
+			
+			if (loginSenhaVazios(username, password)) {
+				StringBuffer mensagem = new StringBuffer();
+				mensagem.append(SigaMessages.getMessage("usuario.informarlogin"));
+				throw new RuntimeException(mensagem.toString());
+			}
+
+			
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);
 
@@ -362,4 +370,9 @@ public class LoginController extends SigaController {
 			return false;
 		}
 	}
+	
+	private boolean loginSenhaVazios(String username, String password) {
+		return ((username == null || username.trim().isEmpty()) || (password == null || password.trim().isEmpty()));
+	}
+
 }

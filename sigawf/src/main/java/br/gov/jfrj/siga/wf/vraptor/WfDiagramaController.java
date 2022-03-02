@@ -199,6 +199,16 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		}
 	}
 
+	@Get("app/diagrama/documentar")
+	public void documenta(final Long id) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		if (id != null) {
+			WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(id);
+			result.include("pd", pd);
+			result.include("dot", util.getDot(pd));
+		}
+	}
+
 	@Get("app/diagrama/editar")
 	public void edita(final Long id, final boolean duplicar) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -364,9 +374,10 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			jsonError(e);
 		}
 	}
-	
+
 	private static class GravarResultado {
 		String id;
+
 		public GravarResultado(Long id) {
 			this.id = id.toString();
 		}

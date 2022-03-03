@@ -48,34 +48,4 @@ public interface RecebeMSGSoap {
         String unidadeGestora,
         @WebParam(name = "DocumentoXML", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
         String documentoXML);
-
-    /**
-     * 
-     * @param unidadeGestora
-     * @param senha
-     * @param sIPEstimulo
-     * @param usuario
-     * @param anoBase
-     * @param documentoXML
-     * @return
-     *     returns java.lang.String
-     */
-    @WebMethod(operationName = "Mensagem2", action = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/Mensagem2")
-    @WebResult(name = "Mensagem2Result", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
-    @RequestWrapper(localName = "Mensagem2", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/", className = "br.gov.jfrj.siga.ex.ws.siafem.Mensagem2")
-    @ResponseWrapper(localName = "Mensagem2Response", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/", className = "br.gov.jfrj.siga.ex.ws.siafem.Mensagem2Response")
-    public String mensagem2(
-        @WebParam(name = "Usuario", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
-        String usuario,
-        @WebParam(name = "Senha", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
-        String senha,
-        @WebParam(name = "AnoBase", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
-        String anoBase,
-        @WebParam(name = "UnidadeGestora", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
-        String unidadeGestora,
-        @WebParam(name = "DocumentoXML", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
-        String documentoXML,
-        @WebParam(name = "sIP_Estimulo", targetNamespace = "https://www.bec.sp.gov.br/SIAFISICO/RecebeMSG/")
-        String sIPEstimulo);
-
 }

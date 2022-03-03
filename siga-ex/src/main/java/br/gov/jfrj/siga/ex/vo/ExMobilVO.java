@@ -25,6 +25,7 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AcaoVO;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
@@ -417,10 +418,15 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("Notificar").icone("email_go").nameSpace("/app/expediente/mov").acao("notificar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeNotificar(mob, titular, lotaTitular)).build());
 		
-		addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add")
-				.descr("Insere uma pequena observação ao documento. A anotação será exibida nas movimentações do documento, podendo ser excluída a qualquer tempo pela pessoa que a criou.")
-				.modal("anotacaoObservacaoModal").params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
-		
+		if (!Prop.isGovSP()) {
+			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").acao("/app/expediente/mov/anotar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		} else {
+			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotacaoObservacaoModal")
+					.descr("Insere uma pequena observação ao documento. A anotação será exibida nas movimentações do documento, podendo ser excluída a qualquer tempo pela pessoa que a criou.")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+		}
+
 		addAcao(AcaoVO.builder().nome("Definir " + SigaMessages.getMessage("documento.marca")).icone("folder_star").modal("definirMarcaModal")
 				.exp(new ExPodeMarcar(mob, titular, lotaTitular)).build());
 		

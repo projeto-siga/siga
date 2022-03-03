@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1375,18 +1376,22 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 		}		
-
+		
 		if (recebimentoAutomatico) {				
 			if (Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
 				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
-		} else if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
-				&& !exDocumentoDto.getMob().isEmTransitoExterno()
-				&& !exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA).getCadastrante().equivale(getTitular())
+		} else {
+			ExMovimentacao mov = exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA);
+		
+			if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
+				&& !exDocumentoDto.getMob().isEmTransitoExterno()				
+				&& (mov.getCadastrante() == null || !mov.getCadastrante().equivale(getTitular()))
 				&& !exDocumentoDto.getMob().isJuntado()) {
-			recebimentoPendente = true;			
+				recebimentoPendente = true;		
+			}
 		} 		
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
@@ -2410,6 +2415,9 @@ public class ExDocumentoController extends ExController {
 		final String[] aVars = vars;
 		final String[] aCampos = campos;
 		final ArrayList<String> aFinal = new ArrayList<String>();
+		String descrDocumento = param("exDocumentoDTO.descrDocumento");
+		if (descrDocumento != null && !descrDocumento.trim().isEmpty())
+			aFinal.add("descrDocumento");
 		if (aVars != null && aVars.length > 0) {
 			for (final String str : aVars) {
 				aFinal.add(str);
@@ -2730,7 +2738,21 @@ public class ExDocumentoController extends ExController {
 			return exDocumentoDTO.getPreenchSet();
 		}
 
-		exDocumentoDTO.setPreenchSet(new TreeSet<ExPreenchimento>());
+		exDocumentoDTO.setPreenchSet(new TreeSet<ExPreenchimento>(new Comparator<ExPreenchimento>() {
+			@Override
+			public int compare(ExPreenchimento o1, ExPreenchimento o2) {
+				if (o1.getIdPreenchimento() != 0L && o2.getIdPreenchimento() == 0L)
+					return 1;
+				if (o1.getIdPreenchimento() == 0L && o2.getIdPreenchimento() != 0L)
+					return -1;
+				if (Utils.equivale(getLotaTitular(), o1.getDpLotacao()) && !Utils.equivale(getLotaTitular(), o2.getDpLotacao()))
+					return -1;
+				if (!Utils.equivale(getLotaTitular(), o1.getDpLotacao()) && Utils.equivale(getLotaTitular(), o2.getDpLotacao()))
+					return 1;
+				return o1.descricaoNaLista(getLotaTitular()).compareToIgnoreCase(o2.descricaoNaLista(getLotaTitular()));
+			}
+			
+		}));
 
 		ExPreenchimento preench = new ExPreenchimento();
 		if (exDocumentoDTO.getIdMod() != null
@@ -2745,15 +2767,19 @@ public class ExDocumentoController extends ExController {
 				new ExPreenchimento(0, null, " [Em branco] ", null));
 
 		if (exDocumentoDTO.getIdMod() != null && exDocumentoDTO.getIdMod() != 0) {
-			for (final DpLotacao lotacao : lotacaoSet) {
-				preench.setDpLotacao(lotacao);
-				try {
-					exDocumentoDTO.getPreenchSet().addAll(
-							dao().consultar(preench));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			try {
+				if (Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), 
+						ExTipoDeConfiguracao.EXIBIR_PREENCHIMENTOS_AUTOMATICOS_DE_OUTRAS_LOTACOES)) {
+					exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+				} else {
+					for (final DpLotacao lotacao : lotacaoSet) {
+						preench.setDpLotacao(lotacao);
+						exDocumentoDTO.getPreenchSet().addAll(
+								dao().consultar(preench));
+					}
 				}
+			} catch (Exception e) {
+				throw new RuntimeException("Erro listando preenchimentos automáticos", e);
 			}
 		}
 

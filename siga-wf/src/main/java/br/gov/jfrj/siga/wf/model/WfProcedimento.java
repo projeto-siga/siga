@@ -661,7 +661,7 @@ public class WfProcedimento extends Objeto
 			DpPessoa resp = plWF.getPessoa();
 			DpLotacao lotaResp = plWF.getLotacao();
 			boolean estaComTarefa = (resp != null && titular.equivale(resp))
-					|| (lotaResp != null && lotaTitular.equals(lotaResp));
+					|| (lotaResp != null && lotaTitular.equivale(lotaResp));
 			respEX = service.getAtendente(getPrincipal(), siglaTitular);
 			lotEX = new PessoaLotacaoParser(respEX).getLotacaoOuLotacaoPrincipalDaPessoa();
 
@@ -733,23 +733,14 @@ public class WfProcedimento extends Objeto
 	}
 
 	public List<String> getTags() {
-		ArrayList<String> tags = new ArrayList<String>();
-		if (getProcessDefinition() != null) {
-			tags.add("@" + Texto.slugify(getProcessDefinition().getSiglaCompacta(), true, false));
-			tags.add("@" + Texto.slugify(getProcessDefinition().getNome(), true, false));
-		}
-		if (getCurrentTaskDefinition() != null && getCurrentTaskDefinition().getNome() != null)
-			tags.add("@" + Texto.slugify(getCurrentTaskDefinition().getNome(), true, false));
-
-		return tags;
+		if (getCurrentTaskDefinition() != null)
+			return getCurrentTaskDefinition().getTags();
+		return new ArrayList<String>();
 	}
 
 	public String getAncora() {
-		if (getProcessDefinition().getNome() != null && getCurrentTaskDefinition() != null
-				&& getCurrentTaskDefinition().getNome() != null)
-			return "^wf:" + Texto.slugify(
-					getProcessDefinition().getSiglaCompacta() + "-" + getCurrentTaskDefinition().getNome(), true,
-					false);
+		if (getCurrentTaskDefinition() != null)
+			return getCurrentTaskDefinition().getAncora();
 		return null;
 	}
 

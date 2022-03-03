@@ -31,6 +31,7 @@ import com.crivano.jflow.model.TaskDefinition;
 
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
@@ -377,7 +378,8 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 		if (!pode.eval())
 			throw new RuntimeException("Edição do diagrama '" + nome + "' não é permitida para "
 					+ (titular != null ? titular.getSigla() : null) + "/"
-					+ (lotaTitular != null ? lotaTitular.getSigla() : null) + " - " + AcaoVO.Helper.formatarExplicacao(pode, false));
+					+ (lotaTitular != null ? lotaTitular.getSigla() : null) + " - "
+					+ AcaoVO.Helper.formatarExplicacao(pode, false));
 	}
 
 	public void assertAcessoDeDuplicar(DpPessoa titular, DpLotacao lotaTitular) {
@@ -385,7 +387,8 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 		if (!pode.eval())
 			throw new RuntimeException("Edição do diagrama '" + nome + "' não é permitida para "
 					+ (titular != null ? titular.getSigla() : null) + "/"
-					+ (lotaTitular != null ? lotaTitular.getSigla() : null) + " - " + AcaoVO.Helper.formatarExplicacao(pode, false));
+					+ (lotaTitular != null ? lotaTitular.getSigla() : null) + " - "
+					+ AcaoVO.Helper.formatarExplicacao(pode, false));
 	}
 
 	public List<AcaoVO> getAcoes(DpPessoa titular, DpLotacao lotaTitular) {
@@ -398,7 +401,8 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 				.exp(new WfPodeIniciarDiagrama(this, titular, lotaTitular)).build());
 
 		set.add(AcaoVO.builder().nome("_Duplicar").icone("arrow_divide")
-				.acao("/app/diagrama/editar?duplicar=true&id=" + id).exp(new WfPodeDuplicarDiagrama(this, titular, lotaTitular)).build());
+				.acao("/app/diagrama/editar?duplicar=true&id=" + id)
+				.exp(new WfPodeDuplicarDiagrama(this, titular, lotaTitular)).build());
 
 		return set;
 	}
@@ -490,6 +494,12 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 				set.add(WfTarefaDocCriar.getIdentificadorDaVariavel(td));
 		}
 		return String.join(", ", set);
+	}
+
+	public String getAncora() {
+		if (getNome() != null)
+			return "^wf:" + Texto.slugify(getSiglaCompacta(), true, false);
+		return null;
 	}
 
 }

@@ -97,7 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.2.2.0" />
+<c:set var="siga_version"  scope="request" value="10.2.3.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -232,7 +232,7 @@ ${meta}
 									<script>
 									    $('#btnTutorial').click(function () {
 									        var src = 'https://vimeopro.com/fcav/spsempapel';
-									        $('#tutorialModal').modal('show');
+									        $('#tutorialModal').appendTo("body").modal('show');
 									        $('#tutorialModal iframe').attr('src', src);
 									    });
 									
@@ -411,7 +411,7 @@ ${meta}
 					 						</strong>
 										<c:if test="${cadastrante.lotacoes[1] != null}">
 											</button>
-											<div class="dropdown-menu" aria-labelledby="dropdownLotaMenuButton">
+											<div class="dropdown-menu" style="z-index: 1040" aria-labelledby="dropdownLotaMenuButton">
 												<c:forEach var="lota" items="${cadastrante.lotacoes}">
 													<c:if test="${!(lota[0]==cadastrante.sigla || lota[1]==cadastrante.lotacao)}">
 														<a class="dropdown-item" href="/siga/app/swapUser?username=${lota[0]}">
@@ -475,6 +475,7 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+	sessionStorage.removeItem('listaNotificacaoSilenciada' + document.getElementById('cadastrante').title);
 
 	for (var obj in sessionStorage) {
       if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {

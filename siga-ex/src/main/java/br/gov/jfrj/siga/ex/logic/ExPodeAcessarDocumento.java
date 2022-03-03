@@ -37,7 +37,8 @@ public class ExPodeAcessarDocumento extends CompositeExpressionSupport {
 
 	@Override
 	protected Expression create() {
-		if (mob.doc().getDnmAcesso() == null || mob.doc().isDnmAcessoMAisAntigoQueODosPais()) {
+		if (mob.doc().getDnmAcesso() == null 
+				|| (mob.doc().isDnmAcessoMAisAntigoQueODosPais() && !mob.doc().isDmnAcessoPaiPapelRevisorSubscritor())) {
 			Ex.getInstance().getBL().atualizarDnmAcesso(mob.doc());
 		}
 

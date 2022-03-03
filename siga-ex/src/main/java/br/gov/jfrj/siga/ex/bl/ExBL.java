@@ -38,6 +38,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -235,6 +236,7 @@ public class ExBL extends CpBL {
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
+	private static final boolean VISUALIZACAO_DOC_ARVORE = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore");
 	private static final boolean VISUALIZACAO_DOC_ARVORE_COMPL = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.completa");
 	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
@@ -1757,8 +1759,8 @@ public class ExBL extends CpBL {
 			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 			
-			if (Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore") && doc.isFinalizado()
-					&& doc.isAssinadoDigitalmente() && possuiAssinaturaSubscritorCossignatarioHoje(doc)) {
+			if (VISUALIZACAO_DOC_ARVORE && doc.isFinalizado() && doc.isAssinadoDigitalmente() 
+													&& possuiAssinaturaSubscritorCossignatarioHoje(doc)) {
 				removerPermissaoTempDnmAcessoArvoreDocs(doc);
 			}
 		} catch (final Exception e) {
@@ -3007,6 +3009,10 @@ public class ExBL extends CpBL {
 							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
 				processar(mob.getExDocumento(), true, false);
 				// mob.getExDocumento().armazenar(); 
+				if (VISUALIZACAO_DOC_ARVORE 
+						&& ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(mov.getExTipoMovimentacao())){
+					removerPermissaoTempDnmAcessoArvoreDocs(mob.doc(), Arrays.asList(mov.getSubscritor()));
+				}
 			}
 			concluirAlteracao(mov);
 
@@ -3155,8 +3161,7 @@ public class ExBL extends CpBL {
 	}
 	
 	private void inserirPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc) {
-		if (Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore") && doc.isFinalizado()
-				&& possuiInclusaoCossignatarioSubscritor(doc)) {
+		if (VISUALIZACAO_DOC_ARVORE && doc.isFinalizado() && possuiInclusaoCossignatarioSubscritor(doc)) {
 			Date dt = ExDao.getInstance().dt();
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL ? doc.getListaArvoreTodosDocs()
 					: doc.getListaDocsArvoreVerticalParcial();
@@ -3912,7 +3917,7 @@ public class ExBL extends CpBL {
 		doc = salvarDocSemSalvarArq(doc);
 		return nivel;
 	}
-
+	
 	public void atualizarDnmAcesso(ExDocumento doc) {
 		atualizarDnmAcesso(doc, null, null);
 	}
@@ -3992,34 +3997,27 @@ public class ExBL extends CpBL {
 	}
 	
 	private static boolean podeAdicionarMovVinculacaoPapel(ExDocumento doc, DpPessoa dpPessoaResp) {
-		boolean podeAddMov = Boolean.TRUE;
-		
-		SortedSet<ExMovimentacao> listMovimentacao = doc.getMobilGeral().getExMovimentacaoSet();
-		if (listMovimentacao != null) {
-			for (ExMovimentacao mov : listMovimentacao) {
-				if (mov.isCancelada())
-					continue;
-				if (mov.getExMovimentacaoCanceladora() == null) {
-					if (ExTipoDeMovimentacao.VINCULACAO_PAPEL.equals(mov.getExTipoMovimentacao())
-							&& mov.getSubscritor().equals(dpPessoaResp)) {
-						podeAddMov = Boolean.FALSE;
-						break;
-					}
-				}
-			}
+		//Valida se for usuario externo
+		boolean podeAddMov = dpPessoaResp.isUsuarioExterno() ? Boolean.FALSE : Boolean.TRUE;
+		if (podeAddMov) {
+			//Valida se pessoa ja possui vinculo de Papel Revisor Subscritor
+			podeAddMov = doc.possuiVinculacaoPapelRevisorSubscritor(dpPessoaResp) ? Boolean.FALSE : Boolean.TRUE;
 		}
 		return podeAddMov;
 	}
 	
 	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc) throws Exception {
 		List<DpPessoa> listaDpPessoaCancelMovPapel = listaPessoasSubscritorCossignatarioAssinadoHoje(doc);
-		if (!listaDpPessoaCancelMovPapel.isEmpty()) {			
+		removerPermissaoTempDnmAcessoArvoreDocs(doc, listaDpPessoaCancelMovPapel);
+	}
+	
+	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, List<DpPessoa> listaDpPessoa) throws Exception {
+		if (!listaDpPessoa.isEmpty()) {			
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
 									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
 				//chamar servico cancelamento mov
-				for (DpPessoa pessoa : listaDpPessoaCancelMovPapel) {
-					System.out.println("Doc: " + exDoc.getCodigo());
+				for (DpPessoa pessoa : listaDpPessoa) {
 					removerPapel(exDoc, ExPapel.PAPEL_REVISOR_SUBSCRITOR, pessoa);
 				}
 			}

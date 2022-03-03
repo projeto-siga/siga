@@ -2731,6 +2731,33 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return null;
 	}
+	
+	public Boolean isDmnAcessoPaiPapelRevisorSubscritor() {
+		for (ExDocumento doc : getTodosOsPaisDasVias()) {
+			if (doc.getDnmDtAcesso() != null
+					&& doc.getDnmDtAcesso().after(this.getDnmDtAcesso())) {
+				return doc.possuiVinculacaoPapelRevisorSubscritor(null);
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	public boolean possuiVinculacaoPapelRevisorSubscritor(DpPessoa dpPessoa) {
+		List<ExMovimentacao> movs = this.getMobilGeral()
+				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, false);
+		for (ExMovimentacao mov : movs) {
+			if (mov.isCancelada())
+				continue;
+			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR_SUBSCRITOR)) 
+				if (dpPessoa != null) {
+					if (mov.getSubscritor().equals(dpPessoa))
+						return Boolean.TRUE;
+				} else {
+					return Boolean.TRUE;
+				}
+		}
+		return Boolean.FALSE;
+	}
 
 	public boolean isDnmAcessoMAisAntigoQueODosPais() {
 		for (ExDocumento doc : getTodosOsPaisDasVias()) {

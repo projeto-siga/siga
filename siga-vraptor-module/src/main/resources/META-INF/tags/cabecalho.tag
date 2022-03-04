@@ -232,7 +232,7 @@ ${meta}
 									<script>
 									    $('#btnTutorial').click(function () {
 									        var src = 'https://vimeopro.com/fcav/spsempapel';
-									        $('#tutorialModal').modal('show');
+									        $('#tutorialModal').appendTo("body").modal('show');
 									        $('#tutorialModal iframe').attr('src', src);
 									    });
 									

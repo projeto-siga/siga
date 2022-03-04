@@ -87,6 +87,8 @@
  
 		<property name="sigaex.folha.de.rosto" value="ativa"/>
         <property name="sigaex.volume.max.paginas" value="2000"/>
+        
+        <property name="sigaex.documento.novo.modelo.padrao" value="Ofício"/>
   
     </system-properties>
     <management>

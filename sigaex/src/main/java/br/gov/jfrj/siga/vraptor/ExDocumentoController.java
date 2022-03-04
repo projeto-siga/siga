@@ -557,7 +557,8 @@ public class ExDocumentoController extends ExController {
 				
 				if (modeloDefault == null) {
 					for (ExModelo mod : exDocumentoDTO.getModelos()) {
-						if ("Memorando".equals(mod.getNmMod())) {
+						
+						if (Prop.get("documento.novo.padrao").equalsIgnoreCase(mod.getNmMod())) {
 							modeloDefault = mod;
 							break;
 						}

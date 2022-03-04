@@ -186,7 +186,12 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 		
 		if(flt.getListaIdDoc() != null && !flt.getListaIdDoc().isEmpty()) {
-			sbf.append(" and doc.idDoc IN :listaIdDoc");
+			sbf.append(" and (");
+			
+			for(int i=0; i <= flt.getListaIdDoc().size()/1000; i++)
+				sbf.append(" doc.idDoc IN :listaIdDoc" + i + " or");
+			
+			sbf.delete(sbf.length()-3, sbf.length()).append(")");
 		}
 
 		if (!apenasCount) {

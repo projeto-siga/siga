@@ -613,7 +613,11 @@ public class ExMobilController extends
 				+ getTitular().getIdInicial();
 		
 		try {
-			List<Long> listaIdDoc = Ex.getInstance().getBL().pesquisarXjus(
+			
+			List<Long> listaIdDoc = new ArrayList<>();
+			int page = 1;
+			do {
+				listaIdDoc.addAll(Ex.getInstance().getBL().pesquisarXjus(
 					filter, 
 					acronimoOrgaoUsu,
 					descEspecie,
@@ -621,14 +625,15 @@ public class ExMobilController extends
 					dataInicial, 
 					dataFinal, 
 					acl, 
-					1, 
-					1000);
+					page++, 
+					1000));
+			} while (listaIdDoc.size() >= 1000);
 			
 			flt.setListaIdDoc(listaIdDoc);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.include("msgCabecClass", "alert-warning");
-    		result.include("mensagemCabec", "Não foi possível utilizar a pesquisa via XJUS. A consulta foi realizada via Banco de Dados: " + e.getMessage());		
+    		result.include("mensagemCabec", "Não foi possível utilizar a pesquisa via XJUS. A consulta será realizada via Banco de Dados: " + e.getMessage());		
 		}
 	}
 

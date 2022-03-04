@@ -681,7 +681,10 @@ public class ExDao extends CpDao {
 		}
 		
 		if (flt.getListaIdDoc() != null && !flt.getListaIdDoc().isEmpty()) {
-			query.setParameter("listaIdDoc", flt.getListaIdDoc());
+			for(int i = 0; i <= flt.getListaIdDoc().size()/1000; i++) {		
+				int toIndex =  (i + 1)*1000 > flt.getListaIdDoc().size() ? flt.getListaIdDoc().size() : (i + 1)*1000;
+				query.setParameter("listaIdDoc"+i, flt.getListaIdDoc().subList(i*1000, toIndex));
+			}
 		}
 	}
 

@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class CpGrupoDaoFiltro extends DaoFiltroSelecionavel {
 	private Integer idTpGrupo;
+	private Long idOrgaoUsu;
 	private String nome;
 	/**
 	 * @return the idTpGrupo
@@ -49,6 +50,14 @@ public class CpGrupoDaoFiltro extends DaoFiltroSelecionavel {
 	 */
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public Long getIdOrgaoUsu() {
+		return idOrgaoUsu;
+	}
+
+	public void setIdOrgaoUsu(Long idOrgaoUsu) {
+		this.idOrgaoUsu = idOrgaoUsu;
 	}
 	
 

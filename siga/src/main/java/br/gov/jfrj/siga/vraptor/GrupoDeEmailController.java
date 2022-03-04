@@ -32,12 +32,16 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Controller
 public class GrupoDeEmailController extends GrupoController {
@@ -212,12 +216,28 @@ public class GrupoDeEmailController extends GrupoController {
 		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
 	}
 	
+	@Override
+	protected CpGrupoDaoFiltro createDaoFiltro() {
+		final CpGrupoDaoFiltro flt = new CpGrupoDaoFiltro();
+		flt.setIdTpGrupo(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO);
+		// flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
+		flt.setIdOrgaoUsu(getCadastrante().getOrgaoUsuario().getId());
+		return flt;
+	}
+	
 	@Get("app/gi/grupoDeEmail/selecionar")
 	public void selecionar(String sigla) throws Exception {
 		String fileRedirect = "/WEB-INF/jsp/" + super.aSelecionar(sigla) + ".jsp";
 
-		result.include("sel", this.getSel());
-		result.use(Results.page()).forwardTo(fileRedirect);	
+		String resultado = super.aSelecionar(sigla);
+
+		if (resultado == "ajax_retorno") {
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo(
+					"/WEB-INF/jsp/ajax_retorno.jsp");
+		} else {
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
 	}
 	
 	@Get

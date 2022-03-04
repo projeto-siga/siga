@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -54,6 +55,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +69,11 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import com.auth0.jwt.JWTSigner;
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
 import com.crivano.swaggerservlet.SwaggerAsyncResponse;
@@ -96,6 +102,7 @@ import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.RequestInfo;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.base.util.SetUtils;
@@ -8210,6 +8217,69 @@ public class ExBL extends CpBL {
 
 	public String obterNumeracaoExpediente(Long idOrgaoUsuario, Long idFormaDocumento, Long anoEmissao) throws Exception {
 		return Service.getExService().obterNumeracaoExpediente(idOrgaoUsuario, idFormaDocumento, anoEmissao);
+	}
+
+	public List<Long> pesquisarXjus(
+			String filter, 
+			String acronimoOrgaoUsu, 
+			String descEspecie,
+			String descModelo,
+			String dataInicial, 
+			String dataFinal, 
+			String acl, 
+			int page, 
+			int perpage) throws Exception {
+		
+		final SigaHTTP http = new SigaHTTP();
+		String url = Prop.get("/xjus.url");
+		
+		String facets = (acronimoOrgaoUsu == null ? "" : ("facet_orgao:" + acronimoOrgaoUsu)) +
+						(descEspecie == null ? "" : (",facet_especie:" + descEspecie)) +
+						(descModelo == null ? "" : (",facet_modelo:" + descModelo));
+		
+		if(dataInicial != null || dataFinal != null)
+			facets = facets + ",field_data:" + (dataInicial == null ? "" : dataInicial) + ":" + (dataFinal == null ? "" : dataFinal);
+		
+		url += "?filter=" + URLEncoder.encode(filter, "UTF-8") + 
+			   "&facets=" + URLEncoder.encode(facets, "UTF-8") + 
+			   "&page=" + page + 
+			   "&perpage=" + perpage;
+
+		final JWTSigner signer = new JWTSigner(Prop.get("/xjus.jwt.secret"));
+		final HashMap<String, Object> claims = new HashMap<String, Object>();
+
+		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
+		final long exp = iat + 60 * 60L; // token expires in 1h
+		claims.put("exp", exp);
+		claims.put("iat", iat);
+		claims.put("acl", acl);
+		String token = signer.sign(claims);
+
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("Authorization", "Bearer " + token);
+		String response = http.getNaWeb(url, headers, 60000, null);
+
+		JSONObject obj = new JSONObject(response);
+		JSONArray arr = obj.getJSONArray("results");
+		
+		List<String> siglas = new ArrayList<>();
+		for (int i = 0; i < arr.length(); i++){
+		    String code = arr.getJSONObject(i).getString("code");
+		    
+		    siglas.add(code.replaceAll("[-/]", ""));
+		}
+		
+		List<Long> ret =  new ArrayList<Long>();
+		
+		if(siglas.isEmpty())
+			return ret;
+		
+		List<BigDecimal> listaIdDoc = dao().consultarDocumentosPorSiglas(siglas);
+		
+		if(listaIdDoc != null && !listaIdDoc.isEmpty())
+			ret = listaIdDoc.stream().map(n -> n.longValue()).collect(Collectors.toList());
+		
+		return ret;
 	}
 
 }

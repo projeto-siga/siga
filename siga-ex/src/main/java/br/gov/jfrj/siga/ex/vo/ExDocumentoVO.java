@@ -468,6 +468,8 @@ public class ExDocumentoVO extends ExVO {
 				.add(ExTipoDeMovimentacao.COPIA);
 		movimentacoesPermitidas
 				.add(ExTipoDeMovimentacao.CIENCIA);		
+		movimentacoesPermitidas
+				.add(ExTipoDeMovimentacao.ENVIO_SIAFEM);	
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
 		marcasGeralPermitidas.add(CpMarcadorEnum.A_ELIMINAR.getId());

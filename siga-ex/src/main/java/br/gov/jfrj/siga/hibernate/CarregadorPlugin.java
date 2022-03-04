@@ -9,8 +9,8 @@ import java.util.ListIterator;
 import java.util.logging.Logger;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
+import br.gov.jfrj.siga.hibernate.query.ext.IMontadorQuery;
 
 /**
  * Classe que trata da lógica de carregamento da extensão de busca textual em outro classloader. 

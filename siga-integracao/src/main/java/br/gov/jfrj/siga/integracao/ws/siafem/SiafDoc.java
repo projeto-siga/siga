@@ -4,6 +4,7 @@ import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 
@@ -41,39 +42,43 @@ public class SiafDoc {
 	SimpleDateFormat formatoSiafem = new SimpleDateFormat("ddMMMyyyy", new Locale("pt", "BR"));
 	SimpleDateFormat formatoSiga = new SimpleDateFormat("ddMMyyyy", new Locale("pt", "BR"));
 	
-	public SiafDoc(String[] dados) {
-		try {
-			int i = -1;
-			this.codUnico = dados[++i].trim().replace("-", "");
-			this.unidadeGestora = "00000" + (dados[++i].trim().split(" ")[0]);
+	private Map<String, String> formulario;
+	
+	public SiafDoc(Map<String, String> formulario) {
+		this.formulario = formulario;
+		try {					
+			this.codUnico = get("codigoUnico") + get("digitoVerificadorCodigoUnico") ;
+			this.unidadeGestora = "00000" + get("unidadeGestora").split(" ")[0];
 			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
-			this.gestao = dados[++i].trim();
-			this.objetoProcesso = URLDecoder.decode(dados[++i].trim(), "UTF-8");
-			this.tipoLicitacao = dados[++i].split("-")[0].trim().matches("\\d+") ? (Integer.valueOf(dados[i].split("-")[0].trim()) + "") : "";
-			this.id = dados[++i].trim();
-			this.ata = dados[++i].trim().matches("[1Ss]") ? "S" : "N";
-			this.convenio = dados[++i].trim().matches("[1Ss]") ? "S" : "N";
-			this.finalidade = URLDecoder.decode(dados[++i].trim(), "UTF-8");
-			this.processo = dados[++i].trim();
-			this.desdobramento = dados[++i].trim();
-			this.flagPresencial = dados[++i].trim();
-			this.flagEletronico = dados[++i].trim();
-			this.cnpj = dados[++i].replaceAll("[^\\d]", "");
-			this.naturezaDespesa = dados[++i].trim().split(" ")[0];
-			this.codMunicipio = dados[++i].trim().split(" ")[0];
-			this.signatarioCedente =  dados[++i].trim();
-			this.signatarioConvenente =  dados[++i].trim();
-			this.dataCelebracao = formatarData(dados[++i]); 
-			this.dataPublicacao = formatarData(dados[++i]); 
-			this.dataVigenciaInicial = formatarData(dados[++i]); 
-			this.dataVigenciaFinal = formatarData(dados[++i]); 
-			this.valorTotal = dados[++i].replaceAll("[^\\d]", "");
-			this.valorContrapartida = dados[++i].replaceAll("[^\\d]", "");
-			this.situacao = dados[++i].trim().split(" ")[0];
-			this.objetoResumido1 = dados[++i].trim();
+			this.gestao = get("compraGestao");
+			this.objetoProcesso = URLDecoder.decode(get("objetoProcesso"), "UTF-8");
+			this.tipoLicitacao = get("selecioneLicitacao").split("-")[0].trim();
+			this.tipoLicitacao = this.tipoLicitacao.matches("\\d+") ? this.tipoLicitacao : "";
+			this.id = get("idProcesso");
+			this.ata = get("ataTeste").matches("[1Ss]") ? "S" : "N";
+			this.convenio = get("especie").equals("Convênio Sim") ? "S" : "N";
+			this.finalidade = URLDecoder.decode(get("finalidadeProcesso"), "UTF-8");
+			this.processo = get("processoLegado");
+			this.desdobramento = get("desdobramento");
+			this.flagPresencial = (get("presencialConvite") + get("presencialLicitacao") + get("presencialPregao")).contains("Sim") ? "X" : "";
+			this.flagEletronico = (get("eletronicoConvite") + get("eletronicoLicitacao") + get("eletronicoPregao")).contains("Sim") ? "X" : "";
+			this.cnpj = get("interessado_cnpj").replaceAll("[^\\d]", "");
+			this.naturezaDespesa = get("naturezaDespesa").split(" ")[0];
+			this.codMunicipio = get("municipioSao").split(" ")[0];			
+			this.signatarioCedente = get("signatarioCedente");
+			this.signatarioConvenente = get("signatarioConvenente");
+			this.dataCelebracao = formatarData(get("data_da_celebracao")); 
+			this.dataPublicacao = formatarData(get("data_da_publicacao")); 
+			this.dataVigenciaInicial = formatarData(get("data_da_inicio")); 
+			this.dataVigenciaFinal = formatarData(get("data_da_fim")); 
+			this.valorTotal = get("valorTotal").replaceAll("[^\\d]", "");
+			this.valorContrapartida = get("valorContrapartida").replaceAll("[^\\d]", "");
+			this.situacao = get("situacaoConvenio").split(" ")[0];
+			this.objetoResumido1 = get("descricaoResumida");
 			this.objetoResumido2 = substring(this.objetoResumido1, 77, 154);
 			this.objetoResumido3 = substring(this.objetoResumido1, 154, 232);
 			this.objetoResumido1 = substring(this.objetoResumido1, 0, 77);
+			
 //			Quando for Legado o usuário deve preencher SOMENTE os campos
 //			- UG/Gestão
 //			- número do processo legado (10 posições alfanumérico)
@@ -89,6 +94,10 @@ public class SiafDoc {
 		} catch (Exception e) {
 			throw new AplicacaoException("Falha ao realizar a leitura da entrevista: " + e.getMessage());
 		}
+	}
+	
+	private String get(String key) {
+		return this.formulario.get(key) == null ? "" : this.formulario.get(key).trim();
 	}
 
 	private String formatarData(String data) throws ParseException {

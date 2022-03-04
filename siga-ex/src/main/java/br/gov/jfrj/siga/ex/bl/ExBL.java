@@ -8088,11 +8088,14 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + ".");
 		
 		String descricao = formulario.getDescrDocumento();
-		SiafDoc doc = new SiafDoc(descricao.split(";"));
 		
-		doc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
+		Map<String, String> form = new TreeMap<String, String>();
+		Utils.mapFromUrlEncodedForm(form, formulario.getConteudoBlobForm());
+		SiafDoc siafDoc = new SiafDoc(form);
 		
-		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
+		siafDoc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
+		
+		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, siafDoc);
 	}
 
 	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {

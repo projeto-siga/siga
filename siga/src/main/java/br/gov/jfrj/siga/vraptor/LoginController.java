@@ -23,6 +23,11 @@ import org.jboss.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -44,6 +49,7 @@ import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
+import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
 import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 @Controller
@@ -64,11 +70,50 @@ public class LoginController extends SigaController {
 		super(request, result, dao, so, em);
 		this.response = response;
 		this.context = context;
+
+	}
+	
+	private void setDefaultResults() {
+		result.include("request", getRequest());
+	}
+	
+	private static String getRecaptchaSiteKey() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.key");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.key");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.key",
+					0, e);
+		}
 	}
 
+	private static String getRecaptchaSitePassword() {
+		String pwd = null;
+		try {
+			pwd = Prop.get("/siga.recaptcha.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.recaptcha.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.recaptcha.pwd",
+					0, e);
+		}
+	}
+	
 	@Transacional
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
+		
+		String recaptchaSiteKey = getRecaptchaSiteKey();
+		result.include("recaptchaSiteKey", recaptchaSiteKey);
+		
 		Map<String, String> manifest = new HashMap<>();
 		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
 			String m = convertStreamToString(is); 
@@ -91,7 +136,7 @@ public class LoginController extends SigaController {
 		result.include("versao", manifest.get("Siga-Versao"));
 		result.include("cont", cont);
 	}
-
+	
 	@Post("public/app/login")
 	@Transacional
 	public void auth(String username, String password, String cont) throws IOException {
@@ -100,6 +145,11 @@ public class LoginController extends SigaController {
 				StringBuffer mensagem = new StringBuffer();
 				mensagem.append(SigaMessages.getMessage("usuario.informarlogin"));
 				throw new RuntimeException(mensagem.toString());
+			}
+			
+			if (!isCaptchaValido()) {
+				setDefaultResults();
+				return;
 			}
 			
 			GiService giService = Service.getGiService();
@@ -136,6 +186,38 @@ public class LoginController extends SigaController {
 			result.include("loginMensagem", e.getMessage()); // aqui adicionar tente com a senha de rede windows 
 			result.forwardTo(this).login(cont);
 		}
+	}
+	
+
+//	------------------------------ CAPTCHA
+	private boolean isCaptchaValido() throws UnirestException, JSONException {
+		
+		String recaptchaSiteKey = getRecaptchaSiteKey();
+		String recaptchaSitePassword = getRecaptchaSitePassword();
+		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");		
+
+		boolean success = false;
+		if (gRecaptchaResponse != null) {
+			JsonNode body = null;
+			if (GoogleRecaptcha.isProxySetted()) {
+				body = GoogleRecaptcha.validarRecaptcha(recaptchaSitePassword, gRecaptchaResponse,
+						request.getRemoteAddr());
+			} else {
+				HttpResponse<JsonNode> result = Unirest.post("https://www.google.com/recaptcha/api/siteverify")
+						.header("accept", "application/json").header("Content-Type", "application/json")
+						.queryString("secret", getRecaptchaSitePassword()).queryString("response", gRecaptchaResponse)
+						.queryString("remoteip", request.getRemoteAddr()).asJson();
+
+				body = result.getBody();
+			}
+			String hostname = request.getServerName();
+			if (body.getObject().getBoolean("success")) {
+				String retHostname = body.getObject().getString("hostname");
+				success = retHostname.equals(hostname);
+			}
+		}
+		
+		return success;
 	}
 	
 	private boolean isCamposLoginSenhaVazios(String username, String password) {

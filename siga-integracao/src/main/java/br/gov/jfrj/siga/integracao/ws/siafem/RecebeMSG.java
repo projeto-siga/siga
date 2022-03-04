@@ -26,7 +26,7 @@ public class RecebeMSG
 
     private final static URL RECEBEMSG_WSDL_LOCATION;
     private final static WebServiceException RECEBEMSG_EXCEPTION;
-    private final static QName RECEBEMSG_QNAME = new QName(PropriedadeSiafem.URL_NAMESPACE, "recebeMSG");
+    private final static QName RECEBEMSG_QNAME = new QName(PropriedadeSiafem.URL_NAMESPACE, PropriedadeSiafem.LOCAL_PART);
 
     static {
         URL url = null;
@@ -71,7 +71,7 @@ public class RecebeMSG
      */
     @WebEndpoint(name = "recebeMSGSoap")
     public RecebeMSGSoap getRecebeMSGSoap() {
-        return super.getPort(new QName(PropriedadeSiafem.URL_NAMESPACE, "recebeMSGSoap"), RecebeMSGSoap.class);
+        return super.getPort(new QName(PropriedadeSiafem.URL_NAMESPACE, PropriedadeSiafem.LOCAL_PART_SOAP), RecebeMSGSoap.class);
     }
 
     /**
@@ -83,7 +83,7 @@ public class RecebeMSG
      */
     @WebEndpoint(name = "recebeMSGSoap")
     public RecebeMSGSoap getRecebeMSGSoap(WebServiceFeature... features) {
-        return super.getPort(new QName(PropriedadeSiafem.URL_NAMESPACE, "recebeMSGSoap"), RecebeMSGSoap.class, features);
+        return super.getPort(new QName(PropriedadeSiafem.URL_NAMESPACE, PropriedadeSiafem.LOCAL_PART_SOAP), RecebeMSGSoap.class, features);
     }
 
     /**

@@ -136,7 +136,7 @@ public class ExServiceImpl implements ExService {
 				if (!mob.isAtendente(destinoParser.getPessoa(), destinoParser.getLotacao())) {
 					Ex.getInstance().getBL().transferir(null, null, cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null, null, destinoParser.getLotacao(),
-							destinoParser.getPessoa(), null, null, null, null, null, false, null, null, null,
+							destinoParser.getPessoa(), null, null, null, null, null, null, false, null, null, null,
 							forcarTransferencia, false, ExTipoDeMovimentacao.TRANSFERENCIA);
 				}
 				return true;

@@ -105,16 +105,20 @@
 
 <style type="text/css">
 
-.modal-selecao .modal-dialog ,
+.modal-selecao .zmodal-dialog ,
 
 .modal-selecao .modal-content {
   border-radius: 0 !important;
-  height: 100%;
+  height: 100%;   
+}
+
+.modal-dialog {
+  height: 80%;
 }
 
 .modal-selecao .modal-body  {
-   max-height: 97%;
-   height: 97%;
+   max-height: 97%; 
+   height: 97%; 
    overflow-y: auto; /*habilita o overflow no corpo da modal*/
 }
 
@@ -122,8 +126,6 @@
    max-height: 100%;
    height: 100%;
 }
-
-
 </style>
 
 <script type="text/javascript">
@@ -186,7 +188,7 @@ var modalsimulawindow${propriedade} = 	function(url) {
 				+   '           <img src="${uri_logo_siga_pequeno}" class="siga-modal__logo" alt="logo siga">'
 				+	'	        <button type="button" id="btnsenhaDialog${propriedade}" class="close  p-0  m-0  siga-modal__btn-close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>'				
 				+   '    </div>'
-				+	'      <div class="modal-body">'
+				+	'      <div class="modal-body" style="background-color: #dae9ec;">'
 				+	'	   	   <div class="embed-responsive embed-responsive-16by9">'
 				+	'	   	      <iframe id="iframe${propriedade}" class="embed-responsive-item" src="' + urlInterna + '" allowfullscreen></iframe>'
 				+	'	  	   </div>'

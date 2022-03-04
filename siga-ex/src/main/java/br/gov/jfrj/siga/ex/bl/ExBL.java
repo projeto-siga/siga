@@ -108,12 +108,16 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
+import br.gov.jfrj.siga.cp.CpGrupo;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
+import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -1777,7 +1781,7 @@ public class ExBL extends CpBL {
 				&& !doc.getPrimeiroMobil().getMobilPrincipal().doc().isPendenteDeAssinatura()) {
 			transferir(doc.getOrgaoExternoDestinatario(), doc.getObsOrgao(), cadastrante, lotaCadastrante,
 					doc.getPrimeiroMobil().getMobilPrincipal(), null, null, null, doc.getLotaDestinatario(),
-					doc.getDestinatario(), null, null, assinante, assinante, null, false, null, null, null, false,
+					doc.getDestinatario(), null, null, null, assinante, assinante, null, false, null, null, null, false,
 					false, ExTipoDeMovimentacao.TRANSFERENCIA);
 		}
 	}
@@ -4912,7 +4916,7 @@ public class ExBL extends CpBL {
 	public void transferirAutomatico(DpPessoa cadastrante, final DpLotacao lotaCadastrante, DpPessoa resp,
 			DpLotacao lotaResp, ExMobil mob) throws Exception {
 
-		transferir(null, null, cadastrante, lotaCadastrante, mob, null, null, null, lotaResp, resp, null, null, null,
+		transferir(null, null, cadastrante, lotaCadastrante, mob, null, null, null, lotaResp, resp, null, null, null, null,
 				null, null, false, null, null, null, false, true, ExTipoDeMovimentacao.TRANSFERENCIA);
 	}
 
@@ -4946,7 +4950,7 @@ public class ExBL extends CpBL {
 
 	public void transferir(final CpOrgao orgaoExterno, final String obsOrgao, final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov, final Date dtMovIni,
-			final Date dtFimMov, DpLotacao lotaResponsavel, final DpPessoa responsavel,
+			final Date dtFimMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final CpGrupoDeEmail grupo,
 			final DpLotacao lotaDestinoFinal, final DpPessoa destinoFinal, final DpPessoa subscritor,
 			final DpPessoa titular, final ExTipoDespacho tpDespacho, final boolean fInterno, final String descrMov,
 			final String conteudo, String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico, final ITipoDeMovimentacao tipoTramite) {
@@ -5027,7 +5031,7 @@ public class ExBL extends CpBL {
 				}
 
 				if (!fDespacho) {
-					if (responsavel == null && lotaResponsavel == null)
+					if (responsavel == null && lotaResponsavel == null && grupo == null)
 						if (orgaoExterno == null && obsOrgao == null)
 							throw new AplicacaoException("não foram informados dados para o trâmite");
 				}
@@ -5043,7 +5047,7 @@ public class ExBL extends CpBL {
 
 				ITipoDeMovimentacao idTpMov;
 				if (!fDespacho) {
-					if (responsavel == null && lotaResponsavel == null)
+					if (responsavel == null && lotaResponsavel == null && grupo == null)
 						idTpMov = ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
 					else
 						idTpMov = ExTipoDeMovimentacao.TRANSFERENCIA;
@@ -5076,108 +5080,123 @@ public class ExBL extends CpBL {
 						|| idTpMov == ExTipoDeMovimentacao.TRANSFERENCIA 
 						|| idTpMov == ExTipoDeMovimentacao.TRAMITE_PARALELO
 						|| idTpMov == ExTipoDeMovimentacao.NOTIFICACAO) {
-
-					ExMovimentacao mov = criarNovaMovimentacaoTransferencia(idTpMov, cadastrante,
-							lotaCadastrante, m, dtMov, dtFimMov,
-							(subscritor == null && fDespacho) ? cadastrante : subscritor, null, titular, null, dt);
-
-					if (dt != null)
-						mov.setDtIniMov(dt);
-
-					if (dtFimMov != null)//
-						mov.setDtFimMov(dtFimMov);//
-
-					if (orgaoExterno != null || obsOrgao != null) {
-						mov.setOrgaoExterno(orgaoExterno);
-						mov.setObsOrgao(obsOrgao);
-					}
-
-					if (lotaResponsavel != null) {
-						mov.setLotaResp(lotaResponsavel);
-						mov.setResp(responsavel);
+					
+					Set<PessoaLotacaoParser> destinatarios = new HashSet<>();
+					if (grupo != null) {
+						ArrayList<ConfiguracaoGrupo> configuracoesGrupo = Cp.getInstance().getConf()
+								.obterCfgGrupo(dao().consultar(grupo.getHisIdIni(),CpGrupo.class,false));
+						for (ConfiguracaoGrupo cfgGrp : configuracoesGrupo) {
+							CpConfiguracao cfg = cfgGrp.getCpConfiguracao();
+							switch (cfgGrp.getTipo()) {
+							case PESSOA:
+								destinatarios.add(new PessoaLotacaoParser(cfg.getDpPessoa(), cfg.getDpPessoa().getLotacao()));
+								break;
+							case LOTACAO:
+								destinatarios.add(new PessoaLotacaoParser(null, cfg.getLotacao()));
+								break;
+							}
+						}
 					} else {
-						if (responsavel != null)
-							lotaResponsavel = responsavel.getLotacao();
+						destinatarios.add(new PessoaLotacaoParser(responsavel, lotaResponsavel));
 					}
-
-					mov.setLotaTitular(mov.getLotaSubscritor());
-					mov.setDestinoFinal(destinoFinal);
-					mov.setLotaDestinoFinal(lotaDestinoFinal);
-
-					mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
-
-					mov.setExTipoDespacho(tpDespacho);
-					mov.setDescrMov(descrMov);
-
-					if (tpDespacho != null || descrMov != null || conteudo != null) {
-						// Gravar o form
-						String cont = null;
-						if (conteudo != null) {
-							cont = conteudo;
-						} else if (descrMov != null) {
-							cont = descrMov;
+					
+					for (PessoaLotacaoParser destinatario : destinatarios) {
+						ExMovimentacao mov = criarNovaMovimentacaoTransferencia(idTpMov, cadastrante,
+								lotaCadastrante, m, dtMov, dtFimMov,
+								(subscritor == null && fDespacho) ? cadastrante : subscritor, null, titular, null, dt);
+	
+						if (dt != null)
+							mov.setDtIniMov(dt);
+	
+						if (dtFimMov != null)//
+							mov.setDtFimMov(dtFimMov);//
+	
+						if (orgaoExterno != null || obsOrgao != null) {
+							mov.setOrgaoExterno(orgaoExterno);
+							mov.setObsOrgao(obsOrgao);
+						}
+	
+						mov.setLotaResp(destinatario.getLotacao());
+						mov.setResp(destinatario.getPessoa());
+	
+						mov.setLotaTitular(mov.getLotaSubscritor());
+						mov.setDestinoFinal(destinoFinal);
+						mov.setLotaDestinoFinal(lotaDestinoFinal);
+	
+						mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+	
+						mov.setExTipoDespacho(tpDespacho);
+						mov.setDescrMov(descrMov);
+	
+						if (tpDespacho != null || descrMov != null || conteudo != null) {
+							// Gravar o form
+							String cont = null;
+							if (conteudo != null) {
+								cont = conteudo;
+							} else if (descrMov != null) {
+								cont = descrMov;
+							} else {
+								cont = tpDespacho.getDescTpDespacho();
+							}
+							try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+								baos.write("conteudo".getBytes("iso-8859-1"));
+								baos.write('=');
+								baos.write(URLEncoder.encode(cont, "iso-8859-1").getBytes());
+								mov.setConteudoBlobForm(baos.toByteArray());
+							}
+	
+							// Gravar o Html //Nato
+							final String strHtml = processarModelo(mov, "processar_modelo", null,
+									mov.getTitular().getOrgaoUsuario());
+							mov.setConteudoBlobHtmlString(strHtml);
+	
+							// Gravar o Pdf
+							final byte pdf[] = Documento.generatePdf(strHtml);
+							mov.setConteudoBlobPdf(pdf);
+							mov.setConteudoTpMov("application/zip");
+						}
+						if (automatico)
+							mov.setDescrMov("Transferência automática.");
+						
+						Pendencias p = m.calcularTramitesPendentes();
+						
+						// Localiza o tramite que será recebido
+						for (ExMovimentacao t : p.recebimentosPendentes) {
+							if (forcarTransferencia || (titularFinal == null && lotaCadastrante == null) || t.isResp(titularFinal, lotaCadastrante)) {
+								mov.setExMovimentacaoRef(t);
+								break;
+							}
+						}
+						
+						// Titular é a origem e deve sempre ser preenchido
+						if (mov.getExMovimentacaoRef() == null && p.fIncluirCadastrante) {
+							mov.setTitular(mov.mob().getTitular());
+							mov.setLotaTitular(mov.mob().getLotaTitular());
+						}
+						
+						// Cancelar trâmite pendente quando é para forçar para outro destino
+						Set<ExMovimentacao> movsTramitePendente = m.calcularTramitesPendentes().tramitesPendentes;
+						if (forcarTransferencia && movsTramitePendente.size() > 0) {
+							for (ExMovimentacao tp : movsTramitePendente)
+								gravarMovimentacaoCancelamento(mov, tp);
 						} else {
-							cont = tpDespacho.getDescTpDespacho();
+							gravarMovimentacao(mov);
 						}
-						try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-							baos.write("conteudo".getBytes("iso-8859-1"));
-							baos.write('=');
-							baos.write(URLEncoder.encode(cont, "iso-8859-1").getBytes());
-							mov.setConteudoBlobForm(baos.toByteArray());
-						}
-
-						// Gravar o Html //Nato
-						final String strHtml = processarModelo(mov, "processar_modelo", null,
-								mov.getTitular().getOrgaoUsuario());
-						mov.setConteudoBlobHtmlString(strHtml);
-
-						// Gravar o Pdf
-						final byte pdf[] = Documento.generatePdf(strHtml);
-						mov.setConteudoBlobPdf(pdf);
-						mov.setConteudoTpMov("application/zip");
-					}
-					if (automatico)
-						mov.setDescrMov("Transferência automática.");
-					
-					Pendencias p = m.calcularTramitesPendentes();
-					
-					// Localiza o tramite que será recebido
-					for (ExMovimentacao t : p.recebimentosPendentes) {
-						if (forcarTransferencia || (titularFinal == null && lotaCadastrante == null) || t.isResp(titularFinal, lotaCadastrante)) {
-							mov.setExMovimentacaoRef(t);
-							break;
+	
+						concluirAlteracaoParcialComRecalculoAcesso(m);
+						
+						List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
+						listaMovimentacao.addAll(m.doc().getMobilGeral()
+								.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
+						if (!listaMovimentacao.isEmpty()) {
+							List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();
+							listaDocumentos.addAll(mob.getDoc().getExDocumentoFilhoSet());
+	
+							for (ExDocumento exDocumento : listaDocumentos) {
+								concluirAlteracaoParcialComRecalculoAcesso(exDocumento.getMobilGeral());
+							}
 						}
 					}
-					
-					// Titular é a origem e deve sempre ser preenchido
-					if (mov.getExMovimentacaoRef() == null && p.fIncluirCadastrante) {
-						mov.setTitular(mov.mob().getTitular());
-						mov.setLotaTitular(mov.mob().getLotaTitular());
-					}
-					
-					// Cancelar trâmite pendente quando é para forçar para outro destino
-					Set<ExMovimentacao> movsTramitePendente = m.calcularTramitesPendentes().tramitesPendentes;
-					if (forcarTransferencia && movsTramitePendente.size() > 0) {
-						for (ExMovimentacao tp : movsTramitePendente)
-							gravarMovimentacaoCancelamento(mov, tp);
-					} else {
-						gravarMovimentacao(mov);
-					}
-
-					concluirAlteracaoParcialComRecalculoAcesso(m);
-					
-					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
-					listaMovimentacao.addAll(m.doc().getMobilGeral()
-							.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
-					if (!listaMovimentacao.isEmpty()) {
-						List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();
-						listaDocumentos.addAll(mob.getDoc().getExDocumentoFilhoSet());
-
-						for (ExDocumento exDocumento : listaDocumentos) {
-							concluirAlteracaoParcialComRecalculoAcesso(exDocumento.getMobilGeral());
-						}
-					}
-
 				}
 			}
 

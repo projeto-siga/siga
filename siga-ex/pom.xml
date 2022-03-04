@@ -25,32 +25,6 @@
 					</goals> </execution> </executions> <dependencies> <dependency> <groupId>siga</groupId> 
 					<artifactId>siga-ex</artifactId> <version>${project.version}</version> </dependency> 
 					</dependencies> </plugin> -->
-
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.hibernate.orm.tooling</groupId>
-										<artifactId>hibernate-enhance-maven-plugin</artifactId>
-										<versionRange>[${hibernate.version},)</versionRange>
-										<goals>
-											<goal>enhance</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-				
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<executions>
@@ -96,24 +70,6 @@
 				</plugin>
 	 		</plugins>
 	 	</pluginManagement>
-	 	<plugins>
-	 		<plugin>
-               <groupId>org.hibernate.orm.tooling</groupId>
-               <artifactId>hibernate-enhance-maven-plugin</artifactId>
-               <version>${hibernate.version}</version>
-               <executions>
-                   <execution>
-                    <configuration>
-                        <enableLazyInitialization>true</enableLazyInitialization>
-                    </configuration>
-                       <goals>
-                           <goal>enhance</goal>
-                       </goals>
-                   </execution>
-               </executions>
-           </plugin>
-		</plugins>
-	 	
 	</build>
 
 	<dependencies>

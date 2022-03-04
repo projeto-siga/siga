@@ -253,7 +253,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		
 		addPublicProperty("consultapublica.exibe.tramitacao.ate.nivelacesso", "-1");
 
-		addPublicProperty("documento.novo.padrao", "Ofício");
+		addPublicProperty("documento.novo.modelo.padrao", "Memorando");
 	}
 
 	@Override

@@ -489,7 +489,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
-		if (Prop.get("arquivosAuxiliares.extensoes.excecao").contains(fileExtension)) {
+		if ( StringUtils.containsIgnoreCase(Prop.get("arquivosAuxiliares.extensoes.excecao"), fileExtension) ) {
 			throw new AplicacaoException(
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}

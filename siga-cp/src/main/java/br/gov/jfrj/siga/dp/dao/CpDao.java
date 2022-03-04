@@ -875,6 +875,7 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final CpGrupoDaoFiltro flt) throws AplicacaoException {
 		final CpGrupo o = CpGrupo.getInstance(flt.getIdTpGrupo());
 		o.setSigla(flt.getSigla());
+		o.setOrgaoUsuario(consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false));
 		return consultarPorSigla(o);
 	}
 

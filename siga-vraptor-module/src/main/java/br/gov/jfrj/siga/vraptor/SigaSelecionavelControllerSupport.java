@@ -30,6 +30,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -116,9 +118,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 		final DaoFiltroT flt = createDaoFiltro();
 
-		boolean primeiraVez = getP().getOffset() == null;
-
-		if ( !primeiraVez   ||  Prop.getBool("/siga.selecao.consulta.acesso")){
+		if ( StringUtils.isNotBlank(sigla)){
 		
 			tamanho = dao().consultarQuantidade(flt);
 			itens = dao().consultarPorFiltro(flt, offset, itemPagina);

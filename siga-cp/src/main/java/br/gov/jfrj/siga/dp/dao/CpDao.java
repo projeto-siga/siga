@@ -708,7 +708,7 @@ public class CpDao extends ModeloDao {
 	public List<DpLotacao> consultarPorFiltro(final DpLotacaoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
 			final Query query;
-
+			
 			if (!o.isBuscarFechadas())
 				query = em().createNamedQuery("consultarPorFiltroDpLotacao");
 			else
@@ -720,7 +720,7 @@ public class CpDao extends ModeloDao {
 				query.setMaxResults(itemPagina);
 			}
 			query.setParameter("nome", o.getNome() == null ? "" : o.getNome().replace(' ', '%'));
-
+			query.setParameter("sigla", o.getSigla() == null ? "" : o.getSigla().replace(' ', '%'));
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
@@ -875,6 +875,7 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final CpGrupoDaoFiltro flt) throws AplicacaoException {
 		final CpGrupo o = CpGrupo.getInstance(flt.getIdTpGrupo());
 		o.setSigla(flt.getSigla());
+		o.setOrgaoUsuario(consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false));
 		return consultarPorSigla(o);
 	}
 

@@ -171,7 +171,7 @@
                 <level name="WARN"/>
             </logger>
             <logger category="jboss.jdbc.spy">
-                <level name="ERROR"/>
+                <level name="INFO"/>
             </logger>
             <root-logger>
                 <level name="INFO"/>
@@ -487,7 +487,7 @@
             </cache-container>
             <cache-container name="hibernate" module="org.infinispan.hibernate-cache">
                 <local-cache name="entity">
-                    <transaction mode="NONE"/>
+                    <transaction mode="NON_XA"/>
                     <object-memory size="10000"/>
                     <expiration max-idle="100000"/>
                 </local-cache>

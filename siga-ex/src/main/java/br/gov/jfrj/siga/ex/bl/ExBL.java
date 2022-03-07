@@ -1761,7 +1761,7 @@ public class ExBL extends CpBL {
 			
 			if (VISUALIZACAO_DOC_ARVORE && doc.isFinalizado() && doc.isAssinadoDigitalmente() 
 													&& possuiAssinaturaSubscritorCossignatarioHoje(doc)) {
-				removerPermissaoTempDnmAcessoArvoreDocs(doc);
+				removerPermissaoTempDnmAcessoArvoreDocs(doc, cadastrante);
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
@@ -3011,7 +3011,7 @@ public class ExBL extends CpBL {
 				// mob.getExDocumento().armazenar(); 
 				if (VISUALIZACAO_DOC_ARVORE 
 						&& ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(mov.getExTipoMovimentacao())){
-					removerPermissaoTempDnmAcessoArvoreDocs(mob.doc(), Arrays.asList(mov.getSubscritor()));
+					removerPermissaoTempDnmAcessoArvoreDocs(mob.doc(), Arrays.asList(mov.getSubscritor()), cadastrante);
 				}
 			}
 			concluirAlteracao(mov);
@@ -3824,16 +3824,23 @@ public class ExBL extends CpBL {
 	}
 	
 	private void removerPapel(ExDocumento doc, long idPapel) throws Exception {
-		removerPapel(doc, idPapel, null);
-	}
-
-	private void removerPapel(ExDocumento doc, long idPapel, DpPessoa dpPessoaMov) throws Exception {
-		ExMovimentacao movCancelamento = null;
-		boolean removerMovsPessoa = dpPessoaMov != null;
 		List<ExMovimentacao> movs = doc.getMobilGeral()
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, false);
-		movs = new ArrayList<ExMovimentacao>(
-						removerMovsPessoa ? getListaMovimentosPorPessoaSubscritora(movs, dpPessoaMov) : movs);
+		removerPapel(doc, movs, idPapel, null, Boolean.TRUE);
+	}
+	
+	private void removerPapelSubscritor(ExDocumento doc, 
+			long idPapel, DpPessoa cadastrante, DpPessoa subscritor) throws Exception {
+		List<ExMovimentacao> movs = doc.getMobilGeral()
+								.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, false);
+		movs = new ArrayList<ExMovimentacao>(subscritor != null 
+								? getListaMovimentosPorPessoaSubscritora(movs, subscritor) : movs);
+		removerPapel(doc, movs, idPapel, cadastrante, Boolean.FALSE);
+	}
+
+	private void removerPapel(ExDocumento doc, List<ExMovimentacao> movs,
+			long idPapel, DpPessoa cadastrante, boolean notificaEmail) throws Exception {
+		ExMovimentacao movCancelamento = null;
 		boolean removido = false;
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada() || !mov.getExPapel().getIdPapel().equals(idPapel))
@@ -3841,14 +3848,14 @@ public class ExBL extends CpBL {
 			if (movCancelamento == null) {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				movCancelamento = criarNovaMovimentacao(
-						ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, null, null,
+						ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, cadastrante, null,
 						doc.getMobilGeral(), dt, null, null, null, null, null);
 				movCancelamento.setExMovimentacaoRef(mov);
 			}
-			if (removerMovsPessoa)
-				gravarMovimentacaoCancelamento(movCancelamento, mov, Boolean.FALSE);
-			else 
+			if (notificaEmail)
 				gravarMovimentacaoCancelamento(movCancelamento, mov);
+			else 
+				gravarMovimentacaoCancelamento(movCancelamento, mov, Boolean.FALSE);
 			
 			removido = true;
 		}
@@ -3856,10 +3863,10 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 	}
 	
-	private List<ExMovimentacao> getListaMovimentosPorPessoaSubscritora(List<ExMovimentacao> movs, DpPessoa dpPessoaMov){
+	private List<ExMovimentacao> getListaMovimentosPorPessoaSubscritora(List<ExMovimentacao> movs, DpPessoa subscritor){
 		List<ExMovimentacao> movsPessoa = new ArrayList<ExMovimentacao>();
 		for (ExMovimentacao mov : movs) {
-			if (!mov.isCancelada() && mov.getSubscritor().equals(dpPessoaMov)) {
+			if (!mov.isCancelada() && mov.getSubscritor().equals(subscritor)) {
 				movsPessoa.add(mov);
 			}
 		}
@@ -3996,7 +4003,7 @@ public class ExBL extends CpBL {
 		return listaSubscrCossigFinal;
 	}
 	
-	private static boolean podeAdicionarMovVinculacaoPapel(ExDocumento doc, DpPessoa dpPessoaResp) {
+	private boolean podeAdicionarMovVinculacaoPapel(ExDocumento doc, DpPessoa dpPessoaResp) {
 		//Valida se for usuario externo
 		boolean podeAddMov = dpPessoaResp.isUsuarioExterno() ? Boolean.FALSE : Boolean.TRUE;
 		if (podeAddMov) {
@@ -4006,19 +4013,20 @@ public class ExBL extends CpBL {
 		return podeAddMov;
 	}
 	
-	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc) throws Exception {
-		List<DpPessoa> listaDpPessoaCancelMovPapel = listaPessoasSubscritorCossignatarioAssinadoHoje(doc);
-		removerPermissaoTempDnmAcessoArvoreDocs(doc, listaDpPessoaCancelMovPapel);
+	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, DpPessoa cadastrante) throws Exception {
+		List<DpPessoa> listaSubscrCancelMovPapel = listaPessoasSubscritorCossignatarioAssinadoHoje(doc);
+		removerPermissaoTempDnmAcessoArvoreDocs(doc, listaSubscrCancelMovPapel, cadastrante);
 	}
 	
-	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, List<DpPessoa> listaDpPessoa) throws Exception {
-		if (!listaDpPessoa.isEmpty()) {			
+	private void removerPermissaoTempDnmAcessoArvoreDocs(
+			ExDocumento doc, List<DpPessoa> listaSubscritor, DpPessoa cadastrante) throws Exception {
+		if (!listaSubscritor.isEmpty()) {			
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
 									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
 				//chamar servico cancelamento mov
-				for (DpPessoa pessoa : listaDpPessoa) {
-					removerPapel(exDoc, ExPapel.PAPEL_REVISOR_SUBSCRITOR, pessoa);
+				for (DpPessoa subscritor : listaSubscritor) {
+					removerPapelSubscritor(exDoc, ExPapel.PAPEL_REVISOR_SUBSCRITOR, cadastrante, subscritor);
 				}
 			}
 		}

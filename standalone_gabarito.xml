@@ -37,6 +37,7 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
     <system-properties>
+        <property name="sigaex.folha.de.rosto" value="ativa"/>
 		<property name="sigaex.data.validar.assinatura.com.senha" value="@@@sigaex.data.validar.assinatura.com.senha@@@"/>
         <property name="siga.session.modelos.tempo.expiracao" value="@@@siga.session.modelos.tempo.expiracao@@@"/>
         <property name="sigaex.consultapublica.exibe.tramitacao.ate.nivelacesso" value="@@@sigaex.consultapublica.exibe.tramitacao.ate.nivelacesso@@@"/>
@@ -84,8 +85,6 @@
         <property name="sigaex.carimbo.url" value="@@@sigaex.carimbo.url@@@"/>
         <property name="sigaex.carimbo.public.key" value="@@@sigaex.carimbo.public.key@@@"/>
 <!-- novas properties para serem parametrizadas ? Coloque o texto delas aqui abaixo para depois ser parametrizada. -->
- 
-		<property name="sigaex.folha.de.rosto" value="ativa"/>
         <property name="sigaex.volume.max.paginas" value="2000"/>
  
         

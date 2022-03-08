@@ -32,8 +32,8 @@ else
         exit 1
 fi
 echo ""
-echo "JBOSS VERSION:"
-if jboss_version=`$JBOSS_HOME/bin/standalone.sh -version`; then
+echo "JBOSS PID:"
+if jboss_version=`pgrep -f org.jboss.as`; then
         echo $jboss_version
         echo "OK"
 else
@@ -71,7 +71,7 @@ echo "VIZSERVICE:"
 curl -s https://api.github.com/repos/projeto-siga/vizservice/releases/latest | grep browser_download_url | grep vizservice.war | cut -d '"' -f 4 | xargs wget -q downloading vizservice.war
 if verify_vizservice_war=`ls -l vizservice.war`; then
         echo "DOWNLOAD: vizservice.war - OK"
-        cp -rf vizservice.war /tmp
+        cp -rf vizservice.war ~/
                 if deploy_vizservice=`mv -f vizservice.war $JBOSS_HOME/standalone/deployments/`; then
                         echo "DEPLOY: vizservice.war - OK"
                 else
@@ -93,7 +93,7 @@ curl -s https://api.github.com/repos/assijus/blucservice/releases/latest | grep 
 
 if verify_blucservice_war=`ls -l blucservice.war`; then
         echo "DOWNLOAD: blucservice.war - OK"
-        cp -rf blucservice.war /tmp
+        cp -rf blucservice.war ~/
                 if deploy_blucservice=`mv -f blucservice.war $JBOSS_HOME/standalone/deployments/`; then
                         echo "DEPLOY: blucservice.war - OK"
                 else
@@ -114,7 +114,7 @@ echo "CKEDITOR:"
 curl -s https://api.github.com/repos/projeto-siga/siga-docker/releases/latest | grep browser_download_url | grep .war | cut -d '"' -f 4 | xargs wget -q
 if verify_ckeditor_war=`ls -l ckeditor.war`; then
         echo "DOWNLOAD: ckeditor.war - OK"
-        cp -rf ckeditor.war /tmp
+        cp -rf ckeditor.war ~/
                 if deploy_ckeditor=`mv -f ckeditor.war $JBOSS_HOME/standalone/deployments/`; then
                         echo "DEPLOY: ckeditor.war - OK"
                 else
@@ -154,7 +154,7 @@ echo "                              STARTING DEPLOY"
 echo "###############################################################################"
 echo ""
 
-cp -rf target/* /tmp
+cp -rf target/* ~/
 
 echo "SIGA:"
 if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace $3/target/siga.war"`; then
@@ -193,7 +193,7 @@ if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext
 fi
 
 
-if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$2 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar"`; then
+if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$2 --command="module add --name=sigadoc.ext --resources=~/siga-ext.jar"`; then
         echo "DEPLOY MODULE: siga-ext.jar - OK"
 else
         echo $module_siga_ext

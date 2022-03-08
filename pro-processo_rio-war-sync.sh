@@ -4,9 +4,9 @@
 #
 
 #verify parameters 
-if [ $# -lt 5 ]; then
+if [ $# -lt 4 ]; then
    echo "ARGS NOT FOUND:  FAIL"
-   echo "ARGS: JBOSS_USER JBOSS_PASS SCP_USER SERVERS_ARRAY ORIGIN_SERVER_ARTIFACTS"
+   echo "ARGS: JBOSS_USER JBOSS_PASS SERVERS_ARRAY ORIGIN_SERVER_ARTIFACTS"
    echo "E.G: ./processo_rio-war-sync.sh jboss 12343 root ´jhomas456.infra.rio.gov.br jhomas987.infra.rio.gov.br´ jdevas323"
    echo "ABORTING..."
    exit 1
@@ -16,9 +16,6 @@ fi
 jboss_user=$1
 jboss_pass=$2
 
-#DECLARE SCP USER
-scp_user=$3
-
 ## DECLARE DEPENDENCIES ARRAY
 dependencies=(blucservice.war ckeditor.war vizservice.war)
 
@@ -27,11 +24,11 @@ targets=(siga-ext.jar sigaex.war siga.war)
 
 ## DECLARE SERVERS ARRAY
 ##e.g jdevasxxx.infra.rio.gov.br jdevaszzz.infra.rio.gov.br jdevasyyy.infra.rio.gov.br
-servers=($4)
+servers=($3)
 
 ## DECLARE ORIGIN SERVER ARTIFACTS VARIABLE
 ##e.g jdevasxxx
-origin_server_artifacts=($5)
+origin_server_artifacts=($4)
 
 #set variables
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.el7_9.x86_64/
@@ -46,7 +43,7 @@ echo "                            VERIFYING REQUIREMENTS"
 echo "################################################################################"
 echo ""
 echo "JAVAC VERSION:"
-if j_version=`javac -version 2>&1 |cut -d "\"" -f2|head -n 1`; then
+if j_version=`java -version 2>&1 |cut -d "\"" -f2|head -n 1`; then
         echo "$j_version"
         echo "OK"
 
@@ -58,7 +55,7 @@ else
 fi
 echo ""
 echo "JBOSS VERSION:"
-if jboss_version=`$JBOSS_HOME/bin/standalone.sh -version`; then
+if jboss_version=`pgrep -f org.jboss.as`; then
         echo $jboss_version
         echo "OK"
 else
@@ -89,38 +86,45 @@ echo "##########################################################################
 echo "                              STARTING SCP"
 echo "###############################################################################"
 echo ""
-echo "COPYING DEPENDENCIES FROM $origin_server_artifacts"
-
-for t in ${dependencies[@]}; do
-        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /opt/java/jboss-eap-7.2/standalone/deployments/`; then
-                echo $copy_war_jar
-                echo "$t - OK"
-        else
-                echo $copy_war_jar
-                echo "FAIL"
-                echo "ABORTING..."
-                exit 1
-        fi
+for s in ${servers[@]}; do
+        echo ""
+        echo "COPYING DEPENDENCIES FROM $origin_server_artifacts TO $s"
+        echo ""
+                for t in ${dependencies[@]}; do
+                        if copy_war_jar=`scp $origin_server_artifacts:~/$t $s:/opt/java/jboss-eap-7.2/standalone/deployments/`; then
+                                echo $copy_war_jar
+                                echo "$t - OK"
+                        else
+                                echo $copy_war_jar
+                                echo "FAIL"
+                                echo "ABORTING..."
+                                exit 1
+                        fi      
+                done
+        echo ""
 done
 
 echo ""
 echo ""
-echo "COPYING TARGETS FROM $origin_server_artifacts"
+for s in ${servers[@]}; do
+        echo ""
+        echo "COPYING TARGETS FROM $origin_server_artifacts TO $s"
 
-for t in ${targets[@]}; do
-        if copy_war_jar=`scp $scp_user@$origin_server_artifacts:/tmp/$t /tmp`; then
-                echo $copy_war_jar
-                echo "$t - OK"
-        else
-                echo $copy_war_jar
-                echo "FAIL"
-                echo "ABORTING..."
-                exit 1
-        fi
+                for t in ${targets[@]}; do
+                        if copy_war_jar=`scp $origin_server_artifacts:~/$t $s:~/`; then
+                                echo $copy_war_jar
+                                echo "$t - OK"
+                        else
+                                echo $copy_war_jar
+                                echo "FAIL"
+                                echo "ABORTING..."
+                                exit 1
+                        fi
+                done
+
+
+        echo ""
 done
-
-
-echo ""
 
 echo "###############################################################################"
 echo "                              STARTING DEPLOY"
@@ -158,7 +162,7 @@ for s in ${servers[@]}; do
         fi
 
 
-        if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module add --name=sigadoc.ext --resources=/tmp/siga-ext.jar" --user=$jboss_user --password=$jboss_pass`; then
+        if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="module add --name=sigadoc.ext --resources=~/siga-ext.jar" --user=$jboss_user --password=$jboss_pass`; then
                 echo "DEPLOY MODULE: siga-ext.jar - OK"
         else
                 echo $module_siga_ext
@@ -166,12 +170,12 @@ for s in ${servers[@]}; do
                 echo "ABORTING..."
                 exit 1
         fi        
-echo ""
+echo "" 
 
 echo "DEPLOY WAR TARGETS:"
         #DEPLOY TARGETS
         for t in ${targets[@]}; do
-	        if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace /tmp/$t" --user=$jboss_user --password=$jboss_pass`; then
+	        if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$s:9990 --command="deployment deploy-file --replace ~/$t" --user=$jboss_user --password=$jboss_pass`; then
                         echo "DEPLOY: $t - OK"
 	        else
                         echo $deploy_siga

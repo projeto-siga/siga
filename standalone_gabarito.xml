@@ -37,6 +37,7 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
     <system-properties>
+        <property name="sigaex.folha.de.rosto" value="ativa"/>
 		<property name="sigaex.data.validar.assinatura.com.senha" value="@@@sigaex.data.validar.assinatura.com.senha@@@"/>
         <property name="siga.session.modelos.tempo.expiracao" value="@@@siga.session.modelos.tempo.expiracao@@@"/>
         <property name="sigaex.consultapublica.exibe.tramitacao.ate.nivelacesso" value="@@@sigaex.consultapublica.exibe.tramitacao.ate.nivelacesso@@@"/>
@@ -83,11 +84,9 @@
         <property name="sigaex.carimbo.sistema" value="@@@sigaex.carimbo.sistema@@@"/>
         <property name="sigaex.carimbo.url" value="@@@sigaex.carimbo.url@@@"/>
         <property name="sigaex.carimbo.public.key" value="@@@sigaex.carimbo.public.key@@@"/>
-<!-- novas properties para serem parametrizadas ? Coloque o texto delas aqui abaixo para depois ser parametrizada. -->
+	<!-- novas properties para serem parametrizadas ? Coloque o texto delas aqui abaixo para depois ser parametrizada. -->
  
-		<property name="sigaex.folha.de.rosto" value="ativa"/>
-        <property name="sigaex.volume.max.paginas" value="2000"/>
-        
+        <property name="sigaex.volume.max.paginas" value="400"/>
         <property name="sigaex.documento.novo.modelo.padrao" value="Ofício"/>
   
     </system-properties>
@@ -172,7 +171,7 @@
                 <level name="WARN"/>
             </logger>
             <logger category="jboss.jdbc.spy">
-                <level name="ERROR"/>
+                <level name="INFO"/>
             </logger>
             <root-logger>
                 <level name="INFO"/>
@@ -203,7 +202,7 @@
         <subsystem xmlns="urn:jboss:domain:core-management:1.0"/>
         <subsystem xmlns="urn:jboss:domain:datasources:5.0">
             <datasources>
-                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true" tracking="true" statistics-enabled="true" use-ccm="true" jta="false">
+                <datasource jndi-name="java:/jboss/datasources/SigaCpDS" pool-name="SigaCpDS" enabled="true" spy="true" tracking="true" statistics-enabled="true" use-ccm="true">
                     <connection-url>@@@string_db_corporativo@@@</connection-url>
 					<driver>ojdbc8.jar</driver>
                     <pool>
@@ -218,11 +217,6 @@
                         <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
 
-                 <validation>
-                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
-                    <validate-on-match>false</validate-on-match>
-                    <background-validation-millis>62000</background-validation-millis>
-                 </validation>
                  <statement>
                      <track-statements>true</track-statements>
                         <prepared-statement-cache-size>10</prepared-statement-cache-size>
@@ -231,7 +225,7 @@
 
 
                 </datasource>
-                <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true" tracking="true" statistics-enabled="true" use-ccm="true"  jta="false">
+                <datasource jndi-name="java:/jboss/datasources/SigaExDS" pool-name="SigaExDS" enabled="true" spy="true" tracking="true" statistics-enabled="true" use-ccm="true">
                     <connection-url>@@@string_db_siga@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
@@ -246,11 +240,6 @@
                         <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
 
-                 <validation>
-                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
-                    <validate-on-match>false</validate-on-match>
-                    <background-validation-millis>62000</background-validation-millis>
-                 </validation>
                  <statement>
                         <track-statements>true</track-statements>
                         <prepared-statement-cache-size>20</prepared-statement-cache-size>
@@ -259,7 +248,7 @@
 
 
                 </datasource>
-                <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true" tracking="true" statistics-enabled="true"  use-ccm="true" jta="false">
+                <datasource jndi-name="java:/jboss/datasources/SigaWfDS" pool-name="SigaWfDS" enabled="true" spy="true" tracking="true" statistics-enabled="true"  use-ccm="true">
                     <connection-url>@@@string_db_sigawf@@@</connection-url>
                     <driver>ojdbc8.jar</driver>
                     <pool>
@@ -274,11 +263,6 @@
                         <idle-timeout-minutes>1</idle-timeout-minutes>
                     </timeout>
 
-                 <validation>
-                    <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
-                    <validate-on-match>false</validate-on-match>
-                    <background-validation-millis>62000</background-validation-millis>
-                 </validation>
                  <statement>
                         <track-statements>true</track-statements>
                         <prepared-statement-cache-size>10</prepared-statement-cache-size>
@@ -488,7 +472,7 @@
             </cache-container>
             <cache-container name="hibernate" module="org.infinispan.hibernate-cache">
                 <local-cache name="entity">
-                    <transaction mode="NONE"/>
+                    <transaction mode="NON_XA"/>
                     <object-memory size="10000"/>
                     <expiration max-idle="100000"/>
                 </local-cache>

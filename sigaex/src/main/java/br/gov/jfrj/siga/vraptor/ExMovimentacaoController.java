@@ -68,8 +68,10 @@ import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -1937,7 +1939,7 @@ public class ExMovimentacaoController extends ExController {
 			final List<Map<Integer, String>> listaTipoResp,
 			final int tipoResponsavel,
 			final DpLotacaoSelecao lotaResponsavelSel,
-			final DpPessoaSelecao responsavelSel,
+			final DpPessoaSelecao responsavelSel, final CpGrupoDeEmailSelecao grupoSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
 			final String obsOrgao, final String protocolo, final Integer tipoTramite) throws Exception {
 		this.setPostback(postback);
@@ -1948,7 +1950,7 @@ public class ExMovimentacaoController extends ExController {
 				responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getFuncaoConfianca() : null,
 				responsavelSel.getObjeto() != null ? responsavelSel.getObjeto().getOrgaoUsuario() : lotaResponsavelSel.getObjeto().getOrgaoUsuario()).eval()) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário / unidade não está apto para tramite de documento."));
-			forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, postback, dtMovString,
+			forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
 					subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp, tiposDespacho,
 					descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo, tipoTramite);
 			
@@ -1963,7 +1965,7 @@ public class ExMovimentacaoController extends ExController {
 	        	if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
 	        		result.include("msgCabecClass", "alert-danger");
 	        		result.include("mensagemCabec", "Data de devolução não pode ser anterior à data de hoje.");
-	        		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, postback, dtMovString,
+	        		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
 							subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp,
 							tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo,
 							tipoTramite);
@@ -2017,7 +2019,7 @@ public class ExMovimentacaoController extends ExController {
 			} else {
 				result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa para o recebimento de Documentos. Favor inserir outra " + SigaMessages.getMessage("usuario.lotacao"));
 			}
-    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, postback, dtMovString,
+    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
 					subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp, tiposDespacho,
 					descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo, tipoTramite);
 			return;
@@ -2046,7 +2048,7 @@ public class ExMovimentacaoController extends ExController {
 			if(!podeTramitar) {
 				result.include("msgCabecClass", "alert-danger");
 	    		result.include("mensagemCabec", "Para tramitar é necessário incluir um documento do tipo capturado.");
-        		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, postback, dtMovString,
+        		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
 						subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp,
 						tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo, tipoTramite);
     			return;
@@ -2080,20 +2082,26 @@ public class ExMovimentacaoController extends ExController {
 				result.include("msgCabecClass", "alert-danger");
 	    		result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") 
 	    			+ " informada não possui Usuário cadastrado ou ativo, para prosseguir com a tramitação informe outra " + SigaMessages.getMessage("usuario.lotacao"));
-        		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, postback, dtMovString,
+        		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
 						subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp,
 						tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo, tipoTramite);
     			return;
 				
 			}
 		}
+		
+		CpGrupoDeEmail grupo = null;
+		if (grupoSel != null && grupoSel.getId() != null) {
+			grupo = dao.consultar(grupoSel.getId(), CpGrupoDeEmail.class, false);
+		}
+
 
 		Ex.getInstance()
 				.getBL()
 				.transferir(mov.getOrgaoExterno(), mov.getObsOrgao(),
 						getCadastrante(), getLotaTitular(), builder.getMob(),
 						mov.getDtMov(), mov.getDtIniMov(), mov.getDtFimMov(),
-						mov.getLotaResp(), mov.getResp(),
+						mov.getLotaResp(), mov.getResp(), grupo,
 						mov.getLotaDestinoFinal(), mov.getDestinoFinal(),
 						mov.getSubscritor(), mov.getTitular(),
 						mov.getExTipoDespacho(), false, mov.getDescrMov(),
@@ -2120,7 +2128,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	private void forwardToTransferir(final String sigla, final int tipoResponsavel,
-			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final int postback,
+			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final CpGrupoDeEmailSelecao grupoSel, final int postback,
 			final String dtMovString, final DpPessoaSelecao subscritorSel, final boolean substituicao,
 			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final long idTpDespacho,
 			final long idResp, final List<ExTipoDespacho> tiposDespacho, final String descrMov,
@@ -2128,9 +2136,9 @@ public class ExMovimentacaoController extends ExController {
 			final String protocolo, final Integer tipoTramite) {
 		ITipoDeMovimentacao tpTramite = ExTipoDeMovimentacao.getById(tipoTramite);
 		if (tpTramite == ExTipoDeMovimentacao.NOTIFICACAO)
-			result.forwardTo(this).aNotificar(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel);
+			result.forwardTo(this).aNotificar(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel);
 		else if (tpTramite == ExTipoDeMovimentacao.TRAMITE_PARALELO)
-			result.forwardTo(this).aNotificar(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel);
+			result.forwardTo(this).aTramitarParalelo(sigla, tipoTramite, lotaResponsavelSel, responsavelSel);
 		else
 			result.forwardTo(this).aTransferir(
 					sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
@@ -2143,7 +2151,7 @@ public class ExMovimentacaoController extends ExController {
 	public void aNotificar(final String sigla,
 			final Integer tipoResponsavel, 
 			final DpLotacaoSelecao lotaResponsavelSel,
-			final DpPessoaSelecao responsavelSel) {
+			final DpPessoaSelecao responsavelSel, final CpGrupoDeEmailSelecao grupoSel) {
 		
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -2152,7 +2160,8 @@ public class ExMovimentacaoController extends ExController {
 				lotaResponsavelSel).or(new DpLotacaoSelecao());
 		final DpPessoaSelecao responsavelSelFinal = Optional.fromNullable(
 				responsavelSel).or(new DpPessoaSelecao());
-		
+		final CpGrupoDeEmailSelecao grupoSelFinal = Optional.fromNullable(
+				grupoSel).or(new CpGrupoDeEmailSelecao());	
 
 		Integer tipoResponsavelFinal = Optional.fromNullable(tipoResponsavel)
 				.or(DEFAULT_TIPO_RESPONSAVEL);
@@ -2172,6 +2181,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("tipoResponsavel", tipoResponsavelFinal);
 		result.include("lotaResponsavelSel", lotaResponsavelSelFinal);
 		result.include("responsavelSel", responsavelSelFinal);
+		result.include("grupoSel", grupoSelFinal);
 	}
 
 	@Post("/app/expediente/mov/tramitar_paralelo")
@@ -2783,6 +2793,7 @@ public class ExMovimentacaoController extends ExController {
 									getLotaTitular(), mobil, //
 									mov.getDtMov(), dt, mov.getDtFimMov(), //
 									mov.getLotaResp(), mov.getResp(), //
+									null, // Ainda falta implementar a notificação de grupo de email
 									mov.getLotaDestinoFinal(), //
 									mov.getDestinoFinal(), //
 									mov.getSubscritor(), mov.getTitular(), //
@@ -4441,6 +4452,7 @@ public class ExMovimentacaoController extends ExController {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, SigaMessages.getMessage("usuario.lotacao"));
 		map.put(2, SigaMessages.getMessage("usuario.matricula"));
+		map.put(3, "Grupo de Distribuição");
 		return map;
 	}
 

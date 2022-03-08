@@ -80,7 +80,7 @@ public enum CpMarcadorEnum {
 	SOBRESTADO(31, "Sobrestado", "fas fa-hourglass-start", "", CpMarcadorGrupoEnum.ACOMPANHANDO),
 	//
 	SEM_EFEITO(32, SigaMessages.getMessage("marcador.semEfeito.label"), "fas fa-power-off", "",
-			CpMarcadorGrupoEnum.NENHUM),
+			CpMarcadorGrupoEnum.OUTROS),
 
 	//
 	ATIVO(36, "Ativo", "inbox", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),

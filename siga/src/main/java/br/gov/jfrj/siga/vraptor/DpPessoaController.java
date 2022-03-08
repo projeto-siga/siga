@@ -202,7 +202,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Post
 	@Path({ "/public/app/pessoa/selecionar", "/app/pessoa/selecionar", "/app/cosignatario/selecionar",
 			"/pessoa/selecionar.action", "/cosignatario/selecionar.action" })
-	public void selecionar(String sigla) {
+	public void selecionar(String sigla, String matricula) {
 		String resultado = super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno") {
 			result.include("sel", getSel());

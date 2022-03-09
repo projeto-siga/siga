@@ -1464,7 +1464,7 @@ public class ExBL extends CpBL {
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
 					"Não é possível assinar o documento pois não está finalizado.");
-
+		
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!fPreviamenteAssinado) {
@@ -1519,8 +1519,9 @@ public class ExBL extends CpBL {
 
 			String sCPF = validateresp.getCertdetails().get("cpf0");
 			Service.throwExceptionIfError(sCPF);
-
+			
 			lCPF = Long.valueOf(sCPF);
+			
 		} catch (final Exception e) {
 			throw new RuntimeException(
 					"Erro na assinatura de um documento: " + e.getMessage() == null ? "" : e.getMessage(), e);
@@ -1678,6 +1679,14 @@ public class ExBL extends CpBL {
 					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
+				
+				List<DpPessoa> cossignatarios = doc.getCosignatarios();  
+				for (DpPessoa cossignatario : cossignatarios) {
+					if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cossignatario, cossignatario.getLotacao(), 
+							CpServicosNotificacaoPorEmail.COSSIG.getChave()) && !doc.isAssinadoPeloSubscritorComTokenOuSenha()) {
+						Cp.getInstance().getBL().enviarEmailAoCossignatario(cossignatario, cadastrante, doc.getSigla());
+					}
+				} 
 				
 				gravarMovimentacao(mov);
 	
@@ -1939,6 +1948,14 @@ public class ExBL extends CpBL {
 					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
+				
+				List<DpPessoa> cossignatarios = doc.getCosignatarios();  
+				for (DpPessoa cossignatario : cossignatarios) {
+					if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cossignatario, cossignatario.getLotacao(), 
+							CpServicosNotificacaoPorEmail.COSSIG.getChave()) && !doc.isAssinadoPeloSubscritorComTokenOuSenha()) {
+						Cp.getInstance().getBL().enviarEmailAoCossignatario(cossignatario, cadastrante, doc.getSigla());
+					}
+				} 
 				
 				gravarMovimentacao(mov);
 	
@@ -3143,7 +3160,7 @@ public class ExBL extends CpBL {
 			if (doc.getExMobilAutuado() != null)
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
 			
-			if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
 					doc.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.RESPASS.getChave())) { 
 				Cp.getInstance().getBL().enviarEmailResponsavelPelaAssinatura(cadastrante, doc.getSubscritor(), doc.getSigla());
 			}
@@ -4142,10 +4159,6 @@ public class ExBL extends CpBL {
 			processar(doc, true, false);
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
-			
-			if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getSubscritor(), mov.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.COSSIG.getChave())) {
-				Cp.getInstance().getBL().enviarEmailAoCossignatario(mov.getSubscritor(), mov.getCadastrante(), mov.getExDocumento().getSigla());
-			}
 			
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -5188,7 +5201,7 @@ public class ExBL extends CpBL {
 					StringJoiner marcasDoDoc = new StringJoiner(", ");  
 					
 					if (mov.getResp() != null) { 
-						if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+						if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
 								mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())) {
 							for (ExMobil exMobil: exMobils) {
 								for (ExMarca exMarca: exMobil.getExMarcaSet()) {
@@ -5212,7 +5225,7 @@ public class ExBL extends CpBL {
 					
 					if (mov.getResp() == null) {
 						for (DpPessoa pessoa: pessoasLota) {
-							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+							if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 									pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())) { 
 								for (ExMobil exMobil: exMobils) {
 									for (ExMarca exMarca: exMobil.getExMarcaSet()) {
@@ -5226,10 +5239,10 @@ public class ExBL extends CpBL {
 									marcas.forEach(marc -> {
 										marcasDoDoc.add(marc.getDescrMarcador());
 									}); 
-								}
+								} 
 								Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcado(pessoa, mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");		
 							} 
-							if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+							if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 									pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCTUN.getChave())) 
 									Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuariosDaUnidade(mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());
 						}

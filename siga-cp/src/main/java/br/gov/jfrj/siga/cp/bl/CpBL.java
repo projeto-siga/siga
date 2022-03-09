@@ -1998,7 +1998,7 @@ public class CpBL {
 	} 
 	
 	public void enviarEmailResponsavelPelaAssinatura(DpPessoa pessoaDest, DpPessoa titular, String sigla) {
-		String assunto = "Documento tramitado para " + pessoaDest.getDescricao();
+		String assunto = "Responsável pela assinatura: " + pessoaDest.getDescricao();
 		String[] destinanarios = { pessoaDest.getEmailPessoaAtual() };
 		String conteudoHTML = responsavelPelaAssinatura(pessoaDest, titular, sigla);
 		try {

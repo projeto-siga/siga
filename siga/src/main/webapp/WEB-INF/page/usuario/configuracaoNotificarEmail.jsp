@@ -45,14 +45,14 @@
 										    <c:choose>   
 											    <c:when test="${conf.cpSituacaoConfiguracao.getId() == PODE and conf.cpServico.siglaServico != SERV_PAI}">
 												   <td> 
-												   	  <button class="btn btn-danger btnAcao" style="min-width: 100px;" type="button" onclick="javascript:submitPost('${inativar}')">Ativar</button>
+												   	  <button class="btn btn-primary btnAcao" style="min-width: 100px;" type="button" onclick="javascript:submitPost('${inativar}')">Inativar</button>
 												   </td> 
 										        </c:when>   
 									        </c:choose> 
 									        <c:choose>  
 									          	<c:when test="${conf.cpSituacaoConfiguracao.getId() == NAO_PODE and conf.cpServico.siglaServico != SERV_PAI}">  
 												   <td>  				        			
-										              <button class="btn btn-primary btnAcao" style="min-width: 100px;" type="button" onclick="javascript:submitPost('${ativar}')">Inativar</button>
+										              <button class="btn btn-danger btnAcao" style="min-width: 100px;" type="button" onclick="javascript:submitPost('${ativar}')">Ativar</button>
 										           </td>
 										        </c:when> 
 									        </c:choose>

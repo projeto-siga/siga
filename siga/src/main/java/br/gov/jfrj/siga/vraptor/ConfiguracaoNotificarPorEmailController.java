@@ -58,10 +58,10 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 			CpServico servico = new CpServico();
 			CpConfiguracao configuracao = new CpConfiguracao(); 
 			if (servicoDoUsuario.getCondicao().equals(UTILIZAVEL)) { 
-				if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), servicoDoUsuario.getChave())) {
-					configuracao.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
-				} else {
+				if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), servicoDoUsuario.getChave())) {
 					configuracao.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.PODE);
+				} else {
+					configuracao.setCpSituacaoConfiguracao(CpSituacaoDeConfiguracaoEnum.NAO_PODE);
 				} 
 			} 
 			servico.setSigla(servicoDoUsuario.getSigla());

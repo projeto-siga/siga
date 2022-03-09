@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.wf.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -38,6 +39,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -45,14 +47,15 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.dao.WfDao;
-import br.gov.jfrj.siga.wf.logic.PodeSim;
 import br.gov.jfrj.siga.wf.logic.WfPodeDuplicarDiagrama;
 import br.gov.jfrj.siga.wf.logic.WfPodeEditarDiagrama;
 import br.gov.jfrj.siga.wf.logic.WfPodeIniciarDiagrama;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeAcessoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
@@ -300,12 +303,11 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 		return getSigla().replace("-", "").replace("/", "");
 	}
 
-	public static WfDefinicaoDeProcedimento findBySigla(String sigla) throws NumberFormatException, Exception {
+	public static WfDefinicaoDeProcedimento findBySigla(String sigla) {
 		return findBySigla(sigla, null);
 	}
 
-	public static WfDefinicaoDeProcedimento findBySigla(String sigla, CpOrgaoUsuario ouDefault)
-			throws NumberFormatException, Exception {
+	public static WfDefinicaoDeProcedimento findBySigla(String sigla, CpOrgaoUsuario ouDefault) {
 		SiglaDecodificada d = SiglaUtils.parse(sigla, "DP", null);
 
 		WfDefinicaoDeProcedimento info = null;
@@ -322,6 +324,12 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 					+ sigla + ". Favor verificá-lo.");
 		} else
 			return info;
+	}
+	
+	public WfDefinicaoDeProcedimento getAtual() {
+		if (this.getDataFim() != null)
+			return CpDao.getInstance().obterAtual(this);
+		return this;
 	}
 
 	public static WfDefinicaoDeProcedimento findByNome(String titulo) throws Exception {
@@ -404,6 +412,8 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 				.acao("/app/diagrama/editar?duplicar=true&id=" + id)
 				.exp(new WfPodeDuplicarDiagrama(this, titular, lotaTitular)).build());
 
+		set.add(AcaoVO.builder().nome("Documentar").icone("book_open").acao("/app/diagrama/documentar?id=" + id)
+				.exp(new WfPodeEditarDiagrama(this, titular, lotaTitular)).build());
 		return set;
 	}
 
@@ -501,5 +511,37 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 			return "^wf:" + Texto.slugify(getSiglaCompacta(), true, false);
 		return null;
 	}
+	
+	public WfDefinicaoDeTarefa gerarDefinicaoDeTarefaComTodasAsVariaveis() {
+		WfDefinicaoDeTarefa tdSuper = new WfDefinicaoDeTarefa();
+		Set<String> identificadores = new HashSet<>();
+		for (WfDefinicaoDeTarefa td : getDefinicaoDeTarefa()) {
+			switch (td.getKind()) {
+			case FORMULARIO:
+				for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel())
+					if (!identificadores.contains(vd.getIdentificador())) {
+						WfDefinicaoDeVariavel vdSuper = new WfDefinicaoDeVariavel(vd);
+						tdSuper.getDefinicaoDeVariavel().add(vdSuper);
+						identificadores.add(vd.getIdentificador());
+					}
+				break;
+			case CRIAR_DOCUMENTO:
+				String identificador = WfTarefaDocCriar.getIdentificadorDaVariavel(td);
+				if (!identificadores.contains(identificador)) {
+					WfDefinicaoDeVariavel vdSuper = new WfDefinicaoDeVariavel();
+					vdSuper.setIdentificador(identificador);
+					vdSuper.setNome(td.getNome());
+					vdSuper.setTipo(WfTipoDeVariavel.DOC_MOBIL);
+					vdSuper.setAcesso(WfTipoDeAcessoDeVariavel.READ_WRITE);
+					tdSuper.getDefinicaoDeVariavel().add(vdSuper);
+					identificadores.add(vdSuper.getIdentificador());
+				}
+			default:
+			}
+		}
+		return tdSuper;
+	}
+	
+
 
 }

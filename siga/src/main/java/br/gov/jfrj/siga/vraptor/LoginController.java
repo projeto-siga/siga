@@ -148,8 +148,11 @@ public class LoginController extends SigaController {
 			}
 			
 			if (!isCaptchaValido()) {
-				setDefaultResults();
-				return;
+				throw new RuntimeException("Verificação deve ser marcado!");
+				
+//				setDefaultResults();
+				
+//				return;
 			}
 			
 			GiService giService = Service.getGiService();

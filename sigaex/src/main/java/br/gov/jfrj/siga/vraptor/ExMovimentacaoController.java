@@ -102,6 +102,7 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
+import br.gov.jfrj.siga.ex.logic.ExECossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
@@ -1371,6 +1372,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("cosignatarioSel",
 				movimentacaoBuilder.getSubscritorSel());
 		result.include("mob", builder.getMob());
+		result.include("listaCossignatarios", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE));
+		
 	}
 
 	@Transacional
@@ -1384,17 +1387,6 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
-
-		if (!new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), cosignatarioSel.getObjeto(), cosignatarioSel.getObjeto().getLotacao(),
-				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getCargo() : null,
-				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getFuncaoConfianca() : null,
-				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getOrgaoUsuario() : cosignatarioSel.getObjeto().getOrgaoUsuario()).eval()) {
-			result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário não está disponível para inclusão de Cossignatário / "+ SigaMessages.getMessage("documento.subscritor")+"."));
-			result.forwardTo(this).incluirCosignatario(sigla);
-			
-			return;
-		}
-
 		
 		String funcaoUnidadeCosignatario = funcaoCosignatario;
 		// Efetuar validação e concatenar o conteudo se for implantação GOVSP
@@ -1411,13 +1403,18 @@ public class ExMovimentacaoController extends ExController {
 
 		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, getTitular(), getLotaTitular(), documentoBuilder.getMob());
 
-		Ex.getInstance()
-				.getBL()
-				.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
-						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
-
-		ExDocumentoController.redirecionarParaExibir(result, mov
-				.getExDocumento().getSigla());
+		try {
+			Ex.getInstance()
+					.getBL()
+					.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
+							mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+	
+		}			
+		result.forwardTo(this).incluirCosignatario(sigla);
+		
+		return;
 	}
 
 	// Nato: Temos que substituir por uma tela que mostre os itens marcados como

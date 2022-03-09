@@ -148,7 +148,8 @@ public class LoginController extends SigaController {
 			}
 			
 			if (!isCaptchaValido()) {
-				throw new RuntimeException("Verificação deve ser marcado!");
+				
+				throw new RuntimeException("O campo Verificação deve ser respondido");
 				
 //				setDefaultResults();
 				

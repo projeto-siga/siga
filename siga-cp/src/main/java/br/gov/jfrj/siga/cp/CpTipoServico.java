@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Entity
 @Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.NONE)
 @Table(name = "corporativo.cp_tipo_servico")
 public class CpTipoServico extends AbstractCpTipoServico {
 	public static final int TIPO_SERVICO_DIRETORIO = 1;

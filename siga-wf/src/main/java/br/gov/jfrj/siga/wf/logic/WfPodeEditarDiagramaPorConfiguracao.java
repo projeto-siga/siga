@@ -27,6 +27,6 @@ public class WfPodeEditarDiagramaPorConfiguracao implements Expression {
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("tem configuração para editar", result);
+		return JLogic.explain("tem configuração para editar o diagrama " + pd.getSigla(), result);
 	}
 };

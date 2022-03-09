@@ -2,8 +2,10 @@ package br.gov.jfrj.siga.wf.vraptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -35,6 +37,7 @@ import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.logic.WfPodeEditarVariaveis;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
@@ -241,67 +244,20 @@ public class WfAppController extends WfController {
 	@Path("/app/procedimento/{piId}/continuar")
 	public void continuar(Long piId, String[] campoIdentificador, StringQualquer[] campoValor, Integer indiceDoDesvio,
 			String sigla) throws Exception {
+		if (indiceDoDesvio != null && indiceDoDesvio == -1) {
+			// redireciona para o método salvar quando o desvio é -1
+			result.forwardTo(this).salvar(piId, campoIdentificador, campoValor, sigla);
+			return;
+		}
+		
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
 		WfProcedimento pi = loadTaskInstance(piId);
 
 		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
 
-		// TODO Pegar automaticamente
-
-		// WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
-
-		Map<String, Object> param = new HashMap<>();
-
-		if (td.getVariable() != null) {
-			for (int n = 0, c = 0; n < campoIdentificador.length; n++) {
-				// Associa cada variavel com seu valore especifico
-				for (WfDefinicaoDeVariavel variable : td.getVariable()) {
-					if (campoIdentificador[n] == null)
-						continue;
-					if (variable.getIdentifier().equals(campoIdentificador[n])
-							&& (variable.getEditingKind() == VariableEditingKind.READ_WRITE
-									|| variable.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED)) {
-						Object value;
-						StringQualquer campo = campoValor[c];
-						if (variable.getTipo() == WfTipoDeVariavel.DOC_MOBIL) {
-							value = param(variable.getIdentifier() + "_expedienteSel.sigla");
-						} else if (variable.getTipo() == WfTipoDeVariavel.PESSOA) {
-							value = param(variable.getIdentifier() + "_pessoaSel.sigla");
-						} else if (variable.getTipo() == WfTipoDeVariavel.LOTACAO) {
-							value = param(variable.getIdentifier() + "_lotacaoSel.sigla");
-						} else if (variable.getTipo() == WfTipoDeVariavel.DATE) {
-							value = SigaCalendar.converteStringEmData(campo.toString());
-							c++;
-						} else if (variable.getTipo() == WfTipoDeVariavel.BOOLEAN) {
-							value = converterParaBoolean(campo);
-							c++;
-						} else if (variable.getTipo() == WfTipoDeVariavel.DOUBLE) {
-							value = converterParaDouble(campo);
-							c++;
-						} else if (variable.getTipo() == WfTipoDeVariavel.SELECAO) {
-							value = campo;
-							c++;
-						} else {
-							value = campo;
-							c++;
-						}
-
-						if (value instanceof StringQualquer)
-							value = ((StringQualquer) value).toString();
-
-						// TODO: Verifica se as variáveis "required" foram preenchidas
-						if (variable.isRequired() && (value == null
-								|| (value instanceof String && (((String) value).trim().length() == 0)))) {
-							throw new AplicacaoException("O campo " + variable.getTitle() + " deve ser preenchido");
-						}
-
-						param.put(campoIdentificador[n], value);
-					}
-				}
-			}
-		}
-
+		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
+		
 		Integer desvio = null;
 		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
 			desvio = indiceDoDesvio;
@@ -342,6 +298,114 @@ public class WfAppController extends WfController {
 		}
 
 		result.redirectTo(this).procedimento(pi.getId().toString());
+	}
+	
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{piId}/salvar")
+	public void salvar(Long piId, String[] campoIdentificador, StringQualquer[] campoValor, 
+			String sigla) throws Exception {
+		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
+
+		WfProcedimento pi = loadTaskInstance(piId);
+
+		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
+
+		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
+
+		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(),
+				getIdentidadeCadastrante());
+
+		if (sigla != null) 
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + sigla);
+		else
+			result.redirectTo(this).procedimento(pi.getId().toString());
+	}
+
+	@Path("/app/procedimento/{piId}/editar-variaveis")
+	public void editarVariaveis(String piId) throws Exception {
+		WfProcedimento pi;
+		if (StringUtils.isNumeric(piId))
+			pi = loadTaskInstance(Long.valueOf(piId));
+		else
+			pi = WfProcedimento.findBySigla(piId);
+		WfPodeEditarVariaveis.afirmar(pi, getTitular(), getLotaTitular());
+		WfDefinicaoDeTarefa tdSuper = pi.getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
+		result.include("piId", pi.getId());
+		result.include("pi", pi);
+		result.include("td", tdSuper);
+	}
+
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{piId}/salvar-variaveis")
+	public void salvarVariaveis(Long piId, String[] campoIdentificador, StringQualquer[] campoValor) throws Exception {
+		WfProcedimento pi = loadTaskInstance(piId);
+		WfPodeEditarVariaveis.afirmar(pi, getTitular(), getLotaTitular());
+		WfDefinicaoDeTarefa td = pi.getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
+		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
+		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(),
+				getIdentidadeCadastrante());
+		result.redirectTo(this).procedimento(pi.getId().toString());
+	}
+
+	private Map<String, Object> carregarVariaveis(WfDefinicaoDeTarefa td, String[] campoIdentificador,
+			StringQualquer[] campoValor) {
+		// TODO Pegar automaticamente
+
+		// WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
+
+		Map<String, Object> param = new HashMap<>();
+
+		if (td.getVariable() != null) {
+			for (int n = 0, c = 0; n < campoIdentificador.length; n++) {
+				// Associa cada variavel com seu valore especifico
+				for (WfDefinicaoDeVariavel variable : td.getVariable()) {
+					if (campoIdentificador[n] == null)
+						continue;
+					if (variable.getIdentifier().equals(campoIdentificador[n])
+							&& (variable.getEditingKind() == VariableEditingKind.READ_WRITE
+									|| variable.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED)) {
+						Object value;
+						StringQualquer campo = c < campoValor.length ? campoValor[c] : null; 
+						if (variable.getTipo() == WfTipoDeVariavel.DOC_MOBIL) {
+							value = param(variable.getIdentifier() + "_expedienteSel.sigla");
+						} else if (variable.getTipo() == WfTipoDeVariavel.PESSOA) {
+							value = param(variable.getIdentifier() + "_pessoaSel.sigla");
+						} else if (variable.getTipo() == WfTipoDeVariavel.LOTACAO) {
+							value = param(variable.getIdentifier() + "_lotacaoSel.sigla");
+						} else if (variable.getTipo() == WfTipoDeVariavel.DATE) {
+							value = SigaCalendar.converteStringEmData(campo.toString());
+							c++;
+						} else if (variable.getTipo() == WfTipoDeVariavel.BOOLEAN) {
+							value = converterParaBoolean(campo);
+							c++;
+						} else if (variable.getTipo() == WfTipoDeVariavel.DOUBLE) {
+							value = converterParaDouble(campo);
+							c++;
+						} else if (variable.getTipo() == WfTipoDeVariavel.SELECAO) {
+							value = campo;
+							c++;
+						} else {
+							value = campo;
+							c++;
+						}
+
+						if (value instanceof StringQualquer)
+							value = ((StringQualquer) value).toString();
+
+						// TODO: Verifica se as variáveis "required" foram preenchidas
+						if (variable.isRequired() && (value == null
+								|| (value instanceof String && (((String) value).trim().length() == 0)))) {
+							throw new AplicacaoException("O campo " + variable.getTitle() + " deve ser preenchido");
+						}
+
+						param.put(campoIdentificador[n], value);
+					}
+				}
+			}
+		}
+		return param;
 	}
 
 	private Boolean converterParaBoolean(StringQualquer campo) {

@@ -4422,17 +4422,20 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * 
 	 * @param titular
 	 * @param lotaTitular
-	 * @param mob
+	 * @param mobPai
 	 * @return
 	 * @throws Exception
 	 */
 	public boolean podeSerJuntado(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) {
+			final DpLotacao lotaTitular, final ExMobil mobFilho, final ExMobil mobPai) {
 
-		return !mob.isCancelada() && !mob.isVolumeEncerrado()
-				&& !mob.isJuntado()
-				&& !mob.isEmTransito(titular, lotaTitular) && !mob.isArquivado()
-				&& podeMovimentar(titular, lotaTitular, mob);
+		return !mobPai.isCancelada() && !mobPai.isVolumeEncerrado()
+				&& !mobPai.isJuntado()
+				&& !mobPai.isEmTransito(titular, lotaTitular) && !mobPai.isArquivado()
+				&& (
+						podeMovimentar(titular, lotaTitular, mobPai)
+						|| mobPai.equals(mobFilho.doc().getExMobilPai()
+					));
 	}
 
 	/**

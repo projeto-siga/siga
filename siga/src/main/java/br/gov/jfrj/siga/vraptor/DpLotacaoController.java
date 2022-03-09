@@ -162,7 +162,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get
 	@Post
 	@Path({ "/public/app/lotacao/selecionar", "app/lotacao/selecionar", "/lotacao/selecionar.action" })
-	public String selecionar(String sigla) {
+	public String selecionar(String sigla, String matricula) {
+		if (matricula != null && orgaoUsu == null) {
+			DpPessoa pessoa = CpDao.getInstance().getPessoaFromSigla(matricula);
+			if (pessoa != null)
+				orgaoUsu = pessoa.getOrgaoUsuario().getId();
+		}
 		String resultado = super.aSelecionar(sigla);
 		if (getSel() != null) {
 			try {

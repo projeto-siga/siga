@@ -28,8 +28,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.crivano.jflow.TaskResult;
-import com.crivano.jflow.model.enm.TaskResultKind;
+import com.crivano.jflow.model.enm.VariableEditingKind;
+import com.crivano.jflow.model.util.MissingParameterException;
 import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.wf.logic.WfPodeRetomar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
@@ -212,6 +213,21 @@ public class WfBL extends CpBL {
 			DpLotacao lotaTitular, CpIdentidade identidade) throws Exception {
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.resume(event, detourIndex, param);
+	}
+	
+	public void salvar(WfProcedimento pi, WfDefinicaoDeTarefa td, Map<String, Object> param, DpPessoa titular,
+			DpLotacao lotaTitular, CpIdentidade identidade) throws Exception {
+		if (td.getVariable() != null && td.getVariable().size() > 0) {
+			for (WfDefinicaoDeVariavel v : (List<WfDefinicaoDeVariavel>) td.getVariable()) {
+				if (v.getEditingKind() == VariableEditingKind.READ_ONLY)
+					continue;
+				Object value = param != null ? param.get(v.getIdentifier()) : null;
+				if (v.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED && value == null)
+					throw new MissingParameterException(v.getIdentifier());
+				pi.getVariable().put(v.getIdentifier(), value);
+			}
+		}
+		WfDao.getInstance().gravarInstanciaDeProcedimento(pi);
 	}
 
 	/**

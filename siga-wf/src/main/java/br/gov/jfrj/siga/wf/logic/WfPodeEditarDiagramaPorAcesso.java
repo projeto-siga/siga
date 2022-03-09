@@ -27,6 +27,6 @@ public class WfPodeEditarDiagramaPorAcesso implements Expression {
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("tem acesso para editar", result);
+		return JLogic.explain("tem acesso para editar o diagrama " + pd.getSigla(), result);
 	}
 };

@@ -101,6 +101,16 @@ public class WfTarefaDocCriar extends
 	public TaskResult resume(WfDefinicaoDeTarefa td, WfProcedimento pi, Integer detourIndex, Map<String, Object> param,
 			Engine<?, ?, ?> engine) throws Exception {
 		String siglaDoDocumentoCriado = getSiglaDoDocumentoCriado(pi);
+		
+		// Caso o documento tenha sido finalizado, atualiza a variável
+		if (siglaDoDocumentoCriado.startsWith("TMP")) {
+			String siglaAtualDoDocumento = Service.getExService().obterSiglaAtual(siglaDoDocumentoCriado);
+			if (!siglaDoDocumentoCriado.equals(siglaAtualDoDocumento)) {
+				pi.getVariable().put(getIdentificadorDaVariavel(pi.getDefinicaoDeTarefaCorrente()), siglaAtualDoDocumento);
+				siglaDoDocumentoCriado = siglaAtualDoDocumento;
+			}
+		}
+		
 		if (isAguardarAssinatura(td) && !Service.getExService().isAssinado(siglaDoDocumentoCriado, null))
 			return new TaskResult(TaskResultKind.PAUSE, null, null, getEvent(td, pi), pi.calcResponsible(td));
 		if (isAguardarJuntada(td) && !Service.getExService().isJuntado(siglaDoDocumentoCriado, getSiglaMobilPai(pi)))

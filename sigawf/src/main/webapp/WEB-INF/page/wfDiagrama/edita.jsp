@@ -387,7 +387,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									ng-model="tarefaItem.param"
 									ng-options="item.id as item.nome for item in [{id: 'NAO_FINALIZAR', nome: 'Não Finalizar'},{id: 'FINALIZAR', nome: 'Finalizar'}]"
 									class="form-control"></select> </section>
-								<section ng-if="(tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO') && tarefaItem.param == 'FINALIZAR'"
+								<section ng-if="(tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO')"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="param2" title="" class="label mb-0">Aguardar</label>
 								<select ng-model="tarefaItem.param2"

@@ -435,6 +435,15 @@ public class ExServiceImpl implements ExService {
 			}
 		}
 	}
+	
+	@Override
+	public String obterSiglaAtual(String codigoDocumentoVia)
+			throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			return mob.getSigla();
+		}
+	}
 
 	@Override
 	public Boolean atualizarPrincipal(String codigoDocumento, String tipoPrincipal,
@@ -1163,6 +1172,9 @@ public class ExServiceImpl implements ExService {
 				mobFilho = mobFilho.doc().getPrimeiraVia();
 			else if (mobFilho.isGeralDeProcesso())
 				mobFilho = mobFilho.doc().getUltimoVolume();
+			
+			if (mobFilho == null)
+				return false;
 
 			if (!mobFilho.isJuntado())
 				return false;

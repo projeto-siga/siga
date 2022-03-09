@@ -10,13 +10,15 @@
 	<tr>
 		<td style="${tipoDeConfiguracao.style('PESSOA')}"><c:if
 				test="${not empty cfg.dpPessoa}">
-				<siga:selecionado sigla="${cfg.dpPessoa.iniciais}"
-					descricao="${cfg.dpPessoa.descricao}" />
+				<c:set var="pessoaAtual" value="${cfg.dpPessoa.pessoaAtual}"/>
+				<siga:selecionado sigla="${pessoaAtual.iniciais}"
+					descricao="${pessoaAtual.descricao}" />
 			</c:if></td>
 		<td style="${tipoDeConfiguracao.style('LOTACAO')}"><c:if
 				test="${not empty cfg.lotacao}">
-				<siga:selecionado sigla="${cfg.lotacao.sigla}"
-					descricao="${cfg.lotacao.descricao}" />
+				<c:set var="lotacaoAtual" value="${cfg.lotacao.lotacaoAtual}"/>
+				<siga:selecionado sigla="${lotacaoAtual.sigla}"
+					descricao="${lotacaoAtual.descricao}" />
 			</c:if></td>
 		<td style="${tipoDeConfiguracao.style('TIPO_DE_LOTACAO')}"><c:if
 				test="${not empty cfg.cpTipoLotacao}">${cfg.cpTipoLotacao.dscTpLotacao}</c:if></td>
@@ -31,13 +33,13 @@
 
 		<td style="${tipoDeConfiguracao.style('PESSOA_OBJETO')}"><c:if
 				test="${not empty cfg.pessoaObjeto}">
-				<siga:selecionado sigla="${cfg.pessoaObjeto.iniciais}"
-					descricao="${cfg.pessoaObjeto.descricao}" />
+				<siga:selecionado sigla="${cfg.pessoaObjeto.pessoaAtual.iniciais}"
+					descricao="${cfg.pessoaObjeto.pessoaAtual.descricao}" />
 			</c:if></td>
 		<td style="${tipoDeConfiguracao.style('LOTACAO_OBJETO')}"><c:if
 				test="${not empty cfg.lotacaoObjeto}">
-				<siga:selecionado sigla="${cfg.lotacaoObjeto.sigla}"
-					descricao="${cfg.lotacaoObjeto.descricao}" />
+				<siga:selecionado sigla="${cfg.lotacaoObjeto.lotacaoAtual.sigla}"
+					descricao="${cfg.lotacaoObjeto.lotacaoAtual.descricao}" />
 			</c:if></td>
 		<td style="${tipoDeConfiguracao.style('CARGO_OBJETO')}"><c:if
 				test="${not empty cfg.cargoObjeto}">${cfg.cargoObjeto.nomeCargo}</c:if></td>

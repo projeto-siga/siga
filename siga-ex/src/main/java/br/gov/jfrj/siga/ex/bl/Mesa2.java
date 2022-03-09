@@ -52,6 +52,7 @@ public class Mesa2 {
 		public String grupoOrdem;
 		public boolean grupoCollapsed;
 		public boolean grupoHide;
+		public boolean grupoAtingiuLimite;
 		public List<MesaItem> grupoDocs;
 		public List<Integer> grupoMarcadores;
 	}
@@ -369,6 +370,7 @@ public class Mesa2 {
 			boolean usuarioPosse, List<Integer> marcasAIgnorar) throws Exception {
 //		long tempoIni = System.nanoTime();
 		Date dtNow = dao.consultarDataEHoraDoServidor();
+		final int qtdMaxGrupo = 1000;
 
 		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
 				lotaTitular, exibeLotacao, ordemCrescenteData, marcasAIgnorar);
@@ -418,7 +420,8 @@ public class Mesa2 {
 								marcador = (CpMarcador) reference[1];
 								if (!map.containsKey(mobil)) {
 									// Mobil ainda nao foi incluido no grupo, inclui
-									if (listIdMobil.size() < gItem.grupoQtd) {
+									if (listIdMobil.size() < gItem.grupoQtd 
+											&& listIdMobil.size() < qtdMaxGrupo) {
 										DocDados docDados = new DocDados();
 										MeM mm = new MeM();
 										mm.marca = marca;
@@ -459,6 +462,11 @@ public class Mesa2 {
 						}
 						iMobs = iMobsFim;
 					}
+					if (map.size() < qtdMaxGrupo)
+						gItem.grupoAtingiuLimite = false;
+					else
+						gItem.grupoAtingiuLimite = true;
+					
 					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
 							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
 							usuarioPosse, marcasAIgnorar);

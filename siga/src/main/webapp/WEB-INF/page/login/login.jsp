@@ -9,6 +9,8 @@
 	desabilitarmenu="sim"
 	incluirJs="/siga/javascript/jquery.placeholder.js">
 
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+
 	<script type="text/javascript">
 		/*  converte para maiï¿ºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -93,6 +95,16 @@
 						<div class="row pt-3">
 							<div class="col">
 								<div class="text-center">
+								
+									<div class="row">
+										<div class="col">
+											<div class="form-group">
+												<label>Verificação</label> 
+												<div class="g-recaptcha" data-sitekey="${recaptchaSiteKey}"></div>
+											</div>
+										</div>
+									</div>
+							
 									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>								
 									<div class="mt-4">
 										<c:if test="${siga_cliente != 'GOVSP'}">

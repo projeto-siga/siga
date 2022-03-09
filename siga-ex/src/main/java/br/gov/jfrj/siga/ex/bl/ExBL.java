@@ -6151,7 +6151,8 @@ public class ExBL extends CpBL {
  				}
  			}
 		}
-		set.clear();
+		if (set != null)
+			set.clear();
 		docsParaAtualizacaoDeWorkflow.remove();
 	}
 

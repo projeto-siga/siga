@@ -66,6 +66,18 @@ public class WfDefinicaoDeVariavel extends HistoricoAuditavelSuporte
 
 	@Column(name = "DEFV_NR_ORDEM")
 	private int ordem;
+	
+	public WfDefinicaoDeVariavel() {
+		super();
+	}
+
+	public WfDefinicaoDeVariavel(WfDefinicaoDeVariavel toClone) {
+		super();
+		this.identificador = toClone.identificador;
+		this.nome = toClone.nome;
+		this.tipo = toClone.tipo;
+		this.acesso = WfTipoDeAcessoDeVariavel.READ_WRITE;
+	}
 
 	//
 	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam

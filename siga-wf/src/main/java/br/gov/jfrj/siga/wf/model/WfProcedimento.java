@@ -52,6 +52,7 @@ import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.PodeSim;
+import br.gov.jfrj.siga.wf.logic.WfPodeEditarVariaveis;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
@@ -574,6 +575,9 @@ public class WfProcedimento extends Objeto
 		List<AcaoVO> set = new ArrayList<>();
 
 		set.add(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotarModal").exp(new PodeSim()).build());
+		
+		set.add(AcaoVO.builder().nome("Editar Variáveis").icone("database_edit").acao("/app/procedimento/" + getSiglaCompacta() + "/editar-variaveis")
+				.exp(new WfPodeEditarVariaveis(this, titular, lotaTitular)).build());
 
 		set.add(AcaoVO.builder().nome("_Pegar").icone("add").acao("/app/procedimento/" + getSiglaCompacta() + "/pegar")
 				.exp(new WfPodePegar(this, titular, lotaTitular)).post(true).build());

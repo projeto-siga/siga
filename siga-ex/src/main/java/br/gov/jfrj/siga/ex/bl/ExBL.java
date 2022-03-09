@@ -3077,6 +3077,9 @@ public class ExBL extends CpBL {
 			if (c.before(dtDocCalendar))
 				throw new AplicacaoException("não é permitido criar documento com data futura");
 		}
+		
+		// Acrescenta o TMP na lista de notificações do WF, para que seja atualizado o evento com o código que será recebido depois da finalização
+		atualizarWorkFlowAdicionarCodigoDeDocumento(doc.getCodigo());
 
 		try {
 			// atualizando a classificacao do documento
@@ -6189,20 +6192,15 @@ public class ExBL extends CpBL {
  	}
 
 	private void atualizarWorkflow(ExDocumento doc, ExMobil mob, ExMovimentacao mov) {
-		Set<String> set = docsParaAtualizacaoDeWorkflow.get();
-		if (set == null) {
-			docsParaAtualizacaoDeWorkflow.set(new HashSet<>());
-			set = docsParaAtualizacaoDeWorkflow.get();
-		}
-		
+		Set<String> set = null;
 		if (mov != null) {
-			set.add(mov.mob().doc().getCodigo());
+			set = atualizarWorkFlowAdicionarCodigoDeDocumento(mov.mob().doc().getCodigo());
 			if (mov.getExMobilRef() != null)
-				set.add(mov.getExMobilRef().doc().getCodigo());
+				set = atualizarWorkFlowAdicionarCodigoDeDocumento(mov.getExMobilRef().doc().getCodigo());
 		} else if (mob != null) 
-			set.add(mob.doc().getCodigo());
+			set = atualizarWorkFlowAdicionarCodigoDeDocumento(mob.doc().getCodigo());
 		else if (doc != null)
-			set.add(doc.getCodigo());
+			set = atualizarWorkFlowAdicionarCodigoDeDocumento(doc.getCodigo());
 		
 		// Nato: criei uma threadLocal para suprimir a atualização do WF. Isso é especialmente
 		// necessário para métodos que realizam várias operações, como por exemplo a assinatura,
@@ -6224,7 +6222,8 @@ public class ExBL extends CpBL {
  				}
  			}
 		}
-		set.clear();
+		if (set != null)
+			set.clear();
 		docsParaAtualizacaoDeWorkflow.remove();
 	}
 
@@ -6237,7 +6236,14 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void atualizarWorkFlow(ExDocumento doc) throws AplicacaoException {
+	public Set<String> atualizarWorkFlowAdicionarCodigoDeDocumento(String codigoDoDocumento) throws AplicacaoException {
+		Set<String> set = docsParaAtualizacaoDeWorkflow.get();
+		if (set == null) {
+			docsParaAtualizacaoDeWorkflow.set(new HashSet<>());
+			set = docsParaAtualizacaoDeWorkflow.get();
+		}
+		set.add(codigoDoDocumento);
+		return set;
 	}
 
 	/**

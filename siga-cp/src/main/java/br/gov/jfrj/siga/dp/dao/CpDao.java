@@ -449,6 +449,7 @@ public class CpDao extends ModeloDao {
 				s = s.replace(' ', '%');
 			else
 				s = "";
+			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
 			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);

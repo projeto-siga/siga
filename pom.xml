@@ -635,7 +635,7 @@
 			<dependency>
 				<groupId>com.crivano</groupId>
 				<artifactId>jlogic</artifactId>
-				<version>1.0.3</version>
+				<version>1.1.1</version>
 
 			</dependency>
 			<dependency>

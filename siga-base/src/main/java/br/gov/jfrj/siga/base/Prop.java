@@ -287,11 +287,6 @@ public class Prop {
 		provider.addPublicProperty("/siga.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
 		
 		/* Habilita que Usuários distintos inclusos como Cossignatários ou Responsáveis pela Assinatura,
-		 * possam visualizar o “Documento Composto (Arvore Hierarquica) no SIGA”
-		 * */
-		provider.addPublicProperty("/siga.usuarios.distintos.visualizar.doc.arvore.composto", "false");
-		
-		/* Habilita que Usuários distintos inclusos como Cossignatários ou Responsáveis pela Assinatura,
 		 * possam visualizar o “Documento Composto (Arvore Hierarquica Completa) no SIGA”
 		 * */
 		provider.addPublicProperty("/siga.usuarios.distintos.visualizar.doc.arvore", "false");

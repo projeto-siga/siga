@@ -3877,7 +3877,7 @@ public class ExBL extends CpBL {
 	private List<ExMovimentacao> getListaMovimentosPorPessoaSubscritora(List<ExMovimentacao> movs, DpPessoa subscritor){
 		List<ExMovimentacao> movsPessoa = new ArrayList<ExMovimentacao>();
 		for (ExMovimentacao mov : movs) {
-			if (!mov.isCancelada() && mov.getSubscritor().equals(subscritor)) {
+			if (!mov.isCancelada() && mov.getSubscritor().equivale(subscritor)) {
 				movsPessoa.add(mov);
 			}
 		}
@@ -3966,7 +3966,7 @@ public class ExBL extends CpBL {
 				if (mov.getExMovimentacaoCanceladora() == null) {					
 					DpPessoa idSubscritor = mov.getSubscritor();
 					if (ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(mov.getExTipoMovimentacao())
-							&& !mov.getCadastrante().equals(mov.getSubscritor())) {
+							&& !mov.getCadastrante().equivale(mov.getSubscritor())) {
 						listaSubscritor.add(idSubscritor);
 					}
 				}
@@ -3982,7 +3982,7 @@ public class ExBL extends CpBL {
 	private DpPessoa getSubscritorDiferenteCadastrante(ExDocumento doc) {
 		//Caso o usuario cadastrante do ExDoc for diferente do usuario subscritor
 		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
-						&& !doc.getCadastrante().equals(doc.getSubscritor())) {
+						&& !doc.getCadastrante().equivale(doc.getSubscritor())) {
 			return doc.getSubscritor();
 		}
 		return null;
@@ -4004,7 +4004,7 @@ public class ExBL extends CpBL {
 			for (ExMovimentacao mov : listaMovAssinaturas) {
 				if (DateUtils.isToday(mov.getData())) {
 					for (DpPessoa pessoa : listaSubscrCossig) {
-						if (mov.getCadastrante().equals(pessoa)) {
+						if (mov.getCadastrante().equivale(pessoa)) {
 							listaSubscrCossigFinal.add(pessoa);
 						}
 					}

@@ -2750,7 +2750,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				continue;
 			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR_SUBSCRITOR)) 
 				if (dpPessoa != null) {
-					if (mov.getSubscritor().equals(dpPessoa))
+					if (mov.getSubscritor().equivale(dpPessoa))
 						return Boolean.TRUE;
 				} else {
 					return Boolean.TRUE;

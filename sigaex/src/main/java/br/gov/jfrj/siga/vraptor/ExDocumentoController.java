@@ -811,8 +811,8 @@ public class ExDocumentoController extends ExController {
 			
 			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
 				ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
-				Map<String, String> form = new TreeMap<String, String>();
-				Utils.mapFromUrlEncodedForm(form, doc.getConteudoBlobForm());
+				
+				Map<String, String> form = Ex.getInstance().getBL().obterEntrevista(doc, false);
 				
 				for(Entry<String,String> entry : form.entrySet()) {
 					if(!parFreeMarker.containsKey(entry.getKey()))

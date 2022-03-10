@@ -2744,17 +2744,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	public boolean possuiVinculacaoPapelRevisorSubscritor(DpPessoa dpPessoa) {
 		List<ExMovimentacao> movs = this.getMobilGeral()
-				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, false);
+				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		for (ExMovimentacao mov : movs) {
-			if (mov.isCancelada())
-				continue;
-			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR_SUBSCRITOR)) 
+			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR_SUBSCRITOR)) { 
 				if (dpPessoa != null) {
 					if (mov.getSubscritor().equivale(dpPessoa))
 						return Boolean.TRUE;
 				} else {
 					return Boolean.TRUE;
 				}
+			}
 		}
 		return Boolean.FALSE;
 	}

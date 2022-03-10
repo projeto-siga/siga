@@ -19,6 +19,8 @@
 package br.gov.jfrj.siga.hibernate.ext;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
+import br.gov.jfrj.siga.hibernate.query.ext.IMontadorQuery;
 
 public class MontadorQuery implements IMontadorQuery {
 
@@ -94,8 +96,7 @@ public class MontadorQuery implements IMontadorQuery {
 			sbf.append(" and doc.exClassificacao.hisIdIni = :classificacaoSelId");
 		}
 
-		if (flt.getDescrDocumento() != null
-				&& !flt.getDescrDocumento().trim().equals("")) {
+		if (flt.getDescrDocumento() != null && !flt.getDescrDocumento().trim().equals("") && flt.getListaIdDoc() == null) {
 			sbf.append(" and doc.descrDocumentoAI like :descrDocumento");
 		}
 
@@ -182,6 +183,15 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
 			sbf.append(" and exMod.hisIdIni = :hisIdIni");
+		}
+		
+		if(flt.getListaIdDoc() != null && !flt.getListaIdDoc().isEmpty()) {
+			sbf.append(" and (");
+			
+			for(int i=0; i <= flt.getListaIdDoc().size()/1000; i++)
+				sbf.append(" doc.idDoc IN :listaIdDoc" + i + " or");
+			
+			sbf.delete(sbf.length()-3, sbf.length()).append(")");
 		}
 
 		if (!apenasCount) {

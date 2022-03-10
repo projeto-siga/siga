@@ -136,7 +136,7 @@ public class ExServiceImpl implements ExService {
 				if (!mob.isAtendente(destinoParser.getPessoa(), destinoParser.getLotacao())) {
 					Ex.getInstance().getBL().transferir(null, null, cadastranteParser.getPessoa(),
 							cadastranteParser.getLotacao(), mob, null, null, null, destinoParser.getLotacao(),
-							destinoParser.getPessoa(), null, null, null, null, null, false, null, null, null,
+							destinoParser.getPessoa(), null, null, null, null, null, null, false, null, null, null,
 							forcarTransferencia, false, ExTipoDeMovimentacao.TRANSFERENCIA);
 				}
 				return true;
@@ -433,6 +433,15 @@ public class ExServiceImpl implements ExService {
 				ctx.rollback(e);
 				throw e;
 			}
+		}
+	}
+	
+	@Override
+	public String obterSiglaAtual(String codigoDocumentoVia)
+			throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
+			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			return mob.getSigla();
 		}
 	}
 
@@ -1176,6 +1185,9 @@ public class ExServiceImpl implements ExService {
 				mobFilho = mobFilho.doc().getPrimeiraVia();
 			else if (mobFilho.isGeralDeProcesso())
 				mobFilho = mobFilho.doc().getUltimoVolume();
+			
+			if (mobFilho == null)
+				return false;
 
 			if (!mobFilho.isJuntado())
 				return false;

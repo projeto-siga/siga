@@ -445,6 +445,10 @@ ${meta}
 					</div>
 				</c:if>
 			</div>
+			<script>
+				if('${mensagemConsole}' != '')
+					console.log('${mensagemConsole}');
+			</script>
 			<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
 				<div class="col" >
 					<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">

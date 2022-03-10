@@ -633,7 +633,7 @@ public class ExMobilController extends
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.include("msgCabecClass", "alert-warning");
-    		result.include("mensagemCabec", "Não foi possível utilizar a pesquisa via XJUS. A consulta será realizada via Banco de Dados: " + e.getMessage());		
+    		result.include("mensagemConsole", "Não foi possível utilizar a pesquisa via XJUS. A consulta será realizada via Banco de Dados: " + e.getMessage());		
 		}
 	}
 

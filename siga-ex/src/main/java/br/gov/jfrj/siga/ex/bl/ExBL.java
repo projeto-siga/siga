@@ -3090,6 +3090,9 @@ public class ExBL extends CpBL {
 			if (c.before(dtDocCalendar))
 				throw new AplicacaoException("não é permitido criar documento com data futura");
 		}
+		
+		// Acrescenta o TMP na lista de notificações do WF, para que seja atualizado o evento com o código que será recebido depois da finalização
+		atualizarWorkFlowAdicionarCodigoDeDocumento(doc.getCodigo());
 
 		try {
 			// atualizando a classificacao do documento
@@ -6353,20 +6356,15 @@ public class ExBL extends CpBL {
  	}
 
 	private void atualizarWorkflow(ExDocumento doc, ExMobil mob, ExMovimentacao mov) {
-		Set<String> set = docsParaAtualizacaoDeWorkflow.get();
-		if (set == null) {
-			docsParaAtualizacaoDeWorkflow.set(new HashSet<>());
-			set = docsParaAtualizacaoDeWorkflow.get();
-		}
-		
+		Set<String> set = null;
 		if (mov != null) {
-			set.add(mov.mob().doc().getCodigo());
+			set = atualizarWorkFlowAdicionarCodigoDeDocumento(mov.mob().doc().getCodigo());
 			if (mov.getExMobilRef() != null)
-				set.add(mov.getExMobilRef().doc().getCodigo());
+				set = atualizarWorkFlowAdicionarCodigoDeDocumento(mov.getExMobilRef().doc().getCodigo());
 		} else if (mob != null) 
-			set.add(mob.doc().getCodigo());
+			set = atualizarWorkFlowAdicionarCodigoDeDocumento(mob.doc().getCodigo());
 		else if (doc != null)
-			set.add(doc.getCodigo());
+			set = atualizarWorkFlowAdicionarCodigoDeDocumento(doc.getCodigo());
 		
 		// Nato: criei uma threadLocal para suprimir a atualização do WF. Isso é especialmente
 		// necessário para métodos que realizam várias operações, como por exemplo a assinatura,
@@ -6388,7 +6386,8 @@ public class ExBL extends CpBL {
  				}
  			}
 		}
-		set.clear();
+		if (set != null)
+			set.clear();
 		docsParaAtualizacaoDeWorkflow.remove();
 	}
 
@@ -6401,7 +6400,14 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void atualizarWorkFlow(ExDocumento doc) throws AplicacaoException {
+	public Set<String> atualizarWorkFlowAdicionarCodigoDeDocumento(String codigoDoDocumento) throws AplicacaoException {
+		Set<String> set = docsParaAtualizacaoDeWorkflow.get();
+		if (set == null) {
+			docsParaAtualizacaoDeWorkflow.set(new HashSet<>());
+			set = docsParaAtualizacaoDeWorkflow.get();
+		}
+		set.add(codigoDoDocumento);
+		return set;
 	}
 
 	/**
@@ -8277,12 +8283,13 @@ public class ExBL extends CpBL {
 		if(formulario == null)
 			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + ".");
 		
-		String descricao = formulario.getDescrDocumento();
-		SiafDoc doc = new SiafDoc(descricao.split(";"));
+		Map<String, String> form = new TreeMap<String, String>();
+		Utils.mapFromUrlEncodedForm(form, formulario.getConteudoBlobForm());
+		SiafDoc siafDoc = new SiafDoc(form);
 		
-		doc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
+		siafDoc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
 		
-		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, doc);
+		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, siafDoc);
 	}
 
 	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {
@@ -8345,22 +8352,24 @@ public class ExBL extends CpBL {
 	}
 	
 	public String obterCodigoUnico(ExDocumento doc, boolean comDigitoVerificador) {
-		ExDocumento formulario = obterFormularioSiafem(doc);
+		ExDocumento doctSiafem = obterFormularioSiafem(doc);
 		
-		if(formulario == null)
+		if(doctSiafem == null)
 			return null;
+				
+		Map<String, String> form = new TreeMap<String, String>();
+		Utils.mapFromUrlEncodedForm(form, doctSiafem.getConteudoBlobForm());
 		
-		String[] tokens = formulario.getDescrDocumento().split(";");
+		String codigoUnico = form.get("codigoUnico") == null ? "" : form.get("codigoUnico").trim();
+		String digitoCodigoUnico = form.get("digitoVerificadorCodigoUnico") == null ? "" : form.get("digitoVerificadorCodigoUnico").trim();
 		
-		if(tokens.length <= 0 || tokens[0].trim().length() == 0)
+		if(codigoUnico.isEmpty() || digitoCodigoUnico.isEmpty())
 			throw new AplicacaoException("O código único não foi gerado corretamente");
-		
-		String codigo = tokens[0].trim();
-		
+				
 		if(!comDigitoVerificador)
-			codigo = codigo.substring(0,codigo.length()-2);
+			return codigoUnico;
 		
-		return codigo;
+		return codigoUnico + "-" + digitoCodigoUnico;
 	}
 	
 	public String calcularDigitoVerificador(String numero) {

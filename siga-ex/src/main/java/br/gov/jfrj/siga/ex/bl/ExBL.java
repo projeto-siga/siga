@@ -6146,7 +6146,7 @@ public class ExBL extends CpBL {
 		// Nato: meio confuso esse código de commitar a transação e depois atualizar o workflow, mas
 		// quis manter assim mesmo para não correr o risco de mudar alguma lógica e provocar algum erro
 		// inesperado.
-		if (Prop.getBool("/sigawf.ativo") && (ContextoPersistencia.getUsuarioDeSistema() == null || ContextoPersistencia.getUsuarioDeSistema() != UsuarioDeSistemaEnum.SIGA_WF)) {
+		if (set != null && Prop.getBool("/sigawf.ativo") && (ContextoPersistencia.getUsuarioDeSistema() == null || ContextoPersistencia.getUsuarioDeSistema() != UsuarioDeSistemaEnum.SIGA_WF)) {
 			ContextoPersistencia.flushTransaction();
  			for (String d : set) {
  				try {

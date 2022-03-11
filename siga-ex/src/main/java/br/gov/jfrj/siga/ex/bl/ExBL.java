@@ -3179,7 +3179,7 @@ public class ExBL extends CpBL {
 			Date dt = ExDao.getInstance().dt();
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL ? doc.getListaArvoreTodosDocs()
 					: doc.getListaDocsArvoreVerticalParcial();
-			List<DpPessoa> listaCossigDoc = getListaPessoaCossigSubscritor(doc);
+			List<DpPessoa> listaCossigDoc = doc.getListaSubscritorECossignatariosDiffCadastranteDoc();
 			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_REVISOR_SUBSCRITOR, ExPapel.class, false);
 
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
@@ -3955,40 +3955,7 @@ public class ExBL extends CpBL {
 	}
 	
 	private boolean possuiInclusaoCossignatarioSubscritor(ExDocumento doc) {
-		return !getListaPessoaCossigSubscritor(doc).isEmpty();
-	}
-	
-	private List<DpPessoa> getListaPessoaCossigSubscritor(ExDocumento doc) {
-		List<DpPessoa> listaSubscritor = new ArrayList<>();
-		
-		SortedSet<ExMovimentacao> listMovimentacao = doc.getMobilGeral().getExMovimentacaoSet();
-		if (listMovimentacao != null) {
-			for (ExMovimentacao mov : listMovimentacao) {
-				if (mov.isCancelada())
-					continue;
-				if (mov.getExMovimentacaoCanceladora() == null) {					
-					DpPessoa idSubscritor = mov.getSubscritor();
-					if (ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(mov.getExTipoMovimentacao())
-							&& !mov.getCadastrante().equivale(mov.getSubscritor())) {
-						listaSubscritor.add(idSubscritor);
-					}
-				}
-			}
-		}
-		DpPessoa subscritor = getSubscritorDiferenteCadastrante(doc);
-		if (subscritor != null)
-			listaSubscritor.add(subscritor);
-		
-		return listaSubscritor;
-	}
-	
-	private DpPessoa getSubscritorDiferenteCadastrante(ExDocumento doc) {
-		//Caso o usuario cadastrante do ExDoc for diferente do usuario subscritor
-		if ((doc.getCadastrante() != null && doc.getSubscritor() != null ) 
-						&& !doc.getCadastrante().equivale(doc.getSubscritor())) {
-			return doc.getSubscritor();
-		}
-		return null;
+		return !doc.getListaSubscritorECossignatariosDiffCadastranteDoc().isEmpty();
 	}
 	
 	private boolean possuiAssinaturaSubscritorCossignatarioHoje(ExDocumento doc){
@@ -3997,11 +3964,8 @@ public class ExBL extends CpBL {
 	
 	private List<DpPessoa> listaPessoasSubscritorCossignatarioAssinadoHoje(ExDocumento doc) {
 		List<DpPessoa> listaSubscrCossigFinal = new ArrayList<DpPessoa>();
-		List<DpPessoa> listaSubscrCossig =  getListaPessoaCossigSubscritor(doc);
-		DpPessoa subscritor = getSubscritorDiferenteCadastrante(doc);
-		if (subscritor != null)
-			listaSubscrCossig.add(subscritor);
-		
+		List<DpPessoa> listaSubscrCossig =  doc.getListaSubscritorECossignatariosDiffCadastranteDoc();
+
 		if (!listaSubscrCossig.isEmpty()) {
 			Set<ExMovimentacao> listaMovAssinaturas = doc.getAssinaturasComTokenOuSenhaERegistros();
 			for (ExMovimentacao mov : listaMovAssinaturas) {

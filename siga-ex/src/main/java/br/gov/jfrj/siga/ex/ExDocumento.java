@@ -2505,6 +2505,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 		return subscritores;
 	}
+	
+	public List<DpPessoa> getListaSubscritorECossignatariosDiffCadastranteDoc() {
+		List<DpPessoa> listaSubscritor = new ArrayList<>();
+		for (DpPessoa dpPessoa : this.getSubscritorECosignatarios()) {
+			if(!this.getCadastrante().equivale(dpPessoa))
+				listaSubscritor.add(dpPessoa);
+		}
+		return listaSubscritor;
+	}
 
 	/**
 	 * Retorna uma lista com o todos os cossignatários.

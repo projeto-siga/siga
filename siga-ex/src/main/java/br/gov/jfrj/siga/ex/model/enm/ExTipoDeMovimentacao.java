@@ -231,4 +231,10 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
 	}
 
+	public static boolean hasRecebimento(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.RECEBIMENTO
+				|| id == ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO
+				|| id == ExTipoDeMovimentacao.CONCLUSAO;
+	}
+
 }

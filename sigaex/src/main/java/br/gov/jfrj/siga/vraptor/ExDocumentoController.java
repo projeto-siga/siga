@@ -971,6 +971,7 @@ public class ExDocumentoController extends ExController {
 				s = ".";
 			}
 			//s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
+			s = " Documento com acesso limitado ao órgão, lotação ou pessoa. " + s;
 
 			String ERRO_INACESSIVEL_USUARIO;
 

@@ -3234,23 +3234,26 @@ public class ExBL extends CpBL {
 			ArrayList<String> values = new ArrayList<String>();
 			{ // Adiciona no contexto a via Geral
 				keys.add("doc_document");
-				values.add(doc.getCodigo());
+				if (doc.isExpediente())
+					values.add(doc.getMobilDefaultParaReceberJuntada().getSigla());
+				else
+					values.add(doc.getCodigo());
 			}
-			for (ExMobil mob : doc.getExMobilSet()) {
-				if (mob.isGeral())
-					continue;
-				if (mob.isVia() || mob.isVolume()) {
-					keys.add("doc_" + (char) ('a' + mob.getNumSequencia()));
-					values.add((String) mob.getSigla());
-				}
-			}
+//			for (ExMobil mob : doc.getExMobilSet()) {
+//				if (mob.isGeral())
+//					continue;
+//				if (mob.isVia() || mob.isVolume()) {
+//					keys.add("doc_" + (char) ('a' + mob.getNumSequencia()));
+//					values.add((String) mob.getSigla());
+//				}
+//			}
 
-			for (int n = 0; n < doc.getSetVias().size(); n++) { // Adiciona no
-				// contexto a
-				// via 'n'
-				keys.add("doc_" + (char) ('a' + n));
-				values.add(doc.getCodigo() + "-" + (char) ('A' + n));
-			}
+//			for (int n = 0; n < doc.getSetVias().size(); n++) { // Adiciona no
+//				// contexto a
+//				// via 'n'
+//				keys.add("doc_" + (char) ('a' + n));
+//				values.add(doc.getCodigo() + "-" + (char) ('A' + n));
+//			}
 			List<ExPapel> papeis = dao().listarExPapeis();
 			for (ExPapel papel : papeis) {
 				List<DpResponsavel> responsaveis = doc.getResponsaveisPorPapel(papel);

@@ -56,10 +56,12 @@ public class ExApiV1Context extends ApiContextSupport {
 
 	static void assertAcesso(final ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, mob)) {
+			 
 			String s = "";
 			s += mob.doc().getListaDeAcessosString();
 			s = "(" + s + ")";
-			s = " " + mob.doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
+			//s = " " + mob.doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
+			s = " Documento com acesso limitado ao órgão, lotação ou pessoa. " + s;
 
 			Map<ExPapel, List<Object>> mapa = mob.doc().getPerfis();
 			boolean isInteressado = false;

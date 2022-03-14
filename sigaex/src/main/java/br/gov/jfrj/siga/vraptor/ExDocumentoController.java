@@ -960,7 +960,7 @@ public class ExDocumentoController extends ExController {
 	private void assertAcesso(final ExDocumentoDTO exDocumentoDTO) throws Exception {
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMob())) {
 
-			String msgDestinoDoc = arquivamentoAutomatico(exDocumentoDTO.getMob());
+			String msgDestinoDoc ="."; //	arquivamentoAutomatico(exDocumentoDTO.getMob());
 			final boolean exibeNomeAcesso = Prop.getBool("exibe.nome.acesso");
 
 			String s = "";
@@ -970,7 +970,7 @@ public class ExDocumentoController extends ExController {
 			} else {
 				s = ".";
 			}
-			s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
+			//s = " " + exDocumentoDTO.getMob().doc().getExNivelAcessoAtual().getNmNivelAcesso() + " " + s;
 
 			String ERRO_INACESSIVEL_USUARIO;
 
@@ -1049,7 +1049,7 @@ public class ExDocumentoController extends ExController {
 				mobArq = mob.doc().getMobilGeral();
 			} else {
 				if (mob.isGeral()) {
-					msgDestinoDoc = "Para arquivar ou cancelar informe a via.";
+					msgDestinoDoc =""; 	//"Para arquivar ou cancelar informe a via.";
 					return msgDestinoDoc;
 				} else {
 					mobUlt = mob;

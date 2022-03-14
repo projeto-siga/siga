@@ -26,7 +26,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
@@ -34,6 +38,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Table(name = "corporativo.cp_grupo")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 		Comparable<CpGrupo>, CpConvertableEntity {

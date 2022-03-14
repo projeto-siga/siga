@@ -2544,7 +2544,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 	
 	public Pendencias calcularTramitesPendentes() {
-		SortedSet<ExMovimentacao> movs = new TreeSet<>();;
+		SortedSet<ExMovimentacao> movs = new TreeSet<>();
 		if (isVolume()) {
 			ExMobil mob = this;
 			
@@ -2571,6 +2571,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		} else {
 			movs.addAll(getExMovimentacaoSet());
 		}
+		
+		// Elimina recebimentos duplicados
+		ExMovimentacao movAnt = null;
+		SortedSet<ExMovimentacao> movsAExcluir = new TreeSet<>();
+		for (ExMovimentacao mov : movs) {
+			if (movAnt != null 
+					&& (ExTipoDeMovimentacao.hasTransferencia(mov.getExTipoMovimentacao())
+							|| ExTipoDeMovimentacao.hasRecebimento(mov.getExTipoMovimentacao()))
+					&& Utils.igual(mov.getExTipoMovimentacao(), movAnt.getExTipoMovimentacao())
+					&& Utils.igual(mov.getExMobilRef(), movAnt.getExMobilRef()))
+				movsAExcluir.add(mov);
+			movAnt = mov;
+		}
+		movs.removeAll(movsAExcluir);
+		
 		Pendencias p = new Pendencias();
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada())

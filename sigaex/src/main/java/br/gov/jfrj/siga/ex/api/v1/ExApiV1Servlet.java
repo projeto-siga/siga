@@ -260,6 +260,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("ws.siafem.url.namespace", null);
 		addPublicProperty("ws.siafem.service.localpart", null);
 		addPublicProperty("ws.siafem.service.localpartsoap", null);
+		
+		addPublicProperty("documento.novo.modelo.padrao", "Memorando");
 	}
 
 	@Override

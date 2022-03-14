@@ -106,6 +106,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.base.util.Utils;
@@ -166,6 +167,7 @@ import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.logic.ExECossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeApensar;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
@@ -202,6 +204,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeReceberDocumentoSemAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeReiniciarNumeracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerJuntado;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
@@ -4256,12 +4259,24 @@ public class ExBL extends CpBL {
 
 	public void incluirCosignatario(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor, final String funcaoCosignatario) throws AplicacaoException {
-				
-		try {
-			if (subscritor == null) {
-				throw new AplicacaoException("Cossignatário não foi informado");
-			}
+			
+		if (subscritor == null) {
+			throw new RegraNegocioException("Cossignatário não foi informado");
+		}
+		
+		if(Ex.getInstance().getComp().exp(ExECossignatario.class, subscritor, doc).eval()) {
+			throw new RegraNegocioException("Não é possivel incluir o cossignatário, pois ele já foi incluído!");
+		}
+		
+		if (!new ExPodeRestringirCossignatarioSubscritor(cadastrante, lotaCadastrante, subscritor, subscritor.getLotacao(),
+				subscritor.getCargo(),
+				subscritor.getFuncaoConfianca(),
+				subscritor.getOrgaoUsuario()).eval()) {
+			throw new RegraNegocioException("Esse usuário não está disponível para inclusão de Cossignatário / " + SigaMessages.getMessage("documento.subscritor"));
+		}
 
+		try {
+			
 			iniciarAlteracao();
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
@@ -6340,7 +6355,7 @@ public class ExBL extends CpBL {
 		// Nato: meio confuso esse código de commitar a transação e depois atualizar o workflow, mas
 		// quis manter assim mesmo para não correr o risco de mudar alguma lógica e provocar algum erro
 		// inesperado.
-		if (Prop.getBool("/sigawf.ativo") && (ContextoPersistencia.getUsuarioDeSistema() == null || ContextoPersistencia.getUsuarioDeSistema() != UsuarioDeSistemaEnum.SIGA_WF)) {
+		if (set != null && Prop.getBool("/sigawf.ativo") && (ContextoPersistencia.getUsuarioDeSistema() == null || ContextoPersistencia.getUsuarioDeSistema() != UsuarioDeSistemaEnum.SIGA_WF)) {
 			ContextoPersistencia.flushTransaction();
  			for (String d : set) {
  				try {

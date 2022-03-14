@@ -103,6 +103,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 	}
 
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final ExDocumento doc) {
+		try {
+			return clazz.getDeclaredConstructor(ExDocumento.class, DpPessoa.class).newInstance(doc,
+					titular);
+		} catch (Exception e) {
+			throw new RuntimeException("Erro executando lógica de negócios", e);
+		}
+	}
+	
 	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
 			final ExDocumento doc) {
 		return exp(clazz, titular, lotaTitular, doc).eval();

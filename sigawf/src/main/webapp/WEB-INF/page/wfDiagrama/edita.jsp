@@ -377,23 +377,26 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="angucomplete-ctrl"
 									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
 								</section>
-								<section ng-if="tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
+								<section
+									ng-if="tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
 									ng-if="tarefaItem.preenchimentos"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="ref2" title="" class="label mb-0">Preenchimento</label> <select
 									ng-model="tarefaItem.ref2"
 									ng-options="item.idPreenchimento as item.nome for item in tarefaItem.preenchimentos"
 									class="form-control"></select> </section>
-								<section ng-if="tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
+								<section
+									ng-if="tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="param" title="" class="label mb-0">Finalizar</label> <select
 									ng-model="tarefaItem.param"
 									ng-options="item.id as item.nome for item in [{id: 'NAO_FINALIZAR', nome: 'Não Finalizar'},{id: 'FINALIZAR', nome: 'Finalizar'}]"
 									class="form-control"></select> </section>
-								<section ng-if="(tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO')"
+								<section
+									ng-if="(tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO')"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="param2" title="" class="label mb-0">Aguardar</label>
-								<select ng-model="tarefaItem.param2"
+									for="param2" title="" class="label mb-0">Aguardar</label> <select
+									ng-model="tarefaItem.param2"
 									ng-options="item.id as item.nome for item in [{id: 'NAO_AGUARDAR', nome: 'Não Aguardar'},{id: 'AGUARDAR_ASSINATURA', nome: 'Aguardar Assinatura'},{id: 'AGUARDAR_JUNTADA', nome: 'Aguardar Juntada ao Principal'}]"
 									class="form-control"></select> </section>
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"
@@ -597,14 +600,15 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 			</div>
 		</fieldset>
 
-		<div class="row">
+		<div class="row mt-3 mb-3">
 			<div class="col-sm-12">
 				<div class="form-group mb-0">
 					<button class="btn btn-primary" ng-click="gravar()">Ok</button>
-					<button value="Desativar" class="btn btn-primary"
+					<button onclick="javascript:history.back();" class="btn btn-primary">Cancelar</button>
+					<button value="Desativar" class="btn btn-danger"
 						ng-click="desativar()">Desativar</button>
-					<button onclick="javascript:history.back();"
-						class="btn btn-primary">Cancelar</button>
+					<button ng-click="colar()" class="btn btn-info float-right ml-2">Colar</button>
+					<button ng-click="copiar()" class="btn btn-info float-right ml-2">Copiar</button>
 				</div>
 			</div>
 		</div>

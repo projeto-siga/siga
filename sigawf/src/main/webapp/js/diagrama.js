@@ -39,10 +39,40 @@ app
 		function($scope, $http, debounce) {
 			$scope.data = {};
 
+			$scope.copiar = function() {
+				var text_to_share = JSON.stringify($scope.data.workflow);
+
+				// create temp element
+				var copyElement = document.createElement("span");
+				copyElement.appendChild(document.createTextNode(text_to_share));
+				copyElement.id = 'tempCopyToClipboard';
+				angular.element(document.body.append(copyElement));
+
+				// select the text
+				var range = document.createRange();
+				range.selectNode(copyElement);
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+
+				// copy & cleanup
+				document.execCommand('copy');
+				window.getSelection().removeAllRanges();
+				copyElement.remove();
+
+				window.alert("O conteúdo do diagrama foi copiado para o clipboard. Agora, abra um outro diagrama e clique em 'Colar' para fazer a transferência.")
+			}
+
+			$scope.colar = function() {
+				var s = window.prompt("Tecle Ctrl-V para colar o diagrama previamente copiado, e clique OK");
+				if (!s || s === "") return;
+				s = JSON.parse(s);
+				$scope.data.workflow = s;
+			}
+
 			$scope.gravar = function() {
-				if(!validarFormulario($scope.data.workflow))
+				if (!validarFormulario($scope.data.workflow))
 					return;
-					
+
 				var fd = formdata({
 					id: $scope.id,
 					pd: $scope.encode($scope.data.workflow)
@@ -63,19 +93,20 @@ app
 			}
 
 			$scope.desativar = function() {
-				$http({
-					url: '/sigawf/app/diagrama/desativar?id=' + $scope.id,
-					method: "POST",
-					data: {},
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-					}
-				}).then(function(response) {
-					window.location = '/sigawf/app/diagrama/listar'
-				}, function(response) {
-					alert(response.data.errormsg)
-				});
-
+				if (confirm('Se o diagrama for desativado, não será possível reativá-lo depois. Tem certeza que deseja desativar?')) {
+					$http({
+						url: '/sigawf/app/diagrama/desativar?id=' + $scope.id,
+						method: "POST",
+						data: {},
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+						}
+					}).then(function(response) {
+						window.location = '/sigawf/app/diagrama/listar'
+					}, function(response) {
+						alert(response.data.errormsg)
+					});
+				}
 			}
 
 			$scope.encode = function(d) {
@@ -643,6 +674,7 @@ app
 						function(response) { });
 				}
 			})
+
 		});
 
 var uuidv4 = function() {
@@ -653,22 +685,22 @@ var uuidv4 = function() {
 	});
 };
 
-var validarFormulario = function(data){
+var validarFormulario = function(data) {
 	camposObrigatorios = [];
-	
-	if(!data.nome){
-		camposObrigatorios.push("Nome");
-	} 
-	
-	if(!data.descricao){
-		camposObrigatorios.push("Descrição");
-	} 
 
-	if(camposObrigatorios.length > 0){
+	if (!data.nome) {
+		camposObrigatorios.push("Nome");
+	}
+
+	if (!data.descricao) {
+		camposObrigatorios.push("Descrição");
+	}
+
+	if (camposObrigatorios.length > 0) {
 		alert("Favor informar os campos obrigatórios: " + camposObrigatorios.join(", "))
 		return false;
 	}
-	
+
 	return true;
 };
 

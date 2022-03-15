@@ -169,7 +169,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
 			final ExDocumento doc, final ExMobil mob) {
 		try {
-			return clazz.getDeclaredConstructor(ExMovimentacao.class, DpPessoa.class, DpLotacao.class).newInstance(doc, mob,
+			return clazz.getDeclaredConstructor(ExDocumento.class, ExMobil.class, DpPessoa.class, DpLotacao.class).newInstance(doc, mob,
 					titular, lotaTitular);
 		} catch (Exception e) {
 			throw new RuntimeException("Erro executando lógica de negócios", e);

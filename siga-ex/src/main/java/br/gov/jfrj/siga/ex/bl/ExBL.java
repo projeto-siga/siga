@@ -4005,10 +4005,13 @@ public class ExBL extends CpBL {
 			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
 									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
-				//chamar servico cancelamento mov
+				Date dtTemp = exDoc.getDtFinalizacao();
+				//Alteracao necessaria para alteracao da dnmAcesso, deixando exDoc temporarialmente status nao finalizado
+				exDoc.setDtFinalizacao(null);
 				for (DpPessoa subscritor : listaSubscritor) {
 					removerPapelSubscritor(exDoc, ExPapel.PAPEL_REVISOR_SUBSCRITOR, cadastrante, subscritor);
 				}
+				exDoc.setDtFinalizacao(dtTemp);
 			}
 		}
 	}

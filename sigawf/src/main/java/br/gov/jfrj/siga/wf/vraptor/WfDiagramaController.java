@@ -241,14 +241,16 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
 
+			Long lId = null;
 			if (id != null) {
 				WfDefinicaoDeProcedimento pdOriginal = buscar(id);
+				lId = pdOriginal.getId();
 				pdOriginal.assertAcessoDeEditar(getTitular(), getLotaTitular());
 			}
 
 			List<WfDefinicaoDeProcedimento> pds = dao().listarDefinicoesDeProcedimentos();
 			for (WfDefinicaoDeProcedimento opd : pds) {
-				if (opd.getNome().equals(pd.getNome()) && !opd.getId().equals(id))
+				if (opd.getNome().equals(pd.getNome()) && !opd.getId().equals(lId))
 					throw new AplicacaoException("Já existe um diagrama com este nome: " + pd.getNome());
 			}
 

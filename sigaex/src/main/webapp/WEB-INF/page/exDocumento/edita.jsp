@@ -248,7 +248,7 @@
 										<div class="form-group">
 											<div class="form-check form-check-inline mt-4">
 												<fmt:message key="documento.help.substituto" var="documento_help_substituto" />
-												<input type="checkbox" name="exDocumentoDTO.substituicao" class="form-check-input" onclick="javascript:displayTitular(this);"
+												<input type="checkbox" id="substituicaoId" name="exDocumentoDTO.substituicao" class="form-check-input" onclick="javascript:displayTitular(this);"
 													<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
 												<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto </label>
 												<a class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="${documento_help_substituto}"></a>
@@ -284,7 +284,7 @@
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label><fmt:message key="documento.titular"/></label>
-								<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga" />
+								<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga"  />
 							</div>
 						</div>
 					</div>

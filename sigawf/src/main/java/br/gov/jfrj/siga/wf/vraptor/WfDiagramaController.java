@@ -34,6 +34,7 @@ import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -410,7 +411,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			WfDefinicaoDeProcedimento pd = null;
 			if (StringUtils.isNumeric(id))
 				pd = dao().consultar(Long.valueOf(id), WfDefinicaoDeProcedimento.class, false);
-			else 
+			else
 				pd = WfDefinicaoDeProcedimento.findBySigla(id);
 			if (pd != null)
 				pd = pd.getAtual();
@@ -514,5 +515,37 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	protected void jsonSuccess(final Object resp) {
 		String s = gson.toJson(resp);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+	}
+
+	@Get
+	@Path({ "/app/diagrama/buscar-json/{sigla}" })
+	public void busca(String sigla) throws Exception {
+		aBuscarJson(sigla);
+	}
+
+	@Override
+	protected String aBuscar(String sigla, String postback) throws Exception {
+		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();
+		flt.setSigla(sigla);
+		WfDao dao = WfDao.getInstance();
+		WfDefinicaoDeProcedimento pd = null;
+		try {
+			pd = dao.consultarPorSigla(flt);
+		} catch (NumberFormatException ex) {
+		}
+		if (pd != null) {
+			setTamanho(1);
+			ArrayList<Object> l = new ArrayList<>();
+			l.add(pd);
+			setItens(l);
+		} else {
+			List<WfDefinicaoDeProcedimento> l = dao.consultarWfDefinicoesDeProcedimentoPorNome(sigla);
+			if (l != null) {
+				setTamanho(l.size());
+				setItens(l);
+			}
+		}
+		result.include("currentPageNumber", 0);
+		return "busca";
 	}
 }

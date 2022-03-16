@@ -154,7 +154,7 @@ public class WfAppController extends WfController {
 				throw new RuntimeException("Identificador da definição de tarefa não encontrado");
 		}
 
-		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, idx, getTitular(), getLotaTitular(),
+		WfProcedimento pi = Wf.getInstance().getBL().criarProcedimento(pdId, idx, getTitular(), getLotaTitular(),
 				getIdentidadeCadastrante(), tipoDePrincipal, principal, null, null, true);
 		result.redirectTo(this).procedimento(pi.getId().toString());
 	}

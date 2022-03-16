@@ -61,6 +61,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTarefaDocCriarParam2;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaSubprocedimento;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -575,8 +576,9 @@ public class WfProcedimento extends Objeto
 		List<AcaoVO> set = new ArrayList<>();
 
 		set.add(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotarModal").exp(new PodeSim()).build());
-		
-		set.add(AcaoVO.builder().nome("Editar Variáveis").icone("database_edit").acao("/app/procedimento/" + getSiglaCompacta() + "/editar-variaveis")
+
+		set.add(AcaoVO.builder().nome("Editar Variáveis").icone("database_edit")
+				.acao("/app/procedimento/" + getSiglaCompacta() + "/editar-variaveis")
 				.exp(new WfPodeEditarVariaveis(this, titular, lotaTitular)).build());
 
 		set.add(AcaoVO.builder().nome("_Pegar").icone("add").acao("/app/procedimento/" + getSiglaCompacta() + "/pegar")
@@ -595,6 +597,10 @@ public class WfProcedimento extends Objeto
 
 	public boolean isPausado() {
 		return status == ProcessInstanceStatus.PAUSED;
+	}
+
+	public boolean isFinalizado() {
+		return status == ProcessInstanceStatus.FINISHED || status == ProcessInstanceStatus.INACTIVE;
 	}
 
 	public boolean isRetomando() {
@@ -655,6 +661,14 @@ public class WfProcedimento extends Objeto
 		if (respWF == null && lotEvento != null)
 			respWF = "@" + lotEvento.getSiglaCompleta();
 
+		if (getDefinicaoDeTarefaCorrente() != null
+				&& (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.SUBPROCEDIMENTO)) {
+			String siglaDoDocumentoCriado = WfTarefaSubprocedimento.getSiglaDoSubprocedimentoCriado(this);
+			return "Este workflow prosseguirá automaticamente quando o subprocedimento <a href=\"/sigawf/app/procedimento/"
+					+ siglaDoDocumentoCriado.replace("/", "").replace("-", "") + "\">" + siglaDoDocumentoCriado
+					+ "</a> for concluído.";
+		}
+
 		if (!Utils.empty(getPrincipal()) && getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
 			ExService service = Service.getExService();
 			String respEX = service.getAtendente(getPrincipal(), siglaTitular);
@@ -703,9 +717,9 @@ public class WfProcedimento extends Objeto
 		}
 		if (getDefinicaoDeTarefaCorrente() != null
 				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_AUXILIAR) {
-			return "Este workflow prosseguirá automaticamente quando for anexado um arquivo auxilar ao documento " + getPrincipal()
-					+ ". Clique <a href=\"/sigaex/app/expediente/mov/anexar_arquivo_auxiliar?sigla=" + getPrincipal()
-					+ "\">aqui</a> para incluir.";
+			return "Este workflow prosseguirá automaticamente quando for anexado um arquivo auxilar ao documento "
+					+ getPrincipal() + ". Clique <a href=\"/sigaex/app/expediente/mov/anexar_arquivo_auxiliar?sigla="
+					+ getPrincipal() + "\">aqui</a> para incluir.";
 		}
 		if (getDefinicaoDeTarefaCorrente() != null
 				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AGUARDAR_ASSINATURA_PRINCIPAL) {

@@ -18,7 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -99,9 +98,9 @@ public class WfBL extends CpBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public WfProcedimento createProcessInstance(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
+	public WfProcedimento criarProcedimento(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
 			DpLotacao lotaTitular, CpIdentidade identidade, WfTipoDePrincipal tipoDePrincipal, String principal,
-			ArrayList<String> keys, ArrayList<String> values, boolean fCreateStartTask) throws Exception {
+			List<String> keys, List<Object> values, boolean fCreateStartTask) throws Exception {
 
 		// Create the process definition,
 		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
@@ -141,7 +140,7 @@ public class WfBL extends CpBL {
 			List<WfProcedimento> l = dao().consultarProcedimentosAtivosPorPrincipal(principal);
 			if (l.size() > 0)
 				throwErroDeInicializacao(pi, null,
-						"não é permitido instanciar este procedimento com um principal que já está sendo orquestrado por pelo procedimento ativo "
+						"não é permitido instanciar este procedimento com o principal " + principal + " que já está sendo orquestrado por pelo procedimento ativo "
 								+ l.get(0).getSigla());
 		}
 

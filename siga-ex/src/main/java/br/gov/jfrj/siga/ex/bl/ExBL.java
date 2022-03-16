@@ -3007,10 +3007,7 @@ public class ExBL extends CpBL {
 
 			final ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
 			
-			if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANOTACAO &&
-					mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO &&
-					mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANEXACAO &&
-					mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
+			if (mov != null && !ExTipoDeMovimentacao.listaTipoMovimentacoesExcluiveisFisicamente().contains(mov.getExTipoMovimentacao())) {
 				throw new AplicacaoException("Não é permitido excluir a movimentação!");
 			}
 			

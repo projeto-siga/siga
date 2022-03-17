@@ -2765,6 +2765,12 @@ public class ExBL extends CpBL {
 
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
 
+				if (mov.isMovimentacaoDePosse()) {
+					m.setUltimaMovimentacaoDePosse(m
+							.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+									new ITipoDeMovimentacao[] {}, m, false, null, false));
+				}
+
 				if (ultMovNaoCancelada.getExTipoMovimentacao()
 						== ExTipoDeMovimentacao.ANOTACAO) {
 					atualizarDnmAnotacao(m);
@@ -2911,6 +2917,7 @@ public class ExBL extends CpBL {
 			ExMobil mob = new ExMobil();
 			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_VIA, ExTipoMobil.class, false));
 			mob.setNumSequencia(numSequencia);
+			mob.setDnmSigla(mob.doc().getSigla());
 			mob.setExDocumento(doc);
 			doc.getExMobilSet().add(mob);
 			mob = dao().gravar(mob);
@@ -3008,7 +3015,15 @@ public class ExBL extends CpBL {
 			final ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
 			// ExTipoDeMovimentacao.ANEXACAO
 			// movDao.excluir(mov);
+			ExMobil mobil = mov.getExMobil();
 			excluirMovimentacao(mov);
+			mobil.setUltimaMovimentacaoNaoCancelada(mobil
+					.getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, 
+							new ITipoDeMovimentacao[] {}, mobil, false, null, false));
+			mobil.setUltimaMovimentacaoDePosse(mobil
+					.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+							new ITipoDeMovimentacao[] {}, mobil, false, null, false));
+
 			if (mob.doc().isPendenteDeAssinatura()
 					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob.doc().isEletronico()
 							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
@@ -3245,6 +3260,7 @@ public class ExBL extends CpBL {
 			ExMobil mob = new ExMobil();
 			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_VOLUME, ExTipoMobil.class, false));
 			mob.setNumSequencia((int) dao().obterProximoNumeroVolume(doc));
+			mob.setDnmSigla(mob.doc().getSigla());
 			mob.setExDocumento(doc);
 			doc.getExMobilSet().add(mob);
 			mob = dao().gravar(mob);
@@ -3958,6 +3974,24 @@ public class ExBL extends CpBL {
 			mov.getExMobil().setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 
 		mov.getExMobil().getExMovimentacaoSet().add(mov);
+		
+		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
+			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
+			
+			if (mov.isMovimentacaoDePosse()) { 
+				mov.getExMobil().setUltimaMovimentacaoDePosse(mov);
+			}
+		} else {
+			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov.getExMobil()
+					.getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, 
+							new ITipoDeMovimentacao[] {}, mov.getExMobil(), false, null, false));
+			if (mov.getExMovimentacaoRef() != null 
+					&& mov.getExMovimentacaoRef().isMovimentacaoDePosse()) { 
+				mov.getExMobil().setUltimaMovimentacaoDePosse(mov.getExMobil()
+						.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+								new ITipoDeMovimentacao[] {}, mov.getExMobil(), false, null, false));
+			}
+		}
 
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
 			Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
@@ -4488,6 +4522,7 @@ public class ExBL extends CpBL {
 		ExMobil mob = new ExMobil();
 		mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
 		mob.setNumSequencia(1);
+		mob.setDnmSigla(mob.doc().getSigla());
 		mob.setExDocumento(novoDoc);
 		mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 		novoDoc.setExMobilSet(new TreeSet<ExMobil>());
@@ -7911,6 +7946,7 @@ public class ExBL extends CpBL {
 			ExMobil mob = new ExMobil();
 			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
 			mob.setNumSequencia(1);
+			mob.setDnmSigla(mob.doc().getSigla());
 			mob.setExDocumento(doc);
 			doc.getExMobilSet().add(mob);
 			mob = dao().gravar(mob);

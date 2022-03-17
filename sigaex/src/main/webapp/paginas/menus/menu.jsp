@@ -18,7 +18,7 @@
                 <li><a class="dropdown-item"
                     href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
             </c:if>
-			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
+			<li><a class="dropdown-item" href="/sigaex/app/mesa${fx:getMesaVersao(titular,lotaTitular)}">Mesa
 					Virtual </a></li>
 			
 			<c:if test="${not empty meusDelegados && f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">

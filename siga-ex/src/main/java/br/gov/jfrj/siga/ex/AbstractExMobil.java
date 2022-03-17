@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,6 +36,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.BatchSize;
@@ -148,6 +150,17 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMarca> exMarcaSet;
 
+	@Column(name = "DNM_SIGLA", length = 40)
+	private String dnmSigla;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ULT_MOV")
+	private ExMovimentacao ultimaMovimentacaoNaoCancelada;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ULT_MOV_POSSE")
+	private ExMovimentacao ultimaMovimentacaoDePosse;
+	
 	public java.lang.Long getIdMobil() {
 		return idMobil;
 	}
@@ -226,6 +239,30 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 
 	public void setDnmNumPrimeiraPagina(Integer dnmNumPrimeiraPagina) {
 		this.dnmNumPrimeiraPagina = dnmNumPrimeiraPagina;
+	}
+
+	public String getDnmSigla() {
+		return dnmSigla;
+	}
+
+	public void setDnmSigla(String sigla) {
+		this.dnmSigla = sigla;
+	}
+
+	public ExMovimentacao getUltimaMovimentacaoNaoCancelada() {
+		return ultimaMovimentacaoNaoCancelada;
+	}
+
+	public void setUltimaMovimentacaoNaoCancelada(ExMovimentacao exMovimentacao) {
+		this.ultimaMovimentacaoNaoCancelada = exMovimentacao;
+	}
+
+	public ExMovimentacao getUltimaMovimentacaoDePosse() {
+		return ultimaMovimentacaoDePosse;
+	}
+
+	public void setUltimaMovimentacaoDePosse(ExMovimentacao exMovimentacao) {
+		this.ultimaMovimentacaoDePosse = exMovimentacao;
 	}
 
 }

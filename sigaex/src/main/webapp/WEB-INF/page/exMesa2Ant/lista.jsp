@@ -89,7 +89,7 @@
 	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
 					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
-					<select class="form-control form-control-sm p-0" v-model="qtdPag" :class="{disabled: carregando}">
+					<select class="form-control form-control-sm p-0" v-model="selQtdPag" :class="{disabled: carregando}">
 						  <option value="5">5</option>
 						  <option value="10">10</option>
 						  <option value="15">15</option>
@@ -130,10 +130,11 @@
 								<fmt:message key="documento.novo"/></a>
 						</div>
 					</c:if>
-					<c:if test="${!ehPublicoExterno && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
+					<c:if test="${!ehPublicoExterno}">
 						<div class="col col-12 col-sm-4 col-md-auto pl-md-0 mb-2">
 							<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-								<i class="fas fa-search mr-1"></i>Pesquisar</a> 
+								<i class="fas fa-search mr-1"></i>Pesquisar 
+							</a>
 						</div>
 					</c:if>
 				</c:if>
@@ -142,7 +143,7 @@
 					v-if="!carregando || (!errormsg &amp;&amp; grupos.length >= 0)">
 				<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">
 					<c:set var="varLotacaoUnidade"><fmt:message key='usuario.lotacao'/></c:set>
-					<div id="radioBtn" class="btn-group mb-1">
+					<div id="radioBtn" class="btn-group mr-2 mb-1">
 						<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
 							accesskey="u" @click="carregarMesaUser('#btnUser');" 
 							title="Visualiza somente os documentos do Usuário">
@@ -157,11 +158,8 @@
 						</a>
 					</div>
 				</c:if>
-				<div class="input-group col-3 mb-1">
-					<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" @keyup.enter="recarregarMesa()" placeholder="Filtrar cód. ou descrição" v-model="filtro" @keyup.enter="getItensGrupo();">
-					<div class="input-group-append">
-						<button class="btn btn-secondary border-light" type="button" @click="recarregarMesa();"><i class="fas fa-search"></i></button>
-					</div>
+				<div class="mr-2 mb-1">
+					<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" placeholder="Filtrar docs. da mesa" v-model="filtro" ng-model-options="{ debounce: 200 }">
 				</div>
 				<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
 					<i class="fas fa-sync-alt"></i>
@@ -198,9 +196,9 @@
 					</p>
 				</div>
 			</div>
-			<div id="mesaItens" class="row mt-2" style="min-height: 50vh;">
+			<div class="row mt-2" style="min-height: 50vh;">
 				<div class="col-sm-12">
-					<template v-for="g in grupos">
+					<template v-for="g in filtrados">
 						<div v-if="!g.hide && (g.grupoCounterUser > 0 || g.grupoCounterLota > 0)" :key="g.grupoOrdem">	
 							<div class="collapse-header d-inline">
 								<h5 :id="['collapse-header-' + g.grupoOrdem]" data-toggle="collapse" :data-target="['#collapsetab-' + g.grupoOrdem]" 
@@ -208,7 +206,7 @@
 										v-bind:class="{ collapsed: g.grupoCollapsed}" v-bind:aria-expanded="{false: g.grupoCollapsed}"
 										@click="collapseGrupo(g.grupoOrdem, g.grupoNome)">
 									<i class="h5 mb-0" :class="g.grupoIcone"></i>
-									<span class="grupo-nome mr-3">{{g.grupoNome}}</span>
+									<span class="mr-3">{{g.grupoNome}}</span>
 									<small> 
 										<span class="badge badge-light btn-sm align-middle" :class="{disabled: exibeLota}">
 											<small class="fas fa-user"></small>
@@ -226,7 +224,7 @@
 							<div :id="['collapsetab-' + g.grupoOrdem]" class="collapse" :key="g.grupoOrdem" v-bind:class="{show: !g.grupoCollapsed }">
 								<div class="row" v-if="!carregando && (g.grupoDocs == undefined || g.grupoDocs.length == 0)">
 									<div class="col col-12">
-										<p class="alert alert-warning alert-dismissible fade show">Não há documentos a exibir.</p>
+										<p class="alert alert-warning alert-dismissible fade show">Não há documentos a exibir para est{{exibeLota? 'a lotação.' : 'e usuário.'}}</p>
 									</div>
 								</div>
 								<table v-else class="text-muted table table-sm table-striped table-hover table-borderless">
@@ -246,9 +244,9 @@
 										</tr>
 									</thead>
 									<tbody>
-										<template v-for="(f, index) in g.grupoDocs">
-											<tr class="grupo-item d-flex mh-100" v-bind:class="f.codigo == ''? 'linha-ref':''" :title="index" :data-grupo="g.grupoNome" :data-numitem="index">
-												<td class="col-1 d-none d-md-block"  
+										<template v-for="f in g.grupoDocs">
+											<tr class="d-flex">
+												<td class="col-1 d-none d-md-block" 
 													:title="f.datahoraDDMMYYYHHMM"><small>{{dtDMA? formatJSDDMMYYYY(f.datahoraDDMMYYYHHMM) 
 														: f.tempoRelativo}}</small></td>
 												<td class="col-md-2"
@@ -256,7 +254,7 @@
 													<c:if test="${siga_cliente == 'GOVSP'}">
 														<span v-if="trazerComposto">
 															<span v-if="f.tipoDoc == 'Avulso'"><i class="far fa-file text-secondary" title="Documento Avulso"></i></span>
-															<span v-if="f.tipoDoc == 'Composto'"><i class="far fa-copy" title="Documento Composto"></i></span>
+															<span v-else><i class="far fa-copy" title="Documento Composto"></i></span>
 														</span>
 													</c:if>
 													<c:choose>
@@ -267,16 +265,10 @@
 															<a :href="'expediente/doc/exibir?sigla=' + f.codigo">{{f.sigla}}</a>
 														</c:otherwise>
 													</c:choose>
-													<span class="d-inline d-md-none" v-if="f.descr != ''" :title='processDescription(f.descr)' > - {{ processDescription(f.descr, 60) }}
-														</span>
-													<span v-else><div v-if="f.datahora == '.'" class="spinner-dots my-2 mx-auto d-md-none"></div>
-														<div v-else class="d-md-none">&nbsp;</div></span>
+													<span class="d-inline d-md-none"> - {{f.descr}}</span>
 												</td>
 												<td class="d-none d-md-block" v-bind:class="usuarioPosse ? 'col-3' : 'col-4'">
-													<span class="text-break" v-if="f.descr != ''" :title='processDescription(f.descr)' >{{ processDescription(f.descr, 60) }}
-														</span>
-													<span v-else><div v-if="f.datahora == '.'" class="spinner-dots my-2 mx-auto"></div>
-														<div v-else>&nbsp;</div></span>
+													<span class="text-break" :title='processDescription(f.descr)' >{{ processDescription(f.descr, 60) }}</span>
 												</td>
 												<td class="col-md-1"
 														v-bind:class="usuarioPosse ? 'col-2' : 'col-3'">
@@ -290,7 +282,7 @@
 													</small>
 												</td>
 												<td v-if="usuarioPosse" class="col-md-1 col-2">
-													<small>{{f.lotaPosse}}{{f.nomePessoaPosse? ' / ': ''}} {{f.nomePessoaPosse}}</small>
+													<small>{{f.lotaPosse}} / {{f.nomePessoaPosse}}</small>
 												</td>												
 												<td class="col-3 d-none d-md-block p-1">
 													<span v-if="f.anotacao != null">
@@ -322,6 +314,9 @@
 								</div>
 								<div class="row">
 									<div class="col col-md-9 mb-2">
+										<div class="text-center" v-if="carregando">
+											<div class="spinner-grow text-info text-center" role="status"></div>
+										</div>
 									</div>
 									<div class="col-6 col-md-3 mb-2">
 										<div class="float-right d-flex">
@@ -369,6 +364,6 @@
 			initPopovers();
 		});
 	</script>
+	<script type="text/javascript" src="/siga/javascript/mesa2ant.js?v=1646187984"></script>
 </siga:pagina>
 <script src="/siga/bootstrap/4.6.0/js/bootstrap.bundle.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="/siga/javascript/mesa2.js?v=1646187984"></script>

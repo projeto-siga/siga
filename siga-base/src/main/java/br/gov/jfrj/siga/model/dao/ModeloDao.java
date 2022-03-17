@@ -44,6 +44,8 @@ public abstract class ModeloDao {
 
 	protected String cacheRegion = null;
 
+	private String banco = null;  
+
 	private static final ThreadLocal<ModeloDao> threadDao = new ThreadLocal<ModeloDao>();
 
 	protected ModeloDao() {
@@ -204,4 +206,18 @@ public abstract class ModeloDao {
 		EntityManager em = em();
 		return em != null && em.isOpen() && em.getTransaction() != null && em.getTransaction().isActive();
 	}
+	
+	/**
+	 * @return Tipo do banco utilizado (Oracle ou MySQL)
+	 */
+	public String getBanco() {
+		if (banco != null) 
+			return banco;
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains("MySQL"))
+			banco = "MYSQL";
+		if (dialect != null && dialect.contains("Oracle"))
+			banco = "ORACLE";
+		return banco;
+	}	
 }

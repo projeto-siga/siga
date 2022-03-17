@@ -577,6 +577,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 	}
 
+	/**
+	 * Retorna a sigla denormalizada já calculada do mobil. Se não estiver no banco, calcula e armazena
+	 * 
+	 * @return Sigla do mobil.
+	 * 
+	 */
+	public String getDnmSigla() {
+		if (super.getDnmSigla() == null) {
+			setDnmSigla(getSigla());
+			return getSigla();
+		}
+		return super.getDnmSigla();
+	}
+	
 	/*
 	 * public Long getId() { if (getExDocumento() == null) return null;
 	 * ExMovimentacao mov = getExDocumento()
@@ -699,9 +713,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @return
 	 */
 	public boolean sofreuMov(ITipoDeMovimentacao[] tpMovs, ITipoDeMovimentacao[] tpMovReversao, ExMobil mob) {
-		return getUltimaMovimentacao(tpMovs, tpMovReversao, mob, false, null) != null;
+		return getUltimaMovimentacao(tpMovs, tpMovReversao, mob, false, null, false) != null;
 	}
 
+		
+	/**
+	 * Retorna a última movimentação não cancelada e que não seja canceladora de outra que o móbil recebeu.
+	 * Verifica se já está registrada no mobil, se não estiver obtem das movs
+	 * @return
+	 */
+	public ExMovimentacao getUltimaMovimentacaoNaoCanceladaENãoCanceladora() {
+		if (super.getUltimaMovimentacaoNaoCancelada() != null)
+			return super.getUltimaMovimentacaoNaoCancelada();
+		return getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, new ITipoDeMovimentacao[] {}, this, true, null, true);
+	}
+	
 	/**
 	 * Retorna a última movimentação não cancelada que o móbil recebeu.
 	 * 
@@ -732,7 +758,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @return
 	 */
 	public ExMovimentacao getUltimaMovimentacaoNaoCancelada(ITipoDeMovimentacao tpMov, ITipoDeMovimentacao tpMovReversao) {
-		return getUltimaMovimentacao(tpMov != null ? new ITipoDeMovimentacao[] { tpMov } : new ITipoDeMovimentacao[] {}, tpMovReversao != null ? new ITipoDeMovimentacao[] { tpMovReversao } : new ITipoDeMovimentacao[] {}, this, false, null);
+		return getUltimaMovimentacao(tpMov != null ? new ITipoDeMovimentacao[] { tpMov } : new ITipoDeMovimentacao[] {}, tpMovReversao != null ? new ITipoDeMovimentacao[] { tpMovReversao } : new ITipoDeMovimentacao[] {}, this, false, null, false);
 	}
 
 	/**
@@ -744,7 +770,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 */
 	public ExMovimentacao getUltimaMovimentacaoNaoCancelada(ExMovimentacao movParam) {
 		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { movParam.getExTipoMovimentacao() }, new ITipoDeMovimentacao[] {},
-				this, false, movParam.getDtMov());
+				this, false, movParam.getDtMov(), false);
 	}	
 
 	/**
@@ -754,7 +780,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * 
 	 */
 	public ExMovimentacao getUltimaMovimentacao() {
-		return getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, new ITipoDeMovimentacao[] {}, this, true, null);
+		return getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, new ITipoDeMovimentacao[] {}, this, true, null, false);
 	}
 
 	/**
@@ -764,7 +790,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @return
 	 */
 	public ExMovimentacao getUltimaMovimentacao(ITipoDeMovimentacao tpMov) {
-		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { tpMov }, new ITipoDeMovimentacao[] {}, this, true, null);
+		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { tpMov }, new ITipoDeMovimentacao[] {}, this, true, null, false);
 	}
 
 	/**
@@ -781,7 +807,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @return
 	 */
 	public ExMovimentacao getUltimaMovimentacao(ITipoDeMovimentacao[] tpMovs, ITipoDeMovimentacao[] tpMovsReversao, ExMobil mob,
-			boolean permitirCancelada, Date dt) {
+			boolean permitirCancelada, Date dt, boolean permitirCanceladora) {
 
 		if (mob == null)
 			return null;
@@ -792,7 +818,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 		ExMovimentacao movReturn = null;
 		for (ExMovimentacao mov : movSet) {
-			if (!permitirCancelada && (mov.isCancelada() || mov.isCanceladora()))
+			if ((!permitirCancelada && mov.isCancelada()) 
+					|| (!permitirCanceladora && mov.isCanceladora()))
 				continue;
 		
 			if (tpMovs.length == 0)

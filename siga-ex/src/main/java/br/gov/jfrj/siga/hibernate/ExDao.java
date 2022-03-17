@@ -27,7 +27,6 @@ package br.gov.jfrj.siga.hibernate;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -39,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -56,6 +56,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
@@ -94,7 +95,7 @@ import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
+import br.gov.jfrj.siga.ex.bl.Mesa2Ant;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
@@ -1939,7 +1940,7 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<GrupoItem> grupos, 
+	public List consultarTotaisPorMarcador(DpPessoa pes, DpLotacao lot, List<Mesa2Ant.GrupoItem> grupos, 
 			boolean exibeLotacao, List<Integer> marcasAIgnorar) {
 		try {
 //			long tempoIni = System.nanoTime();
@@ -1950,7 +1951,7 @@ public class ExDao extends CpDao {
 			int i = 0;
 			
 			// Para cada grupo solicitado, gera a query para contagem
-			for (GrupoItem grupoItem : grupos) {
+			for (Mesa2Ant.GrupoItem grupoItem : grupos) {
 				i++;
 				if (!grupoItem.grupoHide && grupoItem.grupoMarcadores.size() > 0) {
 					queryMarcasAIgnorarFinal = queryMarcasAIgnorar;
@@ -2066,6 +2067,115 @@ public class ExDao extends CpDao {
 		query.setParameter("marcaAssinSenha", CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId());
 		query.setParameter("marcaMovAssinSenha", CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId());
 		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		
+		l = query.getResultList();
+//		long tempoTotal = System.nanoTime() - tempoIni;
+//		System.out.println("listarMobilsPorMarcas: " + tempoTotal
+//		/ 1000000 + " ms ==> " + query);
+		return l;
+	}
+	
+	/**
+	 * Pesquisa ou conta os mobils de um grupo da mesa virtual
+	 * @param contar : Se true, conta sem trazer os ids dos mobils
+	 * @param qtd : Quantidade de mobils a trazer 
+	 * @param offset : Qtd de mobils a saltar (pagina)
+	 * @param titular : Pessoa a pesquisar as marcas
+	 * @param lotaTitular : Lotação a pesquisar as marcas 
+	 * @param ordemCrescenteData : ordenação do resultado: se true, ascendente
+	 * @param marcasAIgnorar : se o documento tiver uma marca com um dos ids dessa lista, ignora o documento
+	 * @param grupos : Lista de ids dos grupos a pesquisar 
+	 * @return List<Object[]> : Lista dos ids dos mobils (se contar = false)
+	 * 		ou Lista contendo grupo, qtd da pessoa e qtd da lotação (se contar = true)  
+	 */
+	public List listarMobilsPorGrupoEMarcas(boolean contar, Integer qtd, Integer offset, DpPessoa titular, DpLotacao lotaTitular,  
+			boolean ordemCrescenteData, List<Integer> marcasAIgnorar, List<CpMarcadorGrupoEnum> grupos, String filtro) {
+		List<Object> ls = em().createQuery("select mar from ExMarca mar where mar.idMarca = 1428484").getResultList();
+		List<Object> lpes = em().createQuery("select mov from ExMovimentacao mov where mov.idMov = 20674").getResultList();
+		
+		String queryString;
+		String queryMarcasAIgnorar = "";
+		String queryMarcasAIgnorarWhere = "";
+		
+		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
+			queryMarcasAIgnorar += " left join corporativo.cp_marca mx on"
+					+ " mx.id_ref = m.id_ref and mx.id_marcador in(";
+			for (Integer marcaAIgnorar : marcasAIgnorar)
+				queryMarcasAIgnorar += marcaAIgnorar.toString() + ",";
+			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1) + ") ";
+			queryMarcasAIgnorarWhere = " and mx.id_marca is null ";
+		}		
+		List<List<String>> l = new ArrayList<List<String>> ();
+//		long tempoIni = System.nanoTime();
+		queryString =
+			"WITH marca AS (SELECT m.*, md.grupo_marcador,"
+			+ " ROW_NUMBER() OVER(PARTITION BY m.id_ref" 
+				+ " ORDER BY "
+				// Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
+				+ (Prop.isGovSP()? "(CASE WHEN md.grupo_marcador = 6 THEN 0 ELSE md.grupo_marcador END)" 
+						: "md.grupo_marcador ")
+				+ ") AS rank"
+			+ " FROM corporativo.cp_marca m"
+			+ " INNER JOIN corporativo.cp_marcador md ON m.id_marcador = md.id_marcador"
+			+ queryMarcasAIgnorar
+			+ " WHERE (m.dt_ini_marca is null or m.dt_ini_marca < :dbDatetime)"
+				+ " and (m.dt_fim_marca is null or m.dt_fim_marca > :dbDatetime)"
+				+ (contar? " and (m.id_pessoa_ini = :titular or m.id_lotacao_ini = :lotaTitular)" : "")
+				+ (!contar && titular != null ? " and m.id_pessoa_ini = :titular" : "") 
+				+ (!contar && lotaTitular != null ? " and m.id_lotacao_ini = :lotaTitular" : "")
+				+ " and m.id_marcador <> :marcaAssinSenha "
+				+ " and m.id_marcador <> :marcaMovAssinSenha " 
+				+ queryMarcasAIgnorarWhere
+			+ ") SELECT"
+				+ (contar ? " grupo_marcador,"
+						+ " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end),"  
+						+ " sum(case when marca.id_lotacao_ini = :lotaTitular  then 1 else 0 end)" 
+					: " grupo_marcador, id_ref, (case when movultima.id_mov is null then"
+						+ " doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem") 
+				+ " FROM marca "
+				+ " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref "
+				+ " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc "
+				+ " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov "
+				+ " WHERE rank = 1"
+				+ (filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "")
+				+ (grupos != null  && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "") 
+			+ (contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador" : 
+				" ORDER BY grupo_marcador, dtOrdem " + (ordemCrescenteData? " ASC":" DESC") + ", marca.id_marca")
+			+ (getBanco().equals("ORACLE") && offset != null && offset != 0 ? " OFFSET :offs ROWS" : "")
+			+ (getBanco().equals("ORACLE") && qtd != null && qtd != 0 ? " FETCH NEXT :qtd ROWS ONLY" : "");
+	
+		Query query = em()
+			.createNativeQuery(queryString);
+		if (contar || titular != null)
+			query.setParameter("titular", titular.getIdPessoaIni());
+		
+		if (contar || lotaTitular != null)
+			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
+		
+		if (grupos != null && grupos.size() > 0) {
+			List<Integer> gruposList = grupos.stream()
+				.map(g -> g.getId())
+				.collect(Collectors.toList());
+			query.setParameter("listGrupos", gruposList);
+		}
+		
+		if (filtro != null && !"".equals(filtro))
+			query.setParameter("flt", "%" + filtro.toUpperCase().replace(" ", "%") + "%");
+			
+		if (getBanco().equals("ORACLE") && offset != null && offset != 0)
+			query.setParameter("offs", offset);
+			
+		if (getBanco().equals("ORACLE") && qtd != null && qtd != 0)
+			query.setParameter("qtd", qtd);
+			
+		query.setParameter("marcaAssinSenha", CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId());
+		query.setParameter("marcaMovAssinSenha", CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId());
+
+		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
+		if (!getBanco().equals("ORACLE") && offset != null && offset != 0)
+			query.setFirstResult(offset);
+		if (!getBanco().equals("ORACLE") && qtd != null && qtd != 0)
+			query.setMaxResults(qtd > 0? qtd : 100);
 		
 		l = query.getResultList();
 //		long tempoTotal = System.nanoTime() - tempoIni;

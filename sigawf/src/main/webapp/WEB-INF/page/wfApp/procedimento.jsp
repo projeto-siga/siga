@@ -138,7 +138,7 @@
 					<div class="card-sidebar card bg-light mb-3">
 						<div class="card-header">Variáveis</div>
 						<div class="card-body">
-							<c:forEach var="v" items="${pi.variaveis}">
+							<c:forEach var="v" items="${pi.variaveisOrdenadas}">
 								<p>
 									<b>${v.nome}:</b> ${v.valorAsString}
 								</p>

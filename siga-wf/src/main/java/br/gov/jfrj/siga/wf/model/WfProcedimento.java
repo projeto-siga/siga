@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -465,6 +466,32 @@ public class WfProcedimento extends Objeto
 
 	public void setVariaveis(List<WfVariavel> listaDeVariaveis) {
 		this.variaveis = listaDeVariaveis;
+	}
+
+	public List<WfVariavel> getVariaveisOrdenadas() {
+		List<WfVariavel> l = new ArrayList<>();
+		WfDefinicaoDeTarefa tdSuper = getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
+		Set<String> identificadoresAProcessar = new TreeSet<>();
+		getVariable().keySet().stream().forEach(v -> identificadoresAProcessar.add(v));
+		for (WfDefinicaoDeVariavel vd : tdSuper.getDefinicaoDeVariavel()) {
+			String identificador = vd.getIdentificador();
+			if (getVariable().containsKey(identificador)) {
+				Optional<WfVariavel> x = variaveis.stream().filter(v -> identificador.equals(v.getIdentifier()))
+						.findFirst();
+				if (!x.isPresent())
+					continue;
+				l.add(x.get());
+				identificadoresAProcessar.remove(identificador);
+			}
+		}
+		for (String identificador : identificadoresAProcessar) {
+			Optional<WfVariavel> x = variaveis.stream().filter(v -> identificador.equals(v.getIdentifier()))
+					.findFirst();
+			if (!x.isPresent())
+				continue;
+			l.add(x.get());
+		}
+		return l;
 	}
 
 	public void setStatus(ProcessInstanceStatus status) {

@@ -176,6 +176,15 @@ function validar(silencioso) {
 	var subscritor = document.getElementById('formulario_exDocumentoDTO.subscritorSel_id');
 	var temCossignatarios = document.getElementById('temCossignatarios');
 	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
+	
+	var isSubstituicao =  document.getElementById('substituicaoId').checked;
+	var titular =document.getElementById('formulario_exDocumentoDTO.titularSel_sigla');
+	
+	if ( isSubstituicao  && (!titular || !titular.value) ){
+		aviso("Preencha o campo Titular antes de gravar o documento.",	silencioso);
+		return false;
+	}
+	
 	if (descricaoAutomatica == null && (descr == null || descr == "")) {
 		aviso("Preencha o campo Descrição antes de gravar o documento.",
 				silencioso);

@@ -54,9 +54,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
-
-import com.auth0.jwt.internal.org.apache.commons.lang3.StringUtils;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -1634,6 +1633,12 @@ public class ExDocumentoController extends ExController {
 			throw new AplicacaoException("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
 				+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
 				+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".");			
+		}
+		
+		//verificar se  foi marcado substituto, mas não preenchido o titular
+		
+		if ( exDocumentoDTO.isSubstituicao() &&  StringUtils.isBlank(exDocumentoDTO.getTitularSel().getDescricao() )) {
+			throw new AplicacaoException("Preencha o campo Titular antes de gravar o documento.");
 		}
 		
 		try {

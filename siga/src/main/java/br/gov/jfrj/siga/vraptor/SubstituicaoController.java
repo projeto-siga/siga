@@ -442,8 +442,10 @@ public class SubstituicaoController extends SigaController {
 	}
 	
 	private String getEmailCabecalho(){
-
-		String cabecalho = "Informamos que o agente público: #nomeCadastrante#(#matriculaCadastrante#) cadastrou uma substituição ";
+		
+		String ambienteHomologacao =  "homolog".equalsIgnoreCase(Prop.get("/siga.ambiente")) ?", no ambiente de homologação,":"";
+		String cabecalho = "Informamos que o agente público: #nomeCadastrante#(#matriculaCadastrante#) cadastrou";
+		cabecalho = cabecalho + ambienteHomologacao  +	" uma substituição ";
 		cabecalho = cabecalho.replace("#matriculaCadastrante#", getCadastrante().getSesbPessoa() + getCadastrante().getMatricula());
 		cabecalho = cabecalho.replace("#nomeCadastrante#", getCadastrante().getNomePessoa());
 
@@ -453,7 +455,8 @@ public class SubstituicaoController extends SigaController {
 	private void enviarEmailSubstituicao(Integer tipoTitular, Integer tipoSubstituto, DpSubstituicao subst)
 			throws Exception {
 		
-		String assunto = "Cadastro de Substituição";
+		String ambienteHomologacao =  "homolog".equalsIgnoreCase(Prop.get("/siga.ambiente")) ?" Ambiente de Homologação":"";
+		String assunto = "Cadastro de Substituição"+ ambienteHomologacao;
 		
 		StringBuffer sbTextoEmail = new StringBuffer();
 

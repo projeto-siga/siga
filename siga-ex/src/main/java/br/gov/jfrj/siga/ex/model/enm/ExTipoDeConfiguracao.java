@@ -565,6 +565,23 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
+	EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO(60,"Exibir para Subscritores e Cossignatários Árvore de Documentos", 
+			"Essa configuração permite exibir para Subscritores e Cossignatários Árvore Completa de Documentos, tendo como vínculo movimentação de juntadas e documentos inclusos. Você pode configurar "
+			+ "para Orgão, Unidade/Lotação e Usuário.  ",
+			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+	
+	EXIBIR_ARVORE_PARCIAL_DOCS_SUBSCRITOR_COSSIGNATARIO(61,"Exibir para Subscritores e Cossignatários Árvore Parcial de Documentos", 
+			"Essa configuração permite exibir para Subscritores e Cossignatários a lista de documentos presentes no galho principal da árvore de documentos, tendo como vínculo movimentação de juntadas e documentos inclusos. "
+					+ "Você pode configurar para Orgão, Unidade/Lotação e Usuário. Atenção: Essa configuração depende da habilitação da configuração " 
+					+ "\"Exibir para Subscritores e Cossignatários Árvore de Documentos.\"",
+			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
 	
 	

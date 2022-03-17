@@ -250,8 +250,8 @@ public class ExBL extends CpBL {
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
-	private static final boolean VISUALIZACAO_DOC_ARVORE = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore");
-	private static final boolean VISUALIZACAO_DOC_ARVORE_COMPL = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.completa");
+//	private static final boolean VISUALIZACAO_DOC_ARVORE = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore");
+//	private static final boolean VISUALIZACAO_DOC_ARVORE_COMPL = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.completa");
 	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();
@@ -1773,9 +1773,9 @@ public class ExBL extends CpBL {
 			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 			
-			if (VISUALIZACAO_DOC_ARVORE && doc.isFinalizado() && doc.isAssinadoDigitalmente() 
-													&& possuiAssinaturaSubscritorCossignatarioHoje(doc)) {
-				removerPermissaoTempDnmAcessoArvoreDocs(doc, cadastrante);
+			if (podeExibirArvoreDocsSubscritorCossignatario(cadastrante, lotaCadastrante)
+					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && possuiAssinaturaSubscritorCossignatarioHoje(doc)) {
+				removerPermissaoTempDnmAcessoArvoreDocs(cadastrante, lotaCadastrante, doc);
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
@@ -3023,9 +3023,9 @@ public class ExBL extends CpBL {
 							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
 				processar(mob.getExDocumento(), true, false);
 				// mob.getExDocumento().armazenar(); 
-				if (VISUALIZACAO_DOC_ARVORE 
+				if (podeExibirArvoreDocsSubscritorCossignatario(cadastrante, lotaCadastrante) 
 						&& ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO.equals(mov.getExTipoMovimentacao())){
-					removerPermissaoTempDnmAcessoArvoreDocs(mob.doc(), Arrays.asList(mov.getSubscritor()), cadastrante);
+					removerPermissaoTempDnmAcessoArvoreDocs(cadastrante, lotaCadastrante, mob.doc(), Arrays.asList(mov.getSubscritor()));
 				}
 			}
 			concluirAlteracao(mov);
@@ -3160,7 +3160,7 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
-			inserirPermissaoTempDnmAcessoArvoreDocs(doc);
+			inserirPermissaoTempDnmAcessoArvoreDocs(cadastrante, lotaCadastrante, doc);
 
 			if (setVias == null || setVias.size() == 0)
 				criarVia(cadastrante, lotaCadastrante, doc, null);
@@ -3177,11 +3177,12 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	private void inserirPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc) {
-		if (VISUALIZACAO_DOC_ARVORE && doc.isFinalizado() && possuiInclusaoCossignatarioSubscritor(doc)) {
+	private void inserirPermissaoTempDnmAcessoArvoreDocs(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc) {
+		if (podeExibirArvoreDocsSubscritorCossignatario(cadastrante, lotaCadastrante) 
+										&& doc.isFinalizado() && possuiInclusaoCossignatarioSubscritor(doc)) {
 			Date dt = ExDao.getInstance().dt();
-			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL ? doc.getListaArvoreTodosDocs()
-					: doc.getListaDocsArvoreVerticalParcial();
+			List<ExDocumento> listaArvoreDocsFinal = podeExibirArvoreParcialDocsSubscritorCossignatario(cadastrante, lotaCadastrante) 
+																? doc.getListaDocsArvoreVerticalParcial() : doc.getListaArvoreTodosDocs();
 			List<DpPessoa> listaCossigDoc = doc.getListaSubscritorECossignatariosDiffCadastranteDoc();
 			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_REVISOR_SUBSCRITOR, ExPapel.class, false);
 
@@ -3997,16 +3998,16 @@ public class ExBL extends CpBL {
 		return podeAddMov;
 	}
 	
-	private void removerPermissaoTempDnmAcessoArvoreDocs(ExDocumento doc, DpPessoa cadastrante) throws Exception {
+	private void removerPermissaoTempDnmAcessoArvoreDocs(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 		List<DpPessoa> listaSubscrCancelMovPapel = listaPessoasSubscritorCossignatarioAssinadoHoje(doc);
-		removerPermissaoTempDnmAcessoArvoreDocs(doc, listaSubscrCancelMovPapel, cadastrante);
+		removerPermissaoTempDnmAcessoArvoreDocs(cadastrante, lotaCadastrante, doc, listaSubscrCancelMovPapel);
 	}
 	
-	private void removerPermissaoTempDnmAcessoArvoreDocs(
-			ExDocumento doc, List<DpPessoa> listaSubscritor, DpPessoa cadastrante) throws Exception {
+	private void removerPermissaoTempDnmAcessoArvoreDocs(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+															ExDocumento doc, List<DpPessoa> listaSubscritor) throws Exception {
 		if (!listaSubscritor.isEmpty()) {			
-			List<ExDocumento> listaArvoreDocsFinal = VISUALIZACAO_DOC_ARVORE_COMPL 
-									? doc.getListaArvoreTodosDocs() : doc.getListaDocsArvoreVerticalParcial();
+			List<ExDocumento> listaArvoreDocsFinal = podeExibirArvoreParcialDocsSubscritorCossignatario(cadastrante, lotaCadastrante) 
+															? doc.getListaDocsArvoreVerticalParcial() : doc.getListaArvoreTodosDocs();
 			for (ExDocumento exDoc : listaArvoreDocsFinal) {
 				Date dtTemp = exDoc.getDtFinalizacao();
 				//Alteracao necessaria para alteracao da dnmAcesso, deixando exDoc temporarialmente status nao finalizado
@@ -4017,6 +4018,16 @@ public class ExBL extends CpBL {
 				exDoc.setDtFinalizacao(dtTemp);
 			}
 		}
+	}
+	
+	private static boolean podeExibirArvoreDocsSubscritorCossignatario(DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+		return Ex.getInstance().getConf().podePorConfiguracao(
+				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
+	}
+	
+	private static boolean podeExibirArvoreParcialDocsSubscritorCossignatario(DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+		return Ex.getInstance().getConf().podePorConfiguracao(
+				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.EXIBIR_ARVORE_PARCIAL_DOCS_SUBSCRITOR_COSSIGNATARIO);
 	}
 	
 	public void bCorrigirDataFimMov(final ExMovimentacao mov) throws Exception {
@@ -4296,7 +4307,7 @@ public class ExBL extends CpBL {
 			processar(doc, true, false);
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
-			inserirPermissaoTempDnmAcessoArvoreDocs(doc);
+			inserirPermissaoTempDnmAcessoArvoreDocs(cadastrante, lotaCadastrante, doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao incluir Cossignatário.", e);

@@ -250,8 +250,6 @@ public class ExBL extends CpBL {
 	private static final String SHA1 = "1.3.14.3.2.26";
 	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 	private static final String STRING_TRUE = "1";
-//	private static final boolean VISUALIZACAO_DOC_ARVORE = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore");
-//	private static final boolean VISUALIZACAO_DOC_ARVORE_COMPL = Prop.getBool("/siga.usuarios.distintos.visualizar.doc.arvore.completa");
 	
 	private final ThreadLocal<Set<String>> docsParaAtualizacaoDeWorkflow = new ThreadLocal<Set<String>>();
 	private final ThreadLocal<Boolean> suprimirAtualizacaoDeWorkflow = new ThreadLocal<>();

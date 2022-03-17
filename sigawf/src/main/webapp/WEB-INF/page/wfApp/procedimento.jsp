@@ -268,6 +268,8 @@
 
 				<%@ include file="anotar.jsp"%>
 
+				<%@ include file="priorizar.jsp"%>
+
 				<%@ include file="redirecionar.jsp"%>
 
 				<script>

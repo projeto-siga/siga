@@ -24,6 +24,7 @@
 package br.gov.jfrj.siga.wf.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -224,7 +225,10 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		query.setParameter("idPessoaIni", titular.getIdPessoaIni());
 		query.setParameter("idLotacaoIni", lotaTitular.getIdLotacaoIni());
 		List<WfProcedimento> result = query.getResultList();
-		return result;
+		List<WfProcedimento> l = new ArrayList<>();
+		result.stream().forEach(i -> l.add(i));
+		l.sort(null);
+		return l;
 	}
 
 	public List<WfResponsavel> consultarResponsaveisPorDefinicaoDeResponsavel(WfDefinicaoDeResponsavel dr) {

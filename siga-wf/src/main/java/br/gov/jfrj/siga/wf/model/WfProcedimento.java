@@ -71,7 +71,8 @@ import br.gov.jfrj.siga.wf.util.WfResp;
 @BatchSize(size = 500)
 @Table(name = "sigawf.wf_procedimento")
 public class WfProcedimento extends Objeto
-		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp>, Selecionavel {
+		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp>, Selecionavel,
+		Comparable<WfProcedimento> {
 	public static ActiveRecord<WfProcedimento> AR = new ActiveRecord<>(WfProcedimento.class);
 
 	@Id
@@ -611,6 +612,9 @@ public class WfProcedimento extends Objeto
 		set.add(AcaoVO.builder().nome("_Pegar").icone("add").acao("/app/procedimento/" + getSiglaCompacta() + "/pegar")
 				.exp(new WfPodePegar(this, titular, lotaTitular)).post(true).build());
 
+		set.add(AcaoVO.builder().nome("_Priorizar").icone("text_list_numbers").modal("priorizarModal")
+				.exp(new PodeSim()).build());
+
 		set.add(AcaoVO.builder().nome("_Redirecionar").icone("arrow_branch").modal("redirecionarModal")
 				.exp(new WfPodeRedirecionar(this, titular, lotaTitular)).build());
 
@@ -879,6 +883,17 @@ public class WfProcedimento extends Objeto
 
 	public String obterProximoResponsavel() {
 		return WfDefinicaoDeDesvio.obterProximoResponsavel(this, null);
+	}
+
+	@Override
+	public int compareTo(WfProcedimento o) {
+		int i = getPrioridade().compareTo(o.getPrioridade());
+		if (i != 0)
+			return i;
+		i = getHisDtIni().compareTo(o.getHisDtIni());
+		if (i != 0)
+			return i;
+		return getId().compareTo(o.getId());
 	}
 
 }

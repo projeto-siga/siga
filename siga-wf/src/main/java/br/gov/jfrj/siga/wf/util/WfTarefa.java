@@ -41,6 +41,15 @@ public class WfTarefa implements Comparable<WfTarefa> {
 		int i = 0;
 		if (o == null)
 			return 1;
+		if (getInstanciaDeProcedimento().getPrioridade() != null
+				&& o.getInstanciaDeProcedimento().getPrioridade() == null)
+			return 1;
+		if (getInstanciaDeProcedimento().getPrioridade() != null
+				&& o.getInstanciaDeProcedimento().getPrioridade() != null) {
+			i = getInstanciaDeProcedimento().getPrioridade().compareTo(o.getInstanciaDeProcedimento().getPrioridade());
+			if (i != 0)
+				return i;
+		}
 		if (getInstanciaDeProcedimento().getEventoData() != null
 				&& o.getInstanciaDeProcedimento().getEventoData() == null)
 			return 1;

@@ -22,6 +22,9 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 	List<String> listaAssunto = new ArrayList<>();
 	
 	List<String> listaSetoreSubordinado = new ArrayList<>();
+	
+	Integer idTipoFormaDoc = 1;
+	
 
 	public RelPermanenciaSetorAssunto(Map parametros) throws DJBuilderException {
 		super(parametros);
@@ -34,10 +37,16 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 			throw new DJBuilderException("Setor subordinado deve ser escolhido!");
 		}
 		
+		
+		if (parametros.get("idTipoFormaDoc") == null) {
+			throw new DJBuilderException("Informe a forma documental: Processo Administrativo ou Expediente!");
+		}
 
 		 listaAssunto =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaAssunto") ).split(",")));
 		
 		 listaSetoreSubordinado =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaSetoresSubordinados") ).split(",")));
+		 
+		 idTipoFormaDoc =  Integer.valueOf(   String.valueOf(  parametros.get("idTipoFormaDoc")  ) );
 
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
@@ -153,7 +162,8 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 						+ "			ON (l.id_orgao_usu = u.id_orgao_usu) "
 						+ "		INNER JOIN siga.ex_forma_documento f "
 						+ "			ON (f.id_forma_doc = d.id_forma_doc) "
-						+ "		WHERE (tm.id_tp_mov >77) OR tm.id_tp_mov in(1,3,4,9,17,18,19,20,23,48,49,56) "
+						+ "		WHERE  ((tm.id_tp_mov >77) OR tm.id_tp_mov in(1,3,4,9,17,18,19,20,23,48,49,56)) and  "
+						+ "				f.id_tipo_forma_doc= :idTipoFormaDoc "		
 						+ "		GROUP BY u.acronimo_orgao_usu,f.sigla_forma_doc,d.ano_emissao,d.num_expediente "
 						+ "		ORDER BY NUM_PROCESSO desc ) x2 "
 						+ "		ON x1.NUM_PROCESSO = X2.NUM_PROCESSO AND X1.DATA_DESPACHO = X2.DATA_DESPACHO AND x1.COD_DESPACHO <> 48 "
@@ -178,6 +188,8 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		query.setParameter("assuntos", listaAssunto);
 		
 		query.setParameter("setoresSubordinados",listaSetoreSubordinado);
+		
+		query.setParameter("idTipoFormaDoc",idTipoFormaDoc);
 		
 		List<Object[]> lista = query.getResultList();
 		

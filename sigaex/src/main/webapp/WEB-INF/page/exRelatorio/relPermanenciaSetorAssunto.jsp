@@ -6,6 +6,9 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
+
+
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt() {
 		frmRelExpedientes.action = '${url}';
@@ -31,9 +34,9 @@ fieldset.group legend {
 }
 
 ul.checkbox {
- 	columns: 1;
-    -webkit-columns: 1;
-    -moz-columns: 1;
+	columns: 1;
+	-webkit-columns: 1;
+	-moz-columns: 1;
 	margin: 0;
 	padding: 0;
 	margin-left: 20px;
@@ -64,13 +67,13 @@ ul.checkbox li:hover, ul.checkbox li.focus {
 <c:set var="titulo_pagina" scope="request">
 Relatório de Permanência por Setor e Assunto
 </c:set>
-<input type="hidden" name="secaoUsuario" id="secaoUsuario"
-	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
+<input type="hidden" name="secaoUsuario" id="secaoUsuario" 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 
 <div class="row" style="height: 300px; overflow-y: auto;">
 	<fieldset class="group">
 		<legend>Assuntos</legend>
-		<ul class="checkbox">
+
+		<ul id="assuntoul" class="checkbox">
 			<c:forEach items="${listaAssuntos}" var="item">
 				<li><input type="checkbox" name="assuntos"
 					value="${item.idClassificacao}">${item.codificacao}-${item.descrClassificacao}</input></li>
@@ -78,7 +81,6 @@ Relatório de Permanência por Setor e Assunto
 		</ul>
 	</fieldset>
 </div>
-
 
 <br />
 
@@ -94,7 +96,18 @@ Relatório de Permanência por Setor e Assunto
 	</fieldset>
 </div>
 
+<div class="row">
+	<fieldset class="group">
+		<legend>Tipo de forma documental</legend>
 
+		<select id="tipoFormaDoc" name="idTipoFormaDoc"
+			value="${idTipoFormaDoc}">
+			<c:forEach var="tipo" items="${listaTiposFormaDoc}">
+				<option value="${tipo.idTipoFormaDoc}"
+					${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>
+			</c:forEach>
+		</select>
+</div>
 
 <input type="hidden" name="lotacao" id="lotacao"
 	value="${lotacaoDestinatarioSel.id}" />

@@ -532,9 +532,10 @@
 						</div>
 					</div>
 				</div>
-				</c:if>	
-				<div class="row inline">					
+				</c:if>
+					
 				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
+				<div class="row inline">					
 					<div class="col-sm-12">
 				  		<div class="form-group">
 				    		<label><fmt:message key="documento.preenchimento.automatico"/></label>
@@ -569,8 +570,8 @@
 				  		</div>
 				  </div>
 				</div>
-				
-			</c:if>
+				</c:if>
+			
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
 					<div class="row  ${hide_only_GOVSP}">
 						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">

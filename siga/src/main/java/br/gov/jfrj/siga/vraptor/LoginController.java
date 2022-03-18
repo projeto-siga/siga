@@ -77,6 +77,11 @@ public class LoginController extends SigaController {
 		result.include("request", getRequest());
 	}
 	
+	private static boolean getRecaptchaAtivo() {
+		String ativo = Prop.get("/siga.recaptcha.ativo");
+		return ativo.equals("true") ? true : false;
+	}
+
 	private static String getRecaptchaSiteKey() {
 		String pwd = null;
 		try {
@@ -111,6 +116,8 @@ public class LoginController extends SigaController {
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
 		
+		boolean recaptpchaAtivo = getRecaptchaAtivo();
+		result.include("recaptpchaAtivo", recaptpchaAtivo);
 		String recaptchaSiteKey = getRecaptchaSiteKey();
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		
@@ -148,12 +155,7 @@ public class LoginController extends SigaController {
 			}
 			
 			if (!isCaptchaValido()) {
-				
 				throw new RuntimeException("O campo Verificação deve ser respondido");
-				
-//				setDefaultResults();
-				
-//				return;
 			}
 			
 			GiService giService = Service.getGiService();
@@ -193,10 +195,11 @@ public class LoginController extends SigaController {
 	}
 	
 
-//	------------------------------ CAPTCHA
 	private boolean isCaptchaValido() throws UnirestException, JSONException {
 		
-		String recaptchaSiteKey = getRecaptchaSiteKey();
+		boolean recaptpchaAtivo = getRecaptchaAtivo();
+		if(!recaptpchaAtivo) return true;
+
 		String recaptchaSitePassword = getRecaptchaSitePassword();
 		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");		
 

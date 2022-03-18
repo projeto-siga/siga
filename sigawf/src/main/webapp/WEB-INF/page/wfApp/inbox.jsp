@@ -42,7 +42,7 @@
 								test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
 								</span>
 							</c:if></td>
-						<td align="center">${taskInstance.instanciaDeProcedimento.prioridade}</td>
+						<td align="center">${taskInstance.instanciaDeProcedimento.prioridade.descr}</td>
 						<td align="right">${fn:replace(f:esperaSimples(taskInstance.instanciaDeProcedimento.eventoData),
 						" ", "&nbsp;")}</td>
 					</tr>

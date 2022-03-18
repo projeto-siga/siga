@@ -40,9 +40,9 @@ app
 			$scope.data = {};
 
 			$scope.gravar = function() {
-				if(!validarFormulario($scope.data.workflow))
+				if (!validarFormulario($scope.data.workflow))
 					return;
-					
+
 				var fd = formdata({
 					id: $scope.id,
 					pd: $scope.encode($scope.data.workflow)
@@ -120,7 +120,7 @@ app
 						if (t.tipoResponsavel == 'RESPONSAVEL')
 							td.definicaoDeResponsavelId = t.refResponsavel;
 
-						if ((t.tipo == 'INCLUIR_DOCUMENTO' || t.tipo == 'INCLUIR_COPIA' || t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
+						if ((t.tipo == 'SUBPROCEDIMENTO' || t.tipo == 'INCLUIR_DOCUMENTO' || t.tipo == 'INCLUIR_COPIA' || t.tipo == 'CRIAR_DOCUMENTO' || t.tipo == 'AUTUAR_DOCUMENTO') && t.ref && t.ref.originalObject && t.ref.originalObject.key) {
 							td.refId = t.ref.originalObject.key;
 							td.refSigla = t.ref.originalObject.firstLine;
 						}
@@ -653,22 +653,22 @@ var uuidv4 = function() {
 	});
 };
 
-var validarFormulario = function(data){
+var validarFormulario = function(data) {
 	camposObrigatorios = [];
-	
-	if(!data.nome){
-		camposObrigatorios.push("Nome");
-	} 
-	
-	if(!data.descricao){
-		camposObrigatorios.push("Descrição");
-	} 
 
-	if(camposObrigatorios.length > 0){
+	if (!data.nome) {
+		camposObrigatorios.push("Nome");
+	}
+
+	if (!data.descricao) {
+		camposObrigatorios.push("Descrição");
+	}
+
+	if (camposObrigatorios.length > 0) {
 		alert("Favor informar os campos obrigatórios: " + camposObrigatorios.join(", "))
 		return false;
 	}
-	
+
 	return true;
 };
 

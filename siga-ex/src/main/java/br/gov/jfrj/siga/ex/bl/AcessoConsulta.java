@@ -1,6 +1,9 @@
 package br.gov.jfrj.siga.ex.bl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -9,6 +12,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.logic.ExLotacaoEstaVinculadoPorPerfil;
+import br.gov.jfrj.siga.ex.logic.ExPessoaEstaVinculadaPorPerfil;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class AcessoConsulta {
@@ -60,6 +65,17 @@ public class AcessoConsulta {
 						return true;
 					} 
 				}
+			}
+		}
+		
+		List<ExDocumento> listaTodosOsPais = new ArrayList<ExDocumento>();
+		listaTodosOsPais.addAll(doc.getTodosOsPaisDasVias());
+		
+		for (ExDocumento exDocumento : listaTodosOsPais) {
+			if((new ExPessoaEstaVinculadaPorPerfil(exDocumento, titular).eval()
+					|| new ExLotacaoEstaVinculadoPorPerfil(exDocumento, lotaTitular).eval()) 
+					&& this.pattern.matcher(exDocumento.getDnmAcesso()).find()) {
+				return true;
 			}
 		}
 		

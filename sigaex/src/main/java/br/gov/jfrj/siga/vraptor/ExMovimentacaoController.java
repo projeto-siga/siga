@@ -4215,10 +4215,14 @@ public class ExMovimentacaoController extends ExController {
 			result.include("idLotDefault", listaLotPubl.getIdLotDefault());
 		}
 
-		result.include("tipoMateria",
-				PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
-		result.include("cadernoDJEObrigatorio",
-				PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
+		// Nato: só estamos aceitando matérias administrativas no momento
+		String tipoMateria = PublicacaoDJEBL.obterSugestaoTipoMateria(doc);
+		boolean cadernoDJEObrigatorio = PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc);
+		tipoMateria = "A";
+		cadernoDJEObrigatorio = true;
+		result.include("tipoMateria", tipoMateria);
+		result.include("cadernoDJEObrigatorio",	cadernoDJEObrigatorio);
+		
 		result.include("descrPublicacao",
 				descrPublicacao == null ? doc.getDescrDocumento()
 						: descrPublicacao);

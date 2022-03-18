@@ -118,7 +118,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 		final DaoFiltroT flt = createDaoFiltro();
 
-		if ( StringUtils.isNotBlank(sigla)){
+		if ( StringUtils.isNotBlank(sigla) || StringUtils.isNotBlank(getNome()) ){
 		
 			tamanho = dao().consultarQuantidade(flt);
 			itens = dao().consultarPorFiltro(flt, offset, itemPagina);

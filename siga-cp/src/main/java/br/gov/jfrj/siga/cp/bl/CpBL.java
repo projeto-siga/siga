@@ -1340,7 +1340,24 @@ public class CpBL {
 				if(pessoaAnt.getDataFimPessoa() != null) {
 					pessoa.setDataFimPessoa(pessoaAnt.getDataFimPessoa());
 				}
+				CpIdentidade ident = null;
+				
+				if(!pessoa.getOrgaoUsuario().equivale(pessoaAnt.getOrgaoUsuario())) {
+					ident = new CpIdentidade();
+					CpIdentidade identAnt = new CpIdentidade();
+					identAnt = CpDao.getInstance().consultaIdentidadeCadastrante(pessoaAnt.getSesbPessoa() + pessoaAnt.getMatricula(), true);
+					PropertyUtils.copyProperties(ident, identAnt);
+					ident.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
+					ident.setNmLoginIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula());
+					ident.setDtCriacaoIdentidade(data);
+					ident.setId(null);
+					CpDao.getInstance().gravarComHistorico(ident, identAnt, data , identidadeCadastrante);
+				}
 				CpDao.getInstance().gravarComHistorico(pessoa, pessoaAnt, data , identidadeCadastrante);
+				if(ident != null) {
+					ident.setDpPessoa(pessoa);
+					CpDao.getInstance().gravar(ident);
+				}
 			} else {
 				pessoa.setHisIdcIni(identidadeCadastrante);
 				CpDao.getInstance().gravar(pessoa);

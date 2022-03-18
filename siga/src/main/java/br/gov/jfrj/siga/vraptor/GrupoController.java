@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFormula;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -105,7 +106,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 	// erro
 	private Exception exception;
-	private CpGrupoDeEmailSelecao grupoPaiSel;
+	private CpPerfilSelecao grupoPaiSel;
 	// Texto endereco email,
 	// etc. , conforme
 	// codigoTipoConfiguracao.
@@ -163,7 +164,12 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			}
 			dscGrupo = grp.getDscGrupo();
 			siglaGrupo = grp.getSiglaGrupo();
-			getGrupoPaiSel().buscarPorObjeto(grp.getCpGrupoPai());
+			
+			// Nato: o cast direto não funciona por causa do proxy do Hibernate, então precisei fazer o deproxy antes.
+			CpGrupo cpGrupoPai = grp.getCpGrupoPai();
+			if (cpGrupoPai != null)
+				cpGrupoPai = (CpGrupo) cpGrupoPai.getImplementation();
+			getGrupoPaiSel().buscarPorObjeto((CpPerfil) cpGrupoPai);
 
 			CpTipoGrupo tpGrp = grp.getCpTipoGrupo();
 
@@ -609,7 +615,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		return exception;
 	}
 
-	protected CpGrupoDeEmailSelecao getGrupoPaiSel() {
+	protected CpPerfilSelecao getGrupoPaiSel() {
 		return grupoPaiSel;
 	}
 
@@ -728,7 +734,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 */
 	protected void prepare() {
 		lotacaoGestoraSel = new DpLotacaoSelecao();
-		grupoPaiSel = new CpGrupoDeEmailSelecao();
+		grupoPaiSel = new CpPerfilSelecao();
 		tiposDeGrupo = obterTiposGrupo();
 		tipoConfiguracao = CpTipoDeConfiguracao.PERTENCER;
 	}
@@ -796,7 +802,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		this.exception = exception;
 	}
 
-	protected void setGrupoPaiSel(CpGrupoDeEmailSelecao grupoPaiSel) {
+	protected void setGrupoPaiSel(CpPerfilSelecao grupoPaiSel) {
 		this.grupoPaiSel = grupoPaiSel;
 	}
 

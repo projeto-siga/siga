@@ -1464,43 +1464,6 @@ public class ExDocumentoController extends ExController {
 		exibe(false, sigla, null, null, null, false);
 	}
 
-	private void verificaDocumento(final ExDocumento doc) {
-		if ((doc.getSubscritor() == null)
-				&& !doc.isExternoCapturado()
-				&& !doc.isExterno()
-				&& ((doc.isProcesso() && doc.isEletronico()) || !doc
-						.isProcesso())) {
-			throw new AplicacaoException(
-					"É necessário definir um subscritor para o documento.");
-		}
-
-		if (doc.getDestinatario() == null
-				&& doc.getLotaDestinatario() == null
-				&& (doc.getNmDestinatario() == null || doc.getNmDestinatario()
-						.trim().equals(""))
-				&& doc.getOrgaoExternoDestinatario() == null
-				&& (doc.getNmOrgaoExterno() == null || doc.getNmOrgaoExterno()
-						.trim().equals(""))) {
-			final CpSituacaoDeConfiguracaoEnum idSit = Ex
-					.getInstance()
-					.getConf()
-					.buscaSituacao(doc.getExModelo(), getTitular(),
-							getLotaTitular(),
-							ExTipoDeConfiguracao.DESTINATARIO);
-			if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
-				throw new AplicacaoException("Para documentos do modelo "
-						+ doc.getExModelo().getNmMod()
-						+ ", é necessário definir um destinatário");
-			}
-		}
-
-		if (doc.getExClassificacao() == null) {
-			throw new AplicacaoException(
-					"É necessário informar a classificação documental.");
-		}
-
-	}
-
 	private void buscarDocumentoOuNovo(final boolean fVerificarAcesso,
 			final ExDocumentoDTO exDocumentoDTO) {
 		buscarDocumento(fVerificarAcesso, true, exDocumentoDTO);
@@ -1580,7 +1543,7 @@ public class ExDocumentoController extends ExController {
 
 		buscarDocumento(true, exDocumentoDto);
 
-		verificaDocumento(exDocumentoDto.getDoc());
+		Ex.getInstance().getBL().verificaDocumento(getTitular(), getLotaTitular(), exDocumentoDto.getDoc());
 
 		Ex.getInstance().getComp().afirmar("Não é possível Finalizar", ExPodeFinalizar.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob().doc());
 
@@ -1754,7 +1717,7 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
 				}
 
-				verificaDocumento(exDocumentoDTO.getDoc());
+				Ex.getInstance().getBL().verificaDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc());
 			}
 
 			ExMobil mobilAutuado = null;

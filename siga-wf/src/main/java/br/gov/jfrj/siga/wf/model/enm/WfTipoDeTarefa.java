@@ -8,13 +8,14 @@ import com.crivano.jflow.task.TaskEval;
 
 import br.gov.jfrj.siga.wf.model.task.WfTarefaArquivar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarAssinatura;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarAuxiliar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarJuntada;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAutuar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocIncluirCopia;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaSubprocedimento;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
-import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarAuxiliar;
 
 public enum WfTipoDeTarefa implements TaskKind {
 
@@ -41,6 +42,8 @@ public enum WfTipoDeTarefa implements TaskKind {
 	EXECUTAR("Executar", "rectangle", null, TaskEval.class, false),
 	//
 	EMAIL("Email", "folder", null, TaskEmail.class, true),
+	//
+	SUBPROCEDIMENTO("Subprocedimento", "rectangle", "Subprocedimento", WfTarefaSubprocedimento.class, false),
 	//
 	INCLUIR_AUXILIAR("Incluir Auxiliar", "rectangle", "Incluir Auxiliar", WfTarefaDocAguardarAuxiliar.class, true);
 

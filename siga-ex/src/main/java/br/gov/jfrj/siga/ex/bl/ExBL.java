@@ -3013,6 +3013,11 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			final ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
+			
+			if (mov != null && !ExTipoDeMovimentacao.listaTipoMovimentacoesExcluiveisFisicamente().contains(mov.getExTipoMovimentacao())) {
+				throw new AplicacaoException("Não é permitido excluir a movimentação!");
+			}
+			
 			// ExTipoDeMovimentacao.ANEXACAO
 			// movDao.excluir(mov);
 			excluirMovimentacao(mov);
@@ -3037,6 +3042,8 @@ public class ExBL extends CpBL {
 	@SuppressWarnings("unchecked")
 	public String finalizar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
 			throws AplicacaoException {
+		
+		verificaDocumento(cadastrante, lotaCadastrante, doc);
 
 		if (doc.isFisico() && Utils.empty(doc.getDescrDocumento()))
 			throw new AplicacaoException(
@@ -3196,6 +3203,44 @@ public class ExBL extends CpBL {
 				}
 			}
 		}
+	}
+
+	public void verificaDocumento(final DpPessoa titular, final DpLotacao lotaTitular, final ExDocumento doc) {
+		if ((doc.getSubscritor() == null)
+				&& !doc.isExternoCapturado()
+				&& !doc.isExterno()
+				&& ((doc.isProcesso() && doc.isEletronico()) || !doc
+						.isProcesso())) {
+			throw new AplicacaoException(
+					"É necessário definir um subscritor para o documento.");
+		}
+
+		if (doc.getDestinatario() == null
+				&& doc.getLotaDestinatario() == null
+				&& (doc.getNmDestinatario() == null || doc.getNmDestinatario()
+						.trim().equals(""))
+				&& doc.getOrgaoExternoDestinatario() == null
+				&& (doc.getNmOrgaoExterno() == null || doc.getNmOrgaoExterno()
+						.trim().equals(""))
+				&& titular != null && lotaTitular != null) {
+			final CpSituacaoDeConfiguracaoEnum idSit = Ex
+					.getInstance()
+					.getConf()
+					.buscaSituacao(doc.getExModelo(), titular,
+							lotaTitular,
+							ExTipoDeConfiguracao.DESTINATARIO);
+			if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
+				throw new AplicacaoException("Para documentos do modelo "
+						+ doc.getExModelo().getNmMod()
+						+ ", é necessário definir um destinatário");
+			}
+		}
+
+		if (doc.getExClassificacao() == null) {
+			throw new AplicacaoException(
+					"É necessário informar a classificação documental.");
+		}
+
 	}
 
 	public Long obterProximoNumero(ExDocumento doc) throws Exception {

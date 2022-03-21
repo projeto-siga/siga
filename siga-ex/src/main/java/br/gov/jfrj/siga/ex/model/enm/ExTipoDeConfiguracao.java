@@ -122,8 +122,8 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO,
 					ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
-			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.OBRIGATORIO,
+					CpSituacaoDeConfiguracaoEnum.OPCIONAL },
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
 	DUPLICAR(9, "Duplicar",

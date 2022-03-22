@@ -93,6 +93,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacaoPorM
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -284,19 +285,20 @@ public class ExRelatorioController extends ExController {
 
 
 
+	@SuppressWarnings("unchecked")
 	private List<ExClassificacao> getTodosOsAssuntos(){
 
-		Query q = em().createQuery("from ExClassificacao cl where cl.hisAtivo = 1  order by cl.descrClassificacao");
-	
-		return q.getResultList();
+		Query q = em().createQuery("from ExClassificacao cl where cl.hisAtivo = 1  order by cl.codificacao");
+		return q.getResultList(); 
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	private List<ExTipoFormaDoc> getTodosOsTiposFormaDocumental(){
 		
-		Query q = em().createQuery("from ExTipoFormaDoc tf"  );
-		
-		return q.getResultList();
+//		Query q = em().createQuery("from ExTipoFormaDoc tf"  );
+//				return q.getResultList();
+		return ExDao.getInstance().listarExTiposFormaDoc();
 	}
 
 
@@ -1765,9 +1767,13 @@ public class ExRelatorioController extends ExController {
 		
 		String[] setoresSelecionados = getRequest().getParameterValues("setoresSelecionados");
 		
+		
 		String[] assuntos = getRequest().getParameterValues("assuntos");
 		
+		
 		String idTipoFormaDoc =  getRequest().getParameter("idTipoFormaDoc");
+		
+		String idTipoSaida = getRequest().getParameter("idTipoSaida");
 		
 		if (setoresSelecionados == null ) {
 			
@@ -1780,9 +1786,14 @@ public class ExRelatorioController extends ExController {
 		}
 		
 
-		if (idTipoFormaDoc == null ) {
+		if (StringUtils.isBlank(idTipoFormaDoc ) ) {
 			
 			throw new AplicacaoException( "Selecione pelo menos um Tipo de Forma Documental.");
+		}
+		
+		if (StringUtils.isBlank(idTipoSaida ) ) {
+			
+			throw new AplicacaoException( "Selecione o tipo de saida desejado :PDF ou EXCEL");
 		}
 	
 		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
@@ -1791,21 +1802,27 @@ public class ExRelatorioController extends ExController {
 		
 		parametros.put("idTipoFormaDoc", idTipoFormaDoc);
 		
+		parametros.put("idTipoSaida", idTipoSaida); 
+		
 		addParametrosPersonalizadosOrgaoString(parametros);
 
 		final RelPermanenciaSetorAssunto rel = new RelPermanenciaSetorAssunto(parametros);
 		
 		rel.gerar();
-
 		
 		InputStream inputStream   =null; 
-		inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF,	"RelPermanenciaSetorAssunto");
+
+		String nomeArquivoSaida = 	"RelPermanenciaSetorAssunto_"+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		
-		
+		if (Integer.valueOf(idTipoSaida) == 1){ 
+
+			inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
+			return new InputStreamDownload(inputStream, APPLICATION_PDF,	nomeArquivoSaida +".pdf");
+		} else {
 			
-//		inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
-//		return new InputStreamDownload(inputStream, APPLICATION_EXCEL,	"RelPermanenciaSetorAssunto");
+			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
+			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
+		}
 
 		
 }

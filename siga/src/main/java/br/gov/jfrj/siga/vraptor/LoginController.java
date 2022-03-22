@@ -147,11 +147,11 @@ public class LoginController extends SigaController {
 				throw new RuntimeException(mensagem.toString());
 			}
 			
-			if (!isCaptchaValido()) {
-				
-				throw new RuntimeException("O campo Verificação deve ser respondido");
-	 
-			}
+//			if (!isCaptchaValido()) {
+//				
+//				throw new RuntimeException("O campo Verificação deve ser respondido");
+//	 
+//			}
 			
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);

@@ -6,107 +6,78 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
-
-
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt() {
 		frmRelExpedientes.action = '${url}';
 		frmRelExpedientes.submit();
 	}
 </script>
+ 
+<link rel="stylesheet" href="/siga/css/selectpicker/bootstrap-select.min.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="../../../stylesheet/exconfiguracao.css"/>
 
-<style>
-fieldset.group {
-	margin: 0;
-	padding: 0;
-	margin-bottom: 1.25em;
-	padding: .125em;
-}
 
-fieldset.group legend {
-	margin: 0;
-	padding: 0;
-	font-weight: bold;
-	margin-left: 20px;
-	font-size: 100%;
-	color: black;
-}
-
-ul.checkbox {
-	columns: 1;
-	-webkit-columns: 1;
-	-moz-columns: 1;
-	margin: 0;
-	padding: 0;
-	margin-left: 20px;
-	list-style: none;
-}
-
-ul.checkbox li input {
-	margin-right: .25em;
-}
-
-ul.checkbox li {
-	border: 1px transparent solid;
-	display: inline-block;
-	width: 15em;
-}
-
-ul.checkbox li label {
-	margin-left:;
-}
-
-ul.checkbox li:hover, ul.checkbox li.focus {
-	background-color: lightyellow;
-	border: 1px gray solid;
-	width: 12em;
-}
-</style>
-
-<c:set var="titulo_pagina" scope="request">
-Relatório de Permanência por Setor e Assunto
-</c:set>
+<c:set var="titulo_pagina" scope="request"> Relatório de Permanência por Setor e Assunto </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 
-<div class="row" style="height: 300px; overflow-y: auto;">
-	<fieldset class="group">
-		<legend>Assuntos</legend>
-
-		<ul id="assuntoul" class="checkbox">
-			<c:forEach items="${listaAssuntos}" var="item">
-				<li><input type="checkbox" name="assuntos"
-					value="${item.idClassificacao}">${item.codificacao}-${item.descrClassificacao}</input></li>
-			</c:forEach>
-		</ul>
-	</fieldset>
-</div>
-
-<br />
-
-<div class="row">
-	<fieldset class="group">
-		<legend>Setores</legend>
-		<ul class="checkbox">
-			<c:forEach items="${listaSetoresSubordinados}" var="item">
-				<li><input type="checkbox" name="setoresSelecionados"
-					value="${item.idLotacao}"> ${item.nomeLotacao}</input></li>
-			</c:forEach>
-		</ul>
-	</fieldset>
-</div>
-
-<div class="row">
-	<fieldset class="group">
-		<legend>Tipo de forma documental</legend>
-
-		<select id="tipoFormaDoc" name="idTipoFormaDoc"
-			value="${idTipoFormaDoc}">
-			<c:forEach var="tipo" items="${listaTiposFormaDoc}">
-				<option value="${tipo.idTipoFormaDoc}"
-					${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>
-			</c:forEach>
-		</select>
+<div class="container-fluid">
+	<div class="card bg-light mb-3" >
+				 		
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-6">
+							<label for="tipoSaida">Tipo Saída</label>
+							<select id="tipoSaida" name="idTipoSaida"	value="${idTipoSaida}">
+								 	<option value="1" 	>PDF</option>
+								 	<option value="2" 	>Excel</option>
+					 		</select>
+						</div>
+						
+						<div class="col-md-6">
+							<label for="tipoFormaDoc">Tipo Forma Documento</label>
+							<select id="tipoFormaDoc" name="idTipoFormaDoc"			value="${idTipoFormaDoc}">
+								<c:forEach var="tipo" items="${listaTiposFormaDoc}">
+									<option value="${tipo.idTipoFormaDoc}" 	${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>
+								</c:forEach>
+							</select>
+						</div>
+					
+					</div>				
+				
+					<div class="row">
+					
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="lotacao">Setores</label>
+								<input type="hidden" name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" id="inputHiddenLotacoesSelecionadas" />
+								<select id="lotacao" name="setoresSelecionados"
+								class="form-control  siga-multiploselect  js-siga-multiploselect--lotacao">
+									<c:forEach items="${listaSetoresSubordinados}" var="itemL"  >
+										<option value="${itemL.idLotacao}">${itemL.nomeLotacao}</option>
+									</c:forEach>
+								</select>
+							</div>					
+						</div>
+						
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="classificacao">Assuntos</label>
+									<input type="hidden" name="idClassificacaoPesquisa" value="${idClassificacaoPesquisa}" id="inputHiddenClassificacoesSelecionadas" />
+								<select id="classificacao" name="assuntos"  
+								 class="form-control  siga-multiploselect  js-siga-multiploselect--classificacao">
+									<c:forEach items="${listaAssuntos}" var="itemC">
+										<option value="${itemC.idClassificacao}">${itemC.codificacao}-${itemC.descrClassificacao}</option>
+									</c:forEach>
+								</select>
+							</div>					
+						</div>
+						
+					</div>
+				</div>
+	</div>
 </div>
 
 <input type="hidden" name="lotacao" id="lotacao"
@@ -116,3 +87,15 @@ Relatório de Permanência por Setor e Assunto
 <input type="hidden" name="lotacaoTitular" id="lotacaoTitular"
 	value="${lotaTitular.siglaLotacao}" />
 <input type="hidden" name="idTit" id="idTit" value="${titular.id}" />
+
+
+
+<script type="text/javascript" src="/siga/javascript/selectpicker/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="../../../javascript/exconfiguracao.js"></script>
+<script type="text/javascript" src="../../../javascript/relatorio.combo-classificacao.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>		
+
+

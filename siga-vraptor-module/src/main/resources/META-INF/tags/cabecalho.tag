@@ -97,14 +97,14 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.2.0.0" />
+<c:set var="siga_version"  scope="request" value="10.2.3.2" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">
 		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css" type="text/css" media="screen, projection">
 		
-		<c:set var="body_color" value="body_color" scope="request" />
+		<c:set var="body_color" value="body_color_govsp" scope="request" />
 		
 		<c:set var="thead_color" value="thead-dark" scope="request" />
 		
@@ -129,7 +129,8 @@ ${meta}
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
-				<c:set var="thead_color" value="thead-light" scope="request" />
+		<c:set var="body_color" value="body_color_default" scope="request" />
+		<c:set var="thead_color" value="thead-light" scope="request" />
 									
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
@@ -169,7 +170,7 @@ ${meta}
 
 <body onload="${onLoad}" class="${body_color}">
 	<c:if test="${popup!='true'}">
-   		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
+   		<nav id="siga-top-menu" class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
 				src="${navbar_logo}" height="${navbar_logo_size}">
 			</a>
@@ -232,7 +233,7 @@ ${meta}
 									<script>
 									    $('#btnTutorial').click(function () {
 									        var src = 'https://vimeopro.com/fcav/spsempapel';
-									        $('#tutorialModal').modal('show');
+									        $('#tutorialModal').appendTo("body").modal('show');
 									        $('#tutorialModal iframe').attr('src', src);
 									    });
 									
@@ -411,7 +412,7 @@ ${meta}
 					 						</strong>
 										<c:if test="${cadastrante.lotacoes[1] != null}">
 											</button>
-											<div class="dropdown-menu" aria-labelledby="dropdownLotaMenuButton">
+											<div class="dropdown-menu" style="z-index: 1040" aria-labelledby="dropdownLotaMenuButton">
 												<c:forEach var="lota" items="${cadastrante.lotacoes}">
 													<c:if test="${!(lota[0]==cadastrante.sigla || lota[1]==cadastrante.lotacao)}">
 														<a class="dropdown-item" href="/siga/app/swapUser?username=${lota[0]}">
@@ -445,6 +446,10 @@ ${meta}
 					</div>
 				</c:if>
 			</div>
+			<script>
+				if('${mensagemConsole}' != '')
+					console.log('${mensagemConsole}');
+			</script>
 			<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
 				<div class="col" >
 					<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
@@ -475,6 +480,7 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+	sessionStorage.removeItem('listaNotificacaoSilenciada' + document.getElementById('cadastrante').title);
 
 	for (var obj in sessionStorage) {
       if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {

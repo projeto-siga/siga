@@ -104,11 +104,13 @@ public class Utils {
 	}
 
 	public static boolean equivale(Historico o1, Historico o2) {
+		if (o1 == null && o2 == null)
+			return true;
 		if (o1 != null && o2 != null && o1.equivale(o2))
 			return true;
 		return false;
 	}
-	
+    
 	public static boolean igual(Object o1, Object o2) {
 		if (o1 == null && o2 == null)
 			return true;

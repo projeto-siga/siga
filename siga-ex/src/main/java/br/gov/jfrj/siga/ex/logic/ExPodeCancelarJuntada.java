@@ -68,6 +68,6 @@ public class ExPodeCancelarJuntada extends CompositeExpressionSupport {
 				
 				Or.of(new ExEstaJuntadoExterno(mob), new ExPodeMovimentar(mobPai, titular, lotaTitular)),
 				
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.PUBLICACAO_BOLETIM, titular, lotaTitular));
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA, titular, lotaTitular));
 	}
 }

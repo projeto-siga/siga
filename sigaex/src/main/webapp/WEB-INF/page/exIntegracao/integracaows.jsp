@@ -29,7 +29,7 @@ function submeter() {
 				<div class="row">
 					<div class="col col-4">
 						<div class="form-group">
-							<label>Usuario</label> 
+							<label>Usuário</label> 
 							<input type="text" size="30" name="usuario" class="form-control"/>			 
 						</div>
 					</div>

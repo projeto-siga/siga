@@ -95,13 +95,13 @@ function sbmt(offset) {
 		</div>
 		<br>
 	
-		<table class="table table-sm table-striped table-responsive">
+		<table class="table table-sm table-striped" width="100%">
 			<thead class="${thead_color}">
 				<tr>
 					<th align="center">Matrícula</th>
 					<th align="left">Nome</th>
-					<th align="center"><fmt:message key="usuario.lotacao"/></th>
-					<th align="center">Função</th>
+					<th align="left"><fmt:message key="usuario.lotacao"/></th>
+					<th align="left">Função</th>
 					<th>Fim de Vigência</th>
 				</tr>
 			</thead>
@@ -111,8 +111,8 @@ function sbmt(offset) {
 					<td align="center"><a
 						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${fn:replace(pessoa.descricao,'\'','&#8217;')}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
 					<td align="left">${pessoa.descricao}</td>
-					<td align="center">${pessoa.lotacao.sigla}</td>
-					<td align="center">${pessoa.funcaoConfianca.nomeFuncao}${buscarFechadas}</td>
+					<td align="left">${pessoa.lotacao.sigla}</td>
+					<td align="left">${pessoa.funcaoConfianca.nomeFuncao}${buscarFechadas}</td>
 					<td align="left">${pessoa.dataFimPessoa}</td>
 				</tr>
 			</siga:paginador>

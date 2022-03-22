@@ -18,7 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +27,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.crivano.jflow.TaskResult;
-import com.crivano.jflow.model.enm.TaskResultKind;
+import com.crivano.jflow.model.enm.VariableEditingKind;
+import com.crivano.jflow.model.util.MissingParameterException;
 import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
@@ -41,18 +40,22 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
+import br.gov.jfrj.siga.wf.logic.WfPodePriorizar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRetomar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
+import br.gov.jfrj.siga.wf.model.WfMovPriorizacao;
 import br.gov.jfrj.siga.wf.model.WfMovRedirecionamento;
 import br.gov.jfrj.siga.wf.model.WfMovTermino;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
@@ -98,9 +101,9 @@ public class WfBL extends CpBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public WfProcedimento createProcessInstance(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
+	public WfProcedimento criarProcedimento(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
 			DpLotacao lotaTitular, CpIdentidade identidade, WfTipoDePrincipal tipoDePrincipal, String principal,
-			ArrayList<String> keys, ArrayList<String> values, boolean fCreateStartTask) throws Exception {
+			List<String> keys, List<Object> values, boolean fCreateStartTask) throws Exception {
 
 		// Create the process definition,
 		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
@@ -140,8 +143,8 @@ public class WfBL extends CpBL {
 			List<WfProcedimento> l = dao().consultarProcedimentosAtivosPorPrincipal(principal);
 			if (l.size() > 0)
 				throwErroDeInicializacao(pi, null,
-						"não é permitido instanciar este procedimento com um principal que já está sendo orquestrado por pelo procedimento ativo "
-								+ l.get(0).getSigla());
+						"não é permitido instanciar este procedimento com o principal " + principal
+								+ " que já está sendo orquestrado por pelo procedimento ativo " + l.get(0).getSigla());
 		}
 
 		pi.setTipoDePrincipal(tipoDePrincipal);
@@ -166,7 +169,7 @@ public class WfBL extends CpBL {
 				if (td.getRefId() == null)
 					throwErroDeInicializacao(pi, td, "não foi definido o modelo de documento na tarefa");
 			}
-			
+
 			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO
 					|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
 				if (pi.getPrincipal() == null)
@@ -183,7 +186,7 @@ public class WfBL extends CpBL {
 //				}
 			}
 		}
-		
+
 		if (pi.getPrincipal() != null && pi.getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
 			dao().gravar(pi); // Precisa gravar para gerar uma sigla válida para o procedimento
 			Service.getExService().atualizarPrincipal(pi.getPrincipal(), "PROCEDIMENTO", pi.getSigla());
@@ -212,6 +215,21 @@ public class WfBL extends CpBL {
 			DpLotacao lotaTitular, CpIdentidade identidade) throws Exception {
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.resume(event, detourIndex, param);
+	}
+
+	public void salvar(WfProcedimento pi, WfDefinicaoDeTarefa td, Map<String, Object> param, DpPessoa titular,
+			DpLotacao lotaTitular, CpIdentidade identidade) throws Exception {
+		if (td.getVariable() != null && td.getVariable().size() > 0) {
+			for (WfDefinicaoDeVariavel v : (List<WfDefinicaoDeVariavel>) td.getVariable()) {
+				if (v.getEditingKind() == VariableEditingKind.READ_ONLY)
+					continue;
+				Object value = param != null ? param.get(v.getIdentifier()) : null;
+				if (v.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED && value == null)
+					throw new MissingParameterException(v.getIdentifier());
+				pi.getVariable().put(v.getIdentifier(), value);
+			}
+		}
+		WfDao.getInstance().gravarInstanciaDeProcedimento(pi);
 	}
 
 	/**
@@ -335,9 +353,21 @@ public class WfBL extends CpBL {
 
 	private void gravarMovimentacao(final WfMov mov) throws AplicacaoException {
 		dao().gravar(mov);
-		if (mov.getProcedimento().getMovimentacoes() == null)
-			mov.getProcedimento().setMovimentacoes(new TreeSet<WfMov>());
-		mov.getProcedimento().getMovimentacoes().add(mov);
+		WfProcedimento pi = mov.getProcedimento();
+		if (pi.getMovimentacoes() == null)
+			pi.setMovimentacoes(new TreeSet<WfMov>());
+		pi.getMovimentacoes().add(mov);
+	}
+
+	private void atualizarResponsavel(WfProcedimento pi) {
+		WfResp atual = pi.localizarResponsavelAtual(pi.getCurrentTaskDefinition());
+		if (atual == null)
+			return;
+		if (!atual.equals(pi.getResponsible())) {
+			pi.setEventoPessoa(atual.getPessoa());
+			pi.setEventoLotacao(atual.getLotacao());
+			dao().gravarInstanciaDeProcedimento(pi);
+		}
 	}
 
 	public void anotar(WfProcedimento pi, String descrMov, DpPessoa titular, DpLotacao lotaTitular,
@@ -382,12 +412,7 @@ public class WfBL extends CpBL {
 				identidade, pi.getEventoPessoa(), pi.getEventoLotacao(), titular, lotaTitular);
 		gravarMovimentacao(mov);
 
-		if (pi.getEventoPessoa() != null || pi.getEventoLotacao() != null) {
-			WfResp resp = pi.calcResponsible(pi.getCurrentTaskDefinition());
-			pi.setEventoPessoa(resp.getPessoa());
-			pi.setEventoLotacao(resp.getLotacao());
-			dao().gravarInstanciaDeProcedimento(pi);
-		}
+		atualizarResponsavel(pi);
 	}
 
 	public void redirecionar(WfProcedimento pi, int para, DpPessoa titular, DpLotacao lotaTitular,
@@ -416,6 +441,18 @@ public class WfBL extends CpBL {
 		assertLogic(new WfPodeRetomar(pi, titular, lotaTitular), "retomar");
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.resume(pi);
+	}
+
+	public void priorizar(WfProcedimento pi, WfPrioridade prioridade, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) {
+		assertLogic(new WfPodePriorizar(pi, titular, lotaTitular), "priorizar");
+		if (pi.getPrioridade() == prioridade)
+			return;
+		WfMovPriorizacao mov = new WfMovPriorizacao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
+				identidade, pi.getPrioridade(), prioridade);
+		gravarMovimentacao(mov);
+		pi.setPrioridade(prioridade);
+		dao().gravar(pi);
 	}
 
 	private static void assertLogic(Expression expr, String descr) {

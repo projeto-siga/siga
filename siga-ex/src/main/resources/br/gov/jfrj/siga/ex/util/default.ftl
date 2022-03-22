@@ -1464,9 +1464,8 @@ CKEDITOR.replace( '${var}',
 									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{doc.lotaSubscritor.sigla}'},
 									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{doc.lotaCadastrante.sigla}'},
 									{'name': 'Destinatário', 'value': '$' + '{doc.destinatarioString}'},
-									{'name': 'Campo da Entrevista', 'value': '$' + '{doc.form.NOMECAMPO}'},
+									{'name': 'Campo de cadastro do doc', 'value': '$' + '{doc.form.NOMECAMPO}'},
 									{'name': 'Descrição', 'value': '$' + '{doc.descrDocumento}'},
-									
 									{'name': 'Documento Pai'},
 									{'name': 'Número', 'value': '$' + '{doc.pai.sigla}'},
 									{'name': 'Data', 'value': '$' + '{doc.pai.dtDocDDMMYYYY}'},
@@ -1475,41 +1474,36 @@ CKEDITOR.replace( '${var}',
 									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{doc.pai.lotaSubscritor.sigla}'},
 									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{doc.pai.lotaCadastrante.lotacao.sigla}'},
 									{'name': 'Destinatário', 'value': '$' + '{doc.pai.destinatarioString}'},
-									{'name': 'Campo da Entrevista', 'value': '$' + '{doc.pai.form.NOMECAMPO}'},
+									{'name': 'Campo de cadastro do doc', 'value': '$' + '{doc.pai.form.NOMECAMPO}'},
 									{'name': 'Descrição', 'value': '$' + '{doc.pai.descrDocumento}'},
-									
 									{'name': 'Documento Autuado'},
-									{'name': 'Número', 'value': '$' + '{doc.sigla}'},
+									{'name': 'Número', 'value': '$' + '{ref.pai.autuado.mob.sigla}'},
 									{'name': 'Data', 'value': '$' + '{ref.pai.autuado.doc.dtDocDDMMYYYY}'},
 									{'name': 'Nome do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.descricao}'},
 									{'name': 'Nome da Lotação do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.subscritor.lotacao.descricao}'},
 									{'name': 'Sigla da Lotação do Subscritor', 'value': '$' + '{ref.pai.autuado.doc.lotaSubscritor.sigla}'},
 									{'name': 'Sigla da Lotação do Cadastrante', 'value': '$' + '{ref.pai.autuado.doc.lotaCadastrante.sigla}'},
 									{'name': 'Destinatário', 'value': '$' + '{ref.pai.autuado.doc.destinatarioString}'},
-									{'name': 'Campo da Entrevista do Autuado', 'value': '$' + '{ref.pai.autuado.form.NOMECAMPO}'},
+									{'name': 'Campo de cadastro do doc Autuado', 'value': '$' + '{ref.pai.autuado.form.NOMECAMPO}'},
 									{'name': 'Descrição', 'value': '$' + '{ref.pai.autuado.doc.descrDocumento}'},
-									
-									
 									{'name': 'Outros Documentos'},
-									{'name': 'Lista de números por modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO 1','MODELO DESEJADO 2')}"},
-									{'name': 'Número do último modelo juntado', 'value': '$' + "{ref.modelo('MODELO DESEJADO').ultimo}"},
-									{'name': 'Campo do último modelo juntado', 'value': '$' + "{ref.modelo('memorando').form.NOMECAMPO}"},
-									
+									{'name': 'Relação de docs juntados do modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO 1','MODELO DESEJADO 2')}"},
+									{'name': 'Último doc juntado do modelo', 'value': '$' + "{ref.modelo('MODELO DESEJADO').ultimo.mob.sigla}"},
+									{'name': 'Campo do último doc juntado do modelo', 'value': '$' + "{ref.modelo('memorando').form.NOMECAMPO}"},
 									{'name': 'Workflow'},
-									{'name': 'Sigla do Procedimento', 'value': '$' + '{wf.sigla}'},
-									{'name': 'Principal', 'value': '$' + '{wf.principal}'},
-									{'name': 'Nome do Titular', 'value': '$' + '{wf.titular}'},
-									{'name': 'Nome da Lotação do Titular', 'value': '$' + '{wf.lotaTitular}'},
-									{'name': 'Variável', 'value': '$' + '{wf.var.NOMEVARIAVEL}'},
-									{'name': 'Data', 'value': '$' + '{fmt.data(wf.var.NOMEVARIAVEL)}'},
-									{'name': 'Reais', 'value': '$' + '{fmt.reais(wf.var.NOMEVARIAVEL)}'},								
-									{'name': 'Reais por Extenso', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},								
-									{'name': 'Documento Criado', 'value': '$' + '{wf.var.doc_NOMETAREFA}'},								
-									
+									{'name': 'Número do Procedimento', 'value': '$' + '{wf.sigla}'},
+									{'name': 'Número do Principal vinculado ao procedimento', 'value': '$' + '{wf.principal}'},
+									{'name': 'Nome de quem iniciou o Procedimento', 'value': '$' + '{wf.titular}'},
+									{'name': 'Lotação de quem iniciou o Procedimento', 'value': '$' + '{wf.lotaTitular}'},
+									{'name': 'Variável (sem formatação)', 'value': '$' + '{wf.var.NOMEVARIAVEL}'},
+									{'name': 'Variável (Data)', 'value': '$' + '{fmt.data(wf.var.NOMEVARIAVEL)}'},
+									{'name': 'Variável (Reais)', 'value': '$' + '{fmt.reais(wf.var.NOMEVARIAVEL)}'},
+									{'name': 'Variável (Reais por Extenso)', 'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'},
+									{'name': 'Documento Criado por uma tarefa', 'value': '$' + '{wf.var.doc_NOMETAREFA}'},								
 								];
-								CKEDITOR.config.strinsert_button_label = 'Variável';
-								CKEDITOR.config.strinsert_button_title = 'Inserir Variável';
-								CKEDITOR.config.strinsert_button_voice = 'Inserir Variável';
+								CKEDITOR.config.strinsert_button_label = 'Parâmetro';
+								CKEDITOR.config.strinsert_button_title = 'Inserir Parâmetro';
+								CKEDITOR.config.strinsert_button_voice = 'Inserir Parâmetro';
 								
 								CKEDITOR.plugins.add('strinsert',
 								{

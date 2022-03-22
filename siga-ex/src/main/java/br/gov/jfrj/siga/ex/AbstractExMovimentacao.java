@@ -174,7 +174,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 		// em um exato momento. Usado principalmente para gerar segunda-via de
 		// protocolos. 
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
-				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
+				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov= :data"
 				+ "                order by mov.dtTimestamp"), 
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY),
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),

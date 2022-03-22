@@ -88,7 +88,7 @@
 						</c:choose>
 						<tr class="${evenorodd}">
 							<td>${documento[1].exMobil.codigo}</td>
-							<td>${f:descricaoConfidencial(documento[0], lotaTitular)}</td>
+							<td>${documento[0].descrDocumento}</td>
 						</tr>
 					</c:forEach>
 				</table>

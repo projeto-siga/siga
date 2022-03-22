@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.encoding.Base64;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -33,10 +34,12 @@ import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -190,20 +193,30 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	}
 
 	@Get("app/diagrama/exibir")
-	public void exibe(final Long id) throws Exception {
+	public void exibe(final String id) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id != null) {
-			WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(id);
+			WfDefinicaoDeProcedimento pd = buscar(id);
+			result.include("pd", pd);
+			result.include("dot", util.getDot(pd));
+		}
+	}
+
+	@Get("app/diagrama/documentar")
+	public void documenta(final String id) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		if (id != null) {
+			WfDefinicaoDeProcedimento pd = buscar(id);
 			result.include("pd", pd);
 			result.include("dot", util.getDot(pd));
 		}
 	}
 
 	@Get("app/diagrama/editar")
-	public void edita(final Long id, final boolean duplicar) throws UnsupportedEncodingException {
+	public void edita(final String id, final boolean duplicar) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id != null) {
-			WfDefinicaoDeProcedimento pd = WfDefinicaoDeProcedimento.AR.findById(id);
+			WfDefinicaoDeProcedimento pd = buscar(id);
 			if (duplicar)
 				pd.assertAcessoDeDuplicar(getTitular(), getLotaTitular());
 			else
@@ -213,7 +226,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	}
 
 	@Get("app/diagrama/{id}/carregar")
-	public void carregar(final Long id) throws Exception {
+	public void carregar(final String id) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		try {
 			WfDefinicaoDeProcedimento pd = buscar(id);
@@ -225,18 +238,20 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 
 	@Transacional
 	@Post("app/diagrama/gravar")
-	public void editarGravar(Long id, WfDefinicaoDeProcedimento pd) throws Exception {
+	public void editarGravar(String id, WfDefinicaoDeProcedimento pd) throws Exception {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
 
+			Long lId = null;
 			if (id != null) {
-				WfDefinicaoDeProcedimento pdOriginal = WfDefinicaoDeProcedimento.AR.findById(id);
+				WfDefinicaoDeProcedimento pdOriginal = buscar(id);
+				lId = pdOriginal.getId();
 				pdOriginal.assertAcessoDeEditar(getTitular(), getLotaTitular());
 			}
 
 			List<WfDefinicaoDeProcedimento> pds = dao().listarDefinicoesDeProcedimentos();
 			for (WfDefinicaoDeProcedimento opd : pds) {
-				if (opd.getNome().equals(pd.getNome()) && !opd.getId().equals(id))
+				if (opd.getNome().equals(pd.getNome()) && !opd.getId().equals(lId))
 					throw new AplicacaoException("Já existe um diagrama com este nome: " + pd.getNome());
 			}
 
@@ -310,8 +325,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			}
 
 			if (id != null) {
-				WfDefinicaoDeProcedimento opd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
-				opd = dao().consultarAtivoPorIdInicial(WfDefinicaoDeProcedimento.class, opd.getHisIdIni());
+				WfDefinicaoDeProcedimento opd = buscar(id);
 				setAntes.add(opd);
 				pd.setAno(opd.getAno());
 				pd.setNumero(opd.getNumero());
@@ -364,9 +378,10 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			jsonError(e);
 		}
 	}
-	
+
 	private static class GravarResultado {
 		String id;
+
 		public GravarResultado(Long id) {
 			this.id = id.toString();
 		}
@@ -374,12 +389,12 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 
 	@Transacional
 	@Post("app/diagrama/desativar")
-	public void desativar(final Long id) throws Exception {
+	public void desativar(final String id) throws Exception {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
 			if (id == null)
 				throw new AplicacaoException("ID não informada");
-			final WfDefinicaoDeProcedimento pd = dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
+			final WfDefinicaoDeProcedimento pd = buscar(id);
 			if (pd == null)
 				throw new AplicacaoException("ID inválida");
 			if (!pd.isAtivo())
@@ -391,9 +406,16 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		}
 	}
 
-	private WfDefinicaoDeProcedimento buscar(final Long id) {
+	private WfDefinicaoDeProcedimento buscar(final String id) {
 		if (id != null) {
-			return dao().consultar(id, WfDefinicaoDeProcedimento.class, false);
+			WfDefinicaoDeProcedimento pd = null;
+			if (StringUtils.isNumeric(id))
+				pd = dao().consultar(Long.valueOf(id), WfDefinicaoDeProcedimento.class, false);
+			else
+				pd = WfDefinicaoDeProcedimento.findBySigla(id);
+			if (pd != null)
+				pd = pd.getAtual();
+			return pd;
 		}
 		return new WfDefinicaoDeProcedimento();
 	}
@@ -405,7 +427,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		return null;
 	}
 
-	@Get("app/diagrama/acesso-de-edicao/carregar")
+	@Get("app/diagrama/carregar-acesso-de-edicao")
 	public void carregarAcessosDeEdicao() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		List<SigaIdStringDescrString> list = new ArrayList<>();
@@ -415,7 +437,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		result.use(Results.json()).from(list, "list").serialize();
 	}
 
-	@Get("app/diagrama/acesso-de-inicializacao/carregar")
+	@Get("app/diagrama/carregar-acesso-de-inicializacao")
 	public void carregarAcessosDeInicializacao() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		List<SigaIdStringDescrString> list = new ArrayList<>();
@@ -425,7 +447,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		result.use(Results.json()).from(list, "list").serialize();
 	}
 
-	@Get("app/diagrama/tipo-de-principal/carregar")
+	@Get("app/diagrama/carregar-tipo-de-principal")
 	public void carregarTiposDePrincipal() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		List<SigaIdStringDescrString> list = new ArrayList<>();
@@ -435,7 +457,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		result.use(Results.json()).from(list, "list").serialize();
 	}
 
-	@Get("app/diagrama/tipo-de-vinculo-com-principal/carregar")
+	@Get("app/diagrama/carregar-tipo-de-vinculo-com-principal")
 	public void carregarTiposDeVinculoComPrincipal() throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		List<SigaIdStringDescrString> list = new ArrayList<>();
@@ -493,5 +515,37 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	protected void jsonSuccess(final Object resp) {
 		String s = gson.toJson(resp);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+	}
+
+	@Get
+	@Path({ "/app/diagrama/buscar-json/{sigla}" })
+	public void busca(String sigla) throws Exception {
+		aBuscarJson(sigla);
+	}
+
+	@Override
+	protected String aBuscar(String sigla, String postback) throws Exception {
+		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();
+		flt.setSigla(sigla);
+		WfDao dao = WfDao.getInstance();
+		WfDefinicaoDeProcedimento pd = null;
+		try {
+			pd = dao.consultarPorSigla(flt);
+		} catch (NumberFormatException ex) {
+		}
+		if (pd != null) {
+			setTamanho(1);
+			ArrayList<Object> l = new ArrayList<>();
+			l.add(pd);
+			setItens(l);
+		} else {
+			List<WfDefinicaoDeProcedimento> l = dao.consultarWfDefinicoesDeProcedimentoPorNome(sigla);
+			if (l != null) {
+				setTamanho(l.size());
+				setItens(l);
+			}
+		}
+		result.include("currentPageNumber", 0);
+		return "busca";
 	}
 }

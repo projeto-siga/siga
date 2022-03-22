@@ -33,7 +33,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,6 +68,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaModal;
+import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -211,7 +214,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Post
 	@Path({ "/public/app/pessoa/selecionar", "/app/pessoa/selecionar", "/app/cosignatario/selecionar",
 			"/pessoa/selecionar.action", "/cosignatario/selecionar.action" })
-	public void selecionar(String sigla) {
+	public void selecionar(String sigla, String matricula) {
 		String resultado = super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno") {
 			result.include("sel", getSel());
@@ -318,8 +321,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 					dao().gravar(pessoaAnt);
 					dao().commitTransacao();
 				} catch (final Exception e) {
-					if(e.getCause() instanceof ConstraintViolationException &&
-	    					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
+					if (e.getCause() instanceof ConstraintViolationException 
+							&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
 						result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
 	    			} else {
 	    				throw new AplicacaoException("Erro na gravação", 0, e);
@@ -348,6 +351,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 							"Já existe outro usuário ativo com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 				}
 				
+				DpLotacao lotacaoAtual = dpPessoa.getLotacao().getLotacaoAtual();				
+				if ((lotacaoAtual == null) || (lotacaoAtual != null && lotacaoAtual.getDataFim() != null)) {
+					throw new AplicacaoException(
+							"Não é possível ativar pessoa. Lotação inexistente ou inativada.");
+				}
+				pessoa.setLotacao(lotacaoAtual);
+				
 				DpCargo cargoAtual= new DpCargo();				
 				cargoAtual = CpDao.getInstance().consultarPorIdInicialDpCargoAtual(pessoaAnt.getCargo().getIdCargoIni());
 				if ((cargoAtual == null) || (cargoAtual != null && cargoAtual.getDataFim() != null)) {
@@ -369,7 +379,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				
 				pessoa.setNomePessoa(pessoaAnt.getNomePessoa());
 				pessoa.setCpfPessoa(pessoaAnt.getCpfPessoa());
-				pessoa.setLotacao(pessoaAnt.getLotacao());
 				pessoa.setOrgaoUsuario(pessoaAnt.getOrgaoUsuario());
 				pessoa.setDataNascimento(pessoaAnt.getDataNascimento());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
@@ -381,8 +390,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				try {
 					dao().gravarComHistorico(pessoa, pessoaAnt,dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
 				} catch (Exception e) {
-					if(e.getCause() instanceof ConstraintViolationException &&
-	    					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
+					if (e.getCause() instanceof ConstraintViolationException 
+							&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
 						result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
 	    			} else {
 	    				LOG.error("Erro ao ativar pessoa " + pessoa + ": " + e.getMessage(), e);
@@ -435,17 +444,20 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				if (pessoa.getDataNascimento() != null) {
 					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
 				}
-				if (pessoa.getCargo() != null) {
-					result.include("idCargo", pessoa.getCargo().getId());
-				}
+				
 				if (pessoa.getNomeExibicao() != null) {
 					result.include("nomeExibicao", pessoa.getNomeExibicao());
 				}
+				
+				if (pessoa.getCargo() != null) {
+					result.include("idCargo", pessoa.getCargo().getCargoAtual().getId());
+				}
+
 				if (pessoa.getFuncaoConfianca() != null) {
-					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
+					result.include("idFuncao", pessoa.getFuncaoConfianca().getFuncaoConfiancaAtual().getId());
 				}
 				if (pessoa.getLotacao() != null) {
-					result.include("idLotacao", pessoa.getLotacao().getId());
+					result.include("idLotacao", pessoa.getLotacao().getLotacaoAtual().getId());
 				}
 				
 				if(pessoa.getUfIdentidade() != null) {
@@ -628,15 +640,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 		
-		try {
-			DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
-					orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
-		} catch (RegraNegocioException e) {
-			result.include(SigaModal.ALERTA, e.getMessage());
-		} catch (Exception ex) {
-			result.include(SigaModal.ALERTA,  SigaModal.mensagem("Não é permitido cadastrar na mesma unidade, mais de um cargo para o mesmo CPF."));
-		}
-		
+
+		DpPessoa pes = new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
+				orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
+
+
 		lista(0, null, "", "", null, null, null, "", null);
 	}
 
@@ -919,7 +927,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	@Consumes("application/json")
 	@Get("/public/app/pessoa/usuarios/buscarEmailParcialmenteOculto/{cpf}")
-	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") Long cpf) {	
+	public void buscarEmailUsuarioPorCpf(@PathParam("cpf") String cpf) {	
 		
 		String recaptchaSiteKey = Prop.get("/siga.recaptcha.key");
 		String recaptchaSitePassword =  Prop.get("/siga.recaptcha.pwd");
@@ -936,9 +944,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				result.include("request", getRequest());
 				return;
 			}
-	
-	
 			
+			CPFUtils.efetuaValidacaoSimples(cpf);
+
 			String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 			boolean success = false;
 			if (gRecaptchaResponse != null) {
@@ -968,26 +976,44 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
 			
+			
 			dpPessoa.setBuscarFechadas(false);
-			dpPessoa.setCpf(cpf);	
+			dpPessoa.setCpf(Long.valueOf(cpf));	
 			dpPessoa.setNome("");
 	
 			List<DpPessoa> usuarios = dao().consultarPorFiltro(dpPessoa);
-			List<String> emails = new ArrayList<String>();
-		    
+			Set<String> emailsOculto = new HashSet<String>();
+			
+			final String mensagemUsuarioOuIdentidadeInexistente = "Usuário não localizado ou não possui um acesso ativo. "
+					+ "Verifique os dados informados e caso necessite, entre em contato com o Administrador Local";
+			
 			if (!usuarios.isEmpty()) {
-				for(DpPessoa usuario : usuarios) {
-					emails.add(usuario.getEmailPessoaAtualParcialmenteOculto());
-			    }
 				
+				List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
+				listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(cpf);
+				
+				if (!listaIdentidadesCpf.isEmpty()) {				
+					Set<String> emailsDistintos = new HashSet<String>();
+					//Adiciona email normal de forma distinta
+					for(DpPessoa usuario : usuarios) {
+						emailsDistintos.add(usuario.getEmailPessoaAtual());
+				    }
+					//Troca emails distintos por Email estenografado
+					for (String email : emailsDistintos) {
+						emailsOculto.add(SigaUtil.ocultaParcialmenteEmail(email));
+					}
+					emailsDistintos = null;
+				} else {
+					throw new RuntimeException(mensagemUsuarioOuIdentidadeInexistente);
+				}
 			} else {
-				throw new RuntimeException("Usuário não localizado. Verifique os dados informados.");
+				throw new RuntimeException(mensagemUsuarioOuIdentidadeInexistente);
 			}
 			
-			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf.toString());
+			String jwt = SigaUtil.buildJwtToken("RESET-SENHA",cpf);
 			HashMap<String, Object> json = new HashMap<>();
 			
-			json.put("emails", emails);
+			json.put("emails", emailsOculto);
 			json.put("jwt", jwt);
 			
 			result.use(Results.json()).withoutRoot().from(json).serialize();

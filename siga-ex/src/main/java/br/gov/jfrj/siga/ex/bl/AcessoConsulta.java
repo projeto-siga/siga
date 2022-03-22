@@ -1,6 +1,9 @@
 package br.gov.jfrj.siga.ex.bl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -9,6 +12,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.logic.ExLotacaoEstaVinculadoPorPerfil;
+import br.gov.jfrj.siga.ex.logic.ExPessoaEstaVinculadaPorPerfil;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class AcessoConsulta {
@@ -42,9 +47,9 @@ public class AcessoConsulta {
 	
 	public boolean podeAcessarPublicoExterno(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		
-		if (doc.getSubscritor() != null && doc.getSubscritor().equals(titular)) return true;
+		if (doc.getSubscritor() != null && doc.getSubscritor().equivale(titular)) return true;
 		
-		if (doc.getCadastrante().equals(titular)) return true;
+		if (doc.getCadastrante().equivale(titular)) return true;
 		
 		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao mov : doc.getMobilGeral()
@@ -53,13 +58,24 @@ public class AcessoConsulta {
 					continue;
 				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL)
 				  || (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO)) {
-					if (mov.getSubscritor() != null &&  titular != null && mov.getSubscritor() == titular ) {
+					if (mov.getSubscritor() != null &&  titular != null && mov.getSubscritor().equivale(titular) ) {
 						return true;
 					} 
-					if (mov.getLotaSubscritor() != null &&  lotaTitular != null && mov.getLotaSubscritor() == lotaTitular ) {
+					if (mov.getLotaSubscritor() != null &&  lotaTitular != null && mov.getLotaSubscritor().equivale(lotaTitular) ) {
 						return true;
 					} 
 				}
+			}
+		}
+		
+		List<ExDocumento> listaTodosOsPais = new ArrayList<ExDocumento>();
+		listaTodosOsPais.addAll(doc.getTodosOsPaisDasVias());
+		
+		for (ExDocumento exDocumento : listaTodosOsPais) {
+			if((new ExPessoaEstaVinculadaPorPerfil(exDocumento, titular).eval()
+					|| new ExLotacaoEstaVinculadoPorPerfil(exDocumento, lotaTitular).eval()) 
+					&& this.pattern.matcher(exDocumento.getDnmAcesso()).find()) {
+				return true;
 			}
 		}
 		
@@ -70,14 +86,14 @@ public class AcessoConsulta {
 				if (mov.isCancelada() || mov.isCanceladora())
 					continue;
 				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.RECEBIMENTO)
-		  || (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA)) {
-			if (mov.getResp() != null &&  titular != null && mov.getResp() == titular ) {
-				return true;
-			} 
-			if (mov.getLotaResp() != null &&  lotaTitular != null && mov.getLotaResp() == lotaTitular ) {
-				return true;
-			} 
-		}				
+						|| (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA)) {
+					if (mov.getResp() != null &&  titular != null && mov.getResp().equivale(titular) ) {
+						return true;
+					} 
+					if (mov.getLotaResp() != null &&  lotaTitular != null && mov.getLotaResp().equivale(lotaTitular) ) {
+						return true;
+					} 
+				}				
 			}
 		}
 		

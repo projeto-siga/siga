@@ -25,6 +25,7 @@ package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +51,7 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
@@ -138,6 +140,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			final List<CpOrgao> l = query.getResultList();
@@ -306,6 +310,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			final int l = ((Long) query.getSingleResult()).intValue();
@@ -343,6 +349,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -373,6 +381,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -439,6 +449,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
@@ -473,6 +485,9 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
+			
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -536,6 +551,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -573,6 +590,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 
 			if (o.getIdOrgaoUsu() != null)
@@ -654,6 +673,8 @@ public class CpDao extends ModeloDao {
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
+			else
+				s = "";
 			query.setParameter("nome", s);
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
@@ -688,7 +709,7 @@ public class CpDao extends ModeloDao {
 	public List<DpLotacao> consultarPorFiltro(final DpLotacaoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
 			final Query query;
-
+			
 			if (!o.isBuscarFechadas())
 				query = em().createNamedQuery("consultarPorFiltroDpLotacao");
 			else
@@ -699,8 +720,8 @@ public class CpDao extends ModeloDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			query.setParameter("nome", o.getNome() == null ? "" : o.getNome().replace(' ', '%'));
-
+			query.setParameter("sigla", o.getNome() == null ? "" : o.getNome().replace(' ', '%')); 
+			query.setParameter("nome", o.getNome() == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
@@ -714,10 +735,16 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
-		final Query query = em().createNamedQuery("consultarPorSiglaDpLotacao");
+		return consultarPorSigla(o, false);
+	}
+	
+	public DpLotacao consultarPorSigla(final DpLotacao o, final boolean buscarFechadas) {
+		final Query query = buscarFechadas ? 
+					em().createNamedQuery("consultarPorSiglaInclusiveFechadasDpLotacao") :
+					em().createNamedQuery("consultarPorSiglaDpLotacao");
+		
 		query.setParameter("siglaLotacao", o.getSiglaLotacao());
 		if (o.getOrgaoUsuario() != null) {
 			// O argumento siglaOrgaoLotacao preve a situação onde a sigla pesquisada contem um prefixo coincidente à 
@@ -808,15 +835,15 @@ public class CpDao extends ModeloDao {
 			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
-		DpLotacao lotacao = consultarPorSigla(o);
+		DpLotacao lotacao = consultarPorSigla(o,flt.isBuscarFechadas());
 		if(lotacao == null && flt.getSigla() != null) {
 			o.setSigla(flt.getSigla().replaceFirst("-", ""));
-			lotacao = consultarPorSigla(o);
+			lotacao = consultarPorSigla(o,flt.isBuscarFechadas());
 		}
 		if (lotacao == null) {
 			o.setSiglaLotacao(flt.getSigla());
 			o.setOrgaoUsuario(null);
-			return consultarPorSigla(o);
+			return consultarPorSigla(o,flt.isBuscarFechadas());
 		}
 		return lotacao;
 	}
@@ -830,8 +857,9 @@ public class CpDao extends ModeloDao {
 			else
 				query = em().createNamedQuery("consultarQuantidadeDpLotacaoInclusiveFechadas");
 
-			query.setParameter("nome", o.getNome() != null ? o.getNome().replace(' ', '%') : "%");
-
+			query.setParameter("sigla", o.getNome() == null ? "" : o.getNome().replace(' ', '%')); 
+			query.setParameter("nome", o.getNome() == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
+			
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
@@ -849,6 +877,7 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final CpGrupoDaoFiltro flt) throws AplicacaoException {
 		final CpGrupo o = CpGrupo.getInstance(flt.getIdTpGrupo());
 		o.setSigla(flt.getSigla());
+		o.setOrgaoUsuario(consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false));
 		return consultarPorSigla(o);
 	}
 
@@ -1004,16 +1033,16 @@ public class CpDao extends ModeloDao {
 		return l;
 	}
 
-	@SuppressWarnings("unchecked")
 	public DpPessoa consultarPorSigla(final DpPessoa o) {
+		return consultarPorSigla(o, false);
+	}
+	public DpPessoa consultarPorSigla(final DpPessoa o, final boolean buscarFechadas) {
 		try {
-			final Query query = em().createNamedQuery("consultarPorSiglaDpPessoa");
+			final Query query = buscarFechadas ?
+					em().createNamedQuery("consultarPorSiglaInclusiveFechadasDpPessoa") :
+					em().createNamedQuery("consultarPorSiglaDpPessoa");
 			query.setParameter("sesb", o.getSesbPessoa());
 			query.setParameter("matricula", o.getMatricula());
-			/*
-			 * if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) query.setParameter("idOrgaoUsu",
-			 * o.getOrgaoUsuario().getIdOrgaoUsu()); else query.setParameter("idOrgaoUsu", 0);
-			 */
 
 			final List<DpPessoa> l = query.getResultList();
 			if (l.size() != 1)
@@ -1023,7 +1052,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-
+	
 	/**
 	 * retorna a pessoa pelo sesb+matricula
 	 * 
@@ -1532,11 +1561,9 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpPessoaDaoFiltro flt) {
 		final DpPessoa o = new DpPessoa();
 		o.setSigla(flt.getSigla());
-		/*
-		 * CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
-		 * cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu()); o.setOrgaoUsuario(cpOrgao);
-		 */
-		return consultarPorSigla(o);
+		
+		return consultarPorSigla(o, flt.isBuscarFechadas());
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2737,8 +2764,8 @@ public class CpDao extends ModeloDao {
 			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacao");
 
 			sql.setParameter("idLotacao", idLotacao);
-			List result = sql.getResultList();
-			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
+			
+			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
 			return l;
 		} catch (final NullPointerException e) {
 			return null;

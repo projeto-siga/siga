@@ -890,6 +890,10 @@ public class CpBL {
 
 		boolean podeTrocar = Boolean.FALSE;
 
+		if (listaIdentidades.isEmpty()) {
+			throw new RuntimeException("Usuário não possui um acesso ativo para que seja redefinida a Senha.");
+		}
+		
 		for (CpIdentidade cpIdentidade : listaIdentidades) {
 			podeTrocar = Boolean.TRUE;
 			break;
@@ -1336,7 +1340,24 @@ public class CpBL {
 				if(pessoaAnt.getDataFimPessoa() != null) {
 					pessoa.setDataFimPessoa(pessoaAnt.getDataFimPessoa());
 				}
+				CpIdentidade ident = null;
+				
+				if(!pessoa.getOrgaoUsuario().equivale(pessoaAnt.getOrgaoUsuario())) {
+					ident = new CpIdentidade();
+					CpIdentidade identAnt = new CpIdentidade();
+					identAnt = CpDao.getInstance().consultaIdentidadeCadastrante(pessoaAnt.getSesbPessoa() + pessoaAnt.getMatricula(), true);
+					PropertyUtils.copyProperties(ident, identAnt);
+					ident.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
+					ident.setNmLoginIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula());
+					ident.setDtCriacaoIdentidade(data);
+					ident.setId(null);
+					CpDao.getInstance().gravarComHistorico(ident, identAnt, data , identidadeCadastrante);
+				}
 				CpDao.getInstance().gravarComHistorico(pessoa, pessoaAnt, data , identidadeCadastrante);
+				if(ident != null) {
+					ident.setDpPessoa(pessoa);
+					CpDao.getInstance().gravar(ident);
+				}
 			} else {
 				pessoa.setHisIdcIni(identidadeCadastrante);
 				CpDao.getInstance().gravar(pessoa);
@@ -1400,12 +1421,13 @@ public class CpBL {
 			return pessoa;
 		//	dao().em().getTransaction().commit();
 		} catch (final Exception e) {
-			if(e.getCause() instanceof ConstraintViolationException &&
-					("CORPORATIVO.DP_PESSOA_UNIQUE_PESSOA_ATIVA".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
-				throw new RegraNegocioException("Ocorreu um problema no cadastro da pessoa");
-			} else if(e.getCause() instanceof ConstraintViolationException &&
-					("CORPORATIVO.SIGA_VALID_UNIQUE".equalsIgnoreCase(((ConstraintViolationException)e.getCause()).getConstraintName()))) {
-				throw new RegraNegocioException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+			if (e.getCause() instanceof ConstraintViolationException 
+					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
+				throw new AplicacaoException("Ocorreu um problema no cadastro da pessoa.");
+			} else if (e.getCause() instanceof ConstraintViolationException 
+					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("SIGA_VALID_UNIQUE")) {
+				throw new AplicacaoException(
+						"Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
 			}else {
 		//	dao().em().getTransaction().rollback();
 				throw new AplicacaoException("Erro na gravação", 0, e);
@@ -2270,9 +2292,10 @@ public class CpBL {
 			dao().gravarComHistorico(cargoNovo, cargo, dt, identidadeCadastrante);
 			
 			//Aplica cargo alterado nas pessoas ativas do cargo anterior.
-			if (pessoasAtivasCargo != null && !pessoasAtivasCargo.isEmpty()) {
-				DpPessoa pessoaNovo = new DpPessoa();
+			if (pessoasAtivasCargo != null && !pessoasAtivasCargo.isEmpty()) {		
 				for (DpPessoa pessoaAtual : pessoasAtivasCargo) {
+					
+					DpPessoa pessoaNovo = new DpPessoa();
 					copiarPessoa(pessoaAtual,pessoaNovo); //copyProperty não funciona, pois DpPessoa é um Bean despadronizado
 
 					if (pessoaNovo != null) {
@@ -2390,8 +2413,9 @@ public class CpBL {
 			
 			//Aplica cargo alterado nas pessoas ativas do cargo anterior.
 			if (pessoasAtivasFuncaoConfianca != null && !pessoasAtivasFuncaoConfianca.isEmpty()) {
-				DpPessoa pessoaNovo = new DpPessoa();
 				for (DpPessoa pessoaAtual : pessoasAtivasFuncaoConfianca) {
+				
+					DpPessoa pessoaNovo = new DpPessoa();
 					copiarPessoa(pessoaAtual,pessoaNovo); //copyProperty não funciona, pois DpPessoa é um Bean despadronizado
 
 					if (pessoaNovo != null) {

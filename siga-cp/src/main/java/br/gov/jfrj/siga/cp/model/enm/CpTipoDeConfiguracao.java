@@ -110,7 +110,16 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true), 
 
-	
+	UTILIZAR_PESQUISA_XJUS(212, "Utilizar X-JUS na Pesquisa Avançada",
+			"Utilizada para ativar pesquisa avançada via X-JUS.\n"
+					+ "PODE: Ativa.\n"
+					+ "NÃO PODE: Não ativa.",
+			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO },
+			new CpParamCfg[] { CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
 	UTILIZAR_COMPLEXO(400, "Utilizar Complexo Padrão",
 			"Selecione órgão, lotação, pessoa, cargo ou função comissionada que tem permissão para utilizar determinado complexo como padrão.",
 			new CpParamCfg[] {

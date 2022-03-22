@@ -345,7 +345,7 @@
 									</c:if>
 									<c:set var="arquivo" value="${arqNumerado}" scope="request" />
 									<c:if test="${arqNumerado.arquivo.class.simpleName == 'ExMovimentacao'}">
-										<c:if test="${mov.exTipoMovimentacao.id == 2 && !empty mov.descrMov}">
+										<c:if test="${mov.exTipoMovimentacao == 'ANEXACAO' && !empty mov.descrMov}">
 											<c:set var="possuiResumo" value="sim" />
 										</c:if>
 									</c:if>
@@ -513,7 +513,7 @@
 <script>
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
 	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
-	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}';
+	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&iframe=true';
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			

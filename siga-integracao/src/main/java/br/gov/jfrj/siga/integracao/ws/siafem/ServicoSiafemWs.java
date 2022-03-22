@@ -26,15 +26,30 @@ public class ServicoSiafemWs {
 		String statusOperacao = extrairValor(ret, "StatusOperacao");
 		String msgErro = extrairValor(ret, "MsgErro");
 		String msgRetorno = extrairValor(ret, "MsgRetorno");
+		String mensagemResult = extrairValor(ret, "MensagemResult");
+		String msgRetornoSemPapel = extrairValor(ret, "MsgRetornoSemPapel");
 		
 		if(statusOperacao == null || statusOperacao.isEmpty())
 			if(msgErro == null || msgErro.isEmpty())
 				msgErro = "Retorno vazio";
 		
-		if((statusOperacao != null && statusOperacao.equals("false")) || !msgErro.isEmpty())
-			throw new AplicacaoException(msgErro + msgRetorno);
+		if((statusOperacao != null && statusOperacao.equals("false")) || !msgErro.isEmpty() || !mensagemResult.isEmpty() || !msgRetornoSemPapel.isEmpty())
+			throw new AplicacaoException(formatarRetorno(msgErro, msgRetorno, mensagemResult, msgRetornoSemPapel));
 		
 		return true;
+	}
+	
+	private static String formatarRetorno(String ... mensagens) {
+		String ret = "";
+		
+		for(int i = 0; i < mensagens.length; i++) {
+			if(ret.isEmpty())
+				ret = mensagens[i];
+			else if(!mensagens[i].isEmpty())
+				ret = ret + " | " + mensagens[i];				
+		}
+		
+		return ret;
 	}
 	
 	private static String extrairValor(String xml, String atributo) {
@@ -46,5 +61,4 @@ public class ServicoSiafemWs {
 		
 		return "";
 	}
-
 }

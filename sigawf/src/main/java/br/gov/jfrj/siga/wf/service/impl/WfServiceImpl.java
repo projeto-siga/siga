@@ -146,8 +146,8 @@ public class WfServiceImpl implements WfService {
 				List<CpIdentidade> l = WfDao.getInstance().consultaIdentidades(cadastranteParser.getPessoa());
 				if (l.size() > 0)
 					identidade = l.get(0);
-				WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pd.getId(), null,
-						titularParser.getPessoa(), titularParser.getLotacao(), identidade, WfTipoDePrincipal.valueOf(tipoDePrincipal), principal, keys, values,
+				WfProcedimento pi = Wf.getInstance().getBL().criarProcedimento(pd.getId(), null,
+						titularParser.getPessoa(), titularParser.getLotacao(), identidade, WfTipoDePrincipal.valueOf(tipoDePrincipal), principal, keys, (List) values,
 						false);
 
 				WfBL.transferirDocumentosVinculados(pi, siglaTitular);

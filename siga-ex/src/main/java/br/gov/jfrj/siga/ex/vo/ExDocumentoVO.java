@@ -468,6 +468,8 @@ public class ExDocumentoVO extends ExVO {
 				.add(ExTipoDeMovimentacao.COPIA);
 		movimentacoesPermitidas
 				.add(ExTipoDeMovimentacao.CIENCIA);		
+		movimentacoesPermitidas
+				.add(ExTipoDeMovimentacao.ENVIO_SIAFEM);	
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
 		marcasGeralPermitidas.add(CpMarcadorEnum.A_ELIMINAR.getId());
@@ -764,7 +766,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome("Cancelar").icone("cancel").nameSpace("/app/expediente/doc").acao("cancelarDocumento")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarDocumento(doc, titular, lotaTitular)).msgConfirmacao("Esta operação cancelará o documento pendente de assinatura. Prosseguir?").classe("once").build());
 		
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.publicar.portaltransparencia")).icone("report_link").nameSpace("/app/expediente/doc").acao("cancelarDocumento")
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.publicar.portaltransparencia")).icone("report_link").nameSpace("/app/expediente/mov").acao("publicacao_transparencia")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePublicarPortalDaTransparencia(mob, titular, lotaTitular)).classe("once").build());
 		
 		vo.addAcao(AcaoVO.builder().nome("Gerar Protocolo").icone("printer").nameSpace("/app/expediente/doc").acao("gerarProtocolo")
@@ -775,7 +777,7 @@ public class ExDocumentoVO extends ExVO {
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {
-		return Ex.getInstance().getBL().obterFormularioSiafem(doc) != null;
+		return Ex.getInstance().getBL().obterFormularioSiafem(doc) != null && doc.getPrimeiraVia() != null;
 	}
 
 	public void addDadosComplementares() {

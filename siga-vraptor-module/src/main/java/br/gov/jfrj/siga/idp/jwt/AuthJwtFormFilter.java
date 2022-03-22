@@ -252,15 +252,12 @@ public class AuthJwtFormFilter implements Filter {
 	 * @return String
 	 */
 	private static String getNameCookie() {
-		final String NAME_ENVIRONMENT_PRODUCTION = "PROD";
-		final String NAME_ENVIRONMENT = Prop.get("/siga.ambiente");
-		String nameCookie = SIGA_JWT_AUTH_COOKIE_NAME;
-
-		if (SigaMessages.isSigaSP()) {
-			if (!NAME_ENVIRONMENT_PRODUCTION.equals(NAME_ENVIRONMENT.toUpperCase().trim()))
-				nameCookie += "-" + NAME_ENVIRONMENT;
-		}
-		return nameCookie;
+		
+		if (SIGA_JWT_AUTH_COOKIE_NAME.equals(Prop.get("/siga.jwt.cookie.name")))
+			return SIGA_JWT_AUTH_COOKIE_NAME;
+		else
+			//Add prefixo + name cookie para desambiguacao
+			return SIGA_JWT_AUTH_COOKIE_NAME + "-" + Prop.get("/siga.jwt.cookie.name");
 	}
 	
 	private static String getCookieDomain() {

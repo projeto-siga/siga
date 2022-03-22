@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.hibernate;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,8 +97,8 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
-import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
+import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
+import br.gov.jfrj.siga.hibernate.query.ext.IMontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
@@ -457,9 +458,10 @@ public class ExDao extends CpDao {
 		/*
 		 * Funcao para geracao de codigos alfanumericos randomicos
 		 * recebendo apenas a quantidade de caracteres que o codigo deve conter
+		 * retirado o I, l, 1, 0 e O pois causa confusão na hora do usuário digitar
 		 */
 		public static String randomAlfanumerico(int contador) {
-			final String STRING_ALFANUMERICA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			final String STRING_ALFANUMERICA = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 			StringBuilder sb = new StringBuilder();
 			while (contador-- != 0) {	
 				int caracteres = (int)(Math.random()*STRING_ALFANUMERICA.length());	
@@ -600,11 +602,8 @@ public class ExDao extends CpDao {
 			query.setParameter("classificacaoSelId", flt.getClassificacaoSelId());
 		}
 
-		if (flt.getDescrDocumento() != null
-
-		&& !flt.getDescrDocumento().trim().equals("")) {
-			query.setParameter("descrDocumento", "%"
-					+ flt.getDescrDocumento().toUpperCase() + "%");
+		if (flt.getDescrDocumento() != null && !flt.getDescrDocumento().trim().equals("") && flt.getListaIdDoc() == null) {
+			query.setParameter("descrDocumento", "%" + flt.getDescrDocumento().toUpperCase() + "%");
 		}
 
 		if (flt.getDtDoc() != null) {
@@ -679,6 +678,13 @@ public class ExDao extends CpDao {
 			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(),
 					ExModelo.class, false);
 			query.setParameter("hisIdIni", mod.getHisIdIni());
+		}
+		
+		if (flt.getListaIdDoc() != null && !flt.getListaIdDoc().isEmpty()) {
+			for(int i = 0; i <= flt.getListaIdDoc().size()/1000; i++) {		
+				int toIndex =  (i + 1)*1000 > flt.getListaIdDoc().size() ? flt.getListaIdDoc().size() : (i + 1)*1000;
+				query.setParameter("listaIdDoc"+i, flt.getListaIdDoc().subList(i*1000, toIndex));
+			}
 		}
 	}
 
@@ -1459,18 +1465,14 @@ public class ExDao extends CpDao {
 	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
 
 		if (pes == null || dt == null) {
-			log.error("[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentaï¿½ï¿½es nï¿½o podem ser nulos.");
 			throw new IllegalStateException(
-					"A pessoa e/ou a data informada para a realizaï¿½ï¿½o da consulta ï¿½ nula.");
+					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		final Query query = em().createNamedQuery("consultarMovimentacoes");
-		ExMovimentacao mov = consultar(1122650L, ExMovimentacao.class, false);
 
 		query.setParameter("pessoaIni", pes.getIdPessoaIni());
-		// query.setParameter("data", dt);
-		query.setParameter("data", df.format(dt));
+		query.setParameter("data", dt);
 		return query.getResultList();
 	}
 
@@ -2151,11 +2153,6 @@ public class ExDao extends CpDao {
 						ExMovimentacao.class)
 				.setParameter("idMobil", idMobil)
 				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA))
-				// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
-				.setParameter("enumListMovs", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.JUNTADA,
-						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO, 
-						ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO,
-						ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA, ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, ExTipoDeMovimentacao.TORNAR_SEM_EFEITO))
 				.getResultList();
 	}
 
@@ -2195,20 +2192,14 @@ public class ExDao extends CpDao {
 	 * @param idMobil ID da Mobilização
 	 * @return As Movimentações dos tipos relacionados acima.
 	 */
-	public List<ExMovimentacao> consultarTramitacoesPorMovimentacaoDocumentoCancelado(Long idMobil) {
+	public List<ExMovimentacao> consultarTramitacoesPorMovimentacaoDocumentoCancelado(Long idMobil) { 
 		return em() //
 				.createNamedQuery(
 						AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY,
 						ExMovimentacao.class)
 				.setParameter("idMobil", idMobil) //
-				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA))
-				// Recebimento não exibido! apenas para indicar o instante de recebimento da tramitação.
-				.setParameter("enumListMovs", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.JUNTADA,
-						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO, 
-						ExTipoDeMovimentacao.DESARQUIVAMENTO_CORRENTE, ExTipoDeMovimentacao.DESARQUIVAMENTO_INTERMEDIARIO,
-						ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA, ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, ExTipoDeMovimentacao.TORNAR_SEM_EFEITO))
-				.getResultList();
-	}
+				.setParameter("enumList", EnumSet.of(ExTipoDeMovimentacao.TRANSFERENCIA)).getResultList();
+	}  
 	
 	/**
 	 * Conta o total de movimentações assinadas
@@ -2337,6 +2328,21 @@ public class ExDao extends CpDao {
 		} catch (Exception ne) {
 			return null;
 		}
+	}
+
+	public List<BigDecimal> consultarDocumentosPorSiglas(List<String> siglas) {
+		String sql = "SELECT X.ID_DOC \n" + 
+				"FROM SIGA.EX_DOCUMENTO X, \n" + 
+				"	SIGA.EX_FORMA_DOCUMENTO Y,\n" + 
+				"	CORPORATIVO.CP_ORGAO_USUARIO Z\n" + 
+				"WHERE X.ID_FORMA_DOC  = Y.ID_FORMA_DOC \n" + 
+				"	AND X.ID_ORGAO_USU = Z.ID_ORGAO_USU\n" + 
+				"	AND Z.SIGLA_ORGAO_USU || Y.SIGLA_FORMA_DOC || X.ANO_EMISSAO || LPAD(X.NUM_EXPEDIENTE, 5, '0')\n" + 
+				"	 IN ( :siglas )";
+		final Query query = em().createNativeQuery(sql);
+		query.setParameter("siglas", siglas);
+		
+		return query.getResultList();
 	}
 	
 }

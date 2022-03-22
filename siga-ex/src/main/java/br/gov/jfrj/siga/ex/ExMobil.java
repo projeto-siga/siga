@@ -121,6 +121,10 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			}
 		return movsTp;
 	}
+	
+	public List<ExMovimentacao> getMovimentacoesPorNome (String descr, boolean somenteAtivas) {
+		return getMovimentacoesPorTipo(ExTipoDeMovimentacao.valueOf(descr), somenteAtivas); 
+	}
 
 	/**
 	 * Verifica se um Mobil é do tipo Geral.
@@ -2296,6 +2300,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return false;
 	}
+	
+	public boolean isAuxiliarIncluso(Date depoisDaData) {
+		for (ExMovimentacao m : getExMovimentacaoSet()) {
+			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (depoisDaData != null && depoisDaData.after(m.getDtIniMov()))
+				continue;
+			if (m.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR)
+				continue;
+			
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Verifica se exibe o conteudo do documento no histórico do acompanhamento do protocolo
@@ -2332,6 +2350,24 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		Set<ExMovimentacao> setMov = new HashSet<>();
 		setMov.addAll(p.tramitesDeNotificacoesPendentes);
 		setMov.addAll(p.recebimentosDeNotificacoesPendentes);
+		
+		return calcularAtendentes(setMov, false); 
+	}
+
+	public Set<PessoaLotacaoParser> getRecebidos() {
+		Pendencias p = calcularTramitesPendentes();
+		
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.recebimentosPendentes);
+		
+		return calcularAtendentes(setMov, false); 
+	}
+
+	public Set<PessoaLotacaoParser> getAReceber() {
+		Pendencias p = calcularTramitesPendentes();
+		
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.tramitesPendentes);
 		
 		return calcularAtendentes(setMov, false); 
 	}
@@ -2382,11 +2418,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return equivalePessoaOuLotacao(pessoa, lotacao, set);
 	}
 	
+	public boolean isRecebido(DpPessoa pessoa, DpLotacao lotacao) {
+		Set<PessoaLotacaoParser> set = getRecebidos();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+	
+	public boolean isAReceber(DpPessoa pessoa, DpLotacao lotacao) {
+		Set<PessoaLotacaoParser> set = getAReceber();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+	
 	private boolean equivalePessoaOuLotacao(DpPessoa pessoa, DpLotacao lotacao, Set<PessoaLotacaoParser> set) {
 		for (PessoaLotacaoParser pl : set) {
-			if (Utils.equivale(pl.getPessoa(), pessoa))
+			if (pessoa != null && Utils.equivale(pl.getPessoa(), pessoa))
 				return true;
-			if (Utils.equivale(pl.getLotacao(), lotacao))
+			if (lotacao != null && Utils.equivale(pl.getLotacao(), lotacao))
 				return true;
 		}
 		return false;
@@ -2423,7 +2469,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 	
 	public Pendencias calcularTramitesPendentes() {
-		SortedSet<ExMovimentacao> movs = new TreeSet<>();;
+		SortedSet<ExMovimentacao> movs = new TreeSet<>();
 		if (isVolume()) {
 			ExMobil mob = this;
 			
@@ -2450,6 +2496,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		} else {
 			movs.addAll(getExMovimentacaoSet());
 		}
+		
+		// Elimina recebimentos duplicados
+		ExMovimentacao movAnt = null;
+		SortedSet<ExMovimentacao> movsAExcluir = new TreeSet<>();
+		for (ExMovimentacao mov : movs) {
+			if (movAnt != null 
+					&& (ExTipoDeMovimentacao.hasTransferencia(mov.getExTipoMovimentacao())
+							|| ExTipoDeMovimentacao.hasRecebimento(mov.getExTipoMovimentacao()))
+					&& Utils.igual(mov.getExTipoMovimentacao(), movAnt.getExTipoMovimentacao())
+					&& Utils.igual(mov.getExMobilRef(), movAnt.getExMobilRef()))
+				movsAExcluir.add(mov);
+			movAnt = mov;
+		}
+		movs.removeAll(movsAExcluir);
+		
 		Pendencias p = new Pendencias();
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada())
@@ -2491,7 +2552,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) 
 					p.fIncluirCadastrante = false;
 			}
-			if (t == ExTipoDeMovimentacao.TRANSFERENCIA 
+			if ((t == ExTipoDeMovimentacao.TRANSFERENCIA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA)
 					&& (Utils.equivale(mov.getCadastrante(), doc().getCadastrante()) 
 							|| Utils.equivale(mov.getLotaCadastrante(), doc().getLotaCadastrante())
 							|| Utils.equivale(mov.getTitular(), doc().getCadastrante()) 
@@ -2521,4 +2582,51 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return new ExRef(this);
 	}
 
+	/**
+	 * Devolve as movimentações duplicadas realizadas no intervalo de milisegundos especificado
+	 * @param intervalo
+	 * @return Set de movimentações duplicadas
+	 */
+	public java.util.Set<ExMovimentacao> getMovsDuplicadas(long intervalo, ITipoDeMovimentacao[] tpMovs) {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getExMovimentacaoSet() == null)
+			return set;
+		
+		Set<ExMovimentacao> movs = this.getExMovimentacaoSet();
+		movs.addAll(this.getExMovimentacaoReferenciaSet());
+
+		for (ExMovimentacao m : movs) {
+			if (m.getExMovimentacaoCanceladora() != null )
+				continue;
+			
+			for (ExMovimentacao m2 : movs) {
+				long mResp = (m.getResp() != null? m.getResp().getId():0);
+				long m2Resp = (m2.getResp() != null? m2.getResp().getId():0);
+				long mLotaResp = (m.getLotaResp() != null? m.getLotaResp().getId():0);
+				long m2LotaResp = (m2.getLotaResp() != null? m2.getLotaResp().getId():0);
+				long mExMobilRef = (m.getExMobilRef() != null? m.getExMobilRef().getId():0);
+				long m2ExMobilRef = (m2.getExMobilRef() != null? m2.getExMobilRef().getId():0);
+				
+				if (!m.equals(m2) 
+						&& m2.getExMovimentacaoCanceladora() == null
+						&& Math.abs(m.getDtTimestamp().getTime() - m2.getDtTimestamp().getTime()) < intervalo 
+						&& m.getExTipoMovimentacao().equals(m2.getExTipoMovimentacao())
+						&& m.getCadastrante().equals(m2.getCadastrante())
+						&& m.getLotaCadastrante().equals(m2.getLotaCadastrante())
+						&& mResp == m2Resp
+						&& mLotaResp == m2LotaResp
+						&& m.getExMobil().equals(m2.getExMobil())
+						&& mExMobilRef == m2ExMobilRef) {
+					for (ITipoDeMovimentacao t : tpMovs) {
+						if (m.getExTipoMovimentacao() == t) {
+							set.add(m);
+							break;
+						}
+					}
+				}
+			}
+		}
+		return set;
+	}
 }

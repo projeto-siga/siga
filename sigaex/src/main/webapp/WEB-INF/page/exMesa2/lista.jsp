@@ -133,8 +133,7 @@
 					<c:if test="${!ehPublicoExterno && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
 						<div class="col col-12 col-sm-4 col-md-auto pl-md-0 mb-2">
 							<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-primary form-control">
-								<i class="fas fa-search mr-1"></i><fmt:message key="documento.pesquisar"/> 
-							</a> 
+								<i class="fas fa-search mr-1"></i>Pesquisar</a> 
 						</div>
 					</c:if>
 				</c:if>
@@ -305,6 +304,13 @@
 										</template>
 									</tbody>
 								</table>
+								<div class="row" v-if="g.grupoAtingiuLimite">
+									<div class="col col-12">
+										<p class="alert alert-warning alert-dismissible fade show">Atingiu a quantidade máxima 
+										permitida para visualização de documentos deste grupo. Por favor utilize o <a 
+										href='/siga/app/principal?redirecionar=false'>Quadro Quantitativo</a> ou a Pesquisa.</p>
+									</div>
+								</div>
 								<div class="row">
 									<div class="col col-md-9 mb-2">
 										<div class="text-center" v-if="carregando">
@@ -314,7 +320,7 @@
 									<div class="col-6 col-md-3 mb-2">
 										<div class="float-right d-flex">
 											<button	type="button" class="btn btn-primary btn-sm"
-													v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length" 
+													v-if="g.grupoDocs != undefined && g.grupoCounterAtivo > g.grupoDocs.length && !g.grupoAtingiuLimite" 
 													:class="{disabled: carregando}" @click="pageDownGrupo(g.grupoNome);">
 												Mais<i v-if="!carregando" class="ml-2 fas fa-chevron-circle-down"></i>
 												<div v-if="carregando" class="spinner-border" role="status"></div>

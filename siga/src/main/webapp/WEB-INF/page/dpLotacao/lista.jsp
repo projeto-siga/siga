@@ -52,7 +52,7 @@ function sbmt(offset) {
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
-							<label>Nome/sigla</label>
+							<label>Nome ou Sigla</label>
 							<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" class="form-control"/>
 						</div>
 					</div>

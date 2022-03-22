@@ -244,8 +244,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				paramoffset = 0;
 			}
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
-			dpLotacao.setNome(Texto.removeAcento(nome));
-			dpLotacao.setSigla(nome);
+			dpLotacao.setNome(nome);
 			dpLotacao.setBuscarFechadas(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15));  
 			result.include("itens", getItens());

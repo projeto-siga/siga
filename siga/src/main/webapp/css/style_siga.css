@@ -82,6 +82,9 @@ html body, .table-group-separator {
 	background-color: #dae9ec;
 }
 
+.body_color_default {
+	background-color: #dae9ec !important;
+}
 
 .table-group-separator, .table-group-title {
 	background-color: #dae9ec !important;

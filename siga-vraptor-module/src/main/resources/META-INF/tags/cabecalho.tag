@@ -104,7 +104,7 @@ ${meta}
 		<meta name="theme-color" content="#35b44">
 		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css" type="text/css" media="screen, projection">
 		
-		<c:set var="body_color" value="body_color" scope="request" />
+		<c:set var="body_color" value="body_color_govsp" scope="request" />
 		
 		<c:set var="thead_color" value="thead-dark" scope="request" />
 		
@@ -129,7 +129,8 @@ ${meta}
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
-				<c:set var="thead_color" value="thead-light" scope="request" />
+		<c:set var="body_color" value="body_color_default" scope="request" />
+		<c:set var="thead_color" value="thead-light" scope="request" />
 									
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 

@@ -2367,6 +2367,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 	
 	public DpPessoa getTitular() {
+		ExMovimentacao desentranhamento = getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA);
+		if (desentranhamento != null)
+			return desentranhamento.getCadastrante();
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
 		if (criacao != null)
 			return criacao.getCadastrante();
@@ -2375,6 +2378,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 	
 	public DpLotacao getLotaTitular() {
+		ExMovimentacao desentranhamento = getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA);
+		if (desentranhamento != null)
+			return desentranhamento.getLotaCadastrante();
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
 		if (criacao != null)
 			return criacao.getLotaCadastrante();
@@ -2499,6 +2505,15 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			if (mov.isCancelada())
 				continue;
 			long t = mov.getIdTpMov();
+			
+			// Se encontrar um desentranhamento, simular como se fosse uma via recém criada pelo titular da movimentação
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+				p.recebimentosPendentes.clear();
+				p.tramitesPendentes.clear();
+				p.fIncluirCadastrante = true;
+				continue;
+			}
+			
 			if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA 
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRAMITE_PARALELO 

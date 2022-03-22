@@ -25,6 +25,8 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 	
 	Integer idTipoFormaDoc = 1;
 	
+	Integer idTipoSaida= 1;
+	
 
 	public RelPermanenciaSetorAssunto(Map parametros) throws DJBuilderException {
 		super(parametros);
@@ -41,12 +43,19 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		if (parametros.get("idTipoFormaDoc") == null) {
 			throw new DJBuilderException("Informe a forma documental: Processo Administrativo ou Expediente!");
 		}
+		
+		if (parametros.get("idTipoSaida") == null) {
+			throw new DJBuilderException("Informe a forma visualizar o relatório:PDF ou EXCEL");
+		}
 
 		 listaAssunto =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaAssunto") ).split(",")));
 		
 		 listaSetoreSubordinado =  new ArrayList<String>(Arrays.asList(String.valueOf( parametros.get("listaSetoresSubordinados") ).split(",")));
 		 
 		 idTipoFormaDoc =  Integer.valueOf(   String.valueOf(  parametros.get("idTipoFormaDoc")  ) );
+		 
+		 idTipoSaida =  Integer.valueOf(    String.valueOf(  parametros.get("idTipoSaida")   ) );
+		 
 
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
@@ -203,21 +212,14 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 			
 			String codDestino =   array[9] != null ? String.valueOf( array[9] ) : null ;
 			
-				listaFinal.add( String.valueOf( array[0] ));//NUM. PROCESSO
-				
-				listaFinal.add( String.valueOf(formatter.format( array[1] )));//DATA DESPACHO
-				
-				listaFinal.add( String.valueOf( array[2] ) +" "+ String.valueOf( array[3] ));//COD. DESPACHO + DESCR. DESPACHO,
-				
-				listaFinal.add( String.valueOf( array[5] ) +" "+ String.valueOf( array[6] ));//COD. ASSUNTO  + DESCR. ASSUNTO
-				
-				listaFinal.add(	array[7] != null ? String.valueOf( array[7] ) +" "+ String.valueOf( array[8] ) : ""		);//ORG. ORIGEM	 + DESCR. ORG. ORIGEM
-				
-				listaFinal.add( array[9]  != null ?  String.valueOf( array[9] ) +" "+ String.valueOf( array[10]  ):"");//ORG. DESTINO 	 + DESCR. ORG. DESTINO
-				
-				listaFinal.add( String.valueOf( array[11]));//MATR. DIGITADOR
-				
-				listaFinal.add(String.valueOf( array[12]));//TEMPO
+			listaFinal.add( String.valueOf( array[0] ));//NUM. PROCESSO
+			listaFinal.add( String.valueOf(formatter.format( array[1] )));//DATA DESPACHO
+			listaFinal.add( String.valueOf( array[2] ) +" "+ String.valueOf( array[3] ));//COD. DESPACHO + DESCR. DESPACHO,
+			listaFinal.add( String.valueOf( array[5] ) +" "+ String.valueOf( array[6] ));//COD. ASSUNTO  + DESCR. ASSUNTO
+			listaFinal.add(	array[7] != null ? String.valueOf( array[7] ) +" "+ String.valueOf( array[8] ) : ""		);//ORG. ORIGEM	 + DESCR. ORG. ORIGEM
+			listaFinal.add( array[9]  != null ?  String.valueOf( array[9] ) +" "+ String.valueOf( array[10]  ):"");//ORG. DESTINO 	 + DESCR. ORG. DESTINO
+			listaFinal.add( String.valueOf( array[11]));//MATR. DIGITADOR
+			listaFinal.add(String.valueOf( array[12]));//TEMPO
 		}
 		
 		return listaFinal;

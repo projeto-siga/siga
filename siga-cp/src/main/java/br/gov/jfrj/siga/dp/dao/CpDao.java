@@ -721,7 +721,7 @@ public class CpDao extends ModeloDao {
 				query.setMaxResults(itemPagina);
 			}
 			query.setParameter("sigla", o.getNome() == null ? "" : o.getNome().replace(' ', '%')); 
-			query.setParameter("nome", Texto.removeAcento(o.getNome()) == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
+			query.setParameter("nome", o.getNome() == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
@@ -858,7 +858,7 @@ public class CpDao extends ModeloDao {
 				query = em().createNamedQuery("consultarQuantidadeDpLotacaoInclusiveFechadas");
 
 			query.setParameter("sigla", o.getNome() == null ? "" : o.getNome().replace(' ', '%')); 
-			query.setParameter("nome", Texto.removeAcento(o.getNome()) == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
+			query.setParameter("nome", o.getNome() == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
 			
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());

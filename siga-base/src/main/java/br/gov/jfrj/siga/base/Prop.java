@@ -178,7 +178,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.mensagens", null);
 		provider.addPublicProperty("/siga.mesa.carrega.lotacao", "true");
 		provider.addPublicProperty("/siga.mesa.nao.revisar.temporarios", "false");
-		provider.addPublicProperty("/siga.mesa.versao", "2");
+		provider.addPublicProperty("/siga.mesa.versao", "2ant");
 		provider.addPublicProperty("/siga.municipios", null);
 		provider.addPublicProperty("/siga.pagina.inicial.url", null);
 		provider.addPublicProperty("/siga.versao.teste", "true");

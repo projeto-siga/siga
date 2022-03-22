@@ -166,8 +166,8 @@ public class ExServiceSeiImpl implements ExServiceSei {
 			// documento.getData()
 			// documento.getRemetente()
 			// documento.getDestinatarios()
-			String cadastranteStr = null;
-			String subscritorStr = null;
+			String cadastranteStr = documento.getRemetente().getSigla();
+			String subscritorStr = cadastranteStr;
 			String destinatarioStr = null;
 			String destinatarioCampoExtraStr = null;
 			String nomeForma = null;

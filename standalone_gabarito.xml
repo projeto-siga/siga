@@ -55,6 +55,7 @@
         <property name="siga.local" value="@@@siga.local@@@"/>
         <property name="siga.jwt.secret" value="@@@siga.jwt.secret@@@"/>
         <property name="siga.sinc.password" value="@@@siga.sinc.password@@@"/>
+        <property name="siga.recaptcha.ativo" value="true"/>
         <property name="siga.recaptcha.key" value="@@@siga.recaptcha.key@@@"/>
         <property name="siga.recaptcha.pwd" value="@@@siga.recaptcha.pwd@@@"/>
         <property name="siga.cabecalho.titulo" value="@@@siga.cabecalho.titulo@@@"/>

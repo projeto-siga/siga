@@ -29,7 +29,7 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col-md-6">
-							<label for="tipoSaida">Tipo Saída</label>
+							<label for="tipoSaida">Exportar para</label>
 							<select id="tipoSaida" name="idTipoSaida"	value="${idTipoSaida}">
 								 	<option value="1" 	>PDF</option>
 								 	<option value="2" 	>Excel</option>
@@ -37,7 +37,7 @@
 						</div>
 						
 						<div class="col-md-6">
-							<label for="tipoFormaDoc">Tipo Forma Documento</label>
+							<label for="tipoFormaDoc">Tipo Documental</label>
 							<select id="tipoFormaDoc" name="idTipoFormaDoc"			value="${idTipoFormaDoc}">
 								<c:forEach var="tipo" items="${listaTiposFormaDoc}">
 									<option value="${tipo.idTipoFormaDoc}" 	${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>

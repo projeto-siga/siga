@@ -141,7 +141,7 @@
 			if (objSelecionado != null) {
 				switch (parseInt(objSelecionado.value)) {
 				case 0:
-					document.getElementById('trNumOrigDoc').style.display = 'none';
+					//document.getElementById('trNumOrigDoc').style.display = 'none';
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = 'none';
 					document.getElementById('trTipo').style.display = '';
@@ -149,7 +149,7 @@
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 					break;
 				case 1: // Interno Produzido
-					document.getElementById('trNumOrigDoc').style.display = 'none';
+					//document.getElementById('trNumOrigDoc').style.display = 'none';
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = 'none';
 					document.getElementById('trTipo').style.display = '';
@@ -157,7 +157,7 @@
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 					break;
 				case 2: // Interno Folha de Rosto
-					document.getElementById('trNumOrigDoc').style.display = '';
+					//document.getElementById('trNumOrigDoc').style.display = '';
 					document.getElementById('trNumDocSistAntigo').style.display = '';
 					document.getElementById('trOrgExterno').style.display = 'none';
 					document.getElementById('trTipo').style.display = '';
@@ -165,7 +165,7 @@
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 					break;
 				case 3: // Externo Folha de Rosto
-					document.getElementById('trNumOrigDoc').style.display = '';
+					//document.getElementById('trNumOrigDoc').style.display = '';
 					document.getElementById('trNumDocSistAntigo').style.display = '';
 					document.getElementById('trOrgExterno').style.display = '';
 					document.getElementById('trTipo').style.display = 'none';
@@ -173,7 +173,7 @@
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '5';
 					break;
 				case 4: // Externo Capturado
-					document.getElementById('trNumOrigDoc').style.display = '';
+					//document.getElementById('trNumOrigDoc').style.display = '';
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = '';
 					document.getElementById('trTipo').style.display = '';
@@ -181,7 +181,7 @@
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 					break;
 				case 5: // Interno Capturado
-					document.getElementById('trNumOrigDoc').style.display = 'none';
+					//document.getElementById('trNumOrigDoc').style.display = 'none';
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = 'none';
 					document.getElementById('trTipo').style.display = '';
@@ -629,8 +629,7 @@
 							</div>
 					</div>
 					<div class="form-row">
-						<div class="form-group col-md-3" id="trNumOrigDoc"
-							style="display:${idTpDoc == 2 || idTpDoc == 3 ? '' : 'none'}">
+						<div class="form-group col-md-3" id="trNumOrigDoc">
 							<label for="numExtDoc">Número Original</label> <input
 								class="form-control" type="text" name="numExtDoc" size="16"
 								id="numExtDoc" value="${numExtDoc}" />

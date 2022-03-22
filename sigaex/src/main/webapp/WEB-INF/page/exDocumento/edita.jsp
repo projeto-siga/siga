@@ -196,7 +196,7 @@
 							</div>
 						</div>
 					</div>
-				<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
+				<c:if test='${exDocumentoDTO.tipoDocumento == "antigo" or exDocumentoDTO.tipoDocumento == "interno_capturado" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 				<input type="hidden" name="campos" value="numExtDoc" />
 				<input type="hidden" name="campos" value="numAntigoDoc" />
 				<div class="row">

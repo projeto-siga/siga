@@ -85,6 +85,16 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
 
+	public final static ITipoDeMovimentacao[] tpMovimentacoesDePosse = new ITipoDeMovimentacao[] {ExTipoDeMovimentacao.CRIACAO, 
+			ExTipoDeMovimentacao.TRANSFERENCIA,
+			ExTipoDeMovimentacao.RECEBIMENTO,
+			ExTipoDeMovimentacao.TRAMITE_PARALELO,
+			ExTipoDeMovimentacao.NOTIFICACAO,
+			ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA,
+			ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA,
+			ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA,
+			ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+		};
 	/**
 	 * Simple constructor of ExMovimentacao instances.
 	 */
@@ -1374,5 +1384,13 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				|| Utils.equivale(getResp(),titular)
 				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
 				|| Utils.equivale(getDestinoFinal(),titular);
+	}
+
+	public boolean isMovimentacaoDePosse() {
+		if (ExTipoDeMovimentacao.hasTransferencia(this.getExTipoMovimentacao())) 
+			return true;
+		if (ExTipoDeMovimentacao.hasRecebimentoOuCriacao(this.getExTipoMovimentacao())) 
+			return true;
+		return false;
 	}
 }

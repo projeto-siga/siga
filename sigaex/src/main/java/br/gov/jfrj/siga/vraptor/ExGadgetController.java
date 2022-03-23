@@ -93,10 +93,12 @@ public class ExGadgetController extends ExController {
 		super.getRequest().setAttribute("_cadastrante", super.getTitular().getSigla() + "@"
 				+ super.getLotaTitular().getOrgaoUsuario().getSiglaOrgaoUsu() + super.getLotaTitular().getSigla());
 
+		List <Integer> listIdTpFormaDoc = new ArrayList<Integer>() {{add(1); add(2);}};
+		
 		result.include("listEstados", listEstados);
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
-		result.include("idTpFormaDoc", idTpFormaDoc);
+		result.include("listIdTpFormaDoc", listIdTpFormaDoc);
 		result.include("documentoVia", new ExMobilSelecao());
 		result.include("apenasQuadro", apenasQuadro);
 	}

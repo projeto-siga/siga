@@ -8,7 +8,7 @@ $(function() {
 		        sigaex: {
 		        	name: "sigaex",
 		        	url: "/sigaex/app/expediente/gadget?idTpFormaDoc=1&apenasQuadro=true",
-		          viewId: "left"
+		          viewId: "mesaDocumentos"
 		        },
 		        sigawf: {
 		        	name: "sigawf",
@@ -29,11 +29,6 @@ $(function() {
 		        	name: "sigatp",
 		        	url: "/sigatp/app/application/gadget",
 		          viewId: "rightbottom3"
-		        },
-		        processos: {
-		        	name: "processos",
-		        	url: "/sigaex/app/expediente/gadget?idTpFormaDoc=2",
-		          viewId: "leftbottom"
 		        }
 		    },
 

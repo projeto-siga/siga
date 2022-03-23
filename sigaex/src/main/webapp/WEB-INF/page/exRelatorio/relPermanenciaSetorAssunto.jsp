@@ -44,8 +44,9 @@
 								</c:forEach>
 							</select>
 						</div>
-						
-							<div class="col-md-6">
+					</div>
+					<div class="row">	
+							<div class="col-md-8">
 							<div class="form-group">
 								<label for="lotacao">Setores</label>
 								<input type="hidden" name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" id="inputHiddenLotacoesSelecionadas" />
@@ -61,10 +62,7 @@
 					</div>				
 				
 					<div class="row">
-					
-					
-						
-						<div class="col-md-12">
+						<div class="col-md-8">
 							<div class="form-group">
 								<label for="classificacao">Assuntos</label>
 									<input type="hidden" name="idClassificacaoPesquisa" value="${idClassificacaoPesquisa}" id="inputHiddenClassificacoesSelecionadas" />

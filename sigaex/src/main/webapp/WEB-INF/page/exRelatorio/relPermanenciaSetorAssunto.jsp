@@ -28,28 +28,24 @@
 				 		
 				<div class="card-body">
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-2">
 							<label for="tipoSaida">Exportar para</label>
-							<select id="tipoSaida" name="idTipoSaida"	value="${idTipoSaida}">
+							<select id="tipoSaida" name="idTipoSaida"	value="${idTipoSaida}"  class="form-control" >
 								 	<option value="1" 	>PDF</option>
 								 	<option value="2" 	>Excel</option>
 					 		</select>
 						</div>
 						
-						<div class="col-md-6">
+						<div class="col-md-4">
 							<label for="tipoFormaDoc">Tipo Documental</label>
-							<select id="tipoFormaDoc" name="idTipoFormaDoc"			value="${idTipoFormaDoc}">
+							<select id="tipoFormaDoc" name="idTipoFormaDoc"			value="${idTipoFormaDoc}" class="form-control">
 								<c:forEach var="tipo" items="${listaTiposFormaDoc}">
 									<option value="${tipo.idTipoFormaDoc}" 	${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>
 								</c:forEach>
 							</select>
 						</div>
-					
-					</div>				
-				
-					<div class="row">
-					
-						<div class="col-md-6">
+						
+							<div class="col-md-6">
 							<div class="form-group">
 								<label for="lotacao">Setores</label>
 								<input type="hidden" name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" id="inputHiddenLotacoesSelecionadas" />
@@ -61,8 +57,14 @@
 								</select>
 							</div>					
 						</div>
+					
+					</div>				
+				
+					<div class="row">
+					
+					
 						
-						<div class="col-md-6">
+						<div class="col-md-12">
 							<div class="form-group">
 								<label for="classificacao">Assuntos</label>
 									<input type="hidden" name="idClassificacaoPesquisa" value="${idClassificacaoPesquisa}" id="inputHiddenClassificacoesSelecionadas" />

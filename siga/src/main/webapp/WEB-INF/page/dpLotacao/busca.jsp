@@ -44,6 +44,7 @@
 			<div class="card-body">
 			<form name="frm" action="${request.contextPath}/app/lotacao/buscar" class="form" method="POST">
 				<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" /> 
+				<input type="hidden" name="buscarTodosOrgaos" value="true" /> 
 				<input type="hidden" name="propriedade" value="${param.propriedade}" /> 
 				<input type="hidden" name="postback" value="1" /> 
 				<input type="hidden" name="paramoffset" value="0" />
@@ -62,7 +63,7 @@
 						<div class="form-group">
 							<label for="idOrgaoUsu">Órgão</label>
 							<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2" >
-									<option value="${item.idOrgaoUsu}" >[Todos]</option>
+									<option value="" >[Todos]</option>
 									<c:forEach items="${orgaosUsu}" var="item">
 										<option value="${item.idOrgaoUsu}"
 											${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>

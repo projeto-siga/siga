@@ -17,7 +17,6 @@
 <link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
 <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection"/>
 <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection"/>
-<link rel="stylesheet" href="../../../stylesheet/exconfiguracao.css"/>
 
 
 <c:set var="titulo_pagina" scope="request"> Relatório de Permanência por Setor e Assunto </c:set>
@@ -94,8 +93,8 @@
 <script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
-<script type="text/javascript" src="../../../javascript/exconfiguracao.js"></script>
-<script type="text/javascript" src="../../../javascript/relatorio.combo-classificacao.js"></script>
+<script type="text/javascript" src="../../../javascript/lotacao.combo-multiselect.js"></script>
+<script type="text/javascript" src="../../../javascript/classificacao.combo-multiselect.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>		
 
 

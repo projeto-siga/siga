@@ -4040,7 +4040,7 @@ public class ExBL extends CpBL {
 			
 			for(ExDocumento docPai : listaDocPai) {
 				for (DpPessoa subscritor : listaSubscritor) {
-					String descrMov = "Remoção de Cossignatário ou Responsável pela Assinatura:" 
+					String descrMov = "Assinatura de Cossignatário ou Responsável pela Assinatura concluída:" 
 							+ subscritor.getDescricaoIniciaisMaiusculas()
 							+ " - DOC ORIGEM:" + doc.getCodigo();
 					removerPapelSubscritor(

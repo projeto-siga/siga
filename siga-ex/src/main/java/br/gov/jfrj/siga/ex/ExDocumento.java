@@ -134,29 +134,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return null;
 		return getExMobilPai().getExDocumento();
 	}
-	
-	
-	/**
-	 * Retorna o primeiro documento pai da arvore
-	 */
-	public ExMobil getGrandeExMobilPai() {
-		ExMobil m = getExMobilPai();
-		while (m != null) {
-			ExMobil m2 = m.doc().getExMobilPai();
-			if (m2 == null)
-				return m;
-			else
-				m = m2;
-		}
-		return this.getMobilGeral();
-	}
-	
-	public ExDocumento getGrandeMestreDocJuntada() {
-		ExMobil exMobilGrandeJuntada = this.getGrandeExMobilPai().getGrandeMestreMobilJuntada();
-		if (exMobilGrandeJuntada == null)
-			exMobilGrandeJuntada = this.getGrandeExMobilPai();
-		return exMobilGrandeJuntada.getExDocumento();
-	}
 
 	/**
 	 * Retorna o nível de acesso (não a descrição) do documento definido no

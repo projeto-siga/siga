@@ -3866,19 +3866,19 @@ public class ExBL extends CpBL {
 	private void removerPapel(ExDocumento doc, long idPapel) throws Exception {
 		List<ExMovimentacao> movs = doc.getMobilGeral()
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, false);
-		removerPapel(doc, movs, idPapel, null);
+		removerPapel(doc, movs, idPapel, null, null);
 	}
 	
 	private void removerPapelSubscritor(ExDocumento doc, 
-			long idPapel, DpPessoa cadastrante, DpPessoa subscritor) throws Exception {
+			long idPapel, DpPessoa cadastrante, DpPessoa subscritor, String descrMov) throws Exception {
 		List<ExMovimentacao> movs = doc.getMobilGeral()
 								.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, false);
 		movs = new ArrayList<ExMovimentacao>(subscritor != null 
 								? getListaMovimentosPorPessoaSubscritora(movs, subscritor) : movs);
-		removerPapel(doc, movs, idPapel, cadastrante);
+		removerPapel(doc, movs, idPapel, cadastrante, descrMov);
 	}
 
-	private void removerPapel(ExDocumento doc, List<ExMovimentacao> movs, long idPapel, DpPessoa cadastrante) throws Exception {
+	private void removerPapel(ExDocumento doc, List<ExMovimentacao> movs, long idPapel, DpPessoa cadastrante, String descrMov) throws Exception {
 		ExMovimentacao movCancelamento = null;
 		boolean removido = false;
 		for (ExMovimentacao mov : movs) {
@@ -3889,6 +3889,7 @@ public class ExBL extends CpBL {
 				movCancelamento = criarNovaMovimentacao(
 						ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, cadastrante, null,
 						doc.getMobilGeral(), dt, null, null, null, null, null);
+				movCancelamento.setDescrMov(descrMov);
 				movCancelamento.setExMovimentacaoRef(mov);
 			}
 			gravarMovimentacaoCancelamento(movCancelamento, mov);
@@ -4002,19 +4003,24 @@ public class ExBL extends CpBL {
 										&& doc.isFinalizado() && possuiInclusaoCossignatarioSubscritor(doc)) {
 			Date dt = ExDao.getInstance().dt();
 			
-			//Da permissao ao Doc pai, assim todos os filhos terao acesso aos docs da arvore
-			ExDocumento docPai = doc.getGrandeMestreDocJuntada();
+			//Dar permissao aos Docs pai e vias, assim todos os filhos terao acesso aos docs da arvore
+			List<ExDocumento> listaDocPai = doc.getExMobilPai().getDoc().getTodosOsPaisDasVias();//doc.getGrandeMestreDocJuntada();
+			if (listaDocPai.isEmpty())
+				listaDocPai.add(doc.getExMobilPai().getDoc());
+			
 			List<DpPessoa> listaCossigDoc = doc.getListaSubscritorECossignatariosDiffCadastranteDoc();
 			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, ExPapel.class, false);
 
-			for (DpPessoa dpPessoaResp : listaCossigDoc) {
-				if (podeAdicionarMovVinculacaoPapel(docPai, dpPessoaResp)){
-					String descrMov = "Inclusão de Cossignatário ou Responsável pela Assinatura:" 
-										+ dpPessoaResp.getDescricaoIniciaisMaiusculas()
-										+ " - DOC ORIGEM:" + doc.getCodigo();
-					
-					vincularPapel(doc.getCadastrante(), doc.getLotaCadastrante(), docPai.getMobilGeral(), dt,
-							dpPessoaResp.getLotacao(), dpPessoaResp, null, null, descrMov, null, exPapel);
+			for(ExDocumento docPai : listaDocPai) {
+				for (DpPessoa dpPessoaResp : listaCossigDoc) {
+					if (podeAdicionarMovVinculacaoPapel(docPai, dpPessoaResp)){
+						String descrMov = "Inclusão de Cossignatário ou Responsável pela Assinatura:" 
+											+ dpPessoaResp.getDescricaoIniciaisMaiusculas()
+											+ " - DOC ORIGEM:" + doc.getCodigo();
+						
+						vincularPapel(doc.getCadastrante(), doc.getLotaCadastrante(), docPai.getMobilGeral(), dt,
+								dpPessoaResp.getLotacao(), dpPessoaResp, null, null, descrMov, null, exPapel);
+					}
 				}
 			}
 		}
@@ -4028,10 +4034,19 @@ public class ExBL extends CpBL {
 	private void removerPermissaoTempDnmAcessoArvoreDocs(DpPessoa cadastrante, DpLotacao lotaCadastrante,
 			ExDocumento doc, List<DpPessoa> listaSubscritor) throws Exception {
 		if (!listaSubscritor.isEmpty()) {
-			ExDocumento docPai = doc.getGrandeMestreDocJuntada();
+			List<ExDocumento> listaDocPai = doc.getExMobilPai().getDoc().getTodosOsPaisDasVias();//doc.getGrandeMestreDocJuntada();
+			if (listaDocPai.isEmpty())
+				listaDocPai.add(doc.getExMobilPai().getDoc());
+			
+			for(ExDocumento docPai : listaDocPai) {
 				for (DpPessoa subscritor : listaSubscritor) {
-					removerPapelSubscritor(docPai, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, subscritor);
+					String descrMov = "Remoção de Cossignatário ou Responsável pela Assinatura:" 
+							+ subscritor.getDescricaoIniciaisMaiusculas()
+							+ " - DOC ORIGEM:" + doc.getCodigo();
+					removerPapelSubscritor(
+							docPai, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, subscritor, descrMov);
 				}
+			}
 		}
 	}
 	

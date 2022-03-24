@@ -55,6 +55,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
@@ -132,6 +133,29 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (getExMobilPai() == null)
 			return null;
 		return getExMobilPai().getExDocumento();
+	}
+	
+	
+	/**
+	 * Retorna o primeiro documento pai da arvore
+	 */
+	public ExMobil getGrandeExMobilPai() {
+		ExMobil m = getExMobilPai();
+		while (m != null) {
+			ExMobil m2 = m.doc().getExMobilPai();
+			if (m2 == null)
+				return m;
+			else
+				m = m2;
+		}
+		return this.getMobilGeral();
+	}
+	
+	public ExDocumento getGrandeMestreDocJuntada() {
+		ExMobil exMobilGrandeJuntada = this.getGrandeExMobilPai().getGrandeMestreMobilJuntada();
+		if (exMobilGrandeJuntada == null)
+			exMobilGrandeJuntada = this.getGrandeExMobilPai();
+		return exMobilGrandeJuntada.getExDocumento();
 	}
 
 	/**
@@ -1930,6 +1954,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		set.addAll(getRegistrosDeAssinatura());
 		return set;
 	}
+	
+	
 
 	/**
 	 * Retorna as {@link ExMovimentacao movimentações} de autenticação, seja
@@ -2439,6 +2465,35 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 		return subscritores;
 	}
+	
+	
+	public List<DpPessoa> getListaSubscritorECossignatariosDiffCadastranteDoc() {
+		List<DpPessoa> listaSubscritor = new ArrayList<>();
+		for (DpPessoa dpPessoa : this.getSubscritorECosignatarios()) {
+			if(!this.getCadastrante().equivale(dpPessoa))
+				listaSubscritor.add(dpPessoa);
+		}
+		return listaSubscritor;
+	}
+	
+	public List<DpPessoa> listaPessoasSubscritorCossignatarioAssinadoHoje() {
+		List<DpPessoa> listaSubscrCossigFinal = new ArrayList<DpPessoa>();
+		List<DpPessoa> listaSubscrCossig =  this.getListaSubscritorECossignatariosDiffCadastranteDoc();
+
+		if (!listaSubscrCossig.isEmpty()) {
+			Set<ExMovimentacao> listaMovAssinaturas = this.getAssinaturasComTokenOuSenhaERegistros();
+			for (ExMovimentacao mov : listaMovAssinaturas) {
+				if (DateUtils.isToday(mov.getData())) {
+					for (DpPessoa pessoa : listaSubscrCossig) {
+						if (mov.getCadastrante().equivale(pessoa)) {
+							listaSubscrCossigFinal.add(pessoa);
+						}
+					}
+				}
+			}
+		}
+		return listaSubscrCossigFinal;
+	}
 
 	/**
 	 * Retorna uma lista com o todos os cossignatários.
@@ -2763,6 +2818,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				lista.add(mov.getLotaSubscritor());
 		}
 		return lista.size() == 0 ? null : lista;
+	}
+	
+	public boolean possuiVinculacaoPapelRevisorSubscritor(DpPessoa dpPessoa) {
+		List<ExMovimentacao> movs = this.getMobilGeral()
+				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
+		for (ExMovimentacao mov : movs) {
+			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA)) { 
+				if (dpPessoa != null) {
+					if (mov.getSubscritor().equivale(dpPessoa))
+						return Boolean.TRUE;
+				} else {
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
 	}
 
 	@Override

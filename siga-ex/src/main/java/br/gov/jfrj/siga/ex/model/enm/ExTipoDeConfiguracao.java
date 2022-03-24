@@ -565,6 +565,14 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+	
+	EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO(60,"Exibir para Subscritores e Cossignatários Árvore de Documentos", 
+			"Essa configuração permite exibir para Subscritores e Cossignatários Árvore Completa de Documentos, tendo como vínculo movimentação de juntadas e documentos inclusos. Você pode configurar "
+			+ "para Orgão, Unidade/Lotação e Usuário.  ",
+			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
 	
 	

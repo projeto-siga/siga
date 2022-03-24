@@ -67,6 +67,13 @@
 					<input type="hidden" name="postback" value="1" /> 
 					<input type="hidden" name="sigla" value="${sigla}" />
 					<div class="row">
+						<div class="input-group mb-2 mr-sm-2">
+							<input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Username">
+							   <div class="input-group-prepend">
+							      <input type="button" id="subscritorSelButton" value="..." class="btn btn-secondary" style="border-bottom-right-radius: 0.25em;border-top-right-radius: 0.25em;">
+							   </div>
+						</div>
+						<input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Username">
 						<div class="col-sm">
 							<div class="form-group">
 								<textarea id="descrMov" class="form-control" name="descrMov" cols="60"

@@ -54,7 +54,7 @@ public class SiafDoc {
 			this.objetoProcesso = URLDecoder.decode(get("objetoProcesso"), "UTF-8");
 			this.tipoLicitacao = get("selecioneLicitacao").split("-")[0].trim();
 			this.tipoLicitacao = this.tipoLicitacao.matches("\\d+") ? this.tipoLicitacao : "";
-			this.id = get("idProcesso");
+			this.id = ""; //Regra de negócio de integração SIAFEM: o campo ID deverá ser vazio
 			this.ata = get("ataTeste").matches("[1Ss]") ? "S" : "N";
 			this.convenio = get("especie").equals("Convênio Sim") ? "S" : "N";
 			this.finalidade = URLDecoder.decode(get("finalidadeProcesso"), "UTF-8");

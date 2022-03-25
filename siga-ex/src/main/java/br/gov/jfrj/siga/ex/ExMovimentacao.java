@@ -63,6 +63,7 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
@@ -1370,9 +1371,14 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	}
 	
 	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
+		DpPessoa pessoa = null;
+		if(titular != null) {
+			pessoa = CpDao.getInstance().consultarPorIdInicialDpPessoaInclusiveFechadasDeterminadaData(titular, this.getDtIniMov());
+		}
 		return Utils.equivale(getLotaResp(), lotaTitular)
 				|| Utils.equivale(getResp(),titular)
 				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
-				|| Utils.equivale(getDestinoFinal(),titular);
+				|| Utils.equivale(getDestinoFinal(),titular)
+				|| (pessoa != null && this.getLotaResp().equivale(pessoa.getLotacao()));
 	}
 }

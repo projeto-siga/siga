@@ -61,10 +61,8 @@ public class ExPodeReceberEletronico extends CompositeExpressionSupport {
 
 				new ExEEletronico(mob.doc()),
 
-				Or.of(new ExEstaEmTransitoExterno(mob), new ExEstaResponsavel(mob, titular, lotaTitular)),
+				Or.of(new ExEstaEmTransitoExterno(mob), new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular)),
 
-				Not.of(new ExTemDespachosNaoAssinados(mob)),
-
-				new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular));
+				Not.of(new ExTemDespachosNaoAssinados(mob)));
 	}
 }

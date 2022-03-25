@@ -59,6 +59,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "		and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = :idPessoaIni"
 				+ "				group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa)"),
 		@NamedQuery(name = "consultarPorIdInicialDpPessoaInclusiveFechadas", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni"),
+		@NamedQuery(name = "consultarPorIdInicialDpPessoaInclusiveFechadasDeterminadaData", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni "
+				+ " and pes.dataInicioPessoa <= :dt and pes.dataFimPessoa >= :dt"),
 		@NamedQuery(name = "consultarPorCpf", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa and pes.dataFimPessoa = null"),	
 		@NamedQuery(name = "consultarPorCpfAtivoInativo", query = "from DpPessoa pes where pes.cpfPessoa = :cpfPessoa"
 				+ "  and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = pes.idPessoaIni "

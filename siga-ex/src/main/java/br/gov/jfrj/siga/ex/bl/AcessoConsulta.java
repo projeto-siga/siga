@@ -9,11 +9,14 @@ import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExMobil.Pendencias;
 import br.gov.jfrj.siga.ex.logic.ExLotacaoEstaVinculadoPorPerfil;
 import br.gov.jfrj.siga.ex.logic.ExPessoaEstaVinculadaPorPerfil;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class AcessoConsulta {
@@ -41,8 +44,23 @@ public class AcessoConsulta {
 		if (titular != null && ehPublicoExterno(titular)) {
 			return podeAcessarPublicoExterno(doc, titular, lotaTitular);
 		} else {
-			return this.pattern.matcher(doc.getDnmAcesso()).find();
+			if( this.pattern.matcher(doc.getDnmAcesso()).find()) {
+				return true;
+			} else {
+				for (ExMobil mobil : doc.getExMobilSet()) {
+					Pendencias p = mobil.calcularTramitesPendentes();
+					for (ExMovimentacao tramite : p.tramitesPendentes) {
+						if (tramite.isResp(titular, lotaTitular))
+							return true;
+					}
+					for (ExMovimentacao tramite : p.recebimentosPendentes) {
+						if (tramite.isResp(titular, lotaTitular))
+							return true;
+					}
+				}
+			}
 		}
+		return false;
 	}
 	
 	public boolean podeAcessarPublicoExterno(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {

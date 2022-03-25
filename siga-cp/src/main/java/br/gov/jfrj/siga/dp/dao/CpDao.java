@@ -2739,6 +2739,20 @@ public class CpDao extends ModeloDao {
 		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return qry.getResultList();
 	}
+	
+	public DpPessoa consultarPorIdInicialDpPessoaInclusiveFechadasDeterminadaData(DpPessoa pessoa, Date data) {
+		final Query qry = em().createNamedQuery(
+				"consultarPorIdInicialDpPessoaInclusiveFechadasDeterminadaData");
+		qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		qry.setParameter("dt", data);
+		qry.setHint("org.hibernate.cacheable", true); 
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		List<Object> l = qry.getResultList();
+		if(l.size() == 0) {
+			return null;
+		}
+		return (DpPessoa) l.get(0);
+	}
 
 	public List<CpConfiguracao> consultarCpConfiguracoesPorTipoLotacao(long idTpLotacao) {
 		final Query qry = em().createNamedQuery(

@@ -300,13 +300,12 @@ public class ExMovimentacaoVO extends ExVO {
 							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_INTERNO
 							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
 							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
-							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-							|| exTipoMovimentacao == ExTipoDeMovimentacao.CIENCIA)
+							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA)
 							&& mov.isAssinada()) {
 
 						addAcao(AcaoVO.builder().nome("Ver").icone("printer").nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-								.params("popup", "true").params("arquivo", mov.getReferenciaPDF())
-								.exp(new ExPodeVisualizarImpressao(mov.mob(), titular, lotaTitular)).build());
+									.params("popup", "true").params("arquivo", mov.getReferenciaPDF())
+									.exp(new ExPodeVisualizarImpressao(mov.mob(), titular, lotaTitular)).build());
 
 						if (exTipoMovimentacao != ExTipoDeMovimentacao.CIENCIA)
 							addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
@@ -314,9 +313,17 @@ public class ExMovimentacaoVO extends ExVO {
 									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
-						addAcao(AcaoVO.builder().nome("Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-								.params("popup", "true")
-								.exp(new CpPodeSempre()).build());
+						if (exTipoMovimentacao == ExTipoDeMovimentacao.CIENCIA && mov.isAssinada()) {
+							addAcao(AcaoVO.builder().nome("Ver").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+									.params("popup", "true")
+									.exp(new CpPodeSempre()).build());
+							addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+									.exp(new CpPodeSempre()).build());
+						} else { 
+							addAcao(AcaoVO.builder().nome("Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+									.params("popup", "true")
+									.exp(new CpPodeSempre()).build());
+						}
 					}
 			}
 

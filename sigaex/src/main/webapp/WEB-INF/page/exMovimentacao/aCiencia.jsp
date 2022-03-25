@@ -66,14 +66,20 @@
 				<form name="frm" action="ciencia_gravar" method="post">
 					<input type="hidden" name="postback" value="1" /> 
 					<input type="hidden" name="sigla" value="${sigla}" />
-					<div class="row">
-						<div class="input-group mb-2 mr-sm-2">
-							<input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Username">
+					<div class="form-row">
+						<div class="col-sm-2 mb-2">
+							<div class="input-group mb-2 mr-sm-2">
+							<input type="text" class="form-control" value="${siglaCadastrante}" id="inlineFormInputGroupUsername2" disabled="true">
 							   <div class="input-group-prepend">
-							      <input type="button" id="subscritorSelButton" value="..." class="btn btn-secondary" style="border-bottom-right-radius: 0.25em;border-top-right-radius: 0.25em;">
+							      <input type="button" id="subscritorSelButton" value="..." class="btn btn-secondary" style="border-bottom-right-radius: 0.25em;border-top-right-radius: 0.25em;" disabled="true">
 							   </div>
+							</div>
 						</div>
-						<input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Username">
+						<div class="col-sm-3 mb-3">
+							<input type="text" class="form-control" value="${nomeCadastrante}" id="inlineFormInputGroupUsername2" disabled="true">
+						</div>
+					</div>
+					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
 								<textarea id="descrMov" class="form-control" name="descrMov" cols="60"

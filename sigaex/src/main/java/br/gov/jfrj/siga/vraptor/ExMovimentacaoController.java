@@ -4954,6 +4954,8 @@ public class ExMovimentacaoController extends ExController {
 					+ " Isso pode ocorrer se o documento não estiver apto a receber ciência ou devido a alguma regra para não permitir esta operação", ExPodeFazerCiencia.class, getTitular(), getLotaTitular(),
 							documentoBuilder.getMob());
 	
+			result.include("siglaCadastrante", getCadastrante().getSigla());
+			result.include("nomeCadastrante", getCadastrante().getNomePessoa());
 			result.include("sigla", sigla);
 			result.include("mob", documentoBuilder.getMob());
 			result.include("mov", movimentacao);

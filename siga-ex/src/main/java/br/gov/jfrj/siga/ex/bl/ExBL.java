@@ -6025,14 +6025,14 @@ public class ExBL extends CpBL {
 			mov.setConteudoBlobPdf(pdf);
 			mov.setConteudoTpMov("application/zip");
 			
-			final ExMovimentacao movAssMov = criarNovaMovimentacao(ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA, cadastrante, lotaCadastrante,
-					mov.getExMobil(), null, null, null, null, null, null);
+//			final ExMovimentacao movAssMov = criarNovaMovimentacao(ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA, cadastrante, lotaCadastrante,
+//					mov.getExMobil(), null, null, null, null, null, null);
 
-			movAssMov.setDescrMov(cadastrante.getDescricao());
-
-			movAssMov.setExMovimentacaoRef(mov);
-			
-			gravarMovimentacao(movAssMov);
+//			movAssMov.setDescrMov(cadastrante.getDescricao());
+//
+//			movAssMov.setExMovimentacaoRef(mov);
+//			
+			gravarMovimentacao(mov);
 			
 			concluirAlteracao(mov);
 			

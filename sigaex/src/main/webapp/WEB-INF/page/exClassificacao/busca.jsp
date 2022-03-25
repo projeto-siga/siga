@@ -84,7 +84,7 @@
 								<div class="form-group">
 									<label>${nomeDoNivel[i.index]}</label> 
 									<select class="custom-select"  name="nivelSelecionado[${i.index}]" onchange="javascript:alterarNivel(${i.index});javascript:sbmt(0);" >
-										<option value="-1" >[Todos]</option>									
+																		
 										<c:forEach items="${classificacoesDoNivel[i.index]}" var="item">
 											<option value="${item.codificacao}" ${item.codificacao == nivelSelecionado[i.index] ? 'selected' : ''}>${item.descrClassificacao} </option>  
 										</c:forEach>

@@ -18,23 +18,25 @@
 			frm.elements['offset'].value = offset;
 			
 			frm.elements["paramoffset"].value = offset;
-			frm.elements["p.offset"].value = offset;
 			
 			frm.submit();
 		}
 	</script>
-	
-	<c:choose>
-	<c:when test="${param.modal != true}">
-	    <!-- parteFuncao para fechar window -->
-	    <c:set var="parteFuncao" value="opener" />
-	</c:when>
-	<c:otherwise>
-	    <!-- parteFuncao para fechar modal -->
-	    <c:set var="parteFuncao" value="parent" />
-	</c:otherwise>	
-</c:choose>	
 
+	<c:choose>
+		<c:when test="${param.modal != true}">
+		   <!--     parteFuncao para fechar window  -->
+		    <c:set var="parteFuncao" value="opener" />
+		</c:when>
+		<c:otherwise>
+		 <!--       parteFuncao para fechar modal  -->
+		    <c:set var="parteFuncao" value="parent" />
+		</c:otherwise>	
+	</c:choose>	
+
+ 
+  
+ 
 	<div class="container-fluid">
 		<form name="frm" action="${request.contextPath}/app/orgao/buscar"
 			cssClass="form" method="POST">
@@ -44,6 +46,7 @@
 			
 			<input type="hidden" name="paramoffset" value="0" />
 			<input type="hidden" name="p.offset" value="0" />
+			<input type="hidden" name="modal" value="${param['modal']}" />
 
 			<div class="card bg-light mb-3">
 				<div class="card-header">

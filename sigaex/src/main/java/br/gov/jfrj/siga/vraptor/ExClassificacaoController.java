@@ -33,6 +33,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -120,6 +121,13 @@ public class ExClassificacaoController
 		this.nivelSelecionado = nivelSelecionado != null ? nivelSelecionado
 				: this.nivelSelecionado;
 		getP().setOffset(paramoffset);
+		
+//		if ( postback != null ){  
+//			if ( this.nivelSelecionado[0].equals("-1")   &&  StringUtils.isBlank(nome) ){  
+//				throw new AplicacaoException("Preencha o critério de pesquisa!");
+//			}
+//		}
+		
 		aBuscar(sigla, postback);
 		final String[] listaNiveis = new String[getTotalDeNiveis()];
 		final String[] nomeNivel = new String[getTotalDeNiveis()];

@@ -20,6 +20,8 @@
 
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt(offset) {
+ 
+		
 		if (offset == null) {
 			offset = 0;
 		}
@@ -30,22 +32,28 @@
 	
 	function alterarNivel(nivelAlterado){
 
-
-		if ( document.getElementById("nivelAlterado1").text == 'Todos') {
-				
-			if (document.getElementById("nome").value ==''){
-		 		alert("Informe uma Palavra-chave ou selecione um Assunto.");
-		 		return;
-			}
-		}
-		
 		document.getElementById("nivelAlterado").value = nivelAlterado;
-
-		
 	}
 
+	function validar(){
+		var palavraChave = document.getElementById('palavrachave').value
+			         
+		var select = document.getElementById('nivelSelecionado[0]');
+			var assunto = select.options[select.selectedIndex].value;
+			        
+		 if (  assunto  =="-1"  ){
+		  
+		    if (palavraChave==null || palavraChave ==""){
+				 			 alert("Preencha o critério de pesquisa!");
+ 
+				 			return false;
+			}
+		 }
 
+		 return true;
+	}
 
+	
 </script>
 
 <c:choose>
@@ -85,7 +93,7 @@
 						<div class="col-sm">
 							<div class="form-group">
 								<label>Palavra-chave</label> 
-								<input id="nome" class="form-control" type="text" name="nome" size="50" value="${nome}"/>
+								<input id="palavrachave" class="form-control" type="text" name="nome" size="50" value="${nome}"/>
 							</div>
 						</div>
 					</div>
@@ -95,7 +103,7 @@
 							<div class="col-sm">
 								<div class="form-group">
 									<label>${nomeDoNivel[i.index]}</label> 
-									<select class="custom-select"  name="nivelSelecionado[${i.index}]" onchange="javascript:alterarNivel(${i.index});javascript:sbmt(0);" >
+									<select class="custom-select" id="nivelSelecionado[${i.index}]" name="nivelSelecionado[${i.index}]" onchange="javascript:alterarNivel(${i.index});javascript:sbmt(0);" >
 										<option value="-1" >[Todos]</option>								
 										<c:forEach items="${classificacoesDoNivel[i.index]}" var="item">
 											<option value="${item.codificacao}" ${item.codificacao == nivelSelecionado[i.index] ? 'selected' : ''}>${item.descrClassificacao} </option>  
@@ -109,7 +117,7 @@
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
-								<input type="submit" value="Pesquisar" class="btn btn-primary" />
+								<input type="submit" id="btnPesquisar" value="Pesquisar" class="btn btn-primary"  onclick="javascript: validar();" />
 								<input type="checkbox"  name="discriminarVias" id="check" fieldValue="true" onclick="javascript: sbmt();" <c:if test="${marcado}">checked</c:if>/>
 								<label class="form-check-label" for="check">Discriminar vias na listagem</label>
 							</div>

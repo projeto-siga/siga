@@ -3792,6 +3792,8 @@ public class ExMovimentacaoController extends ExController {
 			Ex.getInstance().getComp().afirmar("Não é possível cancelar o documento vinculado", ExPodeCancelarVinculacao.class, getTitular(), getLotaTitular(), mov);
 		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO) {
 			ExPodeCancelarMarcacao.afirmar(mov, getTitular(), getLotaTitular());
+		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CIENCIA) {
+			new ExPodeCancelarCiencia(mov.mob(), getTitular(), getLotaTitular());
 		} else if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.PRAZO_ASSINATURA) {
 			Ex.getInstance().getComp().afirmar("Usuário não permitido a cancelar ou alterar o prazo de assinatura. Se o documento estiver"
 					+ " assinado, deve ser o subscritor; senão deve ser quem cadastrou o prazo.", ExPodeCancelarOuAlterarPrazoDeAssinatura.class, getTitular(), getLotaTitular(), mov);

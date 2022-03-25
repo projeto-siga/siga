@@ -50,6 +50,7 @@ import br.gov.jfrj.siga.ex.logic.ExEstaSemEfeito;
 import br.gov.jfrj.siga.ex.logic.ExMovimentacaoEstaCancelada;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarAnexo;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarCiencia;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
@@ -314,9 +315,9 @@ public class ExMovimentacaoVO extends ExVO {
 
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
 						if (exTipoMovimentacao == ExTipoDeMovimentacao.CIENCIA && mov.isAssinada()) {
-							addAcao(AcaoVO.builder().nome("Ver").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-									.params("popup", "true")
-									.exp(new CpPodeSempre()).build());
+							addAcao(AcaoVO.builder().nome("Ver").icone("printer").nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+									.params("popup", "true").params("arquivo", mov.getReferenciaPDF())
+									.exp(new ExPodeVisualizarImpressao(mov.mob(), titular, lotaTitular)).build());
 							addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 									.exp(new CpPodeSempre()).build());
 						} else { 

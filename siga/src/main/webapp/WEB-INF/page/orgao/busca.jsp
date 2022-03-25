@@ -44,6 +44,8 @@
 			
 			<input type="hidden" name="paramoffset" value="0" />
 			<input type="hidden" name="p.offset" value="0" />
+			<input type="hidden" name="modal" value="${param['modal']}" />
+			
 
 			<div class="card bg-light mb-3">
 				<div class="card-header">

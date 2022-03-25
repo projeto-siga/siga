@@ -17,7 +17,6 @@
 <link rel="stylesheet" href="/siga/css/siga.multiploselect.css" type="text/css" media="screen, projection"/>
 <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection"/>
 <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection"/>
-<link rel="stylesheet" href="../../../stylesheet/exconfiguracao.css"/>
 
 
 <c:set var="titulo_pagina" scope="request"> Relatório de Permanência por Setor e Assunto </c:set>
@@ -28,28 +27,25 @@
 				 		
 				<div class="card-body">
 					<div class="row">
-						<div class="col-md-6">
-							<label for="tipoSaida">Tipo Saída</label>
-							<select id="tipoSaida" name="idTipoSaida"	value="${idTipoSaida}">
+						<div class="col-md-2">
+							<label for="tipoSaida">Exportar para</label>
+							<select id="tipoSaida" name="idTipoSaida"	value="${idTipoSaida}"  class="form-control" >
 								 	<option value="1" 	>PDF</option>
 								 	<option value="2" 	>Excel</option>
 					 		</select>
 						</div>
 						
-						<div class="col-md-6">
-							<label for="tipoFormaDoc">Tipo Forma Documento</label>
-							<select id="tipoFormaDoc" name="idTipoFormaDoc"			value="${idTipoFormaDoc}">
+						<div class="col-md-4">
+							<label for="tipoFormaDoc">Tipo Documental</label>
+							<select id="tipoFormaDoc" name="idTipoFormaDoc"			value="${idTipoFormaDoc}" class="form-control">
 								<c:forEach var="tipo" items="${listaTiposFormaDoc}">
 									<option value="${tipo.idTipoFormaDoc}" 	${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>
 								</c:forEach>
 							</select>
 						</div>
-					
-					</div>				
-				
-					<div class="row">
-					
-						<div class="col-md-6">
+					</div>
+					<div class="row">	
+							<div class="col-md-8">
 							<div class="form-group">
 								<label for="lotacao">Setores</label>
 								<input type="hidden" name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" id="inputHiddenLotacoesSelecionadas" />
@@ -61,8 +57,11 @@
 								</select>
 							</div>					
 						</div>
-						
-						<div class="col-md-6">
+					
+					</div>				
+				
+					<div class="row">
+						<div class="col-md-8">
 							<div class="form-group">
 								<label for="classificacao">Assuntos</label>
 									<input type="hidden" name="idClassificacaoPesquisa" value="${idClassificacaoPesquisa}" id="inputHiddenClassificacoesSelecionadas" />
@@ -94,8 +93,8 @@
 <script type="text/javascript" src="/siga/javascript/siga.multiploselect.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
-<script type="text/javascript" src="../../../javascript/exconfiguracao.js"></script>
-<script type="text/javascript" src="../../../javascript/relatorio.combo-classificacao.js"></script>
+<script type="text/javascript" src="../../../javascript/lotacao.combo-multiselect.js"></script>
+<script type="text/javascript" src="../../../javascript/classificacao.combo-multiselect.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>		
 
 

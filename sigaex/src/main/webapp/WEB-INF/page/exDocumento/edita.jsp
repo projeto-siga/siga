@@ -196,7 +196,7 @@
 							</div>
 						</div>
 					</div>
-				<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
+				<c:if test='${exDocumentoDTO.tipoDocumento == "antigo" or exDocumentoDTO.tipoDocumento == "interno_capturado" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 				<input type="hidden" name="campos" value="numExtDoc" />
 				<input type="hidden" name="campos" value="numAntigoDoc" />
 				<div class="row">
@@ -386,15 +386,13 @@
 										name="exDocumentoDTO.cpfRequerente"
 										style="display: ${not empty exDocumentoDTO.cpfRequerente ? '': 'none'};"
 										value="${exDocumentoDTO.cpfRequerente}" class="form-control"
-										onblur="validarCpf(this.value)" onkeypress="cpf_mask(this.value)"
-										maxlength="11" />
+										onblur="validarCpf(this)" maxlength="14" />
 							 
 									<input type="text" id="cnpjRequerente"
 										name="exDocumentoDTO.cnpjRequerente"
 										style="display: ${not empty exDocumentoDTO.cnpjRequerente ? '': 'none'};"
 										value="${exDocumentoDTO.cnpjRequerente}" class="form-control"
-										onblur="validarCnpj(this.value)" onkeypress="cnpj_mask(this.value)"
-										maxlength="14" />
+										onblur="validarCnpj(this)" maxlength="18" />
 							</div>
 						</div>
 					</div>
@@ -774,6 +772,7 @@
 			}
 		}
 	}
+	
 	function mouseSelect(event, id, parameter) {
 		if (event.type == 'change') {
 			var click = document.getElementById('clickSelect').value;
@@ -782,6 +781,7 @@
 			}
 		}
 	}
+	
 	function getListaModelos () {
 		this.carregando = true; 
 		sigaSpinner.mostrar();
@@ -923,7 +923,7 @@
 			
 			break;
 		}
-}
+	}
 
 	function cpf_mask(v){
 		v=v.replace(/\D/g,"");
@@ -935,7 +935,7 @@
 			validarCpf(v.toString());
 	    }
 		return v;
-		}
+	}
 
 	function cnpj_mask(v){
 		v=v.replace(/^(\d{2})(\d)/,"$1.$2")
@@ -954,19 +954,47 @@
 	}
 	
 	function validarCpf(elemento) {
-		if (!isCpfValido(elemento)) {
+		if (!isCpfValido(elemento.value)) {
 			alert("Favor informar um CPF válido");
 			document.getElementById("cpfRequerente").value = '';
 			return false;
 		}
+		formataCPF(elemento);
 	}
 	
 	function validarCnpj(elemento) {
-		if (!isCnpjValido(elemento)) {
+		if (!isCnpjValido(elemento.value)) {
 			alert("Favor informar um CNPJ válido");
 			document.getElementById("cnpjRequerente").value = '';
 			return false;
-		}				
+		}
+		formataCNPJ(elemento);		
+	}
+
+	function formataCPF(cpf) {
+		const elementoAlvo = cpf
+		const cpfAtual = cpf.value.replace(/[^\d]+/g,'')
+
+		let cpfAtualizado;
+
+		cpfAtualizado = cpfAtual.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, 
+			function( regex, argumento1, argumento2, argumento3, argumento4 ) {
+				return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
+			})  
+		elementoAlvo.value = cpfAtualizado; 
+	}
+	
+	function formataCNPJ(cnpj) {
+		const elementoAlvo = cnpj
+		const cnpjAtual = cnpj.value.replace(/[^\d]+/g,'')
+
+		let cnpjAtualizado;
+
+		cnpjAtualizado = cnpjAtual.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, 
+			function( regex, argumento1, argumento2, argumento3, argumento4, argumento5 ) {
+				return argumento1 + '.' + argumento2 + '.' + argumento3 + '/' + argumento4 + '-' + argumento5;
+			})  
+		elementoAlvo.value = cnpjAtualizado; 
 	}
 	
 	function isCpfValido(cpf) {	

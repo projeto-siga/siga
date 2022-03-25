@@ -314,7 +314,7 @@ public class ExMovimentacaoVO extends ExVO {
 									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
-						addAcao(AcaoVO.builder().nome("Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+						addAcao(AcaoVO.builder().nome(mov.isAssinada() ? "Ver" : "Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 								.params("popup", "true")
 								.exp(new CpPodeSempre()).build());
 					}

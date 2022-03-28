@@ -39,6 +39,8 @@ app
 		function($scope, $http, debounce) {
 			$scope.data = {};
 
+			$scope.preenchimentosCache = {};
+
 			$scope.gravar = function() {
 				if(!validarFormulario($scope.data.workflow))
 					return;
@@ -403,9 +405,23 @@ app
 					}, true);
 
 			$scope.atualizarPreenchimentos = function(t) {
-				$http({ url: '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : t.tipoResponsavel == 'LOTACAO' ? '/lotacoes/' + t.preenchimentoLotacaoId : '') + '/preenchimentos', method: "GET" }).then(
+				var url = '/sigaex/api/v1/modelos/' + t.ref.originalObject.key + (t.tipoResponsavel == 'PESSOA' ? '/pessoas/' + t.preenchimentoPessoaId : t.tipoResponsavel == 'LOTACAO' ? '/lotacoes/' + t.preenchimentoLotacaoId : '') + '/preenchimentos';
+
+				if ($scope.preenchimentosCache[url]) {
+					if ($scope.preenchimentosCache[url].value) {
+						t.preenchimentos = $scope.preenchimentosCache[url].value;
+					} else {
+						$scope.preenchimentosCache[url].tarefas.push(t);
+					}
+					return;
+				}
+				$scope.preenchimentosCache[url] = { tarefas: [t] };
+				$http({ url: url, method: "GET" }).then(
 					function(response) {
-						t.preenchimentos = response.data.list;
+						$scope.preenchimentosCache[url].value = response.data.list;
+						for (var i = 0; i < $scope.preenchimentosCache[url].tarefas.length; i++)
+							t.preenchimentos = $scope.preenchimentosCache[url].value;
+						$scope.preenchimentosCache[url].tarefas = [];
 					},
 					function(response) { });
 			}

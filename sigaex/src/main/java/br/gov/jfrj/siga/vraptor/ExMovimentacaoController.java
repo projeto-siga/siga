@@ -4826,10 +4826,13 @@ public class ExMovimentacaoController extends ExController {
 		lot.buscar();
 		ListaLotPubl listaLotPubl = getListaLotacaoPublicacao(doc);
 
-		result.include("tipoMateria",
-				PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
-		result.include("cadernoDJEObrigatorio",
-				PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
+		String tipoMateria = PublicacaoDJEBL.obterSugestaoTipoMateria(doc);
+		boolean cadernoDJEObrigatorio = PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc);
+		tipoMateria = "A";
+		cadernoDJEObrigatorio = true;
+		result.include("tipoMateria", tipoMateria);
+		result.include("cadernoDJEObrigatorio",	cadernoDJEObrigatorio);
+		
 		result.include("descrPublicacao",
 				descrPublicacao == null ? doc.getDescrDocumento()
 						: descrPublicacao);

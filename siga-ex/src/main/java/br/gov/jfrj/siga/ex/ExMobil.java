@@ -722,7 +722,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * Verifica se já está registrada no mobil, se não estiver obtem das movs
 	 * @return
 	 */
-	public ExMovimentacao getUltimaMovimentacaoNaoCanceladaENãoCanceladora() {
+	public ExMovimentacao getUltimaMovimentacaoNaoCanceladaENaoCanceladora() {
 		if (super.getUltimaMovimentacaoNaoCancelada() != null)
 			return super.getUltimaMovimentacaoNaoCancelada();
 		return getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, new ITipoDeMovimentacao[] {}, this, true, null, true);

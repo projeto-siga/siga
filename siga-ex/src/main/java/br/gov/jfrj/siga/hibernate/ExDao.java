@@ -100,6 +100,7 @@ import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.query.ext.IMontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.model.dao.CpBancoDeDados;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
@@ -2137,8 +2138,8 @@ public class ExDao extends CpDao {
 				+ (grupos != null  && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "") 
 			+ (contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador" : 
 				" ORDER BY grupo_marcador, dtOrdem " + (ordemCrescenteData? " ASC":" DESC") + ", marca.id_marca")
-			+ (getBanco().equals("ORACLE") && offset != null && offset != 0 ? " OFFSET :offs ROWS" : "")
-			+ (getBanco().equals("ORACLE") && qtd != null && qtd != 0 ? " FETCH NEXT :qtd ROWS ONLY" : "");
+			+ (isOracle() && offset != null && offset != 0 ? " OFFSET :offs ROWS" : "")
+			+ (isOracle() && qtd != null && qtd != 0 ? " FETCH NEXT :qtd ROWS ONLY" : "");
 	
 		Query query = em()
 			.createNativeQuery(queryString);
@@ -2158,19 +2159,19 @@ public class ExDao extends CpDao {
 		if (filtro != null && !"".equals(filtro))
 			query.setParameter("flt", "%" + filtro.toUpperCase().replace(" ", "%") + "%");
 			
-		if (getBanco().equals("ORACLE") && offset != null && offset != 0)
+		if (isOracle() && offset != null && offset != 0)
 			query.setParameter("offs", offset);
 			
-		if (getBanco().equals("ORACLE") && qtd != null && qtd != 0)
+		if (isOracle() && qtd != null && qtd != 0)
 			query.setParameter("qtd", qtd);
 			
 		query.setParameter("marcaAssinSenha", CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.getId());
 		query.setParameter("marcaMovAssinSenha", CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.getId());
 
 		query.setParameter("dbDatetime", this.consultarDataEHoraDoServidor());
-		if (!getBanco().equals("ORACLE") && offset != null && offset != 0)
+		if (!isOracle() && offset != null && offset != 0)
 			query.setFirstResult(offset);
-		if (!getBanco().equals("ORACLE") && qtd != null && qtd != 0)
+		if (!isOracle() && qtd != null && qtd != 0)
 			query.setMaxResults(qtd > 0? qtd : 100);
 		
 		l = query.getResultList();

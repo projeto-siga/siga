@@ -127,7 +127,7 @@ public class Mesa2 {
 
 			try {
 				Date datahora = null;
-				ExMovimentacao ultimaMov = mobil.getUltimaMovimentacaoNaoCanceladaENãoCanceladora();
+				ExMovimentacao ultimaMov = mobil.getUltimaMovimentacaoNaoCanceladaENaoCanceladora();
 				if (ultimaMov != null)
 					datahora = ultimaMov.getDtIniMov();
 				else

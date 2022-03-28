@@ -44,7 +44,7 @@ public abstract class ModeloDao {
 
 	protected String cacheRegion = null;
 
-	private String banco = null;  
+	private CpBancoDeDados banco = null;  
 
 	private static final ThreadLocal<ModeloDao> threadDao = new ThreadLocal<ModeloDao>();
 
@@ -208,16 +208,30 @@ public abstract class ModeloDao {
 	}
 	
 	/**
-	 * @return Tipo do banco utilizado (Oracle ou MySQL)
+	 * @return Tipo do banco de dados utilizado
 	 */
-	public String getBanco() {
+	private CpBancoDeDados getBanco() {
 		if (banco != null) 
 			return banco;
 		String dialect = System.getProperty("siga.hibernate.dialect");
-		if (dialect != null && dialect.contains("MySQL"))
-			banco = "MYSQL";
-		if (dialect != null && dialect.contains("Oracle"))
-			banco = "ORACLE";
+		if (dialect != null && dialect.contains(CpBancoDeDados.MYSQL.getDescr()))
+			banco = CpBancoDeDados.MYSQL;
+		if (dialect != null && dialect.contains(CpBancoDeDados.ORACLE.getDescr()))
+			banco = CpBancoDeDados.ORACLE;
+		if (dialect != null && dialect.contains(CpBancoDeDados.POSTGRESQL.getDescr()))
+			banco = CpBancoDeDados.POSTGRESQL;
 		return banco;
-	}	
+	}
+
+	public boolean isOracle() {
+		return getBanco().equals(CpBancoDeDados.ORACLE);
+	}
+
+	public boolean isMySQL() {
+		return getBanco().equals(CpBancoDeDados.MYSQL);
+	}
+
+	public boolean isPostgreSQL() {
+		return getBanco().equals(CpBancoDeDados.POSTGRESQL);
+	}
 }

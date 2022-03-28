@@ -101,6 +101,7 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.model.dao.CpBancoDeDados;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
@@ -1863,8 +1864,7 @@ public class CpDao extends ModeloDao {
 			return ContextoPersistencia.dt();
 
 		String sql = "SELECT sysdate from dual";
-		String dialect = System.getProperty("siga.hibernate.dialect");
-		if (dialect != null && dialect.contains("MySQL"))
+		if (isMySQL())
 			sql = "SELECT CURRENT_TIMESTAMP";
 		Query query = em().createNativeQuery(sql);
 		query.setFlushMode(FlushModeType.COMMIT);

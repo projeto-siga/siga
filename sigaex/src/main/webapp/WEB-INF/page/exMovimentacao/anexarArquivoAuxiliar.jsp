@@ -9,6 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Anexação de Arquivo Auxiliar">
+	<c:set var="extensoesInvalidas" scope="session" value="${f:resource('arquivosAuxiliares.extensoes.excecao')}" />
 
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">
@@ -59,12 +60,22 @@
 		function validaSelecaoAnexo(form) {
 			var result = true;
 			var arquivo = form.arquivo;
+			var fileExtension = arquivo.value.substring(arquivo.value.lastIndexOf("."));
 
 			if (arquivo == null || arquivo.value == '') {
 				alert("O arquivo a ser anexado não foi selecionado!");
 				result = false;
 			}
 
+			let extensoesInvalidas = "${extensoesInvalidas}".split(",");
+			for (let extensaoInvalida of extensoesInvalidas) {
+	 			if (fileExtension == extensaoInvalida || fileExtension == extensaoInvalida.toUpperCase()) {
+	 				alert("Extensão " + fileExtension + " inválida para inclusão do arquivo.");
+	 				result = false;
+	 				break;
+	 			}
+			}
+ 			
  			if(result) {
  				result = testTamanho();
  			}

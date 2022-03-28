@@ -143,6 +143,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
+import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
@@ -3806,17 +3807,19 @@ public class ExBL extends CpBL {
 		ExConfiguracaoBL confBL = Ex.getInstance().getConf();
 		lista = (TreeSet) confBL.getListaPorTipo(ExTipoDeConfiguracao.DEFINICAO_AUTOMATICA_DE_PAPEL);
 		if (lista != null) {
-			CpConfiguracao confFiltro = new CpConfiguracao();
+			ExConfiguracao confFiltro = new ExConfiguracao();
 			confFiltro.setDpPessoa(doc.getTitular());
 			confFiltro.setLotacao(doc.getLotaTitular());
+			confFiltro.setExFormaDocumento(doc.getExFormaDocumento());
+			confFiltro.setExModelo(doc.getExModelo());
 			confBL.deduzFiltro(confFiltro);
 			Set<Integer> atributosDesconsiderados = new HashSet<>();
 			atributosDesconsiderados.add(CpConfiguracaoBL.PESSOA_OBJETO);
 			atributosDesconsiderados.add(CpConfiguracaoBL.LOTACAO_OBJETO);
+			atributosDesconsiderados.add(ExConfiguracaoBL.PAPEL);
 			
 			CpConfiguracaoCache filtroConfiguracaoCache = confFiltro.converterParaCache();
 			for (ExConfiguracaoCache conf : lista) {
-				
 				if (// (!conf.ativaNaData(dt)) ||
 				conf.exPapel == 0 || (conf.pessoaObjeto == 0 && conf.lotacaoObjeto == 0)
 						|| !confBL.atendeExigencias(filtroConfiguracaoCache, atributosDesconsiderados, conf, null))
@@ -4882,7 +4885,7 @@ public class ExBL extends CpBL {
 			Pendencias p = mob.calcularTramitesPendentes();
 			
 			ExMovimentacao recebimento = null;
-			if (p.fIncluirCadastrante && (Utils.equivale(mob.doc().getLotaCadastrante(), lotaTitular)
+			if (p.fIncluirCadastrante && (Utils.equivale(mob.getLotaTitular(), lotaTitular)
 					|| Utils.equivale(mob.getTitular(), titular))) {
 				recebimento = null;
 			} else {

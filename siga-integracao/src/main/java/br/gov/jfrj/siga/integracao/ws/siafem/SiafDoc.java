@@ -54,14 +54,14 @@ public class SiafDoc {
 			this.objetoProcesso = URLDecoder.decode(get("objetoProcesso"), "UTF-8");
 			this.tipoLicitacao = get("selecioneLicitacao").split("-")[0].trim();
 			this.tipoLicitacao = this.tipoLicitacao.matches("\\d+") ? this.tipoLicitacao : "";
-			this.id = get("idProcesso");
+			this.id = ""; //Regra de negócio de integração SIAFEM: o campo ID deverá ser vazio
 			this.ata = get("ataTeste").matches("[1Ss]") ? "S" : "N";
 			this.convenio = get("especie").equals("Convênio Sim") ? "S" : "N";
 			this.finalidade = URLDecoder.decode(get("finalidadeProcesso"), "UTF-8");
 			this.processo = get("processoLegado");
 			this.desdobramento = get("desdobramento");
-			this.flagPresencial = (get("presencialConvite") + get("presencialLicitacao") + get("presencialPregao") + get("presencialAberto") + get("presencialFechado") + get("presencialCombinado")).contains("Sim") ? "X" : "";
-			this.flagEletronico = (get("eletronicoConvite") + get("eletronicoLicitacao") + get("eletronicoPregao") + get("eletronicoAberto") + get("eletronicoFechado") + get("eletronicoCombinado")).contains("Sim") ? "X" : "";
+			this.flagPresencial = (get("presencial")).contains("Sim") ? "X" : "";
+			this.flagEletronico = (get("eletronico")).contains("Sim") ? "X" : "";
 			this.cnpj = get("interessado_cnpj").replaceAll("[^\\d]", "");
 			this.naturezaDespesa = get("naturezaDespesa").split(" ")[0];
 			this.codMunicipio = get("municipioSao").split(" ")[0];			

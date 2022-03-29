@@ -20,8 +20,6 @@
 
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt(offset) {
- 
-		
 		if (offset == null) {
 			offset = 0;
 		}
@@ -31,7 +29,6 @@
 	}
 	
 	function alterarNivel(nivelAlterado){
-
 		document.getElementById("nivelAlterado").value = nivelAlterado;
 	}
 
@@ -41,19 +38,15 @@
 		var select = document.getElementById('nivelSelecionado[0]');
 			var assunto = select.options[select.selectedIndex].value;
 			        
-		 if (  assunto  =="-1"  ){
-		  
-		    if (palavraChave==null || palavraChave ==""){
-				 			 alert("Preencha o critério de pesquisa!");
- 
-				 			return false;
+		 if (assunto == "-1"){
+		    if (palavraChave == null || palavraChave == ""){
+				alert("Preencha o critério de pesquisa!");
+				event.preventDefault(); 
+				return false;
 			}
 		 }
-
 		 return true;
 	}
-
-	
 </script>
 
 <c:choose>
@@ -75,7 +68,7 @@
 
 			<div class="card-body">
 
-				<form name="frm" action="buscar" namespace="/classificacao" cssClass="form" theme="simple" method="get">
+				<form name="frm" action="buscar" namespace="/classificacao" cssClass="form" theme="simple" method="get" onsubmit="validar();">
 					<input type="hidden" name="propriedade" value="${param.propriedade}" />
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="paramoffset" value="0" />
@@ -117,7 +110,7 @@
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
-								<input type="submit" id="btnPesquisar" value="Pesquisar" class="btn btn-primary"  onclick="javascript: validar();" />
+								<input type="submit" id="btnPesquisar" value="Pesquisar" class="btn btn-primary" />
 								<input type="checkbox"  name="discriminarVias" id="check" fieldValue="true" onclick="javascript: sbmt();" <c:if test="${marcado}">checked</c:if>/>
 								<label class="form-check-label" for="check">Discriminar vias na listagem</label>
 							</div>

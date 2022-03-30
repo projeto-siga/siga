@@ -26,6 +26,7 @@
 		}
 		
 		function valida() {
+			
 			if ( ($('#sigla').val().trim() !== "" ) || ( $('#formulario_lotacaoSel_descricao').val().trim() !== "" )){
 				return true;
 			} else {
@@ -40,8 +41,9 @@
 		}
 		
 		function submit(event) {
-	
+			sigaSpinner.mostrar();
 			if (!valida()) {
+			  sigaSpinner.ocultar();
 			  invalid(event);
 			  event.preventDefault();
 			}

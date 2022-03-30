@@ -373,3 +373,5 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</div>
 
 </c:if>
+
+<siga:siga-spinner />

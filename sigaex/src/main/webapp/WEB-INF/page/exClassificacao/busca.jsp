@@ -130,6 +130,7 @@
 							<div class="form-group">
 								<label>Palavra-chave</label> 
 								<input class="form-control" type="text" name="nome" id="nome" size="50" value="${nome}"/>
+								<small class="text-muted">Obrigatório caso níveis abaixo não sejam filtrados</small>
 							</div>
 						</div>
 					</div>

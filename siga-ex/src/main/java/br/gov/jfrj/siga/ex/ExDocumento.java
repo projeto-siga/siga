@@ -2443,7 +2443,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return subscritores;
 	}
 	
-	
 	public List<DpPessoa> getListaSubscritorECossignatariosDiffCadastranteDoc() {
 		List<DpPessoa> listaSubscritor = new ArrayList<>();
 		for (DpPessoa dpPessoa : this.getSubscritorECosignatarios()) {
@@ -2729,6 +2728,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return pais;
 	}
+	
+	public List<ExDocumento> getTodosOsPaisDasViasCossigRespAssinatura() {
+		List<ExDocumento> pais = new ArrayList<>();
+		if (this.getExMobilPai() != null) {
+			pais = this.getExMobilPai().getDoc().getTodosOsPaisDasVias();
+			if (pais.isEmpty())
+				pais.add(this.getExMobilPai().getDoc());
+		} else {
+			pais = this.getTodosOsPaisDasVias();
+			if (pais.isEmpty())
+				pais.add(this);
+		}
+		return pais;
+	}
 
 	public List<Object> getListaDeAcessos() {
 		if (getDnmAcesso() == null || isDnmAcessoMAisAntigoQueODosPais()) {
@@ -2811,6 +2824,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			}
 		}
 		return Boolean.FALSE;
+	}
+	
+	public List<ExMovimentacao> getMovsVinculacaoPapelRevisorSubscritor() {
+		List<ExMovimentacao> movs = this.getMobilGeral()
+				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
+		List<ExMovimentacao> movsReturn = new ArrayList<>();
+		for (ExMovimentacao mov : movs) {
+			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA)) { 
+				movsReturn.add(mov);
+			}
+		}
+		return movsReturn;
 	}
 
 	@Override

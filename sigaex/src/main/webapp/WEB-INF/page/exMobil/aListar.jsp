@@ -800,13 +800,15 @@
 						<div class="form-group col-md-3">
 							<label for="cpfRequerente">CPF </label> 
 									<input type="text"	id="cpfRequerente" name="cpfRequerente"
-											value="${cpfRequerente}" class="form-control" maxlength="125"   >
+											onblur="validarCpf(this)"
+											value="${cpfRequerente}" class="form-control" maxlength="14"   >
 						</div>
 						
 						<div class="form-group col-md-3">
 							<label for="cnpjRequerente">CNPJ </label> 
 									<input type="text"	id="cnpjRequerente" name="cnpjRequerente"
-											value="${cnpjRequerente}" class="form-control" maxlength="125"   >
+											onblur="validarCnpj(this)"
+											value="${cnpjRequerente}" class="form-control" maxlength="18"   >
 						</div>
 						
 							<div class="form-group col-md-2">
@@ -891,5 +893,150 @@
 	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+	
+	<script type="text/javascript">
+		function validarCpf(elemento) {
+			if (!isCpfValido(elemento.value)) {
+				alert("Favor informar um CPF válido");
+				var onblurevent = elemento.onblur;
+				elemento.onblur = '';
+				setTimeout(function() {
+					document.getElementById("cpfRequerente").value = '';
+					elemento.onblur = onblurevent;
+				},0);
+				return false;
+			}
+			formataCPF(elemento);
+		}
+
+		function validarCnpj(elemento) {
+			if (!isCnpjValido(elemento.value)) {
+				alert("Favor informar um CNPJ válido");
+				var onblurevent = elemento.onblur;
+				elemento.onblur = '';
+				setTimeout(function() {
+					document.getElementById("cnpjRequerente").value = '';
+					elemento.onblur = onblurevent;
+				},0);
+				return false;
+			}
+			formataCNPJ(elemento);		
+		}
+
+		function formataCPF(cpf) {
+			const elementoAlvo = cpf
+			const cpfAtual = cpf.value.replace(/[^\d]+/g,'')
+
+			let cpfAtualizado;
+
+			cpfAtualizado = cpfAtual.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, 
+				function( regex, argumento1, argumento2, argumento3, argumento4 ) {
+					return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
+				})  
+			elementoAlvo.value = cpfAtualizado; 
+		}
+		
+		function formataCNPJ(cnpj) {
+			const elementoAlvo = cnpj
+			const cnpjAtual = cnpj.value.replace(/[^\d]+/g,'')
+
+			let cnpjAtualizado;
+
+			cnpjAtualizado = cnpjAtual.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, 
+				function( regex, argumento1, argumento2, argumento3, argumento4, argumento5 ) {
+					return argumento1 + '.' + argumento2 + '.' + argumento3 + '/' + argumento4 + '-' + argumento5;
+				})  
+			elementoAlvo.value = cnpjAtualizado; 
+		}
+		
+		function isCpfValido(cpf) {	
+			cpf = cpf.replace(/[^\d]+/g,'');	
+		    if(cpf == '') return false;	
+		    // Elimina CPFs invalidos conhecidos	
+		    if (cpf.length != 11 || 
+		        cpf == "00000000000" || 
+		        cpf == "11111111111" || 
+		        cpf == "22222222222" || 
+		        cpf == "33333333333" || 
+		        cpf == "44444444444" || 
+		        cpf == "55555555555" || 
+		        cpf == "66666666666" || 
+		        cpf == "77777777777" || 
+		        cpf == "88888888888" || 
+		        cpf == "99999999999")
+		      return false;		
+		    // Valida 1o digito	
+		    add = 0;	
+		    for (i=0; i < 9; i ++)		
+		      add += parseInt(cpf.charAt(i)) * (10 - i);	
+		    rev = 11 - (add % 11);	
+		    if (rev == 10 || rev == 11)		
+		      rev = 0;	
+		    if (rev != parseInt(cpf.charAt(9)))		
+		      return false;		
+		    // Valida 2o digito	
+		    add = 0;	
+		    for (i = 0; i < 10; i ++)		
+		      add += parseInt(cpf.charAt(i)) * (11 - i);	
+		    rev = 11 - (add % 11);	
+		    if (rev == 10 || rev == 11)	
+		      rev = 0;	
+		    if (rev != parseInt(cpf.charAt(10)))
+		      return false;		
+		    return true;   
+		}
+
+		function isCnpjValido(cnpj) {
+		    cnpj = cnpj.replace(/[^\d]+/g,'');
+
+		    if(cnpj == '') return false;
+
+		    if (cnpj.length != 14)
+		      return false;
+
+		    // Elimina CNPJs invalidos conhecidos
+		    if (cnpj == "00000000000000" || 
+		        cnpj == "11111111111111" || 
+		        cnpj == "22222222222222" || 
+		        cnpj == "33333333333333" || 
+		        cnpj == "44444444444444" || 
+		        cnpj == "55555555555555" || 
+		        cnpj == "66666666666666" || 
+		        cnpj == "77777777777777" || 
+		        cnpj == "88888888888888" || 
+		        cnpj == "99999999999999")
+		      return false;
+
+		    // Valida DVs
+		    tamanho = cnpj.length - 2
+		      numeros = cnpj.substring(0,tamanho);
+		    digitos = cnpj.substring(tamanho);
+		    soma = 0;
+		    pos = tamanho - 7;
+		    for (i = tamanho; i >= 1; i--) {
+		      soma += numeros.charAt(tamanho - i) * pos--;
+		      if (pos < 2)
+		        pos = 9;
+		    }
+		    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+		    if (resultado != digitos.charAt(0))
+		      return false;
+
+		    tamanho = tamanho + 1;
+		    numeros = cnpj.substring(0,tamanho);
+		    soma = 0;
+		    pos = tamanho - 7;
+		    for (i = tamanho; i >= 1; i--) {
+		      soma += numeros.charAt(tamanho - i) * pos--;
+		      if (pos < 2)
+		        pos = 9;
+		    }
+		    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+		    if (resultado != digitos.charAt(1))
+		      return false;
+
+		    return true;
+		}
+	</script>
 
 </siga:pagina>

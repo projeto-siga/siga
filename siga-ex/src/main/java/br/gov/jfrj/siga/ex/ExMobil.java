@@ -2521,10 +2521,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					|| t == ExTipoDeMovimentacao.TRAMITE_PARALELO 
 					|| t == ExTipoDeMovimentacao.NOTIFICACAO)) {
 				// Recebimento sem movRef limpa todos os pendentes até agora
-				if (mov.getExMovimentacaoRef() == null || !p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
-					p.recebimentosPendentes.clear();
-				else 
-					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+				if (t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA || t == ExTipoDeMovimentacao.TRANSFERENCIA) {
+					if (mov.getExMovimentacaoRef() == null || !p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
+						p.recebimentosPendentes.clear();
+					else 
+						p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+				}
 				p.tramitesPendentes.add(mov);
 			}
 			if (t == ExTipoDeMovimentacao.RECEBIMENTO) {
@@ -2572,7 +2574,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			if (mov.getExMovimentacaoRef() == null)
 				continue;
 			if (mov.getExMovimentacaoRef().getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO)
-				p.tramitesDeNotificacoesPendentes.add(mov);
+				p.recebimentosDeNotificacoesPendentes.add(mov);
 		}
 		
 		return p;

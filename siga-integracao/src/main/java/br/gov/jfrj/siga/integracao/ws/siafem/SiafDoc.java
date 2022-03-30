@@ -51,13 +51,13 @@ public class SiafDoc {
 			this.unidadeGestora = "00000" + get("unidadeGestora").split(" ")[0];
 			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
 			this.gestao = get("compraGestao");
-			this.objetoProcesso = URLDecoder.decode(get("objetoProcesso"), "UTF-8");
+			this.objetoProcesso = get("objetoProcesso");
 			this.tipoLicitacao = get("selecioneLicitacao").split("-")[0].trim();
 			this.tipoLicitacao = this.tipoLicitacao.matches("\\d+") ? this.tipoLicitacao : "";
 			this.id = ""; //Regra de negócio de integração SIAFEM: o campo ID deverá ser vazio
 			this.ata = get("ataTeste").matches("[1Ss]") ? "S" : "N";
 			this.convenio = get("especie").equals("Convênio Sim") ? "S" : "N";
-			this.finalidade = URLDecoder.decode(get("finalidadeProcesso"), "UTF-8");
+			this.finalidade = get("finalidadeProcesso");
 			this.processo = get("processoLegado");
 			this.desdobramento = get("desdobramento");
 			this.flagPresencial = (get("presencial")).contains("Sim") ? "X" : "";

@@ -174,4 +174,25 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 			}
 		}
 	}
+	
+	@Override
+	public boolean exigeNomeSigla() {
+		
+		if (id != null)
+			return false;
+		if (lotacao != null)
+			return false;
+		if (cargo != null)
+			return false;
+		if (funcaoConfianca != null)
+			return false;
+		if (cpf != null)
+			return false;
+		if (email != null)
+			return false;
+		if (identidade != null)
+			return false;
+		return true;
+		
+	}
 }

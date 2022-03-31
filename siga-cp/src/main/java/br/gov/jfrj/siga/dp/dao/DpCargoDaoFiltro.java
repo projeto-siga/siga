@@ -64,4 +64,9 @@ public class DpCargoDaoFiltro extends DaoFiltroSelecionavel {
 	public void setIdCargoIni(Long idCargoIni) {
 		this.idCargoIni = idCargoIni;
 	}
+	
+	@Override
+	public boolean exigeNomeSigla() {
+		return true;	
+	}
 }

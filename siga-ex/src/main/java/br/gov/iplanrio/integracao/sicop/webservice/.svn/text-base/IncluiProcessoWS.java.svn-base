@@ -1,0 +1,1436 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for IncluiProcesso_WS complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="IncluiProcesso_WS">
+ *   &lt;complexContent>
+ *     &lt;extension base="{http://pcrj/Sma/Sicop/Grava}Message">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="OPCAO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROCESSO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATAPROC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGAOORIGEM" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPODOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGAODOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPOIDENT" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NRDOCIDENTIFICADOR" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODASSUNTO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NOMREQUERENTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="AUTOINFRACAO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="PLACAVEICULO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TPPESSOA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMCPFCGC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODLOGRADOURO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ENDERECO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUM" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPLEMENTO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CEP" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODCEP" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="BAIRRO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DDI" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DDD" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TELEFONE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="RAMAL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="EMAIL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="INFCOMPL1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="INFCOMPL2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="INFCOMPL3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NOMNOMEPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ENDERECOPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPLEMENTOPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="BAIRROPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CEPPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODLOGRAPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TELEFONEPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="QLFPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATAPROCURACAOPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPOIDENTPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NRDOCIDENTIFICADORPARTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRRECEBEDOR" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="IMPRESSORA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="LBLCONFIRMA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="INDCONFIRMA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MSG1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MSG2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="StatusLine" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/extension>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "IncluiProcesso_WS", propOrder = {
+    "rotina",
+    "opcao",
+    "numprocesso",
+    "dataproc",
+    "orgaoorigem",
+    "tipodoc",
+    "numdoc",
+    "orgaodoc",
+    "tipoident",
+    "nrdocidentificador",
+    "codassunto",
+    "nomrequerente",
+    "autoinfracao",
+    "placaveiculo",
+    "tppessoa",
+    "numcpfcgc",
+    "codlogradouro",
+    "endereco",
+    "num",
+    "complemento",
+    "cep",
+    "codcep",
+    "bairro",
+    "ddi",
+    "ddd",
+    "telefone",
+    "ramal",
+    "email",
+    "infcompl1",
+    "infcompl2",
+    "infcompl3",
+    "nomnomeparte",
+    "enderecoparte",
+    "numparte",
+    "complementoparte",
+    "bairroparte",
+    "cepparte",
+    "codlograparte",
+    "telefoneparte",
+    "qlfparte",
+    "dataprocuracaoparte",
+    "tipoidentparte",
+    "nrdocidentificadorparte",
+    "matrrecebedor",
+    "impressora",
+    "lblconfirma",
+    "indconfirma",
+    "msg1",
+    "msg2",
+    "statusLine"
+})
+public class IncluiProcessoWS
+    extends Message
+{
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "OPCAO")
+    protected String opcao;
+    @XmlElement(name = "NUMPROCESSO")
+    protected String numprocesso;
+    @XmlElement(name = "DATAPROC")
+    protected String dataproc;
+    @XmlElement(name = "ORGAOORIGEM")
+    protected String orgaoorigem;
+    @XmlElement(name = "TIPODOC")
+    protected String tipodoc;
+    @XmlElement(name = "NUMDOC")
+    protected String numdoc;
+    @XmlElement(name = "ORGAODOC")
+    protected String orgaodoc;
+    @XmlElement(name = "TIPOIDENT")
+    protected String tipoident;
+    @XmlElement(name = "NRDOCIDENTIFICADOR")
+    protected String nrdocidentificador;
+    @XmlElement(name = "CODASSUNTO")
+    protected String codassunto;
+    @XmlElement(name = "NOMREQUERENTE")
+    protected String nomrequerente;
+    @XmlElement(name = "AUTOINFRACAO")
+    protected String autoinfracao;
+    @XmlElement(name = "PLACAVEICULO")
+    protected String placaveiculo;
+    @XmlElement(name = "TPPESSOA")
+    protected String tppessoa;
+    @XmlElement(name = "NUMCPFCGC")
+    protected String numcpfcgc;
+    @XmlElement(name = "CODLOGRADOURO")
+    protected String codlogradouro;
+    @XmlElement(name = "ENDERECO")
+    protected String endereco;
+    @XmlElement(name = "NUM")
+    protected String num;
+    @XmlElement(name = "COMPLEMENTO")
+    protected String complemento;
+    @XmlElement(name = "CEP")
+    protected String cep;
+    @XmlElement(name = "CODCEP")
+    protected String codcep;
+    @XmlElement(name = "BAIRRO")
+    protected String bairro;
+    @XmlElement(name = "DDI")
+    protected String ddi;
+    @XmlElement(name = "DDD")
+    protected String ddd;
+    @XmlElement(name = "TELEFONE")
+    protected String telefone;
+    @XmlElement(name = "RAMAL")
+    protected String ramal;
+    @XmlElement(name = "EMAIL")
+    protected String email;
+    @XmlElement(name = "INFCOMPL1")
+    protected String infcompl1;
+    @XmlElement(name = "INFCOMPL2")
+    protected String infcompl2;
+    @XmlElement(name = "INFCOMPL3")
+    protected String infcompl3;
+    @XmlElement(name = "NOMNOMEPARTE")
+    protected String nomnomeparte;
+    @XmlElement(name = "ENDERECOPARTE")
+    protected String enderecoparte;
+    @XmlElement(name = "NUMPARTE")
+    protected String numparte;
+    @XmlElement(name = "COMPLEMENTOPARTE")
+    protected String complementoparte;
+    @XmlElement(name = "BAIRROPARTE")
+    protected String bairroparte;
+    @XmlElement(name = "CEPPARTE")
+    protected String cepparte;
+    @XmlElement(name = "CODLOGRAPARTE")
+    protected String codlograparte;
+    @XmlElement(name = "TELEFONEPARTE")
+    protected String telefoneparte;
+    @XmlElement(name = "QLFPARTE")
+    protected String qlfparte;
+    @XmlElement(name = "DATAPROCURACAOPARTE")
+    protected String dataprocuracaoparte;
+    @XmlElement(name = "TIPOIDENTPARTE")
+    protected String tipoidentparte;
+    @XmlElement(name = "NRDOCIDENTIFICADORPARTE")
+    protected String nrdocidentificadorparte;
+    @XmlElement(name = "MATRRECEBEDOR")
+    protected String matrrecebedor;
+    @XmlElement(name = "IMPRESSORA")
+    protected String impressora;
+    @XmlElement(name = "LBLCONFIRMA")
+    protected String lblconfirma;
+    @XmlElement(name = "INDCONFIRMA")
+    protected String indconfirma;
+    @XmlElement(name = "MSG1")
+    protected String msg1;
+    @XmlElement(name = "MSG2")
+    protected String msg2;
+    @XmlElement(name = "StatusLine")
+    protected String statusLine;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the opcao property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOPCAO() {
+        return opcao;
+    }
+
+    /**
+     * Sets the value of the opcao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOPCAO(String value) {
+        this.opcao = value;
+    }
+
+    /**
+     * Gets the value of the numprocesso property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROCESSO() {
+        return numprocesso;
+    }
+
+    /**
+     * Sets the value of the numprocesso property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROCESSO(String value) {
+        this.numprocesso = value;
+    }
+
+    /**
+     * Gets the value of the dataproc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATAPROC() {
+        return dataproc;
+    }
+
+    /**
+     * Sets the value of the dataproc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATAPROC(String value) {
+        this.dataproc = value;
+    }
+
+    /**
+     * Gets the value of the orgaoorigem property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGAOORIGEM() {
+        return orgaoorigem;
+    }
+
+    /**
+     * Sets the value of the orgaoorigem property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGAOORIGEM(String value) {
+        this.orgaoorigem = value;
+    }
+
+    /**
+     * Gets the value of the tipodoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPODOC() {
+        return tipodoc;
+    }
+
+    /**
+     * Sets the value of the tipodoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPODOC(String value) {
+        this.tipodoc = value;
+    }
+
+    /**
+     * Gets the value of the numdoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC() {
+        return numdoc;
+    }
+
+    /**
+     * Sets the value of the numdoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC(String value) {
+        this.numdoc = value;
+    }
+
+    /**
+     * Gets the value of the orgaodoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGAODOC() {
+        return orgaodoc;
+    }
+
+    /**
+     * Sets the value of the orgaodoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGAODOC(String value) {
+        this.orgaodoc = value;
+    }
+
+    /**
+     * Gets the value of the tipoident property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPOIDENT() {
+        return tipoident;
+    }
+
+    /**
+     * Sets the value of the tipoident property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPOIDENT(String value) {
+        this.tipoident = value;
+    }
+
+    /**
+     * Gets the value of the nrdocidentificador property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNRDOCIDENTIFICADOR() {
+        return nrdocidentificador;
+    }
+
+    /**
+     * Sets the value of the nrdocidentificador property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNRDOCIDENTIFICADOR(String value) {
+        this.nrdocidentificador = value;
+    }
+
+    /**
+     * Gets the value of the codassunto property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODASSUNTO() {
+        return codassunto;
+    }
+
+    /**
+     * Sets the value of the codassunto property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODASSUNTO(String value) {
+        this.codassunto = value;
+    }
+
+    /**
+     * Gets the value of the nomrequerente property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNOMREQUERENTE() {
+        return nomrequerente;
+    }
+
+    /**
+     * Sets the value of the nomrequerente property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNOMREQUERENTE(String value) {
+        this.nomrequerente = value;
+    }
+
+    /**
+     * Gets the value of the autoinfracao property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAUTOINFRACAO() {
+        return autoinfracao;
+    }
+
+    /**
+     * Sets the value of the autoinfracao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAUTOINFRACAO(String value) {
+        this.autoinfracao = value;
+    }
+
+    /**
+     * Gets the value of the placaveiculo property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPLACAVEICULO() {
+        return placaveiculo;
+    }
+
+    /**
+     * Sets the value of the placaveiculo property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPLACAVEICULO(String value) {
+        this.placaveiculo = value;
+    }
+
+    /**
+     * Gets the value of the tppessoa property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTPPESSOA() {
+        return tppessoa;
+    }
+
+    /**
+     * Sets the value of the tppessoa property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTPPESSOA(String value) {
+        this.tppessoa = value;
+    }
+
+    /**
+     * Gets the value of the numcpfcgc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMCPFCGC() {
+        return numcpfcgc;
+    }
+
+    /**
+     * Sets the value of the numcpfcgc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMCPFCGC(String value) {
+        this.numcpfcgc = value;
+    }
+
+    /**
+     * Gets the value of the codlogradouro property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODLOGRADOURO() {
+        return codlogradouro;
+    }
+
+    /**
+     * Sets the value of the codlogradouro property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODLOGRADOURO(String value) {
+        this.codlogradouro = value;
+    }
+
+    /**
+     * Gets the value of the endereco property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getENDERECO() {
+        return endereco;
+    }
+
+    /**
+     * Sets the value of the endereco property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setENDERECO(String value) {
+        this.endereco = value;
+    }
+
+    /**
+     * Gets the value of the num property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUM() {
+        return num;
+    }
+
+    /**
+     * Sets the value of the num property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUM(String value) {
+        this.num = value;
+    }
+
+    /**
+     * Gets the value of the complemento property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPLEMENTO() {
+        return complemento;
+    }
+
+    /**
+     * Sets the value of the complemento property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPLEMENTO(String value) {
+        this.complemento = value;
+    }
+
+    /**
+     * Gets the value of the cep property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCEP() {
+        return cep;
+    }
+
+    /**
+     * Sets the value of the cep property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCEP(String value) {
+        this.cep = value;
+    }
+
+    /**
+     * Gets the value of the codcep property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODCEP() {
+        return codcep;
+    }
+
+    /**
+     * Sets the value of the codcep property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODCEP(String value) {
+        this.codcep = value;
+    }
+
+    /**
+     * Gets the value of the bairro property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBAIRRO() {
+        return bairro;
+    }
+
+    /**
+     * Sets the value of the bairro property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBAIRRO(String value) {
+        this.bairro = value;
+    }
+
+    /**
+     * Gets the value of the ddi property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDDI() {
+        return ddi;
+    }
+
+    /**
+     * Sets the value of the ddi property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDDI(String value) {
+        this.ddi = value;
+    }
+
+    /**
+     * Gets the value of the ddd property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDDD() {
+        return ddd;
+    }
+
+    /**
+     * Sets the value of the ddd property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDDD(String value) {
+        this.ddd = value;
+    }
+
+    /**
+     * Gets the value of the telefone property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTELEFONE() {
+        return telefone;
+    }
+
+    /**
+     * Sets the value of the telefone property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTELEFONE(String value) {
+        this.telefone = value;
+    }
+
+    /**
+     * Gets the value of the ramal property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRAMAL() {
+        return ramal;
+    }
+
+    /**
+     * Sets the value of the ramal property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRAMAL(String value) {
+        this.ramal = value;
+    }
+
+    /**
+     * Gets the value of the email property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEMAIL() {
+        return email;
+    }
+
+    /**
+     * Sets the value of the email property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEMAIL(String value) {
+        this.email = value;
+    }
+
+    /**
+     * Gets the value of the infcompl1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINFCOMPL1() {
+        return infcompl1;
+    }
+
+    /**
+     * Sets the value of the infcompl1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINFCOMPL1(String value) {
+        this.infcompl1 = value;
+    }
+
+    /**
+     * Gets the value of the infcompl2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINFCOMPL2() {
+        return infcompl2;
+    }
+
+    /**
+     * Sets the value of the infcompl2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINFCOMPL2(String value) {
+        this.infcompl2 = value;
+    }
+
+    /**
+     * Gets the value of the infcompl3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINFCOMPL3() {
+        return infcompl3;
+    }
+
+    /**
+     * Sets the value of the infcompl3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINFCOMPL3(String value) {
+        this.infcompl3 = value;
+    }
+
+    /**
+     * Gets the value of the nomnomeparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNOMNOMEPARTE() {
+        return nomnomeparte;
+    }
+
+    /**
+     * Sets the value of the nomnomeparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNOMNOMEPARTE(String value) {
+        this.nomnomeparte = value;
+    }
+
+    /**
+     * Gets the value of the enderecoparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getENDERECOPARTE() {
+        return enderecoparte;
+    }
+
+    /**
+     * Sets the value of the enderecoparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setENDERECOPARTE(String value) {
+        this.enderecoparte = value;
+    }
+
+    /**
+     * Gets the value of the numparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPARTE() {
+        return numparte;
+    }
+
+    /**
+     * Sets the value of the numparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPARTE(String value) {
+        this.numparte = value;
+    }
+
+    /**
+     * Gets the value of the complementoparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPLEMENTOPARTE() {
+        return complementoparte;
+    }
+
+    /**
+     * Sets the value of the complementoparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPLEMENTOPARTE(String value) {
+        this.complementoparte = value;
+    }
+
+    /**
+     * Gets the value of the bairroparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBAIRROPARTE() {
+        return bairroparte;
+    }
+
+    /**
+     * Sets the value of the bairroparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBAIRROPARTE(String value) {
+        this.bairroparte = value;
+    }
+
+    /**
+     * Gets the value of the cepparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCEPPARTE() {
+        return cepparte;
+    }
+
+    /**
+     * Sets the value of the cepparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCEPPARTE(String value) {
+        this.cepparte = value;
+    }
+
+    /**
+     * Gets the value of the codlograparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODLOGRAPARTE() {
+        return codlograparte;
+    }
+
+    /**
+     * Sets the value of the codlograparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODLOGRAPARTE(String value) {
+        this.codlograparte = value;
+    }
+
+    /**
+     * Gets the value of the telefoneparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTELEFONEPARTE() {
+        return telefoneparte;
+    }
+
+    /**
+     * Sets the value of the telefoneparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTELEFONEPARTE(String value) {
+        this.telefoneparte = value;
+    }
+
+    /**
+     * Gets the value of the qlfparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getQLFPARTE() {
+        return qlfparte;
+    }
+
+    /**
+     * Sets the value of the qlfparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setQLFPARTE(String value) {
+        this.qlfparte = value;
+    }
+
+    /**
+     * Gets the value of the dataprocuracaoparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATAPROCURACAOPARTE() {
+        return dataprocuracaoparte;
+    }
+
+    /**
+     * Sets the value of the dataprocuracaoparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATAPROCURACAOPARTE(String value) {
+        this.dataprocuracaoparte = value;
+    }
+
+    /**
+     * Gets the value of the tipoidentparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPOIDENTPARTE() {
+        return tipoidentparte;
+    }
+
+    /**
+     * Sets the value of the tipoidentparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPOIDENTPARTE(String value) {
+        this.tipoidentparte = value;
+    }
+
+    /**
+     * Gets the value of the nrdocidentificadorparte property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNRDOCIDENTIFICADORPARTE() {
+        return nrdocidentificadorparte;
+    }
+
+    /**
+     * Sets the value of the nrdocidentificadorparte property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNRDOCIDENTIFICADORPARTE(String value) {
+        this.nrdocidentificadorparte = value;
+    }
+
+    /**
+     * Gets the value of the matrrecebedor property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRRECEBEDOR() {
+        return matrrecebedor;
+    }
+
+    /**
+     * Sets the value of the matrrecebedor property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRRECEBEDOR(String value) {
+        this.matrrecebedor = value;
+    }
+
+    /**
+     * Gets the value of the impressora property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getIMPRESSORA() {
+        return impressora;
+    }
+
+    /**
+     * Sets the value of the impressora property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setIMPRESSORA(String value) {
+        this.impressora = value;
+    }
+
+    /**
+     * Gets the value of the lblconfirma property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getLBLCONFIRMA() {
+        return lblconfirma;
+    }
+
+    /**
+     * Sets the value of the lblconfirma property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setLBLCONFIRMA(String value) {
+        this.lblconfirma = value;
+    }
+
+    /**
+     * Gets the value of the indconfirma property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINDCONFIRMA() {
+        return indconfirma;
+    }
+
+    /**
+     * Sets the value of the indconfirma property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINDCONFIRMA(String value) {
+        this.indconfirma = value;
+    }
+
+    /**
+     * Gets the value of the msg1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMSG1() {
+        return msg1;
+    }
+
+    /**
+     * Sets the value of the msg1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMSG1(String value) {
+        this.msg1 = value;
+    }
+
+    /**
+     * Gets the value of the msg2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMSG2() {
+        return msg2;
+    }
+
+    /**
+     * Sets the value of the msg2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMSG2(String value) {
+        this.msg2 = value;
+    }
+
+    /**
+     * Gets the value of the statusLine property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getStatusLine() {
+        return statusLine;
+    }
+
+    /**
+     * Sets the value of the statusLine property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setStatusLine(String value) {
+        this.statusLine = value;
+    }
+
+}

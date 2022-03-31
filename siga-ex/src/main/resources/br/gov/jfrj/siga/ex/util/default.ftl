@@ -4623,6 +4623,83 @@ ${texto}
 </table>
 [/#macro]
 
+[#macro folhaDeIntegracao]
+	[@documento]
+	  [@estiloBrasaoCentralizado tipo="" tamanhoLetra="11pt"]
+	    <table width="100%" border="0" cellpadding="6" cellspacing="6" bgcolor="#FFFFFF">
+	      <tr>
+	        <td width="50%">
+	          Número Original:
+	        </td>
+	        <td width="50%">
+	          ${doc.numExtDoc!}
+	        </td>
+	      </tr>
+	       [#if (doc.numAntigoDoc)! != '']
+	        <tr>
+	          <td>
+	            Número no Sistema Antigo:
+	          </td>
+	          <td>
+	            ${(doc.numAntigoDoc)!}
+	          </td>
+	        </tr>
+	      [/#if]
+	      
+	      <tr>
+	        <td>
+	          Forma:
+	        </td>
+	        <td>
+	          ${doc.exFormaDocumento.descrFormaDoc!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Modelo:
+	        </td>
+	        <td>
+	          ${doc.exModelo.nmMod!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Subscritor:
+	        </td>
+	        <td>
+	          ${doc.subscritorString!}
+	        </td>
+	      </tr>
+	      
+	      <tr>
+	        <td>
+	          Descrição:
+	        </td>
+	        <td>
+	          ${doc.descrDocumento!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Cadastrante:
+	        </td>
+	        <td>
+	          ${doc.cadastrante.descricao!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Data do cadastro:
+	        </td>
+	        <td>
+	          ${doc.dtRegDocDDMMYYHHMMSS!}
+	        </td>
+	      </tr>
+	    </table>
+	  [/@estiloBrasaoCentralizado]
+	[/@documento]
+[/#macro]
+
 [#assign _pathBrasao = "contextpath/imagens/BrasaoPCRJ.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
 [#assign _widthBrasao = "auto" /]

@@ -3041,5 +3041,4 @@ public class ExDocumentoController extends ExController {
 	public void aDesfazerCancelamentoDocumento(final Long pessoa, final String sigla) {
 		result.redirectTo(Prop.get("/siga.base.url") + "/siga/permalink/" + sigla);
 	}
-
 }

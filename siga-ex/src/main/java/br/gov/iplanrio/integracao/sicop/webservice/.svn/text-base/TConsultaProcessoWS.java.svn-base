@@ -1,0 +1,92 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NRPROCESSO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "rotina",
+    "nrprocesso"
+})
+@XmlRootElement(name = "TConsultaProcesso_WS")
+public class TConsultaProcessoWS {
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "NRPROCESSO")
+    protected String nrprocesso;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the nrprocesso property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNRPROCESSO() {
+        return nrprocesso;
+    }
+
+    /**
+     * Sets the value of the nrprocesso property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNRPROCESSO(String value) {
+        this.nrprocesso = value;
+    }
+
+}

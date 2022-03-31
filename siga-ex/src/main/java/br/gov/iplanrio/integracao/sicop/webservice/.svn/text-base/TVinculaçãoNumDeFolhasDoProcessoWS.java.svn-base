@@ -1,0 +1,2640 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="OPCAO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROPROCESSO15" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHAS15" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPREV15" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDO15" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROLIVRO15" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NROFOLHA15" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="INDCONFIRMA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "rotina",
+    "opcao",
+    "nroprocesso1",
+    "nrofolhas1",
+    "comprev1",
+    "datdo1",
+    "nrolivro1",
+    "nrofolha1",
+    "nroprocesso2",
+    "nrofolhas2",
+    "comprev2",
+    "datdo2",
+    "nrolivro2",
+    "nrofolha2",
+    "nroprocesso3",
+    "nrofolhas3",
+    "comprev3",
+    "datdo3",
+    "nrolivro3",
+    "nrofolha3",
+    "nroprocesso4",
+    "nrofolhas4",
+    "comprev4",
+    "datdo4",
+    "nrolivro4",
+    "nrofolha4",
+    "nroprocesso5",
+    "nrofolhas5",
+    "comprev5",
+    "datdo5",
+    "nrolivro5",
+    "nrofolha5",
+    "nroprocesso6",
+    "nrofolhas6",
+    "comprev6",
+    "datdo6",
+    "nrolivro6",
+    "nrofolha6",
+    "nroprocesso7",
+    "nrofolhas7",
+    "comprev7",
+    "datdo7",
+    "nrolivro7",
+    "nrofolha7",
+    "nroprocesso8",
+    "nrofolhas8",
+    "comprev8",
+    "datdo8",
+    "nrolivro8",
+    "nrofolha8",
+    "nroprocesso9",
+    "nrofolhas9",
+    "comprev9",
+    "datdo9",
+    "nrolivro9",
+    "nrofolha9",
+    "nroprocesso10",
+    "nrofolhas10",
+    "comprev10",
+    "datdo10",
+    "nrolivro10",
+    "nrofolha10",
+    "nroprocesso11",
+    "nrofolhas11",
+    "comprev11",
+    "datdo11",
+    "nrolivro11",
+    "nrofolha11",
+    "nroprocesso12",
+    "nrofolhas12",
+    "comprev12",
+    "datdo12",
+    "nrolivro12",
+    "nrofolha12",
+    "nroprocesso13",
+    "nrofolhas13",
+    "comprev13",
+    "datdo13",
+    "nrolivro13",
+    "nrofolha13",
+    "nroprocesso14",
+    "nrofolhas14",
+    "comprev14",
+    "datdo14",
+    "nrolivro14",
+    "nrofolha14",
+    "nroprocesso15",
+    "nrofolhas15",
+    "comprev15",
+    "datdo15",
+    "nrolivro15",
+    "nrofolha15",
+    "indconfirma"
+})
+@XmlRootElement(name = "TVincula\u00e7\u00e3oNumDeFolhasDoProcesso_WS")
+public class TVinculaçãoNumDeFolhasDoProcessoWS {
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "OPCAO")
+    protected String opcao;
+    @XmlElement(name = "NROPROCESSO1")
+    protected String nroprocesso1;
+    @XmlElement(name = "NROFOLHAS1")
+    protected String nrofolhas1;
+    @XmlElement(name = "COMPREV1")
+    protected String comprev1;
+    @XmlElement(name = "DATDO1")
+    protected String datdo1;
+    @XmlElement(name = "NROLIVRO1")
+    protected String nrolivro1;
+    @XmlElement(name = "NROFOLHA1")
+    protected String nrofolha1;
+    @XmlElement(name = "NROPROCESSO2")
+    protected String nroprocesso2;
+    @XmlElement(name = "NROFOLHAS2")
+    protected String nrofolhas2;
+    @XmlElement(name = "COMPREV2")
+    protected String comprev2;
+    @XmlElement(name = "DATDO2")
+    protected String datdo2;
+    @XmlElement(name = "NROLIVRO2")
+    protected String nrolivro2;
+    @XmlElement(name = "NROFOLHA2")
+    protected String nrofolha2;
+    @XmlElement(name = "NROPROCESSO3")
+    protected String nroprocesso3;
+    @XmlElement(name = "NROFOLHAS3")
+    protected String nrofolhas3;
+    @XmlElement(name = "COMPREV3")
+    protected String comprev3;
+    @XmlElement(name = "DATDO3")
+    protected String datdo3;
+    @XmlElement(name = "NROLIVRO3")
+    protected String nrolivro3;
+    @XmlElement(name = "NROFOLHA3")
+    protected String nrofolha3;
+    @XmlElement(name = "NROPROCESSO4")
+    protected String nroprocesso4;
+    @XmlElement(name = "NROFOLHAS4")
+    protected String nrofolhas4;
+    @XmlElement(name = "COMPREV4")
+    protected String comprev4;
+    @XmlElement(name = "DATDO4")
+    protected String datdo4;
+    @XmlElement(name = "NROLIVRO4")
+    protected String nrolivro4;
+    @XmlElement(name = "NROFOLHA4")
+    protected String nrofolha4;
+    @XmlElement(name = "NROPROCESSO5")
+    protected String nroprocesso5;
+    @XmlElement(name = "NROFOLHAS5")
+    protected String nrofolhas5;
+    @XmlElement(name = "COMPREV5")
+    protected String comprev5;
+    @XmlElement(name = "DATDO5")
+    protected String datdo5;
+    @XmlElement(name = "NROLIVRO5")
+    protected String nrolivro5;
+    @XmlElement(name = "NROFOLHA5")
+    protected String nrofolha5;
+    @XmlElement(name = "NROPROCESSO6")
+    protected String nroprocesso6;
+    @XmlElement(name = "NROFOLHAS6")
+    protected String nrofolhas6;
+    @XmlElement(name = "COMPREV6")
+    protected String comprev6;
+    @XmlElement(name = "DATDO6")
+    protected String datdo6;
+    @XmlElement(name = "NROLIVRO6")
+    protected String nrolivro6;
+    @XmlElement(name = "NROFOLHA6")
+    protected String nrofolha6;
+    @XmlElement(name = "NROPROCESSO7")
+    protected String nroprocesso7;
+    @XmlElement(name = "NROFOLHAS7")
+    protected String nrofolhas7;
+    @XmlElement(name = "COMPREV7")
+    protected String comprev7;
+    @XmlElement(name = "DATDO7")
+    protected String datdo7;
+    @XmlElement(name = "NROLIVRO7")
+    protected String nrolivro7;
+    @XmlElement(name = "NROFOLHA7")
+    protected String nrofolha7;
+    @XmlElement(name = "NROPROCESSO8")
+    protected String nroprocesso8;
+    @XmlElement(name = "NROFOLHAS8")
+    protected String nrofolhas8;
+    @XmlElement(name = "COMPREV8")
+    protected String comprev8;
+    @XmlElement(name = "DATDO8")
+    protected String datdo8;
+    @XmlElement(name = "NROLIVRO8")
+    protected String nrolivro8;
+    @XmlElement(name = "NROFOLHA8")
+    protected String nrofolha8;
+    @XmlElement(name = "NROPROCESSO9")
+    protected String nroprocesso9;
+    @XmlElement(name = "NROFOLHAS9")
+    protected String nrofolhas9;
+    @XmlElement(name = "COMPREV9")
+    protected String comprev9;
+    @XmlElement(name = "DATDO9")
+    protected String datdo9;
+    @XmlElement(name = "NROLIVRO9")
+    protected String nrolivro9;
+    @XmlElement(name = "NROFOLHA9")
+    protected String nrofolha9;
+    @XmlElement(name = "NROPROCESSO10")
+    protected String nroprocesso10;
+    @XmlElement(name = "NROFOLHAS10")
+    protected String nrofolhas10;
+    @XmlElement(name = "COMPREV10")
+    protected String comprev10;
+    @XmlElement(name = "DATDO10")
+    protected String datdo10;
+    @XmlElement(name = "NROLIVRO10")
+    protected String nrolivro10;
+    @XmlElement(name = "NROFOLHA10")
+    protected String nrofolha10;
+    @XmlElement(name = "NROPROCESSO11")
+    protected String nroprocesso11;
+    @XmlElement(name = "NROFOLHAS11")
+    protected String nrofolhas11;
+    @XmlElement(name = "COMPREV11")
+    protected String comprev11;
+    @XmlElement(name = "DATDO11")
+    protected String datdo11;
+    @XmlElement(name = "NROLIVRO11")
+    protected String nrolivro11;
+    @XmlElement(name = "NROFOLHA11")
+    protected String nrofolha11;
+    @XmlElement(name = "NROPROCESSO12")
+    protected String nroprocesso12;
+    @XmlElement(name = "NROFOLHAS12")
+    protected String nrofolhas12;
+    @XmlElement(name = "COMPREV12")
+    protected String comprev12;
+    @XmlElement(name = "DATDO12")
+    protected String datdo12;
+    @XmlElement(name = "NROLIVRO12")
+    protected String nrolivro12;
+    @XmlElement(name = "NROFOLHA12")
+    protected String nrofolha12;
+    @XmlElement(name = "NROPROCESSO13")
+    protected String nroprocesso13;
+    @XmlElement(name = "NROFOLHAS13")
+    protected String nrofolhas13;
+    @XmlElement(name = "COMPREV13")
+    protected String comprev13;
+    @XmlElement(name = "DATDO13")
+    protected String datdo13;
+    @XmlElement(name = "NROLIVRO13")
+    protected String nrolivro13;
+    @XmlElement(name = "NROFOLHA13")
+    protected String nrofolha13;
+    @XmlElement(name = "NROPROCESSO14")
+    protected String nroprocesso14;
+    @XmlElement(name = "NROFOLHAS14")
+    protected String nrofolhas14;
+    @XmlElement(name = "COMPREV14")
+    protected String comprev14;
+    @XmlElement(name = "DATDO14")
+    protected String datdo14;
+    @XmlElement(name = "NROLIVRO14")
+    protected String nrolivro14;
+    @XmlElement(name = "NROFOLHA14")
+    protected String nrofolha14;
+    @XmlElement(name = "NROPROCESSO15")
+    protected String nroprocesso15;
+    @XmlElement(name = "NROFOLHAS15")
+    protected String nrofolhas15;
+    @XmlElement(name = "COMPREV15")
+    protected String comprev15;
+    @XmlElement(name = "DATDO15")
+    protected String datdo15;
+    @XmlElement(name = "NROLIVRO15")
+    protected String nrolivro15;
+    @XmlElement(name = "NROFOLHA15")
+    protected String nrofolha15;
+    @XmlElement(name = "INDCONFIRMA")
+    protected String indconfirma;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the opcao property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOPCAO() {
+        return opcao;
+    }
+
+    /**
+     * Sets the value of the opcao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOPCAO(String value) {
+        this.opcao = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO1() {
+        return nroprocesso1;
+    }
+
+    /**
+     * Sets the value of the nroprocesso1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO1(String value) {
+        this.nroprocesso1 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS1() {
+        return nrofolhas1;
+    }
+
+    /**
+     * Sets the value of the nrofolhas1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS1(String value) {
+        this.nrofolhas1 = value;
+    }
+
+    /**
+     * Gets the value of the comprev1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV1() {
+        return comprev1;
+    }
+
+    /**
+     * Sets the value of the comprev1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV1(String value) {
+        this.comprev1 = value;
+    }
+
+    /**
+     * Gets the value of the datdo1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO1() {
+        return datdo1;
+    }
+
+    /**
+     * Sets the value of the datdo1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO1(String value) {
+        this.datdo1 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO1() {
+        return nrolivro1;
+    }
+
+    /**
+     * Sets the value of the nrolivro1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO1(String value) {
+        this.nrolivro1 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA1() {
+        return nrofolha1;
+    }
+
+    /**
+     * Sets the value of the nrofolha1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA1(String value) {
+        this.nrofolha1 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO2() {
+        return nroprocesso2;
+    }
+
+    /**
+     * Sets the value of the nroprocesso2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO2(String value) {
+        this.nroprocesso2 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS2() {
+        return nrofolhas2;
+    }
+
+    /**
+     * Sets the value of the nrofolhas2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS2(String value) {
+        this.nrofolhas2 = value;
+    }
+
+    /**
+     * Gets the value of the comprev2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV2() {
+        return comprev2;
+    }
+
+    /**
+     * Sets the value of the comprev2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV2(String value) {
+        this.comprev2 = value;
+    }
+
+    /**
+     * Gets the value of the datdo2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO2() {
+        return datdo2;
+    }
+
+    /**
+     * Sets the value of the datdo2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO2(String value) {
+        this.datdo2 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO2() {
+        return nrolivro2;
+    }
+
+    /**
+     * Sets the value of the nrolivro2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO2(String value) {
+        this.nrolivro2 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA2() {
+        return nrofolha2;
+    }
+
+    /**
+     * Sets the value of the nrofolha2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA2(String value) {
+        this.nrofolha2 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO3() {
+        return nroprocesso3;
+    }
+
+    /**
+     * Sets the value of the nroprocesso3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO3(String value) {
+        this.nroprocesso3 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS3() {
+        return nrofolhas3;
+    }
+
+    /**
+     * Sets the value of the nrofolhas3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS3(String value) {
+        this.nrofolhas3 = value;
+    }
+
+    /**
+     * Gets the value of the comprev3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV3() {
+        return comprev3;
+    }
+
+    /**
+     * Sets the value of the comprev3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV3(String value) {
+        this.comprev3 = value;
+    }
+
+    /**
+     * Gets the value of the datdo3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO3() {
+        return datdo3;
+    }
+
+    /**
+     * Sets the value of the datdo3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO3(String value) {
+        this.datdo3 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO3() {
+        return nrolivro3;
+    }
+
+    /**
+     * Sets the value of the nrolivro3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO3(String value) {
+        this.nrolivro3 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA3() {
+        return nrofolha3;
+    }
+
+    /**
+     * Sets the value of the nrofolha3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA3(String value) {
+        this.nrofolha3 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO4() {
+        return nroprocesso4;
+    }
+
+    /**
+     * Sets the value of the nroprocesso4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO4(String value) {
+        this.nroprocesso4 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS4() {
+        return nrofolhas4;
+    }
+
+    /**
+     * Sets the value of the nrofolhas4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS4(String value) {
+        this.nrofolhas4 = value;
+    }
+
+    /**
+     * Gets the value of the comprev4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV4() {
+        return comprev4;
+    }
+
+    /**
+     * Sets the value of the comprev4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV4(String value) {
+        this.comprev4 = value;
+    }
+
+    /**
+     * Gets the value of the datdo4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO4() {
+        return datdo4;
+    }
+
+    /**
+     * Sets the value of the datdo4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO4(String value) {
+        this.datdo4 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO4() {
+        return nrolivro4;
+    }
+
+    /**
+     * Sets the value of the nrolivro4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO4(String value) {
+        this.nrolivro4 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA4() {
+        return nrofolha4;
+    }
+
+    /**
+     * Sets the value of the nrofolha4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA4(String value) {
+        this.nrofolha4 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO5() {
+        return nroprocesso5;
+    }
+
+    /**
+     * Sets the value of the nroprocesso5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO5(String value) {
+        this.nroprocesso5 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS5() {
+        return nrofolhas5;
+    }
+
+    /**
+     * Sets the value of the nrofolhas5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS5(String value) {
+        this.nrofolhas5 = value;
+    }
+
+    /**
+     * Gets the value of the comprev5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV5() {
+        return comprev5;
+    }
+
+    /**
+     * Sets the value of the comprev5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV5(String value) {
+        this.comprev5 = value;
+    }
+
+    /**
+     * Gets the value of the datdo5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO5() {
+        return datdo5;
+    }
+
+    /**
+     * Sets the value of the datdo5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO5(String value) {
+        this.datdo5 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO5() {
+        return nrolivro5;
+    }
+
+    /**
+     * Sets the value of the nrolivro5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO5(String value) {
+        this.nrolivro5 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA5() {
+        return nrofolha5;
+    }
+
+    /**
+     * Sets the value of the nrofolha5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA5(String value) {
+        this.nrofolha5 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO6() {
+        return nroprocesso6;
+    }
+
+    /**
+     * Sets the value of the nroprocesso6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO6(String value) {
+        this.nroprocesso6 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS6() {
+        return nrofolhas6;
+    }
+
+    /**
+     * Sets the value of the nrofolhas6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS6(String value) {
+        this.nrofolhas6 = value;
+    }
+
+    /**
+     * Gets the value of the comprev6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV6() {
+        return comprev6;
+    }
+
+    /**
+     * Sets the value of the comprev6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV6(String value) {
+        this.comprev6 = value;
+    }
+
+    /**
+     * Gets the value of the datdo6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO6() {
+        return datdo6;
+    }
+
+    /**
+     * Sets the value of the datdo6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO6(String value) {
+        this.datdo6 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO6() {
+        return nrolivro6;
+    }
+
+    /**
+     * Sets the value of the nrolivro6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO6(String value) {
+        this.nrolivro6 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA6() {
+        return nrofolha6;
+    }
+
+    /**
+     * Sets the value of the nrofolha6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA6(String value) {
+        this.nrofolha6 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO7() {
+        return nroprocesso7;
+    }
+
+    /**
+     * Sets the value of the nroprocesso7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO7(String value) {
+        this.nroprocesso7 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS7() {
+        return nrofolhas7;
+    }
+
+    /**
+     * Sets the value of the nrofolhas7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS7(String value) {
+        this.nrofolhas7 = value;
+    }
+
+    /**
+     * Gets the value of the comprev7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV7() {
+        return comprev7;
+    }
+
+    /**
+     * Sets the value of the comprev7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV7(String value) {
+        this.comprev7 = value;
+    }
+
+    /**
+     * Gets the value of the datdo7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO7() {
+        return datdo7;
+    }
+
+    /**
+     * Sets the value of the datdo7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO7(String value) {
+        this.datdo7 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO7() {
+        return nrolivro7;
+    }
+
+    /**
+     * Sets the value of the nrolivro7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO7(String value) {
+        this.nrolivro7 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA7() {
+        return nrofolha7;
+    }
+
+    /**
+     * Sets the value of the nrofolha7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA7(String value) {
+        this.nrofolha7 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO8() {
+        return nroprocesso8;
+    }
+
+    /**
+     * Sets the value of the nroprocesso8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO8(String value) {
+        this.nroprocesso8 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS8() {
+        return nrofolhas8;
+    }
+
+    /**
+     * Sets the value of the nrofolhas8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS8(String value) {
+        this.nrofolhas8 = value;
+    }
+
+    /**
+     * Gets the value of the comprev8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV8() {
+        return comprev8;
+    }
+
+    /**
+     * Sets the value of the comprev8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV8(String value) {
+        this.comprev8 = value;
+    }
+
+    /**
+     * Gets the value of the datdo8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO8() {
+        return datdo8;
+    }
+
+    /**
+     * Sets the value of the datdo8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO8(String value) {
+        this.datdo8 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO8() {
+        return nrolivro8;
+    }
+
+    /**
+     * Sets the value of the nrolivro8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO8(String value) {
+        this.nrolivro8 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA8() {
+        return nrofolha8;
+    }
+
+    /**
+     * Sets the value of the nrofolha8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA8(String value) {
+        this.nrofolha8 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO9() {
+        return nroprocesso9;
+    }
+
+    /**
+     * Sets the value of the nroprocesso9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO9(String value) {
+        this.nroprocesso9 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS9() {
+        return nrofolhas9;
+    }
+
+    /**
+     * Sets the value of the nrofolhas9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS9(String value) {
+        this.nrofolhas9 = value;
+    }
+
+    /**
+     * Gets the value of the comprev9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV9() {
+        return comprev9;
+    }
+
+    /**
+     * Sets the value of the comprev9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV9(String value) {
+        this.comprev9 = value;
+    }
+
+    /**
+     * Gets the value of the datdo9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO9() {
+        return datdo9;
+    }
+
+    /**
+     * Sets the value of the datdo9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO9(String value) {
+        this.datdo9 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO9() {
+        return nrolivro9;
+    }
+
+    /**
+     * Sets the value of the nrolivro9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO9(String value) {
+        this.nrolivro9 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA9() {
+        return nrofolha9;
+    }
+
+    /**
+     * Sets the value of the nrofolha9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA9(String value) {
+        this.nrofolha9 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO10() {
+        return nroprocesso10;
+    }
+
+    /**
+     * Sets the value of the nroprocesso10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO10(String value) {
+        this.nroprocesso10 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS10() {
+        return nrofolhas10;
+    }
+
+    /**
+     * Sets the value of the nrofolhas10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS10(String value) {
+        this.nrofolhas10 = value;
+    }
+
+    /**
+     * Gets the value of the comprev10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV10() {
+        return comprev10;
+    }
+
+    /**
+     * Sets the value of the comprev10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV10(String value) {
+        this.comprev10 = value;
+    }
+
+    /**
+     * Gets the value of the datdo10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO10() {
+        return datdo10;
+    }
+
+    /**
+     * Sets the value of the datdo10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO10(String value) {
+        this.datdo10 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO10() {
+        return nrolivro10;
+    }
+
+    /**
+     * Sets the value of the nrolivro10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO10(String value) {
+        this.nrolivro10 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA10() {
+        return nrofolha10;
+    }
+
+    /**
+     * Sets the value of the nrofolha10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA10(String value) {
+        this.nrofolha10 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO11() {
+        return nroprocesso11;
+    }
+
+    /**
+     * Sets the value of the nroprocesso11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO11(String value) {
+        this.nroprocesso11 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS11() {
+        return nrofolhas11;
+    }
+
+    /**
+     * Sets the value of the nrofolhas11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS11(String value) {
+        this.nrofolhas11 = value;
+    }
+
+    /**
+     * Gets the value of the comprev11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV11() {
+        return comprev11;
+    }
+
+    /**
+     * Sets the value of the comprev11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV11(String value) {
+        this.comprev11 = value;
+    }
+
+    /**
+     * Gets the value of the datdo11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO11() {
+        return datdo11;
+    }
+
+    /**
+     * Sets the value of the datdo11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO11(String value) {
+        this.datdo11 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO11() {
+        return nrolivro11;
+    }
+
+    /**
+     * Sets the value of the nrolivro11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO11(String value) {
+        this.nrolivro11 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA11() {
+        return nrofolha11;
+    }
+
+    /**
+     * Sets the value of the nrofolha11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA11(String value) {
+        this.nrofolha11 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO12() {
+        return nroprocesso12;
+    }
+
+    /**
+     * Sets the value of the nroprocesso12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO12(String value) {
+        this.nroprocesso12 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS12() {
+        return nrofolhas12;
+    }
+
+    /**
+     * Sets the value of the nrofolhas12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS12(String value) {
+        this.nrofolhas12 = value;
+    }
+
+    /**
+     * Gets the value of the comprev12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV12() {
+        return comprev12;
+    }
+
+    /**
+     * Sets the value of the comprev12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV12(String value) {
+        this.comprev12 = value;
+    }
+
+    /**
+     * Gets the value of the datdo12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO12() {
+        return datdo12;
+    }
+
+    /**
+     * Sets the value of the datdo12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO12(String value) {
+        this.datdo12 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO12() {
+        return nrolivro12;
+    }
+
+    /**
+     * Sets the value of the nrolivro12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO12(String value) {
+        this.nrolivro12 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA12() {
+        return nrofolha12;
+    }
+
+    /**
+     * Sets the value of the nrofolha12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA12(String value) {
+        this.nrofolha12 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO13() {
+        return nroprocesso13;
+    }
+
+    /**
+     * Sets the value of the nroprocesso13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO13(String value) {
+        this.nroprocesso13 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS13() {
+        return nrofolhas13;
+    }
+
+    /**
+     * Sets the value of the nrofolhas13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS13(String value) {
+        this.nrofolhas13 = value;
+    }
+
+    /**
+     * Gets the value of the comprev13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV13() {
+        return comprev13;
+    }
+
+    /**
+     * Sets the value of the comprev13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV13(String value) {
+        this.comprev13 = value;
+    }
+
+    /**
+     * Gets the value of the datdo13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO13() {
+        return datdo13;
+    }
+
+    /**
+     * Sets the value of the datdo13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO13(String value) {
+        this.datdo13 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO13() {
+        return nrolivro13;
+    }
+
+    /**
+     * Sets the value of the nrolivro13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO13(String value) {
+        this.nrolivro13 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA13() {
+        return nrofolha13;
+    }
+
+    /**
+     * Sets the value of the nrofolha13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA13(String value) {
+        this.nrofolha13 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO14() {
+        return nroprocesso14;
+    }
+
+    /**
+     * Sets the value of the nroprocesso14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO14(String value) {
+        this.nroprocesso14 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS14() {
+        return nrofolhas14;
+    }
+
+    /**
+     * Sets the value of the nrofolhas14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS14(String value) {
+        this.nrofolhas14 = value;
+    }
+
+    /**
+     * Gets the value of the comprev14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV14() {
+        return comprev14;
+    }
+
+    /**
+     * Sets the value of the comprev14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV14(String value) {
+        this.comprev14 = value;
+    }
+
+    /**
+     * Gets the value of the datdo14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO14() {
+        return datdo14;
+    }
+
+    /**
+     * Sets the value of the datdo14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO14(String value) {
+        this.datdo14 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO14() {
+        return nrolivro14;
+    }
+
+    /**
+     * Sets the value of the nrolivro14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO14(String value) {
+        this.nrolivro14 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA14() {
+        return nrofolha14;
+    }
+
+    /**
+     * Sets the value of the nrofolha14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA14(String value) {
+        this.nrofolha14 = value;
+    }
+
+    /**
+     * Gets the value of the nroprocesso15 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROPROCESSO15() {
+        return nroprocesso15;
+    }
+
+    /**
+     * Sets the value of the nroprocesso15 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROPROCESSO15(String value) {
+        this.nroprocesso15 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolhas15 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHAS15() {
+        return nrofolhas15;
+    }
+
+    /**
+     * Sets the value of the nrofolhas15 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHAS15(String value) {
+        this.nrofolhas15 = value;
+    }
+
+    /**
+     * Gets the value of the comprev15 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPREV15() {
+        return comprev15;
+    }
+
+    /**
+     * Sets the value of the comprev15 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPREV15(String value) {
+        this.comprev15 = value;
+    }
+
+    /**
+     * Gets the value of the datdo15 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDO15() {
+        return datdo15;
+    }
+
+    /**
+     * Sets the value of the datdo15 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDO15(String value) {
+        this.datdo15 = value;
+    }
+
+    /**
+     * Gets the value of the nrolivro15 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROLIVRO15() {
+        return nrolivro15;
+    }
+
+    /**
+     * Sets the value of the nrolivro15 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROLIVRO15(String value) {
+        this.nrolivro15 = value;
+    }
+
+    /**
+     * Gets the value of the nrofolha15 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNROFOLHA15() {
+        return nrofolha15;
+    }
+
+    /**
+     * Sets the value of the nrofolha15 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNROFOLHA15(String value) {
+        this.nrofolha15 = value;
+    }
+
+    /**
+     * Gets the value of the indconfirma property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINDCONFIRMA() {
+        return indconfirma;
+    }
+
+    /**
+     * Sets the value of the indconfirma property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINDCONFIRMA(String value) {
+        this.indconfirma = value;
+    }
+
+}

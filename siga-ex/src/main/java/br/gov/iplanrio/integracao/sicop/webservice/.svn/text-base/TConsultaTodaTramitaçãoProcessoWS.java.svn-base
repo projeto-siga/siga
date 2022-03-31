@@ -1,0 +1,120 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CONCAD" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "rotina",
+    "numproc",
+    "concad"
+})
+@XmlRootElement(name = "TConsultaTodaTramita\u00e7\u00e3oProcesso_WS")
+public class TConsultaTodaTramitaçãoProcessoWS {
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "NUMPROC")
+    protected String numproc;
+    @XmlElement(name = "CONCAD")
+    protected String concad;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the numproc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC() {
+        return numproc;
+    }
+
+    /**
+     * Sets the value of the numproc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC(String value) {
+        this.numproc = value;
+    }
+
+    /**
+     * Gets the value of the concad property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCONCAD() {
+        return concad;
+    }
+
+    /**
+     * Sets the value of the concad property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCONCAD(String value) {
+        this.concad = value;
+    }
+
+}

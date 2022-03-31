@@ -352,6 +352,8 @@ public class ExMobilVO extends ExVO {
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 
 		if (!mob.isGeral()) {
+		 
+			
 			addAcao("folder",
 					SigaMessages.getMessage("documento.ver.dossie"),
 					"/app/expediente/doc",

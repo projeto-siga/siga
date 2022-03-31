@@ -1,0 +1,176 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for Logon_WS complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="Logon_WS">
+ *   &lt;complexContent>
+ *     &lt;extension base="{http://pcrj/Sma/Sicop/Grava}Message">
+ *       &lt;sequence>
+ *         &lt;element name="USERCODE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SENHA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MSG1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MSG2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="StatusLine" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/extension>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Logon_WS", propOrder = {
+    "usercode",
+    "senha",
+    "msg1",
+    "msg2",
+    "statusLine"
+})
+public class LogonWS
+    extends Message
+{
+
+    @XmlElement(name = "USERCODE")
+    protected String usercode;
+    @XmlElement(name = "SENHA")
+    protected String senha;
+    @XmlElement(name = "MSG1")
+    protected String msg1;
+    @XmlElement(name = "MSG2")
+    protected String msg2;
+    @XmlElement(name = "StatusLine")
+    protected String statusLine;
+
+    /**
+     * Gets the value of the usercode property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUSERCODE() {
+        return usercode;
+    }
+
+    /**
+     * Sets the value of the usercode property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUSERCODE(String value) {
+        this.usercode = value;
+    }
+
+    /**
+     * Gets the value of the senha property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSENHA() {
+        return senha;
+    }
+
+    /**
+     * Sets the value of the senha property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSENHA(String value) {
+        this.senha = value;
+    }
+
+    /**
+     * Gets the value of the msg1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMSG1() {
+        return msg1;
+    }
+
+    /**
+     * Sets the value of the msg1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMSG1(String value) {
+        this.msg1 = value;
+    }
+
+    /**
+     * Gets the value of the msg2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMSG2() {
+        return msg2;
+    }
+
+    /**
+     * Sets the value of the msg2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMSG2(String value) {
+        this.msg2 = value;
+    }
+
+    /**
+     * Gets the value of the statusLine property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getStatusLine() {
+        return statusLine;
+    }
+
+    /**
+     * Sets the value of the statusLine property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setStatusLine(String value) {
+        this.statusLine = value;
+    }
+
+}

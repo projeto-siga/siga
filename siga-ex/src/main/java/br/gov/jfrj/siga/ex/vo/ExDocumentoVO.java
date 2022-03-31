@@ -117,8 +117,12 @@ public class ExDocumentoVO extends ExVO {
 	String exTipoDocumentoDescricao;
 	boolean podeAnexarArquivoAuxiliar;
 	String dtLimiteDemandaJudicial;
-	String dtPrazoDeAssinatura;
+ 
 	
+	String antigoNumero;
+ 
+	String dtPrazoDeAssinatura;
+ 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel) {
 		this.titular = titular;
@@ -320,6 +324,8 @@ public class ExDocumentoVO extends ExVO {
 		this.originalNumero = doc.getNumExtDoc();
 		this.originalData = doc.getDtDocOriginalDDMMYYYY();
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
+		
+		this.antigoNumero = doc.getNumAntigoDoc() != null ? doc.getNumAntigoDoc() : null;
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
 
@@ -961,6 +967,7 @@ public class ExDocumentoVO extends ExVO {
 					null,
 					"&popup=true", null, null, null);
 		}
+		
 	}
 
 	public void addDadosComplementares() {
@@ -1199,16 +1206,21 @@ public class ExDocumentoVO extends ExVO {
 	public void setMarcasDeSistemaPorMobil(Map<ExMobil, Set<ExMarca>> marcasDeSistemaPorMobil) {
 		this.marcasDeSistemaPorMobil = marcasDeSistemaPorMobil;
 	}
-
+ 
+	public String getAntigoNumero() {
+		return antigoNumero;
+	}
+ 
 	public String getDtPrazoDeAssinatura() {
 		return dtPrazoDeAssinatura;
 	}
 
+ 
 	public boolean isPossuiRequerente() {
 		return this.doc.getCpfRequerente() != null ||
 				this.doc.getCnpjRequerente() != null ||
 				this.doc.getMatriculaRequerente() != null ||
 				StringUtils.isNotBlank(this.doc.getNomeRequerente()) ;
 	}
-
+ 
 }

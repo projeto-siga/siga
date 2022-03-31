@@ -215,7 +215,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("dje.servidor.data.disponivel", null);
 		addPublicProperty("dje.servidor.url", null);
 		addPublicProperty("email.mensagem.teste", null);
-		addPublicProperty("folha.de.rosto", "inativa");
+//		addPublicProperty("folha.de.rosto", "inativa");
 		addPublicProperty("modelo.interno.importado", null);
 		addPublicProperty("modelo.processo.administrativo", null);
 		addPublicProperty("montador.query", "br.gov.jfrj.siga.hibernate.ext.MontadorQuery");
@@ -252,8 +252,16 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("qtd.max.arquivo.anexado.upload", "1");
 		
 		addPublicProperty("consultapublica.exibe.tramitacao.ate.nivelacesso", "-1");
-
+		
+		addPublicProperty("folha.de.rosto", "ativa");
+ 
 		addPublicProperty("documento.novo.modelo.padrao", "Memorando");
+		
+		// integração com SICOP
+		addPublicProperty("sicop.url",  "XXXXXXX");
+		addPublicProperty("sicop.token","XXXXXXX");
+		
+		addPublicProperty("sicop.ativo","false");
 	}
 
 	@Override

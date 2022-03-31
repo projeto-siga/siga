@@ -89,6 +89,10 @@
  
         <property name="sigaex.volume.max.paginas" value="400"/>
         <property name="sigaex.documento.novo.modelo.padrao" value="Ofício"/>
+        
+       <property name="sigaex.sicop.url" value=  "http://10.2.227.20/dc201wssicopgravaatu/wssicopgrava.asmx?wsdl"/>
+		<property name="sigaex.sicop.token" value="OTk5OTk5MTE6MTIzNDQ="/>
+		<property name="sigaex.sicop.ativo" value="true"/>
   
     </system-properties>
     <management>

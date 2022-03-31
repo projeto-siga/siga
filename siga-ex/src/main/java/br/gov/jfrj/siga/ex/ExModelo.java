@@ -200,4 +200,11 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecio
 	public String getDescricao() {
 		return null;
 	}
+	
+	public boolean isPermiteSicop() {
+		if (getIsPermiteSicop() != null && getIsPermiteSicop()== 1)
+			return true;
+
+		return false;
+	}
 }

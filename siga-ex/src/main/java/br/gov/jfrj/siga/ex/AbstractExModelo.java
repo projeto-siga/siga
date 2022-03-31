@@ -123,6 +123,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	//
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
+	
+	@Column(name = "IS_SICOP", length = 1)
+	private Integer isPermiteSicop;
 
 	@Override
 	public Integer getHisAtivo() {
@@ -451,5 +454,14 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMod);
 		}
 	}
+
+	public Integer getIsPermiteSicop() {
+		return isPermiteSicop;
+	}
+
+	public void setIsPermiteSicop(Integer isPermiteSicop) {
+		this.isPermiteSicop = isPermiteSicop;
+	}
+	
 	
 }

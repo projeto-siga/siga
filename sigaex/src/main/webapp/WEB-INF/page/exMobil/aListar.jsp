@@ -108,7 +108,7 @@
 		function submitBusca(cliente) {
 			if(cliente == 'GOVSP') {
 				var descricao = document.getElementById('descrDocumento').value.trim();
-				if(descricao.length != 0 && descricao.length < 5) {
+				if(descricao.length != 0  && descricao.length < 5) {
 					sigaModal.alerta("Preencha no mínimo 5 caracteres no campo descrição");
 					return;
 				}
@@ -141,7 +141,9 @@
 			if (objSelecionado != null) {
 				switch (parseInt(objSelecionado.value)) {
 				case 0:
+
 					//document.getElementById('trNumOrigDoc').style.display = 'none';
+
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = 'none';
 					document.getElementById('trTipo').style.display = '';
@@ -149,6 +151,7 @@
 					if (document.getElementById('idFormaDoc')) document.getElementById('idFormaDoc').value = '0';
 					break;
 				case 1: // Interno Produzido
+
 					//document.getElementById('trNumOrigDoc').style.display = 'none';
 					document.getElementById('trNumDocSistAntigo').style.display = 'none';
 					document.getElementById('trOrgExterno').style.display = 'none';
@@ -628,11 +631,13 @@
 							    <input type="text" size="7" name="numExpediente" value="${numExpediente}" maxlength="6" class="form-control" />
 							</div>
 					</div>
+
 					<div class="form-row">
 						<div class="form-group col-md-3" id="trNumOrigDoc">
 							<label for="numExtDoc">Número Original</label> <input
 								class="form-control" type="text" name="numExtDoc" size="16"
 								id="numExtDoc" value="${numExtDoc}" />
+
 						</div>
 
 						<div class="form-group col-md-6" id="trOrgExterno"
@@ -648,6 +653,8 @@
 								Antigo</label> <input class="form-control" type="text"
 								name="numAntigoDoc" value="${numAntigoDoc}" size="16" value=""
 								id="numAntigoDoc" />
+									<small class="form-text text-muted">(informar o número do documento no antigo sistema de controle de expedientes ou de
+											processos administrativos).</small>
 						</div>
 
 						<div class="form-group col-md-3" id="trSubscritorExt"

@@ -35,7 +35,6 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -62,6 +61,7 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.logging.Logger;
@@ -86,6 +86,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import br.gov.iplanrio.integracao.sicop.SicopService;
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
@@ -133,7 +134,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
-import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExConfiguracaoCache;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
@@ -3072,10 +3072,24 @@ public class ExBL extends CpBL {
 
 			Set<ExVia> setVias = doc.getSetVias();
 
+			// Integracao com o SICOP 
+			if (getComp().podeIntegrarComAntigoSistemaControleDocumento(doc)){
+				
+				String assuntoSicop = StringUtils.isNotBlank( doc.getExClassificacaoAtual().getAssuntoSicop() ) ?  doc.getExClassificacaoAtual().getAssuntoSicop() :"05028";  
+				
+				SicopService sicopService = new SicopService();
+				
+				String numeroProcessoSicop =sicopService.incluirProcesso(doc.getSigla(),assuntoSicop);
+				
+				doc.setNumExtDoc( numeroProcessoSicop  );
+				
+			}
+
 			processar(doc, false, false);
 			// doc.armazenar();
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
+			
 			
 			dao().gravar(doc);
 
@@ -3104,7 +3118,7 @@ public class ExBL extends CpBL {
 			throw new RuntimeException("Erro ao finalizar o documento: " + e.getMessage(), e);
 		}
 	}
-
+	
 	public Long obterProximoNumero(ExDocumento doc) throws Exception {
 		doc.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
 
@@ -5498,8 +5512,9 @@ public class ExBL extends CpBL {
 								MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO);
 						idMod = modPA != null ? modPA.getId() : Prop.getInt("modelo.processo.administrativo");
 					} else {
-						ExModelo modInterno = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO);
-						idMod = modInterno != null ? modInterno.getId() : Prop.getInt("modelo.interno.importado");
+					
+							ExModelo modInterno = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO);
+							idMod = modInterno != null ? modInterno.getId() : Prop.getInt("modelo.interno.importado");
 					}
 					doc.setExModelo(dao().consultar(idMod, ExModelo.class, false));
 				}

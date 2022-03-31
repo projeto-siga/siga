@@ -1323,4 +1323,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 				this.matriculaRequerente != null ||
 				StringUtils.isNotBlank(nomeRequerente) ;
 	}
+	
+	public boolean isModeloPermiteSicop() {
+		return this.getExModelo().getIsPermiteSicop() == 1;
+	}
 }

@@ -584,6 +584,7 @@ public class ExMobilController extends
 		result.include("ufRequerente", ufRequerente);
 		result.include("cepRequerente", cepRequerente);
 
+
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();
 			for (Object[] oa : (List<Object[]>) this.getItens()) {

@@ -1001,7 +1001,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class,
 				false);
-
+		
 		result.include("id", id);
 		result.include("doc", doc);
 		result.include("mov", mov);
@@ -3676,9 +3676,12 @@ public class ExMovimentacaoController extends ExController {
 			String sigla, String dtMovString, boolean substituicao,
 			String descrMov, DpPessoaSelecao subscritorSel,
 			DpPessoaSelecao titularSel) throws Exception {
-
+		Boolean tipoMovCiencia = false;
+		
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
-
+		if(mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.CIENCIA))
+			tipoMovCiencia = true;
+			
 		ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setDtMovString(dtMovString)
 				.setSubstituicao(substituicao).setDescrMov(descrMov)
@@ -3703,7 +3706,12 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		if (tipoMovCiencia) {
+			result.forwardTo("/WEB-INF/page/exMovimentacao/fecharPopup.jsp"); 
+		} else {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		}
+		
 	}
 
 	@Get("app/expediente/mov/retirar_de_edital_eliminacao")

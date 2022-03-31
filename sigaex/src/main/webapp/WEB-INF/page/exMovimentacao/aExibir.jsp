@@ -65,6 +65,11 @@
                     "/sigaex/app/arquivo/exibir?${mov.exTipoMovimentacao == 'CANCELAMENTO_JUNTADA' ? 'sigla='.concat(mov.exMobilRef.doc.sigla).concat('&'):''}arquivo=${mov.referencia}.pdf",
                     "_blank");
         }
+        
+        function cancelar() {
+        	window.location="/sigaex/app/expediente/mov/cancelar?id=${mov.idMov}&sigla=${mov.mob().codigoCompacto}";     	
+        }
+        
     </script>
 
 	<div class="container-fluid">
@@ -226,6 +231,12 @@
 							<button type="button" class="btn btn-info"
 								onclick="javascript:visualizarImpressao();">
 								<i class="fa fa-print"></i> Visualizar
+							</button>
+						</c:if>
+						<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO' and mov.exTipoMovimentacao == 'CIENCIA' and mov.isAssinada()}">
+							<button type=button class="btn btn-info"
+								onclick="javascript:cancelar();">
+								<i class="fa fa-times"></i> Cancelar
 							</button>
 						</c:if>
 					</div>

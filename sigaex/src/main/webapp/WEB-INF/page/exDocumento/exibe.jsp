@@ -342,6 +342,9 @@
 														inline="${true}"
 														separator="${not empty mov.descricao and mov.descricao != null}">
 														<c:forEach var="acao" items="${mov.acoes}">
+															<c:if test="${acao.nomeNbsp == 'Ver/Cancelar'}">
+																<c:set var="assinado" value="${true}" />
+															</c:if>
 															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 																pos="${acao.pos}"
 																url="${pageContext.request.contextPath}${acao.url}"
@@ -353,6 +356,12 @@
 															</c:if>
 														</c:forEach>
 												</siga:links>
+												<c:if test="${mov.exTipoMovimentacao == 'CIENCIA' and assinado}">
+													<a class="fas fa-info-circle text-secondary ml-1"
+														data-toggle="tooltip" data-trigger="click"
+														data-placement="bottom"
+														title="'Ver': Possibilita a Visualização e impressão da Ciência 'Cancelar': Cancela a movimentação da Ciência."></a>	
+												</c:if>
 											</td>
 										</tr>
 										<c:choose>
@@ -1585,6 +1594,10 @@
 	$(function() {																				
 		atualizarDescricaoArquivosAuxiliares();																												
 	});
+	
+	$(function () {
+		 $('[data-toggle="tooltip"]').tooltip()
+	})
 	
 	function atualizarDescricaoArquivosAuxiliares() {
 		$('.files').find('.btn.btn-sm.btn-light').each(function(index) {

@@ -44,6 +44,7 @@ import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExEstaSemEfeito;
@@ -296,7 +297,7 @@ public class ExMovimentacaoVO extends ExVO {
 					&& exTipoMovimentacao != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO && exTipoMovimentacao != ExTipoDeMovimentacao.ANEXACAO
 					&& exTipoMovimentacao != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito())
-
+					
 					if ((exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO
 							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_INTERNO
 							|| exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
@@ -312,14 +313,14 @@ public class ExMovimentacaoVO extends ExVO {
 							addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 									.params("popup", "true").params("autenticando", "true")
 									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
-
+						
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
 						if (exTipoMovimentacao == ExTipoDeMovimentacao.CIENCIA && mov.isAssinada()) {
-							addAcao(AcaoVO.builder().nome("Ver").icone("printer").nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-									.params("popup", "true").params("arquivo", mov.getReferenciaPDF())
-									.exp(new ExPodeVisualizarImpressao(mov.mob(), titular, lotaTitular)).build());
-							addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-									.exp(new CpPodeSempre()).build());
+							//Somente quem criou a ciência pode cancelar a mesma.
+							if (mov.getCadastrante() == cadastrante)
+								addAcao(AcaoVO.builder().nome("Ver/Cancelar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+										.params("popup", "true")
+										.exp(new CpPodeSempre()).build());
 						} else { 
 							addAcao(AcaoVO.builder().nome("Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 									.params("popup", "true")

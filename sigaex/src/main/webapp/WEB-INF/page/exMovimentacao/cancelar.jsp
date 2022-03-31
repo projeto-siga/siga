@@ -11,6 +11,15 @@
 		<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 	</c:if>
 
+	<script language="javascript">
+		function fechaJanela() {
+			if (frm.fechaJanela == 'sim') {
+				opener.refresh();
+				self.close();
+			}
+		}
+	</script>
+
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -68,7 +77,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-6">
-							<input type="submit" value="Ok" class="btn btn-primary"/> 
+							<input type="submit" value="Ok" class="btn btn-primary" /> 
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/> 
 						</div>
 					</div>

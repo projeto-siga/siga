@@ -1402,7 +1402,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		docVO.exibe();
-
+		
 		String Sigla = "";
 		if (exDocumentoDto.getSigla() != null) {
 			Sigla = exDocumentoDto.getSigla().replace("/", "");

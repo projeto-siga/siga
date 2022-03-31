@@ -1,6 +1,6 @@
 -- jira processo_rio-2063
 -- Método de geração da numeração de documentos.
--- connect siga@srv000764.infra.rio.gov.br:1521/sigadoc.pcrj;
+-- connect siga@srv000767.infra.rio.gov.br:1521/sigadoc.pcrj;
 
 -- 
 --------------------------------------------------------

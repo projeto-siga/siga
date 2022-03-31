@@ -3,6 +3,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <%@ attribute name="assinar" required="false"%>
+<%@ attribute name="emLote" required="false"%>
 <%@ attribute name="voltar" required="false"%>
 <%@ attribute name="linkVoltar" required="false"%>
 <%@ attribute name="autenticar" required="false"%>
@@ -32,7 +33,7 @@
 			</c:if>
 			
 			<c:choose>
-				<c:when test="${assinarCertDigital or assinarComSenha or assinarComSenhaPin or autenticarComSenha or autenticarComSenhaPin or autenticar}">
+				<c:when test="${assinarCertDigital or assinarComSenha or assinarComSenhaPin or autenticarComSenha or autenticarComSenhaPin or autenticar or emLote}">
 					<c:if test="${not empty assinar and assinar}">
 						<a id="bot-assinar" accesskey="s" href="#"
 								onclick="javascript: AssinarDocumentos(false, ${assinarCertDigital or assinarComSenha or assinarComSenhaPin});"

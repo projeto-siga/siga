@@ -59,12 +59,10 @@ public class ExGadgetController extends ExController {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Get("app/expediente/gadget")
-	public void execute(final String idTpMarcadorExcluir, final Integer idTpFormaDoc, boolean apenasQuadro)
+	public void execute(final String idTpMarcadorExcluir,     boolean apenasQuadro)
 			throws Exception {
-		if (idTpFormaDoc == null || idTpFormaDoc.equals(0)) {
-			throw new AplicacaoException("Código do tipo de marca (Processos ou Expedientes) não foi informado");
-		}
-		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular(), idTpFormaDoc);
+		 
+		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular() );
 
 		if (idTpMarcadorExcluir != null) {
 			final String as[] = idTpMarcadorExcluir.split(",");
@@ -91,10 +89,12 @@ public class ExGadgetController extends ExController {
 		super.getRequest().setAttribute("_cadastrante", super.getTitular().getSigla() + "@"
 				+ super.getLotaTitular().getOrgaoUsuario().getSiglaOrgaoUsu() + super.getLotaTitular().getSigla());
 
+		List <Integer> listIdTpFormaDoc = new ArrayList<Integer>() {{add(1); add(2);}};
+		
 		result.include("listEstados", listEstados);
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
-		result.include("idTpFormaDoc", idTpFormaDoc);
+		result.include("listIdTpFormaDoc", listIdTpFormaDoc);
 		result.include("documentoVia", new ExMobilSelecao());
 		result.include("apenasQuadro", apenasQuadro);
 	}
@@ -116,10 +116,8 @@ public class ExGadgetController extends ExController {
 			return;
 		}
 
-		final Integer id = (idTpFormaDoc == null || idTpFormaDoc == 0 ? 1 : idTpFormaDoc);
-
 		setTitular(pes);
 		setLotaTitular(pes.getLotacao());
-		this.execute(null, id, Boolean.FALSE);
+		this.execute(null,  Boolean.FALSE);
 	}
 }

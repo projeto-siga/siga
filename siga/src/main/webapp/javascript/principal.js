@@ -7,8 +7,8 @@ $(function() {
 		    modules: {
 		        sigaex: {
 		        	name: "sigaex",
-		        	url: "/sigaex/app/expediente/gadget?idTpFormaDoc=1&apenasQuadro=true",
-		          viewId: "left"
+		        	url: "/sigaex/app/expediente/gadget?apenasQuadro=true",
+		          viewId: "mesaDocumentos"
 		        },
 		        sigawf: {
 		        	name: "sigawf",
@@ -30,11 +30,6 @@ $(function() {
 		        	url: "/sigatp/app/application/gadget",
 		          viewId: "rightbottom3"
 		        },
-		        processos: {
-		        	name: "processos",
-		        	url: "/sigaex/app/expediente/gadget?idTpFormaDoc=2",
-		          viewId: "leftbottom"
-		        }
 		    },
 
 		    render: function(target, text){

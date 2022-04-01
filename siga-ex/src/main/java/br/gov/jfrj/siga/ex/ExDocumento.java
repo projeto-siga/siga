@@ -2443,7 +2443,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return subscritores;
 	}
 	
-	public List<DpPessoa> getListaSubscritorECossignatariosDiffCadastranteDoc() {
+	public List<DpPessoa> getListaCossigRespAssDiffCadastranteDoc() {
 		List<DpPessoa> listaSubscritor = new ArrayList<>();
 		for (DpPessoa dpPessoa : this.getSubscritorECosignatarios()) {
 			if(!this.getCadastrante().equivale(dpPessoa))
@@ -2454,7 +2454,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	
 	public List<DpPessoa> listaPessoasSubscritorCossignatarioAssinadoHoje() {
 		List<DpPessoa> listaSubscrCossigFinal = new ArrayList<DpPessoa>();
-		List<DpPessoa> listaSubscrCossig =  this.getListaSubscritorECossignatariosDiffCadastranteDoc();
+		List<DpPessoa> listaSubscrCossig =  this.getListaCossigRespAssDiffCadastranteDoc();
 
 		if (!listaSubscrCossig.isEmpty()) {
 			Set<ExMovimentacao> listaMovAssinaturas = this.getAssinaturasComTokenOuSenhaERegistros();
@@ -2729,7 +2729,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return pais;
 	}
 	
-	public List<ExDocumento> getTodosOsPaisDasViasCossigRespAssinatura() {
+	public List<ExDocumento> getTodosOsPaisDasViasCossigRespAss() {
 		List<ExDocumento> pais = new ArrayList<>();
 		if (this.getExMobilPai() != null) {
 			pais = this.getExMobilPai().getDoc().getTodosOsPaisDasVias();
@@ -2810,7 +2810,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return lista.size() == 0 ? null : lista;
 	}
 	
-	public boolean possuiVinculacaoPapelRevisorSubscritor(DpPessoa dpPessoa) {
+	public boolean possuiVinculPapelRevisorCossigRespAss(DpPessoa dpPessoa) {
 		List<ExMovimentacao> movs = this.getMobilGeral()
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		for (ExMovimentacao mov : movs) {
@@ -2826,7 +2826,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return Boolean.FALSE;
 	}
 	
-	public List<ExMovimentacao> getMovsVinculacaoPapelRevisorSubscritor() {
+	public List<ExMovimentacao> getMovsVinculacaoPapelCossigRespAssinatura() {
 		List<ExMovimentacao> movs = this.getMobilGeral()
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		List<ExMovimentacao> movsReturn = new ArrayList<>();

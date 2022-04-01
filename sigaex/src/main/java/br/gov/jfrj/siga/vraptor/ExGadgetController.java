@@ -63,32 +63,32 @@ public class ExGadgetController extends ExController {
 	@Get("app/expediente/gadget")
 	public void execute(final String idTpMarcadorExcluir,     boolean apenasQuadro)
 			throws Exception {
-		 
-		
-		String ignoradosQuadroQuantitativo = "7,8,9,10,11,12,13,16,18,20,21,22,26,32,50,51,62,63,64";
-		
-		String idTpMarcadorExcluidos = (StringUtils.isNotBlank(idTpMarcadorExcluir) ? idTpMarcadorExcluir+"," : "" )+ ignoradosQuadroQuantitativo;
-		
-				
-		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular() );
 
-		if (idTpMarcadorExcluidos != null) {
+		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular() );
+		
+		if (listEstados.size()>0){
+		
+			String idTpMarcadorIgnoradosQuadroQuantitativo = "7,8,9,10,11,12,13,16,18,20,21,22,26,32,50,51,62,63,64";
+			String idTpMarcadorExcluidos = (StringUtils.isNotBlank(idTpMarcadorExcluir) ? idTpMarcadorExcluir+"," : "" )+ idTpMarcadorIgnoradosQuadroQuantitativo;
+		
 			final String as[] = idTpMarcadorExcluidos.split(",");
-			final Set<Integer> excluir = new HashSet<Integer>();
+			final Set<Long> excluir = new HashSet<Long>();
 
 			for (final String s : as) {
-				excluir.add(Integer.valueOf(s));
+				excluir.add(Long.valueOf(s));
 			}
+		
 			final List listEstadosReduzida = new ArrayList<Object[]>();
+			
 			for (Object o : listEstados) {
-				if (!excluir.contains((Integer) ((Object[]) o)[0])) {
+				if (!excluir.contains(  ((Object[]) o)[0] 	)
+				   ) {
 					listEstadosReduzida.add(o);
 				}
 			}
+
 			listEstados = listEstadosReduzida;
 		}
-
-		
 
 		if (super.getTitular() == null) {
 			throw new AplicacaoException("Titular nulo, verificar se usuário está ativo no RH");
@@ -106,7 +106,7 @@ public class ExGadgetController extends ExController {
 		result.include("documentoVia", new ExMobilSelecao());
 		result.include("apenasQuadro", apenasQuadro);
 	}
-
+	
 	@Get("/public/app/testes/gadgetTest")
 	public void test(final String matricula, final Integer idTpFormaDoc) throws Exception {
 		if (matricula == null) {

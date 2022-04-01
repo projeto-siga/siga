@@ -33,6 +33,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
@@ -62,10 +64,16 @@ public class ExGadgetController extends ExController {
 	public void execute(final String idTpMarcadorExcluir,     boolean apenasQuadro)
 			throws Exception {
 		 
+		
+		String ignoradosQuadroQuantitativo = "7,8,9,10,11,12,13,16,18,20,21,22,26,32,50,51,62,63,64";
+		
+		String idTpMarcadorExcluidos = (StringUtils.isNotBlank(idTpMarcadorExcluir) ? idTpMarcadorExcluir+"," : "" )+ ignoradosQuadroQuantitativo;
+		
+				
 		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular() );
 
-		if (idTpMarcadorExcluir != null) {
-			final String as[] = idTpMarcadorExcluir.split(",");
+		if (idTpMarcadorExcluidos != null) {
+			final String as[] = idTpMarcadorExcluidos.split(",");
 			final Set<Integer> excluir = new HashSet<Integer>();
 
 			for (final String s : as) {

@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.persistencia;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
@@ -100,4 +102,27 @@ public class ExClassificacaoDaoFiltro extends DaoFiltroSelecionavel {
 //	public void setUltimoNivel(String ultimoNivel) {
 //		this.ultimoNivel = ultimoNivel;
 //	}
+	
+//	private String ultimoNivel;
+	
+	
+	@Override
+	public boolean exigeNomeSigla() {
+		
+		if (StringUtils.isNotBlank(atividade))
+			return false;
+		if (StringUtils.isNotBlank(classe))
+			return false;
+		if (StringUtils.isNotBlank(descricao))
+			return false;
+		if (StringUtils.isNotBlank(subclasse))
+			return false;
+		if (StringUtils.isNotBlank(assunto))
+			return false;
+		if (super.getSigla() != null && StringUtils.isNotBlank(super.getSigla()))
+			return false;
+
+		return true;
+		
+	}
 }

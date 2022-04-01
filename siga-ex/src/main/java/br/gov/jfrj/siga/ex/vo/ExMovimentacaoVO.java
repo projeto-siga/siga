@@ -314,6 +314,7 @@ public class ExMovimentacaoVO extends ExVO {
 									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 						
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
+<<<<<<< HEAD
 						if (exTipoMovimentacao == ExTipoDeMovimentacao.CIENCIA && mov.isAssinada()) {
 							if (mov.getCadastrante() == cadastrante)
 								addAcao(AcaoVO.builder().nome("Ver/Cancelar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
@@ -324,6 +325,11 @@ public class ExMovimentacaoVO extends ExVO {
 									.params("popup", "true")
 									.exp(new CpPodeSempre()).build());
 						}
+=======
+						addAcao(AcaoVO.builder().nome(mov.isAssinada() ? "Ver" : "Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+								.params("popup", "true")
+								.exp(new CpPodeSempre()).build());
+>>>>>>> develop
 					}
 			}
 

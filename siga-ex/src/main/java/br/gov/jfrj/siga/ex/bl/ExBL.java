@@ -2773,6 +2773,11 @@ public class ExBL extends CpBL {
 				} else {
 					mov.setExClassificacao(null);
 				}
+				
+				if (ExTipoDeMovimentacao.JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
+					if (podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)) 
+						tratarFluxoDesentrDesfJuntadaArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
+				}
 
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
 
@@ -2790,7 +2795,7 @@ public class ExBL extends CpBL {
 						if (!mobPai.doc().equals(mob.doc()))
 							atualizarMarcas(mobPai);
 					}
-
+				
 				concluirAlteracaoParcialComRecalculoAcesso(m);
 			}
 

@@ -497,7 +497,6 @@ public class ExMobilVO extends ExVO {
 			
 			//Cria lista de Movimentações que não podem ser canceladas
 			List<ITipoDeMovimentacao> listaMovimentacoesNaoCancelavel = new ArrayList<>();
-			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.CIENCIA);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.RESTRINGIR_ACESSO);

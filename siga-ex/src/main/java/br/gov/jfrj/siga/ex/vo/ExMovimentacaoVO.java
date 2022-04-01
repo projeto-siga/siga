@@ -309,20 +309,18 @@ public class ExMovimentacaoVO extends ExVO {
 									.params("popup", "true").params("arquivo", mov.getReferenciaPDF())
 									.exp(new ExPodeVisualizarImpressao(mov.mob(), titular, lotaTitular)).build());
 
-						if (exTipoMovimentacao != ExTipoDeMovimentacao.CIENCIA)
-							addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+						addAcao(AcaoVO.builder().nome("Autenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_mov").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 									.params("popup", "true").params("autenticando", "true")
 									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 						
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
 						if (exTipoMovimentacao == ExTipoDeMovimentacao.CIENCIA && mov.isAssinada()) {
-							//Somente quem criou a ciência pode cancelar a mesma.
 							if (mov.getCadastrante() == cadastrante)
 								addAcao(AcaoVO.builder().nome("Ver/Cancelar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 										.params("popup", "true")
 										.exp(new CpPodeSempre()).build());
 						} else { 
-							addAcao(AcaoVO.builder().nome("Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+							addAcao(AcaoVO.builder().nome(mov.isAssinada() ? "Ver" : "Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 									.params("popup", "true")
 									.exp(new CpPodeSempre()).build());
 						}

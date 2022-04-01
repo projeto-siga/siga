@@ -2778,8 +2778,13 @@ public class ExBL extends CpBL {
 					if (podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)) 
 						tratarFluxoDesentrDesfJuntadaArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
 				}
-
+				
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
+				
+				if (ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
+					if (podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)) 
+						tratarFluxoJuntarArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
+				}
 
 				if (ultMovNaoCancelada.getExTipoMovimentacao()
 						== ExTipoDeMovimentacao.ANOTACAO) {

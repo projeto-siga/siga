@@ -309,6 +309,7 @@
 		
 							<c:set var="lote" value="false" />
 						</div>
+						<c:set var="podeAssinarCertDigital" value="${f:podeAssinarMovimentacao(titular,lotaTitular,mov)}" />
 						<c:set var="podeAssinarComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
 						<c:set var="podeAutenticarComSenha" value="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
 						<c:set var="defaultAssinarComSenha" value="${f:deveAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
@@ -320,7 +321,7 @@
 						
 						<tags:assinatura_botoes assinar="true"
 							autenticar="${mov.exTipoMovimentacao == 'ANEXACAO'}"
-							
+								assinarCertDigital="${podeAssinarCertDigital}"
 								assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
 							    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
 								assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"

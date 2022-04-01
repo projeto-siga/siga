@@ -102,7 +102,6 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
-import br.gov.jfrj.siga.ex.logic.ExECossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
@@ -112,6 +111,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeApensar;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarIntermediario;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarPermanente;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
@@ -154,7 +154,6 @@ import br.gov.jfrj.siga.ex.logic.ExPodeReferenciar;
 import br.gov.jfrj.siga.ex.logic.ExPodeRegistrarAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeRemeterParaPublicacaoSolicitadaNoDiario;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
-import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirDefAcompanhamento;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirTramitacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeRetirarDeEditalDeEliminacao;
@@ -3100,6 +3099,7 @@ public class ExMovimentacaoController extends ExController {
 				itensFinalizados.add(doc);
 		}
 		final List<ExDocumento> documentosQuePodemSerAssinadosComSenha = new ArrayList<ExDocumento>();
+		Boolean podeAssinarComCertDigital = false;
 
 		for (final ExDocumento exDocumento : itensFinalizados) {
 			if (Ex.getInstance()
@@ -3108,10 +3108,18 @@ public class ExMovimentacaoController extends ExController {
 							exDocumento.getMobilGeral())) {
 				documentosQuePodemSerAssinadosComSenha.add(exDocumento);
 			}
+			if (!podeAssinarComCertDigital && Ex.getInstance()
+					.getComp()
+					.pode(ExPodeAssinar.class, getTitular(), getLotaTitular(),
+							exDocumento.getMobilGeral())) {
+				podeAssinarComCertDigital = true;
+			}
 		}
 
 		result.include("documentosQuePodemSerAssinadosComSenha",
 				documentosQuePodemSerAssinadosComSenha);
+		result.include("podeAssinarComCertDigital",
+				podeAssinarComCertDigital);
 		result.include("itensSolicitados", itensFinalizados);
 		result.include("request", getRequest());
 	}

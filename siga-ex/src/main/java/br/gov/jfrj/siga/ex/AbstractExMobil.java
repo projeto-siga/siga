@@ -38,6 +38,8 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
@@ -157,9 +159,9 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@JoinColumn(name = "ID_ULT_MOV")
 	private ExMovimentacao ultimaMovimentacaoNaoCancelada;
 	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ULT_MOV_POSSE")
-	private ExMovimentacao ultimaMovimentacaoDePosse;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DNM_DT_ULT_MOV", length = 19)
+	private java.util.Date dnmDtUltMov;
 	
 	public java.lang.Long getIdMobil() {
 		return idMobil;
@@ -257,12 +259,12 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 		this.ultimaMovimentacaoNaoCancelada = exMovimentacao;
 	}
 
-	public ExMovimentacao getUltimaMovimentacaoDePosse() {
-		return ultimaMovimentacaoDePosse;
+	public java.util.Date getDnmDataUltimaMovimentacaoNaoCancelada() {
+		return this.dnmDtUltMov;
 	}
 
-	public void setUltimaMovimentacaoDePosse(ExMovimentacao exMovimentacao) {
-		this.ultimaMovimentacaoDePosse = exMovimentacao;
+	public void setDnmDataUltimaMovimentacaoNaoCancelada(java.util.Date dnmDtUltMov) {
+		this.dnmDtUltMov = dnmDtUltMov;
 	}
 
 }

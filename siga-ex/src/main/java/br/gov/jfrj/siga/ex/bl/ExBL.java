@@ -2765,12 +2765,6 @@ public class ExBL extends CpBL {
 
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
 
-				if (mov.isMovimentacaoDePosse()) {
-					m.setUltimaMovimentacaoDePosse(m
-							.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
-									new ITipoDeMovimentacao[] {}, m, false, null, false));
-				}
-
 				if (ultMovNaoCancelada.getExTipoMovimentacao()
 						== ExTipoDeMovimentacao.ANOTACAO) {
 					atualizarDnmAnotacao(m);
@@ -3019,12 +3013,11 @@ public class ExBL extends CpBL {
 			// movDao.excluir(mov);
 			ExMobil mobil = mov.getExMobil();
 			excluirMovimentacao(mov);
-			mobil.setUltimaMovimentacaoNaoCancelada(mobil
+			ExMovimentacao ultMov = mobil
 					.getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, 
-							new ITipoDeMovimentacao[] {}, mobil, false, null, false));
-			mobil.setUltimaMovimentacaoDePosse(mobil
-					.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
-							new ITipoDeMovimentacao[] {}, mobil, false, null, false));
+							new ITipoDeMovimentacao[] {}, mobil, false, null, false);
+			mobil.setUltimaMovimentacaoNaoCancelada(ultMov);
+			mobil.setDnmDataUltimaMovimentacaoNaoCancelada(ultMov.getDtIniMov());
 
 			if (mob.doc().isPendenteDeAssinatura()
 					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob.doc().isEletronico()
@@ -3983,20 +3976,14 @@ public class ExBL extends CpBL {
 		
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
 			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
-			
-			if (mov.isMovimentacaoDePosse()) { 
-				mov.getExMobil().setUltimaMovimentacaoDePosse(mov);
-			}
+			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(mov.getDtIniMov());
 		} else {
-			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov.getExMobil()
+			ExMovimentacao movUlt = mov.getExMobil()
 					.getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, 
-							new ITipoDeMovimentacao[] {}, mov.getExMobil(), false, null, false));
-			if (mov.getExMovimentacaoRef() != null 
-					&& mov.getExMovimentacaoRef().isMovimentacaoDePosse()) { 
-				mov.getExMobil().setUltimaMovimentacaoDePosse(mov.getExMobil()
-						.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
-								new ITipoDeMovimentacao[] {}, mov.getExMobil(), false, null, false));
-			}
+							new ITipoDeMovimentacao[] {}, mov.getExMobil(), false, null, false);
+			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(movUlt);
+			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(movUlt.getDtIniMov());
+			
 		}
 
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {

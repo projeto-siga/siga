@@ -2111,7 +2111,7 @@ public class ExDao extends CpDao {
 				// Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
 				+ (Prop.isGovSP()? "(CASE WHEN md.grupo_marcador = 6 THEN 0 ELSE md.grupo_marcador END)" 
 						: "md.grupo_marcador ")
-				+ ") AS rank"
+				+ ") AS rown"
 			+ " FROM corporativo.cp_marca m"
 			+ " INNER JOIN corporativo.cp_marcador md ON m.id_marcador = md.id_marcador"
 			+ queryMarcasAIgnorar
@@ -2124,16 +2124,16 @@ public class ExDao extends CpDao {
 				+ " and m.id_marcador <> :marcaMovAssinSenha " 
 				+ queryMarcasAIgnorarWhere
 			+ ") SELECT"
-				+ (contar ? " grupo_marcador,"
+				+ (contar ? " CONCAT(grupo_marcador,''),"
 						+ " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end),"  
 						+ " sum(case when marca.id_lotacao_ini = :lotaTitular  then 1 else 0 end)" 
-					: " grupo_marcador, id_ref, (case when movultima.id_mov is null then"
+					: " CONCAT(grupo_marcador,''), id_ref, (case when movultima.id_mov is null then"
 						+ " doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem") 
 				+ " FROM marca "
 				+ " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref "
 				+ " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc "
 				+ " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov "
-				+ " WHERE rank = 1"
+				+ " WHERE rown = 1"
 				+ (filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "")
 				+ (grupos != null  && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "") 
 			+ (contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador" : 

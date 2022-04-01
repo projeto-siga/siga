@@ -146,7 +146,9 @@ public class Mesa2 {
 				if (mobil.doc().getSubscritor() != null
 						&& mobil.doc().getSubscritor().getLotacao() != null) {
 					if (SigaMessages.isSigaSP()) {
-						ultMovPosse = mobil.getUltimaMovimentacaoDePosse();
+						ultMovPosse = mobil
+								.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+										new ITipoDeMovimentacao[] {}, mobil, false, null, false);
 						
 						if (ultMovPosse != null) {
 							r.origem = ultMovPosse.getLotacao()
@@ -210,7 +212,10 @@ public class Mesa2 {
 	
 				if (usuarioPosse) {
 					if (ultMovPosse == null)
-						ultMovPosse = mobil.getUltimaMovimentacaoDePosse();
+						ultMovPosse = mobil
+								.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+										new ITipoDeMovimentacao[] {}, mobil, false, null, false);
+						
 					if (ultMovPosse != null && ultMovPosse.getCadastrante() != null) {
 						r.nomePessoaPosse = ultMovPosse.getCadastrante().getNomePessoa(); 
 						r.lotaPosse = ultMovPosse.getCadastrante().getLotacao().getSigla();
@@ -350,7 +355,7 @@ public class Mesa2 {
 			gItem.grupoCounterUser = 0L;
 			gItem.grupoCounterLota = 0L;
 			for (Object[] reference : l) {
-				if (gItem.grupoOrdem.equals(((BigDecimal)reference[0]).toString())) {
+				if (gItem.grupoOrdem.equals(reference[0].toString())) {
 					if (reference[1] != null)  
 						gItem.grupoCounterUser = Long.valueOf(reference[1].toString());
 					if (reference[2] != null)  
@@ -408,13 +413,13 @@ public class Mesa2 {
 			}
 			
 			// Cria hashmap contendo grupos e mobils do grupo
-			Map<Integer, List<ExMobil>> hashMobGrp = l.stream()
-			        .collect(Collectors.groupingBy(k -> (((BigDecimal) k[0]).intValue()), 
+			Map<String, List<ExMobil>> hashMobGrp = l.stream()
+			        .collect(Collectors.groupingBy(k -> ((k[0]).toString()), 
 			                Collectors.mapping(v -> dao.consultar(Long.valueOf(v[1].toString()), ExMobil.class, false), 
 			                		Collectors.toList())));
 	
 			// Insere em cada grupo encontrado os documentos e seus dados a serem apresentados na mesa
-			for (Map.Entry<Integer, List<ExMobil>> entry : hashMobGrp.entrySet()) {
+			for (Map.Entry<String, List<ExMobil>> entry : hashMobGrp.entrySet()) {
 				GrupoItem gItem = gruposMesa.stream()
 						.filter(g -> g.grupoOrdem.equals(entry.getKey().toString()))
 						.findFirst().orElse(null); 

@@ -149,5 +149,6 @@
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/select2-dropdownPosition.js"></script>
 </siga:pagina>
 		

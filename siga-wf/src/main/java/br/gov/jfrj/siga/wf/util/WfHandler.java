@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 
 public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
@@ -82,11 +83,12 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
 	@Override
 	public void afterPause(WfProcedimento pi, TaskResult result) {
+		boolean deveTramitarPrincipal = pi.getCurrentTaskDefinition() != null && pi.getCurrentTaskDefinition().getTipoDeTarefa().isTramitarPrincipal();
 		String siglaTitular = null;
 		if (titular != null && lotaTitular != null)
 			siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
 		try {
-			if (transicionou)
+			if (transicionou && deveTramitarPrincipal)
 				WfBL.transferirDocumentosVinculados(pi, siglaTitular);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

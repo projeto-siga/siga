@@ -3431,11 +3431,17 @@ public class ExBL extends CpBL {
 			return false;
 		if (doc.getExNivelAcessoAtual() == null)
 			return false;
-		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
+			return true;
+		if (doc.getOrgaoUsuario() == null)
+			return false;
+		if (lotaTitular == null)
+			return false;
+		if (lotaTitular.getOrgaoUsuario() == null)
+			return false;
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
 						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
-						.getOrgaoUsuario().getIdOrgaoUsu()))
-			
+						.getOrgaoUsuario().getIdOrgaoUsu())
 			return true;
 		return false;
 	}
@@ -5899,8 +5905,8 @@ public class ExBL extends CpBL {
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
-			if (getComp().pode(ExPodeJuntar.class, titular, lotaCadastrante, doc.getExMobilAutuado())
-					& getComp().pode(ExPodeSerJuntado.class, titular, lotaCadastrante, mob.doc(), doc.getExMobilAutuado())) {
+			if (getComp().pode(ExPodeJuntar.class, titular, lotaCadastrante, mob.doc(), doc.getExMobilAutuado())
+					& getComp().pode(ExPodeSerJuntado.class, titular, lotaCadastrante, doc.getExMobilAutuado().doc(), mob)) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null,
 						doc.getExMobilAutuado(), mob, dtMov, null, titular, "1");
 				break;

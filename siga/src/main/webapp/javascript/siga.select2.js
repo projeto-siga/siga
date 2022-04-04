@@ -28,6 +28,7 @@ function transformarEmSelect2(select, idSelect, idDivContainer, descricao) {
 		var width = "resolve";
 		var language = "pt-BR";	
 		var placeholder = ''; 
+		var dropdownPosition = 'below'; 
 			
 		if (typeof descricao !== 'undefined' && descricao != null) {
 			if (descricao.length > 0) {
@@ -70,7 +71,8 @@ function transformarEmSelect2(select, idSelect, idDivContainer, descricao) {
 				width: width,
 				language: language,
 				placeholder: placeholder,				
-				dropdownParent: container				
+				dropdownParent: container,
+				dropdownPosition: dropdownPosition			
 			});
 		} else {
 			select.select2({
@@ -78,7 +80,8 @@ function transformarEmSelect2(select, idSelect, idDivContainer, descricao) {
 				theme: theme,
 				width: width,
 				language: language,
-				dropdownParent: container
+				dropdownParent: container,
+				dropdownPosition: dropdownPosition
 			});
 		}
 		

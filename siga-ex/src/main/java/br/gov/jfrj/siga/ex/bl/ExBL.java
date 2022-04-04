@@ -56,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.StringJoiner;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -120,6 +121,7 @@ import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.model.enm.CpServicosNotificacaoPorEmail;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -131,6 +133,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1691,6 +1694,14 @@ public class ExBL extends CpBL {
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
 				
+				List<DpPessoa> cossignatarios = doc.getCosignatarios();  
+				for (DpPessoa cossignatario : cossignatarios) { 
+					if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cossignatario, cossignatario.getLotacao(), 
+							CpServicosNotificacaoPorEmail.COSSIG.getChave()) && !doc.isAssinadoPeloSubscritorComTokenOuSenha()) {
+						Cp.getInstance().getBL().enviarEmailAoCossignatario(cossignatario, cadastrante, doc.getSigla());
+					}
+				} 
+				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -1951,6 +1962,14 @@ public class ExBL extends CpBL {
 					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
+				
+				List<DpPessoa> cossignatarios = doc.getCosignatarios();  
+				for (DpPessoa cossignatario : cossignatarios) {
+					if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cossignatario, cossignatario.getLotacao(), 
+							CpServicosNotificacaoPorEmail.COSSIG.getChave()) && !doc.isAssinadoPeloSubscritorComTokenOuSenha()) {
+						Cp.getInstance().getBL().enviarEmailAoCossignatario(cossignatario, cadastrante, doc.getSigla());
+					}
+				} 
 				
 				gravarMovimentacao(mov);
 	
@@ -3164,6 +3183,11 @@ public class ExBL extends CpBL {
 			ExMobil mob = doc.getMobilDefaultParaReceberJuntada();
 			if (doc.getExMobilAutuado() != null)
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
+			
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
+					doc.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.RESPASS.getChave())) { 
+				Cp.getInstance().getBL().enviarEmailResponsavelPelaAssinatura(cadastrante, doc.getSubscritor(), doc.getSigla());
+			}
 			
 			return s;
 		} catch (final Exception e) {
@@ -5264,6 +5288,52 @@ public class ExBL extends CpBL {
 						List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
 						listaMovimentacao.addAll(m.doc().getMobilGeral()
 								.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
+						
+						Set<ExMobil> exMobils = mov.getExDocumento().getExMobilSet();
+						Set<DpPessoa> pessoasLota = mov.getLotaResp().getDpPessoaLotadosSet();
+						Set<CpMarcador> marcas = new HashSet<>();
+						StringJoiner marcasDoMobil = new StringJoiner(", ");   
+
+						if (mov.getResp() != null) { 
+							if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+									mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())) {
+								for (ExMobil exMobil: exMobils) {
+									exMobil.getExMarcaSet().stream()
+										.filter(mobil -> mobil.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO 
+												|| mobil.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
+										.forEach(marca -> marcas.add(marca.getCpMarcador()));
+								} 
+								if (marcasDoMobil.length() == 0) 
+									marcas.forEach(marc -> { marcasDoMobil.add(marc.getDescrMarcador()); }); 
+								
+								Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcadoParaUsuario(mov.getResp(), mov.getLotaResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoMobil + "");	
+							}
+							if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+										mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCTUSU.getChave()))  
+								Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuario(mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());
+						}
+
+						if (mov.getResp() == null) {
+							for (DpPessoa pessoa: pessoasLota) {
+								if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+										pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())) { 
+									for (ExMobil exMobil: exMobils) {
+										exMobil.getExMarcaSet().stream()
+											.filter(mobil -> mobil.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO 
+													|| mobil.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
+											.forEach(marca -> marcas.add(marca.getCpMarcador()));
+									} 
+									if (marcasDoMobil.length() == 0) 
+										marcas.forEach(marc -> { marcasDoMobil.add(marc.getDescrMarcador()); }); 
+										
+									Cp.getInstance().getBL().enviarEmailAoTramitarDocMarcadoParaUnidade(pessoa, mov.getLotaResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoMobil + "");		
+								} 
+								if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+										pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCTUN.getChave())) 
+										Cp.getInstance().getBL().enviarEmailAoTramitarDocParaUsuariosDaUnidade(mov.getLotaResp(), mov.getTitular(), pessoa, mov.getExDocumento().getSigla());
+							}
+						}
+						
 						if (!listaMovimentacao.isEmpty()) {
 							List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();
 							listaDocumentos.addAll(mob.getDoc().getExDocumentoFilhoSet());

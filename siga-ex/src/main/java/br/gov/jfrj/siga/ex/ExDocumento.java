@@ -2452,7 +2452,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return listaSubscritor;
 	}
 	
-	public List<DpPessoa> listaPessoasSubscritorCossignatarioAssinadoHoje() {
+	public List<DpPessoa> getListaCossigRespAssDocHoje() {
 		List<DpPessoa> listaSubscrCossigFinal = new ArrayList<DpPessoa>();
 		List<DpPessoa> listaSubscrCossig =  this.getListaCossigRespAssDiffCadastranteDoc();
 

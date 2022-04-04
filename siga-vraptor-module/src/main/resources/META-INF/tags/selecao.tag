@@ -113,7 +113,7 @@
 }
 
 .modal-dialog {
-  height: 80%;
+  height: 90%;
 }
 
 .modal-selecao .modal-body  {

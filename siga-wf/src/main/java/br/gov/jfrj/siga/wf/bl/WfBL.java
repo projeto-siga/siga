@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -249,6 +250,7 @@ public class WfBL extends CpBL {
 		for (WfProcedimento pi : pis2)
 			if (!pis.contains(pi))
 				pis.add(pi);
+		Collections.sort(pis);
 		return pis;
 	}
 
@@ -434,6 +436,7 @@ public class WfBL extends CpBL {
 		gravarMovimentacao(mov);
 		pi.end();
 		dao().gravar(pi);
+		new WfHandler(titular, lotaTitular, identidade).signalToOtherProcessInstances(pi);
 	}
 
 	public void retomar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade)

@@ -527,6 +527,8 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	protected String aBuscar(String sigla, String postback) throws Exception {
 		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();
 		flt.setSigla(sigla);
+		if (getTitular() != null)
+			flt.setOuDefault(getTitular().getOrgaoUsuario());
 		WfDao dao = WfDao.getInstance();
 		WfDefinicaoDeProcedimento pd = null;
 		try {

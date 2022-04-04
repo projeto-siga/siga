@@ -58,6 +58,7 @@
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 				<div class="col col-sm-12 col-md-6">
+				<div id="mesaDocumentos">
 					<div class="card bg-light mb-3">
 						<div class="card-header"><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim&idTipoFormaDoc=1">Expedientes</a></div>
 						<div class="card-body">
@@ -75,7 +76,7 @@
 							</div>
 						</div>
 					</div>
-
+				</div>
 					<div class="mt-2">
 						<a class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/editar'"
@@ -84,7 +85,7 @@
 							class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/listar?primeiraVez=sim'"
 							title="Pesquisar expedientes e processos administrativos">
-							Pesquisar</a>
+							<fmt:message key = "documento.pesquisar"/></a>
 							<a
 							class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/mesa'"
@@ -94,6 +95,7 @@
 
 				</div>
 			</c:if>
+
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow') or f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR') or f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento') or f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
 				<div class="col col-sm-12 col-md-6">

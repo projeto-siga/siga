@@ -57,14 +57,24 @@ public class ExPodeReceberEletronico extends CompositeExpressionSupport {
 
 		return And.of(
 
-				Or.of(new ExEMobilVia(mob), new ExEMobilVolume(mob)),
-
 				new ExEEletronico(mob.doc()),
-
-				Or.of(new ExEstaEmTransitoExterno(mob), new ExEstaResponsavel(mob, titular, lotaTitular)),
+				
+				Or.of(
+						
+						new ExEMobilVia(mob), 
+						
+						new ExEMobilVolume(mob)),
 
 				Not.of(new ExTemDespachosNaoAssinados(mob)),
-
-				new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular));
+				
+				Or.of(
+						
+						And.of(
+						
+								new ExEstaEmTransitoExterno(mob), 
+						
+								new ExEstaResponsavel(mob, titular, lotaTitular)),
+						
+						new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular)));
 	}
 }

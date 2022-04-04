@@ -442,7 +442,7 @@ public class ExMobilVO extends ExVO {
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeArquivarCorrente(mob, titular, lotaTitular)).classe("once siga-btn-arq-corrente").build());
 
 		addAcao(AcaoVO.builder().nome("Concluir").icone("tick").nameSpace("/app/expediente/mov").acao("concluir_gravar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeConcluir(mob, titular, lotaTitular)).classe("once").build());
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeConcluir(mob, titular, lotaTitular)).post(true).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("Indicar para Guarda Permanente").icone("building_go").nameSpace("/app/expediente/mov").acao("indicar_permanente")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeIndicarPermanente(mob, titular, lotaTitular)).classe("once").build());

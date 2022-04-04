@@ -56,7 +56,7 @@ public class DocumentosPost implements IDocumentosPost {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 
-		DpPessoa cadastrante = null;
+		DpPessoa cadastrante = ctx.getCadastrante();
 		ExModelo modelo = null;
 		ExClassificacao classificacao = null;
 		CpOrgao destinatarioOrgaoExterno = null;

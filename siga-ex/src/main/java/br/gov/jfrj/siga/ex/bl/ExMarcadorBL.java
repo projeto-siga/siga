@@ -598,10 +598,11 @@ public class ExMarcadorBL {
 	public void calcularMarcadoresDeTramite() {
 		Pendencias p = mob.calcularTramitesPendentes();
 		for (ExMovimentacao tramite : p.tramitesPendentes) {
-			acrescentarMarcaTransferencia(
-					mob.doc().isEletronico() ? CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
-							: CpMarcadorEnum.EM_TRANSITO.getId(),
-					tramite.getDtIniMov(), null, tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
+			if (tramite.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO)
+				acrescentarMarcaTransferencia(
+						mob.doc().isEletronico() ? CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
+								: CpMarcadorEnum.EM_TRANSITO.getId(),
+						tramite.getDtIniMov(), null, tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
 							: CpMarcadorEnum.A_RECEBER.getId(),

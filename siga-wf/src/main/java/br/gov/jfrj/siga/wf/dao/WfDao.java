@@ -102,7 +102,13 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		CriteriaQuery<WfDefinicaoDeProcedimento> q = cb().createQuery(WfDefinicaoDeProcedimento.class);
 		Root<WfDefinicaoDeProcedimento> c = q.from(WfDefinicaoDeProcedimento.class);
 		q.select(c);
-		q.where(cb().like(c.get("nome"), nome + "%"), cb().equal(c.get("hisAtivo"), 1));
+		
+		if (nome != null)
+			nome = nome.replace(' ', '%');
+		else
+			nome = "";
+		
+		q.where(cb().like(c.get("nome"), "%" + nome + "%"), cb().equal(c.get("hisAtivo"), 1));
 		try {
 			return em().createQuery(q).getResultList();
 		} catch (Exception ex) {

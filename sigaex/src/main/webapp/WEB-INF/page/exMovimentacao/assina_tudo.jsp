@@ -88,7 +88,7 @@
 										<c:set var="botao" value="autenticando" />
 									</c:if>
 									<c:set var="lote" value="false" />
-								</div> <tags:assinatura_botoes assinar="true" />
+								</div> <tags:assinatura_botoes assinar="true" emLote="true"/>
 							</div>
 						</div>
 					</div>

@@ -5899,8 +5899,8 @@ public class ExBL extends CpBL {
 		// for (int numVia = 1; numVia <= doc.getNumUltimaViaNaoCancelada();
 		// numVia++)
 		for (final ExMobil mob : doc.getExMobilSet()) {
-			if (getComp().pode(ExPodeJuntar.class, titular, lotaCadastrante, doc.getExMobilAutuado())
-					& getComp().pode(ExPodeSerJuntado.class, titular, lotaCadastrante, mob.doc(), doc.getExMobilAutuado())) {
+			if (getComp().pode(ExPodeJuntar.class, titular, lotaCadastrante, mob.doc(), doc.getExMobilAutuado())
+					& getComp().pode(ExPodeSerJuntado.class, titular, lotaCadastrante, doc.getExMobilAutuado().doc(), mob)) {
 				juntarDocumento(cadastrante, titular, lotaCadastrante, null,
 						doc.getExMobilAutuado(), mob, dtMov, null, titular, "1");
 				break;

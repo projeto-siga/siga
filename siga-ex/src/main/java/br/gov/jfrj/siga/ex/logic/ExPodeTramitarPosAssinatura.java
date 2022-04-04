@@ -5,6 +5,7 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.If;
 import com.crivano.jlogic.NAnd;
+import com.crivano.jlogic.Not;
 
 import br.gov.jfrj.siga.cp.logic.CpENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -53,6 +54,8 @@ public class ExPodeTramitarPosAssinatura extends CompositeExpressionSupport {
 	protected Expression create() {
 
 		return And.of(
+				
+				Not.of(new ExEstaOrquestradoPeloWF(mob.doc())),
 
 				NAnd.of(new CpENulo(destinatario, "destinatário"),
 						new CpENulo(lotaDestinatario, "lotação destinatária")),

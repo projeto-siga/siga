@@ -657,6 +657,56 @@ public class CpBL {
 		return retorno.toString();
 	}
 	
+	private String textoEmailAltOrgaoUsuario(CpIdentidade identidade, String matricula) {
+		StringBuffer retorno = new StringBuffer();
+
+		retorno.append("<table>");
+		retorno.append("<tbody>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
+		retorno.append(
+				"<img style='padding: 10px 0px; text-align: center;' src='https://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
+		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='background-color: #bbb; padding: 0 20px;'>");
+		retorno.append("<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr style='height: 310px;'>");
+		retorno.append("<td style='height: 310px; padding: 10px 20px;'>");
+		retorno.append("<div>");
+		retorno.append("<p><span style='color: #808080;'>Prezado Servidor(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getNomePessoa() + "</strong>");
+		retorno.append(" do(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>");
+		retorno.append(".</span></h4>");
+		retorno.append(
+				"<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua Nova matr&iacute;cula para acesso ");
+		retorno.append("ao Portal SP Sem Papel, a senha permanece a mesma.</span></p>");
+		retorno.append(
+				"<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; ");
+		retorno.append("produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade ");
+		retorno.append("antes de iniciar o uso e assinar documentos.</span></p>");
+		
+		retorno.append("<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>");
+		retorno.append(matricula);
+		retorno.append("</strong></span></p>");
+		
+		retorno.append("</div>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>");
+		retorno.append(
+				"<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("</tbody>");
+		retorno.append("</table>");
+		return retorno.toString();
+	}
+	
 	private String textoEmailNovoUsuarioExternoSP(CpIdentidade identidade, String matricula, String novaSenha) {		
 		String conteudo = "";
 		
@@ -1193,6 +1243,9 @@ public class CpBL {
 		if (nmPessoa != null && !nmPessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS))
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 
+		Boolean podeAlterarOrgaoPessoa = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(identidadeCadastrante.getPessoaAtual(),
+				identidadeCadastrante.getPessoaAtual().getLotacao(), "SIGA;GI;CAD_PESSOA;ALT");
+		
 		DpPessoa pessoa = new DpPessoa();
 		DpPessoa pessoaAnt = new DpPessoa();
 		List<CpIdentidade> lista = new ArrayList<CpIdentidade>();
@@ -1202,7 +1255,7 @@ public class CpBL {
 			
 			if(pessoaAnt != null) {
 				Integer qtde = CpDao.getInstance().quantidadeDocumentos(pessoaAnt);
-				if (qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) {
+				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) && !podeAlterarOrgaoPessoa) {
 					throw new AplicacaoException(
 							"A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
 				}
@@ -1276,7 +1329,7 @@ public class CpBL {
 		ou = CpDao.getInstance().consultarPorId(ou);
 		
 		if (!"ZZ".equals(identidadeCadastrante.getCpOrgaoUsuario().getSigla())){
-			if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu())) {
+			if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu()) && !podeAlterarOrgaoPessoa) {
 				throw new AplicacaoException("Usuário não pode cadastrar nesse órgão.");
 			}
 		}
@@ -1358,6 +1411,14 @@ public class CpBL {
 					ident.setDpPessoa(pessoa);
 					CpDao.getInstance().gravar(ident);
 				}
+				
+				if (ident != null && !pessoa.getOrgaoUsuario().equivale(pessoaAnt.getOrgaoUsuario())) {
+					this.desativarConfiguracoesPessoa(identidadeCadastrante, pessoaAnt.getPessoaInicial() != null ? pessoaAnt.getPessoaInicial() : pessoaAnt, data);
+					
+					//enviar e-mail informado alteracao de orgao
+					String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+					Correio.enviar(null, destinanarios, "Alteração Usuário", "", textoEmailAltOrgaoUsuario(ident, ident.getNmLoginIdentidade()));
+				}
 			} else {
 				pessoa.setHisIdcIni(identidadeCadastrante);
 				CpDao.getInstance().gravar(pessoa);
@@ -1435,6 +1496,15 @@ public class CpBL {
 		}
 	}
 	
+	public void desativarConfiguracoesPessoa(CpIdentidade identidadeCadastrante, DpPessoa pessoa, Date dataAtual) {
+		List<CpConfiguracao> listConfig = CpDao.getInstance().consultarCpConfiguracoesPorPessoa(pessoa.getId());
+			
+		for (CpConfiguracao cpConfiguracao : listConfig) {
+			cpConfiguracao.setDtFimVigConfiguracao(dataAtual);
+			cpConfiguracao.setHisDtFim(dataAtual);
+			CpDao.getInstance().gravarComHistorico(cpConfiguracao, identidadeCadastrante);	
+		}
+	}
 		
 	public String inativarUsuario(final Long idUsuario) {
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();

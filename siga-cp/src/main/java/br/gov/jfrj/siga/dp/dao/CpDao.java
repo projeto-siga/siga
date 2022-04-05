@@ -2746,6 +2746,13 @@ public class CpDao extends ModeloDao {
 		qry.setParameter("idTpLotacao", idTpLotacao);
 		return qry.getResultList();
 	}
+	
+	public List<CpConfiguracao> consultarCpConfiguracoesPorPessoa(long idPessoa) {
+		final Query qry = em().createNamedQuery(
+				"consultarCpConfiguracoesPorPessoa");
+		qry.setParameter("idPessoa", idPessoa);
+		return qry.getResultList();
+	}
 
 	public Integer quantidadeDocumentos(DpPessoa pes) {
 		try {

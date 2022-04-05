@@ -519,7 +519,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 		}
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+				|| (id != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_PESSOA;ALT"))) {
 			list = dao().listarOrgaosUsuarios();
 
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
@@ -557,7 +558,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		setItemPagina(15);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+				|| (id != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;GI;CAD_PESSOA;ALT"))) {
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
 			list = dao().consultaCpOrgaoUsuario();
 

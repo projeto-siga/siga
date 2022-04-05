@@ -536,6 +536,20 @@ parameters:
     required: true
     type: string
     
+  usuarioSiafem:
+    name: usuarioSiafem
+    in: query
+    description: Informa o usuário SIAFEM.
+    required: true
+    type: string
+
+  senhaSiafem:
+    name: senhaSiafem
+    in: query
+    description: Informa o senha SIAFEM.
+    required: true
+    type: string
+    
 ################################################################################
 #                                           Paths                              #
 ################################################################################
@@ -2475,6 +2489,35 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /documentos/{sigla}/enviar-siafem:
+    post:
+      description: Utilize este método para enviar um SIAFDOC ao SIAFEM
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/usuarioSiafem"
+        - $ref: "#/parameters/senhaSiafem"
+      summary: Enviar ao SIAFEM
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento enviado ao SIAFEM
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"           
             
 ################################################################################
 #                                     Definitions                              #

@@ -23,7 +23,6 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,12 +33,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -61,30 +61,34 @@ public class ExGadgetController extends ExController {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Get("app/expediente/gadget")
-	public void execute(final String idTpMarcadorExcluir, final Integer idTpFormaDoc, boolean apenasQuadro)
+	public void execute(final String idTpMarcadorExcluir, boolean apenasQuadro)
 			throws Exception {
-		if (idTpFormaDoc == null || idTpFormaDoc.equals(0)) {
-			throw new AplicacaoException("Código do tipo de marca (Processos ou Expedientes) não foi informado");
-		}
-		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular(), idTpFormaDoc);
-
-		if (idTpMarcadorExcluir != null) {
-			final String as[] = idTpMarcadorExcluir.split(",");
-			final Set<Integer> excluir = new HashSet<Integer>();
+	 
+List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular() );
+		
+		if (listEstados.size()>0){
+		
+			String idTpMarcadorIgnoradosQuadroQuantitativo = "7,8,9,10,11,12,13,16,18,20,21,22,26,32,50,51,62,63,64";
+			String idTpMarcadorExcluidos = (StringUtils.isNotBlank(idTpMarcadorExcluir) ? idTpMarcadorExcluir+"," : "" )+ idTpMarcadorIgnoradosQuadroQuantitativo;
+		
+			final String as[] = idTpMarcadorExcluidos.split(",");
+			final Set<Long> excluir = new HashSet<Long>();
 
 			for (final String s : as) {
-				excluir.add(Integer.valueOf(s));
+				excluir.add(Long.valueOf(s));
 			}
+		
 			final List listEstadosReduzida = new ArrayList<Object[]>();
+			
 			for (Object o : listEstados) {
-				if (!excluir.contains((Integer) ((Object[]) o)[0])) {
+				if (!excluir.contains(  ((Object[]) o)[0] 	)
+				   ) {
 					listEstadosReduzida.add(o);
 				}
 			}
+
 			listEstados = listEstadosReduzida;
 		}
-
-		
 
 		if (super.getTitular() == null) {
 			throw new AplicacaoException("Titular nulo, verificar se usuário está ativo no RH");
@@ -124,6 +128,6 @@ public class ExGadgetController extends ExController {
 
 		setTitular(pes);
 		setLotaTitular(pes.getLotacao());
-		this.execute(null, id, Boolean.FALSE);
+		this.execute(null,  Boolean.FALSE);
 	}
 }

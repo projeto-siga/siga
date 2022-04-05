@@ -67,15 +67,6 @@
 							</thead>
 						</c:if>
 						<c:set var="descr" value="${listEstado[4].grupo.nome}" />
-						<c:if
-							test="${listEstado[0] != 9 && listEstado[0] != 8  && listEstado[0] != 10 
-							&& listEstado[0] != 11 && listEstado[0] != 12 
-							&& listEstado[0] != 13 && listEstado[0] != 16
-							&& listEstado[0] != 18 && listEstado[0] != 20 
-							&& listEstado[0] != 21 && listEstado[0] != 22 
-							&& listEstado[0] != 26 && listEstado[0] != 32
-							&& listEstado[0] != 62 && listEstado[0] != 63 && listEstado[0] != 64
-							&& listEstado[0] != 7 && listEstado[0] != 50 && listEstado[0] != 51}">
 				
 							<c:set var="titulo1" value="" />
 							<c:set var="titulo2" value="" />
@@ -165,7 +156,7 @@
 										href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
 								</td>
 							</tr>
-						</c:if>
+						 
 					</c:if>
 				</c:forEach>
 			</table>

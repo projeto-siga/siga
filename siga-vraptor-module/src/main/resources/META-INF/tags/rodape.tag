@@ -89,7 +89,7 @@
 </script>
 
 <script>
-	$('a[data-html="true"]').tooltip();
+	$('[data-html="true"]').tooltip();
 </script>
 
 

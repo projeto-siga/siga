@@ -19,7 +19,7 @@ public class ExEstaOrquestradoPeloWF implements Expression {
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("está sendo orquestrado pelo " + doc.getPrincipal(), result);
+		return JLogic.explain("está sendo orquestrado pelo " + (doc.getPrincipal() != null ? doc.getPrincipal() : "workflow"), result);
 	}
 
 }

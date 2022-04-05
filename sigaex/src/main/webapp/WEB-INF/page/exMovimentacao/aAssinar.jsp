@@ -149,7 +149,7 @@
 				
 								
 								juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
-								tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" 
+								tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" tramitarExplicacao="${tramitarExplicacao}"
 								exibirNoProtocoloAtivo="${f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)? false:undefined}" 
 								exibirNoProtocoloFixo="${not f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)}"/>
 		

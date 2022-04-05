@@ -1,6 +1,7 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <%@ attribute name="assinar" required="false"%>
 <%@ attribute name="voltar" required="false"%>
@@ -19,6 +20,7 @@
 <%@ attribute name="juntarFixo" required="false"%>
 <%@ attribute name="tramitarAtivo" required="false"%>
 <%@ attribute name="tramitarFixo" required="false"%>
+<%@ attribute name="tramitarExplicacao" required="false"%>
 <%@ attribute name="exibirNoProtocoloAtivo" required="false"%>
 <%@ attribute name="exibirNoProtocoloFixo" required="false"%>
 
@@ -102,7 +104,7 @@
 					<input class="form-check-input" type="checkbox" name="ad_tramitar_0"
 						id="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>
 						<c:if test="${tramitarFixo}">disabled</c:if> /> <label
-						class="form-check-label" for="ad_tramitar_0">Tramitar</label>
+						class="form-check-label" for="ad_tramitar_0" <siga:tooltip title="Tramitar Automaticamente" explicacao="${tramitarExplicacao}"/> >Tramitar</label>
 				</div>
 				<c:set var="exibirOpcoes" scope="request" value="d-block" />
 			</c:if>

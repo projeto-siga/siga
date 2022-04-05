@@ -79,7 +79,8 @@ public class ExPodePorConfiguracao implements Expression {
 	@Override
 	public String explain(boolean result) {
 		return JLogic.explain(
-				"pode" + (idTpConf != null ? " " + idTpConf.getDescr().toLowerCase() : "") + " por configuração",
+				"pode" + (idTpConf != null ? " " + idTpConf.getDescr().toLowerCase() : "") 
+				+ (exTpMov != null ? " " + exTpMov.getDescr().toLowerCase() : "") + " por configuração",
 				result);
 	}
 

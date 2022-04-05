@@ -538,14 +538,14 @@ parameters:
     
   usuarioSiafem:
     name: usuarioSiafem
-    in: query
+    in: formData
     description: Informa o usuário SIAFEM.
     required: true
     type: string
 
   senhaSiafem:
     name: senhaSiafem
-    in: query
+    in: formData
     description: Informa o senha SIAFEM.
     required: true
     type: string

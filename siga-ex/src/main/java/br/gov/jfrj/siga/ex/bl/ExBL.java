@@ -3912,11 +3912,11 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 	}
 	
-	private List<ExMovimentacao> getMovsCossigRespAssPorDocOrigem(List<ExMovimentacao> movs, DpPessoa subscritor, String codDocOrigem){
+	private List<ExMovimentacao> getMovsCossigRespAssPorDocOrigem(List<ExMovimentacao> movs, DpPessoa subscritor, ExMobil mobRefMov){
 		List<ExMovimentacao> movsPessoa = new ArrayList<ExMovimentacao>();
 		for (ExMovimentacao mov : movs) {
 			if (!mov.isCancelada() && mov.getSubscritor().equivale(subscritor)
-					&& mov.getObsOrgao().equals(codDocOrigem)) {
+					&& mov.getExMobilRef().equals(mobRefMov)) {
 				movsPessoa.add(mov);
 			}
 		}
@@ -4026,7 +4026,7 @@ public class ExBL extends CpBL {
 										.append(dpPessoaResp.getDescricaoIniciaisMaiusculas())
 										.append(" - DOC ORIGEM:").append(docOrigem.getCodigo());
 					vincularPapel(docOrigem.getCadastrante(), docOrigem.getLotaCadastrante(), docPai.getMobilGeral(), dt,
-							dpPessoaResp.getLotacao(), dpPessoaResp, null, null, descrMov.toString(), null, exPapel, docOrigem.getCodigo());
+							dpPessoaResp.getLotacao(), dpPessoaResp, null, null, descrMov.toString(), null, exPapel, docOrigem.getMobilGeral());
 				}
 			}
 		}
@@ -4044,7 +4044,7 @@ public class ExBL extends CpBL {
 	private void removerDnmAcessoTempArvoreDocsCossigRespAss(DpPessoa cadastrante, 
 			ExDocumento docOrigem, List<ExDocumento> listaViasDocPai, List<DpPessoa> listaSubscritor, StringBuffer descrMov) throws Exception {
 		if (!listaSubscritor.isEmpty()) {
-			//obter movs de inclusao de Papel cossig ou resp assinatura doc Pai
+			//obter movs de inclusao de Papel cossig ou resp assinatura doc Pai 
 			List<ExMovimentacao> movsPai = listaViasDocPai.iterator().next().getMovsVinculacaoPapelCossigRespAssinatura();
 			//obter movs do pai que possam movs de inclusao de Papel cossig ou resp
 			List<ExMovimentacao> movsCossigResp = obterMovsPaiComCossigRespAssDocsFilhos(movsPai, Arrays.asList(docOrigem));
@@ -4053,7 +4053,7 @@ public class ExBL extends CpBL {
 			for(ExDocumento docPai : listaViasDocPai) {
 				for (DpPessoa subscritor : listaSubscritor) {
 					descrMov.append(subscritor.getDescricaoIniciaisMaiusculas()).append(" - DOC ORIGEM:").append(codDocOrigem);
-					List<ExMovimentacao> movsPersist = getMovsCossigRespAssPorDocOrigem(movsCossigResp, subscritor, codDocOrigem);
+					List<ExMovimentacao> movsPersist = getMovsCossigRespAssPorDocOrigem(movsCossigResp, subscritor, docOrigem.getMobilGeral());
 					removerPapel(docPai, movsPersist, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, descrMov.toString());
 				}
 			}
@@ -4073,20 +4073,21 @@ public class ExBL extends CpBL {
 			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, ExPapel.class, false);
 			for (ExMovimentacao movCossig : movsCossigResp) {
 				DpPessoa subscritorTemp = movCossig.getSubscritor();
-				String codDocOrigemTemp = movCossig.getObsOrgao();
+				ExMobil mobRefMov = movCossig.getExMobilRef();
+				String codDocOrigemTemp = mobRefMov.getDoc().getCodigo();
 				//Cria Descricoes Movs Remocao e Inclusao
 				String descrMovRemocao = getDescricaoMovPapelMontada("Juntada", docAtual, subscritorTemp, codDocOrigemTemp, "Remoção");
 				String descrMovInsercao = getDescricaoMovPapelMontada("Juntada", docAtual, subscritorTemp, codDocOrigemTemp, "Inclusão");
 				//Movimentos de Cossig/Resp Assinatura Por Doc de Origem
 				List<ExMovimentacao> movsPersist = getMovsCossigRespAssPorDocOrigem(
-															Arrays.asList(movCossig), subscritorTemp, codDocOrigemTemp);
+															Arrays.asList(movCossig), subscritorTemp, mobRefMov);
 				for (ExDocumento docVia : viasDocPai) {
 					//Remove papel do docAtual
 					removerPapel(docAtual, movsPersist, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, descrMovRemocao.toString());
 					//Inclui papel das vias do novo docPai
 					vincularPapel(cadastrante, lotaCadastrante, docVia.getMobilGeral(), dt,
 												subscritorTemp.getLotacao(), subscritorTemp, null, null,
-												descrMovInsercao.toString(), null, exPapel, codDocOrigemTemp);
+												descrMovInsercao.toString(), null, exPapel, mobRefMov);
 				}
 			}
 		}
@@ -4106,20 +4107,21 @@ public class ExBL extends CpBL {
 				ExPapel exPapel = dao().consultar(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, ExPapel.class, false);
 				for (ExMovimentacao movCossig : movsCossigResp) {
 					DpPessoa subscritorTemp = movCossig.getSubscritor();
-					String codDocOrigemTemp = movCossig.getObsOrgao();
+					ExMobil mobRefMov = movCossig.getExMobilRef();
+					String codDocOrigemTemp = mobRefMov.getDoc().getCodigo();
 					//Cria Descricoes Movs Remocao e Inclusao
 					String descrMovRemocao = getDescricaoMovPapelMontada("Desentranhamento", docAtual, subscritorTemp, codDocOrigemTemp, "Remoção");
 					String descrMovInsercao = getDescricaoMovPapelMontada("Desentranhamento", docAtual, subscritorTemp, codDocOrigemTemp, "Inclusão");
 					//Movimentos de Cossig/Resp Assinatura Por Doc de Origem
 					List<ExMovimentacao> movsPersist = getMovsCossigRespAssPorDocOrigem(
-																Arrays.asList(movCossig), subscritorTemp, codDocOrigemTemp);
+																Arrays.asList(movCossig), subscritorTemp, mobRefMov);
 					for (ExDocumento docVia : viasDocPai) {
 						//Remove papel das vias do docPai
 						removerPapel(docVia, movsPersist, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, descrMovRemocao);
 						//Inclui papel das vias do novo docPai
 						vincularPapel(cadastrante, lotaCadastrante, docAtual.getMobilGeral(), dt,
 													subscritorTemp.getLotacao(), subscritorTemp, null, null,
-													descrMovInsercao, null, exPapel, codDocOrigemTemp);
+													descrMovInsercao, null, exPapel, mobRefMov);
 					}
 				}
 			}
@@ -4136,16 +4138,11 @@ public class ExBL extends CpBL {
 		List<ExMovimentacao> listaMovCossigResp = new ArrayList<>();
 		for (ExMovimentacao movPai : movsPai) {
 			// Obter Codigo do Doc persistido no campo ObsOrgao
-			String codigoDocMov = movPai.getObsOrgao();
-			if (codigoDocMov != null && !codigoDocMov.isEmpty()) {
-				final ExMobil docVia = new ExMobil();
-				docVia.setSigla(codigoDocMov);
-
-				if (docVia != null) {					
-					for (ExDocumento exDoc : docsFilhosCossigResp) {
-						if(docVia.doc().getCodigo().equals(exDoc.getCodigo()))
-							listaMovCossigResp.add(movPai);
-					}
+			ExMobil docVia = movPai.getExMobilRef();
+			if (docVia != null) {					
+				for (ExDocumento exDoc : docsFilhosCossigResp) {
+					if(docVia.doc().getCodigo().equals(exDoc.getCodigo()))
+						listaMovCossigResp.add(movPai);
 				}
 			}
 		}
@@ -5584,7 +5581,7 @@ public class ExBL extends CpBL {
 	// Nato: removi: final HttpServletRequest request,
 	public void vincularPapel(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final DpPessoa subscritor,
-			final DpPessoa titular, final String descrMov, String nmFuncaoSubscritor, ExPapel papel, String obsOrgao)
+			final DpPessoa titular, final String descrMov, String nmFuncaoSubscritor, ExPapel papel, ExMobil exMobRef)
 			throws AplicacaoException {
 
 		if (descrMov == null) {
@@ -5605,7 +5602,7 @@ public class ExBL extends CpBL {
 			mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
 			mov.setDescrMov(descrMov);
 			mov.setExPapel(papel);
-			mov.setObsOrgao(obsOrgao);
+			mov.setExMobilRef(exMobRef);
 			gravarMovimentacao(mov);
 			concluirAlteracaoComRecalculoAcesso(mov);
 		} catch (final Exception e) {

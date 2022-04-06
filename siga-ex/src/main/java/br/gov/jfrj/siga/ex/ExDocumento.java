@@ -1738,8 +1738,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				an.setData(m.getData());
 				an.setCopia(true);
 				list.add(an);
-				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list,
-						nivel + 1, true);
+//				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list,
+//						nivel + 1, true);
 			} else if (isDesentranhamentoSP(mob, m)) {				
 				continue;				
 			} else {			

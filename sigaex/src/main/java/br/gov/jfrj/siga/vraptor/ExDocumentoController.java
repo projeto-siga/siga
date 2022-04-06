@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -553,7 +554,7 @@ public class ExDocumentoController extends ExController {
 				
 				if (modeloDefault == null) {
 					for (ExModelo mod : exDocumentoDTO.getModelos()) {
-						if ("Memorando".equals(mod.getNmMod())) {
+						if (Prop.get("documento.novo.modelo.padrao").equalsIgnoreCase(mod.getNmMod())) {
 							modeloDefault = mod;
 							break;
 						}
@@ -1463,43 +1464,6 @@ public class ExDocumentoController extends ExController {
 		exibe(false, sigla, null, null, null, false);
 	}
 
-	private void verificaDocumento(final ExDocumento doc) {
-		if ((doc.getSubscritor() == null)
-				&& !doc.isExternoCapturado()
-				&& !doc.isExterno()
-				&& ((doc.isProcesso() && doc.isEletronico()) || !doc
-						.isProcesso())) {
-			throw new AplicacaoException(
-					"É necessário definir um subscritor para o documento.");
-		}
-
-		if (doc.getDestinatario() == null
-				&& doc.getLotaDestinatario() == null
-				&& (doc.getNmDestinatario() == null || doc.getNmDestinatario()
-						.trim().equals(""))
-				&& doc.getOrgaoExternoDestinatario() == null
-				&& (doc.getNmOrgaoExterno() == null || doc.getNmOrgaoExterno()
-						.trim().equals(""))) {
-			final CpSituacaoDeConfiguracaoEnum idSit = Ex
-					.getInstance()
-					.getConf()
-					.buscaSituacao(doc.getExModelo(), getTitular(),
-							getLotaTitular(),
-							ExTipoDeConfiguracao.DESTINATARIO);
-			if (idSit == CpSituacaoDeConfiguracaoEnum.OBRIGATORIO) {
-				throw new AplicacaoException("Para documentos do modelo "
-						+ doc.getExModelo().getNmMod()
-						+ ", é necessário definir um destinatário");
-			}
-		}
-
-		if (doc.getExClassificacao() == null) {
-			throw new AplicacaoException(
-					"É necessário informar a classificação documental.");
-		}
-
-	}
-
 	private void buscarDocumentoOuNovo(final boolean fVerificarAcesso,
 			final ExDocumentoDTO exDocumentoDTO) {
 		buscarDocumento(fVerificarAcesso, true, exDocumentoDTO);
@@ -1579,7 +1543,7 @@ public class ExDocumentoController extends ExController {
 
 		buscarDocumento(true, exDocumentoDto);
 
-		verificaDocumento(exDocumentoDto.getDoc());
+		Ex.getInstance().getBL().verificaDocumento(getTitular(), getLotaTitular(), exDocumentoDto.getDoc());
 
 		Ex.getInstance().getComp().afirmar("Não é possível Finalizar", ExPodeFinalizar.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob().doc());
 
@@ -1753,7 +1717,7 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
 				}
 
-				verificaDocumento(exDocumentoDTO.getDoc());
+				Ex.getInstance().getBL().verificaDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc());
 			}
 
 			ExMobil mobilAutuado = null;
@@ -2732,7 +2696,21 @@ public class ExDocumentoController extends ExController {
 			return exDocumentoDTO.getPreenchSet();
 		}
 
-		exDocumentoDTO.setPreenchSet(new TreeSet<ExPreenchimento>());
+		exDocumentoDTO.setPreenchSet(new TreeSet<ExPreenchimento>(new Comparator<ExPreenchimento>() {
+			@Override
+			public int compare(ExPreenchimento o1, ExPreenchimento o2) {
+				if (o1.getIdPreenchimento() != 0L && o2.getIdPreenchimento() == 0L)
+					return 1;
+				if (o1.getIdPreenchimento() == 0L && o2.getIdPreenchimento() != 0L)
+					return -1;
+				if (Utils.equivale(getLotaTitular(), o1.getDpLotacao()) && !Utils.equivale(getLotaTitular(), o2.getDpLotacao()))
+					return -1;
+				if (!Utils.equivale(getLotaTitular(), o1.getDpLotacao()) && Utils.equivale(getLotaTitular(), o2.getDpLotacao()))
+					return 1;
+				return o1.descricaoNaLista(getLotaTitular()).compareToIgnoreCase(o2.descricaoNaLista(getLotaTitular()));
+			}
+			
+		}));
 
 		ExPreenchimento preench = new ExPreenchimento();
 		if (exDocumentoDTO.getIdMod() != null
@@ -2747,15 +2725,19 @@ public class ExDocumentoController extends ExController {
 				new ExPreenchimento(0, null, " [Em branco] ", null));
 
 		if (exDocumentoDTO.getIdMod() != null && exDocumentoDTO.getIdMod() != 0) {
-			for (final DpLotacao lotacao : lotacaoSet) {
-				preench.setDpLotacao(lotacao);
-				try {
-					exDocumentoDTO.getPreenchSet().addAll(
-							dao().consultar(preench));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			try {
+				if (Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), 
+						ExTipoDeConfiguracao.EXIBIR_PREENCHIMENTOS_AUTOMATICOS_DE_OUTRAS_LOTACOES)) {
+					exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+				} else {
+					for (final DpLotacao lotacao : lotacaoSet) {
+						preench.setDpLotacao(lotacao);
+						exDocumentoDTO.getPreenchSet().addAll(
+								dao().consultar(preench));
+					}
 				}
+			} catch (Exception e) {
+				throw new RuntimeException("Erro listando preenchimentos automáticos", e);
 			}
 		}
 
@@ -3010,5 +2992,4 @@ public class ExDocumentoController extends ExController {
 	public void aDesfazerCancelamentoDocumento(final Long pessoa, final String sigla) {
 		result.redirectTo(Prop.get("/siga.base.url") + "/siga/permalink/" + sigla);
 	}
-
 }

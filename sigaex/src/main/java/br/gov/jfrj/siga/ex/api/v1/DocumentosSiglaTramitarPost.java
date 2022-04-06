@@ -130,6 +130,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 				dtDevolucao, // Date dtFimMov
 				lot, // DpLotacao lotaResponsavel
 				pes, // final DpPessoa responsavel
+				null, // Ainda falta implementar a notificação para grupo de email
 				null, // DpLotacao lotaDestinoFinal
 				null, // DpPessoa destinoFinal
 				null, // DpPessoa subscritor

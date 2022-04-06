@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.ex.model.enm;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
@@ -230,5 +233,23 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 				|| id == ExTipoDeMovimentacao.TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
 	}
+
+	public static boolean hasRecebimento(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.RECEBIMENTO
+				|| id == ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO
+				|| id == ExTipoDeMovimentacao.CONCLUSAO;
+	}
+	
+   public static Set<ExTipoDeMovimentacao> listaTipoMovimentacoesExcluiveisFisicamente() {
+         Set<ExTipoDeMovimentacao> listaTipoMovimentacoes  = new HashSet<ExTipoDeMovimentacao>();
+
+         listaTipoMovimentacoes.add(ANOTACAO);
+         listaTipoMovimentacoes.add(INCLUSAO_DE_COSIGNATARIO);
+         listaTipoMovimentacoes.add(ANEXACAO);
+         listaTipoMovimentacoes.add(INCLUSAO_EM_EDITAL_DE_ELIMINACAO);
+
+         return listaTipoMovimentacoes;
+
+    }
 
 }

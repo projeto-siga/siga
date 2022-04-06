@@ -103,6 +103,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 	}
 
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final ExDocumento doc) {
+		try {
+			return clazz.getDeclaredConstructor(ExDocumento.class, DpPessoa.class).newInstance(doc,
+					titular);
+		} catch (Exception e) {
+			throw new RuntimeException("Erro executando lógica de negócios", e);
+		}
+	}
+	
 	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
 			final ExDocumento doc) {
 		return exp(clazz, titular, lotaTitular, doc).eval();
@@ -163,6 +172,27 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob, final ExMovimentacao mov) {
 		Expression exp = exp(clazz, titular, lotaTitular, mob, mov);
+		afirmar(msg, exp, titular, lotaTitular);
+	}
+
+	public Expression exp(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular,
+			final ExDocumento doc, final ExMobil mob) {
+		try {
+			return clazz.getDeclaredConstructor(ExDocumento.class, ExMobil.class, DpPessoa.class, DpLotacao.class).newInstance(doc, mob,
+					titular, lotaTitular);
+		} catch (Exception e) {
+			throw new RuntimeException("Erro executando lógica de negócios", e);
+		}
+	}
+
+	public boolean pode(Class<? extends Expression> clazz, final DpPessoa titular, final DpLotacao lotaTitular, 
+			final ExDocumento doc, final ExMobil mob) {
+		return exp(clazz, titular, lotaTitular, doc, mob).eval();
+	}
+
+	public void afirmar(String msg, Class<? extends Expression> clazz, final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExDocumento doc, final ExMobil mob) {
+		Expression exp = exp(clazz, titular, lotaTitular, doc, mob);
 		afirmar(msg, exp, titular, lotaTitular);
 	}
 
@@ -296,3 +326,4 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return resposta.booleanValue();
 	}
 }
+

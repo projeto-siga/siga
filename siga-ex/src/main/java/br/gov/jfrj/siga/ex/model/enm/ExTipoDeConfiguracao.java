@@ -122,8 +122,8 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO,
 					ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
-			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.OBRIGATORIO,
+					CpSituacaoDeConfiguracaoEnum.OPCIONAL },
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
 	DUPLICAR(9, "Duplicar",
@@ -513,7 +513,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 
-	
+	//
 	EXIBIR_QUEM_TEM_ACESSO_DOCUMENTO_LIMITADO(55,"Exibir quem tem acesso a documentos limitados?", "Tem como objetivo não exibir as informações das pessoas e lotações que tem acesso a um documento limitado",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
 					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
@@ -527,7 +527,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
-
+	//
 	RESTRINGIR_DEF_ACOMPANHAMENTO(56, "Restringir Def. Acompanhamento", "Esta configuração define a limitação  de Pessoa, Cargo, Função de Confiança, Lotação e Órgão na Definição de Acompanhmento," +
 			" “Não Pode”, ou seja, após a configuração realizada, o Usuário/ Unidade informado, ficará restrito na definição de acompanhamento.<br>" + 
 			"Os campos com objeto define a Pessoa, Cargo, Função de Confiança, Lotação e Órgão alvo.<br>" + 
@@ -559,7 +559,13 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true);
+			CpSituacaoDeConfiguracaoEnum.PODE, true),
+	//
+	EXIBIR_PREENCHIMENTOS_AUTOMATICOS_DE_OUTRAS_LOTACOES(59, "Exibir preenchimentos automáticos de outras lotações", "Esta configuração define se determinada pessoa ou lotação visualiza preenchimentos automáticos de outras lotações na lista de preenchimentos automáticos, na página de edição de documento.",
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO},
+			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
 	
 	
 	private final int id;

@@ -9,6 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Anexação de Arquivo Auxiliar">
+	<c:set var="extensoesInvalidas" scope="session" value="${f:resource('arquivosAuxiliares.extensoes.excecao')}" />
 
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">
@@ -66,10 +67,14 @@
 				result = false;
 			}
 
- 			if (fileExtension == ".bat" || fileExtension == ".exe" || fileExtension == ".sh" || fileExtension == ".dll" ) {
- 				alert("Extensão " + fileExtension + " inválida para inclusão do arquivo.");
- 				result = false;
- 			}
+			let extensoesInvalidas = "${extensoesInvalidas}".split(",");
+			for (let extensaoInvalida of extensoesInvalidas) {
+	 			if (fileExtension == extensaoInvalida || fileExtension == extensaoInvalida.toUpperCase()) {
+	 				alert("Extensão " + fileExtension + " inválida para inclusão do arquivo.");
+	 				result = false;
+	 				break;
+	 			}
+			}
  			
  			if(result) {
  				result = testTamanho();

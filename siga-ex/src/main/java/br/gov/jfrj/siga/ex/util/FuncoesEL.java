@@ -70,7 +70,9 @@ import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPor;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
@@ -966,6 +968,16 @@ public class FuncoesEL {
 	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
 		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);
+	}
+	
+	public static Boolean podeAssinarMovimentacao(DpPessoa titular,
+			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacao.class, titular, lotaTitular, mov);
+	}
+	
+	public static Boolean podeAssinar(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp().pode(ExPodeAssinar.class, titular, lotaTitular, mob);
 	}
 	
 	public static Boolean podeAssinarMovimentacaoDoMobilComSenha(DpPessoa titular,

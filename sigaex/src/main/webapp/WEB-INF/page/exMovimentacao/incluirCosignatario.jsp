@@ -99,7 +99,7 @@
 						</div>
 						<div class="col-12 col-lg-6">
 							<div class="form-group">
-								<label>Função; Lotação; Localidade</label>
+								<label class="col-sm-2x col-form-label">Função; Lotação; Localidade</label>
 								<input class="form-control" type="text" name="funcaoCosignatario" size="50" value="${funcaoCosignatario}" maxlength="128" />
 							</div>
 						</div>
@@ -107,12 +107,41 @@
 					</c:if>
 					<div class="row">
 						<div class="col-12 col-lg-6">
-							<input type="submit" value="Ok" class="btn btn-primary" />
-							<input type="button" value="<fmt:message key="botao.cancela"/>" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+							<input type="submit" value="Incluir" class="btn btn-primary" />
+							<input type="button" value="Voltar" onclick="javascript:location.href='${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}';" class="btn btn-cancel ml-2" />
 						</div>
 					</div>
 				</form>							
 			</div>
+		</div>
+		<h3 class="gt-table-head">Cossignatários adicionados</h3>
+		<div class="table-responsive">
+			<table border="0" class="table table-sm table-striped">
+				<thead class="thead-dark">
+					<tr>
+						<th align="left" width="10%">Matrícula</th>
+						<th align="left">Nome</th>						
+						<th align="left"><fmt:message key="usuario.lotacao"/></th>
+						<th align="left">Função</th>
+						<th align="left"><c:if test="${siga_cliente != 'GOVSP'}">Localidade</c:if></th>
+						<th align="left" width="5%">Excluir</th>					
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="mov" items="${listaCossignatarios}">
+						<tr>
+							<td>${mov.subscritor }</td>
+							<td>${mov.subscritor.nomePessoa }</td>
+							<td>${mov.nmLotacao }</td>
+							<td>${mov.nmFuncao }</td>
+							<td><c:if test="${siga_cliente != 'GOVSP'}">${mov.nmLocalidade}</c:if></td>
+							<td><input type="button" value="Excluir" 
+								onclick="javascript:location.href='${pageContext.request.contextPath}/app/expediente/mov/excluir?id=${mov.idMov}&redirectURL=/app/expediente/mov/incluir_cosignatario?sigla=${sigla}'" class="btn btn-danger"/>					
+							</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </siga:pagina>

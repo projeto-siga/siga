@@ -2354,6 +2354,24 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return calcularAtendentes(setMov, false); 
 	}
 
+	public Set<PessoaLotacaoParser> getRecebidos() {
+		Pendencias p = calcularTramitesPendentes();
+		
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.recebimentosPendentes);
+		
+		return calcularAtendentes(setMov, false); 
+	}
+
+	public Set<PessoaLotacaoParser> getAReceber() {
+		Pendencias p = calcularTramitesPendentes();
+		
+		Set<ExMovimentacao> setMov = new HashSet<>();
+		setMov.addAll(p.tramitesPendentes);
+		
+		return calcularAtendentes(setMov, false); 
+	}
+
 	public Set<PessoaLotacaoParser> calcularAtendentes(Set<ExMovimentacao> setMov, boolean fIncluirCadastrante) {
 		Set<PessoaLotacaoParser> set = new HashSet<>();
 		for (ExMovimentacao mov : setMov) {
@@ -2400,11 +2418,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return equivalePessoaOuLotacao(pessoa, lotacao, set);
 	}
 	
+	public boolean isRecebido(DpPessoa pessoa, DpLotacao lotacao) {
+		Set<PessoaLotacaoParser> set = getRecebidos();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+	
+	public boolean isAReceber(DpPessoa pessoa, DpLotacao lotacao) {
+		Set<PessoaLotacaoParser> set = getAReceber();
+		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+	}
+	
 	private boolean equivalePessoaOuLotacao(DpPessoa pessoa, DpLotacao lotacao, Set<PessoaLotacaoParser> set) {
 		for (PessoaLotacaoParser pl : set) {
-			if (Utils.equivale(pl.getPessoa(), pessoa))
+			if (pessoa != null && Utils.equivale(pl.getPessoa(), pessoa))
 				return true;
-			if (Utils.equivale(pl.getLotacao(), lotacao))
+			if (lotacao != null && Utils.equivale(pl.getLotacao(), lotacao))
 				return true;
 		}
 		return false;
@@ -2441,7 +2469,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	}
 	
 	public Pendencias calcularTramitesPendentes() {
-		SortedSet<ExMovimentacao> movs = new TreeSet<>();;
+		SortedSet<ExMovimentacao> movs = new TreeSet<>();
 		if (isVolume()) {
 			ExMobil mob = this;
 			
@@ -2468,6 +2496,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		} else {
 			movs.addAll(getExMovimentacaoSet());
 		}
+		
+		// Elimina recebimentos duplicados
+		ExMovimentacao movAnt = null;
+		SortedSet<ExMovimentacao> movsAExcluir = new TreeSet<>();
+		for (ExMovimentacao mov : movs) {
+			if (movAnt != null 
+					&& (ExTipoDeMovimentacao.hasTransferencia(mov.getExTipoMovimentacao())
+							|| ExTipoDeMovimentacao.hasRecebimento(mov.getExTipoMovimentacao()))
+					&& Utils.igual(mov.getExTipoMovimentacao(), movAnt.getExTipoMovimentacao())
+					&& Utils.igual(mov.getExMobilRef(), movAnt.getExMobilRef()))
+				movsAExcluir.add(mov);
+			movAnt = mov;
+		}
+		movs.removeAll(movsAExcluir);
+		
 		Pendencias p = new Pendencias();
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada())
@@ -2478,10 +2521,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					|| t == ExTipoDeMovimentacao.TRAMITE_PARALELO 
 					|| t == ExTipoDeMovimentacao.NOTIFICACAO)) {
 				// Recebimento sem movRef limpa todos os pendentes até agora
-				if (mov.getExMovimentacaoRef() == null || !p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
-					p.recebimentosPendentes.clear();
-				else 
-					p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+				if (t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA || t == ExTipoDeMovimentacao.TRANSFERENCIA) {
+					if (mov.getExMovimentacaoRef() == null || !p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
+						p.recebimentosPendentes.clear();
+					else 
+						p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+				}
 				p.tramitesPendentes.add(mov);
 			}
 			if (t == ExTipoDeMovimentacao.RECEBIMENTO) {
@@ -2529,7 +2574,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			if (mov.getExMovimentacaoRef() == null)
 				continue;
 			if (mov.getExMovimentacaoRef().getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO)
-				p.tramitesDeNotificacoesPendentes.add(mov);
+				p.recebimentosDeNotificacoesPendentes.add(mov);
 		}
 		
 		return p;
@@ -2586,4 +2631,5 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return set;
 	}
+
 }

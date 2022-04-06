@@ -97,14 +97,14 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.2.2.0" />
+<c:set var="siga_version"  scope="request" value="10.2.3.6" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">
-		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css" type="text/css" media="screen, projection">
+		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css?v=1647962650" type="text/css" media="screen, projection">
 		
-		<c:set var="body_color" value="body_color" scope="request" />
+		<c:set var="body_color" value="body_color_govsp" scope="request" />
 		
 		<c:set var="thead_color" value="thead-dark" scope="request" />
 		
@@ -129,7 +129,8 @@ ${meta}
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
-				<c:set var="thead_color" value="thead-light" scope="request" />
+		<c:set var="body_color" value="body_color_default" scope="request" />
+		<c:set var="thead_color" value="thead-light" scope="request" />
 									
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
@@ -153,7 +154,7 @@ ${meta}
 	</c:otherwise>
 </c:choose>
 
-<link rel="stylesheet" href="/siga/css/style_siga.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/style_siga.css?v=1647962650" type="text/css" media="screen, projection">
 <link rel="shortcut icon" href="/siga/imagens/${ico_siga}" />
 
 
@@ -232,7 +233,7 @@ ${meta}
 									<script>
 									    $('#btnTutorial').click(function () {
 									        var src = 'https://vimeopro.com/fcav/spsempapel';
-									        $('#tutorialModal').modal('show');
+									        $('#tutorialModal').appendTo("body").modal('show');
 									        $('#tutorialModal iframe').attr('src', src);
 									    });
 									
@@ -445,6 +446,10 @@ ${meta}
 					</div>
 				</c:if>
 			</div>
+			<script>
+				if('${mensagemConsole}' != '')
+					console.log('${mensagemConsole}');
+			</script>
 			<div class="row ${mensagemCabec==null?'d-none':''}" id="mensagemCabecId" >
 				<div class="col" >
 					<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
@@ -475,6 +480,7 @@ setTimeout(function() {
 function delSession() {
 	sessionStorage.removeItem('timeout' + document.getElementById('cadastrante').title);
 	sessionStorage.removeItem('mesa' + document.getElementById('cadastrante').title);
+	sessionStorage.removeItem('listaNotificacaoSilenciada' + document.getElementById('cadastrante').title);
 
 	for (var obj in sessionStorage) {
       if (sessionStorage.hasOwnProperty(obj) && (obj.includes("pessoa.") || obj.includes("lotacao."))) {

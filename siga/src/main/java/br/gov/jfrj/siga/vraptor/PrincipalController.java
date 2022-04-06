@@ -175,11 +175,6 @@ public class PrincipalController extends SigaController {
 				// Documentos
 				lurls.add(urlBase + "/sigaex/public/app/expediente/selecionar?sigla=" + sigla + incluirMatricula
 						+ ";/sigaex/app/expediente/doc/exibir?sigla=");
-				if(orgao == null) {
-					// Pessoas
-					lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla + incluirMatricula
-							+ ";/siga/app/pessoa/exibir?sigla=");
-				}
 			} else if (modulo != null) {
 				switch (modulo) {
 				case "SR": // Solicitacoes
@@ -202,15 +197,15 @@ public class PrincipalController extends SigaController {
 					break;
 				}
 			}
-		} else {
-			// Pessoas
-			lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla + incluirMatricula
-					+ ";/siga/app/pessoa/exibir?sigla=");
+		} 
 
-			// Lotacoes
-			lurls.add(urlBase + "/siga/public/app/lotacao/selecionar?sigla=" + sigla + incluirMatricula
-					+ ";/siga/app/lotacao/exibir?sigla=");
-		}
+		// Pessoas
+		lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla + incluirMatricula
+				+ ";/siga/app/pessoa/exibir?sigla=");
+
+		// Lotacoes
+		lurls.add(urlBase + "/siga/public/app/lotacao/selecionar?sigla=" + sigla + incluirMatricula
+				+ ";/siga/app/lotacao/exibir?sigla=");
 
 		final SigaHTTP http = new SigaHTTP();
 		for (String urls : lurls) {

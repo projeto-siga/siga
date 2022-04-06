@@ -16,9 +16,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.hibernate.ext;
+package br.gov.jfrj.siga.hibernate.query.ext;
 
 import java.util.Date;
+import java.util.List;
 
 public interface IExMobilDaoFiltro {
 
@@ -156,4 +157,8 @@ public interface IExMobilDaoFiltro {
 	public abstract boolean buscarPorCamposMarca();
 
 	public abstract boolean buscarPorCamposDoc();
+	
+	public abstract List<Long> getListaIdDoc();
+	
+	public abstract void setListaIdDoc(final List<Long> lista);
 }

@@ -136,8 +136,11 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		 * flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu()); else
 		 * flt.setIdOrgaoUsu(paramInteger("orgaoUsu"));
 		 */
+		
+		String paramBuscarTodosOrgaos = param("buscarTodosOrgaos");
+		boolean buscarTodosOrgaos =  paramBuscarTodosOrgaos != null ? Boolean.valueOf(paramBuscarTodosOrgaos) : false;
 		flt.setIdOrgaoUsu(orgaoUsu);
-		if (flt.getIdOrgaoUsu() == null && getLotaTitular() != null ) {
+		if (flt.getIdOrgaoUsu() == null && !buscarTodosOrgaos && getLotaTitular() != null ) {
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		}
 
@@ -162,7 +165,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get
 	@Post
 	@Path({ "/public/app/lotacao/selecionar", "app/lotacao/selecionar", "/lotacao/selecionar.action" })
-	public String selecionar(String sigla) {
+	public String selecionar(String sigla, String matricula) {
+		if (matricula != null && orgaoUsu == null) {
+			DpPessoa pessoa = CpDao.getInstance().getPessoaFromSigla(matricula);
+			if (pessoa != null)
+				orgaoUsu = pessoa.getOrgaoUsuario().getId();
+		}
 		String resultado = super.aSelecionar(sigla);
 		if (getSel() != null) {
 			try {
@@ -239,9 +247,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				paramoffset = 0;
 			}
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
-			dpLotacao.setNome(Texto.removeAcento(nome));
+			dpLotacao.setNome(nome);
 			dpLotacao.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15));  
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpLotacao));
 

@@ -424,7 +424,7 @@
 			<c:if test="${not empty tamanho and tamanho > 0}">
 				<h2 class="mt-3"><fmt:message key="documento.encontrados"/></h2>
 				<c:choose>
-					<c:when test="${siga_cliente == 'GOVSP'}">
+					<c:when test="${f:resource('/sigaex.metodo.apresentacao.resultado.pesquisa.documento') == 'GOVSP'}">
 						<jsp:include page="./listaSP.jsp"/>
 					</c:when>
 					<c:otherwise>

@@ -46,6 +46,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -105,7 +107,7 @@ public class ExMobilController extends
 	public ExMobilController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
-		setItemPagina(50);
+		setItemPagina(10);
 	}
 
 	@Transacional
@@ -636,13 +638,14 @@ public class ExMobilController extends
 			if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), 
 					getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA ) && dt == null) 
 				validarLimiteDeDatas(dtDocString, dtDocFinalString);
-//					long tempoIni = System.currentTimeMillis();
-//					System.out.println("Consulta dos por filtro: "
-//							+ (System.currentTimeMillis() - tempoIni));
+ 			
+			boolean isMetodoApresentacaoResultadoPesquisaDocumentoGOVSP = "GOVSP".equalsIgnoreCase(Prop.get("/sigaex.metodo.apresentacao.resultado.pesquisa.documento")) ;
+			
 			setItens(dao().consultarPorFiltroOtimizado(flt,
-					builder.getOffset(), getItemPagina() + (Prop.isGovSP() ? 1 : 0), getTitular(),
+					builder.getOffset(), getItemPagina() + (isMetodoApresentacaoResultadoPesquisaDocumentoGOVSP ? 1 : 0), getTitular(),
 					getLotaTitular()));
-			if(Prop.isGovSP()) {
+			
+			if(isMetodoApresentacaoResultadoPesquisaDocumentoGOVSP) {
 				setTamanho(getItens().size());
 			} else {
 				setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,

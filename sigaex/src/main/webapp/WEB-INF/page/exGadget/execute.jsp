@@ -160,13 +160,16 @@
 										</c:otherwise>
 									</c:choose>
 								<td align="right" class="count">
-									<c:when test="${listEstado[3]>0}">
-										<siga:monolink titulo="${titulo3}" texto="${listEstado[3]}"
-											href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
-	
-									</c:when> <c:otherwise>
-											 ${listEstado[3]} 
+									<c:choose>
+										<c:when test="${listEstado[3]>0}">
+											<siga:monolink titulo="${titulo3}" texto="${listEstado[3]}"
+												href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
+		
+										</c:when>
+										<c:otherwise>
+												 ${listEstado[3]} 
 										</c:otherwise>
+									</c:choose>
 							</td>
 							</tr>
 						 

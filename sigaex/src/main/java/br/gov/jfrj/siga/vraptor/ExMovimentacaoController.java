@@ -56,6 +56,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
@@ -743,10 +744,13 @@ public class ExMovimentacaoController extends ExController {
 		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
 		
 		// Habilita ou desabilita o trâmite 
-		if (!new ExPodeTramitarPosAssinatura(doc.getMobilGeral(), doc.getDestinatario(), doc.getLotaDestinatario(), getTitular(), getLotaTitular()).eval()){
-						afTramite.ativo = false;
+		ExPodeTramitarPosAssinatura podeTramitarPosAssinatura = new ExPodeTramitarPosAssinatura(doc.getMobilGeral(), getTitular(), getLotaTitular(), doc.getDestinatario(), doc.getLotaDestinatario());
+		boolean podeTramitar = podeTramitarPosAssinatura.eval();
+		if (!podeTramitar){
+			afTramite.ativo = false;
 			afTramite.fixo = true;
 		}
+		afTramite.explicacao = AcaoVO.Helper.produzirExplicacao(podeTramitarPosAssinatura, podeTramitar);
 		if(Prop.isGovSP()
 				&& (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))
 				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA).isEmpty()
@@ -764,6 +768,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
 		result.include("tramitarAtivo", Prop.isGovSP() ? "" : afTramite.ativo);
 		result.include("tramitarFixo", afTramite.fixo);
+		result.include("tramitarExplicacao", afTramite.explicacao);
 	}
 	
 	private boolean permiteAutenticar(ExDocumento doc) {
@@ -773,6 +778,7 @@ public class ExMovimentacaoController extends ExController {
 	public static class AtivoEFixo {
 		public boolean ativo;
 		public boolean fixo;
+		public String explicacao;
 	}
 
 	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, ITipoDeConfiguracao tipoConf) {

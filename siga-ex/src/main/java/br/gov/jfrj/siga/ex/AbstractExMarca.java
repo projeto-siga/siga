@@ -58,7 +58,6 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
 		"               AND marca.cpTipoMarca.idTpMarca = 1 "+
-		"               AND (:idTipoForma = 0L OR tpForma.idTipoFormaDoc = :idTipoForma)"+
 		"        GROUP  BY mard.idMarcador, "+
 		"                  mard.descrMarcador, "+
 		"                  mard.idFinalidade, "+

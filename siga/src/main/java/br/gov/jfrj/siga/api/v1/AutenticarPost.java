@@ -2,12 +2,14 @@ package br.gov.jfrj.siga.api.v1;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -78,7 +80,7 @@ public class AutenticarPost implements IAutenticarPost {
 			resp.token = token;
 
 			Cookie cookie = buildCookie(token);
-			SwaggerServlet.getHttpServletResponse().addCookie(cookie);
+			addCookie(SwaggerServlet.getHttpServletResponse(), cookie);
 		} catch (Exception ex) {
 			throw new PresentableUnloggedException("Erro no login: " + ex.getMessage(), ex);
 		}
@@ -87,6 +89,13 @@ public class AutenticarPost implements IAutenticarPost {
 	@Override
 	public String getContext() {
 		return "autenticar usuário";
+	}
+
+	public static void addCookie(HttpServletResponse response, Cookie cookie) {
+		response.addHeader("Set-Cookie",
+				cookie.getName() + "=" + cookie.getValue() + ";Path=" + cookie.getPath() + ";Max-Age="
+						+ cookie.getMaxAge() + ";Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
+						+ "; HttpOnly; SameSite=none");
 	}
 
 	public static Cookie buildCookie(String tokenNew) {

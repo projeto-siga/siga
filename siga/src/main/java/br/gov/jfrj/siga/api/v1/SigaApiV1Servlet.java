@@ -186,7 +186,7 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 						String tokenNew = AuthJwtFormFilter.renovarToken(token);
 						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
 						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-						context.getResponse().addCookie(cookie);
+						AutenticarPost.addCookie(context.getResponse(), cookie);
 					}
 					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 				} catch (Exception e) {

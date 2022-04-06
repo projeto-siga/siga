@@ -6,6 +6,7 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.If;
 import com.crivano.jlogic.NAnd;
 import com.crivano.jlogic.Not;
+import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.cp.logic.CpENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -54,7 +55,7 @@ public class ExPodeTramitarPosAssinatura extends CompositeExpressionSupport {
 	protected Expression create() {
 
 		return And.of(
-				
+
 				Not.of(new ExEstaOrquestradoPeloWF(mob.doc())),
 
 				NAnd.of(new CpENulo(destinatario, "destinatário"),
@@ -71,6 +72,16 @@ public class ExPodeTramitarPosAssinatura extends CompositeExpressionSupport {
 
 						new ExPodeMovimentar(mob, titular, lotaTitular),
 
-						new ExECadastrante(mob.doc(), titular, lotaTitular)));
+						Or.of(
+
+								new ExECadastrante(mob.doc(), titular, lotaTitular),
+
+								new ExESubscritor(mob.doc(), titular, lotaTitular))),
+
+				Or.of(
+
+						Not.of(new ExTemMobilPai(mob.doc())),
+
+						new ExEstaResponsavel(mob.doc().getExMobilPai(), titular, lotaTitular)));
 	}
 }

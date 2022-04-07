@@ -657,7 +657,7 @@ public class CpBL {
 		return retorno.toString();
 	}
 	
-	private String textoEmailAltOrgaoUsuario(CpIdentidade identidade, String matricula) {
+	private String textoEmailAltOrgaoUsuarioSP(CpIdentidade identidade, String matricula) {
 		StringBuffer retorno = new StringBuffer();
 
 		retorno.append("<table>");
@@ -1244,7 +1244,8 @@ public class CpBL {
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 
 		Boolean podeAlterarOrgaoPessoa = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(identidadeCadastrante.getPessoaAtual(),
-				identidadeCadastrante.getPessoaAtual().getLotacao(), "SIGA;GI;CAD_PESSOA;ALT");
+				identidadeCadastrante.getPessoaAtual().getLotacao(), 
+				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa;ALT:Alterar Órgão Cadastro Pessoa");
 		
 		DpPessoa pessoa = new DpPessoa();
 		DpPessoa pessoaAnt = new DpPessoa();
@@ -1416,8 +1417,10 @@ public class CpBL {
 					this.desativarConfiguracoesPessoa(identidadeCadastrante, pessoaAnt.getPessoaInicial() != null ? pessoaAnt.getPessoaInicial() : pessoaAnt, data);
 					
 					//enviar e-mail informado alteracao de orgao
-					String[] destinanarios = { pessoa.getEmailPessoaAtual() };
-					Correio.enviar(null, destinanarios, "Alteração Usuário", "", textoEmailAltOrgaoUsuario(ident, ident.getNmLoginIdentidade()));
+					if (SigaMessages.isSigaSP()) {
+						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+						Correio.enviar(null, destinanarios, "Alteração Usuário", "", textoEmailAltOrgaoUsuarioSP(ident, ident.getNmLoginIdentidade()));
+					}
 				}
 			} else {
 				pessoa.setHisIdcIni(identidadeCadastrante);

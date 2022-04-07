@@ -2751,6 +2751,7 @@ public class CpDao extends ModeloDao {
 		final Query qry = em().createNamedQuery(
 				"consultarCpConfiguracoesPorPessoa");
 		qry.setParameter("idPessoa", idPessoa);
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return qry.getResultList();
 	}
 

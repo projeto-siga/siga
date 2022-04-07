@@ -70,6 +70,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -78,6 +79,7 @@ import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -2976,4 +2978,46 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(query).getResultList();
 	}
 	
+	public Long qtdeMarcasMarcadorPessoa(DpPessoa pessoa, CpMarcadorEnum marcador) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<CpMarca> c = cq.from(CpMarca.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa);
+		Predicate predicateEqualMarca  = cb().equal(c.get("cpMarcador"), marcador.getId());
+		predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+	
+	public Long qtdeMarcasMarcadorLotacao(DpLotacao lotacao, CpMarcadorEnum marcador) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<CpMarca> c = cq.from(CpMarca.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao);
+		Predicate predicateEqualMarca  = cb().equal(c.get("cpMarcador"), marcador.getId());
+		predicateAnd = cb().and(predicateEqualLotacao, predicateEqualMarca);
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+	
+	public Long qtdePessoaLotacao(DpLotacao lotacao, Boolean somenteAtivas) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<DpPessoa> c = cq.from(DpPessoa.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualPessoa  = cb().equal(c.get("lotacao"), lotacao);
+		if(somenteAtivas) {
+			Predicate predicateEqualMarca  = cb().isNull(c.get("dataFimPessoa"));
+			predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		} else {
+			predicateAnd = predicateEqualPessoa;
+		}
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
 }

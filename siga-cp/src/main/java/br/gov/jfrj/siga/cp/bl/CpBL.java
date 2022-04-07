@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
@@ -1262,7 +1263,17 @@ public class CpBL {
 				}
 				pessoa.setIdInicial(pessoaAnt.getIdInicial());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
-				
+			
+				if(podeAlterarOrgaoPessoa) {
+					Long qtdeCaixaEntradaPessoa = CpDao.getInstance().qtdeMarcasMarcadorPessoa(pessoaAnt.getPessoaInicial(), CpMarcadorEnum.CAIXA_DE_ENTRADA);
+					Long qtdeCaixaEntradaLotacao = CpDao.getInstance().qtdeMarcasMarcadorLotacao(pessoaAnt.getLotacao().getLotacaoInicial(), CpMarcadorEnum.CAIXA_DE_ENTRADA);
+					Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);
+					
+					if(qtdeCaixaEntradaPessoa > 0 || (qtdeCaixaEntradaLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
+						throw new AplicacaoException(
+								"O Órgão da Pessoa não pode ser alterado, pois existem documentos pendentes na Caixa de Entrada do Usuário/" + SigaMessages.getMessage("usuario.lotacao"));
+					}
+				}
 			}
 		}
 		

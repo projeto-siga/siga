@@ -3,10 +3,12 @@ package br.gov.jfrj.siga.context;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import com.crivano.swaggerservlet.SwaggerApiContextSupport;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
@@ -131,7 +133,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 					String tokenNew = AuthJwtFormFilter.renovarToken(token);
 					Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
 					Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-					getCtx().getResponse().addCookie(cookie);
+					AuthJwtFormFilter.addCookie(getCtx().getResponse(), cookie);
 				}
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			} catch (Exception e) {
@@ -143,7 +145,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		if (ContextoPersistencia.getUserPrincipal() != null)
 			assertAcesso("");
 	}
-
+	
 	@Override
 	public void onCatch(Exception e) throws Exception {
 		if (em.getTransaction().isActive())

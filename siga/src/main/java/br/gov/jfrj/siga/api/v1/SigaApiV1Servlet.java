@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
 import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
+import br.gov.jfrj.siga.context.ApiContextSupport;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -181,12 +182,12 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 					String token = AuthJwtFormFilter.extrairAuthorization(context.getRequest());
 					Map<String, Object> decodedToken = AuthJwtFormFilter.validarToken(token);
 					final long now = System.currentTimeMillis() / 1000L;
-					if ((Integer) decodedToken.get("exp") < now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S) {
+					if (((Integer) decodedToken.get("exp")) < (now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S)) {
 						// Seria bom incluir o attributo HttpOnly
 						String tokenNew = AuthJwtFormFilter.renovarToken(token);
 						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
 						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-						AutenticarPost.addCookie(context.getResponse(), cookie);
+						AuthJwtFormFilter.addCookie(context.getResponse(), cookie);
 					}
 					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 				} catch (Exception e) {

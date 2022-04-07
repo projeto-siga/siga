@@ -29,6 +29,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
 import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
+import br.gov.jfrj.siga.context.ApiContextSupport;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -292,7 +293,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 						@SuppressWarnings("unused")
 						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
 						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-						context.getResponse().addCookie(cookie);
+						AuthJwtFormFilter.addCookie(context.getResponse(), cookie);
 					}
 					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 				} catch (JWTExpiredException e) {

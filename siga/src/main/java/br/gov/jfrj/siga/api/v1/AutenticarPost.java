@@ -2,14 +2,12 @@ package br.gov.jfrj.siga.api.v1;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -19,6 +17,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.IAutenticarPost;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.context.AcessoPublico;
+import br.gov.jfrj.siga.context.ApiContextSupport;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -70,7 +69,7 @@ public class AutenticarPost implements IAutenticarPost {
 			String modulo = SigaJwtBL.extrairModulo(request);
 			SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
 
-			String token = jwtBL.criarToken(username, null, null, null);
+			String token = jwtBL.criarToken(username, null, null, AuthJwtFormFilter.TIME_TO_EXPIRE_IN_S);
 
 			Map<String, Object> decodedToken = jwtBL.validarToken(token);
 			Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
@@ -79,8 +78,8 @@ public class AutenticarPost implements IAutenticarPost {
 
 			resp.token = token;
 
-			Cookie cookie = buildCookie(token);
-			addCookie(SwaggerServlet.getHttpServletResponse(), cookie);
+			Cookie cookie = AuthJwtFormFilter.buildCookie(token);
+			AuthJwtFormFilter.addCookie(SwaggerServlet.getHttpServletResponse(), cookie);
 		} catch (Exception ex) {
 			throw new PresentableUnloggedException("Erro no login: " + ex.getMessage(), ex);
 		}
@@ -91,24 +90,17 @@ public class AutenticarPost implements IAutenticarPost {
 		return "autenticar usuário";
 	}
 
-	public static void addCookie(HttpServletResponse response, Cookie cookie) {
-		response.addHeader("Set-Cookie",
-				cookie.getName() + "=" + cookie.getValue() + ";Path=" + cookie.getPath() + ";Max-Age="
-						+ cookie.getMaxAge() + ";Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
-						+ "; HttpOnly; SameSite=none");
-	}
-
-	public static Cookie buildCookie(String tokenNew) {
-		Cookie cookie = new Cookie(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_NAME, tokenNew);
-		cookie.setPath("/");
-		if (AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN != null)
-			cookie.setDomain(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN);
-
-		cookie.setMaxAge(AuthJwtFormFilter.TIME_TO_EXPIRE_IN_S);
-
-		// cookie.setSecure(true);
-		return cookie;
-	}
+//	public static Cookie buildCookie(String tokenNew) {
+//		Cookie cookie = new Cookie(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_NAME, tokenNew);
+//		cookie.setPath("/");
+//		if (AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN != null)
+//			cookie.setDomain(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_DOMAIN);
+//
+//		cookie.setMaxAge(AuthJwtFormFilter.TIME_TO_EXPIRE_IN_S);
+//
+//		// cookie.setSecure(true);
+//		return cookie;
+//	}
 
 	public static Cookie buildEraseCookie() {
 		Cookie cookie = new Cookie(AuthJwtFormFilter.SIGA_JWT_AUTH_COOKIE_NAME, "");

@@ -3977,13 +3977,14 @@ public class ExBL extends CpBL {
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
 			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
 			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(mov.getDtIniMov());
+			dao().gravar(mov.getExMobil());
 		} else {
 			ExMovimentacao movUlt = mov.getExMobil()
 					.getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, 
 							new ITipoDeMovimentacao[] {}, mov.getExMobil(), false, null, false);
 			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(movUlt);
 			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(movUlt.getDtIniMov());
-			
+			dao().gravar(mov.getExMobil());
 		}
 
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {

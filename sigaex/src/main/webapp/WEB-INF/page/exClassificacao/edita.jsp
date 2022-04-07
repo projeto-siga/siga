@@ -15,8 +15,6 @@
 	var elementosComMascara = ['#codificacao'];		
 </script>
 
-
-
 	<script type="text/javascript">
 
 	//funções de dados

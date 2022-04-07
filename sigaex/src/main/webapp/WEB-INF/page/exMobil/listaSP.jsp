@@ -141,8 +141,8 @@ td.tramitacoes.fa-fw>a.disabled {
 				<thead class="${thead_color}">
 					<tr>
 						<th rowspan="2" align="right">Número</th>
-						<th colspan="3" align="center">Origem</th>
-						<th colspan="4" align="center">Destino</th>
+						<th colspan="3" align="center"><fmt:message key="documento.subscritor.resultado.pesquisa"/></th>
+						<th colspan="4" align="center"><fmt:message key="documento.destinatario.resultado.pesquisa"/></th>
 						<th rowspan="2"><fmt:message key="documento.modelo2"/></th>
 						<th rowspan="2"><fmt:message key="documento.descricao"/></th>
 						<c:if test="${visualizacao == 1}">
@@ -157,10 +157,10 @@ td.tramitacoes.fa-fw>a.disabled {
 					</tr>
 					<tr>
 						<th rowspan="1" align="center"><fmt:message key="usuario.lotacao"/></th>
-						<th colspan="1" align="center"><fmt:message key="usuario.pessoa"/></th>
+						<th colspan="1" align="center"><fmt:message key="usuario.pessoa2"/></th>
 						<th rowspan="1" align="center">Data</th>
 						<th rowspan="1" align="center"><fmt:message key="usuario.lotacao"/></th>
-						<th colspan="1" align="center"><fmt:message key="usuario.pessoa"/></th>
+						<th colspan="1" align="center"><fmt:message key="usuario.pessoa2"/></th>
 						<th rowspan="1" align="center">Data</th>
 						<th rowspan="1" align="center">Situação</th>
 					</tr>

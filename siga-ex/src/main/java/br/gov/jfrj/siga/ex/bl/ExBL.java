@@ -4002,12 +4002,12 @@ public class ExBL extends CpBL {
 				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
 	}
 	
-	private boolean podeAddMovVinculPapelCossigRespAss(ExDocumento doc, DpPessoa dpPessoaResp) {
+	private boolean podeAddMovVinculPapelCossigRespAss(ExDocumento docOrigem, ExDocumento docPai, DpPessoa dpPessoaResp) {
 		//Valida se for usuario externo
 		boolean podeAddMov = dpPessoaResp.isUsuarioExterno() ? Boolean.FALSE : Boolean.TRUE;
 		if (podeAddMov) {
-			//Valida se pessoa ja possui vinculo de Papel Revisor Subscritor
-			podeAddMov = doc.possuiVinculPapelRevisorCossigRespAss(dpPessoaResp) ? Boolean.FALSE : Boolean.TRUE;
+			//Valida se pessoa ja possui vinculo de Papel Cossig Resp Ass
+			podeAddMov = docPai.possuiVinculPapelRevisorCossigRespAss(dpPessoaResp, docOrigem.getMobilGeral()) ? Boolean.FALSE : Boolean.TRUE;
 		}
 		return podeAddMov;
 	}
@@ -4021,7 +4021,7 @@ public class ExBL extends CpBL {
 
 		for(ExDocumento docPai : listaViasDocPai) {
 			for (DpPessoa dpPessoaResp : listaCossigDoc) {
-				if (podeAddMovVinculPapelCossigRespAss(docPai, dpPessoaResp)){
+				if (podeAddMovVinculPapelCossigRespAss(docOrigem, docPai, dpPessoaResp)){
 					StringBuffer descrMov = new StringBuffer("Inclusão de Cossignatário ou Responsável pela Assinatura:") 
 										.append(dpPessoaResp.getDescricaoIniciaisMaiusculas())
 										.append(" - DOC ORIGEM:").append(docOrigem.getCodigo());

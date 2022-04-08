@@ -2810,13 +2810,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return lista.size() == 0 ? null : lista;
 	}
 	
-	public boolean possuiVinculPapelRevisorCossigRespAss(DpPessoa dpPessoa) {
+	public boolean possuiVinculPapelRevisorCossigRespAss(DpPessoa dpPessoa, ExMobil mobRefMov) {
 		List<ExMovimentacao> movs = this.getMobilGeral()
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		for (ExMovimentacao mov : movs) {
 			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA)) { 
 				if (dpPessoa != null) {
-					if (mov.getSubscritor().equivale(dpPessoa))
+					if (mov.getSubscritor().equivale(dpPessoa) && mov.getExMobilRef().equals(mobRefMov))
 						return Boolean.TRUE;
 				} else {
 					return Boolean.TRUE;

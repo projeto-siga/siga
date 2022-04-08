@@ -24,8 +24,6 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1865,8 +1863,7 @@ public class CpDao extends ModeloDao {
 			return ContextoPersistencia.dt();
 
 		String sql = "SELECT sysdate from dual";
-		String dialect = System.getProperty("siga.hibernate.dialect");
-		if (dialect != null && dialect.contains("MySQL"))
+		if (isMySQL())
 			sql = "SELECT CURRENT_TIMESTAMP";
 		Query query = em().createNativeQuery(sql);
 		query.setFlushMode(FlushModeType.COMMIT);

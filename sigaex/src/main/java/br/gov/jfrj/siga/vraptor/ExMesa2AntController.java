@@ -40,6 +40,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -50,30 +51,27 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.Mesa2;
+import br.gov.jfrj.siga.ex.bl.Mesa2Ant;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
-public class ExMesa2Controller extends ExController {
-	private static final String ACESSO_MESA2BETA = "MESA2:Mesa Versão 2;BETA:Utilizar versão beta";
+public class ExMesa2AntController extends ExController {
 	/**
 	 * @deprecated CDI eyes only
 	 */
-	public ExMesa2Controller() {
+	public ExMesa2AntController() {
 		super();
 	}
 
 	@Inject
-	public ExMesa2Controller(HttpServletRequest request, HttpServletResponse response, ServletContext context,
+	public ExMesa2AntController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
-	@Get("app/mesa2")
+	@Get("app/mesa2ant")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) throws Exception {
-		super.assertAcesso(ACESSO_MESA2BETA);
-		
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {
 			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
@@ -107,30 +105,30 @@ public class ExMesa2Controller extends ExController {
 		}
 	}
 
-	@Get("app/mesa2.json")
-	public void json(final boolean contar, final Integer qtd, final Integer offset, final Long idVisualizacao, final boolean exibeLotacao, boolean trazerAnotacoes, final boolean trazerArquivados, 
-			final boolean trazerComposto, final boolean trazerCancelados, final boolean ordemCrescenteData, 
-			final boolean usuarioPosse, final String parms, final String filtro) throws Exception {
+	@Post("app/mesa2ant.json")
+	public void json(Integer grupo, Integer start, Integer offset, Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerArquivados, 
+			boolean trazerComposto, boolean trazerCancelados, boolean ordemCrescenteData, 
+			boolean usuarioPosse, String parms) throws Exception {
 		
-		List<Mesa2.GrupoItem> g = new ArrayList<Mesa2.GrupoItem>();
-		Map<String, Mesa2.SelGrupo> selGrupos = null;
-		
+		List<br.gov.jfrj.siga.ex.bl.Mesa2Ant.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2Ant.GrupoItem>();
+		Map<String, Mesa2Ant.SelGrupo> selGrupos = null;
+		List<Mesa2Ant.GrupoItem> gruposMesa = new ArrayList<Mesa2Ant.GrupoItem>();
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		List<Integer> marcasAIgnorar = new ArrayList<Integer>();
 
-		if (!trazerArquivados) {
-			marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
-			marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
-			marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
+		if (SigaMessages.isSigaSP()) { 
+			if (!trazerArquivados) {
+				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
+				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
+				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
+			}
+			if (!trazerCancelados) 
+				marcasAIgnorar.add((int) CpMarcadorEnum.CANCELADO.getId());
 		}
-		
-		if (!trazerCancelados) 
-			marcasAIgnorar.add((int) CpMarcadorEnum.CANCELADO.getId());
-		
 		try {
 			if (parms != null) {
 				ObjectMapper mapper = new ObjectMapper();
-				selGrupos = mapper.readValue(parms, new TypeReference<Map<String, Mesa2.SelGrupo>>() {});
+				selGrupos = mapper.readValue(parms, new TypeReference<Map<String, Mesa2Ant.SelGrupo>>() {});
 			}
 			if (exibeLotacao 
 					&& (Ex.getInstance().getComp().ehPublicoExterno(
@@ -142,17 +140,24 @@ public class ExMesa2Controller extends ExController {
 					.setStatusCode(200);				
 				return;
 			}
+			DpLotacao lotaTitular = null;
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) 
 					&& Cp.getInstance().getConf().podePorConfiguracao
 						(getCadastrante(), 
 						 getCadastrante().getLotacao(), 
 						 ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
-				g = Mesa2.getMesa(contar, qtd, offset, vis.getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
-						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
+				lotaTitular = vis.getTitular().getLotacao();
+				gruposMesa = Mesa2Ant.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
+						exibeLotacao, marcasAIgnorar);
+				g = Mesa2Ant.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar);
 			} else {
-				g = Mesa2.getMesa(contar, qtd, offset, getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
-						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
+				lotaTitular = getTitular().getLotacao();
+				gruposMesa = Mesa2Ant.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
+						exibeLotacao, marcasAIgnorar);
+				g = Mesa2Ant.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
+						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar);
 			}
 	
 			String s = ExAssinadorExternoController.gson.toJson(g);

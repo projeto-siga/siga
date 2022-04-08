@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa2 {
+	private static final int MESA_QTD_MAX_INICIAL = 20;
 	private static List<GrupoItem> gruposBase;
 	
 	public static class SelGrupo implements ISwaggerModel {
@@ -128,9 +128,8 @@ public class Mesa2 {
 			try {
 				Date datahora = null;
 				ExMovimentacao ultimaMov = mobil.getUltimaMovimentacaoNaoCanceladaENaoCanceladora();
-				if (ultimaMov != null)
-					datahora = ultimaMov.getDtIniMov();
-				else
+				datahora = mobil.getDnmDataUltimaMovimentacaoNaoCancelada();
+				if (datahora == null)
 					datahora = mobil.getDoc().getDtAltDoc();
 				r.datahora = datahora;
 				r.datahoraDDMMYYYHHMM = df.format(datahora);
@@ -379,31 +378,15 @@ public class Mesa2 {
 
 		List<Mesa2.GrupoItem> gruposMesa = getContadores(contar, titular, titular.getLotacao(), selGrupos, exibeLotacao, marcasAIgnorar, filtro);
 
-		List<CpMarcadorGrupoEnum> lstGrupos = gruposMesa.parallelStream()
-					.filter(g -> !g.grupoCollapsed && !g.grupoHide)
-					.map(g -> CpMarcadorGrupoEnum.getById(Integer.valueOf(g.grupoOrdem)))
-					.collect(Collectors.toList());
-		if (lstGrupos.isEmpty()) 
-			return gruposMesa;
-
-		if (selGrupos != null && selGrupos.size() > 1) {
-			int i = 0;
-			long qt = 0;
-			for (i = 0; qt < 50 && i < lstGrupos.size(); i++) {
-				String grpId = lstGrupos.get(i).getId().toString();
-				List<GrupoItem> grpItem = gruposMesa.stream()
-						.filter(g -> g.grupoOrdem.equals(grpId))
-						.collect(Collectors.toList());
-				qt = qt + grpItem.get(0).grupoCounterAtivo;
-			}
-			lstGrupos = lstGrupos.subList(0, i);
-		}
-
-		for (CpMarcadorGrupoEnum grpEnum : lstGrupos) {
-			List<CpMarcadorGrupoEnum> lGrp = Arrays.asList(new CpMarcadorGrupoEnum[] {grpEnum});
+		int qtTotal = 0;
+		for (Mesa2.GrupoItem g : gruposMesa) {
+			if (g.grupoCollapsed || g.grupoHide)
+				continue;
+			List<CpMarcadorGrupoEnum> lGrp = Arrays.asList(new CpMarcadorGrupoEnum[] 
+					{CpMarcadorGrupoEnum.getById(Integer.valueOf(g.grupoOrdem))});
 			List<Object[]> l;
 			int parmOffset = (offset != null? offset : 0);
-			int q = (qtd != null && qtd < 50? qtd : 50);
+			int q = (qtd != null && qtd < MESA_QTD_MAX_INICIAL? qtd : MESA_QTD_MAX_INICIAL);
 			if (exibeLotacao) {
 				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, null,
 						titular.getLotacao(), ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
@@ -412,23 +395,26 @@ public class Mesa2 {
 						null, ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
 			}
 			
-			// Cria hashmap contendo grupos e mobils do grupo
+			// Cria hashmap contendo grupo e mobils do grupo
 			Map<String, List<ExMobil>> hashMobGrp = l.stream()
 			        .collect(Collectors.groupingBy(k -> ((k[0]).toString()), 
 			                Collectors.mapping(v -> dao.consultar(Long.valueOf(v[1].toString()), ExMobil.class, false), 
 			                		Collectors.toList())));
 	
-			// Insere em cada grupo encontrado os documentos e seus dados a serem apresentados na mesa
+			// Insere no grupo os documentos e seus dados a serem apresentados na mesa
 			for (Map.Entry<String, List<ExMobil>> entry : hashMobGrp.entrySet()) {
-				GrupoItem gItem = gruposMesa.stream()
-						.filter(g -> g.grupoOrdem.equals(entry.getKey().toString()))
-						.findFirst().orElse(null); 
-				if (gItem != null) {
-					gItem.grupoDocs = Mesa2.listarReferencias(entry.getValue(), titular,
-							titular.getLotacao(), gItem.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
-							usuarioPosse, parmOffset);
+				g.grupoDocs = Mesa2.listarReferencias(entry.getValue(), titular,
+						titular.getLotacao(), g.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
+						usuarioPosse, parmOffset);
+				if (exibeLotacao) {
+					g.grupoQtdLota = g.grupoQtdLota > 0 ? g.grupoQtdLota : l.size();
+				} else {
+					g.grupoQtd = g.grupoQtd > 0 ? g.grupoQtd : l.size();
 				}
 			}
+			qtTotal = qtTotal + l.size();
+			if (qtTotal >= MESA_QTD_MAX_INICIAL)
+				break;
 		}
 //		long tempoTotal = System.nanoTime() - tempoIni;
 //		System.out.println("getMesa: " + tempoTotal	/ 1000000 + " ms ==> ");

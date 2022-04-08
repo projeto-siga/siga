@@ -2,7 +2,7 @@
  * Configura o comportamento da página da Mesa virtual, usando a API do Vue.js
  */
 "use strict";
-const qtdMax = 30;
+const qtdMax = 20;
 setTimeout(function() {
 	$('#bem-vindo').fadeTo(1000, 0, function() {
 		$('#row-bem-vindo').slideUp(1000);
@@ -308,9 +308,9 @@ var appMesa = new Vue({
 						.getAttribute('data-numitem')) + 1;
 			sessionStorage.removeItem('timeout' + getUser());
 			if (this.exibeLota)
-				setValueGrupo(grupoNome, 'qtdLota', listaLinhas.length + this.qtdPag);
+				setValueGrupo(grupoNome, 'qtdLota', listaLinhas.length + parseInt(this.qtdPag));
 			else
-				setValueGrupo(grupoNome, 'qtd', listaLinhas.length + this.qtdPag);
+				setValueGrupo(grupoNome, 'qtd', listaLinhas.length + parseInt(this.qtdPag));
 			this.criaLinhasFantasmas(getGrupoVue(grupoNome), offset, this.qtdPag);
 			this.getItensGrupo(grupoNome, offset, this.qtdPag);
 		},
@@ -320,11 +320,13 @@ var appMesa = new Vue({
 			var collapsibleElemHeader = document.getElementById('collapse-header-' + grupoOrdem);
 			if (collapsibleElemHeader.classList.contains('collapsed')) {
 				setValueGrupo(grupoNome, 'collapsed', false);
+				setValueGrupoVue(grupoNome, 'grupoCollapsed', false);
 				if ($('#collapsetab-' + grupoOrdem + ' tr').length < 2) {
 					this.pageDownGrupo(grupoNome);
 				}
 			} else {
 				setValueGrupo(grupoNome, 'collapsed', true);
+				setValueGrupoVue(grupoNome, 'grupoCollapsed', true);
 			}
 		},
 		fecharGrupo: function(grupoOrdem, grupoNome) {

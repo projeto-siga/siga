@@ -157,7 +157,7 @@
 						</a>
 					</div>
 				</c:if>
-				<div class="input-group col-3 mb-1">
+				<div class="input-group col-5 mb-1">
 					<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" @keyup.enter="recarregarMesa()" placeholder="Filtrar cód. ou descrição" v-model="filtro" @keyup.enter="getItensGrupo();">
 					<div class="input-group-append">
 						<button class="btn btn-secondary border-light" type="button" @click="recarregarMesa();"><i class="fas fa-search"></i></button>
@@ -166,7 +166,7 @@
 				<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
 					<i class="fas fa-sync-alt"></i>
 				</button>
-				<small id="ultima-atualizacao" class="my-auto fadein text-danger">
+				<small id="ultima-atualizacao" class="my-auto d-none d-md-block fadein text-danger">
 					Última atualização: {{getLastRefreshTime()}}</small>
 			</div>
 			
@@ -247,7 +247,7 @@
 									</thead>
 									<tbody>
 										<template v-for="(f, index) in g.grupoDocs">
-											<tr class="grupo-item d-flex mh-100" v-bind:class="f.codigo == ''? 'linha-ref':''" :title="index" :data-grupo="g.grupoNome" :data-numitem="index">
+											<tr class="grupo-item d-flex mh-100" v-bind:class="f.codigo == ''? 'linha-ref':''" :data-grupo="g.grupoNome" :data-numitem="index">
 												<td class="col-1 d-none d-md-block"  
 													:title="f.datahoraDDMMYYYHHMM"><small>{{dtDMA? formatJSDDMMYYYY(f.datahoraDDMMYYYHHMM) 
 														: f.tempoRelativo}}</small></td>
@@ -267,7 +267,8 @@
 															<a :href="'expediente/doc/exibir?sigla=' + f.codigo">{{f.sigla}}</a>
 														</c:otherwise>
 													</c:choose>
-													<span class="d-inline d-md-none" v-if="f.descr != ''" :title='processDescription(f.descr)' > - {{ processDescription(f.descr, 60) }}
+													<span :title="index + 1">&nbsp;</span>
+													<span class="d-inline d-md-none" v-if="f.descr != ''" :title='processDescription(f.descr)' >- {{ processDescription(f.descr, 60) }}
 														</span>
 													<span v-else><div v-if="f.datahora == '.'" class="spinner-dots my-2 mx-auto d-md-none"></div>
 														<div v-else class="d-md-none">&nbsp;</div></span>

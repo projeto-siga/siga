@@ -79,7 +79,7 @@ public class AutenticarPost implements IAutenticarPost {
 			resp.token = token;
 
 			Cookie cookie = AuthJwtFormFilter.buildCookie(token);
-			AuthJwtFormFilter.addCookie(SwaggerServlet.getHttpServletResponse(), cookie);
+			AuthJwtFormFilter.addCookie(SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse(), cookie);
 		} catch (Exception ex) {
 			throw new PresentableUnloggedException("Erro no login: " + ex.getMessage(), ex);
 		}

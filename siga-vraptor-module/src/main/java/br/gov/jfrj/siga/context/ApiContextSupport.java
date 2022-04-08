@@ -133,7 +133,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 					String tokenNew = AuthJwtFormFilter.renovarToken(token);
 					Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
 					Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-					AuthJwtFormFilter.addCookie(getCtx().getResponse(), cookie);
+					AuthJwtFormFilter.addCookie(getCtx().getRequest(), getCtx().getResponse(), cookie);
 				}
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			} catch (Exception e) {

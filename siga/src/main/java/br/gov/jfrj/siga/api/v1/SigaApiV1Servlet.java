@@ -170,37 +170,6 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 		return ContextoPersistencia.getUserPrincipal();
 	}
 
-//	public static <T> Future<T> submitToExecutor(Callable<T> task) {
-//		return executor.submit(task);
-//	}
-
-	@Override
-	public void invoke(SwaggerContext context) throws Exception {
-		try {
-			if (!context.getAction().getClass().isAnnotationPresent(AcessoPublico.class)) {
-				try {
-					String token = AuthJwtFormFilter.extrairAuthorization(context.getRequest());
-					Map<String, Object> decodedToken = AuthJwtFormFilter.validarToken(token);
-					final long now = System.currentTimeMillis() / 1000L;
-					if (((Integer) decodedToken.get("exp")) < (now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S)) {
-						// Seria bom incluir o attributo HttpOnly
-						String tokenNew = AuthJwtFormFilter.renovarToken(token);
-						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
-						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-						AuthJwtFormFilter.addCookie(context.getResponse(), cookie);
-					}
-					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
-				} catch (Exception e) {
-					if (!context.getAction().getClass().isAnnotationPresent(AcessoPublicoEPrivado.class))
-						throw e;
-				}
-			}
-			super.invoke(context);
-		} finally {
-			ContextoPersistencia.removeUserPrincipal();
-		}
-	}
-
 	@Override
 	public String getProp(String nome) {
 		return getProperty(nome);

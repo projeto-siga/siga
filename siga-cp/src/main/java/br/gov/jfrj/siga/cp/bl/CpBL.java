@@ -1257,7 +1257,8 @@ public class CpBL {
 			
 			if(pessoaAnt != null) {
 				Integer qtde = CpDao.getInstance().quantidadeDocumentos(pessoaAnt);
-				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) && !podeAlterarOrgaoPessoa) {
+				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) 
+						&& (!podeAlterarOrgaoPessoa || pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu))) {
 					throw new AplicacaoException(
 							"A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
 				}

@@ -26,14 +26,16 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
 
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		DpPessoa cadastrante = ctx.getCadastrante();
-		DpPessoa titular = cadastrante;
-		DpLotacao lotaTitular = cadastrante.getLotacao();
+		DpPessoa titular = ctx.getTitular();
+		DpLotacao lotaTitular = ctx.getLotaTitular();
 
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp);
 
@@ -42,7 +44,7 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		ExDocumento doc = mob.doc();
 		// Mostra o último volume de um processo ou a primeira via de um
 		// expediente
-		if (mob == null || mob.isGeral()) {
+		if ((req.auditar == null || !req.auditar) && (mob == null || mob.isGeral())) {
 			if (mob.getDoc().isFinalizado()) {
 				if (doc.isProcesso())
 					mob = doc.getUltimoVolume();
@@ -55,16 +57,16 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		if (Prop.getBool("recebimento.automatico") 
 				&& Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob)) {
 			try {
+				ctx.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());
+				ExDao.getInstance().em().refresh(mob);
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 				throw e;
 			}
 		}
 
-		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, false, true);
-		docVO.setCodigoUnico(Ex.getInstance().getBL().obterCodigoUnico(doc, true));
-		
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, req.auditar != null && req.auditar, true, true);
 		// TODO: Resolver o problema declares multiple JSON fields named
 		// serialVersionUID
 		// Usado o Expose temporariamente

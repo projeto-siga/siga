@@ -189,15 +189,15 @@ public class ExMobilVO extends ExVO {
 		for (ExDocumento d : mob.getExDocumentoFilhoSet()) {
 			if (d.isExpediente())
 				expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d,
-						null, cadastrante, titular, lotaTitular, false, false, serializavel));
+						null, cadastrante, titular, lotaTitular, false, false, serializavel, false));
 			else
 				processosFilhosNaoCancelados.add(new ExDocumentoVO(d, null,
-						cadastrante, titular, lotaTitular, false, false, serializavel));
+						cadastrante, titular, lotaTitular, false, false, serializavel, false));
 		}
 
 		for (ExDocumento doc : mob.getDocsFilhosNaoJuntados())
 			expedientesFilhosNaoJuntados.add(new ExDocumentoVO(doc, null,
-					cadastrante, titular, lotaTitular, false, false, serializavel));
+					cadastrante, titular, lotaTitular, false, false, serializavel, false));
 
 		log.debug(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()

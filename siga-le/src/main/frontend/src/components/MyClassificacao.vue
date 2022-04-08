@@ -5,7 +5,7 @@
     }}</label>
     <v-autocomplete
       :name="name"
-      v-bind:value="value"
+      v-bind:value="definedValue"
       v-on:input="$emit('input', $event)"
       v-on:change="$emit('change', $event)"
       :items="classificacoes"
@@ -33,6 +33,12 @@ export default {
       classificacoes: [],
       template: ItemTemplate,
     };
+  },
+  computed: {
+    definedValue() {
+      if (this.value) return this.value;
+      return "";
+    },
   },
   methods: {
     getLabelClassificacao: function(item) {

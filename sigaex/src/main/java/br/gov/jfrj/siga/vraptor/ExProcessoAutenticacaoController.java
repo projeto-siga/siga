@@ -333,8 +333,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
-			docVO.exibe();
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false, true);
 			Cookie cookie = new Cookie("jwt-prot", buildJwtToken(n));
 			cookie.setMaxAge(1 * 60 * 60);
 			this.response.addCookie(cookie);

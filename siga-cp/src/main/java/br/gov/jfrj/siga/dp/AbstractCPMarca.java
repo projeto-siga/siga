@@ -32,6 +32,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -39,10 +41,62 @@ import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-/**
- * A class that represents a row in the EX_DOCUMENTO table. You can customize
- * the behavior of this class by editing the class, {@link ExDocumento()}.
- */
+@NamedQueries({ @NamedQuery(name = "consultarPainelQuadro", query = "SELECT mard.hisIdIni, "+
+		"               mard.descrMarcador, "+
+		"               mard.idFinalidade, "+
+		"               mard.ordem, "+
+		"               mard.idCor, "+
+		"               mard.idIcone, "+
+		"               tipoMarca, "+
+		"               Sum(1) as cont_total, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_pessoa, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_lota, "+
+		"               Sum(CASE "+
+		"                     WHEN marca.dpPessoaIni.idPessoa is null and marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
+		"                     ELSE 0 "+
+		"                   END) as cont_nao_atrib "+
+		"        FROM   CpMarca marca "+
+		"               JOIN marca.cpTipoMarca tipoMarca "+
+		"               JOIN marca.cpMarcador marcador "+
+		"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
+		"        WHERE  ( marca.dtIniMarca IS NULL OR marca.dtIniMarca < :amanha ) "+
+		"               AND (:idTipoMarca = 0L OR marca.cpTipoMarca.idTpMarca = :idTipoMarca)"+
+		"               AND ( marca.dtFimMarca IS NULL "+
+		"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
+		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
+		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
+		"        GROUP  BY tipoMarca.idTpMarca, tipoMarca.descrTipoMarca, "+
+		"                  mard.hisIdIni, "+
+		"                  mard.descrMarcador, "+
+		"                  mard.idFinalidade, "+
+		"                  mard.ordem, "+
+		"                  mard.idCor, "+
+		"                  mard.idIcone "+
+		"ORDER  BY mard.idFinalidade, "+
+		"          mard.ordem, "+
+		"          mard.descrMarcador"),
+	
+	 @NamedQuery(name = "consultarPainelLista", query = "SELECT marca "+
+				"        FROM   CpMarca marca "+
+				"               JOIN marca.cpMarcador marcador "+
+				"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
+				"        WHERE  (0L in :idMarcadorIni or marcador.hisIdIni in :idMarcadorIni)"+ 
+				"               AND (:idTipoMarca = 0L OR marca.cpTipoMarca.idTpMarca = :idTipoMarca)"+
+				"               AND ( marca.dtIniMarca IS NULL "+
+				"                  OR marca.dtIniMarca < :amanha ) "+
+				"               AND ( marca.dtFimMarca IS NULL "+
+				"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
+				"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
+				"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
+				"ORDER  BY marca.dtIniMarca desc")
+})
+
 @MappedSuperclass
 public abstract class AbstractCPMarca extends Objeto implements Serializable {
 

@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -15,14 +16,22 @@ import java.util.concurrent.Future;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 
+import com.auth0.jwt.JWTExpiredException;
+import com.crivano.swaggerservlet.SwaggerAuthorizationException;
+import com.crivano.swaggerservlet.SwaggerContext;
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
+import br.gov.jfrj.siga.context.AcessoPublico;
+import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
+import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 public class WfApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
@@ -181,5 +190,4 @@ public class WfApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	public String getProp(String nome) {
 		return getProperty(nome);
 	}
-
 }

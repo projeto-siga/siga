@@ -638,6 +638,11 @@ public class WfProcedimento extends Objeto
 		return status == ProcessInstanceStatus.RESUMING;
 	}
 
+	public boolean isFormulario() {
+		return status == ProcessInstanceStatus.PAUSED
+				&& getCurrentTaskDefinition().getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO;
+	}
+	
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
 		if (getDefinicaoDeTarefaCorrente() == null
 				|| getDefinicaoDeTarefaCorrente().getTipoDeTarefa() != WfTipoDeTarefa.FORMULARIO)

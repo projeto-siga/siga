@@ -2446,6 +2446,22 @@ public class ExDao extends CpDao {
 		}
 	}
 
+	public List<Object[]> consultarPainelLista(final List<Long> l) {
+		if (l == null || l.size() == 0) 
+			return null;
+
+		List<Object[]> l2 = new ArrayList<Object[]>();
+		
+		Query query = em().createQuery("select doc, mob, label from ExMarca label"
+						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+						+ " where label.idMarca in (:listIdMarca)");
+		query.setParameter("listIdMarca", l);
+		l2 = query.getResultList();
+		Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
+			    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+		return l2;
+	}
+
 	public List<BigDecimal> consultarDocumentosPorSiglas(List<String> siglas) {
 		String sql = "SELECT X.ID_DOC \n" + 
 				"FROM SIGA.EX_DOCUMENTO X, \n" + 

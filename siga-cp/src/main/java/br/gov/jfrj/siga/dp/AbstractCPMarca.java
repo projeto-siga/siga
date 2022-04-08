@@ -24,6 +24,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -122,19 +123,25 @@ public abstract class AbstractCPMarca extends Objeto implements Serializable {
 //	@Temporal(TemporalType.TIMESTAMP)
 //	private Date dtRef2Marca;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MARCADOR")
 	private CpMarcador cpMarcador;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)	
 	@JoinColumn(name = "ID_PESSOA_INI")
 	private DpPessoa dpPessoaIni;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)	
 	@JoinColumn(name = "ID_LOTACAO_INI")
 	private DpLotacao dpLotacaoIni;
 
-	@ManyToOne
+	@Column(name = "ID_PESSOA_INI", insertable = false, updatable = false)
+	private Long idPessoaIni;
+
+	@Column(name = "ID_LOTACAO_INI", insertable = false, updatable = false)
+	private Long idLotacaoIni;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_MARCA", insertable = false, updatable = false)
 	private CpTipoMarca cpTipoMarca;
 

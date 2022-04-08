@@ -519,7 +519,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 		}
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+				|| (id != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa;ALT:Alterar Órgão Cadastro Pessoa"))) {
 			list = dao().listarOrgaosUsuarios();
 
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
@@ -557,7 +559,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		setItemPagina(15);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+				|| (id != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa;ALT:Alterar Órgão Cadastro Pessoa"))) {
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
 			list = dao().consultaCpOrgaoUsuario();
 

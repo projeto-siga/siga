@@ -227,10 +227,12 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	}
 
 	public static boolean hasTransferencia(ITipoDeMovimentacao id) {
-		return id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+		return id == ExTipoDeMovimentacao.TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.TRAMITE_PARALELO
+				|| id == ExTipoDeMovimentacao.NOTIFICACAO
+				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-				|| id == ExTipoDeMovimentacao.TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
 	}
 
@@ -251,5 +253,10 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
          return listaTipoMovimentacoes;
 
     }
+
+	public static boolean hasRecebimentoOuCriacao(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.CRIACAO
+				|| id == ExTipoDeMovimentacao.RECEBIMENTO;
+	}
 
 }

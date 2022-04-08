@@ -1,11 +1,11 @@
 package br.gov.jfrj.siga.model.dao;
 
-public enum CpBancoDeDados {
+public enum BancoDeDados {
 	ORACLE("Oracle"), MYSQL("MySQL"), POSTGRESQL("PostgreSQL");
 
 	private String descr;
 
-	private CpBancoDeDados(String descr) {
+	private BancoDeDados(String descr) {
 		this.descr = descr;
 	}
 

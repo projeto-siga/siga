@@ -7,8 +7,6 @@ COMMENT ON COLUMN "SIGA"."EX_MOBIL"."DNM_SIGLA" IS 'Sigla do mobil denormalizada
 COMMENT ON COLUMN "SIGA"."EX_MOBIL"."ID_ULT_MOV" IS 'Id da ultima movimentacao realizada.'; 
 COMMENT ON COLUMN "SIGA"."EX_MOBIL"."DNM_DT_ULT_MOV" IS 'Data da ultima movimentacao realizada. Se nao houver movs, data da criacao.'; 
 
-ALTER TABLE SIGA.EX_MOBIL ADD CONSTRAINT MOB_ULT_MOV_FK FOREIGN KEY (ID_ULT_MOV) REFERENCES SIGA.EX_MOVIMENTACAO(ID_MOV);
-		
 -- -------------------------------------------------------------------------    
 --  Carga inicial das colunas
 --
@@ -17,8 +15,6 @@ ALTER TABLE SIGA.EX_MOBIL ADD CONSTRAINT MOB_ULT_MOV_FK FOREIGN KEY (ID_ULT_MOV)
 --  Somente habilitar a versão nova da mesa para algum usuário depois de atualizados todos os mobils
 -- -------------------------------------------------------------------------
 /*
---  Desabilita FK da coluna ID_ULT_MOV, para agilizar o processo
-ALTER TABLE siga.ex_mobil DISABLE CONSTRAINT MOB_ULT_MOV_FK;
 UPDATE SIGA.EX_MOBIL MOB 
 	SET ID_ULT_MOV = (SELECT MOV.ID_MOV FROM (SELECT MOVULT.ID_MOV FROM siga.ex_movimentacao MOVULT 
 													WHERE MOVULT.ID_MOBIL = MOB.ID_MOBIL
@@ -49,7 +45,7 @@ UPDATE SIGA.EX_MOBIL MOB
 						FROM (SELECT * FROM siga.ex_mobil MOBPAI WHERE MOBPAI.ID_MOBIL = DOC.ID_MOB_PAI) MOBPAI
 						INNER JOIN siga.ex_documento DOCPAI ON MOBPAI.ID_DOC = DOCPAI.ID_DOC
 						INNER JOIN corporativo.cp_orgao_usuario ORG on ORG.ID_ORGAO_USU = DOCPAI.ID_ORGAO_USU
-						LEFT OUTER JOIN siga.ex_modelo modelo on MODELO.ID_MOD = DOCPAI.ID_MOD
+						LEFT OUTER JOIN siga.ex_modelo MODELO on MODELO.ID_MOD = DOCPAI.ID_MOD
 						LEFT OUTER JOIN siga.ex_forma_documento FRM on FRM.ID_FORMA_DOC = MODELO.ID_FORMA_DOC
 						WHERE MOBPAI.ID_MOBIL = DOC.ID_MOB_PAI)
 			    WHEN DOC.NUM_EXPEDIENTE IS NOT NULL THEN 
@@ -71,6 +67,4 @@ UPDATE SIGA.EX_MOBIL MOB
 			LEFT OUTER JOIN siga.ex_modelo modelo on MODELO.ID_MOD = DOC.ID_MOD
 			LEFT OUTER JOIN siga.ex_forma_documento FRM on FRM.ID_FORMA_DOC = MODELO.ID_FORMA_DOC
 			WHERE MOB.ID_DOC=DOC.ID_DOC);
---  Habilita FK da coluna ID_ULT_MOV, para agilizar o processo		
-ALTER TABLE siga.ex_mobil ENABLE CONSTRAINT MOB_ULT_MOV_FK;	
 */

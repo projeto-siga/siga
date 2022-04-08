@@ -3,8 +3,6 @@
 -- -------------------------------------------------------------------------
 ALTER TABLE siga.ex_mobil ADD (DNM_SIGLA VARCHAR(40), ID_ULT_MOV INT UNSIGNED DEFAULT NULL, DNM_DT_ULT_MOV DATETIME);
 
-ALTER TABLE siga.ex_mobil ADD CONSTRAINT `MOB_ULT_MOV_FK` FOREIGN KEY (`ID_ULT_MOV`) REFERENCES siga.ex_movimentacao(`ID_MOV`);
-		
 -- -------------------------------------------------------------------------    
 --  Carga inicial das colunas
 --
@@ -13,8 +11,6 @@ ALTER TABLE siga.ex_mobil ADD CONSTRAINT `MOB_ULT_MOV_FK` FOREIGN KEY (`ID_ULT_M
 --  Somente habilitar a versão nova da mesa para algum usuário depois de atualizados todos os mobils
 -- -------------------------------------------------------------------------
 /*
---  Desabilita FK da coluna ID_ULT_MOV, para agilizar o processo
-SET FOREIGN_KEY_CHECKS=0;
 UPDATE siga.ex_mobil MOB 
 	SET ID_ULT_MOV = (SELECT MOV.ID_MOV FROM siga.ex_movimentacao MOV 
 					WHERE MOV.ID_MOBIL = MOB.ID_MOBIL 
@@ -74,6 +70,4 @@ UPDATE siga.ex_mobil MOB
 			LEFT OUTER JOIN siga.ex_modelo MODELO on MODELO.ID_MOD = DOC.ID_MOD
 			LEFT OUTER JOIN siga.ex_forma_documento FRM on FRM.ID_FORMA_DOC = MODELO.ID_FORMA_DOC
 			WHERE MOB.ID_DOC=DOC.ID_DOC);
---  Habilita FK da coluna ID_ULT_MOV, para agilizar o processo		
-SET FOREIGN_KEY_CHECKS=1;
 */

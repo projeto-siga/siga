@@ -89,6 +89,8 @@
  
         <property name="sigaex.volume.max.paginas" value="400"/>
         <property name="sigaex.documento.novo.modelo.padrao" value="Ofício"/>
+		<property name="siga.pesquisa.limite.dias" value="60"/>
+		
        
 
        <!-- sicop desenvolvimento, onde token= usuario:senha  base64

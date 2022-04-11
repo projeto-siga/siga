@@ -53,7 +53,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
+import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 
 @Controller
 public class ExProcessoAutenticacaoController extends ExController {

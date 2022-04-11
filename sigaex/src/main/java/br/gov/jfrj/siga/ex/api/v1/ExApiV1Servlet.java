@@ -260,7 +260,7 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		// integração com SICOP
 		addPublicProperty("sicop.url",  "XXXXXXX");
 		addPublicProperty("sicop.token","XXXXXXX");
-		
+		addPublicProperty("sicop.assunto.padrao",null);
 		addPublicProperty("sicop.ativo","false");
 		
 		// metodo apresentacao do resultado pesquisa documento (paginacao ): listaGOVSP.jsp  ou lista.jsp 

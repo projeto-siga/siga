@@ -38,7 +38,7 @@ import org.hibernate.annotations.BatchSize;
 @Table(name = "corporativo.cp_marca")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER)
-public abstract class CpMarca extends AbstractCPMarca {
+public class CpMarca extends AbstractCPMarca {
 
 	public String getDtIniMarcaDDMMYYYY() {
 		if (getDtIniMarca() != null) {

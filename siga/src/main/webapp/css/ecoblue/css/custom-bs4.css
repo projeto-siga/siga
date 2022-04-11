@@ -741,3 +741,8 @@ table .table-head th {
 .cke_combopanel__strinsert {
 	width: 20em !important;
 }
+
+div.divDoc p {
+	margin-top: 0.5rem !important;
+	margin-bottom: 0.5rem !important;
+} 

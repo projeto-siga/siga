@@ -28,6 +28,8 @@ public class ExPodeSerMovimentado extends CompositeExpressionSupport {
 						break;
 					}
 				}
+				if (this.mob.isGeral())
+					this.mob = this.mob.doc().getPrimeiraVia();
 			}
 		}
 	}

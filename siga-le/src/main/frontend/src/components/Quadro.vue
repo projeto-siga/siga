@@ -1,11 +1,5 @@
 <template>
   <div class="container-fluid content">
-    <div class="row">
-      <div class="col-md-12">
-        <h4 class="text-center mt-3 mb-0">Quadro Quantitativo</h4>
-      </div>
-    </div>
-
     <div class="row mt-3">
       <div class="col-12 col-md-6">
         <quadro-tabela
@@ -40,7 +34,7 @@
       </div>
     </div>
     <p
-      class="alert alert-success"
+      class="alert alert-success mt-3"
       v-if="acessos &amp;&amp; acessos.length >= 1"
     >
       Último acesso em {{ acessos[1].datahora }} no endereço

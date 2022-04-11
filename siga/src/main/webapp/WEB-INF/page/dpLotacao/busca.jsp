@@ -45,6 +45,8 @@
 		
 		function invalid(event) {
 			$("#alertFiltros").show();
+			$('#containerResult').remove();
+			$('#alertNaoEncontrado').remove();
 		}
 		
 		function submit(event) {
@@ -55,9 +57,19 @@
 			}
 		}
 		
+		function sbmt(offset) {
+			if (offset == null) {
+				offset = 0;
+			}
+			frm.elements["paramoffset"].value = offset;
+			frm.elements["p.offset"].value = offset;
+			frm.submit();
+		}
+		
 		$( document ).ready(function() {
+			$("#alertFiltros").hide();
 			frm.onsubmit = submit;
-	
+
 			$("#alertFiltros").hide();
 			if ($('#sigla').val().trim() === "" ) {
 				$('#sigla').focus();
@@ -68,7 +80,7 @@
 
 	<!-- main content -->
 	<div class="container-fluid">
-		<div id="alertFiltros" class="alert alert-warning" role="alert">
+		<div id="alertFiltros" class="alert alert-warning" role="alert" style="display: none;">
 		  Obrigatório informar o <strong>Nome ou Sigla</strong> para realizar a pesquisa.
 		</div>
 		<div class="card bg-light mb-3" >
@@ -155,4 +167,5 @@
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	
+<script type="text/javascript" src="/siga/javascript/select2/select2-dropdownPosition.js"></script>
 </siga:pagina>

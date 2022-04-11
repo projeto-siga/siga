@@ -11,10 +11,10 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.dao.WfStarter;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.util.WfUtil;
 
 public class WfApiV1Context extends ApiContextSupport {
 	private static final String WF_MÓDULO_DE_WORKFLOW = "WF:Módulo de Workflow;";
-
 	public void atualizarCacheDeConfiguracoes() throws Exception {
 		Wf.getInstance().getConf().limparCacheSeNecessario();
 	}
@@ -46,5 +46,9 @@ public class WfApiV1Context extends ApiContextSupport {
 			throw new AplicacaoException("Procedimento " + mob.getSigla() + " inacessível ao usuário "
 					+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + ".");
 	}
+
+	public WfUtil getUtil() throws Exception {
+		return new WfUtil(getSigaObjects());
+	};
 
 }

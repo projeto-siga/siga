@@ -1,9 +1,13 @@
 const path = require("path");
 
+const publicPath = (process.env.NODE_ENV === "production" && process.env.VERCEL !== "true") ? "/siga-le/" : "/";
+const outputDir = (process.env.NODE_ENV === "production" && process.env.VERCEL === "true") ? "dist" : "../webapp";
+
+
 module.exports = {
-  outputDir: path.resolve(__dirname, "../webapp"),
+  outputDir: path.resolve(__dirname, outputDir),
   assetsDir: "static",
-  publicPath: process.env.NODE_ENV === "production" ? "/siga-le/" : "/",
+  publicPath: publicPath,
   lintOnSave: true,
   runtimeCompiler: true,
   pwa: {
@@ -16,7 +20,7 @@ module.exports = {
     manifestOptions: {
       short_name: "Siga-Le",
       scope: "/",
-      start_url: "/siga-le/index.html",
+      start_url: publicPath + "index.html",
       description: "Siga-Doc UI",
       background_color: "#058fcc",
       "theme-color": "#058fcc"

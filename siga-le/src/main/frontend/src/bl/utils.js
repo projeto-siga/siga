@@ -260,5 +260,41 @@ export default {
 
   onlyLettersAndNumbers(s) {
     return s.replace(/[^a-z0-9]/gi, "")
+  },
+
+  buildHierarchy(input, id, label) {
+    var output = [];
+    var allNodes = [];
+    for (var i = 0; i < input.length; i++) {
+      var chain = input[i][label].split(": ");
+      var currentNode = output;
+      for (var j = 0; j < chain.length; j++) {
+        var wantedNode = chain[j];
+        var lastNode = currentNode;
+        for (var k = 0; k < currentNode.length; k++) {
+          if (currentNode[k].label == wantedNode) {
+            currentNode = currentNode[k].children;
+            break;
+          }
+        }
+        // If we couldn't find an item in this list of children
+        // that has the right name, create one:
+        if (lastNode == currentNode) {
+          var newNode = currentNode[k] = {
+            id: (j === chain.length - 1) ? input[i][id] : chain.slice(0, j+1).join(": "),
+            label: wantedNode,
+            children: []
+          };
+          allNodes.push(newNode);
+          currentNode = newNode.children;
+        }
+      }
+    }
+
+    for (i = 0; i < allNodes.length; i++)
+      if (allNodes[i].children.length == 0)
+        delete allNodes[i].children;
+
+    return output;
   }
 }

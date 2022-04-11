@@ -46,16 +46,6 @@
 			return false;
 		}
 	}
-
-
-	function sbmt(offset) {
-		if (offset == null) {
-			offset = 0;
-		}
-		frm.elements["paramoffset"].value = offset;
-		frm.elements["p.offset"].value = offset;
-		frm.submit();
-	}
 	
 	function alterarNivel(nivelAlterado){
 		document.getElementById("nivelAlterado").value = nivelAlterado;
@@ -64,6 +54,8 @@
 	
 	function invalid(event) {
 		$("#alertFiltros").show();
+		$('#containerResult').remove();
+		$('#alertNaoEncontrado').remove();
 	}
 	
 	function submit(event) {
@@ -76,10 +68,19 @@
 		}
 	}
 	
+	function sbmt(offset) {
+		if (offset == null) {
+			offset = 0;
+		}
+		frm.elements["paramoffset"].value = offset;
+		frm.elements["p.offset"].value = offset;
+		frm.submit();
+	}
+	
 	$( document ).ready(function() {
+		$("#alertFiltros").hide();
 		frm.onsubmit = submit;
 
-		$("#alertFiltros").hide();
 		if ($('#sigla').val() === "" ) {
 			$('#sigla').focus();
 		}
@@ -101,7 +102,7 @@
 </c:choose>	
 
 	<div class="container-fluid">
-		<div id="alertFiltros" class="alert alert-warning" role="alert">
+		<div id="alertFiltros" class="alert alert-warning" role="alert" style="display: none;">
 		  Obrigatório informar <strong>Palavra-chave</strong> e/ou informar algum<strong> Nível de Classificação</strong> para realizar a pesquisa.
 		</div>
 		<div class="card bg-light mb-3">

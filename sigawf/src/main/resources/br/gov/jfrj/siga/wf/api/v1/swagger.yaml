@@ -11,6 +11,14 @@ consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
 
 tags:
+  - name: procedimento
+    description: Procedimento
+  - name: definicao-de-procedimento
+    description: Definição de Procedimento
+  - name: responsavel
+    description: Responsável
+  - name: relatorio
+    description: Relatório
   - name: utils
     description: Utilitários
     
@@ -26,48 +34,746 @@ securityDefinitions:
 #                                   Parameters                                 #
 ################################################################################
 parameters:
-  sigla:
-    name: sigla
+  procedimentoSigla:
+    name: procedimentoSigla
     in: path
-    description: Sigla do mobil
+    description: Sigla do procedimento
     type: string
     required: true
-   
+  definicaoDeProcedimentoSigla:
+    name: definicaoDeProcedimentoSigla
+    in: path
+    description: Sigla da definição de procedimento
+    type: string
+    required: true
+  principalSigla:
+    name: principalSigla
+    in: path
+    description: Sigla do principal
+    type: string
+    required: true
+  eventoId:
+    name: eventoId
+    in: path
+    description: Identificador de um evento
+    type: string
+    required: true
+  definicaoDeResponsavelId:
+    name: definicaoDeResponsavelId
+    in: path
+    description: Identificador da definição de responsável
+    type: string
+    required: true
+  responsavelId:
+    name: responsavelId
+    in: path
+    description: Identificador do responsável
+    type: string
+    required: true
+  relatorioId:
+    name: relatorioId
+    in: path
+    description: Identificador do tipo do relatório
+    type: string
+    required: true
 
+  principalTipoForm:
+    name: principalTipo
+    in: formData
+    description: Tipo do principal
+    type: string
+    required: true
+  principalSiglaForm:
+    name: principalSigla
+    in: formData
+    description: Sigla do principal
+    type: string
+    required: true
+  definicaoDeTarefaIdForm:
+    name: definicaoDeTarefaId
+    in: formData
+    description: Identificador da tarefa
+    type: string
+    required: true
+  variaveisForm:
+    name: variaveis
+    in: formData
+    description: Variadas a serem incluídas
+      Pode ser descrito em dois formatos, JSON (array com objetos com as propriedades chave, tipo e valor) ou Form Data (chave1=tipo1:valor1&chave2=tipo2:valor2&chave3=tipo3:valor3) 
+    type: string
+    required: false
+  indiceDoDesvioForm:
+    name: indiceDoDesvio
+    in: formData
+    description: Índice do desvio a ser utilizado
+    type: string
+    required: true
+  anotacaoTextoForm:
+    name: anotacaoTexto
+    in: formData
+    description: Texto da anotação
+    type: string
+    required: true
+  definicaoDeResponsavelNomeForm:
+    name: definicaoDeResponsavelNome
+    in: formData
+    description: Nome da definição de responsável
+    type: string
+    required: true
+  definicaoDeResponsavelDescrForm:
+    name: definicaoDeResponsavelDescr
+    in: formData
+    description: Descrição da definição de responsável
+    type: string
+    required: true
+  definicaoDeResponsavelTipoForm:
+    name: definicaoDeResponsavelTipo
+    in: formData
+    description: Tipo da definição de responsável
+    type: string
+    required: true
+  orgaoIdForm:
+    name: orgaoId
+    in: formData
+    description: Identificador do orgão
+    type: string
+    required: true
+  lotacaoIdForm:
+    name: lotacaoId
+    in: formData
+    description: Identificador da lotação
+    type: string
+    required: true
+  pessoaIdForm:
+    name: pessoaId
+    in: formData
+    description: Identificador da pessoa
+    type: string
+
+  grupoIniQuery:
+    name: grupoIni
+    in: query
+    description: Grupo inicial para relatório
+    type: string
+    required: false
+  grupoFimQuery:
+    name: grupoFim
+    in: query
+    description: Grupo final para relatório
+    type: string
+    required: false
+  incluirAbertosQuery:
+    name: incluirAbertos
+    in: query
+    description: Incluir procedimento não terminados no relatório
+    type: boolean
+    required: false
+  minMediaTruncadaQuery:
+    name: minMediaTruncada
+    in: query
+    description: Incluir procedimento não terminados no relatório
+    type: number
+    required: false
+  maxMediaTruncadaQuery:
+    name: maxMediaTruncada
+    in: query
+    description: Incluir procedimento não terminados no relatório
+    type: number
+    required: false
+
+    
 ################################################################################
 #                                           Paths                              #
 ################################################################################
 paths:
-  /status/{chave}:
+  /ativos:
     get:
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/chave"
-      summary: Obtem o status de uma operação assíncrona
+      tags: [procedimento]
+      parameters: []
+      summary: Obtem a lista de procedimentos ativos com o usuário corrente
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
-              mensagem:
-                type: string
-                description: Mensagem
-              indice:
-                type: number
-                description: Quantos passos já foram executados
-              contador:
-                type: number
-                description: Número total de passos a serem executados
-              bytes:
-                type: number
-                description: Tamanho total do payload até o momento
-              errormsg:
-                type: string
-                description: Mensagem de erro se houver
-              stacktrace:
-                type: string
-                description: Detalhamento do erro
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /relacionados-ao-principal/{principalSigla}:
+    get:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/principalSigla"
+      summary: Obtem a lista de procedimentos relacionados a determinado principal
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /procedimentos/{procedimentoSigla}:
+    get:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/procedimentoSigla"
+      summary: Obtem informações sobre um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /procedimentos/{procedimentoSigla}/continuar:
+    post:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/procedimentoSigla"
+        - $ref: "#/parameters/variaveisForm"
+        - $ref: "#/parameters/indiceDoDesvioForm"
+      summary: Dá prosseguimento a uma tarefa humana
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /procedimentos/{procedimentoSigla}/pegar:
+    post:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/procedimentoSigla"
+      summary: Atribui a tarefa ao usuário corrente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /procedimentos/{procedimentoSigla}/redirecionar:
+    post:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/procedimentoSigla"
+        - $ref: "#/parameters/definicaoDeTarefaIdForm"
+      summary: Força um desvio para a tarefa especificada
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /procedimentos/{procedimentoSigla}/terminar:
+    post:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/procedimentoSigla"
+      summary: Força o término de um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /procedimentos/{procedimentoSigla}/anotar:
+    post:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/procedimentoSigla"
+        - $ref: "#/parameters/anotacaoTextoForm"
+      summary: Acrescenta uma anotação a um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /procedimentos/{procedimentoSigla}/eventos/{eventoId}:
+    delete:
+      tags: [procedimento]
+      parameters: 
+        - $ref: "#/parameters/procedimentoSigla"
+        - $ref: "#/parameters/eventoId"
+      summary: Remove uma anotação ou outro evento de um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              procedimento:
+                $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /definicoes-de-procedimentos-iniciaveis:
+    get:
+      tags: [definicao-de-procedimento]
+      parameters: []
+      summary: Obtem a lista de definições de procedimento que podem ser iniciadas pelo usuário corrente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+  /definicoes-de-procedimentos/vazio:
+    get:
+      tags: [definicao-de-procedimento]
+      parameters: 
+        - $ref: "#/parameters/definicaoDeProcedimentoSigla"
+      summary: Iniciar um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/DefinicaoDeProcedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /definicoes-de-procedimentos/{definicaoDeProcedimentoSigla}:
+    get:
+      tags: [definicao-de-procedimento]
+      parameters: 
+        - $ref: "#/parameters/definicaoDeProcedimentoSigla"
+      summary: Iniciar um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/DefinicaoDeProcedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags: [definicao-de-procedimento]
+      parameters: 
+        - $ref: "#/parameters/definicaoDeProcedimentoSigla"
+      summary: Iniciar um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/DefinicaoDeProcedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /definicoes-de-procedimentos/{definicaoDeProcedimentoSigla}/iniciar:
+    post:
+      tags: [definicao-de-procedimento]
+      parameters: 
+        - $ref: "#/parameters/definicaoDeProcedimentoSigla"
+        - $ref: "#/parameters/definicaoDeTarefaIdForm"
+        - $ref: "#/parameters/principalTipoForm"
+        - $ref: "#/parameters/principalSiglaForm"
+        - $ref: "#/parameters/variaveisForm"
+      summary: Iniciar um procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Procedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /definicoes-de-procedimentos/{definicaoDeProcedimentoSigla}/desativar:
+    post:
+      tags: [definicao-de-procedimento]
+      parameters: 
+        - $ref: "#/parameters/definicaoDeProcedimentoSigla"
+      summary: Desativar uma definição de procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              definicaoDeProcedimento:
+                $ref: "#/definitions/DefinicaoDeProcedimento"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /definicoes-de-responsaveis:
+    get:
+      tags: [responsavel]
+      parameters: []
+      summary: Lista de definições de responsáveis
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/DefinicaoDeResponsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelNomeForm"
+        - $ref: "#/parameters/definicaoDeResponsavelDescrForm"
+        - $ref: "#/parameters/definicaoDeResponsavelTipoForm"
+      summary: Lista de definições de responsáveis
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              definicaoDeResponsavel:
+                $ref: "#/definitions/DefinicaoDeResponsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  /definicoes-de-responsaveis/{definicaoDeResponsavelId}:
+    get:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+      summary: Obtem dados de uma definição de responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/DefinicaoDeResponsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+        - $ref: "#/parameters/definicaoDeResponsavelNomeForm"
+        - $ref: "#/parameters/definicaoDeResponsavelDescrForm"
+        - $ref: "#/parameters/definicaoDeResponsavelTipoForm"
+      summary: Atualiza uma definição de responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              definicaoDeResponsavel:
+                $ref: "#/definitions/DefinicaoDeResponsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+      summary: Cancela uma definição de responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              definicaoDeResponsavel:
+                $ref: "#/definitions/DefinicaoDeResponsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /definicoes-de-responsaveis/{definicaoDeResponsavelId}/responsaveis:
+    get:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+      summary: Obtem lista de responsáveis relacionados a uma definição de responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Responsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+        - $ref: "#/parameters/orgaoIdForm"
+        - $ref: "#/parameters/lotacaoIdForm"
+        - $ref: "#/parameters/pessoaIdForm"
+      summary: Atualizar dados de um responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              responsavel:
+                $ref: "#/definitions/Responsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /definicoes-de-responsaveis/{definicaoDeResponsavelId}/responsaveis/{responsavelId}:
+    get:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+        - $ref: "#/parameters/responsavelId"
+      summary: Obtem um responsável relacionado a uma definição de responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Responsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+        - $ref: "#/parameters/responsavelId"
+        - $ref: "#/parameters/orgaoIdForm"
+        - $ref: "#/parameters/lotacaoIdForm"
+        - $ref: "#/parameters/pessoaIdForm"
+      summary: Atualizar dados de um responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              responsavel:
+                $ref: "#/definitions/Responsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      tags: [responsavel]
+      parameters:
+        - $ref: "#/parameters/definicaoDeResponsavelId"
+        - $ref: "#/parameters/responsavelId"
+      summary: Cancela um responsável
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              responsavel:
+                $ref: "#/definitions/Responsavel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /acessos-de-edicao:
+    get:
+      tags: [utils]
+      parameters: []
+      summary: Obtem a lista de tipos de acesso de edição
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Enumeravel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /acessos-de-inicializacao:
+    get:
+      tags: [utils]
+      parameters: []
+      summary: Obtem a lista de tipos de acesso de inicializacao
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Enumeravel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /tipos-de-principal:
+    get:
+      tags: [utils]
+      parameters: []
+      summary: Obtem a lista de tipos de principal
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Enumeravel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /tipos-de-vinculo-com-principal:
+    get:
+      tags: [utils]
+      parameters: []
+      summary: Obtem a lista de tipos de vínculo com o principal
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/Enumeravel"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /definicoes-de-procedimentos/{definicaoDeProcedimentoSigla}/relatorio/{relatorioId}:
+    post:
+      tags: [relatorio]
+      parameters: 
+        - $ref: "#/parameters/definicaoDeProcedimentoSigla"
+        - $ref: "#/parameters/relatorioId"
+        - $ref: "#/parameters/grupoIniQuery"
+        - $ref: "#/parameters/grupoFimQuery"
+        - $ref: "#/parameters/incluirAbertosQuery"
+        - $ref: "#/parameters/minMediaTruncadaQuery"
+        - $ref: "#/parameters/maxMediaTruncadaQuery"
+      summary: Desativar uma definição de procedimento
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              definicaoDeProcedimento:
+                $ref: "#/definitions/DefinicaoDeProcedimento"
         500:
           description: Error ocurred
           schema:
@@ -77,27 +783,368 @@ paths:
 #                                     Definitions                              #
 ################################################################################
 definitions:
-  Status:
+  Procedimento:
     type: object
     properties:
-      mensagem:
+      id:
         type: string
-        description: Mensagem
-      indice:
-        type: number
-        description: Quantos passos já foram executados
-      contador:
-        type: number
-        description: Número total de passos a serem executados
-      bytes:
-        type: number
-        description: Tamanho total do payload até o momento
-      errormsg:
+        description: Identificador
+      sigla:
         type: string
-        description: Mensagem de erro se houver
-      stacktrace:
+        description: Sigla do procedimento
+      principalTipo:
         type: string
-        description: Detalhamento do erro
+        description: Tipo do principal
+      principalSigla:
+        type: string
+        description: Sigla do principal
+      atendente:
+        $ref: "#/definitions/Pessoa"      
+      lotaAtendente:
+        $ref: "#/definitions/Lotacao"      
+      prioridadeId:
+        type: string
+        description: Identificador da prioridade
+      prioridadeNome:
+        type: string
+        description: Nome da prioridade
+      vizProcedimento:
+        type: string
+        description: Gráfico do procedimento
+      msgAviso:
+        type: string
+        description: Mensagem de aviso
+      formulario:
+        type: boolean
+        description: Indica se o formulário deve ser apresentado
+      desabilitarFormulario:
+        type: boolean
+        description: Indica se o formulário deve ser desabilitado
+      tarefaTitulo:
+        type: string
+        description: Título da tarefa
+      tarefaDataDeInicio:
+        type: string
+        format: date-time
+        description: Data e hora do início da tarefa
+      tarefaTempoRelativo:
+        type: string
+        description: Tempo transcorrido desde o início da tarefa
+      definicaoDeTarefaCorrente:
+        $ref: "#/definitions/DefinicaoDeTarefa"      
+      definicaoDeProcedimentoId:
+        type: string
+        description: Identificador da definição de procedimento
+      definicaoDeProcedimentoSigla:
+        type: string
+        description: Sigla da definição do procedimento
+      definicaoDeProcedimentoNome:
+        type: string
+        description: Nome da definição do procedimento
+      variaveis:
+        type: array
+        items:
+          $ref: "#/definitions/Variavel"      
+      eventos:
+        type: array
+        items:
+          $ref: "#/definitions/Evento"      
+      acoes:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"      
+        
+  Acao:
+    description: Ação que pode ser realizada a um procedimento
+    type: object
+    properties:
+      nome:
+        type: string
+      icone:
+        type: string
+      nameSpace:
+        type: string
+      acao:
+        type: string
+      pode:
+        type: boolean
+      explicacao:
+        type: string
+      msgConfirmacao:
+        type: string
+      params:
+        type: string
+      pre:
+        type: string
+      pos:
+        type: string
+      classe:
+        type: string
+      modal:
+        type: string
+      post:
+        type: boolean
+
+  Evento:
+    type: object
+    properties:
+      eventoId:
+        type: string
+        description: Identificador do evento
+      eventoHora:
+        type: string
+        format: date-time
+        description: Data e hora do evento
+      eventoTempoRelativo:
+        type: string
+        description: Tempo transcorrido do evento
+      eventoTitulo:
+        type: string
+        description: Título do evento
+      eventoDescr:
+        type: string
+        description: Descrição do evento
+      responsavel:
+        $ref: "#/definitions/Pessoa"      
+      lotaResponsavel:
+        $ref: "#/definitions/Lotacao"      
+
+  Variavel:
+    type: object
+    properties:
+      variavelIdentificador:
+        type: string
+        description: Identificador da variável
+      variavelTipo:
+        type: string
+        description: Tipo da variável
+      variavelValorString:
+        type: string
+        description: Valor string da variável
+      variavelValorDate:
+        type: string
+        format: date-time
+        description: Valor data da variável
+      variavelValorBoolean:
+        type: boolean
+        description: Valor lógico da variável
+      variavelValorNumber:
+        type: number
+        description: Valor numérido da variável
+        
+  DefinicaoDeResponsavel:
+    type: object
+    properties:
+      definicaoDeResponsavelId:
+        type: string
+        description: Identificador da definição de responsável
+      definicaoDeResponsavelNome:
+        type: string
+        description: Nome da definição de responsável
+      definicaoDeResponsavelDescr:
+        type: string
+        description: Descrição da definição de responsável
+      definicaoDeResponsavelTipo:
+        type: string
+        description: Tipo da definição de responsável
+        
+  Responsavel:
+    type: object
+    properties:
+      responsavelId:
+        type: string
+        description: Identificador do responsável
+      orgaoId:
+        type: string
+        description: Identificador do órgão
+      orgaoSigla:
+        type: string
+        description: Sigla do órgão
+      pessoa:
+        $ref: "#/definitions/Pessoa"      
+      lotacao:
+        $ref: "#/definitions/Lotacao"      
+
+  DefinicaoDeProcedimento:
+    type: object
+    properties:
+      definicaoDeProcedimentoId:
+        type: string
+        description: Identificador
+      definicaoDeProcedimentoSigla:
+        type: string
+        description: Sigla
+      definicaoDeProcedimentoNome:
+        type: string
+        description: Nome
+      definicaoDeProcedimentoDescr:
+        type: string
+        description: Descrição
+      definicaoDeProcedimentoAno:
+        type: string
+        description: Ano de criação
+      definicaoDeProcedimentoNumero:
+        type: string
+        description: Número de série no ano e no órgão
+      orgaoId:
+        type: string
+        description: Identificador do órgão que criou
+      responsavel:
+        $ref: "#/definitions/Pessoa"      
+      lotaResponsavel:
+        $ref: "#/definitions/Lotacao"      
+      acessoDeEdicaoId:
+        type: string
+        description: Identificador do acesso de edição
+      acessoDeInicializacaoId:
+        type: string
+        description: Identificador do acesso de inicialização
+      tipoDePrincipalId:
+        type: string
+        description: Identificador do tipo de principal
+      tipoDeVinculoComPrincipalId:
+        type: string
+        description: Identificador do tipo de vínculo com o principal
+      definicoesDeTarefas:
+        type: array
+        items:
+          $ref: "#/definitions/DefinicaoDeTarefa"      
+          
+  DefinicaoDeTarefa:
+    type: object
+    properties:
+      definicaoDeTarefaId:
+        type: string
+        description: Identificador
+      definicaoDeTarefaOrdem:
+        type: string
+        description: Indica a ordenação das tarefas para compor a lista
+      definicaoDeTarefaTipo:
+        type: string
+        description: Tipo
+      definicaoDeTarefaNome:
+        type: string
+        description: Nome
+      definicaoDeTarefaAssunto:
+        type: string
+        description: Assunto
+      definicaoDeTarefaConteudo:
+        type: string
+        description: Conteudo
+      definicaoDeTarefaSeguinteId:
+        type: string
+        description: Identificador da tarefa seguinte
+      definicaoDeTarefaUltimo:
+        type: boolean
+        description: Indica se depois dessa tarefa deve prosseguir direto para o fim
+      tipoDeResponsavel:
+        type: string
+        description: Tipo do responsável pela tarefa
+      definicaoDeResponsavelId:
+        type: string
+        description: Responsável pela tarefa
+      responsavel:
+        $ref: "#/definitions/Pessoa"      
+      lotaResponsavel:
+        $ref: "#/definitions/Lotacao"      
+      refId:
+        type: string
+        description: Identificador do elemento ao qual essa tarefa se refere
+      refSigla:
+        type: string
+        description: Sigla do elemento ao qual essa tarefa se refere
+      refDescr:
+        type: string
+        description: Descrição do elemento ao qual essa tarefa se refere
+      definicoesDeVariaveis:
+        type: array
+        items:
+          $ref: "#/definitions/DefinicaoDeVariavel"      
+      definicoesDeDesvios:
+        type: array
+        items:
+          $ref: "#/definitions/DefinicaoDeDesvio"      
+
+  DefinicaoDeVariavel:
+    type: object
+    properties:
+      definicaoDeVariavelId:
+        type: string
+        description: Chave primária
+      definicaoDeVariavelOrdem:
+        type: string
+        description: Indica a ordenação das variáveis para compor a lista
+      definicaoDeVariavelIdentificador:
+        type: string
+        description: Identificador
+      definicaoDeVariavelNome:
+        type: string
+        description: Nome
+      definicaoDeVariavelTipo:
+        type: string
+        description: Tipo
+      definicaoDeVariavelAcesso:
+        type: string
+        description: Nome
+
+  DefinicaoDeDesvio:
+    type: object
+    properties:
+      definicaoDeDesvioId:
+        type: string
+        description: Chave primária
+      definicaoDeDesvioOrdem:
+        type: string
+        description: Indica a ordenação das variáveis para compor a lista
+      definicaoDeDesvioNome:
+        type: string
+        description: Nome
+      definicaoDeDesvioCondicao:
+        type: string
+        description: Condição
+      definicaoDeTarefaSeguinteId:
+        type: string
+        description: Identificador da próxima tarefa apontada por este desvio
+      definicaoDeTarefaUltimo:
+        type: boolean
+        description: Indica se depois desse desvio deve prosseguir direto para o fim
+
+
+  Enumeravel:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Identificador
+      descr:
+        type: string
+        description: Descricao
+
+  Pessoa:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Identificador
+      sigla:
+        type: string
+        description: Identificador
+      descr:
+        type: string
+        description: Descricao
+        
+  Lotacao:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Identificador
+      sigla:
+        type: string
+        description: Identificador
+      descr:
+        type: string
+        description: Descricao
 
   Error:
     type: object

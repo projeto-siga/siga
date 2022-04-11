@@ -90,13 +90,19 @@
         <property name="sigaex.volume.max.paginas" value="400"/>
         <property name="sigaex.documento.novo.modelo.padrao" value="Ofício"/>
        
-        
-       <property name="sigaex.sicop.url" value=  "http://10.2.227.20/dc201wssicopgravaatu/wssicopgrava.asmx?wsdl"/>
-       
-       <!-- usuario e senha base64-->
+
+       <!-- sicop desenvolvimento, onde token= usuario:senha  base64
+		 <property name="sigaex.sicop.url" value=  "http://10.2.227.20/dc201wssicopgravaatu/wssicopgrava.asmx?wsdl"/>
 		<property name="sigaex.sicop.token" value="OTk5OTk5MTE6MTIzNDQ="/>
-		
 		<property name="sigaex.sicop.ativo" value="true"/>
+		<property name="sigaex.sicop.assunto.padrao" value="05028"/>
+		-->
+		
+        <property name="sigaex.sicop.url" value="@@@sigaex.sicop.url@@@"/>
+		<property name="sigaex.sicop.token" value="@@@sigaex.sicop.token@@@"/>
+        <property name="sigaex.sicop.ativo" value="@@@sigaex.sicop.ativo@@@"/>
+        <property name="sigaex.sicop.assunto.padrao" value="@@@sigaex.sicop.assunto.padrao@@@"/>
+      
 		
 		<property name="sigaex.metodo.apresentacao.resultado.pesquisa.documento" value="GOVSP"/>
   

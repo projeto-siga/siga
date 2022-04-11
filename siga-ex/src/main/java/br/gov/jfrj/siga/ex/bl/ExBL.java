@@ -3075,7 +3075,7 @@ public class ExBL extends CpBL {
 			// Integracao com o SICOP 
 			if (getComp().podeIntegrarComAntigoSistemaControleDocumento(doc)){
 				
-				String assuntoSicop = StringUtils.isNotBlank( doc.getExClassificacaoAtual().getAssuntoSicop() ) ?  doc.getExClassificacaoAtual().getAssuntoSicop() :"05028";  
+				String assuntoSicop = StringUtils.isNotBlank( doc.getExClassificacaoAtual().getAssuntoSicop() ) ?  doc.getExClassificacaoAtual().getAssuntoSicop() :Prop.get("sigaex.sicop.assunto.padrao");  
 				
 				SicopService sicopService = new SicopService();
 				

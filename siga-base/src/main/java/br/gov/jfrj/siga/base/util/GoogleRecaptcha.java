@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.unirest.proxy;
+package br.gov.jfrj.siga.base.util;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -14,21 +14,14 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import br.gov.jfrj.siga.base.Prop;
 
+
+
 public class GoogleRecaptcha {
 	
-	private static String proxyHost = Prop.get("/http.proxyHost");
-	private static int proxyPort = Prop.getInt("/http.proxyPort");
-
 	public static boolean isProxySetted() {
-		return proxyHost != null && proxyPort > 0;
-	}
-	
-	static void setProxyHost(String proxyHost) {
-		GoogleRecaptcha.proxyHost = proxyHost;
-	}
-	
-	static void setProxyPort(int proxyPort) {
-		GoogleRecaptcha.proxyPort = proxyPort;
+		String proxyHost = Prop.get("/http.proxyHost");
+
+		return proxyHost != null;
 	}
 	
 	/**
@@ -41,6 +34,8 @@ public class GoogleRecaptcha {
 	 * @throws UnirestException
 	 */
 	public static JsonNode validarRecaptcha(String secretKey, String responseUIRecaptcha, String remoteip) throws UnirestException {
+		String proxyHost = Prop.get("/http.proxyHost");
+		Integer proxyPort = Prop.getInt("/http.proxyPort");
 
 		HttpURLConnection connection = null;
 		try {

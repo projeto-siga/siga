@@ -11,10 +11,8 @@ consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
 
 tags:
-  - name: auth
-    description: Autenticação
-  - name: download
-    description: Download
+  - name: lista
+    description: Consulta e listagem
     
 securityDefinitions:
   Basic:
@@ -28,207 +26,272 @@ securityDefinitions:
 #                                   Parameters                                 #
 ################################################################################
 parameters:
-  sigla:
-    name: sigla
-    in: path
-    description: Sigla do mobil
-    type: string
-    required: true
-  completo:
-    name: completo
+  filtroPessoaLotacao:
+    name: filtroPessoaLotacao
     in: query
-    description: Informar true se deseja receber todos os arquivos juntados e anexos
-    required: false
-    type: boolean
-  estampa:
-    name: estampa
-    in: query
-    description: Informar true se deseja receber o PDF sem estampas
-    required: false
-    type: boolean
-  volumes:
-    name: volumes
-    in: query
-    description: Informar true se deseja receber uma compilação com todos os volumes de um processo
-    required: false
-    type: boolean
-  pdf:
-    name: pdf
-    in: path
-    description: Referência para o PDF que foi enviado previamente para o servidor
-    type: string
-    required: true
-  jwt:
-    name: jwt
-    in: path
-    description: JWT que referencia um artefato a ser baixado
-    required: true
-    type: string
-  filename:
-    name: filename
-    in: path
-    description: Nome do arquivo de um artefato a ser baixado
-    required: true
-    type: string
-  disposition:
-    name: disposition
-    in: query
-    description: Informar attachment se desejar receber como um download
+    description: Informa se deseja filtrar documentos por pessoa ou lotação
     required: false
     type: string
-  contenttype:
-    name: contenttype
+    default: Pessoa e Lotacao
+    enum:
+      - Pessoa e Lotacao
+      - Pessoa
+      - Lotacao
+  idMarcadorQuery:
+    name: idMarcador
     in: query
-    description: Informar o tipo de arquivo desejado, pode ser application/pdf ou text/html
+    description: Identificador do Marcador
+    required: true
+    type: string            
+  idMarcasQuery:
+    name: idMarcas
+    in: query
+    description: Identificadores de marcas separados por vírgula
+    required: true
+    type: string            
+  estilo:
+    name: estilo
+    in: query
+    description: Informa se deseja agrupar
     required: false
     type: string
-  chave:
-    name: chave
-    in: path
-    description: Chave que referencia um processo assíncrono
-    required: true
-    type: string
-
+    enum:
+      - Agrupados
 
 ################################################################################
 #                                           Paths                              #
 ################################################################################
 paths:
-  /autenticar:
-    post:
-      summary: Recebe login e senha e gera um token JWT para ser usado nos outros métodos da API
-      tags: [auth]
+  /painel/lista:
+    get:
+      summary: Listar móbiles por marcas
+      tags: [lista]
       security:
-        - Basic: []
-      parameters: []
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcasQuery"
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
-              token:
-                type: string
-                description: Token JWT
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-  /documento/{sigla}/arquivo:
-    get:
-      summary: Inicia o processo de geração do PDF completo de um documento para visualização
-      tags: [download]
-      security:
-        - Bearer: []
-      parameters:
-        - $ref: "#/parameters/contenttype"
-        - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/estampa"
-        - $ref: "#/parameters/completo"
-        - $ref: "#/parameters/volumes"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: object
-            properties:
-              uuid:
-                type: string
-                description: UUID que pode ser usado como chave para obter status da geração do PDF
-              jwt:
-                type: string
-                description: JWT com as informações para download do PDF
-        500:
-          description: Error ocurred
-          schema:
-            $ref: "#/definitions/Error"
-
-  /download/{jwt}/{filename}:
-    get:
-      summary: Faz o download de um artefato qualquer, baseado nas informações contidas em um JWT
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/jwt"
-        - $ref: "#/parameters/filename"
-        - $ref: "#/parameters/disposition"
-      responses:
-        200:
-          description: Successful response
-          schema:
-            type: file
-          headers:
-            Content-Type:
-              type: string
-              description: application/pdf
-            Content-Disposition:
-              type: string
-              description: attachment
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PainelListaItem"
         500:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
             
-  /status/{chave}:
+  /lista:
     get:
-      tags: [download]
-      parameters:
-        - $ref: "#/parameters/chave"
-      summary: Obtem o status de uma operação assíncrona
+      summary: Listar móbiles por filtro
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcadorQuery"
+        - $ref: "#/parameters/filtroPessoaLotacao"
       responses:
         200:
           description: Successful response
           schema:
             type: object
             properties:
-              mensagem:
-                type: string
-                description: Mensagem
-              indice:
-                type: number
-                description: Quantos passos já foram executados
-              contador:
-                type: number
-                description: Número total de passos a serem executados
-              bytes:
-                type: number
-                description: Tamanho total do payload até o momento
-              errormsg:
-                type: string
-                description: Mensagem de erro se houver
-              stacktrace:
-                type: string
-                description: Detalhamento do erro
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ListaItem"
         500:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+
+
+  /quadro:
+    get:
+      summary: Listar a quantidade de documentos
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/estilo"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/QuadroItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+
+
 
 
 ################################################################################
 #                                     Definitions                              #
 ################################################################################
 definitions:
-  Status:
+  QuadroItem:
+    description: Lista quantidade de documentos na mesa
     type: object
     properties:
-      mensagem:
+      finalidadeId:
         type: string
-        description: Mensagem
-      indice:
-        type: number
-        description: Quantos passos já foram executados
-      contador:
-        type: number
-        description: Número total de passos a serem executados
-      bytes:
-        type: number
-        description: Tamanho total do payload até o momento
-      errormsg:
+      tipoId:
         type: string
-        description: Mensagem de erro se houver
-      stacktrace:
+      tipoNome:
         type: string
-        description: Detalhamento do erro
+      grupoId:
+        type: string
+      grupoNome:
+        type: string
+      marcadorEnum:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      qtdAtendente:
+        type: string
+      qtdLotaAtendente:
+        type: string
+
+  ListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      sigla:
+        type: string
+      documentoData:
+        type: string
+        format: date-time
+      documentoSubscritor:
+        type: string
+      documentoLotaSubscritor:
+        type: string
+      documentoEspecie:
+        type: string
+      documentoModelo:
+        type: string
+      documentoDescricao:
+        type: string
+      mobilUltimaAnotacao:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      marcaData:
+        type: string
+        format: date-time
+      marcaResponsavel:
+        type: string
+      marcaLotaResponsavel:
+        type: string
+
+  PainelListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      marcaId:
+        type: string
+      marcaTipo:
+        type: string
+      marcaTexto:
+        type: string
+      marcaIcone:
+        type: string
+      dataIni:
+        type: string
+        format: date-time
+      dataFim:
+        type: string
+        format: date-time
+      moduloId:
+        type: string
+      refId:
+        type: string
+      movId:
+        type: string
+      tipo:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descricao:
+        type: string
+      origem:
+        type: string
+      ultimaAnotacao:
+        type: string
+      marcas:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acoes:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"
+          
+  Marca:
+    description: Etiquetas relacionadas a um documento
+    type: object
+    properties:
+      pessoa:
+        type: string
+      lotacao:
+        type: string
+      nome:
+        type: string
+      icone:
+        type: string
+      titulo:
+        type: string
+      marcaId:
+        type: string
+      inicio:
+        type: string
+        format: date-time
+      termino:
+        type: string
+        format: date-time
+      daPessoa:
+        type: boolean
+      deOutraPessoa:
+        type: boolean
+      daLotacao:
+        type: boolean
+
+  Acao:
+    description: Ação que pode ser realizada a um documento
+    type: object
+    properties:
+      nome:
+        type: string
+      icone:
+        type: string
+      ativa:
+        type: boolean
 
   Error:
     type: object

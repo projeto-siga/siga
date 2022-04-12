@@ -398,6 +398,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return Texto.maximoCaracteres(getDescricao(), 70, 100);
     }
 
+    public String getDescricaoMax40(){
+    	return Texto.maximoCaracteres(getDescricao(), 40, 50);
+    }
+
     @Override
     public String getDescricao() {
         if (!isDescrSolicitacaoPreenchida()) {

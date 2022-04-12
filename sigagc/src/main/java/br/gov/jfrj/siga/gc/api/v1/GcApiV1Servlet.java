@@ -63,7 +63,8 @@ public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(true)) {
+				try (GcApiV1Context ctx = new GcApiV1Context()) {
+					ctx.init(null);
 					return CpDao.getInstance().dt() != null;
 				}
 			}
@@ -75,7 +76,7 @@ public class GcApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		});
 
 	}
-	
+
 	private void defineProperties() {
 		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaGcDS");
 	}

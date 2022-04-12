@@ -1,0 +1,282 @@
+swagger: '2.0'
+
+info:
+  version: "1.0.0"
+  title: ExApiV1
+  description: "<h2>API para o Siga-Integra&ccedil;&atilde;o - Módulo de Integra&ccedil;&atilde;o</h2>"
+basePath: /integracao/api/v1
+schemes: [http,https]
+consumes: [application/json,application/x-www-form-urlencoded]
+produces: [application/json]
+
+tags:
+  - name: download
+    description: Download
+  - name: lista
+    description: Listagem de Documentos
+  - name: consulta
+    description: Consulta a Documentos
+  - name: acao
+    description: Ações em Documentos
+  - name: modelo
+    description: Informações sobre Modelos para a Criação de Documentos
+  - name: classificacao
+    description: Classificações Documentais
+  - name: utils
+    description: Utilitários
+
+securityDefinitions:
+  Basic:
+    type: basic
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+################################################################################
+#                                   Parameters                                 #
+################################################################################
+parameters:
+  sigla:
+    name: sigla
+    in: path
+    description: Sigla do mobil
+    type: string
+    required: true
+
+  usuarioSiafem:
+    name: usuarioSiafem
+    in: formData
+    description: Informa o usuário SIAFEM.
+    required: true
+    type: string
+
+  senhaSiafem:
+    name: senhaSiafem
+    in: formData
+    description: Informa o senha SIAFEM.
+    required: true
+    type: string
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+  /documentos/{sigla}/enviar-siafem:
+    post:
+      description: Utilize este método para enviar um SIAFDOC ao SIAFEM
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/usuarioSiafem"
+        - $ref: "#/parameters/senhaSiafem"
+      summary: Enviar ao SIAFEM
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento enviado ao SIAFEM
+                type: string
+              status:
+                type: string
+                default: "OK"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+################################################################################
+#                                     Definitions                              #
+################################################################################
+definitions:
+  Status:
+    type: object
+    properties:
+      mensagem:
+        type: string
+        description: Mensagem
+      indice:
+        type: number
+        description: Quantos passos já foram executados
+      contador:
+        type: number
+        description: Número total de passos a serem executados
+      bytes:
+        type: number
+        description: Tamanho total do payload até o momento
+      errormsg:
+        type: string
+        description: Mensagem de erro se houver
+      stacktrace:
+        type: string
+        description: Detalhamento do erro
+
+  Error:
+    type: object
+    properties:
+      errormsg:
+        type: string
+  MesaItem:
+    description: Lista documentos na mesa
+    type: object
+    properties:
+      tipo:
+        type: string
+      datahora:
+        type: string
+        format: date-time
+      tempoRelativo:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descr:
+        type: string
+      origem:
+        type: string
+      grupo:
+        type: string
+      grupoNome:
+        type: string
+      grupoOrdem:
+        type: string
+      podeAnotar:
+        type: boolean
+      podeAssinar:
+        type: boolean
+      podeAssinarEmLote:
+        type: boolean
+      podeTramitar:
+        type: boolean
+      list:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+
+  QuadroItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      grupoId:
+        type: string
+      grupoNome:
+        type: string
+      finalidadeId:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      qtdAtendente:
+        type: string
+      qtdLotaAtendente:
+        type: string
+
+  ListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      sigla:
+        type: string
+      documentoData:
+        type: string
+        format: date-time
+      documentoSubscritor:
+        type: string
+      documentoLotaSubscritor:
+        type: string
+      documentoEspecie:
+        type: string
+      documentoModelo:
+        type: string
+      documentoDescricao:
+        type: string
+      mobilUltimaAnotacao:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      marcaData:
+        type: string
+        format: date-time
+      marcaResponsavel:
+        type: string
+      marcaLotaResponsavel:
+        type: string
+
+  Marca:
+    description: Etiquetas relacionadas a um documento
+    type: object
+    properties:
+      pessoa:
+        type: string
+      lotacao:
+        type: string
+      nome:
+        type: string
+      icone:
+        type: string
+      titulo:
+        type: string
+      marcaId:
+        type: string
+      inicio:
+        type: string
+        format: date-time
+      termino:
+        type: string
+        format: date-time
+      daPessoa:
+        type: boolean
+      deOutraPessoa:
+        type: boolean
+      daLotacao:
+        type: boolean
+
+  Acao:
+    description: Ação que pode ser realizada a um documento
+    type: object
+    properties:
+      nome:
+        type: string
+      icone:
+        type: string
+      ativa:
+        type: boolean
+
+  Documento:
+    description: Dados de um documento
+    type: object
+    properties:
+      sigla:
+        type: string
+      html:
+        type: string
+      data:
+        type: string
+      descr:
+        type: string
+      marca:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acao:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"

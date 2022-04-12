@@ -95,7 +95,7 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
 	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
-	final static public Long MAXIMO_DIAS_PESQUISA = 30L;	
+	final static public Long MAXIMO_DIAS_PESQUISA = Prop.getLong("/siga.pesquisa.limite.dias")> 0 ? Prop.getLong("/siga.pesquisa.limite.dias"):30L;	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -186,7 +186,7 @@ public class ExMobilController extends
 				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
         		result.include("msgCabecClass", "alert-warning");
         		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
-        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial  " + MAXIMO_DIAS_PESQUISA.toString() +"  dias anterior à hoje no campo Data Inicial.");
 			}
 		}
 
@@ -515,7 +515,7 @@ public class ExMobilController extends
 				dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);
         		result.include("msgCabecClass", "alert-warning");
         		result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
-        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial 30 dias anterior à hoje no campo Data Inicial.");
+        				+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Será assumida uma data inicial " + MAXIMO_DIAS_PESQUISA.toString() +" dias anterior à hoje no campo Data Inicial.");
 			}
 		}
 
@@ -628,7 +628,7 @@ public class ExMobilController extends
 					.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), SIGA_DOC_PESQ_DTLIMITADA )) {
 			result.include("msgCabecClass", "alert-warning");
 			result.include("mensagemCabec", "ATENÇÃO: A pesquisa deve ser limitada com uma range de datas de no máximo "
-					+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Foi assumida uma data inicial 30 dias anterior à hoje.");
+					+ MAXIMO_DIAS_PESQUISA.toString() + " dias. Foi assumida uma data inicial  " + MAXIMO_DIAS_PESQUISA.toString() +"  dias anterior à hoje.");
 			dt = LocalDate.now().plusDays(-MAXIMO_DIAS_PESQUISA);
 			flt.setDtDoc(Date.from(dt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			dtDoc = FuncoesEL.calculaDiasAPartirDeHoje(-MAXIMO_DIAS_PESQUISA);

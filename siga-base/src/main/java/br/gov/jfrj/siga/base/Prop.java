@@ -53,7 +53,14 @@ public class Prop {
 			return null;
 		return Double.valueOf(p.trim());
 	}
-
+	
+	public static Long getLong(String nome) {
+		String p = Prop.get(nome);
+		if (p == null)
+			return null;
+		return Long.valueOf(p.trim());
+	}
+	
 	public static List<String> getList(String nome) {
 		String p = Prop.get(nome);
 		if (p == null)
@@ -264,6 +271,12 @@ public class Prop {
 		 * armazenado em session storage no browser do usuário.
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
+		
+		/* Tela de Pesquisa, só funciona se permissão de acesso SIGA;DOC;PESQ;DTLIMITADA estiver permitida. Será a qtd máxima 
+		 * de dias que poderá ser pesquisada na pesquisa avançada.
+		 * */
+		provider.addPublicProperty("/siga.pesquisa.limite.dias", "30");
+		
 
 	}
 }

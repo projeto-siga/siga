@@ -2319,13 +2319,13 @@ paths:
           description: Nome do grupo de marcadores da mesa
           required: false
           type: string
-        - name: idpessoa
+        - name: idPessoa
           in: query
           description: Identificador da Pessoa Inicial
           required: false
           type: integer
           format: int64
-        - name: idlotacao
+        - name: idLotacao
           in: query
           description: Identificador da Lotação Inicial. Pesquisa de outras lotações liberada somente para usuários autorizados. 
             Se não informado, assume a lotação do usuário.

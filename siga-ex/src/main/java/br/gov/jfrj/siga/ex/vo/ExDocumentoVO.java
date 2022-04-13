@@ -518,12 +518,17 @@ public class ExDocumentoVO extends ExVO {
 			SortedSet<ExMarca> setSistema = new TreeSet<>();
 			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
 			for (ExMarca m : set) {
-				if ((m.getDtIniMarca() == null || !m.getDtIniMarca().after(now))
-						&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(now))) {
-					if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
-						setSistema.add(m);
-					if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
-						getMarcasDoMobil().add(m);
+			
+				if (m.getCpMarcador().isAtivo()){
+				
+					if ((m.getDtIniMarca() == null || !m.getDtIniMarca().after(now))
+							&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(now))) {
+						if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+							setSistema.add(m);
+						if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
+							getMarcasDoMobil().add(m);
+					}
+				
 				}
 			}
 			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);

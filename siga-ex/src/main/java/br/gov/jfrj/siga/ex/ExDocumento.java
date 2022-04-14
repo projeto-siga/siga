@@ -2742,6 +2742,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return pais;
 	}
+	
+	public boolean paiPossuiMovsVinculacaoPapelCossigRespAssinatura(){
+		boolean possuiMovs = Boolean.FALSE;
+		List<ExDocumento> viasDocPai = this.getTodosOsPaisDasViasCossigRespAss();
+		if (viasDocPai.iterator().hasNext()) {
+			List<ExMovimentacao> movs = viasDocPai.iterator().next().getMovsVinculacaoPapelCossigRespAssinatura();
+			possuiMovs = !movs.isEmpty() ? Boolean.TRUE :Boolean.FALSE;
+		}
+		return possuiMovs;
+	}
 
 	public List<Object> getListaDeAcessos() {
 		if (getDnmAcesso() == null || isDnmAcessoMAisAntigoQueODosPais()) {

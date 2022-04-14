@@ -1378,8 +1378,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("cosignatarioSel", movimentacaoBuilder.getSubscritorSel());
 		result.include("mob", builder.getMob());
 		result.include("listaCossignatarios", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE));
-		result.include("podeExibirArvoreDocsCossig", Ex.getInstance().getBL().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante()));	
-		result.include("podeIncluirCossigArvoreDocs", Ex.getInstance().getBL().possuiMovsVinculacaoPapelCossigRespAssinatura(doc));
+		boolean podeExibirArvoreDocsCossig = Ex.getInstance().getBL().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
+		result.include("podeExibirArvoreDocsCossig", podeExibirArvoreDocsCossig);
+		if	(podeExibirArvoreDocsCossig)
+			result.include("podeIncluirCossigArvoreDocs", doc.paiPossuiMovsVinculacaoPapelCossigRespAssinatura());
 	}
 
 	@Transacional

@@ -4010,17 +4010,17 @@ public class ExBL extends CpBL {
 		}
 	}
 	
+	public boolean podeExibirArvoreDocsCossigRespAss(DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+		return Ex.getInstance().getConf().podePorConfiguracao(
+				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
+	}
+	
 	private boolean possuiInclusaoCossigRespAss(ExDocumento doc) {
 		return !doc.getListaCossigRespAssDiffCadastranteDoc().isEmpty();
 	}
 	
 	private boolean possuiAssinaturaCossigRespAssHoje(ExDocumento doc){
 		return !doc.getListaCossigRespAssDocHoje().isEmpty() ? Boolean.TRUE : Boolean.FALSE;
-	}
-	
-	public boolean podeExibirArvoreDocsCossigRespAss(DpPessoa cadastrante, DpLotacao lotaCadastrante) {
-		return Ex.getInstance().getConf().podePorConfiguracao(
-				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
 	}
 	
 	private boolean podeAddMovVinculPapelCossigRespAss(ExDocumento docOrigem, ExDocumento docPai, DpPessoa dpPessoaResp) {
@@ -4167,16 +4167,6 @@ public class ExBL extends CpBL {
 			}
 		}
 		return listaMovCossigResp.stream().distinct().collect(Collectors.toList());
-	}
-	
-	public boolean possuiMovsVinculacaoPapelCossigRespAssinatura(ExDocumento doc){
-		boolean possuiMovs = Boolean.FALSE;
-		List<ExDocumento> viasDocPai = doc.getTodosOsPaisDasViasCossigRespAss();
-		if (viasDocPai.iterator().hasNext()) {
-			List<ExMovimentacao> movs = viasDocPai.iterator().next().getMovsVinculacaoPapelCossigRespAssinatura();
-			possuiMovs = !movs.isEmpty() ? Boolean.TRUE :Boolean.FALSE;
-		}
-		return possuiMovs;
 	}
 	
 	private String getDescricaoMovPapelMontada(String tituloDesc, ExDocumento docAtual, DpPessoa substritor, String codDocOrigem, String nomeMov) {

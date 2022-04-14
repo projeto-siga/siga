@@ -1160,7 +1160,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true, false, true);
+				getLotaTitular(), true, true, false, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(
@@ -1208,7 +1208,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true, false, true);
+				getLotaTitular(), true, true, false, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(

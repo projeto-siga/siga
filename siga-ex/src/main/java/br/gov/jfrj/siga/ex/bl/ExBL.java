@@ -4018,7 +4018,7 @@ public class ExBL extends CpBL {
 		return !doc.getListaCossigRespAssDocHoje().isEmpty() ? Boolean.TRUE : Boolean.FALSE;
 	}
 	
-	private boolean podeExibirArvoreDocsCossigRespAss(DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+	public boolean podeExibirArvoreDocsCossigRespAss(DpPessoa cadastrante, DpLotacao lotaCadastrante) {
 		return Ex.getInstance().getConf().podePorConfiguracao(
 				cadastrante, lotaCadastrante, ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
 	}
@@ -4078,7 +4078,6 @@ public class ExBL extends CpBL {
 					removerPapel(docPai, movsPersist, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, descrMov.toString());
 				}
 			}
-		
 		}
 	}
 	
@@ -4158,7 +4157,7 @@ public class ExBL extends CpBL {
 	private List<ExMovimentacao> obterMovsPaiComCossigRespAssDocsFilhos(List<ExMovimentacao> movsPai, List<ExDocumento> docsFilhosCossigResp) {
 		List<ExMovimentacao> listaMovCossigResp = new ArrayList<>();
 		for (ExMovimentacao movPai : movsPai) {
-			// Obter Codigo do Doc persistido no campo ObsOrgao
+			// Obter Codigo do Doc persistido no campo ExMobilRef
 			ExMobil docVia = movPai.getExMobilRef();
 			if (docVia != null) {					
 				for (ExDocumento exDoc : docsFilhosCossigResp) {
@@ -4168,6 +4167,16 @@ public class ExBL extends CpBL {
 			}
 		}
 		return listaMovCossigResp.stream().distinct().collect(Collectors.toList());
+	}
+	
+	public boolean possuiMovsVinculacaoPapelCossigRespAssinatura(ExDocumento doc){
+		boolean possuiMovs = Boolean.FALSE;
+		List<ExDocumento> viasDocPai = doc.getTodosOsPaisDasViasCossigRespAss();
+		if (viasDocPai.iterator().hasNext()) {
+			List<ExMovimentacao> movs = viasDocPai.iterator().next().getMovsVinculacaoPapelCossigRespAssinatura();
+			possuiMovs = !movs.isEmpty() ? Boolean.TRUE :Boolean.FALSE;
+		}
+		return possuiMovs;
 	}
 	
 	private String getDescricaoMovPapelMontada(String tituloDesc, ExDocumento docAtual, DpPessoa substritor, String codDocOrigem, String nomeMov) {
@@ -4430,9 +4439,14 @@ public class ExBL extends CpBL {
 		}
 
 	}
-
+	
 	public void incluirCosignatario(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor, final String funcaoCosignatario) throws AplicacaoException {
+		incluirCosignatario(cadastrante, lotaCadastrante, doc, dtMov, subscritor, funcaoCosignatario, Boolean.FALSE);
+	}
+
+	public void incluirCosignatario(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final Date dtMov, final DpPessoa subscritor, final String funcaoCosignatario, final boolean podeIncluirCossigArvoreDocs) throws AplicacaoException {
 			
 		if (subscritor == null) {
 			throw new RegraNegocioException("Cossignatário não foi informado");
@@ -4464,7 +4478,7 @@ public class ExBL extends CpBL {
 			processar(doc, true, false);
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
-			if (podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante) 
+			if (podeIncluirCossigArvoreDocs && podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante) 
 					&& doc.isFinalizado() && possuiInclusaoCossigRespAss(doc)) {
 				incluirDnmAcessoTempArvoreDocsCossigRespAss(cadastrante, lotaCadastrante, doc, doc.getTodosOsPaisDasViasCossigRespAss());
 			}

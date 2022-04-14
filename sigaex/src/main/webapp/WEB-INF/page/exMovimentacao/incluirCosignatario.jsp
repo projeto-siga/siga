@@ -76,6 +76,17 @@
 								</div>
 							</div>
 						</div>
+						<c:if test="${podeExibirArvoreDocsCossig}">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<div class="form-check form-check-inline mt-4">
+										<input type="checkbox" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if> />
+										<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessa Todos Documentos</label>
+										<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="Selecionar esse campo se houver a necessidade de permitir que os cossignatário(s) acesse(m) a árvore de documentos completa."></a>
+									</div>
+								</div>
+							</div>
+						</c:if>
 					</div>
 					<div id="div_personalizacao" style="display: none" class="row">
 						<div class="col-sm-4">

@@ -1375,18 +1375,18 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("documento", doc);
-		result.include("cosignatarioSel",
-				movimentacaoBuilder.getSubscritorSel());
+		result.include("cosignatarioSel", movimentacaoBuilder.getSubscritorSel());
 		result.include("mob", builder.getMob());
 		result.include("listaCossignatarios", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE));
-		
+		result.include("podeExibirArvoreDocsCossig", Ex.getInstance().getBL().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante()));	
+		result.include("podeIncluirCossigArvoreDocs", Ex.getInstance().getBL().possuiMovsVinculacaoPapelCossigRespAssinatura(doc));
 	}
 
 	@Transacional
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback, final boolean podeIncluirCossigArvoreDocs) {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -1413,7 +1413,7 @@ public class ExMovimentacaoController extends ExController {
 			Ex.getInstance()
 					.getBL()
 					.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
-							mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
+							mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov(), podeIncluirCossigArvoreDocs);
 		} catch (RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
 	

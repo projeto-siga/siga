@@ -3023,7 +3023,7 @@ public class ExBL extends CpBL {
 					.getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, 
 							new ITipoDeMovimentacao[] {}, mobil, false, null, false);
 			mobil.setUltimaMovimentacaoNaoCancelada(ultMov);
-			mobil.setDnmDataUltimaMovimentacaoNaoCancelada(ultMov.getDtIniMov());
+			mobil.setDnmDataUltimaMovimentacaoNaoCancelada(ultMov != null ? ultMov.getDtIniMov() : null);
 
 			if (mob.doc().isPendenteDeAssinatura()
 					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob.doc().isEletronico()

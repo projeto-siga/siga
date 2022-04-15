@@ -62,7 +62,7 @@ parameters:
 #                                           Paths                              #
 ################################################################################
 paths:
-  /documentos/{sigla}/enviar-siafem:
+  /integracao/{sigla}/enviar-siafem:
     post:
       description: Utilize este método para enviar um SIAFDOC ao SIAFEM
       consumes: ["application/x-www-form-urlencoded"]

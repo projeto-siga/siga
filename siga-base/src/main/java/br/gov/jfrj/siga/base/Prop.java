@@ -216,6 +216,11 @@ public class Prop {
 		provider.addPublicProperty("/blucservice.url", sigaBaseUrl + "/blucservice/api/v1");
 		provider.addPublicProperty("/vizservice.url", sigaBaseUrl + "/vizservice");
 
+		provider.addPublicProperty("/sigaintegracao.service.endpoint", sigaBaseUrl + "/sigaintegracao/servicos/IntegracaoService?wsdl");
+		provider.addPublicProperty("/sigaintegracao.service.url", sigaBaseUrl + "/sigaintegracao/servicos/IntegracaoService");
+		provider.addPublicProperty("/sigaintegracao.service.qname", "http://impl.service.integracao.siga.jfrj.gov.br/");
+		provider.addPublicProperty("/sigaintegracao.service.name", "IntegracaoService");
+
 		provider.addPublicProperty("/siga.sgp.bnf.url", "/siga-beneficios");
 		provider.addPublicProperty("/siga.sgp.aq.url", "/sigarhaq");
 		provider.addPublicProperty("/siga.sgp.cad.url", "/sigarh");

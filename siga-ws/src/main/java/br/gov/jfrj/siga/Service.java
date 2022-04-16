@@ -26,6 +26,7 @@ import java.util.Collections;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
+import br.gov.jfrj.siga.integracao.service.IntegracaoService;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
@@ -47,6 +48,8 @@ public abstract class Service {
 	static GiService gi = null;
 	static GcService gc = null;
 	static BlucService bluc = null;
+
+	static IntegracaoService integracao = null;
 	static UsuarioDeSistemaEnum usuarioDeSistema = null;
 
 	static {
@@ -119,6 +122,16 @@ public abstract class Service {
 		if (bluc == null)
 			bluc = new BlucService(Prop.get("/blucservice.url"));
 		return bluc;
+	}
+
+	public static IntegracaoService getIntegracaoService() {
+		if (integracao == null)
+			integracao = getService(IntegracaoService.class,
+					Prop.get("/sigaintegracao.service.endpoint"),
+					Prop.get("/sigaintegracao.service.qname"),
+					Prop.get("/sigaintegracao.service.name"),
+					Prop.get("/sigaintegracao.service.url"));
+		return integracao;
 	}
 
 	@SuppressWarnings("unchecked")

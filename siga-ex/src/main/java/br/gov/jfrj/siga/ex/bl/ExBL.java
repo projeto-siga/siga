@@ -224,8 +224,6 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
-import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
@@ -515,7 +513,7 @@ public class ExBL extends CpBL {
 	 * Método criado para contar o némero de páginas de uma movimentacao que foi
 	 * criada antes da função que grava uma movimentacao com o total de páginas.
 	 * 
-	 * @param doc
+	 * @param mov
 	 * @return
 	 * @throws Exception
 	 */
@@ -7770,7 +7768,7 @@ public class ExBL extends CpBL {
 			throw new RuntimeException("Ocorreu um erro ao reordenar documentos.", e);
 		}
 	}
-	
+
 	public ExDocumento buscarDocumentoPorLinkPermanente(CpToken cpToken) {
 		
 		ExDocumento doc = ExDao.getInstance().consultar(cpToken.getIdRef(), ExDocumento.class, false);
@@ -8175,7 +8173,7 @@ public class ExBL extends CpBL {
 	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) {
 		try {
 			gravarMovimentacaoSiafem(exDoc, cadastrante, lotacaoTitular);
-			enviarSiafem(usuarioSiafem, senhaSiafem, exDoc);
+			Service.getIntegracaoService().enviarSiafem(usuarioSiafem, senhaSiafem, exDoc.getSigla());
 		} catch (final AplicacaoException e) {
 			cancelarAlteracao();
 			throw e;
@@ -8183,21 +8181,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao enviar documento ao SIAFEM", e);
 		}
-	}
-
-	private void enviarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) {
-		ExDocumento formulario = obterFormularioSiafem(exDoc);
-		
-		if(formulario == null)
-			throw new AplicacaoException("Favor preencher o \"" + Prop.get("ws.siafem.nome.modelo") + ".");
-		
-		Map<String, String> form = new TreeMap<String, String>();
-		Utils.mapFromUrlEncodedForm(form, formulario.getConteudoBlobForm());
-		SiafDoc siafDoc = new SiafDoc(form);
-		
-		siafDoc.setCodSemPapel(exDoc.getExMobilPai().doc().getSigla().replaceAll("[-/]", ""));
-		
-		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, siafDoc);
 	}
 
 	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {

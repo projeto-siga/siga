@@ -47,7 +47,7 @@ public class IntegracaoApiV1Servlet extends SwaggerServlet implements Prop.IProp
     }
 
     private void defineProperties() {
-        addPublicProperty("datasource.name", "java:/jboss/datasources/SigaGcDS");
+
     }
 
     @Override

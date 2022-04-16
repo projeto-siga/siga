@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <display-name>siga-integracao</display-name>
+
+    <servlet>
+        <servlet-name>IntegracaoApiV1Servlet</servlet-name>
+        <servlet-class>br.gov.jfrj.siga.integracao.api.v1.IntegracaoApiV1Servlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>IntegracaoApiV1Servlet</servlet-name>
+        <url-pattern>/api/v1/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Inicio de WebServer -->
+    <context-param>
+        <param-name>br.com.caelum.vraptor.provider</param-name>
+        <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider
+        </param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>br.com.caelum.vraptor.encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>br.com.caelum.vraptor.packages</param-name>
+        <param-value>
+            br.gov.jfrj.siga.vraptor,
+            br.com.caelum.vraptor.util.jpa
+        </param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>IntegracaoService</servlet-name>
+        <servlet-class>br.gov.jfrj.siga.integracao.service.impl.IntegracaoServiceImpl
+        </servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>IntegracaoService</servlet-name>
+        <url-pattern>/servicos/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>IntegracaoService</servlet-name>
+        <url-pattern>/servicos/IntegracaoService</url-pattern>
+    </servlet-mapping>
+
+</web-app>

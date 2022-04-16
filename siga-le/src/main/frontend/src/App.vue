@@ -16,7 +16,7 @@
                 test.properties['siga.ambiente'] === 'prod',
             }"
           >
-            <b-navbar-brand href="#/mesa">
+            <b-navbar-brand href="#/quadro">
               <img
                 id="logo-header"
                 src="./assets/logo-siga-novo-38px.png"
@@ -48,18 +48,18 @@
                   <router-link
                     class="nav-link"
                     active-class="active"
-                    :to="{ name: 'Mesa' }"
+                    :to="{ name: 'Quadro' }"
                     tag="a"
-                    >Mesa</router-link
+                    >Quadro</router-link
                   >
                 </b-nav-item>
                 <b-nav-item v-if="jwt &amp;&amp; jwt.sub">
                   <router-link
                     class="nav-link"
                     active-class="active"
-                    :to="{ name: 'Quadro' }"
+                    :to="{ name: 'Mesa' }"
                     tag="a"
-                    >Quadro</router-link
+                    >Mesa</router-link
                   >
                 </b-nav-item>
                 <b-nav-item>
@@ -87,6 +87,26 @@
                   :text="jwt.sub"
                   right
                 >
+                  <template v-if="usuario && usuario.substituicoesPermitidas">
+                    <b-dropdown-group header="Substituir:"></b-dropdown-group>
+                    <b-dropdown-item
+                      v-for="s in usuario.substituicoesPermitidas"
+                      :key="s.substituicaoId"
+                      @click="substituir(subst)"
+                    >
+                      {{
+                        (s.cadastranteId !== s.titularId ? s.titularNome : "") +
+                          (s.cadastranteId !== s.titularId &&
+                          s.lotaCadastranteId !== s.lotaTitularId
+                            ? "/"
+                            : "") +
+                          (s.lotaCadastranteId !== s.lotaTitularId
+                            ? s.lotaTitularNome
+                            : "")
+                      }}
+                    </b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                  </template>
                   <b-dropdown-item @click="logout">Logout</b-dropdown-item>
                 </b-nav-item-dropdown>
 
@@ -224,10 +244,12 @@ export default {
       if (token) {
         AuthBL.setIdToken(token);
         this.jwt = AuthBL.decodeToken(token);
+        this.carregarUsuario();
+
         // $rootScope.updateLogged();
         // $state.go('consulta-processual');
         this.$router.push({
-          name: "Mesa",
+          name: "Quadro",
           params: { exibirAcessoAnterior: true },
         });
       }
@@ -292,6 +314,7 @@ export default {
     if (this.token) {
       AuthBL.setIdToken(this.token);
       this.jwt = AuthBL.decodeToken(this.token);
+      this.carregarUsuario();
     } else {
       this.$router.push({ name: "Login" });
     }
@@ -350,9 +373,14 @@ export default {
       },
       token: undefined,
       jwt: {},
+      usuario: undefined,
     };
   },
   methods: {
+    async carregarUsuario() {
+      var response = await this.$http.get("siga/api/v1/usuario");
+      this.usuario = response.data;
+    },
     isTokenValid: function() {
       return this.token && !AuthBL.isTokenExpired(this.token);
     },
@@ -523,6 +551,7 @@ body {
   margin: 0;
   padding-bottom: 6rem;
   min-height: 100%;
+  background-color: #dae9ec !important;
 }
 
 div.dropdown-menu.logout {
@@ -594,6 +623,7 @@ h6::first-letter {
     padding: 0 !important;
     min-width: 768px;
   }
+
   .container {
     width: auto;
     min-width: 750px;

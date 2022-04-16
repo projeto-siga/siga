@@ -126,7 +126,6 @@ import {
   Bus
 } from './bl/bus.js'
 
-import vSelect from 'vue-select'
 
 import Autocomplete from 'v-autocomplete'
 
@@ -142,7 +141,12 @@ ptBR.messages.oab = field => 'OAB ' + field + ' inválido.'
 Vue.use(VueResource)
 Vue.use(VueClip)
 
+import vSelect from 'vue-select'
 Vue.component('v-select', vSelect)
+
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+Vue.component('treeselect', Treeselect)
 
 Vue.config.productionTip = false
 

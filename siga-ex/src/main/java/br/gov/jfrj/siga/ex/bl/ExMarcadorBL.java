@@ -315,7 +315,8 @@ public class ExMarcadorBL {
 
 	protected boolean acrescentarMarcadorCancelado() {
 		if (mob.isCancelada()) {
-			acrescentarMarca(CpMarcadorEnum.CANCELADO.getId(), null, mob.doc().getCadastrante(),
+			ExMovimentacao ultimaMovimentacao = mob.getUltimaMovimentacao();
+			acrescentarMarca(CpMarcadorEnum.CANCELADO.getId(), ultimaMovimentacao != null ? ultimaMovimentacao.getDtIniMov() : null, mob.doc().getCadastrante(),
 					mob.doc().getLotaCadastrante());
 			return true;
 		}

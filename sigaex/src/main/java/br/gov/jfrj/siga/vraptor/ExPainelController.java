@@ -93,7 +93,7 @@ public class ExPainelController extends ExController {
 			}
 			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-					getLotaTitular(), true, true, false);
+					getLotaTitular(), true, true, false, false);
 			// Verifica se doc só tem o mobil geral
 			if (exDocumentoDTO.getDoc().isFinalizado() 
 					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
@@ -164,7 +164,7 @@ public class ExPainelController extends ExController {
 			buscarDocumento(false, exDocumentoDTO);
 			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-					getLotaTitular(), true, true, false);
+					getLotaTitular(), true, true, false, false);
 		} catch (Exception e) {
 		}
 		if (exDocumentoDTO != null && exDocumentoDTO.getDoc().isFinalizado() 
@@ -206,7 +206,7 @@ public class ExPainelController extends ExController {
 		buscarDocumento(false, exDocumentoDTO);
 		docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true, false);
+				getLotaTitular(), true, true, false, false);
 		
 		ExMovimentacao mov = dao().consultar(idMovDuplicada, ExMovimentacao.class, false);
 
@@ -261,7 +261,7 @@ public class ExPainelController extends ExController {
 			buscarDocumento(false, exDocumentoDTO);
 			docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 					exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-					getLotaTitular(), true, true, false);
+					getLotaTitular(), true, true, false, false);
 		} catch (Exception e) {
 		}
 		if (exDocumentoDTO.getDoc().getDescrDocumento() != null) {

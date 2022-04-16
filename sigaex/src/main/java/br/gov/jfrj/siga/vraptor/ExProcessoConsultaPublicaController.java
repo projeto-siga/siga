@@ -40,7 +40,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
+import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 
 @Controller
 public class ExProcessoConsultaPublicaController extends ExController {
@@ -129,9 +129,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			l = lista.get(0).getLotaSubscritor();
 		}
 
-		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
-		
-		docVO.exibe();
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false, true);
 
 		result.include("movs", lista);
 		result.include("sigla", exDocumentoDTO.getDoc().getSigla());

@@ -6,6 +6,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -29,8 +30,9 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
+	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = null;
 
-	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
+	public static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
 																// de duração
 	public static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova
 																// automaticamente
@@ -122,7 +124,7 @@ public class AuthJwtFormFilter implements Filter {
 				String token = extrairAuthorization(req);
 				Map<String, Object> decodedToken = validarToken(token);
 				final long now = System.currentTimeMillis() / 1000L;
-				if ((Integer) decodedToken.get("exp") < now + TIME_TO_RENEW_IN_S) {
+				if (((Integer) decodedToken.get("exp")) < (now + TIME_TO_RENEW_IN_S)) {
 					// Seria bom incluir o attributo HttpOnly
 					String tokenNew = renovarToken(token);
 					Map<String, Object> decodedNewToken = validarToken(token);
@@ -169,7 +171,6 @@ public class AuthJwtFormFilter implements Filter {
 	}
 
 	public static Cookie buildCookie(String tokenNew) {
-
 		Cookie cookie = new Cookie(getNameCookie(), tokenNew);
 		cookie.setPath("/");
 
@@ -177,9 +178,18 @@ public class AuthJwtFormFilter implements Filter {
 			cookie.setDomain(getCookieDomain());
 		}
 
+		cookie.setMaxAge(TIME_TO_EXPIRE_IN_S);
+
 		return cookie;
 	}
 
+	public static void addCookie(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {
+		response.setHeader("Set-Cookie",
+				cookie.getName() + "=" + cookie.getValue() + "; Path=" + cookie.getPath() + "; Max-Age="
+						+ cookie.getMaxAge() + "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
+						+ "; HttpOnly" + (request.getServerName().equals("localhost") ? "" : "; Secure; SameSite=None"));
+	}
+	
 	public static Cookie buildEraseCookie() {
 		Cookie cookie = new Cookie(getNameCookie(), "");
 		cookie.setPath("/");

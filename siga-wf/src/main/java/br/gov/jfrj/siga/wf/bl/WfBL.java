@@ -34,6 +34,7 @@ import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -59,6 +60,7 @@ import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
@@ -231,6 +233,79 @@ public class WfBL extends CpBL {
 			}
 		}
 		WfDao.getInstance().gravarInstanciaDeProcedimento(pi);
+	}
+
+	public static WfProcedimento converterVariaveisEProsseguir(WfProcedimento pi, Map<String, String> paramsAsStrings,
+	Integer indiceDoDesvio, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade idc) throws Exception {
+		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
+		
+		// TODO Pegar automaticamente
+		
+		// WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
+		
+		Map<String, Object> paramsAsObjects = new HashMap<>();
+		
+		if (td.getVariable() != null) {
+			// Associa cada variavel com seu valore especifico
+			for (WfDefinicaoDeVariavel variable : td.getVariable()) {
+				String identificador = variable.getIdentifier();
+				if (!paramsAsStrings.containsKey(identificador))
+					continue;
+				if (variable.getEditingKind() != VariableEditingKind.READ_WRITE
+						&& variable.getEditingKind() != VariableEditingKind.READ_WRITE_REQUIRED)
+					continue;
+		
+				String campo = paramsAsStrings.get(identificador);
+				Object value = campo;
+		
+				if (variable.getTipo() == WfTipoDeVariavel.DATE)
+					value = SigaCalendar.converteStringEmData(campo.toString());
+				else if (variable.getTipo() == WfTipoDeVariavel.BOOLEAN)
+					value = converterParaBoolean(campo);
+				else if (variable.getTipo() == WfTipoDeVariavel.DOUBLE)
+					value = converterParaDouble(campo);
+				else if (variable.getTipo() == WfTipoDeVariavel.SELECAO)
+					value = campo;
+		
+				// TODO: Verifica se as variáveis "required" foram preenchidas
+				if (variable.isRequired()
+						&& (value == null || (value instanceof String && (((String) value).trim().length() == 0)))) {
+					throw new AplicacaoException("O campo " + variable.getTitle() + " deve ser preenchido");
+				}
+		
+				paramsAsObjects.put(identificador, value);
+			}
+		}
+		
+		Integer desvio = null;
+		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
+			desvio = indiceDoDesvio;
+		}
+		
+		Wf.getInstance().getBL().prosseguir(pi.getIdEvent(), desvio, paramsAsObjects, titular, lotaTitular, idc);
+		return pi;
+	}
+	
+	private static Boolean converterParaBoolean(String campo) {
+		if (campo == null)
+			return null;
+		String s = campo.trim();
+		if (s.length() == 0)
+			return null;
+		return "1".equals(s) || "true".equals(s);
+	}
+	
+	private static Double converterParaDouble(String campo) {
+		if (campo == null)
+			return null;
+		String s = campo.trim();
+		if (s.length() == 0)
+			return null;
+		if (s.contains("."))
+			s = s.replace(".", "");
+		if (s.contains(","))
+			s = s.replace(",", ".");
+		return Double.parseDouble(s);
 	}
 
 	/**

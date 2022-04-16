@@ -58,8 +58,8 @@ abstract class DocumentosSiglaAssinarAutenticarComSenhaPost {
 		// Necessário pois é chamado o método "realPath" durante a criação do
 		// PDF.
 		DpPessoa cadastrante = ctx.getCadastrante();
-		DpPessoa titular = cadastrante;
-		DpLotacao lotaTitular = cadastrante.getLotacao();
+		DpPessoa titular = ctx.getTitular();
+		DpLotacao lotaTitular = ctx.getLotaTitular();
 
 		ExMobil mob = getMob(sigla);
 

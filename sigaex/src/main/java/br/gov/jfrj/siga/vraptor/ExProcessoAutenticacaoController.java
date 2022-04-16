@@ -53,7 +53,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
+import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 
 @Controller
 public class ExProcessoAutenticacaoController extends ExController {
@@ -333,8 +333,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
-			docVO.exibe();
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false, true);
 			Cookie cookie = new Cookie("jwt-prot", buildJwtToken(n));
 			cookie.setMaxAge(1 * 60 * 60);
 			this.response.addCookie(cookie);

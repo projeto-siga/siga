@@ -157,7 +157,8 @@ echo ""
 cp -rf target/* ~/
 
 echo "SIGA:"
-if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace $3/target/siga.war"`; then
+#if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace $3/target/siga.war"`; then
+if deploy_siga=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file $JBOSS_HOME/standalone/deployments/siga.war"`; then
         echo "DEPLOY: siga.war - OK"
 else
         echo $deploy_siga
@@ -169,7 +170,7 @@ echo ""
 
 
 echo "SIGAEX:"
-if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace $3/target/sigaex.war"`; then
+if deploy_sigaex=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="deployment deploy-file --replace $JBOSS_HOME/standalone/deployments/sigaex.war"`; then
         echo "DEPLOY: sigaex.war - OK"
 else
         echo $deploy_sigaex

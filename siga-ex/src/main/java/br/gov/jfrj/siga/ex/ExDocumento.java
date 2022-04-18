@@ -2744,13 +2744,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 	
 	public boolean paiPossuiMovsVinculacaoPapelCossigRespAssinatura(){
-		boolean possuiMovs = Boolean.FALSE;
 		List<ExDocumento> viasDocPai = this.getTodosOsPaisDasViasCossigRespAss();
 		if (viasDocPai.iterator().hasNext()) {
 			List<ExMovimentacao> movs = viasDocPai.iterator().next().getMovsVinculacaoPapelCossigRespAssinatura();
-			possuiMovs = !movs.isEmpty() ? Boolean.TRUE :Boolean.FALSE;
+			for (ExMovimentacao mov : movs) {
+				ExMobil docVia = mov.getExMobilRef();
+				if(docVia.doc().getCodigo().equals(this.getCodigo()))
+					return Boolean.TRUE;
+			}
 		}
-		return possuiMovs;
+		return Boolean.FALSE;
 	}
 
 	public List<Object> getListaDeAcessos() {

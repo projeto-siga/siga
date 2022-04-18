@@ -34,6 +34,16 @@
 			}
 		}
 		return true;
+	}	
+	function incluirExcluirAcessoTempArvoreDocs(thisElement) {
+		var podeChamarServico = ${!listaCossignatarios.isEmpty()};
+		if (podeChamarServico) {
+			var incluirCossig = false;
+			if (thisElement.checked) {
+				incluirCossig = true;
+			}
+			window.location.href='${pageContext.request.contextPath}/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs?sigla=${sigla}&incluirCossig='+incluirCossig;
+		}
 	}
 	
 </script>
@@ -77,12 +87,14 @@
 							</div>
 						</div>
 						<c:if test="${podeExibirArvoreDocsCossig}">
-							<div class="col-sm-3">
+							<div class="col-sm-4">
 								<div class="form-group">
 									<div class="form-check form-check-inline mt-4">
-										<input type="checkbox" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if> />
-										<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessa Todos Documentos</label>
-										<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="Selecionar esse campo se houver a necessidade de permitir que os cossignatário(s) acesse(m) a árvore completa de documentos."></a>
+										<input type="checkbox" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if>
+																onclick="javascript:incluirExcluirAcessoTempArvoreDocs(this);" />
+										<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessar árvore de documentos</label>
+										<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
+																title="Selecionar esse campo se houver a necessidade de permitir que os cossignatário(s) acesse(m) a árvore completa de documentos. Atenção: Para habilitar ou desabilitar essa função o documento deverá estar com status 'Finalizado'"></a>
 									</div>
 								</div>
 							</div>

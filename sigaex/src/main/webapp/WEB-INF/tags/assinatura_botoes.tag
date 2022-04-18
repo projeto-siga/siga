@@ -52,47 +52,6 @@
 				</c:otherwise>	
 			</c:choose>	
 		</div>
-		
-		<div class="col">	
-			<c:if test="${(not empty juntarAtivo and siga_cliente != 'GOVSP') or (not empty tramitarAtivo) or (not empty exibirNoProtocoloAtivo)}">
-				<h5>Após ${(not empty assinar and assinar)? 'assinatura':'autenticação'}:</h5>
-			</c:if>
-			<c:if test="${not empty juntarAtivo}">
-				<div class="custom-control custom-checkbox ${hide_only_GOVSP}">
-					<input class="form-check-input " type="checkbox" name="ad_juntar_0"
-						id="ad_juntar_0" <c:if test="${juntarAtivo}">checked</c:if>
-						<c:if test="${juntarFixo}">disabled</c:if> /> <label
-						class="form-check-label" for="ad_juntar_0">Juntar</label>
-				</div>
-			</c:if>
-		
-			<c:if test="${not empty tramitarAtivo}">
-				<div class="custom-control custom-checkbox ">
-					<input class="form-check-input" type="checkbox" name="ad_tramitar_0"
-						id="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>
-						<c:if test="${tramitarFixo}">disabled</c:if> /> <label
-						class="form-check-label" for="ad_tramitar_0" <siga:tooltip title="Tramitar Automaticamente" explicacao="${tramitarExplicacao}"/> >Tramitar</label>
-				</div>
-				<c:set var="exibirOpcoes" scope="request" value="d-block" />
-			</c:if>
-			<c:if test="${not empty exibirNoProtocoloAtivo}">
-				<div class="custom-control custom-checkbox ">
-					<input class="form-check-input" type="checkbox" name="ad_exibirNoProtocolo_0"
-						id="ad_exibirNoProtocolo_0" onchange="confirmaExibirNoProtocolo(this)" <c:if test="${exibirNoProtocoloAtivo}">checked</c:if>
-						<c:if test="${exibirNoProtocoloFixo}">disabled</c:if> /> <label 
-						class="form-check-label" for="ad_exibirNoProtocolo_0">Disponibilizar no Acompanhamento do Protocolo</label>
-				</div>
-				<script type="text/javascript">
-					function confirmaExibirNoProtocolo(checkbox) {
-					  if (checkbox.checked) {
-					    if (!confirm("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do protocolo de acompanhamento. Deseja continuar? ")) {
-						  checkbox.checked = false;
-					    }
-					  }
-					}	
-				</script>
-			</c:if>
-		</div>
 		<c:if test="${assinarCertDigital or assinarComSenha or assinarComSenhaPin or autenticarComSenha or autenticarComSenhaPin or autenticar}">
 			<div class="col-auto my-auto mr-5">
 				<h5>Formas de ${(not empty assinar and assinar)? 'assinatura': (not empty autenticar and autenticar) ? 'autenticação':''}:</h5>
@@ -155,7 +114,7 @@
 						<input class="form-check-input" type="checkbox" name="ad_tramitar_0"
 							id="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>
 							<c:if test="${tramitarFixo}">disabled</c:if> /> <label
-							class="form-check-label" for="ad_tramitar_0">Tramitar</label>
+							class="form-check-label" for="ad_tramitar_0" <siga:tooltip title="Tramitar Automaticamente" explicacao="${tramitarExplicacao}"/> >Tramitar</label>
 					</div>
 					<c:set var="exibirOpcoes" scope="request" value="d-block" />
 				</c:if>

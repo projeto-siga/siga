@@ -11,6 +11,8 @@ ALTER TABLE siga.ex_mobil ADD (DNM_SIGLA VARCHAR(40), ID_ULT_MOV INT UNSIGNED DE
 --  Somente habilitar a versão nova da mesa para algum usuário depois de atualizados todos os mobils
 -- -------------------------------------------------------------------------
 /*
+
+SET SQL_SAFE_UPDATES = 0;
 UPDATE siga.ex_mobil MOB 
 	SET ID_ULT_MOV = (SELECT MOV.ID_MOV FROM siga.ex_movimentacao MOV 
 					WHERE MOV.ID_MOBIL = MOB.ID_MOBIL 
@@ -70,4 +72,7 @@ UPDATE siga.ex_mobil MOB
 			LEFT OUTER JOIN siga.ex_modelo MODELO on MODELO.ID_MOD = DOC.ID_MOD
 			LEFT OUTER JOIN siga.ex_forma_documento FRM on FRM.ID_FORMA_DOC = MODELO.ID_FORMA_DOC
 			WHERE MOB.ID_DOC=DOC.ID_DOC);
+
+SET SQL_SAFE_UPDATES = 1; 						
+			
 */

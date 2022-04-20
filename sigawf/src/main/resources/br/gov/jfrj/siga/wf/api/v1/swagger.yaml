@@ -19,6 +19,8 @@ tags:
     description: Responsável
   - name: relatorio
     description: Relatório
+  - name: lista
+    description: Consulta e listagem
   - name: utils
     description: Utilitários
     
@@ -34,6 +36,37 @@ securityDefinitions:
 #                                   Parameters                                 #
 ################################################################################
 parameters:
+  filtroPessoaLotacao:
+    name: filtroPessoaLotacao
+    in: query
+    description: Informa se deseja filtrar documentos por pessoa ou lotação
+    required: false
+    type: string
+    default: Pessoa e Lotacao
+    enum:
+      - Pessoa e Lotacao
+      - Pessoa
+      - Lotacao
+  idMarcadorQuery:
+    name: idMarcador
+    in: query
+    description: Identificador do Marcador
+    required: true
+    type: string            
+  idMarcasQuery:
+    name: idMarcas
+    in: query
+    description: Identificadores de marcas separados por vírgula
+    required: true
+    type: string            
+  estilo:
+    name: estilo
+    in: query
+    description: Informa se deseja agrupar
+    required: false
+    type: string
+    enum:
+      - Agrupados
   procedimentoSigla:
     name: procedimentoSigla
     in: path
@@ -186,6 +219,77 @@ parameters:
 #                                           Paths                              #
 ################################################################################
 paths:
+  /painel/lista:
+    get:
+      summary: Listar móbiles por marcas
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcasQuery"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PainelListaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /lista:
+    get:
+      summary: Listar móbiles por filtro
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcadorQuery"
+        - $ref: "#/parameters/filtroPessoaLotacao"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ListaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+
+  /quadro:
+    get:
+      summary: Listar a quantidade de documentos
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/estilo"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/QuadroItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
   /ativos:
     get:
       tags: [procedimento]
@@ -1145,6 +1249,146 @@ definitions:
       descr:
         type: string
         description: Descricao
+
+  QuadroItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      finalidadeId:
+        type: string
+      tipoId:
+        type: string
+      tipoNome:
+        type: string
+      grupoId:
+        type: string
+      grupoNome:
+        type: string
+      marcadorEnum:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      qtdAtendente:
+        type: string
+      qtdLotaAtendente:
+        type: string
+
+  ListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      sigla:
+        type: string
+      documentoData:
+        type: string
+        format: date-time
+      documentoSubscritor:
+        type: string
+      documentoLotaSubscritor:
+        type: string
+      documentoEspecie:
+        type: string
+      documentoModelo:
+        type: string
+      documentoDescricao:
+        type: string
+      mobilUltimaAnotacao:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      marcaData:
+        type: string
+        format: date-time
+      marcaResponsavel:
+        type: string
+      marcaLotaResponsavel:
+        type: string
+
+  PainelListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      marcaId:
+        type: string
+      marcaTipo:
+        type: string
+      marcaTexto:
+        type: string
+      marcaIcone:
+        type: string
+      dataIni:
+        type: string
+        format: date-time
+      dataFim:
+        type: string
+        format: date-time
+      moduloId:
+        type: string
+      refId:
+        type: string
+      movId:
+        type: string
+      tipo:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descricao:
+        type: string
+      origem:
+        type: string
+      ultimaAnotacao:
+        type: string
+      marcas:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acoes:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"
+          
+  Marca:
+    description: Etiquetas relacionadas a um documento
+    type: object
+    properties:
+      pessoa:
+        type: string
+      lotacao:
+        type: string
+      nome:
+        type: string
+      icone:
+        type: string
+      titulo:
+        type: string
+      marcaId:
+        type: string
+      inicio:
+        type: string
+        format: date-time
+      termino:
+        type: string
+        format: date-time
+      daPessoa:
+        type: boolean
+      deOutraPessoa:
+        type: boolean
+      daLotacao:
+        type: boolean
 
   Error:
     type: object

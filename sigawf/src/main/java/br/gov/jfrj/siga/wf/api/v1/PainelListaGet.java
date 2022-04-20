@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.gc.api.v1;
+package br.gov.jfrj.siga.wf.api.v1;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,17 +7,18 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import br.gov.jfrj.siga.gc.api.v1.IGcApiV1.IPainelListaGet;
-import br.gov.jfrj.siga.gc.api.v1.IGcApiV1.PainelListaItem;
-import br.gov.jfrj.siga.gc.model.GcInformacao;
-import br.gov.jfrj.siga.gc.model.GcMarca;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.wf.api.v1.IWfApiV1.IPainelListaGet;
+import br.gov.jfrj.siga.wf.api.v1.IWfApiV1.PainelListaItem;
+import br.gov.jfrj.siga.wf.model.WfMarca;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
 
 public class PainelListaGet implements IPainelListaGet {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void run(Request req, Response resp, GcApiV1Context ctx) throws Exception {
+	public void run(Request req, Response resp, WfApiV1Context ctx) throws Exception {
 		if (req.idMarcas == null || req.idMarcas.trim().isEmpty())
 			return;
 		String[] aMarcas = req.idMarcas.split(",");
@@ -27,8 +28,8 @@ public class PainelListaGet implements IPainelListaGet {
 		List<Object[]> l = consultarPainelLista(lMarcas);
 
 		for (Object[] o : l) {
-			GcInformacao inf = (GcInformacao) o[0];
-			GcMarca marca = (GcMarca) o[1];
+			WfProcedimento sol = (WfProcedimento) o[0];
+			WfMarca marca = (WfMarca) o[1];
 			PainelListaItem r = new PainelListaItem();
 
 			r.marcaId = marca.getIdMarca().toString();
@@ -36,12 +37,12 @@ public class PainelListaGet implements IPainelListaGet {
 			r.dataFim = marca.getDtFimMarca();
 			r.moduloId = marca.getCpTipoMarca().getIdTpMarca().toString();
 
-			r.tipo = inf.getTipo().getNome();
-			r.codigo = inf.getSiglaCompacta();
-			r.sigla = inf.getSigla();
-			if (inf.getLotacao() != null)
-				r.origem = inf.getLotacao().getSigla();
-			r.descricao = inf.getDescrCurta();
+			r.tipo = "Procedimento";
+			r.codigo = sol.getSiglaCompacta();
+			r.sigla = sol.getSigla();
+			if (sol.getLotaTitular() != null)
+				r.origem = sol.getLotaTitular().getSigla();
+			r.descricao = Texto.maximoCaracteres(sol.getDescricao(), 40);
 			r.ultimaAnotacao = null;
 
 			resp.list.add(r);
@@ -54,11 +55,11 @@ public class PainelListaGet implements IPainelListaGet {
 
 		List<Object[]> l2 = new ArrayList<Object[]>();
 
-		Query query = ContextoPersistencia.em().createQuery("select inf, label from GcMarca label"
-				+ " inner join label.inf inf" + " where label.idMarca in (:listIdMarca)");
+		Query query = ContextoPersistencia.em().createQuery("select pi, label from WfMarca label"
+				+ " inner join label.procedimento pi" + " where label.idMarca in (:listIdMarca)");
 		query.setParameter("listIdMarca", l);
 		l2 = query.getResultList();
-		Collections.sort(l2, Comparator.comparing(item -> l.indexOf(Long.valueOf(((GcMarca) (item[1])).getIdMarca()))));
+		Collections.sort(l2, Comparator.comparing(item -> l.indexOf(Long.valueOf(((WfMarca) (item[1])).getIdMarca()))));
 		return l2;
 	}
 

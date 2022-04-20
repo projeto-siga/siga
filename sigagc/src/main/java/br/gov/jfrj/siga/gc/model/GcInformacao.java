@@ -905,10 +905,12 @@ public class GcInformacao extends Objeto {
 			String text;
 			try {
 				text = HtmlToPlainText.getText(html);
-				if (text.length() > 40)
-					return text.substring(0, 39) + "...";
-				else
-					return text;
+				if (text != null) {
+					if (text.length() > 40)
+						return text.substring(0, 39) + "...";
+					else
+						return text;
+				}
 			} catch (IOException e) {
 				return "[descrição inválida]";
 			}

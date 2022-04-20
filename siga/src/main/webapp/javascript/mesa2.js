@@ -62,8 +62,10 @@ var appMesa = new Vue({
 		};
 	},
 	watch: {
-		selQtdPag: function() {
-			setParmUser('qtdPag', this.qtdPag);
+		qtdPag: function() {
+			setParmUser('qtdPag', parseInt(this.qtdPag));
+			setParmGrupos('grupoQtd', parseInt(this.qtdPag));
+			setParmGrupos('grupoQtdLota', parseInt(this.qtdPag));
 			this.recarregarMesa();
 		},
 		trazerAnotacoes: function() {
@@ -76,7 +78,7 @@ var appMesa = new Vue({
 		},
 		trazerArquivados: function() {
 			setParmUser('trazerArquivados', this.trazerArquivados);
-			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+			setValueGrupo('Aguardando Ação de Temporalidade', 'grupoHide', !this.trazerArquivados);
 			this.recarregarMesa();
 		},
 		trazerCancelados: function() {
@@ -120,20 +122,20 @@ var appMesa = new Vue({
 			let gNome = grpNome;
 			if (gNome) {
 				parms[gNome] = {
-					'grupoOrdem': parmGrupos[gNome].ordem,
-					'grupoQtd': parseInt(parmGrupos[gNome].qtd),
-					'grupoQtdLota': parseInt(parmGrupos[gNome].qtdLota),
-					'grupoCollapsed': parmGrupos[gNome].collapsed,
-					'grupoHide': parmGrupos[gNome].hide};
+					'grupoOrdem': parmGrupos[gNome].grupoOrdem,
+					'grupoQtd': parseInt(parmGrupos[gNome].grupoQtd),
+					'grupoQtdLota': parseInt(parmGrupos[gNome].grupoQtdLota),
+					'grupoCollapsed': parmGrupos[gNome].grupoCollapsed,
+					'grupoHide': parmGrupos[gNome].grupoHide};
 				this.mostraSpinner(getGrupoVue(gNome), offset, q);
 			} else {
 				for (let p in parmGrupos) {
 					parms[p] = {
-						'grupoOrdem': parmGrupos[p].ordem, 
-						'grupoQtd': parseInt(parmGrupos[p].qtd),
-						'grupoQtdLota': parseInt(parmGrupos[p].qtdLota),
-						'grupoCollapsed': parmGrupos[p].collapsed,
-						'grupoHide': parmGrupos[p].hide
+						'grupoOrdem': parmGrupos[p].grupoOrdem, 
+						'grupoQtd': (parseInt(parmGrupos[p].grupoQtd) > 0? parseInt(parmGrupos[p].grupoQtd) : q),
+						'grupoQtdLota': (parseInt(parmGrupos[p].grupoQtdLota) > 0? parseInt(parmGrupos[p].grupoQtdLota) : q),
+						'grupoCollapsed': parmGrupos[p].grupoCollapsed,
+						'grupoHide': parmGrupos[p].grupoHide
 					};
 				}
 			}
@@ -282,13 +284,14 @@ var appMesa = new Vue({
 			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
 			this.usuarioPosse = (getParmUser('usuarioPosse') == null ? false : getParmUser('usuarioPosse'));
 			this.dtDMA = (getParmUser('dtDMA') == null ? false : getParmUser('dtDMA'));
-			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+			setValueGrupo('Aguardando Ação de Temporalidade', 'grupoHide', !this.trazerArquivados);
 		},
 		
 		recarregarMesa: function() {
 			this.grupos = [];
 			sessionStorage.removeItem('timeout' + getUser());
-			this.getItensGrupo();
+			setParmGrupos();
+			this.getItensGrupo(null, 0, this.qtdPag);
 		},
 		carregarMesaUser: function() {
 			setParmUser('exibeLota', false);
@@ -308,9 +311,9 @@ var appMesa = new Vue({
 						.getAttribute('data-numitem')) + 1;
 			sessionStorage.removeItem('timeout' + getUser());
 			if (this.exibeLota)
-				setValueGrupo(grupoNome, 'qtdLota', listaLinhas.length + parseInt(this.qtdPag));
+				setValueGrupo(grupoNome, 'grupoQtdLota', listaLinhas.length + parseInt(this.qtdPag));
 			else
-				setValueGrupo(grupoNome, 'qtd', listaLinhas.length + parseInt(this.qtdPag));
+				setValueGrupo(grupoNome, 'grupoQtd', listaLinhas.length + parseInt(this.qtdPag));
 			this.criaLinhasFantasmas(getGrupoVue(grupoNome), offset, this.qtdPag);
 			this.getItensGrupo(grupoNome, offset, this.qtdPag);
 		},
@@ -319,19 +322,19 @@ var appMesa = new Vue({
 			var parmGrupos = JSON.parse(getParmUser('grupos'));
 			var collapsibleElemHeader = document.getElementById('collapse-header-' + grupoOrdem);
 			if (collapsibleElemHeader.classList.contains('collapsed')) {
-				setValueGrupo(grupoNome, 'collapsed', false);
+				setValueGrupo(grupoNome, 'grupoCollapsed', false);
 				setValueGrupoVue(grupoNome, 'grupoCollapsed', false);
 				if ($('#collapsetab-' + grupoOrdem + ' tr').length < 2) {
 					this.pageDownGrupo(grupoNome);
 				}
 			} else {
-				setValueGrupo(grupoNome, 'collapsed', true);
+				setValueGrupo(grupoNome, 'grupoCollapsed', true);
 				setValueGrupoVue(grupoNome, 'grupoCollapsed', true);
 			}
 		},
 		fecharGrupo: function(grupoOrdem, grupoNome) {
 			$('#collapsetab-' + grupoOrdem).collapse('hide');
-			setValueGrupo(grupoNome, 'collapsed', true);
+			setValueGrupo(grupoNome, 'grupoCollapsed', true);
 			setValueGrupoVue(grupoNome, 'grupoCollapsed', true);
 		},
 		getLastRefreshTime: function() {
@@ -435,13 +438,13 @@ function setGrupo(grupoNome, ordem, qtd, qtdLota, collapsed, hide) {
 	var parms = JSON.parse(getParmUser('grupos'));
 	if (parms == null) {
 		parms = { "key": "" };
-		parms[grupoNome] = { 'ordem': ordem, 'qtd': qtd, 'qtdLota': qtdLota, 'collapsed': collapsed, 'hide': hide };
+		parms[grupoNome] = { 'grupoOrdem': ordem, 'grupoQtd': qtd, 'grupoQtdLota': qtdLota, 'grupoCollapsed': collapsed, 'grupoHide': hide };
 		delete parms["key"];
 	} else {
 		if ((qtd === "" || qtd === false) && (qtdLota === "" || qtdLota === false)) {
 			delete parms[grupoNome];
 		} else {
-			parms[grupoNome] = { 'ordem': ordem, 'qtd': qtd, 'qtdLota': qtdLota, 'collapsed': collapsed, 'hide': hide };
+			parms[grupoNome] = { 'grupoOrdem': ordem, 'grupoQtd': qtd, 'grupoQtdLota': qtdLota, 'grupoCollapsed': collapsed, 'grupoHide': hide };
 		}
 	}
 	setParmUser('grupos', JSON.stringify(parms));
@@ -473,6 +476,13 @@ function getGrupoVue(grupoNome) {
 			return appMesa.grupos[g];
 	}
 }
+function setParmGrupos(nomeParm, value) {
+	var parms = JSON.parse(getParmUser('grupos'));
+	for (var g in parms) {
+		setValueGrupo(g, nomeParm, value);
+	}
+}
+
 function setParmUser(nomeParm, value) {
 	window.localStorage.setItem(nomeParm + getUser(), value)
 }

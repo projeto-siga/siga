@@ -23,6 +23,7 @@
 		}
 	}
 	function validate() {
+		sigaSpinner.mostrar();
 		var sigaCliente = document.getElementById('sigaCliente');
 		if (sigaCliente.value == 'GOVSP') {
 			var personalizacao = document.getElementById('exDocumentoDTO.personalizacao');
@@ -159,7 +160,7 @@
 							<td>${mov.nmFuncao }</td>
 							<td><c:if test="${siga_cliente != 'GOVSP'}">${mov.nmLocalidade}</c:if></td>
 							<td><input type="button" value="Excluir" 
-								onclick="javascript:location.href='${pageContext.request.contextPath}/app/expediente/mov/excluir?id=${mov.idMov}&redirectURL=/app/expediente/mov/incluir_cosignatario?sigla=${sigla}'" class="btn btn-danger"/>					
+								onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/excluir?id=${mov.idMov}&redirectURL=/app/expediente/mov/incluir_cosignatario?sigla=${sigla}'" class="btn btn-danger"/>					
 							</td>
 						</tr>
 					</c:forEach>

@@ -88,8 +88,8 @@
 					</div>            
 	            </div>
 				<div class="form-group pb-2 mb-1 border-bottom">
-					<label for="selQtdPagId"><small>Qtd. de documentos a trazer</small></label>
-					<select class="form-control form-control-sm p-0" v-model="qtdPag" :class="{disabled: carregando}">
+					<label for="selQtdPag"><small>Qtd. de documentos a trazer</small></label>
+					<select name="selQtdPag" class="form-control form-control-sm p-0" v-model="qtdPag" :class="{disabled: carregando}">
 						  <option value="5">5</option>
 						  <option value="10">10</option>
 						  <option value="15">15</option>

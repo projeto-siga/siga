@@ -187,7 +187,8 @@ public class AuthJwtFormFilter implements Filter {
 		response.setHeader("Set-Cookie",
 				cookie.getName() + "=" + cookie.getValue() + "; Path=" + cookie.getPath() + "; Max-Age="
 						+ cookie.getMaxAge() + "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
-						+ "; HttpOnly" + (request.getServerName().equals("localhost") ? "" : "; Secure; SameSite=None"));
+						// + "; HttpOnly" // Nato: Tive que desabilitar pois a nova-ux precisa ter acesso ao token jwt
+						+ (request.getServerName().equals("localhost") ? "" : "; Secure; SameSite=None"));
 	}
 	
 	public static Cookie buildEraseCookie() {

@@ -1,19 +1,18 @@
 package br.gov.jfrj.siga.integracao.api.v1;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
+
 import com.crivano.swaggerservlet.SwaggerServlet;
-import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import java.net.URL;
-import java.net.URLConnection;
 
 public class IntegracaoApiV1Servlet extends SwaggerServlet implements Prop.IPropertyProvider {
     private static final long serialVersionUID = 105585066035160075L;
 
     @Override
-    protected void initialize(ServletConfig config) throws ServletException {
+    public void initialize(ServletConfig config) throws ServletException {
         setAPI(IIntegracaoApiV1.class);
 
         setActionPackage("br.gov.jfrj.siga.integracao.api.v1");
@@ -21,33 +20,26 @@ public class IntegracaoApiV1Servlet extends SwaggerServlet implements Prop.IProp
         Prop.setProvider(this);
         Prop.defineGlobalProperties();
         defineProperties();
-
-        class HttpGetDependency extends TestableDependency {
-            final String testsite;
-
-            HttpGetDependency(String category, String service, String testsite, boolean partial, long msMin,
-                              long msMax) {
-                super(category, service, partial, msMin, msMax);
-                this.testsite = testsite;
-            }
-
-            @Override
-            public String getUrl() {
-                return testsite;
-            }
-
-            @Override
-            public boolean test() throws Exception {
-                final URL url = new URL(testsite);
-                final URLConnection conn = url.openConnection();
-                conn.connect();
-                return true;
-            }
-        }
     }
 
     private void defineProperties() {
+        // Informações Siafem
+        addPublicProperty("ws.siafem.nome.modelo", null);
+        addPublicProperty("ws.siafem.url.wsdl", null);
+        addPublicProperty("ws.siafem.url.namespace", null);
+        addPublicProperty("ws.siafem.service.localpart", null);
+        addPublicProperty("ws.siafem.service.localpartsoap", null);
 
+    }
+
+    @Override
+    public String getService() {
+        return "siga-integracao";
+    }
+
+    @Override
+    public String getUser() {
+        return ContextoPersistencia.getUserPrincipal();
     }
 
     @Override

@@ -90,6 +90,11 @@
             <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+			<groupId>jsptags</groupId>
+			<artifactId>pager-taglib</artifactId>
+		</dependency>
 
     </dependencies>
 </project>

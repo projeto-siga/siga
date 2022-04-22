@@ -2,8 +2,9 @@ swagger: '2.0'
 
 info:
   version: "1.0.0"
-  title: ExApiV1
+  title: IntegracaoApiV1
   description: "<h2>API para o Siga-Integra&ccedil;&atilde;o - Módulo de Integra&ccedil;&atilde;o</h2>"
+
 basePath: /integracao/api/v1
 schemes: [http,https]
 consumes: [application/json,application/x-www-form-urlencoded]

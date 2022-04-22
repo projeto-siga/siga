@@ -35,20 +35,5 @@
         </param-value>
     </context-param>
 
-    <servlet>
-        <servlet-name>IntegracaoService</servlet-name>
-        <servlet-class>br.gov.jfrj.siga.integracao.service.impl.IntegracaoServiceImpl
-        </servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>IntegracaoService</servlet-name>
-        <url-pattern>/servicos/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>IntegracaoService</servlet-name>
-        <url-pattern>/servicos/IntegracaoService</url-pattern>
-    </servlet-mapping>
 
 </web-app>

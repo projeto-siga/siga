@@ -1,12 +1,14 @@
 package br.gov.jfrj.siga.integracao.api.v1;
 
 import br.gov.jfrj.siga.context.ApiContextSupport;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.hibernate.ExStarter;
+import br.gov.jfrj.siga.hibernate.IntegracaoStarter;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
@@ -18,7 +20,7 @@ import static java.util.Objects.isNull;
 
 public class IntegracaoApiV1Context extends ApiContextSupport {
 
-    private static final String INTGR_MODULO_DE_INTEGRACAO = "INTGR:Módulo de Integração;";
+    private static final String INTGR_MODULO_DE_INTEGRACAO = "DOC:Módulo de Documentos;";
 
     public void assertAcesso(String acesso) throws Exception {
         getSigaObjects().assertAcesso(INTGR_MODULO_DE_INTEGRACAO + acesso);
@@ -26,23 +28,18 @@ public class IntegracaoApiV1Context extends ApiContextSupport {
 
     @Override
     public void atualizarCacheDeConfiguracoes() throws Exception {
-        Ex.getInstance().getConf().limparCacheSeNecessario();
+        Cp.getInstance().getConf().limparCacheSeNecessario();
     }
 
     @Override
     public CpDao inicializarDao() {
-        return ExDao.getInstance();
+        ModeloDao.freeInstance();
+        return CpDao.getInstance();
     }
 
     @Override
     public EntityManager criarEntityManager() {
-        EntityManager em = this.inicializarDao().em();
-
-        if (em == null || em.isOpen()) {
-            em = ExStarter.emf.createEntityManager();
-        }
-
-        return em;
+        return IntegracaoStarter.emf.createEntityManager();
     }
 
     ExMobil buscarEValidarMobil(final String sigla, ISwaggerRequest req, ISwaggerResponse resp,

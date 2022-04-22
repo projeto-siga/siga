@@ -8203,7 +8203,7 @@ public class ExBL extends CpBL {
 	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) {
 		try {
 			gravarMovimentacaoSiafem(exDoc, cadastrante, lotacaoTitular);
-			Service.getIntegracaoService().enviarSiafem(usuarioSiafem, senhaSiafem, exDoc.getSigla());
+			//integracaoService.enviarSiafem(usuarioSiafem, senhaSiafem, exDoc.getSigla());
 		} catch (final AplicacaoException e) {
 			cancelarAlteracao();
 			throw e;

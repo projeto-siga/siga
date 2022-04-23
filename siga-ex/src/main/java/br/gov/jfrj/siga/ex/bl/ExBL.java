@@ -8200,10 +8200,37 @@ public class ExBL extends CpBL {
 		ExDao.getInstance().gravar(doc);
 	}
 
+	private static class IntegracaoPostRequest implements ISwaggerRequest {
+		String sigla;
+		String usuarioSiafem;
+		String senhaSiafem;
+
+	}
+
+	private static class IntegracaoPostResponse implements ISwaggerResponse {
+		String sigla;
+		String status;
+	}
+
 	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) {
 		try {
+			String integracaoUrl = Prop.get("integracao.url");
+			log.warn("URL_INTEGRACAO " + integracaoUrl);
+			if (integracaoUrl == null)
+				return;
+			IntegracaoPostRequest req = new IntegracaoPostRequest();
+			req.sigla = exDoc.getSigla();
+			req.usuarioSiafem = usuarioSiafem;
+			req.senhaSiafem = senhaSiafem;
+
+			SwaggerAsyncResponse<IntegracaoPostResponse> resp = SwaggerCall.callAsync("enviar documento ao SIAFEM", null, "POST",
+							integracaoUrl + req.sigla + "/enviar-siafem", req, IntegracaoPostResponse.class)
+					.get(1000, TimeUnit.MILLISECONDS);
+			if (resp != null && resp.getException() != null)
+				throw new RuntimeException(resp.getException());
+			if (resp == null || resp.getResp() == null)
+				throw new RuntimeException("Serviço de envio ao SIAFEM indisponível");
 			gravarMovimentacaoSiafem(exDoc, cadastrante, lotacaoTitular);
-			//integracaoService.enviarSiafem(usuarioSiafem, senhaSiafem, exDoc.getSigla());
 		} catch (final AplicacaoException e) {
 			cancelarAlteracao();
 			throw e;
@@ -8231,9 +8258,9 @@ public class ExBL extends CpBL {
 		mov.setResp(cadastrante);
 		mov.setSubscritor(cadastrante);
 		mov.setTitular(cadastrante);
-		
+
 		acrescentarCamposDeAuditoria(mov);
-		
+
 		gravarMovimentacao(mov);
 	}
 

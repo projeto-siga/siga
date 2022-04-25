@@ -107,6 +107,7 @@
       
 		
 		<property name="sigaex.metodo.apresentacao.resultado.pesquisa.documento" value="GOVSP"/>
+		<property name="siga.armazenamento.arquivo.tipo" value="TABELA"/>
   
     </system-properties>
     <management>

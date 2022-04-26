@@ -591,8 +591,9 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR);
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_GERAR_PROTOCOLO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PUBLICACAO_PORTAL_TRANSPARENCIA);
-			
 			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR);
+			
+			listaMovimentacoesNaoCancelavel.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR);
 			
 			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getIdTpMov())) {
 				addAcao("arrow_undo",

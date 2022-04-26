@@ -1,4 +1,0 @@
--- Erro ao desapensar PVR-PRO-2022/00211 - jira processo_rio-1729
--- connect siga@srv000764.infra.rio.gov.br:1521/sigadoc.pcrj;
-UPDATE SIGA.EX_MOVIMENTACAO em SET ID_LOTA_RESP=12677, ID_RESP=5242071 WHERE  ID_LOTA_RESP=12685 AND ID_RESP =5128650 AND ID_MOV =1424005;
-COMMIT;

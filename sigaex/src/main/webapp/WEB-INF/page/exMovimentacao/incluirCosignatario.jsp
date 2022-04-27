@@ -93,9 +93,10 @@
 									<div class="form-check form-check-inline mt-4">
 										<input type="checkbox" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if>
 																onclick="javascript:incluirExcluirAcessoTempArvoreDocs(this);" />
-										<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessar árvore de documentos</label>
+										<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessar Documento Completo</label>
 										<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
-																title="Selecionar esse campo se houver a necessidade de permitir que os cossignatário(s) acesse(m) a árvore completa de documentos. Atenção: Para habilitar ou desabilitar essa função o documento deverá estar com status 'Finalizado'"></a>
+																title='Selecionar esse campo se houver a necessidade de permitir que o(s) cossignatário(s) acesse(m) o documento completo, enquanto o mesmo estiver pendente 
+																		de assinatura. Atenção: Para habilitar ou desabilitar essa função, o documento deverá estar com status "Finalizado"'></a>
 									</div>
 								</div>
 							</div>

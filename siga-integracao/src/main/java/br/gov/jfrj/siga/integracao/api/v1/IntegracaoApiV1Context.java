@@ -7,6 +7,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.hibernate.IntegracaoDao;
 import br.gov.jfrj.siga.hibernate.IntegracaoStarter;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -33,8 +34,8 @@ public class IntegracaoApiV1Context extends ApiContextSupport {
 
     @Override
     public CpDao inicializarDao() {
-        ModeloDao.freeInstance();
-        return CpDao.getInstance();
+    	ModeloDao.freeInstance();
+        return IntegracaoDao.getInstance();
     }
 
     @Override

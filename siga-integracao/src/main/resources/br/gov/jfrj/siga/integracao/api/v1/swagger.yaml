@@ -5,7 +5,7 @@ info:
   title: IntegracaoApiV1
   description: "<h2>API para o Siga-Integra&ccedil;&atilde;o - Módulo de Integra&ccedil;&atilde;o</h2>"
 
-basePath: /integracao/api/v1
+basePath: /siga-integracao/api/v1
 schemes: [http,https]
 consumes: [application/json,application/x-www-form-urlencoded]
 produces: [application/json]
@@ -63,7 +63,7 @@ parameters:
 #                                           Paths                              #
 ################################################################################
 paths:
-  /integracao/{sigla}/enviar-siafem:
+  /enviar-siafem/{sigla}:
     post:
       description: Utilize este método para enviar um SIAFDOC ao SIAFEM
       consumes: ["application/x-www-form-urlencoded"]

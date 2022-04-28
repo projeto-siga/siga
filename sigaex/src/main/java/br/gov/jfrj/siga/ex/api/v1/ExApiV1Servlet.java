@@ -256,6 +256,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPrivateProperty("debug.default.template.pathname", null);
 		
 		addPublicProperty("documento.novo.modelo.padrao", "Memorando");
+		
+		addPublicProperty("ws.siafem.nome.modelo", null);
 	}
 
 	@Override

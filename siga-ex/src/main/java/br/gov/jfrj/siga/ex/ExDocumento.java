@@ -1387,6 +1387,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return m;
 	}
 
+	public String getFormString(){
+		final byte[] form = getConteudoBlob("doc.form");
+		return new String(form);
+	}
+
 	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
 		if (Ex.getInstance()
 				.getComp()

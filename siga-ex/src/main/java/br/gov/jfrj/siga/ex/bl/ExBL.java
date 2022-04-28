@@ -60,6 +60,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
+import com.crivano.swaggerservlet.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
@@ -74,10 +75,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.auth0.jwt.JWTSigner;
-import com.crivano.swaggerservlet.ISwaggerRequest;
-import com.crivano.swaggerservlet.ISwaggerResponse;
-import com.crivano.swaggerservlet.SwaggerAsyncResponse;
-import com.crivano.swaggerservlet.SwaggerCall;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -8200,31 +8197,34 @@ public class ExBL extends CpBL {
 		ExDao.getInstance().gravar(doc);
 	}
 
-	private static class IntegracaoPostRequest implements ISwaggerRequest {
+	private static class EnviarSiafemSiglaPostRequest implements ISwaggerRequest {
 		String sigla;
 		String usuarioSiafem;
 		String senhaSiafem;
 
 	}
 
-	private static class IntegracaoPostResponse implements ISwaggerResponse {
+	private static class EnviarSiafemSiglaPostResponse implements ISwaggerResponse {
 		String sigla;
 		String status;
 	}
 
 	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) {
 		try {
-			String integracaoUrl = Prop.get("integracao.url");
+			String integracaoUrl = Prop.get("/siga-integracao.service.url");
 			log.warn("URL_INTEGRACAO " + integracaoUrl);
 			if (integracaoUrl == null)
 				return;
-			IntegracaoPostRequest req = new IntegracaoPostRequest();
-			req.sigla = exDoc.getSigla();
+
+			EnviarSiafemSiglaPostRequest req = new EnviarSiafemSiglaPostRequest();
+			req.sigla = exDoc.getCodigoCompacto();
 			req.usuarioSiafem = usuarioSiafem;
 			req.senhaSiafem = senhaSiafem;
+			
+			HttpServletRequest request = SwaggerServlet.getHttpServletRequest();
 
-			SwaggerAsyncResponse<IntegracaoPostResponse> resp = SwaggerCall.callAsync("enviar documento ao SIAFEM", null, "POST",
-							integracaoUrl + req.sigla + "/enviar-siafem", req, IntegracaoPostResponse.class)
+			SwaggerAsyncResponse<EnviarSiafemSiglaPostResponse> resp = SwaggerCall.callAsync("enviar documento ao SIAFEM", ContextoPersistencia.getUserPrincipal(), "POST",
+							integracaoUrl + "/enviar-siafem/" + req.sigla, req, EnviarSiafemSiglaPostResponse.class)
 					.get(1000, TimeUnit.MILLISECONDS);
 			if (resp != null && resp.getException() != null)
 				throw new RuntimeException(resp.getException());

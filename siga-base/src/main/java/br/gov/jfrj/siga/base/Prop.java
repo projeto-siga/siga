@@ -213,6 +213,8 @@ public class Prop {
 		provider.addPublicProperty("/sigagc.service.qname", "http://impl.service.gc.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigagc.service.name", "GcService");
 
+		provider.addPublicProperty("/siga-integracao.service.url", sigaBaseUrl + "/siga-integracao/api/v1");
+		
 		provider.addPublicProperty("/blucservice.url", sigaBaseUrl + "/blucservice/api/v1");
 		provider.addPublicProperty("/vizservice.url", sigaBaseUrl + "/vizservice");
 

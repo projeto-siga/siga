@@ -5,7 +5,7 @@ import com.crivano.swaggerservlet.ISwaggerRequest;
 import com.crivano.swaggerservlet.ISwaggerResponse;
 
 public interface IIntegracaoApiV1 {
-    public interface IIntegracaoSiglaEnviarSiafemPost extends ISwaggerMethod {
+    public interface IEnviarSiafemSiglaPost extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
             public String sigla;
             public String usuarioSiafem;

@@ -2549,12 +2549,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					// normal que cancela um recebimento pendente
 					if (p.tramitesPendentes.contains(mov.getExMovimentacaoRef()))
 						p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
-					else
-						p.tramitesPendentes.clear();
 					if (p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
 						p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
-					else
-						p.recebimentosPendentes.clear();
 				} 
 			} else {
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) 

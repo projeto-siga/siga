@@ -4643,14 +4643,27 @@ public class ExBL extends CpBL {
 					if (tramitesERecebimentosPendentes.size() > 1) {
 						// Seleciona o que será mantido
 						ExMovimentacao selecionado = null;
-						for (ExMovimentacao r : p.tramitesPendentes)
+						// Tenta selecionar um trâmite
+						for (ExMovimentacao r : p.tramitesPendentes) 
 							if (r.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO
-									|| r.getExTipoMovimentacao() != ExTipoDeMovimentacao.TRAMITE_PARALELO)
+									&& r.getExTipoMovimentacao() != ExTipoDeMovimentacao.TRAMITE_PARALELO) {
 								selecionado = r;
+								break;	
+							}
+						// Tenta selecionar um trâmite ou um trâmite paralelo
 						if (selecionado == null)
 							for (ExMovimentacao r : p.tramitesPendentes)
-								if (r.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO)
+								if (r.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO) {
 									selecionado = r;
+									break;
+								}
+						if (selecionado == null)
+							for (ExMovimentacao r : p.recebimentosPendentes)
+								if (!p.recebimentosDeNotificacoesPendentes.contains(r)) {
+									selecionado = r;
+									break;
+								}
+						// OK, seleciona uma das notificações
 						if (selecionado == null)
 							for (ExMovimentacao r : p.tramitesPendentes) {
 								selecionado = r;

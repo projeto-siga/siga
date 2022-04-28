@@ -1931,8 +1931,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		set.addAll(getRegistrosDeAssinatura());
 		return set;
 	}
-	
-	
 
 	/**
 	 * Retorna as {@link ExMovimentacao movimentações} de autenticação, seja

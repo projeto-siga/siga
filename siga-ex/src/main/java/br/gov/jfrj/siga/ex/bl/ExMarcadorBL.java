@@ -792,39 +792,54 @@ public class ExMarcadorBL {
 	}
 
 	private void acrescentarMarca(Long idMarcador, Date dt, DpPessoa pess, DpLotacao lota, Date dtFim) {
-		ExMarca mar = new ExMarca();
-		mar.setExMobil(mob);
-		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
-		if (pess != null)
-			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null) {
-			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 0L, lota.getOrgaoUsuario().getId());
-			if (ac.podeAcessar(mob.doc(), null, lota))
-				mar.setDpLotacaoIni(lota.getLotacaoInicial());
-		}
-		mar.setDtIniMarca(dt);
+		
+		CpMarcador cpMarcador = ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false);
+		if ( cpMarcador != null && cpMarcador.isAtivo() ) {
+			
+			ExMarca mar = new ExMarca();
+			mar.setExMobil(mob);
+			mar.setCpMarcador(cpMarcador);
+			
+			if (pess != null)
+				mar.setDpPessoaIni(pess.getPessoaInicial());
+			if (lota != null) {
+				AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 0L, lota.getOrgaoUsuario().getId());
+				if (ac.podeAcessar(mob.doc(), null, lota))
+					mar.setDpLotacaoIni(lota.getLotacaoInicial());
+			}
+			mar.setDtIniMarca(dt);
 
-		if (dtFim != null)
-			mar.setDtFimMarca(dtFim);
-		set.add(mar);
+			
+			if (dtFim != null)
+				mar.setDtFimMarca(dtFim);
+			set.add(mar);
+		}
+		
 	}
 
 	private void acrescentarMarcaTransferencia(Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota,
 			ExMovimentacao mov) {
-		ExMarca mar = new ExMarca();
-		mar.setExMobil(mob);
-		mar.setCpMarcador(ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false));
-		mar.setExMovimentacao(mov);
-		if (pess != null)
-			mar.setDpPessoaIni(pess.getPessoaInicial());
-		if (lota != null) {
-			AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 0L, lota.getOrgaoUsuario().getId());
-			if (ac.podeAcessar(mob.doc(), null, lota))
-				mar.setDpLotacaoIni(lota.getLotacaoInicial());
+		
+		CpMarcador cpMarcador =ExDao.getInstance().consultar(idMarcador, CpMarcador.class, false);
+		if ( cpMarcador != null && cpMarcador.isAtivo() ) {
+			
+			ExMarca mar = new ExMarca();
+			mar.setExMobil(mob);
+			mar.setCpMarcador(cpMarcador);
+			mar.setExMovimentacao(mov);
+			
+			if (pess != null)
+				mar.setDpPessoaIni(pess.getPessoaInicial());
+			if (lota != null) {
+				AcessoConsulta ac = new AcessoConsulta(0L, lota.getIdInicial(), 0L, lota.getOrgaoUsuario().getId());
+				if (ac.podeAcessar(mob.doc(), null, lota))
+					mar.setDpLotacaoIni(lota.getLotacaoInicial());
+			}
+
+			mar.setDtIniMarca(dtIni);
+			mar.setDtFimMarca(dtFim);
+			set.add(mar);
 		}
-		mar.setDtIniMarca(dtIni);
-		mar.setDtFimMarca(dtFim);
-		set.add(mar);
 	}
 
 	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob) {

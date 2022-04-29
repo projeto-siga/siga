@@ -59,10 +59,12 @@ public class PrincipalController extends SigaController {
 	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) throws Exception {
 		if (redirecionar == null || redirecionar) {
 			String paginaInicialUrl = Prop.get("/siga.pagina.inicial.url");
-			if (paginaInicialUrl.contains("/mesa"))
-				paginaInicialUrl = paginaInicialUrl.replace("/mesa2", "/mesa") + SigaLibsEL.getMesaVersao(getTitular(), getLotaTitular());
-				
+			
 			if (paginaInicialUrl != null) {
+
+				if (paginaInicialUrl.contains("/mesa"))
+					paginaInicialUrl = paginaInicialUrl.replace("/mesa2", "/mesa") + SigaLibsEL.getMesaVersao(getTitular(), getLotaTitular());
+				
 				result.redirectTo(paginaInicialUrl + ((exibirAcessoAnterior != null && exibirAcessoAnterior) ? "?exibirAcessoAnterior=true" : ""));
 				return;
 			}

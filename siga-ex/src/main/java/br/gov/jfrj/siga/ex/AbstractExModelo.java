@@ -407,6 +407,13 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				return false;
 		} else if (!nmMod.equals(other.nmMod))
 			return false;
+		
+		if (isPermiteSicop == null) {
+			if (other.isPermiteSicop != null)
+				return false;
+		} else if (!isPermiteSicop.equals(other.isPermiteSicop))
+			return false;
+		
 		return true;
 	}
 
@@ -456,11 +463,11 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	public Integer getIsPermiteSicop() {
-		return isPermiteSicop;
+		return this.isPermiteSicop != null ? this.isPermiteSicop : 0;
 	}
 
 	public void setIsPermiteSicop(Integer isPermiteSicop) {
-		this.isPermiteSicop = isPermiteSicop;
+		this.isPermiteSicop = isPermiteSicop != null ? isPermiteSicop:0;
 	}
 	
 	

@@ -1325,6 +1325,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 	
 	public boolean isModeloPermiteSicop() {
-		return this.getExModelo().getIsPermiteSicop() == 1;
+		return this.getExModelo().getIsPermiteSicop() != null && this.getExModelo().getIsPermiteSicop() == 1;
 	}
 }

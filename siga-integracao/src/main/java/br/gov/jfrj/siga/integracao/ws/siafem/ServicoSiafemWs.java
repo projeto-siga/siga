@@ -4,7 +4,7 @@ import java.util.Calendar;
 import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class ServicoSiafemWs {
-	public static boolean enviarDocumento(String usuario, String senha, SiafDoc doc) {
+	public static boolean enviarDocumento(String usuario, String senha, SiafDoc doc) throws AplicacaoException {
 		RecebeMSG service = new RecebeMSG();
 
 		try {

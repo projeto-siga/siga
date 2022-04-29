@@ -8204,18 +8204,16 @@ public class ExBL extends CpBL {
 
 	public void gravarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) {
 		try {
-			gravarMovimentacaoSiafem(exDoc, cadastrante, lotacaoTitular);
 			enviarSiafem(usuarioSiafem, senhaSiafem, exDoc);
+			gravarMovimentacaoSiafem(exDoc, cadastrante, lotacaoTitular);
 		} catch (final AplicacaoException e) {
-			cancelarAlteracao();
-			throw e;
-		} catch (final Exception e) {
-			cancelarAlteracao();
+			if(e.getCodigoErro() == ExTipoDeMovimentacao.ENVIO_SIAFEM.getId())
+				cancelarAlteracao();
 			throw new RuntimeException("Erro ao enviar documento ao SIAFEM", e);
 		}
 	}
 
-	private void enviarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) {
+	private void enviarSiafem(String usuarioSiafem, String senhaSiafem, ExDocumento exDoc) throws AplicacaoException {
 		ExDocumento formulario = obterFormularioSiafem(exDoc);
 		
 		if(formulario == null)
@@ -8230,28 +8228,32 @@ public class ExBL extends CpBL {
 		ServicoSiafemWs.enviarDocumento(usuarioSiafem, senhaSiafem, siafDoc);
 	}
 
-	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException, SQLException {
-		ExMovimentacao mov = new ExMovimentacao();
-		Date dt = dao().dt();
-		//final ExTipoDeMovimentacao tpmov = dao().consultar(ExTipoDeMovimentacao.ENVIO_SIAFEM, ExTipoDeMovimentacao.class, false);
-		
-		mov.setCadastrante(cadastrante);
-		mov.setDtIniMov(dt);
-		mov.setDtFimMov(dt);
-		mov.setDtMov(dt);
-		mov.setExMobil(exDoc.getPrimeiraVia());
-		mov.setExTipoMovimentacao(ExTipoDeMovimentacao.ENVIO_SIAFEM);
-		mov.setLotaCadastrante(lotacaoTitular);
-		mov.setLotaResp(lotacaoTitular);
-		mov.setLotaSubscritor(lotacaoTitular);
-		mov.setLotaTitular(lotacaoTitular);
-		mov.setResp(cadastrante);
-		mov.setSubscritor(cadastrante);
-		mov.setTitular(cadastrante);
-		
-		acrescentarCamposDeAuditoria(mov);
-		
-		gravarMovimentacao(mov);
+	private void gravarMovimentacaoSiafem(ExDocumento exDoc, DpPessoa cadastrante, DpLotacao lotacaoTitular) throws AplicacaoException {
+		try {
+			ExMovimentacao mov = new ExMovimentacao();
+			Date dt = dao().dt();
+			//final ExTipoDeMovimentacao tpmov = dao().consultar(ExTipoDeMovimentacao.ENVIO_SIAFEM, ExTipoDeMovimentacao.class, false);
+
+			mov.setCadastrante(cadastrante);
+			mov.setDtIniMov(dt);
+			mov.setDtFimMov(dt);
+			mov.setDtMov(dt);
+			mov.setExMobil(exDoc.getPrimeiraVia());
+			mov.setExTipoMovimentacao(ExTipoDeMovimentacao.ENVIO_SIAFEM);
+			mov.setLotaCadastrante(lotacaoTitular);
+			mov.setLotaResp(lotacaoTitular);
+			mov.setLotaSubscritor(lotacaoTitular);
+			mov.setLotaTitular(lotacaoTitular);
+			mov.setResp(cadastrante);
+			mov.setSubscritor(cadastrante);
+			mov.setTitular(cadastrante);
+
+			acrescentarCamposDeAuditoria(mov);
+
+			gravarMovimentacao(mov);
+		}catch (final AplicacaoException | SQLException e){
+			throw new AplicacaoException(e.getMessage(), ExTipoDeMovimentacao.ENVIO_SIAFEM.getId());
+		}
 	}
 
 	public ExDocumento obterFormularioSiafem(ExDocumento doc) {

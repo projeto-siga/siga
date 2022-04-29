@@ -8209,7 +8209,7 @@ public class ExBL extends CpBL {
 		} catch (final AplicacaoException e) {
 			if(e.getCodigoErro() == ExTipoDeMovimentacao.ENVIO_SIAFEM.getId())
 				cancelarAlteracao();
-			throw new RuntimeException("Erro ao enviar documento ao SIAFEM", e);
+			throw e;
 		}
 	}
 
@@ -8251,7 +8251,7 @@ public class ExBL extends CpBL {
 			acrescentarCamposDeAuditoria(mov);
 
 			gravarMovimentacao(mov);
-		}catch (final AplicacaoException | SQLException e){
+		} catch (final AplicacaoException | SQLException e) {
 			throw new AplicacaoException(e.getMessage(), ExTipoDeMovimentacao.ENVIO_SIAFEM.getId());
 		}
 	}

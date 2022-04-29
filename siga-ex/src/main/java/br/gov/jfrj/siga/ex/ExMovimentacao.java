@@ -1369,10 +1369,21 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return retorno +" (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
 	}
 	
-	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
-		return Utils.equivale(getLotaResp(), lotaTitular)
-				|| Utils.equivale(getResp(),titular)
-				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
+	public boolean isResp(DpPessoa titular) {
+		return Utils.equivale(getResp(),titular)
 				|| Utils.equivale(getDestinoFinal(),titular);
+	}
+	
+	public boolean isResp(DpLotacao lotaTitular) {
+		return Utils.equivale(getLotaResp(), lotaTitular)
+				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular);
+	}
+	
+	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
+		return isResp(titular) || isResp(lotaTitular);
+	}
+	
+	public boolean isRespPreferencialmentePelaLotacao(DpPessoa titular, DpLotacao lotaTitular) {
+		return getLotaResp() != null ? isResp(lotaTitular) : isResp(titular);
 	}
 }

@@ -1385,7 +1385,7 @@ public class ExDocumentoController extends ExController {
 		
 			if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
 				&& !exDocumentoDto.getMob().isEmTransitoExterno()				
-				&& (mov.getCadastrante() == null || !mov.getCadastrante().equivale(getTitular()))
+				&& (mov != null && (mov.getCadastrante() == null || !mov.getCadastrante().equivale(getTitular())))
 				&& !exDocumentoDto.getMob().isJuntado()) {
 				recebimentoPendente = true;		
 			}

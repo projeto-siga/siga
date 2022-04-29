@@ -72,7 +72,12 @@ public class ExMesa2Controller extends ExController {
 
 	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) throws Exception {
-		super.assertAcesso(ACESSO_MESA2BETA);
+		if( !Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+				ACESSO_MESA2BETA) ) {
+			result.redirectTo("/app/mesa2ant" + (exibirAcessoAnterior != null? 
+					"?exibirAcessoAnterior=" + exibirAcessoAnterior.toString() : "")); 
+			return;
+		}
 		
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {

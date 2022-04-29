@@ -447,7 +447,7 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("Indicar para Guarda Permanente").icone("building_go").nameSpace("/app/expediente/mov").acao("indicar_permanente")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeIndicarPermanente(mob, titular, lotaTitular)).classe("once").build());
 
-		addAcao(AcaoVO.builder().nome("Reverter Ind. Guarda Permanente").icone("buildinge_delete").nameSpace("/app/expediente/mov").acao("reverter_indicacao_permanente")
+		addAcao(AcaoVO.builder().nome("Reverter Ind. Guarda Permanente").icone("building_delete").nameSpace("/app/expediente/mov").acao("reverter_indicacao_permanente")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReverterIndicacaoPermanente(mob, titular, lotaTitular)).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("Retirar de Edital de Eliminação").icone("page_red").nameSpace("/app/expediente/mov").acao("retirar_de_edital_eliminacao")

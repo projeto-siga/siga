@@ -151,6 +151,9 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 										ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
+										ExTipoDeMovimentacao.CONCLUSAO),
+
+								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
 										ExTipoDeMovimentacao.REGISTRO_ASSINATURA_DOCUMENTO),
 
 								new ExMovimentacaoEDoTipo(exUltMovNaoCanc,

@@ -2383,7 +2383,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		Set<ExMovimentacao> setMov = new HashSet<>();
 		setMov.addAll(p.tramitesDeNotificacoesPendentes);
 		setMov.addAll(p.recebimentosDeNotificacoesPendentes);
-		
+
 		return calcularAtendentes(setMov, false); 
 	}
 
@@ -2441,24 +2441,32 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return getAtendente().size() > 1;
 	}
 	
+	public boolean isTitular(DpPessoa pessoa, DpLotacao lotacao) {
+		if (getLotaTitular() != null)
+			return Utils.equivale(lotacao, getLotaTitular());
+		else
+			return Utils.equivale(pessoa, getTitular());
+	}
+
 	public boolean isAtendente(DpPessoa pessoa, DpLotacao lotacao) {
 		Set<PessoaLotacaoParser> set = getAtendente();
-		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+		return equivalePessoaOuLotacaoPreferencialmentePelaLotacao(pessoa, lotacao, set);
 	}
 
 	public boolean isNotificado(DpPessoa pessoa, DpLotacao lotacao) {
 		Set<PessoaLotacaoParser> set = getNotificados();
-		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+		boolean eq = equivalePessoaOuLotacaoPreferencialmentePelaLotacao(pessoa, lotacao, set);
+		return eq;
 	}
 	
 	public boolean isRecebido(DpPessoa pessoa, DpLotacao lotacao) {
 		Set<PessoaLotacaoParser> set = getRecebidos();
-		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+		return equivalePessoaOuLotacaoPreferencialmentePelaLotacao(pessoa, lotacao, set);
 	}
 	
 	public boolean isAReceber(DpPessoa pessoa, DpLotacao lotacao) {
 		Set<PessoaLotacaoParser> set = getAReceber();
-		return equivalePessoaOuLotacao(pessoa, lotacao, set);
+		return equivalePessoaOuLotacaoPreferencialmentePelaLotacao(pessoa, lotacao, set);
 	}
 	
 	private boolean equivalePessoaOuLotacao(DpPessoa pessoa, DpLotacao lotacao, Set<PessoaLotacaoParser> set) {
@@ -2466,6 +2474,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			if (pessoa != null && Utils.equivale(pl.getPessoa(), pessoa))
 				return true;
 			if (lotacao != null && Utils.equivale(pl.getLotacao(), lotacao))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean equivalePessoaOuLotacaoPreferencialmentePelaLotacao(DpPessoa pessoa, DpLotacao lotacao, Set<PessoaLotacaoParser> set) {
+		for (PessoaLotacaoParser pl : set) {
+			if (pl.getLotacao() != null) {
+				if (Utils.equivale(pl.getLotacao(), lotacao))
+					return true;
+			} else if (pl.getPessoa() != null && Utils.equivale(pl.getPessoa(), pessoa))
 				return true;
 		}
 		return false;
@@ -2538,7 +2557,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					&& (ExTipoDeMovimentacao.hasTransferencia(mov.getExTipoMovimentacao())
 							|| ExTipoDeMovimentacao.hasRecebimento(mov.getExTipoMovimentacao()))
 					&& Utils.igual(mov.getExTipoMovimentacao(), movAnt.getExTipoMovimentacao())
-					&& Utils.igual(mov.getExMobilRef(), movAnt.getExMobilRef()))
+					&& Utils.igual(mov.getExMobilRef(), movAnt.getExMobilRef())
+					&& Utils.igual(mov.getExMovimentacaoRef(), movAnt.getExMovimentacaoRef()))
 				movsAExcluir.add(mov);
 			movAnt = mov;
 		}
@@ -2576,12 +2596,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					// normal que cancela um recebimento pendente
 					if (p.tramitesPendentes.contains(mov.getExMovimentacaoRef()))
 						p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
-					else
-						p.tramitesPendentes.clear();
 					if (p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
 						p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
-					else
-						p.recebimentosPendentes.clear();
 				} 
 			} else {
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) 

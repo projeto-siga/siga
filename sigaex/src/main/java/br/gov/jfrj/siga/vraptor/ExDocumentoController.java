@@ -1378,7 +1378,12 @@ public class ExDocumentoController extends ExController {
 			if (Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
-				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
+				
+				// Nato: commentei essa linha pois estava fazendo com que o "caixa de entrada" permanecesse visível na caixa de marcas,
+				// mesmo depois do recebimento. É possível que isso acarrete algum problema em outros lugares. Neste caso, sugiro rehabilitar
+				// o código.
+				//
+				// ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else {
 			ExMovimentacao mov = exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA);

@@ -45,6 +45,7 @@ import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarca;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -1922,10 +1923,15 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public SortedSet<ExMarca> getExMarcaSetAtivas() {
 		SortedSet<ExMarca> finalSet = new TreeSet<ExMarca>();
 		Date dt = new Date();
-		for (ExMarca m : getExMarcaSet())
-			if ((m.getDtIniMarca() == null || m.getDtIniMarca().before(dt))
-					&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(dt)))
-				finalSet.add(m);
+		for (ExMarca m : getExMarcaSet()) {
+			if (!((m.getDtIniMarca() == null || m.getDtIniMarca().before(dt))
+					&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(dt))))
+				continue;
+			CpMarcador marcador = ExDao.getInstance().obterAtual(m.getCpMarcador());
+			if (marcador == null || !marcador.isAtivo())
+				continue;
+			finalSet.add(m);
+		}
 		return finalSet;
 	}
 

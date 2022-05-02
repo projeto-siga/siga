@@ -64,7 +64,7 @@
 					<div class="custom-control custom-radio">
 						<input class="custom-control-input" type="radio" 
 							   accesskey="c" name="radioProviderAssinatura" id="ad_password_0" 
-							   <c:if test="${SenhaChecked}">checked</c:if> /> 
+							   <c:if test="${SenhaChecked}">checked</c:if> onclick="setUserLocalStorage('tipo-assinatura', 'senha')" /> 
 						<label class="custom-control-label" for="ad_password_0">Senha</label>
 	
 					</div>
@@ -77,7 +77,7 @@
 							accesskey="p" name="radioProviderAssinatura" id="ad_pin_0" 
 							<c:if test="${PinChecked}">checked</c:if>
 							<c:if test="${empty identidadeCadastrante.pinIdentidade}">disabled</c:if>
-							identidadeCadastrante /> 
+							identidadeCadastrante onclick="setUserLocalStorage('tipo-assinatura', 'pin')" /> 
 						<label class="custom-control-label" for="ad_pin_0">PIN</label>
 						<c:if test="${empty identidadeCadastrante.pinIdentidade}">
 							<small class="text-muted"> - Clique <strong><a href='/siga/app/pin/cadastro'>aqui</a></strong> saber mais e definir seu PIN.</small>
@@ -85,16 +85,37 @@
 					</div>
 				</c:if>
 				
-				
 				<c:if test="${assinarCertDigital || autenticar}">
 					<div class="custom-control custom-radio">
 						<input class="custom-control-input" type="radio" 
 							accesskey="d" name="radioProviderAssinatura" id="ad_certificado_0" 
-							<c:if test="${CertificadoChecked}">checked</c:if> /> 
+							<c:if test="${CertificadoChecked}">checked</c:if> onclick="setUserLocalStorage('tipo-assinatura', 'certificado-digital')" /> 
 						<label class="custom-control-label" for="ad_certificado_0">Certificado Digital</label>
 					</div>
 				</c:if>
+				
 			</div>
+
+			<script>
+				$(document).ready(function() {
+					var tipoAssinatura = getUserLocalStorage('tipo-assinatura');
+					var i = undefined;
+					
+					switch (tipoAssinatura) {
+					case 'certificado-digital': 
+						i = $('#ad_certificado_0');
+						break;						
+					case 'senha': 
+						i = $('#ad_password_0');
+						break;						
+					case 'pin': 
+						i = $('#ad_pin_0');
+						break;						
+					}
+					if (i && !i.prop('checked') && !i.prop('disabled'))
+						i.prop('checked', true);
+				});
+			</script>
 			
 			<div class="col">	
 				<c:if test="${(not empty juntarAtivo and siga_cliente != 'GOVSP') or (not empty tramitarAtivo) or (not empty exibirNoProtocoloAtivo)}">

@@ -2876,7 +2876,7 @@ public class CpDao extends ModeloDao {
 	
 	public CpMarcador obterPastaPadraoDaLotacao(DpLotacao lotacao) {
 		for (CpMarcador m : listarCpMarcadoresPorLotacao(lotacao, false))
-			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO && obterAtual(m).isAtivo())
 				return m;
 		return null;
 	}

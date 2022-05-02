@@ -316,7 +316,7 @@
 							<table class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
-										<th class="text-left">Tempo</th>
+										<th class="text-left">Data</th>
 										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
 										<th class="text-left">Evento</th>
 										<th class="text-left">Descrição</th>
@@ -328,7 +328,7 @@
 										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td class="text-left" title="${mov.tempoRelativo}">${mov.dtRegMovDDMMYY}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td class="text-left" >${mov.mov.exTipoMovimentacao.descr}</td>
 											<td class="text-left" 

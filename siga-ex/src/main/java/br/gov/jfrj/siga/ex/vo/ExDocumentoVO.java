@@ -63,6 +63,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarSubprocesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVolume;
+import br.gov.jfrj.siga.ex.logic.ExPodeDefinirPrazoAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerConcelamentoDeDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerRestricaoDeAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
@@ -782,6 +783,11 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(AcaoVO.builder().nome("Enviar ao SIAFEM").icone("email_go").nameSpace("/app/expediente/integracao").acao("integracaows")
 				.params("sigla", mob.getCodigoCompacto()).exp(And.of(new CpPodeBoolean(mostrarEnviarSiafem(doc), "pode mostrar Siafem"), new ExPodeEnviarSiafem(doc, titular, lotaTitular))).classe("once").build());
+	
+		if (!doc.isCancelado())
+			vo.addAcao(AcaoVO.builder().nome("Atribuir Prazo de Assinatura").icone("date_previous").nameSpace("/app/expediente/mov").acao("definir_prazo_assinatura")
+			.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDefinirPrazoAssinatura(mob, titular, lotaTitular)).classe("once").build());
+		
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {

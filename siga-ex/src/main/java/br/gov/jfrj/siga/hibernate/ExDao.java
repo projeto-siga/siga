@@ -974,9 +974,22 @@ public class ExDao extends CpDao {
 
 		return query.getResultList();
 	}
+	
+	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot , Integer idTipoForma ) {
+		 
+		List listEstadosReduzida = new ArrayList<Object[]>();
+		
+		for (Object o : consultarPaginaInicial( pes,  lot  )) {
+			if (Long.valueOf(idTipoForma) ==   ((Object[]) o)[8]  )  {
+				listEstadosReduzida.add(o);
+			}
+		} 
+		 
+		return listEstadosReduzida;
+	}
 
-	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot,
-			Integer idTipoForma) {
+
+	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot ) {
 		try {
 			Query sql = em().createNamedQuery(
 					"consultarPaginaInicial");
@@ -986,7 +999,6 @@ public class ExDao extends CpDao {
 			sql.setParameter("amanha", amanha, TemporalType.DATE);
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
-//			sql.setParameter("idTipoForma", Long.valueOf(idTipoForma));
 
 			List result = sql.getResultList();
 			

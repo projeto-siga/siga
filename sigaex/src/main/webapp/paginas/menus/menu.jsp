@@ -88,7 +88,7 @@
 			</c:catch>
 			<c:catch>
 				<c:if
-					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
+					test="${f:podeArquivarIntermediarioPorConfiguracao(titular,lotaTitular)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_intermediario_lote">Arquivar
 							Intermediário em Lote</a></li>

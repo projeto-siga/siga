@@ -1,0 +1,1604 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="OPCAO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="PROCESSOPRINCIPAL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGORIGEM13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DTSOLIC13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRESP13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CONFIRMA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "rotina",
+    "opcao",
+    "processoprincipal",
+    "numproc1",
+    "orgorigem1",
+    "dtsolic1",
+    "matresp1",
+    "numproc2",
+    "orgorigem2",
+    "dtsolic2",
+    "matresp2",
+    "numproc3",
+    "orgorigem3",
+    "dtsolic3",
+    "matresp3",
+    "numproc4",
+    "orgorigem4",
+    "dtsolic4",
+    "matresp4",
+    "numproc5",
+    "orgorigem5",
+    "dtsolic5",
+    "matresp5",
+    "numproc6",
+    "orgorigem6",
+    "dtsolic6",
+    "matresp6",
+    "numproc7",
+    "orgorigem7",
+    "dtsolic7",
+    "matresp7",
+    "numproc8",
+    "orgorigem8",
+    "dtsolic8",
+    "matresp8",
+    "numproc9",
+    "orgorigem9",
+    "dtsolic9",
+    "matresp9",
+    "numproc10",
+    "orgorigem10",
+    "dtsolic10",
+    "matresp10",
+    "numproc11",
+    "orgorigem11",
+    "dtsolic11",
+    "matresp11",
+    "numproc12",
+    "orgorigem12",
+    "dtsolic12",
+    "matresp12",
+    "numproc13",
+    "orgorigem13",
+    "dtsolic13",
+    "matresp13",
+    "confirma"
+})
+@XmlRootElement(name = "TApensaProcesso_WS")
+public class TApensaProcessoWS {
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "OPCAO")
+    protected String opcao;
+    @XmlElement(name = "PROCESSOPRINCIPAL")
+    protected String processoprincipal;
+    @XmlElement(name = "NUMPROC1")
+    protected String numproc1;
+    @XmlElement(name = "ORGORIGEM1")
+    protected String orgorigem1;
+    @XmlElement(name = "DTSOLIC1")
+    protected String dtsolic1;
+    @XmlElement(name = "MATRESP1")
+    protected String matresp1;
+    @XmlElement(name = "NUMPROC2")
+    protected String numproc2;
+    @XmlElement(name = "ORGORIGEM2")
+    protected String orgorigem2;
+    @XmlElement(name = "DTSOLIC2")
+    protected String dtsolic2;
+    @XmlElement(name = "MATRESP2")
+    protected String matresp2;
+    @XmlElement(name = "NUMPROC3")
+    protected String numproc3;
+    @XmlElement(name = "ORGORIGEM3")
+    protected String orgorigem3;
+    @XmlElement(name = "DTSOLIC3")
+    protected String dtsolic3;
+    @XmlElement(name = "MATRESP3")
+    protected String matresp3;
+    @XmlElement(name = "NUMPROC4")
+    protected String numproc4;
+    @XmlElement(name = "ORGORIGEM4")
+    protected String orgorigem4;
+    @XmlElement(name = "DTSOLIC4")
+    protected String dtsolic4;
+    @XmlElement(name = "MATRESP4")
+    protected String matresp4;
+    @XmlElement(name = "NUMPROC5")
+    protected String numproc5;
+    @XmlElement(name = "ORGORIGEM5")
+    protected String orgorigem5;
+    @XmlElement(name = "DTSOLIC5")
+    protected String dtsolic5;
+    @XmlElement(name = "MATRESP5")
+    protected String matresp5;
+    @XmlElement(name = "NUMPROC6")
+    protected String numproc6;
+    @XmlElement(name = "ORGORIGEM6")
+    protected String orgorigem6;
+    @XmlElement(name = "DTSOLIC6")
+    protected String dtsolic6;
+    @XmlElement(name = "MATRESP6")
+    protected String matresp6;
+    @XmlElement(name = "NUMPROC7")
+    protected String numproc7;
+    @XmlElement(name = "ORGORIGEM7")
+    protected String orgorigem7;
+    @XmlElement(name = "DTSOLIC7")
+    protected String dtsolic7;
+    @XmlElement(name = "MATRESP7")
+    protected String matresp7;
+    @XmlElement(name = "NUMPROC8")
+    protected String numproc8;
+    @XmlElement(name = "ORGORIGEM8")
+    protected String orgorigem8;
+    @XmlElement(name = "DTSOLIC8")
+    protected String dtsolic8;
+    @XmlElement(name = "MATRESP8")
+    protected String matresp8;
+    @XmlElement(name = "NUMPROC9")
+    protected String numproc9;
+    @XmlElement(name = "ORGORIGEM9")
+    protected String orgorigem9;
+    @XmlElement(name = "DTSOLIC9")
+    protected String dtsolic9;
+    @XmlElement(name = "MATRESP9")
+    protected String matresp9;
+    @XmlElement(name = "NUMPROC10")
+    protected String numproc10;
+    @XmlElement(name = "ORGORIGEM10")
+    protected String orgorigem10;
+    @XmlElement(name = "DTSOLIC10")
+    protected String dtsolic10;
+    @XmlElement(name = "MATRESP10")
+    protected String matresp10;
+    @XmlElement(name = "NUMPROC11")
+    protected String numproc11;
+    @XmlElement(name = "ORGORIGEM11")
+    protected String orgorigem11;
+    @XmlElement(name = "DTSOLIC11")
+    protected String dtsolic11;
+    @XmlElement(name = "MATRESP11")
+    protected String matresp11;
+    @XmlElement(name = "NUMPROC12")
+    protected String numproc12;
+    @XmlElement(name = "ORGORIGEM12")
+    protected String orgorigem12;
+    @XmlElement(name = "DTSOLIC12")
+    protected String dtsolic12;
+    @XmlElement(name = "MATRESP12")
+    protected String matresp12;
+    @XmlElement(name = "NUMPROC13")
+    protected String numproc13;
+    @XmlElement(name = "ORGORIGEM13")
+    protected String orgorigem13;
+    @XmlElement(name = "DTSOLIC13")
+    protected String dtsolic13;
+    @XmlElement(name = "MATRESP13")
+    protected String matresp13;
+    @XmlElement(name = "CONFIRMA")
+    protected String confirma;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the opcao property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOPCAO() {
+        return opcao;
+    }
+
+    /**
+     * Sets the value of the opcao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOPCAO(String value) {
+        this.opcao = value;
+    }
+
+    /**
+     * Gets the value of the processoprincipal property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPROCESSOPRINCIPAL() {
+        return processoprincipal;
+    }
+
+    /**
+     * Sets the value of the processoprincipal property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPROCESSOPRINCIPAL(String value) {
+        this.processoprincipal = value;
+    }
+
+    /**
+     * Gets the value of the numproc1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC1() {
+        return numproc1;
+    }
+
+    /**
+     * Sets the value of the numproc1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC1(String value) {
+        this.numproc1 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM1() {
+        return orgorigem1;
+    }
+
+    /**
+     * Sets the value of the orgorigem1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM1(String value) {
+        this.orgorigem1 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC1() {
+        return dtsolic1;
+    }
+
+    /**
+     * Sets the value of the dtsolic1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC1(String value) {
+        this.dtsolic1 = value;
+    }
+
+    /**
+     * Gets the value of the matresp1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP1() {
+        return matresp1;
+    }
+
+    /**
+     * Sets the value of the matresp1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP1(String value) {
+        this.matresp1 = value;
+    }
+
+    /**
+     * Gets the value of the numproc2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC2() {
+        return numproc2;
+    }
+
+    /**
+     * Sets the value of the numproc2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC2(String value) {
+        this.numproc2 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM2() {
+        return orgorigem2;
+    }
+
+    /**
+     * Sets the value of the orgorigem2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM2(String value) {
+        this.orgorigem2 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC2() {
+        return dtsolic2;
+    }
+
+    /**
+     * Sets the value of the dtsolic2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC2(String value) {
+        this.dtsolic2 = value;
+    }
+
+    /**
+     * Gets the value of the matresp2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP2() {
+        return matresp2;
+    }
+
+    /**
+     * Sets the value of the matresp2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP2(String value) {
+        this.matresp2 = value;
+    }
+
+    /**
+     * Gets the value of the numproc3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC3() {
+        return numproc3;
+    }
+
+    /**
+     * Sets the value of the numproc3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC3(String value) {
+        this.numproc3 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM3() {
+        return orgorigem3;
+    }
+
+    /**
+     * Sets the value of the orgorigem3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM3(String value) {
+        this.orgorigem3 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC3() {
+        return dtsolic3;
+    }
+
+    /**
+     * Sets the value of the dtsolic3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC3(String value) {
+        this.dtsolic3 = value;
+    }
+
+    /**
+     * Gets the value of the matresp3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP3() {
+        return matresp3;
+    }
+
+    /**
+     * Sets the value of the matresp3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP3(String value) {
+        this.matresp3 = value;
+    }
+
+    /**
+     * Gets the value of the numproc4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC4() {
+        return numproc4;
+    }
+
+    /**
+     * Sets the value of the numproc4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC4(String value) {
+        this.numproc4 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM4() {
+        return orgorigem4;
+    }
+
+    /**
+     * Sets the value of the orgorigem4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM4(String value) {
+        this.orgorigem4 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC4() {
+        return dtsolic4;
+    }
+
+    /**
+     * Sets the value of the dtsolic4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC4(String value) {
+        this.dtsolic4 = value;
+    }
+
+    /**
+     * Gets the value of the matresp4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP4() {
+        return matresp4;
+    }
+
+    /**
+     * Sets the value of the matresp4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP4(String value) {
+        this.matresp4 = value;
+    }
+
+    /**
+     * Gets the value of the numproc5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC5() {
+        return numproc5;
+    }
+
+    /**
+     * Sets the value of the numproc5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC5(String value) {
+        this.numproc5 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM5() {
+        return orgorigem5;
+    }
+
+    /**
+     * Sets the value of the orgorigem5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM5(String value) {
+        this.orgorigem5 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC5() {
+        return dtsolic5;
+    }
+
+    /**
+     * Sets the value of the dtsolic5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC5(String value) {
+        this.dtsolic5 = value;
+    }
+
+    /**
+     * Gets the value of the matresp5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP5() {
+        return matresp5;
+    }
+
+    /**
+     * Sets the value of the matresp5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP5(String value) {
+        this.matresp5 = value;
+    }
+
+    /**
+     * Gets the value of the numproc6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC6() {
+        return numproc6;
+    }
+
+    /**
+     * Sets the value of the numproc6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC6(String value) {
+        this.numproc6 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM6() {
+        return orgorigem6;
+    }
+
+    /**
+     * Sets the value of the orgorigem6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM6(String value) {
+        this.orgorigem6 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC6() {
+        return dtsolic6;
+    }
+
+    /**
+     * Sets the value of the dtsolic6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC6(String value) {
+        this.dtsolic6 = value;
+    }
+
+    /**
+     * Gets the value of the matresp6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP6() {
+        return matresp6;
+    }
+
+    /**
+     * Sets the value of the matresp6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP6(String value) {
+        this.matresp6 = value;
+    }
+
+    /**
+     * Gets the value of the numproc7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC7() {
+        return numproc7;
+    }
+
+    /**
+     * Sets the value of the numproc7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC7(String value) {
+        this.numproc7 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM7() {
+        return orgorigem7;
+    }
+
+    /**
+     * Sets the value of the orgorigem7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM7(String value) {
+        this.orgorigem7 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC7() {
+        return dtsolic7;
+    }
+
+    /**
+     * Sets the value of the dtsolic7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC7(String value) {
+        this.dtsolic7 = value;
+    }
+
+    /**
+     * Gets the value of the matresp7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP7() {
+        return matresp7;
+    }
+
+    /**
+     * Sets the value of the matresp7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP7(String value) {
+        this.matresp7 = value;
+    }
+
+    /**
+     * Gets the value of the numproc8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC8() {
+        return numproc8;
+    }
+
+    /**
+     * Sets the value of the numproc8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC8(String value) {
+        this.numproc8 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM8() {
+        return orgorigem8;
+    }
+
+    /**
+     * Sets the value of the orgorigem8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM8(String value) {
+        this.orgorigem8 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC8() {
+        return dtsolic8;
+    }
+
+    /**
+     * Sets the value of the dtsolic8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC8(String value) {
+        this.dtsolic8 = value;
+    }
+
+    /**
+     * Gets the value of the matresp8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP8() {
+        return matresp8;
+    }
+
+    /**
+     * Sets the value of the matresp8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP8(String value) {
+        this.matresp8 = value;
+    }
+
+    /**
+     * Gets the value of the numproc9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC9() {
+        return numproc9;
+    }
+
+    /**
+     * Sets the value of the numproc9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC9(String value) {
+        this.numproc9 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM9() {
+        return orgorigem9;
+    }
+
+    /**
+     * Sets the value of the orgorigem9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM9(String value) {
+        this.orgorigem9 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC9() {
+        return dtsolic9;
+    }
+
+    /**
+     * Sets the value of the dtsolic9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC9(String value) {
+        this.dtsolic9 = value;
+    }
+
+    /**
+     * Gets the value of the matresp9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP9() {
+        return matresp9;
+    }
+
+    /**
+     * Sets the value of the matresp9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP9(String value) {
+        this.matresp9 = value;
+    }
+
+    /**
+     * Gets the value of the numproc10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC10() {
+        return numproc10;
+    }
+
+    /**
+     * Sets the value of the numproc10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC10(String value) {
+        this.numproc10 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM10() {
+        return orgorigem10;
+    }
+
+    /**
+     * Sets the value of the orgorigem10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM10(String value) {
+        this.orgorigem10 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC10() {
+        return dtsolic10;
+    }
+
+    /**
+     * Sets the value of the dtsolic10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC10(String value) {
+        this.dtsolic10 = value;
+    }
+
+    /**
+     * Gets the value of the matresp10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP10() {
+        return matresp10;
+    }
+
+    /**
+     * Sets the value of the matresp10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP10(String value) {
+        this.matresp10 = value;
+    }
+
+    /**
+     * Gets the value of the numproc11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC11() {
+        return numproc11;
+    }
+
+    /**
+     * Sets the value of the numproc11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC11(String value) {
+        this.numproc11 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM11() {
+        return orgorigem11;
+    }
+
+    /**
+     * Sets the value of the orgorigem11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM11(String value) {
+        this.orgorigem11 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC11() {
+        return dtsolic11;
+    }
+
+    /**
+     * Sets the value of the dtsolic11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC11(String value) {
+        this.dtsolic11 = value;
+    }
+
+    /**
+     * Gets the value of the matresp11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP11() {
+        return matresp11;
+    }
+
+    /**
+     * Sets the value of the matresp11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP11(String value) {
+        this.matresp11 = value;
+    }
+
+    /**
+     * Gets the value of the numproc12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC12() {
+        return numproc12;
+    }
+
+    /**
+     * Sets the value of the numproc12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC12(String value) {
+        this.numproc12 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM12() {
+        return orgorigem12;
+    }
+
+    /**
+     * Sets the value of the orgorigem12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM12(String value) {
+        this.orgorigem12 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC12() {
+        return dtsolic12;
+    }
+
+    /**
+     * Sets the value of the dtsolic12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC12(String value) {
+        this.dtsolic12 = value;
+    }
+
+    /**
+     * Gets the value of the matresp12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP12() {
+        return matresp12;
+    }
+
+    /**
+     * Sets the value of the matresp12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP12(String value) {
+        this.matresp12 = value;
+    }
+
+    /**
+     * Gets the value of the numproc13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC13() {
+        return numproc13;
+    }
+
+    /**
+     * Sets the value of the numproc13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC13(String value) {
+        this.numproc13 = value;
+    }
+
+    /**
+     * Gets the value of the orgorigem13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGORIGEM13() {
+        return orgorigem13;
+    }
+
+    /**
+     * Sets the value of the orgorigem13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGORIGEM13(String value) {
+        this.orgorigem13 = value;
+    }
+
+    /**
+     * Gets the value of the dtsolic13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDTSOLIC13() {
+        return dtsolic13;
+    }
+
+    /**
+     * Sets the value of the dtsolic13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDTSOLIC13(String value) {
+        this.dtsolic13 = value;
+    }
+
+    /**
+     * Gets the value of the matresp13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRESP13() {
+        return matresp13;
+    }
+
+    /**
+     * Sets the value of the matresp13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRESP13(String value) {
+        this.matresp13 = value;
+    }
+
+    /**
+     * Gets the value of the confirma property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCONFIRMA() {
+        return confirma;
+    }
+
+    /**
+     * Sets the value of the confirma property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCONFIRMA(String value) {
+        this.confirma = value;
+    }
+
+}

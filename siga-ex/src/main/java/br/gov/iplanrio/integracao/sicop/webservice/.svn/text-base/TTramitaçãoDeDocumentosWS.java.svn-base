@@ -1,0 +1,1856 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="OPCAO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORIGEM" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESTINO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DSCDESTINO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATREMESSA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATRRECEBEDOR" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATRRECEBEDOR" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="T1PDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODDES14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "rotina",
+    "opcao",
+    "origem",
+    "destino",
+    "dscdestino",
+    "datremessa",
+    "guia",
+    "matrrecebedor",
+    "datrrecebedor",
+    "t1PDOC",
+    "numdoc1",
+    "orgdoc1",
+    "coddes1",
+    "tipdoc2",
+    "numdoc2",
+    "orgdoc2",
+    "coddes2",
+    "tipdoc3",
+    "numdoc3",
+    "orgdoc3",
+    "coddes3",
+    "tipdoc4",
+    "numdoc4",
+    "orgdoc4",
+    "coddes4",
+    "tipdoc5",
+    "numdoc5",
+    "orgdoc5",
+    "coddes5",
+    "tipdoc6",
+    "numdoc6",
+    "orgdoc6",
+    "coddes6",
+    "tipdoc7",
+    "numdoc7",
+    "orgdoc7",
+    "coddes7",
+    "tipdoc8",
+    "numdoc8",
+    "orgdoc8",
+    "coddes8",
+    "tipdoc9",
+    "numdoc9",
+    "orgdoc9",
+    "coddes9",
+    "tipdoc10",
+    "numdoc10",
+    "orgdoc10",
+    "coddes10",
+    "tipdoc11",
+    "numdoc11",
+    "orgdoc11",
+    "coddes11",
+    "tipdoc12",
+    "numdoc12",
+    "orgdoc12",
+    "coddes12",
+    "tipdoc13",
+    "numdoc13",
+    "orgdoc13",
+    "coddes13",
+    "tipdoc14",
+    "numdoc14",
+    "orgdoc14",
+    "coddes14"
+})
+@XmlRootElement(name = "TTramita\u00e7\u00e3oDeDocumentos_WS")
+public class TTramitaçãoDeDocumentosWS {
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "OPCAO")
+    protected String opcao;
+    @XmlElement(name = "ORIGEM")
+    protected String origem;
+    @XmlElement(name = "DESTINO")
+    protected String destino;
+    @XmlElement(name = "DSCDESTINO")
+    protected String dscdestino;
+    @XmlElement(name = "DATREMESSA")
+    protected String datremessa;
+    @XmlElement(name = "GUIA")
+    protected String guia;
+    @XmlElement(name = "MATRRECEBEDOR")
+    protected String matrrecebedor;
+    @XmlElement(name = "DATRRECEBEDOR")
+    protected String datrrecebedor;
+    @XmlElement(name = "T1PDOC")
+    protected String t1PDOC;
+    @XmlElement(name = "NUMDOC1")
+    protected String numdoc1;
+    @XmlElement(name = "ORGDOC1")
+    protected String orgdoc1;
+    @XmlElement(name = "CODDES1")
+    protected String coddes1;
+    @XmlElement(name = "TIPDOC2")
+    protected String tipdoc2;
+    @XmlElement(name = "NUMDOC2")
+    protected String numdoc2;
+    @XmlElement(name = "ORGDOC2")
+    protected String orgdoc2;
+    @XmlElement(name = "CODDES2")
+    protected String coddes2;
+    @XmlElement(name = "TIPDOC3")
+    protected String tipdoc3;
+    @XmlElement(name = "NUMDOC3")
+    protected String numdoc3;
+    @XmlElement(name = "ORGDOC3")
+    protected String orgdoc3;
+    @XmlElement(name = "CODDES3")
+    protected String coddes3;
+    @XmlElement(name = "TIPDOC4")
+    protected String tipdoc4;
+    @XmlElement(name = "NUMDOC4")
+    protected String numdoc4;
+    @XmlElement(name = "ORGDOC4")
+    protected String orgdoc4;
+    @XmlElement(name = "CODDES4")
+    protected String coddes4;
+    @XmlElement(name = "TIPDOC5")
+    protected String tipdoc5;
+    @XmlElement(name = "NUMDOC5")
+    protected String numdoc5;
+    @XmlElement(name = "ORGDOC5")
+    protected String orgdoc5;
+    @XmlElement(name = "CODDES5")
+    protected String coddes5;
+    @XmlElement(name = "TIPDOC6")
+    protected String tipdoc6;
+    @XmlElement(name = "NUMDOC6")
+    protected String numdoc6;
+    @XmlElement(name = "ORGDOC6")
+    protected String orgdoc6;
+    @XmlElement(name = "CODDES6")
+    protected String coddes6;
+    @XmlElement(name = "TIPDOC7")
+    protected String tipdoc7;
+    @XmlElement(name = "NUMDOC7")
+    protected String numdoc7;
+    @XmlElement(name = "ORGDOC7")
+    protected String orgdoc7;
+    @XmlElement(name = "CODDES7")
+    protected String coddes7;
+    @XmlElement(name = "TIPDOC8")
+    protected String tipdoc8;
+    @XmlElement(name = "NUMDOC8")
+    protected String numdoc8;
+    @XmlElement(name = "ORGDOC8")
+    protected String orgdoc8;
+    @XmlElement(name = "CODDES8")
+    protected String coddes8;
+    @XmlElement(name = "TIPDOC9")
+    protected String tipdoc9;
+    @XmlElement(name = "NUMDOC9")
+    protected String numdoc9;
+    @XmlElement(name = "ORGDOC9")
+    protected String orgdoc9;
+    @XmlElement(name = "CODDES9")
+    protected String coddes9;
+    @XmlElement(name = "TIPDOC10")
+    protected String tipdoc10;
+    @XmlElement(name = "NUMDOC10")
+    protected String numdoc10;
+    @XmlElement(name = "ORGDOC10")
+    protected String orgdoc10;
+    @XmlElement(name = "CODDES10")
+    protected String coddes10;
+    @XmlElement(name = "TIPDOC11")
+    protected String tipdoc11;
+    @XmlElement(name = "NUMDOC11")
+    protected String numdoc11;
+    @XmlElement(name = "ORGDOC11")
+    protected String orgdoc11;
+    @XmlElement(name = "CODDES11")
+    protected String coddes11;
+    @XmlElement(name = "TIPDOC12")
+    protected String tipdoc12;
+    @XmlElement(name = "NUMDOC12")
+    protected String numdoc12;
+    @XmlElement(name = "ORGDOC12")
+    protected String orgdoc12;
+    @XmlElement(name = "CODDES12")
+    protected String coddes12;
+    @XmlElement(name = "TIPDOC13")
+    protected String tipdoc13;
+    @XmlElement(name = "NUMDOC13")
+    protected String numdoc13;
+    @XmlElement(name = "ORGDOC13")
+    protected String orgdoc13;
+    @XmlElement(name = "CODDES13")
+    protected String coddes13;
+    @XmlElement(name = "TIPDOC14")
+    protected String tipdoc14;
+    @XmlElement(name = "NUMDOC14")
+    protected String numdoc14;
+    @XmlElement(name = "ORGDOC14")
+    protected String orgdoc14;
+    @XmlElement(name = "CODDES14")
+    protected String coddes14;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the opcao property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOPCAO() {
+        return opcao;
+    }
+
+    /**
+     * Sets the value of the opcao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOPCAO(String value) {
+        this.opcao = value;
+    }
+
+    /**
+     * Gets the value of the origem property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORIGEM() {
+        return origem;
+    }
+
+    /**
+     * Sets the value of the origem property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORIGEM(String value) {
+        this.origem = value;
+    }
+
+    /**
+     * Gets the value of the destino property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESTINO() {
+        return destino;
+    }
+
+    /**
+     * Sets the value of the destino property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESTINO(String value) {
+        this.destino = value;
+    }
+
+    /**
+     * Gets the value of the dscdestino property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDSCDESTINO() {
+        return dscdestino;
+    }
+
+    /**
+     * Sets the value of the dscdestino property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDSCDESTINO(String value) {
+        this.dscdestino = value;
+    }
+
+    /**
+     * Gets the value of the datremessa property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATREMESSA() {
+        return datremessa;
+    }
+
+    /**
+     * Sets the value of the datremessa property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATREMESSA(String value) {
+        this.datremessa = value;
+    }
+
+    /**
+     * Gets the value of the guia property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA() {
+        return guia;
+    }
+
+    /**
+     * Sets the value of the guia property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA(String value) {
+        this.guia = value;
+    }
+
+    /**
+     * Gets the value of the matrrecebedor property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATRRECEBEDOR() {
+        return matrrecebedor;
+    }
+
+    /**
+     * Sets the value of the matrrecebedor property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATRRECEBEDOR(String value) {
+        this.matrrecebedor = value;
+    }
+
+    /**
+     * Gets the value of the datrrecebedor property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATRRECEBEDOR() {
+        return datrrecebedor;
+    }
+
+    /**
+     * Sets the value of the datrrecebedor property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATRRECEBEDOR(String value) {
+        this.datrrecebedor = value;
+    }
+
+    /**
+     * Gets the value of the t1PDOC property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getT1PDOC() {
+        return t1PDOC;
+    }
+
+    /**
+     * Sets the value of the t1PDOC property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setT1PDOC(String value) {
+        this.t1PDOC = value;
+    }
+
+    /**
+     * Gets the value of the numdoc1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC1() {
+        return numdoc1;
+    }
+
+    /**
+     * Sets the value of the numdoc1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC1(String value) {
+        this.numdoc1 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC1() {
+        return orgdoc1;
+    }
+
+    /**
+     * Sets the value of the orgdoc1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC1(String value) {
+        this.orgdoc1 = value;
+    }
+
+    /**
+     * Gets the value of the coddes1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES1() {
+        return coddes1;
+    }
+
+    /**
+     * Sets the value of the coddes1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES1(String value) {
+        this.coddes1 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC2() {
+        return tipdoc2;
+    }
+
+    /**
+     * Sets the value of the tipdoc2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC2(String value) {
+        this.tipdoc2 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC2() {
+        return numdoc2;
+    }
+
+    /**
+     * Sets the value of the numdoc2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC2(String value) {
+        this.numdoc2 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC2() {
+        return orgdoc2;
+    }
+
+    /**
+     * Sets the value of the orgdoc2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC2(String value) {
+        this.orgdoc2 = value;
+    }
+
+    /**
+     * Gets the value of the coddes2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES2() {
+        return coddes2;
+    }
+
+    /**
+     * Sets the value of the coddes2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES2(String value) {
+        this.coddes2 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC3() {
+        return tipdoc3;
+    }
+
+    /**
+     * Sets the value of the tipdoc3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC3(String value) {
+        this.tipdoc3 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC3() {
+        return numdoc3;
+    }
+
+    /**
+     * Sets the value of the numdoc3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC3(String value) {
+        this.numdoc3 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC3() {
+        return orgdoc3;
+    }
+
+    /**
+     * Sets the value of the orgdoc3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC3(String value) {
+        this.orgdoc3 = value;
+    }
+
+    /**
+     * Gets the value of the coddes3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES3() {
+        return coddes3;
+    }
+
+    /**
+     * Sets the value of the coddes3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES3(String value) {
+        this.coddes3 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC4() {
+        return tipdoc4;
+    }
+
+    /**
+     * Sets the value of the tipdoc4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC4(String value) {
+        this.tipdoc4 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC4() {
+        return numdoc4;
+    }
+
+    /**
+     * Sets the value of the numdoc4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC4(String value) {
+        this.numdoc4 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC4() {
+        return orgdoc4;
+    }
+
+    /**
+     * Sets the value of the orgdoc4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC4(String value) {
+        this.orgdoc4 = value;
+    }
+
+    /**
+     * Gets the value of the coddes4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES4() {
+        return coddes4;
+    }
+
+    /**
+     * Sets the value of the coddes4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES4(String value) {
+        this.coddes4 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC5() {
+        return tipdoc5;
+    }
+
+    /**
+     * Sets the value of the tipdoc5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC5(String value) {
+        this.tipdoc5 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC5() {
+        return numdoc5;
+    }
+
+    /**
+     * Sets the value of the numdoc5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC5(String value) {
+        this.numdoc5 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC5() {
+        return orgdoc5;
+    }
+
+    /**
+     * Sets the value of the orgdoc5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC5(String value) {
+        this.orgdoc5 = value;
+    }
+
+    /**
+     * Gets the value of the coddes5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES5() {
+        return coddes5;
+    }
+
+    /**
+     * Sets the value of the coddes5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES5(String value) {
+        this.coddes5 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC6() {
+        return tipdoc6;
+    }
+
+    /**
+     * Sets the value of the tipdoc6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC6(String value) {
+        this.tipdoc6 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC6() {
+        return numdoc6;
+    }
+
+    /**
+     * Sets the value of the numdoc6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC6(String value) {
+        this.numdoc6 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC6() {
+        return orgdoc6;
+    }
+
+    /**
+     * Sets the value of the orgdoc6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC6(String value) {
+        this.orgdoc6 = value;
+    }
+
+    /**
+     * Gets the value of the coddes6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES6() {
+        return coddes6;
+    }
+
+    /**
+     * Sets the value of the coddes6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES6(String value) {
+        this.coddes6 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC7() {
+        return tipdoc7;
+    }
+
+    /**
+     * Sets the value of the tipdoc7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC7(String value) {
+        this.tipdoc7 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC7() {
+        return numdoc7;
+    }
+
+    /**
+     * Sets the value of the numdoc7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC7(String value) {
+        this.numdoc7 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC7() {
+        return orgdoc7;
+    }
+
+    /**
+     * Sets the value of the orgdoc7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC7(String value) {
+        this.orgdoc7 = value;
+    }
+
+    /**
+     * Gets the value of the coddes7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES7() {
+        return coddes7;
+    }
+
+    /**
+     * Sets the value of the coddes7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES7(String value) {
+        this.coddes7 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC8() {
+        return tipdoc8;
+    }
+
+    /**
+     * Sets the value of the tipdoc8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC8(String value) {
+        this.tipdoc8 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC8() {
+        return numdoc8;
+    }
+
+    /**
+     * Sets the value of the numdoc8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC8(String value) {
+        this.numdoc8 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC8() {
+        return orgdoc8;
+    }
+
+    /**
+     * Sets the value of the orgdoc8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC8(String value) {
+        this.orgdoc8 = value;
+    }
+
+    /**
+     * Gets the value of the coddes8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES8() {
+        return coddes8;
+    }
+
+    /**
+     * Sets the value of the coddes8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES8(String value) {
+        this.coddes8 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC9() {
+        return tipdoc9;
+    }
+
+    /**
+     * Sets the value of the tipdoc9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC9(String value) {
+        this.tipdoc9 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC9() {
+        return numdoc9;
+    }
+
+    /**
+     * Sets the value of the numdoc9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC9(String value) {
+        this.numdoc9 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC9() {
+        return orgdoc9;
+    }
+
+    /**
+     * Sets the value of the orgdoc9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC9(String value) {
+        this.orgdoc9 = value;
+    }
+
+    /**
+     * Gets the value of the coddes9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES9() {
+        return coddes9;
+    }
+
+    /**
+     * Sets the value of the coddes9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES9(String value) {
+        this.coddes9 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC10() {
+        return tipdoc10;
+    }
+
+    /**
+     * Sets the value of the tipdoc10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC10(String value) {
+        this.tipdoc10 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC10() {
+        return numdoc10;
+    }
+
+    /**
+     * Sets the value of the numdoc10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC10(String value) {
+        this.numdoc10 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC10() {
+        return orgdoc10;
+    }
+
+    /**
+     * Sets the value of the orgdoc10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC10(String value) {
+        this.orgdoc10 = value;
+    }
+
+    /**
+     * Gets the value of the coddes10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES10() {
+        return coddes10;
+    }
+
+    /**
+     * Sets the value of the coddes10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES10(String value) {
+        this.coddes10 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC11() {
+        return tipdoc11;
+    }
+
+    /**
+     * Sets the value of the tipdoc11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC11(String value) {
+        this.tipdoc11 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC11() {
+        return numdoc11;
+    }
+
+    /**
+     * Sets the value of the numdoc11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC11(String value) {
+        this.numdoc11 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC11() {
+        return orgdoc11;
+    }
+
+    /**
+     * Sets the value of the orgdoc11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC11(String value) {
+        this.orgdoc11 = value;
+    }
+
+    /**
+     * Gets the value of the coddes11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES11() {
+        return coddes11;
+    }
+
+    /**
+     * Sets the value of the coddes11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES11(String value) {
+        this.coddes11 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC12() {
+        return tipdoc12;
+    }
+
+    /**
+     * Sets the value of the tipdoc12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC12(String value) {
+        this.tipdoc12 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC12() {
+        return numdoc12;
+    }
+
+    /**
+     * Sets the value of the numdoc12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC12(String value) {
+        this.numdoc12 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC12() {
+        return orgdoc12;
+    }
+
+    /**
+     * Sets the value of the orgdoc12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC12(String value) {
+        this.orgdoc12 = value;
+    }
+
+    /**
+     * Gets the value of the coddes12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES12() {
+        return coddes12;
+    }
+
+    /**
+     * Sets the value of the coddes12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES12(String value) {
+        this.coddes12 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC13() {
+        return tipdoc13;
+    }
+
+    /**
+     * Sets the value of the tipdoc13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC13(String value) {
+        this.tipdoc13 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC13() {
+        return numdoc13;
+    }
+
+    /**
+     * Sets the value of the numdoc13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC13(String value) {
+        this.numdoc13 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC13() {
+        return orgdoc13;
+    }
+
+    /**
+     * Sets the value of the orgdoc13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC13(String value) {
+        this.orgdoc13 = value;
+    }
+
+    /**
+     * Gets the value of the coddes13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES13() {
+        return coddes13;
+    }
+
+    /**
+     * Sets the value of the coddes13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES13(String value) {
+        this.coddes13 = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC14() {
+        return tipdoc14;
+    }
+
+    /**
+     * Sets the value of the tipdoc14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC14(String value) {
+        this.tipdoc14 = value;
+    }
+
+    /**
+     * Gets the value of the numdoc14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC14() {
+        return numdoc14;
+    }
+
+    /**
+     * Sets the value of the numdoc14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC14(String value) {
+        this.numdoc14 = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC14() {
+        return orgdoc14;
+    }
+
+    /**
+     * Sets the value of the orgdoc14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC14(String value) {
+        this.orgdoc14 = value;
+    }
+
+    /**
+     * Gets the value of the coddes14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODDES14() {
+        return coddes14;
+    }
+
+    /**
+     * Sets the value of the coddes14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODDES14(String value) {
+        this.coddes14 = value;
+    }
+
+}

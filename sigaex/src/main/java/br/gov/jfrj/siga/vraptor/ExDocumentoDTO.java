@@ -239,9 +239,9 @@ public class ExDocumentoDTO {
 	
 	private boolean possuiRequerente;
 //	
-	private Long cpfRequerente;
+	private String cpfRequerente;
 	
-	private Long cnpjRequerente;
+	private String cnpjRequerente;
 
 	private Long matriculaRequerente;
 	
@@ -1067,19 +1067,19 @@ public class ExDocumentoDTO {
 		return dtPrazoAssinaturaString;
 	}
 
-	public Long getCpfRequerente() {
+	public String getCpfRequerente() {
 		return cpfRequerente;
 	}
 
-	public void setCpfRequerente(Long cpfRequerente) {
+	public void setCpfRequerente(String cpfRequerente) {
 		this.cpfRequerente = cpfRequerente;
 	}
 
-	public Long getCnpjRequerente() {
+	public String getCnpjRequerente() {
 		return cnpjRequerente;
 	}
 
-	public void setCnpjRequerente(Long cnpjRequerente) {
+	public void setCnpjRequerente(String cnpjRequerente) {
 		this.cnpjRequerente = cnpjRequerente;
 	}
 

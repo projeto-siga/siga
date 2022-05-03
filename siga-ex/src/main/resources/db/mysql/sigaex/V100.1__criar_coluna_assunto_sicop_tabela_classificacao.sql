@@ -1,0 +1,1 @@
+ALTER TABLE siga.ex_classificacao ADD ASSUNTO_SICOP VARCHAR(200);

@@ -140,6 +140,7 @@ public class ExModeloController extends ExSelecionavelController {
 			result.include("uuid", modelo.getUuid());
 			result.include("diretorio", modelo.getNmDiretorio());
 			result.include("marcaDagua", modelo.getMarcaDagua());
+			result.include("isPermiteSicop", modelo.getIsPermiteSicop());
 		}
 	}
 
@@ -151,7 +152,7 @@ public class ExModeloController extends ExSelecionavelController {
 			final ExClassificacaoSelecao classificacaoCriacaoViasSel,
 			final String descricao, final Long forma, final Long nivel,
 			final String arquivo, final String diretorio, final String uuid, 
-			final String marcaDagua, final Integer postback) throws Exception {
+			final String marcaDagua, final Integer isPermiteSicop, final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		ExModelo modelo = copiarModeloAtual(id);
 		if (postback != null) {
@@ -165,6 +166,9 @@ public class ExModeloController extends ExSelecionavelController {
 			modelo.setNmDiretorio(diretorio);
 			modelo.setUuid(uuid);
 			modelo.setMarcaDagua(marcaDagua);
+			
+			modelo.setIsPermiteSicop(isPermiteSicop != null ? isPermiteSicop : 0 );
+			
 			if (conteudo != null && conteudo.trim().length() > 0) {
 				modelo.setConteudoBlobMod2(conteudo.getBytes(UTF8));
 			}

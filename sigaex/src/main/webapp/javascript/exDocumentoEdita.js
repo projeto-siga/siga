@@ -177,7 +177,7 @@ function validar(silencioso) {
 	var temCossignatarios = document.getElementById('temCossignatarios');
 	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
 	
-	var isSubstituicao =  document.getElementById('substituicaoId').checked;
+	var isSubstituicao =  !!document.getElementById('substituicaoId') ?  document.getElementById('substituicaoId').checked :false;
 	var titular =document.getElementById('formulario_exDocumentoDTO.titularSel_sigla');
 	
 	if ( isSubstituicao  && (!titular || !titular.value) ){

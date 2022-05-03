@@ -1,0 +1,395 @@
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice
+END
+WSSicopGrava.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/WSSicopGrava.java
+END
+ConsultaProcessoPrincipalouApensoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 160
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ConsultaProcessoPrincipalouApensoWS.java
+END
+ConsultaTodaTramitaçãoDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 169
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ConsultaTodaTramita%C3%A7%C3%A3oDocumentosWS.java
+END
+TDespachoComplementarWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TDespachoComplementarWS.java
+END
+ObjectFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ObjectFactory.java
+END
+ConnectResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ConnectResponse.java
+END
+TVinculaçãoNumDeFolhasDoProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 169
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TVincula%C3%A7%C3%A3oNumDeFolhasDoProcessoWS.java
+END
+LogonWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/LogonWS.java
+END
+TConsultaProcessoPrincipalouApensoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 169
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaProcessoPrincipalouApensoWSResponse.java
+END
+Disconnect.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/Disconnect.java
+END
+TLogonSicopWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TLogonSicopWS.java
+END
+UnknownPage.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/UnknownPage.java
+END
+TApensaProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TApensaProcessoWSResponse.java
+END
+TVinculaçãoInscriçãoImobPorProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 190
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TVincula%C3%A7%C3%A3oInscri%C3%A7%C3%A3oImobPorProcessoWSResponse.java
+END
+package-info.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/package-info.java
+END
+TMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TMessage.java
+END
+TIncluiProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TIncluiProcessoWSResponse.java
+END
+RuntimeError.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/RuntimeError.java
+END
+TLogonWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TLogonWSResponse.java
+END
+TCadastroDeDocumentosWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 156
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TCadastroDeDocumentosWSResponse.java
+END
+TConsultaProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 152
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaProcessoWSResponse.java
+END
+TConsultaDocumentosWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 154
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaDocumentosWSResponse.java
+END
+TConsultaTodaTramitaçãoProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 176
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaTodaTramita%C3%A7%C3%A3oProcessoWSResponse.java
+END
+TConsultaTodaTramitaçãoDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 170
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaTodaTramita%C3%A7%C3%A3oDocumentosWS.java
+END
+ApensaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ApensaProcessoWS.java
+END
+VinculaçãoInscriçãoImobPorProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 181
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/Vincula%C3%A7%C3%A3oInscri%C3%A7%C3%A3oImobPorProcessoWS.java
+END
+IncluiProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/IncluiProcessoWS.java
+END
+WSSicopGravaSoap.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/WSSicopGravaSoap.java
+END
+TConsultaTabsAssuntoDespachoOrgãoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 173
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaTabsAssuntoDespachoOrg%C3%A3oWSResponse.java
+END
+TTramitaçãoDeDocumentosWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 168
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TTramita%C3%A7%C3%A3oDeDocumentosWSResponse.java
+END
+CadastroDeDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/CadastroDeDocumentosWS.java
+END
+TTramitaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TTramitaProcessoWS.java
+END
+VinculaçãoNumDeFolhasDoProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 168
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/Vincula%C3%A7%C3%A3oNumDeFolhasDoProcessoWS.java
+END
+ConsultaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ConsultaProcessoWS.java
+END
+ConsultaTodaTramitaçãoProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 167
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ConsultaTodaTramita%C3%A7%C3%A3oProcessoWS.java
+END
+TTramitaçãoInternaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TTramita%C3%A7%C3%A3oInternaProcessoWS.java
+END
+ConsultaDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ConsultaDocumentosWS.java
+END
+TDespachoComplementarWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 156
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TDespachoComplementarWSResponse.java
+END
+Connect.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/Connect.java
+END
+Message.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/Message.java
+END
+TramitaçãoDeDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 159
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/Tramita%C3%A7%C3%A3oDeDocumentosWS.java
+END
+ConsultaTabsAssuntoDespachoOrgãoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 164
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/ConsultaTabsAssuntoDespachoOrg%C3%A3oWS.java
+END
+TVinculaçãoNumDeFolhasDoProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 177
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TVincula%C3%A7%C3%A3oNumDeFolhasDoProcessoWSResponse.java
+END
+DisconnectResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/DisconnectResponse.java
+END
+TLogonSicopWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TLogonSicopWSResponse.java
+END
+TConsultaProcessoPrincipalouApensoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 161
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaProcessoPrincipalouApensoWS.java
+END
+DespachoComplementarWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/DespachoComplementarWS.java
+END
+TApensaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TApensaProcessoWS.java
+END
+TVinculaçãoInscriçãoImobPorProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 182
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TVincula%C3%A7%C3%A3oInscri%C3%A7%C3%A3oImobPorProcessoWS.java
+END
+TMessageResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TMessageResponse.java
+END
+TIncluiProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TIncluiProcessoWS.java
+END
+TLogonWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TLogonWS.java
+END
+TCadastroDeDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TCadastroDeDocumentosWS.java
+END
+TramitaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TramitaProcessoWS.java
+END
+LogonSicopWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/LogonSicopWS.java
+END
+TConsultaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaProcessoWS.java
+END
+TConsultaTodaTramitaçãoDocumentosWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 178
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaTodaTramita%C3%A7%C3%A3oDocumentosWSResponse.java
+END
+TConsultaDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaDocumentosWS.java
+END
+TramitaçãoInternaProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/Tramita%C3%A7%C3%A3oInternaProcessoWS.java
+END
+TConsultaTodaTramitaçãoProcessoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 168
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaTodaTramita%C3%A7%C3%A3oProcessoWS.java
+END
+TConsultaTabsAssuntoDespachoOrgãoWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 165
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TConsultaTabsAssuntoDespachoOrg%C3%A3oWS.java
+END
+TTramitaçãoDeDocumentosWS.java
+K 25
+svn:wc:ra_dav:version-url
+V 160
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TTramita%C3%A7%C3%A3oDeDocumentosWS.java
+END
+TTramitaProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TTramitaProcessoWSResponse.java
+END
+TTramitaçãoInternaProcessoWSResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 171
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/TTramita%C3%A7%C3%A3oInternaProcessoWSResponse.java
+END
+InnerMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repos/uc/!svn/ver/24905/maverick/maverick1/core/trunk/src/br/gov/rj/rio/iplanrio/maverick/integration/sicop/webservice/InnerMessage.java
+END

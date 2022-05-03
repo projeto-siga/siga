@@ -1,0 +1,6 @@
+/**
+ * Processos do SICOP - telas IncluiProcesso (2010), TramitaProcesso (2050), ApensaProcesso (2060), DespachoComplementar (2210), ConsultaProcesso (3010), ConsultaTodaTramitaçãoProcesso (3110), CadastroDeDocumentos (2080), ConsultaTodaTramitaçãoDocumentos (3160), TramitaçãoDocumentos (2090), ConsultaProcessoPrincipalouApenso (3030), VinculaçãoInscriçãoImobPorProcesso (2140), ConsultaDocumentos (3150), TramitaçãoInternaProcesso (2220), ConsultaTabsAssuntoDespachoOrgão (3210) e VinculaçãoNumDeFolhasDoProcesso (2160)
+ * 
+ */
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://pcrj/Sma/Sicop/Grava", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;

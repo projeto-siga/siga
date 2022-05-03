@@ -133,6 +133,17 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 	@JoinColumn(name = "HIS_ID_INI", insertable=false, updatable=false)
 	private ExClassificacao classificacaoInicial;
 
+	@Column(name = "ASSUNTO_SICOP", nullable = false, length = 13)
+	private String assuntoSicop;
+	
+	public String getAssuntoSicop() {
+		return assuntoSicop;
+	}
+
+	public void setAssuntoSicop(String assuntoSicop) {
+		this.assuntoSicop = assuntoSicop;
+	}
+
 	/**
 	 * Simple constructor of AbstractExClassificacao instances.
 	 */

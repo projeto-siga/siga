@@ -26,6 +26,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -41,7 +43,6 @@ import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
@@ -594,10 +595,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAnexarArquivo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-		Boolean podePorConf = podePorConfiguracao(titular, lotaTitular,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
-				ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null);
+		
+//		Boolean podePorConf = podePorConfiguracao(titular, lotaTitular,
+//				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
+//				ExTipoDeConfiguracao.MOVIMENTAR, null, null, null, null, null, null);
 	
+		Boolean podePorConf = getConf().podePorConfiguracao(titular, lotaTitular, 
+				titular.getCargo(), titular.getFuncaoConfianca(),
+				mob.doc().getExFormaDocumento(), mob.doc().getExModelo(),
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
+				ExTipoDeConfiguracao.MOVIMENTAR); 
+		
 		if (mob.doc().isFinalizado()) {
 			return !mob.isEmTransito(titular, lotaTitular)
 					&& (!mob.isGeral() || (mob.doc().isExterno() && !mob.doc().jaTransferido()))
@@ -5048,6 +5056,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), 
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_PRAZO_ASSINATURA,
 						ExTipoDeConfiguracao.MOVIMENTAR);
+	}
+	
+	public boolean podeIntegrarComAntigoSistemaControleDocumento(ExDocumento doc){
+		
+		return Prop.getBool("sicop.ativo") 
+			&& StringUtils.isNotBlank(Prop.get("sicop.token")) 
+			&& StringUtils.isNotBlank(Prop.get("sicop.url"))
+			&& StringUtils.isBlank(doc.getNumExtDoc()) 
+			&& doc.isModeloPermiteSicop();
 	}
 
 }

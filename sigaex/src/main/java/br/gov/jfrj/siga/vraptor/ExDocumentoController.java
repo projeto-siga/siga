@@ -1626,27 +1626,29 @@ public class ExDocumentoController extends ExController {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
 		
-		if(!exDocumentoDTO.getCriandoSubprocesso() 
-				&& (exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
-					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null 
-					&& !Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto()))) {
-			throw new AplicacaoException("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
-				+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
-				+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".");			
-		}
+		try {
+
+			if(!exDocumentoDTO.getCriandoSubprocesso() 
+					&& (exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
+						&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null 
+						&& !Ex.getInstance().getComp().podeIncluirDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto()))) {
+				throw new AplicacaoException("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
+					+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
+					+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".");			
+			}
 		
 		//verificar se  foi marcado substituto, mas não preenchido o titular
 		
-		if ( exDocumentoDTO.isSubstituicao() &&  StringUtils.isBlank(exDocumentoDTO.getTitularSel().getDescricao() )) {
-			throw new AplicacaoException("Preencha o campo Titular antes de gravar o documento.");
-		}
+
+			if ( exDocumentoDTO.isSubstituicao() &&  StringUtils.isBlank(exDocumentoDTO.getTitularSel().getDescricao() )) {
+				throw new AplicacaoException("Preencha o campo Titular antes de gravar o documento.");
+			}
 		
-		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null) {
 				exDocumentoDTO.setDoc(new ExDocumento());
 			}
-
+			
 			long tempoIni = System.currentTimeMillis();
 
 			setPar(getRequest().getParameterMap());
@@ -1860,7 +1862,7 @@ public class ExDocumentoController extends ExController {
 							.getDtRegDocDDMMYY());
 			result.use(Results.http()).body(body);
 		} else {
-			final String url = MessageFormat.format(
+			final String url =  MessageFormat.format(
 					"exibir?sigla={0}{1}",
 					exDocumentoDTO.getDoc().getSigla(),
 					exDocumentoDTO.getDesativ() == null ? "" : exDocumentoDTO
@@ -2519,8 +2521,12 @@ public class ExDocumentoController extends ExController {
 		doc.setNmDestinatario(exDocumentoDTO.getNmDestinatario());
 		
 		//requerente
-		doc.setCpfRequerente(exDocumentoDTO.isPossuiRequerente() ? exDocumentoDTO.getCpfRequerente() : null);
-		doc.setCnpjRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCnpjRequerente() : null);
+		doc.setCpfRequerente(
+		exDocumentoDTO.isPossuiRequerente() && exDocumentoDTO.getCpfRequerente() != null ? Long.valueOf( exDocumentoDTO.getCpfRequerente().replaceAll("[^0-9]", "")) : null );
+		
+		doc.setCnpjRequerente(
+				exDocumentoDTO.isPossuiRequerente() && exDocumentoDTO.getCnpjRequerente() != null ? Long.valueOf( exDocumentoDTO.getCnpjRequerente().replaceAll("[^0-9]", "")) : null );
+		
 		doc.setMatriculaRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getMatriculaRequerente() : null);
 		doc.setNomeRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getNomeRequerente() : null);
 		doc.setTipoLogradouroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getTipoLogradouroRequerente() : null);
@@ -3041,5 +3047,4 @@ public class ExDocumentoController extends ExController {
 	public void aDesfazerCancelamentoDocumento(final Long pessoa, final String sigla) {
 		result.redirectTo(Prop.get("/siga.base.url") + "/siga/permalink/" + sigla);
 	}
-
 }

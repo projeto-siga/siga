@@ -1,0 +1,3284 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for ConsultaTodaTramitaçãoProcesso_WS complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="ConsultaTodaTramitaçãoProcesso_WS">
+ *   &lt;complexContent>
+ *     &lt;extension base="{http://pcrj/Sma/Sicop/Grava}Message">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO12" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO13" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ITEM14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATDIG14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="MATREC14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDEST14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDESP14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="SEQ14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="GUIA14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DESPACHO14" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CONCAD" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="StatusLine" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/extension>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ConsultaTodaTramita\u00e7\u00e3oProcesso_WS", propOrder = {
+    "rotina",
+    "numproc",
+    "item1",
+    "matdig1",
+    "matrec1",
+    "orgdest1",
+    "datdesp1",
+    "seq1",
+    "guia1",
+    "despacho1",
+    "item2",
+    "matdig2",
+    "matrec2",
+    "orgdest2",
+    "datdesp2",
+    "seq2",
+    "guia2",
+    "despacho2",
+    "item3",
+    "matdig3",
+    "matrec3",
+    "orgdest3",
+    "datdesp3",
+    "seq3",
+    "guia3",
+    "despacho3",
+    "item4",
+    "matdig4",
+    "matrec4",
+    "orgdest4",
+    "datdesp4",
+    "seq4",
+    "guia4",
+    "despacho4",
+    "item5",
+    "matdig5",
+    "matrec5",
+    "orgdest5",
+    "datdesp5",
+    "seq5",
+    "guia5",
+    "despacho5",
+    "item6",
+    "matdig6",
+    "matrec6",
+    "orgdest6",
+    "datdesp6",
+    "seq6",
+    "guia6",
+    "despacho6",
+    "item7",
+    "matdig7",
+    "matrec7",
+    "orgdest7",
+    "datdesp7",
+    "seq7",
+    "guia7",
+    "despacho7",
+    "item8",
+    "matdig8",
+    "matrec8",
+    "orgdest8",
+    "datdesp8",
+    "seq8",
+    "guia8",
+    "despacho8",
+    "item9",
+    "matdig9",
+    "matrec9",
+    "orgdest9",
+    "datdesp9",
+    "seq9",
+    "guia9",
+    "despacho9",
+    "item10",
+    "matdig10",
+    "matrec10",
+    "orgdest10",
+    "datdesp10",
+    "seq10",
+    "guia10",
+    "despacho10",
+    "item11",
+    "matdig11",
+    "matrec11",
+    "orgdest11",
+    "datdesp11",
+    "seq11",
+    "guia11",
+    "despacho11",
+    "item12",
+    "matdig12",
+    "matrec12",
+    "orgdest12",
+    "datdesp12",
+    "seq12",
+    "guia12",
+    "despacho12",
+    "item13",
+    "matdig13",
+    "matrec13",
+    "orgdest13",
+    "datdesp13",
+    "seq13",
+    "guia13",
+    "despacho13",
+    "item14",
+    "matdig14",
+    "matrec14",
+    "orgdest14",
+    "datdesp14",
+    "seq14",
+    "guia14",
+    "despacho14",
+    "concad",
+    "statusLine"
+})
+public class ConsultaTodaTramitaçãoProcessoWS
+    extends Message
+{
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "NUMPROC")
+    protected String numproc;
+    @XmlElement(name = "ITEM1")
+    protected String item1;
+    @XmlElement(name = "MATDIG1")
+    protected String matdig1;
+    @XmlElement(name = "MATREC1")
+    protected String matrec1;
+    @XmlElement(name = "ORGDEST1")
+    protected String orgdest1;
+    @XmlElement(name = "DATDESP1")
+    protected String datdesp1;
+    @XmlElement(name = "SEQ1")
+    protected String seq1;
+    @XmlElement(name = "GUIA1")
+    protected String guia1;
+    @XmlElement(name = "DESPACHO1")
+    protected String despacho1;
+    @XmlElement(name = "ITEM2")
+    protected String item2;
+    @XmlElement(name = "MATDIG2")
+    protected String matdig2;
+    @XmlElement(name = "MATREC2")
+    protected String matrec2;
+    @XmlElement(name = "ORGDEST2")
+    protected String orgdest2;
+    @XmlElement(name = "DATDESP2")
+    protected String datdesp2;
+    @XmlElement(name = "SEQ2")
+    protected String seq2;
+    @XmlElement(name = "GUIA2")
+    protected String guia2;
+    @XmlElement(name = "DESPACHO2")
+    protected String despacho2;
+    @XmlElement(name = "ITEM3")
+    protected String item3;
+    @XmlElement(name = "MATDIG3")
+    protected String matdig3;
+    @XmlElement(name = "MATREC3")
+    protected String matrec3;
+    @XmlElement(name = "ORGDEST3")
+    protected String orgdest3;
+    @XmlElement(name = "DATDESP3")
+    protected String datdesp3;
+    @XmlElement(name = "SEQ3")
+    protected String seq3;
+    @XmlElement(name = "GUIA3")
+    protected String guia3;
+    @XmlElement(name = "DESPACHO3")
+    protected String despacho3;
+    @XmlElement(name = "ITEM4")
+    protected String item4;
+    @XmlElement(name = "MATDIG4")
+    protected String matdig4;
+    @XmlElement(name = "MATREC4")
+    protected String matrec4;
+    @XmlElement(name = "ORGDEST4")
+    protected String orgdest4;
+    @XmlElement(name = "DATDESP4")
+    protected String datdesp4;
+    @XmlElement(name = "SEQ4")
+    protected String seq4;
+    @XmlElement(name = "GUIA4")
+    protected String guia4;
+    @XmlElement(name = "DESPACHO4")
+    protected String despacho4;
+    @XmlElement(name = "ITEM5")
+    protected String item5;
+    @XmlElement(name = "MATDIG5")
+    protected String matdig5;
+    @XmlElement(name = "MATREC5")
+    protected String matrec5;
+    @XmlElement(name = "ORGDEST5")
+    protected String orgdest5;
+    @XmlElement(name = "DATDESP5")
+    protected String datdesp5;
+    @XmlElement(name = "SEQ5")
+    protected String seq5;
+    @XmlElement(name = "GUIA5")
+    protected String guia5;
+    @XmlElement(name = "DESPACHO5")
+    protected String despacho5;
+    @XmlElement(name = "ITEM6")
+    protected String item6;
+    @XmlElement(name = "MATDIG6")
+    protected String matdig6;
+    @XmlElement(name = "MATREC6")
+    protected String matrec6;
+    @XmlElement(name = "ORGDEST6")
+    protected String orgdest6;
+    @XmlElement(name = "DATDESP6")
+    protected String datdesp6;
+    @XmlElement(name = "SEQ6")
+    protected String seq6;
+    @XmlElement(name = "GUIA6")
+    protected String guia6;
+    @XmlElement(name = "DESPACHO6")
+    protected String despacho6;
+    @XmlElement(name = "ITEM7")
+    protected String item7;
+    @XmlElement(name = "MATDIG7")
+    protected String matdig7;
+    @XmlElement(name = "MATREC7")
+    protected String matrec7;
+    @XmlElement(name = "ORGDEST7")
+    protected String orgdest7;
+    @XmlElement(name = "DATDESP7")
+    protected String datdesp7;
+    @XmlElement(name = "SEQ7")
+    protected String seq7;
+    @XmlElement(name = "GUIA7")
+    protected String guia7;
+    @XmlElement(name = "DESPACHO7")
+    protected String despacho7;
+    @XmlElement(name = "ITEM8")
+    protected String item8;
+    @XmlElement(name = "MATDIG8")
+    protected String matdig8;
+    @XmlElement(name = "MATREC8")
+    protected String matrec8;
+    @XmlElement(name = "ORGDEST8")
+    protected String orgdest8;
+    @XmlElement(name = "DATDESP8")
+    protected String datdesp8;
+    @XmlElement(name = "SEQ8")
+    protected String seq8;
+    @XmlElement(name = "GUIA8")
+    protected String guia8;
+    @XmlElement(name = "DESPACHO8")
+    protected String despacho8;
+    @XmlElement(name = "ITEM9")
+    protected String item9;
+    @XmlElement(name = "MATDIG9")
+    protected String matdig9;
+    @XmlElement(name = "MATREC9")
+    protected String matrec9;
+    @XmlElement(name = "ORGDEST9")
+    protected String orgdest9;
+    @XmlElement(name = "DATDESP9")
+    protected String datdesp9;
+    @XmlElement(name = "SEQ9")
+    protected String seq9;
+    @XmlElement(name = "GUIA9")
+    protected String guia9;
+    @XmlElement(name = "DESPACHO9")
+    protected String despacho9;
+    @XmlElement(name = "ITEM10")
+    protected String item10;
+    @XmlElement(name = "MATDIG10")
+    protected String matdig10;
+    @XmlElement(name = "MATREC10")
+    protected String matrec10;
+    @XmlElement(name = "ORGDEST10")
+    protected String orgdest10;
+    @XmlElement(name = "DATDESP10")
+    protected String datdesp10;
+    @XmlElement(name = "SEQ10")
+    protected String seq10;
+    @XmlElement(name = "GUIA10")
+    protected String guia10;
+    @XmlElement(name = "DESPACHO10")
+    protected String despacho10;
+    @XmlElement(name = "ITEM11")
+    protected String item11;
+    @XmlElement(name = "MATDIG11")
+    protected String matdig11;
+    @XmlElement(name = "MATREC11")
+    protected String matrec11;
+    @XmlElement(name = "ORGDEST11")
+    protected String orgdest11;
+    @XmlElement(name = "DATDESP11")
+    protected String datdesp11;
+    @XmlElement(name = "SEQ11")
+    protected String seq11;
+    @XmlElement(name = "GUIA11")
+    protected String guia11;
+    @XmlElement(name = "DESPACHO11")
+    protected String despacho11;
+    @XmlElement(name = "ITEM12")
+    protected String item12;
+    @XmlElement(name = "MATDIG12")
+    protected String matdig12;
+    @XmlElement(name = "MATREC12")
+    protected String matrec12;
+    @XmlElement(name = "ORGDEST12")
+    protected String orgdest12;
+    @XmlElement(name = "DATDESP12")
+    protected String datdesp12;
+    @XmlElement(name = "SEQ12")
+    protected String seq12;
+    @XmlElement(name = "GUIA12")
+    protected String guia12;
+    @XmlElement(name = "DESPACHO12")
+    protected String despacho12;
+    @XmlElement(name = "ITEM13")
+    protected String item13;
+    @XmlElement(name = "MATDIG13")
+    protected String matdig13;
+    @XmlElement(name = "MATREC13")
+    protected String matrec13;
+    @XmlElement(name = "ORGDEST13")
+    protected String orgdest13;
+    @XmlElement(name = "DATDESP13")
+    protected String datdesp13;
+    @XmlElement(name = "SEQ13")
+    protected String seq13;
+    @XmlElement(name = "GUIA13")
+    protected String guia13;
+    @XmlElement(name = "DESPACHO13")
+    protected String despacho13;
+    @XmlElement(name = "ITEM14")
+    protected String item14;
+    @XmlElement(name = "MATDIG14")
+    protected String matdig14;
+    @XmlElement(name = "MATREC14")
+    protected String matrec14;
+    @XmlElement(name = "ORGDEST14")
+    protected String orgdest14;
+    @XmlElement(name = "DATDESP14")
+    protected String datdesp14;
+    @XmlElement(name = "SEQ14")
+    protected String seq14;
+    @XmlElement(name = "GUIA14")
+    protected String guia14;
+    @XmlElement(name = "DESPACHO14")
+    protected String despacho14;
+    @XmlElement(name = "CONCAD")
+    protected String concad;
+    @XmlElement(name = "StatusLine")
+    protected String statusLine;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the numproc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROC() {
+        return numproc;
+    }
+
+    /**
+     * Sets the value of the numproc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROC(String value) {
+        this.numproc = value;
+    }
+
+    /**
+     * Gets the value of the item1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM1() {
+        return item1;
+    }
+
+    /**
+     * Sets the value of the item1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM1(String value) {
+        this.item1 = value;
+    }
+
+    /**
+     * Gets the value of the matdig1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG1() {
+        return matdig1;
+    }
+
+    /**
+     * Sets the value of the matdig1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG1(String value) {
+        this.matdig1 = value;
+    }
+
+    /**
+     * Gets the value of the matrec1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC1() {
+        return matrec1;
+    }
+
+    /**
+     * Sets the value of the matrec1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC1(String value) {
+        this.matrec1 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST1() {
+        return orgdest1;
+    }
+
+    /**
+     * Sets the value of the orgdest1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST1(String value) {
+        this.orgdest1 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP1() {
+        return datdesp1;
+    }
+
+    /**
+     * Sets the value of the datdesp1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP1(String value) {
+        this.datdesp1 = value;
+    }
+
+    /**
+     * Gets the value of the seq1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ1() {
+        return seq1;
+    }
+
+    /**
+     * Sets the value of the seq1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ1(String value) {
+        this.seq1 = value;
+    }
+
+    /**
+     * Gets the value of the guia1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA1() {
+        return guia1;
+    }
+
+    /**
+     * Sets the value of the guia1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA1(String value) {
+        this.guia1 = value;
+    }
+
+    /**
+     * Gets the value of the despacho1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO1() {
+        return despacho1;
+    }
+
+    /**
+     * Sets the value of the despacho1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO1(String value) {
+        this.despacho1 = value;
+    }
+
+    /**
+     * Gets the value of the item2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM2() {
+        return item2;
+    }
+
+    /**
+     * Sets the value of the item2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM2(String value) {
+        this.item2 = value;
+    }
+
+    /**
+     * Gets the value of the matdig2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG2() {
+        return matdig2;
+    }
+
+    /**
+     * Sets the value of the matdig2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG2(String value) {
+        this.matdig2 = value;
+    }
+
+    /**
+     * Gets the value of the matrec2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC2() {
+        return matrec2;
+    }
+
+    /**
+     * Sets the value of the matrec2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC2(String value) {
+        this.matrec2 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST2() {
+        return orgdest2;
+    }
+
+    /**
+     * Sets the value of the orgdest2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST2(String value) {
+        this.orgdest2 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP2() {
+        return datdesp2;
+    }
+
+    /**
+     * Sets the value of the datdesp2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP2(String value) {
+        this.datdesp2 = value;
+    }
+
+    /**
+     * Gets the value of the seq2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ2() {
+        return seq2;
+    }
+
+    /**
+     * Sets the value of the seq2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ2(String value) {
+        this.seq2 = value;
+    }
+
+    /**
+     * Gets the value of the guia2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA2() {
+        return guia2;
+    }
+
+    /**
+     * Sets the value of the guia2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA2(String value) {
+        this.guia2 = value;
+    }
+
+    /**
+     * Gets the value of the despacho2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO2() {
+        return despacho2;
+    }
+
+    /**
+     * Sets the value of the despacho2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO2(String value) {
+        this.despacho2 = value;
+    }
+
+    /**
+     * Gets the value of the item3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM3() {
+        return item3;
+    }
+
+    /**
+     * Sets the value of the item3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM3(String value) {
+        this.item3 = value;
+    }
+
+    /**
+     * Gets the value of the matdig3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG3() {
+        return matdig3;
+    }
+
+    /**
+     * Sets the value of the matdig3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG3(String value) {
+        this.matdig3 = value;
+    }
+
+    /**
+     * Gets the value of the matrec3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC3() {
+        return matrec3;
+    }
+
+    /**
+     * Sets the value of the matrec3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC3(String value) {
+        this.matrec3 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST3() {
+        return orgdest3;
+    }
+
+    /**
+     * Sets the value of the orgdest3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST3(String value) {
+        this.orgdest3 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP3() {
+        return datdesp3;
+    }
+
+    /**
+     * Sets the value of the datdesp3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP3(String value) {
+        this.datdesp3 = value;
+    }
+
+    /**
+     * Gets the value of the seq3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ3() {
+        return seq3;
+    }
+
+    /**
+     * Sets the value of the seq3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ3(String value) {
+        this.seq3 = value;
+    }
+
+    /**
+     * Gets the value of the guia3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA3() {
+        return guia3;
+    }
+
+    /**
+     * Sets the value of the guia3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA3(String value) {
+        this.guia3 = value;
+    }
+
+    /**
+     * Gets the value of the despacho3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO3() {
+        return despacho3;
+    }
+
+    /**
+     * Sets the value of the despacho3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO3(String value) {
+        this.despacho3 = value;
+    }
+
+    /**
+     * Gets the value of the item4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM4() {
+        return item4;
+    }
+
+    /**
+     * Sets the value of the item4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM4(String value) {
+        this.item4 = value;
+    }
+
+    /**
+     * Gets the value of the matdig4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG4() {
+        return matdig4;
+    }
+
+    /**
+     * Sets the value of the matdig4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG4(String value) {
+        this.matdig4 = value;
+    }
+
+    /**
+     * Gets the value of the matrec4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC4() {
+        return matrec4;
+    }
+
+    /**
+     * Sets the value of the matrec4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC4(String value) {
+        this.matrec4 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST4() {
+        return orgdest4;
+    }
+
+    /**
+     * Sets the value of the orgdest4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST4(String value) {
+        this.orgdest4 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP4() {
+        return datdesp4;
+    }
+
+    /**
+     * Sets the value of the datdesp4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP4(String value) {
+        this.datdesp4 = value;
+    }
+
+    /**
+     * Gets the value of the seq4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ4() {
+        return seq4;
+    }
+
+    /**
+     * Sets the value of the seq4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ4(String value) {
+        this.seq4 = value;
+    }
+
+    /**
+     * Gets the value of the guia4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA4() {
+        return guia4;
+    }
+
+    /**
+     * Sets the value of the guia4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA4(String value) {
+        this.guia4 = value;
+    }
+
+    /**
+     * Gets the value of the despacho4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO4() {
+        return despacho4;
+    }
+
+    /**
+     * Sets the value of the despacho4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO4(String value) {
+        this.despacho4 = value;
+    }
+
+    /**
+     * Gets the value of the item5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM5() {
+        return item5;
+    }
+
+    /**
+     * Sets the value of the item5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM5(String value) {
+        this.item5 = value;
+    }
+
+    /**
+     * Gets the value of the matdig5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG5() {
+        return matdig5;
+    }
+
+    /**
+     * Sets the value of the matdig5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG5(String value) {
+        this.matdig5 = value;
+    }
+
+    /**
+     * Gets the value of the matrec5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC5() {
+        return matrec5;
+    }
+
+    /**
+     * Sets the value of the matrec5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC5(String value) {
+        this.matrec5 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST5() {
+        return orgdest5;
+    }
+
+    /**
+     * Sets the value of the orgdest5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST5(String value) {
+        this.orgdest5 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP5() {
+        return datdesp5;
+    }
+
+    /**
+     * Sets the value of the datdesp5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP5(String value) {
+        this.datdesp5 = value;
+    }
+
+    /**
+     * Gets the value of the seq5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ5() {
+        return seq5;
+    }
+
+    /**
+     * Sets the value of the seq5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ5(String value) {
+        this.seq5 = value;
+    }
+
+    /**
+     * Gets the value of the guia5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA5() {
+        return guia5;
+    }
+
+    /**
+     * Sets the value of the guia5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA5(String value) {
+        this.guia5 = value;
+    }
+
+    /**
+     * Gets the value of the despacho5 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO5() {
+        return despacho5;
+    }
+
+    /**
+     * Sets the value of the despacho5 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO5(String value) {
+        this.despacho5 = value;
+    }
+
+    /**
+     * Gets the value of the item6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM6() {
+        return item6;
+    }
+
+    /**
+     * Sets the value of the item6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM6(String value) {
+        this.item6 = value;
+    }
+
+    /**
+     * Gets the value of the matdig6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG6() {
+        return matdig6;
+    }
+
+    /**
+     * Sets the value of the matdig6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG6(String value) {
+        this.matdig6 = value;
+    }
+
+    /**
+     * Gets the value of the matrec6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC6() {
+        return matrec6;
+    }
+
+    /**
+     * Sets the value of the matrec6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC6(String value) {
+        this.matrec6 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST6() {
+        return orgdest6;
+    }
+
+    /**
+     * Sets the value of the orgdest6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST6(String value) {
+        this.orgdest6 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP6() {
+        return datdesp6;
+    }
+
+    /**
+     * Sets the value of the datdesp6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP6(String value) {
+        this.datdesp6 = value;
+    }
+
+    /**
+     * Gets the value of the seq6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ6() {
+        return seq6;
+    }
+
+    /**
+     * Sets the value of the seq6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ6(String value) {
+        this.seq6 = value;
+    }
+
+    /**
+     * Gets the value of the guia6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA6() {
+        return guia6;
+    }
+
+    /**
+     * Sets the value of the guia6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA6(String value) {
+        this.guia6 = value;
+    }
+
+    /**
+     * Gets the value of the despacho6 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO6() {
+        return despacho6;
+    }
+
+    /**
+     * Sets the value of the despacho6 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO6(String value) {
+        this.despacho6 = value;
+    }
+
+    /**
+     * Gets the value of the item7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM7() {
+        return item7;
+    }
+
+    /**
+     * Sets the value of the item7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM7(String value) {
+        this.item7 = value;
+    }
+
+    /**
+     * Gets the value of the matdig7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG7() {
+        return matdig7;
+    }
+
+    /**
+     * Sets the value of the matdig7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG7(String value) {
+        this.matdig7 = value;
+    }
+
+    /**
+     * Gets the value of the matrec7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC7() {
+        return matrec7;
+    }
+
+    /**
+     * Sets the value of the matrec7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC7(String value) {
+        this.matrec7 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST7() {
+        return orgdest7;
+    }
+
+    /**
+     * Sets the value of the orgdest7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST7(String value) {
+        this.orgdest7 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP7() {
+        return datdesp7;
+    }
+
+    /**
+     * Sets the value of the datdesp7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP7(String value) {
+        this.datdesp7 = value;
+    }
+
+    /**
+     * Gets the value of the seq7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ7() {
+        return seq7;
+    }
+
+    /**
+     * Sets the value of the seq7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ7(String value) {
+        this.seq7 = value;
+    }
+
+    /**
+     * Gets the value of the guia7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA7() {
+        return guia7;
+    }
+
+    /**
+     * Sets the value of the guia7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA7(String value) {
+        this.guia7 = value;
+    }
+
+    /**
+     * Gets the value of the despacho7 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO7() {
+        return despacho7;
+    }
+
+    /**
+     * Sets the value of the despacho7 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO7(String value) {
+        this.despacho7 = value;
+    }
+
+    /**
+     * Gets the value of the item8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM8() {
+        return item8;
+    }
+
+    /**
+     * Sets the value of the item8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM8(String value) {
+        this.item8 = value;
+    }
+
+    /**
+     * Gets the value of the matdig8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG8() {
+        return matdig8;
+    }
+
+    /**
+     * Sets the value of the matdig8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG8(String value) {
+        this.matdig8 = value;
+    }
+
+    /**
+     * Gets the value of the matrec8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC8() {
+        return matrec8;
+    }
+
+    /**
+     * Sets the value of the matrec8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC8(String value) {
+        this.matrec8 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST8() {
+        return orgdest8;
+    }
+
+    /**
+     * Sets the value of the orgdest8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST8(String value) {
+        this.orgdest8 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP8() {
+        return datdesp8;
+    }
+
+    /**
+     * Sets the value of the datdesp8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP8(String value) {
+        this.datdesp8 = value;
+    }
+
+    /**
+     * Gets the value of the seq8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ8() {
+        return seq8;
+    }
+
+    /**
+     * Sets the value of the seq8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ8(String value) {
+        this.seq8 = value;
+    }
+
+    /**
+     * Gets the value of the guia8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA8() {
+        return guia8;
+    }
+
+    /**
+     * Sets the value of the guia8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA8(String value) {
+        this.guia8 = value;
+    }
+
+    /**
+     * Gets the value of the despacho8 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO8() {
+        return despacho8;
+    }
+
+    /**
+     * Sets the value of the despacho8 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO8(String value) {
+        this.despacho8 = value;
+    }
+
+    /**
+     * Gets the value of the item9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM9() {
+        return item9;
+    }
+
+    /**
+     * Sets the value of the item9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM9(String value) {
+        this.item9 = value;
+    }
+
+    /**
+     * Gets the value of the matdig9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG9() {
+        return matdig9;
+    }
+
+    /**
+     * Sets the value of the matdig9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG9(String value) {
+        this.matdig9 = value;
+    }
+
+    /**
+     * Gets the value of the matrec9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC9() {
+        return matrec9;
+    }
+
+    /**
+     * Sets the value of the matrec9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC9(String value) {
+        this.matrec9 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST9() {
+        return orgdest9;
+    }
+
+    /**
+     * Sets the value of the orgdest9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST9(String value) {
+        this.orgdest9 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP9() {
+        return datdesp9;
+    }
+
+    /**
+     * Sets the value of the datdesp9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP9(String value) {
+        this.datdesp9 = value;
+    }
+
+    /**
+     * Gets the value of the seq9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ9() {
+        return seq9;
+    }
+
+    /**
+     * Sets the value of the seq9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ9(String value) {
+        this.seq9 = value;
+    }
+
+    /**
+     * Gets the value of the guia9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA9() {
+        return guia9;
+    }
+
+    /**
+     * Sets the value of the guia9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA9(String value) {
+        this.guia9 = value;
+    }
+
+    /**
+     * Gets the value of the despacho9 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO9() {
+        return despacho9;
+    }
+
+    /**
+     * Sets the value of the despacho9 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO9(String value) {
+        this.despacho9 = value;
+    }
+
+    /**
+     * Gets the value of the item10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM10() {
+        return item10;
+    }
+
+    /**
+     * Sets the value of the item10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM10(String value) {
+        this.item10 = value;
+    }
+
+    /**
+     * Gets the value of the matdig10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG10() {
+        return matdig10;
+    }
+
+    /**
+     * Sets the value of the matdig10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG10(String value) {
+        this.matdig10 = value;
+    }
+
+    /**
+     * Gets the value of the matrec10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC10() {
+        return matrec10;
+    }
+
+    /**
+     * Sets the value of the matrec10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC10(String value) {
+        this.matrec10 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST10() {
+        return orgdest10;
+    }
+
+    /**
+     * Sets the value of the orgdest10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST10(String value) {
+        this.orgdest10 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP10() {
+        return datdesp10;
+    }
+
+    /**
+     * Sets the value of the datdesp10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP10(String value) {
+        this.datdesp10 = value;
+    }
+
+    /**
+     * Gets the value of the seq10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ10() {
+        return seq10;
+    }
+
+    /**
+     * Sets the value of the seq10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ10(String value) {
+        this.seq10 = value;
+    }
+
+    /**
+     * Gets the value of the guia10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA10() {
+        return guia10;
+    }
+
+    /**
+     * Sets the value of the guia10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA10(String value) {
+        this.guia10 = value;
+    }
+
+    /**
+     * Gets the value of the despacho10 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO10() {
+        return despacho10;
+    }
+
+    /**
+     * Sets the value of the despacho10 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO10(String value) {
+        this.despacho10 = value;
+    }
+
+    /**
+     * Gets the value of the item11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM11() {
+        return item11;
+    }
+
+    /**
+     * Sets the value of the item11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM11(String value) {
+        this.item11 = value;
+    }
+
+    /**
+     * Gets the value of the matdig11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG11() {
+        return matdig11;
+    }
+
+    /**
+     * Sets the value of the matdig11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG11(String value) {
+        this.matdig11 = value;
+    }
+
+    /**
+     * Gets the value of the matrec11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC11() {
+        return matrec11;
+    }
+
+    /**
+     * Sets the value of the matrec11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC11(String value) {
+        this.matrec11 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST11() {
+        return orgdest11;
+    }
+
+    /**
+     * Sets the value of the orgdest11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST11(String value) {
+        this.orgdest11 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP11() {
+        return datdesp11;
+    }
+
+    /**
+     * Sets the value of the datdesp11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP11(String value) {
+        this.datdesp11 = value;
+    }
+
+    /**
+     * Gets the value of the seq11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ11() {
+        return seq11;
+    }
+
+    /**
+     * Sets the value of the seq11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ11(String value) {
+        this.seq11 = value;
+    }
+
+    /**
+     * Gets the value of the guia11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA11() {
+        return guia11;
+    }
+
+    /**
+     * Sets the value of the guia11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA11(String value) {
+        this.guia11 = value;
+    }
+
+    /**
+     * Gets the value of the despacho11 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO11() {
+        return despacho11;
+    }
+
+    /**
+     * Sets the value of the despacho11 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO11(String value) {
+        this.despacho11 = value;
+    }
+
+    /**
+     * Gets the value of the item12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM12() {
+        return item12;
+    }
+
+    /**
+     * Sets the value of the item12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM12(String value) {
+        this.item12 = value;
+    }
+
+    /**
+     * Gets the value of the matdig12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG12() {
+        return matdig12;
+    }
+
+    /**
+     * Sets the value of the matdig12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG12(String value) {
+        this.matdig12 = value;
+    }
+
+    /**
+     * Gets the value of the matrec12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC12() {
+        return matrec12;
+    }
+
+    /**
+     * Sets the value of the matrec12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC12(String value) {
+        this.matrec12 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST12() {
+        return orgdest12;
+    }
+
+    /**
+     * Sets the value of the orgdest12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST12(String value) {
+        this.orgdest12 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP12() {
+        return datdesp12;
+    }
+
+    /**
+     * Sets the value of the datdesp12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP12(String value) {
+        this.datdesp12 = value;
+    }
+
+    /**
+     * Gets the value of the seq12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ12() {
+        return seq12;
+    }
+
+    /**
+     * Sets the value of the seq12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ12(String value) {
+        this.seq12 = value;
+    }
+
+    /**
+     * Gets the value of the guia12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA12() {
+        return guia12;
+    }
+
+    /**
+     * Sets the value of the guia12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA12(String value) {
+        this.guia12 = value;
+    }
+
+    /**
+     * Gets the value of the despacho12 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO12() {
+        return despacho12;
+    }
+
+    /**
+     * Sets the value of the despacho12 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO12(String value) {
+        this.despacho12 = value;
+    }
+
+    /**
+     * Gets the value of the item13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM13() {
+        return item13;
+    }
+
+    /**
+     * Sets the value of the item13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM13(String value) {
+        this.item13 = value;
+    }
+
+    /**
+     * Gets the value of the matdig13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG13() {
+        return matdig13;
+    }
+
+    /**
+     * Sets the value of the matdig13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG13(String value) {
+        this.matdig13 = value;
+    }
+
+    /**
+     * Gets the value of the matrec13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC13() {
+        return matrec13;
+    }
+
+    /**
+     * Sets the value of the matrec13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC13(String value) {
+        this.matrec13 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST13() {
+        return orgdest13;
+    }
+
+    /**
+     * Sets the value of the orgdest13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST13(String value) {
+        this.orgdest13 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP13() {
+        return datdesp13;
+    }
+
+    /**
+     * Sets the value of the datdesp13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP13(String value) {
+        this.datdesp13 = value;
+    }
+
+    /**
+     * Gets the value of the seq13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ13() {
+        return seq13;
+    }
+
+    /**
+     * Sets the value of the seq13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ13(String value) {
+        this.seq13 = value;
+    }
+
+    /**
+     * Gets the value of the guia13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA13() {
+        return guia13;
+    }
+
+    /**
+     * Sets the value of the guia13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA13(String value) {
+        this.guia13 = value;
+    }
+
+    /**
+     * Gets the value of the despacho13 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO13() {
+        return despacho13;
+    }
+
+    /**
+     * Sets the value of the despacho13 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO13(String value) {
+        this.despacho13 = value;
+    }
+
+    /**
+     * Gets the value of the item14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getITEM14() {
+        return item14;
+    }
+
+    /**
+     * Sets the value of the item14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setITEM14(String value) {
+        this.item14 = value;
+    }
+
+    /**
+     * Gets the value of the matdig14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATDIG14() {
+        return matdig14;
+    }
+
+    /**
+     * Sets the value of the matdig14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATDIG14(String value) {
+        this.matdig14 = value;
+    }
+
+    /**
+     * Gets the value of the matrec14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getMATREC14() {
+        return matrec14;
+    }
+
+    /**
+     * Sets the value of the matrec14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setMATREC14(String value) {
+        this.matrec14 = value;
+    }
+
+    /**
+     * Gets the value of the orgdest14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDEST14() {
+        return orgdest14;
+    }
+
+    /**
+     * Sets the value of the orgdest14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDEST14(String value) {
+        this.orgdest14 = value;
+    }
+
+    /**
+     * Gets the value of the datdesp14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDESP14() {
+        return datdesp14;
+    }
+
+    /**
+     * Sets the value of the datdesp14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDESP14(String value) {
+        this.datdesp14 = value;
+    }
+
+    /**
+     * Gets the value of the seq14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSEQ14() {
+        return seq14;
+    }
+
+    /**
+     * Sets the value of the seq14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSEQ14(String value) {
+        this.seq14 = value;
+    }
+
+    /**
+     * Gets the value of the guia14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGUIA14() {
+        return guia14;
+    }
+
+    /**
+     * Sets the value of the guia14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGUIA14(String value) {
+        this.guia14 = value;
+    }
+
+    /**
+     * Gets the value of the despacho14 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDESPACHO14() {
+        return despacho14;
+    }
+
+    /**
+     * Sets the value of the despacho14 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDESPACHO14(String value) {
+        this.despacho14 = value;
+    }
+
+    /**
+     * Gets the value of the concad property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCONCAD() {
+        return concad;
+    }
+
+    /**
+     * Sets the value of the concad property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCONCAD(String value) {
+        this.concad = value;
+    }
+
+    /**
+     * Gets the value of the statusLine property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getStatusLine() {
+        return statusLine;
+    }
+
+    /**
+     * Sets the value of the statusLine property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setStatusLine(String value) {
+        this.statusLine = value;
+    }
+
+}

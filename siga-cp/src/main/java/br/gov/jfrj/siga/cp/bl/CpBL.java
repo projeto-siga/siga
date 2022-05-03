@@ -1266,13 +1266,18 @@ public class CpBL {
 				pessoa.setMatricula(pessoaAnt.getMatricula());
 			
 				if(podeAlterarOrgaoPessoa && !idLotacao.equals(pessoaAnt.getLotacao().getId())) {
-					Long qtdeCaixaEntradaPessoa = CpDao.getInstance().qtdeMarcasMarcadorPessoa(pessoaAnt.getPessoaInicial(), CpMarcadorEnum.CAIXA_DE_ENTRADA);
-					Long qtdeCaixaEntradaLotacao = CpDao.getInstance().qtdeMarcasMarcadorLotacao(pessoaAnt.getLotacao().getLotacaoInicial(), CpMarcadorEnum.CAIXA_DE_ENTRADA);
+
+					List<Long> marcadores = new ArrayList<Long>();
+					marcadores.add(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
+					marcadores.add(CpMarcadorEnum.EM_ELABORACAO.getId());
+					
+					Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().qtdeMarcasMarcadorPessoa(pessoaAnt.getPessoaInicial(), marcadores);
+					Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().qtdeMarcasMarcadorLotacao(pessoaAnt.getLotacao().getLotacaoInicial(), marcadores);
 					Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);
 					
-					if(qtdeCaixaEntradaPessoa > 0 || (qtdeCaixaEntradaLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
+					if(qtdeCaixaEntradaTMPPessoa > 0 || (qtdeCaixaEntradaTMPLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
 						throw new AplicacaoException(
-								"O Órgão da Pessoa não pode ser alterado, pois existem documentos pendentes na Caixa de Entrada do Usuário/" + SigaMessages.getMessage("usuario.lotacao"));
+								"O Órgão da Pessoa não pode ser alterado, pois existem documentos pendentes na Caixa de Entrada/TMP do Usuário/" + SigaMessages.getMessage("usuario.lotacao"));
 					}
 				}
 			}

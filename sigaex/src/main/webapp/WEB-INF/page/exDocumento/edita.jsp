@@ -400,7 +400,7 @@
 										name="exDocumentoDTO.cpfRequerente"
 										style="display: ${not empty exDocumentoDTO.cpfRequerente ? '': 'none'};"
 										value="${exDocumentoDTO.cpfRequerente}" class="form-control"
-										onblur="validarCpf(this)" maxlength="14" />
+										onblur="validarCpf(this)"  maxlength="14" />
 							 
 									<input type="text" id="cnpjRequerente"
 										name="exDocumentoDTO.cnpjRequerente"

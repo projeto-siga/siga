@@ -1265,7 +1265,7 @@ public class CpBL {
 				pessoa.setIdInicial(pessoaAnt.getIdInicial());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
 			
-				if(podeAlterarOrgaoPessoa) {
+				if(podeAlterarOrgaoPessoa && !idLotacao.equals(pessoaAnt.getLotacao().getId())) {
 					Long qtdeCaixaEntradaPessoa = CpDao.getInstance().qtdeMarcasMarcadorPessoa(pessoaAnt.getPessoaInicial(), CpMarcadorEnum.CAIXA_DE_ENTRADA);
 					Long qtdeCaixaEntradaLotacao = CpDao.getInstance().qtdeMarcasMarcadorLotacao(pessoaAnt.getLotacao().getLotacaoInicial(), CpMarcadorEnum.CAIXA_DE_ENTRADA);
 					Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);

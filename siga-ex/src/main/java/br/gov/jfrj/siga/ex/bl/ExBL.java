@@ -209,6 +209,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
@@ -4938,12 +4939,16 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void referenciarDocumento(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
-			final ExMobil mobRef, final Date dtMov, final DpPessoa subscritor, final DpPessoa titular)
+	public void referenciarDocumento(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob,
+			ExMobil mobRef, final ExTipoDeVinculo tipo, final Date dtMov, final DpPessoa subscritor, final DpPessoa titular)
 			throws AplicacaoException {
+		
+		mob = mob.doc().getMobilGeral();
 
 		if (mobRef == null)
 			throw new AplicacaoException("não foi selecionado um documento para o vinculo");
+
+		mobRef = mobRef.doc().getMobilGeral();
 
 		if (mob.getExDocumento().getIdDoc().equals(mobRef.getExDocumento().getIdDoc())
 				&& mob.getNumSequencia().equals(mobRef.getNumSequencia())
@@ -4960,7 +4965,8 @@ public class ExBL extends CpBL {
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, titular, null, null);
 
 			mov.setExMobilRef(mobRef);
-			mov.setDescrMov("Vínculo: documento " + mov.getExMobilRef().getCodigo().toString());
+			mov.setTipoDeVinculo(tipo);
+			mov.setDescrMov(tipo.getAcao() + ": " + mov.getExMobilRef().getCodigo().toString());
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov);

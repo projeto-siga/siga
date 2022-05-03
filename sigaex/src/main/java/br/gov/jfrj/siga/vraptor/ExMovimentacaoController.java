@@ -167,6 +167,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPosAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -1741,6 +1742,7 @@ public class ExMovimentacaoController extends ExController {
 
 		Ex.getInstance().getComp().afirmar("Não é possível fazer vinculação", ExPodeReferenciar.class, getTitular(), getLotaTitular(), builder.getMob());
 
+		result.include("listaTipoDeVinculo", ExTipoDeVinculo.values());
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("mob", builder.getMob());
@@ -1813,7 +1815,8 @@ public class ExMovimentacaoController extends ExController {
 			final String dtMovString, final boolean substituicao,
 			final DpPessoaSelecao titularSel,
 			final DpPessoaSelecao subscritorSel,
-			final ExMobilSelecao documentoRefSel) {
+			final ExMobilSelecao documentoRefSel,
+			final ExTipoDeVinculo tipo) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
@@ -1841,7 +1844,7 @@ public class ExMovimentacaoController extends ExController {
 		Ex.getInstance()
 				.getBL()
 				.referenciarDocumento(getCadastrante(), getLotaTitular(),
-						builder.getMob(), mov.getExMobilRef(), mov.getDtMov(),
+						builder.getMob(), mov.getExMobilRef(), tipo, mov.getDtMov(),
 						mov.getSubscritor(), mov.getTitular());
 
 		ExDocumentoController.redirecionarParaExibir(result, mov

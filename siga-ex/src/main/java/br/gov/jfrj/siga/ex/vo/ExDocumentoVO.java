@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodePublicar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
 import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
+import br.gov.jfrj.siga.ex.logic.ExPodeReferenciar;
 import br.gov.jfrj.siga.ex.logic.ExPodeRegistrarAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeSolicitarAssinatura;
@@ -774,6 +775,9 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome("Cancelar").icone("cancel").nameSpace("/app/expediente/doc").acao("cancelarDocumento")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarDocumento(doc, titular, lotaTitular)).msgConfirmacao("Esta operação cancelará o documento pendente de assinatura. Prosseguir?").classe("once").build());
 		
+		vo.addAcao(AcaoVO.builder().nome("Vi_ncular").icone("page_find").nameSpace("/app/expediente/mov").acao("referenciar")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReferenciar(mob, titular, lotaTitular)).build());
+
 		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.publicar.portaltransparencia")).icone("report_link").nameSpace("/app/expediente/mov").acao("publicacao_transparencia")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePublicarPortalDaTransparencia(mob, titular, lotaTitular)).classe("once").build());
 		

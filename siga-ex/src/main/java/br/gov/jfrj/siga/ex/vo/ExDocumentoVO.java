@@ -566,7 +566,7 @@ public class ExDocumentoVO extends ExVO {
 	
 		for (ExMobil cadaMobil : doc.getExMobilSet()) {
 			SortedSet<ExMarca> setSistema = new TreeSet<>();
-			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
+			SortedSet<ExMarca> set = cadaMobil.getExMarcaSetAtivas();
 			for (ExMarca m : set) {
 				if ((m.getDtIniMarca() == null || !m.getDtIniMarca().after(now))
 						&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(now))) {

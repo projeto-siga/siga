@@ -4,7 +4,7 @@ import java.util.Calendar;
 import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class ServicoSiafemWs {
-	public static boolean enviarDocumento(String usuario, String senha, SiafDoc doc) {
+	public static boolean enviarDocumento(String usuario, String senha, SiafDoc doc) throws AplicacaoException {
 		RecebeMSG service = new RecebeMSG();
 
 		try {
@@ -29,12 +29,17 @@ public class ServicoSiafemWs {
 		String mensagemResult = extrairValor(ret, "MensagemResult");
 		String msgRetornoSemPapel = extrairValor(ret, "MsgRetornoSemPapel");
 		
-		if(statusOperacao == null || statusOperacao.isEmpty())
-			if(msgErro == null || msgErro.isEmpty())
-				msgErro = "Retorno vazio";
-		
-		if((statusOperacao != null && statusOperacao.equals("false")) || !msgErro.isEmpty() || !mensagemResult.isEmpty() || !msgRetornoSemPapel.isEmpty())
+		if (statusOperacao == null || statusOperacao.isEmpty()) {
+			if ((msgErro == null || msgErro.isEmpty()) &&
+					(msgRetorno == null || msgRetorno.isEmpty()) &&
+					(mensagemResult == null || mensagemResult.isEmpty()) &&
+					(msgRetornoSemPapel == null || msgRetornoSemPapel.isEmpty()))
+				msgErro = ret;
 			throw new AplicacaoException(formatarRetorno(msgErro, msgRetorno, mensagemResult, msgRetornoSemPapel));
+		} else if ((statusOperacao != null && statusOperacao.equals("false")) ||
+				!msgErro.isEmpty() || !mensagemResult.isEmpty() || !msgRetornoSemPapel.isEmpty()) {
+			throw new AplicacaoException(formatarRetorno(msgErro, msgRetorno, mensagemResult, msgRetornoSemPapel));
+		}
 		
 		return true;
 	}

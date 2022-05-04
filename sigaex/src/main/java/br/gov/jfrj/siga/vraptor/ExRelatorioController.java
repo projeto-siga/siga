@@ -125,6 +125,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
 	private static final String APPLICATION_EXCEL = "application/vnd.ms-excel"; 
+	private static final String APPLICATION_CSV = "application/csv"; 
 	
 	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
 
@@ -1808,20 +1809,25 @@ public class ExRelatorioController extends ExController {
 
 		final RelPermanenciaSetorAssunto rel = new RelPermanenciaSetorAssunto(parametros);
 		
-		rel.gerar();
 		
 		InputStream inputStream   =null; 
 
 		String nomeArquivoSaida = 	"RelPermanenciaSetorAssunto_"+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		rel.gerar();
 		
 		if (Integer.valueOf(idTipoSaida) == 1){ 
 
 			inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
 			return new InputStreamDownload(inputStream, APPLICATION_PDF,	nomeArquivoSaida +".pdf");
-		} else {
-			
+
+		} else if (Integer.valueOf(idTipoSaida) == 2){ 
+
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
 			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
+
+		} else {
+			inputStream   = new ByteArrayInputStream(	rel.getRelatorioCSV() );
+			return new InputStreamDownload(inputStream, APPLICATION_CSV,nomeArquivoSaida +".csv");
 		}
 
 		

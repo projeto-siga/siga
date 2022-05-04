@@ -19,6 +19,7 @@
 package br.gov.jfrj.relatorio.dinamico;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
@@ -30,11 +31,15 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
+import net.sf.jasperreports.export.SimpleWriterExporterOutput;
 
 /**
  * USE ESTA CLASSE para a criação de relatórios rápidos.<br>
@@ -310,5 +315,19 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 			return arquivo;
 		}
 	}
+	 
+	public byte[]  getRelatorioCSV() throws JRException, IOException { 
+		
+		 JRCsvExporter exporter = new JRCsvExporter();
+		 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		 
+	 
+		 exporter.setParameter(JRExporterParameter.JASPER_PRINT, relatorio.getRelatorioJasperPrint());
+		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, byteArrayOutputStream);
+		    exporter.exportReport();
+		    byte[] archivo = byteArrayOutputStream.toByteArray();
 
+		    return archivo;
+	}
+	
 }

@@ -1,0 +1,64 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="TConsultaTodaTramitaçãoDocumentos_WSResult" type="{http://pcrj/Sma/Sicop/Grava}Message" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "tConsultaTodaTramita\u00e7\u00e3oDocumentosWSResult"
+})
+@XmlRootElement(name = "TConsultaTodaTramita\u00e7\u00e3oDocumentos_WSResponse")
+public class TConsultaTodaTramitaçãoDocumentosWSResponse {
+
+    @XmlElement(name = "TConsultaTodaTramita\u00e7\u00e3oDocumentos_WSResult")
+    protected Message tConsultaTodaTramitaçãoDocumentosWSResult;
+
+    /**
+     * Gets the value of the tConsultaTodaTramitaçãoDocumentosWSResult property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Message }
+     *     
+     */
+    public Message getTConsultaTodaTramitaçãoDocumentosWSResult() {
+        return tConsultaTodaTramitaçãoDocumentosWSResult;
+    }
+
+    /**
+     * Sets the value of the tConsultaTodaTramitaçãoDocumentosWSResult property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Message }
+     *     
+     */
+    public void setTConsultaTodaTramitaçãoDocumentosWSResult(Message value) {
+        this.tConsultaTodaTramitaçãoDocumentosWSResult = value;
+    }
+
+}

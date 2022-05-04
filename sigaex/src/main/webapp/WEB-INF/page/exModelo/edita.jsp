@@ -148,6 +148,16 @@
 									class="form-control" />
 							</div>
 						</div>
+						
+						<div class="col-md-2">
+							<div class="form-group">
+								<div class="form-check form-check-inline mt-4">
+								  <input class="form-check-input" type="checkbox" name="isPermiteSicop" id="isPermiteSicop" value="1"
+								   <c:if test="${isPermiteSicop == 1}">checked</c:if>				  	/>
+								  <label  for="isPermiteSicop">Permite Integração Antigo Sist. Controle Documentos ?</label>
+								</div>
+							</div>
+						</div>	
 					</div>
 					<div class="row">
 						<div class="col-md-2">

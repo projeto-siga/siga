@@ -1004,9 +1004,15 @@
 								</c:choose>
 								
 							</p>
+							
 							<c:if test="${not empty docVO.originalNumero}">
 								<p>
 									<b>Número original:</b> ${docVO.originalNumero}
+								</p>
+							</c:if>
+							<c:if test="${not empty docVO.antigoNumero}">
+								<p>
+									<b>Número Antigo Sistema:</b> ${docVO.antigoNumero}
 								</p>
 							</c:if>
 							<p class="${hide_only_GOVSP}">

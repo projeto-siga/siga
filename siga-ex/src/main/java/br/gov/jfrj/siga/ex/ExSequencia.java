@@ -45,7 +45,8 @@ public class ExSequencia implements Serializable {
 	
 	public enum ExSequenciaEnum {
 		 
-	    PROTOCOLO(1);
+	    PROTOCOLO(1),
+		SICOP(2);
 	 
 	    private Integer valor;
 	 

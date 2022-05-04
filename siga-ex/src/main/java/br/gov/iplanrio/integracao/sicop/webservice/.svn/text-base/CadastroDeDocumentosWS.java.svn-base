@@ -1,0 +1,792 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for CadastroDeDocumentos_WS complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="CadastroDeDocumentos_WS">
+ *   &lt;complexContent>
+ *     &lt;extension base="{http://pcrj/Sma/Sicop/Grava}Message">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="OPCAO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DATDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="EMAIL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMEXTERNO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMPROCESSO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NOMREQUERENTE" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ENDERECO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUM" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="COMPLEMENTO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CEP" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODCEP" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="BAIRRO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODBAIRRO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="RA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="AP" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CODASSUNTO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ASSUNTOCOMPL1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ASSUNTOCOMPL2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ASSUNTOCOMPL3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CONFIDENCIAL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="LBLCONFIRMA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="INDCONFIRMA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="StatusLine" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/extension>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "CadastroDeDocumentos_WS", propOrder = {
+    "rotina",
+    "opcao",
+    "tipdoc",
+    "numdoc",
+    "orgdoc",
+    "datdoc",
+    "email",
+    "numexterno",
+    "numprocesso",
+    "nomrequerente",
+    "endereco",
+    "num",
+    "complemento",
+    "cep",
+    "codcep",
+    "bairro",
+    "codbairro",
+    "ra",
+    "ap",
+    "codassunto",
+    "assuntocompl1",
+    "assuntocompl2",
+    "assuntocompl3",
+    "confidencial",
+    "lblconfirma",
+    "indconfirma",
+    "statusLine"
+})
+public class CadastroDeDocumentosWS
+    extends Message
+{
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "OPCAO")
+    protected String opcao;
+    @XmlElement(name = "TIPDOC")
+    protected String tipdoc;
+    @XmlElement(name = "NUMDOC")
+    protected String numdoc;
+    @XmlElement(name = "ORGDOC")
+    protected String orgdoc;
+    @XmlElement(name = "DATDOC")
+    protected String datdoc;
+    @XmlElement(name = "EMAIL")
+    protected String email;
+    @XmlElement(name = "NUMEXTERNO")
+    protected String numexterno;
+    @XmlElement(name = "NUMPROCESSO")
+    protected String numprocesso;
+    @XmlElement(name = "NOMREQUERENTE")
+    protected String nomrequerente;
+    @XmlElement(name = "ENDERECO")
+    protected String endereco;
+    @XmlElement(name = "NUM")
+    protected String num;
+    @XmlElement(name = "COMPLEMENTO")
+    protected String complemento;
+    @XmlElement(name = "CEP")
+    protected String cep;
+    @XmlElement(name = "CODCEP")
+    protected String codcep;
+    @XmlElement(name = "BAIRRO")
+    protected String bairro;
+    @XmlElement(name = "CODBAIRRO")
+    protected String codbairro;
+    @XmlElement(name = "RA")
+    protected String ra;
+    @XmlElement(name = "AP")
+    protected String ap;
+    @XmlElement(name = "CODASSUNTO")
+    protected String codassunto;
+    @XmlElement(name = "ASSUNTOCOMPL1")
+    protected String assuntocompl1;
+    @XmlElement(name = "ASSUNTOCOMPL2")
+    protected String assuntocompl2;
+    @XmlElement(name = "ASSUNTOCOMPL3")
+    protected String assuntocompl3;
+    @XmlElement(name = "CONFIDENCIAL")
+    protected String confidencial;
+    @XmlElement(name = "LBLCONFIRMA")
+    protected String lblconfirma;
+    @XmlElement(name = "INDCONFIRMA")
+    protected String indconfirma;
+    @XmlElement(name = "StatusLine")
+    protected String statusLine;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the opcao property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOPCAO() {
+        return opcao;
+    }
+
+    /**
+     * Sets the value of the opcao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOPCAO(String value) {
+        this.opcao = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC() {
+        return tipdoc;
+    }
+
+    /**
+     * Sets the value of the tipdoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC(String value) {
+        this.tipdoc = value;
+    }
+
+    /**
+     * Gets the value of the numdoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC() {
+        return numdoc;
+    }
+
+    /**
+     * Sets the value of the numdoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC(String value) {
+        this.numdoc = value;
+    }
+
+    /**
+     * Gets the value of the orgdoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGDOC() {
+        return orgdoc;
+    }
+
+    /**
+     * Sets the value of the orgdoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGDOC(String value) {
+        this.orgdoc = value;
+    }
+
+    /**
+     * Gets the value of the datdoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDATDOC() {
+        return datdoc;
+    }
+
+    /**
+     * Sets the value of the datdoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDATDOC(String value) {
+        this.datdoc = value;
+    }
+
+    /**
+     * Gets the value of the email property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEMAIL() {
+        return email;
+    }
+
+    /**
+     * Sets the value of the email property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEMAIL(String value) {
+        this.email = value;
+    }
+
+    /**
+     * Gets the value of the numexterno property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMEXTERNO() {
+        return numexterno;
+    }
+
+    /**
+     * Sets the value of the numexterno property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMEXTERNO(String value) {
+        this.numexterno = value;
+    }
+
+    /**
+     * Gets the value of the numprocesso property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMPROCESSO() {
+        return numprocesso;
+    }
+
+    /**
+     * Sets the value of the numprocesso property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMPROCESSO(String value) {
+        this.numprocesso = value;
+    }
+
+    /**
+     * Gets the value of the nomrequerente property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNOMREQUERENTE() {
+        return nomrequerente;
+    }
+
+    /**
+     * Sets the value of the nomrequerente property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNOMREQUERENTE(String value) {
+        this.nomrequerente = value;
+    }
+
+    /**
+     * Gets the value of the endereco property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getENDERECO() {
+        return endereco;
+    }
+
+    /**
+     * Sets the value of the endereco property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setENDERECO(String value) {
+        this.endereco = value;
+    }
+
+    /**
+     * Gets the value of the num property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUM() {
+        return num;
+    }
+
+    /**
+     * Sets the value of the num property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUM(String value) {
+        this.num = value;
+    }
+
+    /**
+     * Gets the value of the complemento property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCOMPLEMENTO() {
+        return complemento;
+    }
+
+    /**
+     * Sets the value of the complemento property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCOMPLEMENTO(String value) {
+        this.complemento = value;
+    }
+
+    /**
+     * Gets the value of the cep property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCEP() {
+        return cep;
+    }
+
+    /**
+     * Sets the value of the cep property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCEP(String value) {
+        this.cep = value;
+    }
+
+    /**
+     * Gets the value of the codcep property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODCEP() {
+        return codcep;
+    }
+
+    /**
+     * Sets the value of the codcep property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODCEP(String value) {
+        this.codcep = value;
+    }
+
+    /**
+     * Gets the value of the bairro property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBAIRRO() {
+        return bairro;
+    }
+
+    /**
+     * Sets the value of the bairro property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBAIRRO(String value) {
+        this.bairro = value;
+    }
+
+    /**
+     * Gets the value of the codbairro property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODBAIRRO() {
+        return codbairro;
+    }
+
+    /**
+     * Sets the value of the codbairro property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODBAIRRO(String value) {
+        this.codbairro = value;
+    }
+
+    /**
+     * Gets the value of the ra property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRA() {
+        return ra;
+    }
+
+    /**
+     * Sets the value of the ra property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRA(String value) {
+        this.ra = value;
+    }
+
+    /**
+     * Gets the value of the ap property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAP() {
+        return ap;
+    }
+
+    /**
+     * Sets the value of the ap property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAP(String value) {
+        this.ap = value;
+    }
+
+    /**
+     * Gets the value of the codassunto property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCODASSUNTO() {
+        return codassunto;
+    }
+
+    /**
+     * Sets the value of the codassunto property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCODASSUNTO(String value) {
+        this.codassunto = value;
+    }
+
+    /**
+     * Gets the value of the assuntocompl1 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getASSUNTOCOMPL1() {
+        return assuntocompl1;
+    }
+
+    /**
+     * Sets the value of the assuntocompl1 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setASSUNTOCOMPL1(String value) {
+        this.assuntocompl1 = value;
+    }
+
+    /**
+     * Gets the value of the assuntocompl2 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getASSUNTOCOMPL2() {
+        return assuntocompl2;
+    }
+
+    /**
+     * Sets the value of the assuntocompl2 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setASSUNTOCOMPL2(String value) {
+        this.assuntocompl2 = value;
+    }
+
+    /**
+     * Gets the value of the assuntocompl3 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getASSUNTOCOMPL3() {
+        return assuntocompl3;
+    }
+
+    /**
+     * Sets the value of the assuntocompl3 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setASSUNTOCOMPL3(String value) {
+        this.assuntocompl3 = value;
+    }
+
+    /**
+     * Gets the value of the confidencial property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCONFIDENCIAL() {
+        return confidencial;
+    }
+
+    /**
+     * Sets the value of the confidencial property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCONFIDENCIAL(String value) {
+        this.confidencial = value;
+    }
+
+    /**
+     * Gets the value of the lblconfirma property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getLBLCONFIRMA() {
+        return lblconfirma;
+    }
+
+    /**
+     * Sets the value of the lblconfirma property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setLBLCONFIRMA(String value) {
+        this.lblconfirma = value;
+    }
+
+    /**
+     * Gets the value of the indconfirma property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getINDCONFIRMA() {
+        return indconfirma;
+    }
+
+    /**
+     * Sets the value of the indconfirma property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setINDCONFIRMA(String value) {
+        this.indconfirma = value;
+    }
+
+    /**
+     * Gets the value of the statusLine property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getStatusLine() {
+        return statusLine;
+    }
+
+    /**
+     * Sets the value of the statusLine property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setStatusLine(String value) {
+        this.statusLine = value;
+    }
+
+}

@@ -7,7 +7,7 @@ $(function() {
 		    modules: {
 		        sigaex: {
 		        	name: "sigaex",
-		        	url: "/sigaex/app/expediente/gadget?idTpFormaDoc=1&apenasQuadro=true",
+		        	url: "/sigaex/app/expediente/gadget?apenasQuadro=true",
 		          viewId: "mesaDocumentos"
 		        },
 		        sigawf: {

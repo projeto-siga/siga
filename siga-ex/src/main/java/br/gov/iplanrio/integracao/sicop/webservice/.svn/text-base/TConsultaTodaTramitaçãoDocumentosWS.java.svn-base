@@ -1,0 +1,204 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="ROTINA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="OPCAO" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="TIPDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="NUMDOC" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ORGRESP" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="CONULT" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "rotina",
+    "opcao",
+    "tipdoc",
+    "numdoc",
+    "orgresp",
+    "conult"
+})
+@XmlRootElement(name = "TConsultaTodaTramita\u00e7\u00e3oDocumentos_WS")
+public class TConsultaTodaTramitaçãoDocumentosWS {
+
+    @XmlElement(name = "ROTINA")
+    protected String rotina;
+    @XmlElement(name = "OPCAO")
+    protected String opcao;
+    @XmlElement(name = "TIPDOC")
+    protected String tipdoc;
+    @XmlElement(name = "NUMDOC")
+    protected String numdoc;
+    @XmlElement(name = "ORGRESP")
+    protected String orgresp;
+    @XmlElement(name = "CONULT")
+    protected String conult;
+
+    /**
+     * Gets the value of the rotina property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getROTINA() {
+        return rotina;
+    }
+
+    /**
+     * Sets the value of the rotina property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setROTINA(String value) {
+        this.rotina = value;
+    }
+
+    /**
+     * Gets the value of the opcao property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOPCAO() {
+        return opcao;
+    }
+
+    /**
+     * Sets the value of the opcao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOPCAO(String value) {
+        this.opcao = value;
+    }
+
+    /**
+     * Gets the value of the tipdoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTIPDOC() {
+        return tipdoc;
+    }
+
+    /**
+     * Sets the value of the tipdoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTIPDOC(String value) {
+        this.tipdoc = value;
+    }
+
+    /**
+     * Gets the value of the numdoc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNUMDOC() {
+        return numdoc;
+    }
+
+    /**
+     * Sets the value of the numdoc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNUMDOC(String value) {
+        this.numdoc = value;
+    }
+
+    /**
+     * Gets the value of the orgresp property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getORGRESP() {
+        return orgresp;
+    }
+
+    /**
+     * Sets the value of the orgresp property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setORGRESP(String value) {
+        this.orgresp = value;
+    }
+
+    /**
+     * Gets the value of the conult property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCONULT() {
+        return conult;
+    }
+
+    /**
+     * Sets the value of the conult property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCONULT(String value) {
+        this.conult = value;
+    }
+
+}

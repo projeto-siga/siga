@@ -1,0 +1,520 @@
+
+package br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice;
+
+import javax.xml.bind.annotation.XmlRegistry;
+
+
+/**
+ * This object contains factory methods for each 
+ * Java content interface and Java element interface 
+ * generated in the br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice package. 
+ * <p>An ObjectFactory allows you to programatically 
+ * construct new instances of the Java representation 
+ * for XML content. The Java representation of XML 
+ * content can consist of schema derived interfaces 
+ * and classes representing the binding of schema 
+ * type definitions, element declarations and model 
+ * groups.  Factory methods for each of these are 
+ * provided in this class.
+ * 
+ */
+@XmlRegistry
+public class ObjectFactory {
+
+
+    /**
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: br.gov.rj.rio.iplanrio.maverick.integration.sicop.webservice
+     * 
+     */
+    public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link Connect }
+     * 
+     */
+    public Connect createConnect() {
+        return new Connect();
+    }
+
+    /**
+     * Create an instance of {@link ApensaProcessoWS }
+     * 
+     */
+    public ApensaProcessoWS createApensaProcessoWS() {
+        return new ApensaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TTramitaçãoInternaProcessoWS }
+     * 
+     */
+    public TTramitaçãoInternaProcessoWS createTTramitaçãoInternaProcessoWS() {
+        return new TTramitaçãoInternaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link DespachoComplementarWS }
+     * 
+     */
+    public DespachoComplementarWS createDespachoComplementarWS() {
+        return new DespachoComplementarWS();
+    }
+
+    /**
+     * Create an instance of {@link Message }
+     * 
+     */
+    public Message createMessage() {
+        return new Message();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaProcessoWS }
+     * 
+     */
+    public TConsultaProcessoWS createTConsultaProcessoWS() {
+        return new TConsultaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaTodaTramitaçãoDocumentosWSResponse }
+     * 
+     */
+    public TConsultaTodaTramitaçãoDocumentosWSResponse createTConsultaTodaTramitaçãoDocumentosWSResponse() {
+        return new TConsultaTodaTramitaçãoDocumentosWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TTramitaçãoDeDocumentosWSResponse }
+     * 
+     */
+    public TTramitaçãoDeDocumentosWSResponse createTTramitaçãoDeDocumentosWSResponse() {
+        return new TTramitaçãoDeDocumentosWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TVinculaçãoInscriçãoImobPorProcessoWSResponse }
+     * 
+     */
+    public TVinculaçãoInscriçãoImobPorProcessoWSResponse createTVinculaçãoInscriçãoImobPorProcessoWSResponse() {
+        return new TVinculaçãoInscriçãoImobPorProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TDespachoComplementarWSResponse }
+     * 
+     */
+    public TDespachoComplementarWSResponse createTDespachoComplementarWSResponse() {
+        return new TDespachoComplementarWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link ConsultaTodaTramitaçãoProcessoWS }
+     * 
+     */
+    public ConsultaTodaTramitaçãoProcessoWS createConsultaTodaTramitaçãoProcessoWS() {
+        return new ConsultaTodaTramitaçãoProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaProcessoWSResponse }
+     * 
+     */
+    public TConsultaProcessoWSResponse createTConsultaProcessoWSResponse() {
+        return new TConsultaProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TLogonSicopWSResponse }
+     * 
+     */
+    public TLogonSicopWSResponse createTLogonSicopWSResponse() {
+        return new TLogonSicopWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaProcessoPrincipalouApensoWS }
+     * 
+     */
+    public TConsultaProcessoPrincipalouApensoWS createTConsultaProcessoPrincipalouApensoWS() {
+        return new TConsultaProcessoPrincipalouApensoWS();
+    }
+
+    /**
+     * Create an instance of {@link TramitaçãoDeDocumentosWS }
+     * 
+     */
+    public TramitaçãoDeDocumentosWS createTramitaçãoDeDocumentosWS() {
+        return new TramitaçãoDeDocumentosWS();
+    }
+
+    /**
+     * Create an instance of {@link TApensaProcessoWSResponse }
+     * 
+     */
+    public TApensaProcessoWSResponse createTApensaProcessoWSResponse() {
+        return new TApensaProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link VinculaçãoInscriçãoImobPorProcessoWS }
+     * 
+     */
+    public VinculaçãoInscriçãoImobPorProcessoWS createVinculaçãoInscriçãoImobPorProcessoWS() {
+        return new VinculaçãoInscriçãoImobPorProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TTramitaProcessoWS }
+     * 
+     */
+    public TTramitaProcessoWS createTTramitaProcessoWS() {
+        return new TTramitaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TDespachoComplementarWS }
+     * 
+     */
+    public TDespachoComplementarWS createTDespachoComplementarWS() {
+        return new TDespachoComplementarWS();
+    }
+
+    /**
+     * Create an instance of {@link TApensaProcessoWS }
+     * 
+     */
+    public TApensaProcessoWS createTApensaProcessoWS() {
+        return new TApensaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link DisconnectResponse }
+     * 
+     */
+    public DisconnectResponse createDisconnectResponse() {
+        return new DisconnectResponse();
+    }
+
+    /**
+     * Create an instance of {@link TramitaProcessoWS }
+     * 
+     */
+    public TramitaProcessoWS createTramitaProcessoWS() {
+        return new TramitaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link ConsultaProcessoPrincipalouApensoWS }
+     * 
+     */
+    public ConsultaProcessoPrincipalouApensoWS createConsultaProcessoPrincipalouApensoWS() {
+        return new ConsultaProcessoPrincipalouApensoWS();
+    }
+
+    /**
+     * Create an instance of {@link TMessage }
+     * 
+     */
+    public TMessage createTMessage() {
+        return new TMessage();
+    }
+
+    /**
+     * Create an instance of {@link TTramitaçãoDeDocumentosWS }
+     * 
+     */
+    public TTramitaçãoDeDocumentosWS createTTramitaçãoDeDocumentosWS() {
+        return new TTramitaçãoDeDocumentosWS();
+    }
+
+    /**
+     * Create an instance of {@link TVinculaçãoInscriçãoImobPorProcessoWS }
+     * 
+     */
+    public TVinculaçãoInscriçãoImobPorProcessoWS createTVinculaçãoInscriçãoImobPorProcessoWS() {
+        return new TVinculaçãoInscriçãoImobPorProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TLogonWS }
+     * 
+     */
+    public TLogonWS createTLogonWS() {
+        return new TLogonWS();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaProcessoPrincipalouApensoWSResponse }
+     * 
+     */
+    public TConsultaProcessoPrincipalouApensoWSResponse createTConsultaProcessoPrincipalouApensoWSResponse() {
+        return new TConsultaProcessoPrincipalouApensoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TramitaçãoInternaProcessoWS }
+     * 
+     */
+    public TramitaçãoInternaProcessoWS createTramitaçãoInternaProcessoWS() {
+        return new TramitaçãoInternaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link VinculaçãoNumDeFolhasDoProcessoWS }
+     * 
+     */
+    public VinculaçãoNumDeFolhasDoProcessoWS createVinculaçãoNumDeFolhasDoProcessoWS() {
+        return new VinculaçãoNumDeFolhasDoProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TIncluiProcessoWSResponse }
+     * 
+     */
+    public TIncluiProcessoWSResponse createTIncluiProcessoWSResponse() {
+        return new TIncluiProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TVinculaçãoNumDeFolhasDoProcessoWS }
+     * 
+     */
+    public TVinculaçãoNumDeFolhasDoProcessoWS createTVinculaçãoNumDeFolhasDoProcessoWS() {
+        return new TVinculaçãoNumDeFolhasDoProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link InnerMessage }
+     * 
+     */
+    public InnerMessage createInnerMessage() {
+        return new InnerMessage();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaTodaTramitaçãoProcessoWSResponse }
+     * 
+     */
+    public TConsultaTodaTramitaçãoProcessoWSResponse createTConsultaTodaTramitaçãoProcessoWSResponse() {
+        return new TConsultaTodaTramitaçãoProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link LogonWS }
+     * 
+     */
+    public LogonWS createLogonWS() {
+        return new LogonWS();
+    }
+
+    /**
+     * Create an instance of {@link ConsultaTabsAssuntoDespachoOrgãoWS }
+     * 
+     */
+    public ConsultaTabsAssuntoDespachoOrgãoWS createConsultaTabsAssuntoDespachoOrgãoWS() {
+        return new ConsultaTabsAssuntoDespachoOrgãoWS();
+    }
+
+    /**
+     * Create an instance of {@link TVinculaçãoNumDeFolhasDoProcessoWSResponse }
+     * 
+     */
+    public TVinculaçãoNumDeFolhasDoProcessoWSResponse createTVinculaçãoNumDeFolhasDoProcessoWSResponse() {
+        return new TVinculaçãoNumDeFolhasDoProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link CadastroDeDocumentosWS }
+     * 
+     */
+    public CadastroDeDocumentosWS createCadastroDeDocumentosWS() {
+        return new CadastroDeDocumentosWS();
+    }
+
+    /**
+     * Create an instance of {@link LogonSicopWS }
+     * 
+     */
+    public LogonSicopWS createLogonSicopWS() {
+        return new LogonSicopWS();
+    }
+
+    /**
+     * Create an instance of {@link ConnectResponse }
+     * 
+     */
+    public ConnectResponse createConnectResponse() {
+        return new ConnectResponse();
+    }
+
+    /**
+     * Create an instance of {@link ConsultaDocumentosWS }
+     * 
+     */
+    public ConsultaDocumentosWS createConsultaDocumentosWS() {
+        return new ConsultaDocumentosWS();
+    }
+
+    /**
+     * Create an instance of {@link TLogonWSResponse }
+     * 
+     */
+    public TLogonWSResponse createTLogonWSResponse() {
+        return new TLogonWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaDocumentosWS }
+     * 
+     */
+    public TConsultaDocumentosWS createTConsultaDocumentosWS() {
+        return new TConsultaDocumentosWS();
+    }
+
+    /**
+     * Create an instance of {@link ConsultaProcessoWS }
+     * 
+     */
+    public ConsultaProcessoWS createConsultaProcessoWS() {
+        return new ConsultaProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TTramitaçãoInternaProcessoWSResponse }
+     * 
+     */
+    public TTramitaçãoInternaProcessoWSResponse createTTramitaçãoInternaProcessoWSResponse() {
+        return new TTramitaçãoInternaProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaDocumentosWSResponse }
+     * 
+     */
+    public TConsultaDocumentosWSResponse createTConsultaDocumentosWSResponse() {
+        return new TConsultaDocumentosWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TTramitaProcessoWSResponse }
+     * 
+     */
+    public TTramitaProcessoWSResponse createTTramitaProcessoWSResponse() {
+        return new TTramitaProcessoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaTodaTramitaçãoDocumentosWS }
+     * 
+     */
+    public TConsultaTodaTramitaçãoDocumentosWS createTConsultaTodaTramitaçãoDocumentosWS() {
+        return new TConsultaTodaTramitaçãoDocumentosWS();
+    }
+
+    /**
+     * Create an instance of {@link Disconnect }
+     * 
+     */
+    public Disconnect createDisconnect() {
+        return new Disconnect();
+    }
+
+    /**
+     * Create an instance of {@link RuntimeError }
+     * 
+     */
+    public RuntimeError createRuntimeError() {
+        return new RuntimeError();
+    }
+
+    /**
+     * Create an instance of {@link TLogonSicopWS }
+     * 
+     */
+    public TLogonSicopWS createTLogonSicopWS() {
+        return new TLogonSicopWS();
+    }
+
+    /**
+     * Create an instance of {@link TCadastroDeDocumentosWSResponse }
+     * 
+     */
+    public TCadastroDeDocumentosWSResponse createTCadastroDeDocumentosWSResponse() {
+        return new TCadastroDeDocumentosWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaTabsAssuntoDespachoOrgãoWSResponse }
+     * 
+     */
+    public TConsultaTabsAssuntoDespachoOrgãoWSResponse createTConsultaTabsAssuntoDespachoOrgãoWSResponse() {
+        return new TConsultaTabsAssuntoDespachoOrgãoWSResponse();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaTodaTramitaçãoProcessoWS }
+     * 
+     */
+    public TConsultaTodaTramitaçãoProcessoWS createTConsultaTodaTramitaçãoProcessoWS() {
+        return new TConsultaTodaTramitaçãoProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TMessageResponse }
+     * 
+     */
+    public TMessageResponse createTMessageResponse() {
+        return new TMessageResponse();
+    }
+
+    /**
+     * Create an instance of {@link TIncluiProcessoWS }
+     * 
+     */
+    public TIncluiProcessoWS createTIncluiProcessoWS() {
+        return new TIncluiProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link IncluiProcessoWS }
+     * 
+     */
+    public IncluiProcessoWS createIncluiProcessoWS() {
+        return new IncluiProcessoWS();
+    }
+
+    /**
+     * Create an instance of {@link TCadastroDeDocumentosWS }
+     * 
+     */
+    public TCadastroDeDocumentosWS createTCadastroDeDocumentosWS() {
+        return new TCadastroDeDocumentosWS();
+    }
+
+    /**
+     * Create an instance of {@link TConsultaTabsAssuntoDespachoOrgãoWS }
+     * 
+     */
+    public TConsultaTabsAssuntoDespachoOrgãoWS createTConsultaTabsAssuntoDespachoOrgãoWS() {
+        return new TConsultaTabsAssuntoDespachoOrgãoWS();
+    }
+
+    /**
+     * Create an instance of {@link UnknownPage }
+     * 
+     */
+    public UnknownPage createUnknownPage() {
+        return new UnknownPage();
+    }
+
+    /**
+     * Create an instance of {@link ConsultaTodaTramitaçãoDocumentosWS }
+     * 
+     */
+    public ConsultaTodaTramitaçãoDocumentosWS createConsultaTodaTramitaçãoDocumentosWS() {
+        return new ConsultaTodaTramitaçãoDocumentosWS();
+    }
+
+}

@@ -15,8 +15,6 @@
 	var elementosComMascara = ['#codificacao'];		
 </script>
 
-
-
 	<script type="text/javascript">
 
 	//funções de dados
@@ -116,10 +114,12 @@
 					<div class="row">
 						<div class="col-sm-2">
 							<div class="form-group">
-								<label>Codificação</label> <input id="codificacao"
+								<label>Codificação</label>
+								 <input id="codificacao"
 									class="form-control" name="exClassificacao.codificacao"
 									type="text" value="${exClassificacao.codificacao}"
-									onblur="javascript:aplicarMascara(this)" /> <input
+									onblur="javascript:aplicarMascara(this)" /> 
+								<input
 									type="hidden" id="codificacaoAntiga" name="codificacaoAntiga"
 									value="${exClassificacao.codificacao}" />
 							</div>
@@ -141,6 +141,15 @@
 								<label>Observação</label> <input id="obs"
 									name="exClassificacao.obs" type="text"
 									value="${exClassificacao.obs}" class="form-control" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label>Assunto (Antigo Sist. Controle Documentos)</label> <input id="idAssuntoIntegracao"
+									name="exClassificacao.assuntoSicop" type="text"
+									value="${exClassificacao.assuntoSicop}" class="form-control" />
 							</div>
 						</div>
 					</div>

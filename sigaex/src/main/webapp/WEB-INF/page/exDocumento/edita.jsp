@@ -200,6 +200,7 @@
 				<input type="hidden" name="campos" value="numExtDoc" />
 				<input type="hidden" name="campos" value="numAntigoDoc" />
 				<div class="row">
+ 
 					<div class="col-sm-2">
 						<div class="form-group">
 							<label for="exDocumentoDTO.numExtDoc">Número Original</label>
@@ -207,6 +208,7 @@
 						</div>
 					</div>
 					<div class="col-sm-4 d-none">
+ 
 						<div class="form-group">
 							<label for="exDocumentoDTO.numAntigoDoc">Nº antigo</label>
 							<input type="text" name="exDocumentoDTO.numAntigoDoc" size="16" maxLength="32" value="${exDocumentoDTO.numAntigoDoc}" class="form-control" />
@@ -244,6 +246,9 @@
 											<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
 										</div>
 									</div>
+									
+									
+									
 									<div class="col-sm-2">
 										<div class="form-group">
 											<div class="form-check form-check-inline mt-4">
@@ -260,6 +265,8 @@
 											</div>
 										</div>
 									</div>
+									
+									
 								</c:when>
 								<c:otherwise>
 									<div class="col-sm-12">
@@ -279,51 +286,58 @@
 					</c:otherwise>
 				</c:choose>
 				<input type="hidden" name="campos" value="titularSel.id" />
-				<div id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
-					<div class="row  js-siga-sp-documento-analisa-alteracao">
-						<div class="col-sm-8">
-							<div class="form-group">
-								<label><fmt:message key="documento.titular"/></label>
-								<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga"  />
+				
+				
+					<div id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
+						<div class="row  js-siga-sp-documento-analisa-alteracao">
+							<div class="col-sm-8">
+								<div class="form-group">
+									<label><fmt:message key="documento.titular"/></label>
+									<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga"  />
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+			 
 				<input type="hidden" name="campos" value="nmFuncaoSubscritor" />
 				<input type="hidden" name="exDocumentoDTO.nmFuncaoSubscritor" maxlength="128" id="frm_nmFuncaoSubscritor" value="${exDocumentoDTO.nmFuncaoSubscritor}" />
 				
-				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.personalizacao? '': 'none'};">
-					<div class="row ml-1">
-						<h6>Personalização</h6>
-					</div>
-					<div class="row  js-siga-sp-documento-analisa-alteracao">
-						<div class="col-sm-2">
-							<div class="form-group">
-								<label>Função</label>
-								<input type="text" id="personalizarFuncao" maxlength="125" class="form-control">
+				
+		 
+				
+						<div id="tr_personalizacao" style="display: ${exDocumentoDTO.personalizacao? '': 'none'};">
+							<div class="row ml-1">
+								<h6>Personalização</h6>
+							</div>
+							<div class="row  js-siga-sp-documento-analisa-alteracao">
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label>Função</label>
+										<input type="text" id="personalizarFuncao" maxlength="125" class="form-control">
+									</div>
+								</div>
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label><fmt:message key="usuario.lotacao"/></label>
+										<input type="text" id="personalizarUnidade" maxlength="125" class="form-control">
+									</div>
+								</div>
+								<div class="col-sm-2 ${hide_only_GOVSP}">
+									<div class="form-group">
+										<label>Cidade</label>
+										<input type="text" id="personalizarLocalidade" maxlength="125" class="form-control">
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group ${hide_only_GOVSP}">
+										<label>Nome</label>
+										<input type="text" id="personalizarNome"  maxlength="125" class="form-control">
+									</div>
+								</div>
 							</div>
 						</div>
-						<div class="col-sm-2">
-							<div class="form-group">
-								<label><fmt:message key="usuario.lotacao"/></label>
-								<input type="text" id="personalizarUnidade" maxlength="125" class="form-control">
-							</div>
-						</div>
-						<div class="col-sm-2 ${hide_only_GOVSP}">
-							<div class="form-group">
-								<label>Cidade</label>
-								<input type="text" id="personalizarLocalidade" maxlength="125" class="form-control">
-							</div>
-						</div>
-						<div class="col-sm-4">
-							<div class="form-group ${hide_only_GOVSP}">
-								<label>Nome</label>
-								<input type="text" id="personalizarNome"  maxlength="125" class="form-control">
-							</div>
-						</div>
-					</div>
-				</div>
-
+			 
+				
 <c:if test="${exDocumentoDTO.permiteRequerente}"> 
 					<div class="row">
 						<div class="col-sm-2">
@@ -386,7 +400,7 @@
 										name="exDocumentoDTO.cpfRequerente"
 										style="display: ${not empty exDocumentoDTO.cpfRequerente ? '': 'none'};"
 										value="${exDocumentoDTO.cpfRequerente}" class="form-control"
-										onblur="validarCpf(this)" maxlength="14" />
+										onblur="validarCpf(this)"  maxlength="14" />
 							 
 									<input type="text" id="cnpjRequerente"
 										name="exDocumentoDTO.cnpjRequerente"
@@ -477,97 +491,101 @@
 				</div>
 		 	
 				<input type="hidden" name="campos" value="tipoDestinatario" />
-				<c:if test='${exDocumentoDTO.tipoDocumento != "interno_capturado" }'> 
-				<div class="row ${hide_only_GOVSP}">
-					<div class="col-sm-2">
-						<div class="form-group">
-							<label>Destinatário</label>
-							<select name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();" class="form-control">
-								<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
-									<option value="${item.key}"
-										${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
-										${item.value}</option>
-								</c:forEach>
-							</select> 
-						</div>
-					</div>
-					<div class="col-sm-6">
-						<div class="form-group">
-							<siga:span id="destinatario" depende="tipoDestinatario">
-							<c:choose>
-								<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
-									<input type="hidden" name="campos" value="destinatario" />
-									<label>&nbsp;&nbsp;&nbsp;</label>
-									<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario1" reler="ajax" modulo="siga" />
-										<!--  idAjax="destinatario"  -->
-								</c:when>
-								<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
-									<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
-									<label>&nbsp;&nbsp;&nbsp;</label>
-									<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" onchangeid="updateURL()" />
-									<!--  idAjax="destinatario" -->
-								</c:when>
-								<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
-									<input type="hidden" name="campos" value="orgaoExternoDestinatarioSel.id" />
-									<label>&nbsp;&nbsp;&nbsp;</label>
-									<siga:selecao propriedade="orgaoExternoDestinatario" inputName="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" idAjax="destinatario3" reler="ajax" modulo="siga" />
-									<!--  idAjax="destinatario" -->
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="form-group">
-									<input type="hidden" name="campos" value="nmOrgaoExterno" />
-									<label>&nbsp;&nbsp;&nbsp;</label>
-									<input type="text" name="exDocumentoDTO.nmOrgaoExterno" size="120" maxLength="256" value="${exDocumentoDTO.nmOrgaoExterno}" class="form-control" />
-								</c:when>
-								<c:otherwise>
-									<input type="hidden" name="campos" value="nmDestinatario" />
-									<label>&nbsp;&nbsp;&nbsp;</label>
-									<input type="text" name="exDocumentoDTO.nmDestinatario" size="80" maxLength="256" value="${exDocumentoDTO.nmDestinatario}" class="form-control" />
-								</c:otherwise>
-							</c:choose>
-							</siga:span>
-						</div>
-					</div>
-				</div>
-				</c:if>
-					
-				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
-				<div class="row inline">					
-					<div class="col-sm-12">
-				  		<div class="form-group">
-				    		<label><fmt:message key="documento.preenchimento.automatico"/></label>
-				    		<div class="row">
-				      			<div class="col col-xl-4 col-lg-12">
-							        <select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control siga-select2">
-										<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
-											<option value="${item.idPreenchimento}"
-												${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
-												${item.nomePreenchimento}</option>
+				
+				<c:if test="${ not exDocumentoDTO.modelo.permiteSicop}"> 
+				
+					<c:if test='${exDocumentoDTO.tipoDocumento != "interno_capturado"}'> 
+						<div class="row ${hide_only_GOVSP}">
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label>Destinatário</label>
+									<select name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();" class="form-control">
+										<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
+											<option value="${item.key}"
+												${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
+												${item.value}</option>
 										</c:forEach>
-									</select>
-				      			</div>
-				      			<div class="col col-xl-8 col-lg-12">
-							        <c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
-										<c:set var="desabilitaBtn"> disabled </c:set>
-									</c:if> 
-									<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
-										<i class="far fa-edit"></i>
-										<span class="${hide_only_GOVSP}">Alterar</span>
-									</button>
-									<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
-										<i class="far fa-trash-alt"></i>
-										<span class="${hide_only_GOVSP}">Remover</span>
-									</button>
-									<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2 p-2">
-										<i class="fas fa-plus"></i>
-										<span class="${hide_only_GOVSP}">Adicionar</span>
-									</button>
-				      			</div>
-				    		</div>
-				  		</div>
-				  </div>
-				</div>
+									</select> 
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<siga:span id="destinatario" depende="tipoDestinatario">
+									<c:choose>
+										<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
+											<input type="hidden" name="campos" value="destinatario" />
+											<label>&nbsp;&nbsp;&nbsp;</label>
+											<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario1" reler="ajax" modulo="siga" />
+												<!--  idAjax="destinatario"  -->
+										</c:when>
+										<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
+											<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
+											<label>&nbsp;&nbsp;&nbsp;</label>
+											<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" onchangeid="updateURL()" />
+											<!--  idAjax="destinatario" -->
+										</c:when>
+										<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
+											<input type="hidden" name="campos" value="orgaoExternoDestinatarioSel.id" />
+											<label>&nbsp;&nbsp;&nbsp;</label>
+											<siga:selecao propriedade="orgaoExternoDestinatario" inputName="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" idAjax="destinatario3" reler="ajax" modulo="siga" />
+											<!--  idAjax="destinatario" -->
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+											<input type="hidden" name="campos" value="nmOrgaoExterno" />
+											<label>&nbsp;&nbsp;&nbsp;</label>
+											<input type="text" name="exDocumentoDTO.nmOrgaoExterno" size="120" maxLength="256" value="${exDocumentoDTO.nmOrgaoExterno}" class="form-control" />
+										</c:when>
+										<c:otherwise>
+											<input type="hidden" name="campos" value="nmDestinatario" />
+											<label>&nbsp;&nbsp;&nbsp;</label>
+											<input type="text" name="exDocumentoDTO.nmDestinatario" size="80" maxLength="256" value="${exDocumentoDTO.nmDestinatario}" class="form-control" />
+										</c:otherwise>
+									</c:choose>
+									</siga:span>
+								</div>
+							</div>
+						</div>
+					</c:if>
+						
+					<c:if test='${ exDocumentoDTO.tipoDocumento == "interno"  && !ehPublicoExterno}'>
+						<div class="row inline">					
+							<div class="col-sm-12">
+						  		<div class="form-group">
+						    		<label><fmt:message key="documento.preenchimento.automatico"/></label>
+						    		<div class="row">
+						      			<div class="col col-xl-4 col-lg-12">
+									        <select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control siga-select2">
+												<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
+													<option value="${item.idPreenchimento}"
+														${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
+														${item.nomePreenchimento}</option>
+												</c:forEach>
+											</select>
+						      			</div>
+						      			<div class="col col-xl-8 col-lg-12">
+									        <c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
+												<c:set var="desabilitaBtn"> disabled </c:set>
+											</c:if> 
+											<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+												<i class="far fa-edit"></i>
+												<span class="${hide_only_GOVSP}">Alterar</span>
+											</button>
+											<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2 p-2" ${desabilitaBtn}>
+												<i class="far fa-trash-alt"></i>
+												<span class="${hide_only_GOVSP}">Remover</span>
+											</button>
+											<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2 p-2">
+												<i class="fas fa-plus"></i>
+												<span class="${hide_only_GOVSP}">Adicionar</span>
+											</button>
+						      			</div>
+						    		</div>
+						  		</div>
+						  </div>
+						</div>
+					</c:if>
 				</c:if>
 			
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">

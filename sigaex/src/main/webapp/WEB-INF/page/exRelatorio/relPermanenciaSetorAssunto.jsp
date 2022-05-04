@@ -32,6 +32,7 @@
 							<select id="tipoSaida" name="idTipoSaida"	value="${idTipoSaida}"  class="form-control" >
 								 	<option value="1" 	>PDF</option>
 								 	<option value="2" 	>Excel</option>
+								 	<option value="3" 	>CSV</option>
 					 		</select>
 						</div>
 						

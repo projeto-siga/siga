@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1828,9 +1829,8 @@ public class ExRelatorioController extends ExController {
 		} else {
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioCSV() );
 			return new InputStreamDownload(inputStream, APPLICATION_CSV,nomeArquivoSaida +".csv");
+ 
 		}
-
-		
 }
 	private Date parseDate(String parameter) throws AplicacaoException {
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");

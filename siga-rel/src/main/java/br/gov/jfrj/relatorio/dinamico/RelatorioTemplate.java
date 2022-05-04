@@ -321,7 +321,6 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 		 JRCsvExporter exporter = new JRCsvExporter();
 		 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		 
-	 
 		 exporter.setParameter(JRExporterParameter.JASPER_PRINT, relatorio.getRelatorioJasperPrint());
 		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, byteArrayOutputStream);
 		    exporter.exportReport();

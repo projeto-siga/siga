@@ -1827,6 +1827,7 @@ public class ExRelatorioController extends ExController {
 			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
 
 		} else {
+			 
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioCSV() );
 			return new InputStreamDownload(inputStream, APPLICATION_CSV,nomeArquivoSaida +".csv");
  

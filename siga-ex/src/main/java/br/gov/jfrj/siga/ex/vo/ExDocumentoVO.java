@@ -783,10 +783,6 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(AcaoVO.builder().nome("Enviar ao SIAFEM").icone("email_go").nameSpace("/app/expediente/integracao").acao("integracaows")
 				.params("sigla", mob.getCodigoCompacto()).exp(And.of(new CpPodeBoolean(mostrarEnviarSiafem(doc), "pode mostrar Siafem"), new ExPodeEnviarSiafem(doc, titular, lotaTitular))).classe("once").build());
-	
-		if (!doc.isCancelado())
-			vo.addAcao(AcaoVO.builder().nome("Atribuir Prazo de Assinatura").icone("date_previous").nameSpace("/app/expediente/mov").acao("definir_prazo_assinatura")
-			.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDefinirPrazoAssinatura(mob, titular, lotaTitular)).classe("once").build());
 		
 	}
 

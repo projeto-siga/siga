@@ -359,7 +359,8 @@ public class ExDocumentoVO extends ExVO {
 		List<ExDocumento> documentosPublicadosNoBoletim = doc.getDocumentosPublicadosNoBoletim();
 		if (documentosPublicadosNoBoletim != null) {
 			for (ExDocumento documentoPublicado : documentosPublicadosNoBoletim) {
-				documentosPublicados.add(new ExDocumentoVO(documentoPublicado));
+				documentosPublicados.add(new ExDocumentoVO(documentoPublicado, documentoPublicado.getMobilGeral(), cadastrante, titular,
+						lotaTitular, false, exibirAntigo, serializavel));
 			}
 		}
 

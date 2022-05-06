@@ -783,9 +783,9 @@
 						<div class="card-sidebar card bg-light mb-3">
 							<tags:collapse title="Documentos Relacionados" id="DocsRelacionados" collapseMode="${collapse_Expanded}">
 								<div id="outputRelacaoDocs" class="bg-light" style="border: 0px; padding: 0px">
-									<c:forEach items="${docVO.dotRelacaoDocs.asMap}" var="mapa">
-										<p style="margin-bottom: 3px;">
-											<b>${mapa.key}:</b>
+									<c:forEach items="${docVO.dotRelacaoDocs.secundariosAsMap}" var="mapa">
+										<p style="margin-top: .5em;">
+											${mapa.key}:
 										</p>
 										<ul>
 											<c:forEach var="mobRelacionado" items="${mapa.value}">
@@ -797,6 +797,19 @@
 										</ul>
 									</c:forEach>
 								</div>
+								<c:forEach items="${docVO.dotRelacaoDocs.principaisAsMap}" var="mapa">
+									<p style="margin-top: .5em;">
+										${mapa.key}:
+									</p>
+									<ul>
+										<c:forEach var="mobRelacionado" items="${mapa.value}">
+											<li><a
+												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobRelacionado.sigla}"
+												title="${mobRelacionado.doc.descrDocumento}"
+												style="text-decoration: none"> ${mobRelacionado.sigla} </a></li>
+										</c:forEach>
+									</ul>
+								</c:forEach>
 							</tags:collapse>
 						</div>
 

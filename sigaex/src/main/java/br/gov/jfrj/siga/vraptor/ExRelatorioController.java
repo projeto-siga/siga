@@ -1814,20 +1814,23 @@ public class ExRelatorioController extends ExController {
 		InputStream inputStream   =null; 
 
 		String nomeArquivoSaida = 	"RelPermanenciaSetorAssunto_"+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		rel.gerar();
 		
 		if (Integer.valueOf(idTipoSaida) == 1){ 
+			rel.gerar();
 
 			inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
 			return new InputStreamDownload(inputStream, APPLICATION_PDF,	nomeArquivoSaida +".pdf");
 
-		} else if (Integer.valueOf(idTipoSaida) == 2){ 
-
-			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
-			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
+//		} else if (Integer.valueOf(idTipoSaida) == 2){ 
+//
+//			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
+//			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
 
 		} else {
 			 
+			boolean isCSV = true;
+			rel.gerar(isCSV);
+			
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioCSV() );
 			return new InputStreamDownload(inputStream, APPLICATION_CSV,nomeArquivoSaida +".csv");
  

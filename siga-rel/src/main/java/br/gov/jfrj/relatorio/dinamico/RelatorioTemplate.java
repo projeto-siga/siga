@@ -316,17 +316,44 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 		}
 	}
 	 
-	public byte[]  getRelatorioCSV() throws JRException, IOException { 
-		
-		 JRCsvExporter exporter = new JRCsvExporter();
-		 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		 
-		 exporter.setParameter(JRExporterParameter.JASPER_PRINT, relatorio.getRelatorioJasperPrint());
-		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, byteArrayOutputStream);
-		    exporter.exportReport();
-		    byte[] archivo = byteArrayOutputStream.toByteArray();
+//	public byte[]  getRelatorioCSV() throws JRException, IOException { 
+//		
+//		 JRCsvExporter exporter = new JRCsvExporter();
+//		 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//		 
+//		 exporter.setParameter(JRExporterParameter.JASPER_PRINT, relatorio.getRelatorioJasperPrint());
+//		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, byteArrayOutputStream);
+//		    exporter.exportReport();
+//		    byte[] archivo = byteArrayOutputStream.toByteArray();
+//
+//		    return archivo;
+//	}
+	
+	
+	public void gerar(boolean isCSV) throws Exception {
 
-		    return archivo;
+		String colunas  = configurarRelatorioCSV();
+		dados = processarDados();
+		if (dados != null && dados.size() > 0) {
+			//relatorio.setDados(dados);
+			dados.add(colunas); 
+			
+		} else {
+			throw new AplicacaoException("Não há dados para gerar o relatório!");
+		}
+
+	}
+	
+	public  String configurarRelatorioCSV(){
+	return "";	
+	}
+	
+	
+	
+   public byte[]  getRelatorioCSV() throws JRException, IOException { 
+		
+		 return dados.toString().getBytes();
+		 
 	}
 	
 }

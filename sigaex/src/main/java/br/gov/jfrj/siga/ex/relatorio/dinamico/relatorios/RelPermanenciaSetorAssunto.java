@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -95,6 +96,21 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 
 		return this;
 
+	}
+	
+	
+
+//	@Override
+//	public byte[] getRelatorioCSV() throws JRException, IOException {
+//		// TODO Auto-generated method stub
+//		return super.getRelatorioCSV();
+//	}
+
+ 
+
+	@Override
+	public String configurarRelatorioCSV() {
+       return "Assunto,Classificação;Número;Dt.Movimento;Movimento;Assunto;Órgão Origem;Órgão Destino;Digitador;Dias";
 	}
 
 	private String montarConsulta() {

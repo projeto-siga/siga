@@ -446,7 +446,8 @@
 				</div></li>
 		</c:if>
 
-		<li><c:choose>
+		<li>
+			<c:choose>
 				<c:when test="${f:resource('/siga.local') eq 'GOVSP'}">
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;MA:Manual')}">
 							<a class="dropdown-item" id="apostilaSiga"
@@ -460,8 +461,14 @@
 						href="https://processo.rio/manual-do-usuario-processo-rio/" target="_blank">Manual processo.rio</a>
 
 				</c:otherwise>
-			</c:choose></li>
+			</c:choose>
+		</li>
 
+		<li>
+			<a class="dropdown-item" id="pontosFocais"
+						href="https://processo.rio/planilha-pontos-focais/" target="_blank">Planilha de Pontos Focais</a>
+		</li>
+		
 		<li><a class="dropdown-item" href="/siga/public/app/logout">Logoff</a></li>
 	</ul></li>
 

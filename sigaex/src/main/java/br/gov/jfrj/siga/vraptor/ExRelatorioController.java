@@ -126,7 +126,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
 	private static final String APPLICATION_EXCEL = "application/vnd.ms-excel"; 
-	private static final String APPLICATION_CSV = "application/csv"; 
+	private static final String APPLICATION_CSV = "text/csv"; 
 	
 	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
 
@@ -1832,8 +1832,9 @@ public class ExRelatorioController extends ExController {
 			rel.gerar(isCSV);
 			
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioCSV() );
-			return new InputStreamDownload(inputStream, APPLICATION_CSV,nomeArquivoSaida +".csv");
+	//		return new InputStreamDownload(inputStream, APPLICATION_CSV,nomeArquivoSaida +".csv");
  
+			return null;
 		}
 }
 	private Date parseDate(String parameter) throws AplicacaoException {

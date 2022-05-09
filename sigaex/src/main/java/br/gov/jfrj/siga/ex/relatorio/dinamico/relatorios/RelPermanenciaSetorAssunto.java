@@ -15,6 +15,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
@@ -106,6 +107,8 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 //		return super.getRelatorioCSV();
 //	}
 
+	 
+ 
  
 
 	@Override

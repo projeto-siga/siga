@@ -3019,27 +3019,27 @@ public class CpDao extends ModeloDao {
 	}
 
 
-	public Long qtdeMarcasMarcadorPessoa(DpPessoa pessoa, CpMarcadorEnum marcador) {
+	public Long qtdeMarcasMarcadorPessoa(DpPessoa pessoa, List<Long> marcadores) {
 		CriteriaBuilder qb = em().getCriteriaBuilder();
 		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
 		Root<CpMarca> c = cq.from(CpMarca.class);
 		cq.select(qb.count(c));
 		Predicate predicateAnd;
 		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa);
-		Predicate predicateEqualMarca  = cb().equal(c.get("cpMarcador"), marcador.getId());
+		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
 		predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();
 	}
 	
-	public Long qtdeMarcasMarcadorLotacao(DpLotacao lotacao, CpMarcadorEnum marcador) {
+	public Long qtdeMarcasMarcadorLotacao(DpLotacao lotacao, List<Long> marcadores) {
 		CriteriaBuilder qb = em().getCriteriaBuilder();
 		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
 		Root<CpMarca> c = cq.from(CpMarca.class);
 		cq.select(qb.count(c));
 		Predicate predicateAnd;
 		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao);
-		Predicate predicateEqualMarca  = cb().equal(c.get("cpMarcador"), marcador.getId());
+		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
 		predicateAnd = cb().and(predicateEqualLotacao, predicateEqualMarca);
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();

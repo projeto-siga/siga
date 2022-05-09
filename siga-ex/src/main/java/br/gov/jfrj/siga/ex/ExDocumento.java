@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -52,6 +54,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicUpdate;
 import org.jboss.logging.Logger;
+
+import com.google.common.collect.Lists;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -69,6 +73,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
@@ -1819,6 +1824,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public String getSiglaAssinatura() {
 		return getIdDoc() + "-" + Math.abs(getDescrCurta().hashCode() % 10000);
 	}
+	
+	public Set<ExMovimentacao> getVinculosPorTipo(ExTipoDeVinculo tipo) {
+		if (getMobilGeral() == null)
+			return new TreeSet<ExMovimentacao>();
+		return getMobilGeral()
+				.getMovsNaoCanceladas(ExTipoDeMovimentacao.REFERENCIA,	true).stream().filter(i -> i.getTipoDeVinculo() == tipo).collect(Collectors.toSet());
+	}
 
 	/**
 	 * Retorna as {@link ExMovimentacao Movimentações} de
@@ -2028,6 +2040,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 					+ conferentesSenha + ".\n"
 					: "";
 
+		return retorno;
+	}
+	
+	public String getVinculosCompleto() {
+		String retorno = "";
+		for (ExTipoDeVinculo tipo : Lists.reverse(Lists.newArrayList(ExTipoDeVinculo.values()))) {
+			if (tipo != ExTipoDeVinculo.REVOGACAO)
+				continue;
+			String s = Documento.getVinculosString(getVinculosPorTipo(tipo));
+			if (s.length() > 0)
+				retorno += tipo.getAcao() + " " + s + ". ";
+		}
 		return retorno;
 	}
 

@@ -926,7 +926,10 @@ public class FuncoesEL {
 	public static String webservice(String url, String corpo, Integer timeout) {
 		try {
 			HashMap<String, String> headers = new HashMap<String, String>();
-			headers.put("Content-Type", "text/xml;charset=UTF-8");
+			if (corpo != null && corpo.isEmpty())
+				corpo = null;
+			if (corpo != null)
+				headers.put("Content-Type", "text/xml;charset=UTF-8");
 			String auth = (String) resource("/siga.freemarker.webservice.password");
 			if (auth != null)
 				headers.put("Authorization", auth);

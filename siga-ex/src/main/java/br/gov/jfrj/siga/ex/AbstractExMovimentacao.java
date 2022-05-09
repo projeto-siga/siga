@@ -58,6 +58,8 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.converter.ExTipoDeVinculoConverter;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 
 /**
  * A class that represents a row in the EX_MOVIMENTACAO table. You can customize
@@ -377,6 +379,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@Convert(converter = ITipoDeMovimentacaoConverter.class)
 	@Column(name = "id_tp_mov", nullable = false)
 	private ITipoDeMovimentacao exTipoMovimentacao;
+	
+	@Convert(converter = ExTipoDeVinculoConverter.class)
+	@Column(name = "TP_VINCULO")
+	private ExTipoDeVinculo tipoDeVinculo;
 
 	// private Long idTpMov;
 
@@ -891,6 +897,14 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 				return true;
 		}
 		return false;
+	}
+
+	public ExTipoDeVinculo getTipoDeVinculo() {
+		return tipoDeVinculo;
+	}
+
+	public void setTipoDeVinculo(ExTipoDeVinculo tipoDeVinculo) {
+		this.tipoDeVinculo = tipoDeVinculo;
 	}
 	
 }

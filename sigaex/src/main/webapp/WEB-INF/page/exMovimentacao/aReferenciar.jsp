@@ -80,7 +80,18 @@ function sbmt() {
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-sm-6">
+							<div class="col col-auto">
+								<label for="tipo" class="col-sm-2x col-form-label">Tipo de Vínculo:</label>
+								<select name="tipo" id="tipo" class="form-control" >
+									<c:forEach items="${listaTipoDeVinculo}" var="item">
+										<option value="${item.name()}">
+											${item.acao}
+										</option>  
+									</c:forEach>
+								</select> 
+							</div>
+						
+							<div class="col">
 								<div class="form-group">
 									<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
 								</div>

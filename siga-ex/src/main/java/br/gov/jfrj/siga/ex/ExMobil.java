@@ -54,6 +54,7 @@ import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -1402,18 +1403,19 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @param recursivo
 	 * @return
 	 */
-	public Set<ExMobil> getVinculados() {
+	public Set<ExMobil> getVinculados(ExTipoDeVinculo tipo) {
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
 		for (ExMovimentacao mov : getCronologiaSet())
 			if (!mov.isCancelada()) {
-				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA) {
-					set.add(mov.getExMobilRef());
+				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA 
+						&& (tipo == null || tipo == mov.getTipoDeVinculo())) {
+					set.add(mov.getExMobilRef().doc().getMobilGeral());
 					set.add(mov.getExMobil());
 				}
 			}
 		set.remove(this);
 		if (!isGeral())
-			set.addAll(doc().getMobilGeral().getVinculados());
+			set.addAll(doc().getMobilGeral().getVinculados(tipo));
 		return set;
 	}
 

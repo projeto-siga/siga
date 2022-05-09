@@ -480,15 +480,12 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("_Juntar").icone("page_white_go").nameSpace("/app/expediente/mov").acao("juntar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeJuntar(mob, titular, lotaTitular)).classe("once").build());
 
-		addAcao(AcaoVO.builder().nome("Vi_ncular").icone("page_find").nameSpace("/app/expediente/mov").acao("referenciar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReferenciar(mob, titular, lotaTitular)).build());
-
 		addAcao(AcaoVO.builder().nome("Apensar").icone("link_add").nameSpace("/app/expediente/mov").acao("apensar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeApensar(mob, titular, lotaTitular)).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("Atribuir Prazo de Assinatura").icone("date_previous").nameSpace("/app/expediente/mov").acao("definir_prazo_assinatura")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDefinirPrazoAssinatura(mob, titular, lotaTitular)).classe("once").build());
-
+		
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
 		

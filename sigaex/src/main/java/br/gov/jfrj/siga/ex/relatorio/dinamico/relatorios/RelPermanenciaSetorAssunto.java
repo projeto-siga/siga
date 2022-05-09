@@ -113,7 +113,7 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 
 	@Override
 	public String configurarRelatorioCSV() {
-       return "Assunto,Classificação;Número;Dt.Movimento;Movimento;Assunto;Órgão Origem;Órgão Destino;Digitador;Dias";
+       return "Assunto,Classificação,Número,Dt.Movimento,Movimento,Assunto,Órgão Origem,Órgão Destino,Digitador,Dias";  
 	}
 
 	private String montarConsulta() {
@@ -203,24 +203,51 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		return sql;
 	}
 
+	public List<String> processarDadosCSV(){
+		List<Object[]> lista = consultar();
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		List<String> listaFinal = new ArrayList<>();
+
+		for (Object[] array : lista) {
+				StringBuilder sb = new StringBuilder();
+				sb.append( String.valueOf( array[4] ));  // cod assunto
+				sb.append(";");
+				sb.append( String.valueOf( array[9] )); // cod destino
+				sb.append(";");
+				sb.append(String.valueOf( array[0] ));//NUM. PROCESSO
+				sb.append(";");
+				sb.append ( String.valueOf(formatter.format( array[1] )));//DATA DESPACHO
+				sb.append(";");
+				sb.append( String.valueOf( array[2] ) +" "+ String.valueOf( array[3] ));//COD. DESPACHO + DESCR. DESPACHO,
+				sb.append(";");
+				sb.append( String.valueOf( array[5] ) +" "+ String.valueOf( array[6] ));//COD. ASSUNTO  + DESCR. ASSUNTO
+				sb.append(";");
+				sb.append(	array[7] != null ? String.valueOf( array[7] ) +" "+ String.valueOf( array[8] ) : ""		);//ORG. ORIGEM	 + DESCR. ORG. ORIGEM
+				sb.append(";");
+				sb.append( array[9]  != null ?  String.valueOf( array[9] ) +" "+ String.valueOf( array[10]  ):"");//ORG. DESTINO 	 + DESCR. ORG. DESTINO
+				sb.append(";");
+				sb.append( String.valueOf( array[11]));//MATR. DIGITADOR
+				sb.append(";");
+				sb.append(String.valueOf( array[12]));//TEMPO
+				
+				listaFinal.add(sb.toString());
+			}
+			
+			return listaFinal;
+		
+		
+	}
+	
+	
 	
 	@Override
 	public Collection processarDados() throws Exception {
- 		
+
+		List<Object[]> lista = consultar();
+		
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-		List<String> d = new ArrayList<String>();
-
-		Query query = ContextoPersistencia.em().createNativeQuery( montarConsulta() );
-		
-		query.setParameter("assuntos", listaAssunto);
-		
-		query.setParameter("setoresSubordinados",listaSetoreSubordinado);
-		
-		query.setParameter("idTipoFormaDoc",idTipoFormaDoc);
-		
-		List<Object[]> lista = query.getResultList();
-		
 		List<String> listaFinal = new ArrayList<String>();
 
 		for (Object[] array : lista) {
@@ -242,6 +269,20 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		}
 		
 		return listaFinal;
+	}
+
+	private List<Object[]> consultar() {
+		Query query = ContextoPersistencia.em().createNativeQuery( montarConsulta() );
+		
+		query.setParameter("assuntos", listaAssunto);
+		
+		query.setParameter("setoresSubordinados",listaSetoreSubordinado);
+		
+		query.setParameter("idTipoFormaDoc",idTipoFormaDoc);
+		
+		List<Object[]> lista = query.getResultList();
+		
+		return lista;
 	}
 	
 	 	private void acrescentarColuna(List<String> d, Map<String, Long> map,

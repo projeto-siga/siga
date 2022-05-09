@@ -1827,14 +1827,12 @@ public class ExRelatorioController extends ExController {
 //			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
 
 		} else {
-			 
-			boolean isCSV = true;
-			rel.gerar(isCSV);
+			  
+			rel.gerarCSV();
 			
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioCSV() );
-	//		return new InputStreamDownload(inputStream, APPLICATION_CSV,nomeArquivoSaida +".csv");
- 
-			return null;
+		    return new InputStreamDownload(inputStream, "text/plain",nomeArquivoSaida +".csv");
+  
 		}
 }
 	private Date parseDate(String parameter) throws AplicacaoException {

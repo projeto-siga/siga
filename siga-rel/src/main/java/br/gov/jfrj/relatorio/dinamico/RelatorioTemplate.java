@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
@@ -325,14 +326,16 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 //		    return archivo;
 //	}
 	
+	public Collection processarDadosCSV(){
+		return Collections.EMPTY_LIST;
+	}
 	
-	public void gerar(boolean isCSV) throws Exception {
+	public void gerarCSV() throws Exception {
 
-		String colunas  = configurarRelatorioCSV();
-		dados = processarDados();
+		dados = processarDadosCSV();
 		if (dados != null && dados.size() > 0) {
 			//relatorio.setDados(dados);
-			dados.add(colunas); 
+			dados.add(configurarRelatorioCSV()); 
 			
 		} else {
 			throw new AplicacaoException("Não há dados para gerar o relatório!");
@@ -346,8 +349,9 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	
 	
 	
-   public byte[]  getRelatorioCSV() throws JRException, IOException { 
+   public byte[]  getRelatorioCSV() throws IOException { 
 		
+	   
 	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	   ObjectOutputStream oos;
 		try {
@@ -358,6 +362,8 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 		}
 		// Convert to Byte Array
 		 return  baos.toByteArray();
+	   
+	   
 		 
 	}
 	

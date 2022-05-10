@@ -326,21 +326,8 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 //		    return archivo;
 //	}
 	
-	public Collection processarDadosCSV(){
-		return Collections.EMPTY_LIST;
-	}
-	
-	public void gerarCSV() throws Exception {
-
-		dados = processarDadosCSV();
-		if (dados != null && dados.size() > 0) {
-			//relatorio.setDados(dados);
-			dados.add(configurarRelatorioCSV()); 
-			
-		} else {
-			throw new AplicacaoException("Não há dados para gerar o relatório!");
-		}
-
+	public String processarDadosCSV(){
+		return null;
 	}
 	
 	public  String configurarRelatorioCSV(){
@@ -349,19 +336,22 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	
 	
 	
-   public byte[]  getRelatorioCSV() throws IOException { 
+   public byte[]  gerarRelatorioCSV() throws IOException { 
 		
+	   String dados = processarDadosCSV();
+	  return  dados.getBytes();
 	   
-	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	   ObjectOutputStream oos;
-		try {
-			oos = new ObjectOutputStream(baos);
-			oos.writeObject(dados);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		// Convert to Byte Array
-		 return  baos.toByteArray();
+//	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//	  
+//	   ObjectOutputStream oos;
+//		try {
+//			oos = new ObjectOutputStream(baos);
+//			oos.writeObject(dados);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		// Convert to Byte Array
+//		 return  baos.toByteArray();
 	   
 	   
 		 

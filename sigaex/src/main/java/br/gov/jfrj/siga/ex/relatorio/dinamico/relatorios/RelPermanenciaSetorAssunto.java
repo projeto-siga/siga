@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 
@@ -15,7 +15,6 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
@@ -203,11 +202,15 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		return sql;
 	}
 
-	public List<String> processarDadosCSV(){
+	public  String  processarDadosCSV(){
+		
 		List<Object[]> lista = consultar();
+		
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
 		List<String> listaFinal = new ArrayList<>();
+		
+		listaFinal.add(configurarRelatorioCSV());
 
 		for (Object[] array : lista) {
 				StringBuilder sb = new StringBuilder();
@@ -234,7 +237,7 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 				listaFinal.add(sb.toString());
 			}
 			
-			return listaFinal;
+			return listaFinal.stream().collect(Collectors.joining(","));
 		
 		
 	}

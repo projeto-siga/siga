@@ -33,7 +33,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +57,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
@@ -1828,10 +1828,11 @@ public class ExRelatorioController extends ExController {
 
 		} else {
 			  
-			rel.gerarCSV();
+			byte[] csv =rel.gerarRelatorioCSV();
 			
-			inputStream   = new ByteArrayInputStream(	rel.getRelatorioCSV() );
-		    return new InputStreamDownload(inputStream, "text/plain",nomeArquivoSaida +".csv");
+			inputStream   = new ByteArrayInputStream(	csv );
+			 
+		    return new InputStreamDownload(inputStream, "application/octet-stream",nomeArquivoSaida +".csv", true, csv.length);
   
 		}
 }

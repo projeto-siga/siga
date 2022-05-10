@@ -1832,7 +1832,7 @@ public class ExRelatorioController extends ExController {
 			
 			inputStream   = new ByteArrayInputStream(	csv );
 			 
-		    return new InputStreamDownload(inputStream, "application/octet-stream",nomeArquivoSaida +".csv", true, csv.length);
+		    return  new InputStreamDownload(inputStream, "application/octet-stream",nomeArquivoSaida +".csv", true, csv.length);
   
 		}
 }

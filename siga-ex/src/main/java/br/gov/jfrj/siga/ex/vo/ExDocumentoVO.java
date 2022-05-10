@@ -366,8 +366,9 @@ public class ExDocumentoVO extends ExVO {
 
 		ExDocumento bol = doc.getBoletimEmQueDocFoiPublicado();
 		if (bol != null)
-			boletim = new ExDocumentoVO(bol);
-		
+			boletim = new ExDocumentoVO(bol, bol.getMobilGeral(), cadastrante, titular,
+					lotaTitular, false, exibirAntigo, serializavel);
+					
 		this.originalNumero = doc.getNumExtDoc();
 		this.originalData = doc.getDtDocOriginalDDMMYYYY();
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;

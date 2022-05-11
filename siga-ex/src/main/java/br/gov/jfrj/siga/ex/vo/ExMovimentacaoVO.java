@@ -256,7 +256,7 @@ public class ExMovimentacaoVO extends ExVO {
 			// <c:url var='anexo' value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
 			// tipo="${mov.conteudoTpMov}" />
 			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-					.params("arquivo", mov.getReferenciaPDF())
+					.params("arquivo", mov.getReferenciaPDF()).params("popup", "true")
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 
 			if (exTipoMovimentacao == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO) {

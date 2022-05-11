@@ -24,6 +24,7 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2774,6 +2775,21 @@ public class CpDao extends ModeloDao {
 			sql.setParameter("idLotacao", idLotacao);
 			
 			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+
+	public Integer consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(Long idLotacao) {
+		try {
+			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacaoECpMarca");
+			sql.setParameter("idLotacao", idLotacao);
+			sql.setParameter("listMarcadores", Arrays.asList(
+					CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId(),
+					CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()));
+			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;

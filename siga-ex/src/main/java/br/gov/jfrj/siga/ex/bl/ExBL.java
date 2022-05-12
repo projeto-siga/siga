@@ -3185,8 +3185,7 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
-			if (podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante) 
-					&& doc.paiPossuiMovsVinculacaoPapelCossigRespAssinatura() && doc.isFinalizado() && possuiInclusaoCossigRespAss(doc)) {
+			if (podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante) && doc.isFinalizado() && possuiInclusaoCossigRespAss(doc)) {
 				incluirDnmAcessoTempArvoreDocsCossigRespAss(cadastrante, lotaCadastrante, doc, doc.getTodosOsPaisDasViasCossigRespAss());
 			}
 
@@ -4039,7 +4038,7 @@ public class ExBL extends CpBL {
 		Date dt = ExDao.getInstance().dt();
 		//obter lista cossig/resp ass diferente do user cadastrante doc origem
 		List<DpPessoa> listaCossigDoc = docOrigem.getListaCossigRespAssDiffCadastranteDoc();
-		ExPapel exPapel = dao().consultar(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, ExPapel.class, false);
+		ExPapel exPapel = dao().consultar(ExPapel.PAPEL_AUTORIZADO, ExPapel.class, false);
 
 		for(ExDocumento docPai : listaViasDocPai) {
 			for (DpPessoa dpPessoaResp : listaCossigDoc) {
@@ -4092,7 +4091,7 @@ public class ExBL extends CpBL {
 				for (DpPessoa subscritor : listaSubscritor) {
 					descrMov.append(subscritor.getDescricaoIniciaisMaiusculas()).append(" - DOC ORIGEM:").append(codDocOrigem);
 					List<ExMovimentacao> movsPersist = getMovsCossigRespAssPorDocOrigem(movsCossigResp, subscritor, docOrigem.getMobilGeral());
-					removerPapel(docPai, movsPersist, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, descrMov.toString());
+					removerPapel(docPai, movsPersist, ExPapel.PAPEL_AUTORIZADO, cadastrante, descrMov.toString());
 				}
 			}
 		}
@@ -4107,7 +4106,7 @@ public class ExBL extends CpBL {
 		
 		if (!viasDocPai.isEmpty() && movsCossigResp.iterator().hasNext()) {
 			Date dt = ExDao.getInstance().dt();
-			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, ExPapel.class, false);
+			ExPapel exPapel = dao().consultar(ExPapel.PAPEL_AUTORIZADO, ExPapel.class, false);
 			for (ExMovimentacao movCossig : movsCossigResp) {
 				DpPessoa subscritorTemp = movCossig.getSubscritor();
 				ExMobil mobRefMov = movCossig.getExMobilRef();
@@ -4120,7 +4119,7 @@ public class ExBL extends CpBL {
 															Arrays.asList(movCossig), subscritorTemp, mobRefMov);
 				for (ExDocumento docVia : viasDocPai) {
 					//Remove papel do docAtual
-					removerPapel(docAtual, movsPersist, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, descrMovRemocao.toString());
+					removerPapel(docAtual, movsPersist, ExPapel.PAPEL_AUTORIZADO, cadastrante, descrMovRemocao.toString());
 					//Inclui papel das vias do novo docPai
 					vincularPapel(cadastrante, lotaCadastrante, docVia.getMobilGeral(), dt,
 												subscritorTemp.getLotacao(), subscritorTemp, null, null,
@@ -4141,7 +4140,7 @@ public class ExBL extends CpBL {
 				//Obtem Movs Cossig/Resp Ass validos para Desentranhamento/Desfazer Juntada
 				List<ExMovimentacao> movsCossigResp = obterMovsCossigRespAssValidosDesentrDesfJuntada(mob, movsPaiTemp);
 				Date dt = ExDao.getInstance().dt();
-				ExPapel exPapel = dao().consultar(ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, ExPapel.class, false);
+				ExPapel exPapel = dao().consultar(ExPapel.PAPEL_AUTORIZADO, ExPapel.class, false);
 				for (ExMovimentacao movCossig : movsCossigResp) {
 					DpPessoa subscritorTemp = movCossig.getSubscritor();
 					ExMobil mobRefMov = movCossig.getExMobilRef();
@@ -4154,7 +4153,7 @@ public class ExBL extends CpBL {
 																Arrays.asList(movCossig), subscritorTemp, mobRefMov);
 					for (ExDocumento docVia : viasDocPai) {
 						//Remove papel das vias do docPai
-						removerPapel(docVia, movsPersist, ExPapel.PAPEL_COSSIGNATARIO_RESP_ASSINATURA, cadastrante, descrMovRemocao);
+						removerPapel(docVia, movsPersist, ExPapel.PAPEL_AUTORIZADO, cadastrante, descrMovRemocao);
 						//Inclui papel das vias do novo docPai
 						vincularPapel(cadastrante, lotaCadastrante, docAtual.getMobilGeral(), dt,
 													subscritorTemp.getLotacao(), subscritorTemp, null, null,

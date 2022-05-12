@@ -2926,12 +2926,17 @@ public class CpDao extends ModeloDao {
 		Predicate predicateEqualNome = criteriaBuilder.equal(cpMarcadorRoot.get("descrMarcador"), nome);
 		Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
 
-		Predicate predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
-				criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
-				criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
-		
-		Predicate predicateAnd = criteriaBuilder.and(predicateEqualNome, 
-				predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		Predicate predicateAnd;
+		Predicate predicateGeralOuLotacaoEspecifica = null;
+		if (lota != null) { 
+			predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
+					criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
+					criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, 
+					predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		} else {
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, predicateNullHisDtFim);
+		}
 		criteriaQuery.where(predicateAnd);
 		
 		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("idFinalidade"))); 

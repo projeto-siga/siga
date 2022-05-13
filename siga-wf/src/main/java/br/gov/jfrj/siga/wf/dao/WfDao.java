@@ -237,6 +237,17 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		return l;
 	}
 
+	public List<WfProcedimento> consultarProcedimentosAtivosPorDiagrama(WfDefinicaoDeProcedimento pd) {
+		String sql = "select p from WfProcedimento p join p.definicaoDeProcedimento pd where pd.hisIdIni = :idIni and p.status not in ('FINISHED', 'INACTIVE')";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idIni", pd.getHisIdIni());
+		List<WfProcedimento> result = query.getResultList();
+		List<WfProcedimento> l = new ArrayList<>();
+		result.stream().forEach(i -> l.add(i));
+		l.sort(null);
+		return l;
+	}
+
 	public List<WfResponsavel> consultarResponsaveisPorDefinicaoDeResponsavel(WfDefinicaoDeResponsavel dr) {
 		String sql = "from WfResponsavel o where o.definicaoDeResponsavel.hisIdIni = :idIni and o.hisDtFim is null";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);

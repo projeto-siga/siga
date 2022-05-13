@@ -160,7 +160,7 @@ public class Texto {
 	}
 	
 	public static String extrai(final String sSource, final String sBegin,
-			final String sEnd) throws UnsupportedEncodingException {
+			final String sEnd) {
 		final Integer iBegin = sSource.indexOf(sBegin);
 		final Integer iEnd = sSource.indexOf(sEnd);
 

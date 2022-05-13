@@ -618,6 +618,12 @@ public class FuncoesEL {
 		return string1.replaceAll("/", "/<br>");
 	}
 
+	public static String formatarMemo(String frase) {
+		if (frase == null || frase.trim().isEmpty())
+			return "";
+		return frase.replaceAll("\n", "<br/>");
+	}
+
 	public static String stringParaMinusculaNomes(String string) {
 		String strSplit[] = string.split(" ");
 		String stringFinal = "";

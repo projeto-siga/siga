@@ -278,7 +278,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	@Override
 	public String getAfter() {
 		if (isUltimo())
-			return null;
+			return "finish";
 		if (getSeguinte() != null)
 			return getSeguinte().getIdentifier();
 		if (getDefinicaoDeProcedimento().getDefinicaoDeTarefa().size() > getOrdem() + 1)

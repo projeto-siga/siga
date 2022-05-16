@@ -1795,7 +1795,7 @@ public class ExRelatorioController extends ExController {
 		
 		if (StringUtils.isBlank(idTipoSaida ) ) {
 			
-			throw new AplicacaoException( "Selecione o tipo de saida desejado :PDF ou EXCEL");
+			throw new AplicacaoException( "Selecione o tipo de saida desejado :PDF, EXCEL ou CSV");
 		}
 	
 		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
@@ -1815,14 +1815,14 @@ public class ExRelatorioController extends ExController {
 
 		String nomeArquivoSaida = 	"RelPermanenciaSetorAssunto_"+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		
+		
 		if (Integer.valueOf(idTipoSaida) == 1){ 
 			rel.gerar();
-
 			inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
 			return new InputStreamDownload(inputStream, APPLICATION_PDF,	nomeArquivoSaida +".pdf");
 
 		} else if (Integer.valueOf(idTipoSaida) == 2){ 
-
+			rel.gerar();
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
 			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
 

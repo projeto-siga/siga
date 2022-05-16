@@ -1821,19 +1821,15 @@ public class ExRelatorioController extends ExController {
 			inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
 			return new InputStreamDownload(inputStream, APPLICATION_PDF,	nomeArquivoSaida +".pdf");
 
-//		} else if (Integer.valueOf(idTipoSaida) == 2){ 
-//
-//			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
-//			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
+		} else if (Integer.valueOf(idTipoSaida) == 2){ 
+
+			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
+			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
 
 		} else {
 			  
-			byte[] csv =rel.gerarRelatorioCSV();
-			
-			inputStream   = new ByteArrayInputStream(	csv );
-			 
-		    return  new InputStreamDownload(inputStream, "application/octet-stream",nomeArquivoSaida +".csv", true, csv.length);
-  
+			inputStream = new ByteArrayInputStream( rel.gerarRelatorioCSV() );
+			return new InputStreamDownload(inputStream, "text/csv",  nomeArquivoSaida +".csv" );
 		}
 }
 	private Date parseDate(String parameter) throws AplicacaoException {

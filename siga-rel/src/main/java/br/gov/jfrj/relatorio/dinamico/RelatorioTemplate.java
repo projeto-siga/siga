@@ -18,8 +18,10 @@
  ******************************************************************************/
 package br.gov.jfrj.relatorio.dinamico;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Collections;
@@ -339,22 +341,8 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
    public byte[]  gerarRelatorioCSV() throws IOException { 
 		
 	   String dados = processarDadosCSV();
-	  return  dados.getBytes();
 	   
-//	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//	  
-//	   ObjectOutputStream oos;
-//		try {
-//			oos = new ObjectOutputStream(baos);
-//			oos.writeObject(dados);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		// Convert to Byte Array
-//		 return  baos.toByteArray();
-	   
-	   
-		 
+	   return dados.getBytes("ISO-8859-1");
 	}
 	
 }

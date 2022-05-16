@@ -2476,6 +2476,13 @@ Pede deferimento.</span><br/><br/><br/>
                 ${(doc.subscritor.cargo.nomeCargo)!}
             [/#if]
         [/#if]
+        
+		<br>
+        [#if (doc.titular.matricula)??]
+        	${(doc.titular.matricula)!}
+        [#else]
+                ${(doc.subscritor.matricula)!}
+        [/#if]
          
         [#if formatarOrgao]
             <br>
@@ -2484,7 +2491,9 @@ Pede deferimento.</span><br/><br/><br/>
             [#else]
                 ${(doc.titular.lotacao.nomeLotacao)!}
             [/#if]
+            
         [/#if]
+        
         [#if (doc.subscritor)??]
             [@fimSubscritor]${(doc.subscritor.idPessoa)}[/@fimSubscritor]
         [/#if]
@@ -2514,6 +2523,15 @@ Pede deferimento.</span><br/><br/><br/>
                         [#else]
                             ${(mov.subscritor.cargo.nomeCargo)!}
                         [/#if]
+                        
+                        <br>
+                            
+				        [#if (mov.titular.matricula)??]
+				        	${(mov.titular.matricula)!}
+				        [#else]
+				                ${(mov.subscritor.matricula)!}
+				        [/#if]
+				        
                         [#if formatarOrgao]
                             <br>
                             [#if mov.nmLotacao??]
@@ -2522,6 +2540,8 @@ Pede deferimento.</span><br/><br/><br/>
                                 ${mov.titular.lotacao.nomeLotacao}
                             [/#if]
                         [/#if]
+
+                     
                         [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
             [/#if]
         [/#list]

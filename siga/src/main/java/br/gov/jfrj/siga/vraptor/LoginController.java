@@ -156,7 +156,7 @@ public class LoginController extends SigaController {
 			
  
 			if (!isCaptchaValido()) {
-				throw new RuntimeException("O campo Verificação deve ser respondido");
+				throw new RuntimeException("O campo Verificação deve ser preenchido");
 			}
   
 			

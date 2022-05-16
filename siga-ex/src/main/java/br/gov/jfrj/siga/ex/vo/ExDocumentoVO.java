@@ -36,6 +36,7 @@ import com.crivano.jlogic.And;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.logic.CpPodeBoolean;
 import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
@@ -140,6 +141,7 @@ public class ExDocumentoVO extends ExVO {
 	String nmArqMod;
 	String conteudoBlobHtmlString;
 	String conteudoBlobFormString;
+	Map<String, String> form;
 	String sigla;
 	String codigoUnico;
 	String fisicoOuEletronico;
@@ -273,9 +275,13 @@ public class ExDocumentoVO extends ExVO {
 		this.conteudoBlobHtmlString = doc
 				.getConteudoBlobHtmlStringComReferencias();
 
-		byte[] form = doc.getConteudoBlobForm();
-		if (form != null)
-			this.conteudoBlobFormString = new String(form, StandardCharsets.ISO_8859_1);
+		byte[] conteudoBlobForm = doc.getConteudoBlobForm();
+		if (conteudoBlobForm != null) {
+			Map<String, String> map = new HashMap<>();
+			this.conteudoBlobFormString = new String(conteudoBlobForm, StandardCharsets.ISO_8859_1);
+			Utils.mapFromUrlEncodedForm(map, conteudoBlobForm);
+			this.form = map;
+		}
 		
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";

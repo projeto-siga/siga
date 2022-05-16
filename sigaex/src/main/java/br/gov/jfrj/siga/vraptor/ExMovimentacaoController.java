@@ -2861,7 +2861,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("mov", mov);
 		result.include("itens", arrays);
-		result.include("lotaTitular", mov.getLotaTitular());
+		result.include("lotaTitular", getLotaTitular());
 //		result.include("dtMovString", dtMovString);
 //		result.include("subscritorSel", subscritorSel);
 //		result.include("titularSel", titularSel);

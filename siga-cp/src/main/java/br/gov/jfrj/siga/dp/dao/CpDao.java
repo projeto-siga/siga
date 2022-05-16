@@ -24,6 +24,7 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2779,6 +2780,21 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+
+	public Integer consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(Long idLotacao) {
+		try {
+			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacaoECpMarca");
+			sql.setParameter("idLotacao", idLotacao);
+			sql.setParameter("listMarcadores", Arrays.asList(
+					CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId(),
+					CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()));
+			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 	
 	public CpToken obterCpTokenPorTipoToken(final Long idTpToken, final String token) {
 		
@@ -2926,12 +2942,17 @@ public class CpDao extends ModeloDao {
 		Predicate predicateEqualNome = criteriaBuilder.equal(cpMarcadorRoot.get("descrMarcador"), nome);
 		Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
 
-		Predicate predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
-				criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
-				criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
-		
-		Predicate predicateAnd = criteriaBuilder.and(predicateEqualNome, 
-				predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		Predicate predicateAnd;
+		Predicate predicateGeralOuLotacaoEspecifica = null;
+		if (lota != null) { 
+			predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
+					criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
+					criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, 
+					predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		} else {
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, predicateNullHisDtFim);
+		}
 		criteriaQuery.where(predicateAnd);
 		
 		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("idFinalidade"))); 

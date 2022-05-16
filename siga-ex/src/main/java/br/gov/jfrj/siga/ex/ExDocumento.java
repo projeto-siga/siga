@@ -3180,4 +3180,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return new ExRef(this);
 	}
 
+	public String fragmento(String nome) {
+		return Texto.extrai(getHtml(), "<!-- fragmento:" + nome + " -->", "<!-- /fragmento:" + nome + " -->");
+	}
 }

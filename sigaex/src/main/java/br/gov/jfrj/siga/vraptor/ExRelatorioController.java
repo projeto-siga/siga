@@ -57,6 +57,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
@@ -125,6 +126,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
 	private static final String APPLICATION_PDF = "application/pdf";
 	private static final String APPLICATION_EXCEL = "application/vnd.ms-excel"; 
+	private static final String APPLICATION_CSV = "text/csv"; 
 	
 	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
 
@@ -1793,7 +1795,7 @@ public class ExRelatorioController extends ExController {
 		
 		if (StringUtils.isBlank(idTipoSaida ) ) {
 			
-			throw new AplicacaoException( "Selecione o tipo de saida desejado :PDF ou EXCEL");
+			throw new AplicacaoException( "Selecione o tipo de saida desejado :PDF, EXCEL ou CSV");
 		}
 	
 		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
@@ -1808,23 +1810,27 @@ public class ExRelatorioController extends ExController {
 
 		final RelPermanenciaSetorAssunto rel = new RelPermanenciaSetorAssunto(parametros);
 		
-		rel.gerar();
 		
 		InputStream inputStream   =null; 
 
 		String nomeArquivoSaida = 	"RelPermanenciaSetorAssunto_"+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		
+		
 		if (Integer.valueOf(idTipoSaida) == 1){ 
-
+			rel.gerar();
 			inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
 			return new InputStreamDownload(inputStream, APPLICATION_PDF,	nomeArquivoSaida +".pdf");
-		} else {
-			
+
+		} else if (Integer.valueOf(idTipoSaida) == 2){ 
+			rel.gerar();
 			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
 			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
-		}
 
-		
+		} else {
+			  
+			inputStream = new ByteArrayInputStream( rel.gerarRelatorioCSV() );
+			return new InputStreamDownload(inputStream, "text/csv",  nomeArquivoSaida +".csv" );
+		}
 }
 	private Date parseDate(String parameter) throws AplicacaoException {
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");

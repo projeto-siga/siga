@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 
@@ -14,6 +15,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import net.sf.jasperreports.engine.JRException;
 
@@ -96,7 +98,16 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		return this;
 
 	}
+	
+	
 
+//	@Override
+//	public byte[] getRelatorioCSV() throws JRException, IOException {
+//		// TODO Auto-generated method stub
+//		return super.getRelatorioCSV();
+//	}
+
+	 
 	private String montarConsulta() {
 
 		String sql = "SELECT X1.NUM_PROCESSO, X1.DATA_DESPACHO, X1.COD_DESPACHO, X1.DESCR_DESPACHO, X1.ID_CLASSIFICACAO, "
@@ -139,8 +150,8 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 						+ "			ON (m.id_mobil = mb.id_mobil) "
 						+ "		INNER JOIN siga.ex_tipo_movimentacao tm "
 						+ "			ON (tm.id_tp_mov = m.id_tp_mov) "
-						+ "		INNER JOIN siga.ex_classificacao c "
-						+ "			ON (c.id_classificacao = d.id_classificacao) "
+//						+ "		INNER JOIN siga.ex_classificacao c "
+//						+ "			ON (c.id_classificacao = d.id_classificacao) "
 						+ "		INNER JOIN corporativo.dp_lotacao l "
 						+ "			ON (d.id_lota_cadastrante = l.id_lotacao) "
 						+ "		INNER JOIN corporativo.cp_orgao_usuario u"
@@ -163,8 +174,8 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 						+ "			ON (m.id_mobil = mb.id_mobil) "
 						+ "		INNER JOIN siga.ex_tipo_movimentacao tm "
 						+ "			ON (tm.id_tp_mov = m.id_tp_mov) "
-						+ "		INNER JOIN siga.ex_classificacao c "
-						+ "			ON (c.id_classificacao = d.id_classificacao) "
+//						+ "		INNER JOIN siga.ex_classificacao c "
+//						+ "			ON (c.id_classificacao = d.id_classificacao) "
 						+ "		INNER JOIN corporativo.dp_lotacao l "
 						+ "			ON (d.id_lota_cadastrante = l.id_lotacao) "
 						+ "		INNER JOIN corporativo.cp_orgao_usuario u "
@@ -184,24 +195,91 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		return sql;
 	}
 
+	public  String  processarDadosCSV(){
+		
+		List<Object[]> lista = consultar();
+		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		StringBuffer sb = new StringBuffer();
+				
+		sb.append(configurarRelatorioCSV());
+		
+		for (Object[] array : lista) { 
+			
+			//codigo assunto - classificacao
+			sb.append( String.valueOf( array[5] ) );//COD. ASSUNTO  + DESCR. ASSUNTO
+			sb.append(";");
+			// descricao assunto - classificacao
+			sb.append(  String.valueOf( array[6] ));//COD. ASSUNTO  + DESCR. ASSUNTO
+			sb.append(";");
+			// codigo orgao destino
+			sb.append( array[9]  != null ?  String.valueOf( array[9]   ):"");
+			sb.append(";");
+			// nome orgao destino 
+			sb.append( array[9]  != null ? String.valueOf( array[10]  ):"");
+			sb.append(";");
+			// numero
+			sb.append(String.valueOf( array[0] ));//NUM. PROCESSO
+			sb.append(";");
+			// data movimento
+			sb.append ( String.valueOf(formatter.format( array[1] )));//DATA DESPACHO
+			sb.append(";");
+			//codigo movimento
+			sb.append( String.valueOf( array[2] )  ); 
+			sb.append(";");
+			// movimento
+			sb.append( String.valueOf( array[3] )); 
+			sb.append(";");
+			// codigo do orgao origem
+			sb.append(	array[7] != null ? String.valueOf( array[7] )  : ""		);
+			sb.append(";");
+			// descricao do orgao origem
+			sb.append(	array[7] != null ? String.valueOf( array[8] ) : ""		);
+			sb.append(";");
+			// digitador
+			sb.append( String.valueOf( array[11]));
+			sb.append(";");
+			// dias
+			sb.append(String.valueOf( array[12]));
+				
+			sb.append(";");
+			sb.append(System.lineSeparator());
+		}
+			
+		return Texto.removeAcento( sb.toString() );
+	}
+	
+
+	@Override
+	public String configurarRelatorioCSV() {
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("COD_ASSUNTO") .append(";");
+		sb.append("DESCR_ASSUNTO") .append(";");
+		sb.append("COD_ORGAO_DESTINO") .append(";");
+		sb.append("NOME_ORGAO_DESTINO") .append(";");
+		sb.append("NUMERO") .append(";");
+		sb.append("DATA_MOVIMENTO") .append(";");
+		sb.append("COD_MOVIMENTO") .append(";");
+		sb.append("DESCR_MOVIMENTO") .append(";");
+		
+		sb.append("COD_ORGAO_ORIGEM") .append(";"); 
+		sb.append("NOME_ORGAO_ORIGEM") .append(";"); 
+		sb.append("DIGITADOR") .append(";");
+		sb.append("DIAS") .append(";");
+		
+		sb.append(System.lineSeparator());
+		return sb.toString();
+	}
 	
 	@Override
 	public Collection processarDados() throws Exception {
- 		
+
+		List<Object[]> lista = consultar();
+		
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-		List<String> d = new ArrayList<String>();
-
-		Query query = ContextoPersistencia.em().createNativeQuery( montarConsulta() );
-		
-		query.setParameter("assuntos", listaAssunto);
-		
-		query.setParameter("setoresSubordinados",listaSetoreSubordinado);
-		
-		query.setParameter("idTipoFormaDoc",idTipoFormaDoc);
-		
-		List<Object[]> lista = query.getResultList();
-		
 		List<String> listaFinal = new ArrayList<String>();
 
 		for (Object[] array : lista) {
@@ -223,6 +301,20 @@ public class RelPermanenciaSetorAssunto extends RelatorioTemplate {
 		}
 		
 		return listaFinal;
+	}
+
+	private List<Object[]> consultar() {
+		Query query = ContextoPersistencia.em().createNativeQuery( montarConsulta() );
+		
+		query.setParameter("assuntos", listaAssunto);
+		
+		query.setParameter("setoresSubordinados",listaSetoreSubordinado);
+		
+		query.setParameter("idTipoFormaDoc",idTipoFormaDoc);
+		
+		List<Object[]> lista = query.getResultList();
+		
+		return lista;
 	}
 	
 	 	private void acrescentarColuna(List<String> d, Map<String, Long> map,

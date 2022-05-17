@@ -13,7 +13,7 @@ import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
-	private static final String HQL = "select doc.idDoc from ExDocumento doc where (doc.dtFinalizacao != null) and (doc.idDoc > :id) order by doc.idDoc";
+	private static final String HQL = "select doc.idDoc from ExDocumento doc where (doc.dtFinalizacao != null and doc.dtPrimeiraAssinatura != null) and (doc.idDoc > :id) order by doc.idDoc";
 
 	@Override
 	@SuppressWarnings("unchecked")

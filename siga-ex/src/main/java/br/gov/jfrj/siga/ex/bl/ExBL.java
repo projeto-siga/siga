@@ -3080,7 +3080,9 @@ public class ExBL extends CpBL {
 				
 				SicopService sicopService = new SicopService();
 				
-				String numeroProcessoSicop =sicopService.incluirProcesso(doc.getSigla(),assuntoSicop);
+				String siglaDocumento  = doc.getPai() != null ? doc.getPai().getSigla(): doc.getSigla();
+				
+				String numeroProcessoSicop =sicopService.incluirProcesso(siglaDocumento,assuntoSicop);
 				
 				doc.setNumExtDoc( numeroProcessoSicop  );
 				

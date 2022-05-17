@@ -822,6 +822,9 @@ public class ExDocumentoController extends ExController {
 			// System.out.println("*** " + p + ", "
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
+		
+		final boolean podeExibirArvoreDocsCossig = Ex.getInstance().getBL().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
+		
 		result.include("vars", l);
 
 		result.include("par", parFreeMarker);
@@ -845,6 +848,8 @@ public class ExDocumentoController extends ExController {
 		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		result.include("idMod", exDocumentoDTO.getIdMod());
+		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
+		result.include("podeExibirArvoreDocsCossig", podeExibirArvoreDocsCossig);
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");

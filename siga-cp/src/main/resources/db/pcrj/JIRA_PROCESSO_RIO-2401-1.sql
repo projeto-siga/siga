@@ -11,16 +11,15 @@ INSERT INTO dp_substituicao (
     tp_substituicao,
     ID_REG_INI
 ) VALUES (
-    1618,
+    1694,       --  select max(id_substituicao) from corporativo.dp_substituicao; -- último id da corporativo.dp_substituicao;
+    NULL,       -- não usado, já que o titular é um setor e não uma pessoa
+    '9484',     --  id da lotação SELECT * FROM corporativo.DP_LOTACAO WHERE SIGLA_LOTACAO='51973';
+    '7388094',  -- id da pessoa  SELECT * FROM corporativo.DP_PESSOA WHERE NOME_PESSOA LIKE '%LUCAS PAULO DE ALMEIDA COSTA%' and data_fim_pessoa is null;
+    27481,      -- ID DA LOTACAO SELECT ID_LOTACAO FROM corporativo.DP_PESSOA WHERE NOME_PESSOA LIKE '%LUCAS PAULO DE ALMEIDA COSTA%' and data_fim_pessoa is null; 
+    timestamp '2022-05-17 00:00:00.000', 
+    timestamp '2024-05-16 00:00:00.000',
+    timestamp '2022-05-17 00:00:00.000',
     NULL,
-    '9484',
-    '6878968',
-    27481,
-     timestamp '2022-05-13 00:00:00.000', 
-     timestamp '2024-05-12 00:00:00.000',
-     timestamp '2022-05-13 00:00:00.000',
     NULL,
-    NULL,
-    1618
+    1694            --  select max(id_substituicao) from corporativo.dp_substituicao; -- último id da corporativo.dp_substituicao;
 );
-commit;

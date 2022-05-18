@@ -903,31 +903,36 @@
 	
 	<script type="text/javascript">
 		function validarCpf(elemento) {
-			if (!isCpfValido(elemento.value)) {
-				alert("Favor informar um CPF válido");
-				var onblurevent = elemento.onblur;
-				elemento.onblur = '';
-				setTimeout(function() {
-					document.getElementById("cpfRequerente").value = '';
-					elemento.onblur = onblurevent;
-				},0);
-				return false;
-			}
-			formataCPF(elemento);
+		 	if (elemento.value.trim() !== ''){
+		 		 
+				if (!isCpfValido(elemento.value)) {
+					alert("Favor informar um CPF válido");
+					var onblurevent = elemento.onblur;
+					elemento.onblur = '';
+					setTimeout(function() {
+						document.getElementById("cpfRequerente").value = '';
+						elemento.onblur = onblurevent;
+					},0);
+					return false;
+				}
+				formataCPF(elemento);
+			 }	
 		}
 
 		function validarCnpj(elemento) {
-			if (!isCnpjValido(elemento.value)) {
-				alert("Favor informar um CNPJ válido");
-				var onblurevent = elemento.onblur;
-				elemento.onblur = '';
-				setTimeout(function() {
-					document.getElementById("cnpjRequerente").value = '';
-					elemento.onblur = onblurevent;
-				},0);
-				return false;
-			}
-			formataCNPJ(elemento);		
+			 if (elemento.value.trim() !== ''){	
+				if (!isCnpjValido(elemento.value)) {
+					alert("Favor informar um CNPJ válido");
+					var onblurevent = elemento.onblur;
+					elemento.onblur = '';
+					setTimeout(function() {
+						document.getElementById("cnpjRequerente").value = '';
+						elemento.onblur = onblurevent;
+					},0);
+					return false;
+				}
+				formataCNPJ(elemento);		
+			 }
 		}
 
 		function formataCPF(cpf) {

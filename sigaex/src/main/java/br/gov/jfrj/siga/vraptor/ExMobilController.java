@@ -143,7 +143,7 @@ public class ExMobilController extends
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText, final Long ultMovEstadoDoc,
 			final Integer offset, 
-			final String nomeRequerente,final Long cpfRequerente,final Long cnpjRequerente,
+			final String nomeRequerente,final String cpfRequerente,final String cnpjRequerente,
 			final Long matriculaRequerente,final String bairroRequerente,final String cidadeRequerente, final String logradouroRequerente,
 			final String tipoLogradouroRequerente, final String numeroLogradouroRequerente, final String complementoLogradouroRequerente,
 			final String ufRequerente, final String cepRequerente
@@ -290,7 +290,7 @@ public class ExMobilController extends
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset, 
-			final String nomeRequerente, final Long cpfRequerente,final Long cnpjRequerente,
+			final String nomeRequerente, final String cpfRequerente,final String cnpjRequerente,
 			final Long matriculaRequerente,final String bairroRequerente,final String cidadeRequerente,
 			final String logradouroRequerente,
 			final String tipoLogradouroRequerente, final String numeroLogradouroRequerente, final String complementoLogradouroRequerente,
@@ -475,7 +475,7 @@ public class ExMobilController extends
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset,
-			final String nomeRequerente, final Long cpfRequerente,final Long cnpjRequerente,
+			final String nomeRequerente, final String cpfRequerente,final String cnpjRequerente,
 			final Long matriculaRequerente,final String bairroRequerente,final String cidadeRequerente,
 			final String logradouroRequerente,	
 			final String tipoLogradouroRequerente, final String numeroLogradouroRequerente, final String complementoLogradouroRequerente,
@@ -828,8 +828,10 @@ public class ExMobilController extends
 
 		// interessado
 		flt.setNomeRequerente(param("nomeRequerente"));
-		flt.setCpfRequerente(paramLong("cpfRequerente"));
-		flt.setCnpjRequerente(paramLong("cnpjRequerente"));
+		 
+		
+		flt.setCpfRequerente( 	StringUtils.isNotBlank(param("cpfRequerente")) ?  	Long.valueOf( param("cpfRequerente").replaceAll("[^0-9]", "") ) : null 		);
+		flt.setCnpjRequerente( 	StringUtils.isNotBlank(param("cnpjRequerente")) ?  	Long.valueOf( param("cnpjRequerente").replaceAll("[^0-9]", "") ) : null 		);
 		flt.setMatriculaRequerente(paramLong("matriculaRequerente"));
 		flt.setTipoLogradouroRequerente(param("tipoLogradouroRequerente"));
 		flt.setLogradouroRequerente(param("logradouroRequerente"));

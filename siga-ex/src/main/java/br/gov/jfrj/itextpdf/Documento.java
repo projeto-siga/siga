@@ -406,11 +406,16 @@ public class Documento {
 
 		int f = 0;
 		long bytes = 0;
+		long garbage = 0;
+		int ansSize = ans.size();
 		try {
-			for (ExArquivoNumerado an : ans) {
+			while (ans.size() > 0) {
+				ExArquivoNumerado an = ans.get(0);
+				ans.remove(0);
+				
 				if (uuid != null)
-					status = Status.update(uuid, "Agregando documento " + (f + 1) + "/" + ans.size(),
-							f * 2 + 1, ans.size() * 2 + 1, bytes);
+					status = Status.update(uuid, "Agregando documento " + (f + 1) + "/" + ansSize,
+							f * 2 + 1, ansSize * 2 + 1, bytes);
 
 				// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
 				// an
@@ -508,6 +513,14 @@ public class Documento {
 
 				pageOffset += n;
 				f++;
+				an.evict();
+				an = null;
+				
+				garbage += ab.length;
+				if (garbage > 1000000) {
+					garbage = 0;
+					System.gc();
+				}
 			}
 			if (!master.isEmpty())
 				writer.setOutlines(master);
@@ -520,7 +533,7 @@ public class Documento {
 			document.close();
 
 			if (uuid != null)
-				status = Status.update(uuid, "PDF completo gerado", ans.size() * 2 + 1, ans.size() * 2 + 1,
+				status = Status.update(uuid, "PDF completo gerado", ansSize * 2 + 1, ansSize * 2 + 1,
 					bytes);
 
 		} catch (Exception ex) {
@@ -590,11 +603,16 @@ public class Documento {
 					+ (mob.getDoc().isEletronico() ? "#E2EAEE" : "#f1e9c6")
 					+ ";overflow:visible;\">");
 			int f = 0;
-			for (ExArquivoNumerado an : ans) {
+			int garbage = 0;
+			int ansSize = ans.size();
+			while (ans.size() > 0) {
+				ExArquivoNumerado an = ans.get(0);
+				ans.remove(0);
+				
 				String numeracao = null;
 				if (uuid != null)
-					status = Status.update(uuid, "Agregando documento " + (f + 1) + "/" + ans.size(),
-							f * 2 + 1, ans.size() * 2 + 1, 0L);
+					status = Status.update(uuid, "Agregando documento " + (f + 1) + "/" + ansSize,
+							f * 2 + 1, ansSize * 2 + 1, 0L);
 			// if (fFirst)
 				// fFirst = false;
 				// else
@@ -657,11 +675,19 @@ public class Documento {
 				}
 				sb.append("</td></tr></table></div>");
 				f++;
+				an.evict();
+				an = null;
+				
+				garbage += 1;
+				if (garbage > 20) {
+					garbage = 0;
+					System.gc();
+				}
 			}
 			sb.append("</body></html>");
 			
 			if (uuid != null)
-				status = Status.update(uuid, "PDF completo gerado", ans.size() * 2 + 1, ans.size() * 2 + 1, 0L);
+				status = Status.update(uuid, "HTML completo gerado", ansSize * 2 + 1, ansSize * 2 + 1, 0L);
 		}
 	}
 

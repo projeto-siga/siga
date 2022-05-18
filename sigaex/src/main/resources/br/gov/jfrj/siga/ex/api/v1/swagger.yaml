@@ -2477,7 +2477,29 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-
+  
+  /processos/{sigla}:
+    get:
+      description: Obtém o link de acesso ao processo
+      tags: [ consulta ]
+      security:
+        - Bearer: [ ]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              link:
+                description: Link de acesso ao processo
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+    
   /numeracao-expediente:
     post:
       description: Utilize este método para gerar numeração de expediente.

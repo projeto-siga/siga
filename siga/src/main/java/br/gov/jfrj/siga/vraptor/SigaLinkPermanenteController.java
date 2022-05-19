@@ -128,8 +128,7 @@ public class SigaLinkPermanenteController extends SigaController {
 		}
 		
 		
-		CpToken cpToken = new CpToken();
-		cpToken = dao().obterCpTokenPorTipoToken(Long.valueOf(tipoLink), token);
+		CpToken cpToken = dao().obterCpTokenPorTipoToken(Long.valueOf(tipoLink), token);
 		if (cpToken != null) {
 			if ("1".equals(tipoLink)) {
 				ExService exService = Service.getExService();

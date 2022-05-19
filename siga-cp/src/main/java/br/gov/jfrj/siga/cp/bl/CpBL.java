@@ -1566,11 +1566,21 @@ public class CpBL {
 				
 				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
 				sigaUrlPermanente.setIdRef(idRef);
+				
+				Date dt = dao().consultarDataEHoraDoServidor();
+				Calendar c = Calendar.getInstance();
+				c.setTime(dt);
+				c.add(Calendar.YEAR, 1);
+				
+				sigaUrlPermanente.setDtIat(dt);
+				sigaUrlPermanente.setDtExp(c.getTime());
 
 				try {
+					dao().iniciarTransacao();
 					dao().gravar(sigaUrlPermanente);
+					dao().commitTransacao();
 				} catch (final Exception e) {
-	
+					dao().rollbackTransacao();
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			} 

@@ -2478,10 +2478,10 @@ paths:
           schema:
             $ref: "#/definitions/Error"
   
-  /processos/{sigla}:
-    get:
-      description: Obtém o link de acesso ao processo
-      tags: [ consulta ]
+  /processos/{sigla}/gerar-link:
+    post:
+      description: Gera o link de acesso ao processo
+      tags: [ acao ]
       security:
         - Bearer: [ ]
       parameters:

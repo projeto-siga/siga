@@ -1489,7 +1489,7 @@ public interface IExApiV1 {
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
 
-	public interface IProcessosSiglaGet extends ISwaggerMethod {
+	public interface IProcessosSiglaGerarLinkPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String sigla;
 		}

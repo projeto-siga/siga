@@ -107,7 +107,7 @@ public class ExMobilController extends
 	public ExMobilController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
-		setItemPagina(10);
+		setItemPagina(50);
 	}
 
 	@Transacional

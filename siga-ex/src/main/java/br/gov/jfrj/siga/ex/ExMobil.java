@@ -1653,7 +1653,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			if (!juntado && !juntadoAOutro)
 				meusFilhosNaoJuntados.add(docFilho);
 		}
-		if (isVolume())
+		if (!isGeral())
 			meusFilhosNaoJuntados.addAll(doc().getMobilGeral().getDocsFilhosNaoJuntados());
 		return meusFilhosNaoJuntados;
 	}

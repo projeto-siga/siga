@@ -9,6 +9,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeGerarLink;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
@@ -27,7 +28,7 @@ public class ProcessosSiglaGerarLinkPost implements IExApiV1.IProcessosSiglaGera
 
         ctx.assertAcesso(mob, titular, lotaTitular);
 
-        Ex.getInstance().getComp().afirmar("Não é possível gerar o link para o processo especificado", ExPodePublicarPortalDaTransparencia.class, cadastrante, lotaTitular, mob);
+        Ex.getInstance().getComp().afirmar("Não é possível gerar o link para o processo especificado", ExPodeGerarLink.class, cadastrante, lotaTitular, mob);
 
         ExNivelAcesso exTipoSig = ExDao.getInstance().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
 
@@ -37,9 +38,8 @@ public class ProcessosSiglaGerarLinkPost implements IExApiV1.IProcessosSiglaGera
         try {
             cpToken = Cp.getInstance().getBL().gerarUrlPermanente(doc.getIdDoc());
         } catch (Exception e) {
-            throw new RuntimeException("Ocorreu um erro ao gerar Token.", e);
+            throw new RuntimeException("Ocorreu um erro ao gerar Token de acesso público.", e);
         }
-        CpToken cpToken1 = CpDao.getInstance().obterCpTokenPorTipoToken(cpToken.getIdTpToken(), cpToken.getToken());
 
         String urlPermanente;
         if (cpToken != null) {

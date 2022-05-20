@@ -44,7 +44,7 @@ public class ExPodeSolicitarAssinatura extends CompositeExpressionSupport {
 
 				Not.of(new ExTemAssinaturaSolicitada(doc)),
 
-				Not.of(new ExTemLotaSubscritor(doc)),
+				new ExTemLotaSubscritor(doc),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(doc.getExModelo())
 						.withExFormaDoc(doc.getExFormaDocumento()).withPessoaObjeto(doc.getSubscritor())

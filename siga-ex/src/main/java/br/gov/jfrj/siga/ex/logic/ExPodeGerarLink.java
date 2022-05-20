@@ -38,7 +38,9 @@ public class ExPodeGerarLink extends CompositeExpressionSupport {
                 Not.of(new ExEstaEliminado(mob)),
 
                 Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
-
+                
+                new ExTemMovimentacaoNaoCanceladaDoTipo(mob.doc(), ExTipoDeMovimentacao.ENVIO_SIAFEM),
+                
                 new ExEstaMarcadoComMarcador(mob, ExDao.getInstance().consultar(CpMarcadorEnum.COVID_19.getId(), CpMarcador.class, false)),
 
                 new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)

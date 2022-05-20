@@ -30,7 +30,7 @@ public class ExPodeGerarLink extends CompositeExpressionSupport {
     protected Expression create() {
         return And.of(
                 new ExEProcesso(mob.doc()),
-                
+
                 new ExEstaFinalizado(mob.doc()),
 
                 Not.of(new ExEstaSemEfeito(mob.doc())),
@@ -39,7 +39,10 @@ public class ExPodeGerarLink extends CompositeExpressionSupport {
 
                 Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
 
-                new ExEstaMarcadoComMarcador(mob, ExDao.getInstance().consultar(CpMarcadorEnum.COVID_19.getId(), CpMarcador.class, false))
+                new ExEstaMarcadoComMarcador(mob, ExDao.getInstance().consultar(CpMarcadorEnum.COVID_19.getId(), CpMarcador.class, false)),
+
+                new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+                        .withExTpMov(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO)
         );
     }
 }

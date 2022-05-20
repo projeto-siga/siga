@@ -103,6 +103,7 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
+import br.gov.jfrj.siga.ex.bl.ExConsultaTempDocCompleto;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
@@ -214,6 +215,10 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		return doc;
+	}
+	
+	private ExConsultaTempDocCompleto getExConsTempDocCompleto() {
+		return ExConsultaTempDocCompleto.getInstance();
 	}
 	
 	@Get("app/expediente/mov/anexar")
@@ -1372,7 +1377,7 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 		
-		final boolean podeExibirArvoreDocsCossig = Ex.getInstance().getBL().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
+		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
 
 		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, getTitular(), getLotaTitular(), builder.getMob().doc());
 
@@ -1393,7 +1398,7 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs")
 	public void incluirExcluirDnmAcessoTempArvoreDocsCossigRespAss(final String sigla, boolean incluirCossig) {
 		
-		final boolean podeExibirArvoreDocsCossig = Ex.getInstance().getBL().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
+		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
 		if	(podeExibirArvoreDocsCossig) {	
 			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 			final ExDocumento doc = buscarDocumento(builder);
@@ -1401,9 +1406,9 @@ public class ExMovimentacaoController extends ExController {
 			List<ExMovimentacao> listaCossignatarios = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE);
 			if (!listaCossignatarios.isEmpty()) {
 				if (incluirCossig)
-					Ex.getInstance().getBL().incluirDnmAcessoTempArvoreDocsCossigRespAssFluxoTela(getCadastrante(), getLotaTitular(), doc);
+					getExConsTempDocCompleto().incluirSomenteCossigsAcessoTempArvoreDocs(getCadastrante(), getLotaTitular(), doc);
 				else
-					Ex.getInstance().getBL().removerDnmAcessoTempArvoreDocsCossigRespAssFluxoTela(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
+					getExConsTempDocCompleto().removerDnmAcessoTempArvoreDocsCossigRespAssFluxoTela(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
 			}
 		}
 		result.forwardTo(this).incluirCosignatario(sigla);

@@ -2859,7 +2859,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		List<ExMovimentacao> movs = this.getMobilGeral()
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		for (ExMovimentacao mov : movs) {
-			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_AUTORIZADO)) { 
+			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_AUTORIZADO_COSSIG)) { 
 				if (dpPessoa != null) {
 					if (mov.getSubscritor().equivale(dpPessoa) && mov.getExMobilRef().equals(mobRefMov))
 						return Boolean.TRUE;
@@ -2876,7 +2876,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		List<ExMovimentacao> movsReturn = new ArrayList<>();
 		for (ExMovimentacao mov : movs) {
-			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_AUTORIZADO)) { 
+			if (mov.getExPapel().getIdPapel().equals(ExPapel.PAPEL_AUTORIZADO_COSSIG)) { 
 				movsReturn.add(mov);
 			}
 		}

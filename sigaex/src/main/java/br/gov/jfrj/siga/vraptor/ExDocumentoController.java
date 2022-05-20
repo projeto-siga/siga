@@ -38,6 +38,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -98,6 +99,7 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.ExConsultaTempDocCompleto;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
@@ -164,6 +166,10 @@ public class ExDocumentoController extends ExController {
 		}
 
 		return doc;
+	}
+	
+	private ExConsultaTempDocCompleto getExConsTempDocCompleto() {
+		return ExConsultaTempDocCompleto.getInstance();
 	}
 
 	@Transacional
@@ -823,7 +829,7 @@ public class ExDocumentoController extends ExController {
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		
-		final boolean podeExibirArvoreDocsCossig = Ex.getInstance().getBL().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
+		final boolean podeExibirArvoreDocsSubscr = getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
 		
 		result.include("vars", l);
 
@@ -849,7 +855,7 @@ public class ExDocumentoController extends ExController {
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		result.include("idMod", exDocumentoDTO.getIdMod());
 		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
-		result.include("podeExibirArvoreDocsCossig", podeExibirArvoreDocsCossig);
+		result.include("podeExibirArvoreDocsSubscr", podeExibirArvoreDocsSubscr);
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
@@ -1806,6 +1812,17 @@ public class ExDocumentoController extends ExController {
 			/*
 			 * fim da alteracao
 			 */
+			final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
+			if	(podeExibirArvoreDocsCossig) {		
+				if (!exDocumentoDTO.getDoc().isFinalizado() 
+						&& !exDocumentoDTO.getDoc().getSubscritor().equivale(getCadastrante())) {
+					if (exDocumentoDTO.isPodeIncluirSubscrArvoreDocs()) 
+						getExConsTempDocCompleto()
+								.incluirSomenteSubscritorAcessoTempArvoreDocs(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+					else
+						getExConsTempDocCompleto().removerDnmAcessoTempArvoreDocsCossigRespAssDocTemp(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+				}
+			}
 			
 			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
 				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());

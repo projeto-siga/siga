@@ -383,16 +383,16 @@
 								</c:choose>
 							</div>
 							<c:choose>
-								<c:when test="${!ehPublicoExterno && podeExibirArvoreDocsCossig}">
+								<c:when test="${!ehPublicoExterno && podeExibirArvoreDocsSubscr}">
 									<div class="row">
 										<div class="col-sm-8 "></div>
 									    <div class="col-xs-4 "> 
 									    	<div class="form-group">
 									    		<div class="form-check form-check-inline mt-1">
-									    			<input type="checkbox" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if>/>
-													<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessar Documento Completo</label>
+									    			<input type="checkbox" name="exDocumentoDTO.podeIncluirSubscrArvoreDocs" class="form-check-input ml-3" <c:if test="${exDocumentoDTO.podeIncluirSubscrArvoreDocs}">checked</c:if>/>
+													<label class="form-check-label" for="exDocumentoDTO.podeIncluirSubscrArvoreDocs">Acessar Documento Completo</label>
 													<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
-																			title='Selecionar esse campo se houver a necessidade de permitir que o(s) cossignatário(s) acesse(m) o documento completo, enquanto o mesmo estiver pendente 
+																			title='Selecionar esse campo se houver a necessidade de permitir que o Responsável pela Assinatura acesse o documento completo, enquanto o mesmo estiver pendente 
 																					de assinatura. Atenção: Para habilitar ou desabilitar essa função, o documento deverá estar com status "Finalizado"'></a>
 									    		</div>
 									    	</div>

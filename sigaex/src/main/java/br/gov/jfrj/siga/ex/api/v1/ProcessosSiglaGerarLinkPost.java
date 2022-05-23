@@ -29,11 +29,14 @@ public class ProcessosSiglaGerarLinkPost implements IExApiV1.IProcessosSiglaGera
         ctx.assertAcesso(mob, titular, lotaTitular);
 
         Ex.getInstance().getComp().afirmar("Não é possível gerar o link para o processo especificado", ExPodeGerarLink.class, cadastrante, lotaTitular, mob);
-
+        
+        /** Redefinição do nível de acesso para público **/
         ExNivelAcesso exTipoSig = ExDao.getInstance().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
-
-        Ex.getInstance().getBL().redefinirNivelAcesso(cadastrante, lotaTitular, doc, null, lotaTitular, cadastrante, cadastrante, cadastrante, null, exTipoSig);
-
+        if (doc.getExNivelAcessoAtual() != exTipoSig) {
+            Ex.getInstance().getBL().redefinirNivelAcesso(cadastrante, lotaTitular, doc, null, lotaTitular, cadastrante, cadastrante, cadastrante, null, exTipoSig);
+        }
+        
+        /** Gerar link público **/
         CpToken cpToken;
         try {
             cpToken = Cp.getInstance().getBL().gerarUrlPermanente(doc.getIdDoc());
@@ -53,7 +56,7 @@ public class ProcessosSiglaGerarLinkPost implements IExApiV1.IProcessosSiglaGera
 
     @Override
     public String getContext() {
-        return "obter link do processo";
+        return "gerar link público do Processo";
     }
 
 

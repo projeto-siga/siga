@@ -29,19 +29,16 @@ public class ExPodeGerarLink extends CompositeExpressionSupport {
     @Override
     protected Expression create() {
         return And.of(
-                new ExEProcesso(mob.doc()),
 
-                new ExEstaFinalizado(mob.doc()),
+                Not.of(new ExEstaPendenteDeAssinatura(mob.getDoc())),
 
-                Not.of(new ExEstaSemEfeito(mob.doc())),
+                new ExEProcesso(mob.getDoc()),
 
-                Not.of(new ExEstaEliminado(mob)),
-
-                Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
-                
-                new ExTemMovimentacaoNaoCanceladaDoTipo(mob.doc(), ExTipoDeMovimentacao.ENVIO_SIAFEM),
+                new ExPodeSerMovimentado(mob, titular, lotaTitular),
                 
                 new ExEstaMarcadoComMarcador(mob, ExDao.getInstance().consultar(CpMarcadorEnum.COVID_19.getId(), CpMarcador.class, false)),
+
+                new ExTemVolumeComMovimentacaoNaoCanceladaDoTipo(mob.getDoc(), ExTipoDeMovimentacao.ENVIO_SIAFEM),
 
                 new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
                         .withExTpMov(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO)

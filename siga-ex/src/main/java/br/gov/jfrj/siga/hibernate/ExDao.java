@@ -2178,11 +2178,9 @@ public class ExDao extends CpDao {
 				+ " (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem");
 		
 		sbQueryString.append(" FROM marca ");
-		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? 
-				  " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref "
-				+ " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc "
-				+ " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov "
-				: ""); //Se CONTANDO e SEM FILTROS, não adiciona tabelas adicionais
+		sbQueryString.append(" INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ");
+		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc ": "");
+		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); //Se CONTANDO e SEM FILTROS, não adiciona
 		
 		sbQueryString.append(" WHERE 1=1");
 		sbQueryString.append(filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "");

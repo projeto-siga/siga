@@ -2478,9 +2478,9 @@ paths:
           schema:
             $ref: "#/definitions/Error"
   
-  /processos/{sigla}/gerar-link:
+  /processos/{sigla}/gerar-link-publico:
     post:
-      description: Gera o link de acesso ao processo
+      description: Gera o link público do Processo
       tags: [ acao ]
       security:
         - Bearer: [ ]
@@ -2499,7 +2499,29 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-    
+            
+  /processos/{sigla}/link-publico:
+    get:
+      description: Obt&ecute;m o link p&ucute;blico do Processo
+      tags: [ acao ]
+      security:
+        - Bearer: [ ]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              link:
+                description: Link de acesso ao processo
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /numeracao-expediente:
     post:
       description: Utilize este método para gerar numeração de expediente.

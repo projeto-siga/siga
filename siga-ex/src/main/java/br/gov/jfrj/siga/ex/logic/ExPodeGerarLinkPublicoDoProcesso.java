@@ -13,13 +13,13 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 
-public class ExPodeGerarLink extends CompositeExpressionSupport {
+public class ExPodeGerarLinkPublicoDoProcesso extends CompositeExpressionSupport {
 
     private final ExMobil mob;
     private final DpPessoa titular;
     private final DpLotacao lotaTitular;
 
-    public ExPodeGerarLink(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+    public ExPodeGerarLinkPublicoDoProcesso(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
         super();
         this.mob = mob;
         this.titular = titular;
@@ -35,6 +35,8 @@ public class ExPodeGerarLink extends CompositeExpressionSupport {
                 new ExEProcesso(mob.getDoc()),
 
                 new ExPodeSerMovimentado(mob, titular, lotaTitular),
+                
+                Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(mob, ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO)),
                 
                 new ExEstaMarcadoComMarcador(mob, ExDao.getInstance().consultar(CpMarcadorEnum.COVID_19.getId(), CpMarcador.class, false)),
 

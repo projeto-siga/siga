@@ -1568,12 +1568,8 @@ public class CpBL {
 				sigaUrlPermanente.setIdRef(idRef);
 				
 				Date dt = dao().consultarDataEHoraDoServidor();
-				Calendar c = Calendar.getInstance();
-				c.setTime(dt);
-				c.add(Calendar.YEAR, 1);
 				
 				sigaUrlPermanente.setDtIat(dt);
-				sigaUrlPermanente.setDtExp(c.getTime());
 
 				try {
 					dao().iniciarTransacao();

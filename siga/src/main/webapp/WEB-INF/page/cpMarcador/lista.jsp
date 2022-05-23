@@ -86,6 +86,9 @@
 
 	<script type="text/javascript">
 	function excluir(id) {
+		if (!confirm('Todas as marcas deste marcador serão removidas. Esta ação não poderá ser desfeita. Tem certeza que deseja excluir o marcador?'))
+			return;
+		
 		$.ajax({
 			url: "${request.contextPath}/siga/app/marcador/excluir",
 			type: "POST",

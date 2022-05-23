@@ -3312,15 +3312,22 @@ public class ExBL extends CpBL {
 	}
 
 	public static boolean mostraDescricaoConfidencial(ExDocumento doc, DpLotacao lotaTitular) {
+		
 		if (doc == null)
 			return false;
 		if (doc.getExNivelAcessoAtual() == null)
 			return false;
-		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS)
+			return true;
+		if (doc.getOrgaoUsuario() == null)
+			return false;
+		if (lotaTitular == null)
+			return false;
+		if (lotaTitular.getOrgaoUsuario() == null)
+			return false;
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
 						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
-						.getOrgaoUsuario().getIdOrgaoUsu()))
-			
+						.getOrgaoUsuario().getIdOrgaoUsu())
 			return true;
 		return false;
 	}

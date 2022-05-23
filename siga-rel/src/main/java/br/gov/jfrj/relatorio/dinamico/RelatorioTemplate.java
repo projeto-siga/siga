@@ -18,9 +18,13 @@
  ******************************************************************************/
 package br.gov.jfrj.relatorio.dinamico;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
@@ -310,5 +314,35 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 			return arquivo;
 		}
 	}
-
+	 
+//	public byte[]  getRelatorioCSV() throws JRException, IOException { 
+//		
+//		 JRCsvExporter exporter = new JRCsvExporter();
+//		 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//		 
+//		 exporter.setParameter(JRExporterParameter.JASPER_PRINT, relatorio.getRelatorioJasperPrint());
+//		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, byteArrayOutputStream);
+//		    exporter.exportReport();
+//		    byte[] archivo = byteArrayOutputStream.toByteArray();
+//
+//		    return archivo;
+//	}
+	
+	public String processarDadosCSV(){
+		return null;
+	}
+	
+	public  String configurarRelatorioCSV(){
+	return "";	
+	}
+	
+	
+	
+   public byte[]  gerarRelatorioCSV() throws IOException { 
+		
+	   String dados = processarDadosCSV();
+	   
+	   return dados.getBytes("ISO-8859-1");
+	}
+	
 }

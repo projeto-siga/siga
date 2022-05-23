@@ -1391,12 +1391,12 @@ public class ExMovimentacaoController extends ExController {
 		result.include("podeExibirArvoreDocsCossig", podeExibirArvoreDocsCossig);
 		if	(podeExibirArvoreDocsCossig)
 			//Check automatico de checkbox cossignatarios
-			result.include("podeIncluirCossigArvoreDocs", doc.paiPossuiMovsVinculacaoPapelCossigRespAssinatura() || doc.possuiMovsVinculacaoPapelCossigRespAssinatura());
+			result.include("podeIncluirCossigArvoreDocs", doc.paiPossuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO_COSSIG) || doc.possuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO_COSSIG));
 	}
 	
 	@Transacional
 	@Get("/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs")
-	public void incluirExcluirDnmAcessoTempArvoreDocsCossigRespAss(final String sigla, boolean incluirCossig) {
+	public void incluirExcluirDnmAcessoTempArvoreDocsCossigs(final String sigla, boolean incluirCossig) {
 		
 		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
 		if	(podeExibirArvoreDocsCossig) {	
@@ -1406,9 +1406,9 @@ public class ExMovimentacaoController extends ExController {
 			List<ExMovimentacao> listaCossignatarios = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE);
 			if (!listaCossignatarios.isEmpty()) {
 				if (incluirCossig)
-					getExConsTempDocCompleto().incluirSomenteCossigsAcessoTempArvoreDocs(getCadastrante(), getLotaTitular(), doc);
+					getExConsTempDocCompleto().incluirCossigsAcessoTempArvoreDocs(getCadastrante(), getLotaTitular(), doc, incluirCossig);
 				else
-					getExConsTempDocCompleto().removerDnmAcessoTempArvoreDocsCossigRespAssFluxoTela(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
+					getExConsTempDocCompleto().removerCossigsTempArvoreDocsFluxoTela(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
 			}
 		}
 		result.forwardTo(this).incluirCosignatario(sigla);

@@ -830,7 +830,9 @@ public class ExDocumentoController extends ExController {
 		}
 		
 		final boolean podeExibirArvoreDocsSubscr = getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
-		
+		if (podeExibirArvoreDocsSubscr && exDocumentoDTO.getDoc() != null) {
+			exDocumentoDTO.setPodeIncluirSubscrArvoreDocs(exDocumentoDTO.getDoc().paiPossuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO) || exDocumentoDTO.getDoc().possuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO));
+		}
 		result.include("vars", l);
 
 		result.include("par", parFreeMarker);
@@ -1814,13 +1816,16 @@ public class ExDocumentoController extends ExController {
 			 */
 			final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante());
 			if	(podeExibirArvoreDocsCossig) {		
-				if (!exDocumentoDTO.getDoc().isFinalizado() 
-						&& !exDocumentoDTO.getDoc().getSubscritor().equivale(getCadastrante())) {
-					if (exDocumentoDTO.isPodeIncluirSubscrArvoreDocs()) 
+				if (!exDocumentoDTO.getDoc().isFinalizado()) {
+					//&& !exDocumentoDTO.getDoc().getSubscritor().equivale(getCadastrante()
+					//input checkbox selecionado  
+					if (exDocumentoDTO.isPodeIncluirSubscrArvoreDocs()) { 
+						getExConsTempDocCompleto().removerSubscrDnmAcessoTempArvoreDocAtual(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
 						getExConsTempDocCompleto()
-								.incluirSomenteSubscritorAcessoTempArvoreDocs(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
-					else
-						getExConsTempDocCompleto().removerDnmAcessoTempArvoreDocsCossigRespAssDocTemp(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+								.incluirSubscritorAcessoTempArvoreDocs(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), exDocumentoDTO.isPodeIncluirSubscrArvoreDocs());
+					} else {
+						getExConsTempDocCompleto().removerSubscrDnmAcessoTempArvoreDocAtual(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+					}
 				}
 			}
 			

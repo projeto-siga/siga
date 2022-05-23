@@ -1776,7 +1776,7 @@ public class ExBL extends CpBL {
 			
 			if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)
 					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && getExConsTempDocCompleto().possuiAssinaturaCossigRespAssHoje(doc)) {
-				getExConsTempDocCompleto().removerDnmAcessoTempArvoreDocsCossigRespAssDepoisAssinar(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsDepoisAssinar(cadastrante, lotaCadastrante, doc);
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
@@ -3053,7 +3053,7 @@ public class ExBL extends CpBL {
 							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
 				processar(mob.getExDocumento(), true, false);
 				// mob.getExDocumento().armazenar(); 
-				getExConsTempDocCompleto().removerDnmAcessoTempArvoreDocsCossigRespAssFluxoTela(cadastrante, lotaCadastrante, Arrays.asList(mov), mob.doc());
+				getExConsTempDocCompleto().removerCossigsTempArvoreDocsFluxoTela(cadastrante, lotaCadastrante, Arrays.asList(mov), mob.doc());
 			}
 			concluirAlteracao(mov);
 
@@ -3191,10 +3191,10 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 			if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante) 
 							&& doc.isFinalizado() && getExConsTempDocCompleto().possuiInclusaoCossigRespAss(doc)) {
-				//Aqui tem que pegar as movimentações  do doc atual
-				
-				getExConsTempDocCompleto().incluirSomenteCossigsAcessoTempArvoreDocs(cadastrante, lotaCadastrante, doc);
-				getExConsTempDocCompleto().removerDnmAcessoTempArvoreDocsCossigRespAssDocTemp(cadastrante, lotaCadastrante, doc);
+				//Incluir Mov Papel todos Cossignatarios e subscritor 
+				getExConsTempDocCompleto().incluirCossigsSubscrAcessoTempArvoreDocsFluxoFinaliza(cadastrante, lotaCadastrante, doc);
+				//Remover todas movs Papel todos Cossignatarios e subscritor 
+				getExConsTempDocCompleto().removerCossigsSubscrDnmAcessoTempArvoreDocAtual(cadastrante, lotaCadastrante, doc);
 			}
 
 			if (setVias == null || setVias.size() == 0)
@@ -4290,7 +4290,7 @@ public class ExBL extends CpBL {
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 			if (podeIncluirCossigArvoreDocs)
-				getExConsTempDocCompleto().incluirSomenteCossigsAcessoTempArvoreDocs(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().incluirCossigsAcessoTempArvoreDocs(cadastrante, lotaCadastrante, doc, podeIncluirCossigArvoreDocs);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao incluir Cossignatário.", e);

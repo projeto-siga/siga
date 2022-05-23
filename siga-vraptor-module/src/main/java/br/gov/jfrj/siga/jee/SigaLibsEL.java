@@ -118,6 +118,8 @@ public class SigaLibsEL {
 	}
 
 	public static String esperaSimples(Date dt) {
+		if (dt == null)
+			return null;
 		SigaCalendar c = new SigaCalendar();
 		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
 		// long l = -c.diffDayPeriods(lAnterior);

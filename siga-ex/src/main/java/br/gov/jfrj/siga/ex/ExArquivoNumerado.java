@@ -22,6 +22,7 @@ import java.util.Date;
 
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class ExArquivoNumerado implements Comparable {
 	private ExArquivo arquivo;
@@ -221,6 +222,32 @@ public class ExArquivoNumerado implements Comparable {
 	
 	public void setReferenciaPDFCompletoDocPrincipal(String referenciaPDFCompletoDocPrincipal) {
 		this.referenciaPDFCompletoDocPrincipal = referenciaPDFCompletoDocPrincipal;
+	}
+	
+	/**
+	 * Desconecta este arquivo do banco de dados, liberando portanto memoria da hibernate session. Necessario pois
+	 * quando geramos o PDF completo, precisamos controlar a quantidade total de memoria que sera utilizada.
+	 */
+	public void evict() {
+		if (getArquivo() instanceof ExDocumento) {
+			ExDocumento doc = (ExDocumento) getArquivo();
+			if (doc.getCpArquivo() != null) {
+				if (doc.getCpArquivo().getArquivoBlob() != null) {
+					ContextoPersistencia.em().detach(doc.getCpArquivo().getArquivoBlob());
+				}
+				ContextoPersistencia.em().detach(doc.getCpArquivo());
+			}
+			ContextoPersistencia.em().detach(doc);
+		} else if (getArquivo() instanceof ExMovimentacao) {
+			ExMovimentacao mv = (ExMovimentacao) getArquivo();
+			if (mv.getCpArquivo() != null) {
+				if (mv.getCpArquivo().getArquivoBlob() != null) {
+					ContextoPersistencia.em().detach(mv.getCpArquivo().getArquivoBlob());
+				}
+				ContextoPersistencia.em().detach(mv.getCpArquivo());
+			}
+			ContextoPersistencia.em().detach(mv);
+		}
 	}
 
 

@@ -2887,12 +2887,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 	
 	public List<ExMovimentacao> getMovsVinculacaoPapelGenerico(long codigoPapel) {
-		List<ExMovimentacao> movs = this.getMobilGeral()
-				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		List<ExMovimentacao> movsReturn = new ArrayList<>();
-		for (ExMovimentacao mov : movs) {
-			if (mov.getExPapel().getIdPapel().equals(codigoPapel)) { 
-				movsReturn.add(mov);
+		ExMobil mobil = this.getMobilGeral();
+		if (mobil != null) {
+			List<ExMovimentacao> movs = mobil
+					.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
+			for (ExMovimentacao mov : movs) {
+				if (mov.getExPapel().getIdPapel().equals(codigoPapel)) { 
+					movsReturn.add(mov);
+				}
 			}
 		}
 		return movsReturn;

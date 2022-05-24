@@ -1774,7 +1774,7 @@ public class ExBL extends CpBL {
 			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 			
-			if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)
+			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)
 					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && getExConsTempDocCompleto().possuiAssinaturaCossigRespAssHoje(doc)) {
 				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsDepoisAssinar(cadastrante, lotaCadastrante, doc);
 			}
@@ -2480,6 +2480,9 @@ public class ExBL extends CpBL {
 		}
 		try {
 			iniciarAlteracao();
+			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoResfazer(cadastrante, lotaCadastrante, doc);
+			}
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
 			concluirAlteracaoDocComRecalculoAcesso(doc);
@@ -2574,7 +2577,7 @@ public class ExBL extends CpBL {
 				mov.setLotaResp(mob.getExDocumento().getLotaTitular());
 			}
 			
-			if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)) {
+			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
 				getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
 			}
 
@@ -2778,14 +2781,14 @@ public class ExBL extends CpBL {
 				}
 				
 				if (ExTipoDeMovimentacao.JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
-					if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)) 
+					if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) 
 						getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
 				}
 				
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
 				
 				if (ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
-					if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)) 
+					if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) 
 						getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
 				}
 
@@ -3053,7 +3056,7 @@ public class ExBL extends CpBL {
 							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
 				processar(mob.getExDocumento(), true, false);
 				// mob.getExDocumento().armazenar(); 
-				getExConsTempDocCompleto().removerCossigsTempArvoreDocsFluxoTela(cadastrante, lotaCadastrante, Arrays.asList(mov), mob.doc());
+				getExConsTempDocCompleto().removerCossigsTempArvoreDocsFluxoTelaCossignatarios(cadastrante, lotaCadastrante, Arrays.asList(mov), mob.doc());
 			}
 			concluirAlteracao(mov);
 
@@ -3189,12 +3192,12 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
-			if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante) 
+			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante) 
 							&& doc.isFinalizado() && getExConsTempDocCompleto().possuiInclusaoCossigRespAss(doc)) {
 				//Incluir Mov Papel todos Cossignatarios e subscritor 
-				getExConsTempDocCompleto().incluirCossigsSubscrAcessoTempArvoreDocsFluxoFinaliza(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().incluirCossigsSubscrAcessoTempArvoreDocsFluxoFinalizar(cadastrante, lotaCadastrante, doc);
 				//Remover todas movs Papel todos Cossignatarios e subscritor 
-				getExConsTempDocCompleto().removerCossigsSubscrDnmAcessoTempArvoreDocAtual(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().removerCossigsSubscrDnmAcessoTempArvoreDocFluxoFinalizar(cadastrante, lotaCadastrante, doc);
 			}
 
 			if (setVias == null || setVias.size() == 0)
@@ -4175,14 +4178,19 @@ public class ExBL extends CpBL {
 
 				for (ExMarca marc : m.getExMarcaSet())
 					dao().excluir(marc);
+				
+				if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(titular, lotaTitular)) {
+					getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoResfazer(titular, lotaTitular, doc);
+				}
 
 				set = m.getExMovimentacaoReferenciaSet();
 				if (set.size() > 0) {
 					final Object[] aMovimentacao = set.toArray();
 					for (int i = 0; i < set.size(); i++) {
 						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
-						Ex.getInstance().getBL().excluirMovimentacao(titular, lotaTitular, movimentacao.getExMobil(),
-								movimentacao.getIdMov());
+						if (!movimentacao.isCancelada())
+							Ex.getInstance().getBL().excluirMovimentacao(titular, lotaTitular, movimentacao.getExMobil(),
+									movimentacao.getIdMov());
 					}
 				}
 
@@ -4406,7 +4414,7 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			
-			if (getExConsTempDocCompleto().podeExibirArvoreDocsCossigRespAss(cadastrante, lotaCadastrante)) {
+			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
 				getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
 			}
 
@@ -4488,6 +4496,10 @@ public class ExBL extends CpBL {
 		// As alterações devem ser feitas em cancelardocumento.
 		try {
 			iniciarAlteracao();
+			
+			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoResfazer(cadastrante, lotaCadastrante, doc);
+			}
 
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
 

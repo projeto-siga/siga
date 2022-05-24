@@ -1776,7 +1776,7 @@ public class ExBL extends CpBL {
 			
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)
 					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && getExConsTempDocCompleto().possuiAssinaturaCossigRespAssHoje(doc)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsDepoisAssinar(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoDepoisAssinar(cadastrante, lotaCadastrante, doc);
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
@@ -2481,7 +2481,7 @@ public class ExBL extends CpBL {
 		try {
 			iniciarAlteracao();
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoResfazer(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
 			}
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
@@ -4180,7 +4180,7 @@ public class ExBL extends CpBL {
 					dao().excluir(marc);
 				
 				if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(titular, lotaTitular)) {
-					getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoResfazer(titular, lotaTitular, doc);
+					getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(titular, lotaTitular, doc);
 				}
 
 				set = m.getExMovimentacaoReferenciaSet();
@@ -4498,7 +4498,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 			
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoResfazer(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
 			}
 
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);

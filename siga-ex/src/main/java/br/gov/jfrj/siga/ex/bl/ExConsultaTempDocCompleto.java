@@ -33,10 +33,6 @@ public class ExConsultaTempDocCompleto {
 		return INSTANCE;
 	}
 	
-	public void setExBL(ExBL exBL) {
-		this.exBL = exBL;
-	}
-	
 	/**
 	 * Metodo responsavel por verificar se pode habilitar acesso temporario a arvore completa de documentos 
 	 * @param cadastrante
@@ -187,7 +183,7 @@ public class ExConsultaTempDocCompleto {
 	 * @param doc
 	 * @throws Exception
 	 */
-	public void removerCossigsSubscritorTempArvoreDocsDepoisAssinar(DpPessoa cadastrante,
+	public void removerCossigsSubscritorTempArvoreDocsFluxoDepoisAssinar(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 		// obter lista de Cossig/Resp ass que assinaram doc hoje
 		List<DpPessoa> listaSubscrCancelMovPapel = doc.getListaCossigRespAssDocHoje();
@@ -196,7 +192,16 @@ public class ExConsultaTempDocCompleto {
 		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDocPai, listaSubscrCancelMovPapel, descrMov);
 	}
 	
-	public void removerCossigsSubscritorTempArvoreDocsFluxoResfazer(DpPessoa cadastrante,
+	/**
+	 * Remover Subscritor e/Ou Cossignatarios para acesso temporario a arvore de documentos completo 
+	 * Fluxos Refazer | Cancelar e Excluir Documentos
+	 * 
+	 * @param cadastrante
+	 * @param lotaCadastrante
+	 * @param doc
+	 * @throws Exception
+	 */
+	public void removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 		List<DpPessoa> listaSubscrCancelMovPapel = doc.getCossigsSubscritorDiffCadastranteDoc();
 		if	(!listaSubscrCancelMovPapel.isEmpty()) {

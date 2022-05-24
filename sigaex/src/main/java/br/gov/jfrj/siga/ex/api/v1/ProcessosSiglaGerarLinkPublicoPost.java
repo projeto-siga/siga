@@ -5,11 +5,14 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeGerarLinkPublicoDoProcesso;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
+import java.util.Date;
 import java.util.Set;
 
 @Transacional
@@ -31,7 +34,16 @@ public class ProcessosSiglaGerarLinkPublicoPost implements IExApiV1.IProcessosSi
 
         Ex.getInstance().getComp().afirmar("Não é possível gerar o link para o processo especificado", ExPodeGerarLinkPublicoDoProcesso.class, cadastrante, lotaTitular, mob);
 
-        resp.link = Ex.getInstance().getBL().gerarLinkPublicoProcesso(cadastrante, titular, lotaTitular, mob);
+        Date dtMov = ExDao.getInstance().dt();
+        
+        /** Redefinição do nível de acesso para público **/
+        ExNivelAcesso nivelAcessoPublico = ExDao.getInstance().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
+        if (mob.getDoc().getExNivelAcessoAtual() != nivelAcessoPublico) {
+            Ex.getInstance().getBL().redefinirNivelAcesso(cadastrante, lotaTitular, mob.getDoc(), dtMov, lotaTitular,
+                    cadastrante, cadastrante, cadastrante, null, nivelAcessoPublico);
+        }
+        
+        resp.link = Ex.getInstance().getBL().gravarLinkPublicoProcesso(cadastrante, titular, lotaTitular, mob);
 
     }
 

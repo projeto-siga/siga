@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -24,7 +26,9 @@ public class ProcessosSiglaLinkPublicoGet implements IExApiV1.IProcessosSiglaLin
             throw new AplicacaoException("Não é possível obter o link para o processo especificado");
         }
 
-        resp.link = Ex.getInstance().getBL().obterLinkPublicoProcesso(mob);
+        CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
+        
+        resp.link = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
 
     }
 

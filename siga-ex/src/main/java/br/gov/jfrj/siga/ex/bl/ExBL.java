@@ -7840,17 +7840,13 @@ public class ExBL extends CpBL {
 		}
 		
 		/* END Gravação dos Marcadores  */
-		
-		/*3- Gerar URL Permanente */
-		CpToken sigaUrlPermanente = new CpToken();
+
+		CpToken sigaUrlPermanente;
 		try {
+			/*3- Gerar URL Permanente */
 			sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
-		} catch (Exception e) {
-			throw new RuntimeException("Ocorreu um erro ao gerar Token.", e);
-		}
-		
-		/*4- Gerar Movimentação de Publicação */
-		try {
+			
+			/*4- Gerar Movimentação de Publicação */
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA, cadastrante, lotaCadastrante,
 					mob, null, cadastrante, null, cadastrante, null, null);
@@ -7862,11 +7858,8 @@ public class ExBL extends CpBL {
 		} catch (Exception e) {
 			throw new RuntimeException("Ocorreu um erro na publicação do documento em Portal da Transparência", e);
 		}
-
 		
 		return sigaUrlPermanente;
-		
-		
 		
 	}
 	
@@ -8392,21 +8385,14 @@ public class ExBL extends CpBL {
 		return ret;
 	}
 
-	public String gerarLinkPublicoProcesso(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+	public String gravarLinkPublicoProcesso(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 		
-		Date dtMov = dao().dt();
-		/** Redefinição do nível de acesso para público **/
-		ExNivelAcesso nivelAcessoPublico = ExDao.getInstance().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
-		if (mob.getDoc().getExNivelAcessoAtual() != nivelAcessoPublico) {
-			redefinirNivelAcesso(cadastrante, lotaTitular, mob.getDoc(), dtMov, lotaTitular, 
-					cadastrante, cadastrante, cadastrante, null, nivelAcessoPublico);
-		}
-
         String urlPermanente;
 		
 		try {
             /** Gera o link público **/
-            urlPermanente = obterLinkPublicoProcesso(mob);
+			CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
+            urlPermanente = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
 
             /** Gravar movimentação de link público gerado **/
             final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO, cadastrante,
@@ -8417,22 +8403,10 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao gerar link público do Processo", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
+			throw new AplicacaoException("Erro ao gravar link público do Processo", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
 		}
 
 		return urlPermanente;
-	}
-
-	public String obterLinkPublicoProcesso(final ExMobil mob) throws AplicacaoException {
-		
-		CpToken cpToken;
-		try {
-			cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
-		} catch (Exception e) {
-			throw new AplicacaoException("Ocorreu um erro ao gerar Token de acesso público.", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
-		}
-
-		return Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
 	}
 
 }

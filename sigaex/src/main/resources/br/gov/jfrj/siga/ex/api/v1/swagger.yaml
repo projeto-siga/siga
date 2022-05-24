@@ -2502,8 +2502,8 @@ paths:
             
   /processos/{sigla}/link-publico:
     get:
-      description: Obt&ecute;m o link p&ucute;blico do Processo
-      tags: [ acao ]
+      description: Obtém o link público do Processo
+      tags: [ consulta ]
       security:
         - Bearer: [ ]
       parameters:

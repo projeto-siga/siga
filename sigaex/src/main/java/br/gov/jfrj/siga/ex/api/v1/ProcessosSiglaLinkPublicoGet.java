@@ -23,10 +23,9 @@ public class ProcessosSiglaLinkPublicoGet implements IExApiV1.IProcessosSiglaLin
         if (!Ex.getInstance().getComp().pode(ExPodeObterLinkPublicoDoProcesso.class, mob.getDoc())) {
             throw new AplicacaoException("Não é possível obter o link para o processo especificado");
         }
-        
-        String urlPermanente = Ex.getInstance().getBL().obterLinkPublicoProcesso(mob);
 
-        resp.link = urlPermanente;
+        resp.link = Ex.getInstance().getBL().obterLinkPublicoProcesso(mob);
+
     }
 
     @Override

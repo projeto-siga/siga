@@ -60,7 +60,6 @@ import java.util.stream.Collectors;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
-import br.gov.jfrj.siga.ex.logic.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
@@ -164,6 +163,49 @@ import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.logic.ExECossignatario;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeApensar;
+import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPorPorConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelar;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarAnexo;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMovimentacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarOuAlterarPrazoDeAssinatura;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVia;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacaoPapel;
+import br.gov.jfrj.siga.ex.logic.ExPodeCriarSubprocesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeDefinirPrazoAssinatura;
+import br.gov.jfrj.siga.ex.logic.ExPodeDespachar;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
+import br.gov.jfrj.siga.ex.logic.ExPodeExcluir;
+import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeFazerCiencia;
+import br.gov.jfrj.siga.ex.logic.ExPodeJuntar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMovimentar;
+import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
+import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceberDocumentoSemAssinatura;
+import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeReiniciarNumeracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
+import br.gov.jfrj.siga.ex.logic.ExPodeSerJuntado;
+import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
+import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
+import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
@@ -8351,12 +8393,6 @@ public class ExBL extends CpBL {
 	}
 
 	public String gerarLinkPublicoProcesso(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
-		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao
-				.GERAR_LINK_PUBLICO_PROCESSO);
-		if (!movs.isEmpty())
-			throw new AplicacaoException("Link público do Processo já foi gerado anteriormente.");
-		
-		getComp().afirmar("Não é possível gerar o link para o processo especificado", ExPodeGerarLinkPublicoDoProcesso.class, cadastrante, lotaTitular, mob);
 		
 		Date dtMov = dao().dt();
 		/** Redefinição do nível de acesso para público **/
@@ -8388,14 +8424,6 @@ public class ExBL extends CpBL {
 	}
 
 	public String obterLinkPublicoProcesso(final ExMobil mob) throws AplicacaoException {
-		Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao
-				.GERAR_LINK_PUBLICO_PROCESSO);
-		if (movs.isEmpty())
-			throw new AplicacaoException("Link público ainda não foi gerado para este Processo.");
-		
-		if (!getComp().pode(ExPodeObterLinkPublicoDoProcesso.class, mob.getDoc())) {
-			throw new AplicacaoException("Não é possível obter o link para o processo especificado");
-		}
 		
 		CpToken cpToken;
 		try {

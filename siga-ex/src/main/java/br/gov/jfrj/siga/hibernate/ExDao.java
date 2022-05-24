@@ -2099,9 +2099,13 @@ public class ExDao extends CpDao {
 	 */
 	public List listarMobilsPorGrupoEMarcas(boolean contar, Integer qtd, Integer offset, DpPessoa titular, DpLotacao lotaTitular,  
 			boolean ordemCrescenteData, List<Integer> marcasAIgnorar, List<CpMarcadorGrupoEnum> grupos, String filtro) {
-		String queryString;
+
+		StringBuilder sbQueryString = new StringBuilder();
+		
 		String queryMarcasAIgnorar = "";
 		String queryMarcasAIgnorarWhere = "";
+		
+		
 		
 		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
 			queryMarcasAIgnorar += " left join corporativo.cp_marca mx on"
@@ -2111,47 +2115,85 @@ public class ExDao extends CpDao {
 			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1) + ") ";
 			queryMarcasAIgnorarWhere = " and mx.id_marca is null ";
 		}		
-		List<List<String>> l = new ArrayList<List<String>> ();
-//		long tempoIni = System.nanoTime();
-		queryString =
-			"WITH marca AS (SELECT m.*, md.grupo_marcador,"
-			+ " ROW_NUMBER() OVER(PARTITION BY m.id_ref" 
-				+ " ORDER BY "
-				// Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
-				+ (Prop.isGovSP()? "(CASE WHEN md.grupo_marcador = 6 THEN 0 ELSE md.grupo_marcador END)" 
-						: "md.grupo_marcador ")
-				+ ") AS rown"
-			+ " FROM corporativo.cp_marca m"
-			+ " INNER JOIN corporativo.cp_marcador md ON m.id_marcador = md.id_marcador"
-			+ queryMarcasAIgnorar
-			+ " WHERE (m.dt_ini_marca is null or m.dt_ini_marca < :dbDatetime)"
-				+ " and (m.dt_fim_marca is null or m.dt_fim_marca > :dbDatetime)"
-				+ (contar? " and (m.id_pessoa_ini = :titular or m.id_lotacao_ini = :lotaTitular)" : "")
-				+ (!contar && titular != null ? " and m.id_pessoa_ini = :titular" : "") 
-				+ (!contar && lotaTitular != null ? " and m.id_lotacao_ini = :lotaTitular" : "")
-				+ " and m.id_marcador <> :marcaAssinSenha "
-				+ " and m.id_marcador <> :marcaMovAssinSenha " 
-				+ queryMarcasAIgnorarWhere
-			+ ") SELECT"
-				+ (contar ? " CONCAT(grupo_marcador,''),"
-						+ " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end),"  
-						+ " sum(case when marca.id_lotacao_ini = :lotaTitular  then 1 else 0 end)" 
-					: " CONCAT(grupo_marcador,''), id_ref, (case when movultima.id_mov is null then"
-						+ " doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem") 
-				+ " FROM marca "
-				+ " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref "
-				+ " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc "
-				+ " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov "
-				+ " WHERE rown = 1"
-				+ (filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "")
-				+ (grupos != null  && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "") 
-			+ (contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador" : 
-				" ORDER BY grupo_marcador, dtOrdem " + (ordemCrescenteData? " ASC":" DESC") + ", marca.id_marca")
-			+ (isOracle() && offset != null && offset != 0 ? " OFFSET :offs ROWS" : "")
-			+ (isOracle() && qtd != null && qtd != 0 ? " FETCH NEXT :qtd ROWS ONLY" : "");
+
+		/* String Builder Query Primeira Marca entre os Grupos */
+		StringBuilder sbQueryPrimeiraMarca = new StringBuilder();
+		
+		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca ");
+		sbQueryPrimeiraMarca.append("FROM corporativo.cp_marca marcaAux INNER JOIN ");
+		sbQueryPrimeiraMarca.append("     corporativo.cp_marcador marcadorAux ");
+		sbQueryPrimeiraMarca.append("          ON marcaAux.id_marcador = marcadorAux.id_marcador ");
+		sbQueryPrimeiraMarca.append("WHERE marcaAux.id_ref = m.id_ref ");
+		
+		sbQueryPrimeiraMarca.append(contar ? " AND (marcaAux.id_pessoa_ini = :titular OR marcaAux.id_lotacao_ini = :lotaTitular) " : ""); // Se CONTAR filtra PESSOA e LOTACAO
+		sbQueryPrimeiraMarca.append(!contar && titular != null ? " AND marcaAux.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
+		sbQueryPrimeiraMarca.append(!contar && lotaTitular != null ? " AND marcaAux.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		
+		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaAssinSenha ");
+		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaMovAssinSenha ");
+		
+		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_ini_marca is null OR marcaAux.dt_ini_marca < :dbDatetime ) ");
+		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_fim_marca is null OR marcaAux.dt_fim_marca > :dbDatetime ) ");
+		
+		sbQueryPrimeiraMarca.append("ORDER BY ");
+		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcadorAux.grupo_marcador = 6 THEN 0 ELSE marcadorAux.grupo_marcador END" //Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
+												   : " marcadorAux.grupo_marcador ");
+		sbQueryPrimeiraMarca.append(", marcaAux.id_pessoa_ini, marcaAux.id_lotacao_ini) aux ");
+		
+		sbQueryPrimeiraMarca.append(isOracle() ? "WHERE rownum = 1 " : "LIMIT 1 "); //Obtém a primeira MARCA daquele ID_REF seguindo os critérios, desprezando as demais ocorrências
+		sbQueryPrimeiraMarca.append(")");
+		/*** ---- ***/
+
+		/* String Builder Query */
+		sbQueryString.append("WITH marca AS (SELECT m.*, md.grupo_marcador ");
+		sbQueryString.append(" FROM corporativo.cp_marca m ");
+		sbQueryString.append(" INNER JOIN corporativo.cp_marcador md ON m.id_marcador = md.id_marcador ");
+		
+		sbQueryString.append(queryMarcasAIgnorar);
+		
+		sbQueryString.append(" WHERE 1=1 ");
+		sbQueryString.append(contar ? " AND (m.id_pessoa_ini = :titular OR m.id_lotacao_ini = :lotaTitular)" : ""); // Se CONTAR filtra PESSOA e LOTACAO
+		sbQueryString.append(!contar && titular != null ? " and m.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
+		sbQueryString.append(!contar && lotaTitular != null ? " and m.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		
+		//MARCAS ativas
+		sbQueryString.append(" AND (m.dt_ini_marca is null OR m.dt_ini_marca < :dbDatetime)");
+		sbQueryString.append(" AND (m.dt_fim_marca is null OR m.dt_fim_marca > :dbDatetime)");
+		
+		//Remove MARCAS de Assinatura e a ignorar
+		sbQueryString.append(" and m.id_marcador <> :marcaAssinSenha ");
+		sbQueryString.append(" and m.id_marcador <> :marcaMovAssinSenha ");
+		
+		sbQueryString.append(queryMarcasAIgnorarWhere);
+		
+		sbQueryString.append(sbQueryPrimeiraMarca);
+		
+		sbQueryString.append(") SELECT");
+		sbQueryString.append(contar ?  " CONCAT(grupo_marcador,''),"
+				+ " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end), "  
+				+ " sum(case when marca.id_lotacao_ini = :lotaTitular then 1 else 0 end) " 
+				
+				: " CONCAT(grupo_marcador,''),"
+				+ " id_ref, "
+				+ " (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem");
+		
+		sbQueryString.append(" FROM marca ");
+		sbQueryString.append(" INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ");
+		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc ": "");
+		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); //Se CONTANDO e SEM FILTROS, não adiciona
+		
+		sbQueryString.append(" WHERE 1=1");
+		sbQueryString.append(filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "");
+		sbQueryString.append(grupos != null && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "");
+		sbQueryString.append(contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador " 
+									: " ORDER BY grupo_marcador, dtOrdem " + (ordemCrescenteData ? " ASC":" DESC" + ", marca.id_marca"));
+
+		
+		sbQueryString.append(isOracle() && offset != null && offset != 0 ? " OFFSET :offs ROWS" : "");
+		sbQueryString.append(isOracle() && qtd != null && qtd != 0 ? " FETCH NEXT :qtd ROWS ONLY" : "");
 	
-		Query query = em()
-			.createNativeQuery(queryString);
+		Query query = em().createNativeQuery(sbQueryString.toString());
+		
 		if (contar || titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
 		
@@ -2183,10 +2225,9 @@ public class ExDao extends CpDao {
 		if (!isOracle() && qtd != null && qtd != 0)
 			query.setMaxResults(qtd > 0? qtd : 100);
 		
+		List<List<String>> l = new ArrayList<List<String>> ();
 		l = query.getResultList();
-//		long tempoTotal = System.nanoTime() - tempoIni;
-//		System.out.println("listarMobilsPorMarcas: " + tempoTotal
-//		/ 1000000 + " ms ==> " + query);
+
 		return l;
 	}
 	

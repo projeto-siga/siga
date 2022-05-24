@@ -284,6 +284,11 @@
 							Relatório de Permanência por Setor e Assunto </a></li>
 				</c:if>
 
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DOCGERADOSQUANTITATIVO:Relatório de Documentos Gerados com Quantitativo')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relDocsQuantidadeGerados.jsp">
+							Relatório de Documentos Gerados com Quantitativo </a></li>
+				</c:if>
 
 			</ul></li>
 	</c:if>

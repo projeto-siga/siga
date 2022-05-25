@@ -123,7 +123,7 @@
 									name="ad_kind_0" value="${doc.descrFormaDoc}" />
 							</div>
 							
-							<c:set var="podeAssinarCertDigital" value="${f:podeAssinar(cadastrante,lotaCadastrante,doc.mobilGeral)}" />
+							<c:set var="podeAssinarCertDigital" value="${f:podeAssinar(titular,lotaTitular,doc.mobilGeral)}" />
 							<c:set var="podeAssinarComSenha" value="${assinando and f:podeAssinarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
 							<c:set var="podeAutenticarComSenha" value="${autenticando and f:podeAutenticarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
 							<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />

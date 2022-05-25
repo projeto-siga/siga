@@ -1400,7 +1400,7 @@ public class CpBL {
 		List<DpPessoa> listaPessoasMesmoCPF = new ArrayList<DpPessoa>();
 		DpPessoa pessoa2 = new DpPessoa();
 	
-		listaPessoasMesmoCPF.addAll(CpDao.getInstance().listarCpfAtivoInativo(pessoa.getCpfPessoa()));
+		listaPessoasMesmoCPF.addAll(CpDao.getInstance().listarPorCpf(pessoa.getCpfPessoa()));
 		
 		try {
 	//		dao().em().getTransaction().begin();

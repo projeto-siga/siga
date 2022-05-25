@@ -5,9 +5,6 @@ import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.logic.ExPodeObterLinkPublicoDoProcesso;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 import java.util.Set;
@@ -21,10 +18,6 @@ public class ProcessosSiglaLinkPublicoGet implements IExApiV1.IProcessosSiglaLin
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
         if (movs.isEmpty())
             throw new AplicacaoException("Link público ainda não foi gerado para este Processo.");
-
-        if (!Ex.getInstance().getComp().pode(ExPodeObterLinkPublicoDoProcesso.class, mob.getDoc())) {
-            throw new AplicacaoException("Não é possível obter o link para o processo especificado");
-        }
 
         CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
         

@@ -1404,7 +1404,6 @@ public class CpBL {
 		
 		try {
 	//		dao().em().getTransaction().begin();
-
 			if(pessoaAnt != null && pessoaAnt.getId() != null) {
 				pessoa.setMatricula(pessoaAnt.getMatricula());
 				pessoa.setIdePessoa(pessoaAnt.getIdePessoa());

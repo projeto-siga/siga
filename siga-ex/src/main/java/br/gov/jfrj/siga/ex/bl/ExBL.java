@@ -1775,7 +1775,7 @@ public class ExBL extends CpBL {
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 			
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)
-					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && getExConsTempDocCompleto().possuiAssinaturaCossigRespAssHoje(doc)) {
+					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && getExConsTempDocCompleto().possuiAssinaturaCossigsSubscritorHoje(doc)) {
 				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoDepoisAssinar(cadastrante, lotaCadastrante, doc);
 			}
 		} catch (final Exception e) {
@@ -2578,7 +2578,7 @@ public class ExBL extends CpBL {
 			}
 			
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
+				getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
 			}
 
 			gravarMovimentacao(mov);
@@ -2782,14 +2782,14 @@ public class ExBL extends CpBL {
 				
 				if (ExTipoDeMovimentacao.JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
 					if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) 
-						getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
+						getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
 				}
 				
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
 				
 				if (ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
 					if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) 
-						getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
+						getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
 				}
 
 				if (ultMovNaoCancelada.getExTipoMovimentacao()
@@ -3193,7 +3193,7 @@ public class ExBL extends CpBL {
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante) 
-							&& doc.isFinalizado() && getExConsTempDocCompleto().possuiInclusaoCossigRespAss(doc)) {
+							&& doc.isFinalizado() && getExConsTempDocCompleto().possuiInclusaoCossigsSubscritor(doc)) {
 				//Incluir Mov Papel todos Cossignatarios e subscritor 
 				getExConsTempDocCompleto().incluirCossigsSubscrAcessoTempArvoreDocsFluxoFinalizar(cadastrante, lotaCadastrante, doc);
 				//Remover todas movs Papel todos Cossignatarios e subscritor 
@@ -4159,6 +4159,10 @@ public class ExBL extends CpBL {
 			} catch (final ObjectNotFoundException e) {
 				throw new AplicacaoException("Documento já foi excluído anteriormente", 1, e);
 			}
+			
+			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(titular, lotaTitular)) {
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(titular, lotaTitular, doc);
+			}
 
 			if (doc.isFinalizado())
 				throw new AplicacaoException("Documento já foi finalizado e não pode ser excluído", 2);
@@ -4178,10 +4182,6 @@ public class ExBL extends CpBL {
 
 				for (ExMarca marc : m.getExMarcaSet())
 					dao().excluir(marc);
-				
-				if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(titular, lotaTitular)) {
-					getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(titular, lotaTitular, doc);
-				}
 
 				set = m.getExMovimentacaoReferenciaSet();
 				if (set.size() > 0) {
@@ -4415,7 +4415,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigRespAss(mob, cadastrante, lotaCadastrante);
+				getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
 			}
 
 			atualizarMarcas(false, mob);

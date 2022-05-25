@@ -2465,40 +2465,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return subscritores;
 	}
 	
-	public List<DpPessoa> getCossigsSubscritorDiffCadastranteDoc() {
-		List<DpPessoa> listaSubscritor = new ArrayList<>();
-		for (DpPessoa dpPessoa : this.getSubscritorECosignatarios()) {
-			if(!this.getCadastrante().equivale(dpPessoa))
-				listaSubscritor.add(dpPessoa);
-		}
-		return listaSubscritor;
-	}
-	
-	public List<DpPessoa> getCossignatariosDiffCadastranteDoc() {
-		List<DpPessoa> listacossignatarios = new ArrayList<>();
-		for (DpPessoa dpPessoa : this.getCosignatarios()) {
-			if(!this.getCadastrante().equivale(dpPessoa))
-				listacossignatarios.add(dpPessoa);
-		}
-		return listacossignatarios;
-	}
-	
-	public DpPessoa getSubscritorDiffCadastranteDoc() {
+	public DpPessoa getSubscritorDiffTitularDoc() {
 		if (getSubscritor() != null && !this.getCadastrante().equivale(getSubscritor())) 
 			return getSubscritor();
 		return null;
 	}
 	
-	public List<DpPessoa> getListaCossigRespAssDocHoje() {
+	public List<DpPessoa> getListaCossigsSubscritorAssinouDocHoje() {
 		List<DpPessoa> listaSubscrCossigFinal = new ArrayList<DpPessoa>();
-		List<DpPessoa> listaSubscrCossig =  this.getCossigsSubscritorDiffCadastranteDoc();
+		List<DpPessoa> listaSubscrCossig =  this.getSubscritorECosignatarios();
 
 		if (!listaSubscrCossig.isEmpty()) {
 			Set<ExMovimentacao> listaMovAssinaturas = this.getAssinaturasComTokenOuSenhaERegistros();
 			for (ExMovimentacao mov : listaMovAssinaturas) {
 				if (DateUtils.isToday(mov.getData())) {
 					for (DpPessoa pessoa : listaSubscrCossig) {
-						if (mov.getCadastrante().equivale(pessoa)) {
+						if (mov.getTitular().equivale(pessoa)) {
 							listaSubscrCossigFinal.add(pessoa);
 						}
 					}
@@ -2766,7 +2748,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return pais;
 	}
 	
-	public List<ExDocumento> getTodosOsPaisDasViasCossigRespAss() {
+	public List<ExDocumento> getTodosOsPaisDasViasCossigsSubscritor() {
 		List<ExDocumento> pais = new ArrayList<>();
 		if (this.getExMobilPai() != null) {
 			pais = this.getExMobilPai().getDoc().getTodosOsPaisDasVias();
@@ -2781,7 +2763,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 	
 	public boolean paiPossuiMovsVinculacaoPapel(long codigoPapel){
-		List<ExDocumento> viasDocPai = this.getTodosOsPaisDasViasCossigRespAss();
+		List<ExDocumento> viasDocPai = this.getTodosOsPaisDasViasCossigsSubscritor();
 		if (viasDocPai.iterator().hasNext()) {
 			List<ExMovimentacao> movs = viasDocPai.iterator().next().getMovsVinculacaoPapelGenerico(codigoPapel);
 			for (ExMovimentacao mov : movs) {
@@ -2870,7 +2852,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return lista.size() == 0 ? null : lista;
 	}
 	
-	public boolean possuiVinculPapelRevisorCossigRespAss(DpPessoa dpPessoa, ExMobil mobRefMov, long codigoPapel) {
+	public boolean possuiVinculPapelRevisorCossigsSubscritor(DpPessoa dpPessoa, ExMobil mobRefMov, long codigoPapel) {
 		List<ExMovimentacao> movs = this.getMobilGeral()
 				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
 		for (ExMovimentacao mov : movs) {

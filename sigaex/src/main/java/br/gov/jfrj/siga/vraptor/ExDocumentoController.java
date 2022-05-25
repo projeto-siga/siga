@@ -829,7 +829,7 @@ public class ExDocumentoController extends ExController {
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		
-		final boolean podeExibirArvoreDocsSubscr = getExConsTempDocCompleto().podeExibirCheckBoxArvoreDocsCossigRespAss(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc());
+		final boolean podeExibirArvoreDocsSubscr = getExConsTempDocCompleto().podeExibirCheckBoxArvoreDocsCossigsSubscritor(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc());
 		if (podeExibirArvoreDocsSubscr && exDocumentoDTO.getDoc() != null) {
 			exDocumentoDTO.setPodeIncluirSubscrArvoreDocs(exDocumentoDTO.getDoc().paiPossuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO) || exDocumentoDTO.getDoc().possuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO));
 		}

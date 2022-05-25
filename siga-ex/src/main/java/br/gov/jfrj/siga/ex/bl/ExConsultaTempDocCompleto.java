@@ -149,14 +149,6 @@ public class ExConsultaTempDocCompleto {
 		}
 	}
 	
-	private static String getNomeSubscritorOuCossignatario(long idPapel) {
-		if (idPapel == PAPEL_AUTORIZ_SUBSCR)
-			return "Responsável pela Assinatura";
-		if (idPapel == PAPEL_AUTORIZ_COSSIG)
-			return "Cossignatário";
-		return "";
-	}
-	
 	/**
 	 * Remover Apenas Cossignatarios para acesso temporario a arvore de documentos completo Fluxo Depois de Assinar
 	 * @param cadastrante
@@ -336,7 +328,7 @@ public class ExConsultaTempDocCompleto {
 								exPapel, mobRefMov);
 					}
 				}
-				}
+			}
 		}
 	}
 	
@@ -430,6 +422,14 @@ public class ExConsultaTempDocCompleto {
 				.append(" - ").append(nomeMov).append(" de Cossignatário ou Responsável pela Assinatura:")
 				.append(substritor.getDescricaoIniciaisMaiusculas()).append(" - DOC ORIGEM:").append(codDocOrigem);
 		return descrMovInsercao.toString();
+	}
+	
+	private static String getNomeSubscritorOuCossignatario(long idPapel) {
+		if (idPapel == PAPEL_AUTORIZ_SUBSCR)
+			return "Responsável pela Assinatura";
+		if (idPapel == PAPEL_AUTORIZ_COSSIG)
+			return "Cossignatário";
+		return "";
 	}
 
 	private List<ExMovimentacao> getMovsCossigsSubscritorPorDocOrigem(List<ExMovimentacao> movs, DpPessoa subscritor,

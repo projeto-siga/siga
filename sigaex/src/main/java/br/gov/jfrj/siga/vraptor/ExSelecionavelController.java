@@ -73,7 +73,7 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 				CpMarcadorEnum.ANEXO_PENDENTE_DE_ASSINATURA.getId(),
 				CpMarcadorEnum.APENSADO.getId(), 
 				CpMarcadorEnum.ARQUIVADO_CORRENTE.getId(),
-				CpMarcadorEnum.ARQUIVADO_CORRENTE.ASSINADO.getId(),
+				CpMarcadorEnum.ASSINADO.getId(),
 				CpMarcadorEnum.CAIXA_DE_ENTRADA.getId(),
 				CpMarcadorEnum.CANCELADO.getId(),
 				CpMarcadorEnum.COMO_GESTOR.getId(),

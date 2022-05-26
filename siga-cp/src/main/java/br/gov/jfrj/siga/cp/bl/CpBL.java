@@ -1572,11 +1572,8 @@ public class CpBL {
 				sigaUrlPermanente.setDtIat(dt);
 
 				try {
-					dao().iniciarTransacao();
 					dao().gravar(sigaUrlPermanente);
-					dao().commitTransacao();
 				} catch (final Exception e) {
-					dao().rollbackTransacao();
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			} 

@@ -1776,7 +1776,7 @@ public class ExBL extends CpBL {
 			
 			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)
 					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && getExConsTempDocCompleto().possuiAssinaturaCossigsSubscritorHoje(doc)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoDepoisAssinar(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoDepoisAssinar(cadastrante, lotaCadastrante, usuarioDoToken, doc);
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);

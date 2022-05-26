@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections.CollectionUtils;
-
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -192,11 +190,21 @@ public class ExVisualizacaoTempDocCompl {
 	 * @throws Exception
 	 */
 	public void removerCossigsSubscritorTempArvoreDocsFluxoDepoisAssinar(DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			DpLotacao lotaCadastrante, DpPessoa usuarioDoToken, ExDocumento doc) throws Exception {
 		// obter lista de Cossig/Resp ass que assinaram doc hoje
-		List<DpPessoa> listaSubscrCancelMovPapel = doc.getListaCossigsSubscritorAssinouDocHoje();
-		List<ExDocumento> listaViasDocPai = doc.getTodosOsPaisDasViasCossigsSubscritor();
-		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDocPai, listaSubscrCancelMovPapel, TEXTO_REMOCAO_TEMP_ASSINATURA);
+		DpPessoa subscrAssinante = getUsuarioDoTokenPosAssinatura(doc.getListaCossigsSubscritorAssinouDocHoje(), usuarioDoToken);
+		if (subscrAssinante != null) {
+			List<ExDocumento> listaViasDocPai = doc.getTodosOsPaisDasViasCossigsSubscritor();
+			removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDocPai, Arrays.asList(subscrAssinante), TEXTO_REMOCAO_TEMP_ASSINATURA);
+		}
+	}
+	
+	private DpPessoa getUsuarioDoTokenPosAssinatura(List<DpPessoa> listaSubscrCancelMovPapel, DpPessoa usuarioDoToken) {
+		for (DpPessoa dpPessoa : listaSubscrCancelMovPapel) {
+			if (dpPessoa.equivale(usuarioDoToken))
+				return dpPessoa;
+		}
+		return null;
 	}
 	
 	/**
@@ -368,7 +376,7 @@ public class ExVisualizacaoTempDocCompl {
 			// Remover de todas as vias doc pai
 			for (ExDocumento docPai : listaViasDocPai) {
 				for (DpPessoa subscritor : listaSubscritor) {
-					descrMov.append(subscritor.getDescricaoIniciaisMaiusculas()).append(" - DOC ORIGEM:")
+					descrMov.append(" ").append(subscritor.getDescricaoIniciaisMaiusculas()).append(" - DOC ORIGEM:")
 							.append(codDocOrigem);
 					List<ExMovimentacao> movsPersist = getMovsCossigsSubscritorPorDocOrigem(movsCossigResp, subscritor,
 							docOrigem.getMobilGeral());

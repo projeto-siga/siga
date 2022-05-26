@@ -1774,9 +1774,9 @@ public class ExBL extends CpBL {
 			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				removerPapel(doc, ExPapel.PAPEL_REVISOR);
 			
-			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)
+			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)
 					&& doc.isFinalizado() && doc.isAssinadoDigitalmente() && getExConsTempDocCompleto().possuiAssinaturaCossigsSubscritorHoje(doc)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxoDepoisAssinar(cadastrante, lotaCadastrante, usuarioDoToken, doc);
+				getExConsTempDocCompleto().removerCossigsSubscritorVisTempDocsComplFluxoDepoisAssinar(cadastrante, lotaCadastrante, usuarioDoToken, doc);
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
@@ -2480,8 +2480,8 @@ public class ExBL extends CpBL {
 		}
 		try {
 			iniciarAlteracao();
-			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
+			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
+				getExConsTempDocCompleto().removerCossigsSubscritorVisTempDocsComplFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
 			}
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
@@ -2577,8 +2577,8 @@ public class ExBL extends CpBL {
 				mov.setLotaResp(mob.getExDocumento().getLotaTitular());
 			}
 			
-			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
+			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
+				getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaVisTempDocsCompl(mob, cadastrante, lotaCadastrante);
 			}
 
 			gravarMovimentacao(mov);
@@ -2781,15 +2781,15 @@ public class ExBL extends CpBL {
 				}
 				
 				if (ExTipoDeMovimentacao.JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
-					if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) 
-						getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
+					if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) 
+						getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaVisTempDocsCompl(mob, cadastrante, lotaCadastrante);
 				}
 				
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
 				
 				if (ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA.equals(ultMovNaoCancelada.getExTipoMovimentacao())) {
-					if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) 
-						getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
+					if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) 
+						getExConsTempDocCompleto().tratarFluxoJuntarVisTempDocsCompl(mob, cadastrante, lotaCadastrante);
 				}
 
 				if (ultMovNaoCancelada.getExTipoMovimentacao()
@@ -3056,7 +3056,7 @@ public class ExBL extends CpBL {
 							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()))) {
 				processar(mob.getExDocumento(), true, false);
 				// mob.getExDocumento().armazenar(); 
-				getExConsTempDocCompleto().removerCossigsTempArvoreDocsFluxoTelaCossignatarios(cadastrante, lotaCadastrante, Arrays.asList(mov), mob.doc());
+				getExConsTempDocCompleto().removerCossigsVisTempDocsComplFluxoTelaCossignatarios(cadastrante, lotaCadastrante, Arrays.asList(mov), mob.doc());
 			}
 			concluirAlteracao(mov);
 
@@ -3192,12 +3192,12 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
-			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante) 
+			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante) 
 							&& doc.isFinalizado() && getExConsTempDocCompleto().possuiInclusaoCossigsSubscritor(doc)) {
 				//Incluir Mov Papel todos Cossignatarios e subscritor 
-				getExConsTempDocCompleto().incluirCossigsSubscrAcessoTempArvoreDocsFluxoFinalizar(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().incluirCossigsSubscrVisTempDocsComplFluxoFinalizar(cadastrante, lotaCadastrante, doc);
 				//Remover todas movs Papel todos Cossignatarios e subscritor 
-				getExConsTempDocCompleto().removerCossigsSubscrDnmAcessoTempArvoreDocFluxoFinalizar(cadastrante, lotaCadastrante, doc);
+				getExConsTempDocCompleto().removerCossigsSubscrVisTempDocsComplFluxoFinalizar(cadastrante, lotaCadastrante, doc);
 			}
 
 			if (setVias == null || setVias.size() == 0)
@@ -4160,8 +4160,8 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("Documento já foi excluído anteriormente", 1, e);
 			}
 			
-			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(titular, lotaTitular)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(titular, lotaTitular, doc);
+			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(titular, lotaTitular)) {
+				getExConsTempDocCompleto().removerCossigsSubscritorVisTempDocsComplFluxosRefazerCancelarExcluirDoc(titular, lotaTitular, doc);
 			}
 
 			if (doc.isFinalizado())
@@ -4298,7 +4298,7 @@ public class ExBL extends CpBL {
 			// doc.armazenar();
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 			if (podeIncluirCossigArvoreDocs)
-				getExConsTempDocCompleto().incluirCossigsAcessoTempArvoreDocs(cadastrante, lotaCadastrante, doc, podeIncluirCossigArvoreDocs);
+				getExConsTempDocCompleto().incluirCossigsVisTempDocsCompl(cadastrante, lotaCadastrante, doc, podeIncluirCossigArvoreDocs);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao incluir Cossignatário.", e);
@@ -4414,8 +4414,8 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			
-			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().tratarFluxoJuntarArvoreDocsCossigsSubscritor(mob, cadastrante, lotaCadastrante);
+			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
+				getExConsTempDocCompleto().tratarFluxoJuntarVisTempDocsCompl(mob, cadastrante, lotaCadastrante);
 			}
 
 			atualizarMarcas(false, mob);
@@ -4497,8 +4497,8 @@ public class ExBL extends CpBL {
 		try {
 			iniciarAlteracao();
 			
-			if (getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante)) {
-				getExConsTempDocCompleto().removerCossigsSubscritorTempArvoreDocsFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
+			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
+				getExConsTempDocCompleto().removerCossigsSubscritorVisTempDocsComplFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
 			}
 
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);

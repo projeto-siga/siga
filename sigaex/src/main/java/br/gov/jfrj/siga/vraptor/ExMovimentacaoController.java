@@ -1377,7 +1377,7 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 		
-		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirCheckBoxArvoreDocsCossigsSubscritor(getCadastrante(), getLotaCadastrante(), doc);
+		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirCheckBoxVisTempDocsComplCossigsSubscritor(getCadastrante(), getLotaCadastrante(), doc);
 
 		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, getTitular(), getLotaTitular(), builder.getMob().doc());
 
@@ -1398,7 +1398,7 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs")
 	public void incluirExcluirDnmAcessoTempArvoreDocsCossigs(final String sigla, boolean incluirCossig) {
 		
-		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(getCadastrante(), getLotaCadastrante());
+		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(getCadastrante(), getLotaCadastrante());
 		if	(podeExibirArvoreDocsCossig) {	
 			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 			final ExDocumento doc = buscarDocumento(builder);
@@ -1406,9 +1406,9 @@ public class ExMovimentacaoController extends ExController {
 			List<ExMovimentacao> listaCossignatarios = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE);
 			if (!listaCossignatarios.isEmpty()) {
 				if (incluirCossig)
-					getExConsTempDocCompleto().incluirCossigsAcessoTempArvoreDocs(getCadastrante(), getLotaTitular(), doc, incluirCossig);
+					getExConsTempDocCompleto().incluirCossigsVisTempDocsCompl(getCadastrante(), getLotaTitular(), doc, incluirCossig);
 				else
-					getExConsTempDocCompleto().removerCossigsTempArvoreDocsFluxoTelaCossignatarios(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
+					getExConsTempDocCompleto().removerCossigsVisTempDocsComplFluxoTelaCossignatarios(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
 			}
 		}
 		result.forwardTo(this).incluirCosignatario(sigla);

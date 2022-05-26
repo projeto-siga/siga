@@ -567,7 +567,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	
-	EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO(60,"Exibir para Subscritores e Cossignatários Árvore de Documentos", 
+	VISUALIZAR_TEMP_DOCS_COMPL_SUBSCRITOR_COSSIGNATARIO(60,"Exibir para Subscritores e Cossignatários Árvore de Documentos", 
 			"Essa configuração permite exibir para Subscritores e Cossignatários Árvore Completa de Documentos, tendo como vínculo movimentação de juntadas e documentos inclusos. Você pode configurar "
 			+ "para Orgão, Unidade/Lotação e Usuário.  ",
 			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },

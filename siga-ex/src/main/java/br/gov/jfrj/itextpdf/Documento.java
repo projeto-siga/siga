@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -243,6 +244,25 @@ public class Documento {
 
 	public static String getAssinantesString(Set<ExMovimentacao> movsAssinatura, Date dtDoc) {
 		ArrayList<String> als = getAssinantesStringLista(movsAssinatura,dtDoc);
+		String retorno = "";
+		if (als.size() > 0) {
+			for (int i = 0; i < als.size(); i++) {
+				String nome = als.get(i);
+				if (i > 0) {
+					if (i == als.size() - 1) {
+						retorno += " e ";
+					} else {
+						retorno += ", ";
+					}
+				}
+				retorno += nome;
+			}
+		}
+		return retorno;
+	}
+	
+	public static String getVinculosString(Set<ExMovimentacao> movs) {
+		List<String> als = movs.stream().map(m -> m.getExMobilRef().getSigla()).collect(Collectors.toList());
 		String retorno = "";
 		if (als.size() > 0) {
 			for (int i = 0; i < als.size(); i++) {

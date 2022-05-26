@@ -36,6 +36,7 @@ import com.crivano.jlogic.And;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.logic.CpPodeBoolean;
 import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
@@ -63,6 +64,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarSubprocesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVolume;
+import br.gov.jfrj.siga.ex.logic.ExPodeDefinirPrazoAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerConcelamentoDeDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerRestricaoDeAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
@@ -80,6 +82,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodePublicar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
 import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
+import br.gov.jfrj.siga.ex.logic.ExPodeReferenciar;
 import br.gov.jfrj.siga.ex.logic.ExPodeRegistrarAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeSolicitarAssinatura;
@@ -138,6 +141,7 @@ public class ExDocumentoVO extends ExVO {
 	String nmArqMod;
 	String conteudoBlobHtmlString;
 	String conteudoBlobFormString;
+	Map<String, String> form;
 	String sigla;
 	String codigoUnico;
 	String fisicoOuEletronico;
@@ -271,9 +275,13 @@ public class ExDocumentoVO extends ExVO {
 		this.conteudoBlobHtmlString = doc
 				.getConteudoBlobHtmlStringComReferencias();
 
-		byte[] form = doc.getConteudoBlobForm();
-		if (form != null)
-			this.conteudoBlobFormString = new String(form, StandardCharsets.ISO_8859_1);
+		byte[] conteudoBlobForm = doc.getConteudoBlobForm();
+		if (conteudoBlobForm != null) {
+			Map<String, String> map = new HashMap<>();
+			this.conteudoBlobFormString = new String(conteudoBlobForm, StandardCharsets.ISO_8859_1);
+			Utils.mapFromUrlEncodedForm(map, conteudoBlobForm);
+			this.form = map;
+		}
 		
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";
@@ -774,6 +782,9 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome("Cancelar").icone("cancel").nameSpace("/app/expediente/doc").acao("cancelarDocumento")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarDocumento(doc, titular, lotaTitular)).msgConfirmacao("Esta operação cancelará o documento pendente de assinatura. Prosseguir?").classe("once").build());
 		
+		vo.addAcao(AcaoVO.builder().nome("Vi_ncular").icone("page_find").nameSpace("/app/expediente/mov").acao("referenciar")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReferenciar(mob, titular, lotaTitular)).build());
+
 		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.publicar.portaltransparencia")).icone("report_link").nameSpace("/app/expediente/mov").acao("publicacao_transparencia")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePublicarPortalDaTransparencia(mob, titular, lotaTitular)).classe("once").build());
 		
@@ -782,6 +793,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(AcaoVO.builder().nome("Enviar ao SIAFEM").icone("email_go").nameSpace("/app/expediente/integracao").acao("integracaows")
 				.params("sigla", mob.getCodigoCompacto()).exp(And.of(new CpPodeBoolean(mostrarEnviarSiafem(doc), "pode mostrar Siafem"), new ExPodeEnviarSiafem(doc, titular, lotaTitular))).classe("once").build());
+		
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {

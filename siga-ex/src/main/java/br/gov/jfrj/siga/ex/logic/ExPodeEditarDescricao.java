@@ -31,7 +31,10 @@ public class ExPodeEditarDescricao extends CompositeExpressionSupport {
 
 	@Override
 	protected Expression create() {
-		return new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mod).withExFormaDoc(mod.getExFormaDocumento())
-				.withIdTpConf(ExTipoDeConfiguracao.EDITAR_DESCRICAO);
+		ExPodePorConfiguracao exp = new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.EDITAR_DESCRICAO);
+		if (mod != null) {
+			exp.withExMod(mod).withExFormaDoc(mod.getExFormaDocumento());
+		}
+		return exp;
 	}
 }

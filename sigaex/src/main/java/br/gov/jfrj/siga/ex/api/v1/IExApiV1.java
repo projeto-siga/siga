@@ -1489,6 +1489,66 @@ public interface IExApiV1 {
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
 
+	public interface IDocumentosLocalizarMaisRecenteGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String modelo;
+			public String ano;
+			public String lotaSubscritor;
+			public String marcador;
+		}
+
+		public static class Response implements ISwaggerResponse, ISwaggerResponseFile {
+			public String contenttype = "application/json";
+			public String contentdisposition = "attachment";
+			public Long contentlength;
+			public InputStream inputstream;
+			public Map<String, List<String>> headerFields;
+
+			public String getContenttype() {
+				return contenttype;
+			}
+
+			public void setContenttype(String contenttype) {
+				this.contenttype = contenttype;
+			}
+
+			public String getContentdisposition() {
+				return contentdisposition;
+			}
+
+			public void setContentdisposition(String contentdisposition) {
+				this.contentdisposition = contentdisposition;
+			}
+
+			public Long getContentlength() {
+				return contentlength;
+			}
+
+			public void setContentlength(Long contentlength) {
+				this.contentlength = contentlength;
+			}
+
+			public InputStream getInputstream() {
+				return inputstream;
+			}
+
+			public void setInputstream(InputStream inputstream) {
+				this.inputstream = inputstream;
+			}
+
+			public Map<String, List<String>> getHeaderFields() {
+				return headerFields;
+			}
+
+			public void setHeaderFields(Map<String, List<String>> headerFields) {
+				this.headerFields = headerFields;
+			}
+
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
 	public interface IProcessosSiglaGerarLinkPublicoPost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String sigla;

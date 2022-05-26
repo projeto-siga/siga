@@ -2388,13 +2388,13 @@ paths:
           description: Nome do grupo de marcadores da mesa
           required: false
           type: string
-        - name: idPessoa
+        - name: idpessoa
           in: query
           description: Identificador da Pessoa Inicial
           required: false
           type: integer
           format: int64
-        - name: idLotacao
+        - name: idlotacao
           in: query
           description: Identificador da Lotação Inicial. Pesquisa de outras lotações liberada somente para usuários autorizados. 
             Se não informado, assume a lotação do usuário.
@@ -2477,6 +2477,57 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+
+  /documentos/localizar/mais-recente:
+    get:
+      description: "Exibe dados do móbil mais recente que atende às condições desejadas."
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: modelo
+          in: query
+          description: Nome do modelo
+          required: false
+          type: string
+        - name: ano
+          in: query
+          description: Ano de produção do documento
+          required: false
+          type: string
+        - name: lotaSubscritor
+          in: query
+          description: Sigla da lotação do subscritor
+          required: false
+          type: string
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: application/json
+            Content-Disposition:
+              type: string
+              description: attachment        
+        404:
+          description: Nenhum documento foi encontrado com os argumentos informados
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
+
   
   /processos/{sigla}/gerar-link-publico:
     post:

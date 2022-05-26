@@ -284,8 +284,8 @@ public class ExBL extends CpBL {
 		return (new XMLOutputter()).outputString(doc);
 	}
 	
-	private ExConsultaTempDocCompleto getExConsTempDocCompleto() {
-		return ExConsultaTempDocCompleto.getInstance();
+	private ExVisualizacaoTempDocCompl getExConsTempDocCompleto() {
+		return ExVisualizacaoTempDocCompl.getInstance();
 	}
 	
 	private void fixTableCols(Element raiz) {

@@ -99,7 +99,7 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.ExConsultaTempDocCompleto;
+import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
@@ -168,8 +168,8 @@ public class ExDocumentoController extends ExController {
 		return doc;
 	}
 	
-	private ExConsultaTempDocCompleto getExConsTempDocCompleto() {
-		return ExConsultaTempDocCompleto.getInstance();
+	private ExVisualizacaoTempDocCompl getExConsTempDocCompleto() {
+		return ExVisualizacaoTempDocCompl.getInstance();
 	}
 
 	@Transacional

@@ -103,7 +103,7 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
-import br.gov.jfrj.siga.ex.bl.ExConsultaTempDocCompleto;
+import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
@@ -217,8 +217,8 @@ public class ExMovimentacaoController extends ExController {
 		return doc;
 	}
 	
-	private ExConsultaTempDocCompleto getExConsTempDocCompleto() {
-		return ExConsultaTempDocCompleto.getInstance();
+	private ExVisualizacaoTempDocCompl getExConsTempDocCompleto() {
+		return ExVisualizacaoTempDocCompl.getInstance();
 	}
 	
 	@Get("app/expediente/mov/anexar")

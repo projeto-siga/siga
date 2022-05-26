@@ -18,17 +18,20 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-public class ExConsultaTempDocCompleto {
+public class ExVisualizacaoTempDocCompl {
 
 	private static long PAPEL_AUTORIZ_SUBSCR = ExPapel.PAPEL_AUTORIZADO;
 	private static long PAPEL_AUTORIZ_COSSIG = ExPapel.PAPEL_AUTORIZADO_COSSIG;
-	private static ExConsultaTempDocCompleto INSTANCE;
+	private static StringBuffer TEXTO_REMOCAO_TEMP = new StringBuffer("Remoção de Cossignatário ou Responsável pela Assinatura Documento Temporário concluída:");
+	private static StringBuffer TEXTO_REMOCAO_TEMP_ASSINATURA = new StringBuffer("Assinatura de Cossignatário ou Responsável pela Assinatura concluída:");
+	
+	private static ExVisualizacaoTempDocCompl INSTANCE;
 	private ExBL exBL = Ex.getInstance().getBL();
 	private ExDao exDao = ExDao.getInstance();
 	
-	public static ExConsultaTempDocCompleto getInstance() {
+	public static ExVisualizacaoTempDocCompl getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new ExConsultaTempDocCompleto();
+			INSTANCE = new ExVisualizacaoTempDocCompl();
 		}
 		return INSTANCE;
 	}
@@ -41,7 +44,7 @@ public class ExConsultaTempDocCompleto {
 	 */
 	public boolean podeHabilitarAcessoTempArvoreDocsCossigsSubscritor(DpPessoa cadastrante, DpLotacao lotaCadastrante) {
 		return Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotaCadastrante,
-				ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
+												ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
 	}
 	
 	/**
@@ -52,11 +55,14 @@ public class ExConsultaTempDocCompleto {
 	 * @return
 	 */
 	public boolean podeExibirCheckBoxArvoreDocsCossigsSubscritor(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc) {
-		boolean podeExbir =  Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotaCadastrante,
-				ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
-		if (podeExbir && doc != null && doc.getTodosOsPaisDasViasCossigsSubscritor().iterator().hasNext()) {
-			ExDocumento docPai = doc.getTodosOsPaisDasViasCossigsSubscritor().iterator().next();
-			return (docPai != null && docPai.getIdDoc() != null && !docPai.equals(doc)) ? Boolean.TRUE : Boolean.FALSE;
+		boolean podeExibir =  Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotaCadastrante,
+												ExTipoDeConfiguracao.EXIBIR_ARVORE_DOCS_SUBSCRITOR_COSSIGNATARIO);
+		if (podeExibir && doc != null) {
+			List<ExDocumento> viasDocPai = doc.getTodosOsPaisDasViasCossigsSubscritor();
+			if (viasDocPai.iterator().hasNext()) {
+				ExDocumento docPai = viasDocPai.iterator().next();
+				return (docPai != null && docPai.getIdDoc() != null && !docPai.equals(doc)) ? Boolean.TRUE : Boolean.FALSE;
+			}
 		}
 		return Boolean.FALSE;
 	}
@@ -101,7 +107,7 @@ public class ExConsultaTempDocCompleto {
 				//obtem vias doc ao qual deve se criar mov
 				List<ExDocumento> listaViasDocs = doc.isFinalizado() ? doc.getTodosOsPaisDasViasCossigsSubscritor() : Arrays.asList(doc);
 				incluirDnmAcessoTempArvoreDocsCossigsSubscritor(cadastrante, lotaCadastrante, doc,
-						listaViasDocs, cossigs, PAPEL_AUTORIZ_COSSIG);
+													listaViasDocs, cossigs, PAPEL_AUTORIZ_COSSIG);
 			}
 		}
 	}
@@ -189,9 +195,8 @@ public class ExConsultaTempDocCompleto {
 			DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 		// obter lista de Cossig/Resp ass que assinaram doc hoje
 		List<DpPessoa> listaSubscrCancelMovPapel = doc.getListaCossigsSubscritorAssinouDocHoje();
-		StringBuffer descrMov = new StringBuffer("Assinatura de Cossignatário ou Responsável pela Assinatura concluída:");
 		List<ExDocumento> listaViasDocPai = doc.getTodosOsPaisDasViasCossigsSubscritor();
-		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDocPai, listaSubscrCancelMovPapel, descrMov);
+		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDocPai, listaSubscrCancelMovPapel, TEXTO_REMOCAO_TEMP_ASSINATURA);
 	}
 	
 	/**
@@ -266,28 +271,21 @@ public class ExConsultaTempDocCompleto {
 				String codDocOrigemTemp = mobRefMov.getDoc().getCodigo();
 				
 				ExPapel exPapel = exDao.consultar(movCossig.getExPapel().getIdPapel(), ExPapel.class, false);
-				
 				// Cria Descricoes Movs Remocao e Inclusao
-				String descrMovRemocao = getDescricaoMovPapelMontada("Juntada", docAtual, subscritorTemp,
-						codDocOrigemTemp, "Remoção");
-				String descrMovInsercao = getDescricaoMovPapelMontada("Juntada", docAtual, subscritorTemp,
-						codDocOrigemTemp, "Inclusão");
+				String descrMovRemocao = getDescricaoMovPapelMontada("Juntada", docAtual, subscritorTemp, codDocOrigemTemp, "Remoção");
+				String descrMovInsercao = getDescricaoMovPapelMontada("Juntada", docAtual, subscritorTemp, codDocOrigemTemp, "Inclusão");
 				// Movimentos de Cossig/Resp Assinatura Por Doc de Origem
 				List<ExMovimentacao> movsPersist = getMovsCossigsSubscritorPorDocOrigem(Arrays.asList(movCossig),
 						subscritorTemp, mobRefMov);
 				for (ExDocumento docVia : viasDocPai) {
-					// Remove papel do docAtual
-					exBL.removerPapel(docAtual, movsPersist, exPapel.getIdPapel(), cadastrante,
-							descrMovRemocao.toString());
-					// Inclui papel das vias do novo docPai
-					exBL.vincularPapel(cadastrante, lotaCadastrante, docVia.getMobilGeral(), dt,
-							subscritorTemp.getLotacao(), subscritorTemp, null, null, descrMovInsercao.toString(), null,
-							exPapel, mobRefMov);
+					removerIncluirPapelCossigsSubscritor(docAtual, movsPersist, exPapel, cadastrante, 
+							descrMovRemocao, lotaCadastrante, docVia.getMobilGeral(), dt, subscritorTemp.getLotacao(), 
+							subscritorTemp, descrMovInsercao, mobRefMov);
 				}
 			}
 		}
 	}
-
+	
 	public void tratarFluxoDesentrDesfJuntadaArvoreDocsCossigsSubscritor(ExMobil mob, DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
 		ExDocumento docAtual = mob.doc();
@@ -320,30 +318,36 @@ public class ExConsultaTempDocCompleto {
 					List<ExMovimentacao> movsPersist = getMovsCossigsSubscritorPorDocOrigem(Arrays.asList(movCossig),
 							subscritorTemp, mobRefMov);
 					for (ExDocumento docVia : viasDocPai) {
-						// Remove papel das vias do docPai
-						exBL.removerPapel(docVia, movsPersist, exPapel.getIdPapel(), cadastrante, descrMovRemocao);
-						// Inclui papel das vias do novo docPai
-						exBL.vincularPapel(cadastrante, lotaCadastrante, docAtual.getMobilGeral(), dt,
-								subscritorTemp.getLotacao(), subscritorTemp, null, null, descrMovInsercao, null,
-								exPapel, mobRefMov);
+						removerIncluirPapelCossigsSubscritor(docVia, movsPersist, exPapel, cadastrante, descrMovRemocao, 
+								lotaCadastrante, docAtual.getMobilGeral(), dt, subscritorTemp.getLotacao(), subscritorTemp, 
+								descrMovInsercao, mobRefMov);
 					}
 				}
 			}
 		}
 	}
 	
+	private void removerIncluirPapelCossigsSubscritor(ExDocumento doc, List<ExMovimentacao> movsPersist,
+			ExPapel exPapel, DpPessoa cadastrante, String descrMovRemocao, DpLotacao lotaCadastrante, ExMobil mobil,
+			Date dt, DpLotacao lotaSubscr, DpPessoa subscritorTemp, String descrMovInsercao, ExMobil mobRefMov)
+			throws Exception {
+		// Remove papel do docAtual
+		exBL.removerPapel(doc, movsPersist, exPapel.getIdPapel(), cadastrante, descrMovRemocao);
+		// Inclui papel das vias do novo docPai
+		exBL.vincularPapel(cadastrante, lotaCadastrante, mobil, dt, lotaSubscr, subscritorTemp, null, null,
+				descrMovInsercao, null, exPapel, mobRefMov);
+	}
+	
 	private void removerSubscrCossigsDnmAcessoTempArvoreDocAtual(DpPessoa cadastrante, DpLotacao lotaCadastrante,
 			ExDocumento doc, List<DpPessoa> listaSubscrCancelMovPapel) throws Exception {
-		StringBuffer descrMov = new StringBuffer("Remoção de Cossignatário ou Responsável pela Assinatura Documento Temporário concluída:");
 		List<ExDocumento> listaViasDoc = Arrays.asList(doc);
-		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDoc, listaSubscrCancelMovPapel, descrMov);
+		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDoc, listaSubscrCancelMovPapel, TEXTO_REMOCAO_TEMP);
 	}
 	
 	private void removerSubscrCossigsDnmAcessoTempArvoreDocPai(DpPessoa cadastrante, DpLotacao lotaCadastrante,
 			ExDocumento doc, List<DpPessoa> listaSubscrCancelMovPapel) throws Exception {
-		StringBuffer descrMov = new StringBuffer("Remoção de Cossignatário ou Responsável pela Assinatura Documento Temporário concluída:");
 		List<ExDocumento> listaViasDoc = doc.getTodosOsPaisDasViasCossigsSubscritor();
-		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDoc, listaSubscrCancelMovPapel, descrMov);
+		removerCossigsESubscritorTempArvore(cadastrante, lotaCadastrante, doc, listaViasDoc, listaSubscrCancelMovPapel, TEXTO_REMOCAO_TEMP);
 	}
 	
 	private void removerCossigsESubscritorTempArvore(DpPessoa cadastrante,

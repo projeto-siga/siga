@@ -8385,28 +8385,19 @@ public class ExBL extends CpBL {
 		return ret;
 	}
 
-	public String gravarLinkPublicoProcesso(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
-		
-        String urlPermanente;
+	public void gravarMovimentacaoLinkPublicoProcesso(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		try {
-            /** Gera o link público **/
-			CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
-            urlPermanente = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
-
-            /** Gravar movimentação de link público gerado **/
             final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO, cadastrante,
 					lotaTitular, mob, null, cadastrante, null, titular, lotaTitular, null);
 
 			mov.setDescrMov("Gerado link público do Processo " + mob.getSigla());
-
 			gravarMovimentacao(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao gravar link público do Processo", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
 		}
 
-		return urlPermanente;
 	}
 
 }

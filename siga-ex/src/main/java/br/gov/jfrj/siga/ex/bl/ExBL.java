@@ -8389,24 +8389,13 @@ public class ExBL extends CpBL {
 
 		JSONObject obj = new JSONObject(response);
 		JSONArray arr = obj.getJSONArray("results");
-		
-		List<String> siglas = new ArrayList<>();
-		for (int i = 0; i < arr.length(); i++){
-		    String code = arr.getJSONObject(i).getString("code");
-		    
-		    siglas.add(code.replaceAll("[-/]", ""));
-		}
-		
+
 		List<Long> ret =  new ArrayList<Long>();
-		
-		if(siglas.isEmpty())
-			return ret;
-		
-		List<BigDecimal> listaIdDoc = dao().consultarDocumentosPorSiglas(siglas);
-		
-		if(listaIdDoc != null && !listaIdDoc.isEmpty())
-			ret = listaIdDoc.stream().map(n -> n.longValue()).collect(Collectors.toList());
-		
+		for (int i = 0; i < arr.length(); i++){
+			String id = arr.getJSONObject(i).getString("id");
+			ret.add(Long.parseLong(id));
+		}
+
 		return ret;
 	}
 

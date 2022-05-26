@@ -56,7 +56,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
 public class ExMesa2Controller extends ExController {
-	private static final String ACESSO_MESA2BETA = "MESA2:Mesa Versão 2;BETA:Utilizar versão beta";
+	private static final String ACESSO_MESA2BETA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;BETA:Utilizar versão beta";
 	/**
 	 * @deprecated CDI eyes only
 	 */

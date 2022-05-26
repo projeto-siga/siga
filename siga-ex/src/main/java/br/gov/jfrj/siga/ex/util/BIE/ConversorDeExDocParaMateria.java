@@ -16,17 +16,20 @@ public class ConversorDeExDocParaMateria {
 	private static String SIGLA_FORMA_DOC_ANEXO = "ANE";
 	
 	public List<Materia> converter(List<ExDocumento> docs){
-		List<Materia> materias = new ArrayList<Materia>();
-		for (ExDocumento doc : docs){
-			materias.add(converter(doc));
+		List<Materia> materias = new ArrayList<Materia>();		
+		for (ExDocumento doc : docs){			
+			materias.add(converter(doc, 0));
+			int i = 1;
 			for (ExDocumento filho : doc.getExDocumentoFilhoSet())
-				if (!filho.isPendenteDeAssinatura() && filho.getExFormaDocumento().getSiglaFormaDoc().equals(SIGLA_FORMA_DOC_ANEXO))
-					materias.add(converter(filho));
+				if (!filho.isPendenteDeAssinatura() && filho.getExFormaDocumento().getSiglaFormaDoc().equals(SIGLA_FORMA_DOC_ANEXO)) {
+					materias.add(converter(filho, i));
+					i++;
+				}	
 		}
 		return materias;
 	}
 
-	public Materia converter(ExDocumento doc) {
+	public Materia converter(ExDocumento doc, int cont) {
 
 		Materia m = new Materia();
 				
@@ -50,7 +53,7 @@ public class ConversorDeExDocParaMateria {
 		//agrupamento, define que o código e o tipo de matéria do doc filho são 
 		//os do pai, de modo que os dois permaneçam na mesma categoria e em sequência
 		
-		m.setCodigo(doc.getPai() != null ? doc.getPai().getCodigo()+"#" : doc.getCodigo());
+		m.setCodigo(doc.getPai() != null ? doc.getPai().getCodigo()+cont : doc.getCodigo());
 		
 		ExDocumento docBase = doc.getPai() != null ? doc.getPai() : doc;
 		m.setTipoMateria(getTipoMateria(docBase));

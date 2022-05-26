@@ -7,6 +7,9 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import com.crivano.swaggerservlet.PresentableUnloggedException;
 
 import java.util.Set;
 
@@ -15,14 +18,19 @@ public class ProcessosSiglaLinkPublicoGet implements IExApiV1.IProcessosSiglaLin
 
     @Override
     public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-        ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Processo a obter link público");
+        final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+        filter.setSigla(req.sigla);
+        ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
+        if (mob == null)
+            throw new AplicacaoException(
+                    "Não foi possível encontrar o Processo a partir da sigla fornecida");
 
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
         if (movs.isEmpty())
-            throw new AplicacaoException("Link público ainda não foi gerado para este Processo.");
+            throw new AplicacaoException("Link público ainda não foi gerado para o Processo " + mob.getSigla());
 
         CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
-        
+
         resp.link = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
 
     }

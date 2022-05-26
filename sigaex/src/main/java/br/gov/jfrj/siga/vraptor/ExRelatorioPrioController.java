@@ -74,7 +74,7 @@ public class ExRelatorioPrioController extends ExController {
 	private static final String APPLICATION_CSV = "text/csv";
 
 	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
-	private static final String ACESSO_DOCGERADOSQUANTITATIVO = "DOCGERADOSQUANTITATIVO:Relatório de Documentos Gerados com Quantitativo";
+	private static final String ACESSO_DOCGERADOSQUANTITATIVO = "DOCGERADOSQUANTITATIVO:Relatório de Saída de Documentos por Setor";
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -201,6 +201,11 @@ public class ExRelatorioPrioController extends ExController {
 		assertAcesso(ACESSO_DOCGERADOSQUANTITATIVO);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
+		
+		String dataInicial = getRequest().getParameter("dataInicial") ;
+		String dataFinal = getRequest().getParameter("dataFinal");
+		parametros.put("dataInicial", dataInicial);
+		parametros.put("dataFinal", dataFinal );
 
 		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
 
@@ -220,6 +225,8 @@ public class ExRelatorioPrioController extends ExController {
 		String idTipoFormaDoc = getRequest().getParameter("idTipoFormaDoc");
 
 		String idTipoSaida = getRequest().getParameter("idTipoSaida");
+		
+		consistePeriodo(dataInicial, dataFinal);
 
 		if (setoresSelecionados == null) {
 
@@ -256,7 +263,7 @@ public class ExRelatorioPrioController extends ExController {
 
 		InputStream inputStream = null;
 
-		String nomeArquivoSaida = "RelDocsQuantidadeGerados_"
+		String nomeArquivoSaida = "RelSaidaDocSetor_"
 				+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
 		if (Integer.valueOf(idTipoSaida) == 1) {
@@ -273,6 +280,35 @@ public class ExRelatorioPrioController extends ExController {
 
 			inputStream = new ByteArrayInputStream(rel.gerarRelatorioCSV());
 			return new InputStreamDownload(inputStream, "text/csv", nomeArquivoSaida + ".csv");
+		}
+	}
+	
+	private void consistePeriodo(String dataInicial, String dataFinal) throws Exception {
+		consistePeriodo(dataInicial, dataFinal, true);
+	}
+	
+	private void consistePeriodo(String dataInicial, String dataFinal, boolean mesmoMes)
+			throws Exception {
+		if (dataInicial == null || dataFinal == null) {
+			throw new AplicacaoException(
+					"Data inicial ou data final não informada.");
+		}
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		
+		final Date dtIni = df.parse(dataInicial);
+		final Date dtFim = df.parse(dataFinal);
+		
+		if (dtFim.getTime() - dtIni.getTime() < 0L) {
+			throw new AplicacaoException(
+					"Data inicial maior que a data final.");
+		}		
+		if (mesmoMes && !dataInicial.substring(2,9).equals(dataFinal.substring(2,9))) {
+			throw new AplicacaoException(
+					"Período informado deve ser dentro do mesmo mês/ano.");
+		}
+		if (!mesmoMes && (dtFim.getTime() - dtIni.getTime() > 31536000000L)) {
+			throw new AplicacaoException(
+					"O intervalo máximo entre as datas deve ser de um ano.");
 		}
 	}
 }

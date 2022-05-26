@@ -130,7 +130,7 @@ page
 		
 		<c:when test='${nomeArquivoRel eq "relDocsQuantidadeGerados.jsp"}'>
 			<c:set var="actionName" scope="request">emiteRelDocsQuantidadeGerados</c:set>
-			<c:set var="titulo_pagina" scope="request">Relatório de Documentos Gerados com Quantitativo</c:set>
+			<c:set var="titulo_pagina" scope="request">Relatório de Saída de Documentos por Setor</c:set>
 			<c:set var="nomeRelatorio" scope="request">relDocsQuantidadeGerados.jsp</c:set>
 		</c:when>
 		

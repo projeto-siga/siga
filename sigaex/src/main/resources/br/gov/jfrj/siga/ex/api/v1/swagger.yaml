@@ -2502,10 +2502,8 @@ paths:
             
   /processos/{sigla}/link-publico:
     get:
-      description: Obtém o link público do Processo
+      description: Obter o link público do Processo
       tags: [ consulta ]
-      security:
-        - Bearer: [ ]
       parameters:
         - $ref: "#/parameters/sigla"
       responses:

@@ -48,7 +48,7 @@ public class RelDocsQuantidadeGerados extends RelatorioTemplate {
 		
 		this.addColuna("Órgão/Lotação Destino", 30, RelatorioRapido.ESQUERDA, false); 	// ORG.  DESTINO  + DESCR.  ORG.  DESTINO
 		
-		this.addColuna("Descrição", 55, RelatorioRapido.ESQUERDA, false); 		// DESCRICAO DOCUMENTO
+		this.addColuna("Descrição", 70, RelatorioRapido.ESQUERDA, false); 		// DESCRICAO DOCUMENTO
 		
 		
 		return this;

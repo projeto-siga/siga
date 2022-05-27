@@ -57,7 +57,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
@@ -78,6 +77,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreData
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsOrgaoInteressado;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsQuantidadeGerados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocumentosForaPrazo;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocumentosProduzidos;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
@@ -127,9 +127,9 @@ public class ExRelatorioController extends ExController {
 	private static final String APPLICATION_PDF = "application/pdf";
 	private static final String APPLICATION_EXCEL = "application/vnd.ms-excel"; 
 	private static final String APPLICATION_CSV = "text/csv"; 
-	
-	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
-
+//	
+//	private static final String ACESSO_PERMASETORASSUNTO = "PERMASETORASSUNTO:Relatório de Permanência por Setor e Assunto";
+//	private static final String ACESSO_DOCGERADOSQUANTITATIVO = "DOCGERADOSQUANTITATIVO:Relatório de Documentos Gerados com Quantitativo";
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -165,7 +165,10 @@ public class ExRelatorioController extends ExController {
 
 		result.include("nomeArquivoRel", nomeArquivoRel);
 
-		if (nomeArquivoRel.equals("relDocumentosSubordinados.jsp")) {
+		if (nomeArquivoRel.equals("relDocsQuantidadeGerados.jsp")){
+			fazerResultsParaRelDocsQuantidadeGerados(lotacaoDestinatarioSel);
+			
+		} else if (nomeArquivoRel.equals("relDocumentosSubordinados.jsp")) {
 			fazerResultsParaRelDocumentosSubordinados(lotacaoDestinatarioSel);
 			
 			
@@ -249,6 +252,26 @@ public class ExRelatorioController extends ExController {
 	}
 	
 	private void fazerResultsParaRelPermanenciaSetorAssunto(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
+		
+		result.include("lotaTitular", this.getLotaTitular());
+		
+		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
+		
+		result.include("titular", this.getTitular());
+		
+		Set <DpLotacao> listaLotacao = new HashSet<>();
+
+		listaLotacao.add(this.getLotaTitular());
+		
+		result.include("listaSetoresSubordinados", getSetoresSubordinados(listaLotacao));
+		
+		result.include("listaAssuntos", getTodosOsAssuntos());
+		
+		result.include("listaTiposFormaDoc",getTodosOsTiposFormaDocumental());
+		
+	}
+	
+	private void fazerResultsParaRelDocsQuantidadeGerados(	final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		
 		result.include("lotaTitular", this.getLotaTitular());
 		
@@ -372,7 +395,7 @@ public class ExRelatorioController extends ExController {
 	}
 
 	private Map<Integer, String> getListaTipoRel() {
-		final Map<Integer, String> listaTipoRel = new HashMap<Integer, String>();
+		final Map<Integer, String> listaTipoRel =  new HashMap<Integer, String>();
 		listaTipoRel.put(1, "Documentos Ativos");
 		listaTipoRel.put(2, "Como Gestor");
 		listaTipoRel.put(3, "Como Interessado");
@@ -1747,91 +1770,6 @@ public class ExRelatorioController extends ExController {
 		return orgaoSelId;
 	}
 	
-
-	@Get("app/expediente/rel/emiteRelPermanenciaSetorAssunto")
-	public Download aRelPermanenciaSetorAssunto() throws Exception {
-		
-		assertAcesso(ACESSO_PERMASETORASSUNTO);
-
-		final Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("lotacao",getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
-
-		
-		parametros.put("link_siga", linkHttp() + getRequest().getServerName() + ":" + getRequest().getServerPort()	+ getRequest().getContextPath()
-				+ "/app/expediente/doc/exibir?sigla=");
-
-		parametros.put("lotacaoTitular",getRequest().getParameter("lotacaoTitular"));
-
-		parametros.put("idTit", getRequest().getParameter("idTit"));
-		
-		String[] setoresSelecionados = getRequest().getParameterValues("setoresSelecionados");
-		
-		
-		String[] assuntos = getRequest().getParameterValues("assuntos");
-		
-		
-		String idTipoFormaDoc =  getRequest().getParameter("idTipoFormaDoc");
-		
-		String idTipoSaida = getRequest().getParameter("idTipoSaida");
-		
-		if (setoresSelecionados == null ) {
-			
-			throw new AplicacaoException( "Selecione pelo menos um Setor.");
-		}
-		
-		if (assuntos == null ) {
-			
-			throw new AplicacaoException( "Selecione pelo menos um Assunto.");
-		}
-		
-
-		if (StringUtils.isBlank(idTipoFormaDoc ) ) {
-			
-			throw new AplicacaoException( "Selecione pelo menos um Tipo de Forma Documental.");
-		}
-		
-		if (StringUtils.isBlank(idTipoSaida ) ) {
-			
-			throw new AplicacaoException( "Selecione o tipo de saida desejado :PDF, EXCEL ou CSV");
-		}
-	
-		parametros.put("listaSetoresSubordinados",Arrays.toString(setoresSelecionados).replace("[", "").replace("]",""));
-		
-		parametros.put("listaAssunto",Arrays.toString(assuntos).replace("[", "").replace("]",""));
-		
-		parametros.put("idTipoFormaDoc", idTipoFormaDoc);
-		
-		parametros.put("idTipoSaida", idTipoSaida); 
-		
-		addParametrosPersonalizadosOrgaoString(parametros);
-
-		final RelPermanenciaSetorAssunto rel = new RelPermanenciaSetorAssunto(parametros);
-		
-		
-		InputStream inputStream   =null; 
-
-		String nomeArquivoSaida = 	"RelPermanenciaSetorAssunto_"+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		
-		
-		if (Integer.valueOf(idTipoSaida) == 1){ 
-			rel.gerar();
-			inputStream = new ByteArrayInputStream(	rel.getRelatorioPDF());
-			return new InputStreamDownload(inputStream, APPLICATION_PDF,	nomeArquivoSaida +".pdf");
-
-		} else if (Integer.valueOf(idTipoSaida) == 2){ 
-			rel.gerar();
-			inputStream   = new ByteArrayInputStream(	rel.getRelatorioExcel());
-			return new InputStreamDownload(inputStream, APPLICATION_EXCEL,nomeArquivoSaida +".xlsx");
-
-		} else {
-			  
-			inputStream = new ByteArrayInputStream( rel.gerarRelatorioCSV() );
-			return new InputStreamDownload(inputStream, "text/csv",  nomeArquivoSaida +".csv" );
-		}
-}
 	private Date parseDate(String parameter) throws AplicacaoException {
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		if (Utils.empty(getRequest().getParameter(parameter)))

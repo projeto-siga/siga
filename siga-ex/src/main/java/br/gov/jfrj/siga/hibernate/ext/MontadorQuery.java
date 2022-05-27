@@ -18,11 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
-import org.apache.commons.lang3.StringUtils;
-
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
-import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 
 public class MontadorQuery implements IMontadorQuery {
 

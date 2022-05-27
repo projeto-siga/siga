@@ -1057,7 +1057,9 @@ LINHA  VARIÁVEL / CONTEÚDO
 	</div>
 [/#macro]
 
-[#macro texto var titulo="" largura="" maxcaracteres="" style="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" onblur="" placeholder="" isCpf=false isCnpj=false ]
+[#macro texto var titulo="" largura="" maxcaracteres="" style="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" 
+	atts={} onkeyup="" onkeypress="" onblur="" placeholder="" isCpf=false isCnpj=false disabled=false]
+    
     [#if reler == 'ajax']
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -1105,7 +1107,13 @@ LINHA  VARIÁVEL / CONTEÚDO
     			<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
     		[/#if]
     		
-       		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""} ${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" onblur="${onblur}" style="${style}" class="form-control" placeholder="${placeholder}" [#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"[#else]${jlargura!""}${jmaxcaracteres!""}[/#if]/>
+       		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""} ${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" onkeypress="${onkeypress}" 
+       			onblur="${onblur}" class="form-control" 
+       			[#if disabled == true] readonly[/#if]
+       			[#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"
+       			[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"
+       			[#else]${jlargura!""}${jmaxcaracteres!""} style="${style}" placeholder="${placeholder}"[/#if]/>
+       			
        		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>	     	
 	     	[#if isCpf]
 		     	<script>

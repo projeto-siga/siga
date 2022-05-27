@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import java.util.Set;
 
 @AcessoPublico
-public class ProcessosSiglaLinkPublicoGet implements IExApiV1.IProcessosSiglaLinkPublicoGet {
+public class DocumentosSiglaLinkPublicoGet implements IExApiV1.IDocumentosSiglaLinkPublicoGet {
 
     @Override
     public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
@@ -22,11 +22,11 @@ public class ProcessosSiglaLinkPublicoGet implements IExApiV1.IProcessosSiglaLin
         ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
         if (mob == null)
             throw new AplicacaoException(
-                    "Não foi possível encontrar o Processo a partir da sigla fornecida");
+                    "Não foi possível encontrar o documento a partir da sigla fornecida");
 
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
         if (movs.isEmpty())
-            throw new AplicacaoException("Link público ainda não foi gerado para o Processo " + mob.getSigla());
+            throw new AplicacaoException("Link público ainda não foi gerado para o documento " + mob.getSigla());
 
         CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
 
@@ -36,7 +36,7 @@ public class ProcessosSiglaLinkPublicoGet implements IExApiV1.IProcessosSiglaLin
 
     @Override
     public String getContext() {
-        return "obter link público do Processo";
+        return "obter link público do documento";
     }
 
 

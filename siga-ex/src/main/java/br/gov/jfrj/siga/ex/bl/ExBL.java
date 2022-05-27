@@ -55,7 +55,6 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -8399,17 +8398,17 @@ public class ExBL extends CpBL {
 		return ret;
 	}
 
-	public void gravarMovimentacaoLinkPublicoProcesso(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+	public void gravarMovimentacaoLinkPublico(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		try {
             final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO, cadastrante,
 					lotaTitular, mob, null, cadastrante, null, titular, lotaTitular, null);
 
-			mov.setDescrMov("Gerado link público do Processo " + mob.getSigla());
+			mov.setDescrMov("Gerado link público do documento " + mob.getSigla());
 			gravarMovimentacao(mov);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao gravar link público do Processo", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
+			throw new AplicacaoException("Erro ao gravar link público do documento", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
 		}
 
 	}

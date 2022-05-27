@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Transacional
-public class ProcessosSiglaGerarLinkPublicoPost implements IExApiV1.IProcessosSiglaGerarLinkPublicoPost {
+public class DocumentosSiglaGerarLinkPublicoPost implements IExApiV1.IDocumentosSiglaGerarLinkPublicoPost {
 
     @Override
     public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
@@ -28,11 +28,11 @@ public class ProcessosSiglaGerarLinkPublicoPost implements IExApiV1.IProcessosSi
 
         ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Processo a gerar link público");
 
-        ctx.assertAcesso(mob, titular, lotaTitular);
+        ExApiV1Context.assertAcesso(mob, titular, lotaTitular);
 
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
         if (!movs.isEmpty())
-            throw new AplicacaoException("Link público do Processo já foi gerado anteriormente.");
+            throw new AplicacaoException("Link público do documento já foi gerado anteriormente.");
 
         Ex.getInstance().getComp().afirmar("Não é possível gerar o link para o processo especificado", ExPodeGerarLinkPublicoDoProcesso.class, cadastrante, lotaTitular, mob);
 
@@ -41,15 +41,15 @@ public class ProcessosSiglaGerarLinkPublicoPost implements IExApiV1.IProcessosSi
         /** Gera o link público **/
         CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
         String link = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
-        
+
         /** Redefinição do nível de acesso para público **/
         ExNivelAcesso nivelAcessoPublico = ExDao.getInstance().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
         if (mob.getDoc().getExNivelAcessoAtual() != nivelAcessoPublico) {
             Ex.getInstance().getBL().redefinirNivelAcesso(cadastrante, lotaTitular, mob.getDoc(), dtMov, lotaTitular,
                     cadastrante, cadastrante, cadastrante, null, nivelAcessoPublico);
         }
-        
-        Ex.getInstance().getBL().gravarMovimentacaoLinkPublicoProcesso(cadastrante, titular, lotaTitular, mob);
+
+        Ex.getInstance().getBL().gravarMovimentacaoLinkPublico(cadastrante, titular, lotaTitular, mob);
 
         resp.link = link;
 
@@ -57,7 +57,7 @@ public class ProcessosSiglaGerarLinkPublicoPost implements IExApiV1.IProcessosSi
 
     @Override
     public String getContext() {
-        return "gerar link público do Processo";
+        return "gerar link público do documento";
     }
 
 

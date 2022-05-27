@@ -33,8 +33,6 @@ public class ExPodeGerarLinkPublicoDoProcesso extends CompositeExpressionSupport
 
                 Not.of(new ExEstaPendenteDeAssinatura(mob.getDoc())),
 
-                new ExEProcesso(mob.getDoc()),
-
                 new ExPodeSerMovimentado(mob, titular, lotaTitular),
 
                 Not.of(new ExTemMovimentacaoNaoCanceladaDoTipo(mob, ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO)),
@@ -47,6 +45,7 @@ public class ExPodeGerarLinkPublicoDoProcesso extends CompositeExpressionSupport
 
                 new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
                         .withExTpMov(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO)
+                        .withExMod(mob.doc().getExModelo())
         );
     }
 }

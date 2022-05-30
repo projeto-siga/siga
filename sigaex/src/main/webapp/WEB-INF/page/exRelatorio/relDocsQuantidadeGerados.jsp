@@ -57,7 +57,7 @@
 
 			<div class="row">
 				<div class="col-sm-2">
-					<label>Data Inicial</label> <input type="text" name="dataInicial"
+					<label>Data Inicial</label> <input type="text" name="dataInicial" 
 						id="dataInicial"
 						onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
 						theme="simple" maxlength="10" class="form-control" />

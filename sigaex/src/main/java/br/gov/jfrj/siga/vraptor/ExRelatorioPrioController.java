@@ -27,6 +27,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -48,23 +49,9 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.util.Utils;
-import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
-import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsQuantidadeGerados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelPermanenciaSetorAssunto;
-import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 @Controller
 public class ExRelatorioPrioController extends ExController {
@@ -202,8 +189,8 @@ public class ExRelatorioPrioController extends ExController {
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		
-		String dataInicial = getRequest().getParameter("dataInicial") ;
-		String dataFinal = getRequest().getParameter("dataFinal");
+		String dataInicial =  getRequest().getParameter("dataInicial") ;
+		String dataFinal =  getRequest().getParameter("dataFinal");
 		parametros.put("dataInicial", dataInicial);
 		parametros.put("dataFinal", dataFinal );
 
@@ -289,26 +276,33 @@ public class ExRelatorioPrioController extends ExController {
 	
 	private void consistePeriodo(String dataInicial, String dataFinal, boolean mesmoMes)
 			throws Exception {
-		if (dataInicial == null || dataFinal == null) {
-			throw new AplicacaoException(
-					"Data inicial ou data final não informada.");
-		}
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try{
+			
+			if (dataInicial.isEmpty() || dataFinal.isEmpty()) {
+				throw new AplicacaoException(	"Data inicial ou data final não informada.");
+			}
+			
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		
-		final Date dtIni = df.parse(dataInicial);
-		final Date dtFim = df.parse(dataFinal);
+			final Date dtIni = df.parse(dataInicial);
+			final Date dtFim = df.parse(dataFinal);
 		
-		if (dtFim.getTime() - dtIni.getTime() < 0L) {
-			throw new AplicacaoException(
-					"Data inicial maior que a data final.");
-		}		
-		if (mesmoMes && !dataInicial.substring(2,9).equals(dataFinal.substring(2,9))) {
-			throw new AplicacaoException(
-					"Período informado deve ser dentro do mesmo mês/ano.");
-		}
-		if (!mesmoMes && (dtFim.getTime() - dtIni.getTime() > 31536000000L)) {
-			throw new AplicacaoException(
-					"O intervalo máximo entre as datas deve ser de um ano.");
+		
+			if (dtFim.getTime() - dtIni.getTime() < 0L) {
+				throw new AplicacaoException(
+						"Data inicial maior que a data final.");
+			}		
+			if (mesmoMes && !dataInicial.substring(2,9).equals(dataFinal.substring(2,9))) {
+				throw new AplicacaoException(
+						"Período informado deve ser dentro do mesmo mês/ano.");
+			}
+			if (!mesmoMes && (dtFim.getTime() - dtIni.getTime() > 31536000000L)) {
+				throw new AplicacaoException(
+						"O intervalo máximo entre as datas deve ser de um ano.");
+			}
+		
+		}catch (java.text.ParseException e) {
+			throw new AplicacaoException("A data inicial ou data final  é inválida.");
 		}
 	}
 }

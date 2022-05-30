@@ -12,6 +12,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeGerarLinkPublicoDoProcesso;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 import java.util.Date;
@@ -26,15 +27,21 @@ public class DocumentosSiglaGerarLinkPublicoPost implements IExApiV1.IDocumentos
         DpPessoa titular = ctx.getTitular();
         DpLotacao lotaTitular = ctx.getLotaTitular();
 
-        ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Processo a gerar link público");
-
-        ExApiV1Context.assertAcesso(mob, titular, lotaTitular);
+        final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+        filter.setSigla(req.sigla);
+        ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
+        if (mob == null)
+            throw new AplicacaoException(
+                    "Não foi possível encontrar o documento a partir da sigla " + req.sigla);
 
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
         if (!movs.isEmpty())
-            throw new AplicacaoException("Link público do documento já foi gerado anteriormente.");
+            throw new AplicacaoException(
+                    "Link público do documento " + mob.getSigla() + " já foi gerado anteriormente.");
 
-        Ex.getInstance().getComp().afirmar("Não é possível gerar o link para o processo especificado", ExPodeGerarLinkPublicoDoProcesso.class, cadastrante, lotaTitular, mob);
+        Ex.getInstance().getComp().afirmar(
+                "Não é possível gerar o link para o documento " + mob.getSigla(),
+                ExPodeGerarLinkPublicoDoProcesso.class, cadastrante, lotaTitular, mob);
 
         Date dtMov = ExDao.getInstance().dt();
 

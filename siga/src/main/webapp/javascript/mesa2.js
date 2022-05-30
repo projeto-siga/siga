@@ -166,6 +166,8 @@ var appMesa = new Vue({
 						self.errormsg = "O servidor demorou para responder. Por favor tente novamente ou use a pesquisa.";
 					} else if (cType && cType.indexOf('text/plain') !== -1 && response.status == 200) {
 						self.errormsg = response.responseText;
+					} else if (response.status == 401 || response.status == 403) { 
+						window.location.href = "/siga/public/app/login" 
 					} else if (response.status > 300) {
 						if (cType != null && cType.indexOf('text/html') !== -1) {
 							document.write(response.responseText);

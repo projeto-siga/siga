@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import br.gov.jfrj.siga.base.SigaHTTP;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -128,8 +129,7 @@ public class SigaLinkPermanenteController extends SigaController {
 		}
 		
 		
-		CpToken cpToken = new CpToken();
-		cpToken = dao().obterCpTokenPorTipoToken(Long.valueOf(tipoLink), token);
+		CpToken cpToken = dao().obterCpTokenPorTipoToken(Long.valueOf(tipoLink), token);
 		if (cpToken != null) {
 			if ("1".equals(tipoLink)) {
 				ExService exService = Service.getExService();
@@ -169,10 +169,9 @@ public class SigaLinkPermanenteController extends SigaController {
 
 			if ("1".equals(tipoLink)) {
 				if (!"".equals(sigla)) {
-					/* Reaproveitado estrutura da ExArquivoController - Analisar levar para WebService */ 
-					/* Identidicar parametro interno de contexto JBoss */
-					String endPoint = System.getProperty("exservice.endpoint").replace("/sigaex/servicos/ExService?wsdl", "") + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
-					stream = new URL(endPoint).openStream();
+					final SigaHTTP http = new SigaHTTP();
+					String url = Prop.get("/siga.base.url") + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
+					stream = http.fetch(url, null, 5000, null); 
 					
 					String fileName = sigla.replace("-", "").replace("/", "");
 					if (completo) 

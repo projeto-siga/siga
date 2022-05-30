@@ -2208,7 +2208,7 @@ public class ExDao extends CpDao {
 		}
 		
 		if (filtro != null && !"".equals(filtro))
-			query.setParameter("flt", "%" + filtro.toUpperCase().replace(" ", "%") + "%");
+			query.setParameter("flt", "%" + Texto.removeAcentoMaiusculas(filtro).replace(" ", "%") + "%");
 			
 		if (isOracle() && offset != null && offset != 0)
 			query.setParameter("offs", offset);

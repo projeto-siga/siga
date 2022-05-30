@@ -56,7 +56,6 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -7933,17 +7932,13 @@ public class ExBL extends CpBL {
 		}
 		
 		/* END Gravação dos Marcadores  */
-		
-		/*3- Gerar URL Permanente */
-		CpToken sigaUrlPermanente = new CpToken();
+
+		CpToken sigaUrlPermanente;
 		try {
+			/*3- Gerar URL Permanente */
 			sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
-		} catch (Exception e) {
-			throw new RuntimeException("Ocorreu um erro ao gerar Token.", e);
-		}
-		
-		/*4- Gerar Movimentação de Publicação */
-		try {
+			
+			/*4- Gerar Movimentação de Publicação */
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA, cadastrante, lotaCadastrante,
 					mob, null, cadastrante, null, cadastrante, null, null);
@@ -7955,11 +7950,8 @@ public class ExBL extends CpBL {
 		} catch (Exception e) {
 			throw new RuntimeException("Ocorreu um erro na publicação do documento em Portal da Transparência", e);
 		}
-
 		
 		return sigaUrlPermanente;
-		
-		
 		
 	}
 	
@@ -8472,6 +8464,21 @@ public class ExBL extends CpBL {
 		}
 
 		return ret;
+	}
+
+	public void gravarMovimentacaoLinkPublico(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+		
+		try {
+            final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO, cadastrante,
+					lotaTitular, mob, null, cadastrante, null, titular, lotaTitular, null);
+
+			mov.setDescrMov("Gerado link público do documento " + mob.getSigla());
+			gravarMovimentacao(mov);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao gravar link público do documento", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
+		}
+
 	}
 
 }

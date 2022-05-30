@@ -1566,11 +1566,14 @@ public class CpBL {
 				
 				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
 				sigaUrlPermanente.setIdRef(idRef);
+				
+				Date dt = dao().consultarDataEHoraDoServidor();
+				
+				sigaUrlPermanente.setDtIat(dt);
 
 				try {
 					dao().gravar(sigaUrlPermanente);
 				} catch (final Exception e) {
-	
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			} 

@@ -1,4 +1,4 @@
-INSERT INTO dp_substituicao (
+INSERT INTO CORPORATIVO.dp_substituicao (
     ID_SUBSTITUICAO,
     id_titular,
     id_lota_titular,
@@ -11,7 +11,7 @@ INSERT INTO dp_substituicao (
     tp_substituicao,
     ID_REG_INI
 ) VALUES (
-    1775,       --  select max(id_substituicao) from corporativo.dp_substituicao; -- último id da corporativo.dp_substituicao;
+    1776,       --  select max(id_substituicao) from corporativo.dp_substituicao; -- último id da corporativo.dp_substituicao;
     NULL,       -- usar quando o titular da sunstituição for UMA PESSOA
 
         -- select max(id_lotacao) from corporativo.dp_lotacao where SIGLA_LOTACAO='15311';
@@ -30,5 +30,5 @@ INSERT INTO dp_substituicao (
     timestamp '2022-05-30 00:00:00.000',    -- dt_ini_reg quando foi lançada a substituição
     NULL,           --  ( dt_fim_reg )é da data de fim da vigência da substituição, deve ser preenchida quando o usuário titula declinar da condição de substituição
     NULL,           -- tp_substituicao, usar nulo, parece que é uma função não implementada
-    1775            --  ( ID_REG_INI ) select max(id_substituicao) from corporativo.dp_substituicao; -- último id da corporativo.dp_substituicao; mesmo valor de ID_SUBSTITUICAO
+    1776            --  ( ID_REG_INI ) select max(id_substituicao) from corporativo.dp_substituicao; -- último id da corporativo.dp_substituicao; mesmo valor de ID_SUBSTITUICAO
 );

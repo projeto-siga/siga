@@ -613,7 +613,7 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)
+		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)	
 			exDocumentoDTO.setId(exDocumentoDTO.getDoc().getIdDoc());
 
 		if (exDocumentoDTO.getId() == null) {

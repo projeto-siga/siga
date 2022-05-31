@@ -204,6 +204,8 @@
 					<li><a class="dropdown-item"
 						href="/siga/app/usuario/trocar_email">Trocar Email do Usuário</a></li>
 				</c:if>
+				<li><a class="dropdown-item"
+						href="/siga/app/notificarPorEmail/listar">Receber notificações por email</a></li>
 				<c:if test="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }">
 					<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
 						<ul class="dropdown-menu">

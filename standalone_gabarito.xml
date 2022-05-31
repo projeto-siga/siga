@@ -37,6 +37,7 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
     <system-properties>
+        <property name="sigaex.descricao.documento.ai.lengt" value="3151"/>        
         <property name="sigaex.folha.de.rosto" value="ativa"/>
 		<property name="sigaex.data.validar.assinatura.com.senha" value="@@@sigaex.data.validar.assinatura.com.senha@@@"/>
         <property name="siga.session.modelos.tempo.expiracao" value="@@@siga.session.modelos.tempo.expiracao@@@"/>

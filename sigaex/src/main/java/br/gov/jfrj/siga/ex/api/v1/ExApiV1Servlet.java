@@ -263,6 +263,10 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("ws.siafem.service.localpartsoap", null);
 		
 		addPublicProperty("documento.novo.modelo.padrao", "Memorando");
+		
+		//GC Control - Concatenação de PDF
+		addPublicProperty("arquivo.tamanho.gc", "26214400"); //PDF - 25MB
+		addPublicProperty("arquivo.contagem.gc", "25"); //HTML - 25 documentos
 	}
 
 	@Override

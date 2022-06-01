@@ -536,10 +536,12 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				garbage += ab.length;
-				if (garbage > 1000000) {
-					garbage = 0;
-					System.gc();
+				if(Prop.get("arquivo.tamanho.gc") != null) {
+					garbage += ab.length;
+					if (garbage > Long.valueOf(Prop.get("arquivo.tamanho.gc"))) {
+						garbage = 0;
+						System.gc();
+					}
 				}
 			}
 			if (!master.isEmpty())
@@ -698,10 +700,12 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				garbage += 1;
-				if (garbage > 20) {
-					garbage = 0;
-					System.gc();
+				if (garbage > Long.valueOf(Prop.get("arquivo.contagem.gc"))) {
+					garbage += 1;
+					if (garbage > Long.valueOf(Prop.get("arquivo.contagem.gc"))) {
+						garbage = 0;
+						System.gc();
+					}
 				}
 			}
 			sb.append("</body></html>");

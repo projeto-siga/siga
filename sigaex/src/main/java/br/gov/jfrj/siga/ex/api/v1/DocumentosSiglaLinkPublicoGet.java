@@ -22,7 +22,7 @@ public class DocumentosSiglaLinkPublicoGet implements IExApiV1.IDocumentosSiglaL
         ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
         if (mob == null)
             throw new AplicacaoException(
-                    "Não foi possível encontrar o documento a partir da sigla fornecida");
+                    "Não foi possível encontrar o documento a partir da sigla " + req.sigla);
 
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
         if (movs.isEmpty())

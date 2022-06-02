@@ -107,39 +107,6 @@ function converteUsuario(nomeusuario){
   nomeusuario.value=tmp.toUpperCase();
 }
 
-function passwordStrength(password,metodo) {
-        var desc = new Array();
-        desc[0] = "Inaceitável";
-        desc[1] = "Muito Fraca";
-        desc[2] = "Fraca";
-        desc[3] = "Razoável";
-        desc[4] = "Boa";
-        desc[5] = "Forte";
-        var score   = 0;
-        
-        //if password bigger than 6 give 1 point
-        if (password.length >= 6) score++;
-
-        //if password has both lower and uppercase characters give 1 point      
-        if ( ( password.match(/[a-z]/) ) && ( password.match(/[A-Z]/) ) ) score++;
-
-        //if password has at least one number give 1 point
-        if ( ( password.match(/[a-z]/) ||  password.match(/[A-Z]/) ) && (password.match(/\d+/))) score++;
-
-        //if password has at least one special caracther give 1 point
-        if ( password.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/) ) score++;
-
-        //if password bigger than 12 give another 1 point
-        if (password.length >= 12) score++;
-        
-        //mininum requirements to be accepted by the AD
-        if (score > 2 && (password.length < 6 || !password.match(/[a-z]/) || !password.match(/[A-Z]/) || !password.match(/\d+/)))
-        	score = 2;
-
-         document.getElementById('passwordDescription' + metodo).innerHTML = desc[score];
-         document.getElementById('passwordStrength' + metodo).className = "strength" + score;
-}
-
 function validateUsuarioForm(form,metodo) {
 	
 	if ((metodo == 'Met1') && document.getElementById('dadosIntegracaoAD').style.display == 'none'){

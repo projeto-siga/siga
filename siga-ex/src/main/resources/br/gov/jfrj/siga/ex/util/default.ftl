@@ -2479,9 +2479,9 @@ Pede deferimento.</span><br/><br/><br/>
         
 		<br>
         [#if (doc.titular.matricula)??]
-        	${(doc.titular.matricula)!}
+        	Matrícula: ${(doc.titular.matricula)!}
         [#else]
-                ${(doc.subscritor.matricula)!}
+                Matrícula: ${(doc.subscritor.matricula)!}
         [/#if]
          
         [#if formatarOrgao]
@@ -2527,9 +2527,9 @@ Pede deferimento.</span><br/><br/><br/>
                         <br>
                             
 				        [#if (mov.titular.matricula)??]
-				        	${(mov.titular.matricula)!}
+				        	Matrícula: ${(mov.titular.matricula)!}
 				        [#else]
-				                ${(mov.subscritor.matricula)!}
+				                Matrícula: ${(mov.subscritor.matricula)!}
 				        [/#if]
 				        
                         [#if formatarOrgao]

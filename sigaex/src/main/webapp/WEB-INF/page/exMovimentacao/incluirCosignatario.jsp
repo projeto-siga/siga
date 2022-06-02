@@ -37,13 +37,18 @@
 		return true;
 	}	
 	function incluirExcluirAcessoTempArvoreDocs(thisElement) {
-		var podeChamarServico = ${!listaCossignatarios.isEmpty()};
-		if (podeChamarServico) {
-			var incluirCossig = false;
-			if (thisElement.checked) {
-				incluirCossig = true;
+		if (confirm('Ao clicar em OK você habilitará ou desabilitará o acesso ao documento completo para o(s) cossignatário(s). Deseja continuar?')) {
+			var podeChamarServico = ${!listaCossignatarios.isEmpty()};
+			if (podeChamarServico) {
+				var incluirCossig = false;
+				if (thisElement.checked) {
+					incluirCossig = true;
+				}
+				sigaSpinner.mostrar();
+				window.location.href='${pageContext.request.contextPath}/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs?sigla=${sigla}&incluirCossig='+incluirCossig;
 			}
-			window.location.href='${pageContext.request.contextPath}/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs?sigla=${sigla}&incluirCossig='+incluirCossig;
+		} else {
+			thisElement.checked = !thisElement.checked;
 		}
 	}
 	
@@ -87,20 +92,6 @@
 								</div>
 							</div>
 						</div>
-						<c:if test="${podeExibirArvoreDocsCossig}">
-							<div class="col-sm-4">
-								<div class="form-group">
-									<div class="form-check form-check-inline mt-4">
-										<input type="checkbox" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if>
-																onclick="javascript:incluirExcluirAcessoTempArvoreDocs(this);" />
-										<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessar Documento Completo</label>
-										<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
-																title='Selecionar esse campo se houver a necessidade de permitir que o(s) cossignatário(s) acesse(m) o documento completo, enquanto o mesmo estiver pendente 
-																		de assinatura. Atenção: Para habilitar ou desabilitar essa função, o documento deverá estar com status "Finalizado"'></a>
-									</div>
-								</div>
-							</div>
-						</c:if>
 					</div>
 					<div id="div_personalizacao" style="display: none" class="row">
 						<div class="col-sm-4">
@@ -140,6 +131,22 @@
 			</div>
 		</div>
 		<h3 class="gt-table-head">Cossignatários adicionados</h3>
+		<c:if test="${podeExibirArvoreDocsCossig}">
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="form-group">
+						<div class="form-check form-check-inline mt-4">
+							<input type="checkbox" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if>
+													onchange="javascript:incluirExcluirAcessoTempArvoreDocs(this);" />
+							<label class="form-check-label" for="podeIncluirCossigArvoreDocs">Acessar Documento Completo</label>
+							<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
+													title='Selecionar esse campo se houver a necessidade de permitir que o(s) cossignatário(s) acesse(m) o documento completo, enquanto o mesmo estiver pendente 
+															de assinatura. Atenção: Para habilitar ou desabilitar essa função, o documento deverá estar com status "Finalizado"'></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</c:if>
 		<div class="table-responsive">
 			<table border="0" class="table table-sm table-striped">
 				<thead class="thead-dark">

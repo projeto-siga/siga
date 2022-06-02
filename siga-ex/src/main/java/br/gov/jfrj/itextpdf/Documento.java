@@ -680,7 +680,7 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				if (garbage > Long.valueOf(Prop.get("arquivo.contagem.gc"))) {
+				if(Prop.get("arquivo.contagem.gc") != null) {
 					garbage += 1;
 					if (garbage > Long.valueOf(Prop.get("arquivo.contagem.gc"))) {
 						garbage = 0;

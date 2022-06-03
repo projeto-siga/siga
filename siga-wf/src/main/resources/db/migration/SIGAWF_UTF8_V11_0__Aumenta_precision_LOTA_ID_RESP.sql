@@ -1,0 +1,1 @@
+ALTER TABLE sigawf.wf_def_procedimento ADD LOTA_ID_RESP NUMBER(10) NULL;

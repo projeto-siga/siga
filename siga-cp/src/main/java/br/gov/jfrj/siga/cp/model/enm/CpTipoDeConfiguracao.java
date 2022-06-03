@@ -128,7 +128,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, false),
-	//
+	
 //	AUTORIZAR_MOVIMENTACAO_POR_WS(?, "Autorizar Movimentação por WS",
 //			"Utilizada para ativar e configurar o uso do Personal Identification Number (PIN) no SIGA como segundo fator de autenticação e seu comportamento com uso na Assinatura com Senha e outras funcionalidades que requerem uma segunda validação de autenticação.\n"
 //					+ "PODE: Habilita uso do PIN como Segundo Fator e combinado com o Assinar com Senha libera o uso de autenticar com PIN.\n"

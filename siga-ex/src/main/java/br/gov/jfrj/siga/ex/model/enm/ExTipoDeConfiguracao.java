@@ -39,7 +39,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	CANCELAR_MOVIMENTACAO(29, "Cancelar Movimentação",
+	CANCELAR_MOVIMENTACAO(29, "Cancelar Movimentação", 
 			"Por padão as movimentações não podem ser canceladas. Utilizando essa configuração, é possível habilitar o cancelamento de movimentações de determinado tipo, dependendo ainda de regras de negócios específicas. Por exemplo, para que seja possível excluir \"Arquivos Auxiliares\" é necessário criar uma configuração habilitando o cancelamento de \"Anexação de Arquivo Auxiliar\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO },
@@ -565,8 +565,13 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
-	
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+	//
+	RESTRINGIR_VINCULACAO_DO_ORGAO_NO_CAMPO_BUSCAR(60, "Restringir Vinculação do Órgão no Campo Busca", "Esta configuração define que esse órgão poderá ser exibido aos usuários de outros órgãos.",
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO},
+			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE }, 
+			CpSituacaoDeConfiguracaoEnum.PODE, true);
 	
 	private final int id;
 	private final String descr;

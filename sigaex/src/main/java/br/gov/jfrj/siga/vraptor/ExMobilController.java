@@ -77,6 +77,7 @@ import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -90,6 +91,7 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -523,6 +525,18 @@ public class ExMobilController extends
         				+ maxDiasPesquisa.toString() + " dias anterior à hoje.");
 			}
 		}
+		
+		List<CpOrgaoUsuario> orgaos = this.getOrgaosUsu();
+		try {
+			if(!Cp.getInstance().getConf().podePorConfiguracao(
+					getTitular(), getLotaTitular(), 
+					ExTipoDeConfiguracao.RESTRINGIR_VINCULACAO_DO_ORGAO_NO_CAMPO_BUSCAR)) {	
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	    DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
 		result.include("primeiraVez", primeiraVez);
@@ -537,7 +551,7 @@ public class ExMobilController extends
 		result.include("ultMovTipoResp", builder.getUltMovTipoResp());
 		result.include("ultMovRespSel", builder.getUltMovRespSel());
 		result.include("orgaoUsu", builder.getOrgaoUsu());
-		result.include("orgaosUsu", this.getOrgaosUsu());
+		result.include("orgaosUsu", orgaos);
 		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
 		result.include("dtDocString", (flt.getDtDoc() != null ? df.format(flt.getDtDoc()) : null));

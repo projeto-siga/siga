@@ -4049,10 +4049,10 @@ public class ExBL extends CpBL {
 		// ExDao.getInstance().gravar(ultMov);
 		// }
 		
-		if (!SigaMessages.isSigaSP() && mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
-			mov.setNumPaginas(mov.getContarNumeroDePaginas());
-		} else {
+		if (SigaMessages.isSigaSP()) {
 			mov.setNumPaginas(mov.getContarNumeroDePaginas()); //Sempre conta a página para SP
+		} else if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+			mov.setNumPaginas(mov.getContarNumeroDePaginas()); 
 		}
 		
 		dao().gravar(mov);

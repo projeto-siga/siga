@@ -1044,7 +1044,22 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" isCpf=false isCnpj=false ]
+
+[#macro email var titulo="" onblur="" size="" maxlength="" placeholder="" default="" ]
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+    
+	<div class="form-group" style="margin-bottom:0">
+		<input type="hidden" name="vars" value="${var}" />
+		<input type="email" id="${var}" name="${var}" value="${v}" onblur="${onblur}" size="${size}" maxlength="${maxlength}" placeholder="${placeholder}" />
+	</div>
+[/#macro]
+
+[#macro texto var titulo="" largura="" maxcaracteres="" style="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" 
+	atts={} onkeyup="" onkeypress="" onblur="" placeholder="" isCpf=false isCnpj=false disabled=false]
+    
     [#if reler == 'ajax']
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -1092,9 +1107,15 @@ LINHA  VARIÁVEL / CONTEÚDO
     			<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
     		[/#if]
     		
-       		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""}${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control" [#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"[#else]${jlargura!""}${jmaxcaracteres!""}[/#if]/>
+       		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""} ${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" onkeypress="${onkeypress}" 
+       			onblur="${onblur}" class="form-control" 
+       			[#if disabled == true] readonly[/#if]
+       			[#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"
+       			[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"
+       			[#else]${jlargura!""}${jmaxcaracteres!""} style="${style}" placeholder="${placeholder}"[/#if]/>
+       			
        		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>	     	
-	     	[#if isCpf]    
+	     	[#if isCpf]
 		     	<script>
 		     		function aplicarMascaraCPF(evento) {	     			             
 	            		cpf = this.value.replace(/([^\d])/g, '');
@@ -2040,7 +2061,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} ]
+[#macro data var titulo="" reler=false idAjax="" default="" onSelect="" onblur="" obrigatorio=false atts={} placeholder="" ]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -2076,8 +2097,8 @@ Pede deferimento.</span><br/><br/><br/>
 	         
 		[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="00/00/0000"/>		
-		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>				
+		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="${placeholder}"/>		
+		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>			
 	    [#else]
 	    <span class="valor">${v}</span>
 	    [/#if]
@@ -4183,7 +4204,31 @@ Pede deferimento.</span><br/><br/><br/>
     </div>
 [/#macro]
 
-[#macro horaMinuto titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false]
+[#macro date var default="" style="" onblur="" placeholder=""]
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+    
+	<div class="form-group" style="margin-bottom:0">
+		<input type="hidden" name="vars" value="${var}" />
+		<input type="date" id="${var}" name="${var}" value="${v}" style="${style}" onblur="${onblur}" placeholder="${placeholder}" />
+	</div>
+[/#macro]
+
+[#macro time var default="" style="" onblur="" placeholder=""]
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+    
+	<div class="form-group" style="margin-bottom:0">
+		<input type="hidden" name="vars" value="${var}" />
+		<input type="time" id="${var}" name="${var}" value="${v}" style="${style}" onblur="${onblur}" placeholder="${placeholder}" />
+	</div>
+[/#macro]
+
+[#macro horaMinuto var titulo="" reler=false idAjax="" default="" alerta=false obrigatorio=false onblur=""]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -4201,7 +4246,7 @@ Pede deferimento.</span><br/><br/><br/>
 	    [#if !gerar_formulario!false]
 	        <input type="hidden" name="vars" value="${var}" />                            	  
 			[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 			
-			<input type="text" id="${var}" name="${var}" value="${v}" size="6" maxlength="5" class="form-control  campoHoraMinuto" style="max-width: 70px" placeholder="00:00" />
+			<input type="text" id="${var}" name="${var}" value="${v}" size="6" maxlength="5" class="form-control  campoHoraMinuto" style="max-width: 70px" placeholder="00:00" onblur="${onblur}" />
 			<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
 	    [#else]
 			<span class="valor">${v}</span>
@@ -4720,6 +4765,7 @@ ${texto}
 	  [/@estiloBrasaoCentralizado]
 	[/@documento]
 [/#macro]
+
 
 [#assign _pathBrasao = "contextpath/imagens/BrasaoPCRJ.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]

@@ -143,7 +143,7 @@
 						<div class="form-check form-check-inline mt-1">
 							<input type="checkbox" id="podeIncluirCossigArvoreDocsCheck" name="podeIncluirCossigArvoreDocsCheck" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if>
 													onchange="javascript:incluirExcluirAcessoTempArvoreDocs(this);" />
-							<label class="form-check-label" for="podeIncluirCossigArvoreDocsCheck">Acessar Documento Completo</label>
+							<label class="form-check-label" for="podeIncluirCossigArvoreDocsCheck">Acessar Documento ${paiDasViasCossigsSubscritor}</label>
 							<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
 													title='Selecionar esse campo se houver a necessidade de permitir que o(s) cossignatário(s) acesse(m) o documento completo, enquanto o mesmo estiver pendente 
 															de assinatura. Atenção: Para habilitar ou desabilitar essa função, o documento deverá estar com status "Finalizado"'></a>

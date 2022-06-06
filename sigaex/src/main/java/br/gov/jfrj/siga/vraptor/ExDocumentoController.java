@@ -832,6 +832,8 @@ public class ExDocumentoController extends ExController {
 		final boolean podeExibirArvoreDocsSubscr = getExConsTempDocCompleto().podeExibirCheckBoxVisTempDocsComplCossigsSubscritor(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc());
 		if (podeExibirArvoreDocsSubscr && exDocumentoDTO.getDoc() != null) {
 			exDocumentoDTO.setPodeIncluirSubscrArvoreDocs(exDocumentoDTO.getDoc().paiPossuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO) || exDocumentoDTO.getDoc().possuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO));
+			ExDocumento exPaiDasViasCossigsSubscritor = getExConsTempDocCompleto().getPaiDasViasCossigsSubscritor(exDocumentoDTO.getDoc());
+			result.include("paiDasViasCossigsSubscritor", exPaiDasViasCossigsSubscritor != null ? exPaiDasViasCossigsSubscritor.getCodigo() : "");
 		}
 		result.include("vars", l);
 
@@ -858,6 +860,7 @@ public class ExDocumentoController extends ExController {
 		result.include("idMod", exDocumentoDTO.getIdMod());
 		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
 		result.include("podeExibirArvoreDocsSubscr", podeExibirArvoreDocsSubscr);
+		
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");

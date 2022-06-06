@@ -53,14 +53,20 @@ public class ExVisualizacaoTempDocCompl {
 	public boolean podeExibirCheckBoxVisTempDocsComplCossigsSubscritor(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc) {
 		boolean podeExibir =  Ex.getInstance().getConf().podePorConfiguracao(cadastrante, lotaCadastrante,
 												ExTipoDeConfiguracao.VISUALIZAR_TEMP_DOCS_COMPL_SUBSCRITOR_COSSIGNATARIO);
-		if (podeExibir && doc != null) {
-			List<ExDocumento> viasDocPai = doc.getTodosOsPaisDasViasCossigsSubscritor();
-			if (viasDocPai.iterator().hasNext()) {
-				ExDocumento docPai = viasDocPai.iterator().next();
-				return (docPai != null && docPai.getIdDoc() != null && !docPai.equals(doc)) ? Boolean.TRUE : Boolean.FALSE;
-			}
+		if (podeExibir) {
+			ExDocumento docPai = getPaiDasViasCossigsSubscritor(doc);
+			return (docPai != null && docPai.getIdDoc() != null && !docPai.equals(doc)) ? Boolean.TRUE : Boolean.FALSE;
 		}
 		return Boolean.FALSE;
+	}
+	
+	public ExDocumento getPaiDasViasCossigsSubscritor(ExDocumento docFilho) {
+		if (docFilho != null) {
+			List<ExDocumento> viasDocPai = docFilho.getTodosOsPaisDasViasCossigsSubscritor();
+			if (viasDocPai.iterator().hasNext()) 
+				return viasDocPai.iterator().next();			
+		}
+		return null;
 	}
 
 	public boolean possuiInclusaoCossigsSubscritor(ExDocumento doc) {
@@ -374,11 +380,11 @@ public class ExVisualizacaoTempDocCompl {
 			// Remover de todas as vias doc pai
 			for (ExDocumento docPai : listaViasDocPai) {
 				for (DpPessoa subscritor : listaSubscritor) {
-					descrMov.append(" ").append(subscritor.getDescricaoIniciaisMaiusculas()).append(" - DOC ORIGEM:")
-							.append(codDocOrigem);
+					String strMov = descrMov.toString() + " " + subscritor.getDescricaoIniciaisMaiusculas() 
+									+ " - DOC ORIGEM:" + codDocOrigem;
 					List<ExMovimentacao> movsPersist = getMovsCossigsSubscritorPorDocOrigem(movsCossigResp, subscritor,
 							docOrigem.getMobilGeral());
-					exBL.removerPapel(docPai, movsPersist, codigoPapel, cadastrante, descrMov.toString());
+					exBL.removerPapel(docPai, movsPersist, codigoPapel, cadastrante, strMov);
 				}
 			}
 		}

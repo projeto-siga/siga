@@ -1,5 +1,5 @@
 -- http://jeap.rio.rj.gov.br/jira/browse/PROCESSO_RIO-574
--- Criação de Modelo Averbação SMDEIS
+-- Criação de Modelo Licença Municipal Ambiental SMDEIS
 -- connect siga@srv000764.infra.rio.gov.br:1521/sigadoc.pcrj;
 -- numeracao = 389
 -- espécie LMS // id=360

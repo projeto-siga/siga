@@ -25,42 +25,27 @@
 								<b>Documento ${docVO.tipoDocumento}:</b> ${sigla}
 							</p>
 							<p class="p-0 m-0">
-								<b>Data:</b> ${docVO.dtDocDDMMYY}
-							</p>
-							<p class="p-0 m-0">
 								<b>Classifica&ccedil;&atilde;o:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>
 							<p class="p-0 m-0">
 								<b>Descri&ccedil;&atilde;o:</b> ${docVO.descrDocumento}
 							</p>
+							<p class="${hide_only_GOVSP}">
+								<b>Para:</b> ${docVO.destinatarioString}
+							</p>
+							<p>
+								<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
+							</p>
+							<p class="${hide_only_GOVSP}">
+								<b>Espécie:</b> ${docVO.forma}
+							</p>
+							<p class="p-0 m-0">
+								<b>Autentica&ccedil;&atilde;o/Assinatura:</b> ${autenticacao}
+							</p>
 						</c:if>
-						<p class="p-0 m-0">
-							<b>Titular:</b> ${docVO.titular}
-						</p>
-						<p class="p-0 m-0">
-							<b>Lota&ccedil;&atilde;o do titular:</b> ${docVO.lotaTitular}
-						</p>
 					</div>
 				</div>
 			</div>
-			<!--
-			<div class="col">
-				<div class="row">
-					<div class="col">
-						<div class="card bg-light mb-3" >
-							<div class="card-header">
-								<h5>
-									<i class="fa fa-file-pdf"></i> Arquivos para Download
-								</h5>
-							</div>
-							<div class="card-body">
-								<i class="fa fa-angle-double-right"></i> <a href="${pdf}" target="_blank">PDF do documento</a>
-							</div>
-						</div>
-					</div>
-				</div>				
-			</div>
-			-->
 		</div>
 		<div class="row">
 			<div class="col-12">

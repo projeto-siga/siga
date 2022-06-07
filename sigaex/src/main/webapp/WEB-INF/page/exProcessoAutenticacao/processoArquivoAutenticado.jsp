@@ -16,20 +16,31 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							Acompanhamento e Autenticação de Protocolo - Documento <b>${sigla}</b> 
+							Acompanhamento e Autentica&ccedil;&atilde;o de Protocolo</b>
 						</h5>
 					</div>
-					<!--
 					<div class="card-body">
-						<div>
-							<c:url var='pdfAssinado'
-								value='/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
-							<c:url var='pdf'
-								value='/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
-							<iframe src="${pdfAssinado}" width="100%" height="600" align="center" style="margin-top: 10px;"> </iframe>
-						</div>
+						<c:if test="${not empty docVO}">
+							<p class="p-0 m-0">
+								<b>Documento ${docVO.tipoDocumento}:</b> ${sigla}
+							</p>
+							<p class="p-0 m-0">
+								<b>Data:</b> ${docVO.dtDocDDMMYY}
+							</p>
+							<p class="p-0 m-0">
+								<b>Classifica&ccedil;&atilde;o:</b> ${docVO.classificacaoDescricaoCompleta}
+							</p>
+							<p class="p-0 m-0">
+								<b>Descri&ccedil;&atilde;o:</b> ${docVO.descrDocumento}
+							</p>
+						</c:if>
+						<p class="p-0 m-0">
+							<b>Titular:</b> ${docVO.titular}
+						</p>
+						<p class="p-0 m-0">
+							<b>Lota&ccedil;&atilde;o do titular:</b> ${docVO.lotaTitular}
+						</p>
 					</div>
-					-->
 				</div>
 			</div>
 			<!--

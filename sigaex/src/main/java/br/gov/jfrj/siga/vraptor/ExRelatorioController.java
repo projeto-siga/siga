@@ -283,7 +283,7 @@ public class ExRelatorioController extends ExController {
 	private void fazerResultsParaRelOrgao(
 			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
-		//result.include("orgaosUsu", this.getOrgaosUsu());
+		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 	}

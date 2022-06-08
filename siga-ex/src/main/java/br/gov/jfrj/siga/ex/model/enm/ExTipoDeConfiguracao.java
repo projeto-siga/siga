@@ -567,7 +567,9 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	RESTRINGIR_VINCULACAO_DO_ORGAO_NO_CAMPO_BUSCAR(60, "Restringir Vinculação do Órgão no Campo Busca", "222Esta configuração define que esse órgão não poderá ser exibido aos usuários de outros órgãos quando utilizarem o campo de pesquisa.",
+	RESTRINGIR_VINCULACAO_DO_ORGAO_NO_CAMPO_BUSCAR(60, "Restringir Vinculação do Órgão no Campo Busca", "Esta configuração define que um órgão não poderá ser exibido aos usuários de outros órgãos quando utilizarem o campo de pesquisa. "
+			+ "“Pode”, ou seja, após a configuração realizada, o órgão poderá ser visto para todos ou alguns órgãos especificado na configuração.<br>"
+			+ "“Não Pode”, ou seja, após a configuração realizada, o órgão não poderá ser visto para todos ou alguns órgãos especificado na configuração.",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
 					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
@@ -575,7 +577,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true);
 	
-	private final int id;
+	private final int id; 
 	private final String descr;
 	private final String explicacao;
 	private final Enum[] params;

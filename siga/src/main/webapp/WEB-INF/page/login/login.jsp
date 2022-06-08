@@ -23,7 +23,7 @@
 	<c:choose>
 		<c:when test="${siga_cliente == 'GOVSP'}">
 			<c:set var="login_box_class" value="box_login" />
-			<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
+			<c:set var="login_box_logo" value="/siga/imagens/brasao_sp_col.png" />
 			<c:set var="login_box_logo_size" value="132" />
 			<c:set var="login_box_text" value="" />
 			<c:set var="login_titulo_modal" value="SP Sem Papel"/>

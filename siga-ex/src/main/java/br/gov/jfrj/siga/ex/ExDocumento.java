@@ -59,6 +59,7 @@ import com.google.common.collect.Lists;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
@@ -2463,6 +2464,31 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 		return subscritores;
 	}
+	
+	public DpPessoa getSubscritorDiffTitularDoc() {
+		if (getSubscritor() != null && !this.getCadastrante().equivale(getSubscritor())) 
+			return getSubscritor();
+		return null;
+	}
+	
+	public List<DpPessoa> getListaCossigsSubscritorAssinouDocHoje() {
+		List<DpPessoa> listaSubscrCossigFinal = new ArrayList<DpPessoa>();
+		List<DpPessoa> listaSubscrCossig =  this.getSubscritorECosignatarios();
+
+		if (!listaSubscrCossig.isEmpty()) {
+			Set<ExMovimentacao> listaMovAssinaturas = this.getAssinaturasComTokenOuSenhaERegistros();
+			for (ExMovimentacao mov : listaMovAssinaturas) {
+				if (DateUtils.isToday(mov.getData())) {
+					for (DpPessoa pessoa : listaSubscrCossig) {
+						if (mov.getTitular().equivale(pessoa)) {
+							listaSubscrCossigFinal.add(pessoa);
+						}
+					}
+				}
+			}
+		}
+		return listaSubscrCossigFinal;
+	}
 
 	/**
 	 * Retorna uma lista com o todos os cossignatários.
@@ -2721,6 +2747,43 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return pais;
 	}
+	
+	public List<ExDocumento> getTodosOsPaisDasViasCossigsSubscritor() {
+		List<ExDocumento> pais = new ArrayList<>();
+		if (this.getExMobilPai() != null) {
+			pais = this.getExMobilPai().getDoc().getTodosOsPaisDasVias();
+			if (pais.isEmpty())
+				pais.add(this.getExMobilPai().getDoc());
+		} else {
+			pais = this.getTodosOsPaisDasVias();
+			if (pais.isEmpty())
+				pais.add(this);
+		}
+		return pais;
+	}
+	
+	public boolean paiPossuiMovsVinculacaoPapel(long codigoPapel){
+		List<ExDocumento> viasDocPai = this.getTodosOsPaisDasViasCossigsSubscritor();
+		if (viasDocPai.iterator().hasNext()) {
+			List<ExMovimentacao> movs = viasDocPai.iterator().next().getMovsVinculacaoPapelGenerico(codigoPapel);
+			for (ExMovimentacao mov : movs) {
+				ExMobil docVia = mov.getExMobilRef();
+				if(docVia.doc().getCodigo().equals(this.getCodigo()))
+					return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	public boolean possuiMovsVinculacaoPapel(long codigoPapel){
+		List<ExMovimentacao> movs = this.getMovsVinculacaoPapelGenerico(codigoPapel);
+		for (ExMovimentacao mov : movs) {
+			ExMobil docVia = mov.getExMobilRef();
+			if(docVia.doc().getCodigo().equals(this.getCodigo()))
+				return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
 
 	public List<Object> getListaDeAcessos() {
 		if (getDnmAcesso() == null || isDnmAcessoMAisAntigoQueODosPais()) {
@@ -2787,6 +2850,37 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				lista.add(mov.getLotaSubscritor());
 		}
 		return lista.size() == 0 ? null : lista;
+	}
+	
+	public boolean possuiVinculPapelRevisorCossigsSubscritor(DpPessoa dpPessoa, ExMobil mobRefMov, long codigoPapel) {
+		List<ExMovimentacao> movs = this.getMobilGeral()
+				.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
+		for (ExMovimentacao mov : movs) {
+			if (mov.getExPapel().getIdPapel().equals(codigoPapel)) { 
+				if (dpPessoa != null) {
+					if (mov.getSubscritor().equivale(dpPessoa) && mov.getExMobilRef().equals(mobRefMov))
+						return Boolean.TRUE;
+				} else {
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	public List<ExMovimentacao> getMovsVinculacaoPapelGenerico(long codigoPapel) {
+		List<ExMovimentacao> movsReturn = new ArrayList<>();
+		ExMobil mobil = this.getMobilGeral();
+		if (mobil != null) {
+			List<ExMovimentacao> movs = mobil
+					.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, Boolean.TRUE);
+			for (ExMovimentacao mov : movs) {
+				if (mov.getExPapel().getIdPapel().equals(codigoPapel)) { 
+					movsReturn.add(mov);
+				}
+			}
+		}
+		return movsReturn;
 	}
 
 	@Override

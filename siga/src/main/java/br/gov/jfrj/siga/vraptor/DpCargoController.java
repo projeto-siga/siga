@@ -78,7 +78,7 @@ public class DpCargoController extends
 		result.include("request",getRequest());
 		result.include("itens",getItens());
 		result.include("tamanho",getTamanho());
-		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("idOrgaoUsu",orgaoUsu);
 		result.include("nome",nome);
 		result.include("postbak",postback);

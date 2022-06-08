@@ -86,7 +86,7 @@ public class ExConfiguracaoController extends ExController {
 
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
-		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("orgaosUsu", this.getOrgaosUsu());
 	}
 
 	@Get("app/configuracao/listar_cadastradas")
@@ -194,7 +194,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("listaNivelAcesso", getListaNivelAcesso());
 		result.include("listaPapel", getListaPapel());
-		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
 		result.include("tiposFormaDoc", getTiposFormaDoc());
 		result.include("listaTiposDocumento", getListaTiposDocumento());

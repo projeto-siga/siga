@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -199,6 +200,10 @@ public class ExMobilController extends
         				+ maxDiasPesquisa.toString() + " dias anterior à hoje.");
 			}
 		}
+		
+//		List<CpOrgaoUsuario> orgaos = Ex.getInstance().getBL().
+//				removeOrgaosRestritos(this.getOrgaosUsu(), getCadastrante(), getLotaCadastrante());
+//		
 	    DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
 	    result.include("primeiraVez", primeiraVez);
@@ -526,17 +531,9 @@ public class ExMobilController extends
 			}
 		}
 		
-		List<CpOrgaoUsuario> orgaos = this.getOrgaosUsu();
-		try {
-			if(!Cp.getInstance().getConf().podePorConfiguracao(
-					getTitular(), getLotaTitular(), 
-					ExTipoDeConfiguracao.RESTRINGIR_VINCULACAO_DO_ORGAO_NO_CAMPO_BUSCAR)) {	
-				
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		List<CpOrgaoUsuario> orgaos = Ex.getInstance().getBL().
+				removeOrgaosRestritos(this.getOrgaosUsu(), getCadastrante(), getLotaCadastrante());
+		 
 	    DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
 		result.include("primeiraVez", primeiraVez);

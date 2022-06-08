@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -1143,7 +1144,7 @@ public class CpBL {
 	}
 
 	public CpModelo alterarCpModelo(CpModelo mod, String conteudo, CpIdentidade identidadeCadastrante)
-			throws AplicacaoException {
+			throws AplicacaoException { 
 		try {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpModelo modNew = new CpModelo();
@@ -2552,7 +2553,7 @@ public class CpBL {
 			throw e;
 		}
 
-	}
+	}  
 	
 	
 }

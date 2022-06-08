@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.siga.ex.*;
+import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
@@ -338,7 +339,8 @@ public class ExProcessoAutenticacaoController extends ExController {
 			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
 			result.include("msg", exDocumentoDTO.getMsg());
 			result.include("docVO", docVO);
-			result.include("autenticacao",
+			result.include("podeVisualizarExternamente", new ExPodeVisualizarExternamente(mob, p, l).eval());
+			result.include("autenticidade",
 					exDocumentoDTO.getDoc().getAssinantesCompleto()
 					+ " Documento Nº:  "
 					+ exDocumentoDTO.getDoc().getSiglaAssinatura()

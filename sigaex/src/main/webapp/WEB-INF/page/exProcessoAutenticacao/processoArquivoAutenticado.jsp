@@ -16,11 +16,11 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							Acompanhamento e Autentica&ccedil;&atilde;o de Protocolo</b>
+							Acompanhamento e Autentica&ccedil;&atilde;o de Protocolo - Documento <b>${sigla}</b>
 						</h5>
 					</div>
 					<div class="card-body">
-						<c:if test="${not empty docVO}">
+						<c:if test="${not empty docVO && podeVisualizarExternamente}">
 							<p class="p-0 m-0">
 								<b>Documento ${docVO.tipoDocumento}:</b> ${sigla}
 							</p>
@@ -43,7 +43,7 @@
 								<b>Espécie:</b> ${docVO.forma}
 							</p>
 							<p class="p-0 m-0">
-								<b>Autentica&ccedil;&atilde;o/Assinatura:</b> ${autenticacao}
+								<b>Autentica&ccedil;&atilde;o/Assinatura:</b> ${autenticidade}
 							</p>
 						</c:if>
 					</div>

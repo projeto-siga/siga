@@ -581,7 +581,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true),;
+			CpSituacaoDeConfiguracaoEnum.PODE, true);
 	
 	private final int id; 
 	private final String descr;

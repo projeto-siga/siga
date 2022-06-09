@@ -206,7 +206,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeSerJuntado;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
-import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir; 
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;

@@ -2524,10 +2524,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			ITipoDeMovimentacao t = mov.getExTipoMovimentacao();
 			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 					|| t == ExTipoDeMovimentacao.TRANSFERENCIA 
+					|| t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
+					|| t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
 					|| t == ExTipoDeMovimentacao.TRAMITE_PARALELO 
 					|| t == ExTipoDeMovimentacao.NOTIFICACAO)) {
 				// Recebimento sem movRef limpa todos os pendentes até agora
-				if (t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA || t == ExTipoDeMovimentacao.TRANSFERENCIA) {
+				if (t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA || t == ExTipoDeMovimentacao.TRANSFERENCIA
+						||t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA 
+						|| t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA) {
 					if (mov.getExMovimentacaoRef() == null || !p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
 						p.recebimentosPendentes.clear();
 					else 

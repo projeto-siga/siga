@@ -48,7 +48,6 @@ public class ConfiguracaoController extends SigaController {
 		if (idTpConfiguracao == null)
 			idTpConfiguracao = CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST.getId();
 		ITipoDeConfiguracao tpconf = CpTipoDeConfiguracao.getById(idTpConfiguracao);
-		
 		result.include("tipoDeConfiguracao", tpconf);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("orgaosUsu", getOrgaosUsu());

@@ -105,6 +105,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	/**
 	 * @deprecated CDI eyes only
 	 */
+	
 	public DpPessoaController() {	
 		super();
 	}
@@ -153,7 +154,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("request", getRequest());
 		result.include("itens", getItens());
 		result.include("tamanho", getTamanho());
-		result.include("orgaosUsu", this.getOrgaosUsu());
+		result.include("orgaosUsu", getOrgaosUsu());
 		result.include("lotacaoSel", lotacaoSel == null ? new DpLotacaoSelecao() : lotacaoSel);
 		result.include("idOrgaoUsu", orgaoUsu);
 		result.include("sigla", sigla);

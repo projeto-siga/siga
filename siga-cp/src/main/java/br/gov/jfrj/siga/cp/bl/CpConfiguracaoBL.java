@@ -932,12 +932,11 @@ public class CpConfiguracaoBL {
 		List<CpConfiguracao> todasConfig = CpDao.getInstance().consultar(exemplo);
 		List<CpConfiguracao> configVigentes = new ArrayList<CpConfiguracao>();
 
-		for (CpConfiguracao cfg : todasConfig) {
+		for (CpConfiguracao cfg : todasConfig) { 
 			if (!cfg.ativaNaData(hoje))
 				continue;
 			configVigentes.add(cfg);
 		}
 		return (configVigentes);
 	}
-	
 }

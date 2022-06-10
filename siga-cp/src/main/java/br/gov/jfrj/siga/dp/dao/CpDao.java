@@ -651,7 +651,7 @@ public class CpDao extends ModeloDao {
 		query.setParameter("idOrgaoUsuario", o.getOrgaoUsuario().getIdOrgaoUsu());
 
 		final List<DpFuncaoConfianca> l = query.getResultList();
-		if (l.isEmpty())
+		if (l.size() != 1)
 			return null;
 		return l.get(0);
 	}

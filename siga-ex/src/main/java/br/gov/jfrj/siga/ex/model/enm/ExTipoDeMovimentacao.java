@@ -182,9 +182,7 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	ENVIO_SIAFEM(85, "Envio ao SIAFEM"),
 	//
-	GERAR_LINK_PUBLICO_PROCESSO(86, "Gerar link público do Processo"),
-	//
-	VISUALIZACAO_EXTERNA(87, "Visualização Externa");
+	GERAR_LINK_PUBLICO_PROCESSO(86, "Gerar link público do Processo");
 
 	private final int id;
 	private final String descr;

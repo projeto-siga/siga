@@ -99,7 +99,7 @@
 												pos="${acao.pos}" url="${url}" test="${acao.pode}"
 												popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 												ajax="${acao.ajax}" idAjax="${mov.idMov}" />
-											<c:if test='${assinadopor and mov.exTipoAnexacao == ANEXACAO}'> ${mov.complemento}
+											<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}
 												<c:set var="assinadopor" value="${false}" />
 											</c:if>
 										</c:forEach>

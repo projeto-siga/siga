@@ -69,7 +69,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfiancaInclusiveInativas", query = "select count(distinct funcao.idFuncaoIni) from DpFuncaoConfianca funcao "
 				+ "  	where  (:idOrgaoUsu = null or :idOrgaoUsu = 0L or funcao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "  		and upper(funcao.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"),
-		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(REMOVE_ACENTO(fun.nomeFuncao)) = upper(REMOVE_ACENTO(:nome)) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
+		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(REMOVE_ACENTO(fun.nomeFuncao)) = upper(REMOVE_ACENTO(:nome)) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
+				+ "			and fun.dataFimFuncao = null")})
 
 public abstract class AbstractDpFuncaoConfianca extends Objeto implements
 		Serializable, HistoricoAuditavel  {

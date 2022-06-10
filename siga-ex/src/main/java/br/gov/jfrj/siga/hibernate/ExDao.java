@@ -2441,7 +2441,7 @@ public class ExDao extends CpDao {
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < :dbDatetime)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > :dbDatetime)"
 					+ queryDt
-					+ (flt.getIdMarcador() != null ? " and marca.cpMarcador.idMarcador = :idMar " : "")
+					+ (flt.getIdMarcador() != null ? " and marca.cpMarcador.hisIdIni = :idMar " : "")
 					+ (flt.getGrupoMarcador() != null ? " and marca.cpMarcador.idGrupo = :idGrupo " : "")
 					+ (flt.getIdCadastrante() != null ? " and (marca.dpPessoaIni.idPessoaIni = :pesIni)" : "")
 					+ (flt.getIdLotaCadastrante() != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaIni)" : "")

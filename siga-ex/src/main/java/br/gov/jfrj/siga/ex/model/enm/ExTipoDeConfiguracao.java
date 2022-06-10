@@ -573,15 +573,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
 			new Enum[] { CpParamCfg.SITUACAO }, 
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true), 
-	
-	RESTRINGIR_VINCULACAO_DO_ORGAO_NO_CAMPO_BUSCAR(61, "Restringir Pesquisa de Órgão", "Esta configuração permite restringir órgão no campo busca da pesquisa avançada.",
-			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
-					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
-					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
-			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.PODE, true);
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
 	
 	private final int id; 
 	private final String descr;

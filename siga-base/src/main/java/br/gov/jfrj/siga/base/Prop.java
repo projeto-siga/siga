@@ -293,6 +293,6 @@ public class Prop {
 
 
 		// CKEditor
-		provider.addPublicProperty("/ckeditor.url", sigaBaseUrl + "/ckeditor/ckeditor/ckeditor.js");
+		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 	}
 }

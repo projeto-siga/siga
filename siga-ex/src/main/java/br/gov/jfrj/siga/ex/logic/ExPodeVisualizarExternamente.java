@@ -12,21 +12,21 @@ public class ExPodeVisualizarExternamente extends CompositeExpressionSupport {
 
     private ExMobil mob;
     private ExDocumento doc;
-    private DpPessoa titular;
-    private DpLotacao lotaTitular;
+    private DpPessoa cadastrante;
+    private DpLotacao lotaCadastrante;
 
-    public ExPodeVisualizarExternamente(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+    public ExPodeVisualizarExternamente(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante) {
         this.mob = mob;
         this.doc = mob.doc();
-        this.titular = titular;
-        this.lotaTitular = lotaTitular;
+        this.cadastrante = cadastrante;
+        this.lotaCadastrante = lotaCadastrante;
     }
 
     /**
      * Retorna se é possível visualizar um documento por um usuário externo
      *
-     * @param titular
-     * @param lotaTitular
+     * @param cadastrante
+     * @param lotaCadastrante
      * @param mob
      * @return
      */
@@ -37,10 +37,10 @@ public class ExPodeVisualizarExternamente extends CompositeExpressionSupport {
 
                 new ExEstaAssinadoOuAutenticadoComTokenOuSenhaERegistros(doc),
 
-                new ExPodePorConfiguracao(titular, lotaTitular)
+                new ExPodePorConfiguracao(cadastrante, lotaCadastrante)
                         .withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
                         .withExTpMov(ExTipoDeMovimentacao.VISUALIZACAO_EXTERNA)
-                        .withExMod(mob.doc().getExModelo())
+                        .withCpOrgaoUsu(mob.doc().getOrgaoUsuario())
         );
     }
 }

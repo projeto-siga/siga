@@ -20,7 +20,7 @@
 						</h5>
 					</div>
 					<div class="card-body">
-						<c:if test="${not empty docVO && podeVisualizarExternamente}">
+						<c:if test="${not empty docVO}">
 							<p class="p-0 m-0">
 								<b>Documento ${docVO.tipoDocumento}:</b> ${sigla}
 							</p>

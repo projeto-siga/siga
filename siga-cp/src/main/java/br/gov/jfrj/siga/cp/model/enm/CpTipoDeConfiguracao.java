@@ -129,7 +129,7 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, false),
 	
-	EXIBIR_EM_CAMPO_DE_BUSCA(401, "Exibir em campo de pesquisa", "Esta configuração tem o objetivo de exibir [órgão(s), lotação(s), pessoa(s). O objeto preenchido no cadastro de configuração "
+	EXIBIR_EM_CAMPO_DE_BUSCA(401, "Exibir em Campo de Pesquisa", "Esta configuração tem o objetivo de exibir [órgão(s), lotação(s), pessoa(s). O objeto preenchido no cadastro de configuração "
 			+ "não aparecerá na lista da combo. O padrão é pode. Implementado somente para limitar órgão na combo de pesquisa avançada.",
 			new CpParamCfg[] {CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
 					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,

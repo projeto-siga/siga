@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.ex.*;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
@@ -44,10 +45,6 @@ import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExArquivo;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
@@ -341,6 +338,15 @@ public class ExProcessoAutenticacaoController extends ExController {
 			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
 			result.include("msg", exDocumentoDTO.getMsg());
 			result.include("docVO", docVO);
+			result.include("autenticidade", exDocumentoDTO.getDoc().getAssinantesCompleto());
+
+            ExProtocolo prot = Ex.getInstance().getBL().obterProtocolo(exDocumentoDTO.getDoc());
+            if (prot == null) {
+                throw new AplicacaoException(
+                        "Ocorreu um erro ao obter protocolo do Documento: " + exDocumentoDTO.getDoc().getSigla());
+            }
+
+            result.include("protocolo", prot.getCodigo());
 			result.include("mob", exDocumentoDTO.getMob());
 			result.include("isProtocoloFilho", (idMovJuntada != null ? true : false));
 

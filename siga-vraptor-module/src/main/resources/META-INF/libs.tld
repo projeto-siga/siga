@@ -72,6 +72,26 @@
   <function-signature>java.lang.Object resource(java.lang.String)</function-signature>
  </function>
  <function>
+  <name>formatarDDMMYY</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String formatarDDMMYY(java.util.Date)</function-signature>
+ </function>
+ <function>
+  <name>formatarDDMMYYYY</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String formatarDDMMYYYY(java.util.Date)</function-signature>
+ </function>
+ <function>
+  <name>formatarDDMMYYYYHHMMSS</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String formatarDDMMYYYYHHMMSS(java.util.Date)</function-signature>
+ </function>
+ <function>
+  <name>tempoRelativo</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String tempoRelativo(java.util.Date)</function-signature>
+ </function>
+ <function>
   <name>espera</name>
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.String espera(java.util.Date)</function-signature>

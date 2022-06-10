@@ -896,4 +896,14 @@ public class WfProcedimento extends Objeto
 		return getId().compareTo(o.getId());
 	}
 
+	public Date getDtInicioDaTarefa() {
+		Date dt = getHisDtIni();
+		for (WfMov mov : getMovimentacoes()) {
+			if (!mov.isAtivo())
+				continue;
+			if (mov instanceof WfMovTransicao && dt.before(mov.getHisDtIni())) 
+				dt = mov.getHisDtIni();
+		}
+		return dt;
+	}
 }

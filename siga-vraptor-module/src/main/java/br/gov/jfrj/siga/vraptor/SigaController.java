@@ -415,7 +415,8 @@ public class SigaController {
 
 	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
 		return dao().listarOrgaosUsuarios();
-	}
+		
+	} 
 	
 	protected Paginador getP() {
 		return p;

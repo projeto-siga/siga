@@ -14,12 +14,12 @@ public class ExEstaSolicitadaPublicacaoNoDiario implements Expression {
 
 	@Override
 	public boolean eval() {
-		return doc.isPublicacaoAgendada();
+		return doc.isPublicacaoSolicitada();
 	}
 
 	@Override
 	public String explain(boolean result) {
-		return JLogic.explain("está agendada a publicação no diário", result);
+		return JLogic.explain("está solicitado o agendamento da publicação no diário", result);
 	}
 
 }

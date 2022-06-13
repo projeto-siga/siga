@@ -8,10 +8,12 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <siga:pagina popup="false" titulo="Receber notificação por email">
+	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
+
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header"> 
-				<h5 id="et">Receber notificação por email</h5>
+				<h5 id="et">Receber notificação por e-mail</h5>
 			</div> <!-- card-header -->
 			<div class="card-body"> 
 				<form name="frm" id="listar" action="listar" method="GET">
@@ -40,6 +42,11 @@
 											<c:if test="${conf.cpServico.siglaServico != SERV_PAI}"> 
 												<td style="width: 70%;">
 										      		${conf.cpServico.dscServico}  
+										      		<a
+														class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}"
+														data-toggle="tooltip" data-trigger="click"
+														data-placement="bottom"
+														title="${conf.cpServico.labelServico} ">
 										    	</td> 
 											</c:if>
 										    <c:choose>   
@@ -79,6 +86,11 @@
 		$(document).ready(function() {	
 			if ('${mensagemPesquisa}'.length > 0) $('.mensagem-pesquisa').css({'display':'block'});
 		});
+		
+		$(function () {
+			  $('[data-toggle="tooltip"]').tooltip()
+		})
+		
 		function sbmtAction(codigo, action) {
 			var frm = document.getElementById(codigo);
 			frm.action = action;
@@ -95,5 +107,6 @@
 				sbmtAction('listar',url);
 			}, 1000)
 		}
+		
 	</script>
 </siga:pagina> 

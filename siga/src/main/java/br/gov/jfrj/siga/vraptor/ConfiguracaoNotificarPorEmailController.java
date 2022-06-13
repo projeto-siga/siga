@@ -65,7 +65,8 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 			} 
 			servico.setSigla(servicoDoUsuario.getSigla());
 			servico.setDscServico(servicoDoUsuario.getDescricao());
-			configuracao.setCpServico(servico);      
+			servico.setLabelServico(servicoDoUsuario.getExplicacao());
+			configuracao.setCpServico(servico); 
 			configuracoes.add(configuracao); 
 		}	
 		return configuracoes;

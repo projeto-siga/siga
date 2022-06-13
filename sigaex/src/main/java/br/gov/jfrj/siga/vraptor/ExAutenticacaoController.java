@@ -15,6 +15,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
@@ -50,6 +51,7 @@ import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 @Controller
 public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/public/app/autenticar";
+	private static final String URL_ACOMPANHAMENTO_PROTOCOLO = "/public/app/processoautenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
 
@@ -85,6 +87,15 @@ public class ExAutenticacaoController extends ExController {
 			final String ass, final String assinaturaB64,
 			final String certificadoB64, final String atributoAssinavelDataHora)
 			throws Exception {
+
+		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
+		ExDocumento doc = dao().consultar(arq.getIdDoc(), ExDocumento.class, false);
+
+		if (!Ex.getInstance().getComp().pode(ExPodeVisualizarExternamente.class, doc)) {
+			setDefaultResults();
+			result.redirectTo(URL_ACOMPANHAMENTO_PROTOCOLO);
+		}
+
 
 		// Só para já dar o erro logo.
 		String pwd = getJwtPassword();
@@ -129,7 +140,6 @@ public class ExAutenticacaoController extends ExController {
 			return;
 		}
 
-		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		boolean mostrarBotaoAssinarExterno = arq
 				.isCodigoParaAssinaturaExterna(n);

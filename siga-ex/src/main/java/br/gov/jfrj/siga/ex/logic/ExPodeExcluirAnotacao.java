@@ -61,7 +61,9 @@ public class ExPodeExcluirAnotacao extends CompositeExpressionSupport {
 						
 						new ExMovimentacaoELotaCadastrante(mov, titular.getLotacao()),
 						
-						new ExMovimentacaoELotaSubscritor(mov, titular.getLotacao())),
+						new ExMovimentacaoELotaSubscritor(mov, titular.getLotacao()),
+				
+						new ExMovimentacaoELotaTitular(mov, lotaTitular)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.EXCLUIR_ANOTACAO));
 	}

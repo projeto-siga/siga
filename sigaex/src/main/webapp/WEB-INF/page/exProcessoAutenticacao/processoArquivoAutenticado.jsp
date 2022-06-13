@@ -34,12 +34,6 @@
 								<b>Descri&ccedil;&atilde;o:</b> ${docVO.descrDocumento}
 							</p>
 							<p class="${hide_only_GOVSP}">
-								<b>Para:</b> ${docVO.destinatarioString}
-							</p>
-							<p>
-								<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
-							</p>
-							<p class="${hide_only_GOVSP}">
 								<b>Espécie:</b> ${docVO.forma}
 							</p>
 							<p class="p-0 m-0">

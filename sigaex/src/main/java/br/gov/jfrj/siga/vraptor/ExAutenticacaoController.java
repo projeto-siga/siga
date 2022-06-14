@@ -52,7 +52,6 @@ import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 @Controller
 public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/public/app/autenticar";
-	private static final String URL_ACOMPANHAMENTO_PROTOCOLO = "/public/app/processoautenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
 

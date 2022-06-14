@@ -6,6 +6,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
+import com.crivano.jlogic.Or;
 
 public class ExPodeVisualizarExternamente extends CompositeExpressionSupport {
 
@@ -25,11 +26,14 @@ public class ExPodeVisualizarExternamente extends CompositeExpressionSupport {
 
                 new ExEstaAssinadoOuAutenticadoComTokenOuSenhaERegistros(doc),
 
-                new ExTemMovimentacaoNaoCanceladaDoTipo(doc, ExTipoDeMovimentacao.GERAR_PROTOCOLO),
+                Or.of(
+                        new ExPodePorConfiguracao(null, null)
+                                .withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+                                .withCpOrgaoUsu(doc.getOrgaoUsuario())
+                                .withExTpMov(ExTipoDeMovimentacao.VISUALIZACAO_EXTERNA),
 
-                new ExPodePorConfiguracao(null, null)
-                        .withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-                        .withExTpMov(ExTipoDeMovimentacao.VISUALIZACAO_EXTERNA)
+                        new ExTemMovimentacaoNaoCanceladaDoTipo(doc, ExTipoDeMovimentacao.GERAR_PROTOCOLO)
+                )
         );
     }
 }

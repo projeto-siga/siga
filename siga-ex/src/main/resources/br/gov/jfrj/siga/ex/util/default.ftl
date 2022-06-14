@@ -1044,6 +1044,16 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
+[#macro img var titulo="" label="" src="" width="" height="" onchange="" onblur="" size="" maxlength="" placeholder="" default="" ]
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+    
+    <div class="form-group" style="margin-bottom:0">
+    	<img id="${var}" name="${var}" value="${v}" src="${src}" width="${width}" height="${height}" onchange="${onchange}" onblur="${onblur}" />
+    </div>
+[/#macro]
 
 [#macro email var titulo="" onblur="" size="" maxlength="" placeholder="" default="" ]
     [#local v = .vars[var]!""]
@@ -1660,6 +1670,7 @@ CKEDITOR.replace( '${var}',
                 [/#if]
     </div>
 [/#macro]
+
 [#macro XStandard nome="" conteudo=""]
         <script type="text/javascript" language="Javascript1.1">
 
@@ -1769,6 +1780,7 @@ CKEDITOR.replace( '${var}',
         --> 
         </object>
 [/#macro]
+
 [#macro formulario texto fecho="" tamanhoLetra="Normal" _tipo="FORMULÁRIO"]
 [#--
   Aplicação: Formatar documento para o tipo Formulário

@@ -15,7 +15,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
@@ -91,9 +92,13 @@ public class ExAutenticacaoController extends ExController {
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 		ExDocumento doc = dao().consultar(arq.getIdDoc(), ExDocumento.class, false);
 
-		if (!Ex.getInstance().getComp().pode(ExPodeVisualizarExternamente.class, doc)) {
-			setDefaultResults();
-			result.redirectTo(URL_ACOMPANHAMENTO_PROTOCOLO);
+		if (!
+				new ExPodePorConfiguracao(null, null)
+				.withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
+				.withCpOrgaoUsu(doc.getOrgaoUsuario()).eval()
+		) {
+			throw new AplicacaoException("Documento " + doc.getSigla() +
+					" inacessível para visualização externa.");
 		}
 
 

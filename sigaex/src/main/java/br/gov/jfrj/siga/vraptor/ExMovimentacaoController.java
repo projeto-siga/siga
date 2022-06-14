@@ -2714,7 +2714,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("app/expediente/mov/transferir_lote")
 	public void aTransferirLote(Integer paramoffset) {
-		Long tamanho = dao().consultarQuantidadeParaTransferirEmLote(getLotaTitular());
+		Long tamanho = dao().consultarQuantidadeParaTransferirEmLote(getTitular());
 
 		LOGGER.debug("TAMANHO : " + tamanho);
 
@@ -2724,8 +2724,8 @@ public class ExMovimentacaoController extends ExController {
 				: 0;
 
 		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_TRAMITACAO_LOTE)
-				? dao().consultarParaTransferirEmLote(getLotaTitular(), null, null)
-				: dao().consultarParaTransferirEmLote(getLotaTitular(), offset, MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+				? dao().consultarParaTransferirEmLote(getTitular(), null, null)
+				: dao().consultarParaTransferirEmLote(getTitular(), offset, MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
 
 		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
 		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();

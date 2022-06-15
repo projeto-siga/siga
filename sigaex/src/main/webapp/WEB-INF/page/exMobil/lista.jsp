@@ -331,6 +331,9 @@
 						</c:if>
 					</tr>
 				</siga:paginador>
+				<c:if test="${ehPublicoExterno}">
+					<p><a class="btn btn-primary float-right btn-sm ml-2" href="/siga/app/principal?redirecionar=false">Retornar ao Quadro Quantitativo</a></p>
+				</c:if>
 			</table>
 		</c:otherwise>
 	</c:choose>

@@ -134,10 +134,8 @@
 								</span>
 							</c:if></td>
 						<td align="center">${taskInstance.instanciaDeProcedimento.prioridade.descr}</td>
-						<td align="right">${fn:replace(f:esperaSimples(taskInstance.instanciaDeProcedimento.eventoData),
-						" ", "&nbsp;")}</td>
-						<td align="right">${fn:replace(f:esperaSimples(taskInstance.instanciaDeProcedimento.hisDtIni),
-						" ", "&nbsp;")}</td>
+						<td align="right" title="${f:formatarDDMMYY(taskInstance.instanciaDeProcedimento.dtInicioDaTarefa)}">${f:tempoRelativo(taskInstance.instanciaDeProcedimento.dtInicioDaTarefa)}</td>
+						<td align="right" title="${f:formatarDDMMYY(taskInstance.instanciaDeProcedimento.hisDtIni)}">${f:tempoRelativo(taskInstance.instanciaDeProcedimento.hisDtIni)}</td>
 					</tr>
 				</c:forEach>
 			</tbody>

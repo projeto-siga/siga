@@ -61,6 +61,7 @@ import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
 import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
@@ -203,7 +204,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		WfDefinicaoDeProcedimento pd = buscar(id);
 		result.include("pd", pd);
 		result.include("dot", util.getDot(pd));
-		
+
 		SortedSet<WfTarefa> tis = new TreeSet<>();
 		List<WfProcedimento> pis = dao().consultarProcedimentosAtivosPorDiagrama(pd);
 		for (WfProcedimento pi : pis) {
@@ -311,12 +312,19 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 						td.setDefinicaoDeResponsavel(dao().consultar(td.getDefinicaoDeResponsavelId(),
 								WfDefinicaoDeResponsavel.class, false));
 
+					if (!td.getTipoDeTarefa().isSuportarVariaveis())
+						td.setDefinicaoDeVariavel(new ArrayList<>());
+
 					if (td.getDefinicaoDeVariavel() != null) {
 						for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel()) {
 							vd.setDefinicaoDeTarefa(td);
 							setDepois.add(vd);
 						}
 					}
+
+					if (!td.getTipoDeTarefa().isSuportarDesvios())
+						td.setDefinicaoDeDesvio(new ArrayList<>());
+
 					if (td.getDefinicaoDeDesvio() != null) {
 						for (WfDefinicaoDeDesvio dd : td.getDefinicaoDeDesvio()) {
 							dd.setDefinicaoDeTarefa(td);

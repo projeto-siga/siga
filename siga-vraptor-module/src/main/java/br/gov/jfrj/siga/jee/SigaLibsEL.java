@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.jee;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaCalendar;
@@ -96,6 +98,33 @@ public class SigaLibsEL {
 
 	public static Object resource(String name) {
 		return Contexto.resource(name);
+	}
+	
+	public static String formatarDDMMYY(Date dt) {
+		if (dt == null) 
+			return null;
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+		return df.format(dt);
+	}
+
+	public static String formatarDDMMYYYY(Date dt) {
+		if (dt == null) 
+			return null;
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		return df.format(dt);
+	}
+
+	public static String formatarDDMMYYYYHHMMSS(Date dt) {
+		if (dt == null) 
+			return null;
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		return df.format(dt);
+	}
+
+	public static String tempoRelativo(Date dt) {
+		if (dt == null)
+			return null;
+		return Data.calcularTempoRelativo(dt);
 	}
 
 	public static String espera(Date dt) {

@@ -40,7 +40,7 @@ public class CarregadorPlugin {
 				if (!url.getPath().contains("siga-ext")){
 					iterator.remove();
 				}else{
-					iterator.set(new URL(url.getPath().replaceAll("\\.jar.*", ".jar")));
+					iterator.set(new URL("file://"+ url.getPath().replaceAll("\\.jar.*", ".jar").replace("file:", "")));
 				}
 			}
 			URL implDefault = Thread.currentThread().getContextClassLoader().getResource("br/gov/jfrj/siga/hibernate/ext/MontadorQuery.class");

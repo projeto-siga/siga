@@ -89,9 +89,6 @@ public class ExAutenticacaoController extends ExController {
 			final String certificadoB64, final String atributoAssinavelDataHora)
 			throws Exception {
 
-		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
-		ExDocumento doc = dao().consultar(arq.getIdDoc(), ExDocumento.class, false);
-
 		// Só para já dar o erro logo.
 		String pwd = getJwtPassword();
 		String recaptchaSiteKey = getRecaptchaSiteKey();
@@ -134,6 +131,8 @@ public class ExAutenticacaoController extends ExController {
 			setDefaultResults();
 			return;
 		}
+
+		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		boolean mostrarBotaoAssinarExterno = arq

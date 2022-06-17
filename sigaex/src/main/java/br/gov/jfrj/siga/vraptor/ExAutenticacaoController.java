@@ -53,7 +53,6 @@ import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 @Controller
 public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/public/app/autenticar";
-	private static final String URL_ACOMPANHAMENTO_PROTOCOLO = "/public/app/processoautenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
 
@@ -92,19 +91,6 @@ public class ExAutenticacaoController extends ExController {
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 		ExDocumento doc = dao().consultar(arq.getIdDoc(), ExDocumento.class, false);
-
-		/*
-		 * Verifica se não tem acesso ao Documento e
-		 * se não é permitido a visualização externa do Documento no Órgão
-		 */
-		if (!(Ex.getInstance().getComp()
-				.pode(ExPodeAcessarDocumento.class, getCadastrante(), getLotaCadastrante(), doc.getMobilGeral())) &&
-				!(new ExPodePorConfiguracao(null, null)
-						.withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
-						.withCpOrgaoUsu(doc.getOrgaoUsuario()).eval())
-		) {
-			result.redirectTo(URL_ACOMPANHAMENTO_PROTOCOLO);
-		}
 
 		// Só para já dar o erro logo.
 		String pwd = getJwtPassword();
@@ -149,7 +135,6 @@ public class ExAutenticacaoController extends ExController {
 			return;
 		}
 
-
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		boolean mostrarBotaoAssinarExterno = arq
 				.isCodigoParaAssinaturaExterna(n);
@@ -189,9 +174,6 @@ public class ExAutenticacaoController extends ExController {
 
 		setDefaultResults();
 
-
-		
-		
 		result.include("assinaturas", assinaturas);
 		result.include("mov", mov);
 		result.include("mostrarBotaoAssinarExterno", mostrarBotaoAssinarExterno);
@@ -346,11 +328,27 @@ public class ExAutenticacaoController extends ExController {
 			if(l == null && !lista.isEmpty()) {
 				l = lista.get(0).getLotaSubscritor();
 			}
+
+			/*
+			 * Verifica se tem acesso ao Documento ou
+			 * se é permitido a visualização externa do Documento no Órgão
+			 */
+			boolean podeVisualizarExternamente = Ex.getInstance().getComp()
+					.pode(ExPodeAcessarDocumento.class, getCadastrante(), getLotaCadastrante(), doc.getMobilGeral()) ||
+					new ExPodePorConfiguracao(null, null)
+							.withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
+							.withCpOrgaoUsu(doc.getOrgaoUsuario()).eval();
+			
+			result.include("podeVisualizarExternamente", podeVisualizarExternamente);
 			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
-			SigaObjects sigaObjects = new SigaObjects(request);
-			DpPessoa cadastrante = sigaObjects.getCadastrante();
 			result.include("docVO", docVO);
+			result.include("autenticidade",
+					docVO.getDoc().getAssinantesCompleto() +
+							" Documento N: " +
+							docVO.getDoc().getSiglaAssinatura()
+
+			);
 		}
 	}
 

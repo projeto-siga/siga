@@ -49,7 +49,7 @@ import br.gov.jfrj.siga.model.Historico;
 		+ "	WHERE (marca.dtIniMarca IS NULL OR marca.dtIniMarca < :dbDatetime)"
 		+ "		AND (marca.dtFimMarca IS NULL OR marca.dtFimMarca > :dbDatetime)"
 		+ "		AND marca.dpPessoaIni.idPessoa = :idPessoaIni" + "     AND marca.cpTipoMarca.idTpMarca = 1 "
-		+ "	    AND marca.cpMarcador.idMarcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
+		+ "	    AND marca.cpMarcador.idMarcador not in (6,9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)") })
 public abstract class AbstractCpMarcador extends HistoricoAuditavelSuporte implements Serializable, Historico {
 
 	@Id

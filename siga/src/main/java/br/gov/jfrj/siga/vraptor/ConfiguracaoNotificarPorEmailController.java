@@ -20,9 +20,10 @@ import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 @Controller
-public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport {
+public class ConfiguracaoNotificarPorEmailController extends SigaSelecionavelControllerSupport<CpServico, DaoFiltroSelecionavel> {
 
 	private static final Boolean UTILIZAVEL = true;
 
@@ -44,6 +45,9 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 
 	@Get({ "/app/notificarPorEmail/listar", "/public/app/page/usuario/listar" })
 	public void listar () throws Exception {	 
+		
+		assertAcesso("CEMAIL:Módulo de notificação por email");
+		
 		result.include("ITENS", colecao());
 		result.include("SERV_PAI", CpServicosNotificacaoPorEmail.SIGACEMAIL.getSigla());
 		result.include("RECB_OBRIGATORIO", null); 
@@ -87,6 +91,11 @@ public class ConfiguracaoNotificarPorEmailController extends GiControllerSupport
 		Cp.getInstance().getBL().configurarAcesso(null, getCadastrante().getOrgaoUsuario(), 
 				lotacao, pessoa, servico, situacao, tpConf, getIdentidadeCadastrante());
 		result.redirectTo(ConfiguracaoNotificarPorEmailController.class).listar();
-	}   
+	}
+
+	@Override
+	protected DaoFiltroSelecionavel createDaoFiltro() {
+		return null;
+	}    
 	
 }

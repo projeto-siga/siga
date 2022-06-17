@@ -264,6 +264,8 @@ public class ExBL extends CpBL {
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
 
+	Notificar notificar = new Notificar();
+	
 	public ExCompetenciaBL getComp() {
 		return (ExCompetenciaBL) super.getComp();
 	}
@@ -1697,8 +1699,8 @@ public class ExBL extends CpBL {
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
 				
-//				notificar = new Notificar();
-//				notificar.cossignatario(doc, cadastrante);
+				notificar = new Notificar();
+				notificar.cossignatario(doc, cadastrante);
 				
 				gravarMovimentacao(mov);
 	
@@ -1961,8 +1963,8 @@ public class ExBL extends CpBL {
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
 				
-//				notificar = new Notificar();
-//				notificar.cossignatario(doc, cadastrante);
+				notificar = new Notificar();
+				notificar.cossignatario(doc, cadastrante);
 				
 				gravarMovimentacao(mov);
 	
@@ -3187,8 +3189,8 @@ public class ExBL extends CpBL {
 			if (doc.getExMobilAutuado() != null)
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
 			
-//			notificar = new Notificar();
-//			notificar.responsavelPelaAssinatura(doc, cadastrante);
+			notificar = new Notificar();
+			notificar.responsavelPelaAssinatura(doc, cadastrante);
 			
 			return s;
 		} catch (final Exception e) {
@@ -4056,8 +4058,8 @@ public class ExBL extends CpBL {
 			dao().gravar(mov.getExMobil());
 		}
 		
-		Notificar notificar = new Notificar(mov.getCadastrante());
-		notificar.enviar(mov);
+		notificar = new Notificar();
+		notificar.habilitadoOuDesabilitadoParaEsseOrgao(mov);
 		
 		if (SigaMessages.isSigaSP()) {
 			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA &&
@@ -5337,8 +5339,8 @@ public class ExBL extends CpBL {
 						listaMovimentacao.addAll(m.doc().getMobilGeral()
 								.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 						
-//						notificar = new Notificar();
-//						notificar.usuarioDiretamenteOuPelaUnidade(mov);
+						notificar = new Notificar();
+						notificar.usuarioDiretamenteOuPelaUnidade(mov);
 						
 						if (!listaMovimentacao.isEmpty()) {
 							List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();

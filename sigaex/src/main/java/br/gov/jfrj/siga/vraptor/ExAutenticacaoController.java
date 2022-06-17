@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
@@ -91,15 +92,19 @@ public class ExAutenticacaoController extends ExController {
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 		ExDocumento doc = dao().consultar(arq.getIdDoc(), ExDocumento.class, false);
 
-		if (!
-				new ExPodePorConfiguracao(null, null)
-				.withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
-				.withCpOrgaoUsu(doc.getOrgaoUsuario()).eval()
+		/*
+		 * Verifica se não tem acesso ao Documento e
+		 * se não é permitido a visualização externa do Documento no Órgão
+		 */
+		if (!(Ex.getInstance().getComp()
+				.pode(ExPodeAcessarDocumento.class, getCadastrante(), getLotaCadastrante(), doc.getMobilGeral())) &&
+				!(new ExPodePorConfiguracao(null, null)
+						.withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
+						.withCpOrgaoUsu(doc.getOrgaoUsuario()).eval())
 		) {
 			throw new AplicacaoException("Documento " + doc.getSigla() +
 					" inacessível para visualização externa.");
 		}
-
 
 		// Só para já dar o erro logo.
 		String pwd = getJwtPassword();
@@ -144,6 +149,7 @@ public class ExAutenticacaoController extends ExController {
 			return;
 		}
 
+
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		boolean mostrarBotaoAssinarExterno = arq
 				.isCodigoParaAssinaturaExterna(n);
@@ -182,6 +188,9 @@ public class ExAutenticacaoController extends ExController {
 		}
 
 		setDefaultResults();
+
+
+		
 		
 		result.include("assinaturas", assinaturas);
 		result.include("mov", mov);
@@ -339,7 +348,8 @@ public class ExAutenticacaoController extends ExController {
 			}
 			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
-
+			SigaObjects sigaObjects = new SigaObjects(request);
+			DpPessoa cadastrante = sigaObjects.getCadastrante();
 			result.include("docVO", docVO);
 		}
 	}

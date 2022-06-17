@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 @Controller
 public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/public/app/autenticar";
+	private static final String URL_ACOMPANHAMENTO_PROTOCOLO = "/public/app/processoautenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
 
@@ -102,8 +103,7 @@ public class ExAutenticacaoController extends ExController {
 						.withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
 						.withCpOrgaoUsu(doc.getOrgaoUsuario()).eval())
 		) {
-			throw new AplicacaoException("Documento " + doc.getSigla() +
-					" inacessível para visualização externa.");
+			result.redirectTo(URL_ACOMPANHAMENTO_PROTOCOLO);
 		}
 
 		// Só para já dar o erro logo.

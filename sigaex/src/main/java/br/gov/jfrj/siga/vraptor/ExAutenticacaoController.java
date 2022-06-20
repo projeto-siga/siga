@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
@@ -332,13 +333,9 @@ public class ExAutenticacaoController extends ExController {
 			 * Verifica se tem acesso ao Documento ou
 			 * se é permitido a visualização externa do Documento no Órgão
 			 */
-			boolean podeVisualizarExternamente = Ex.getInstance().getComp()
-					.pode(ExPodeAcessarDocumento.class, getCadastrante(), getLotaCadastrante(), doc.getMobilGeral()) ||
-					new ExPodePorConfiguracao(null, null)
-							.withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
-							.withCpOrgaoUsu(doc.getOrgaoUsuario()).eval();
-			
-			result.include("podeVisualizarExternamente", podeVisualizarExternamente);
+			result.include("podeVisualizarExternamente", 
+					Ex.getInstance().getComp().pode(ExPodeVisualizarExternamente.class,
+							getTitular(), getLotaTitular(), doc.getMobilGeral()));
 			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
 			result.include("docVO", docVO);

@@ -54,6 +54,8 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 
+				Not.of(new ExEExterno(mob.doc())),
+
 				// Edson: este isEletronico() está aqui porque o físico deixa de estar pendente
 				// de
 				// assinatura logo que a primeira pessoa assina. Porém, isso não significa que

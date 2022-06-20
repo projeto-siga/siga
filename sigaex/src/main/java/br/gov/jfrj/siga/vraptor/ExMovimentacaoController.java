@@ -5250,4 +5250,9 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+    @Get("/app/expediente/mov/enviar_para_visualizacao_externa")
+    public void aEnviarParaVisualizacaoExterna(final String sigla) {
+        System.out.println(sigla);
+
+    }
 }

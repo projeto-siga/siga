@@ -131,7 +131,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	}
 
 	public List<WfProcedimento> consultarProcedimentosAtivosPorPrincipal(String principal) {
-		String sql = "select p from WfProcedimento p where p.hisDtFim is null and p.principal is not null and p.principal <> '' and p.principal like :principal";
+		String sql = "select p from WfProcedimento p where p.hisDtFim is null and p.principal is not null and p.principal like :principal";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("principal", principal + "%");
 		List<WfProcedimento> result = query.getResultList();

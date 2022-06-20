@@ -476,8 +476,8 @@ public class ExMobilController extends
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
 		
 		assertAcesso("PESQ:Pesquisar");
-		if (getCadastrante().isUsuarioExterno()) {
-			throw new RegraNegocioException("Pesquisa indisponível para Usuários Externos.");
+		if (getCadastrante().isUsuarioExterno() && Prop.isGovSP()) {
+			throw new AplicacaoException("Pesquisa indisponível para Usuários Externos.");
 		}
 		
 		if (Prop.getBool("atualiza.anotacao.pesquisa"))
@@ -581,7 +581,9 @@ public class ExMobilController extends
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", idFormaDoc);
-		result.include("idMod", idMod);		
+		result.include("idMod", idMod);	
+		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());	
+		
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();

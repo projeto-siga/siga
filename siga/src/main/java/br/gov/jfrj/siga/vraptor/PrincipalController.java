@@ -56,7 +56,11 @@ public class PrincipalController extends SigaController {
 	}
 
 	@Get("app/principal")
-	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) throws Exception {
+
+	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) {
+		
+		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());
+		
 		if (redirecionar == null || redirecionar) {
 			String paginaInicialUrl = Prop.get("/siga.pagina.inicial.url");
 			

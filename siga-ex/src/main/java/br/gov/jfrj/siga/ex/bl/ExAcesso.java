@@ -251,7 +251,7 @@ public class ExAcesso {
 		
 			// Aberto
 			if (doc.isPendenteDeAssinatura()) {
-				switch (doc.getExNivelAcesso().getGrauNivelAcesso()) {
+				switch (doc.getExNivelAcessoAtual().getGrauNivelAcesso()) {
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
 					add(doc.getCadastrante());

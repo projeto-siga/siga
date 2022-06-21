@@ -760,7 +760,7 @@ public class ExDocumentoVO extends ExVO {
 				.params("sigla", mob.getCodigoCompacto()).exp(And.of(new CpPodeBoolean(mostrarEnviarSiafem(doc), "pode mostrar Siafem"), new ExPodeEnviarSiafem(doc, titular, lotaTitular))).classe("once").build());
 
 		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.enviar.visualizacaoexterna"))
-				.icone("email_go").nameSpace("/app/expediente/doc").acao("enviar_para_visualizacao_externa")
+				.icone("email_go").nameSpace("/app/expediente/mov").acao("enviar_para_visualizacao_externa")
 				.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
 				.exp(new ExPodeEnviarParaVisualizacaoExterna(mob, titular, lotaTitular)).classe("once").build());
 		

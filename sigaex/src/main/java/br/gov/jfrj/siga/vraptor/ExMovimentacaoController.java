@@ -5251,8 +5251,8 @@ public class ExMovimentacaoController extends ExController {
 	}
 
     @Get("/app/expediente/mov/enviar_para_visualizacao_externa")
-    public void aEnviarParaVisualizacaoExterna(final String sigla) {
-        System.out.println(sigla);
+    public void enviarParaVisualizacaoExterna(final String sigla) {
+		result.include("sigla", sigla);
 
     }
 }

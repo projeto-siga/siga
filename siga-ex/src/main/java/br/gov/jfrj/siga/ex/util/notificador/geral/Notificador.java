@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.ex.util;
+package br.gov.jfrj.siga.ex.util.notificador.geral;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,6 +27,8 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.enm.CpServicosNotificacaoPorEmail;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -390,15 +392,19 @@ public class Notificador {
 						papel,
 						pessoa,
 						tipoMovimentacao,
-						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL));
+						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL) && 
+						!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+								pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()));
 				
-	}
+	} 
 	
 	private static boolean temPermissao(DpPessoa pessoa, DpLotacao lotacao, ExModelo modelo, ITipoDeMovimentacao idTpMov) throws AplicacaoException, Exception {
 		
 			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
 							lotacao, modelo,idTpMov,
-							ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL));		
+							ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) && 
+					!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+							pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave());		
 				
 	}
 	

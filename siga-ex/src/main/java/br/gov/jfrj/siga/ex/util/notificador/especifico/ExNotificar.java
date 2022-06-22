@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.util;
+package br.gov.jfrj.siga.ex.util.notificador.especifico;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +15,7 @@ import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 
 /**
  * Essa classe tem a responsabilidade de realizar todas as 
@@ -23,20 +24,19 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
  * 
  */
 
-public class Notificar {
+public class ExNotificar {
 
-	private Email email;
+	private ExEmail email;
 	
-	public Notificar() { }
+	public ExNotificar() { }
 	
 	//Esse método notifica o(s) usuário(s) que foi incluido como cossignatário de um documento.
 	public void cossignatario (ExDocumento doc, DpPessoa cadastrante) {
-		email = new Email();
+		email = new ExEmail();
 		List<DpPessoa> cossignatarios = doc.getCosignatarios();  
 		for (DpPessoa cossignatario : cossignatarios) {
 			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cossignatario, cossignatario.getLotacao(), 
 					CpServicosNotificacaoPorEmail.COSSIG.getChave()) 
-					&& doc.isAssinadoPeloSubscritorComTokenOuSenha()
 					&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cossignatario, 
 							cossignatario.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) {
 				email.enviarAoCossignatario(cossignatario, cadastrante, doc.getSigla());
@@ -48,7 +48,7 @@ public class Notificar {
 	//Existem dois tipos de notificações aqui. A primeira é quando o documento possui algum marcador Local ou Geral.
 	//A segunda é quando o documento simplesmente foi tramitado indepente se tem ou não marcadores.
 	public void usuarioDiretamenteOuPelaUnidade (ExMovimentacao mov) {
-		email = new Email();
+		email = new ExEmail();
 		Set<ExMobil> exMobils = mov.getExDocumento().getExMobilSet();
 		Set<DpPessoa> pessoasLota = mov.getLotaResp().getDpPessoaLotadosSet();
 		Set<CpMarcador> marcas = new HashSet<>();
@@ -115,22 +115,13 @@ public class Notificar {
 	
 	//Esse método envia uma notificação para o responsável pela assinatura do documento.
 	public void responsavelPelaAssinatura (ExDocumento doc, DpPessoa cadastrante) {
-		email = new Email();
+		email = new ExEmail();
 		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
 				doc.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.RESPASS.getChave())
 				&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
 						doc.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
 			email.enviarAoResponsavelPelaAssinatura(
 					doc.getSubscritor(), cadastrante, doc.getSigla());
-		
-	}
-	
-	//Esse método verifica se está habilitado o Módulo de notificação por email. Caso esteja então ele sobreescreve o notificador Geral do sistema.
-	public void habilitadoOuDesabilitadoParaEsseOrgao (ExMovimentacao mov) {   
-		if (!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getCadastrante(), 
-				mov.getCadastrante().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())
-				&& (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO)) 
-				Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO); 
 		
 	}
 	

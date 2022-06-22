@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.util;
+package br.gov.jfrj.siga.ex.util.notificador.especifico;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
  * 
  */
 
-public class Email implements EnviarEmail {
+public class ExEmail implements ExEnviarEmail, ExMontarEmail {
 
 	public void enviarAoTramitarDocParaUsuario(DpPessoa pessoaDest, DpPessoa titular, String sigla) {
 		String assunto = "Documento tramitado para " + pessoaDest.getDescricao();
@@ -74,9 +74,10 @@ public class Email implements EnviarEmail {
 		}
 	}
 	
-	private String docTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
+	@Override
+	public String docTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
 		String conteudo = "";
-		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/doc-tramitado-para-usuario.html"),StandardCharsets.UTF_8))) {			
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(ExTemplateEmail.DOCUMENTO_TRAMITADO_PARA_USUARIO.getPath()),StandardCharsets.UTF_8))) {			
 			String str;
 			while((str = bfr.readLine()) != null) {
 				conteudo += str;
@@ -98,9 +99,10 @@ public class Email implements EnviarEmail {
 		}	
 	}
 
-	private String docMarcadoTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String docSigla, String marcador) {		 
+	@Override
+	public String docMarcadoTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String docSigla, String marcador) {		 
 		String conteudo = "";
-		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/doc-marcado-tramitado-para-unidade.html"),StandardCharsets.UTF_8))) {			
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(ExTemplateEmail.DOCUMENTO_COM_MARCAS_TRAMITADO_PARA_USUARIO_OU_UNIDADE.getPath()),StandardCharsets.UTF_8))) {			
 			String str;
 			while((str = bfr.readLine()) != null) {
 				conteudo += str;
@@ -123,9 +125,10 @@ public class Email implements EnviarEmail {
 		}	
 	}
 
-	private String responsavelPelaAssinatura(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
+	@Override
+	public String responsavelPelaAssinatura(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
 		String conteudo = "";
-		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/usuario-responsavel-pela-assinatura.html"),StandardCharsets.UTF_8))) {			
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(ExTemplateEmail.RESPONSAVEL_PELA_ASSINATURA.getPath()),StandardCharsets.UTF_8))) {			
 			String str;
 			while((str = bfr.readLine()) != null) {
 				conteudo += str;
@@ -147,9 +150,10 @@ public class Email implements EnviarEmail {
 		}	
 	}
 
-	private String incluirCossignatario(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
+	@Override
+	public String incluirCossignatario(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc) {		 
 		String conteudo = "";
-		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/incluido-como-cossignatario.html"),StandardCharsets.UTF_8))) {			
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(ExTemplateEmail.INCLUIDO_COMO_COSSIGNATARIO.getPath()),StandardCharsets.UTF_8))) {			
 			String str;
 			while((str = bfr.readLine()) != null) {
 				conteudo += str;
@@ -171,9 +175,10 @@ public class Email implements EnviarEmail {
 		}	
 	}
 
-	private String docTramitadoParaUnidade(DpPessoa destinatario, DpLotacao lotacao, String docSigla) {		 
+	@Override
+	public String docTramitadoParaUnidade(DpPessoa destinatario, DpLotacao lotacao, String docSigla) {		 
 		String conteudo = "";
-		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/templates/email/doc-tramitado-para-unidade.html"),StandardCharsets.UTF_8))) {			
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(ExTemplateEmail.DOCUMENTO_TRAMITADO_PARA_UNIDADE.getPath()),StandardCharsets.UTF_8))) {			
 			String str;
 			while((str = bfr.readLine()) != null) {
 				conteudo += str;

@@ -1,9 +1,9 @@
-package br.gov.jfrj.siga.ex.util;
+package br.gov.jfrj.siga.ex.util.notificador.especifico;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
-public interface EnviarEmail {
+public interface ExEnviarEmail {
 
 	public void enviarAoCossignatario(DpPessoa pessoaDest, DpPessoa titular, String sigla);
 	public void enviarAoTramitarDocParaUsuariosDaUnidade(DpLotacao lotaDest, DpPessoa pessoa, String sigla);

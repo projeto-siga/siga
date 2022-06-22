@@ -218,17 +218,17 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
-import br.gov.jfrj.siga.ex.util.Email;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import br.gov.jfrj.siga.ex.util.Notificador;
-import br.gov.jfrj.siga.ex.util.Notificar;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
+import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
 import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
@@ -264,7 +264,7 @@ public class ExBL extends CpBL {
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
 
-	Notificar notificar = new Notificar();
+	ExNotificar notificar = new ExNotificar();
 	
 	public ExCompetenciaBL getComp() {
 		return (ExCompetenciaBL) super.getComp();
@@ -1699,7 +1699,7 @@ public class ExBL extends CpBL {
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
 				
-				notificar = new Notificar();
+				notificar = new ExNotificar();
 				notificar.cossignatario(doc, cadastrante);
 				
 				gravarMovimentacao(mov);
@@ -1963,7 +1963,7 @@ public class ExBL extends CpBL {
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
 				
-				notificar = new Notificar();
+				notificar = new ExNotificar();
 				notificar.cossignatario(doc, cadastrante);
 				
 				gravarMovimentacao(mov);
@@ -3189,7 +3189,7 @@ public class ExBL extends CpBL {
 			if (doc.getExMobilAutuado() != null)
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
 			
-			notificar = new Notificar();
+			notificar = new ExNotificar();
 			notificar.responsavelPelaAssinatura(doc, cadastrante);
 			
 			return s;
@@ -4058,8 +4058,9 @@ public class ExBL extends CpBL {
 			dao().gravar(mov.getExMobil());
 		}
 		
-		notificar = new Notificar();
-		notificar.habilitadoOuDesabilitadoParaEsseOrgao(mov);
+		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) { 
+			Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
+		} 
 		
 		if (SigaMessages.isSigaSP()) {
 			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA &&
@@ -5339,7 +5340,7 @@ public class ExBL extends CpBL {
 						listaMovimentacao.addAll(m.doc().getMobilGeral()
 								.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 						
-						notificar = new Notificar();
+						notificar = new ExNotificar();
 						notificar.usuarioDiretamenteOuPelaUnidade(mov);
 						
 						if (!listaMovimentacao.isEmpty()) {

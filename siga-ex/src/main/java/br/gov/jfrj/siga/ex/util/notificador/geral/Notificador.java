@@ -392,8 +392,8 @@ public class Notificador {
 						papel,
 						pessoa,
 						tipoMovimentacao,
-						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL) && 
-						!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL) || 
+						Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 								pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()));
 				
 	} 
@@ -402,8 +402,8 @@ public class Notificador {
 		
 			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
 							lotacao, modelo,idTpMov,
-							ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) && 
-					!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+							ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) || 
+					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 							pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave());		
 				
 	}

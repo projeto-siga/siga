@@ -259,7 +259,7 @@ public class ExBL extends CpBL {
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
 
-	ExNotificar notificar = new ExNotificar();
+	ExNotificar notificar;
 	
 	public ExCompetenciaBL getComp() {
 		return (ExCompetenciaBL) super.getComp();

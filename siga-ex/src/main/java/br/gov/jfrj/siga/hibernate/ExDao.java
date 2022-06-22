@@ -1367,9 +1367,10 @@ public class ExDao extends CpDao {
 		return ((Long) query.getSingleResult()).intValue();
 	}
 
-	public List<ExMobil> consultarParaTransferirEmLote(DpLotacao lot, Integer offset, Integer tamPagina) {
-		final Query query = em().createNamedQuery("consultarParaTransferirEmLote").setParameter("lotaIni",
-				lot.getIdLotacaoIni());
+	public List<ExMobil> consultarParaTransferirEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaTransferirEmLote")
+				.setParameter("pessoaIni",pes.getIdPessoaIni())
+				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId());
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
 		}
@@ -1380,9 +1381,11 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public Long consultarQuantidadeParaTransferirEmLote(DpLotacao lot) {
+	public Long consultarQuantidadeParaTransferirEmLote(DpPessoa pes) {
 		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
-				.setParameter("lotaIni", lot.getIdLotacaoIni()).getSingleResult();
+				.setParameter("pessoaIni", pes.getIdPessoaIni())
+				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId())
+				.getSingleResult();
 	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {
@@ -2441,7 +2444,7 @@ public class ExDao extends CpDao {
 					+ " where (marca.dtIniMarca is null or marca.dtIniMarca < :dbDatetime)"
 					+ " and (marca.dtFimMarca is null or marca.dtFimMarca > :dbDatetime)"
 					+ queryDt
-					+ (flt.getIdMarcador() != null ? " and marca.cpMarcador.idMarcador = :idMar " : "")
+					+ (flt.getIdMarcador() != null ? " and marca.cpMarcador.hisIdIni = :idMar " : "")
 					+ (flt.getGrupoMarcador() != null ? " and marca.cpMarcador.idGrupo = :idGrupo " : "")
 					+ (flt.getIdCadastrante() != null ? " and (marca.dpPessoaIni.idPessoaIni = :pesIni)" : "")
 					+ (flt.getIdLotaCadastrante() != null ? " and (marca.dpLotacaoIni.idLotacaoIni = :lotaIni)" : "")

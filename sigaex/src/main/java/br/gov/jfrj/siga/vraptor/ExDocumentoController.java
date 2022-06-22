@@ -38,6 +38,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -98,6 +99,7 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
@@ -164,6 +166,10 @@ public class ExDocumentoController extends ExController {
 		}
 
 		return doc;
+	}
+	
+	private ExVisualizacaoTempDocCompl getExConsTempDocCompleto() {
+		return ExVisualizacaoTempDocCompl.getInstance();
 	}
 
 	@Transacional
@@ -613,7 +619,7 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)
+		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)	
 			exDocumentoDTO.setId(exDocumentoDTO.getDoc().getIdDoc());
 
 		if (exDocumentoDTO.getId() == null) {
@@ -822,6 +828,13 @@ public class ExDocumentoController extends ExController {
 			// System.out.println("*** " + p + ", "
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
+		
+		final boolean podeExibirArvoreDocsSubscr = getExConsTempDocCompleto().podeExibirCheckBoxVisTempDocsComplCossigsSubscritor(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc());
+		if (podeExibirArvoreDocsSubscr && exDocumentoDTO.getDoc() != null) {
+			exDocumentoDTO.setPodeIncluirSubscrArvoreDocs(exDocumentoDTO.getDoc().paiPossuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO) || exDocumentoDTO.getDoc().possuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO));
+			ExDocumento exPaiDasViasCossigsSubscritor = getExConsTempDocCompleto().getPaiDasViasCossigsSubscritor(exDocumentoDTO.getDoc());
+			result.include("paiDasViasCossigsSubscritor", exPaiDasViasCossigsSubscritor != null ? exPaiDasViasCossigsSubscritor.getCodigo() : "");
+		}
 		result.include("vars", l);
 
 		result.include("par", parFreeMarker);
@@ -845,6 +858,9 @@ public class ExDocumentoController extends ExController {
 		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		result.include("idMod", exDocumentoDTO.getIdMod());
+		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
+		result.include("podeExibirArvoreDocsSubscr", podeExibirArvoreDocsSubscr);
+		
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
@@ -1801,6 +1817,17 @@ public class ExDocumentoController extends ExController {
 			/*
 			 * fim da alteracao
 			 */
+			final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(getCadastrante(), getLotaCadastrante());
+			if	(podeExibirArvoreDocsCossig) {		
+				//input checkbox selecionado  
+				if (exDocumentoDTO.isPodeIncluirSubscrArvoreDocs()) { 
+					getExConsTempDocCompleto().removerSubscrVisTempDocsComplFluxoGravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+					getExConsTempDocCompleto()
+							.incluirSubscritorVisTempDocsCompl(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), exDocumentoDTO.isPodeIncluirSubscrArvoreDocs());
+				} else {
+					getExConsTempDocCompleto().removerSubscrVisTempDocsComplFluxoGravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+				}
+			}
 			
 			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
 				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());

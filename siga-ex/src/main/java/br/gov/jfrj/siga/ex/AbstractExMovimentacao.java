@@ -75,14 +75,15 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		+ "                and doc.idDoc=mob.exDocumento.idDoc" + "                and doc.anoEmissao=:anoEmissao"
 		+ "                and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
 		+ "                and doc.numExpediente=:numExpediente)"),
-		// Somente os "em andamento" ou "pendentes de assinatura"
+		// Somente os "2 - em andamento" ou "75 - Assinado (Equivalente a primeiro aguardando andamento)"
+	    // (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) devido a nível de acesso add pessoa Inicial também
 		@NamedQuery(name = "consultarParaTransferirEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
-				+ "                and (mar.cpMarcador.idMarcador=2)"
+				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
+				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
 		@NamedQuery(name = "consultarQuantidadeParaTransferirEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
-				+ "                and (mar.cpMarcador.idMarcador=2)"
+				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
+				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os "a receber"
 		@NamedQuery(name = "consultarParaReceberEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"

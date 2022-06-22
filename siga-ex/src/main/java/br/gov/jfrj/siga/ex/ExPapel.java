@@ -52,6 +52,10 @@ public class ExPapel extends AbstractExPapel {
 	final static public long PAPEL_AUTORIZADOR = 6;
 
 	final static public long PAPEL_REVISOR = 7;
+	
+	final static public long PAPEL_AUTORIZADO_COSSIG = 8;
+	
+	final static public long PAPEL_AUTORIZADO = 9;
 
 	public String getComoNomeDeVariavel() {
 		String s = getDescPapel().trim().toLowerCase();

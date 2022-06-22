@@ -105,7 +105,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	/**
 	 * @deprecated CDI eyes only
 	 */
-	public DpPessoaController() {
+	
+	public DpPessoaController() {	
 		super();
 	}
 
@@ -148,6 +149,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		} catch (Exception ex) {
 			throw ex;
 		}
+		 
 		result.include("param", getRequest().getParameterMap());
 		result.include("request", getRequest());
 		result.include("itens", getItens());

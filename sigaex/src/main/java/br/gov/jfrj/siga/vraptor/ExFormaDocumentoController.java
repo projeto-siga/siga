@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Controller
 public class ExFormaDocumentoController extends ExController {
 
-	private static final String ACESSO_SIGA_DOC_MOD = "MOD:Cadastrar Espécies";
+	private static final String ACESSO_SIGA_DOC_MOD = "FE-ESP:Cadastrar Espécies";
 
 	/**
 	 * @deprecated CDI eyes only

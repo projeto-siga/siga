@@ -257,7 +257,7 @@ public class ExMovimentacaoVO extends ExVO {
 			// tipo="${mov.conteudoTpMov}" />
 			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 					.params("arquivo", mov.getReferenciaPDF()).params("popup", "true")
-					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
+					.exp(new CpPodeSempre()).build());
 
 			if (exTipoMovimentacao == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO) {
 				addAcao(AcaoVO.builder().nome("Excluir").nameSpace("/app/expediente/mov").acao("excluir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())

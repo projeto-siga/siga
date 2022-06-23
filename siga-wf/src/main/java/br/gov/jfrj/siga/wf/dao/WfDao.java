@@ -288,7 +288,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni and p.hisDtFim is not null "
 				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
 				+ " and p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte "
-				+ " and p.principal is not null and p.principal <> '' order by p.principal";
+				+ " and p.principal is not null order by p.principal";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("hisIdIni", pd.getHisIdIni());
 		query.setParameter("dataInicialDe", dataInicialDe);
@@ -305,7 +305,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni "
 				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
 				+ " and ((p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte) or p.hisDtFim is null) "
-				+ " and p.principal is not null and p.principal <> '' order by p.principal";
+				+ " and p.principal is not null order by p.principal";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("hisIdIni", pd.getHisIdIni());
 		query.setParameter("dataInicialDe", dataInicialDe);

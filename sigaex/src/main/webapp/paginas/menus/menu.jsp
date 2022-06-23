@@ -128,15 +128,16 @@
 			class="nav-link dropdown-toggle" data-toggle="dropdown">
 				Ferramentas </a>
 			<ul class="dropdown-menu">
-
-				<c:if test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE-ESP:Cadastrar Espécies')}">
+																 
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;ESPECIE:Espécies')}">
 					<li><a class="dropdown-item" href="/sigaex/app/forma/listar">Cadastro	de Espécies</a></li>
 				</c:if>		
 						
-				<li><a class="dropdown-item" href="/sigaex/app/modelo/listar">Cadastro 	de Modelos</a></li>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MOD:Gerenciar modelos')}">
+					<li><a class="dropdown-item" href="/sigaex/app/modelo/listar">Cadastro 	de Modelos</a></li>
+				</c:if>	
 				
-				<c:if
-					test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
+				<c:if test="${false and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/despacho/tipodespacho/listar">Cadastro de
 							Tipos de Despacho</a></li>

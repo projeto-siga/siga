@@ -13,19 +13,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -5252,7 +5241,30 @@ public class ExMovimentacaoController extends ExController {
 
     @Get("/app/expediente/mov/enviar_para_visualizacao_externa")
     public void enviarParaVisualizacaoExterna(final String sigla) {
+		assertAcesso("");
+
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento documento = buscarDocumento(documentoBuilder);
+		
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+
+		String servidor = Prop.get("/sigaex.url");
+
+		String caminho = servidor + "/public/app/autenticar?n=";
+
+		result.include("url", caminho);
 		result.include("sigla", sigla);
+		result.include("dataHora", df.format(c.getTime()));
 
     }
+
+	@Transacional
+	@Post("/app/expediente/mov/enviar_para_visualizacao_externa_gravar")
+	public void enviarParaVisualizacaoExternaGravar(final String sigla) {
+		result.include("sigla", sigla);
+
+	}
 }

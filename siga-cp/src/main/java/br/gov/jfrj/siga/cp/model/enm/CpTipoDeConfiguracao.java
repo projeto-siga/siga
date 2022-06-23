@@ -138,16 +138,6 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, false),
-
-    PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS(402, "Permitir a visualização externa de Documentos",
-            "Esta configuração tem o objetivo de permitir a visualização externa (sem autenticação) de Documentos.\n" +
-                    "Essa visualização é feita através do link de autenticidade contido no rodapé dos Documentos.\n" +
-                    "O padrão é PODE. Esta configuração foi adicionada para restringir a visualição externa a Documentos de um determinado Órgão.",
-            new CpParamCfg[] { CpParamCfg.ORGAO },
-            new CpParamCfg[] { CpParamCfg.SITUACAO },
-            new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-                    CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-            CpSituacaoDeConfiguracaoEnum.PODE, true),
 	
 	// 
 //	AUTORIZAR_MOVIMENTACAO_POR_WS(?, "Autorizar Movimentação por WS",

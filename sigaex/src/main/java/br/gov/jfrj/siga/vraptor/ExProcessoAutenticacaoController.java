@@ -338,7 +338,12 @@ public class ExProcessoAutenticacaoController extends ExController {
 			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
 			result.include("msg", exDocumentoDTO.getMsg());
 			result.include("docVO", docVO);
-			result.include("autenticidade", exDocumentoDTO.getDoc().getAssinantesCompleto());
+			result.include("autenticidade",
+					exDocumentoDTO.getDoc().getAssinantesCompleto() +
+							" Documento Nº: " +
+							exDocumentoDTO.getDoc().getSiglaAssinatura()
+					
+			);
 
             ExProtocolo prot = Ex.getInstance().getBL().obterProtocolo(exDocumentoDTO.getDoc());
             if (prot == null) {

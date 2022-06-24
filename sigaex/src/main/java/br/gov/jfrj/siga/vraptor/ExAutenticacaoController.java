@@ -15,6 +15,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
@@ -130,6 +134,7 @@ public class ExAutenticacaoController extends ExController {
 		}
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
+
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		boolean mostrarBotaoAssinarExterno = arq
 				.isCodigoParaAssinaturaExterna(n);
@@ -168,7 +173,7 @@ public class ExAutenticacaoController extends ExController {
 		}
 
 		setDefaultResults();
-		
+
 		result.include("assinaturas", assinaturas);
 		result.include("mov", mov);
 		result.include("mostrarBotaoAssinarExterno", mostrarBotaoAssinarExterno);
@@ -323,10 +328,23 @@ public class ExAutenticacaoController extends ExController {
 			if(l == null && !lista.isEmpty()) {
 				l = lista.get(0).getLotaSubscritor();
 			}
+
+			/*
+			 * Verifica se tem acesso ao Documento ou
+			 * se é permitido a visualização externa do Documento no Órgão
+			 */
+			result.include("podeVisualizarExternamente", 
+					Ex.getInstance().getComp().pode(ExPodeVisualizarExternamente.class,
+							getTitular(), getLotaTitular(), doc.getMobilGeral()));
 			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
-
 			result.include("docVO", docVO);
+			result.include("autenticidade",
+					docVO.getDoc().getAssinantesCompleto() +
+							" Documento N: " +
+							docVO.getDoc().getSiglaAssinatura()
+
+			);
 		}
 	}
 

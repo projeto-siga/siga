@@ -574,6 +574,16 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO }, 
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
+	VISUALIZACAO_EXTERNA_DOCUMENTOS(61, "Visualização externa de Documentos",
+			"Esta configuração tem o objetivo de permitir a visualização externa (sem autenticação) de Documentos.\n" +
+					"Essa visualização é feita através do link de autenticidade contido no rodapé dos Documentos.\n" +
+					"O padrão é PODE. Esta configuração foi adicionada para possibilitar a restrição da visualição externa a Documentos de um determinado Órgão.",
+			new Enum[] { CpParamCfg.ORGAO },
+			new Enum[] { CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	
 	HERDAR_PREENCHIMENTO(60, "Herdar Preenchimento", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
@@ -581,6 +591,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
+
 	
 	private final int id; 
 	private final String descr;

@@ -24,6 +24,7 @@
 package br.gov.jfrj.siga.wf.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -40,10 +41,12 @@ import javax.persistence.criteria.Root;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.CpOrgaoDaoFiltro;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
@@ -95,6 +98,25 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		}
 	}
 
+	public List<WfDefinicaoDeProcedimento> consultarWfDefinicoesDeProcedimentoPorNome(String nome) {
+		CriteriaQuery<WfDefinicaoDeProcedimento> q = cb().createQuery(WfDefinicaoDeProcedimento.class);
+		Root<WfDefinicaoDeProcedimento> c = q.from(WfDefinicaoDeProcedimento.class);
+		q.select(c);
+		
+		if (nome != null)
+			nome = nome.replace(' ', '%');
+		else
+			nome = "";
+		
+		q.where(cb().like(c.get("nome"), "%" + nome + "%"), cb().equal(c.get("hisAtivo"), 1));
+		try {
+			return em().createQuery(q).getResultList();
+		} catch (Exception ex) {
+			throw new RuntimeException("Não foi possível localizar definições de procedimento com nome '" + nome + "'",
+					ex);
+		}
+	}
+
 	public SortedSet<WfTarefa> consultarTarefasDeLotacao(DpLotacao lotaTitular) {
 		// TODO Auto-generated method stub
 		return null;
@@ -109,7 +131,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	}
 
 	public List<WfProcedimento> consultarProcedimentosAtivosPorPrincipal(String principal) {
-		String sql = "select p from WfProcedimento p where p.hisDtFim is null and p.principal like :principal";
+		String sql = "select p from WfProcedimento p where p.hisDtFim is null and p.principal is not null and p.principal <> '' and p.principal like :principal";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("principal", principal + "%");
 		List<WfProcedimento> result = query.getResultList();
@@ -209,7 +231,21 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		query.setParameter("idPessoaIni", titular.getIdPessoaIni());
 		query.setParameter("idLotacaoIni", lotaTitular.getIdLotacaoIni());
 		List<WfProcedimento> result = query.getResultList();
-		return result;
+		List<WfProcedimento> l = new ArrayList<>();
+		result.stream().forEach(i -> l.add(i));
+		l.sort(null);
+		return l;
+	}
+
+	public List<WfProcedimento> consultarProcedimentosAtivosPorDiagrama(WfDefinicaoDeProcedimento pd) {
+		String sql = "select p from WfProcedimento p join p.definicaoDeProcedimento pd where pd.hisIdIni = :idIni and p.status not in ('FINISHED', 'INACTIVE')";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idIni", pd.getHisIdIni());
+		List<WfProcedimento> result = query.getResultList();
+		List<WfProcedimento> l = new ArrayList<>();
+		result.stream().forEach(i -> l.add(i));
+		l.sort(null);
+		return l;
 	}
 
 	public List<WfResponsavel> consultarResponsaveisPorDefinicaoDeResponsavel(WfDefinicaoDeResponsavel dr) {

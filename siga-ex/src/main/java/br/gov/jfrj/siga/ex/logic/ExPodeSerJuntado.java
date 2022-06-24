@@ -73,6 +73,8 @@ public class ExPodeSerJuntado extends CompositeExpressionSupport {
 
 						new ExPodeMovimentar(mobPai, titular, lotaTitular),
 
-						new ExEDocFilho(docFilho, mobPai)));
+						new ExEDocFilho(docFilho, mobPai),
+						
+						new ExEMobilAutuado(mobPai.doc(), docFilho.getPrimeiraVia())));
 	}
 }

@@ -18,7 +18,7 @@ public class DocumentosSiglaReceberPost implements IDocumentosSiglaReceberPost {
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		DpPessoa cadastrante = ctx.getCadastrante();
 		DpPessoa titular = ctx.getTitular();
-		DpLotacao lotaTitular = cadastrante.getLotacao();
+		DpLotacao lotaTitular = ctx.getLotaTitular();
 
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento");
 

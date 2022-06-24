@@ -189,15 +189,15 @@ public class ExMobilVO extends ExVO {
 		for (ExDocumento d : mob.getExDocumentoFilhoSet()) {
 			if (d.isExpediente())
 				expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d,
-						null, cadastrante, titular, lotaTitular, false, false, serializavel));
+						null, cadastrante, titular, lotaTitular, false, false, serializavel, false));
 			else
 				processosFilhosNaoCancelados.add(new ExDocumentoVO(d, null,
-						cadastrante, titular, lotaTitular, false, false, serializavel));
+						cadastrante, titular, lotaTitular, false, false, serializavel, false));
 		}
 
 		for (ExDocumento doc : mob.getDocsFilhosNaoJuntados())
 			expedientesFilhosNaoJuntados.add(new ExDocumentoVO(doc, null,
-					cadastrante, titular, lotaTitular, false, false, serializavel));
+					cadastrante, titular, lotaTitular, false, false, serializavel, false));
 
 		log.debug(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
@@ -442,12 +442,12 @@ public class ExMobilVO extends ExVO {
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeArquivarCorrente(mob, titular, lotaTitular)).classe("once siga-btn-arq-corrente").build());
 
 		addAcao(AcaoVO.builder().nome("Concluir").icone("tick").nameSpace("/app/expediente/mov").acao("concluir_gravar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeConcluir(mob, titular, lotaTitular)).classe("once").build());
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeConcluir(mob, titular, lotaTitular)).post(true).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("Indicar para Guarda Permanente").icone("building_go").nameSpace("/app/expediente/mov").acao("indicar_permanente")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeIndicarPermanente(mob, titular, lotaTitular)).classe("once").build());
 
-		addAcao(AcaoVO.builder().nome("Reverter Ind. Guarda Permanente").icone("buildinge_delete").nameSpace("/app/expediente/mov").acao("reverter_indicacao_permanente")
+		addAcao(AcaoVO.builder().nome("Reverter Ind. Guarda Permanente").icone("building_delete").nameSpace("/app/expediente/mov").acao("reverter_indicacao_permanente")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReverterIndicacaoPermanente(mob, titular, lotaTitular)).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("Retirar de Edital de Eliminação").icone("page_red").nameSpace("/app/expediente/mov").acao("retirar_de_edital_eliminacao")
@@ -480,15 +480,12 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("_Juntar").icone("page_white_go").nameSpace("/app/expediente/mov").acao("juntar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeJuntar(mob, titular, lotaTitular)).classe("once").build());
 
-		addAcao(AcaoVO.builder().nome("Vi_ncular").icone("page_find").nameSpace("/app/expediente/mov").acao("referenciar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReferenciar(mob, titular, lotaTitular)).build());
-
 		addAcao(AcaoVO.builder().nome("Apensar").icone("link_add").nameSpace("/app/expediente/mov").acao("apensar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeApensar(mob, titular, lotaTitular)).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("Atribuir Prazo de Assinatura").icone("date_previous").nameSpace("/app/expediente/mov").acao("definir_prazo_assinatura")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDefinirPrazoAssinatura(mob, titular, lotaTitular)).classe("once").build());
-
+		
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
 		
@@ -506,6 +503,7 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.GERAR_PROTOCOLO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ENVIO_SIAFEM);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
 			
 			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getExTipoMovimentacao())) {
 				addAcao(AcaoVO.builder().nome("Desfa_zer "

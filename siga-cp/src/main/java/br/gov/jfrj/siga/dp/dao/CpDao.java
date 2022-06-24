@@ -25,7 +25,6 @@ package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +41,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -51,6 +51,7 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
@@ -69,6 +70,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -77,6 +79,7 @@ import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
+import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -719,8 +722,8 @@ public class CpDao extends ModeloDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			query.setParameter("nome", o.getNome() == null ? "" : o.getNome().replace(' ', '%'));
-			query.setParameter("sigla", o.getSigla() == null ? "" : o.getSigla().replace(' ', '%'));
+			query.setParameter("sigla", o.getNome() == null ? "" : o.getNome().replace(' ', '%')); 
+			query.setParameter("nome", o.getNome() == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
@@ -856,8 +859,9 @@ public class CpDao extends ModeloDao {
 			else
 				query = em().createNamedQuery("consultarQuantidadeDpLotacaoInclusiveFechadas");
 
-			query.setParameter("nome", o.getNome() != null ? o.getNome().replace(' ', '%') : "%");
-
+			query.setParameter("sigla", o.getNome() == null ? "" : o.getNome().replace(' ', '%')); 
+			query.setParameter("nome", o.getNome() == null ? "" : Texto.removeAcento(o.getNome()).replace(' ', '%'));
+			
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
@@ -1863,8 +1867,7 @@ public class CpDao extends ModeloDao {
 			return ContextoPersistencia.dt();
 
 		String sql = "SELECT sysdate from dual";
-		String dialect = System.getProperty("siga.hibernate.dialect");
-		if (dialect != null && dialect.contains("MySQL"))
+		if (isMySQL())
 			sql = "SELECT CURRENT_TIMESTAMP";
 		Query query = em().createNativeQuery(sql);
 		query.setFlushMode(FlushModeType.COMMIT);
@@ -2744,6 +2747,14 @@ public class CpDao extends ModeloDao {
 		qry.setParameter("idTpLotacao", idTpLotacao);
 		return qry.getResultList();
 	}
+	
+	public List<CpConfiguracao> consultarCpConfiguracoesPorPessoa(long idPessoa) {
+		final Query qry = em().createNamedQuery(
+				"consultarCpConfiguracoesPorPessoa");
+		qry.setParameter("idPessoa", idPessoa);
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		return qry.getResultList();
+	}
 
 	public Integer quantidadeDocumentos(DpPessoa pes) {
 		try {
@@ -2764,6 +2775,21 @@ public class CpDao extends ModeloDao {
 			sql.setParameter("idLotacao", idLotacao);
 			
 			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+
+	public Integer consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(Long idLotacao) {
+		try {
+			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacaoECpMarca");
+			sql.setParameter("idLotacao", idLotacao);
+			sql.setParameter("listMarcadores", Arrays.asList(
+					CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId(),
+					CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()));
+			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
@@ -2866,7 +2892,7 @@ public class CpDao extends ModeloDao {
 	
 	public CpMarcador obterPastaPadraoDaLotacao(DpLotacao lotacao) {
 		for (CpMarcador m : listarCpMarcadoresPorLotacao(lotacao, false))
-			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO && obterAtual(m).isAtivo())
 				return m;
 		return null;
 	}
@@ -2916,12 +2942,17 @@ public class CpDao extends ModeloDao {
 		Predicate predicateEqualNome = criteriaBuilder.equal(cpMarcadorRoot.get("descrMarcador"), nome);
 		Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
 
-		Predicate predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
-				criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
-				criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
-		
-		Predicate predicateAnd = criteriaBuilder.and(predicateEqualNome, 
-				predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		Predicate predicateAnd;
+		Predicate predicateGeralOuLotacaoEspecifica = null;
+		if (lota != null) { 
+			predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
+					criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
+					criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, 
+					predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		} else {
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, predicateNullHisDtFim);
+		}
 		criteriaQuery.where(predicateAnd);
 		
 		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("idFinalidade"))); 
@@ -2965,5 +2996,91 @@ public class CpDao extends ModeloDao {
 		query.where(predicateAnd);
 		return em().createQuery(query).getResultList();
 	}
+
 	
+	public List consultarPainelQuadro(DpPessoa pes, DpLotacao lot, CpTipoMarca tipoMarca) {
+		Query sql = em().createNamedQuery(
+				"consultarPainelQuadro");
+		Date dt = consultarDataEHoraDoServidor();
+		Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+		sql.setParameter("amanha", amanha, TemporalType.DATE);
+		sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
+		sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
+		sql.setParameter("idTipoMarca", tipoMarca != null ? tipoMarca.getIdTpMarca() : 0L);
+		return sql.getResultList();
+	}
+
+	public List<CpMarca> consultarPainelLista(List<Long> idMarcadorIni, DpPessoa pes, DpLotacao lot, CpTipoMarca tipoMarca, Integer itensPorPagina, Integer pagina) {
+		Query sql = em().createNamedQuery(
+				"consultarPainelLista");
+		Date dt = consultarDataEHoraDoServidor();
+		Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+		sql.setParameter("amanha", amanha, TemporalType.DATE);
+		sql.setParameter("idPessoaIni", pes != null ? pes.getIdPessoaIni() : null);
+		sql.setParameter("idLotacaoIni", lot != null ? lot.getIdLotacaoIni() : null);
+		sql.setParameter("idTipoMarca", tipoMarca != null ? tipoMarca.getIdTpMarca() : 0L);
+		if (idMarcadorIni.size() == 0)
+			idMarcadorIni.add(0L);
+		sql.setParameter("idMarcadorIni", idMarcadorIni);
+
+		if (itensPorPagina == null || itensPorPagina == 0)
+			itensPorPagina = 10;		
+		if (itensPorPagina > 100)
+			itensPorPagina = 100;
+		if (itensPorPagina > 0) 
+			sql.setMaxResults(itensPorPagina);
+
+		if (pagina == null)
+			pagina = 0;
+		
+		if (pagina > 0) 
+			sql.setFirstResult((pagina - 1) * itensPorPagina);
+
+		return sql.getResultList();
+	}
+
+
+	public Long qtdeMarcasMarcadorPessoa(DpPessoa pessoa, List<Long> marcadores) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<CpMarca> c = cq.from(CpMarca.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa);
+		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
+		predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+	
+	public Long qtdeMarcasMarcadorLotacao(DpLotacao lotacao, List<Long> marcadores) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<CpMarca> c = cq.from(CpMarca.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao);
+		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
+		predicateAnd = cb().and(predicateEqualLotacao, predicateEqualMarca);
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+	
+	public Long qtdePessoaLotacao(DpLotacao lotacao, Boolean somenteAtivas) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<DpPessoa> c = cq.from(DpPessoa.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualPessoa  = cb().equal(c.get("lotacao"), lotacao);
+		if(somenteAtivas) {
+			Predicate predicateEqualMarca  = cb().isNull(c.get("dataFimPessoa"));
+			predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		} else {
+			predicateAnd = predicateEqualPessoa;
+		}
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+
 }

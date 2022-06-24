@@ -854,15 +854,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         confFiltro.setItemConfiguracaoFiltro(getItemConfiguracao());
         confFiltro.setAcaoFiltro(getAcao());
 
-        for (SrAtributo t : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
-            confFiltro.setAtributo(t);
-            SrConfiguracaoCache conf = SrConfiguracao.buscarAssociacao(confFiltro);
-            if (conf != null) {
-                listaFinal.add(t);
-                if (map != null)
-                    map.put(t.getIdAtributo(), conf.atributoObrigatorio);
-            }
-        }
+        if (confFiltro.getAcaoFiltro() != null && confFiltro.getItemConfiguracaoFiltro() != null)
+	        for (SrAtributo t : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
+	            confFiltro.setAtributo(t);
+	            SrConfiguracaoCache conf = SrConfiguracao.buscarAssociacao(confFiltro);
+	            if (conf != null) {
+	                listaFinal.add(t);
+	                if (map != null)
+	                    map.put(t.getIdAtributo(), conf.atributoObrigatorio);
+	            }
+	        }
 
 		Collections.sort(listaFinal, new Comparator<SrAtributo>() {
 			@Override

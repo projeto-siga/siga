@@ -63,6 +63,7 @@
 		<class>br.gov.jfrj.siga.wf.model.WfMovAnotacao</class>
 		<class>br.gov.jfrj.siga.wf.model.WfMovCancelamento</class>
 		<class>br.gov.jfrj.siga.wf.model.WfMovDesignacao</class>
+		<class>br.gov.jfrj.siga.wf.model.WfMovPriorizacao</class>
 		<class>br.gov.jfrj.siga.wf.model.WfMovRedirecionamento</class>
 		<class>br.gov.jfrj.siga.wf.model.WfMovTermino</class>
 		<class>br.gov.jfrj.siga.wf.model.WfMovTransicao</class>

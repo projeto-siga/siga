@@ -140,6 +140,7 @@ public class FOP implements ConversorHtml {
 			html = Jsoup.parse(html, "", Parser.xmlParser()).toString();
 			html = html.replace("</br>", "");
 			html = html.replace("<br>", "<br/>");
+			html = html.replaceAll(Character.toString((char)0x2), "");
 			Source src = new StreamSource(new ByteArrayInputStream(html
 					.getBytes("UTF-8")));
 

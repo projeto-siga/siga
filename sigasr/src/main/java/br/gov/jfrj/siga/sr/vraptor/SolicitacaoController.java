@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
+import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
@@ -574,6 +575,9 @@ public class SolicitacaoController extends SrController {
 		if (filtro.getItemConfiguracao() != null && filtro.getItemConfiguracao().getIdItemConfiguracao() != null) {
 			filtro.setItemConfiguracao(
 					SrItemConfiguracao.AR.findById(filtro.getItemConfiguracao().getIdItemConfiguracao()));
+		}
+		if (filtro.getAtributoSolicitacao() != null && filtro.getAtributoSolicitacao().getAtributo() != null && filtro.getAtributoSolicitacao().getAtributo().getId() != null) {
+			filtro.getAtributoSolicitacao().setAtributo(SrAtributo.AR.findById(filtro.getAtributoSolicitacao().getAtributo().getId())); 
 		}
 		if (filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
 			filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));

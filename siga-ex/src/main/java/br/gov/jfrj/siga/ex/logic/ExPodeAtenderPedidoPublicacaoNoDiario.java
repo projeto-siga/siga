@@ -29,7 +29,7 @@ public class ExPodeAtenderPedidoPublicacaoNoDiario extends CompositeExpressionSu
 	 */
 	public ExPodeAtenderPedidoPublicacaoNoDiario(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		this.mob = mob;
-		this.doc = mob.doc();
+//		this.doc = mob.doc();
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 	}

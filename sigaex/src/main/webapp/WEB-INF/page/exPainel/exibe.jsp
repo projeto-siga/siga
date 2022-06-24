@@ -286,13 +286,25 @@ function sbmtDoc() {
 				<tags:collapse title="${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}" id="docMobs-${m.mob.id}" collapseMode="${collapse_Expanded}">
 					<div class="d-box-content">
 						<div class="row">
-							<div class="d-box-col col-md-2">
+							<div class="d-box-col col-md-1">
 								<div class="text-sm font-weight-bold">IdMobil</div>
 								<div class="">${m.mob.idMobil}</div>
 							</div>
-							<div class="d-box-col col-md-3">
+							<div class="d-box-col col-md-1">
 								<div class="text-sm font-weight-bold">IdTpDoc</div>
 								<div class="">${m.mob.exTipoMobil.idTipoMobil} - ${m.mob.exTipoMobil.descTipoMobil}</div>
+							</div>
+							<div class="d-box-col col-md-2">
+								<div class="text-sm font-weight-bold">DnmSigla</div>
+								<div class="">${m.mob.dnmSigla}</div>
+							</div>
+							<div class="d-box-col col-md-3">
+								<div class="text-sm font-weight-bold">DnmDataUltimaMovimentacaoNaoCancelada</div>
+								<div class="">${m.mob.dnmDataUltimaMovimentacaoNaoCancelada}</div>
+							</div>
+							<div class="d-box-col col-md-3">
+								<div class="text-sm font-weight-bold">ultimaMovimentacaoNaoCancelada</div>
+								<div class="">${m.mob.ultimaMovimentacaoNaoCancelada.idMov}</div>
 							</div>
 						</div>
 						<div class="row">

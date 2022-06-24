@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -61,6 +62,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTarefaDocCriarParam2;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaSubprocedimento;
 import br.gov.jfrj.siga.wf.util.SiglaUtils;
 import br.gov.jfrj.siga.wf.util.SiglaUtils.SiglaDecodificada;
 import br.gov.jfrj.siga.wf.util.WfResp;
@@ -69,7 +71,8 @@ import br.gov.jfrj.siga.wf.util.WfResp;
 @BatchSize(size = 500)
 @Table(name = "sigawf.wf_procedimento")
 public class WfProcedimento extends Objeto
-		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp>, Selecionavel {
+		implements ProcessInstance<WfDefinicaoDeProcedimento, WfDefinicaoDeTarefa, WfResp>, Selecionavel,
+		Comparable<WfProcedimento> {
 	public static ActiveRecord<WfProcedimento> AR = new ActiveRecord<>(WfProcedimento.class);
 
 	@Id
@@ -466,6 +469,32 @@ public class WfProcedimento extends Objeto
 		this.variaveis = listaDeVariaveis;
 	}
 
+	public List<WfVariavel> getVariaveisOrdenadas() {
+		List<WfVariavel> l = new ArrayList<>();
+		WfDefinicaoDeTarefa tdSuper = getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
+		Set<String> identificadoresAProcessar = new TreeSet<>();
+		getVariable().keySet().stream().forEach(v -> identificadoresAProcessar.add(v));
+		for (WfDefinicaoDeVariavel vd : tdSuper.getDefinicaoDeVariavel()) {
+			String identificador = vd.getIdentificador();
+			if (getVariable().containsKey(identificador)) {
+				Optional<WfVariavel> x = variaveis.stream().filter(v -> identificador.equals(v.getIdentifier()))
+						.findFirst();
+				if (!x.isPresent())
+					continue;
+				l.add(x.get());
+				identificadoresAProcessar.remove(identificador);
+			}
+		}
+		for (String identificador : identificadoresAProcessar) {
+			Optional<WfVariavel> x = variaveis.stream().filter(v -> identificador.equals(v.getIdentifier()))
+					.findFirst();
+			if (!x.isPresent())
+				continue;
+			l.add(x.get());
+		}
+		return l;
+	}
+
 	public void setStatus(ProcessInstanceStatus status) {
 		this.status = status;
 	}
@@ -575,12 +604,16 @@ public class WfProcedimento extends Objeto
 		List<AcaoVO> set = new ArrayList<>();
 
 		set.add(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotarModal").exp(new PodeSim()).build());
-		
-		set.add(AcaoVO.builder().nome("Editar Variáveis").icone("database_edit").acao("/app/procedimento/" + getSiglaCompacta() + "/editar-variaveis")
+
+		set.add(AcaoVO.builder().nome("Editar Variáveis").icone("database_edit")
+				.acao("/app/procedimento/" + getSiglaCompacta() + "/editar-variaveis")
 				.exp(new WfPodeEditarVariaveis(this, titular, lotaTitular)).build());
 
 		set.add(AcaoVO.builder().nome("_Pegar").icone("add").acao("/app/procedimento/" + getSiglaCompacta() + "/pegar")
 				.exp(new WfPodePegar(this, titular, lotaTitular)).post(true).build());
+
+		set.add(AcaoVO.builder().nome("_Priorizar").icone("text_list_numbers").modal("priorizarModal")
+				.exp(new PodeSim()).build());
 
 		set.add(AcaoVO.builder().nome("_Redirecionar").icone("arrow_branch").modal("redirecionarModal")
 				.exp(new WfPodeRedirecionar(this, titular, lotaTitular)).build());
@@ -597,10 +630,19 @@ public class WfProcedimento extends Objeto
 		return status == ProcessInstanceStatus.PAUSED;
 	}
 
+	public boolean isFinalizado() {
+		return status == ProcessInstanceStatus.FINISHED || status == ProcessInstanceStatus.INACTIVE;
+	}
+
 	public boolean isRetomando() {
 		return status == ProcessInstanceStatus.RESUMING;
 	}
 
+	public boolean isFormulario() {
+		return status == ProcessInstanceStatus.PAUSED
+				&& getCurrentTaskDefinition().getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO;
+	}
+	
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
 		if (getDefinicaoDeTarefaCorrente() == null
 				|| getDefinicaoDeTarefaCorrente().getTipoDeTarefa() != WfTipoDeTarefa.FORMULARIO)
@@ -655,6 +697,14 @@ public class WfProcedimento extends Objeto
 		if (respWF == null && lotEvento != null)
 			respWF = "@" + lotEvento.getSiglaCompleta();
 
+		if (getDefinicaoDeTarefaCorrente() != null
+				&& (getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.SUBPROCEDIMENTO)) {
+			String siglaDoDocumentoCriado = WfTarefaSubprocedimento.getSiglaDoSubprocedimentoCriado(this);
+			return "Este workflow prosseguirá automaticamente quando o subprocedimento <a href=\"/sigawf/app/procedimento/"
+					+ siglaDoDocumentoCriado.replace("/", "").replace("-", "") + "\">" + siglaDoDocumentoCriado
+					+ "</a> for concluído.";
+		}
+
 		if (!Utils.empty(getPrincipal()) && getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
 			ExService service = Service.getExService();
 			String respEX = service.getAtendente(getPrincipal(), siglaTitular);
@@ -703,9 +753,9 @@ public class WfProcedimento extends Objeto
 		}
 		if (getDefinicaoDeTarefaCorrente() != null
 				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_AUXILIAR) {
-			return "Este workflow prosseguirá automaticamente quando for anexado um arquivo auxilar ao documento " + getPrincipal()
-					+ ". Clique <a href=\"/sigaex/app/expediente/mov/anexar_arquivo_auxiliar?sigla=" + getPrincipal()
-					+ "\">aqui</a> para incluir.";
+			return "Este workflow prosseguirá automaticamente quando for anexado um arquivo auxilar ao documento "
+					+ getPrincipal() + ". Clique <a href=\"/sigaex/app/expediente/mov/anexar_arquivo_auxiliar?sigla="
+					+ getPrincipal() + "\">aqui</a> para incluir.";
 		}
 		if (getDefinicaoDeTarefaCorrente() != null
 				&& getDefinicaoDeTarefaCorrente().getTipoDeTarefa() == WfTipoDeTarefa.AGUARDAR_ASSINATURA_PRINCIPAL) {
@@ -838,6 +888,17 @@ public class WfProcedimento extends Objeto
 
 	public String obterProximoResponsavel() {
 		return WfDefinicaoDeDesvio.obterProximoResponsavel(this, null);
+	}
+
+	@Override
+	public int compareTo(WfProcedimento o) {
+		int i = getPrioridade().compareTo(o.getPrioridade());
+		if (i != 0)
+			return i;
+		i = getHisDtIni().compareTo(o.getHisDtIni());
+		if (i != 0)
+			return i;
+		return getId().compareTo(o.getId());
 	}
 
 }

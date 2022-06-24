@@ -56,7 +56,7 @@ public class DocumentosPost implements IDocumentosPost {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 
-		DpPessoa cadastrante = null;
+		DpPessoa cadastrante = ctx.getCadastrante();
 		ExModelo modelo = null;
 		ExClassificacao classificacao = null;
 		CpOrgao destinatarioOrgaoExterno = null;
@@ -65,10 +65,10 @@ public class DocumentosPost implements IDocumentosPost {
 		if (req.sigla != null && !req.sigla.trim().isEmpty()) {
 			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Salvar");
 			try {
-				Ex.getInstance()
-				.getComp()
-				.afirmar("Edição do documento " + mob.getSigla() + " não é permitida. ("
-						+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", ExPodeEditar.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
+				Ex.getInstance().getComp()
+						.afirmar("Edição do documento " + mob.getSigla() + " não é permitida. ("
+								+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")",
+								ExPodeEditar.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
 			} catch (Exception e) {
 				throw new SwaggerException(e.getMessage(), 403, null, req, resp, null);
 			}
@@ -301,14 +301,14 @@ public class DocumentosPost implements IDocumentosPost {
 						camposModelo = camposModelo + key + "=" + URLEncoder.encode(value, "iso-8859-1") + "&";
 					}
 				}
-			} else {
-				throw new AplicacaoException("O parâmetro entrevista não foi informado.");
+//			} else {
+//				throw new AplicacaoException("O parâmetro entrevista não foi informado.");
+				if (camposModelo.length() > 0)
+					camposModelo = camposModelo.substring(0, camposModelo.length() - 1);
+				baos.write(camposModelo.getBytes());
+				doc.setConteudoTpDoc("application/zip");
+				doc.setConteudoBlobForm(baos.toByteArray());
 			}
-			if (camposModelo.length() > 0)
-				camposModelo = camposModelo.substring(0, camposModelo.length() - 1);
-			baos.write(camposModelo.getBytes());
-			doc.setConteudoTpDoc("application/zip");
-			doc.setConteudoBlobForm(baos.toByteArray());
 		}
 
 		if ((doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO
@@ -363,7 +363,7 @@ public class DocumentosPost implements IDocumentosPost {
 		if (req.titular != null && doc.getTitular() != doc.getSubscritor()) {
 			exBL.geraMovimentacaoSubstituicao(doc, ctx.getCadastrante());
 		}
-		
+
 		if (doc.getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante,
 				cadastrante.getLotacao(), doc.getExMobilPai())) {
 			exBL.copiarRestringir(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(), cadastrante,

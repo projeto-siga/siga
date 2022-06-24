@@ -2,7 +2,7 @@
  * Configura o comportamento da página da Mesa virtual, usando a API do Vue.js
  */
 "use strict";
-
+const qtdMax = 20;
 setTimeout(function() {
 	$('#bem-vindo').fadeTo(1000, 0, function() {
 		$('#row-bem-vindo').slideUp(1000);
@@ -11,32 +11,47 @@ setTimeout(function() {
 	$("#ultima-atualizacao").addClass("text-secondary");
 }, 5000);
 
-if (getParmUser('trazerAnotacoes') == null)
+if (!getParmUser('trazerAnotacoes'))
 	setParmUser('trazerAnotacoes', true)
+if (getParmUser('gruposMesa'))
+	localStorage.removeItem('gruposMesa' + getUser());
+	
 var appMesa = new Vue({
 	el: "#app",
 
 	mounted: function() {
 		this.errormsg = undefined;
-		var self = this
+		var self = this;
 		self.exibeLota = getParmUser('exibeLota');
-		self.carregarMesa();
+		self.getItensGrupo();
+		self.contar = false;
+		// Carrega todas linhas não preenchidas que estiverem na tela
+		var timeoutId;
+		window.addEventListener('scroll', function ( event ) {
+			window.clearTimeout( timeoutId );
+			timeoutId = setTimeout(function() {
+				if (!self.carregando) {
+					// Se o usuario rolar a pagina, espera ele parar de rolar por alguns décimos de seg.
+					self.carregaLinhasExibidasNaTela();
+					window.clearTimeout( timeoutId );
+				}
+			}, 400);
+		}, false);
 	},
 	data: function() {
 		return {
 			mesa: undefined,
 			filtro: undefined,
-			resp: undefined,
 			grupos: [],
-			todos: {},
 			carregando: false,
-			primeiraCarga: true,
+			contar: true,
 			exibeLota: undefined,
 			acessos: [],
 			errormsg: undefined,
 			toggleConfig: '',
+			qtd: qtdMax,
 			selQtd: undefined,
-			selQtdPag: (getParmUser('qtdPag') == null ? 15 : getParmUser('qtdPag')),
+			qtdPag: (getParmUser('qtdPag') ? parseInt(getParmUser('qtdPag')) : 15),
 			trazerAnotacoes: true,
 			trazerComposto: false,
 			trazerArquivados: false,
@@ -46,53 +61,11 @@ var appMesa = new Vue({
 			dtDMA: false
 		};
 	},
-	computed: {
-		filtrados: function() {
-			var grps = JSON.parse(JSON.stringify(this.grupos));
-			for (let g in grps) {
-				if (grps[g].grupoDocs != undefined) {
-					var a = grps[g].grupoDocs;
-					var grupo;
-					var odd = false;
-					a = this.filtrarPorSubstring(
-						a,
-						this.filtro,
-						"grupoNome,tempoRelativo,sigla,codigo,descr,origem,situacao,errormsg,list.nome,dataDevolucao".split(
-							","
-						)
-					);
-					a = a.filter(function(item) {
-						return item.grupo !== "NENHUM";
-					});
-					grps[g].grupoDocs = a;
-				}
-			}
-			this.$nextTick(function() { 
-				initPopovers();
-			}); 
-
-			return grps;
-		},
-		filtradosTemAlgumErro: function() {
-			if (!this.filtrados || this.filtrados.length === 0) return false;
-			for (var i = 0; i < this.filtrados.length; i++) {
-				if (this.filtrados[i].errormsg) return true;
-			}
-			return false;
-		}
-	},
 	watch: {
-		selQtdPag: function(qtdPag) {
-			var parms = JSON.parse(getParmUser('gruposMesa'));
-			if (parms != null) {
-				for (var g in parms) {
-					setValueGrupo(g, 'qtdPag', qtdPag);
-					if (parms[g].collapsed == false) {
-						setValueGrupo(g, 'qtd', qtdPag);
-					}
-				}
-			}
-			setParmUser('qtdPag', qtdPag);
+		qtdPag: function() {
+			setParmUser('qtdPag', parseInt(this.qtdPag));
+			setParmGrupos('grupoQtd', parseInt(this.qtdPag));
+			setParmGrupos('grupoQtdLota', parseInt(this.qtdPag));
 			this.recarregarMesa();
 		},
 		trazerAnotacoes: function() {
@@ -105,7 +78,7 @@ var appMesa = new Vue({
 		},
 		trazerArquivados: function() {
 			setParmUser('trazerArquivados', this.trazerArquivados);
-			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
+			setValueGrupo('Aguardando Ação de Temporalidade', 'grupoHide', !this.trazerArquivados);
 			this.recarregarMesa();
 		},
 		trazerCancelados: function() {
@@ -127,66 +100,54 @@ var appMesa = new Vue({
 		
 	},
 	methods: {
-		carregarMesa: function(grpNome, qtdPagina) {
+		getItensGrupo: function(grpNome, offset, qtd) {
 			var self = this
-			this.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? false : getParmUser('trazerAnotacoes'));
-			this.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
-			this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
-			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
-			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
-			this.usuarioPosse = (getParmUser('usuarioPosse') == null ? false : getParmUser('usuarioPosse'));
-			this.dtDMA = (getParmUser('dtDMA') == null ? false : getParmUser('dtDMA'));
-			this.qtdPag = (getParmUser('qtdPag') == null ? 15 : getParmUser('qtdPag'));
-			setValueGrupo('Aguardando Ação de Temporalidade', 'hide', !this.trazerArquivados);
-			
+			this.setParmsDefault();
+			let contar = true;
+
 			/* clean toast container before reload notification */
 			$('#toastContainer').empty();
 
-			var timeout = Math.abs(new Date() -
+			let timeout = Math.abs(new Date() -
 				new Date(sessionStorage.getItem('timeout' + getUser())));
-			if (timeout < 120000 && grpNome == null) {
-				if (sessionStorage.getItem('mesa' + getUser()) != undefined) {
-					carregaFromJson(sessionStorage.getItem('mesa' + getUser()), self);
-					resetCacheLotacaoPessoaAtual();
-					return;
-				}
+			if (timeout < 120000 && grpNome) {
+				contar = false;
 			}
-			if (this.carregando || timeout < 120000)
+			if (this.carregando)
 				return;
 			this.carregando = true;
-			var erros = {};
-			if (this.grupos && this.grupos.length > 0) {
-				for (var i = 0; i < this.grupos.length; i++) {
-					erros[this.grupos[i].codigo] = this.grupos[i].errormsg;
-				}
-			}
-			var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
-			var parms = {};
-			if (grpNome != null) {
-				parms[grpNome] = {
-					'grupoOrdem': parmGrupos[grpNome].ordem,
-					'grupoQtd': parseInt(parmGrupos[grpNome].qtd) + parseInt(this.qtdPag),
-					'grupoQtdPag': parmGrupos[grpNome].qtdPag, 'grupoCollapsed': parmGrupos[grpNome].collapsed,
-					'grupoHide': parmGrupos[grpNome].hide
-				};
-				setValueGrupo(grpNome, 'qtd', parseInt(parmGrupos[grpNome].qtd) + parseInt(this.qtdPag));
-				
+			let q = (!qtd || qtd > qtdMax? qtdMax : qtd)
+			let parmGrupos = JSON.parse(getParmUser('grupos'));
+			let parms = {};
+			let gNome = grpNome;
+			if (gNome) {
+				parms[gNome] = {
+					'grupoOrdem': parmGrupos[gNome].grupoOrdem,
+					'grupoQtd': parseInt(parmGrupos[gNome].grupoQtd),
+					'grupoQtdLota': parseInt(parmGrupos[gNome].grupoQtdLota),
+					'grupoCollapsed': parmGrupos[gNome].grupoCollapsed,
+					'grupoHide': parmGrupos[gNome].grupoHide};
+				this.mostraSpinner(getGrupoVue(gNome), offset, q);
 			} else {
-				var i = 0;
 				for (let p in parmGrupos) {
 					parms[p] = {
-						'grupoOrdem': parmGrupos[p].ordem, 'grupoQtd': parseInt(parmGrupos[p].qtd),
-						'grupoQtdPag': parmGrupos[p].qtdPag, 'grupoCollapsed': parmGrupos[p].collapsed,
-						'grupoHide': parmGrupos[p].hide
+						'grupoOrdem': parmGrupos[p].grupoOrdem, 
+						'grupoQtd': (parseInt(parmGrupos[p].grupoQtd) > 0? parseInt(parmGrupos[p].grupoQtd) : q),
+						'grupoQtdLota': (parseInt(parmGrupos[p].grupoQtdLota) > 0? parseInt(parmGrupos[p].grupoQtdLota) : q),
+						'grupoCollapsed': parmGrupos[p].grupoCollapsed,
+						'grupoHide': parmGrupos[p].grupoHide
 					};
 				}
 			}
 			$.ajax({
-				type: 'POST',
+				type: 'GET',
 				url: 'mesa2.json',
 				timeout: 120000,
 				data: {
 					parms: JSON.stringify(parms),
+					qtd: q,
+					offset: (offset? offset : 0),
+					contar: contar,
 					exibeLotacao: this.exibeLota,
 					trazerAnotacoes: this.trazerAnotacoes,
 					trazerComposto: this.trazerComposto,
@@ -195,32 +156,38 @@ var appMesa = new Vue({
 					ordemCrescenteData: this.ordemCrescenteData,
 					usuarioPosse: this.usuarioPosse,
 					dtDMA: this.dtDMA,
+					filtro: this.filtro,
 					idVisualizacao: ID_VISUALIZACAO
 				},
 				complete: function(response, status, request) {
 					let cType = response.getResponseHeader('Content-Type');
 					self.errormsg = undefined;
-					if (cType && cType.indexOf('text/plain') !== -1 && response.status == 200) {
+					if (status == 'timeout') {
+						self.errormsg = "O servidor demorou para responder. Por favor tente novamente ou use a pesquisa.";
+					} else if (cType && cType.indexOf('text/plain') !== -1 && response.status == 200) {
 						self.errormsg = response.responseText;
-						self.carregando = false;
-					} else {
-						if (response.status > 300) {
-							if (cType != null && cType.indexOf('text/html') !== -1) {
-								document.write(response.responseText);
-							} else {
-								self.errormsg = response.responseText & " - " & response.status;
-							}
+					} else if (response.status == 401 || response.status == 403) { 
+						window.location.href = "/siga/public/app/login" 
+					} else if (response.status > 300) {
+						if (cType != null && cType.indexOf('text/html') !== -1) {
+							document.write(response.responseText);
 						} else {
-							carregaFromJson(response.responseText, self);
-							resetCacheLotacaoPessoaAtual();
+							self.errormsg = response.responseText & " - " & response.status;
+						}
+					} else {
+						carregaFromJson(response.responseText, self);
+						for (const el of document.getElementsByClassName('spinner-more')) 
+						    el.remove();
+						resetCacheLotacaoPessoaAtual();
+						if (contar)
 							sessionStorage.setItem(
 								'timeout' + getUser(), new Date());
-						}
 					}
+					self.carregando = false;
 				},
 				failure: function(response, status) {
+					alert("Ocorreu um erro no servidor. Por favor recarregue a mesa ou faça o login novamente.");
 					self.carregando = false;
-					self.showError(response.responseText, self);
 				},
 				success: function(){		
 					$.ajax({
@@ -239,9 +206,61 @@ var appMesa = new Vue({
 			   }
 			})
 		},
+		mostraSpinner: function(grp, offset, qtd) {
+			if (grp.grupoDocs) {
+				for (i=offset; i - offset < qtd; i++) {
+					if (grp.grupoDocs[i] && grp.grupoDocs[i].datahora == '')
+						grp.grupoDocs[i].datahora = '.';
+				}
+			}
+			Vue.set(grp, 'grupoDocs', JSON.parse(JSON.stringify(grp.grupoDocs)));
+		},
+		criaLinhasFantasmas: function(grp, offset, qtd) {
+			if (!grp.grupoDocs)
+				Vue.set(grp, 'grupoDocs', []);
+			for (let i=0; i < qtd && i < grp.grupoCounterAtivo; i++) {
+				grp.grupoDocs.push({offset: i.toString(), grupoOrdem: grp.grupoOrdem, codigo: "", dataDevolucao: "ocultar", datahora: ".", datahoraDDMMYYYHHMM: "", 
+					descr: "", list: [], lotaCadastrante: "", lotaPosse: "", nomePessoaPosse: "", origem: "", sigla: "", tempoRelativo: "", tipo: "Documento", tipoDoc: ""});
+			}
+			Vue.set(grp, 'grupoDocs', JSON.parse(JSON.stringify(grp.grupoDocs)));
+		},
+		carregaLinhasExibidasNaTela: function() {
+			// Se encontrar uma linha de referencia (nao preenchida) 
+			// que está exibida na tela, vai carregar mais desse grupo e retorna true.
+			// Se não encontrar, retorna false.
+			let linhaRef = getPrimeiroExibido('.linha-ref');
+			if (linhaRef) {
+				let grp = linhaRef.getAttribute('data-grupo');
+				let offset = parseInt(linhaRef.getAttribute('data-numitem'));
+				let listaItens = document.querySelectorAll("[data-grupo='" + grp + "']")
+				// Conta quantas linhas vazias tem até prox. linha preenchida
+				let i = offset;
+				while (i < listaItens.length && listaItens[i].classList.contains('linha-ref')) 
+					i++;
+				let q = i - offset;
+				if (q < qtdMax) {
+					// Se não atingiu qtd max a trazer, volta o offset até 
+					// atingir ou encontrar linha preenchida
+					for (let o=offset - 1; o >= 0 && q < qtdMax 
+							&& listaItens[o].classList.contains('linha-ref'); o--) {
+						q = q + 1;
+						offset = offset - 1;
+					}
+				}
+				this.getItensGrupo(grp, offset, (q > 0? q : qtdMax));
+				return true;
+			}
+			return false;
+		},
+		isVisible: function(elem) {
+			if (!elem)
+				return false
+			var rect = elem.getBoundingClientRect();
+			var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+			return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
+		},	
 		resetaStorage: function() {
-			sessionStorage.removeItem('mesa' + getUser());
-			localStorage.removeItem('gruposMesa' + getUser());
+			localStorage.removeItem('grupos' + getUser());
 			this.trazerAnotacoes = false;
 			this.trazerComposto = false;
 			this.trazerArquivados = false;
@@ -254,15 +273,27 @@ var appMesa = new Vue({
 			localStorage.removeItem('dtDMA' + getUser());
 			localStorage.removeItem('qtdPag' + getUser());
 			this.recarregarMesa();
-			this.selQtdPag = 15;
 			sessionStorage.removeItem('listaNotificacaoSilenciada' + getUser());
+			this.qtdPag = 15;
 			
 			resetCacheLotacaoPessoaAtual();
 		},
+		setParmsDefault: function() {
+			this.trazerAnotacoes = (getParmUser('trazerAnotacoes') == null ? false : getParmUser('trazerAnotacoes'));
+			this.trazerComposto = (getParmUser('trazerComposto') == null ? false : getParmUser('trazerComposto'));
+			this.trazerArquivados = (getParmUser('trazerArquivados') == null ? false : getParmUser('trazerArquivados'));
+			this.trazerCancelados = (getParmUser('trazerCancelados') == null ? false : getParmUser('trazerCancelados'));
+			this.ordemCrescenteData = (getParmUser('ordemCrescenteData') == null ? false : getParmUser('ordemCrescenteData'));
+			this.usuarioPosse = (getParmUser('usuarioPosse') == null ? false : getParmUser('usuarioPosse'));
+			this.dtDMA = (getParmUser('dtDMA') == null ? false : getParmUser('dtDMA'));
+			setValueGrupo('Aguardando Ação de Temporalidade', 'grupoHide', !this.trazerArquivados);
+		},
+		
 		recarregarMesa: function() {
 			this.grupos = [];
 			sessionStorage.removeItem('timeout' + getUser());
-			this.carregarMesa();
+			setParmGrupos();
+			this.getItensGrupo(null, 0, this.qtdPag);
 		},
 		carregarMesaUser: function() {
 			setParmUser('exibeLota', false);
@@ -274,40 +305,38 @@ var appMesa = new Vue({
 			this.exibeLota = true;
 			this.recarregarMesa();
 		},
-		setQtdPag: function(grupoNome, event) {
-			var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
-			setValueGrupo(grupoNome, 'qtdPag', parseInt(event.target.value));
-		},
 		pageDownGrupo: function(grupoNome) {
-			var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
-			if (parmGrupos[grupoNome].qtd === 0) {
-				setValueGrupo(grupoNome, 'qtd', parmGrupos[grupoNome].qtdPag)
-			} else {
-				setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
-			}
+			let listaLinhas = document.querySelectorAll("[data-grupo='" + grupoNome + "']");
+			let offset = 0;
+			if (listaLinhas.length > 0)
+				offset = parseInt(listaLinhas[listaLinhas.length - 1]
+						.getAttribute('data-numitem')) + 1;
 			sessionStorage.removeItem('timeout' + getUser());
-			this.carregarMesa(grupoNome, parseInt(parmGrupos[grupoNome].qtdPag));
+			if (this.exibeLota)
+				setValueGrupo(grupoNome, 'grupoQtdLota', listaLinhas.length + parseInt(this.qtdPag));
+			else
+				setValueGrupo(grupoNome, 'grupoQtd', listaLinhas.length + parseInt(this.qtdPag));
+			this.criaLinhasFantasmas(getGrupoVue(grupoNome), offset, this.qtdPag);
+			this.getItensGrupo(grupoNome, offset, this.qtdPag);
 		},
 		collapseGrupo: function(grupoOrdem, grupoNome) {
-			// Abre ou fecha o grupo, salvando info no local/session storage e refletindo no vue
-			var parmGrupos = JSON.parse(getParmUser('gruposMesa'));
+			// Abre ou fecha o grupo, salvando info no local storage e refletindo no vue
+			var parmGrupos = JSON.parse(getParmUser('grupos'));
 			var collapsibleElemHeader = document.getElementById('collapse-header-' + grupoOrdem);
 			if (collapsibleElemHeader.classList.contains('collapsed')) {
-				setValueGrupoSessionStorage(grupoNome, 'grupoCollapsed', false);
-				setValueGrupo(grupoNome, 'collapsed', false);
-				setValueGrupo(grupoNome, 'qtd', parseInt(parmGrupos[grupoNome].qtd));
+				setValueGrupo(grupoNome, 'grupoCollapsed', false);
+				setValueGrupoVue(grupoNome, 'grupoCollapsed', false);
 				if ($('#collapsetab-' + grupoOrdem + ' tr').length < 2) {
-					sessionStorage.removeItem('timeout' + getUser());
-					this.carregarMesa(grupoNome, 0);
+					this.pageDownGrupo(grupoNome);
 				}
 			} else {
-				setValueGrupoSessionStorage(grupoNome, 'grupoCollapsed', true);
-				setValueGrupo(grupoNome, 'collapsed', true);
+				setValueGrupo(grupoNome, 'grupoCollapsed', true);
+				setValueGrupoVue(grupoNome, 'grupoCollapsed', true);
 			}
 		},
 		fecharGrupo: function(grupoOrdem, grupoNome) {
 			$('#collapsetab-' + grupoOrdem).collapse('hide');
-			setValueGrupo(grupoNome, 'collapsed', true);
+			setValueGrupo(grupoNome, 'grupoCollapsed', true);
 			setValueGrupoVue(grupoNome, 'grupoCollapsed', true);
 		},
 		getLastRefreshTime: function() {
@@ -324,51 +353,6 @@ var appMesa = new Vue({
 				this.toggleConfig = 'hide-config';
 			} else {
 				this.toggleConfig = 'show-config';
-			}
-		},
-		fixItem: function(item) {
-			this.applyDefauts(item, {
-				checked: false,
-				disabled: false,
-				grupo: undefined,
-				grupoNome: undefined,
-				datahora: undefined,
-				datahoraFormatada: undefined,
-				sigla: undefined,
-				codigo: undefined,
-				descr: undefined,
-				origem: undefined,
-				situacao: undefined,
-				errormsg: undefined,
-				odd: undefined
-			});
-			if (item.datahora !== undefined) {
-				item.datahoraFormatada = this.formatJSDDMMYYYYHHMM(item.datahora);
-			}
-			return item;
-		},
-		// De UtilsBL
-		applyDefauts: function(obj, defaults) {
-			for (var k in defaults) {
-				if (!defaults.hasOwnProperty(k)) continue;
-				if (obj.hasOwnProperty(k)) continue;
-				obj[k] = defaults[k];
-			}
-		},
-		showError: function(error, component) {
-			component.errormsg = undefined;
-			try {
-				component.errormsg = error.data.errormsg;
-			} catch (e) { }
-			if (
-				component.errormsg === undefined &&
-				error.statusText &&
-				error.statusText !== ""
-			) {
-				component.errormsg = error.statusText;
-			}
-			if (component.errormsg === undefined) {
-				component.errormsg = "Erro desconhecido!";
 			}
 		},
 		// Filtra itens por uma string qualquer. Se desejar restringir o filtro apenas a algumas das propriedades,
@@ -432,19 +416,9 @@ var appMesa = new Vue({
 });
 
 function atualizaGrupos(grupos) {
-	var parms = JSON.parse(getParmUser('gruposMesa'));
-	if (parms == null) {
-		for (var g in grupos) {
-			setGrupo(grupos[g].grupoNome, grupos[g].grupoOrdem, grupos[g].grupoQtd, grupos[g].grupoQtdPag,
-				grupos[g].grupoCollapsed, grupos[g].hide);
-		}
-	}
-	for (var i in parms) {
-		if (parms[i].qtdPag > 0) {
-			var grpSelect = document.getElementById('selQtdItens-' + parms[i].ordem);
-			if (grpSelect != null)
-				grpSelect.value = parms[i].qtdPag;
-		}
+	for (var g in grupos) {
+		setGrupo(grupos[g].grupoNome, grupos[g].grupoOrdem, grupos[g].grupoQtd, 
+				grupos[g].grupoQtdLota, grupos[g].grupoCollapsed, grupos[g].grupoHide);
 	}
 }
 
@@ -460,29 +434,35 @@ function cloneArray(arr) {
 	return newArray;
 }
 
-function setGrupo(grupoNome, ordem, qtd, qtdPag, collapsed, hide) {
+function setGrupo(grupoNome, ordem, qtd, qtdLota, collapsed, hide) {
 	// Seta um parametro com dados de selecao do grupo no JSON de parametros e armazena na local storage. 
 	// Se a quantidade for "" ou false, deleta o parametro
-	var parms = JSON.parse(getParmUser('gruposMesa'));
+	var parms = JSON.parse(getParmUser('grupos'));
 	if (parms == null) {
 		parms = { "key": "" };
-		parms[grupoNome] = { 'ordem': ordem, 'qtd': qtd, 'qtdPag': qtdPag, 'collapsed': collapsed, 'hide': hide };
+		parms[grupoNome] = { 'grupoOrdem': ordem, 'grupoQtd': qtd, 'grupoQtdLota': qtdLota, 'grupoCollapsed': collapsed, 'grupoHide': hide };
 		delete parms["key"];
 	} else {
-		if (qtd === "" || qtd === false) {
+		if ((qtd === "" || qtd === false) && (qtdLota === "" || qtdLota === false)) {
 			delete parms[grupoNome];
 		} else {
-			parms[grupoNome] = { 'ordem': ordem, 'qtd': qtd, 'qtdPag': qtdPag, 'collapsed': collapsed, 'hide': hide };
+			parms[grupoNome] = { 'grupoOrdem': ordem, 'grupoQtd': qtd, 'grupoQtdLota': qtdLota, 'grupoCollapsed': collapsed, 'grupoHide': hide };
 		}
 	}
-	setParmUser('gruposMesa', JSON.stringify(parms));
+	setParmUser('grupos', JSON.stringify(parms));
+}
+function getValueGrupo(grupoNome, key) {
+	var parms = JSON.parse(getParmUser('grupos'));
+	if (parms != null) {
+		return parms[grupoNome][key];
+	}
 }
 
 function setValueGrupo(grupoNome, key, value) {
-	var parms = JSON.parse(getParmUser('gruposMesa'));
+	var parms = JSON.parse(getParmUser('grupos'));
 	if (parms != null) {
 		parms[grupoNome][key] = value;
-		setParmUser('gruposMesa', JSON.stringify(parms));
+		setParmUser('grupos', JSON.stringify(parms));
 	}
 }
 
@@ -492,16 +472,17 @@ function setValueGrupoVue(grupoNome, key, value) {
 			Vue.set(appMesa.grupos[g], key, value);
 	}
 }
-
-function setValueGrupoSessionStorage(grupoNome, key, value) {
-	var grp = JSON.parse(sessionStorage.getItem('mesa' + getUser()));
-	for (var g in grp) {
-		if (grp[g].grupoNome == grupoNome) {
-			grp[g][key] = value;
-		}
+function getGrupoVue(grupoNome) {
+	for (var g in appMesa.grupos) {
+		if (appMesa.grupos[g].grupoNome == grupoNome)
+			return appMesa.grupos[g];
 	}
-	sessionStorage.setItem(
-		'mesa' + getUser(), JSON.stringify(grp));
+}
+function setParmGrupos(nomeParm, value) {
+	var parms = JSON.parse(getParmUser('grupos'));
+	for (var g in parms) {
+		setValueGrupo(g, nomeParm, value);
+	}
 }
 
 function setParmUser(nomeParm, value) {
@@ -524,31 +505,82 @@ function slideDown(id) {
 }
 
 function carregaFromJson(json, appMesa) {
-	var grp = JSON.parse(json);
+	let grp = JSON.parse(json);
+	if (appMesa.filtro && grp.length == 0)
+		appMesa.errormsg = "Não foram encontrados documentos para esta pesquisa.";
+		
 	if (grp.length > 1) {
+		preencheLinhasFantasmas(grp);
 		appMesa.grupos = grp;
 	} else {
-		for (var g in appMesa.grupos) {
-			if (appMesa.grupos[g].grupoOrdem === grp[0].grupoOrdem) {
-				Vue.set(appMesa.grupos, g, grp[0]);
-				if (appMesa.grupos[g].grupoDocs == undefined)
+		if (grp[0].grupoDocs && grp[0].grupoDocs.length > 0) {
+			for (let g in appMesa.grupos) {
+				if (appMesa.grupos[g].grupoOrdem == grp[0].grupoOrdem) {
+					let grDocs = appMesa.grupos[g].grupoDocs;
+					if (grDocs) {
+						for (i=grDocs.length - 1; i >= 0; i--) {
+							if (grDocs[i].codigo === '')
+								grDocs.splice(i, 1);
+						}
+						grp[0].grupoDocs = grDocs.concat(grp[0].grupoDocs);
+					}
+					if (!grp[0].grupoCounterAtivo) {
+						grp[0].grupoCounterAtivo = appMesa.grupos[g].grupoCounterAtivo;
+						grp[0].grupoCounterLota = appMesa.grupos[g].grupoCounterLota;
+						grp[0].grupoCounterUser = appMesa.grupos[g].grupoCounterUser;
+					}
+					removeLinhasDuplicadas(grp[0].grupoDocs);
+					preencheLinhasFantasmas(grp);
+					Vue.set(appMesa.grupos, g, grp[0]);
+				}
+			}
+		} else {
+			for (let g in appMesa.grupos) {
+				if (appMesa.grupos[g].grupoOrdem == grp[0].grupoOrdem) 
 					appMesa.grupos[g].grupoDocs = [];
-				var q = Math.round((appMesa.grupos[g].grupoDocs.length / appMesa.grupos[g].grupoQtdPag) - 0.51)
-					* appMesa.grupos[g].grupoQtdPag + appMesa.grupos[g].grupoQtdPag;
-				if (q > 0)
-					setValueGrupo(appMesa.grupos[g].grupoNome, 'qtd', q);
 			}
 		}
 	}
 	
 	appMesa.grupos = removerGruposDuplicados(appMesa.grupos);
-	sessionStorage.setItem(
-		'mesa' + getUser(), JSON.stringify(appMesa.grupos));
 	atualizaGrupos(appMesa.grupos);
-	appMesa.primeiraCarga = false;
-	appMesa.carregando = false;
+	appMesa.$nextTick(function() { 
+		initPopovers();
+	}); 
 }
 
+function removeLinhasDuplicadas(grp) {
+	for (var i = 1; i < grp.length; i++) {
+		let siglaDoc = grp[i].codigo;  
+		let ix = grp.findIndex(e => e.codigo === siglaDoc && e != grp[i]);
+		if (ix >= 0)
+			grp.splice(ix, 1);
+	}
+}
+function preencheLinhasFantasmas(grupos) {
+	// De acordo com os contadores de cada grupo e as linhas já baixadas, gera linhas sem dados
+	// Estas linhas servirão de referência para obter mais linhas do server quando o usuário rolar página
+	for (let j=0; j < grupos.length; j++) {
+		let g = grupos[j];
+		if (!g.grupoCollapsed && g.grupoCounterAtivo > 0) {
+			if (!g.grupoDocs)
+				g.grupoDocs = [];
+			let docsFinal = []
+			let qt = getGrupoQtd(g);
+			for (let h=0; h < qt && h < g.grupoCounterAtivo; h++) {
+				let ix = g.grupoDocs.findIndex(e => e.offset === h.toString());
+				if (ix < 0) {
+					docsFinal.push({offset: h.toString(), grupoOrdem: g.grupoOrdem, codigo: "", dataDevolucao: "ocultar", datahora: "", datahoraDDMMYYYHHMM: "", 
+						descr: "", list: [], lotaCadastrante: "", lotaPosse: "", nomePessoaPosse: "", origem: "", sigla: "", tempoRelativo: "", tipo: "Documento", tipoDoc: ""});
+				} else {
+					docsFinal.push(g.grupoDocs[ix]);
+					g.grupoDocs.splice(ix, 1);
+				}
+			}
+			g.grupoDocs = docsFinal;
+		}
+	}
+}
 function removerGruposDuplicados(values) {
 	let concatArray = values.map(eachValue => {
 		return Object.values(eachValue).join('')
@@ -560,8 +592,26 @@ function removerGruposDuplicados(values) {
 	return filterValues;
 }
 
+function getGrupoQtd(grupo) {
+	if (appMesa.exibeLota)
+		return grupo.grupoQtdLota;
+	else
+		return grupo.grupoQtd;
+}
+
 function getUser() {
 	return document.getElementById('cadastrante').title + (ID_VISUALIZACAO === 0 ? "" : ID_VISUALIZACAO); // ${ idVisualizacao == 0 ? '""' : idVisualizacao };
+}
+
+function getPrimeiroExibido(sel) {
+	let todos = document.querySelectorAll(sel);
+	if (todos.length > 0)
+		for(i=0; i < todos.length; i++) {
+			if (todos[i].getBoundingClientRect().top > 0 
+					&& todos[i].getBoundingClientRect().bottom < window.innerHeight)
+				return todos[i];
+		}
+	return null;
 }
 
 /**
@@ -788,4 +838,3 @@ function toaster(_notificacoes) {
     });
 
 }
-

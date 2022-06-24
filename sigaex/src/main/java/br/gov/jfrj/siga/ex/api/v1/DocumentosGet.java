@@ -38,10 +38,13 @@ public class DocumentosGet implements IDocumentosGet {
 	final static public Long MAXIMO_DIAS_PESQUISA = 30L;
 	DpPessoa titular;
 	DpLotacao lotaTitular;
-
+	
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		final ExMobilApiBuilder builder = new ExMobilApiBuilder();
+		titular = ctx.getTitular();
+		lotaTitular = titular.getLotacao();
+		
 		Date dtIni = null;
 		Date dtFim = null;
 		Long qtdMaxima = req.qtdmax;
@@ -82,9 +85,9 @@ public class DocumentosGet implements IDocumentosGet {
 			}
 		}
 		Long idLota = req.idlotacao;
-		if (req.idlotacao == null)
+		if (idLota == null)
 			idLota = lotaTitular.getIdInicial();
-		if (req.idlotacao != null && !req.idlotacao.equals(lotaTitular.getIdInicial()))
+		if (idLota != null && !idLota.equals(lotaTitular.getIdInicial()))
 			throw new SwaggerException("Usuário não autorizado a pesquisar documentos de outra lotação.", 400, null,
 					req, resp, null);
 

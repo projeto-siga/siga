@@ -10,14 +10,17 @@ import org.mvel2.templates.TemplateRuntime;
 import com.crivano.jflow.Handler;
 import com.crivano.jflow.TaskResult;
 
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 
 public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
@@ -80,11 +83,12 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
 	@Override
 	public void afterPause(WfProcedimento pi, TaskResult result) {
+		boolean deveTramitarPrincipal = pi.getCurrentTaskDefinition() != null && pi.getCurrentTaskDefinition().getTipoDeTarefa().isTramitarPrincipal();
 		String siglaTitular = null;
 		if (titular != null && lotaTitular != null)
 			siglaTitular = titular.getSigla() + "@" + lotaTitular.getSiglaCompleta();
 		try {
-			if (transicionou)
+			if (transicionou && deveTramitarPrincipal)
 				WfBL.transferirDocumentosVinculados(pi, siglaTitular);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -94,6 +98,21 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 	@Override
 	public void afterTransition(WfProcedimento pi, Integer de, Integer para) {
 		Wf.getInstance().getBL().registrarTransicao(pi, de, para, titular, lotaTitular, identidade);
+
+		if (para == null || para == pi.getDefinicaoDeProcedimento().getDefinicaoDeTarefa().size()) {
+			signalToOtherProcessInstances(pi);
+		}
+
 		transicionou = true;
+	}
+
+	public void signalToOtherProcessInstances(WfProcedimento pi) {
+		// Sinalizar para todos os subprocedimentos que podem estar esperando a
+		// conclusão desse
+		try {
+			new WfEngine(WfDao.getInstance(), this).resume(pi.getSigla(), null, null);
+		} catch (Exception e) {
+			throw new RuntimeException("Erro sinalizando subprocedimentos", e);
+		}
 	}
 }

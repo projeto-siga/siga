@@ -55,4 +55,9 @@ public class DpFuncaoConfiancaDaoFiltro extends DaoFiltroSelecionavel {
 	public void setIdOrgaoUsu(Long idOrgaoUsu) {
 		this.idOrgaoUsu = idOrgaoUsu;
 	}
+	
+	@Override
+	public boolean exigeNomeSigla() {
+		return true;	
+	}
 }

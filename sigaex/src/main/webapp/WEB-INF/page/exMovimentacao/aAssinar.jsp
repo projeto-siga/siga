@@ -123,6 +123,7 @@
 									name="ad_kind_0" value="${doc.descrFormaDoc}" />
 							</div>
 							
+							<c:set var="podeAssinarCertDigital" value="${f:podeAssinar(titular,lotaTitular,doc.mobilGeral)}" />
 							<c:set var="podeAssinarComSenha" value="${assinando and f:podeAssinarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
 							<c:set var="podeAutenticarComSenha" value="${autenticando and f:podeAutenticarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
 							<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(cadastrante,lotaCadastrante,doc.mobilGeral) }" />
@@ -135,7 +136,7 @@
 							<tags:assinatura_botoes assinar="${assinando}" voltar="${voltarAtivo}"
 								linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
 								autenticar="${autenticando}"
-		
+									assinarCertDigital="${podeAssinarCertDigital}"
 									assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
 								    autenticarComSenha="${podeAutenticarComSenha and not obrigatorioUtilizarSegundoFatorPin}"			
 									assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
@@ -149,7 +150,7 @@
 				
 								
 								juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
-								tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" 
+								tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" tramitarExplicacao="${tramitarExplicacao}"
 								exibirNoProtocoloAtivo="${f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)? false:undefined}" 
 								exibirNoProtocoloFixo="${not f:podeDisponibilizarNoAcompanhamentoDoProtocolo(titular,lotaTitular,doc)}"/>
 		

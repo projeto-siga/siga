@@ -3,13 +3,13 @@ package br.gov.jfrj.siga.cp.model.enm;
 public enum CpMarcadorFinalidadeGrupoEnum {
 	SISTEMA("Sistema"),
 	//
+	LISTA("Lista"),
+	//
 	GERAL("Geral"),
 	//
 	LOCAL("Local"),
 	//
-	PASTA("Pasta"),
-	//
-	LISTA("Lista");
+	PASTA("Pasta");
 
 	private final String nome;
 

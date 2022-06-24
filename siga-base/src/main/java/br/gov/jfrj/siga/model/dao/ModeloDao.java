@@ -44,6 +44,8 @@ public abstract class ModeloDao {
 
 	protected String cacheRegion = null;
 
+	private static BancoDeDados banco = null;  
+
 	private static final ThreadLocal<ModeloDao> threadDao = new ThreadLocal<ModeloDao>();
 
 	protected ModeloDao() {
@@ -203,5 +205,33 @@ public abstract class ModeloDao {
 	public boolean transacaoEstaAtiva() {
 		EntityManager em = em();
 		return em != null && em.isOpen() && em.getTransaction() != null && em.getTransaction().isActive();
+	}
+	
+	/**
+	 * @return Tipo do banco de dados utilizado
+	 */
+	private static BancoDeDados getBanco() {
+		if (banco != null) 
+			return banco;
+		String dialect = System.getProperty("siga.hibernate.dialect");
+		if (dialect != null && dialect.contains(BancoDeDados.MYSQL.getDescr()))
+			banco = BancoDeDados.MYSQL;
+		if (dialect != null && dialect.contains(BancoDeDados.ORACLE.getDescr()))
+			banco = BancoDeDados.ORACLE;
+		if (dialect != null && dialect.contains(BancoDeDados.POSTGRESQL.getDescr()))
+			banco = BancoDeDados.POSTGRESQL;
+		return banco;
+	}
+
+	public static boolean isOracle() {
+		return getBanco().equals(BancoDeDados.ORACLE);
+	}
+
+	public static boolean isMySQL() {
+		return getBanco().equals(BancoDeDados.MYSQL);
+	}
+
+	public static boolean isPostgreSQL() {
+		return getBanco().equals(BancoDeDados.POSTGRESQL);
 	}
 }

@@ -111,6 +111,8 @@ public class ExMovimentacaoVO extends ExVO {
 		this.dtRegMovDDMMYYHHMMSS = mov.getDtRegMovDDMMYYHHMMSS();
 		this.tempoRelativo = Data.calcularTempoRelativo(mov.getDtIniMov());
 		this.descrTipoMovimentacao = mov.getDescrTipoMovimentacao();
+		if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA && mov.getTipoDeVinculo() != null)
+			this.descrTipoMovimentacao = mov.getTipoDeVinculo().getDescr();
 		this.cancelada = mov.getExMovimentacaoCanceladora() != null;
 		this.lotaCadastranteSigla = mov.getLotaCadastrante() != null ? mov.getLotaCadastrante().getSigla() : null;
 		this.exTipoMovimentacaoSigla = mov.getExTipoMovimentacao().getDescr();
@@ -215,11 +217,6 @@ public class ExMovimentacaoVO extends ExVO {
 						.exp(new ExPodeCancelarMarcacao(mov, titular, lotaTitular)).build());
 		}
 
-		if (exTipoMovimentacao == ExTipoDeMovimentacao.REFERENCIA) {
-			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-					.exp(new ExPodeCancelarVinculacao(mov, titular, lotaTitular)).build());
-		}
-
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).icone(getIcon()).nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 					.params("arquivo", mov.getReferencia())
@@ -256,7 +253,7 @@ public class ExMovimentacaoVO extends ExVO {
 			// <c:url var='anexo' value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
 			// tipo="${mov.conteudoTpMov}" />
 			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).nameSpace("/app/arquivo").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
-					.params("arquivo", mov.getReferenciaPDF())
+					.params("arquivo", mov.getReferenciaPDF()).params("popup", "true")
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 
 			if (exTipoMovimentacao == ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO) {
@@ -314,7 +311,7 @@ public class ExMovimentacaoVO extends ExVO {
 									.exp(new ExPodeAutenticarMovimentacao(mov, titular, lotaTitular)).build());
 
 					} else if (!(mov.isAssinada() && mov.mob().isEmTransito(titular, lotaTitular))) {
-						addAcao(AcaoVO.builder().nome("Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+						addAcao(AcaoVO.builder().nome(mov.isAssinada() ? "Ver" : "Ver/Assinar").nameSpace("/app/expediente/mov").acao("exibir").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 								.params("popup", "true")
 								.exp(new CpPodeSempre()).build());
 					}
@@ -472,11 +469,13 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
-						.exp(new CpPodeSempre()).pre("Ver também: ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
+						.exp(new CpPodeSempre()).pre(mov.getTipoDeVinculo().getAcao() + ": ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			} else {
 				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
 						.exp(new CpPodeSempre()).pre("Ver também: ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			}
+			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
+					.exp(new ExPodeCancelarVinculacao(mov, titular, lotaTitular)).build());
 		}
 
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {

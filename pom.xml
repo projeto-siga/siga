@@ -23,12 +23,8 @@
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
-		<module>siga-ex-gsa</module>
-		<module>siga-ex-sinc</module>
-		<module>siga-gc-gsa</module>
 		<module>sigagc</module>
 		<module>sigasr</module>
- 		<module>sigapp</module>
  		<module>sigatp</module>
 		<!--<module>sigari</module>
  		<module>siga-cp-sinc</module> 
@@ -170,7 +166,7 @@
 			<dependency>
 				<groupId>br.jus.trf2.xjus</groupId>
 				<artifactId>x-jus-record-api</artifactId>
-				<version>1.1.1</version>
+				<version>1.2.0</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.crivano</groupId>

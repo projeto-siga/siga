@@ -1,13 +1,16 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 
 public class ExGraphRelacaoDocs extends ExGraph {
 
@@ -59,6 +62,27 @@ public class ExGraphRelacaoDocs extends ExGraph {
 				setEstilo(ESTILO_TRACEJADO);
 				setCor("gray");
 				setDirected(false);
+			} else if (tipo.equals("alteracao")) {
+				setTooltip("Alteração");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("blue");
+				setLabel("Altera");
+				setDirected(true);
+				setAoContrario(true);
+			} else if (tipo.equals("revogacao")) {
+				setTooltip("Revogação");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("orange");
+				setLabel("Revoga");
+				setDirected(true);
+				setAoContrario(true);
+			} else if (tipo.equals("cancelamento")) {
+				setTooltip("Cancelamento");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("red");
+				setLabel("Cancela");
+				setDirected(true);
+				setAoContrario(true);
 			} else if (tipo.equals("juntada")) {
 				setTooltip("Juntada");
 				setEstilo(ESTILO_TRACEJADO);
@@ -105,9 +129,27 @@ public class ExGraphRelacaoDocs extends ExGraph {
 		}
 
 		// Vinculações
-		for (ExMobil vinculado : mobBase.getVinculados()) {
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.RELACIONAMENTO)) {
 			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
 			adicionar(new TransicaoMob(mobBase, vinculado, "vinculacao"));
+		}
+
+		// Vinculações
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.ALTERACAO)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(mobBase, vinculado, "alteracao"));
+		}
+
+		// Vinculações
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.CANCELAMENTO)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(mobBase, vinculado, "cancelamento"));
+		}
+
+		// Vinculações
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.REVOGACAO)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(mobBase, vinculado, "revogacao"));
 		}
 
 		// Juntadas
@@ -166,13 +208,22 @@ public class ExGraphRelacaoDocs extends ExGraph {
 	}
 
 	public Map<String, List<ExMobil>> getAsMap() {
-		Map<String, List<ExMobil>> mapa = new HashMap<String, List<ExMobil>>();
+		Map<String, List<ExMobil>> mapa = new TreeMap<String, List<ExMobil>>();
 		String cat = "";
 		ExMobil mobilAAdicionar = null;
 		for (Transicao t : getTransicoes()) {
 			TransicaoMob tMob = (TransicaoMob) t;
 			if (tMob.tipo.equals("vinculacao")) {
 				cat = "Veja também";
+				mobilAAdicionar = tMob.mob2;
+			} else if (tMob.tipo.equals("alteracao")) {
+				cat = "Alterado por";
+				mobilAAdicionar = tMob.mob2;
+			} else if (tMob.tipo.equals("revogacao")) {
+				cat = "Revogado por";
+				mobilAAdicionar = tMob.mob2;
+			} else if (tMob.tipo.equals("cancelamento")) {
+				cat = "Cancelado por";
 				mobilAAdicionar = tMob.mob2;
 			} else if (tMob.tipo.equals("juntada")) {
 				cat = "Juntado ao documento";
@@ -200,6 +251,30 @@ public class ExGraphRelacaoDocs extends ExGraph {
 			mapa.get(cat).add(mobilAAdicionar);
 		}
 		return mapa;
+	}
+
+	public Map<String, List<ExMobil>> getPrincipaisAsMap() {
+		Map<String, List<ExMobil>> mapa = getAsMap();
+		Set<String> toRemove = new HashSet<>();
+		for (String key : mapa.keySet())
+			if (!isPrincipal(key))
+				toRemove.add(key);
+		toRemove.forEach(i -> mapa.remove(i));
+		return mapa;
+	}
+
+	public Map<String, List<ExMobil>> getSecundariosAsMap() {
+		Map<String, List<ExMobil>> mapa = getAsMap();
+		Set<String> toRemove = new HashSet<>();
+		for (String key : mapa.keySet())
+			if (isPrincipal(key))
+				toRemove.add(key);
+		toRemove.forEach(i -> mapa.remove(i));
+		return mapa;
+	}
+
+	private boolean isPrincipal(String key) {
+		return key.equals("Alterado por") || key.equals("Revogado por") || key.equals("Cancelado por");
 	}
 
 }

@@ -82,6 +82,9 @@ html body, .table-group-separator {
 	background-color: #dae9ec;
 }
 
+.body_color_default {
+	background-color: #dae9ec !important;
+}
 
 .table-group-separator, .table-group-title {
 	background-color: #dae9ec !important;
@@ -190,6 +193,49 @@ a.doc-sign:hover {
 	opacity: 0;
 	animation: spinner-grow .75s linear infinite;
 }
+
+.spinner-dots {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #dee2e6;
+  color: #dee2e6;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: .5s;
+}
+
+.spinner-dots::before, .spinner-dots::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.spinner-dots::before {
+  left: -15px;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #dee2e6;
+  color: #dee2e6;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.spinner-dots::after {
+  left: 15px;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #dee2e6;
+  color: #dee2e6;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dotFlashing {0% {background-color: #dee2e6;} 50%, 100% {background-color: #c0c0c0;}}
+
 .mesa-config {
     position: fixed;
     right: -320px;

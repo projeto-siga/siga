@@ -23,7 +23,6 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcarComMarcador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
 public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSiglaMarcadoresDisponiveisGet {
@@ -38,15 +37,14 @@ public class DocumentosSiglaMarcadoresDisponiveisGet implements IDocumentosSigla
 					"Não foi possível encontrar um documento a partir da sigla fornecida");
 
 		HttpServletRequest request = SwaggerServlet.getHttpServletRequest();
-		SigaObjects so = new SigaObjects(request);
-		DpPessoa titular = so.getTitular();
-		DpLotacao lotaTitular = so.getLotaTitular();
+		DpPessoa titular = ctx.getTitular();
+		DpLotacao lotaTitular = ctx.getLotaTitular();
 		if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, mob))
 			throw new AplicacaoException(
 					"Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. ("
 							+ titular.getSigla() + "/" + lotaTitular.getSiglaCompleta() + ")");
 
-		List<CpMarcador> marcadores = ExDao.getInstance().listarCpMarcadoresDisponiveis(so.getLotaTitular());
+		List<CpMarcador> marcadores = ExDao.getInstance().listarCpMarcadoresDisponiveis(ctx.getLotaTitular());
 
 		if (marcadores != null) {
 			boolean atendente = mob.isAtendente(titular, lotaTitular);

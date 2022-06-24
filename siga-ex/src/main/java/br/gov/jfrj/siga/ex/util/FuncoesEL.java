@@ -70,7 +70,9 @@ import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPor;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
@@ -616,6 +618,12 @@ public class FuncoesEL {
 		return string1.replaceAll("/", "/<br>");
 	}
 
+	public static String formatarMemo(String frase) {
+		if (frase == null || frase.trim().isEmpty())
+			return "";
+		return frase.replaceAll("\n", "<br/>");
+	}
+
 	public static String stringParaMinusculaNomes(String string) {
 		String strSplit[] = string.split(" ");
 		String stringFinal = "";
@@ -924,7 +932,10 @@ public class FuncoesEL {
 	public static String webservice(String url, String corpo, Integer timeout) {
 		try {
 			HashMap<String, String> headers = new HashMap<String, String>();
-			headers.put("Content-Type", "text/xml;charset=UTF-8");
+			if (corpo != null && corpo.isEmpty())
+				corpo = null;
+			if (corpo != null)
+				headers.put("Content-Type", "text/xml;charset=UTF-8");
 			String auth = (String) resource("/siga.freemarker.webservice.password");
 			if (auth != null)
 				headers.put("Authorization", auth);
@@ -966,6 +977,16 @@ public class FuncoesEL {
 	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
 			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
 		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacaoComSenha.class, titular, lotaTitular, mov);
+	}
+	
+	public static Boolean podeAssinarMovimentacao(DpPessoa titular,
+			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex.getInstance().getComp().pode(ExPodeAssinarMovimentacao.class, titular, lotaTitular, mov);
+	}
+	
+	public static Boolean podeAssinar(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp().pode(ExPodeAssinar.class, titular, lotaTitular, mob);
 	}
 	
 	public static Boolean podeAssinarMovimentacaoDoMobilComSenha(DpPessoa titular,

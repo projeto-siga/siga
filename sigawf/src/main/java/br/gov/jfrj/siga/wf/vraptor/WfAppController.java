@@ -154,7 +154,7 @@ public class WfAppController extends WfController {
 				throw new RuntimeException("Identificador da definição de tarefa não encontrado");
 		}
 
-		WfProcedimento pi = Wf.getInstance().getBL().createProcessInstance(pdId, idx, getTitular(), getLotaTitular(),
+		WfProcedimento pi = Wf.getInstance().getBL().criarProcedimento(pdId, idx, getTitular(), getLotaTitular(),
 				getIdentidadeCadastrante(), tipoDePrincipal, principal, null, null, true);
 		result.redirectTo(this).procedimento(pi.getId().toString());
 	}
@@ -249,7 +249,7 @@ public class WfAppController extends WfController {
 			result.forwardTo(this).salvar(piId, campoIdentificador, campoValor, sigla);
 			return;
 		}
-		
+
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
 		WfProcedimento pi = loadTaskInstance(piId);
@@ -257,7 +257,7 @@ public class WfAppController extends WfController {
 		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
 
 		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
-		
+
 		Integer desvio = null;
 		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
 			desvio = indiceDoDesvio;
@@ -299,12 +299,12 @@ public class WfAppController extends WfController {
 
 		result.redirectTo(this).procedimento(pi.getId().toString());
 	}
-	
+
 	@Transacional
 	@Post
 	@Path("/app/procedimento/{piId}/salvar")
-	public void salvar(Long piId, String[] campoIdentificador, StringQualquer[] campoValor, 
-			String sigla) throws Exception {
+	public void salvar(Long piId, String[] campoIdentificador, StringQualquer[] campoValor, String sigla)
+			throws Exception {
 		String cadastrante = getTitular().getSigla() + "@" + getLotaTitular().getSiglaCompleta();
 
 		WfProcedimento pi = loadTaskInstance(piId);
@@ -313,10 +313,9 @@ public class WfAppController extends WfController {
 
 		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
 
-		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(),
-				getIdentidadeCadastrante());
+		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
 
-		if (sigla != null) 
+		if (sigla != null)
 			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + sigla);
 		else
 			result.redirectTo(this).procedimento(pi.getId().toString());
@@ -344,8 +343,7 @@ public class WfAppController extends WfController {
 		WfPodeEditarVariaveis.afirmar(pi, getTitular(), getLotaTitular());
 		WfDefinicaoDeTarefa td = pi.getDefinicaoDeProcedimento().gerarDefinicaoDeTarefaComTodasAsVariaveis();
 		Map<String, Object> param = carregarVariaveis(td, campoIdentificador, campoValor);
-		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(),
-				getIdentidadeCadastrante());
+		Wf.getInstance().getBL().salvar(pi, td, param, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
 		result.redirectTo(this).procedimento(pi.getId().toString());
 	}
 
@@ -367,7 +365,7 @@ public class WfAppController extends WfController {
 							&& (variable.getEditingKind() == VariableEditingKind.READ_WRITE
 									|| variable.getEditingKind() == VariableEditingKind.READ_WRITE_REQUIRED)) {
 						Object value;
-						StringQualquer campo = c < campoValor.length ? campoValor[c] : null; 
+						StringQualquer campo = c < campoValor.length ? campoValor[c] : null;
 						if (variable.getTipo() == WfTipoDeVariavel.DOC_MOBIL) {
 							value = param(variable.getIdentifier() + "_expedienteSel.sigla");
 						} else if (variable.getTipo() == WfTipoDeVariavel.PESSOA) {
@@ -495,6 +493,17 @@ public class WfAppController extends WfController {
 			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla=" + siglaPrincipal);
 			return;
 		}
+		result.redirectTo(this).procedimento(pi.getId().toString());
+	}
+
+	@Transacional
+	@Post
+	@Path("/app/procedimento/{sigla}/priorizar")
+	public void priorizar(String sigla, WfPrioridade prioridade) throws Exception {
+		WfProcedimento pi = dao().consultarPorSigla(sigla, WfProcedimento.class, null);
+
+		Wf.getInstance().getBL().priorizar(pi, prioridade, getTitular(), getLotaTitular(), getIdentidadeCadastrante());
+
 		result.redirectTo(this).procedimento(pi.getId().toString());
 	}
 

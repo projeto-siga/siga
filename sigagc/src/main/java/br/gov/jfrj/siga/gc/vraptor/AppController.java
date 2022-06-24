@@ -87,9 +87,9 @@ public class AppController extends GcController {
 	}
 
 	@Inject
-	public AppController(HttpServletRequest request,  CpDao dao, Result result, GcBL bl, SigaObjects so, EntityManager em,
-			Correio correio) {
-		super(request,dao, result, so, em);
+	public AppController(HttpServletRequest request, CpDao dao, Result result, GcBL bl, SigaObjects so,
+			EntityManager em, Correio correio) {
+		super(request, dao, result, so, em);
 		this.bl = bl;
 		this.correio = correio;
 	}
@@ -175,13 +175,14 @@ public class AppController extends GcController {
 	}
 
 	@Path("/public/app/knowledge")
-	public void publicKnowledge(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca, Boolean podeCriar, String pagina) throws Exception {
+	public void publicKnowledge(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina) throws Exception {
 		renderKnowledge(id, tags, label, null, msgvazio, urlvazio, titulo, true, popup, estiloBusca, podeCriar, pagina);
 	}
 
-	public void knowledge(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo, boolean testarAcesso,
-			boolean popup, String estiloBusca, Boolean podeCriar, String pagina) throws Exception {
+	public void knowledge(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
+			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+			throws Exception {
 		renderKnowledge(id, tags, label, null, msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
 				pagina);
 	}
@@ -190,40 +191,40 @@ public class AppController extends GcController {
 	public void knowledgeInplace(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, label, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
-				pagina);
+		renderKnowledge(id, tags, label, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca,
+				podeCriar, pagina);
 	}
 
 	@Path("/app/knowledgeInplaceMinimal")
-	public void knowledgeInplaceMinimal(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+	public void knowledgeInplaceMinimal(Long id, String[] tags, String label, String msgvazio, String urlvazio,
+			String titulo, boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, label, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
-				pagina);
+		renderKnowledge(id, tags, label, "inplace", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca,
+				podeCriar, pagina);
 	}
 
 	public void knowledgeSidebar(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, label, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
-				pagina);
+		renderKnowledge(id, tags, label, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca,
+				podeCriar, pagina);
 	}
 
-	public void knowledgeSidebarSr(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+	public void knowledgeSidebarSr(Long id, String[] tags, String label, String msgvazio, String urlvazio,
+			String titulo, boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
-		renderKnowledge(id, tags, label, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca, podeCriar,
-				pagina);
+		renderKnowledge(id, tags, label, "sidebar", msgvazio, urlvazio, titulo, testarAcesso, popup, estiloBusca,
+				podeCriar, pagina);
 	}
 
-	private void renderKnowledge(Long id, String[] tags, String label, String estilo, String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
+	private void renderKnowledge(Long id, String[] tags, String label, String estilo, String msgvazio, String urlvazio,
+			String titulo, boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws UnsupportedEncodingException, Exception {
 		if (label == null || label.isEmpty()) {
 			if ("inplace".equals(estilo))
 				label = "Conhecimento Específico";
 		}
-			
+
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
@@ -233,52 +234,62 @@ public class AppController extends GcController {
 		if ("inplace".equals(estilo) && estiloBusca == null)
 			estiloBusca = "ExatoOuNada";
 		estiloBusca = estiloBusca != null ? estiloBusca.substring(0, 1).toUpperCase() + estiloBusca.substring(1) : "";
-		Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
-		query.setParameter("tags", set);
-		if (estiloBusca == null || estiloBusca.isEmpty() || estiloBusca.equals("AlgumIgualNenhumDiferente")) {
-			query.setParameter("lotacaoIni", getLotaTitular().getIdInicial());
-			query.setParameter("pessoaIni", getTitular().getIdInicial());
-		}
-		if ("ExatoOuNada".equals(estiloBusca))
-			query.setParameter("numeroDeTags", (long) tags.length);
-
-		List<Object[]> conhecimentosCandidatos = query.getResultList();
 		List<Object[]> conhecimentos = new ArrayList<Object[]>();
-		for (Object[] o : conhecimentosCandidatos) {
-			idOutroConhecimento = Long.parseLong(o[0].toString());
-			if (idOutroConhecimento.equals(id))
-				continue;
+		if (set != null) {
+			Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
+			query.setParameter("tags", set);
+			if (estiloBusca == null || estiloBusca.isEmpty() || estiloBusca.equals("AlgumIgualNenhumDiferente")) {
+				query.setParameter("lotacaoIni", getLotaTitular().getIdInicial());
+				query.setParameter("pessoaIni", getTitular().getIdInicial());
+			}
+			if ("ExatoOuNada".equals(estiloBusca))
+				query.setParameter("numeroDeTags", (long) tags.length);
 
-			info = GcInformacao.AR.findById(idOutroConhecimento);
-
-			// Nato: Como a busca ExatoOuNada não estava funcionando bem, inclui
-			// esse IF
-			if ("ExatoOuNada".equals(estiloBusca)) {
-				if (tags.length != info.getTags().size())
+			List<Object[]> conhecimentosCandidatos = query.getResultList();
+			for (Object[] o : conhecimentosCandidatos) {
+				idOutroConhecimento = Long.parseLong(o[0].toString());
+				if (idOutroConhecimento.equals(id))
 					continue;
 
-				HashSet<String> infoTags = new HashSet<String>();
-				for (GcTag t : info.getTags())
-					infoTags.add(t.toString());
-				for (String s : tags)
-					infoTags.remove(s);
-				if (infoTags.size() != 0)
-					continue;
-			}
+				// Nato: Como a busca ExatoOuNada não estava funcionando bem, inclui
+				// esse IF
+				if ("ExatoOuNada".equals(estiloBusca)) {
+					if (tags.length != (long) o[3])
+						continue;
 
-			if (testarAcesso && !info.acessoPermitido(getTitular(), getLotaTitular(), info.getVisualizacao().getId()))
-				continue;
+					if (info == null)
+						info = GcInformacao.AR.findById(idOutroConhecimento);
 
-			// o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
-			o[3] = info.getSiglaCompacta();
-			if (o[2] != null && o[2] instanceof byte[]) {
-				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
-				s = bl.ellipsize(s, 100);
-				o[2] = s;
+					HashSet<String> infoTags = new HashSet<String>();
+					for (GcTag t : info.getTags())
+						infoTags.add(t.toString());
+					for (String s : tags)
+						infoTags.remove(s);
+					if (infoTags.size() != 0)
+						continue;
+				}
+
+				if (testarAcesso) {
+					if (info == null)
+						info = GcInformacao.AR.findById(idOutroConhecimento);
+					if (!info.acessoPermitido(getTitular(), getLotaTitular(), info.getVisualizacao().getId()))
+						continue;
+				}
+						
+
+				// o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
+				if (info == null)
+					info = GcInformacao.AR.findById(idOutroConhecimento);
+				// Nato: O ideal seria não ter que carregar a info só para gerar a ID
+				o[3] = info.getSiglaCompacta();
+				if (o[2] != null && o[2] instanceof byte[]) {
+					String s = new String((byte[]) o[2], Charset.forName("utf-8"));
+					s = bl.ellipsize(s, 100);
+					o[2] = s;
+				}
+				conhecimentos.add(o);
 			}
-			conhecimentos.add(o);
 		}
-
 		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
 			GcInformacao inf = GcInformacao.AR.findById(conhecimentos.get(0)[0]);
 			conhecimentos.get(0)[1] = inf.getArq().getTitulo();
@@ -378,11 +389,11 @@ public class AppController extends GcController {
 		List<Object[]> listaMaisRecentes = query1.getResultList();
 		if (listaMaisRecentes.size() == 0)
 			listaMaisRecentes = null;
-		
-	 	Query query2 = em().createNamedQuery("maisVisitados");
+
+		Query query2 = em().createNamedQuery("maisVisitados");
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
-		if (listaMaisVisitados.size() == 0)  
+		if (listaMaisVisitados.size() == 0)
 			listaMaisVisitados = null;
 
 		Query query3 = em().createNamedQuery("principaisAutores");
@@ -1088,15 +1099,15 @@ public class AppController extends GcController {
 		// ideal seria injetar null se nenhum parâmetro for especificado.
 		if (pessoa != null && pessoa.getId() == null)
 			pessoa = null;
-		
+
 		if (pessoa != null && pessoa.getId() != null)
-			pessoa = dao().consultar(pessoa.getId(),DpPessoa.class,false);
-		
+			pessoa = dao().consultar(pessoa.getId(), DpPessoa.class, false);
+
 		if (lotacao != null && lotacao.getId() == null)
 			lotacao = null;
-		
+
 		if (lotacao != null && lotacao.getId() != null)
-			lotacao = dao().consultar(lotacao.getId(),DpLotacao.class,false);
+			lotacao = dao().consultar(lotacao.getId(), DpLotacao.class, false);
 
 		if (pessoa != null || lotacao != null || email != null) {
 
@@ -1217,12 +1228,11 @@ public class AppController extends GcController {
 			String js = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('" + CKEditorFuncNum
 					+ "','" + url + "');</script>";
 
-	//		HttpResult response = result.use(Results.http());
-	//		response.addHeader("Content-Type", "text/html");
+			// HttpResult response = result.use(Results.http());
+			// response.addHeader("Content-Type", "text/html");
 
-	//		result.use(Results.http()).body(js);
-			
-			
+			// result.use(Results.http()).body(js);
+
 			result.use(Results.http()).addHeader("Content-Type", "text/html").body(js);
 		} else {
 			if (titulo != null && titulo.trim().length() > 0)
@@ -1263,7 +1273,8 @@ public class AppController extends GcController {
 
 		// TODO verificar se o conhecimento pai eh sem autenticacao
 		GcInformacao infoMae = GcInformacao.AR.findById(idInformacao);
-		//GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq, idInformacao);
+		// GcInformacao infoMae = GcMovimentacao.buscarInformacaoPorAnexo(arq,
+		// idInformacao);
 		if (infoMae == null || !(infoMae.acessoExternoPublicoPermitido()))
 			throw new Exception("Arquivo não pode ser acessado sem autenticação.");
 

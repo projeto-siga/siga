@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.ex.*;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
@@ -44,16 +45,12 @@ import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.ExArquivo;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
+import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 
 @Controller
 public class ExProcessoAutenticacaoController extends ExController {
@@ -333,8 +330,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false);
-			docVO.exibe();
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, true, false, true);
 			Cookie cookie = new Cookie("jwt-prot", buildJwtToken(n));
 			cookie.setMaxAge(1 * 60 * 60);
 			this.response.addCookie(cookie);
@@ -342,6 +338,15 @@ public class ExProcessoAutenticacaoController extends ExController {
 			result.include("sigla",exDocumentoDTO.getDoc().getSigla());
 			result.include("msg", exDocumentoDTO.getMsg());
 			result.include("docVO", docVO);
+			result.include("autenticidade", exDocumentoDTO.getDoc().getAssinantesCompleto());
+
+            ExProtocolo prot = Ex.getInstance().getBL().obterProtocolo(exDocumentoDTO.getDoc());
+            if (prot == null) {
+                throw new AplicacaoException(
+                        "Ocorreu um erro ao obter protocolo do Documento: " + exDocumentoDTO.getDoc().getSigla());
+            }
+
+            result.include("protocolo", prot.getCodigo());
 			result.include("mob", exDocumentoDTO.getMob());
 			result.include("isProtocoloFilho", (idMovJuntada != null ? true : false));
 

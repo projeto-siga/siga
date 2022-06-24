@@ -34,6 +34,7 @@ import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -56,12 +57,14 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
 import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
+import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Controller
@@ -194,11 +197,19 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	@Get("app/diagrama/exibir")
 	public void exibe(final String id) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
-		if (id != null) {
-			WfDefinicaoDeProcedimento pd = buscar(id);
-			result.include("pd", pd);
-			result.include("dot", util.getDot(pd));
+		if (id == null)
+			throw new AplicacaoException("Id não pode ser nula");
+
+		WfDefinicaoDeProcedimento pd = buscar(id);
+		result.include("pd", pd);
+		result.include("dot", util.getDot(pd));
+		
+		SortedSet<WfTarefa> tis = new TreeSet<>();
+		List<WfProcedimento> pis = dao().consultarProcedimentosAtivosPorDiagrama(pd);
+		for (WfProcedimento pi : pis) {
+			tis.add(new WfTarefa(pi));
 		}
+		result.include("tarefas", tis);
 	}
 
 	@Get("app/diagrama/documentar")
@@ -241,14 +252,16 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
 
+			Long lId = null;
 			if (id != null) {
 				WfDefinicaoDeProcedimento pdOriginal = buscar(id);
+				lId = pdOriginal.getId();
 				pdOriginal.assertAcessoDeEditar(getTitular(), getLotaTitular());
 			}
 
 			List<WfDefinicaoDeProcedimento> pds = dao().listarDefinicoesDeProcedimentos();
 			for (WfDefinicaoDeProcedimento opd : pds) {
-				if (opd.getNome().equals(pd.getNome()) && !opd.getId().equals(id))
+				if (opd.getNome().equals(pd.getNome()) && !opd.getId().equals(lId))
 					throw new AplicacaoException("Já existe um diagrama com este nome: " + pd.getNome());
 			}
 
@@ -408,7 +421,7 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 			WfDefinicaoDeProcedimento pd = null;
 			if (StringUtils.isNumeric(id))
 				pd = dao().consultar(Long.valueOf(id), WfDefinicaoDeProcedimento.class, false);
-			else 
+			else
 				pd = WfDefinicaoDeProcedimento.findBySigla(id);
 			if (pd != null)
 				pd = pd.getAtual();
@@ -512,5 +525,39 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	protected void jsonSuccess(final Object resp) {
 		String s = gson.toJson(resp);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
+	}
+
+	@Get
+	@Path({ "/app/diagrama/buscar-json/{sigla}" })
+	public void busca(String sigla) throws Exception {
+		aBuscarJson(sigla);
+	}
+
+	@Override
+	protected String aBuscar(String sigla, String postback) throws Exception {
+		WfDefinicaoDeProcedimentoDaoFiltro flt = new WfDefinicaoDeProcedimentoDaoFiltro();
+		flt.setSigla(sigla);
+		if (getTitular() != null)
+			flt.setOuDefault(getTitular().getOrgaoUsuario());
+		WfDao dao = WfDao.getInstance();
+		WfDefinicaoDeProcedimento pd = null;
+		try {
+			pd = dao.consultarPorSigla(flt);
+		} catch (NumberFormatException ex) {
+		}
+		if (pd != null) {
+			setTamanho(1);
+			ArrayList<Object> l = new ArrayList<>();
+			l.add(pd);
+			setItens(l);
+		} else {
+			List<WfDefinicaoDeProcedimento> l = dao.consultarWfDefinicoesDeProcedimentoPorNome(sigla);
+			if (l != null) {
+				setTamanho(l.size());
+				setItens(l);
+			}
+		}
+		result.include("currentPageNumber", 0);
+		return "busca";
 	}
 }

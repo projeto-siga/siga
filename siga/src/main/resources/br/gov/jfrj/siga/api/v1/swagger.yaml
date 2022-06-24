@@ -284,7 +284,68 @@ parameters:
     description: Sigla do órgão
     required: false
     type: string
-    
+  substituicaoId:
+    name: substituicaoId
+    in: formData
+    description: Id da substituição para ser efetivada
+    required: false
+    type: string
+  estilo:
+    name: estilo
+    in: query
+    description: Informa se deseja agrupar
+    required: false
+    type: string
+    default: Agrupados
+    enum:
+      - Agrupados
+  tipoMarca:
+    name: tipoMarca
+    in: query
+    description: Informa se deseja filtrar por um tipo de marca
+    required: false
+    type: string
+    default: 
+    enum:
+      - SIGA_EX
+      - SIGA_WF
+      - SIGA_SR
+      - SIGA_GC
+  idMarcadoresQuery:
+    name: idMarcadores
+    in: query
+    description: Identificadores iniciais dos Marcadores separados por vírgula
+    required: true
+    type: string            
+  idGrupoQuery:
+    name: idGrupo
+    in: query
+    description: Identificador do Grupo
+    required: false
+    type: string            
+  filtroPessoaLotacao:
+    name: filtroPessoaLotacao
+    in: query
+    description: Informa se deseja filtrar documentos por pessoa ou lotação
+    required: false
+    type: string
+    default: Pessoa e Lotacao
+    enum:
+      - Pessoa e Lotacao
+      - Pessoa
+      - Lotacao
+  itensPorPaginaQuery:
+    name: itensPorPagina
+    in: query
+    description: Número de itens por página
+    required: true
+    type: string            
+  paginaQuery:
+    name: pagina
+    in: query
+    description: Número da página
+    required: true
+    type: string            
 
 ################################################################################
 #                                           Paths                              #
@@ -870,6 +931,59 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+            
+  /painel/quadro:
+    get:
+      summary: Listar a quantidade de documentos
+      tags: [painel]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/estilo"
+        - $ref: "#/parameters/tipoMarca"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PainelQuadroItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /painel/lista:
+    get:
+      summary: Listar elementos por filtro
+      tags: [painel]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcadoresQuery"
+        - $ref: "#/parameters/filtroPessoaLotacao"
+        - $ref: "#/parameters/tipoMarca"
+        - $ref: "#/parameters/itensPorPaginaQuery"
+        - $ref: "#/parameters/paginaQuery"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PainelListaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
 
   /acessos:
     get:
@@ -916,6 +1030,38 @@ paths:
           schema:
             $ref: "#/definitions/Error"            
 
+  /usuario:
+    get:
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters: []
+      description: Enviar sugestões
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              usuario:
+                $ref: "#/definitions/Usuario"  
+
+  /usuario/substituir:
+    post:
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/substituicaoId"
+      description: Enviar sugestões
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string  
 
 ################################################################################
 #                                     Definitions                              #
@@ -1136,3 +1282,209 @@ definitions:
         type: boolean
         description: true se notificação não for dispensável. false se notificação for dispensável
         
+  Usuario:
+    description: Lista modelos disponíveis.
+    type: object
+    properties:
+      identidadeId:
+        type: string
+      cadastranteId:
+        type: string
+      cadastranteSigla:
+        type: string
+      cadastranteNome:
+        type: string
+      lotaCadastranteId:
+        type: string
+      lotaCadastranteSigla:
+        type: string
+      lotaCadastranteNome:
+        type: string
+      titularId:
+        type: string
+      titularSigla:
+        type: string
+      titularNome:
+        type: string
+      lotaTitularId:
+        type: string
+      lotaTitularSigla:
+        type: string
+      lotaTitularNome:
+        type: string
+      substituicaoId:
+        type: string
+      substituicoesPermitidas:
+        type: array
+        items:
+          $ref: "#/definitions/SubstituicaoItem"
+
+  SubstituicaoItem:
+    description: Lista modelos disponíveis.
+    type: object
+    properties:
+      substituicaoId:
+        type: string
+      substituicaoDataFim:
+        type: string
+        format: date-time
+      substituicaoDataInicio:
+        type: string
+        format: date-time
+      registroIdInicial:
+        type: string
+      registroDataFim:
+        type: string
+        format: date-time
+      registroDataInicio:
+        type: string
+        format: date-time
+      substitutoId:
+        type: string
+      substitutoSigla:
+        type: string
+      substitutoNome:
+        type: string
+      lotaSubstitutoId:
+        type: string
+      lotaSubstitutoSigla:
+        type: string
+      lotaSubstitutoNome:
+        type: string
+      titularId:
+        type: string
+      titularSigla:
+        type: string
+      titularNome:
+        type: string
+      lotaTitularId:
+        type: string
+      lotaTitularSigla:
+        type: string
+      lotaTitularNome:
+        type: string
+        
+  PainelQuadroItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      finalidadeId:
+        type: string
+      tipoId:
+        type: string
+      tipoNome:
+        type: string
+      grupoId:
+        type: string
+      grupoNome:
+        type: string
+      marcadorEnum:
+        type: string
+      marcadorId:
+        type: string
+      marcadorNome:
+        type: string
+      marcadorIcone:
+        type: string
+      marcadorCor:
+        type: string
+      qtds:
+        type: array
+        items:
+          $ref: "#/definitions/PainelQuadroQtdItem"
+
+  PainelQuadroQtdItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      tipo:
+        type: string
+      filtro:
+        type: string
+      qtd:
+        type: string
+
+  PainelListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      marcaId:
+        type: string
+      marcaTipo:
+        type: string
+      marcaTexto:
+        type: string
+      marcaIcone:
+        type: string
+      dataIni:
+        type: string
+        format: date-time
+      dataFim:
+        type: string
+        format: date-time
+      moduloId:
+        type: string
+      refId:
+        type: string
+      movId:
+        type: string
+      tipo:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descricao:
+        type: string
+      origem:
+        type: string
+      ultimaAnotacao:
+        type: string
+      marcas:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acoes:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"
+          
+  Marca:
+    description: Etiquetas relacionadas a um elemento
+    type: object
+    properties:
+      pessoa:
+        type: string
+      lotacao:
+        type: string
+      nome:
+        type: string
+      icone:
+        type: string
+      titulo:
+        type: string
+      marcaId:
+        type: string
+      inicio:
+        type: string
+        format: date-time
+      termino:
+        type: string
+        format: date-time
+      daPessoa:
+        type: boolean
+      deOutraPessoa:
+        type: boolean
+      daLotacao:
+        type: boolean
+
+  Acao:
+    description: Ação que pode ser realizada a um elemento
+    type: object
+    properties:
+      nome:
+        type: string
+      icone:
+        type: string
+      ativa:
+        type: boolean

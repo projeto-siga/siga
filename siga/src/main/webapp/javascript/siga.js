@@ -1850,7 +1850,7 @@ function setInputFilter(textbox, inputFilter) {
 }
 
 //Verificador de força de senha
-function passwordStrength(password) {
+function passwordStrength(password,metodo) {
 		var desc = new Array();
 		desc[0] = "Inaceitável";
 		desc[1] = "Muito Fraca";
@@ -1859,6 +1859,10 @@ function passwordStrength(password) {
 		desc[4] = "Boa";
 		desc[5] = "Forte";
 		var score = 0;
+		
+		if (metodo === undefined || metodo == null) {
+			metodo = "";
+		}
 
 		//if password bigger than 6 give 1 point
 		if (password.length >= 6)
@@ -1887,7 +1891,6 @@ function passwordStrength(password) {
 						|| !password.match(/[A-Z]/) || !password.match(/\d+/)))
 			score = 2;
 
-		document.getElementById("passwordDescription").innerHTML = desc[score];
-		document.getElementById("passwordStrength").className = "strength"
-				+ score;
+		document.getElementById('passwordDescription' + metodo).innerHTML = desc[score];
+		document.getElementById('passwordStrength' + metodo).className = "strength" + score;
 	}

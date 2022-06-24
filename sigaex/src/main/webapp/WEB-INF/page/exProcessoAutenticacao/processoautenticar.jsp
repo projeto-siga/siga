@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 
-<siga:pagina titulo="Movimentação" desabilitarmenu="sim"
+<siga:pagina titulo="Consulta de Protocolo" desabilitarmenu="sim"
 	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
 	<script src='https://www.google.com/recaptcha/api.js'></script>
 	<div class="container-fluid">

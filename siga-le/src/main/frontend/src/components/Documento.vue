@@ -66,8 +66,11 @@
                 v-if="!doc.conteudoBlobHtmlString"
                 :src="pdfSource"
               ></my-iframe>
-              <table v-if="filteredMovs" class="table table-sm table-striped">
-                <thead>
+              <table
+                v-if="filteredMovs && filteredMovs.length"
+                class="table table-sm table-striped"
+              >
+                <thead class="table-dark">
                   <tr>
                     <th>Tempo</th>
                     <th>Lotação</th>
@@ -198,8 +201,14 @@
                 </div>
               </div>
 
+              <!-- RELACAO -->
+              <div class="card bg-light mb-3" v-show="relacao">
+                <div class="card-header">Documentos Relacionados</div>
+                <div class="card-body" v-html="relacao"></div>
+              </div>
+
               <!-- TRAMITACAO -->
-              <div class="card bg-light mb-3" v-show="doc.dotTramitacao">
+              <div class="card bg-light mb-3" v-show="tramitacao">
                 <div class="card-header">Tramitação</div>
                 <div class="card-body" v-html="tramitacao"></div>
               </div>
@@ -337,6 +346,7 @@ export default {
       marcasativas: true,
       notas: false,
       tramitacao: undefined,
+      relacao: undefined,
     };
   },
   watch: {
@@ -419,39 +429,35 @@ export default {
       );
     },
 
-    atualizarDocumento: function(data) {
+    atualizarDocumento: async function(data) {
       this.doc = data;
       this.mob = this.doc.mobs[0];
       if (!this.mob.isGeral)
         this.numero = this.mob.sigla.replace(/[^a-zA-Z0-9]/gi, "");
-      if (
-        this.doc.dotTramitacao &&
-        this.$parent.test.properties["vizservice.url"]
-      ) {
-        // console.log('dotTramitacao: ' + this.doc.dotTramitacao)
-        this.$http
-          .post(
-            (location.port === "8081" ? "http://localhost:8080/" : "") +
-              "siga/public/app/graphviz/svg",
-            'digraph G { graph[tooltip="Tramitação"] ' +
-              this.doc.dotTramitacao +
-              "}",
-            {
-              headers: { "Content-Type": "text/vnd.graphviz" },
-            }
-          )
-          .then((response) => {
-            this.tramitacao = response.data.replace(
-              /width="\d+pt" height="\d+pt"/gm,
-              'style="left:0; top:0; width:100%; height:12em; display:block; margin: auto;"'
-            );
-            this.tramitacao = this.tramitacao.replace(
-              /<polygon fill="white".+?\/>/gm,
-              ""
-            );
-            // console.log('tramitacao: ' + this.tramitacao)
-          });
+      if (this.$parent.test.properties["vizservice.url"]) {
+        this.tramitacao = await this.computeGraph(this.doc.vizTramitacao);
+        if (this.doc.vizRelacaoDocs && this.doc.vizRelacaoDocs.length > 200)
+          this.relacao = await this.computeGraph(this.doc.vizRelacaoDocs);
       }
+    },
+
+    async computeGraph(dot) {
+      if (!dot) return;
+      var response = await this.$http.post(
+        (location.port === "8081" ? "http://localhost:8080/" : "") +
+          "siga/public/app/graphviz/svg",
+        'digraph G { graph[tooltip="Tramitação"] ' + dot + "}",
+        {
+          headers: { "Content-Type": "text/vnd.graphviz" },
+        }
+      );
+      if (!response || !response.data) return;
+      var result = response.data.replace(
+        /width="\d+pt" height="\d+pt"/gm,
+        'style="left:0; top:0; width:100%; height:12em; display:block; margin: auto;"'
+      );
+      result = result.replace(/<polygon fill="white".+?\/>/gm, "");
+      return result;
     },
 
     reler: function() {

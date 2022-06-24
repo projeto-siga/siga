@@ -231,6 +231,8 @@ public class ExDocumentoDTO {
 	private List<ExTipoDocumento> tiposDocumento;
 	
 	private List<ExNivelAcesso> listaNivelAcesso;
+	
+	private boolean podeIncluirSubscrArvoreDocs;
 
 	public ExDocumentoDTO() {
 		classificacaoSel = new ExClassificacaoSelecao();
@@ -1003,7 +1005,6 @@ public class ExDocumentoDTO {
 		return preenchSet;
 	}
     
-    
     public Set<ExPreenchimento> getPreenchSet() {
 		return preenchSet;
 	}
@@ -1030,6 +1031,14 @@ public class ExDocumentoDTO {
 
 	public String getDtPrazoAssinatura() {
 		return dtPrazoAssinaturaString;
+	}
+
+	public boolean isPodeIncluirSubscrArvoreDocs() {
+		return podeIncluirSubscrArvoreDocs;
+	}
+
+	public void setPodeIncluirSubscrArvoreDocs(boolean podeIncluirSubscrArvoreDocs) {
+		this.podeIncluirSubscrArvoreDocs = podeIncluirSubscrArvoreDocs;
 	}
 
 }

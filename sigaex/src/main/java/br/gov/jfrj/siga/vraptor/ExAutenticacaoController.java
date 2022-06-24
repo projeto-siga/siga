@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
+import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 
 @Controller
 public class ExAutenticacaoController extends ExController {
@@ -324,9 +324,7 @@ public class ExAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 			
-			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false);
-
-			docVO.exibe();
+			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
 
 			result.include("docVO", docVO);
 		}

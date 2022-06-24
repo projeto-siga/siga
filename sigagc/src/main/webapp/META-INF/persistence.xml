@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
-	version="2.0">
-	<persistence-unit name="default"
-		transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+   version="2.0">
+	<persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<non-jta-data-source>java:/jboss/datasources/SigaGcDS</non-jta-data-source>
 
 		<class>br.gov.jfrj.siga.dp.DpCargo</class>
@@ -42,7 +41,6 @@
 		<class>br.gov.jfrj.siga.cp.CpUnidadeMedida</class>
 		<class>br.gov.jfrj.siga.cp.CpComplexo</class>
 		<class>br.gov.jfrj.siga.dp.CpMarcador</class>
-		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
 		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
@@ -53,6 +51,7 @@
 
 		<class>br.gov.jfrj.siga.cp.CpArquivo</class>
 		<class>br.gov.jfrj.siga.cp.CpArquivoBlob</class>
+		<class>br.gov.jfrj.siga.cp.CpArquivoExcluir</class>
 
 		<class>br.gov.jfrj.siga.cp.CpMarcadorCorEnum</class>
 		<class>br.gov.jfrj.siga.cp.CpMarcadorIconeEnum</class>
@@ -89,35 +88,26 @@
 		<class>br.gov.jfrj.siga.gc.model.GcPapel</class>
 
 		<properties>
-			<property name="hibernate.current_session_context_class"
-				value="thread" />
-			<property name="hibernate.query.substitutions" value="true 1, false 0" />
+			<property name="hibernate.cache.use_query_cache" value="true" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="true" />
-			<property name="hibernate.cache.infinispan.cachemanager"
-				value="java:jboss/infinispan/container/hibernate" />
-			<property name="hibernate.transaction.manager_lookup_class"
-				value="org.hibernate.transaction.JBossTransactionManagerLookup" />
-			<property name="hibernate.cache.use_query_cache" value="true" />
-			<property name="hibernate.cache.use_minimal_puts" value="false" />
-			<property name="hibernate.max_fetch_depth" value="3" />
-			<property name="hibernate.default_batch_fetch_size" value="1000" />
-			<property name="hibernate.cache.provider_configuration_file_resource_path"
-				value="classpath:ehcache.xml" />
-			<property name="hibernate.cache.region.factory_class"
-				value="org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory" />
-			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
-			<property name="hibernate.show_sql" value="false" />
 
-			<property name="hibernate.enable_lazy_load_no_trans" value="true"/>
-			
-			<property name="hibernate.hql.bulk_id_strategy"
-          		value="org.hibernate.hql.spi.id.inline.InlineIdsInClauseBulkIdStrategy"/>			
+			<property name="hibernate.current_session_context_class"
+				value="thread" />
+
+			<property name="hibernate.query.substitutions" value="true 1, false 0" />
 
 			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
 			<property name="hibernate.id.new_generator_mappings" value="false"/>
+			
+			<property name="hibernate.max_fetch_depth" value="3" />
+			<property name="hibernate.default_batch_fetch_size" value="1000" />
+			<property name="hibernate.dialect" value="${siga.hibernate.dialect}" />
+			<property name="hibernate.hbm2ddl.auto" value="none" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.enable_lazy_load_no_trans" value="true"/> 
 
-			<!-- Cache Region QUERY_CACHE_SECONDS -->
+						<!-- Cache Region QUERY_CACHE_SECONDS -->
 			<property name="hibernate.cache.infinispan.querySeconds.eviction.strategy"
 				value="LRU" />
 			<property
@@ -159,10 +149,11 @@
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.querySubstituicao.expiration.lifespan"
-				value="3600000" />
+				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.querySubstituicao.expiration.max_idle"
-				value="300000" />
+				value="10000" />
+
 
 			<!-- Cache Region CACHE_HOURS -->
 			<property name="hibernate.cache.infinispan.hours.eviction.strategy"
@@ -206,7 +197,6 @@
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
 				value="300000" />
-
 		</properties>
 	</persistence-unit>
 </persistence>

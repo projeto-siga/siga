@@ -113,7 +113,7 @@
 }
 
 .modal-dialog {
-  height: 80%;
+  height: 90%;
 }
 
 .modal-selecao .modal-body  {
@@ -188,7 +188,7 @@ var modalsimulawindow${propriedade} = 	function(url) {
 				+   '           <img src="${uri_logo_siga_pequeno}" class="siga-modal__logo" alt="logo siga">'
 				+	'	        <button type="button" id="btnsenhaDialog${propriedade}" class="close  p-0  m-0  siga-modal__btn-close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>'				
 				+   '    </div>'
-				+	'      <div class="modal-body" style="background-color: #dae9ec;">'
+				+	'      <div class="modal-body ${body_color}">'
 				+	'	   	   <div class="embed-responsive embed-responsive-16by9">'
 				+	'	   	      <iframe id="iframe${propriedade}" class="embed-responsive-item" src="' + urlInterna + '" allowfullscreen></iframe>'
 				+	'	  	   </div>'
@@ -308,8 +308,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>"
 		id="formulario_${inputNameTipoSel}_sigla"
 		onkeypress="return handleEnter(this, event)" ${requiredValue}
-		onblur="javascript: ajax_${propriedade}${tipoSel}();"
-		<c:if test="${not empty onblur}">${onblur};</c:if>
+		onblur="javascript: ajax_${propriedade}${tipoSel}();<c:if test="${not empty onblur}">${onblur};</c:if>"
 		onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 		class="form-control" style="width: 1%;" ${disabledTxt} />
 	<c:if test="${buscar != 'nao'}">
@@ -374,3 +373,5 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</div>
 
 </c:if>
+
+<siga:siga-spinner />

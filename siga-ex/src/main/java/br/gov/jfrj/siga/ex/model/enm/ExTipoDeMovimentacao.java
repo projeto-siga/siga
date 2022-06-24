@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.ex.model.enm;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
@@ -177,7 +180,9 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	CONCLUSAO(84, "Conclusão de Trâmite"),
 	//
-	ENVIO_SIAFEM(85, "Envio ao SIAFEM");
+	ENVIO_SIAFEM(85, "Envio ao SIAFEM"),
+	//
+	GERAR_LINK_PUBLICO_PROCESSO(86, "Gerar link público do Processo");
 
 	private final int id;
 	private final String descr;
@@ -224,11 +229,36 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	}
 
 	public static boolean hasTransferencia(ITipoDeMovimentacao id) {
-		return id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+		return id == ExTipoDeMovimentacao.TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.TRAMITE_PARALELO
+				|| id == ExTipoDeMovimentacao.NOTIFICACAO
+				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-				|| id == ExTipoDeMovimentacao.TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
+	}
+
+	public static boolean hasRecebimento(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.RECEBIMENTO
+				|| id == ExTipoDeMovimentacao.RECEBIMENTO_TRANSITORIO
+				|| id == ExTipoDeMovimentacao.CONCLUSAO;
+	}
+	
+   public static Set<ExTipoDeMovimentacao> listaTipoMovimentacoesExcluiveisFisicamente() {
+         Set<ExTipoDeMovimentacao> listaTipoMovimentacoes  = new HashSet<ExTipoDeMovimentacao>();
+
+         listaTipoMovimentacoes.add(ANOTACAO);
+         listaTipoMovimentacoes.add(INCLUSAO_DE_COSIGNATARIO);
+         listaTipoMovimentacoes.add(ANEXACAO);
+         listaTipoMovimentacoes.add(INCLUSAO_EM_EDITAL_DE_ELIMINACAO);
+
+         return listaTipoMovimentacoes;
+
+    }
+
+	public static boolean hasRecebimentoOuCriacao(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.CRIACAO
+				|| id == ExTipoDeMovimentacao.RECEBIMENTO;
 	}
 
 }

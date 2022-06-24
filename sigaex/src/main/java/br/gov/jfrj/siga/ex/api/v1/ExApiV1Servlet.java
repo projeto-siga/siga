@@ -29,6 +29,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
 import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
+import br.gov.jfrj.siga.context.ApiContextSupport;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -260,6 +261,12 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("ws.siafem.url.namespace", null);
 		addPublicProperty("ws.siafem.service.localpart", null);
 		addPublicProperty("ws.siafem.service.localpartsoap", null);
+		
+		addPublicProperty("documento.novo.modelo.padrao", "Memorando");
+		
+		//GC Control - Concatenação de PDF
+		addPublicProperty("arquivo.tamanho.gc", "26214400"); //PDF - 25MB
+		addPublicProperty("arquivo.contagem.gc", "25"); //HTML - 25 documentos
 	}
 
 	@Override
@@ -274,36 +281,6 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 	public static <T> Future<T> submitToExecutor(Callable<T> task) {
 		return executor.submit(task);
-	}
-
-	@Override
-	public void invoke(SwaggerContext context) throws Exception {
-		try {
-			if (!context.getAction().getClass().isAnnotationPresent(AcessoPublico.class)) {
-				try {
-					String token = AuthJwtFormFilter.extrairAuthorization(context.getRequest());
-					Map<String, Object> decodedToken = AuthJwtFormFilter.validarToken(token);
-					final long now = System.currentTimeMillis() / 1000L;
-					if ((Integer) decodedToken.get("exp") < now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S) {
-						// Seria bom incluir o attributo HttpOnly
-						String tokenNew = AuthJwtFormFilter.renovarToken(token);
-						@SuppressWarnings("unused")
-						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
-						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-						context.getResponse().addCookie(cookie);
-					}
-					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
-				} catch (JWTExpiredException e) {
-					throw new SwaggerAuthorizationException("token jwt expirado");
-				} catch (Exception e) {
-					if (!context.getAction().getClass().isAnnotationPresent(AcessoPublicoEPrivado.class))
-						throw e;
-				}
-			}
-			super.invoke(context);
-		} finally {
-			ContextoPersistencia.removeUserPrincipal();
-		}
 	}
 
 	@Override

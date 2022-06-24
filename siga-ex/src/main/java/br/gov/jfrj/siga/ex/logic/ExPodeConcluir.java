@@ -31,22 +31,41 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 
-				Not.of(Or.of(new ExTemAnexosNaoAssinados(mob), new ExTemDespachosNaoAssinados(mob),
-						new ExTemAnexosNaoAssinados(mob.doc().getMobilGeral()),
-						new ExTemDespachosNaoAssinados(mob.doc().getMobilGeral()))),
+				Not.of(new ExTemAnexosNaoAssinados(mob)),
+
+				Not.of(new ExTemDespachosNaoAssinados(mob)),
+
+				Not.of(new ExTemAnexosNaoAssinados(mob.doc().getMobilGeral())),
+
+				Not.of(new ExTemDespachosNaoAssinados(mob.doc().getMobilGeral())),
 
 				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
-				Or.of(And.of(new ExEstaEmTramiteParalelo(mob), new ExPodeMovimentar(mob, titular, lotaTitular)),
+
+				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaJuntado(mob)),
+				
+				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
+				
+				Or.of(
+
+						And.of(
+
+								Not.of(new ExEstaArquivado(mob)),
+								
+								new ExEstaEmTramiteParalelo(mob),
+
+								new ExPodeMovimentar(mob, titular, lotaTitular)),
+
 						new ExEstaNotificado(mob, titular, lotaTitular)),
 
-				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaJuntado(mob)),
-				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.CONCLUSAO, titular, lotaTitular)
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.COPIA, titular, lotaTitular),
-
-				Or.of(Not.of(new ExEstaAindaComOCadastrante(mob)),
-						new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular)),
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.RECEBIMENTO, titular,
-						lotaTitular));
+//				Or.of(Not.of(new ExEstaAindaComOCadastrante(mob)),
+//						new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular)),
+//
+//				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.RECEBIMENTO, titular, lotaTitular)
+				
+				);
 	}
 }

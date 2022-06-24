@@ -95,6 +95,13 @@ parameters:
     required: false
     default: false
     type: boolean
+  auditar:
+    name: auditar
+    in: query
+    description: Informar true se deseja receber dados para auditoria
+    required: false
+    default: false
+    type: boolean
   estampa:
     name: estampa
     in: query
@@ -292,6 +299,12 @@ parameters:
     description: Identificador do Marcador
     required: true
     type: string            
+  idMarcasQuery:
+    name: idMarcas
+    in: query
+    description: Identificadores de marcas separados por vírgula
+    required: true
+    type: string            
   idPerfil:
     name: idPerfil
     in: formData
@@ -468,6 +481,16 @@ parameters:
       - Expediente e Processo
       - Expediente
       - Processo
+
+  estilo:
+    name: estilo
+    in: query
+    description: Informa se deseja agrupar
+    required: false
+    type: string
+    default: Expediente e Processo
+    enum:
+      - Agrupados
 
   isEditandoAnexo:
     name: isEditandoAnexo
@@ -1016,6 +1039,7 @@ paths:
         - Bearer: []      
       parameters: 
         - $ref: "#/parameters/filtroExpedienteProcesso"
+        - $ref: "#/parameters/estilo"
       responses:
         200:
           description: Successful response
@@ -1051,6 +1075,29 @@ paths:
                 type: array
                 items:
                   $ref: "#/definitions/ListaItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /painel/lista:
+    get:
+      summary: Listar móbiles por marcas
+      tags: [lista]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/idMarcasQuery"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/PainelListaItem"
         500:
           description: Error ocurred
           schema:
@@ -1092,6 +1139,8 @@ paths:
         - Bearer: []      
       parameters:
         - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/completo"
+        - $ref: "#/parameters/auditar"
       responses:
         200:
           description: Successful response
@@ -2240,6 +2289,26 @@ paths:
             $ref: "#/definitions/Error"
 
 
+  /dados-estaticos:
+    get:
+      tags: [utils]
+      parameters: []
+      description: Obter valores dos enums
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              enumsAsJson:
+                type: string
+              tabelasAsJson:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"         
+
   /sugestao:
     post:
       consumes: ["application/x-www-form-urlencoded"]
@@ -2409,6 +2478,96 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /documentos/localizar/mais-recente:
+    get:
+      description: "Exibe dados do móbil mais recente que atende às condições desejadas."
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: modelo
+          in: query
+          description: Nome do modelo
+          required: false
+          type: string
+        - name: ano
+          in: query
+          description: Ano de produção do documento
+          required: false
+          type: string
+        - name: lotaSubscritor
+          in: query
+          description: Sigla da lotação do subscritor
+          required: false
+          type: string
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: application/json
+            Content-Disposition:
+              type: string
+              description: attachment        
+        404:
+          description: Nenhum documento foi encontrado com os argumentos informados
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  
+  /documentos/{sigla}/gerar-link-publico:
+    post:
+      description: Gera o link público do documento
+      tags: [ acao ]
+      security:
+        - Bearer: [ ]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              link:
+                description: Link público de acesso ao documento
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /documentos/{sigla}/link-publico:
+    get:
+      description: Obter o link público do documento
+      tags: [ consulta ]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              link:
+                description: Link público de acesso ao documento
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /numeracao-expediente:
     post:
       description: Utilize este método para gerar numeração de expediente.
@@ -2549,11 +2708,17 @@ definitions:
     description: Lista quantidade de documentos na mesa
     type: object
     properties:
+      finalidadeId:
+        type: string
+      tipoId:
+        type: string
+      tipoNome:
+        type: string
       grupoId:
         type: string
       grupoNome:
         type: string
-      finalidadeId:
+      marcadorEnum:
         type: string
       marcadorId:
         type: string
@@ -2605,6 +2770,51 @@ definitions:
       marcaLotaResponsavel:
         type: string
 
+  PainelListaItem:
+    description: Lista quantidade de documentos na mesa
+    type: object
+    properties:
+      marcaId:
+        type: string
+      marcaTipo:
+        type: string
+      marcaTexto:
+        type: string
+      marcaIcone:
+        type: string
+      dataIni:
+        type: string
+        format: date-time
+      dataFim:
+        type: string
+        format: date-time
+      moduloId:
+        type: string
+      refId:
+        type: string
+      movId:
+        type: string
+      tipo:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descricao:
+        type: string
+      origem:
+        type: string
+      ultimaAnotacao:
+        type: string
+      marcas:
+        type: array
+        items:
+          $ref: "#/definitions/Marca"
+      acoes:
+        type: array
+        items:
+          $ref: "#/definitions/Acao"
+          
   Marca:
     description: Etiquetas relacionadas a um documento
     type: object

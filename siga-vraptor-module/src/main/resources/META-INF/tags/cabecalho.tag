@@ -97,14 +97,14 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.2.3.0" />
+<c:set var="siga_version"  scope="request" value="10.2.6.1" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">
-		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css" type="text/css" media="screen, projection">
+		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css?v=1647962650" type="text/css" media="screen, projection">
 		
-		<c:set var="body_color" value="body_color" scope="request" />
+		<c:set var="body_color" value="body_color_govsp" scope="request" />
 		
 		<c:set var="thead_color" value="thead-dark" scope="request" />
 		
@@ -117,7 +117,7 @@ ${meta}
 		<c:set var="sub_menu_class" value="submenusp" />
 		<c:set var="ambiente_class" value="ambiente_class" />
 		<c:set var="navbar_class" value="navbar-light" />
-		<c:set var="navbar_logo" value="/siga/imagens/logo-sem-papel-cor.png" /> 
+		<c:set var="navbar_logo" value="/siga/imagens/brasao_sp_col.png" /> 
 		<c:set var="navbar_logo_size" value="50" />
 		<c:set var="button_class_busca" value="btn-primary" />
 		<c:set var="collapse_Tramitacao" scope="request" value="collapsible closed" />
@@ -125,11 +125,12 @@ ${meta}
 		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
 		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
 		<c:set var="hide_only_TRF2" scope="request"> </c:set>
-		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/logo-sem-papel-150x70.png" scope="request" />
+		<c:set var="uri_logo_siga_pequeno" value="${f:resource('/siga.base.url')}/siga/imagens/brasao_sp_col.png" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
-				<c:set var="thead_color" value="thead-light" scope="request" />
+		<c:set var="body_color" value="body_color_default" scope="request" />
+		<c:set var="thead_color" value="thead-light" scope="request" />
 									
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
@@ -153,7 +154,7 @@ ${meta}
 	</c:otherwise>
 </c:choose>
 
-<link rel="stylesheet" href="/siga/css/style_siga.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/style_siga.css?v=1647962650" type="text/css" media="screen, projection">
 <link rel="shortcut icon" href="/siga/imagens/${ico_siga}" />
 
 

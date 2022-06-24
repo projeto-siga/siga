@@ -18,6 +18,18 @@
       <form>
         <div class="row">
           <div class="form-group col col-sm-12">
+            <label for="modelos">Modelo</label>
+            <treeselect
+              id="modelos"
+              v-model="idModelo"
+              :options="hierarquiaDeModelos"
+              :disable-branch-nodes="true"
+              :show-count="true"
+              @input="carregarModeloEProcessarEntrevista()"
+              placeholder="Qual o modelo?"
+            />
+          </div>
+          <div v-if="false" class="form-group col col-sm-12">
             <my-select
               label="Modelo"
               id="modelo"
@@ -175,13 +187,41 @@ export default {
       lotaDestinatario: undefined,
       classificacao: undefined,
       descricao: undefined,
-      nivelacesso: "PUBLICO",
+      nivelacesso: "Público",
       numero: undefined,
       sigla: undefined,
       siglaMobilPai: this.$route.params.siglaMobilPai,
       siglaMobilFilho: this.$route.params.siglaMobilFilho,
       podeCapturarPDF: false,
       arquivo: undefined,
+
+      // define the default value
+      value: null,
+      // define options
+      options: [
+        {
+          id: "a",
+          label: "a",
+          children: [
+            {
+              id: "aa",
+              label: "aa",
+            },
+            {
+              id: "ab",
+              label: "ab",
+            },
+          ],
+        },
+        {
+          id: "b",
+          label: "b",
+        },
+        {
+          id: "c",
+          label: "c",
+        },
+      ],
     };
   },
   watch: {
@@ -190,6 +230,10 @@ export default {
     },
   },
   computed: {
+    hierarquiaDeModelos() {
+      if (!this.modelos) return;
+      return UtilsBL.buildHierarchy(this.modelos, "idModelo", "nome");
+    },
     siglaSubscritor() {
       if (!this.subscritor) return undefined;
       return this.subscritor.split(" - ")[0];

@@ -51,6 +51,8 @@ public class ExPodeDefinirPrazoAssinatura extends CompositeExpressionSupport {
 				new ExEstaFinalizado(mob.doc()),
 
 				new ExEstaPendenteDeAssinatura(mob.doc()),
+				
+				Not.of(new ExEstaCancelado(mob.doc())),
 
 				Not.of(new ExEMobilCancelado(mob)),
 

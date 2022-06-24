@@ -91,7 +91,7 @@ import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
+import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 
 @Controller
 public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPessoa, DpPessoaDaoFiltro> {
@@ -105,7 +105,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	/**
 	 * @deprecated CDI eyes only
 	 */
-	public DpPessoaController() {
+	
+	public DpPessoaController() {	
 		super();
 	}
 
@@ -148,6 +149,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		} catch (Exception ex) {
 			throw ex;
 		}
+		 
 		result.include("param", getRequest().getParameterMap());
 		result.include("request", getRequest());
 		result.include("itens", getItens());
@@ -519,7 +521,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 		}
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+				|| (id != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa;ALT:Alterar Órgão Cadastro Pessoa"))) {
 			list = dao().listarOrgaosUsuarios();
 
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
@@ -557,7 +561,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		setItemPagina(15);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
-		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+				|| (id != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(),getLotaTitular(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa;ALT:Alterar Órgão Cadastro Pessoa"))) {
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
 			list = dao().consultaCpOrgaoUsuario();
 

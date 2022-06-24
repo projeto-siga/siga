@@ -54,21 +54,21 @@ public class ExPodeFinalizar extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaPendenteDeColaboracao(doc.getMobilGeral())),
 
-				And.of(
+				Or.of(
 
-						Not.of(new ExEInternoFolhaDeRosto(doc)),
+						new ExEInternoFolhaDeRosto(doc),
 
-						Not.of(new ExEExterno(doc)),
+						new ExEExterno(doc),
 
-						Or.of(new ExECadastrante(doc, lotaTitular),
+						new ExECadastrante(doc, lotaTitular),
 
-								new ExESubscritor(doc, titular),
+						new ExESubscritor(doc, titular),
 
-								new ExETitular(doc, titular),
+						new ExETitular(doc, titular),
 
-								new ExTemPerfil(doc, ExPapel.PAPEL_GESTOR, titular, lotaTitular),
+						new ExTemPerfil(doc, ExPapel.PAPEL_GESTOR, titular, lotaTitular),
 
-								new ExTemPerfil(doc, ExPapel.PAPEL_REVISOR, titular, lotaTitular))),
+						new ExTemPerfil(doc, ExPapel.PAPEL_REVISOR, titular, lotaTitular)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.FINALIZAR));
 	}

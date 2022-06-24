@@ -17,18 +17,19 @@ public class DocumentosSiglaJuntarPost implements IDocumentosSiglaJuntarPost {
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		DpPessoa cadastrante = ctx.getCadastrante();
-		DpLotacao lotaTitular = cadastrante.getLotacao();
+		DpPessoa titular = ctx.getTitular();
+		DpLotacao lotaTitular = ctx.getLotaTitular();
 
 		ExMobil mobFilho = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento Secundário");
 		ExMobil mobPai = ctx.buscarEValidarMobil(req.siglapai, req, resp, "Documento Principal");
 
-		ctx.assertAcesso(mobFilho, cadastrante, lotaTitular);
+		ctx.assertAcesso(mobFilho, titular, lotaTitular);
 
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 		Ex.getInstance().getComp().afirmar("Não é possível fazer juntada", ExPodeJuntar.class, cadastrante, lotaTitular, mobFilho);
 
-		Ex.getInstance().getBL().juntarDocumento(cadastrante, cadastrante, lotaTitular, null, mobFilho, mobPai, dt,
+		Ex.getInstance().getBL().juntarDocumento(cadastrante, titular, lotaTitular, null, mobFilho, mobPai, dt,
 				cadastrante, cadastrante, "1");
 
 		resp.status = "OK";

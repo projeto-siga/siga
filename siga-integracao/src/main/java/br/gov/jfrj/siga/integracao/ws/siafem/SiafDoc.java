@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.integracao.ws.siafem;
 
-import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -27,7 +26,11 @@ public class SiafDoc {
 	private String codMunicipio;
 	private String signatarioCedente;
 	private String signatarioConvenente;
-	private String naturezaDespesa;
+	private String naturezaDespesa1;
+	private String naturezaDespesa2;
+	private String naturezaDespesa3;
+	private String naturezaDespesa4;
+	private String naturezaDespesa5;
 	private String dataVigenciaInicial;
 	private String dataVigenciaFinal;
 	private String dataCelebracao;
@@ -51,19 +54,23 @@ public class SiafDoc {
 			this.unidadeGestora = "00000" + get("unidadeGestora").split(" ")[0];
 			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
 			this.gestao = get("compraGestao");
-			this.objetoProcesso = URLDecoder.decode(get("objetoProcesso"), "UTF-8");
+			this.objetoProcesso = get("objetoProcesso");
 			this.tipoLicitacao = get("selecioneLicitacao").split("-")[0].trim();
 			this.tipoLicitacao = this.tipoLicitacao.matches("\\d+") ? this.tipoLicitacao : "";
-			this.id = get("idProcesso");
+			this.id = ""; //Regra de negócio de integração SIAFEM: o campo ID deverá ser vazio
 			this.ata = get("ataTeste").matches("[1Ss]") ? "S" : "N";
 			this.convenio = get("especie").equals("Convênio Sim") ? "S" : "N";
-			this.finalidade = URLDecoder.decode(get("finalidadeProcesso"), "UTF-8");
+			this.finalidade = get("finalidadeProcesso");
 			this.processo = get("processoLegado");
 			this.desdobramento = get("desdobramento");
-			this.flagPresencial = (get("presencialConvite") + get("presencialLicitacao") + get("presencialPregao")).contains("Sim") ? "X" : "";
-			this.flagEletronico = (get("eletronicoConvite") + get("eletronicoLicitacao") + get("eletronicoPregao")).contains("Sim") ? "X" : "";
+			this.flagPresencial = (get("presencial")).contains("Sim") ? "X" : "";
+			this.flagEletronico = (get("eletronico")).contains("Sim") ? "X" : "";
 			this.cnpj = get("interessado_cnpj").replaceAll("[^\\d]", "");
-			this.naturezaDespesa = get("naturezaDespesa").split(" ")[0];
+			this.naturezaDespesa1 = get("naturezaDespesa1").split(" ")[0];
+			this.naturezaDespesa2 = get("naturezaDespesa2").split(" ")[0];
+			this.naturezaDespesa3 = get("naturezaDespesa3").split(" ")[0];
+			this.naturezaDespesa4 = get("naturezaDespesa4").split(" ")[0];
+			this.naturezaDespesa5 = get("naturezaDespesa5").split(" ")[0];
 			this.codMunicipio = get("municipioSao").split(" ")[0];			
 			this.signatarioCedente = get("signatarioCedente");
 			this.signatarioConvenente = get("signatarioConvenente");
@@ -85,7 +92,8 @@ public class SiafDoc {
 //			- desdobramento (1 posição)
 			if (this.processo != null && !this.processo.isEmpty()) {
 				this.objetoProcesso = this.tipoLicitacao = this.id = this.ata = this.convenio = this.finalidade = 
-				this.flagPresencial = this.flagEletronico = this.cnpj = this.naturezaDespesa = this.codMunicipio = 
+				this.flagPresencial = this.flagEletronico = this.cnpj = this.naturezaDespesa1 = this.naturezaDespesa2 =
+				this.naturezaDespesa3 = this.naturezaDespesa4 = this.naturezaDespesa5 = this.codMunicipio = 
 				this.signatarioCedente = this.signatarioConvenente = this.dataCelebracao = this.dataPublicacao = 
 				this.dataVigenciaInicial = this.dataVigenciaFinal = this.valorTotal = this.valorContrapartida = 
 				this.situacao = this.objetoResumido1 = this.objetoResumido2 = this.objetoResumido3 = "";
@@ -129,8 +137,9 @@ public class SiafDoc {
 	public String getSiafDoc() {
 		String[] parametros = new String[] { unidadeGestora, gestao, processo, desdobramento, codUnico, codSemPapel, objetoProcesso, 
 				tipoLicitacao, id, ata, convenio, flagPresencial, flagEletronico, finalidade, cnpj, codMunicipio, signatarioCedente, 
-				signatarioConvenente, naturezaDespesa, dataVigenciaInicial, dataVigenciaFinal, dataCelebracao, dataPublicacao, 
-				valorContrapartida, valorTotal, situacao, objetoResumido1, objetoResumido2, objetoResumido3 };
+				signatarioConvenente, naturezaDespesa1, naturezaDespesa2, naturezaDespesa3, naturezaDespesa4, naturezaDespesa5,
+				dataVigenciaInicial, dataVigenciaFinal, dataCelebracao, dataPublicacao, valorContrapartida, valorTotal, 
+				situacao, objetoResumido1, objetoResumido2, objetoResumido3 };
 
 		String xml = SIAFDOC;
 
@@ -152,8 +161,9 @@ public class SiafDoc {
 
 	private String[] TAGS = { "UG", "Gestao", "Processo", "Desdobramento", "CodUnico", "CodSemPapel", "Objeto", 
 			"TipoLicitacao", "ID", "ATA", "Convenio", "FlagPresencial", "FlagEletronico", "Finalidade", "CNPJ",
-			"CodMunicipio", "SignatarioCedente", "SignatarioConvenente", "NaturezaDespesa", "DataVigenciaInicial",
-			"DataVigenciaFinal", "DataCelebracao", "DataPublicacao", "ValorContrapartida", "ValorTotal", "Situacao", 
+			"CodMunicipio", "SignatarioCedente", "SignatarioConvenente", "NaturezaDespesa", "NaturezaDespesa2",
+			"NaturezaDespesa3", "NaturezaDespesa4", "NaturezaDespesa5", "DataVigenciaInicial", "DataVigenciaFinal",
+			"DataCelebracao", "DataPublicacao", "ValorContrapartida", "ValorTotal", "Situacao", 
 			"ObjetoResumido1", "ObjetoResumido2", "ObjetoResumido3" };
 
 	private String SIAFDOC = "<SIAFDOC>\n" +
@@ -180,6 +190,10 @@ public class SiafDoc {
 			"         <SignatarioCedente/>\n" +
 			"         <SignatarioConvenente/>\n" +
 			"         <NaturezaDespesa/>\n" +
+			"         <NaturezaDespesa2/>\n" +
+			"         <NaturezaDespesa3/>\n" +
+			"         <NaturezaDespesa4/>\n" +
+			"         <NaturezaDespesa5/>\n" +
 			"         <DataVigenciaInicial/>\n" +
 			"         <DataVigenciaFinal/>\n" +
 			"         <DataCelebracao/>\n" +

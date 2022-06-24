@@ -316,7 +316,7 @@
 							<table class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
-										<th class="text-left">Tempo</th>
+										<th class="text-left">Data</th>
 										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
 										<th class="text-left">Evento</th>
 										<th class="text-left">Descrição</th>
@@ -328,7 +328,7 @@
 										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td class="text-left" title="${mov.tempoRelativo}">${mov.dtRegMovDDMMYY}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td class="text-left" >${mov.mov.exTipoMovimentacao.descr}</td>
 											<td class="text-left" 
@@ -783,9 +783,9 @@
 						<div class="card-sidebar card bg-light mb-3">
 							<tags:collapse title="Documentos Relacionados" id="DocsRelacionados" collapseMode="${collapse_Expanded}">
 								<div id="outputRelacaoDocs" class="bg-light" style="border: 0px; padding: 0px">
-									<c:forEach items="${docVO.dotRelacaoDocs.asMap}" var="mapa">
-										<p style="margin-bottom: 3px;">
-											<b>${mapa.key}:</b>
+									<c:forEach items="${docVO.dotRelacaoDocs.secundariosAsMap}" var="mapa">
+										<p style="margin-top: .5em;">
+											${mapa.key}:
 										</p>
 										<ul>
 											<c:forEach var="mobRelacionado" items="${mapa.value}">
@@ -797,6 +797,19 @@
 										</ul>
 									</c:forEach>
 								</div>
+								<c:forEach items="${docVO.dotRelacaoDocs.principaisAsMap}" var="mapa">
+									<p style="margin-top: .5em;">
+										${mapa.key}:
+									</p>
+									<ul>
+										<c:forEach var="mobRelacionado" items="${mapa.value}">
+											<li><a
+												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobRelacionado.sigla}"
+												title="${mobRelacionado.doc.descrDocumento}"
+												style="text-decoration: none"> ${mobRelacionado.sigla} </a></li>
+										</c:forEach>
+									</ul>
+								</c:forEach>
 							</tags:collapse>
 						</div>
 

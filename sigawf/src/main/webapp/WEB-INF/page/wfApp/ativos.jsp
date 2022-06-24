@@ -7,6 +7,8 @@
 			<thead class="thead-dark">
 				<tr>
 					<th>Diagrama</th>
+					<th>Nome</th>
+					<th>Procedimento</th>
 					<th>Tarefa</th>
 					<th>Principal</th>
 					<th style="text-align: center">Atendente</th>
@@ -17,9 +19,12 @@
 			<tbody>
 				<c:forEach var="taskInstance" items="${tarefas}">
 					<tr class="count">
+						<td><a
+							href="${linkTo[WfAppController].procedimento(taskInstance.instanciaDeProcedimento.id)}">${taskInstance.instanciaDeProcedimento.definicaoDeProcedimento.sigla}</a></td>
 						<td>${taskInstance.instanciaDeProcedimento.definicaoDeProcedimento.nome}</td>
 						<td><a
-							href="${linkTo[WfAppController].procedimento(taskInstance.instanciaDeProcedimento.id)}">${taskInstance.definicaoDeTarefa.nome}</a></td>
+							href="${linkTo[WfAppController].procedimento(taskInstance.instanciaDeProcedimento.id)}">${taskInstance.instanciaDeProcedimento.sigla}</a></td>
+						<td>${taskInstance.definicaoDeTarefa.nome}</td>
 						<td><c:choose>
 								<c:when
 									test="${taskInstance.instanciaDeProcedimento.tipoDePrincipal eq 'DOCUMENTO' and not empty taskInstance.instanciaDeProcedimento.principal}">
@@ -40,7 +45,7 @@
 								test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
 								</span>
 							</c:if></td>
-						<td align="center">${taskInstance.instanciaDeProcedimento.prioridade}</td>
+						<td align="center">${taskInstance.instanciaDeProcedimento.prioridade.descr}</td>
 						<td align="right">${fn:replace(f:esperaSimples(taskInstance.instanciaDeProcedimento.eventoData),
 						" ", "&nbsp;")}</td>
 					</tr>

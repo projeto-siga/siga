@@ -198,6 +198,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									<option value="DECISAO">Decisão</option>
 									<option value="EMAIL">E-mail</option>
 									<option value="EXECUTAR">Executar</option>
+									<option value="SUBPROCEDIMENTO">Iniciar Procedimento</option>
 									<option value="CRIAR_DOCUMENTO">Criar Documento</option>
 									<optgroup label="{{getPrincipalNome()}}"
 										ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
@@ -339,6 +340,24 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 								<select ng-model="tarefaItem.refResponsavel"
 									ng-options="item.hisIdIni as item.nome for item in responsaveis"
 									class="form-control"></select> </section>
+								<section ng-show="tarefaItem.tipo == 'SUBPROCEDIMENTO'"
+									class="col col-12 col-md-6 col-lg-6 form-group"> <label
+									for="ref" title="" class="label mb-0">Diagrama</label>
+								<div minlength="1" selected-object="selectedObject"
+									focus-first="true"
+									focus-out="$broadcast(!tarefaItem.ref.originalObject ? 'angucomplete-alt:clearInput' : '');"
+									text-searching="Pesquisando Diagrama..."
+									initial-value="tarefaItem.ref.originalObject"
+									title-field="firstLine" description-field="secondLine"
+									input-class="form-control form-control-small"
+									remote-url-data-field="list" pause="200"
+									text-no-results="Não encontrei nenhum Diagrama."
+									selected-object-data="{context:tarefaItem, variable: 'ref', full:false}"
+									remote-url="/sigawf/app/diagrama/buscar-json/" angucomplete-alt
+									name="ref" placeholder="Pesquisar Diagrama" id="ref"
+									class="angucomplete-ctrl"
+									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
+								</section>
 								<section
 									ng-show="tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label

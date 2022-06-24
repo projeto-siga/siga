@@ -85,7 +85,7 @@ const router = new Router({
     component: Lista
   }, {
     path: '*',
-    redirect: '/mesa'
+    redirect: '/quadro'
   }]
 })
 export default router

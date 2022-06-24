@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -45,7 +46,8 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"               mard.idFinalidade, "+
 		"               mard.ordem, "+
 		"               mard.idCor, "+
-		"               mard.idIcone "+
+		"               mard.idIcone , "+
+		"               tpForma.idTipoFormaDoc "+
 		"        FROM   ExMarca marca "+
 		"               JOIN marca.cpMarcador marcador "+
 		"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
@@ -57,13 +59,13 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"               AND ( ( marca.dpPessoaIni.idPessoa = :idPessoaIni ) "+
 		"                      OR ( marca.dpLotacaoIni.idLotacao = :idLotacaoIni ) ) "+
 		"               AND marca.cpTipoMarca.idTpMarca = 1 "+
-		"               AND (tpForma.idTipoFormaDoc = :idTipoForma)"+
 		"        GROUP  BY mard.idMarcador, "+
 		"                  mard.descrMarcador, "+
 		"                  mard.idFinalidade, "+
 		"                  mard.ordem, "+
 		"                  mard.idCor, "+
-		"                  mard.idIcone "+
+		"                  mard.idIcone, "+
+		"                  tpForma.idTipoFormaDoc "+
 		"ORDER  BY mard.idFinalidade, "+
 		"          mard.ordem, "+
 		"          mard.descrMarcador")
@@ -74,6 +76,9 @@ public class AbstractExMarca extends CpMarca {
 	@JoinColumn(name = "ID_REF")
 	private ExMobil exMobil;
 
+	@Column(name = "ID_REF", insertable = false, updatable = false)
+	private Long idRef;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOV")
 	private ExMovimentacao exMovimentacao;

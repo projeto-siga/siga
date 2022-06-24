@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.bl;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +34,7 @@ import com.crivano.jlogic.Expression;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -41,6 +42,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.logic.WfPodePegar;
+import br.gov.jfrj.siga.wf.logic.WfPodePriorizar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRedirecionar;
 import br.gov.jfrj.siga.wf.logic.WfPodeRetomar;
 import br.gov.jfrj.siga.wf.logic.WfPodeTerminar;
@@ -50,12 +52,15 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
 import br.gov.jfrj.siga.wf.model.WfMov;
 import br.gov.jfrj.siga.wf.model.WfMovAnotacao;
 import br.gov.jfrj.siga.wf.model.WfMovDesignacao;
+import br.gov.jfrj.siga.wf.model.WfMovPriorizacao;
 import br.gov.jfrj.siga.wf.model.WfMovRedirecionamento;
 import br.gov.jfrj.siga.wf.model.WfMovTermino;
 import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
+import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.util.WfEngine;
 import br.gov.jfrj.siga.wf.util.WfHandler;
@@ -99,9 +104,9 @@ public class WfBL extends CpBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public WfProcedimento createProcessInstance(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
+	public WfProcedimento criarProcedimento(long pdId, Integer idxPrimeiraTarefa, DpPessoa titular,
 			DpLotacao lotaTitular, CpIdentidade identidade, WfTipoDePrincipal tipoDePrincipal, String principal,
-			ArrayList<String> keys, ArrayList<String> values, boolean fCreateStartTask) throws Exception {
+			List<String> keys, List<Object> values, boolean fCreateStartTask) throws Exception {
 
 		// Create the process definition,
 		WfDefinicaoDeProcedimento pd = WfDao.getInstance().consultar(pdId, WfDefinicaoDeProcedimento.class, false);
@@ -141,8 +146,8 @@ public class WfBL extends CpBL {
 			List<WfProcedimento> l = dao().consultarProcedimentosAtivosPorPrincipal(principal);
 			if (l.size() > 0)
 				throwErroDeInicializacao(pi, null,
-						"não é permitido instanciar este procedimento com um principal que já está sendo orquestrado por pelo procedimento ativo "
-								+ l.get(0).getSigla());
+						"não é permitido instanciar este procedimento com o principal " + principal
+								+ " que já está sendo orquestrado por pelo procedimento ativo " + l.get(0).getSigla());
 		}
 
 		pi.setTipoDePrincipal(tipoDePrincipal);
@@ -167,7 +172,7 @@ public class WfBL extends CpBL {
 				if (td.getRefId() == null)
 					throwErroDeInicializacao(pi, td, "não foi definido o modelo de documento na tarefa");
 			}
-			
+
 			if (td.getTipoDeTarefa() == WfTipoDeTarefa.INCLUIR_DOCUMENTO
 					|| td.getTipoDeTarefa() == WfTipoDeTarefa.AUTUAR_DOCUMENTO) {
 				if (pi.getPrincipal() == null)
@@ -184,7 +189,7 @@ public class WfBL extends CpBL {
 //				}
 			}
 		}
-		
+
 		if (pi.getPrincipal() != null && pi.getTipoDePrincipal() == WfTipoDePrincipal.DOCUMENTO) {
 			dao().gravar(pi); // Precisa gravar para gerar uma sigla válida para o procedimento
 			Service.getExService().atualizarPrincipal(pi.getPrincipal(), "PROCEDIMENTO", pi.getSigla());
@@ -214,7 +219,7 @@ public class WfBL extends CpBL {
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.resume(event, detourIndex, param);
 	}
-	
+
 	public void salvar(WfProcedimento pi, WfDefinicaoDeTarefa td, Map<String, Object> param, DpPessoa titular,
 			DpLotacao lotaTitular, CpIdentidade identidade) throws Exception {
 		if (td.getVariable() != null && td.getVariable().size() > 0) {
@@ -228,6 +233,79 @@ public class WfBL extends CpBL {
 			}
 		}
 		WfDao.getInstance().gravarInstanciaDeProcedimento(pi);
+	}
+
+	public static WfProcedimento converterVariaveisEProsseguir(WfProcedimento pi, Map<String, String> paramsAsStrings,
+	Integer indiceDoDesvio, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade idc) throws Exception {
+		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
+		
+		// TODO Pegar automaticamente
+		
+		// WfBL.assertPodeTransferirDocumentosVinculados(new WfTarefa(pi), cadastrante);
+		
+		Map<String, Object> paramsAsObjects = new HashMap<>();
+		
+		if (td.getVariable() != null) {
+			// Associa cada variavel com seu valore especifico
+			for (WfDefinicaoDeVariavel variable : td.getVariable()) {
+				String identificador = variable.getIdentifier();
+				if (!paramsAsStrings.containsKey(identificador))
+					continue;
+				if (variable.getEditingKind() != VariableEditingKind.READ_WRITE
+						&& variable.getEditingKind() != VariableEditingKind.READ_WRITE_REQUIRED)
+					continue;
+		
+				String campo = paramsAsStrings.get(identificador);
+				Object value = campo;
+		
+				if (variable.getTipo() == WfTipoDeVariavel.DATE)
+					value = SigaCalendar.converteStringEmData(campo.toString());
+				else if (variable.getTipo() == WfTipoDeVariavel.BOOLEAN)
+					value = converterParaBoolean(campo);
+				else if (variable.getTipo() == WfTipoDeVariavel.DOUBLE)
+					value = converterParaDouble(campo);
+				else if (variable.getTipo() == WfTipoDeVariavel.SELECAO)
+					value = campo;
+		
+				// TODO: Verifica se as variáveis "required" foram preenchidas
+				if (variable.isRequired()
+						&& (value == null || (value instanceof String && (((String) value).trim().length() == 0)))) {
+					throw new AplicacaoException("O campo " + variable.getTitle() + " deve ser preenchido");
+				}
+		
+				paramsAsObjects.put(identificador, value);
+			}
+		}
+		
+		Integer desvio = null;
+		if (indiceDoDesvio != null && td.getDetour() != null && td.getDetour().size() > indiceDoDesvio) {
+			desvio = indiceDoDesvio;
+		}
+		
+		Wf.getInstance().getBL().prosseguir(pi.getIdEvent(), desvio, paramsAsObjects, titular, lotaTitular, idc);
+		return pi;
+	}
+	
+	private static Boolean converterParaBoolean(String campo) {
+		if (campo == null)
+			return null;
+		String s = campo.trim();
+		if (s.length() == 0)
+			return null;
+		return "1".equals(s) || "true".equals(s);
+	}
+	
+	private static Double converterParaDouble(String campo) {
+		if (campo == null)
+			return null;
+		String s = campo.trim();
+		if (s.length() == 0)
+			return null;
+		if (s.contains("."))
+			s = s.replace(".", "");
+		if (s.contains(","))
+			s = s.replace(",", ".");
+		return Double.parseDouble(s);
 	}
 
 	/**
@@ -247,6 +325,7 @@ public class WfBL extends CpBL {
 		for (WfProcedimento pi : pis2)
 			if (!pis.contains(pi))
 				pis.add(pi);
+		Collections.sort(pis);
 		return pis;
 	}
 
@@ -409,7 +488,7 @@ public class WfBL extends CpBL {
 		WfMovDesignacao mov = new WfMovDesignacao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
 				identidade, pi.getEventoPessoa(), pi.getEventoLotacao(), titular, lotaTitular);
 		gravarMovimentacao(mov);
-		
+
 		atualizarResponsavel(pi);
 	}
 
@@ -432,6 +511,7 @@ public class WfBL extends CpBL {
 		gravarMovimentacao(mov);
 		pi.end();
 		dao().gravar(pi);
+		new WfHandler(titular, lotaTitular, identidade).signalToOtherProcessInstances(pi);
 	}
 
 	public void retomar(WfProcedimento pi, DpPessoa titular, DpLotacao lotaTitular, CpIdentidade identidade)
@@ -439,6 +519,18 @@ public class WfBL extends CpBL {
 		assertLogic(new WfPodeRetomar(pi, titular, lotaTitular), "retomar");
 		WfEngine engine = new WfEngine(dao(), new WfHandler(titular, lotaTitular, identidade));
 		engine.resume(pi);
+	}
+
+	public void priorizar(WfProcedimento pi, WfPrioridade prioridade, DpPessoa titular, DpLotacao lotaTitular,
+			CpIdentidade identidade) {
+		assertLogic(new WfPodePriorizar(pi, titular, lotaTitular), "priorizar");
+		if (pi.getPrioridade() == prioridade)
+			return;
+		WfMovPriorizacao mov = new WfMovPriorizacao(pi, dao().consultarDataEHoraDoServidor(), titular, lotaTitular,
+				identidade, pi.getPrioridade(), prioridade);
+		gravarMovimentacao(mov);
+		pi.setPrioridade(prioridade);
+		dao().gravar(pi);
 	}
 
 	private static void assertLogic(Expression expr, String descr) {

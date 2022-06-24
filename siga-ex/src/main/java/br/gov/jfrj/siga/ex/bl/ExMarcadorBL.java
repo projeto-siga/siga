@@ -169,6 +169,7 @@ public class ExMarcadorBL {
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
 				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado())
 			calcularMarcadoresDeTramite();
+		calcularMarcadoresDeNotificacao();
 
 		if (!mob.isArquivado())
 			calcularMarcadoresTransferenciaComData(dt);
@@ -315,7 +316,8 @@ public class ExMarcadorBL {
 
 	protected boolean acrescentarMarcadorCancelado() {
 		if (mob.isCancelada()) {
-			acrescentarMarca(CpMarcadorEnum.CANCELADO.getId(), null, mob.doc().getCadastrante(),
+			ExMovimentacao ultimaMovimentacao = mob.getUltimaMovimentacao();
+			acrescentarMarca(CpMarcadorEnum.CANCELADO.getId(), ultimaMovimentacao != null ? ultimaMovimentacao.getDtIniMov() : null, mob.doc().getCadastrante(),
 					mob.doc().getLotaCadastrante());
 			return true;
 		}
@@ -597,7 +599,11 @@ public class ExMarcadorBL {
 
 	public void calcularMarcadoresDeTramite() {
 		Pendencias p = mob.calcularTramitesPendentes();
-		for (ExMovimentacao tramite : p.tramitesPendentes) {
+		
+		Set<ExMovimentacao> enviados = new TreeSet<>();
+		enviados.addAll(p.tramitesPendentes);
+		enviados.removeAll(p.tramitesDeNotificacoesPendentes);
+		for (ExMovimentacao tramite : enviados) {
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
 							: CpMarcadorEnum.EM_TRANSITO.getId(),
@@ -611,8 +617,11 @@ public class ExMarcadorBL {
 				acrescentarMarcaTransferencia(CpMarcadorEnum.DESPACHO_PENDENTE_DE_ASSINATURA.getId(),
 						tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
 		}
-
-		for (ExMovimentacao recebimento : p.recebimentosPendentes) {
+		
+		Set<ExMovimentacao> recebidos = new TreeSet<>();
+		recebidos.addAll(p.recebimentosPendentes);
+		recebidos.removeAll(p.recebimentosDeNotificacoesPendentes);
+		for (ExMovimentacao recebimento : recebidos) {
 			acrescentarMarcaTransferencia(
 					mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())
 							? ((mob.getNumSequencia() > 1 || mob.doc().jaTransferido()) ? CpMarcadorEnum.EM_ANDAMENTO.getId()
@@ -627,6 +636,19 @@ public class ExMarcadorBL {
 									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
 					mob.doc().getDtRegDoc(), null, mob.getTitular(), mob.getLotaTitular(), null);
+	}
+	
+	public void calcularMarcadoresDeNotificacao() {
+		Pendencias p = mob.calcularTramitesPendentes();
+		for (ExMovimentacao tramite : p.tramitesDeNotificacoesPendentes) {
+			acrescentarMarcaTransferencia(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId(),
+					tramite.getDtIniMov(), null, tramite.getResp(), tramite.getLotaResp(), null);
+		}
+
+		for (ExMovimentacao recebimento : p.recebimentosDeNotificacoesPendentes) {
+			acrescentarMarcaTransferencia(CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),
+					recebimento.getDtIniMov(), null, recebimento.getResp(), recebimento.getLotaResp(), null);
+		}
 	}
 
 	public void calcularMarcadoresTransferenciaComData(Date dt) {

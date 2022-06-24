@@ -14,7 +14,7 @@ public class DocumentosSiglaFinalizarPost implements IDocumentosSiglaFinalizarPo
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Finalizar");
 
 		Ex.getInstance().getComp().afirmar("A elaboração do documento " + mob.getSigla() + " não pode ser finalizado por "
-				+ ctx.getTitular().getSiglaCompleta() + "/" + ctx.getLotaTitular().getSiglaCompleta(), ExPodeFinalizar.class, ctx.getTitular(), ctx.getLotaTitular(), mob);
+				+ ctx.getTitular().getSiglaCompleta() + "/" + ctx.getLotaTitular().getSiglaCompleta(), ExPodeFinalizar.class, ctx.getTitular(), ctx.getLotaTitular(), mob.doc());
 
 		ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 

@@ -19,11 +19,11 @@ public class ListaGet implements IListaGet {
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		int ultMovTipoResp = 0;
 		if (req.filtroPessoaLotacao != null) {
-			switch (req.filtroPessoaLotacao) {
-			case "Pessoa":
+			switch (req.filtroPessoaLotacao.toUpperCase()) {
+			case "PESSOA":
 				ultMovTipoResp = 1;
 				break;
-			case "Lotacao":
+			case "LOTACAO":
 				ultMovTipoResp = 2;
 				break;
 			}
@@ -31,11 +31,11 @@ public class ListaGet implements IListaGet {
 
 		Long idTpFormaDoc = 0L;
 		if (req.filtroExpedienteProcesso != null) {
-			switch (req.filtroExpedienteProcesso) {
-			case "Expediente":
+			switch (req.filtroExpedienteProcesso.toUpperCase()) {
+			case "EXPEDIENTE":
 				idTpFormaDoc = 1L;
 				break;
-			case "Processo":
+			case "PROCESSO":
 				idTpFormaDoc = 2L;
 				break;
 			}
@@ -70,7 +70,7 @@ public class ListaGet implements IListaGet {
 			r.documentoLotaSubscritor = doc.getLotaSubscritor() != null ? doc.getLotaSubscritor().getSigla() : null;
 			r.documentoEspecie = doc.getExFormaDocumento().getDescricao();
 			r.documentoModelo = doc.getExModelo().getNmMod();
-			if (Ex.getInstance().getBL().mostraDescricaoConfidencial(doc, ctx.getTitular(), ctx.getLotaTitular())) {
+			if (!Ex.getInstance().getBL().mostraDescricaoConfidencial(doc, ctx.getTitular(), ctx.getLotaTitular())) {
 				r.documentoDescricao = doc.getDescrDocumento();
 				r.mobilUltimaAnotacao = mob.getDnmUltimaAnotacao();
 			} else {

@@ -136,6 +136,10 @@
 		<path>/META-INF/tags/span.tag</path>
 	</tag-file>
 	<tag-file>
+		<name>tooltip</name>
+		<path>/META-INF/tags/tooltip.tag</path>
+	</tag-file>
+	<tag-file>
 		<name>uploadArquivo</name>
 		<path>/META-INF/tags/uploadArquivo.tag</path>
 	</tag-file>

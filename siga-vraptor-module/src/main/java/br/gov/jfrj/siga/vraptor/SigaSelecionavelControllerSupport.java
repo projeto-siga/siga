@@ -31,6 +31,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -126,9 +128,13 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 		final DaoFiltroT flt = createDaoFiltro();
 
-		if (fCalcularTamanho)
+		if (!flt.exigeNomeSigla() || (StringUtils.isNotBlank(sigla) || StringUtils.isNotBlank(nome))) {
+			
+			if (fCalcularTamanho)
 			tamanho = dao().consultarQuantidade(flt);
-		itens = dao().consultarPorFiltro(flt, offset, itemPagina);
+			
+			itens = dao().consultarPorFiltro(flt, offset, itemPagina);
+		}
 		
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		return "busca";

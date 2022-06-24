@@ -46,10 +46,22 @@ public class ExPodeMovimentar extends CompositeExpressionSupport {
 	@Override
 	protected Expression create() {
 		if (tpMov != null)
-			return And.of(new CpNaoENulo(mob, "móbile"), new ExEstaResponsavel(mob, titular, lotaTitular),
+			return And.of(
+
+					new CpNaoENulo(mob, "móbile"),
+
+					new ExEstaResponsavel(mob, titular, lotaTitular),
+
 					new ExPodeMovimentarPorConfiguracao(tpMov, titular, lotaTitular));
-		return And.of(new CpNaoENulo(mob, "móbile"), new ExPodeSerMovimentado(mob, titular, lotaTitular),
+
+		return And.of(
+
+				new CpNaoENulo(mob, "móbile"),
+
+				new ExPodeSerMovimentado(mob, titular, lotaTitular),
+
 				new ExEstaResponsavel(mob, titular, lotaTitular),
+
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR));
 	}
 };

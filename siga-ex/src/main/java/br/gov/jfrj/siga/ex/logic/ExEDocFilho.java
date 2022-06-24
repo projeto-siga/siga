@@ -12,6 +12,7 @@ public class ExEDocFilho implements Expression {
 
 	public ExEDocFilho(ExDocumento docFilho, ExMobil mobPai) {
 		this.docFilho = docFilho;
+		this.mobPai = mobPai;
 	}
 
 	@Override

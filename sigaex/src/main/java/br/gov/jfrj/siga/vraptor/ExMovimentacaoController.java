@@ -56,6 +56,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
@@ -102,6 +103,7 @@ import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
+import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
@@ -111,6 +113,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeApensar;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarIntermediario;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarPermanente;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
@@ -153,7 +156,6 @@ import br.gov.jfrj.siga.ex.logic.ExPodeReferenciar;
 import br.gov.jfrj.siga.ex.logic.ExPodeRegistrarAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeRemeterParaPublicacaoSolicitadaNoDiario;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
-import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirDefAcompanhamento;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirTramitacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeRetirarDeEditalDeEliminacao;
@@ -166,6 +168,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPosAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -212,6 +215,10 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		return doc;
+	}
+	
+	private ExVisualizacaoTempDocCompl getExConsTempDocCompleto() {
+		return ExVisualizacaoTempDocCompl.getInstance();
 	}
 	
 	@Get("app/expediente/mov/anexar")
@@ -534,10 +541,11 @@ public class ExMovimentacaoController extends ExController {
 		
 		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
 		
-		if (Prop.get("arquivosAuxiliares.extensoes.excecao").contains(fileExtension)) {
+		if ( StringUtils.containsIgnoreCase(Prop.get("arquivosAuxiliares.extensoes.excecao"), fileExtension) ) {
 			throw new AplicacaoException(
 					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
+
 		
 		validarTamanhoArquivoAnexado(arquivo);
 		
@@ -742,10 +750,13 @@ public class ExMovimentacaoController extends ExController {
 		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
 		
 		// Habilita ou desabilita o trâmite 
-		if (!new ExPodeTramitarPosAssinatura(doc.getMobilGeral(), doc.getDestinatario(), doc.getLotaDestinatario(), getTitular(), getLotaTitular()).eval()){
-						afTramite.ativo = false;
+		ExPodeTramitarPosAssinatura podeTramitarPosAssinatura = new ExPodeTramitarPosAssinatura(doc.getMobilGeral(), getTitular(), getLotaTitular(), doc.getDestinatario(), doc.getLotaDestinatario());
+		boolean podeTramitar = podeTramitarPosAssinatura.eval();
+		if (!podeTramitar){
+			afTramite.ativo = false;
 			afTramite.fixo = true;
 		}
+		afTramite.explicacao = AcaoVO.Helper.produzirExplicacao(podeTramitarPosAssinatura, podeTramitar);
 		if(Prop.isGovSP()
 				&& (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))
 				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA).isEmpty()
@@ -763,6 +774,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
 		result.include("tramitarAtivo", Prop.isGovSP() ? "" : afTramite.ativo);
 		result.include("tramitarFixo", afTramite.fixo);
+		result.include("tramitarExplicacao", afTramite.explicacao);
 	}
 	
 	private boolean permiteAutenticar(ExDocumento doc) {
@@ -772,6 +784,7 @@ public class ExMovimentacaoController extends ExController {
 	public static class AtivoEFixo {
 		public boolean ativo;
 		public boolean fixo;
+		public String explicacao;
 	}
 
 	private AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, ITipoDeConfiguracao tipoConf) {
@@ -1363,38 +1376,59 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
+		
+		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeExibirCheckBoxVisTempDocsComplCossigsSubscritor(getCadastrante(), getLotaCadastrante(), doc);
 
 		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, getTitular(), getLotaTitular(), builder.getMob().doc());
 
 		result.include("sigla", sigla);
 		result.include("documento", doc);
-		result.include("cosignatarioSel",
-				movimentacaoBuilder.getSubscritorSel());
+		result.include("cosignatarioSel", movimentacaoBuilder.getSubscritorSel());
 		result.include("mob", builder.getMob());
+		result.include("listaCossignatarios", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE));
+
+		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
+		result.include("podeExibirArvoreDocsCossig", podeExibirArvoreDocsCossig);
+		if	(podeExibirArvoreDocsCossig) {
+			//Check automatico de checkbox cossignatarios
+			result.include("podeIncluirCossigArvoreDocs", doc.paiPossuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO_COSSIG) || doc.possuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO_COSSIG));
+			ExDocumento exPaiDasViasCossigsSubscritor = getExConsTempDocCompleto().getPaiDasViasCossigsSubscritor(doc);
+			result.include("paiDasViasCossigsSubscritor", exPaiDasViasCossigsSubscritor != null ? exPaiDasViasCossigsSubscritor.getCodigo() : "");
+		}
+	}
+	
+	@Transacional
+	@Get("/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs")
+	public void incluirExcluirDnmAcessoTempArvoreDocsCossigs(final String sigla, boolean incluirCossig) {
+		
+		final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(getCadastrante(), getLotaCadastrante());
+		if	(podeExibirArvoreDocsCossig) {	
+			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			final ExDocumento doc = buscarDocumento(builder);
+			final ExMobil mob = builder.getMob();
+			List<ExMovimentacao> listaCossignatarios = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE);
+			if (!listaCossignatarios.isEmpty()) {
+				if (incluirCossig)
+					getExConsTempDocCompleto().incluirCossigsVisTempDocsCompl(getCadastrante(), getLotaTitular(), doc, incluirCossig);
+				else
+					getExConsTempDocCompleto().removerCossigsVisTempDocsComplFluxoTelaCossignatarios(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
+			}
+		}
+		result.forwardTo(this).incluirCosignatario(sigla);
+		return;
 	}
 
 	@Transacional
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback, final boolean podeIncluirCossigArvoreDocs) {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
-
-		if (!new ExPodeRestringirCossignatarioSubscritor(getTitular(), getLotaTitular(), cosignatarioSel.getObjeto(), cosignatarioSel.getObjeto().getLotacao(),
-				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getCargo() : null,
-				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getFuncaoConfianca() : null,
-				cosignatarioSel.getObjeto() != null ? cosignatarioSel.getObjeto().getOrgaoUsuario() : cosignatarioSel.getObjeto().getOrgaoUsuario()).eval()) {
-			result.include(SigaModal.ALERTA, SigaModal.mensagem("Esse usuário não está disponível para inclusão de Cossignatário / "+ SigaMessages.getMessage("documento.subscritor")+"."));
-			result.forwardTo(this).incluirCosignatario(sigla);
-			
-			return;
-		}
-
 		
 		String funcaoUnidadeCosignatario = funcaoCosignatario;
 		// Efetuar validação e concatenar o conteudo se for implantação GOVSP
@@ -1411,13 +1445,18 @@ public class ExMovimentacaoController extends ExController {
 
 		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, getTitular(), getLotaTitular(), documentoBuilder.getMob());
 
-		Ex.getInstance()
-				.getBL()
-				.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
-						mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
-
-		ExDocumentoController.redirecionarParaExibir(result, mov
-				.getExDocumento().getSigla());
+		try {
+			Ex.getInstance()
+					.getBL()
+					.incluirCosignatario(getCadastrante(), getLotaTitular(), doc,
+							mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov(), podeIncluirCossigArvoreDocs);
+		} catch (RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+	
+		}			
+		result.forwardTo(this).incluirCosignatario(sigla);
+		
+		return;
 	}
 
 	// Nato: Temos que substituir por uma tela que mostre os itens marcados como
@@ -1738,6 +1777,7 @@ public class ExMovimentacaoController extends ExController {
 
 		Ex.getInstance().getComp().afirmar("Não é possível fazer vinculação", ExPodeReferenciar.class, getTitular(), getLotaTitular(), builder.getMob());
 
+		result.include("listaTipoDeVinculo", ExTipoDeVinculo.values());
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("mob", builder.getMob());
@@ -1810,7 +1850,8 @@ public class ExMovimentacaoController extends ExController {
 			final String dtMovString, final boolean substituicao,
 			final DpPessoaSelecao titularSel,
 			final DpPessoaSelecao subscritorSel,
-			final ExMobilSelecao documentoRefSel) {
+			final ExMobilSelecao documentoRefSel,
+			final ExTipoDeVinculo tipo) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
@@ -1838,7 +1879,7 @@ public class ExMovimentacaoController extends ExController {
 		Ex.getInstance()
 				.getBL()
 				.referenciarDocumento(getCadastrante(), getLotaTitular(),
-						builder.getMob(), mov.getExMobilRef(), mov.getDtMov(),
+						builder.getMob(), mov.getExMobilRef(), tipo, mov.getDtMov(),
 						mov.getSubscritor(), mov.getTitular());
 
 		ExDocumentoController.redirecionarParaExibir(result, mov
@@ -2673,7 +2714,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("app/expediente/mov/transferir_lote")
 	public void aTransferirLote(Integer paramoffset) {
-		Long tamanho = dao().consultarQuantidadeParaTransferirEmLote(getLotaTitular());
+		Long tamanho = dao().consultarQuantidadeParaTransferirEmLote(getTitular());
 
 		LOGGER.debug("TAMANHO : " + tamanho);
 
@@ -2683,8 +2724,8 @@ public class ExMovimentacaoController extends ExController {
 				: 0;
 
 		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_TRAMITACAO_LOTE)
-				? dao().consultarParaTransferirEmLote(getLotaTitular(), null, null)
-				: dao().consultarParaTransferirEmLote(getLotaTitular(), offset, MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+				? dao().consultarParaTransferirEmLote(getTitular(), null, null)
+				: dao().consultarParaTransferirEmLote(getTitular(), offset, MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
 
 		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
 		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
@@ -2830,7 +2871,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("mov", mov);
 		result.include("itens", arrays);
-		result.include("lotaTitular", mov.getLotaTitular());
+		result.include("lotaTitular", getLotaTitular());
 //		result.include("dtMovString", dtMovString);
 //		result.include("subscritorSel", subscritorSel);
 //		result.include("titularSel", titularSel);
@@ -3102,6 +3143,7 @@ public class ExMovimentacaoController extends ExController {
 				itensFinalizados.add(doc);
 		}
 		final List<ExDocumento> documentosQuePodemSerAssinadosComSenha = new ArrayList<ExDocumento>();
+		Boolean podeAssinarComCertDigital = false;
 
 		for (final ExDocumento exDocumento : itensFinalizados) {
 			if (Ex.getInstance()
@@ -3110,10 +3152,18 @@ public class ExMovimentacaoController extends ExController {
 							exDocumento.getMobilGeral())) {
 				documentosQuePodemSerAssinadosComSenha.add(exDocumento);
 			}
+			if (!podeAssinarComCertDigital && Ex.getInstance()
+					.getComp()
+					.pode(ExPodeAssinar.class, getTitular(), getLotaTitular(),
+							exDocumento.getMobilGeral())) {
+				podeAssinarComCertDigital = true;
+			}
 		}
 
 		result.include("documentosQuePodemSerAssinadosComSenha",
 				documentosQuePodemSerAssinadosComSenha);
+		result.include("podeAssinarComCertDigital",
+				podeAssinarComCertDigital);
 		result.include("itensSolicitados", itensFinalizados);
 		result.include("request", getRequest());
 	}
@@ -4226,10 +4276,14 @@ public class ExMovimentacaoController extends ExController {
 			result.include("idLotDefault", listaLotPubl.getIdLotDefault());
 		}
 
-		result.include("tipoMateria",
-				PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
-		result.include("cadernoDJEObrigatorio",
-				PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
+		// Nato: só estamos aceitando matérias administrativas no momento
+		String tipoMateria = PublicacaoDJEBL.obterSugestaoTipoMateria(doc);
+		boolean cadernoDJEObrigatorio = PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc);
+		tipoMateria = "A";
+		cadernoDJEObrigatorio = true;
+		result.include("tipoMateria", tipoMateria);
+		result.include("cadernoDJEObrigatorio",	cadernoDJEObrigatorio);
+		
 		result.include("descrPublicacao",
 				descrPublicacao == null ? doc.getDescrDocumento()
 						: descrPublicacao);
@@ -4653,10 +4707,13 @@ public class ExMovimentacaoController extends ExController {
 		lot.buscar();
 		ListaLotPubl listaLotPubl = getListaLotacaoPublicacao(doc);
 
-		result.include("tipoMateria",
-				PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
-		result.include("cadernoDJEObrigatorio",
-				PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
+		String tipoMateria = PublicacaoDJEBL.obterSugestaoTipoMateria(doc);
+		boolean cadernoDJEObrigatorio = PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc);
+		tipoMateria = "A";
+		cadernoDJEObrigatorio = true;
+		result.include("tipoMateria", tipoMateria);
+		result.include("cadernoDJEObrigatorio",	cadernoDJEObrigatorio);
+		
 		result.include("descrPublicacao",
 				descrPublicacao == null ? doc.getDescrDocumento()
 						: descrPublicacao);

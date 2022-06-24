@@ -39,7 +39,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	CANCELAR_MOVIMENTACAO(29, "Cancelar Movimentação",
+	CANCELAR_MOVIMENTACAO(29, "Cancelar Movimentação", 
 			"Por padão as movimentações não podem ser canceladas. Utilizando essa configuração, é possível habilitar o cancelamento de movimentações de determinado tipo, dependendo ainda de regras de negócios específicas. Por exemplo, para que seja possível excluir \"Arquivos Auxiliares\" é necessário criar uma configuração habilitando o cancelamento de \"Anexação de Arquivo Auxiliar\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO },
@@ -122,8 +122,8 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO,
 					ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
-			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.OBRIGATORIO,
+					CpSituacaoDeConfiguracaoEnum.OPCIONAL },
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
 	DUPLICAR(9, "Duplicar",
@@ -566,6 +566,14 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
+	VISUALIZAR_TEMP_DOCS_COMPL_SUBSCRITOR_COSSIGNATARIO(60,"Exibir Documentos Completo para Subscritores e Cossignatários", 
+			"Essa configuração permite exibir Documentos Completo para Subscritores e Cossignatários, tendo como vínculo movimentação de juntadas e documentos inclusos. Você pode configurar "
+			+ "para Orgão, Unidade/Lotação e Usuário.  ",
+			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	
 	HERDAR_PREENCHIMENTO(60, "Herdar Preenchimento", "",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
@@ -574,7 +582,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
 	
-	private final int id;
+	private final int id; 
 	private final String descr;
 	private final String explicacao;
 	private final Enum[] params;

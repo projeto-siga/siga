@@ -1,3 +1,4 @@
+
 package br.gov.jfrj.siga.ex.api.v1;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -20,8 +21,10 @@ public class DocumentosSiglaDesarquivarCorrentePost implements IDocumentosSiglaD
 
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Desarquivar");
 
-		Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser desarquivado do corrente por "
-				+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), ExPodeDesarquivarCorrente.class, titular, lotaTitular, mob);
+		Ex.getInstance().getComp().afirmar(
+				"O documento " + mob.getSigla() + " não pode ser desarquivado do corrente por "
+						+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(),
+				ExPodeDesarquivarCorrente.class, titular, lotaTitular, mob);
 
 		ctx.assertAcesso(mob, titular, lotaTitular);
 

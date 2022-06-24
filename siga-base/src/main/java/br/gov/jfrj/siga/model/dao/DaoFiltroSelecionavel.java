@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.model.dao;
 
-import br.gov.jfrj.siga.base.util.Texto.DpPessoa;
-
 public class DaoFiltroSelecionavel extends DaoFiltro {
 	private String sigla;
 
@@ -29,6 +27,11 @@ public class DaoFiltroSelecionavel extends DaoFiltro {
 
 	public void setSigla(final String nome) {
 		this.sigla = nome;
+	}
+	
+	public boolean exigeNomeSigla() {
+		return false;
+		
 	}
 
 }

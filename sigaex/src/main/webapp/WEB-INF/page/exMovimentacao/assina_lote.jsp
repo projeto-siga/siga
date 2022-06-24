@@ -102,7 +102,7 @@
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
-
+								<c:set var="podeAssinarCertDigital" value="${podeAssinarComCertDigital}" />
 								<c:set var="podeAssinarComSenha" value="${(not empty documentosQuePodemSerAssinadosComSenha)}" />
 								<c:set var="defaultAssinarComSenha" value="true" />
 
@@ -111,6 +111,7 @@
 								<c:set var="defaultUtilizarSegundoFatorPin" value="${f:defaultUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }" />
 								
 								<tags:assinatura_botoes assinar="true" 
+									assinarCertDigital="${podeAssinarCertDigital}"
 									assinarComSenha="${podeAssinarComSenha and not obrigatorioUtilizarSegundoFatorPin}"
 									assinarComSenhaChecado="${podeAssinarComSenha and defaultAssinarComSenha and not defaultUtilizarSegundoFatorPin}"
 									assinarComSenhaPin="${podeAssinarComSenha and podeUtilizarSegundoFatorPin}"

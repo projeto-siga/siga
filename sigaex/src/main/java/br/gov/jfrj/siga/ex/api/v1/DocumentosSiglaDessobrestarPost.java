@@ -1,3 +1,4 @@
+
 package br.gov.jfrj.siga.ex.api.v1;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -20,8 +21,11 @@ public class DocumentosSiglaDessobrestarPost implements IDocumentosSiglaDessobre
 
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Dessobrestar");
 
-		Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser dessobrestado por "
-				+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), ExPodeDessobrestar.class, titular, lotaTitular, mob);
+		Ex.getInstance().getComp()
+				.afirmar(
+						"O documento " + mob.getSigla() + " não pode ser dessobrestado por "
+								+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(),
+						ExPodeDessobrestar.class, titular, lotaTitular, mob);
 
 		ctx.assertAcesso(mob, titular, lotaTitular);
 

@@ -75,4 +75,9 @@ public class DpLotacaoDaoFiltro extends DaoFiltroSelecionavel {
 
 		setSigla(MatriculaUtils.getSiglaDaLotacao(siglaCompleta));
 	}
+	
+	@Override
+	public boolean exigeNomeSigla() {
+		return true;	
+	}
 }

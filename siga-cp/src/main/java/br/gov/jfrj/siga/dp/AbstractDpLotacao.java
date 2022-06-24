@@ -78,41 +78,52 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		// Encontra a lotação se like a sigla, o nome e o órgão é o mesmo do usuário atual, ou se like a sigla prefixada pelo acrônimo ou pela sigla do órgão. Ou seja,
 		// se sou do TRF2 e buscar "SG", deve retornar apenas T2-SG. Sem a especificação do órgão, retornaria as SGs de todos os órgãos. Se eu sou do TRF2 e
 		// prefixar aconsulta com com JFRJSG, deve retornar apenas RJ-SG.
-		@NamedQuery(name = "consultarPorFiltroDpLotacao", query = "from DpLotacao lot "
-				+ "  where "
-				+ "     ( (upper(lot.siglaLotacao) like upper(:sigla || '%') or upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
-				+ "	       and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "          or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
-				+ "          or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
-				+ "	and lot.dataFimLotacao = null"
-				+ "	order by lot.nomeLotacao"),
-		
-		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
-				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
+		@NamedQuery(name = "consultarPorFiltroDpLotacao", query = "from DpLotacao lot " 
+				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lot.siglaLotacao) like upper('%' || :sigla || '%')) "
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
+				+ " or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and lot.dataFimLotacao = null"
-				+ "	order by lot.nomeLotacao"),
+				+ "	 order by lot.nomeLotacao"),
+		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
+				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lot.siglaLotacao) like upper('%' || :sigla || '%'))"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
+				+ " or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
+				+ "	and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacaoInclusiveFechadas", query = "from DpLotacao lotacao"
-				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "		and ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lotacao.siglaLotacao) like upper('%'  || :sigla || '%')))"
-				+ "		and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni"
-				+ "			group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"
+				+ "  where ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lotacao.siglaLotacao) like upper('%' || :sigla || '%')) " 
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lotacao.orgaoUsuario.acronimoOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%')"
+				+ " or upper(concat(lotacao.orgaoUsuario.siglaOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%'))))"
+				+ "	and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni"
+				+ "	 group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"
 				+ "  order by upper(nomeLotacaoAI)"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacaoInclusiveFechadas", query = "select count(distinct lotacao.idLotacaoIni) from DpLotacao lotacao"
-				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "		and ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lotacao.siglaLotacao) like upper('%'  || :nome || '%')))"),
+				+ "  where ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lotacao.siglaLotacao) like upper('%' || :sigla || '%')) " 
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lotacao.orgaoUsuario.acronimoOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%')"
+				+ " or upper(concat(lotacao.orgaoUsuario.siglaOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%'))))"
+				+ "	and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni"
+				+ "	 group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpLotacao", query = "select lot from DpLotacao lot where upper(REMOVE_ACENTO(lot.nomeLotacao)) = upper(REMOVE_ACENTO(:nome)) and lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu")})
 		@NamedNativeQueries({
-			@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
+		@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
 				+ " left join corporativo.dp_lotacao lotacao on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
 				+ " WHERE id_marcador not in (1,10,32)"
 				+ " AND lotacao.id_lotacao_ini = :idLotacao"
 				+ " AND id_tp_marca = :idTipoMarca "),
-			@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
+		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
 				+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
 				+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
 				+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
+				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao"),
+		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
+						+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+						+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
+						+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
+						+ " where lot.id_lotacao_ini = :idLotacao or (marca.ID_LOTACAO_INI = :idLotacao"
+				        + " and marca.ID_MARCADOR not in (:listMarcadores))")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {

@@ -118,6 +118,8 @@ public class SigaLibsEL {
 	}
 
 	public static String esperaSimples(Date dt) {
+		if (dt == null)
+			return null;
 		SigaCalendar c = new SigaCalendar();
 		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
 		// long l = -c.diffDayPeriods(lAnterior);
@@ -482,4 +484,16 @@ public class SigaLibsEL {
 	public static boolean podeUtilizarSegundoFatorPin(final DpPessoa cadastrante,final DpLotacao lotacaoCadastrante) throws Exception {
 		return Cp.getInstance().getConf().podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoDeConfiguracao.SEGUNDO_FATOR_PIN);
 	}
+	
+	public static String getMesaVersao(DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+		String mesaVersao = Prop.get("/siga.mesa.versao");
+		if (Cp.getInstance()
+				.getConf()
+				.podeUtilizarServicoPorConfiguracao(titular, lotaTitular,
+						"SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;BETA:Utilizar versão beta"))
+			mesaVersao = "2";
+		return mesaVersao;
+	}
+
+	
 }

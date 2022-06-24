@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpSubstituicaoBL;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -381,7 +382,7 @@ public class SubstituicaoController extends SigaController {
 	public void finalizar() throws Exception {
 		try {
 			dao().iniciarTransacao();
-			gravarFinalizar();
+			CpSubstituicaoBL.finalizarSubstituicao(getCadastrante());
 			dao().commitTransacao();
 		} catch (Exception e) {
 			dao().rollbackTransacao();
@@ -393,53 +394,10 @@ public class SubstituicaoController extends SigaController {
 			result.redirectTo(PrincipalController.class).principal(false, false);
 	}	
 	
-	private void gravarFinalizar() {
-		CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
-
-		if (per == null) {
-			per = new CpPersonalizacao();
-			per.setPessoa(getCadastrante());
-		}
-
-		per.setPesSubstituindo(null);
-		per.setLotaSubstituindo(null);
-		dao().gravar(per);
-	}
-	
 	@Transacional
 	@Get("/app/substituicao/substituirGravar")
 	public void substituirGravar(Long id) throws Exception {
-		try {
-			dao().iniciarTransacao();
-			gravarFinalizar();
-			
-			if (id == null)
-				throw new ServletException("Dados não informados");
-			
-			DpSubstituicao dpSub = dao().consultar(id, DpSubstituicao.class, false);
-			
-			if ((dpSub.getSubstituto() == null && !dpSub.getLotaSubstituto().equivale(getLotaCadastrante()) 
-				|| (dpSub.getSubstituto() != null && !dpSub.getSubstituto().equivale(getCadastrante()))))
-				throw new ServletException("Substituição não permitida");
-			
-			setLotaTitular(dpSub.getLotaTitular());
-			setTitular(dpSub.getTitular());
-	
-			CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
-			if (per == null) {
-				per = new CpPersonalizacao();
-			}
-			per.setPessoa(getCadastrante());
-			per.setPesSubstituindo(getTitular() != getCadastrante() ? getTitular(): null);
-			per.setLotaSubstituindo(getLotaTitular() != getCadastrante().getLotacao() ? getLotaTitular() : null);
-		
-			dao().gravar(per);
-			dao().commitTransacao();
-//			result.use(Results.referer()).redirect();
-		} catch (Exception e) {
-			e.printStackTrace();
-			dao().rollbackTransacao();
-		}
+		CpSubstituicaoBL.substituir(getCadastrante(), id);
 		String referer = getRequest().getHeader("Referer");
 		if (referer != null)
 			result.redirectTo(referer);

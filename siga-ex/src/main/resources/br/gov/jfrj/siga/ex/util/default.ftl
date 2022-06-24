@@ -907,7 +907,8 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro documento formato="A4" orientacao="retrato" margemEsquerda="3cm" margemDireita="2cm" margemSuperior="1cm" margemInferior="2cm"]
+[#macro documento formato="A4" orientacao="portrait" margemEsquerda="3cm" margemDireita="2cm" margemSuperior="1cm" margemInferior="2cm"]
+	<!-- size: ${formato} ${orientacao}; -->
     [#if !gerar_entrevista!false || gerar_finalizacao!false || gerar_assinatura!false]
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <head>
@@ -2541,7 +2542,8 @@ Pede deferimento.</span><br/><br/><br/>
 	    </style>     
 	  	<p class="texto-enderecamento">
 	      [#if (Vocativo!"") != ""]<b>${Vocativo!}<b><br />[/#if]
-	      [#if (Orgao!"") != ""]${Orgao!}[/#if]<br />
+	      [#if (CargoDsp!"") != ""]<b>${CargoDsp!}<b><br />[/#if]
+	      [#if (Orgao!"") != ""]${Orgao!}<br />[/#if]
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
 	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}[/#if]    
@@ -4639,9 +4641,7 @@ Pede deferimento.</span><br/><br/><br/>
 			<span>&nbsp;</span>
 			[@br/]
 			<center><span style="font-size: 15px;">********************************* FIM *********************************</span></center>
-		
-		
-			<!-- INICIO PRIMEIRO RODAPE
+			
 			[#assign idOrgaoUsu=""/]
 			[#assign acronimoOrgaoUsu=""/]
 			[#assign descricaoOrgaoUsu=""/]
@@ -4658,19 +4658,18 @@ Pede deferimento.</span><br/><br/><br/>
 				[#assign acronimoOrgaoUsu=mov.lotaCadastrante.orgaoUsuario.acronimoOrgaoUsu/]
 			[/#if]
 	
-			<span align="center">
-			<table bgcolor="#000000" width="96%">
+			<table width="96%" style="page-break-inside: avoid" >
 				<tr>
-					<td width="100%">
-						<table width="100%" align="left" bgcolor="#FFFFFF">
+					<td width="100%" style="border: 1px solid black;">
+						<table width="100%" align="left">
 							<col width="15%"></col>
 							<col width="85%"></col>
-							<tr bgcolor="#FFFFFF">
+							<tr>
 								<td width="15%" align="left" valign="bottom"><img
 									src="${_pathBrasao}" width="65" height="65" />
 								</td>
 								<td>
-									<table align="left" width="100%" bgcolor="#FFFFFF">
+									<table align="left" width="100%">
 										<tr>
 											<td width="18%" width="100%" align="left">
 											<p style="font-size: 11pt;">${func.resource('modelos.cabecalho.titulo')!}</p>
@@ -4707,9 +4706,11 @@ Pede deferimento.</span><br/><br/><br/>
 					</td>
 				</tr>
 			</table>			
-	        </span>		
-		FIM PRIMEIRO RODAPE -->
-	
+		
+		
+		
+		<!-- INICIO PRIMEIRO RODAPE			
+		FIM PRIMEIRO RODAPE -->	
 		<!-- INICIO RODAPE
 			<table width="100%" border="0" cellpadding="0" bgcolor="#000000">
 				<col></col>
@@ -4718,6 +4719,7 @@ Pede deferimento.</span><br/><br/><br/>
 				</tr>
 			</table>
 		FIM RODAPE -->		
+	
 	[/@documento]													
 [/#macro]
 

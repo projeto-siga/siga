@@ -204,13 +204,6 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 		WfDefinicaoDeProcedimento pd = buscar(id);
 		result.include("pd", pd);
 		result.include("dot", util.getDot(pd));
-
-		SortedSet<WfTarefa> tis = new TreeSet<>();
-		List<WfProcedimento> pis = dao().consultarProcedimentosAtivosPorDiagrama(pd);
-		for (WfProcedimento pi : pis) {
-			tis.add(new WfTarefa(pi));
-		}
-		result.include("tarefas", tis);
 	}
 
 	@Get("app/diagrama/documentar")

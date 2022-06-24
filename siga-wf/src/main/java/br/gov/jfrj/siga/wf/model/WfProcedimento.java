@@ -38,6 +38,7 @@ import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
@@ -904,6 +905,18 @@ public class WfProcedimento extends Objeto
 				dt = mov.getHisDtIni();
 		}
 		return dt;
+	}
+	
+	public String getDuracaoDaTarefa() {
+		if (isFinalizado())
+			return null;
+		return DateUtils.esperaSimples(getDtInicioDaTarefa());
+	}
+	
+	public String getDuracaoDoProcedimento() {
+		if (!isFinalizado())
+			return DateUtils.esperaSimples(getHisDtIni());
+		return DateUtils.intervalo(getHisDtFim(), getHisDtIni());
 	}
 	
 	public String getStatusDescr() {

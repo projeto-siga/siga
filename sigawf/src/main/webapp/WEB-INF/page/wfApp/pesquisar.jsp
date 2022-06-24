@@ -18,7 +18,7 @@
 				<div id="divUltMovLotaResp" class="form-group col col-9">
 					<label>Defini&ccedil;&atilde;o de Procedimento</label>
 					<siga:select name="idDefinicaoDeProcedimento"
-						list="definicoesDeProcedimentos" listKey="id" listValue="nome"
+						list="definicoesDeProcedimentos" listKey="id" listValue="descricaoExterna"
 						theme="simple" headerValue="[Todas]" headerKey="0"
 						value="${idDefinicaoDeProcedimento}" />
 				</div>
@@ -41,14 +41,18 @@
 		<table class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<tr>
-					<th>Procedimento</th>
-					<th>Tarefa</th>
+					<th colspan="5" style="text-align: center">Procedimento</th>
+					<th colspan="3" style="text-align: center" class="bg-primary">Tarefa</th>
+				</tr>
+				<tr>
+					<th>Código</th>
 					<th>Principal</th>
-					<th style="text-align: center">Atendente</th>
 					<th style="text-align: center">Prioridade</th>
-					<th style="text-align: right">In&iacute;cio da Tarefa</th>
-					<th style="text-align: right">In&iacute;cio do Procedimento</th>
+					<th style="text-align: right">Duração</th>
 					<th style="text-align: right">Status</th>
+					<th class="bg-primary">Título</th>
+					<th style="text-align: center" class="bg-primary">Atendente</th>
+					<th style="text-align: right" class="bg-primary">Duração</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -56,7 +60,6 @@
 					totalItens="${tamanho}" itens="${itens}">
 					<tr class="count">
 						<td><a href="${linkTo[WfAppController].procedimento(pi.id)}">${pi.sigla}</a></td>
-						<td>${pi.definicaoDeTarefaCorrente.nome}</td>
 						<td><c:choose>
 								<c:when
 									test="${pi.tipoDePrincipal eq 'DOCUMENTO' and not empty pi.principal}">
@@ -65,22 +68,18 @@
 								</c:when>
 								<c:otherwise>${pi.principal}</c:otherwise>
 							</c:choose></td>
-
-						<!-- <td>${pi.definicaoDeProcedimento.nome}</td> -->
-						<td align="center"><c:set var="atendente">${pi.atendente}</c:set>
-							<c:set var="atendenteNome">${pooledActorsDescricao[atendente]}</c:set>
-							<c:if
-								test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
-								<span style="color: silver">
-							</c:if> <siga:selecionado sigla="${atendente}"
-								descricao="${atendenteNome}" /> <c:if
-								test="${atendente != titular.sigla and atendente != lotaTitular.sigla}">
-								</span>
-							</c:if></td>
 						<td align="center">${pi.prioridade.descr}</td>
-						<td align="right" title="${f:formatarDDMMYY(pi.dtInicioDaTarefa)}">${f:esperaSimples(pi.dtInicioDaTarefa)}</td>
-						<td align="right" title="${f:formatarDDMMYY(pi.hisDtIni)}">${f:esperaSimples(pi.hisDtIni)}</td>
-						<td align="right" >${pi.statusDescr}</td>
+						<td align="right"
+							title="Data de início: ${f:formatarDDMMYY(pi.hisDtIni)}">${pi.duracaoDoProcedimento}</td>
+						<td align="right">${pi.statusDescr}</td>
+
+						<td>${pi.definicaoDeTarefaCorrente.nome}</td>
+
+						<td align="center"><siga:selecionado sigla="${pi.atendente}"
+								pessoaParam="${pi.eventoPessoa.sigla}"
+								lotacaoParam="${pi.eventoLotacao.sigla}" /></td>
+						<td align="right"
+							title="Data de início: ${f:formatarDDMMYY(pi.dtInicioDaTarefa)}">${pi.duracaoDaTarefa}</td>
 					</tr>
 				</siga:paginador>
 			</tbody>

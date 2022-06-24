@@ -4,6 +4,8 @@
 <li class="nav-item dropdown"><a href="javascript:void(0);"
 	class="nav-link dropdown-toggle" data-toggle="dropdown">Procedimentos</a>
 	<ul class="dropdown-menu">
+		<li><a class="dropdown-item"
+			href="${linkTo[WfAppController].pesquisar}">Pesquisar</a></li>
 		<c:if
 			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;INI:Iniciar')}">
 			<li><a class="dropdown-item"

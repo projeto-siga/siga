@@ -111,6 +111,12 @@ public class Utils {
 		return false;
 	}
     
+	public static boolean equivaleENaoENulo(Historico o1, Historico o2) {
+		if (o1 == null || o2 == null)
+			return false;
+		return equivale(o1, o2);
+	}
+    
 	public static boolean igual(Object o1, Object o2) {
 		if (o1 == null && o2 == null)
 			return true;

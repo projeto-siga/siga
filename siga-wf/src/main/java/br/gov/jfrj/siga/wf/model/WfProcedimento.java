@@ -38,7 +38,7 @@ import com.crivano.jflow.model.enm.ProcessInstanceStatus;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.util.CpProcessadorReferencias;
@@ -901,4 +901,42 @@ public class WfProcedimento extends Objeto
 		return getId().compareTo(o.getId());
 	}
 
+	public Date getDtInicioDaTarefa() {
+		Date dt = getHisDtIni();
+		for (WfMov mov : getMovimentacoes()) {
+			if (!mov.isAtivo())
+				continue;
+			if (mov instanceof WfMovTransicao && dt.before(mov.getHisDtIni())) 
+				dt = mov.getHisDtIni();
+		}
+		return dt;
+	}
+	
+	public String getDuracaoDaTarefa() {
+		if (isFinalizado())
+			return null;
+		return DateUtils.esperaSimples(getDtInicioDaTarefa());
+	}
+	
+	public String getDuracaoDoProcedimento() {
+		if (!isFinalizado())
+			return DateUtils.esperaSimples(getHisDtIni());
+		return DateUtils.intervalo(getHisDtFim(), getHisDtIni());
+	}
+	
+	public String getStatusDescr() {
+		switch (getStatus()) {
+		case FINISHED:
+			return "Concluído";
+		case INACTIVE:
+			return "Inativo";
+		case PAUSED:
+			return "Pausado";
+		case RESUMING:
+			return "Continuando";
+		case STARTED:
+			return "Iniciado";
+		}
+		return getStatus().name();
+	}
 }

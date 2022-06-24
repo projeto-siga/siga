@@ -66,7 +66,7 @@ public class WfDefinicaoDeProcedimentoSelecao extends Selecao<WfDefinicaoDeProce
 
 	@Override
 	public String getAcaoBusca() {
-		return "/pessoa";
+		return "/diagrama";
 	}
 
 	public void carregarDadosParaView(WfDefinicaoDeProcedimento atendente) {

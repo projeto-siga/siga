@@ -131,7 +131,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	}
 
 	public List<WfProcedimento> consultarProcedimentosAtivosPorPrincipal(String principal) {
-		String sql = "select p from WfProcedimento p where p.hisDtFim is null and p.principal is not null and p.principal <> '' and p.principal like :principal";
+		String sql = "select p from WfProcedimento p where p.hisDtFim is null and p.principal is not null and p.principal like :principal";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("principal", principal + "%");
 		List<WfProcedimento> result = query.getResultList();
@@ -288,7 +288,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni and p.hisDtFim is not null "
 				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
 				+ " and p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte "
-				+ " and p.principal is not null and p.principal <> '' order by p.principal";
+				+ " and p.principal is not null order by p.principal";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("hisIdIni", pd.getHisIdIni());
 		query.setParameter("dataInicialDe", dataInicialDe);
@@ -305,7 +305,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd where pd.hisIdIni = :hisIdIni "
 				+ " and p.hisDtIni >= :dataInicialDe and p.hisDtIni <= :dataInicialAte "
 				+ " and ((p.hisDtFim >= :dataFinalDe and p.hisDtFim <= :dataFinalAte) or p.hisDtFim is null) "
-				+ " and p.principal is not null and p.principal <> '' order by p.principal";
+				+ " and p.principal is not null order by p.principal";
 		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
 		query.setParameter("hisIdIni", pd.getHisIdIni());
 		query.setParameter("dataInicialDe", dataInicialDe);
@@ -316,6 +316,36 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		return result;
 	}
 
+	public static class ListaETotal<T> {
+		public List<T> lista;
+		public long total;
+	}
+	
+	public ListaETotal<WfProcedimento> consultarPorFiltro(WfProcedimentoDaoFiltro flt, final int offset, final int itemPagina) {
+		ListaETotal<WfProcedimento> result = new ListaETotal<>();
+		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd "
+				+ " where (:hisIdIni is null or pd.hisIdIni = :hisIdIni) "
+				+ " and ((:ativos is null) or (:ativos = TRUE and p.hisDtFim is null) or (:ativos = FALSE and p.hisDtFim is not null)) "
+				+ " order by p.hisDtIni";
+
+		for (String i : new String[] {"LISTA", "TOTAL"}) {
+			if ("TOTAL".equals(i))
+				sql = sql.replace("select p", "select count(p)");
+			javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+			query.setParameter("hisIdIni", flt.definicaoDeProcedimento != null ? flt.definicaoDeProcedimento.getHisIdIni() : null);
+			query.setParameter("ativos", flt.ativos);
+			if ("TOTAL".equals(i)) {
+				result.total = (long) query.getSingleResult();
+			} else {
+				query.setFirstResult(offset);
+				query.setMaxResults(itemPagina);
+				result.lista = query.getResultList();
+			}
+		}
+		
+		return result;
+	}
+
 	public WfDefinicaoDeProcedimento consultarPorSigla(WfDefinicaoDeProcedimentoDaoFiltro flt) {
 		return consultarPorSigla(flt.getSigla(), WfDefinicaoDeProcedimento.class, flt.ouDefault);
 	}
@@ -323,7 +353,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 	public WfProcedimento consultarPorSigla(WfProcedimentoDaoFiltro flt) {
 		return consultarPorSigla(flt.getSigla(), WfProcedimento.class, flt.ouDefault);
 	}
-
+	
 	public <T> T consultarPorSigla(String sigla, Class<T> clazz, CpOrgaoUsuario ouDefault) {
 		String acronimo = null;
 		if (clazz.isAssignableFrom(WfProcedimento.class)) {

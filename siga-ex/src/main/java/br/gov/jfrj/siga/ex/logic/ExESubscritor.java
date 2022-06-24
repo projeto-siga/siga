@@ -30,7 +30,8 @@ public class ExESubscritor implements Expression {
 
 	@Override
 	public boolean eval() {
-		return Utils.equivale(doc.getSubscritor(), titular) || Utils.equivale(doc.getLotaSubscritor(), lotaTitular);
+		return Utils.equivaleENaoENulo(doc.getSubscritor(), titular)
+				|| Utils.equivaleENaoENulo(doc.getLotaSubscritor(), lotaTitular);
 	}
 
 	@Override

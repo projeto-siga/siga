@@ -45,6 +45,7 @@ import com.google.common.cache.LoadingCache;
 
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaCalendar;
@@ -101,76 +102,31 @@ public class SigaLibsEL {
 	}
 	
 	public static String formatarDDMMYY(Date dt) {
-		if (dt == null) 
-			return null;
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
-		return df.format(dt);
+		return DateUtils.formatarDDMMYY(dt);
 	}
 
 	public static String formatarDDMMYYYY(Date dt) {
-		if (dt == null) 
-			return null;
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		return df.format(dt);
+		return DateUtils.formatarDDMMYYYY(dt);
 	}
 
 	public static String formatarDDMMYYYYHHMMSS(Date dt) {
-		if (dt == null) 
-			return null;
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-		return df.format(dt);
+		return DateUtils.formatarDDMMYYYYHHMMSS(dt);
 	}
 
 	public static String tempoRelativo(Date dt) {
-		if (dt == null)
-			return null;
-		return Data.calcularTempoRelativo(dt);
+		return DateUtils.tempoRelativo(dt);
 	}
 
 	public static String espera(Date dt) {
-		if (dt == null)
-			return null;
-		SigaCalendar c = new SigaCalendar();
-		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
-		// long l = -c.diffDayPeriods(lAnterior);
-		long l = c.getUnixDay() - lAnterior.getUnixDay();
-		if (l == 0) {
-			if (lAnterior.getJulianDay() == c.getJulianDay())
-				return (lAnterior.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "")
-						+ lAnterior.get(Calendar.HOUR_OF_DAY) + ":"
-						+ (lAnterior.get(Calendar.MINUTE) < 10 ? "0" : "")
-						+ lAnterior.get(Calendar.MINUTE);
-		}
-		return lAnterior.get(Calendar.DAY_OF_MONTH) + "/"
-				+ month[lAnterior.get(Calendar.MONTH)] + " ("
-				+ Long.toString(l) + " dia" + (l == 1L ? "" : "s") + ")";
+		return DateUtils.espera(dt);
 	}
 
 	public static String esperaSimples(Date dt) {
-		if (dt == null)
-			return null;
-		SigaCalendar c = new SigaCalendar();
-		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
-		// long l = -c.diffDayPeriods(lAnterior);
-		long l = c.getUnixDay() - lAnterior.getUnixDay();
-		if (l == 0) {
-			if (lAnterior.getJulianDay() == c.getJulianDay())
-				return lAnterior.get(Calendar.HOUR_OF_DAY) + ":"
-						+ (lAnterior.get(Calendar.MINUTE) < 10 ? "0" : "")
-						+ lAnterior.get(Calendar.MINUTE);
-		}
-		return Long.toString(l) + " dia" + (l == 1L ? "" : "s");
+		return DateUtils.esperaSimples(dt);
 	}
 
 	public static String intervalo(Date dtIni, Date dtFim) {
-		SigaCalendar lFim = new SigaCalendar(dtIni.getTime());
-		SigaCalendar lIni = new SigaCalendar(dtFim.getTime());
-
-		long l = lFim.getUnixDay() - lIni.getUnixDay();
-		if (l == 0) {
-			return lIni.diffHHMMSS(lFim);
-		}
-		return Long.toString(l) + " dia" + (l == 1L ? "" : "s");
+		return DateUtils.intervalo(dt);
 	}
 
 	/*

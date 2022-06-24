@@ -211,6 +211,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -8412,6 +8413,46 @@ public class ExBL extends CpBL {
 
 	public String obterNumeracaoExpediente(Long idOrgaoUsuario, Long idFormaDocumento, Long anoEmissao) throws Exception {
 		return Service.getExService().obterNumeracaoExpediente(idOrgaoUsuario, idFormaDocumento, anoEmissao);
+	}
+	
+	public Map<String, String> obterEntrevista(ExDocumento doc, boolean incluirOculto) {
+		Map<String, String> entrevista = new HashMap<>();
+		
+		Utils.mapFromUrlEncodedForm(entrevista, doc.getConteudoBlobForm());
+		
+		ArrayList<String> variaveisOcultas = obterVariaveisOcultas(doc.getExModelo());
+		
+		for(Iterator<String> it = entrevista.keySet().iterator(); it.hasNext(); ) 
+			if(!incluirOculto && variaveisOcultas.contains(it.next()))
+				it.remove();
+		
+		return entrevista;
+	}
+
+	public ArrayList<String> obterVariaveisOcultas(ExModelo mod) {
+		ArrayList<String> variaveisOcultas = new ArrayList<>();
+
+		byte[] blobMod = mod.getConteudoBlobMod();
+		
+		if (blobMod != null) {
+			final String blobStr = new String(blobMod);
+			int fromIndex = 0;
+
+			do {
+				fromIndex = blobStr.indexOf("[@oculto", fromIndex);
+				if (fromIndex != -1) {
+					fromIndex += 8;
+					int start = blobStr.indexOf("var", fromIndex) + 3;
+					start = blobStr.indexOf("\"", start) + 1;
+					int end = blobStr.indexOf("\"", start + 1);
+
+					if (start > 0 && end > start) 
+						variaveisOcultas.add(blobStr.substring(start, end));
+				}
+			} while (fromIndex != -1);
+		} 
+
+		return variaveisOcultas;
 	}
 
 	public List<Long> pesquisarXjus(

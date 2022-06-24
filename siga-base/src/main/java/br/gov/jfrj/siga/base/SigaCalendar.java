@@ -169,8 +169,20 @@ public class SigaCalendar extends GregorianCalendar {
 				}
 			}
 		}
+		
+		if (d > 0)
+			return d + " dias";
 
-		return d + ":" + h + ":" + m + ":" + s;
+		if (h > 0)
+			return h + "h";
+
+		if (m > 0)
+			return m + "min";
+
+		if (s > 0)
+			return s + "s";
+
+		return String.format("%02d", h) + ":" + String.format("%02d", m) + ":" + String.format("%02d", s);
 	}
 
 	public String diffCompact(Calendar end) {

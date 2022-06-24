@@ -2,10 +2,8 @@ package br.gov.jfrj.siga.wf.vraptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -24,6 +22,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -37,6 +36,7 @@ import br.gov.jfrj.siga.vraptor.Transacional;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.dao.WfDao.ListaETotal;
 import br.gov.jfrj.siga.wf.logic.WfPodeEditarVariaveis;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
@@ -47,6 +47,8 @@ import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
+import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoSelecao;
+import br.gov.jfrj.siga.wf.util.WfProcedimentoDaoFiltro;
 import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
@@ -614,6 +616,43 @@ public class WfAppController extends WfController {
 			}
 		}
 		throw new Exception("Movimentação não encontrada.");
+	}
+
+	
+//	public WfDefinicaoDeProcedimentoSelecao definicaoDeProcedimentoSel = new WfDefinicaoDeProcedimentoSelecao();
+//
+//	public WfDefinicaoDeProcedimentoSelecao getDefinicaoDeProcedimentoSel() {
+//		return definicaoDeProcedimentoSel;
+//	}
+	
+	@Get("app/pesquisar-procedimentos")
+	public void pesquisar(Long idDefinicaoDeProcedimento, final Boolean ativos,final int offset) {
+//		if (definicaoDeProcedimentoSel == null)
+//			definicaoDeProcedimentoSel = new WfDefinicaoDeProcedimentoSelecao();
+		
+//		assertAcesso("PESQ:Pesquisar");
+		if (getCadastrante().isUsuarioExterno() && Prop.isGovSP()) {
+			throw new AplicacaoException("Pesquisa indisponível para Usuários Externos.");
+		}
+		
+		getP().setOffset(offset);
+
+		final WfProcedimentoDaoFiltro flt = new WfProcedimentoDaoFiltro();
+//		flt.definicaoDeProcedimento = definicaoDeProcedimentoSel.buscarObjeto();
+		if (idDefinicaoDeProcedimento != null)
+		flt.definicaoDeProcedimento = WfDefinicaoDeProcedimento.AR.findById(idDefinicaoDeProcedimento);
+		flt.ativos = ativos;
+
+		int itemsPerPage = 50;
+		ListaETotal<WfProcedimento> cet = dao().consultarPorFiltro(flt, offset, itemsPerPage);
+
+//		result.include("definicaoDeProcedimentoSel", definicaoDeProcedimentoSel);
+		result.include("ativos", ativos);
+		result.include("itemPagina", itemsPerPage);
+		result.include("tamanho", cet.total);
+		result.include("itens", cet.lista);
+		result.include("idDefinicaoDeProcedimento", idDefinicaoDeProcedimento);
+		result.include("definicoesDeProcedimentos", dao().listarDefinicoesDeProcedimentos());
 	}
 
 	/**

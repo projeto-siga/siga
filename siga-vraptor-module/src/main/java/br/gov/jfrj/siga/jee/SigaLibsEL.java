@@ -126,7 +126,7 @@ public class SigaLibsEL {
 	}
 
 	public static String intervalo(Date dtIni, Date dtFim) {
-		return DateUtils.intervalo(dt);
+		return DateUtils.intervalo(dtIni, dtFim);
 	}
 
 	/*

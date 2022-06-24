@@ -80,17 +80,16 @@ public class Prop {
 	}
 
 	public static void defineGlobalProperties() {
+		
+		//URL Externa e/ou Interna (para front-end, etc) e
 		provider.addPublicProperty("/siga.base.url", "http://localhost:8080");
-		final String sigaBaseUrl = get("/siga.base.url");
-
-		provider.addPublicProperty("/sigaex.base.url", sigaBaseUrl);
-		final String sigaExBaseUrl = get("/sigaex.base.url");
-
-		provider.addPublicProperty("/sigagc.base.url", sigaBaseUrl);
-		final String sigaGcBaseUrl = get("/sigagc.base.url");
-
-		provider.addPublicProperty("/sigawf.base.url", sigaBaseUrl);
-		final String sigaWfBaseUrl = get("/sigawf.base.url");
+		provider.addPublicProperty("/sigaex.base.url", get("/siga.base.url"));
+		provider.addPublicProperty("/sigagc.base.url", get("/siga.base.url"));
+		provider.addPublicProperty("/sigawf.base.url", get("/siga.base.url"));
+		
+		//URL Interna (para back-end). Objetivo não usar Proxy, SSL, Firewall.. entre outras camandas de rede para chamadas internas
+		provider.addPublicProperty("/siga.service.base.url", get("/siga.base.url"));		
+		final String sigaServiceBaseUrl = get("/siga.service.base.url");
 
 		provider.addPublicProperty("/siga.hibernate.dialect");
 		
@@ -121,7 +120,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.integracao.sso.dominio", null);
 		provider.addPrivateProperty("/siga.integracao.sso.cliente.id", null);
 		provider.addPrivateProperty("/siga.integracao.sso.client.secret", null);
-		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", sigaBaseUrl + "/siga/callBack");
+		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", get("/siga.base.url") + "/siga/callBack");
 		provider.addPublicProperty("/siga.integracao.sso.btn.txt", "Entrar com o SSO");
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 
@@ -180,41 +179,65 @@ public class Prop {
 		provider.addPublicProperty("/siga.mesa.nao.revisar.temporarios", "false");
 		provider.addPublicProperty("/siga.mesa.versao", "2ant");
 		provider.addPublicProperty("/siga.municipios", null);
-		provider.addPublicProperty("/siga.pagina.inicial.url", null);
 		provider.addPublicProperty("/siga.versao.teste", "true");
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
-		provider.addPublicProperty("/sigaex.autenticidade.url", sigaExBaseUrl + "/sigaex/public/app/autenticar");
-		provider.addPublicProperty("/sigaex.url", sigaExBaseUrl + "/sigaex");
-		provider.addPublicProperty("/sigagc.url", sigaGcBaseUrl + "/sigagc");
-		provider.addPublicProperty("/sigaex.manual.url", sigaExBaseUrl + "/siga/arquivos/apostila_sigaex.pdf");
 
+		/* End-points Externos complementares */
+		provider.addPublicProperty("/siga.pagina.inicial.url", null);
+		provider.addPublicProperty("/sigaex.url", get("/sigaex.base.url") + "/sigaex");
+		provider.addPublicProperty("/sigaex.autenticidade.url", get("/sigaex.base.url") + "/sigaex/public/app/autenticar");
+		provider.addPublicProperty("/sigagc.url", get("/sigagc.base.url") + "/sigagc");
+		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
+		
+		/* Indica onde está armazenado o Manual de Operações* */
+		provider.addPublicProperty("/sigaex.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
+		provider.addPublicProperty("/siga.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
+		
+		/* Services
+		 * 
+		 * Properties para ativação do X-JUS 
+		 */
 		provider.addPrivateProperty("/xjus.jwt.secret", null);
 		provider.addPrivateProperty("/xjus.password", null);
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
+		
+		/* Services
+		 * 
+		 * Declaração dos serviços e end-points SOAP e RESTful usados pelo back-end nos módulos
+		 * 
+		 * ENDPOINT, URL, QNAME e NAME
+		 * 
+		 * SIGA
+		 * SIGAEX
+		 * SIGAWF
+		 * SIGAGC
+		 * BLUCSERVICE
+		 * VIZSERVICE
+		 */
 
-		provider.addPublicProperty("/siga.service.endpoint", sigaBaseUrl + "/siga/servicos/GiService?wsdl");
-		provider.addPublicProperty("/siga.service.url", sigaBaseUrl + "/siga/servicos/GiService");
+		provider.addPublicProperty("/siga.service.endpoint", sigaServiceBaseUrl + "/siga/servicos/GiService?wsdl");
+		provider.addPublicProperty("/siga.service.url", sigaServiceBaseUrl + "/siga/servicos/GiService");
 		provider.addPublicProperty("/siga.service.qname", "http://impl.service.gi.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/siga.service.name", "GiService");
 
-		provider.addPublicProperty("/sigaex.service.endpoint", sigaExBaseUrl + "/sigaex/servicos/ExService?wsdl");
-		provider.addPublicProperty("/sigaex.service.url", sigaExBaseUrl + "/sigaex/servicos/ExService");
+		provider.addPublicProperty("/sigaex.service.endpoint", sigaServiceBaseUrl + "/sigaex/servicos/ExService?wsdl");
+		provider.addPublicProperty("/sigaex.service.url", sigaServiceBaseUrl + "/sigaex/servicos/ExService");
 		provider.addPublicProperty("/sigaex.service.qname", "http://impl.service.ex.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigaex.service.name", "ExService");
 
-		provider.addPublicProperty("/sigawf.service.endpoint", sigaWfBaseUrl + "/sigawf/servicos/WfService?wsdl");
-		provider.addPublicProperty("/sigawf.service.url", sigaWfBaseUrl + "/sigawf/servicos/WfService");
+		provider.addPublicProperty("/sigawf.service.endpoint", sigaServiceBaseUrl + "/sigawf/servicos/WfService?wsdl");
+		provider.addPublicProperty("/sigawf.service.url", sigaServiceBaseUrl + "/sigawf/servicos/WfService");
 		provider.addPublicProperty("/sigawf.service.qname", "http://impl.service.wf.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigawf.service.name", "WfService");
 
-		provider.addPublicProperty("/sigagc.service.endpoint", sigaGcBaseUrl + "/sigagc/servicos/GcService?wsdl");
-		provider.addPublicProperty("/sigagc.service.url", sigaGcBaseUrl + "/sigagc/servicos/GcService");
+		provider.addPublicProperty("/sigagc.service.endpoint", sigaServiceBaseUrl + "/sigagc/servicos/GcService?wsdl");
+		provider.addPublicProperty("/sigagc.service.url", sigaServiceBaseUrl + "/sigagc/servicos/GcService");
 		provider.addPublicProperty("/sigagc.service.qname", "http://impl.service.gc.siga.jfrj.gov.br/");
 		provider.addPublicProperty("/sigagc.service.name", "GcService");
 
-		provider.addPublicProperty("/blucservice.url", sigaBaseUrl + "/blucservice/api/v1");
-		provider.addPublicProperty("/vizservice.url", sigaBaseUrl + "/vizservice");
+		provider.addPublicProperty("/blucservice.url", sigaServiceBaseUrl + "/blucservice/api/v1");
+		provider.addPublicProperty("/vizservice.url", sigaServiceBaseUrl + "/vizservice");
 
 		provider.addPublicProperty("/siga.sgp.bnf.url", "/siga-beneficios");
 		provider.addPublicProperty("/siga.sgp.aq.url", "/sigarhaq");
@@ -281,18 +304,8 @@ public class Prop {
 		 * armazenado em session storage no browser do usuário.
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
-		
-		/* Indica onde está armazenado o Manual de Operações do SIGA
-		 * */
-		provider.addPublicProperty("/siga.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
 
 		/* Permite inativar lotação com determinadas marcações */
 		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "false");
-
-
-
-
-		// CKEditor
-		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 	}
 }

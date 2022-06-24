@@ -200,6 +200,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 
 				Long duracaoTarefa = t.getHisDtIni().getTime() - dtLast.getTime();
 				String nomeTarefa = t.getDefinicaoDeTarefaDe().getNome();
+				dtLast = t.getHisDtIni();
 
 				// min Tarefa
 				Long min = mapaMin.get(nomeTarefa);

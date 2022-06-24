@@ -83,6 +83,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
+import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
 

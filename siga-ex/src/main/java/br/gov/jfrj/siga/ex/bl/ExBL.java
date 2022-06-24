@@ -259,11 +259,8 @@ public class ExBL extends CpBL {
 	private ProcessadorModelo processadorModeloFreemarker = new ProcessadorModeloFreemarker();
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
-<<<<<<< HEAD
 
 	ExNotificar notificar;
-=======
->>>>>>> develop
 	
 	public ExCompetenciaBL getComp() {
 		return (ExCompetenciaBL) super.getComp();

@@ -17,20 +17,38 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							Acompanhamento e Autenticação de Documentos
+							Acompanhamento e Autentica&ccedil;&atilde;o de Documentos
 						</h5>
 					</div>
 					<div class="card-body">
-
-						<div>
-							<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
-							<c:url var='pdfAssinado'
-								value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
-							<c:url var='pdf'
-								value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
-							<iframe id="frameDoc" width="100%" height="600"
-								align="center" style="margin-top: 10px;"> </iframe>
-						</div>
+						<c:if test="${not empty docVO}">
+							<p class="p-0 m-0">
+								<b>Documento ${docVO.tipoDocumento}:</b> ${docVO.sigla}
+							</p>
+							<p class="p-0 m-0">
+								<b>Classifica&ccedil;&atilde;o:</b> ${docVO.classificacaoDescricaoCompleta}
+							</p>
+							<p class="p-0 m-0">
+								<b>Descri&ccedil;&atilde;o:</b> ${docVO.descrDocumento}
+							</p>
+							<p class="p-0 m-0">
+								<b>Autentica&ccedil;&atilde;o/Assinatura:</b> ${autenticidade}
+							</p>
+						</c:if>
+					</div>
+					<div class="card-body">
+						<c:if test="${podeVisualizarExternamente}">
+							<div>
+								<input type="hidden" id="visualizador"
+									   value="${f:resource('/sigaex.pdf.visualizador') }"/>
+								<c:url var='pdfAssinado'
+									   value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true'/>
+								<c:url var='pdf'
+									   value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false'/>
+								<iframe id="frameDoc" width="100%" height="600"
+										align="center" style="margin-top: 10px;"></iframe>
+							</div>
+						</c:if>
 					</div>
 				</div>
 			</div>
@@ -38,14 +56,17 @@
 				<div class="row">
 					<div class="col">
 						<div class="card bg-light mb-3" >
-							<div class="card-header">
-								<h5>
-									<i class="fa fa-file-pdf"></i> Arquivos para Download
-								</h5>
-							</div>
-							<div class="card-body">
-								<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc" target="_blank">PDF do documento</a>
-							</div>
+							<c:if test="${podeVisualizarExternamente}">
+								<div class="card-header">
+									<h5>
+										<i class="fa fa-file-pdf"></i> Arquivos para Download
+									</h5>
+								</div>
+								<div class="card-body">
+									<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc" target="_blank">PDF
+									do documento</a>
+								</div>
+							</c:if>
 						</div>
 					</div>
 				</div>

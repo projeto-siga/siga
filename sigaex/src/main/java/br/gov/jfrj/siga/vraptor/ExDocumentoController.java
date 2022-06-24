@@ -46,7 +46,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -114,6 +116,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
@@ -806,6 +809,23 @@ public class ExDocumentoController extends ExController {
 				.getSigla() });
 		parFreeMarker.put("sigla_lota_titular", new String[] { getLotaTitular()
 				.getSiglaCompleta() });
+		
+		if(new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(ExTipoDeConfiguracao.HERDAR_PREENCHIMENTO)
+				.withExMod(exDocumentoDTO.getModelo())
+				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
+			
+			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
+				ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
+				
+				Map<String, String> form = Ex.getInstance().getBL().obterEntrevista(doc, false);
+				
+				for(Entry<String,String> entry : form.entrySet()) {
+					if(!parFreeMarker.containsKey(entry.getKey()))
+						parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
+				}
+			}
+		}
 
 		// result.include("param", exDocumentoDTO.getParamsEntrevista());
 

@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -117,6 +118,7 @@ import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -211,17 +213,19 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import br.gov.jfrj.siga.ex.util.Notificador;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
+import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
 import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
@@ -256,6 +260,8 @@ public class ExBL extends CpBL {
 	private ProcessadorModelo processadorModeloFreemarker = new ProcessadorModeloFreemarker();
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
+
+	ExNotificar notificar;
 	
 	public ExCompetenciaBL getComp() {
 		return (ExCompetenciaBL) super.getComp();
@@ -1694,6 +1700,9 @@ public class ExBL extends CpBL {
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
 				
+				notificar = new ExNotificar();
+				notificar.cossignatario(doc, cadastrante);
+				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -1959,6 +1968,9 @@ public class ExBL extends CpBL {
 					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
 					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
 				}
+				
+				notificar = new ExNotificar();
+				notificar.cossignatario(doc, cadastrante);
 				
 				gravarMovimentacao(mov);
 	
@@ -3175,7 +3187,7 @@ public class ExBL extends CpBL {
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			
 			dao().gravar(doc);
-
+			
 			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 				for (final ExVia via : setVias) {
 					Integer numVia = null;
@@ -3207,6 +3219,9 @@ public class ExBL extends CpBL {
 			ExMobil mob = doc.getMobilDefaultParaReceberJuntada();
 			if (doc.getExMobilAutuado() != null)
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc, null, cadastrante);
+			
+			notificar = new ExNotificar();
+			notificar.responsavelPelaAssinatura(doc, cadastrante);
 			
 			return s;
 		} catch (final Exception e) {
@@ -4078,10 +4093,10 @@ public class ExBL extends CpBL {
 			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(movUlt.getDtIniMov());
 			dao().gravar(mov.getExMobil());
 		}
-
-		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
+		
+		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) { 
 			Notificador.notificarDestinariosEmail(mov, Notificador.TIPO_NOTIFICACAO_GRAVACAO);
-		}
+		} 
 		
 		if (SigaMessages.isSigaSP()) {
 			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA &&
@@ -5380,6 +5395,10 @@ public class ExBL extends CpBL {
 						List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
 						listaMovimentacao.addAll(m.doc().getMobilGeral()
 								.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
+						
+						notificar = new ExNotificar();
+						notificar.usuarioDiretamenteOuPelaUnidade(mov);
+						
 						if (!listaMovimentacao.isEmpty()) {
 							List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();
 							listaDocumentos.addAll(mob.getDoc().getExDocumentoFilhoSet());
@@ -8412,6 +8431,46 @@ public class ExBL extends CpBL {
 
 	public String obterNumeracaoExpediente(Long idOrgaoUsuario, Long idFormaDocumento, Long anoEmissao) throws Exception {
 		return Service.getExService().obterNumeracaoExpediente(idOrgaoUsuario, idFormaDocumento, anoEmissao);
+	}
+	
+	public Map<String, String> obterEntrevista(ExDocumento doc, boolean incluirOculto) {
+		Map<String, String> entrevista = new HashMap<>();
+		
+		Utils.mapFromUrlEncodedForm(entrevista, doc.getConteudoBlobForm());
+		
+		ArrayList<String> variaveisOcultas = obterVariaveisOcultas(doc.getExModelo());
+		
+		for(Iterator<String> it = entrevista.keySet().iterator(); it.hasNext(); ) 
+			if(!incluirOculto && variaveisOcultas.contains(it.next()))
+				it.remove();
+		
+		return entrevista;
+	}
+
+	public ArrayList<String> obterVariaveisOcultas(ExModelo mod) {
+		ArrayList<String> variaveisOcultas = new ArrayList<>();
+
+		byte[] blobMod = mod.getConteudoBlobMod();
+		
+		if (blobMod != null) {
+			final String blobStr = new String(blobMod);
+			int fromIndex = 0;
+
+			do {
+				fromIndex = blobStr.indexOf("[@oculto", fromIndex);
+				if (fromIndex != -1) {
+					fromIndex += 8;
+					int start = blobStr.indexOf("var", fromIndex) + 3;
+					start = blobStr.indexOf("\"", start) + 1;
+					int end = blobStr.indexOf("\"", start + 1);
+
+					if (start > 0 && end > start) 
+						variaveisOcultas.add(blobStr.substring(start, end));
+				}
+			} while (fromIndex != -1);
+		} 
+
+		return variaveisOcultas;
 	}
 
 	public List<Long> pesquisarXjus(

@@ -340,7 +340,7 @@
 			 
 				
 <c:if test="${exDocumentoDTO.permiteRequerente}"> 
-					<div class="row">
+					<div class="row" style="display:none">
 						<div class="col-sm-2">
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-2">

@@ -237,7 +237,7 @@ public class ExDocumentoDTO {
 	private List<ExNivelAcesso> listaNivelAcesso;
 	
 	
-	private boolean possuiRequerente;
+	private boolean possuiRequerente = true;
 //	
 	private String cpfRequerente;
 	

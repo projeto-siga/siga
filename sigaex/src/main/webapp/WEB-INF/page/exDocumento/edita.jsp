@@ -359,6 +359,10 @@
 </c:if>
 
 					<div id="tr_possuiRequerente" style="display: ${exDocumentoDTO.possuiRequerente and exDocumentoDTO.permiteRequerente ? '': 'none'};">
+					
+					 
+   						 <label>Interessado</label>
+							 
 						
 						<input type="hidden" name="campos" value="cpfRequerente" />
 						<input type="hidden" name="campos" value="cnpjRequerente" />

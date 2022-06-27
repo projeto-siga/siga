@@ -2293,6 +2293,7 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDTO.setCidadeRequerente( null);
 			exDocumentoDTO.setUfRequerente( null);
 			exDocumentoDTO.setCepRequerente( null);		
+			exDocumentoDTO.setEmailRequerente(null);
 
 		}
 
@@ -2536,7 +2537,9 @@ public class ExDocumentoController extends ExController {
 		doc.setBairroRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getBairroRequerente() : null);		
 		doc.setCidadeRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCidadeRequerente() : null);
 		doc.setUfRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getUfRequerente() : null);
-		doc.setCepRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCepRequerente() : null);		
+		doc.setCepRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getCepRequerente() : null);	
+		
+		doc.setEmailRequerente(exDocumentoDTO.isPossuiRequerente() ?exDocumentoDTO.getEmailRequerente() : null);	
 
 		doc.setExModelo(null);
 		if (exDocumentoDTO.getIdMod() != 0) {

@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -5247,13 +5248,16 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento documento = buscarDocumento(documentoBuilder);
+
+		String codAcessoDocumento = SigaUtil.buildJwtToken("1", SigaUtil.randomAlfanumerico(10), sigla);
 		
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 
 		String servidor = Prop.get("/sigaex.url");
-
-		String caminho = servidor + "/public/app/autenticar?n=";
+		String n = documento.getSiglaAssinatura();
+		
+		String caminho = servidor + "/public/app/autenticar?n=" + n + "&cod=" + codAcessoDocumento;
 
 		result.include("url", caminho);
 		result.include("sigla", sigla);
@@ -5265,6 +5269,6 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/enviar_para_visualizacao_externa_gravar")
 	public void enviarParaVisualizacaoExternaGravar(final String sigla) {
 		result.include("sigla", sigla);
-
+		//TODO: Gravar movimentacao ENVIO_PARA_VISUALIZACAO_EXTERNA
 	}
 }

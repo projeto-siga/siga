@@ -4,6 +4,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import com.crivano.jlogic.*;
 
 public class ExPodeEnviarParaVisualizacaoExterna extends CompositeExpressionSupport {
@@ -39,7 +40,7 @@ public class ExPodeEnviarParaVisualizacaoExterna extends CompositeExpressionSupp
                 new ExPodeAcessarDocumento(mob, titular, lotaTitular),
 
                 Not.of(new ExPodePorConfiguracao(titular, lotaTitular)
-                        .withIdTpConf(CpTipoDeConfiguracao.PERMITIR_VISUALIZACAO_EXTERNA_DOCUMENTOS)
+                        .withIdTpConf(ExTipoDeConfiguracao.VISUALIZACAO_EXTERNA_DOCUMENTOS)
                         .withCpOrgaoUsu(mob.getDoc().getOrgaoUsuario()))
         );
     }

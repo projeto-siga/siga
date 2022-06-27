@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
-                        <label><b>Aten&ccedil;&atilde;o: </b>Para encaminhar o documento para um usu&acute;rio n&atilde;o cadastrado
+                        <label><b>Aten&ccedil;&atilde;o: </b>Para encaminhar o documento para um usu&aacute;rio n&atilde;o cadastrado
                             no sistema, preencha os seguintes campos </label>
                         <br/>
                         <a href="${url}" target="_blank">${url}</a>

@@ -79,7 +79,7 @@ public class ExAutenticacaoController extends ExController {
 	@Get
 	@Path("/autenticar.action")
 	public void redirecionar() throws Exception {
-		result.redirectTo(this).autenticar(null, null, null, null, null, null);
+		result.redirectTo(this).autenticar(null, null, null, null, null, null, null);
 	}
 
 	@Get
@@ -87,7 +87,7 @@ public class ExAutenticacaoController extends ExController {
 	@Path("/public/app/autenticar")
 	public void autenticar(final String n, final String answer,
 			final String ass, final String assinaturaB64,
-			final String certificadoB64, final String atributoAssinavelDataHora)
+			final String certificadoB64, final String atributoAssinavelDataHora, final String cod)
 			throws Exception {
 
 		// Só para já dar o erro logo.
@@ -181,7 +181,8 @@ public class ExAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
-		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n));
+		result.include("cod", cod);
+		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n), cod);
 	}
 
 	@Get("/public/app/arquivoAutenticado_stream")
@@ -279,7 +280,7 @@ public class ExAutenticacaoController extends ExController {
 
 	// antigo metodo arquivo();
 	@Get("/public/app/arquivoAutenticado")
-	public void arquivoAutenticado(final String jwt) throws Exception {
+	public void arquivoAutenticado(final String jwt, final String cod) throws Exception {
 		if (jwt == null) {
 			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
@@ -334,14 +335,15 @@ public class ExAutenticacaoController extends ExController {
 			 * se é permitido a visualização externa do Documento no Órgão
 			 */
 			result.include("podeVisualizarExternamente", 
-					Ex.getInstance().getComp().pode(ExPodeVisualizarExternamente.class,
-							getTitular(), getLotaTitular(), doc.getMobilGeral()));
+					new ExPodeVisualizarExternamente(
+							doc.getMobilGeral(), getTitular(), getLotaTitular(), cod).eval()
+			);
 			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
 			result.include("docVO", docVO);
 			result.include("autenticidade",
 					docVO.getDoc().getAssinantesCompleto() +
-							" Documento N: " +
+							" Documento Nº: " +
 							docVO.getDoc().getSiglaAssinatura()
 
 			);

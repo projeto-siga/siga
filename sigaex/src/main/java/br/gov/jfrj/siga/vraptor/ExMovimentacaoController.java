@@ -1399,9 +1399,14 @@ public class ExMovimentacaoController extends ExController {
 			List<ExMovimentacao> listaCossignatarios = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE);
 			if (!listaCossignatarios.isEmpty()) {
 				if (incluirCossig)
-					getExConsTempDocCompleto().incluirCossigsVisTempDocsCompl(getCadastrante(), getLotaTitular(), doc, incluirCossig);
+					try {
+						getExConsTempDocCompleto().incluirCossigsVisTempDocsCompl(getCadastrante(), getLotaTitular(), doc, incluirCossig, Boolean.TRUE);
+					} catch (RegraNegocioException e) {
+						result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+					}	
 				else
 					getExConsTempDocCompleto().removerCossigsVisTempDocsComplFluxoTelaCossignatarios(getCadastrante(), getLotaTitular(), listaCossignatarios, doc);
+				
 			}
 		}
 		result.forwardTo(this).incluirCosignatario(sigla);

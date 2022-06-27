@@ -340,7 +340,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 			result.include("docVO", docVO);
 			result.include("autenticidade",
 					exDocumentoDTO.getDoc().getAssinantesCompleto() +
-							" Documento N: " +
+							" Documento Nº: " +
 							exDocumentoDTO.getDoc().getSiglaAssinatura()
 					
 			);

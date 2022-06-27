@@ -30,13 +30,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.hibernate.SQLQuery;
-
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.jee.SigaLibsEL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
@@ -124,8 +123,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 		List<String> dados = new ArrayList<String>();
 		for (Doc s : docs) {
 			dados.add(s.getNumeroDoc());
-			dados.add(DateFormat.getInstance().format(s.getInicio().getTime()));
-			dados.add(s.getFim() == null ? "Em Andamento" : DateFormat.getInstance().format(s.getFim().getTime()));
+			dados.add(SigaLibsEL.formatarDDMMYYYYHHMMSS(s.getInicio().getTime()));
+			dados.add(s.getFim() == null ? "Em Andamento" : SigaLibsEL.formatarDDMMYYYYHHMMSS(s.getFim().getTime()));
 			dados.add(s.getDuracao());
 		}
 		return dados;

@@ -46,7 +46,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -55,8 +57,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
-import br.gov.jfrj.siga.ex.logic.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jboss.logging.Logger;
 
@@ -102,6 +102,25 @@ import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
+import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
+import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
+import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
+import br.gov.jfrj.siga.ex.logic.ExPodeCriarVolume;
+import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerConcelamentoDeDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarData;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
+import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
+import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
+import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
+import br.gov.jfrj.siga.ex.logic.ExPodeRestringirCossignatarioSubscritor;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -790,6 +809,23 @@ public class ExDocumentoController extends ExController {
 				.getSigla() });
 		parFreeMarker.put("sigla_lota_titular", new String[] { getLotaTitular()
 				.getSiglaCompleta() });
+		
+		if(new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(ExTipoDeConfiguracao.HERDAR_PREENCHIMENTO)
+				.withExMod(exDocumentoDTO.getModelo())
+				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
+			
+			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
+				ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
+				
+				Map<String, String> form = Ex.getInstance().getBL().obterEntrevista(doc, false);
+				
+				for(Entry<String,String> entry : form.entrySet()) {
+					if(!parFreeMarker.containsKey(entry.getKey()))
+						parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
+				}
+			}
+		}
 
 		// result.include("param", exDocumentoDTO.getParamsEntrevista());
 
@@ -2073,7 +2109,8 @@ public class ExDocumentoController extends ExController {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 		
-		ExProtocolo prot = exBL.obterProtocolo(exDocumentoDto.getDoc());
+		ExProtocolo prot = new ExProtocolo();
+		prot = exBL.obterProtocolo(exDocumentoDto.getDoc());
 		
 		if(prot == null) {
 			try {

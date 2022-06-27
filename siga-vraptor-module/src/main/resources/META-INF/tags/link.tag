@@ -67,13 +67,13 @@
 	</c:set>
 </c:if>
 
-<c:if test="${exibirExplicacao and (not empty explicacao or not empty descr)}">
+<c:if test="${exibirExplicacao and (((not empty explicacao) and (explicacao ne 'Permitido porque sempre pode')) or not empty descr)}">
 	<c:set var="tooltip">
 		<b>${title}</b>
 		<c:if test="${not empty descr}">
 		<hr /><p style='margin-bottom: 0;'>${descr}</p>
 		</c:if>
-		<c:if test="${not empty explicacao}">
+		<c:if test="${(not empty explicacao) and (explicacao ne 'Permitido porque sempre pode')}">
 		<hr /><p style='font-size: 70%; color: gray; margin-bottom: 0;'>${explicacao}</p>
 		</c:if>
 	</c:set>

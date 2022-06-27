@@ -173,7 +173,7 @@
 							<div class="col-sm-6">
 								<div class="form-group">
 									<div id="tr_titular"
-										style="${!substituicao == '' ? 'display: none' : ''}">
+										style="${!substituicao ? 'display: none' : ''}">
 										<label>Titular</label> <input class="form-control"
 											type="hidden" name="campos" value="titularSel.id" />
 										<siga:selecao propriedade="titular" tema="simple"

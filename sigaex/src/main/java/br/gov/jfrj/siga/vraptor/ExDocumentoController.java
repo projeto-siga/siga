@@ -1842,8 +1842,12 @@ public class ExDocumentoController extends ExController {
 				//input checkbox selecionado  
 				if (exDocumentoDTO.isPodeIncluirSubscrArvoreDocs()) { 
 					getExConsTempDocCompleto().removerSubscrVisTempDocsComplFluxoGravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
-					getExConsTempDocCompleto()
-							.incluirSubscritorVisTempDocsCompl(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), exDocumentoDTO.isPodeIncluirSubscrArvoreDocs());
+					try {
+						getExConsTempDocCompleto()
+								.incluirSubscritorVisTempDocsCompl(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), exDocumentoDTO.isPodeIncluirSubscrArvoreDocs(), Boolean.TRUE);
+					} catch (RegraNegocioException e) {
+						result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+					}	
 				} else {
 					getExConsTempDocCompleto().removerSubscrVisTempDocsComplFluxoGravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
 				}

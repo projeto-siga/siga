@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
+
+import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -87,9 +90,9 @@ public class ExVisualizacaoTempDocCompl {
 	public void incluirCossigsSubscrVisTempDocsComplFluxoFinalizar (
 							final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc) {
 		//Flag Boolean False usada para forcar busca de movs PAPEL_AUTORIZADO_COSSIG
-		incluirCossigsVisTempDocsCompl(cadastrante, lotaCadastrante, doc, Boolean.FALSE);
+		incluirCossigsVisTempDocsCompl(cadastrante, lotaCadastrante, doc, Boolean.FALSE, Boolean.FALSE);
 		//Flag Boolean False usada para forcar busca de movs PAPEL_AUTORIZADO
-		incluirSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc, Boolean.FALSE);
+		incluirSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc, Boolean.FALSE, Boolean.FALSE);
 	}
 	
 	/**
@@ -100,12 +103,15 @@ public class ExVisualizacaoTempDocCompl {
 	 * @param podeIncluirSubscr
 	 */
 	public void incluirCossigsVisTempDocsCompl(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
-							final ExDocumento doc, boolean podeIncluirSubscr) {
+							final ExDocumento doc, boolean podeIncluirSubscr, boolean fluxoInclusao) {
 		if (podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante))	{
 			//Verificacao se pode incluir mov
 			if (podeIncluirCossigSubscrVisTempDocsCompl(doc, podeIncluirSubscr, PAPEL_AUTORIZ_COSSIG)) {
 				//obtem todos os cossigs para inclusao de mov
 				List<DpPessoa> cossigs = doc.getCosignatarios();
+				// Valida se for usuario externo
+				if (fluxoInclusao)
+					validarExistenciaUsuarioExterno(cossigs);
 				//obtem vias doc ao qual deve se criar mov
 				List<ExDocumento> listaViasDocs = doc.isFinalizado() ? doc.getTodosOsPaisDasViasCossigsSubscritor() : Arrays.asList(doc);
 				incluirCossigsSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc,
@@ -122,12 +128,15 @@ public class ExVisualizacaoTempDocCompl {
 	 * @param podeIncluirSubscr
 	 */
 	public void incluirSubscritorVisTempDocsCompl(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExDocumento doc, boolean podeIncluirSubscr) {
+			final DpLotacao lotaCadastrante, final ExDocumento doc, boolean podeIncluirSubscr, boolean fluxoInclusao) {
 		if (podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
 			//Verificacao se pode incluir mov
 			if (podeIncluirCossigSubscrVisTempDocsCompl(doc, podeIncluirSubscr, PAPEL_AUTORIZ_SUBSCR)) {
 				DpPessoa subscritor = doc.getSubscritorDiffTitularDoc();
-					//obtem vias doc ao qual deve se criar mov
+				// Valida se for usuario externo
+				if (fluxoInclusao)
+					validarExistenciaUsuarioExterno(Arrays.asList(subscritor));
+				//obtem vias doc ao qual deve se criar mov
 				List<ExDocumento> listaViasDocs = doc.isFinalizado() ? doc.getTodosOsPaisDasViasCossigsSubscritor() : Arrays.asList(doc);
 				if(subscritor != null) 
 					incluirCossigsSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc,
@@ -140,8 +149,7 @@ public class ExVisualizacaoTempDocCompl {
 			ExDocumento docOrigem, List<ExDocumento> listaViasDocPai, List<DpPessoa> listaCossigDoc, long codigoPapel) {
 		if (!listasVazias(listaViasDocPai, listaCossigDoc)) {
 			Date dt = ExDao.getInstance().dt();
-			ExPapel exPapel = exDao.consultar(codigoPapel, ExPapel.class, false);
-	
+			ExPapel exPapel = exDao.consultar(codigoPapel, ExPapel.class, false);		
 			for (ExDocumento docPai : listaViasDocPai) {
 				for (DpPessoa dpPessoaCossig : listaCossigDoc) {
 					if (podeAddMovVinculPapelCossigsSubscritor(docOrigem, docPai, dpPessoaCossig, codigoPapel)) {
@@ -463,6 +471,13 @@ public class ExVisualizacaoTempDocCompl {
 					: Boolean.TRUE;
 		}
 		return podeAddMov;
+	}
+	
+	private void validarExistenciaUsuarioExterno(List<DpPessoa> listaCossigDoc) {
+		for (DpPessoa dpPessoaCossig : listaCossigDoc) {
+			if (dpPessoaCossig.isUsuarioExterno())
+				throw new RegraNegocioException("Atenção: Usuários Externos não podem acessar Documentos Completos.");
+		}
 	}
 
 	private boolean listasVazias(List<?> ...listas) {

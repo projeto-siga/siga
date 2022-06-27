@@ -3629,6 +3629,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeApensar(DpPessoa titular, DpLotacao lotaTitular,
 			ExMobil mob) {
+		
+		// PROCESSO_RIO-2428
+		boolean apensarPCRJ = false;
 
 		if (!mob.isVia() && !mob.isVolume())
 			return false;
@@ -3636,7 +3639,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isEmTramiteParalelo())
 			return false;
 
-		return !mob.isCancelada()
+		return apensarPCRJ 
+				&& !mob.isCancelada()
 				&& !mob.doc().isSemEfeito()
 				&& !mob.isEmTransito(titular, lotaTitular)
 				&& podeMovimentar(titular, lotaTitular, mob)

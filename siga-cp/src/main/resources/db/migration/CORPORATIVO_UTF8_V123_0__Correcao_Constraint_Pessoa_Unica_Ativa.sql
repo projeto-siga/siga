@@ -1,0 +1,19 @@
+-- -----------------------------------------------------------------------------------------------
+--	CORREÇÃO DA CONSTRAINT CRIADA NO SCRIPT V116 ONDE NÃO FOI TRATADO DADOS INATIVOS
+--	SCRIPT: EVITA A DUPLICIDADE DE PESSOAS COM O MESMO Órgão, Cargo, Função, Unidade e CPF.
+
+-- NÃO APLICADO O NOVALIDATE. DEVE-SE TRATAR DADOS ATIVOS QUE ESTEJAM REPETIDOS.
+
+-- -----------------------------------------------------------------------------------------------
+
+-- DROP CONSTRAINT
+ALTER TABLE CORPORATIVO.DP_PESSOA DROP CONSTRAINT siga_valid_unique;
+-- DROP IDX
+DROP INDEX corporativo.user_index_for_un ;
+
+-- CREATE IDX PESSOA ATIVA SEM REPETIÇÃO DAS CHAVES CPF + ID_ORGAO_USU + ID_LOTACAO + ID_CARGO + ID_FUNCAO_CONFIANCA
+CREATE UNIQUE INDEX CORPORATIVO.PESSOA_ATIVA_CHAVES_UNICA on CORPORATIVO.DP_PESSOA (
+    CASE WHEN DATA_FIM_PESSOA IS NULL THEN 
+        CPF_PESSOA || '-' || ID_ORGAO_USU || '-' || ID_LOTACAO || '-' || ID_CARGO || '-' || ID_FUNCAO_CONFIANCA 
+    END
+);

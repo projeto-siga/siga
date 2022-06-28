@@ -15,12 +15,18 @@ public class ExPodeVisualizarExternamente extends CompositeExpressionSupport {
     private final DpPessoa titular;
     private final DpLotacao lotaTitular;
 
-    private final String cod;
+    private String cod = null;
 
     /**
      * Retorna se é possível visualizar um documento externamente pelo
      * link de autenticidade contido no rodapé do Documento.
      */
+    public ExPodeVisualizarExternamente(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+        this.mob = mob;
+        this.titular = titular;
+        this.lotaTitular = lotaTitular;
+    }
+
     public ExPodeVisualizarExternamente(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular, String cod) {
         this.mob = mob;
         this.titular = titular;

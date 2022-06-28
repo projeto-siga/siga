@@ -94,6 +94,13 @@ public class ExAutenticacaoController extends ExController {
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		result.include("n", n);
 		result.include("cod", cod);
+		
+		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
+		ExDocumento doc = (ExDocumento) arq;
+		
+		result.include("podeVisualizarExternamente", new ExPodeVisualizarExternamente(
+				doc.getMobilGeral(), getTitular(), getLotaTitular()).eval());
+
 
 		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();
@@ -130,9 +137,6 @@ public class ExAutenticacaoController extends ExController {
 			setDefaultResults();
 			return;
 		}
-
-		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
-		ExDocumento doc = (ExDocumento) arq;
 
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		boolean mostrarBotaoAssinarExterno = arq
@@ -180,10 +184,6 @@ public class ExAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
-		result.include("podeVisualizarExternamente",
-				new ExPodeVisualizarExternamente(
-						doc.getMobilGeral(), getTitular(), getLotaTitular(), cod).eval()
-		);
 		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n), cod);
 	}
 

@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.ex.logic;
 
 import br.gov.jfrj.siga.cp.logic.CpTokenEValido;
-import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -9,8 +8,6 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Or;
-
-import java.util.Map;
 
 public class ExPodeVisualizarExternamente extends CompositeExpressionSupport {
 

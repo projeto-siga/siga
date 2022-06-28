@@ -5265,6 +5265,7 @@ public class ExMovimentacaoController extends ExController {
 		String caminho = servidor + "/public/app/autenticar?n=" + n + "&cod=" + codAcessoDocumento;
 
 		result.include("url", caminho);
+		result.include("cod", codAcessoDocumento);
 		result.include("sigla", sigla);
 		result.include("dataHora", df.format(c.getTime()));
 

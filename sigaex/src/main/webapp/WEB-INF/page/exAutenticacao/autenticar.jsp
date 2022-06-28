@@ -44,6 +44,16 @@
 									</div>
 								</div>
 							</div>
+							<c:if test="${!podeVisualizarExternamente}">
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<label>C&oacute;digo de acesso ao documento</label>
+											<input type="text" id="id_cod" name="cod" class="form-control" value="${param.cod}" />
+										</div>
+									</div>
+								</div>
+							</c:if>
 							<div class="row">
 								<div class="col">
 									<div class="form-group">

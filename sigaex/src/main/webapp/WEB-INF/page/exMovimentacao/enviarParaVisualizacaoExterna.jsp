@@ -7,6 +7,34 @@
 
 <link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, projection, print"/>
 
+<script type="text/javascript">
+
+    function validarNome(campo) {
+        campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.\-\/]/g,'');
+    }
+
+    function validarEmail(campo) {
+        if(campo.value != "") {
+            var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
+
+            if (campo.value.search(RegExp) == -1) {
+                sigaModal.alerta("E-mail inválido!");
+                habilitarBotaoOk();
+                document.getElementById('email').focus();
+                return false;
+            } else if (campo.value.search(',') > 0) {
+                sigaModal.alerta("E-mail inválido! Não pode conter vírgula ( , )");
+                habilitarBotaoOk();
+                document.getElementById('email').focus();
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
 <siga:pagina titulo="Enviar para Visualiza&ccedil;&atilde;o Externa" popup="true">
     <style type="text/css">
         @media print {
@@ -86,8 +114,11 @@
                     </div>
                 </div>
             </div>
-            <form name="frm" action="${request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar"
+            <form name="frm" action="${pageContext.request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar"
                   method="POST">
+                <input type="hidden" name="sigla" value="${sigla}" />
+                <input type="hidden" name="cod" value="${cod}" />
+                <input type="hidden" name="url" value="${url}" />
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="form-group">

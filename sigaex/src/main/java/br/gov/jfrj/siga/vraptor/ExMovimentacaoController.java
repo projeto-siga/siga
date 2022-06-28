@@ -5273,8 +5273,26 @@ public class ExMovimentacaoController extends ExController {
 
 	@Transacional
 	@Post("/app/expediente/mov/enviar_para_visualizacao_externa_gravar")
-	public void enviarParaVisualizacaoExternaGravar(final String sigla) {
-		result.include("sigla", sigla);
+	public void enviarParaVisualizacaoExternaGravar(final String sigla,
+													final String nmPessoa,
+													final String email,
+													final String cod,
+													final String url) {
+
+		try {
+			Correio.enviar(email, "SP Sem Papel - Credencial para visualização do documento",
+					"Segue abaixo o código para visualização do documento, " +
+							"para visualizar o documento basta clicar no  link abaixo: "
+							+ "\n" + "\nCÓDIGO: " + cod
+							+ "\n" + "\nLink para acesso: "
+							+ "\n" + url
+							+ "\n\nAtenção: esta é uma "
+							+ "mensagem automática. Por favor, não responda.");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 		//TODO: Gravar movimentacao ENVIO_PARA_VISUALIZACAO_EXTERNA
+		
 	}
 }

@@ -18,6 +18,14 @@
                 -webkit-print-color-adjust: exact;
             }
         }
+        
+        .link-reduzido {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            max-width: 40%;
+        }
     </style>
     <!-- main content bootstrap -->
     <div class="card-body">
@@ -54,7 +62,8 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
-                        <label>N&uacute;mero da credencial de acesso ao documento: <b>${protocolo.codigo}</b></label>
+                        <label>N&uacute;mero da credencial de acesso ao documento:</label>
+                        <a href="${url}" target="_blank" class="link-reduzido">${cod}</a>
                     </div>
                 </div>
             </div>
@@ -70,45 +79,43 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
-                        <label><b>Aten&ccedil;&atilde;o: </b>Para encaminhar o documento para um usu&aacute;rio n&atilde;o cadastrado
+                        <label><b>Aten&ccedil;&atilde;o: </b>Para encaminhar o documento para um usu&aacute;rio n&atilde;o
+                            cadastrado
                             no sistema, preencha os seguintes campos </label>
                         <br/>
-                        <a href="${url}" target="_blank">${url}</a>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <form name="frm" action="${request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar" method="POST">
-                    <div class="col-md-4">
+            <form name="frm" action="${request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar"
+                  method="POST">
+                <div class="row">
+                    <div class="col-sm-12">
                         <div class="form-group">
-                            <label for="nmPessoa">Nome</label>
+                            <label for="nmPessoa">Nome: </label>
                             <input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60"
                                    class="form-control" onkeyup="validarNome(this)"/>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
                         <div class="form-group">
-                            <label for="nmPessoa">E-mail</label>
+                            <label for="email">E-mail: </label>
                             <input type="text" id="email" name="email" value="${email}" maxlength="60"
                                    onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()"
                                    class="form-control"/>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
-        <br>
-        <br>
-        <br/>
-        <div id="btn-form">
-            <form name="frm" action="principal" namespace="/" method="get"
-                  theme="simple">
-                <button type="button" class="btn btn-primary"
-                        onclick="javascript: document.body.offsetHeight; window.print();">Imprimir
-                </button>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-envelope"></i>
+                            Enviar
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
-
 
 </siga:pagina>

@@ -104,6 +104,7 @@ import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
+import br.gov.jfrj.siga.ex.logic.ExEstaAutenticadoComTokenOuSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
@@ -723,17 +724,14 @@ public class ExMovimentacaoController extends ExController {
 		
 		if (autenticando == null)
 			autenticando = false;
+		
+		if (autenticando) {
+			permiteAutenticar(doc);
+		}
+		
 		boolean previamenteAssinado = !doc.isPendenteDeAssinatura();
 		boolean assinando = !autenticando;
-		
-		if (autenticando && !permiteAutenticar(doc)) {				
-			throw new AplicacaoException(
-					"Não é permitido autenticar o documento, favor rever as configurações para o modelo: "
-					+ doc.getExModelo().getDescMod() + ". "
-					+ "Tipo de Configuração: Movimentar. "
-					+ "Tipo de Movimentação: Autenticação de Documento.");			
-		}
-					
+				
 		/*
 		 * 16/01/2020 - recebendo a data da assinatura
 		 */
@@ -778,7 +776,11 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	private boolean permiteAutenticar(ExDocumento doc) {
-		return Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, getTitular(), getLotaTitular(), doc);
+		ExPodeAutenticarDocumento podeAutenticar = new ExPodeAutenticarDocumento(doc, getTitular(), getLotaTitular());
+		if (podeAutenticar.eval())
+			return podeAutenticar.eval();
+		else
+			throw new AplicacaoException("Não é permitido autenticar o documento: <b>" + doc.getSigla() + " " + AcaoVO.Helper.produzirExplicacao(podeAutenticar, podeAutenticar.eval()) + "</b>");
 	}
 	
 	public static class AtivoEFixo {

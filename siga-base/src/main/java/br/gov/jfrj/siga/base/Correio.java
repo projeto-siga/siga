@@ -178,7 +178,7 @@ public class Correio {
 		
 		Boolean isVersionTest;
 		try {
-			isVersionTest = Prop.getBool("/siga.versao.teste");
+			isVersionTest = Prop.getBool("/siga.base.teste");
 			
 		} catch (Exception ex) 
 		{

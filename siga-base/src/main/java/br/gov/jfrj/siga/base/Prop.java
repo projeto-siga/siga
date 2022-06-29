@@ -181,7 +181,6 @@ public class Prop {
 		provider.addPublicProperty("/siga.mesa.versao", "2ant");
 		provider.addPublicProperty("/siga.municipios", null);
 		provider.addPublicProperty("/siga.pagina.inicial.url", null);
-		provider.addPublicProperty("/siga.versao.teste", "true");
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
 		provider.addPublicProperty("/sigaex.autenticidade.url", sigaExBaseUrl + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigaex.url", sigaExBaseUrl + "/sigaex");

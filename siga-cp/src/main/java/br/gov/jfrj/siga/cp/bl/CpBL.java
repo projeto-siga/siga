@@ -394,8 +394,8 @@ public class CpBL {
 								"Esqueci Minha Senha", "",
 								"<table>" + "<tbody>" + "<tr>"
 										+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-										+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-										+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
+										+ "<img style='padding: 10px 0px; text-align: center;' src='" + Prop.get("/siga.base.url") + "/" + Prop.get("/siga.email.logo")+ "' "
+										+ "alt='SP Sem Papel' width='70' height='80' /></td>" + "</tr>" + "<tr>"
 										+ "<td style='background-color: #bbb; padding: 0 20px;'>"
 										+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
 										+ "</td>" + "</tr>" + "<tr style='height: 310px;'>"
@@ -606,8 +606,8 @@ public class CpBL {
 		retorno.append("<tr>");
 		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
 		retorno.append(
-				"<img style='padding: 10px 0px; text-align: center;' src='https://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
-		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
+				"<img style='padding: 10px 0px; text-align: center;' src='" + Prop.get("/siga.base.url") + "/" + Prop.get("/siga.email.logo")+ "' ");
+		retorno.append("alt='SP Sem Papel' width='70' height='80' /></td>");
 		retorno.append("</tr>");
 		retorno.append("<tr>");
 		retorno.append("<td style='background-color: #bbb; padding: 0 20px;'>");
@@ -666,8 +666,8 @@ public class CpBL {
 		retorno.append("<tr>");
 		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
 		retorno.append(
-				"<img style='padding: 10px 0px; text-align: center;' src='https://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
-		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
+				"<img style='padding: 10px 0px; text-align: center;' src='" + Prop.get( "/siga.base.url") + "/" + Prop.get("/siga.email.logo")+ "' ");
+		retorno.append("alt='SP Sem Papel' width='70' height='80' /></td>");
 		retorno.append("</tr>");
 		retorno.append("<tr>");
 		retorno.append("<td style='background-color: #bbb; padding: 0 20px;'>");

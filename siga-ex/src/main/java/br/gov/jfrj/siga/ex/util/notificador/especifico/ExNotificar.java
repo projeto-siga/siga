@@ -116,7 +116,7 @@ public class ExNotificar {
 	//Esse método envia uma notificação para o responsável pela assinatura do documento.
 	public void responsavelPelaAssinatura (ExDocumento doc, DpPessoa cadastrante) {
 		email = new ExEmail();
-		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
+		if (doc.getSubscritor() != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
 				doc.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.RESPASS.getChave())
 				&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
 						doc.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 

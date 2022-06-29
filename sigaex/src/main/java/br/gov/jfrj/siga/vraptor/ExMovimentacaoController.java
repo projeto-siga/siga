@@ -5253,8 +5253,10 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento documento = buscarDocumento(documentoBuilder);
-
-		String codAcessoDocumento = SigaUtil.buildJwtToken("1", SigaUtil.randomAlfanumerico(10), sigla);
+		
+		final long tokenExp = 30 * 24 * 60 * 60L; //token expires in 30 days
+		String codAcessoDocumento = SigaUtil.buildJwtToken("1", 
+				SigaUtil.randomAlfanumerico(10), tokenExp, sigla);
 		
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar c = Calendar.getInstance();
@@ -5293,6 +5295,7 @@ public class ExMovimentacaoController extends ExController {
 							+ "\n" + "\nCÓDIGO: " + cod
 							+ "\n" + "\nLink para acesso: "
 							+ "\n" + url
+							+ "\n\nObservação: O código de acesso fornecido expira em 30 (trinta) dias"
 							+ "\n\nAtenção: esta é uma "
 							+ "mensagem automática. Por favor, não responda.");
 			

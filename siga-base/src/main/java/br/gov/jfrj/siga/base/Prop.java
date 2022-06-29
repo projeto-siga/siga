@@ -179,7 +179,6 @@ public class Prop {
 		provider.addPublicProperty("/siga.mesa.nao.revisar.temporarios", "false");
 		provider.addPublicProperty("/siga.mesa.versao", "2ant");
 		provider.addPublicProperty("/siga.municipios", null);
-		provider.addPublicProperty("/siga.versao.teste", "true");
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
 
 		/* End-points Externos complementares */

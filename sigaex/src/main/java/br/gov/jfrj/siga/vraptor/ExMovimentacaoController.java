@@ -5279,6 +5279,13 @@ public class ExMovimentacaoController extends ExController {
 													final String cod,
 													final String url) {
 
+		assertAcesso("");
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento doc = buscarDocumento(documentoBuilder);
+		
 		try {
 			Correio.enviar(email, "SP Sem Papel - Credencial para visualização do documento",
 					"Segue abaixo o código para visualização do documento, " +
@@ -5288,11 +5295,38 @@ public class ExMovimentacaoController extends ExController {
 							+ "\n" + url
 							+ "\n\nAtenção: esta é uma "
 							+ "mensagem automática. Por favor, não responda.");
+			
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			result.include("mensagem", "Atenção: Falha no envio do e-mail, tente novamente!");	
 		}
 
-		//TODO: Gravar movimentacao ENVIO_PARA_VISUALIZACAO_EXTERNA
+		result.include("mensagem", "E-mail enviado com sucesso.");
+
+		try {
+			final Date dtMov = ExDao.getInstance().dt();
+			final String descrMov = doc.getSigla() + " enviado para visualização externa.\n" +
+					"Destinatário: " + nmPessoa + ". " +
+					"e-mail: " + email;
+			
+			Ex.getInstance().getBL().gravarNovaMovimentacao(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
+					getCadastrante(), getLotaCadastrante(), doc.getMobilGeral(), dtMov, null, null, 
+					null, null, null, descrMov);
+
+			result.include("descrMov", descrMov);
+			result.include("url", url);
+			result.include("cod", cod);
+			result.include("sigla", sigla);
+			
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			result.include("dataHora", df.format(dtMov));
+			
+			result.use(Results.page())
+					.forwardTo("/WEB-INF/page/exMovimentacao/resultadoEnvioParaVisualizacaoExterna.jsp");
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao gravar movimentação de envio para visualização externa", 
+					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA.getId(), e);
+		}
 		
 	}
 }

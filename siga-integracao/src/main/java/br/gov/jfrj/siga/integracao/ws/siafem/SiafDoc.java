@@ -63,8 +63,8 @@ public class SiafDoc {
 			this.finalidade = get("finalidadeProcesso");
 			this.processo = get("processoLegado");
 			this.desdobramento = get("desdobramento");
-			this.flagPresencial = (get("presencial")).contains("Sim") ? "X" : "";
-			this.flagEletronico = (get("eletronico")).contains("Sim") ? "X" : "";
+			this.flagPresencial = (get("presencialEletronico")).contains("1") ? "X" : "";
+			this.flagEletronico = (get("presencialEletronico")).contains("0") ? "X" : "";
 			this.cnpj = get("interessado_cnpj").replaceAll("[^\\d]", "");
 			this.naturezaDespesa1 = get("naturezaDespesa1").split(" ")[0];
 			this.naturezaDespesa2 = get("naturezaDespesa2").split(" ")[0];

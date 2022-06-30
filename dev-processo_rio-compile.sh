@@ -183,7 +183,9 @@ echo ""
 
 
 echo "SIGA-EXT:"
-if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext.jar`; then
+echo "     Undeploying module SIGA-EXT:"
+if [ -f /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext.jar ]; then
+#if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext.jar`; then
         if module_siga_ext_remove=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect --command="module remove --name=sigadoc.ext"`; then
               echo "REMOVE OLD MODULE: OK"
         else
@@ -194,7 +196,7 @@ if module_siga_ext=`ls /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext
         fi
 fi
 
-
+echo "     Deploying module SIGA-EXT:"
 if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$2 --command="module add --name=sigadoc.ext --resources=~/siga-ext.jar"`; then
         echo "DEPLOY MODULE: siga-ext.jar - OK"
 else

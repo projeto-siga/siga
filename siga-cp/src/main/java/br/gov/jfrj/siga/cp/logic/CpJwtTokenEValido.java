@@ -2,14 +2,11 @@ package br.gov.jfrj.siga.cp.logic;
 
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import com.crivano.jlogic.Expression;
-import com.crivano.jlogic.JLogic;
 
-import java.util.Map;
-
-public class CpTokenEValido implements Expression {
+public class CpJwtTokenEValido implements Expression {
     String token;
 
-    public CpTokenEValido(String token) {
+    public CpJwtTokenEValido(String token) {
         this.token = token;
     }
 

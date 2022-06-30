@@ -197,7 +197,7 @@ if [ -f /opt/java/jboss-eap-7.2/modules/sigadoc/ext/main/siga-ext.jar ]; then
 fi
 
 echo "     Deploying module SIGA-EXT:"
-if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$2 --command="module add --name=sigadoc.ext --resources=~/siga-ext.jar"`; then
+if module_siga_ext=`/opt/java/jboss-eap-7.2/bin/jboss-cli.sh --connect controller=$2 --command="module add --name=sigadoc.ext --resources=~/siga-ext.jar" --timeout=30000`; then
         echo "DEPLOY MODULE: siga-ext.jar - OK"
 else
         echo $module_siga_ext

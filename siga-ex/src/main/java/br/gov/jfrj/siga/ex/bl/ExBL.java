@@ -8350,6 +8350,8 @@ public class ExBL extends CpBL {
 			mov.setResp(cadastrante);
 			mov.setSubscritor(cadastrante);
 			mov.setTitular(cadastrante);
+			mov.setDescrMov("Documento enviado ao SIAFEM: " + exDoc.getSigla()
+					+ " " + exDoc.getPai().getSigla());
 
 			acrescentarCamposDeAuditoria(mov);
 

@@ -74,8 +74,7 @@
         <div style="font-size: 26px">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="p-3 mb-2 bg-dark text-white text-center" id="bg"><h4><b>Protocolo de Acompanhamento de
-                        Documento</b></h4></div>
+                    <div class="p-3 mb-2 bg-dark text-white text-center" id="bg"><h4><b>Código de Visualiza&ccedil;&atilde;o Externa do Documento</b></h4></div>
                 </div>
             </div>
             <br>
@@ -90,7 +89,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
-                        <label>N&uacute;mero da credencial de acesso ao documento:</label>
+                        <label>C&oacute;digo de acesso ao documento:</label>
                         <a href="${url}" target="_blank" class="link-reduzido">${cod}</a>
                     </div>
                 </div>

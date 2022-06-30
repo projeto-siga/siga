@@ -5289,15 +5289,15 @@ public class ExMovimentacaoController extends ExController {
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
 		
 		try {
-			Correio.enviar(email, "SP Sem Papel - Credencial para visualização do documento",
-					"Segue abaixo o código para visualização do documento, " +
-							"para visualizar o documento basta clicar no  link abaixo: "
+			Correio.enviar(email, "SP Sem Papel - Código para visualização do documento " + doc.getSigla(),
+					"Segue abaixo o código para visualização do documento " + doc.getSigla() +
+							"\nPara visualizá-lo basta clicar no  link abaixo: "
 							+ "\n" + "\nCÓDIGO: " + cod
 							+ "\n" + "\nLink para acesso: "
 							+ "\n" + url
-							+ "\n\nObservação: O código de acesso fornecido expira em 30 (trinta) dias"
-							+ "\n\nAtenção: esta é uma "
-							+ "mensagem automática. Por favor, não responda.");
+							+ "\n\nObservação: O código de acesso fornecido expirará em 30 (trinta) dias. "
+							+ "Caso seja necessário acessar o documento após esse prazo, solicite um novo código."
+							+ "\n\nAtenção: esta é uma mensagem automática. Por favor, não responda.");
 			
 		} catch (Exception e) {
 			result.include("mensagem", "Atenção: Falha no envio do e-mail, tente novamente!");	
@@ -5307,14 +5307,15 @@ public class ExMovimentacaoController extends ExController {
 
 		try {
 			final Date dtMov = ExDao.getInstance().dt();
-			final String descrMov = doc.getSigla() + " enviado para visualização externa.\n" +
-					"Destinatário: " + nmPessoa + ". " +
-					"e-mail: " + email;
+			final String dest = "Destinatário: " + nmPessoa + ". " + "e-mail: " + email;
+			final String descrMov = doc.getSigla() + " enviado para visualização externa.\n";
+					
 			
 			Ex.getInstance().getBL().gravarNovaMovimentacao(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
 					getCadastrante(), getLotaCadastrante(), doc.getMobilGeral(), dtMov, null, null, 
-					null, null, null, descrMov);
+					null, null, null, descrMov + dest);
 
+			result.include("dest", dest);
 			result.include("descrMov", descrMov);
 			result.include("url", url);
 			result.include("cod", cod);

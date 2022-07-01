@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import br.gov.jfrj.siga.ex.logic.*;
 import com.crivano.jlogic.And;
 
 import br.gov.jfrj.siga.base.AcaoVO;
@@ -51,44 +52,6 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
-import br.gov.jfrj.siga.ex.logic.ExEstaFinalizado;
-import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
-import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
-import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivoAuxiliar;
-import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
-import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
-import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDocumento;
-import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
-import br.gov.jfrj.siga.ex.logic.ExPodeCriarSubprocesso;
-import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
-import br.gov.jfrj.siga.ex.logic.ExPodeCriarVolume;
-import br.gov.jfrj.siga.ex.logic.ExPodeDefinirPrazoAssinatura;
-import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerConcelamentoDeDocumento;
-import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerRestricaoDeAcesso;
-import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
-import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
-import br.gov.jfrj.siga.ex.logic.ExPodeEnviarSiafem;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluir;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
-import br.gov.jfrj.siga.ex.logic.ExPodeFazerAnotacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeFazerVinculacaoDePapel;
-import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
-import br.gov.jfrj.siga.ex.logic.ExPodeGerarProtocolo;
-import br.gov.jfrj.siga.ex.logic.ExPodeIncluirCossignatario;
-import br.gov.jfrj.siga.ex.logic.ExPodePedirPublicacao;
-import br.gov.jfrj.siga.ex.logic.ExPodePublicar;
-import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
-import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
-import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
-import br.gov.jfrj.siga.ex.logic.ExPodeReferenciar;
-import br.gov.jfrj.siga.ex.logic.ExPodeRegistrarAssinatura;
-import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
-import br.gov.jfrj.siga.ex.logic.ExPodeSolicitarAssinatura;
-import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
-import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
-import br.gov.jfrj.siga.ex.logic.ExTemAnexos;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
@@ -795,6 +758,11 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(AcaoVO.builder().nome("Enviar ao SIAFEM").icone("email_go").nameSpace("/app/expediente/integracao").acao("integracaows")
 				.params("sigla", mob.getCodigoCompacto()).exp(And.of(new CpPodeBoolean(mostrarEnviarSiafem(doc), "pode mostrar Siafem"), new ExPodeEnviarSiafem(doc, titular, lotaTitular))).classe("once").build());
+
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.enviar.visualizacaoexterna"))
+				.icone("email_go").nameSpace("/app/expediente/mov").acao("enviar_para_visualizacao_externa")
+				.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
+				.exp(new ExPodeEnviarParaVisualizacaoExterna(mob, titular, lotaTitular)).build());
 		
 	}
 

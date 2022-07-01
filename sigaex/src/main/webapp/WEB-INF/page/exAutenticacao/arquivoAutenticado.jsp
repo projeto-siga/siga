@@ -36,8 +36,8 @@
 							</p>
 						</c:if>
 					</div>
-					<div class="card-body">
-						<c:if test="${podeVisualizarExternamente}">
+					<c:if test="${podeVisualizarExternamente}">
+						<div class="card-body">
 							<div>
 								<input type="hidden" id="visualizador"
 									   value="${f:resource('/sigaex.pdf.visualizador') }"/>
@@ -48,15 +48,15 @@
 								<iframe id="frameDoc" width="100%" height="600"
 										align="center" style="margin-top: 10px;"></iframe>
 							</div>
-						</c:if>
-					</div>
+						</div>
+					</c:if>
 				</div>
 			</div>
 			<div class="col">
 				<div class="row">
 					<div class="col">
-						<div class="card bg-light mb-3" >
-							<c:if test="${podeVisualizarExternamente}">
+						<c:if test="${podeVisualizarExternamente}">
+							<div class="card bg-light mb-3">
 								<div class="card-header">
 									<h5>
 										<i class="fa fa-file-pdf"></i> Arquivos para Download
@@ -66,8 +66,8 @@
 									<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc" target="_blank">PDF
 									do documento</a>
 								</div>
-							</c:if>
-						</div>
+							</div>
+						</c:if>
 					</div>
 				</div>
 				<div class="row">

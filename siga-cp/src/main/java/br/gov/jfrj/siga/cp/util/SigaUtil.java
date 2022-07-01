@@ -177,15 +177,14 @@ public class SigaUtil {
 	
 	/* JWT de uso Externo - Sem autenticação no Sistema. Ex.: Acesso Arquivo,verificação autenticidade */
 	/*TODO: Verificar se não dá para unificar as rotinas JWT */
-	public static String buildJwtToken(final String tipoLink, final String token, final String sigla) {
+	public static String buildJwtToken(final String tipoLink, final String token, final long exp, final String sigla) {
 		String jwt;
 
 		final JWTSigner signer = new JWTSigner(getJwtPassword());
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
-		final long exp = iat + 1 * 60 * 60L; // token expires in 1 hours
-		claims.put("exp", exp);
+		claims.put("exp", exp + iat);
 		claims.put("iat", iat);
 
 		claims.put("tipoLink", tipoLink);

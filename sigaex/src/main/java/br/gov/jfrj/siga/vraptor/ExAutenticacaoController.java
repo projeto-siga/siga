@@ -15,9 +15,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
-import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
-import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
@@ -79,7 +76,7 @@ public class ExAutenticacaoController extends ExController {
 	@Get
 	@Path("/autenticar.action")
 	public void redirecionar() throws Exception {
-		result.redirectTo(this).autenticar(null, null, null, null, null, null);
+		result.redirectTo(this).autenticar(null, null, null, null, null, null, null);
 	}
 
 	@Get
@@ -87,7 +84,7 @@ public class ExAutenticacaoController extends ExController {
 	@Path("/public/app/autenticar")
 	public void autenticar(final String n, final String answer,
 			final String ass, final String assinaturaB64,
-			final String certificadoB64, final String atributoAssinavelDataHora)
+			final String certificadoB64, final String atributoAssinavelDataHora, String cod)
 			throws Exception {
 
 		// Só para já dar o erro logo.
@@ -96,6 +93,14 @@ public class ExAutenticacaoController extends ExController {
 		String recaptchaSitePassword = getRecaptchaSitePassword();
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		result.include("n", n);
+		result.include("cod", cod);
+		
+		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
+		ExDocumento doc = (ExDocumento) arq;
+		
+		result.include("podeVisualizarExternamente", new ExPodeVisualizarExternamente(
+				doc.getMobilGeral(), getTitular(), getLotaTitular()).eval());
+
 
 		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();
@@ -132,8 +137,6 @@ public class ExAutenticacaoController extends ExController {
 			setDefaultResults();
 			return;
 		}
-
-		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		boolean mostrarBotaoAssinarExterno = arq
@@ -181,7 +184,7 @@ public class ExAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
-		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n));
+		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n), cod);
 	}
 
 	@Get("/public/app/arquivoAutenticado_stream")
@@ -279,7 +282,7 @@ public class ExAutenticacaoController extends ExController {
 
 	// antigo metodo arquivo();
 	@Get("/public/app/arquivoAutenticado")
-	public void arquivoAutenticado(final String jwt) throws Exception {
+	public void arquivoAutenticado(final String jwt, final String cod) throws Exception {
 		if (jwt == null) {
 			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
@@ -334,14 +337,15 @@ public class ExAutenticacaoController extends ExController {
 			 * se é permitido a visualização externa do Documento no Órgão
 			 */
 			result.include("podeVisualizarExternamente", 
-					Ex.getInstance().getComp().pode(ExPodeVisualizarExternamente.class,
-							getTitular(), getLotaTitular(), doc.getMobilGeral()));
+					new ExPodeVisualizarExternamente(
+							doc.getMobilGeral(), getTitular(), getLotaTitular(), cod).eval()
+			);
 			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
 			result.include("docVO", docVO);
 			result.include("autenticidade",
 					docVO.getDoc().getAssinantesCompleto() +
-							" Documento N: " +
+							" Documento Nº: " +
 							docVO.getDoc().getSiglaAssinatura()
 
 			);

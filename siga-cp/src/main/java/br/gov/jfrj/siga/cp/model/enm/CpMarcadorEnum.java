@@ -63,7 +63,7 @@ public enum CpMarcadorEnum {
 	//
 	EM_TRANSITO_ELETRONICO(24, "Em Trâmite", "fas fa-shipping-fast", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),
 	//
-	COMO_SUBSCRITOR(25, "Como Subscritor", "fas fa-key", "", CpMarcadorGrupoEnum.A_ASSINAR),
+	COMO_SUBSCRITOR(25, SigaMessages.getMessage("marcador.como.subscritor.label"), "fas fa-key", "", CpMarcadorGrupoEnum.A_ASSINAR),
 	//
 	APENSADO(26, "Apensado", "fas fa-compress-arrows-alt", "", CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO),
 	//
@@ -245,11 +245,7 @@ public enum CpMarcadorEnum {
 	}
 
 	public String getNome() {
-		if (SigaMessages.isSigaSP() && nome.equals("Como Subscritor")) {
-			return "Responsável pela Assinatura";
-		} else {
-			return nome;
-		}
+		return nome;
 	}
 
 	public CpMarcadorGrupoEnum getGrupo() {

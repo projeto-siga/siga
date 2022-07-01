@@ -1044,6 +1044,16 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
+[#macro img var titulo="" label="" src="" width="" height="" onchange="" onblur="" size="" maxlength="" placeholder="" default="" ]
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+    
+    <div class="form-group" style="margin-bottom:0">
+    	<img id="${var}" name="${var}" value="${v}" src="${src}" width="${width}" height="${height}" onchange="${onchange}" onblur="${onblur}" />
+    </div>
+[/#macro]
 
 [#macro email var titulo="" onblur="" size="" maxlength="" placeholder="" default="" ]
     [#local v = .vars[var]!""]
@@ -1502,8 +1512,7 @@ CKEDITOR.replace( '${var}',
     </div>
 [/#macro]
 
-
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" onchange="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -1521,7 +1530,7 @@ CKEDITOR.replace( '${var}',
     [#if !gerar_formulario!false]    
     	<div class="form-group" style="margin-bottom:0">
     		[#if titulo?? && titulo != ""]<label for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
-    		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
+    		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] [#if onchange != ""]onchange="${onchange};"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
     			[#if opcaoNeutra?? && opcaoNeutra != "" && obrigatorio]
     				<option id="opcaoNeutra" value="${opcaoNeutra}" [#if !(temValor??)]selected[/#if]>${opcaoNeutra}</option>
     			[/#if]
@@ -1660,6 +1669,7 @@ CKEDITOR.replace( '${var}',
                 [/#if]
     </div>
 [/#macro]
+
 [#macro XStandard nome="" conteudo=""]
         <script type="text/javascript" language="Javascript1.1">
 
@@ -1769,6 +1779,7 @@ CKEDITOR.replace( '${var}',
         --> 
         </object>
 [/#macro]
+
 [#macro formulario texto fecho="" tamanhoLetra="Normal" _tipo="FORMULÁRIO"]
 [#--
   Aplicação: Formatar documento para o tipo Formulário

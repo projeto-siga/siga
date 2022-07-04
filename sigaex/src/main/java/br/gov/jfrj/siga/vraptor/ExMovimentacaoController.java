@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.siga.cp.util.SigaUtil;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
+import br.gov.jfrj.siga.validation.Email;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -5290,23 +5292,11 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
 		
-		try {
-			Correio.enviar(email, "SP Sem Papel - Código para visualização do documento " + doc.getSigla(),
-					"Segue abaixo o código para visualização do documento " + doc.getSigla() +
-							"\nPara visualizá-lo basta clicar no  link abaixo: "
-							+ "\n" + "\nCÓDIGO: " + cod
-							+ "\n" + "\nLink para acesso: "
-							+ "\n" + url
-							+ "\n\nObservação: O código de acesso fornecido expirará em 30 (trinta) dias. "
-							+ "Caso seja necessário acessar o documento após esse prazo, solicite um novo código."
-							+ "\n\nAtenção: esta é uma mensagem automática. Por favor, não responda.");
-			
-		} catch (Exception e) {
-			result.include("mensagem", "Atenção: Falha no envio do e-mail, tente novamente!");	
-		}
-
+		final ExEmail exEmail = new ExEmail();
+		exEmail.enviarAoDestinatarioExterno(nmPessoa, email, sigla, cod, url);
 		result.include("mensagem", "E-mail enviado com sucesso.");
-
+		
+		/* Após o envio do email gravar a movimentação */
 		try {
 			final Date dtMov = ExDao.getInstance().dt();
 			final String dest = "Destinatário: " + nmPessoa + ". " + "e-mail: " + email;

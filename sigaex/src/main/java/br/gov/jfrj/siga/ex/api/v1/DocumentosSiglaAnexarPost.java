@@ -21,6 +21,9 @@ public class DocumentosSiglaAnexarPost implements IDocumentosSiglaAnexarPost {
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento que Receberá o Anexo");
+		
+		ExMobil ultimoMob = mob.getDoc().getUltimoMobil();
+		
 		try {
 			Ex.getInstance().getComp().afirmar("Anexação no documento " + mob.getSigla() + " não é permitida. ("
 					+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", ExPodeAnexarArquivo.class, ctx.getTitular(), ctx.getLotaTitular(), mob);

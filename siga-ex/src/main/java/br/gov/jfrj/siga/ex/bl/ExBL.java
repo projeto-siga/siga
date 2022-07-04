@@ -8548,21 +8548,6 @@ public class ExBL extends CpBL {
 
 		return ret;
 	}
-
-	public void gravarMovimentacaoLinkPublico(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
-		
-		try {
-            final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO, cadastrante,
-					lotaTitular, mob, null, cadastrante, null, titular, lotaTitular, null);
-
-			mov.setDescrMov("Gerado link público do documento " + mob.getSigla());
-			gravarMovimentacao(mov);
-		} catch (final Exception e) {
-			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao gravar link público do documento", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
-		}
-
-	}
 	
 }
 

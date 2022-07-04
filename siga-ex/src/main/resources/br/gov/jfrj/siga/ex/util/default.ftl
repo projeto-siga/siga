@@ -1512,6 +1512,151 @@ CKEDITOR.replace( '${var}',
     </div>
 [/#macro]
 
+[#macro editor_pcrj var titulo="" default=""]
+    [#if .vars[var]??]
+        [#local v = .vars[var]/]
+        [#local local_v = "1"/]
+    [#else]
+        [#local v = ""/]
+        [#local local_v = "2"/]
+    [/#if]
+    [#if v != ""]
+        [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
+        [#local conteudo_v = true/]
+    [#else]
+        [#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
+        [#local conteudo_v = false/]
+    [/#if]
+
+        <div>
+        [#if titulo != ""]
+                        <b>${titulo}</b>
+        [/#if]
+
+        [#if !gerar_formulario!false]
+            <input type="hidden" name="vars" value="${var}" />
+            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!'false'}" />
+
+            [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+               && (!((desconsiderarExtensao == 'true')!false)) )]
+			[#else]
+				<textarea id="${var}" name="${var}" class="editor">[#if conteudo_v]${v?html}[#else]${default!}[/#if]</textarea>
+			[/#if]
+					
+            <table class="entrevista" width="100%">
+                <tr>
+                    <td></td>
+                    <td colspan="3">
+
+                        
+                         
+                        [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
+                             <input type="hidden" id="${var}" name="${var}" value="${v?html}">
+                            [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
+                        [#else]
+                            <script type="text/javascript">
+
+								CKEDITOR.config.disableNativeSpellChecker = false;
+								CKEDITOR.config.scayt_autoStartup = false;
+								CKEDITOR.config.scayt_sLang = 'pt_BR';
+								CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+								
+								if (CKEDITOR.stylesSet.get('siga_ckeditor_styles') == null) {
+								
+									CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+									        name: 'Título',
+									        element: 'h1',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Subtítulo',
+									        element: 'h2',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Com recuo',
+									        element: 'p',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Marcador',
+									        element: 'span',
+									        styles: {
+									        	'background-color' : '#FFFF00'
+									        }
+									    },
+									    {
+									        name: 'Normal',
+									        element: 'span'
+									    }
+									]);
+								
+								};
+								
+								CKEDITOR.config.toolbar = 'SigaToolbar';
+								
+								CKEDITOR.config.toolbar_SigaToolbar = [{
+								        name: 'styles',
+								        items: ['Styles']
+								    },
+								    {
+								        name: 'clipboard',
+								        items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+								    },
+								    {
+								        name: 'editing',
+								        items: ['Find', 'Replace', '-', 'SelectAll']
+								    },
+								    '/',
+								    {
+								        name: 'basicstyles',
+								        items: ['Bold', 'Italic', 'Subscript', 'Underline', 'Strike', '-', 'RemoveFormat']
+								    },
+								    {
+								        name: 'paragraph',
+								        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyBlock', 'JustifyRight']
+								    },
+								    {
+								        name: 'insert',
+								        items: ['Table' , 'Footnotes', '-', 'SpecialChar', '-', 'PageBreak']
+								    },
+								    {
+								        name: 'document',
+								        items: ['Source']
+								    }
+								];
+								CKEDITOR.config.extraPlugins = 'footnotes';
+								window.onload = function() {
+								    $("textarea.editor").each(function(index) {
+								        CKEDITOR.replace(this, {
+								            toolbar: 'SigaToolbar'
+								        });
+								    });
+								}
+
+                            </script>
+                            
+                        [/#if]
+
+                    </td>
+                </tr>
+            </table>
+        [#else]
+            <br>${v}<br><br>
+        [/#if]
+    </div>
+[/#macro]
+
 [#macro selecao var titulo opcoes reler=false idAjax="" onclick="" onchange="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]

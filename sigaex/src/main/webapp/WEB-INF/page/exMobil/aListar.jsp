@@ -831,7 +831,7 @@
 						<div class="form-group col-md-6">
 							<label for="nomeRequerente">Nome </label> 
 									<input type="text"	id="nomeRequerente" name="nomeRequerente"
-											value="${nomeRequerente}" class="form-control" maxlength="125"   >
+											value="${nomeRequerente}" class="form-control" maxlength="100"   >
 						</div>
 						
 					 </div>

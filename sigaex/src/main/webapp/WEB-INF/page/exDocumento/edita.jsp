@@ -423,7 +423,7 @@
 							<div class="form-group">
 								<label id="lblNomeRequerente">Nome</label> 
 								<input type="text"	id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"
-										value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"   >
+										value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="100"   >
 							</div>
 						</div>
 						

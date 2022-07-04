@@ -49,8 +49,6 @@
                     <div class="p-3 mb-2 bg-dark text-white text-center" id="bg"><h4><b>Código de Visualiza&ccedil;&atilde;o Externa do Documento</b></h4></div>
                 </div>
             </div>
-            <br>
-            <br>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
@@ -61,8 +59,10 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
-                        <label>C&oacute;digo de acesso ao documento:</label>
-                        <a href="${url}" target="_blank" class="link-reduzido">${cod}</a>
+                        <p><label for="cod">C&oacute;digo de acesso ao documento:</label></p>
+                        <textarea id="cod"
+                                  style="width: 200px; height: 170px;padding: 20px 20px;box-sizing: border-box;border: 2px solid #ccc;border-radius: 4px;background-color: #f8f8f8;font-size: 10px;resize: none;"
+                                  disabled rows="8" cols="30">${cod}</textarea>
                     </div>
                 </div>
             </div>

@@ -18,12 +18,15 @@
 		<div id="content" style="margin-top: 30px; padding: 20px;">
 			<div>
 				<p> 
-					Prezado usu&aacute;rio(a) <b>${nomeDestinatario}</b>. Vo&ecirc; recebeu o documento <b>(${siglaDoc})</b>, para visualiza&ccedil;&atilde;o.</b> 
+					Prezado usu&aacute;rio(a) <b>${nomeDestinatario}</b>. Voc&ecirc; recebeu o documento <b>(${siglaDoc})</b>, para visualiza&ccedil;&atilde;o.</b> 
 				</p>
 				<br />
 			</div>
 			<div style="margin-top: 20px;">
-				<p>C&oacute;digo de acesso ao documento: <b>${cod}</b></p>
+				<p><label for="cod">C&oacute;digo de acesso ao documento:</label></p>
+				<textarea id="cod"
+						  style="width: 200px; height: 170px;padding: 20px 20px;box-sizing: border-box;border: 2px solid #ccc;border-radius: 4px;background-color: #f8f8f8;font-size: 10px;resize: none;"
+						  disabled rows="8" cols="30">${cod}</textarea>
 				<p>Para visualizar o documento, <a href="${urlDoc}">clique aqui.</a></p>
 			</div>
 		</div>

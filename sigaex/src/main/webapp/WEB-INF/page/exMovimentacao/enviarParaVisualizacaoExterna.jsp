@@ -89,16 +89,6 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
-                        <p><label for="cod">C&oacute;digo de acesso ao documento:</label></p>
-                        <textarea id="cod"
-                                  style="width: 200px; height: 170px;padding: 20px 20px;box-sizing: border-box;border: 2px solid #ccc;border-radius: 4px;background-color: #f8f8f8;font-size: 10px;resize: none;"
-                                  disabled rows="8" cols="30">${cod}</textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group text-center">
                         <label>Data/Hora: ${dataHora}</label>
                     </div>
                 </div>
@@ -107,8 +97,7 @@
                 <div class="col-sm-12">
                     <div class="form-group text-center">
                         <label><b>Aten&ccedil;&atilde;o: </b>Para encaminhar o documento para um usu&aacute;rio n&atilde;o
-                            cadastrado
-                            no sistema, preencha os seguintes campos </label>
+                            cadastrado no sistema, preencha os seguintes campos </label>
                         <br/>
                     </div>
                 </div>
@@ -116,8 +105,6 @@
             <form name="frm" action="${pageContext.request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar"
                   method="POST">
                 <input type="hidden" name="sigla" value="${sigla}" />
-                <input type="hidden" name="cod" value="${cod}" />
-                <input type="hidden" name="url" value="${url}" />
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="form-group">

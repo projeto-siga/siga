@@ -277,6 +277,10 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.pesquisa.limite.dias", "30");
 		
+		/* Cadastro de marcadores: Indica a quantidade de marcadores permitidos para uma unidade. 
+		 * - Default: 10 marcadores.
+		 * */
+		provider.addPublicProperty("/siga.marcadores.qtd.maxima.por.unidade", "10");	
 
 	}
 }

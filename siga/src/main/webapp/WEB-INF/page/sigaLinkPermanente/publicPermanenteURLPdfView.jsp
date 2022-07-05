@@ -17,12 +17,9 @@
 		
 		function carregarCompleto() {
 			$("#completo").attr("disabled", true);
-			sigaSpinner.mostrar();
 		    $('#framePdf').attr('src', '/siga/public/app/sigalinkStream/${jwt}?completo=1&volumes=1');
 		    return false;
 		}
-
-		
 	</script>
 
 	<div id="pdfContainer" class="container content pt-2 pb-2">
@@ -49,7 +46,7 @@
 
 				  </div>
 				  <div class="card-body bg-secondary text-white p-0">
-					  <c:url var='pdf' value='/public/app/sigalinkStream/${jwt}' />
+					  <c:url var='pdf' value='/pdfjs/web/viewer.html?file=/siga/public/app/sigalinkStream/${jwt}' />
 					  <iframe id="framePdf" src="${pdf}" width="100%" height="500" align="center" style="border: none;" onload='sigaSpinner.ocultar();'  allowfullscreen>
 					  	<h5>Carregando PDF...</h5>
 					  </iframe>

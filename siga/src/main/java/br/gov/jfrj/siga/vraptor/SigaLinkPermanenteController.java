@@ -135,7 +135,9 @@ public class SigaLinkPermanenteController extends SigaController {
 				ExService exService = Service.getExService();
 				String siglaDocumento = exService.obterSiglaMobilPorIdDoc(cpToken.getIdRef());
 
-				result.forwardTo(this).publicPermanenteURLPdfView(SigaUtil.buildJwtToken(tipoLink,token,siglaDocumento));			
+				final long tokenExp = 1 * 60 * 60L; //token expires in 1 hour
+				result.forwardTo(this)
+						.publicPermanenteURLPdfView(SigaUtil.buildJwtToken(tipoLink, token, tokenExp, siglaDocumento));			
 			}
 		} else {
 			throw new RuntimeException("Endereço permamente inválido");

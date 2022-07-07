@@ -209,10 +209,9 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
 
-	public static final List<Long> MARCADORES_DEMANDA_JUDICIAL = Arrays.asList(CpMarcadorEnum.DEMANDA_JUDICIAL_BAIXA.getId(),
-			CpMarcadorEnum.DEMANDA_JUDICIAL_MEDIA.getId(), CpMarcadorEnum.DEMANDA_JUDICIAL_ALTA.getId());
+	public static List<Long> MARCADORES_DEMANDA_JUDICIAL;
 	
-	public static final List<Long> MARCADOR_A_DEVOLVER_FORA_DO_PRAZO = Arrays.asList(CpMarcadorEnum.A_DEVOLVER_FORA_DO_PRAZO.getId());
+	public static List<Long> MARCADOR_A_DEVOLVER_FORA_DO_PRAZO;
 	
 	/**
 	 * Ordena de acordo com a {@link #getOrdem() Ordem}.
@@ -235,10 +234,15 @@ public class CpMarcador extends AbstractCpMarcador {
 	}
 
 	public boolean isDemandaJudicial() {
+		if (MARCADORES_DEMANDA_JUDICIAL == null)
+			 MARCADORES_DEMANDA_JUDICIAL = Arrays.asList(CpMarcadorEnum.DEMANDA_JUDICIAL_BAIXA.getId(),
+						CpMarcadorEnum.DEMANDA_JUDICIAL_MEDIA.getId(), CpMarcadorEnum.DEMANDA_JUDICIAL_ALTA.getId());
 		return MARCADORES_DEMANDA_JUDICIAL.contains(this.getIdMarcador());
 	}
 	
 	public boolean isADevolverForaDoPrazo() {
+		if (MARCADOR_A_DEVOLVER_FORA_DO_PRAZO == null)
+			MARCADOR_A_DEVOLVER_FORA_DO_PRAZO = Arrays.asList(CpMarcadorEnum.A_DEVOLVER_FORA_DO_PRAZO.getId());
 		return MARCADOR_A_DEVOLVER_FORA_DO_PRAZO.contains(this.getIdMarcador());
 	}
 

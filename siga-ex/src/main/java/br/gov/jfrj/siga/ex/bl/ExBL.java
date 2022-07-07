@@ -6124,6 +6124,26 @@ public class ExBL extends CpBL {
 		return mov;
 	}
 
+	public void gravarNovaMovimentacao(final ITipoDeMovimentacao tpmov,
+									   final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+									   final ExMobil mob, final Date dtMov, final DpPessoa subscritor,
+									   final DpLotacao lotaSubscritor, final DpPessoa titular,
+									   final DpLotacao lotaTitular, final Date dtOrNull,
+									   final String descrMov) throws AplicacaoException {
+
+		try {
+			final ExMovimentacao mov = criarNovaMovimentacao(tpmov, cadastrante, lotaCadastrante,
+					mob, dtMov, subscritor, lotaSubscritor, titular, lotaTitular, dtOrNull);
+
+			mov.setDescrMov(descrMov);
+			gravarMovimentacao(mov);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao gravar " + descrMov, tpmov.getId(), e);
+		}
+
+	}
+
 	private void acrescentarCamposDeAuditoria(ExMovimentacao mov) {
 		String principal = ContextoPersistencia.getUserPrincipal();
 		if (principal != null) {

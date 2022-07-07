@@ -6124,7 +6124,7 @@ public class ExBL extends CpBL {
 		return mov;
 	}
 
-	public void gravarNovaMovimentacao(final ITipoDeMovimentacao tpmov,
+	public ExMovimentacao gravarNovaMovimentacao(final ITipoDeMovimentacao tpmov,
 									   final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 									   final ExMobil mob, final Date dtMov, final DpPessoa subscritor,
 									   final DpLotacao lotaSubscritor, final DpPessoa titular,
@@ -6137,6 +6137,8 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(descrMov);
 			gravarMovimentacao(mov);
+			
+			return mov;
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao gravar " + descrMov, tpmov.getId(), e);

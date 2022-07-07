@@ -5253,9 +5253,6 @@ public class ExMovimentacaoController extends ExController {
     public void enviarParaVisualizacaoExterna(final String sigla) {
 		assertAcesso("");
 
-		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
-
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 
@@ -5278,10 +5275,14 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
 		
-		final long tokenExp = 30 * 24 * 60 * 60L; //token expires in 30 days
-		String cod = SigaUtil.buildJwtToken("1",
-				SigaUtil.randomAlfanumerico(10), tokenExp, sigla);
-
+		CpToken token = Cp.getInstance().getBL().gerarToken(
+				CpToken.TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO,
+				1L,
+				Calendar.MONTH,
+				1
+		);
+		String cod = token.getToken();
+		
 		String servidor = Prop.get("/sigaex.url");
 		String n = doc.getSiglaAssinatura();
 
@@ -5296,11 +5297,14 @@ public class ExMovimentacaoController extends ExController {
 			final Date dtMov = ExDao.getInstance().dt();
 			final String dest = "Destinatário: " + nmPessoa + ". " + "e-mail: " + email;
 			final String descrMov = doc.getSigla() + " enviado para visualização externa.\n";
-					
-			
-			Ex.getInstance().getBL().gravarNovaMovimentacao(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
+
+
+			ExMovimentacao mov = Ex.getInstance().getBL().gravarNovaMovimentacao(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
 					getCadastrante(), getLotaCadastrante(), doc.getMobilGeral(), dtMov, null, null, 
 					null, null, null, descrMov + dest);
+			
+			
+			token.setIdRef(mov.getIdMov());
 
 			result.include("dest", dest);
 			result.include("descrMov", descrMov);

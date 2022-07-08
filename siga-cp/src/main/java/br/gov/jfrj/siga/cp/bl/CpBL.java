@@ -1850,38 +1850,35 @@ public class CpBL {
 		}
 	}
 
-	public CpToken gerarToken(Long idTpToken, Long idRef, int tokenExpCalendarField, int tokenExpCalendarFieldAmount) {
+	public CpToken gravarNovoToken(Long idTpToken, Long idRef, int tokenExpCalendarField,
+								   int tokenExpCalendarFieldAmount, String token) {
+		
+		invalidarTokenAtivo(idTpToken, idRef);
+
+		CpToken cpToken = new CpToken();
+
+		cpToken.setIdTpToken(idTpToken);
+		cpToken.setToken(token);
+		cpToken.setIdRef(idRef);
+
+		/* HORA ATUAL */
+		GregorianCalendar gc = new GregorianCalendar();
+		Date dt = dao().consultarDataEHoraDoServidor();
+		gc.setTime(dt);
+		cpToken.setDtIat(dt);
+
+		/* EXP - Expiração do Token */
+		gc.add(tokenExpCalendarField, tokenExpCalendarFieldAmount);
+		cpToken.setDtExp(gc.getTime());
+
 		try {
-
-			CpToken token = new CpToken();
-
-			token.setIdTpToken(idTpToken);
-			token.setToken(SigaUtil.randomAlfanumericoSeletivo(12));
-			token.setIdRef(idRef);
-
-			/* HORA ATUAL */
-			GregorianCalendar gc = new GregorianCalendar();
-			Date dt = dao().consultarDataEHoraDoServidor();
-			gc.setTime(dt);
-
-
-			/* EXP - Expiração do Token */
-			gc.add(tokenExpCalendarField, tokenExpCalendarFieldAmount);
-			token.setDtExp(gc.getTime());
-
-			try {
-				dao().gravar(token);
-			} catch (final Exception e) {
-
-				throw new AplicacaoException("Erro na gravação", 0, e);
-			}
-
-			return token;
-
-
+			dao().gravar(cpToken);
 		} catch (final Exception e) {
-			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
+			throw new AplicacaoException("Erro na gravação do token", 0, e);
 		}
+
+		return cpToken;
+
 	}
 	
 	/**** Controle de Validade Token ****/

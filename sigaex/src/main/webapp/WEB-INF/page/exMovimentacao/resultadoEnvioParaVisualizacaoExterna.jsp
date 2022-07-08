@@ -71,8 +71,6 @@
                         <label>${mensagem}</label>
                         <br/>
                             ${descrMov}
-                        <br/>
-                            ${dest}
                     </div>
                 </div>
             </div>

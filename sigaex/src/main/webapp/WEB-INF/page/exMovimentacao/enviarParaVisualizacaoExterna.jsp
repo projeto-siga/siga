@@ -14,10 +14,10 @@
     }
 
     function validarEmail(campo) {
-        if(campo.value != "") {
-            var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
+        if(campo.value !== "") {
+            const RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
 
-            if (campo.value.search(RegExp) == -1) {
+            if (campo.value.search(RegExp) === -1) {
                 sigaModal.alerta("E-mail inválido!");
                 habilitarBotaoOk();
                 document.getElementById('email').focus();
@@ -45,14 +45,6 @@
             #bg {
                 -webkit-print-color-adjust: exact;
             }
-        }
-        
-        .link-reduzido {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            max-width: 40%;
         }
     </style>
     <!-- main content bootstrap -->

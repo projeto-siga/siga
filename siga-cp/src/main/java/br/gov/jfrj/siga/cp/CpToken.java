@@ -22,6 +22,7 @@ public class CpToken extends AbstractCpToken {
 	final static public long TOKEN_URLPERMANENTE = 1;
 	final static public long TOKEN_PIN = 2;
 	final static public long TOKEN_SENHA = 3;
+	final static public long TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO = 4;
 
 	public CpToken() {
 	}

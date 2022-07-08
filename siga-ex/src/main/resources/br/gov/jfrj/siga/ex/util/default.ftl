@@ -2217,7 +2217,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro data var titulo="" reler=false idAjax="" default="" onSelect="" onblur="" obrigatorio=false atts={} placeholder="" ]
+[#macro data var titulo="" reler=false idAjax="" default="" onSelect="" onblur="" onchange="" obrigatorio=false atts={} placeholder="" ]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -2253,7 +2253,10 @@ Pede deferimento.</span><br/><br/><br/>
 	         
 		[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="${placeholder}"/>		
+		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" 
+			[#if onblur??] onblur="${onblur}"[/#if]
+			[#if onchange??] onchange="${onchange}"[/#if]
+			${attsHtml} style="max-width: 115px" placeholder="${placeholder}"/>		
 		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>			
 	    [#else]
 	    <span class="valor">${v}</span>
@@ -4360,16 +4363,63 @@ Pede deferimento.</span><br/><br/><br/>
     </div>
 [/#macro]
 
-[#macro date var default="" style="" onblur="" placeholder=""]
+[#macro date var default="" style="" onchange="" onblur="" placeholder="" formatar=true oculto=""]
+    [#local listaOcultos = oculto?split(";")]
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+    [#if formatar]
+    	[#local formatarData = "onchange='formatarData(this);'"]
+    [/#if]
+    
+    <script>
+		function formatarData(dataParam){
+		    let data=dataParam.value;
+		    let dateString = new Date(data);
+		    let dateStringBR = dateString.toLocaleString('pt-BR', {timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit'});
+		    [#if listaOcultos?size > 0]
+				[#list listaOcultos as n]
+					document.getElementById("${n}").value = dateStringBR;
+				[/#list]
+			[/#if]
+		    console.log(dateStringBR);
+			return dateStringBR;
+		}
+	</script>
+
+	<div class="form-group" style="margin-bottom:0">
+		<input type="hidden" name="vars" value="${var}" />
+			
+		[#if listaOcultos?size > 0]
+			[#list listaOcultos as n]
+				<input type="hidden" id="${n}" name="${n}" value="${v}" />
+			[/#list]
+		[/#if]
+		
+		<input type="date" id="${var}" name="${var}" value="${v}" 
+			style="${style}" onblur="${onblur}" placeholder="${placeholder}"
+			[#if onblur!=""]onblur="${onblur}"[/#if]
+			[#if formatar]${formatarData}[/#if] />
+	</div>
+[/#macro]
+
+[#macro exibirData var default="" style="" placeholder=""]
     [#local v = .vars[var]!""]
     [#if v == ""]
         [#local v = default/]
     [/#if]
     
-	<div class="form-group" style="margin-bottom:0">
-		<input type="hidden" name="vars" value="${var}" />
-		<input type="date" id="${var}" name="${var}" value="${v}" style="${style}" onblur="${onblur}" placeholder="${placeholder}" />
-	</div>
+	<span id="${var}">
+		
+	</span>
+	
+	<script>
+		let data=${v};
+	    let dateString = new Date(data);
+	    let dateStringBR = dateString.toLocaleString('pt-BR', {timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit'});
+	    document.getElementById("${var}").value = dateStringBR;
+	</script>
 [/#macro]
 
 [#macro time var default="" style="" onblur="" placeholder=""]

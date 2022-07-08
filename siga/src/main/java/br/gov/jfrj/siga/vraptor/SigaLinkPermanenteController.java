@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -22,6 +23,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -173,15 +175,17 @@ public class SigaLinkPermanenteController extends SigaController {
 				if (!"".equals(sigla)) {
 					final SigaHTTP http = new SigaHTTP();
 					String url = Prop.get("/siga.base.url") + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
-					stream = http.fetch(url, null, 5000, null); 
-					
-					String fileName = sigla.replace("-", "").replace("/", "");
-					if (completo) 
-						fileName = fileName + "_completo.pdf";
-					else
+					if(!completo) {
+						stream = http.fetch(url, null, 5000, null); 
+						
+						String fileName = sigla.replace("-", "").replace("/", "");
 						fileName = fileName + ".pdf";
-
-					return new InputStreamDownload(stream, "application/pdf",fileName);
+	
+						return new InputStreamDownload(stream, "application/pdf",fileName);
+					} else {
+						result.redirectTo(url);
+						return null;
+					}
 				}
 			}
 		} catch (final Exception e) {

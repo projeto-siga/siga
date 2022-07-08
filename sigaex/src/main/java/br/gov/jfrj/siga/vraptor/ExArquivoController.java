@@ -42,6 +42,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -299,26 +300,27 @@ public class ExArquivoController extends ExController {
 			}
 			
 			
-			/*TODO: Implementar bloco para escrita em disco e controle do status 
 			if ((isPdf || isHtml) && completo && mob != null) {
 				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
-				DocumentosSiglaArquivoGetRequest req = new DocumentosSiglaArquivoGetRequest();
-				DocumentosSiglaArquivoGetResponse resp = new DocumentosSiglaArquivoGetResponse();
+				DocumentosSiglaArquivoGet.Request req = new DocumentosSiglaArquivoGet.Request();
+				DocumentosSiglaArquivoGet.Response resp = new DocumentosSiglaArquivoGet.Response();
 				req.sigla = mob.getSigla();
 				req.contenttype = isPdf ? "application/pdf" : "text/html";
-				req.estampa = semmarcas;
+				req.estampa = true;
 				req.completo = completo;
 				req.volumes = volumes;
-				req.exibirReordenacao = exibirReordenacao;
+				req.exibirReordenacao = false;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
-				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
+				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, null,
 						filename, contextpath, servernameport);
-				result.redirectTo("/app/arquivo/status/" + URLEncoder.encode(req.sigla, "utf-8") + "/" + resp.uuid + "/"
-						+ resp.jwt + "/" + filename);
+			
+				result.forwardTo(this).status(mob.getCodigoCompacto(), resp.uuid, resp.jwt, filename);
+
 				return null;
 			}
-			*/
+			
+		
 			
 			byte ab[] = null;
 	

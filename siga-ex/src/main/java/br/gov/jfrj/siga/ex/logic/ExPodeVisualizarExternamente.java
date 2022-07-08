@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.ex.logic;
 
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.logic.CpJwtTokenEValido;
+import br.gov.jfrj.siga.cp.logic.CpTokenEValido;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -45,7 +47,7 @@ public class ExPodeVisualizarExternamente extends CompositeExpressionSupport {
                         .withIdTpConf(ExTipoDeConfiguracao.VISUALIZACAO_EXTERNA_DOCUMENTOS)
                         .withCpOrgaoUsu(mob.getDoc().getOrgaoUsuario()),
 
-                new CpJwtTokenEValido(cod)
+                new CpTokenEValido(CpToken.TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO, cod)
         );
     }
 

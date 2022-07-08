@@ -14,10 +14,10 @@
     }
 
     function validarEmail(campo) {
-        if(campo.value != "") {
-            var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
+        if(campo.value !== "") {
+            const RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
 
-            if (campo.value.search(RegExp) == -1) {
+            if (campo.value.search(RegExp) === -1) {
                 sigaModal.alerta("E-mail inválido!");
                 habilitarBotaoOk();
                 document.getElementById('email').focus();
@@ -45,14 +45,6 @@
             #bg {
                 -webkit-print-color-adjust: exact;
             }
-        }
-        
-        .link-reduzido {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            max-width: 40%;
         }
     </style>
     <!-- main content bootstrap -->
@@ -89,26 +81,15 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
-                        <label>C&oacute;digo de acesso ao documento:</label>
-                        <a href="${url}" target="_blank" class="link-reduzido">${cod}</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group text-center">
                         <label>Data/Hora: ${dataHora}</label>
                     </div>
                 </div>
             </div>
-            <br>
-            <br>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
                         <label><b>Aten&ccedil;&atilde;o: </b>Para encaminhar o documento para um usu&aacute;rio n&atilde;o
-                            cadastrado
-                            no sistema, preencha os seguintes campos </label>
+                            cadastrado no sistema, preencha os seguintes campos </label>
                         <br/>
                     </div>
                 </div>
@@ -116,8 +97,6 @@
             <form name="frm" action="${pageContext.request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar"
                   method="POST">
                 <input type="hidden" name="sigla" value="${sigla}" />
-                <input type="hidden" name="cod" value="${cod}" />
-                <input type="hidden" name="url" value="${url}" />
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="form-group">

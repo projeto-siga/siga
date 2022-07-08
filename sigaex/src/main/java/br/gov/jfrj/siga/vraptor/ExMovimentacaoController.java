@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.siga.cp.util.SigaUtil;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
+import br.gov.jfrj.siga.validation.Email;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -5251,25 +5253,10 @@ public class ExMovimentacaoController extends ExController {
     public void enviarParaVisualizacaoExterna(final String sigla) {
 		assertAcesso("");
 
-		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
-
-		final ExDocumento documento = buscarDocumento(documentoBuilder);
-		
-		final long tokenExp = 30 * 24 * 60 * 60L; //token expires in 30 days
-		String codAcessoDocumento = SigaUtil.buildJwtToken("1", 
-				SigaUtil.randomAlfanumerico(10), tokenExp, sigla);
-		
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 
-		String servidor = Prop.get("/sigaex.url");
-		String n = documento.getSiglaAssinatura();
-		
-		String caminho = servidor + "/public/app/autenticar?n=" + n + "&cod=" + codAcessoDocumento;
 
-		result.include("url", caminho);
-		result.include("cod", codAcessoDocumento);
 		result.include("sigla", sigla);
 		result.include("dataHora", df.format(c.getTime()));
 
@@ -5279,9 +5266,8 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/enviar_para_visualizacao_externa_gravar")
 	public void enviarParaVisualizacaoExternaGravar(final String sigla,
 													final String nmPessoa,
-													final String email,
-													final String cod,
-													final String url) {
+													final String email) throws AplicacaoException {
+
 
 		assertAcesso("");
 		
@@ -5290,49 +5276,26 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
 		
-		try {
-			Correio.enviar(email, "SP Sem Papel - Código para visualização do documento " + doc.getSigla(),
-					"Segue abaixo o código para visualização do documento " + doc.getSigla() +
-							"\nPara visualizá-lo basta clicar no  link abaixo: "
-							+ "\n" + "\nCÓDIGO: " + cod
-							+ "\n" + "\nLink para acesso: "
-							+ "\n" + url
-							+ "\n\nObservação: O código de acesso fornecido expirará em 30 (trinta) dias. "
-							+ "Caso seja necessário acessar o documento após esse prazo, solicite um novo código."
-							+ "\n\nAtenção: esta é uma mensagem automática. Por favor, não responda.");
-			
-		} catch (Exception e) {
-			result.include("mensagem", "Atenção: Falha no envio do e-mail, tente novamente!");	
-		}
+		String cod = SigaUtil.randomAlfanumericoSeletivo(12);
+		
+		String servidor = Prop.get("/sigaex.url");
+		String n = doc.getSiglaAssinatura();
+
+		String url = servidor + "/public/app/autenticar?n=" + n + "&cod=" + cod;
+
+		ExMovimentacao mov = Ex.getInstance().getBL().enviarParaVisualizacaoExterna(
+				nmPessoa, email, doc, getCadastrante(), getLotaCadastrante(), cod, url
+		);
 
 		result.include("mensagem", "E-mail enviado com sucesso.");
+		result.include("descrMov", mov.getDescrMov());
+		result.include("sigla", sigla);
 
-		try {
-			final Date dtMov = ExDao.getInstance().dt();
-			final String dest = "Destinatário: " + nmPessoa + ". " + "e-mail: " + email;
-			final String descrMov = doc.getSigla() + " enviado para visualização externa.\n";
-					
-			
-			Ex.getInstance().getBL().gravarNovaMovimentacao(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
-					getCadastrante(), getLotaCadastrante(), doc.getMobilGeral(), dtMov, null, null, 
-					null, null, null, descrMov + dest);
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		result.include("dataHora", df.format(mov.getDtMov()));
 
-			result.include("dest", dest);
-			result.include("descrMov", descrMov);
-			result.include("url", url);
-			result.include("cod", cod);
-			result.include("sigla", sigla);
-			
-			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			result.include("dataHora", df.format(dtMov));
-			
-			result.use(Results.page())
-					.forwardTo("/WEB-INF/page/exMovimentacao/resultadoEnvioParaVisualizacaoExterna.jsp");
-			
-		} catch (final Exception e) {
-			throw new AplicacaoException("Erro ao gravar movimentação de envio para visualização externa", 
-					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA.getId(), e);
-		}
-		
+		result.use(Results.page())
+				.forwardTo("/WEB-INF/page/exMovimentacao/resultadoEnvioParaVisualizacaoExterna.jsp");
+
 	}
 }

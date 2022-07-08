@@ -5268,6 +5268,7 @@ public class ExMovimentacaoController extends ExController {
 													final String nmPessoa,
 													final String email) throws AplicacaoException {
 
+
 		assertAcesso("");
 		
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -5295,7 +5296,6 @@ public class ExMovimentacaoController extends ExController {
 
 		result.use(Results.page())
 				.forwardTo("/WEB-INF/page/exMovimentacao/resultadoEnvioParaVisualizacaoExterna.jsp");
-
 
 	}
 }

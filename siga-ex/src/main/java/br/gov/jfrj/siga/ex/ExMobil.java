@@ -2534,6 +2534,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		ExMovimentacao movAnt = null;
 		SortedSet<ExMovimentacao> movsAExcluir = new TreeSet<>();
 		for (ExMovimentacao mov : movs) {
+			if (mov.isCancelada())
+				continue;
 			if (movAnt != null 
 					&& (ExTipoDeMovimentacao.hasTransferencia(mov.getExTipoMovimentacao())
 							|| ExTipoDeMovimentacao.hasRecebimento(mov.getExTipoMovimentacao()))

@@ -21,10 +21,11 @@ public class DocumentosSiglaAnexarPost implements IDocumentosSiglaAnexarPost {
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento que Receberá o Anexo");
 		
-		// validar com os devs siga - acredito q. so pode anexar no ultimo mobil.
-		ExMobil ultimoMob = mob.getDoc().getUltimoMobil();
+		if (mob.isGeral()){
+			mob = mob.getDoc().getMobilDefaultParaReceberJuntada();
+		}
 		
-		if (!Ex.getInstance().getComp().podeAnexarArquivo(ctx.getTitular(), ctx.getLotaTitular(), ultimoMob))
+		if (!Ex.getInstance().getComp().podeAnexarArquivo(ctx.getTitular(), ctx.getLotaTitular(), mob))
 			throw new SwaggerException("Anexação no documento " + mob.getSigla() + " não é permitida. ("
 					+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", 403, null, req,
 					resp, null);

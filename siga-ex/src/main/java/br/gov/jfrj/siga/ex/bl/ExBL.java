@@ -8552,6 +8552,7 @@ public class ExBL extends CpBL {
 		return ret;
 	}
 
+
 	public void gravarMovimentacaoLinkPublico(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		try {
@@ -8600,6 +8601,7 @@ public class ExBL extends CpBL {
 					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA.getId(), e);
 		}
 	}
+
 	
 }
 

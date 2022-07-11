@@ -29,11 +29,13 @@ import static java.util.Objects.nonNull;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -173,6 +175,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			return;
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance().listarOrgaosUsuarios();
+		//Ordernar do ultimo para o primeiro p/ setar corretamente siglaOrgao | siglaLotacao
+		if (lou != null)
+			lou = lou.stream().sorted(Comparator.comparing(CpOrgaoUsuario::getSiglaOrgaoUsu).reversed()).collect(Collectors.toList());
+		
 		for (CpOrgaoUsuario ou : lou) {
 			siglasOrgaoUsu += (siglasOrgaoUsu.length() > 0 ? "|" : "")
 					+ ou.getSiglaOrgaoUsu();

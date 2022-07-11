@@ -253,7 +253,7 @@ public class Correio {
 		sbHtml.append("		<tbody>");
 		sbHtml.append("			<tr>");
 		sbHtml.append("				<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
-		sbHtml.append("					<img style='padding: 10px 0px; text-align: center;' src='https://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' alt='SP Sem Papel' width='108' height='50' />");		
+		sbHtml.append("					<img style='padding: 10px 0px; text-align: center;' src='" + Prop.get("/siga.base.url") + "/" + Prop.get("/siga.email.logo")+ "' width='70' height='80' />");		
 		sbHtml.append("				</td>");
 		sbHtml.append("			</tr>");
 		sbHtml.append("			<tr>");

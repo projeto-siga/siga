@@ -27,7 +27,22 @@ public class ExEmail implements ExEnviarEmail, ExMontarEmail {
 		} catch (Exception e) {
 			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
 		}
-	} 
+	}
+
+	@Override
+	public void enviarAoDestinatarioExterno(String nomeDestinatario, String emailDestinatario,
+											String sigla, String cod, String urlDoc) {
+
+		String assunto = "Código para visualização do documento " + sigla;
+		String[] destinanarios = { emailDestinatario };
+		String conteudoHTML = docEnviadoParaDestinatarioExterno(nomeDestinatario, emailDestinatario,
+				sigla, cod, urlDoc);
+		try {
+			Correio.enviar(null, destinanarios, assunto, "", conteudoHTML);
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um erro durante o envio do email", 0, e);
+		}
+	}
 
 	public void enviarAoResponsavelPelaAssinatura(DpPessoa pessoaDest, DpPessoa titular, String sigla) {
 		String assunto = "Responsável pela assinatura: " + pessoaDest.getDescricao();
@@ -97,6 +112,37 @@ public class ExEmail implements ExEnviarEmail, ExMontarEmail {
 		} catch (IOException e) {
 			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + destinatario.getNomePessoa());
 		}	
+	}
+
+	@Override
+	public String docEnviadoParaDestinatarioExterno(String nomeDestinatario, 
+													String emailDestinatario, 
+													String siglaDoc,
+													String cod,
+													String urlDoc
+	) {
+		String conteudo = "";
+		try (BufferedReader bfr = new BufferedReader(new InputStreamReader(
+				getClass().getResourceAsStream(ExTemplateEmail.DOCUMENTO_ENVIADO_PARA_USUARIO_EXTERNO.getPath()),
+						StandardCharsets.UTF_8))) {
+			String str;
+			while((str = bfr.readLine()) != null) {
+				conteudo += str;
+			}
+			conteudo = conteudo
+					.replace("${url}", Prop.get("/siga.base.url"))
+					.replace("${logo}", Prop.get("/siga.email.logo"))
+					.replace("${titulo}", Prop.get("/siga.email.titulo"))
+					.replace("${nomeDestinatario}", nomeDestinatario)
+					.replace("${siglaDoc}", siglaDoc)
+					.replace("${cod}", cod)
+					.replace("${urlDoc}", urlDoc);
+
+			return conteudo;
+
+		} catch (IOException e) {
+			throw new AplicacaoException("Erro ao montar e-mail para enviar ao usuário " + emailDestinatario);
+		}
 	}
 
 	@Override

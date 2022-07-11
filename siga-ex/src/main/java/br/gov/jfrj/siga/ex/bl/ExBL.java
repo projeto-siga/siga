@@ -61,6 +61,7 @@ import java.util.regex.Pattern;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
@@ -6124,7 +6125,7 @@ public class ExBL extends CpBL {
 		return mov;
 	}
 
-	public void gravarNovaMovimentacao(final ITipoDeMovimentacao tpmov,
+	public ExMovimentacao gravarNovaMovimentacao(final ITipoDeMovimentacao tpmov,
 									   final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 									   final ExMobil mob, final Date dtMov, final DpPessoa subscritor,
 									   final DpLotacao lotaSubscritor, final DpPessoa titular,
@@ -6137,6 +6138,8 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(descrMov);
 			gravarMovimentacao(mov);
+			
+			return mov;
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao gravar " + descrMov, tpmov.getId(), e);
@@ -8549,6 +8552,7 @@ public class ExBL extends CpBL {
 		return ret;
 	}
 
+
 	public void gravarMovimentacaoLinkPublico(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		try {
@@ -8563,6 +8567,41 @@ public class ExBL extends CpBL {
 		}
 
 	}
+
+	public ExMovimentacao enviarParaVisualizacaoExterna(final String nmPessoa, final String email, ExDocumento doc,
+											  final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+											  final String cod, final String url) throws AplicacaoException {
+
+
+		final Date dt = ExDao.getInstance().dt();
+		final String dest = "Destinatário: " + nmPessoa + ". " + "e-mail: " + email;
+		final String descrMov = doc.getSigla() + " enviado para visualização externa.\n" + dest;
+
+		try {
+			final ExEmail exEmail = new ExEmail();
+			exEmail.enviarAoDestinatarioExterno(nmPessoa, email, doc.getSigla(), cod, url);
+
+			ExMovimentacao mov = gravarNovaMovimentacao(
+					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), dt, null, null,
+					null, null, null, descrMov);
+
+			Cp.getInstance().getBL().gravarNovoToken(
+					CpToken.TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO,
+					mov.getIdMov(),
+					Calendar.MONTH,
+					1,
+					cod
+			);
+
+			return mov;
+			
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao enviar para visualização externa",
+					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA.getId(), e);
+		}
+	}
+
 	
 }
 

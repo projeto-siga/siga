@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8">
+    </head>
+	<body style="font-family: Arial, Helvetica, sans-serif; color: #212529;">
+		<div id="header">
+			<div
+				style='height: 80px; background-color: #f6f5f6; margin: 0px; padding: 20px;'>
+				<img style='text-align: center;'
+					src='${url}/${logo}'
+					alt='SIGA' width='150' />
+			</div>
+			<div style='background-color: #dadada;'>
+				<h3 style="height: 20px; margin: 0px; padding: 10px;">${titulo}</h3>
+			</div>
+		</div>
+		<div id="content" style="margin-top: 30px; padding: 20px;">
+			<div>
+				<p> 
+					Prezado usu&aacute;rio(a) <b>${nomeDestinatario}</b>. Voc&ecirc; recebeu o documento <b>(${siglaDoc})</b>, para visualiza&ccedil;&atilde;o.</b> 
+				</p>
+				<br />
+			</div>
+			<div style="margin-top: 20px;">
+				<p><label>C&oacute;digo de acesso ao documento: <b>${cod}</b></label></p>
+				<p>Para visualizar o documento, <a href="${urlDoc}">clique aqui.</a></p>
+			</div>
+		</div>
+
+		<div id="footer" style='background-color: #dadada; padding: 5px;'>
+			<p><span style='color: #555;'><b>Oberva&ccedil;&atilde;o</b>: O c&oacute;digo de acesso fornecido expirar&aacute; em 30 (trinta) dias. 
+				Caso seja necess&aacute;rio acessar o documento após esse prazo, solicite um novo c&oacute;digo.</span></p>
+			<p><span style='color: #555;'><b>Aten&ccedil;&atilde;o</b>: Esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda.</span></p>
+			<p><span style='color: #555;'><b>Confidencialidade</b>: 
+				A informa&ccedil;&atilde;o contida nesta mensagem de e-mail, incluindo quaisquer anexos, &eacute; confidencial e esta 
+				reservada apenas &agrave; pessoa ou entidade para a qual foi endere&ccedil;ada. Se você n&atilde;o &eacute; o destinat&aacute;rio ou a 
+				pessoa respons&aacute;vel por encaminhar esta mensagem, você est&aacute;, por meio desta, notificado que n&atilde;o deverá
+				rever, retransmitir, imprimir, copiar, usar ou distribuir esta mensagem de e-mail ou quaisquer anexos. 
+				Caso você tenha recebido esta mensagem por engano, por favor, contate o remetente imediatamente e 
+				apague esta mensagem de seu computador ou de qualquer outro banco de dados. Muito obrigado.</span>
+			</p>
+		</div>
+	</body>
+</html> 

@@ -5289,7 +5289,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("mensagem", "E-mail enviado com sucesso.");
 		result.include("descrMov", mov.getDescrMov());
-		result.include("sigla", sigla);
+		result.include("sigla", doc.getSigla());
 
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		result.include("dataHora", df.format(mov.getDtMov()));

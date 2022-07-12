@@ -185,10 +185,14 @@
 											</c:set>
 										<c:set var="tpd_x" scope="request">tpd_${documento.id}</c:set>
 										<tr>
-											<td align="center" class="align-middle text-center"><input
-												type="checkbox" name="documentosSelecionados"
-												value="${documento.id}" id="${x}" class="chkDocumento"
-												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
+											<td align="center" class="align-middle text-center"> 
+											<c:if test="${documento.exDocumento.exNivelAcessoAtual.grauNivelAcesso == 10   }">
+												<input
+													type="checkbox" name="documentosSelecionados"
+													value="${documento.id}" id="${x}" class="chkDocumento"
+													onclick="javascript:displaySel(this, '${tpd_x}');" />
+												</c:if>
+												</td>
 											<td class="text-right"><c:choose>
 													<c:when test='${param.popup!="true"}'>
 														<a

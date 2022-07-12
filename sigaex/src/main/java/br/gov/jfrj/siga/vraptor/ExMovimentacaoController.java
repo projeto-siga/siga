@@ -5309,8 +5309,9 @@ public class ExMovimentacaoController extends ExController {
 
 		buscarDocumento(documentoBuilder);
 		final ExMobil mob = documentoBuilder.getMob();
-		
-		Cp.getInstance().getBL().invalidarTokenAtivo(CpToken.TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO, idRef);
+
+		Cp.getInstance().getBL()
+				.invalidarTokenAtivo(CpToken.TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO, idRef);
 		Ex.getInstance().getBL()
 				.cancelarMovimentacao(getCadastrante(), getLotaCadastrante(), mob);
 		

@@ -31,11 +31,11 @@ public class PinResetPost implements IPinResetPost {
 		if (Cp.getInstance().getBL().isTokenValido(CpToken.TOKEN_PIN, cadastrante.getCpfPessoa(), tokenPin)) {
 			if (Cp.getInstance().getBL().consisteFormatoPin(pin)) {
 
-				List<CpIdentidade> listaIdentidades = new ArrayList<CpIdentidade>();
-				listaIdentidades = CpDao.getInstance().consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());
+				List<CpIdentidade> listaIdentidades = CpDao.getInstance()
+						.consultaIdentidadesPorCpf(cadastrante.getCpfPessoa().toString());
 
 				Cp.getInstance().getBL().definirPinIdentidade(listaIdentidades, pin, identidadeCadastrante);
-				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_PIN,cadastrante.getCpfPessoa(), tokenPin);
+				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_PIN, tokenPin);
 				Cp.getInstance().getBL().enviarEmailDefinicaoPIN(cadastrante, "Redefinição de PIN",
 						"Você redefiniu seu PIN.");
 				resp.mensagem = "PIN foi redefinido.";

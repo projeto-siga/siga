@@ -1907,7 +1907,7 @@ public class CpBL {
 	public void invalidarTokenAtivo(Long tipoToken, Long idRef) {
 		CpToken cpToken = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
 		if (cpToken != null) {
-			cpToken.setDtExp(cpToken.getDtIat());
+			cpToken.setDtExp(dao().consultarDataEHoraDoServidor());
 			try {
 				dao().gravar(cpToken);
 			} catch (final Exception e) {
@@ -1915,20 +1915,19 @@ public class CpBL {
 			}
 		} 
 	}
-	
-	public void invalidarTokenUtilizado(Long tipoToken, Long cpf, String token) {
+
+	public void invalidarTokenUtilizado(Long tipoToken, String token) {
 		try {
-			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
-			if (tokenResetPin != null ) {
-				tokenResetPin.setDtExp(tokenResetPin.getDtIat());
+			CpToken cpToken = dao().obterCpTokenPorTipoToken(tipoToken, token);
+			if (cpToken != null) {
+				cpToken.setDtExp(dao().consultarDataEHoraDoServidor());
 				try {
-					dao().gravar(tokenResetPin);
+					dao().gravar(cpToken);
 				} catch (final Exception e) {
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			}
-			
+
 		} catch (final Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}

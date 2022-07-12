@@ -8576,10 +8576,12 @@ public class ExBL extends CpBL {
 		final Date dt = ExDao.getInstance().dt();
 		final String dest = "Destinatário: " + nmPessoa + ". " + "e-mail: " + email;
 		final String descrMov = doc.getSigla() + " enviado para visualização externa.\n" + dest;
+		final String numeroReferencia = doc.getSiglaAssinatura();
 
 		try {
 			final ExEmail exEmail = new ExEmail();
-			exEmail.enviarAoDestinatarioExterno(nmPessoa, email, doc.getSigla(), cod, url);
+			exEmail.enviarAoDestinatarioExterno(nmPessoa, email, doc.getSigla(), 
+					numeroReferencia, cod, url);
 
 			ExMovimentacao mov = gravarNovaMovimentacao(
 					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,

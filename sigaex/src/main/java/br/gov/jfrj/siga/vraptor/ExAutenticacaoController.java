@@ -15,7 +15,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
@@ -94,16 +97,12 @@ public class ExAutenticacaoController extends ExController {
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		result.include("n", n);
 		result.include("cod", cod);
-		
-		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
-		ExDocumento doc = (ExDocumento) arq;
-		
-		result.include("podeVisualizarExternamente", new ExPodeVisualizarExternamente(
-				doc.getMobilGeral(), getTitular(), getLotaTitular()).eval());
-
 
 		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();
+
+			result.include("podeVisualizarExternamente", true);
+
 			return;
 		}
 
@@ -134,6 +133,20 @@ public class ExAutenticacaoController extends ExController {
 			}
 		}
 		if (!success) {
+			setDefaultResults();
+			return;
+		}
+
+		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
+		ExDocumento doc = (ExDocumento) arq;
+
+		boolean podeVisualizarExternamente = new ExPodeVisualizarExternamente(
+				doc.getMobilGeral(), getTitular(), getLotaTitular())
+				.eval();
+
+		if (( cod == null || cod.trim().length() == 0 ) && ( !podeVisualizarExternamente )) {
+			result.include("podeVisualizarExternamente", false);
+
 			setDefaultResults();
 			return;
 		}
@@ -184,6 +197,7 @@ public class ExAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
+
 		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n), cod);
 	}
 

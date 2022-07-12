@@ -1905,11 +1905,11 @@ public class CpBL {
 	}
 	
 	public void invalidarTokenAtivo(Long tipoToken, Long idRef) {
-		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
-		if (tokenResetPin != null) {
-			tokenResetPin.setDtExp(tokenResetPin.getDtIat());
+		CpToken cpToken = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
+		if (cpToken != null) {
+			cpToken.setDtExp(cpToken.getDtIat());
 			try {
-				dao().gravar(tokenResetPin);
+				dao().gravar(cpToken);
 			} catch (final Exception e) {
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}

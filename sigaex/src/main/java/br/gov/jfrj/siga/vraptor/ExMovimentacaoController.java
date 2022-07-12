@@ -5298,4 +5298,23 @@ public class ExMovimentacaoController extends ExController {
 				.forwardTo("/WEB-INF/page/exMovimentacao/resultadoEnvioParaVisualizacaoExterna.jsp");
 
 	}
+
+	@Transacional
+	@Get("/app/expediente/mov/revogar_visualizacao_externa")
+	public void revogarVisualizacaoExternaGravar(final String sigla, final Long idRef) throws AplicacaoException {
+		assertAcesso("");
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		final ExMobil mob = documentoBuilder.getMob();
+		
+		Cp.getInstance().getBL().invalidarTokenAtivo(CpToken.TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO, idRef);
+		Ex.getInstance().getBL()
+				.cancelarMovimentacao(getCadastrante(), getLotaCadastrante(), mob);
+		
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		
+	}
 }

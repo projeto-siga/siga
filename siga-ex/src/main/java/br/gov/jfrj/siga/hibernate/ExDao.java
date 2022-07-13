@@ -495,7 +495,7 @@ public class ExDao extends CpDao {
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina) {
-		return consultarPorFiltro(flt, 0, 0, new DpPessoa(), new DpLotacao());
+		return consultarPorFiltro(flt, offset, itemPagina, new DpPessoa(), new DpLotacao());
 	}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt,

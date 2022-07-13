@@ -196,7 +196,7 @@
 														onclick="javascript:displaySel(this, '${tpd_x}');" />
 												</c:when>
 												<c:otherwise>
-													${documento.exDocumento.exNivelAcessoAtual}
+													${documento.exDocumento.exNivelAcessoAtual.nmNivelAcesso}
 												</c:otherwise>
 												</c:choose>
 												</td>

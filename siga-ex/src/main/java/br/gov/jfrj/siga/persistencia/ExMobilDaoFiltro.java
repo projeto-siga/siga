@@ -122,6 +122,8 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 
 	private Long subscritorSelId;
 
+	private Long lotaSubscritorSelId;
+
 	private Long cadastranteSelId;
 
 	private Long lotaCadastranteSelId;
@@ -436,6 +438,14 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 				|| (getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0)
 				|| (getAnoEmissao() != null && getAnoEmissao() != 0)
 				|| (getNumExpediente() != null && getNumExpediente() != 0);
+	}
+
+	public Long getLotaSubscritorSelId() {
+		return lotaSubscritorSelId;
+	}
+
+	public void setLotaSubscritorSelId(Long lotaSubscritorSelId) {
+		this.lotaSubscritorSelId = lotaSubscritorSelId;
 	}
 
 }

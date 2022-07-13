@@ -131,6 +131,8 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "			and (:numExpediente = null or :numExpediente = 0L or doc.numExpediente = :numExpediente)"
 				+ "			and (:idTpDoc = null or :idTpDoc = 0L or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
 				+ "			and (:idFormaDoc = null or :idFormaDoc = 0L or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
+				+ "			and (:idMod = null or :idMod = 0L or doc.exModelo.idMod in (select l.idMod from ExModelo as l where l.hisIdIni = :idMod))"
+
 				+ "			and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0L or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
 				+ "			and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
 				+ "			and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
@@ -148,10 +150,11 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "			and (:lotaCadastranteSelId = null or :lotaCadastranteSelId = 0L or doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaCadastranteSelId))"
 				+ "			"
 				+ "			and (:subscritorSelId = null or :subscritorSelId = 0L or doc.subscritor.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :subscritorSelId))"
+				+ "			and (:lotaSubscritorSelId = null or :lotaSubscritorSelId = 0L or doc.lotaSubscritor.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaSubscritorSelId))"
 				+ "			and (:nmSubscritorExt = null or :nmSubscritorExt = '' or upper(doc.nmSubscritorExt) like '%' || :nmSubscritorExt || '%')"
 				+ "			and (:orgaoExternoSelId = null or :orgaoExternoSelId = null or doc.orgaoExterno.idOrgao = :orgaoExternoSelId)"
 				+ "			and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))"
-				+ "			" + "			order by doc.dtDoc desc"),
+				+ "			order by doc.dtDoc desc"),
 		@NamedQuery(name = "consultarQuantidadePorFiltro", query = "select count(doc) "
 				+ "				from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
 				+ "				"
@@ -183,6 +186,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "				and (:idTpDoc = null or :idTpDoc = 0L or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
 				+ "				and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0L or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
 				+ "				and (:idFormaDoc = null or :idFormaDoc = 0L or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
+				+ "				and (:idMod = null or :idMod = 0L or doc.exModelo.idMod in (select l.idMod from ExModelo as l where l.hisIdIni = :idMod))"
 				+ "				and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
 				+ "				and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
 				+ "				"
@@ -199,6 +203,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "				and (:lotaCadastranteSelId = null or :lotaCadastranteSelId = 0L or doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaCadastranteSelId))"
 				+ "				"
 				+ "				and (:subscritorSelId = null or :subscritorSelId = 0L or doc.subscritor.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :subscritorSelId))"
+				+ "				and (:lotaSubscritorSelId = null or :lotaSubscritorSelId = 0L or doc.lotaSubscritor.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaSubscritorSelId))"
 				+ "				"
 				+ "				and (:nmSubscritorExt = null or :nmSubscritorExt = '' or upper(doc.nmSubscritorExt) like '%' || :nmSubscritorExt || '%')"
 				+ "				and (:orgaoExternoSelId = null or :orgaoExternoSelId = null or doc.orgaoExterno.idOrgao = :orgaoExternoSelId)"

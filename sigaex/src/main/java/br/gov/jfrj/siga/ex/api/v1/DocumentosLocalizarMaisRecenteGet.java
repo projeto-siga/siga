@@ -23,39 +23,43 @@ public class DocumentosLocalizarMaisRecenteGet implements IDocumentosLocalizarMa
 
 		// Modelo
 		ExModelo modelo = null;
-		if (req.modelo != null) {
+		if (req.modelo != null && !req.modelo.trim().isEmpty()) {
 			modelo = ExDao.getInstance().consultarExModelo(null, req.modelo);
 			if (modelo == null)
 				throw new SwaggerException("Não existe modelo com o nome especificado (" + req.modelo + ")", 400, null,
 						req, resp, null);
+			builder.setIdMod(modelo.getHisIdIni());
+			builder.setIdFormaDoc(modelo.getExFormaDocumento().getId());
 		}
-		builder.setIdMod(modelo.getHisIdIni());
 
 		// Lota Subscritor
-		final DpLotacao fltLotaSubscritor = new DpLotacao();
-		fltLotaSubscritor.setSigla(req.lotaSubscritor.toUpperCase());
-		DpLotacao lotaSubscritor = CpDao.getInstance().consultarPorSigla(fltLotaSubscritor);
-		if (lotaSubscritor == null)
-			throw new SwaggerException("Nenhuma lotação foi encontrada contendo a sigla informada.", 400, null, req,
-					resp, null);
+		if (req.lotaSubscritor != null && !req.lotaSubscritor.trim().isEmpty()) {
+			final DpLotacao fltLotaSubscritor = new DpLotacao();
+			fltLotaSubscritor.setSigla(req.lotaSubscritor.toUpperCase());
+			DpLotacao lotaSubscritor = CpDao.getInstance().consultarPorSigla(fltLotaSubscritor);
+			if (lotaSubscritor == null)
+				throw new SwaggerException("Nenhuma lotação foi encontrada contendo a sigla informada.", 400, null, req,
+						resp, null);
+			builder.setLotaSubscritorSelId(lotaSubscritor.getHisIdIni());
+		}
 
 		// Ano
-		if (req.ano == null)
-			throw new SwaggerException("Nenhum ano foi informado.", 400, null, req, resp, null);
-		builder.setAnoEmissao(Long.parseLong(req.ano));
+		if (req.ano != null && !req.ano.trim().isEmpty())
+			builder.setAnoEmissao(Long.parseLong(req.ano));
+//		else
+//			throw new SwaggerException("Nenhum ano foi informado.", 400, null, req, resp, null);
 
 		// Marcador
-		CpMarcador marcador = null;
-		if (req.marcador != null) {
+		if (req.marcador != null && !req.marcador.trim().isEmpty()) {
 			List<CpMarcador> listMarcador = ExDao.getInstance().consultaCpMarcadorAtivoPorNome(req.marcador, null);
 			if (listMarcador.size() > 0) {
-				marcador = listMarcador.get(0);
+				CpMarcador marcador = listMarcador.get(0);
+				builder.setUltMovIdEstadoDoc(marcador.getHisIdIni());
 			} else {
 				throw new SwaggerException("Não existe marcador com o nome especificado (" + req.marcador + ")", 400,
 						null, req, resp, null);
 			}
 		}
-		builder.setUltMovIdEstadoDoc(marcador.getHisIdIni());
 
 		List<Object[]> l = ExDao.getInstance().consultarPorFiltro(builder, 0, 1);
 		if (l.isEmpty())

@@ -88,6 +88,7 @@ public class ExArquivoController extends ExController {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
+	@TrackRequest
 	@Get("/app/arquivo/exibir")
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,

@@ -41,6 +41,7 @@ public class UserRequestInterceptor {
     public void around(SimpleInterceptorStack stack) {
         log.info(
                 request.getRequestURL() + ";"
+                        + request.getQueryString() + ";"
                         + this.cadastrante.getMatricula() + ";"
                         + this.cadastrante.getLotacao() + ";"
                         + this.cadastrante.getNomePessoa() + ";"

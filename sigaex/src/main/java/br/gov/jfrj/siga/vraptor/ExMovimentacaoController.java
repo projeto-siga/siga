@@ -5289,7 +5289,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("mensagem", "E-mail enviado com sucesso.");
 		result.include("descrMov", mov.getDescrMov());
-		result.include("sigla", sigla);
+		result.include("sigla", doc.getSigla());
 
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		result.include("dataHora", df.format(mov.getDtMov()));
@@ -5297,5 +5297,25 @@ public class ExMovimentacaoController extends ExController {
 		result.use(Results.page())
 				.forwardTo("/WEB-INF/page/exMovimentacao/resultadoEnvioParaVisualizacaoExterna.jsp");
 
+	}
+
+	@Transacional
+	@Get("/app/expediente/mov/revogar_visualizacao_externa")
+	public void revogarVisualizacaoExternaGravar(final String sigla, final Long idRef) throws AplicacaoException {
+		assertAcesso("");
+		
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		final ExMobil mob = documentoBuilder.getMob();
+
+		Cp.getInstance().getBL()
+				.invalidarTokenAtivo(CpToken.TOKEN_COD_ACESSO_EXTERNO_AO_DOCUMENTO, idRef);
+		Ex.getInstance().getBL()
+				.cancelarMovimentacao(getCadastrante(), getLotaCadastrante(), mob);
+		
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		
 	}
 }

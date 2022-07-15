@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import br.gov.jfrj.siga.ex.logic.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.auth0.jwt.JWTSigner;
@@ -46,19 +47,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.logic.ExEstaSemEfeito;
-import br.gov.jfrj.siga.ex.logic.ExMovimentacaoEstaCancelada;
-import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarAnexo;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacaoPapel;
-import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnexo;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnotacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
-import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExMovimentacaoVO extends ExVO {
@@ -544,6 +532,16 @@ public class ExMovimentacaoVO extends ExVO {
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.ORDENACAO_ORIGINAL_DOCUMENTO) {								
 			addAcao(AcaoVO.builder().nome("Ver documento completo").nameSpace("/app/expediente/doc").acao("exibirProcesso").params("sigla", mov.getExMobil().getSigla()).pre("Documento completo reordenado para sua ordem original:")
 					.exp(new CpPodeSempre()).build());
+		}
+
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA) {
+			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.revogar.visualizacaoexterna"))
+					.nameSpace("/app/expediente/mov").acao("revogar_visualizacao_externa")
+					.params("sigla", mov.mob().getCodigoCompacto())
+					.params("idRef", mov.getIdMov().toString())
+					.exp(new ExPodeEnviarParaVisualizacaoExterna(mov.mob(), titular, lotaTitular))
+					.msgConfirmacao("Confirma a revogação da visualização externa?")
+					.build());
 		}
 		
 		if (descricao != null && descricao.equals(mov.getObs())) {

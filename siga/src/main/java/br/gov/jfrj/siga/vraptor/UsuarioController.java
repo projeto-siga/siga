@@ -519,14 +519,11 @@ public class UsuarioController extends SigaController {
 			if (Cp.getInstance().getBL().isTokenValido(CpToken.TOKEN_SENHA, cpf, token)) {
 				
 				//Obter Todas as identidade para o CPF e redefinir a senha
-				List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
-				listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(strCpf);
+				List<CpIdentidade> listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(strCpf);
 				
 				Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, strCpf, listaIdentidadesCpf);
-				
-				
-				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_SENHA, cpf, token);
-				
+
+				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_SENHA, token);
 				
 				//Redefinir senha de rede de todas as matrículas envolvidas
 				if (!listaIdentidadesCpf.isEmpty()) {

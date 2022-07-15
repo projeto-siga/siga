@@ -46,6 +46,14 @@ public class Prop {
 			return null;
 		return Integer.valueOf(p.trim());
 	}
+	
+	public static Long getLong(String nome) {
+		String p = Prop.get(nome);
+		if (p == null)
+			return null;
+		return Long.valueOf(p.trim());
+	}
+
 
 	public static Double getDouble(String nome) {
 		String p = Prop.get(nome);

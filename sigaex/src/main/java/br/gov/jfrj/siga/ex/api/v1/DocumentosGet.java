@@ -33,9 +33,8 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilApiBuilder;
 
 public class DocumentosGet implements IDocumentosGet {
-	final private static String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
 	final private static String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
-	final static public Long MAXIMO_DIAS_PESQUISA = 30L;
+	final static public Long MAXIMO_DIAS_PESQUISA = Prop.getLong("/siga.pesquisa.limite.dias") != null ? Prop.getLong("/siga.pesquisa.limite.dias"):30L;
 	DpPessoa titular;
 	DpLotacao lotaTitular;
 	

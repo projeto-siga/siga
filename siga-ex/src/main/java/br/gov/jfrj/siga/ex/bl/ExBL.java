@@ -6694,7 +6694,12 @@ public class ExBL extends CpBL {
 			final Date dtMov) throws AplicacaoException, Exception {
 
 		if (mob.doc().isEletronico()) {
-			dao().em().refresh(mob);
+			try {
+				dao().em().refresh(mob);
+			} catch(Exception ex) {
+				//Nato: Nao sei exatamente porque o refresh acima eh necessario, mas esta dando erro quando
+				// se trata de uma autuacao feita pelo workflow. Por isso estou engolindo a excecao.
+			}
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {

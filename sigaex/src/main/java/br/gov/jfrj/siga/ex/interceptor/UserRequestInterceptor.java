@@ -6,6 +6,7 @@ import br.com.caelum.vraptor.interceptor.AcceptsWithAnnotations;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.interceptor.payload.UserRequestPayload;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.TrackRequest;
@@ -21,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 @AcceptsWithAnnotations(TrackRequest.class)
 public class UserRequestInterceptor {
     private HttpServletRequest request;
-
     private DpPessoa cadastrante;
+    private UserRequestPayload userRequestPayload;
 
     private static Log log = LogFactory.getLog(UserRequestInterceptor.class);
 
@@ -35,19 +36,20 @@ public class UserRequestInterceptor {
     public UserRequestInterceptor(HttpServletRequest request, SigaObjects sigaObjects) {
         this.request = request;
         this.cadastrante = sigaObjects.getCadastrante();
+        this.userRequestPayload = new UserRequestPayload(
+                this.request.getRequestURL().toString(),
+                this.request.getQueryString(),
+                this.cadastrante.getMatricula().toString(),
+                this.cadastrante.getLotacao().toString(),
+                this.cadastrante.getNomePessoa(),
+                ExDao.getInstance().consultarDataEHoraDoServidor().toString(),
+                HttpRequestUtils.getIpAudit(request)
+        );
     }
 
     @AroundCall
     public void around(SimpleInterceptorStack stack) {
-        log.info(
-                request.getRequestURL() + ";"
-                        + request.getQueryString() + ";"
-                        + this.cadastrante.getMatricula() + ";"
-                        + this.cadastrante.getLotacao() + ";"
-                        + this.cadastrante.getNomePessoa() + ";"
-                        + ExDao.getInstance().consultarDataEHoraDoServidor() + ";"
-                        + HttpRequestUtils.getIpAudit(request)
-        );
+        log.info(userRequestPayload);
 
         stack.next();
     }

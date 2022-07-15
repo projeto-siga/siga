@@ -1879,6 +1879,8 @@ public class ExDocumentoController extends ExController {
 						0, e);
 			}
 
+		} catch (final AplicacaoException e) {
+			throw e;
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro na gravação", e);
 		}

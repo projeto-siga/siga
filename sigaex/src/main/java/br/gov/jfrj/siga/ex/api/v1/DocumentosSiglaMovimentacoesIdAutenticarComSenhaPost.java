@@ -20,7 +20,7 @@ public class DocumentosSiglaMovimentacoesIdAutenticarComSenhaPost
 		Long movId = Long.parseLong(req.id);
 		ExMovimentacao mov = ExDao.getInstance().consultar(movId, ExMovimentacao.class, false);
 		if (!mov.getExMobil().getDoc().equals(mob.getDoc()))
-			throw new AplicacaoException("Movimentação não se refere ao mobil informado");
+			throw new AplicacaoException("Movimentação não se refere ao documento informado");
 
 		Ex.getInstance().getBL().assinarMovimentacaoComSenha(ctx.getCadastrante(), ctx.getLotaTitular(), mov, null,
 				ctx.getCadastrante().getSiglaCompleta(), null, false, false,

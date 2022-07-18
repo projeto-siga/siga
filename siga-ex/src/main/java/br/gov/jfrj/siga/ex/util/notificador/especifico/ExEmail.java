@@ -31,12 +31,12 @@ public class ExEmail implements ExEnviarEmail, ExMontarEmail {
 
 	@Override
 	public void enviarAoDestinatarioExterno(String nomeDestinatario, String emailDestinatario,
-											String sigla, String cod, String urlDoc) {
+											String sigla, String numeroReferencia, String cod, String urlDoc) {
 
 		String assunto = "Código para visualização do documento " + sigla;
 		String[] destinanarios = { emailDestinatario };
 		String conteudoHTML = docEnviadoParaDestinatarioExterno(nomeDestinatario, emailDestinatario,
-				sigla, cod, urlDoc);
+				sigla, numeroReferencia, cod, urlDoc);
 		try {
 			Correio.enviar(null, destinanarios, assunto, "", conteudoHTML);
 		} catch (Exception e) {
@@ -118,6 +118,7 @@ public class ExEmail implements ExEnviarEmail, ExMontarEmail {
 	public String docEnviadoParaDestinatarioExterno(String nomeDestinatario, 
 													String emailDestinatario, 
 													String siglaDoc,
+													String numeroReferencia,
 													String cod,
 													String urlDoc
 	) {
@@ -135,6 +136,7 @@ public class ExEmail implements ExEnviarEmail, ExMontarEmail {
 					.replace("${titulo}", Prop.get("/siga.email.titulo"))
 					.replace("${nomeDestinatario}", nomeDestinatario)
 					.replace("${siglaDoc}", siglaDoc)
+					.replace("${numeroReferencia}", numeroReferencia)
 					.replace("${cod}", cod)
 					.replace("${urlDoc}", urlDoc);
 

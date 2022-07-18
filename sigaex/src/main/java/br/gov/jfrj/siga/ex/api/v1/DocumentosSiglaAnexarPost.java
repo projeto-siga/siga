@@ -21,6 +21,21 @@ public class DocumentosSiglaAnexarPost implements IDocumentosSiglaAnexarPost {
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento que Receberá o Anexo");
+		
+		if (mob.isGeral()){
+			
+			ExMobil mobDefaultParaReceberJuntada = mob.getDoc().getMobilDefaultParaReceberJuntada();
+			
+			if ( mobDefaultParaReceberJuntada == null ){
+				if (mob.doc().isProcesso()){
+					throw new SwaggerException("Anexação no documento " + mob.getSigla() + " não é permitida, pois se trata de um Processo não finalizado.", 403, null, req,
+									resp, null);
+				}
+			} else {
+				mob = mobDefaultParaReceberJuntada;
+			}
+		}	
+		
 		try {
 			Ex.getInstance().getComp().afirmar("Anexação no documento " + mob.getSigla() + " não é permitida. ("
 					+ ctx.getTitular().getSigla() + "/" + ctx.getLotaTitular().getSiglaCompleta() + ")", ExPodeAnexarArquivo.class, ctx.getTitular(), ctx.getLotaTitular(), mob);

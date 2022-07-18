@@ -11,6 +11,6 @@ public interface ExMontarEmail {
 	public String docMarcadoTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String docSigla, String marcador);
 	public String docTramitadoParaUsuario(DpPessoa destinatario, DpPessoa cadastrante, String siglaDoc);
 	public String docEnviadoParaDestinatarioExterno(String nomeDestinatario, String emailDestinatario,
-													String siglaDoc, String cod, String url);
+													String siglaDoc, String numeroReferencia, String cod, String url);
 	
 }

@@ -761,7 +761,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.enviar.visualizacaoexterna"))
 				.icone("email_go").nameSpace("/app/expediente/mov").acao("enviar_para_visualizacao_externa")
-				.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
+				.params("sigla", mob.getSigla()).params("popup", "true")
 				.exp(new ExPodeEnviarParaVisualizacaoExterna(mob, titular, lotaTitular)).build());
 		
 	}

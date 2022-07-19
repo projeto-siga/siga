@@ -50,7 +50,7 @@
 					</tr>
 					<tr>
 						<td width="100%" align="center">
-							<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt; font-weight: bold;">GOVERNO DO ESTADO DE SÃO PAULO</p>
+							<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt; font-weight: bold;">${f:resource('/siga.relat.titulo')}</p>
 						</td>
 					</tr>
 					<tr>

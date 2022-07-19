@@ -1,30 +1,43 @@
 package br.gov.jfrj.siga.ex.interceptor.payload;
 
-public class UserRequestPayload {
-    private String requestURL;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.dp.DpPessoa;
 
+import javax.servlet.http.HttpServletRequest;
+
+public class UserRequestPayload {
+    private HttpServletRequest request;
+    private String requestURL;
     private String requestParams;
+    private String sessionId;
+    private String userIP;
+
+    private DpPessoa cadastrante;
     private String matricula;
     private String lotacao;
     private String nome;
-    private String dataHora;
-    private String ipAudit;
+    
 
-    public UserRequestPayload(String requestURL,
-                              String requestParams,
-                              String matricula,
-                              String lotacao,
-                              String nome,
-                              String dataHora,
-                              String ipAudit) {
+    public UserRequestPayload(HttpServletRequest request, DpPessoa cadastrante) {
+        this.request = request;
+        this.requestURL = request.getRequestURL().toString();
+        this.requestParams = request.getQueryString();
+        this.sessionId = request.getRequestedSessionId();
+        this.userIP = HttpRequestUtils.getIpAudit(request);
         
-        this.requestURL = requestURL;
-        this.requestParams = requestParams;
-        this.matricula = matricula;
-        this.lotacao = lotacao;
-        this.nome = nome;
-        this.dataHora = dataHora;
-        this.ipAudit = ipAudit;
+        this.cadastrante = cadastrante;
+        this.matricula = cadastrante.getMatricula().toString();
+        this.lotacao = cadastrante.getLotacao().toString();
+        this.nome = cadastrante.getNomePessoa();
+        
+    }
+
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+
+    public DpPessoa getCadastrante() {
+        return cadastrante;
     }
 
     public String getRequestURL() {
@@ -33,6 +46,14 @@ public class UserRequestPayload {
 
     public String getRequestParams() {
         return requestParams;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public String getUserIP() {
+        return userIP;
     }
 
     public String getMatricula() {
@@ -47,24 +68,16 @@ public class UserRequestPayload {
         return nome;
     }
 
-    public String getDataHora() {
-        return dataHora;
-    }
-
-    public String getIpAudit() {
-        return ipAudit;
-    }
-
     @Override
     public String toString() {
         return "UserRequestPayload{" +
                 "requestURL='" + requestURL + '\'' +
                 ", requestParams='" + requestParams + '\'' +
+                ", sessionId='" + sessionId + '\'' +
+                ", userIP='" + userIP + '\'' +
                 ", matricula='" + matricula + '\'' +
                 ", lotacao='" + lotacao + '\'' +
                 ", nome='" + nome + '\'' +
-                ", dataHora='" + dataHora + '\'' +
-                ", ipAudit='" + ipAudit + '\'' +
                 '}';
     }
 }

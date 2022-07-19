@@ -4788,8 +4788,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().isExternoCapturado() && mob.getDoc().getAutenticacoesComTokenOuSenha().isEmpty())
 				return false;
 		
-		return (SigaMessages.isSigaSP()
-					&& !mob.doc().isPendenteDeAssinatura() 
+		return (//SigaMessages.isSigaSP() 	&&
+				!mob.doc().isPendenteDeAssinatura() 
 					&& !mob.isCiente(titular) 
 					&& !mob.isEmTransito(titular, lotaTitular) 
 					&& !mob.isEliminado() 

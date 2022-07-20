@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <!-- Define custom levels before using them for filtering below. -->
+    <CustomLevels>
+        <CustomLevel name="BLAME" intLevel="450"/>
+    </CustomLevels>
+
+    <Appenders>
+        <RollingFile name="json-file"
+                     fileName="${project.artifactId}.log.json"
+                     filePattern="${project.artifactId}-%i.log.json">
+            <JSONLayout compact="true" eventEol="true" properties="true" stacktraceAsString="true"
+                        includeTimeMillis="true">
+                <!--  Project properties-->
+                <KeyValuePair key="appName" value="${project.name}"/>
+                <KeyValuePair key="version" value="${project.version}"/>
+                <KeyValuePair key="appType" value="${app.type}"/>
+                <!--  Datadog log ingestion properties -->
+                <KeyValuePair key="service" value="${project.artifactId}"/>
+            </JSONLayout>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="br.gov.jfrj.siga.ex.interceptor.UserRequestInterceptor" level="BLAME"/>
+
+        <AsyncRoot level="BLAME">
+            <AppenderRef ref="json-file"/>
+        </AsyncRoot>
+    </Loggers>
+
+</Configuration>

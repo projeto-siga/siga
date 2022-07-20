@@ -1114,7 +1114,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
 		this.conteudoTpDoc = conteudoTp;
 		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc, Boolean.TRUE);
 		}
 	}
 	
@@ -1139,7 +1139,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 			conteudoBlobDoc = createBlob;
 		} else if(cacheConteudoBlobDoc != null){
 			if(orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
+				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc, Boolean.TRUE);
 			else
 				conteudoBlobDoc = createBlob;
 		}

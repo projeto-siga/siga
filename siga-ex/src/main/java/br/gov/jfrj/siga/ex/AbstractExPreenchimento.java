@@ -204,8 +204,8 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 		if (this.cpArquivo==null && (this.preenchimentoBlob!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))){
 			this.preenchimentoBlob = preenchimentoBlob;
 		} else if(cacheConteudoBlobPre != null){
-			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, TipoConteudo.X_WWW_FORM_URLENCODED.getMimeType());
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobPre);
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, TipoConteudo.X_WWW_FORM_URLENCODED.getMimeType(), Boolean.TRUE);
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobPre, Boolean.TRUE);
 		}
 	}
 	

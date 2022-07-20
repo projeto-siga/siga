@@ -840,7 +840,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	public void setConteudoTpMov(final String conteudoTp) {
 	    this.conteudoTpMov = conteudoTp;
 	    if (orgaoPermiteHcp() && this.conteudoBlobMov == null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-	    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
+	    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp, Boolean.FALSE);
 	    }
 	}
 
@@ -865,7 +865,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 			this.conteudoBlobMov = createBlob;
 		} else if(cacheConteudoBlobMov != null){
 			if (orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
+				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov, Boolean.FALSE);
 			else
 				this.conteudoBlobMov = createBlob;
 		}

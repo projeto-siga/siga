@@ -423,7 +423,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
 		this.conteudoTpBlob = conteudoTpMod;
 		if (conteudoBlobMod==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod);
+			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod, Boolean.FALSE);
 	    }
 	}
 
@@ -447,7 +447,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		if (this.cpArquivo==null && (this.conteudoBlobMod!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
 			this.conteudoBlobMod = createBlob;
 		} else if(cacheConteudoBlobMod != null){
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMod);
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMod, Boolean.FALSE);
 		}
 	}
 	

@@ -173,7 +173,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		}
 	}
 
-	public static CpArquivo forUpdate(CpArquivo old) {
+	public static CpArquivo forUpdate(CpArquivo old, Boolean excluirArqAnterior) {
 		if (old != null) {
 			if (old.getIdArq() != null) {
 				CpArquivo arq = new CpArquivo();
@@ -182,8 +182,9 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 				arq.setOrgaoUsuario(old.getOrgaoUsuario());
 
 				arq.setConteudo(old.getConteudo());
-
-				ContextoPersistencia.em().remove(old);
+				if (excluirArqAnterior) {
+					ContextoPersistencia.em().remove(old);
+				}
 				return arq;
 			} else
 				return old;
@@ -214,25 +215,25 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	public static CpArquivo updateOrgaoUsuario(CpArquivo old, CpOrgaoUsuario orgaoUsuario) {
 		if (old == null || old.getOrgaoUsuario() == null || !old.getOrgaoUsuario().equals(orgaoUsuario)) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
+			CpArquivo arq = CpArquivo.forUpdate(old, Boolean.FALSE);
 			arq.setOrgaoUsuario(orgaoUsuario);
 			return arq;
 		}
 		return old;
 	}
 
-	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
+	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp, Boolean excluirArqAnterior) {
 		if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
+			CpArquivo arq = CpArquivo.forUpdate(old, excluirArqAnterior);
 			arq.setConteudoTpArq(conteudoTp);
 			return arq;
 		}
 		return old;
 	}
 
-	public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
+	public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo, Boolean excluirArqAnterior) {
 		if (old == null || !Arrays.equals(old.getConteudo(), conteudo)) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
+			CpArquivo arq = CpArquivo.forUpdate(old, excluirArqAnterior);
 			arq.setConteudo(conteudo);
 			arq.setTamanho(conteudo.length);
 			return arq;

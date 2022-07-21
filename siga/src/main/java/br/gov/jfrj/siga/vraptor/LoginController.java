@@ -214,7 +214,7 @@ public class LoginController extends SigaController {
 				(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
 				(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
 
-		response.addCookie(AuthJwtFormFilter.buildCookie(token));
+		AuthJwtFormFilter.addCookie(request, response, AuthJwtFormFilter.buildCookie(token));
 
 		if (cont != null) {
 			if (cont.contains("?"))

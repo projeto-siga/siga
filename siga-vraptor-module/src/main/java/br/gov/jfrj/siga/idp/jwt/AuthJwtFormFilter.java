@@ -125,11 +125,11 @@ public class AuthJwtFormFilter implements Filter {
 				Map<String, Object> decodedToken = validarToken(token);
 				final long now = System.currentTimeMillis() / 1000L;
 				if (((Integer) decodedToken.get("exp")) < (now + TIME_TO_RENEW_IN_S)) {
-					// Seria bom incluir o attributo HttpOnly
+
 					String tokenNew = renovarToken(token);
-					Map<String, Object> decodedNewToken = validarToken(token);
-					Cookie cookie = buildCookie(tokenNew);
-					resp.addCookie(cookie);
+					validarToken(token);
+					addCookie(req, resp, buildCookie(tokenNew));
+					
 //					Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.RENOVACAO_AUTOMATICA,
 //							(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
 //							(Integer) decodedNewToken.get("exp"), HttpRequestUtils.getIpAudit(req));

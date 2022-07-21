@@ -16,6 +16,7 @@
 		<module>siga-ldap</module>
 		<module>siga-vraptor-module-old</module>
 		<module>siga-vraptor-module</module>
+		<module>siga-dump</module>
 		<module>siga</module>
 		<module>sigawf</module>
 		<module>siga-wf</module>

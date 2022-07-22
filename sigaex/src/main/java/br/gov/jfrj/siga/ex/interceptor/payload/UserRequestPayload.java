@@ -23,24 +23,22 @@ public class UserRequestPayload {
     public static final String LOTACAO = "lotacao";
     public static final String NOME = "nome";
 
-    private UUID requestId;
-    private HttpServletRequest request;
-    private String requestURL;
-    private String requestParams;
-    private String sessionId;
-    private String userIpAddress;
-
-    private DpPessoa cadastrante;
-    private String matricula;
-    private String lotacao;
-    private String nome;
+    private final HttpServletRequest request;
+    private final String requestURL;
+    private final String requestParams;
+    private final String userIpAddress;
+    private final DpPessoa cadastrante;
+    private final String matricula;
+    private final String lotacao;
+    private final String nome;
 
 
     public UserRequestPayload(HttpServletRequest request, DpPessoa cadastrante) {
         this.request = request;
         this.requestURL = request.getRequestURL().toString();
         this.requestParams = request.getQueryString();
-        this.sessionId = request.getRequestedSessionId();
+        
+        String sessionId = request.getRequestedSessionId();
         this.userIpAddress = HttpRequestUtils.getIpAudit(request);
 
         this.cadastrante = cadastrante;
@@ -50,7 +48,7 @@ public class UserRequestPayload {
 
         String uuidStr = ThreadContext.get(REQUEST_ID);
         if (uuidStr == null) {
-            requestId = UuidUtil.getTimeBasedUuid();
+            UUID requestId = UuidUtil.getTimeBasedUuid();
             ThreadContext.put(REQUEST_ID, requestId.toString());
         }
         
@@ -60,16 +58,12 @@ public class UserRequestPayload {
         if (userIpAddress != null) {
             ThreadContext.put(USER_IP_ADDRESS, userIpAddress);
         }
-        if (requestURL != null) {
-            ThreadContext.put(REQUEST_URL, requestURL);
-        }
+        ThreadContext.put(REQUEST_URL, requestURL);
         if (requestParams != null) {
             ThreadContext.put(REQUEST_PARAMS, requestParams);
         }
-        
-        if (matricula != null) {
-            ThreadContext.put(MATRICULA, matricula);
-        }
+
+        ThreadContext.put(MATRICULA, matricula);
         if (lotacao != null) {
             ThreadContext.put(LOTACAO, lotacao);
         }

@@ -5399,8 +5399,10 @@ public class ExBL extends CpBL {
 						listaMovimentacao.addAll(m.doc().getMobilGeral()
 								.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 						
-						notificar = new ExNotificar();
-						notificar.usuarioDiretamenteOuPelaUnidade(mov);
+						if(orgaoExterno == null) {
+							notificar = new ExNotificar();
+							notificar.usuarioDiretamenteOuPelaUnidade(mov);
+						}
 						
 						if (!listaMovimentacao.isEmpty()) {
 							List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();

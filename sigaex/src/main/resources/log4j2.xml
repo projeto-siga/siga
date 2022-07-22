@@ -7,10 +7,18 @@
 
     <Appenders>
         <RollingFile name="file"
-                     fileName="sigaex-user-request-track.log"
+                     fileName="logs/sigaex/user-request-track.log"
                      filePattern="sigaex-user-request-track-%d{MM-dd-yy-HH-mm-ss}-%i.log">
-            <PatternLayout pattern="%-5p %d %C{1} %m [%MDC]%n" />
-            <SizeBasedTriggeringPolicy size="10 MB" />
+            <PatternLayout pattern="%-5p %d %C{1} %m [%MDC]%n"/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="json-file"
+                     fileName="logs/sigaex/user-request-track.log.json"
+                     filePattern="sigaex-user-request-track-%d{MM-dd-yy-HH-mm-ss}-%i.log.json">
+            <JSONLayout compact="true" eventEol="true" properties="true"
+                        includeTimeMillis="true" complete="false"/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
     </Appenders>
@@ -19,7 +27,8 @@
         <AsyncLogger name="br.gov.jfrj.siga.ex.interceptor.UserRequestInterceptor" level="BLAME"/>
 
         <AsyncRoot level="BLAME">
-            <AppenderRef ref="file" />
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="json-file"/>
         </AsyncRoot>
     </Loggers>
 

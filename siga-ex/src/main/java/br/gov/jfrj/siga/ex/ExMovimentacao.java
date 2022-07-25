@@ -1375,4 +1375,22 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
 				|| Utils.equivale(getDestinoFinal(),titular);
 	}
+	
+	public boolean isTramite() {
+		if (!(getExTipoMovimentacao() instanceof ExTipoDeMovimentacao))
+			return false;
+		ExTipoDeMovimentacao l = (ExTipoDeMovimentacao) getExTipoMovimentacao();
+		switch (l) {
+		case TRANSFERENCIA:
+		case TRAMITE_PARALELO:
+		case NOTIFICACAO:
+		case DESPACHO_INTERNO_TRANSFERENCIA:
+		case DESPACHO_TRANSFERENCIA:
+		case DESPACHO_TRANSFERENCIA_EXTERNA:
+			return true;
+		}
+		return false;
+	}
+
+
 }

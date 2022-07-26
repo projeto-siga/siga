@@ -151,7 +151,8 @@ public class ExModeloController extends ExSelecionavelController {
 			final String descricao, final Long forma, final Long nivel, final String arquivo, final String diretorio,
 			final String uuid, final String marcaDagua, final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
-		ExModelo modelo = copiarModeloAtual(id);
+		ExModelo modelo = new ExModelo();
+		final ExModelo modAntigo = buscarModeloAntigo(id);
 		if (postback != null) {
 			modelo.setNmMod(nome);
 			modelo.setExClassificacao(classificacaoSel.buscarObjeto());
@@ -162,6 +163,8 @@ public class ExModeloController extends ExSelecionavelController {
 			modelo.setNmDiretorio(diretorio);
 			modelo.setUuid(uuid);
 			modelo.setMarcaDagua(marcaDagua);
+			modelo.setIdInicial(modAntigo != null ? modAntigo.getIdInicial() : null);
+			
 			if (conteudo != null && conteudo.trim().length() > 0) {
 				modelo.setConteudoBlobMod2(conteudo.getBytes(UTF8));
 			}
@@ -173,7 +176,6 @@ public class ExModeloController extends ExSelecionavelController {
 			}
 		}
 
-		final ExModelo modAntigo = buscarModeloAntigo(modelo.getIdInicial());
 		Ex.getInstance().getBL().gravarModelo(modelo, modAntigo, null, getIdentidadeCadastrante());
 		if ("Ok".equals(param("ok"))) {
 			result.redirectTo(ExModeloController.class).lista(null);
@@ -405,15 +407,6 @@ public class ExModeloController extends ExSelecionavelController {
 			return Ex.getInstance().getBL().getCopia(dao().consultar(id, ExModelo.class, false));
 		}
 		return new ExModelo();
-	}
-
-	private ExModelo copiarModeloAtual(final Long id) {
-		ExModelo modelo = buscarModelo(id);
-		if (modelo.getIdInicial() != null) {
-			return Ex.getInstance().getBL()
-					.getCopia(dao().consultar(modelo.getIdInicial(), ExModelo.class, false).getModeloAtual());
-		} else
-			return modelo;
 	}
 
 	private ExModelo buscarModeloAntigo(final Long idInicial) {

@@ -246,7 +246,7 @@ public class Correio {
 	
 	public static String obterHTMLEmailParaUsuarioExternoAssinarDocumento(String uri, String siglaDocumento, String siglaUsuario) {
 		StringBuffer sbHtml = new StringBuffer();
-		
+		String url = Prop.get("/siga.base.url").replace("documentos.", "");
 		sbHtml.append("<html>");
 		sbHtml.append("<body>");
 		sbHtml.append("	<table>");
@@ -264,8 +264,8 @@ public class Correio {
 		sbHtml.append("			<tr>");
 		sbHtml.append("				<td style='height: 310px; padding: 10px 20px;'>");
 		sbHtml.append("					<div>");
-		sbHtml.append("						<p style='color: #808080;'>Esse <a style='color: #808080;' href='" + uri +  "' target='_blank'><b>link</b></a> fornece acesso ao documento nº <b>" + siglaDocumento + "</b>, do Programa SP Sem Papel, cujo usuário <b>" + siglaUsuario +  "</b> é interessado.</p>");
-		sbHtml.append("						<p style='color: #808080;'>Para visualizar e assinar o documento, acesse o link: <a style='color: #808080;' href='" + uri +  "' target='_blank'><b>" + uri + "</b></a>");
+		sbHtml.append("						<p style='color: #808080;'>O documento do Programa SP Sem Papel nº " + siglaDocumento + " encontra-se disponível para assinatura do usuário " + siglaUsuario + "</p>");
+		sbHtml.append("						<p style='color: #808080;'>Para visualizar e assinar o documento, acesse: <a style='color: #808080;' href='" + url + "' target='_blank'>" + url + "</a></p>");
 		sbHtml.append("						<p style='color: #808080;'>Atenção: Esse e-mail é de uso restrito ao usuário e entidade para a qual foi endereçado. Se você não é destinatário desta mensagem, você está, por meio desta, notificado que não deverá retransmitir, imprimir, copiar, examinar, distribuir ou utilizar informação contida nesta mensagem.</p>");
 		sbHtml.append("					</div>");
 		sbHtml.append("				</td>");

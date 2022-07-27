@@ -3189,6 +3189,12 @@ public class ExBL extends CpBL {
 			
 			dao().gravar(doc);
 			
+			if (doc.getSubscritor() != null) {
+				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
+					enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
+				}
+			}	
+			
 			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 				for (final ExVia via : setVias) {
 					Integer numVia = null;
@@ -3742,12 +3748,6 @@ public class ExBL extends CpBL {
 			}
 			
 			// doc.armazenar();
-			
-			if (doc.getSubscritor() != null) {
-				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
-					enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
-				}
-			}			
 
 			/*
 			 * alteracao para adicionar a movimentacao de insercao de substituto

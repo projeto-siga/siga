@@ -1,0 +1,1 @@
+ALTER TABLE sigawf.wf_variavel MODIFY (VARI_NM VARCHAR(64));

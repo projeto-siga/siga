@@ -2850,10 +2850,16 @@ public class ExBL extends CpBL {
 			// throw e;
 		}
 	}
-
+	
 	public void cancelar(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,
 			final ExMovimentacao movCancelar, final Date dtMovForm, final DpPessoa subscritorForm,
 			final DpPessoa titularForm, String textoMotivo) throws Exception {
+		cancelar(titular, lotaTitular, mob, movCancelar, dtMovForm, subscritorForm, titularForm, textoMotivo);
+	}
+	
+	public void cancelar(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,
+			final ExMovimentacao movCancelar, final Date dtMovForm, final DpPessoa subscritorForm,
+			final DpPessoa titularForm, String textoMotivo, boolean forcar) throws Exception {
 
 		if (movCancelar.mob() != mob) {
 			throw new AplicacaoException("movimentação não é relativa ao mobil informado");
@@ -2870,7 +2876,7 @@ public class ExBL extends CpBL {
 			ExPodeCancelarMarcacao.afirmar(movCancelar, titular, lotaTitular);
 		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA) {
 			getComp().afirmar("não é possível cancelar vinculação de documento", ExPodeCancelarVinculacao.class, titular, lotaTitular, movCancelar);
-		} else if (movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM
+		} else if (!forcar && movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.CIENCIA) {
@@ -4717,6 +4723,20 @@ public class ExBL extends CpBL {
 		novaMov.setExPapel(mov.getExPapel());
 		acrescentarCamposDeAuditoria(novaMov);
 		return novaMov;
+	}
+	
+	public int cancelarTramitesPendentes(final ExMobil mob, final String motivo) {
+		int c = 0;
+		Pendencias p = mob.calcularTramitesPendentes();
+		for (ExMovimentacao mov : p.tramitesPendentes) {
+			try {
+				cancelar(null, null, mob, mov, null, null, null, motivo, true);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			c++;
+		}
+		return c;
 	}
 
 	// Nato: removi , final DpPessoa subscritor, final DpPessoa responsavel,

@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.siga.cp.util.SigaUtil;
-import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
-import br.gov.jfrj.siga.validation.Email;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -50,7 +48,6 @@ import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -96,7 +93,6 @@ import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
-import br.gov.jfrj.siga.ex.logic.ExEstaAutenticadoComTokenOuSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
@@ -5060,19 +5056,12 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	@Get("/app/expediente/mov/publicacao_transparencia")
-	public void aPublicarTransparencia(String sigla, String descrPublicacao,
-			String mensagem) throws Exception {
+	public void aPublicarTransparencia(final String sigla) throws Exception {
 		
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento documento = buscarDocumento(documentoBuilder);
-
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia().setMob(documentoBuilder.getMob());
-
-		final ExMovimentacao movimentacao = movimentacaoBuilder
-				.construir(dao());
 
 		List<CpMarcador> marcadores = dao().listarCpMarcadoresGerais(true);
 		Set<CpMarcador> marcadoresAtivo = (Set<CpMarcador>) this.getListaMarcadoresAtivos(documentoBuilder.getMob().getDoc().getMobilGeral());
@@ -5081,10 +5070,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		result.include("sigla", sigla);
-		result.include("mob", documentoBuilder.getMob());
-		result.include("mov", movimentacao);
 		result.include("doc", documento);
-		result.include("descrMov", movimentacaoBuilder.getDescrMov());
 		result.include("listaMarcadores", marcadores);
 		result.include("listaMarcadoresAtivos", marcadoresAtivo);
 	}
@@ -5092,28 +5078,43 @@ public class ExMovimentacaoController extends ExController {
 	
 	@Transacional
 	@Post("/app/expediente/mov/publicacao_transparencia_gravar")
-	public void publicarTransparenciaGravar(final String sigla,
-			final Long nivelAcesso) {
-		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
+	public void publicarTransparenciaGravar(final String sigla) {
 		
-		buscarDocumento(documentoBuilder);
-
+		final BuscaDocumentoBuilder buscaDocumentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(buscaDocumentoBuilder);
+		final ExMobil mob = buscaDocumentoBuilder.getMob();
+		
 		String[] listaMarcadores = request.getParameterValues("lstMarcadores");
 
+		/* Gravação dos Marcadores */
+		if (listaMarcadores != null) {
+			for (String marcador : listaMarcadores) {
+				CpMarcador cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
+				try {
+					Ex.getInstance().getBL()
+							.marcar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),
+									doc.getPrimeiroMobil(),null, getCadastrante(), getLotaCadastrante(), 
+									null, cpMarcador, null, null, true);
+				} catch (Exception e) {
+					throw new RuntimeException("Ocorreu um erro ao gravar marcadores", e);
+				}
+			}
+		}
+		/* END Gravação dos Marcadores  */
 
-		/* Primeiro Passo - Documento para Público */
-		CpToken sigaUrlPermanente = new CpToken();
-		sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(documentoBuilder.getMob(), getCadastrante(), getLotaCadastrante(),listaMarcadores,false);
-	
-		String url = Contexto.urlBase(request);
-		String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
-		
-		result.include("url", caminho);
-		
-		
+		String url = Ex.getInstance().getBL()
+				.publicarTransparencia(mob, getCadastrante(), getLotaCadastrante(), false);
+
+		result.include("url", url);
 		result.include("msgCabecClass", "alert-info");
-		result.include("mensagemCabec", "Documento enviado para publicação. Gerado <a class='alert-link' id='urlPermanente'  href='"+caminho+"' target='_Blank'  data-toggle='tooltip' data-placement='bottom'  data-html='true' title='Ir para endereço <i class=\"fa fa-link\"></i>'>Endereço Permanente</a> para acesso externo ao documento. <script>$(function () {$('[data-toggle=\"tooltip\"]').tooltip();$('#urlPermanente').tooltip('show');});</script> ");
+		result.include("mensagemCabec", "Documento enviado para publicação. " +
+				"Gerado <a class='alert-link' id='urlPermanente'  href='" + url + "' target='_Blank'  " +
+				"data-toggle='tooltip' data-placement='bottom'  data-html='true' " +
+				"title='Ir para endereço <i class=\"fa fa-link\"></i>'>" +
+				"Endereço Permanente</a> para acesso externo ao documento. " +
+				"<script>$(function () {$('[data-toggle=\"tooltip\"]')" +
+				".tooltip();$('#urlPermanente').tooltip('show');});</script> ");
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}

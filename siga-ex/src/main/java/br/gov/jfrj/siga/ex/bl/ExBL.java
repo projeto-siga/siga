@@ -7942,62 +7942,43 @@ public class ExBL extends CpBL {
 		
 	}
 
-	public CpToken publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, String[] listaMarcadores, boolean viaWS) {
+	public String publicarTransparencia(ExMobil mob, DpPessoa cadastrante, DpLotacao lotaCadastrante, boolean viaWS) {
 
 		/* Verificação de autorização - Via WS é feito bypass*/
-		if (!viaWS && !Ex.getInstance().getComp().pode(ExPodePublicarPortalDaTransparencia.class, cadastrante, lotaCadastrante,mob)) {
+		if (!viaWS && !Ex.getInstance().getComp().pode(ExPodePublicarPortalDaTransparencia.class, cadastrante, lotaCadastrante, mob)) {
 			throw new AplicacaoException(
 					"Não é possível " + SigaMessages.getMessage("documento.publicar.portaltransparencia"));
 		}
-		
-		
-		/* 1- Redefinição para Público - Via WS é feito bypass*/	
-		if (!viaWS && !Ex.getInstance().getComp().pode(ExPodeRedefinirNivelDeAcesso.class, cadastrante, lotaCadastrante,mob)) {
+
+		/* 1- Redefinição para Público - Via WS é feito bypass*/
+		if (!viaWS && !Ex.getInstance().getComp().pode(ExPodeRedefinirNivelDeAcesso.class, cadastrante, lotaCadastrante, mob)) {
 			throw new AplicacaoException(
 					"Não é possível redefinir o nível de acesso");
 		}
+
 		ExNivelAcesso exTipoSig = null;
 		exTipoSig = dao().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
-		
+
 		redefinirNivelAcesso(cadastrante, lotaCadastrante, mob.getDoc(), null, lotaCadastrante, cadastrante, cadastrante, cadastrante, null, exTipoSig);
 		/* END Redefinição para Público */
-		
-		
-		/* 2- Gravação dos Marcadores */
-		if (listaMarcadores != null) {
-			CpMarcador cpMarcador = new CpMarcador();
-			
-			for(String marcador: listaMarcadores) {
-			   cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
-			   try {
-				marcar(cadastrante, lotaCadastrante, cadastrante, lotaCadastrante, mob, null, cadastrante, lotaCadastrante, null, cpMarcador, null, null, true);
-			   } catch (Exception e) {
-					throw new RuntimeException("Ocorreu um erro ao gravar marcadores", e);
-			   }
-			}
-		}
-		
-		/* END Gravação dos Marcadores  */
 
-		CpToken sigaUrlPermanente;
+		CpToken cpToken;
 		try {
 			/*3- Gerar URL Permanente */
-			sigaUrlPermanente = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
-			
-			/*4- Gerar Movimentação de Publicação */
-			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA, cadastrante, lotaCadastrante,
-					mob, null, cadastrante, null, cadastrante, null, null);
-			
-			mov.setDescrMov("Publicação em Portal da Transparência.");
+			cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
 
-			gravarMovimentacao(mov);
-			atualizarMarcas(mob.getDoc());
+			/*4- Gerar Movimentação de Publicação */
+			gravarNovaMovimentacao(ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA,
+					cadastrante, lotaCadastrante, mob, null,
+					null, null, null, null, null,
+					"Publicação em Portal da Transparência do documento " + mob.getSigla());
+
 		} catch (Exception e) {
 			throw new RuntimeException("Ocorreu um erro na publicação do documento em Portal da Transparência", e);
 		}
 		
-		return sigaUrlPermanente;
+		String url = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
+		return url;
 		
 	}
 	

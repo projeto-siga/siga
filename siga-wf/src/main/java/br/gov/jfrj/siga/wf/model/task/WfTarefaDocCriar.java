@@ -44,9 +44,13 @@ public class WfTarefaDocCriar extends
 			throw new Exception("modelo deve ser informado");
 		String nomeModelo = Long.toString(td.getRefId());
 
-		if (td.getRefId2() == null)
+		Boolean finalizar = "FINALIZAR".equals(td.getParam());
+		if (finalizar && td.getRefId2() == null)
 			throw new Exception("preenchimento automático deve ser informado");
-		String nomePreenchimento = Long.toString(td.getRefId2());
+
+		String nomePreenchimento = null;
+		if (td.getRefId2() != null)
+			nomePreenchimento = Long.toString(td.getRefId2());
 
 		String classificacaoStr = null;
 		String descricaoStr = null;
@@ -55,7 +59,6 @@ public class WfTarefaDocCriar extends
 		String conteudo = null;
 		String siglaMobilPai = getSiglaMobilPai(pi);
 		String siglaMobilFilho = getSiglaMobilFilho(pi);
-		Boolean finalizar = "FINALIZAR".equals(td.getParam());
 
 		// Nato: Esse flush é necessário porque o documento precisará dos dados
 		// atualizados do workflow para processar o modelo

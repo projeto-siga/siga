@@ -38,6 +38,13 @@ public class ContextoPersistencia {
 		}
 	}
 	
+	static public void flushTransactionAndDowngradeToNonTransactional() {
+		if (em().getTransaction() != null && em().getTransaction().isActive()) {
+			em().flush();
+			em().getTransaction().commit();
+		}
+	}
+	
 	public static void begin() {
 		EntityTransaction transaction = em().getTransaction();
 		if (transaction != null && !transaction.isActive()) {

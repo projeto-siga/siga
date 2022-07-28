@@ -123,7 +123,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.OBRIGATORIO,
-					CpSituacaoDeConfiguracaoEnum.OPCIONAL },
+					CpSituacaoDeConfiguracaoEnum.OPCIONAL, CpSituacaoDeConfiguracaoEnum.PROIBIDO},
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
 	DUPLICAR(9, "Duplicar",

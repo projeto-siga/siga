@@ -30,9 +30,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -119,7 +117,6 @@ import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -208,13 +205,12 @@ import br.gov.jfrj.siga.ex.logic.ExPodeSerJuntado;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
-import br.gov.jfrj.siga.ex.logic.ExPodeTransferir; 
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.service.ExService;
-import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -1763,14 +1759,6 @@ public class ExBL extends CpBL {
 		}
 
 		try {
-			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
-				processarComandosEmTag(doc, "assinatura");
-			}
-		} catch (final Exception e) {
-			throw new RuntimeException("Erro ao executar procedimento pós-assinatura: " + e.getLocalizedMessage(), e);
-		}
-
-		try {
 			if (tramitar == null)
 				tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
 			if (tramitar)
@@ -1789,6 +1777,21 @@ public class ExBL extends CpBL {
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
+		}
+
+		// É importante que esta seja a última operação, pois estávamos vendo um erro muito estranho
+		// do Hibernate quando ele tentava deletar pela segunda vez a mesma CpMarca do banco. O erro
+		// era Caused by: org.hibernate.StaleStateException: Batch update returned unexpected row count 
+		// from update [0]; actual row count: 0; expected: 1. Acho que a explicação é que de alguma
+		// forma, a criação de um novo procedimento, que por sua vez cria um documento filho, estava
+		// alterando o documento corrente. Aí, a sessão do hibernate não refletia mais os dados gravados
+		// no banco, e a tentativa de flush esbarrava em inconsistências.
+		try {
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
+				processarComandosEmTag(doc, "assinatura");
+			}
+		} catch (final Exception e) {
+			throw new RuntimeException("Erro ao executar procedimento pós-assinatura: " + e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -2851,10 +2854,16 @@ public class ExBL extends CpBL {
 			// throw e;
 		}
 	}
-
+	
 	public void cancelar(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,
 			final ExMovimentacao movCancelar, final Date dtMovForm, final DpPessoa subscritorForm,
 			final DpPessoa titularForm, String textoMotivo) throws Exception {
+		cancelar(titular, lotaTitular, mob, movCancelar, dtMovForm, subscritorForm, titularForm, textoMotivo);
+	}
+	
+	public void cancelar(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,
+			final ExMovimentacao movCancelar, final Date dtMovForm, final DpPessoa subscritorForm,
+			final DpPessoa titularForm, String textoMotivo, boolean forcar) throws Exception {
 
 		if (movCancelar.mob() != mob) {
 			throw new AplicacaoException("movimentação não é relativa ao mobil informado");
@@ -2871,7 +2880,7 @@ public class ExBL extends CpBL {
 			ExPodeCancelarMarcacao.afirmar(movCancelar, titular, lotaTitular);
 		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA) {
 			getComp().afirmar("não é possível cancelar vinculação de documento", ExPodeCancelarVinculacao.class, titular, lotaTitular, movCancelar);
-		} else if (movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM
+		} else if (!forcar && movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.CIENCIA) {
@@ -4718,6 +4727,20 @@ public class ExBL extends CpBL {
 		novaMov.setExPapel(mov.getExPapel());
 		acrescentarCamposDeAuditoria(novaMov);
 		return novaMov;
+	}
+	
+	public int cancelarTramitesPendentes(final ExMobil mob, final String motivo) {
+		int c = 0;
+		Pendencias p = mob.calcularTramitesPendentes();
+		for (ExMovimentacao mov : p.tramitesPendentes) {
+			try {
+				cancelar(null, null, mob, mov, null, null, null, motivo, true);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			c++;
+		}
+		return c;
 	}
 
 	// Nato: removi , final DpPessoa subscritor, final DpPessoa responsavel,
@@ -6858,7 +6881,13 @@ public class ExBL extends CpBL {
 			final Date dtMov) throws AplicacaoException, Exception {
 
 		if (mob.doc().isEletronico()) {
-			dao().em().refresh(mob);
+			//Nato: o refresh quando aplicado a uma entidade detached produz um erro e faz com que a
+			// session fique num estado de RollbackOnly. Antes de usar o refresh é necessário verificar se "contains".
+			// Mesmo assim, não sei por que existe esse "refresh" aqui. Mas imagino que, se alguém incluíu, seja necessário.
+			// Fiz mais alguns testes e o "contains" é "true" para uma entidade que ainda não foi "flushed" para o banco.
+			// Ou seja, está muito complicado isso aqui. Simplesmente desabilitei o refresh.
+			// if (dao().em().contains(mob))
+			//	   dao().em().refresh(mob);
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {

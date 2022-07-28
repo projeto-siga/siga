@@ -19,8 +19,8 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 	private DpLotacao lotaTitular;
 
 	public ExPodeAssinar(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado())
-			mob = mob.doc().getUltimoVolume();
+		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado()) 
+			mob = mob.doc().getUltimoVolumeOuGeral();
 		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;

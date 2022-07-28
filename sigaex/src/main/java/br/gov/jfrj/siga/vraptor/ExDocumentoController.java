@@ -1040,7 +1040,6 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
-		SigaTransacionalInterceptor.upgradeParaTransacional();
 		String msgDestinoDoc = "";
 		DpPessoa dest = null;
 		DpLotacao lotaDest = null;
@@ -1057,6 +1056,8 @@ public class ExDocumentoController extends ExController {
 		} else {
 			if (mob.doc().isProcesso()) {
 				mobUlt = mob.doc().getUltimoVolume();
+				if (mobUlt == null)
+					return "Último volume do processo " + mob.getCodigo() + " não encontrado.";
 				mobArq = mob.doc().getMobilGeral();
 			} else {
 				if (mob.isGeral()) {
@@ -1115,10 +1116,10 @@ public class ExDocumentoController extends ExController {
 								break;
 							}
 					}
-					if (!alguemPodeAcessar) { /*
-											 * ninguem pode acessar este
-											 * documento
-											 */
+					
+					// ninguem pode acessar este documento
+					if (!alguemPodeAcessar) {
+						SigaTransacionalInterceptor.upgradeParaTransacional();
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
 								if(mobUlt.isEmTransito(getTitular(), getLotaTitular())) { /*  em transito */

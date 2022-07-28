@@ -30,9 +30,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -118,7 +116,6 @@ import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -207,13 +204,12 @@ import br.gov.jfrj.siga.ex.logic.ExPodeSerJuntado;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
-import br.gov.jfrj.siga.ex.logic.ExPodeTransferir; 
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.service.ExService;
-import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -1762,14 +1758,6 @@ public class ExBL extends CpBL {
 		}
 
 		try {
-			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
-				processarComandosEmTag(doc, "assinatura");
-			}
-		} catch (final Exception e) {
-			throw new RuntimeException("Erro ao executar procedimento pós-assinatura: " + e.getLocalizedMessage(), e);
-		}
-
-		try {
 			if (tramitar == null)
 				tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
 			if (tramitar)
@@ -1788,6 +1776,21 @@ public class ExBL extends CpBL {
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro ao remover revisores: " + e.getLocalizedMessage(), e);
+		}
+
+		// É importante que esta seja a última operação, pois estávamos vendo um erro muito estranho
+		// do Hibernate quando ele tentava deletar pela segunda vez a mesma CpMarca do banco. O erro
+		// era Caused by: org.hibernate.StaleStateException: Batch update returned unexpected row count 
+		// from update [0]; actual row count: 0; expected: 1. Acho que a explicação é que de alguma
+		// forma, a criação de um novo procedimento, que por sua vez cria um documento filho, estava
+		// alterando o documento corrente. Aí, a sessão do hibernate não refletia mais os dados gravados
+		// no banco, e a tentativa de flush esbarrava em inconsistências.
+		try {
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
+				processarComandosEmTag(doc, "assinatura");
+			}
+		} catch (final Exception e) {
+			throw new RuntimeException("Erro ao executar procedimento pós-assinatura: " + e.getLocalizedMessage(), e);
 		}
 	}
 

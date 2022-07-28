@@ -99,7 +99,7 @@ public class ExPainelController extends ExController {
 					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
 				result.include("erroDocLink", "corrigeDocSemMobil?documentoRefSel.sigla=" + documentoRefSel.getSigla());
 				result.include("erroDocBtn", "Corrige Falta de Via ou Volume");
-				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() + "está corrompido (faltando mobil de via ou volume)");
+				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() + " está corrompido (faltando mobil de via ou volume)");
 			}
 			// Verifica se há descrição no doc
 			if (exDocumentoDTO.getDoc().getDescrDocumento() == null) {
@@ -134,7 +134,7 @@ public class ExPainelController extends ExController {
 					&& exDocumentoDTO.getDoc().getExMobilSet().size() <= 1) {
 				result.include("erroDocLink", "corrigeDocSemMobil?documentoRefSel.sigla=" + documentoRefSel.getSigla());
 				result.include("erroDocBtn", "Corrige Falta de Via ou Volume");
-				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() + "está corrompido (faltando mobil de via ou volume)");
+				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() + " está corrompido (faltando mobil de via ou volume)");
 			}
 			throw e;
 		}

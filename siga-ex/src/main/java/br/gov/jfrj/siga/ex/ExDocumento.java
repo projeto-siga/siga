@@ -2345,6 +2345,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return getVolume(getNumUltimoVolume());
 	}
 
+	public ExMobil getUltimoVolumeOuGeral() {
+		ExMobil ult = getVolume(getNumUltimoVolume());
+		if (ult != null)
+			return ult;
+		return getMobilGeral();
+	}
+
 	/**
 	 * Retorna o primeiro móbil do documento, seja via ou volume.
 	 */

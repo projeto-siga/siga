@@ -548,8 +548,10 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA) {
-			CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mov.getIdDoc());
-			String url = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
+			CpToken cpToken = CpDao.getInstance()
+					.obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE, mov.getExDocumento().getIdDoc());
+			String url = Cp.getInstance().getBL()
+					.obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
 			
 			AcaoVO acaoVO = AcaoVO.builder().nome(mov.getExMobil().getSigla())
 					.url(url)

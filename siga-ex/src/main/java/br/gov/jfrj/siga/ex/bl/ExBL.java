@@ -7992,21 +7992,21 @@ public class ExBL extends CpBL {
 		/* END Redefinição para Público */
 
 		CpToken cpToken;
+		String url;
 		try {
 			/*3- Gerar URL Permanente */
 			cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
-
+			url = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
+			
 			/*4- Gerar Movimentação de Publicação */
 			gravarNovaMovimentacao(ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA,
-					cadastrante, lotaCadastrante, mob, null,
-					null, null, null, null, null,
-					"Publicação em Portal da Transparência do documento " + mob.getSigla());
+					cadastrante, lotaCadastrante, mob, null,null, null, 
+					null, null, null, "Publicado no Portal da Transparência");
 
 		} catch (Exception e) {
 			throw new RuntimeException("Ocorreu um erro na publicação do documento em Portal da Transparência", e);
 		}
 		
-		String url = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
 		return url;
 		
 	}

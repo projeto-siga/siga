@@ -144,8 +144,12 @@
 										<siga:links inline="${true}"
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
+												<c:set var="acaourl" value="${pageContext.request.contextPath}${acao.url}"/>
+												<c:if test="${mov.exTipoMovimentacao == 'PUBLICACAO_PORTAL_TRANSPARENCIA'}">
+													<c:set var="acaourl" value="${acao.url}"/>
+												</c:if>
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
-													url="${pageContext.request.contextPath}${acao.url}" test="${acao.pode}" popup="${acao.popup}" 
+													url="${acaourl}" test="${acao.pode}" popup="${acao.popup}" 
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
 													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}"/>
 												<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}">

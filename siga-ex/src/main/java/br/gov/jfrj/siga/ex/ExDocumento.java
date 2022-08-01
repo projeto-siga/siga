@@ -610,6 +610,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return null;
 	}
 
+	public String getLotaSubscritorString() {
+		if (getLotaTitular() != null)
+			return getLotaTitular().getDescricao();
+		else if (getOrgaoExterno() != null)
+			return getOrgaoExterno().getDescricao();
+		return null;
+	}
+
 	/**
 	 * Retorna, em um caracter, o dia que faz parte da data do documento
 	 */
@@ -2344,6 +2352,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public ExMobil getUltimoVolume() {
 		return getVolume(getNumUltimoVolume());
+	}
+
+	public ExMobil getUltimoVolumeOuGeral() {
+		ExMobil ult = getVolume(getNumUltimoVolume());
+		if (ult != null)
+			return ult;
+		return getMobilGeral();
 	}
 
 	/**

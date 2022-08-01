@@ -62,6 +62,7 @@ import br.gov.jfrj.siga.ex.ExSequencia;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.logic.ExPodeMovimentar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
@@ -169,7 +170,10 @@ public class ExServiceImpl implements ExService {
 				}
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 				PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(siglaDestino);
-				Ex.getInstance().getBL().arquivarCorrente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(),
+				
+				ExBL bl = Ex.getInstance().getBL();
+				bl.cancelarTramitesPendentes(mob, "Cancelamento automático de trâmite pendente para arquivamento");
+				bl.arquivarCorrente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(),
 						mob, null, null, destinoParser.getPessoa(), false);
 				return true;
 			} catch (Exception ex) {

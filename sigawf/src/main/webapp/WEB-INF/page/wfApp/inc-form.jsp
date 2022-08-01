@@ -185,10 +185,12 @@
 					</c:if>
 				</div>
 			</c:if>
-			<div class="col col-auto ${empty td.id ? '' : 'ml-auto'}">
-				<button type="submit" name="indiceDoDesvio" value="-1"
-					class="btn btn-${empty td.id ? 'primary' : 'light'}">Salvar</button>
-			</div>
+			<c:if test="${not empty td.definicaoDeVariavel}">
+				<div class="col col-auto ${empty td.id ? '' : 'ml-auto'}">
+					<button type="submit" name="indiceDoDesvio" value="-1"
+						class="btn btn-${empty td.id ? 'primary' : 'light'}">Salvar</button>
+				</div>
+			</c:if>
 		</div>
 		<%--</c:if> --%>
 	</c:if>

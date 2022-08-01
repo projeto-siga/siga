@@ -145,7 +145,8 @@
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
 												<c:set var="acaourl" value="${pageContext.request.contextPath}${acao.url}"/>
-												<c:if test="${mov.exTipoMovimentacao == 'PUBLICACAO_PORTAL_TRANSPARENCIA'}">
+												<c:if test="${mov.exTipoMovimentacao == 'PUBLICACAO_PORTAL_TRANSPARENCIA' 
+													|| mov.exTipoMovimentacao == 'GERAR_LINK_PUBLICO_PROCESSO'}">
 													<c:set var="acaourl" value="${acao.url}"/>
 												</c:if>
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 

@@ -547,7 +547,9 @@ public class ExMovimentacaoVO extends ExVO {
 					.build());
 		}
 
-		if (exTipoMovimentacao == ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA ||
+				exTipoMovimentacao == ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO) {
+			
 			CpToken cpToken = CpDao.getInstance()
 					.obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE, mov.getExDocumento().getIdDoc());
 			String url = Cp.getInstance().getBL()

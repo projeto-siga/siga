@@ -5094,17 +5094,15 @@ public class ExMovimentacaoController extends ExController {
 		String[] listaMarcadores = request.getParameterValues("lstMarcadores");
 
 		/* Gravação dos Marcadores */
-		if (listaMarcadores != null) {
-			for (String marcador : listaMarcadores) {
-				CpMarcador cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
-				try {
-					Ex.getInstance().getBL()
-							.marcar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),
-									doc.getPrimeiroMobil(),null, getCadastrante(), getLotaCadastrante(), 
-									null, cpMarcador, null, null, true);
-				} catch (Exception e) {
-					throw new RuntimeException("Ocorreu um erro ao gravar marcadores", e);
-				}
+		for (String marcador : listaMarcadores) {
+			CpMarcador cpMarcador = dao().consultar(Long.parseLong(marcador), CpMarcador.class, false);
+			try {
+				Ex.getInstance().getBL()
+						.marcar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),
+								doc.getPrimeiroMobil(), null, getCadastrante(), getLotaCadastrante(),
+								null, cpMarcador, null, null, true);
+			} catch (Exception e) {
+				throw new RuntimeException("Ocorreu um erro ao gravar marcadores", e);
 			}
 		}
 		/* END Gravação dos Marcadores  */

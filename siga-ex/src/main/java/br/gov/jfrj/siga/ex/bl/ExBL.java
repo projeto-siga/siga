@@ -6694,7 +6694,13 @@ public class ExBL extends CpBL {
 			final Date dtMov) throws AplicacaoException, Exception {
 
 		if (mob.doc().isEletronico()) {
-			dao().em().refresh(mob);
+			//Nato: o refresh quando aplicado a uma entidade detached produz um erro e faz com que a
+			// session fique num estado de RollbackOnly. Antes de usar o refresh é necessário verificar se "contains".
+			// Mesmo assim, não sei por que existe esse "refresh" aqui. Mas imagino que, se alguém incluíu, seja necessário.
+			// Fiz mais alguns testes e o "contains" é "true" para uma entidade que ainda não foi "flushed" para o banco.
+			// Ou seja, está muito complicado isso aqui. Simplesmente desabilitei o refresh.
+			// if (dao().em().contains(mob))
+			//	   dao().em().refresh(mob);
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {

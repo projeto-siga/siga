@@ -203,7 +203,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return !mob.getExDocumento().isPendenteDeAssinatura();
@@ -216,7 +216,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isSemEfeito(String codigoDocumento) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob == null)
@@ -231,7 +231,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean podeMovimentar(String codigoDocumento, String siglaCadastrante) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -292,7 +292,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public Boolean isAtendente(String codigoDocumento, String siglaTitular) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -306,7 +306,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String getAtendente(String codigoDocumento, String siglaTitular) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular); 
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -334,7 +334,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				return Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(num);
 			} catch (Exception ex) {
@@ -346,7 +346,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String buscarPorCodigo(String codigo) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobilSelecao sel = new ExMobilSelecao();
 				sel.setSigla(codigo);
@@ -384,7 +384,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String form(String codigoDocumento, String variavel) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				if (codigoDocumento == null)
 					return null;
@@ -418,7 +418,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String toJSON(String codigo) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = null;
 				{
@@ -886,7 +886,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo, Date depoisDaData) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob.isGeral())
@@ -900,7 +900,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public Boolean isAuxiliarIncluso(String codigoDocumento, Date depoisDaData) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento).getDoc().getMobilGeral();
 

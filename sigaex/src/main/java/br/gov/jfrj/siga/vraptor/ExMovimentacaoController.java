@@ -1091,10 +1091,13 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		Date dt = paramDate("dt");
+		ExMovimentacao movQualquer = null;
 		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
 		for (ExMovimentacao m : movs) {
-			if (mov == null)
+			if (mov == null && !m.isCancelada() && m.isTramite())
 				mov = m;
+			if (movQualquer == null)
+				movQualquer = m;
 			al.add(new ItemDeProtocolo(m));
 			
 			//Edson: incluindo os mobs apensos do mesmo processo, q não receberam a mov de transferência
@@ -1125,6 +1128,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		Collections.sort(al, new ItemDeProtocoloComparator());
+		
+		if (mov == null)
+			mov = movQualquer;
 		
 		result.include("itens", al);
 		result.include("mov", mov);

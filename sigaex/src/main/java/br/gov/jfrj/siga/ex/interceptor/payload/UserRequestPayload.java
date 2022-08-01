@@ -21,7 +21,9 @@ public class UserRequestPayload {
 
     public static final String MATRICULA = "matricula";
     public static final String LOTACAO = "lotacao";
+
     public static final String NOME = "nome";
+    public static final String SIGLA = "sigla";
 
     private final HttpServletRequest request;
     private final String requestURL;
@@ -32,12 +34,14 @@ public class UserRequestPayload {
     private final String lotacao;
     private final String nome;
 
+    private final String sigla;
+
 
     public UserRequestPayload(HttpServletRequest request, DpPessoa cadastrante) {
         this.request = request;
         this.requestURL = request.getRequestURL().toString();
         this.requestParams = request.getQueryString();
-        
+
         String sessionId = request.getRequestedSessionId();
         this.userIpAddress = HttpRequestUtils.getIpAudit(request);
 
@@ -45,13 +49,14 @@ public class UserRequestPayload {
         this.matricula = cadastrante.getMatricula().toString();
         this.lotacao = cadastrante.getLotacao().toString();
         this.nome = cadastrante.getNomePessoa();
+        this.sigla = request.getParameter("sigla");
 
         String uuidStr = ThreadContext.get(REQUEST_ID);
         if (uuidStr == null) {
             UUID requestId = UuidUtil.getTimeBasedUuid();
             ThreadContext.put(REQUEST_ID, requestId.toString());
         }
-        
+
         if (sessionId != null) {
             ThreadContext.put(SESSION_ID, sessionId);
         }
@@ -69,6 +74,9 @@ public class UserRequestPayload {
         }
         if (nome != null) {
             ThreadContext.put(NOME, nome);
+        }
+        if (sigla != null) {
+            ThreadContext.put(SIGLA, sigla);
         }
 
     }
@@ -123,13 +131,12 @@ public class UserRequestPayload {
         return nome;
     }
 
+    public String getSigla() {
+        return sigla;
+    }
+
     @Override
     public String toString() {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        try {
-            return ow.writeValueAsString(request.getRequestURI());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return request.getRequestURI();
     }
 }

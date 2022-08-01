@@ -38,7 +38,7 @@ public class UserRequestInterceptor {
         logger.log(BLAME, userRequestPayload);
 
         stack.next();
-        
+
         UserRequestPayload.clear();
     }
 

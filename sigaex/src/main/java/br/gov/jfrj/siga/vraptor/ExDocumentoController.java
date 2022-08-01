@@ -1468,6 +1468,7 @@ public class ExDocumentoController extends ExController {
 		result.include("lotaSubscritorSel", lotaSubscritorSel);
 	}
 
+	@TrackRequest
 	@Get("app/expediente/doc/exibirProcesso")
 	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
 			throws Exception {

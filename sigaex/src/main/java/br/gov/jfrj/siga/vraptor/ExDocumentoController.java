@@ -1368,7 +1368,8 @@ public class ExDocumentoController extends ExController {
 
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
-			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, boolean exibirReordenacao)
+			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, 
+					  boolean exibirReordenacao, final String nomeAcaoVO)
 			throws Exception {		
 		final boolean recebimentoAutomatico = Prop.getBool("recebimento.automatico");
 		boolean recebimentoPendente = false;
@@ -1468,7 +1469,8 @@ public class ExDocumentoController extends ExController {
 
 	@TrackRequest
 	@Get("app/expediente/doc/exibirProcesso")
-	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
+	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, 
+                              boolean exibirReordenacao, final String nomeAcaoVO)
 			throws Exception {
 		
 		if(Prop.get("pdf.tamanho.maximo.completo") != null) {
@@ -1496,13 +1498,13 @@ public class ExDocumentoController extends ExController {
 		}
 
 		
-		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao);					
+		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao, nomeAcaoVO);					
 	}
 
 	@Get("/app/expediente/doc/exibirResumoProcesso")
 	public void exibeResumoProcesso(final String sigla, final boolean podeExibir)
 			throws Exception {
-		exibe(false, sigla, null, null, null, false);
+		exibe(false, sigla, null, null, null, false, null);
 	}
 
 	private void buscarDocumentoOuNovo(final boolean fVerificarAcesso,

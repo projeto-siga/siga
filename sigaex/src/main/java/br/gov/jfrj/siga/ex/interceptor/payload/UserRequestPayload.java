@@ -16,6 +16,8 @@ public class UserRequestPayload {
     public static final String REQUEST_ID = "requestId";
     public static final String SESSION_ID = "sessionId";
     public static final String USER_IP_ADDRESS = "userIpAddress";
+
+    public static final String NOME_ACAO_VO = "nomeAcaoVO";
     public static final String REQUEST_URL = "requestURL";
     public static final String REQUEST_PARAMS = "requestParams";
 
@@ -26,6 +28,8 @@ public class UserRequestPayload {
     public static final String SIGLA = "sigla";
 
     private final HttpServletRequest request;
+
+    private final String nomeAcaoVO;
     private final String requestURL;
     private final String requestParams;
     private final String userIpAddress;
@@ -39,6 +43,7 @@ public class UserRequestPayload {
 
     public UserRequestPayload(HttpServletRequest request, DpPessoa cadastrante) {
         this.request = request;
+        this.nomeAcaoVO = request.getParameter("nomeAcaoVO");
         this.requestURL = request.getRequestURL().toString();
         this.requestParams = request.getQueryString();
 
@@ -63,6 +68,7 @@ public class UserRequestPayload {
         if (userIpAddress != null) {
             ThreadContext.put(USER_IP_ADDRESS, userIpAddress);
         }
+        ThreadContext.put(NOME_ACAO_VO, nomeAcaoVO);
         ThreadContext.put(REQUEST_URL, requestURL);
         if (requestParams != null) {
             ThreadContext.put(REQUEST_PARAMS, requestParams);
@@ -107,6 +113,10 @@ public class UserRequestPayload {
         return cadastrante;
     }
 
+    public String getNomeAcaoVO() {
+        return nomeAcaoVO;
+    }
+
     public String getRequestURL() {
         return requestURL;
     }
@@ -137,6 +147,6 @@ public class UserRequestPayload {
 
     @Override
     public String toString() {
-        return request.getRequestURI();
+        return this.nomeAcaoVO;
     }
 }

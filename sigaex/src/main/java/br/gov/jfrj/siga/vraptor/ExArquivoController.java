@@ -91,7 +91,8 @@ public class ExArquivoController extends ExController {
 	@Get("/app/arquivo/exibir")
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
-			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, boolean iframe) throws Exception {
+			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, 
+							boolean iframe, final String nomeAcaoVO) throws Exception {
 		try {						
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();

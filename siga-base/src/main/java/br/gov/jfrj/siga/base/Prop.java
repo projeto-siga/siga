@@ -314,6 +314,5 @@ public class Prop {
 
 		/* Permite inativar lotação com determinadas marcações */
 		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "false");
-
 	}
 }

@@ -384,11 +384,18 @@ public class ExMobilVO extends ExVO {
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 
 		if (!mob.isGeral()) {
-			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder").nameSpace("/app/expediente/doc").acao("exibirProcesso")
-					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie"))
+					.icone("folder")
+					.nameSpace("/app/expediente/doc")
+					.acao("exibirProcesso")
+					.params("sigla", mob.getCodigoCompacto())
+					.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.dossie"))
+					.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular))
+					.classe("once")
+					.build());
 
 			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
-					.params("sigla", mob.getCodigoCompacto()).params("popup", "true").params("arquivo", mob.getReferenciaPDF()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+					.params("sigla", mob.getCodigoCompacto()).params("popup", "true").params("arquivo", mob.getReferenciaPDF()).params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.impressao")).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 
 			addAcao(AcaoVO.builder().nome("Incluir _Documento").icone("page_white_add").nameSpace("/app/expediente/doc").acao("editar")
 					.params("mobilPaiSel.sigla", mob.getCodigoCompacto()).params("criandoAnexo", "true").exp(new ExPodeIncluirDocumento(mob, titular, lotaTitular)).build());

@@ -4,7 +4,9 @@ import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.interceptor.AcceptsWithAnnotations;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.interceptor.payload.UserRequestPayload;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.TrackRequest;
 import org.apache.logging.log4j.Level;
@@ -35,8 +37,9 @@ public class UserRequestInterceptor {
 
     @AroundCall
     public void around(SimpleInterceptorStack stack) {
-        logger.log(BLAME, userRequestPayload);
-
+        if(Prop.getBool("registrar.requisicoes.usuario")){
+            logger.log(BLAME, userRequestPayload);    
+        }
         stack.next();
 
         UserRequestPayload.clear();

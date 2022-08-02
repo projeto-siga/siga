@@ -315,7 +315,5 @@ public class Prop {
 		/* Permite inativar lotação com determinadas marcações */
 		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "false");
 
-		/* Permite habilitar o registro das requisições dos usuários */
-		provider.addPublicProperty("/sigaex.registrar.requisicoes.usuario", "false");
 	}
 }

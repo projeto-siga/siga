@@ -567,12 +567,16 @@ public class ExDocumentoVO extends ExVO {
 		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
 				.params("sigla", doc.toString()).params("idVisualizacao", doc.getSigla()).exp(new CpPodeSempre()).pre(numUltMobil < 20 ? "" : "Exibir todos os " + numUltMobil + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?").classe("once").build());
 		
-		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
-				.params("popup", "true").params("arquivo", doc.getReferenciaPDF()).params("idVisualizacao", Long.toString(idVisualizacao))
+		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao"))
+				.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
+				.params("popup", "true").params("arquivo", doc.getReferenciaPDF())
+				.params("idVisualizacao", Long.toString(idVisualizacao))
+				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.impressao"))
 				.exp(new CpPodeSempre()).build());
 		
 		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify").nameSpace("/app/expediente/doc").acao("exibirProcesso")
 				.params("sigla", doc.toString()).params("idVisualizacao", Long.toString(idVisualizacao))
+				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.dossie"))
 				.exp(new CpPodeSempre()).build());
 		
 		docVO.getMobs().get(0).setAcoes(vo.getAcoes());
@@ -653,11 +657,18 @@ public class ExDocumentoVO extends ExVO {
 
 		ExMobil mob = doc.getMobilGeral();
 		
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify").nameSpace("/app/expediente/doc").acao("exibirProcesso")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify")
+				.nameSpace("/app/expediente/doc").acao("exibirProcesso")
+				.params("sigla", mob.getCodigoCompacto())
+				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.dossie"))
+				.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 		
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
-				.params("sigla", mob.getCodigoCompacto()).params("popup", "true").params("arquivo", doc.getReferenciaPDF()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao"))
+				.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
+				.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
+				.params("arquivo", doc.getReferenciaPDF())
+				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.impressao"))
+				.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 		
 		vo.addAcao(AcaoVO.builder().nome("Fina_lizar").icone("lock").nameSpace("/app/expediente/doc").acao("finalizar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeFinalizar(doc, titular, lotaTitular)).classe("once").build());

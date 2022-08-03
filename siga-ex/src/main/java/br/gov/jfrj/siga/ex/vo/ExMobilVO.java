@@ -394,8 +394,12 @@ public class ExMobilVO extends ExVO {
 					.classe("once")
 					.build());
 
-			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
-					.params("sigla", mob.getCodigoCompacto()).params("popup", "true").params("arquivo", mob.getReferenciaPDF()).params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.impressao")).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao"))
+					.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
+					.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
+					.params("arquivo", mob.getReferenciaPDF())
+					.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.impressao"))
+					.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 
 			addAcao(AcaoVO.builder().nome("Incluir _Documento").icone("page_white_add").nameSpace("/app/expediente/doc").acao("editar")
 					.params("mobilPaiSel.sigla", mob.getCodigoCompacto()).params("criandoAnexo", "true").exp(new ExPodeIncluirDocumento(mob, titular, lotaTitular)).build());

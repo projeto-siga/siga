@@ -2139,9 +2139,10 @@ public class ExDao extends CpDao {
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_fim_marca is null OR marcaAux.dt_fim_marca > :dbDatetime ) ");
 		
 		sbQueryPrimeiraMarca.append("ORDER BY ");
+		sbQueryPrimeiraMarca.append("CASE WHEN marcaAux.id_pessoa_ini = :titular THEN 0 ELSE 1 END, "); //Traz a Pessoa em questão para o Topo pra depois distribuir nos grupos
 		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcadorAux.grupo_marcador = 6 THEN 0 ELSE marcadorAux.grupo_marcador END" //Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
 												   : " marcadorAux.grupo_marcador ");
-		sbQueryPrimeiraMarca.append(", marcaAux.id_pessoa_ini, marcaAux.id_lotacao_ini) aux ");
+		sbQueryPrimeiraMarca.append(") aux ");
 		
 		sbQueryPrimeiraMarca.append(isOracle() ? "WHERE rownum = 1 " : "LIMIT 1 "); //Obtém a primeira MARCA daquele ID_REF seguindo os critérios, desprezando as demais ocorrências
 		sbQueryPrimeiraMarca.append(")");

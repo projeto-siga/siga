@@ -2108,8 +2108,6 @@ public class ExDao extends CpDao {
 		String queryMarcasAIgnorar = "";
 		String queryMarcasAIgnorarWhere = "";
 		
-		
-		
 		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
 			queryMarcasAIgnorar += " left join corporativo.cp_marca mx on"
 					+ " mx.id_ref = m.id_ref and mx.id_marcador in(";
@@ -2182,9 +2180,10 @@ public class ExDao extends CpDao {
 				+ " (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem");
 		
 		sbQueryString.append(" FROM marca ");
-		sbQueryString.append(" INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ");
+		//Qdo conta, não precisa ordenar mas precisa filtrar se for solicitado 
+		sbQueryString.append(!contar || (contar && filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ": "");
 		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc ": "");
-		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); //Se CONTANDO e SEM FILTROS, não adiciona
+		sbQueryString.append(!contar ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); 
 		
 		sbQueryString.append(" WHERE 1=1");
 		sbQueryString.append(filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "");

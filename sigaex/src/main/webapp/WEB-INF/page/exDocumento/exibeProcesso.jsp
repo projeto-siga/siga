@@ -182,15 +182,13 @@
 </script>
 
 <script type="text/javascript">
-	function trackRequest() {
-		var url = "${pageContext.request.contextPath}/app/expediente/doc/registrar_requisicao_usuario?sigla=${sigla}&nomeAcao=TelaCheia"
+	function trackRequest(acao) {
+		var url = "${pageContext.request.contextPath}/app/expediente/doc/registrar_requisicao_usuario?sigla=${sigla}&nomeAcao=" + acao;
 		$.ajax({
 			type: "GET",
 			url: url
 		});
-		console.log(url);
 	}
-
 </script>
 
 <!-- main content bootstrap -->
@@ -433,15 +431,15 @@
 				<div id="linhaBtn" class="mb-2">						
 					<div class="input-group d-inline mb-2">						
 						<div id="radioBtn" class="btn-group">
-							<a class="btn btn-primary btn-sm active" data-toggle="formato" data-title="html" id="radioHTML" name="formato" value="html" accesskey="h" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'');">
+							<a class="btn btn-primary btn-sm active" data-toggle="formato" data-title="html" id="radioHTML" name="formato" value="html" accesskey="h" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,''); trackRequest('HTML');">
 								<u>H</u>TML
 							</a>
-							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdf" id="radioPDF" name="formato" value="pdf" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'');">
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdf" id="radioPDF" name="formato" value="pdf" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,''); trackRequest('PDF');">
 	<!--  									<a id="pdflink" accesskey="a"> -->
 										<u>P</u>DF
 	<!-- 									</a> -->
 							</a>
-							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdfsemmarcas" id="radioPDFSemMarcas" name="pdfsemmarcas" value="pdfsemmarcas" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'semmarcas/');">
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdfsemmarcas" id="radioPDFSemMarcas" name="pdfsemmarcas" value="pdfsemmarcas" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'semmarcas/'); trackRequest('PDF Sem Marcas');">
 										PDF Sem Marcas
 							</a>
 						</div>
@@ -450,7 +448,7 @@
 						<input type="hidden" name="formato" id="radio" value="html">
 					</div>
 					<button type="button" class="btn btn-secondary btn-sm" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
-						onclick="javascript: telaCheia(this); javascript: trackRequest();">
+						onclick="javascript: telaCheia(this); javascript: trackRequest('Tela Cheia');">
 						<u>T</u>ela Cheia
 					</button>
 				</div>

@@ -2126,9 +2126,7 @@ public class ExDao extends CpDao {
 		sbQueryPrimeiraMarca.append("          ON marcaAux.id_marcador = marcadorAux.id_marcador ");
 		sbQueryPrimeiraMarca.append("WHERE marcaAux.id_ref = m.id_ref ");
 		
-		sbQueryPrimeiraMarca.append(contar ? " AND (marcaAux.id_pessoa_ini = :titular OR marcaAux.id_lotacao_ini = :lotaTitular) " : ""); // Se CONTAR filtra PESSOA e LOTACAO
-		sbQueryPrimeiraMarca.append(!contar && titular != null ? " AND marcaAux.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
-		sbQueryPrimeiraMarca.append(!contar && lotaTitular != null ? " AND marcaAux.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? " AND marcaAux.id_pessoa_ini = :titular" : " AND marcaAux.id_lotacao_ini = :lotaTitular"); 
 		
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaAssinSenha ");
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaMovAssinSenha ");
@@ -2136,8 +2134,10 @@ public class ExDao extends CpDao {
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_ini_marca is null OR marcaAux.dt_ini_marca < :dbDatetime ) ");
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_fim_marca is null OR marcaAux.dt_fim_marca > :dbDatetime ) ");
 		
-		sbQueryPrimeiraMarca.append("ORDER BY ");
-		sbQueryPrimeiraMarca.append("CASE WHEN marcaAux.id_pessoa_ini = :titular THEN 0 ELSE 1 END, "); //Traz a Pessoa em questão para o Topo pra depois distribuir nos grupos
+		sbQueryPrimeiraMarca.append("ORDER BY CASE WHEN marcaAux.id_pessoa_ini = :titular THEN ");
+		
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? " 0 ELSE 1 END," : " 1 ELSE 0 END,"); //Se PESSOA, Traz a Pessoa em questão para o TOPO pra depois distribuir nos grupos
+		
 		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcadorAux.grupo_marcador = 6 THEN 0 ELSE marcadorAux.grupo_marcador END" //Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
 												   : " marcadorAux.grupo_marcador ");
 		sbQueryPrimeiraMarca.append(") aux ");
@@ -2154,9 +2154,9 @@ public class ExDao extends CpDao {
 		sbQueryString.append(queryMarcasAIgnorar);
 		
 		sbQueryString.append(" WHERE 1=1 ");
-		sbQueryString.append(contar ? " AND (m.id_pessoa_ini = :titular OR m.id_lotacao_ini = :lotaTitular)" : ""); // Se CONTAR filtra PESSOA e LOTACAO
-		sbQueryString.append(!contar && titular != null ? " and m.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
-		sbQueryString.append(!contar && lotaTitular != null ? " and m.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		
+		sbQueryString.append(lotaTitular == null ? " AND m.id_pessoa_ini = :titular" : " AND m.id_lotacao_ini = :lotaTitular"); 
+
 		
 		//MARCAS ativas
 		sbQueryString.append(" AND (m.dt_ini_marca is null OR m.dt_ini_marca < :dbDatetime)");
@@ -2171,13 +2171,13 @@ public class ExDao extends CpDao {
 		sbQueryString.append(sbQueryPrimeiraMarca);
 		
 		sbQueryString.append(") SELECT");
-		sbQueryString.append(contar ?  " CONCAT(grupo_marcador,''),"
-				+ " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end), "  
-				+ " sum(case when marca.id_lotacao_ini = :lotaTitular then 1 else 0 end) " 
-				
-				: " CONCAT(grupo_marcador,''),"
-				+ " id_ref, "
-				+ " (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem");
+		
+		sbQueryString.append(" CONCAT(grupo_marcador,''),");
+		
+		sbQueryString.append(contar && lotaTitular == null ? " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end) ":"");
+		sbQueryString.append(contar && lotaTitular != null ? " sum(case when marca.id_lotacao_ini = :lotaTitular then 1 else 0 end)" : "");
+
+		sbQueryString.append(!contar ? "id_ref, (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem" : "");
 		
 		sbQueryString.append(" FROM marca ");
 		//Qdo conta, não precisa ordenar mas precisa filtrar se for solicitado 
@@ -2197,10 +2197,10 @@ public class ExDao extends CpDao {
 	
 		Query query = em().createNativeQuery(sbQueryString.toString());
 		
-		if (contar || titular != null)
+		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
 		
-		if (contar || lotaTitular != null)
+		if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
 		
 		if (grupos != null && grupos.size() > 0) {

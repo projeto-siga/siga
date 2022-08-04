@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Controller
 public class ExMesa2Controller extends ExController {
 	private static final String ACESSO_MESA2BETA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;BETA:Utilizar versão beta";
+	private static final String PERMITE_FILTRO = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;FILTRO:Permitir usar o filtro de pesquisa";
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -145,6 +146,14 @@ public class ExMesa2Controller extends ExController {
 					.body("Não é permitido exibir dados da sua " 
 							+ SigaMessages.getMessage("usuario.lotacao"))
 					.setStatusCode(200);				
+				return;
+			}
+			if(filtro != null && !"".equals(filtro) 
+					&& !Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
+							getTitular(), getLotaTitular(),	PERMITE_FILTRO)) {
+					result.use(Results.http()).addHeader("Content-Type", "text/plain")
+					.body("Usuário não autorizado a utilizar o filtro de pesquisa.")
+					.setStatusCode(200);
 				return;
 			}
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) 

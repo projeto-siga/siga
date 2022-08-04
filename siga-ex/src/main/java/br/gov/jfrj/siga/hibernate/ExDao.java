@@ -2108,8 +2108,6 @@ public class ExDao extends CpDao {
 		String queryMarcasAIgnorar = "";
 		String queryMarcasAIgnorarWhere = "";
 		
-		
-		
 		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
 			queryMarcasAIgnorar += " left join corporativo.cp_marca mx on"
 					+ " mx.id_ref = m.id_ref and mx.id_marcador in(";
@@ -2139,9 +2137,10 @@ public class ExDao extends CpDao {
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_fim_marca is null OR marcaAux.dt_fim_marca > :dbDatetime ) ");
 		
 		sbQueryPrimeiraMarca.append("ORDER BY ");
+		sbQueryPrimeiraMarca.append("CASE WHEN marcaAux.id_pessoa_ini = :titular THEN 0 ELSE 1 END, "); //Traz a Pessoa em questão para o Topo pra depois distribuir nos grupos
 		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcadorAux.grupo_marcador = 6 THEN 0 ELSE marcadorAux.grupo_marcador END" //Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
 												   : " marcadorAux.grupo_marcador ");
-		sbQueryPrimeiraMarca.append(", marcaAux.id_pessoa_ini, marcaAux.id_lotacao_ini) aux ");
+		sbQueryPrimeiraMarca.append(") aux ");
 		
 		sbQueryPrimeiraMarca.append(isOracle() ? "WHERE rownum = 1 " : "LIMIT 1 "); //Obtém a primeira MARCA daquele ID_REF seguindo os critérios, desprezando as demais ocorrências
 		sbQueryPrimeiraMarca.append(")");
@@ -2181,9 +2180,10 @@ public class ExDao extends CpDao {
 				+ " (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem");
 		
 		sbQueryString.append(" FROM marca ");
-		sbQueryString.append(" INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ");
+		//Qdo conta, não precisa ordenar mas precisa filtrar se for solicitado 
+		sbQueryString.append(!contar || (contar && filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ": "");
 		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc ": "");
-		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); //Se CONTANDO e SEM FILTROS, não adiciona
+		sbQueryString.append(!contar ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); 
 		
 		sbQueryString.append(" WHERE 1=1");
 		sbQueryString.append(filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "");

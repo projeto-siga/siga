@@ -92,7 +92,7 @@ public class ExArquivoController extends ExController {
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
 			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, 
-							boolean iframe, final String nomeAcaoVO) throws Exception {
+							boolean iframe, final String nomeAcao) throws Exception {
 		try {						
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();

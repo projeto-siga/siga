@@ -2,9 +2,6 @@ package br.gov.jfrj.siga.ex.interceptor.payload;
 
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.util.UuidUtil;
 
@@ -17,33 +14,33 @@ public class UserRequestPayload {
     public static final String SESSION_ID = "sessionId";
     public static final String USER_IP_ADDRESS = "userIpAddress";
 
-    public static final String NOME_ACAO_VO = "nomeAcaoVO";
+    public static final String NOME_ACAO = "nomeAcao";
     public static final String REQUEST_URL = "requestURL";
     public static final String REQUEST_PARAMS = "requestParams";
 
     public static final String MATRICULA = "matricula";
     public static final String LOTACAO = "lotacao";
 
-    public static final String NOME = "nome";
+    public static final String NOME_PESSOA = "nomePessoa";
     public static final String SIGLA = "sigla";
 
     private final HttpServletRequest request;
 
-    private final String nomeAcaoVO;
+    private final String nomeAcao;
     private final String requestURL;
     private final String requestParams;
     private final String userIpAddress;
     private final DpPessoa cadastrante;
     private final String matricula;
     private final String lotacao;
-    private final String nome;
+    private final String nomePessoa;
 
     private final String sigla;
 
 
-    public UserRequestPayload(HttpServletRequest request, DpPessoa cadastrante) {
+    public UserRequestPayload(HttpServletRequest request, String nomeAcao, DpPessoa cadastrante) {
         this.request = request;
-        this.nomeAcaoVO = request.getParameter("nomeAcaoVO");
+        this.nomeAcao = nomeAcao;
         this.requestURL = request.getRequestURL().toString();
         this.requestParams = request.getQueryString();
 
@@ -53,7 +50,7 @@ public class UserRequestPayload {
         this.cadastrante = cadastrante;
         this.matricula = cadastrante.getMatricula().toString();
         this.lotacao = cadastrante.getLotacao().toString();
-        this.nome = cadastrante.getNomePessoa();
+        this.nomePessoa = cadastrante.getNomePessoa();
         this.sigla = request.getParameter("sigla");
 
         String uuidStr = ThreadContext.get(REQUEST_ID);
@@ -68,7 +65,7 @@ public class UserRequestPayload {
         if (userIpAddress != null) {
             ThreadContext.put(USER_IP_ADDRESS, userIpAddress);
         }
-        ThreadContext.put(NOME_ACAO_VO, nomeAcaoVO);
+        ThreadContext.put(NOME_ACAO, nomeAcao);
         ThreadContext.put(REQUEST_URL, requestURL);
         if (requestParams != null) {
             ThreadContext.put(REQUEST_PARAMS, requestParams);
@@ -78,8 +75,8 @@ public class UserRequestPayload {
         if (lotacao != null) {
             ThreadContext.put(LOTACAO, lotacao);
         }
-        if (nome != null) {
-            ThreadContext.put(NOME, nome);
+        if (nomePessoa != null) {
+            ThreadContext.put(NOME_PESSOA, nomePessoa);
         }
         if (sigla != null) {
             ThreadContext.put(SIGLA, sigla);
@@ -113,8 +110,8 @@ public class UserRequestPayload {
         return cadastrante;
     }
 
-    public String getNomeAcaoVO() {
-        return nomeAcaoVO;
+    public String getNomeAcao() {
+        return nomeAcao;
     }
 
     public String getRequestURL() {
@@ -137,8 +134,8 @@ public class UserRequestPayload {
         return lotacao;
     }
 
-    public String getNome() {
-        return nome;
+    public String getNomePessoa() {
+        return nomePessoa;
     }
 
     public String getSigla() {
@@ -147,6 +144,6 @@ public class UserRequestPayload {
 
     @Override
     public String toString() {
-        return this.nomeAcaoVO;
+        return this.nomeAcao;
     }
 }

@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.logic;
 
+import br.gov.jfrj.siga.cp.logic.CpPodeNunca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -20,6 +21,8 @@ public class ExPodeRegistrarRequisicaoUsuario extends CompositeExpressionSupport
 
     @Override
     protected Expression create() {
+        if(mob == null)
+            return new CpPodeNunca();
 
         return And.of(
 

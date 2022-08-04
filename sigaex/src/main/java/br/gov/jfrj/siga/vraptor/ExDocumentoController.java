@@ -1369,7 +1369,7 @@ public class ExDocumentoController extends ExController {
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
 			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, 
-					  boolean exibirReordenacao, final String nomeAcaoVO)
+					  boolean exibirReordenacao, final String nomeAcao)
 			throws Exception {		
 		final boolean recebimentoAutomatico = Prop.getBool("recebimento.automatico");
 		boolean recebimentoPendente = false;
@@ -1470,7 +1470,7 @@ public class ExDocumentoController extends ExController {
 	@TrackRequest
 	@Get("app/expediente/doc/exibirProcesso")
 	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, 
-                              boolean exibirReordenacao, final String nomeAcaoVO)
+                              boolean exibirReordenacao, final String nomeAcao)
 			throws Exception {
 		
 		if(Prop.get("pdf.tamanho.maximo.completo") != null) {
@@ -1498,7 +1498,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		
-		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao, nomeAcaoVO);					
+		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao, nomeAcao);					
 	}
 
 	@Get("/app/expediente/doc/exibirResumoProcesso")
@@ -3051,5 +3051,11 @@ public class ExDocumentoController extends ExController {
 	@Get("app/validar-assinatura")
 	public void aDesfazerCancelamentoDocumento(final Long pessoa, final String sigla) {
 		result.redirectTo(Prop.get("/siga.base.url") + "/siga/permalink/" + sigla);
+	}
+	
+	@TrackRequest
+	@Get("app/expediente/doc/registrar_requisicao_usuario")
+	public void registrarRequisicaoUsuario(final String sigla, final String nomeAcao){
+		result.include("status", "ok");
 	}
 }

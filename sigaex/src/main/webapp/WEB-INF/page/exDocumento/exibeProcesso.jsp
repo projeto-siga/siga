@@ -178,7 +178,19 @@
 
 		redimensionar();
 		resize();
-	}				
+	}
+</script>
+
+<script type="text/javascript">
+	function trackRequest() {
+		var url = "${pageContext.request.contextPath}/app/expediente/doc/registrar_requisicao_usuario?sigla=${sigla}&nomeAcao=TelaCheia"
+		$.ajax({
+			type: "GET",
+			url: url
+		});
+		console.log(url);
+	}
+
 </script>
 
 <!-- main content bootstrap -->
@@ -288,7 +300,7 @@
 							</c:if>
 						</span>		
 						<c:if test="${mob.doc.podeReordenar()}">				
-							<div class="menu-ordenacao"">
+							<div class="menu-ordenacao">
 								Clique e arraste os itens tracejados para reordená-los<br />							
 								<form action="${pageContext.request.contextPath}/app/expediente/doc/reordenar" id="formReordenarDocs" class="form" method="POST">									
 									<input type="hidden" name="idDocumentos" id="inputHiddenIdDocs" />													
@@ -438,7 +450,7 @@
 						<input type="hidden" name="formato" id="radio" value="html">
 					</div>
 					<button type="button" class="btn btn-secondary btn-sm" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
-						onclick="javascript: telaCheia(this);">
+						onclick="javascript: telaCheia(this); javascript: trackRequest();">
 						<u>T</u>ela Cheia
 					</button>
 				</div>

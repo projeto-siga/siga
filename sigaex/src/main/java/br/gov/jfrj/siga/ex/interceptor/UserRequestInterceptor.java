@@ -4,6 +4,8 @@ import br.com.caelum.vraptor.AroundCall;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.interceptor.AcceptsWithAnnotations;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.interceptor.payload.UserRequestPayload;
 import br.gov.jfrj.siga.ex.logic.ExPodeRegistrarRequisicaoUsuario;
@@ -24,7 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 @AcceptsWithAnnotations(TrackRequest.class)
 public class UserRequestInterceptor {
     private HttpServletRequest request;
-    private SigaObjects sigaObjects;
+    private DpPessoa cadastrante;
+    private DpLotacao lotacaoCadastrante;
     private ExMobil mob;
     private ExPodeRegistrarRequisicaoUsuario exPodeRegistrarRequisicaoUsuario;
     private UserRequestPayload userRequestPayload;
@@ -34,37 +37,51 @@ public class UserRequestInterceptor {
 
     public UserRequestInterceptor() {
         this.userRequestPayload = null;
-        this.sigaObjects = null;
         this.mob = null;
         this.exPodeRegistrarRequisicaoUsuario = null;
     }
-
-    @Inject
-    public UserRequestInterceptor(HttpServletRequest request, SigaObjects sigaObjects) {
+    
+    public UserRequestInterceptor(HttpServletRequest request, DpPessoa cadastrante, DpLotacao lotacaoCadastrante){
         this.request = request;
-        this.sigaObjects = sigaObjects;
-
-        String sigla = request.getParameter("sigla");
+        this.cadastrante = cadastrante;
+        this.lotacaoCadastrante = lotacaoCadastrante;
+        
+        String sigla = this.request.getParameter("sigla");
         final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
         filter.setSigla(sigla);
 
         this.mob = ExDao.getInstance().consultarPorSigla(filter);
 
         this.exPodeRegistrarRequisicaoUsuario = new ExPodeRegistrarRequisicaoUsuario(mob,
-                sigaObjects.getTitular(), sigaObjects.getLotaTitular());
+                cadastrante, lotacaoCadastrante);
+    }
+    
+
+    @Inject
+    public UserRequestInterceptor(HttpServletRequest request, SigaObjects sigaObjects) {
+        this(request, sigaObjects.getCadastrante(), sigaObjects.getCadastrante().getLotacao());
     }
 
     @AroundCall
     public void around(SimpleInterceptorStack stack) {
-        boolean temNomeAcaoVO = request.getParameter("nomeAcaoVO") != null ? true : false;
-        if(this.exPodeRegistrarRequisicaoUsuario.eval() && temNomeAcaoVO){
-            this.userRequestPayload = new UserRequestPayload(this.request, this.sigaObjects.getCadastrante());
-            logger.log(BLAME, userRequestPayload);    
-        }
+        log(this.request.getParameter("nomeAcao"));
 
         stack.next();
 
         UserRequestPayload.clear();
+    }
+    
+    public void log(String nomeAcao){
+        boolean temNomeAcao = nomeAcao != null ? true : false;
+        
+        if(this.exPodeRegistrarRequisicaoUsuario != null && 
+                this.exPodeRegistrarRequisicaoUsuario.eval() 
+                && temNomeAcao){
+            this.userRequestPayload = new UserRequestPayload(this.request, nomeAcao, this.cadastrante);
+            logger.log(BLAME, userRequestPayload);
+        }
+
+        this.exPodeRegistrarRequisicaoUsuario = null;
     }
 
 }

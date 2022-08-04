@@ -571,12 +571,12 @@ public class ExDocumentoVO extends ExVO {
 				.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
 				.params("popup", "true").params("arquivo", doc.getReferenciaPDF())
 				.params("idVisualizacao", Long.toString(idVisualizacao))
-				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.impressao"))
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.impressao"))
 				.exp(new CpPodeSempre()).build());
 		
 		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify").nameSpace("/app/expediente/doc").acao("exibirProcesso")
 				.params("sigla", doc.toString()).params("idVisualizacao", Long.toString(idVisualizacao))
-				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.dossie"))
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.dossie"))
 				.exp(new CpPodeSempre()).build());
 		
 		docVO.getMobs().get(0).setAcoes(vo.getAcoes());
@@ -660,14 +660,14 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify")
 				.nameSpace("/app/expediente/doc").acao("exibirProcesso")
 				.params("sigla", mob.getCodigoCompacto())
-				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.dossie"))
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.dossie"))
 				.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 		
 		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao"))
 				.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
 				.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
 				.params("arquivo", doc.getReferenciaPDF())
-				.params("nomeAcaoVO", SigaMessages.getMessage("documento.ver.impressao"))
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.impressao"))
 				.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 		
 		vo.addAcao(AcaoVO.builder().nome("Fina_lizar").icone("lock").nameSpace("/app/expediente/doc").acao("finalizar")

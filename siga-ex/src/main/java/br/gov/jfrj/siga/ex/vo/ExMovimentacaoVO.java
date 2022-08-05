@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.logic.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -542,6 +545,22 @@ public class ExMovimentacaoVO extends ExVO {
 					.exp(new ExPodeEnviarParaVisualizacaoExterna(mov.mob(), titular, lotaTitular))
 					.msgConfirmacao("Confirma a revogação da visualização externa?")
 					.build());
+		}
+
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA ||
+				exTipoMovimentacao == ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO) {
+			
+			CpToken cpToken = CpDao.getInstance()
+					.obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE, mov.getExDocumento().getIdDoc());
+			String url = Cp.getInstance().getBL()
+					.obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
+			
+			AcaoVO acaoVO = AcaoVO.builder().nome(mov.getExMobil().getSigla())
+					.url(url)
+					.exp(new CpPodeSempre())
+					.build();
+			
+			addAcao(acaoVO);
 		}
 		
 		if (descricao != null && descricao.equals(mov.getObs())) {

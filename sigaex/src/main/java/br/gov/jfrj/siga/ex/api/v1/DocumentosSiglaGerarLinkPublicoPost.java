@@ -60,7 +60,7 @@ public class DocumentosSiglaGerarLinkPublicoPost implements IExApiV1.IDocumentos
         /* Grava movimentação com tipo Gerar Link Publico */
         Ex.getInstance().getBL().gravarNovaMovimentacao(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO,
                 cadastrante, lotaCadastrante, mob, dtMov, null, null,
-                null, null, null, "Gerado link público do documento " + mob.getSigla());
+                null, null, null, "Gerado link público");
 
         resp.link = link;
 

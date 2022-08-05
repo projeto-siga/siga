@@ -23,6 +23,10 @@ var appMesa = new Vue({
 		this.errormsg = undefined;
 		var self = this;
 		self.exibeLota = getParmUser('exibeLota');
+		if (self.exibeLota == null) {
+			setParmUser('exibeLota', false); 
+			self.exibeLota = false; 
+		}
 		self.getItensGrupo();
 		self.contar = false;
 		// Carrega todas linhas não preenchidas que estiverem na tela
@@ -110,9 +114,15 @@ var appMesa = new Vue({
 
 			let timeout = Math.abs(new Date() -
 				new Date(sessionStorage.getItem('timeout' + getUser())));
-			if (timeout < 120000 && grpNome) {
-				contar = false;
+			if (timeout < 300000 && !grpNome 
+					&& sessionStorage.getItem('mesa2' + getUser()) != undefined) {
+				// Se nao passou 5 min a partir do ultimo request e não é 
+				// solicitação de mais itens de um grupo, obtem mesa do cache na Session Storage
+				carregaFromJson(sessionStorage.getItem('mesa2' + getUser()), self); 
+				resetCacheLotacaoPessoaAtual(); 
+				return;
 			}
+				
 			if (this.carregando)
 				return;
 			this.carregando = true;
@@ -260,6 +270,7 @@ var appMesa = new Vue({
 			return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
 		},	
 		resetaStorage: function() {
+			sessionStorage.removeItem('mesa2' + getUser());
 			localStorage.removeItem('grupos' + getUser());
 			this.trazerAnotacoes = false;
 			this.trazerComposto = false;
@@ -510,7 +521,7 @@ function carregaFromJson(json, appMesa) {
 		appMesa.errormsg = "Não foram encontrados documentos para esta pesquisa.";
 		
 	if (grp.length > 1) {
-		preencheLinhasFantasmas(grp);
+		preencheLinhasFantasmas(grp, appMesa);
 		appMesa.grupos = grp;
 	} else {
 		if (grp[0].grupoDocs && grp[0].grupoDocs.length > 0) {
@@ -530,7 +541,7 @@ function carregaFromJson(json, appMesa) {
 						grp[0].grupoCounterUser = appMesa.grupos[g].grupoCounterUser;
 					}
 					removeLinhasDuplicadas(grp[0].grupoDocs);
-					preencheLinhasFantasmas(grp);
+					preencheLinhasFantasmas(grp, appMesa);
 					Vue.set(appMesa.grupos, g, grp[0]);
 				}
 			}
@@ -543,6 +554,8 @@ function carregaFromJson(json, appMesa) {
 	}
 	
 	appMesa.grupos = removerGruposDuplicados(appMesa.grupos);
+	sessionStorage.setItem( 
+			'mesa2' + getUser(), JSON.stringify(appMesa.grupos)); 
 	atualizaGrupos(appMesa.grupos);
 	appMesa.$nextTick(function() { 
 		initPopovers();
@@ -557,7 +570,7 @@ function removeLinhasDuplicadas(grp) {
 			grp.splice(ix, 1);
 	}
 }
-function preencheLinhasFantasmas(grupos) {
+function preencheLinhasFantasmas(grupos, appMesa) {
 	// De acordo com os contadores de cada grupo e as linhas já baixadas, gera linhas sem dados
 	// Estas linhas servirão de referência para obter mais linhas do server quando o usuário rolar página
 	for (let j=0; j < grupos.length; j++) {
@@ -566,7 +579,7 @@ function preencheLinhasFantasmas(grupos) {
 			if (!g.grupoDocs)
 				g.grupoDocs = [];
 			let docsFinal = []
-			let qt = getGrupoQtd(g);
+			let qt = getGrupoQtd(g, appMesa.exibeLota);
 			for (let h=0; h < qt && h < g.grupoCounterAtivo; h++) {
 				let ix = g.grupoDocs.findIndex(e => e.offset === h.toString());
 				if (ix < 0) {
@@ -592,8 +605,8 @@ function removerGruposDuplicados(values) {
 	return filterValues;
 }
 
-function getGrupoQtd(grupo) {
-	if (appMesa.exibeLota)
+function getGrupoQtd(grupo, isLotacao) {
+	if (isLotacao)
 		return grupo.grupoQtdLota;
 	else
 		return grupo.grupoQtd;

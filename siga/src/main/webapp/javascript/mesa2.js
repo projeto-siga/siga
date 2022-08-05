@@ -39,7 +39,7 @@ var appMesa = new Vue({
 					self.carregaLinhasExibidasNaTela();
 					window.clearTimeout( timeoutId );
 				}
-			}, 400);
+			}, 800);
 		}, false);
 	},
 	data: function() {
@@ -114,6 +114,9 @@ var appMesa = new Vue({
 
 			let timeout = Math.abs(new Date() -
 				new Date(sessionStorage.getItem('timeout' + getUser())));
+			if (timeout < 600000 && grpNome)
+				// Se está obtendo mais documentos de um grupo pq rolou a tela, nao conta dentro de 10 min 
+				contar = false;
 			if (timeout < 300000 && !grpNome 
 					&& sessionStorage.getItem('mesa2' + getUser()) != undefined) {
 				// Se nao passou 5 min a partir do ultimo request e não é 

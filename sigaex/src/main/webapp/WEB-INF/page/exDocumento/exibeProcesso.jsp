@@ -183,7 +183,8 @@
 
 <script type="text/javascript">
 	function trackRequest(acao) {
-		var url = "${pageContext.request.contextPath}/app/expediente/doc/registrar_requisicao_usuario?sigla=${sigla}&nomeAcao=" + acao;
+		let url;
+		url = "${pageContext.request.contextPath}/app/expediente/doc/registrar_requisicao_usuario?sigla=${sigla}&nomeAcao=" + acao;
 		$.ajax({
 			type: "GET",
 			url: url

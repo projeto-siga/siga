@@ -73,15 +73,15 @@ function popitup(url) {
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	
+	const sigla = new URLSearchParams(url).get('sigla');
 	if(url.includes("/sigaex/app/arquivo/exibir?")) {
 		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
 	}
 
 	newwindow = window.open(url, nameWindow, winProp);
 	newwindow.addEventListener('click', function (e) {
-		if (e.target.classList.contains('print') ||
-			e.target.classList.contains('download')) {
-			trackRequest(sigla, e.target.getAttribute('title'));
+		if (e.target.id == 'print' || e.target.id == 'download') {
+			trackRequest(sigla, e.target.title);
 		}
 	});
 

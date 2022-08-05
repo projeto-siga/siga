@@ -345,20 +345,25 @@ public class Mesa2 {
 		if (!contar)
 			return gruposMesa;
 		
-		List<Object[]> l = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular,
-				titular.getLotacao(), true, marcasAIgnorar, null, filtro);
-		if (l == null)
+		List<Object[]> listaPessoa = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular, null, true, marcasAIgnorar, null, filtro);
+		List<Object[]> listaLotacao = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular, titular.getLotacao(), true, marcasAIgnorar, null, filtro);
+		
+		if (listaPessoa == null && listaLotacao == null)
 			return gruposMesa;
 		
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
 			gItem.grupoCounterLota = 0L;
-			for (Object[] reference : l) {
+			for (Object[] reference : listaPessoa) {
 				if (gItem.grupoOrdem.equals(reference[0].toString())) {
 					if (reference[1] != null)  
 						gItem.grupoCounterUser = Long.valueOf(reference[1].toString());
-					if (reference[2] != null)  
-						gItem.grupoCounterLota = Long.valueOf(reference[2].toString());
+				}
+			}
+			for (Object[] reference : listaLotacao) {
+				if (gItem.grupoOrdem.equals(reference[0].toString())) {
+					if (reference[1] != null)  
+						gItem.grupoCounterLota = Long.valueOf(reference[1].toString());
 				}
 			}
 			if (exibeLotacao) {
@@ -388,7 +393,7 @@ public class Mesa2 {
 			int parmOffset = (offset != null? offset : 0);
 			int q = (qtd != null && qtd < MESA_QTD_MAX_INICIAL? qtd : MESA_QTD_MAX_INICIAL);
 			if (exibeLotacao) {
-				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, null,
+				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, titular,
 						titular.getLotacao(), ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
 			} else {
 				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, titular,

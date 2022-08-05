@@ -1127,15 +1127,11 @@ public class ExServiceImpl implements ExService {
 						listaMarcadores = marcadoresStr.split(",");
 					}
 
-					CpToken sigaUrlPermanente = new CpToken();
-					sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(mob, cadastrante,
-							cadastrante.getLotacao(), listaMarcadores, true);
-					String url = System.getProperty("siga.ex.enderecoAutenticidadeDocs")
-							.replace("/sigaex/public/app/autenticar", "");
-					String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
+					String url = Ex.getInstance().getBL()
+							.publicarTransparencia(mob, cadastrante, cadastrante.getLotacao(), false);
 
 					return "Documento " + siglaDocumento
-							+ " enviado para publicação. Gerado para acesso externo ao documento: " + caminho;
+							+ " enviado para publicação. Gerado para acesso externo ao documento: " + url;
 				}
 			} catch (Exception ex) {
 				ctx.rollback(ex);

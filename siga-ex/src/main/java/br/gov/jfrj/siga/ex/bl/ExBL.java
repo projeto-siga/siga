@@ -2858,7 +2858,7 @@ public class ExBL extends CpBL {
 	public void cancelar(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,
 			final ExMovimentacao movCancelar, final Date dtMovForm, final DpPessoa subscritorForm,
 			final DpPessoa titularForm, String textoMotivo) throws Exception {
-		cancelar(titular, lotaTitular, mob, movCancelar, dtMovForm, subscritorForm, titularForm, textoMotivo);
+		cancelar(titular, lotaTitular, mob, movCancelar, dtMovForm, subscritorForm, titularForm, textoMotivo,false);
 	}
 	
 	public void cancelar(final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,

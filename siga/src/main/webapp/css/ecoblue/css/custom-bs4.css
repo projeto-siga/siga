@@ -749,4 +749,9 @@ table .table-head th {
 div.divDoc p {
 	margin-top: 0.5rem !important;
 	margin-bottom: 0.5rem !important;
-} 
+}
+
+.parte-disabled {
+    pointer-events:none; 
+    opacity: 0.3;
+}

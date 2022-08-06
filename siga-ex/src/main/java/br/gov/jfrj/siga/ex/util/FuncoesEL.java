@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.ex.util;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,9 +34,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jboss.logging.Logger;
 import org.xml.sax.InputSource;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -44,7 +47,11 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaFormats;
 import br.gov.jfrj.siga.base.SigaHTTP;
+import br.gov.jfrj.siga.base.diarias.DiariasDaJusticaFederal;
+import br.gov.jfrj.siga.base.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalParametroTrecho;
+import br.gov.jfrj.siga.base.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -85,10 +92,12 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import freemarker.ext.dom.NodeModel;
+import freemarker.template.TemplateMethodModelEx;
 
 public class FuncoesEL {
+	private final static Logger log = Logger.getLogger(FuncoesEL.class);
+	
 	public static ExDao dao() {
 		return ExDao.getInstance();
 	}
@@ -729,6 +738,7 @@ public class FuncoesEL {
 		} catch (NullPointerException ex) {
 			return "NullPointerException";
 		} catch (Exception ex) {
+			log.error(ex);
 			return ex.getMessage();
 		}
 		return null;
@@ -1120,6 +1130,38 @@ public class FuncoesEL {
 	public static String slugify(String string, Boolean lowercase,
 			Boolean underscore) {
 		return Texto.slugify(string, lowercase, underscore);
+	}
+
+	
+	// Rotina de cálculo específica para diárias da Justiça Federal
+	//
+	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final double valorUnitarioDaDiaria,
+			final boolean internacional, final double cotacaoDoDolar, final double valorUnitarioDoAuxilioAlimentacao,
+			final double limiteDiario, final String form) {
+		Map<String, Object> map = new TreeMap<String, Object>();
+		Utils.mapFromUrlEncodedForm(map, form.getBytes());
+
+		List<DiariasDaJusticaFederalParametroTrecho> l = new ArrayList<>();
+
+		if (map != null) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+			for (int i = 1; map.containsKey("data_de_embarque" + i); i++) {
+				DiariasDaJusticaFederalParametroTrecho t = new DiariasDaJusticaFederalParametroTrecho();
+				t.data = LocalDate.parse((String) map.get("data_de_embarque" + i), formatter);
+				t.trecho = (String) map.get("trecho" + i);
+				t.carroOficialAteOEmbarque = "Sim".equals((String) map.get("veiculo_oficial_embarque" + i));
+				t.carroOficialAteODestino = "Sim".equals((String) map.get("veiculo_oficial_desembarque" + i));
+				t.semDespesasDeHospedagem = "Sim".equals((String) map.get("sem_despesas_de_hospedagem" + i));
+				l.add(t);
+			}
+		}
+		try {
+			return new DiariasDaJusticaFederal().calcular(valorUnitarioDaDiaria, internacional, cotacaoDoDolar,
+					valorUnitarioDoAuxilioAlimentacao, limiteDiario, l);
+		} catch (Exception ex) {
+			log.error(ex);
+			return null;
+		}
 	}
 
 }

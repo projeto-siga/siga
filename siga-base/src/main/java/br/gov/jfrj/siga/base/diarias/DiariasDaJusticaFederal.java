@@ -1,8 +1,8 @@
 package br.gov.jfrj.siga.base.diarias;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -11,47 +11,110 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class DiariasDaJusticaFederal {
 	public static class DiariasDaJusticaFederalParametroTrecho {
-		LocalDate data;
-		String trecho;
-		boolean carroOficialAteOEmbarque;
-		boolean carroOficialAteODestino;
-		boolean semDespesasDeHospedagem;
-	}
+		static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
 
-	public static class DiariasDaJusticaFederalResultadoDiario {
-		LocalDate data;
-		String trecho;
-		double diaria;
-		double acrescimoDeDeslocamento;
-		double descontoDeAuxilioAlimentacao;
-		double descontoDeAuxilioTransporte;
-		double subtotalBruto;
-		double descontoDeTeto;
-		double subtotalLiquido;
+		public LocalDate data;
+		public String trecho;
+		public boolean carroOficialAteOEmbarque;
+		public boolean carroOficialAteODestino;
+		public boolean semDespesasDeHospedagem;
+
+		public String getData() {
+			return data.format(formatter);
+		}
+
+		public String getTrecho() {
+			return trecho;
+		}
+
+		public boolean isCarroOficialAteODestino() {
+			return carroOficialAteODestino;
+		}
+
+		public boolean isCarroOficialAteOEmbarque() {
+			return carroOficialAteOEmbarque;
+		}
+
+		public boolean isSemDespesasDeHospedagem() {
+			return semDespesasDeHospedagem;
+		}
 	}
 
 	public static class DiariasDaJusticaFederalResultado {
-		ArrayList<DiariasDaJusticaFederalResultadoDiario> dias;
-		double totalDoDescontoDeTeto;
-		double total;
+		public ArrayList<DiariasDaJusticaFederalResultadoDiario> dias = new ArrayList<>();
+		public double totalDoDescontoDeTeto;
+		public double total;
+
+		public ArrayList<DiariasDaJusticaFederalResultadoDiario> getDias() {
+			return dias;
+		}
+
+		public double getTotal() {
+			return total;
+		}
+
+		public double getTotalDoDescontoDeTeto() {
+			return totalDoDescontoDeTeto;
+		}
 	}
 
-//	public static DiariasDaJusticaFederalResultado calcular(final double valorUnitarioDaDiaria,
-//			final boolean internacional, final double cotacaoDoDolar, final double valorUnitarioDoAuxilioAlimentacao,
-//			final double limiteDiario, final HashMap<String, Object> trechos) {
-//		List<DiariasDaJusticaFederalParametroTrecho> l = new ArrayList<>();
-//		
-//		DiariasDaJusticaFederalParametroTrecho t = new DiariasDaJusticaFederalParametroTrecho();
-//		
-//		l.add(t);
-//		return calcular(valorUnitarioDaDiaria, internacional, cotacaoDoDolar, valorUnitarioDoAuxilioAlimentacao,
-//				limiteDiario, l);
-//	}
+	public static class DiariasDaJusticaFederalResultadoDiario {
+		public LocalDate data;
+		public String trecho;
+		public double diaria;
+		public double acrescimoDeDeslocamento;
+		public double descontoDeAuxilioAlimentacao;
+		public double descontoDeAuxilioTransporte;
+		public double subtotalBruto;
+		public double descontoDeTeto;
+		public double subtotalLiquido;
+
+		public double getAcrescimoDeDeslocamento() {
+			return acrescimoDeDeslocamento;
+		}
+
+		public LocalDate getData() {
+			return data;
+		}
+
+		public double getDescontoDeAuxilioAlimentacao() {
+			return descontoDeAuxilioAlimentacao;
+		}
+
+		public double getDescontoDeAuxilioTransporte() {
+			return descontoDeAuxilioTransporte;
+		}
+
+		public double getDescontoDeTeto() {
+			return descontoDeTeto;
+		}
+
+		public double getDiaria() {
+			return diaria;
+		}
+
+		public double getSubtotalBruto() {
+			return subtotalBruto;
+		}
+
+		public double getSubtotalLiquido() {
+			return subtotalLiquido;
+		}
+
+		public String getTrecho() {
+			return trecho;
+		}
+	}
 
 	public DiariasDaJusticaFederalResultado calcular(final double valorUnitarioDaDiaria, final boolean internacional,
 			final double cotacaoDoDolar, final double valorUnitarioDoAuxilioAlimentacao, final double limiteDiario,
 			final List<DiariasDaJusticaFederalParametroTrecho> trechos) {
 		DiariasDaJusticaFederalResultado r = new DiariasDaJusticaFederalResultado();
+
+		if (trechos == null)
+			throw new AplicacaoException("Trechos não pode ser nulo");
+		if (trechos.isEmpty())
+			throw new AplicacaoException("Trechos não pode ser uma lista vazia");
 
 		// Cria um mapa de todos os trechos por data
 		SortedMap<LocalDate, DiariasDaJusticaFederalParametroTrecho> mapaDeTrechos = new TreeMap<>();
@@ -75,10 +138,12 @@ public class DiariasDaJusticaFederal {
 		boolean semDespesasDeHospedagem = false;
 		for (LocalDate d : datas) {
 			DiariasDaJusticaFederalResultadoDiario dia = new DiariasDaJusticaFederalResultadoDiario();
+			dia.data = d;
 
 			// Calcula acréscimo de deslocamento com base nas informações de cada trecho
 			DiariasDaJusticaFederalParametroTrecho trecho = mapaDeTrechos.get(d);
 			if (trecho != null) {
+				dia.trecho = trecho.trecho;
 				semDespesasDeHospedagem = trecho.semDespesasDeHospedagem;
 
 				// Art. 17. Será acrescido o adicional de 80% (oitenta por cento) sobre o valor
@@ -120,11 +185,12 @@ public class DiariasDaJusticaFederal {
 			// Calcula o subtotalLiquido depois da aplicação da glosa
 			dia.subtotalLiquido = dia.subtotalBruto - dia.descontoDeTeto;
 
+			r.dias.add(dia);
+
 			// Calcula totalizadores
 			r.totalDoDescontoDeTeto += dia.descontoDeTeto;
 			r.total += dia.subtotalLiquido;
 		}
-
 		return r;
 	}
 

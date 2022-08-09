@@ -14,7 +14,7 @@ import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGet {
 
-	private static final String HQL = "select doc.idDoc, doc.dtAltDoc from ExDocumento doc where (doc.dtFinalizacao != null) and ((doc.dtAltDoc = :dt and doc.idDoc > :id) or (doc.dtAltDoc > :dt)) order by doc.dtAltDoc";
+	private static final String HQL = "select doc.idDoc, doc.dtAltDoc from ExDocumento doc where (doc.dtFinalizacao != null) and ((doc.dtAltDoc = :dt and doc.idDoc > :id) or (doc.dtAltDoc > :dt)) order by doc.dtAltDoc, doc.idDoc";
 
 	@Override
 	@SuppressWarnings("unchecked")

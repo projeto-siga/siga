@@ -16,7 +16,7 @@ import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGet {
 
-	private static final String HQL = "select mov.idMov, mov.dtIniMov from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and mov.exMobil.exDocumento.dtFinalizacao != null and (((mov.exMobil.exDocumento.dtAltDoc > :dt or mov.dtIniMov > :dt) and mov.idMov > :id) or (mov.exMobil.exDocumento.dtAltDoc > :dt or mov.dtIniMov > :dt)) order by mov.dtIniMov";
+	private static final String HQL = "select mov.idMov, case when mov.exMobil.exDocumento.dtAltDoc > mov.dtIniMov then mov.exMobil.exDocumento.dtAltDoc else mov.dtIniMov end as dt from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and mov.exMobil.exDocumento.dtFinalizacao != null and (((mov.exMobil.exDocumento.dtAltDoc = :dt or mov.dtIniMov = :dt) and mov.idMov > :id) or (mov.exMobil.exDocumento.dtAltDoc > :dt or mov.dtIniMov > :dt)) order by dt, mov.idMov";
 
 	@Override
 	@SuppressWarnings("unchecked")

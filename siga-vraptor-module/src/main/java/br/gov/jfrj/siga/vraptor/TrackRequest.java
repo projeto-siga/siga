@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Anota&ccdil;&atilde;o criada para m&eactute;todos que necessitem do registro de logs.
- * Ex.: auditar alguma requisi&ccedil;&atilde;o de um determinado usu&aacute;rio (Visualizar Documento)
+ * Anotação criada para métodos que necessitem do registro de logs.
+ * Ex.: auditar requisições de usuários ao visualizar documentos
  *
  * @author Heverson Vasconcelos
  */

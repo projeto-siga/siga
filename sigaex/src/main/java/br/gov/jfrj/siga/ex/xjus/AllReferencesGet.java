@@ -90,6 +90,16 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 		return Utils.formatId(0L) + "-" + RecordServiceEnum.values()[RecordServiceEnum.values().length - 1].ordinal();
 	}
 
+	static public String defaultCursor() {
+		String s = "";
+		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+			if (!s.isEmpty())
+				s += ";";
+			s += Utils.formatId(0L) + "-" + service.ordinal();
+		}
+		return s;
+	}
+
 	public String getContext() {
 		return "obter a lista de índices";
 	}

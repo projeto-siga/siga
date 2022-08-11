@@ -8531,7 +8531,7 @@ public class ExBL extends CpBL {
 						(descModelo == null ? "" : (",facet_modelo:" + descModelo));
 		
 		if(dataInicial != null || dataFinal != null)
-			facets = facets + ",field_data:" + (dataInicial == null ? "" : dataInicial) + ":" + (dataFinal == null ? "" : dataFinal);
+			facets = facets + ",date:" + (dataInicial == null ? "" : dataInicial) + ":" + (dataFinal == null ? "" : dataFinal);
 		
 		url += "?filter=" + URLEncoder.encode(filter, "UTF-8") + 
 			   "&facets=" + URLEncoder.encode(facets, "UTF-8") + 

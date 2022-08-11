@@ -2106,27 +2106,34 @@ public class ExDao extends CpDao {
 		StringBuilder sbQueryString = new StringBuilder();
 		
 		String queryMarcasAIgnorar = "";
-		String queryMarcasAIgnorarWhere = "";
 		
 		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
-			queryMarcasAIgnorar += " left join corporativo.cp_marca mx on"
-					+ " mx.id_ref = m.id_ref and mx.id_marcador in(";
+			// Se o mobil tiver uma das marcas contidas em marcasAIgnorar, não deve ser mostrado na mesa
 			for (Integer marcaAIgnorar : marcasAIgnorar)
 				queryMarcasAIgnorar += marcaAIgnorar.toString() + ",";
-			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1) + ") ";
-			queryMarcasAIgnorarWhere = " and mx.id_marca is null ";
+			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1);
 		}		
 
 		/* String Builder Query Primeira Marca entre os Grupos */
 		StringBuilder sbQueryPrimeiraMarca = new StringBuilder();
 		
-		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca ");
+		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca, ");
+		sbQueryPrimeiraMarca.append(!"".equals(queryMarcasAIgnorar) ? "CASE WHEN marcaAux.id_marcador in(" + queryMarcasAIgnorar + ") THEN 0 ELSE 1 END ignorar, ": "1 ignorar,");
+		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcaAux.id_marcador = 1 THEN 0 ELSE 1 END temporario, " : "1 temporario, ");
+		sbQueryPrimeiraMarca.append("CASE WHEN marcaAux.");
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? "id_pessoa_ini = :titular " : "id_lotacao_ini = :lotaTitular "); // Traz a marca com a Pessoa ou Lotação em questão para o TOPO pra depois distribuir nos grupos
+		sbQueryPrimeiraMarca.append("THEN 0 ELSE 1 END pessoa, ");
+		sbQueryPrimeiraMarca.append("marcadorAux.grupo_marcador grupo ");
+		
 		sbQueryPrimeiraMarca.append("FROM corporativo.cp_marca marcaAux INNER JOIN ");
 		sbQueryPrimeiraMarca.append("     corporativo.cp_marcador marcadorAux ");
 		sbQueryPrimeiraMarca.append("          ON marcaAux.id_marcador = marcadorAux.id_marcador ");
 		sbQueryPrimeiraMarca.append("WHERE marcaAux.id_ref = m.id_ref ");
 		
-		sbQueryPrimeiraMarca.append(lotaTitular == null ? " AND marcaAux.id_pessoa_ini = :titular" : " AND marcaAux.id_lotacao_ini = :lotaTitular"); 
+		sbQueryPrimeiraMarca.append(" AND ((marcaAux.id_pessoa_ini = :titular");
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? ")" : " OR marcaAux.id_lotacao_ini = :lotaTitular)");
+		sbQueryPrimeiraMarca.append(" OR marcaAux.id_marcador in(1" +
+				(!"".equals(queryMarcasAIgnorar) ? "," + queryMarcasAIgnorar : "") + ")) "); // Inclui temporarios tambem 
 		
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaAssinSenha ");
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaMovAssinSenha ");
@@ -2134,12 +2141,8 @@ public class ExDao extends CpDao {
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_ini_marca is null OR marcaAux.dt_ini_marca < :dbDatetime ) ");
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_fim_marca is null OR marcaAux.dt_fim_marca > :dbDatetime ) ");
 		
-		sbQueryPrimeiraMarca.append("ORDER BY CASE WHEN marcaAux.id_pessoa_ini = :titular THEN ");
+		sbQueryPrimeiraMarca.append("ORDER BY ignorar, temporario, pessoa, grupo");
 		
-		sbQueryPrimeiraMarca.append(lotaTitular == null ? " 0 ELSE 1 END," : " 1 ELSE 0 END,"); //Se PESSOA, Traz a Pessoa em questão para o TOPO pra depois distribuir nos grupos
-		
-		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcadorAux.grupo_marcador = 6 THEN 0 ELSE marcadorAux.grupo_marcador END" //Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
-												   : " marcadorAux.grupo_marcador ");
 		sbQueryPrimeiraMarca.append(") aux ");
 		
 		sbQueryPrimeiraMarca.append(isOracle() ? "WHERE rownum = 1 " : "LIMIT 1 "); //Obtém a primeira MARCA daquele ID_REF seguindo os critérios, desprezando as demais ocorrências
@@ -2150,9 +2153,6 @@ public class ExDao extends CpDao {
 		sbQueryString.append("WITH marca AS (SELECT m.*, md.grupo_marcador ");
 		sbQueryString.append(" FROM corporativo.cp_marca m ");
 		sbQueryString.append(" INNER JOIN corporativo.cp_marcador md ON m.id_marcador = md.id_marcador ");
-		
-		sbQueryString.append(queryMarcasAIgnorar);
-		
 		sbQueryString.append(" WHERE 1=1 ");
 		
 		sbQueryString.append(lotaTitular == null ? " AND m.id_pessoa_ini = :titular" : " AND m.id_lotacao_ini = :lotaTitular"); 
@@ -2165,8 +2165,8 @@ public class ExDao extends CpDao {
 		//Remove MARCAS de Assinatura e a ignorar
 		sbQueryString.append(" and m.id_marcador <> :marcaAssinSenha ");
 		sbQueryString.append(" and m.id_marcador <> :marcaMovAssinSenha ");
-		
-		sbQueryString.append(queryMarcasAIgnorarWhere);
+		sbQueryString.append(grupos != null && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "");
+		sbQueryString.append(!"".equals(queryMarcasAIgnorar) ? " and not m.id_marcador in(" + queryMarcasAIgnorar + ")" : "");
 		
 		sbQueryString.append(sbQueryPrimeiraMarca);
 		
@@ -2187,7 +2187,6 @@ public class ExDao extends CpDao {
 		
 		sbQueryString.append(" WHERE 1=1");
 		sbQueryString.append(filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "");
-		sbQueryString.append(grupos != null && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "");
 		sbQueryString.append(contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador " 
 									: " ORDER BY grupo_marcador, dtOrdem " + (ordemCrescenteData ? " ASC":" DESC" + ", marca.id_marca"));
 

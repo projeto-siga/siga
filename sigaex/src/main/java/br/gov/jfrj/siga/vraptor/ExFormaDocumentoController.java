@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.vraptor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +26,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Controller
 public class ExFormaDocumentoController extends ExController {
 
-	private static final String ACESSO_SIGA_DOC_MOD = "MOD:Gerenciar modelos";
+	private static final String ACESSO_SIGA_DOC_MOD = "FE-ESPECIE:Espécies";
 
 	/**
 	 * @deprecated CDI eyes only

@@ -152,6 +152,8 @@
 						<br />
 						<h5>Destinatário: ${titular.descricao}</h5>
 						<div>
+						<small
+									class="form-text text-muted">Atenção: somente documentos públicos poderão ser transferidos.</small>
 							<table class="table table-hover table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
@@ -185,10 +187,19 @@
 											</c:set>
 										<c:set var="tpd_x" scope="request">tpd_${documento.id}</c:set>
 										<tr>
-											<td align="center" class="align-middle text-center"><input
-												type="checkbox" name="documentosSelecionados"
-												value="${documento.id}" id="${x}" class="chkDocumento"
-												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
+											<td align="center" class="align-middle text-center"> 
+												<c:choose>
+												<c:when test="${documento.exDocumento.exNivelAcessoAtual.grauNivelAcesso == 10   }">
+													<input
+														type="checkbox" name="documentosSelecionados"
+														value="${documento.id}" id="${x}" class="chkDocumento"
+														onclick="javascript:displaySel(this, '${tpd_x}');" />
+												</c:when>
+												<c:otherwise>
+													${documento.exDocumento.exNivelAcessoAtual.nmNivelAcesso}
+												</c:otherwise>
+												</c:choose>
+												</td>
 											<td class="text-right"><c:choose>
 													<c:when test='${param.popup!="true"}'>
 														<a

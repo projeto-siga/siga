@@ -1512,8 +1512,152 @@ CKEDITOR.replace( '${var}',
     </div>
 [/#macro]
 
+[#macro editor_pcrj var titulo="" default=""]
+    [#if .vars[var]??]
+        [#local v = .vars[var]/]
+        [#local local_v = "1"/]
+    [#else]
+        [#local v = ""/]
+        [#local local_v = "2"/]
+    [/#if]
+    [#if v != ""]
+        [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
+        [#local conteudo_v = true/]
+    [#else]
+        [#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
+        [#local conteudo_v = false/]
+    [/#if]
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
+        <div>
+        [#if titulo != ""]
+                        <b>${titulo}</b>
+        [/#if]
+
+        [#if !gerar_formulario!false]
+            <input type="hidden" name="vars" value="${var}" />
+            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!'false'}" />
+
+            [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+               && (!((desconsiderarExtensao == 'true')!false)) )]
+			[#else]
+				<textarea id="${var}" name="${var}" class="editor">[#if conteudo_v]${v?html}[#else]${default!}[/#if]</textarea>
+			[/#if]
+					
+            <table class="entrevista" width="100%">
+                <tr>
+                    <td></td>
+                    <td colspan="3">
+
+                        
+                         
+                        [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
+                             <input type="hidden" id="${var}" name="${var}" value="${v?html}">
+                            [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
+                        [#else]
+                            <script type="text/javascript">
+
+								CKEDITOR.config.disableNativeSpellChecker = false;
+								CKEDITOR.config.scayt_autoStartup = false;
+								CKEDITOR.config.scayt_sLang = 'pt_BR';
+								CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+								
+								if (CKEDITOR.stylesSet.get('siga_ckeditor_styles') == null) {
+								
+									CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+									        name: 'Título',
+									        element: 'h1',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Subtítulo',
+									        element: 'h2',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Com recuo',
+									        element: 'p',
+									        styles: {
+									            'text-align': 'justify',
+									            'text-indent': '2cm'
+									        }
+									    },
+									    {
+									        name: 'Marcador',
+									        element: 'span',
+									        styles: {
+									        	'background-color' : '#FFFF00'
+									        }
+									    },
+									    {
+									        name: 'Normal',
+									        element: 'span'
+									    }
+									]);
+								
+								};
+								
+								CKEDITOR.config.toolbar = 'SigaToolbar';
+								
+								CKEDITOR.config.toolbar_SigaToolbar = [{
+								        name: 'styles',
+								        items: ['Styles']
+								    },
+								    {
+								        name: 'clipboard',
+								        items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+								    },
+								    {
+								        name: 'editing',
+								        items: ['Find', 'Replace', '-', 'SelectAll']
+								    },
+								    '/',
+								    {
+								        name: 'basicstyles',
+								        items: ['Bold', 'Italic', 'Subscript', 'Underline', 'Strike', '-', 'RemoveFormat']
+								    },
+								    {
+								        name: 'paragraph',
+								        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyBlock', 'JustifyRight']
+								    },
+								    {
+								        name: 'insert',
+								        items: ['Table' , 'Footnotes', '-', 'SpecialChar', '-', 'PageBreak']
+								    },
+								    {
+								        name: 'document',
+								        items: ['Source']
+								    }
+								];
+								CKEDITOR.config.extraPlugins = 'footnotes';
+								window.onload = function() {
+								    $("textarea.editor").each(function(index) {
+								        CKEDITOR.replace(this, {
+								            toolbar: 'SigaToolbar'
+								        });
+								    });
+								}
+
+                            </script>
+                            
+                        [/#if]
+
+                    </td>
+                </tr>
+            </table>
+        [#else]
+            <br>${v}<br><br>
+        [/#if]
+    </div>
+[/#macro]
+
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" onchange="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -1531,7 +1675,7 @@ CKEDITOR.replace( '${var}',
     [#if !gerar_formulario!false]    
     	<div class="form-group" style="margin-bottom:0">
     		[#if titulo?? && titulo != ""]<label for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
-    		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
+    		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] [#if onchange != ""]onchange="${onchange};"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
     			[#if opcaoNeutra?? && opcaoNeutra != "" && obrigatorio]
     				<option id="opcaoNeutra" value="${opcaoNeutra}" [#if !(temValor??)]selected[/#if]>${opcaoNeutra}</option>
     			[/#if]
@@ -2073,7 +2217,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro data var titulo="" reler=false idAjax="" default="" onSelect="" onblur="" obrigatorio=false atts={} placeholder="" ]
+[#macro data var titulo="" reler=false idAjax="" default="" onSelect="" onblur="" onchange="" obrigatorio=false atts={} placeholder="" ]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -2109,7 +2253,10 @@ Pede deferimento.</span><br/><br/><br/>
 	         
 		[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="${placeholder}"/>		
+		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" 
+			[#if onblur??] onblur="${onblur}"[/#if]
+			[#if onchange??] onchange="${onchange}"[/#if]
+			${attsHtml} style="max-width: 115px" placeholder="${placeholder}"/>		
 		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>			
 	    [#else]
 	    <span class="valor">${v}</span>
@@ -4216,16 +4363,63 @@ Pede deferimento.</span><br/><br/><br/>
     </div>
 [/#macro]
 
-[#macro date var default="" style="" onblur="" placeholder=""]
+[#macro date var default="" style="" onchange="" onblur="" placeholder="" formatar=true oculto=""]
+    [#local listaOcultos = oculto?split(";")]
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+    [#if formatar]
+    	[#local formatarData = "onchange='formatarData(this);'"]
+    [/#if]
+    
+    <script>
+		function formatarData(dataParam){
+		    let data=dataParam.value;
+		    let dateString = new Date(data);
+		    let dateStringBR = dateString.toLocaleString('pt-BR', {timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit'});
+		    [#if listaOcultos?size > 0]
+				[#list listaOcultos as n]
+					document.getElementById("${n}").value = dateStringBR;
+				[/#list]
+			[/#if]
+		    console.log(dateStringBR);
+			return dateStringBR;
+		}
+	</script>
+
+	<div class="form-group" style="margin-bottom:0">
+		<input type="hidden" name="vars" value="${var}" />
+			
+		[#if listaOcultos?size > 0]
+			[#list listaOcultos as n]
+				<input type="hidden" id="${n}" name="${n}" value="${v}" />
+			[/#list]
+		[/#if]
+		
+		<input type="date" id="${var}" name="${var}" value="${v}" 
+			style="${style}" onblur="${onblur}" placeholder="${placeholder}"
+			[#if onblur!=""]onblur="${onblur}"[/#if]
+			[#if formatar]${formatarData}[/#if] />
+	</div>
+[/#macro]
+
+[#macro exibirData var default="" style="" placeholder=""]
     [#local v = .vars[var]!""]
     [#if v == ""]
         [#local v = default/]
     [/#if]
     
-	<div class="form-group" style="margin-bottom:0">
-		<input type="hidden" name="vars" value="${var}" />
-		<input type="date" id="${var}" name="${var}" value="${v}" style="${style}" onblur="${onblur}" placeholder="${placeholder}" />
-	</div>
+	<span id="${var}">
+		
+	</span>
+	
+	<script>
+		let data=${v};
+	    let dateString = new Date(data);
+	    let dateStringBR = dateString.toLocaleString('pt-BR', {timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit'});
+	    document.getElementById("${var}").value = dateStringBR;
+	</script>
 [/#macro]
 
 [#macro time var default="" style="" onblur="" placeholder=""]

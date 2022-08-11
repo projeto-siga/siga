@@ -340,7 +340,7 @@
 			 
 				
 <c:if test="${exDocumentoDTO.permiteRequerente}"> 
-					<div class="row">
+					<div class="row" style="display:none">
 						<div class="col-sm-2">
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-2">
@@ -359,6 +359,10 @@
 </c:if>
 
 					<div id="tr_possuiRequerente" style="display: ${exDocumentoDTO.possuiRequerente and exDocumentoDTO.permiteRequerente ? '': 'none'};">
+					
+					 
+   						 <label>Interessado</label>
+							 
 						
 						<input type="hidden" name="campos" value="cpfRequerente" />
 						<input type="hidden" name="campos" value="cnpjRequerente" />
@@ -372,6 +376,7 @@
 						<input type="hidden" name="campos" value="cidadeRequerente" />
 						<input type="hidden" name="campos" value="ufRequerente" />
 						<input type="hidden" name="campos" value="cepRequerente" />
+						<input type="hidden" name="campos" value="emailRequerente" />
 
 
 						<div class="row">
@@ -418,7 +423,7 @@
 							<div class="form-group">
 								<label id="lblNomeRequerente">Nome</label> 
 								<input type="text"	id="nomeRequerente" name="exDocumentoDTO.nomeRequerente"
-										value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="125"   >
+										value="${exDocumentoDTO.nomeRequerente}" class="form-control" maxlength="100"   >
 							</div>
 						</div>
 						
@@ -433,6 +438,17 @@
 									class="form-control" maxlength="8">
 							</div>
 						</div>
+						
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label id="lblEmailRequerente">Email</label> 
+								<input type="text"	id="emailRequerente" name="exDocumentoDTO.emailRequerente"
+										value="${exDocumentoDTO.emailRequerente}"  maxlength="60"
+										onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" 
+										class="form-control"   >
+							</div>
+						</div>
+						
 					</div>
 
 					<div class="row">
@@ -970,6 +986,26 @@
 
 	function validarTexto(campo) {
 		campo.value = campo.value.replace(/[^a-zA-ZáâãäéêëíïóôõöúüçñÁÂÃÄÉÊËÍÏÓÔÕÖÚÜÇÑ'' ]/g,'');
+	}
+	
+	function validarEmail(campo) {
+		if(campo.value != "") {
+			var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
+	
+			if (campo.value.search(RegExp) == -1) {					
+				alert("Favor informar um email válido");
+				document.getElementById("emailRequerente").value = '';
+				return false;
+				 
+			} else if (campo.value.search(',') > 0) {
+				alert("E-mail inválido! Não pode conter vírgula ( , )");				
+				document.getElementById('emailRequerente').focus();
+				return false;				
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	function validarCpf(elemento) {

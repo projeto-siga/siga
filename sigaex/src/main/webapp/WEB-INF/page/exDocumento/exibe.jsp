@@ -1069,6 +1069,7 @@
 								<c:if test="${not empty docVO.doc.cpfRequerente}"><li><b>CPF:</b>${docVO.doc.cpfRequerente}</li></c:if>
 								<c:if test="${not empty docVO.doc.cnpjRequerente}"><li><b>CNPJ:</b>${docVO.doc.cnpjRequerente}</li></c:if>
 								<c:if test="${not empty docVO.doc.matriculaRequerente}"><li><b>Matrícula:</b> ${docVO.doc.matriculaRequerente}</li></c:if>
+								<c:if test="${not empty docVO.doc.emailRequerente}"><li><b>Email:</b> ${docVO.doc.emailRequerente}</li></c:if>
 								<c:if test="${not empty docVO.doc.enderecoRequerente}"><li><b>Endereço:</b> ${docVO.doc.enderecoRequerente}</li></c:if>
 							</ul>
 						</c:if> 

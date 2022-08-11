@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -18,9 +17,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.persistence.Column;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -237,7 +233,7 @@ public class ExDocumentoDTO {
 	private List<ExNivelAcesso> listaNivelAcesso;
 	
 	
-	private boolean possuiRequerente;
+	private boolean possuiRequerente = true;
 //	
 	private String cpfRequerente;
 	
@@ -262,6 +258,8 @@ public class ExDocumentoDTO {
 	private String ufRequerente;
 	
 	private String cepRequerente;
+	
+	private String emailRequerente;
 	
 	private int tipoDocumentoRequerente;
 	
@@ -1185,6 +1183,14 @@ public class ExDocumentoDTO {
 
 	public void setPermiteRequerente(boolean permiteRequerente) {
 		this.permiteRequerente = permiteRequerente;
+	}
+
+	public String getEmailRequerente() {
+		return emailRequerente;
+	}
+
+	public void setEmailRequerente(String emailRequerente) {
+		this.emailRequerente = emailRequerente;
 	}
 
 	 

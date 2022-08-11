@@ -37,6 +37,8 @@ function displayPossuiRequerente(thisElement) {
 		document.getElementById('ufRequerente').value = '';
 		document.getElementById('cepRequerente').value = '';
 		
+		document.getElementById('emailRequerente').value = '';
+		
 		document.getElementById('tipoDocumentoCPF').checked = true;
 		document.getElementById('tipoDocumentoCNPJ').checked = false;
 	}

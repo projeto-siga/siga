@@ -475,6 +475,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "CEP_REQUERENTE", length = 8)
 	private String cepRequerente;
 	
+	@Column(name = "EMAIL_REQUERENTE", length = 60)
+	private String emailRequerente;
+	
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -1304,6 +1307,16 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.cepRequerente = cepRequerente;
 	}
 	
+	
+	
+	public String getEmailRequerente() {
+		return emailRequerente;
+	}
+
+	public void setEmailRequerente(String emailRequerente) {
+		this.emailRequerente = emailRequerente;
+	}
+
 	public String getEnderecoRequerente() {
 		
 		String endereco = StringUtils.isNotBlank(this.tipoLogradouroRequerente) ?   this.tipoLogradouroRequerente+" ":" ";
@@ -1321,7 +1334,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		return this.cpfRequerente != null ||
 				this.cnpjRequerente != null ||
 				this.matriculaRequerente != null ||
-				StringUtils.isNotBlank(nomeRequerente) ;
+				StringUtils.isNotBlank(nomeRequerente) ||
+				StringUtils.isNotBlank(emailRequerente);
 	}
 	
 	public boolean isModeloPermiteSicop() {

@@ -1494,9 +1494,10 @@ public class CpBL {
 				cpp++;
 		}
 		
+		Integer qtdMaxPorUnidade = Prop.getInt("/siga.marcadores.qtd.maxima.por.unidade");
 		if (idFinalidade.getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO && id == null 
-				&& c > 10) 
-			throw new AplicacaoException ("Atingiu o limite de 10 marcadores possíveis para " + msgLotacao);
+				&& c > qtdMaxPorUnidade) 
+			throw new AplicacaoException ("Atingiu o limite de " + qtdMaxPorUnidade + " marcadores possíveis para " + msgLotacao);
 		
 		if (idFinalidade == CpMarcadorFinalidadeEnum.PASTA_PADRAO && id == null && cpp > 0) 
 			throw new AplicacaoException ("Só é permitido criar uma pasta padrão");

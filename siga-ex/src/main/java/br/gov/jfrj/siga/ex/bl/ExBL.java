@@ -5824,9 +5824,9 @@ public class ExBL extends CpBL {
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final DpPessoa subscritor,
 			final String descrMov) throws AplicacaoException {
 		
-		if(!SigaMessages.isSigaSP()) {
-			throw new RegraNegocioException("Não é possível fazer ciência do documento neste ambiente.");
-		}
+//		if(!SigaMessages.isSigaSP()) {
+//			throw new RegraNegocioException("Não é possível fazer ciência do documento neste ambiente.");
+//		}
 
 		if (!Ex.getInstance().getComp().podeFazerCiencia(responsavel, lotaResponsavel, mob)) {
 			throw new RegraNegocioException("Não é possível fazer ciência do documento."			

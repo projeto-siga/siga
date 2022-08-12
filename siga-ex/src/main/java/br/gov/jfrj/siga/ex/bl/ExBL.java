@@ -8536,8 +8536,8 @@ public class ExBL extends CpBL {
 			   "&perpage=" + perpage;
 
 		if (dataInicial != null || dataFinal != null)
-			url += "&fromDate:" + ( dataInicial == null ? "" : dataInicial ) +
-					"&toDate:" + ( dataFinal == null ? "" : dataFinal );
+			url += "&fromDate=" + ( dataInicial == null ? "" : dataInicial ) +
+					"&toDate=" + ( dataFinal == null ? "" : dataFinal );
 
 		final JWTSigner signer = new JWTSigner(Prop.get("/xjus.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();

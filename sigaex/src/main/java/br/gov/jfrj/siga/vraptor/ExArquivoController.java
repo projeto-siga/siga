@@ -42,7 +42,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
-import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -88,10 +87,12 @@ public class ExArquivoController extends ExController {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
+	@TrackRequest
 	@Get("/app/arquivo/exibir")
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
-			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, boolean iframe) throws Exception {
+			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, 
+							boolean iframe, final String nomeAcao) throws Exception {
 		try {						
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <!-- https://logging.apache.org/log4j/2.x/manual/configuration.html#PropertySubstitution -->
+    <Properties>
+        <Property name="logdir">${sys:jboss.server.log.dir}</Property>
+    </Properties>
+    <!-- Define custom levels before using them for filtering below. -->
+    <CustomLevels>
+        <CustomLevel name="BLAME" intLevel="450"/>
+    </CustomLevels>
+
+    <Appenders>
+        <RollingFile name="file"
+                     fileName="${logdir}/sigaex/user-request-track.log"
+                     filePattern="sigaex-user-request-track-%d{MM-dd-yy-HH-mm-ss}-%i.log">
+            <PatternLayout pattern="%-5p %d %C{1} %m [%MDC]%n"/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="json-file"
+                     fileName="${logdir}/sigaex/user-request-track.log.json"
+                     filePattern="sigaex-user-request-track-%d{MM-dd-yy-HH-mm-ss}-%i.log.json">
+            <JSONLayout compact="true" eventEol="true" properties="true"
+                        includeTimeMillis="true" complete="false"/>
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="br.gov.jfrj.siga.ex.interceptor.UserRequestInterceptor" level="BLAME"/>
+
+        <AsyncRoot level="BLAME">
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="json-file"/>
+        </AsyncRoot>
+    </Loggers>
+
+</Configuration>

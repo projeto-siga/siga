@@ -38,7 +38,6 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -48,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -1370,7 +1368,8 @@ public class ExDocumentoController extends ExController {
 
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
-			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, boolean exibirReordenacao)
+			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, 
+					  boolean exibirReordenacao, final String nomeAcao)
 			throws Exception {		
 		final boolean recebimentoAutomatico = Prop.getBool("recebimento.automatico");
 		boolean recebimentoPendente = false;
@@ -1468,8 +1467,10 @@ public class ExDocumentoController extends ExController {
 		result.include("lotaSubscritorSel", lotaSubscritorSel);
 	}
 
+	@TrackRequest
 	@Get("app/expediente/doc/exibirProcesso")
-	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
+	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, 
+                              boolean exibirReordenacao, final String nomeAcao)
 			throws Exception {
 		
 		if(Prop.get("pdf.tamanho.maximo.completo") != null) {
@@ -1497,13 +1498,13 @@ public class ExDocumentoController extends ExController {
 		}
 
 		
-		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao);					
+		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao, nomeAcao);					
 	}
 
 	@Get("/app/expediente/doc/exibirResumoProcesso")
 	public void exibeResumoProcesso(final String sigla, final boolean podeExibir)
 			throws Exception {
-		exibe(false, sigla, null, null, null, false);
+		exibe(false, sigla, null, null, null, false, null);
 	}
 
 	private void buscarDocumentoOuNovo(final boolean fVerificarAcesso,
@@ -3050,5 +3051,11 @@ public class ExDocumentoController extends ExController {
 	@Get("app/validar-assinatura")
 	public void aDesfazerCancelamentoDocumento(final Long pessoa, final String sigla) {
 		result.redirectTo(Prop.get("/siga.base.url") + "/siga/permalink/" + sigla);
+	}
+	
+	@TrackRequest
+	@Get("app/expediente/doc/registrar_requisicao_usuario")
+	public void registrarRequisicaoUsuario(final String sigla, final String nomeAcao){
+		result.include("status", "ok");
 	}
 }

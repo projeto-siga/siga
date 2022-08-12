@@ -613,7 +613,7 @@ public class ExMobilController extends
 		String filter = flt.getDescrPesquisaXjus();
 		String acronimoOrgaoUsu = dao().consultarOrgaoUsuarioPorId(flt.getIdOrgaoUsu()).getAcronimoOrgaoUsu();
 		String descEspecie = flt.getIdFormaDoc() == null || flt.getIdFormaDoc() == 0 ? null : dao().consultarExFormaPorId(flt.getIdFormaDoc()).getDescrFormaDoc();
-		String descModelo = flt.getIdMod() == null  || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getDescMod();
+		String descModelo = flt.getIdMod() == null  || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getNmMod();
 		String dataInicial = flt.getDtDoc() == null ? null : df.format(flt.getDtDoc());
 		String dataFinal = flt.getDtDocFinal() == null ? null : df.format(flt.getDtDocFinal());
 		String acl = "PUBLIC;O" + getTitular().getOrgaoUsuario().getId() + ";L"

@@ -8530,13 +8530,14 @@ public class ExBL extends CpBL {
 						(descEspecie == null ? "" : (",facet_especie:" + descEspecie)) +
 						(descModelo == null ? "" : (",facet_modelo:" + descModelo));
 		
-		if(dataInicial != null || dataFinal != null)
-			facets = facets + ",date:" + (dataInicial == null ? "" : dataInicial) + ":" + (dataFinal == null ? "" : dataFinal);
-		
 		url += "?filter=" + URLEncoder.encode(filter, "UTF-8") + 
-			   "&facets=" + URLEncoder.encode(facets, "UTF-8") + 
+			   "&facets=" + URLEncoder.encode(facets, "UTF-8") +
 			   "&page=" + page + 
 			   "&perpage=" + perpage;
+
+		if (dataInicial != null || dataFinal != null)
+			url += "&fromDate:" + ( dataInicial == null ? "" : dataInicial ) +
+					"&toDate:" + ( dataFinal == null ? "" : dataFinal );
 
 		final JWTSigner signer = new JWTSigner(Prop.get("/xjus.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();

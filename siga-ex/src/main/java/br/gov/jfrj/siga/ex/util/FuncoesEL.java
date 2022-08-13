@@ -47,9 +47,6 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaFormats;
 import br.gov.jfrj.siga.base.SigaHTTP;
-import br.gov.jfrj.siga.base.diarias.DiariasDaJusticaFederal;
-import br.gov.jfrj.siga.base.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalParametroTrecho;
-import br.gov.jfrj.siga.base.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -71,6 +68,10 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DeslocamentoConjuntoEnum;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalParametroTrecho;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
 import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
@@ -1136,8 +1137,9 @@ public class FuncoesEL {
 	// Rotina de cálculo específica para diárias da Justiça Federal
 	//
 	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final double valorUnitarioDaDiaria,
-			final boolean internacional, final double cotacaoDoDolar, final double valorUnitarioDoAuxilioAlimentacao,
-			final double limiteDiario, final String form) {
+			final boolean internacional, final String deslocamentoConjunto, 
+			final double cotacaoDoDolar, final double valorUnitarioDoAuxilioAlimentacao,
+			final double valorUnitarioDoAuxilioTransporte, final double limiteDiario, final String form) {
 		Map<String, Object> map = new TreeMap<String, Object>();
 		Utils.mapFromUrlEncodedForm(map, form.getBytes());
 
@@ -1155,9 +1157,10 @@ public class FuncoesEL {
 				l.add(t);
 			}
 		}
+		
 		try {
-			return new DiariasDaJusticaFederal().calcular(valorUnitarioDaDiaria, internacional, cotacaoDoDolar,
-					valorUnitarioDoAuxilioAlimentacao, limiteDiario, l);
+			return new DiariasDaJusticaFederal().calcular(valorUnitarioDaDiaria, internacional, DeslocamentoConjuntoEnum.find(deslocamentoConjunto), cotacaoDoDolar,
+					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, limiteDiario, l);
 		} catch (Exception ex) {
 			log.error(ex);
 			return null;

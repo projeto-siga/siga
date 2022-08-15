@@ -40,22 +40,24 @@ public class UserRequestInterceptor {
         this.mob = null;
         this.exPodeRegistrarRequisicaoUsuario = null;
     }
-    
-    public UserRequestInterceptor(HttpServletRequest request, DpPessoa cadastrante, DpLotacao lotacaoCadastrante){
+
+    public UserRequestInterceptor(HttpServletRequest request, DpPessoa cadastrante, DpLotacao lotacaoCadastrante) {
         this.request = request;
         this.cadastrante = cadastrante;
         this.lotacaoCadastrante = lotacaoCadastrante;
-        
+
         String sigla = this.request.getParameter("sigla");
         final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
         filter.setSigla(sigla);
 
         this.mob = ExDao.getInstance().consultarPorSigla(filter);
 
-        this.exPodeRegistrarRequisicaoUsuario = new ExPodeRegistrarRequisicaoUsuario(mob,
+        String nomeAcao = this.request.getParameter("nomeAcao");
+
+        this.exPodeRegistrarRequisicaoUsuario = new ExPodeRegistrarRequisicaoUsuario(mob, nomeAcao,
                 cadastrante, lotacaoCadastrante);
     }
-    
+
 
     @Inject
     public UserRequestInterceptor(HttpServletRequest request, SigaObjects sigaObjects) {
@@ -64,24 +66,23 @@ public class UserRequestInterceptor {
 
     @AroundCall
     public void around(SimpleInterceptorStack stack) {
-        log(this.request.getParameter("nomeAcao"));
+        log();
 
         stack.next();
 
-        UserRequestPayload.clear();
     }
-    
-    public void log(String nomeAcao){
-        boolean temNomeAcao = nomeAcao != null ? true : false;
-        
-        if(this.exPodeRegistrarRequisicaoUsuario != null && 
-                this.exPodeRegistrarRequisicaoUsuario.eval() 
-                && temNomeAcao){
-            this.userRequestPayload = new UserRequestPayload(this.request, nomeAcao, this.cadastrante);
+
+    public void log() {
+
+        if (this.exPodeRegistrarRequisicaoUsuario != null &&
+                this.exPodeRegistrarRequisicaoUsuario.eval()) {
+
+            this.userRequestPayload = new UserRequestPayload(this.request, this.cadastrante);
             logger.log(BLAME, userRequestPayload);
         }
 
         this.exPodeRegistrarRequisicaoUsuario = null;
+        UserRequestPayload.clear();
     }
 
 }

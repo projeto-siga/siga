@@ -38,9 +38,8 @@ public class UserRequestPayload {
     private final String sigla;
 
 
-    public UserRequestPayload(HttpServletRequest request, String nomeAcao, DpPessoa cadastrante) {
+    public UserRequestPayload(HttpServletRequest request, DpPessoa cadastrante) {
         this.request = request;
-        this.nomeAcao = nomeAcao;
         this.requestURL = request.getRequestURL().toString();
         this.requestParams = request.getQueryString();
 
@@ -52,6 +51,7 @@ public class UserRequestPayload {
         this.lotacao = cadastrante.getLotacao().toString();
         this.nomePessoa = cadastrante.getNomePessoa();
         this.sigla = request.getParameter("sigla");
+        this.nomeAcao = request.getParameter("nomeAcao");
 
         String uuidStr = ThreadContext.get(REQUEST_ID);
         if (uuidStr == null) {

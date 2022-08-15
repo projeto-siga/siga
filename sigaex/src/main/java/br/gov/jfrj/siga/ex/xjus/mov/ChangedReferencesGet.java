@@ -17,6 +17,7 @@ import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGet {
 
 	private static final String HQL = "select mov.idMov, case when mov.exMobil.exDocumento.dtAltDoc > mov.dtIniMov then mov.exMobil.exDocumento.dtAltDoc else mov.dtIniMov end as dt from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and mov.exMobil.exDocumento.dtFinalizacao != null and (((mov.exMobil.exDocumento.dtAltDoc = :dt or mov.dtIniMov = :dt) and mov.idMov > :id) or (mov.exMobil.exDocumento.dtAltDoc > :dt or mov.dtIniMov > :dt)) order by dt, mov.idMov";
+	private static final String HQL1 = "select mov.idMov, mov.dtIniMov as dt from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and mov.exMobil.exDocumento.dtFinalizacao != null and ((mov.dtIniMov = :dt and mov.idMov > :id) or (mov.dtIniMov > :dt)) order by dt, mov.idMov";
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -28,7 +29,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 			req.lastid = Utils.formatId(0L);
 		try {
 			ExDao dao = ExDao.getInstance();
-			Query q = dao.em().createQuery(HQL);
+			Query q = dao.em().createQuery(HQL1);
 			q.setParameter("tpmovs", EnumSet.of(
 					ExTipoDeMovimentacao.ANEXACAO,
 					ExTipoDeMovimentacao.DESPACHO,

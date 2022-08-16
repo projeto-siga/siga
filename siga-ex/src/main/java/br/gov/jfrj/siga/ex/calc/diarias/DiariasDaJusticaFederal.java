@@ -2,18 +2,13 @@ package br.gov.jfrj.siga.ex.calc.diarias;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.CpFeriado;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class DiariasDaJusticaFederal {
 
@@ -75,13 +70,13 @@ public class DiariasDaJusticaFederal {
 			return null;
 		}
 
-//		public static double valorUnitarioDaDiaria(String s) {
-//			return valorUnitarioDaDiaria(find(s));
-//		}
-//
-//		public static double valorUnitarioDaDiaria(FaixaEnum i, double valorUnitatioDaDiariaDoMinistroDoSTF) {
-//			return 
-//		}
+		public static double valorUnitarioDaDiaria(String s, double valorUnitatioDaDiariaDoMinistroDoSTF) {
+			return valorUnitarioDaDiaria(find(s), valorUnitatioDaDiariaDoMinistroDoSTF);
+		}
+
+		public static double valorUnitarioDaDiaria(FaixaEnum i, double valorUnitatioDaDiariaDoMinistroDoSTF) {
+			return floor(valorUnitatioDaDiariaDoMinistroDoSTF * i.coef);
+		}
 	}
 
 	public enum DeslocamentoConjuntoEnum {
@@ -139,8 +134,11 @@ public class DiariasDaJusticaFederal {
 
 	public static class DiariasDaJusticaFederalResultado {
 		public ArrayList<DiariasDaJusticaFederalResultadoDiario> dias = new ArrayList<>();
+		public boolean prorrogacao;
 		public double totalDoDescontoDeTeto;
 		public double total;
+		public double valorJaRecebido;
+		public double totalFinal;
 		public String mensagemDeErro;
 
 		public ArrayList<DiariasDaJusticaFederalResultadoDiario> getDias() {
@@ -153,6 +151,18 @@ public class DiariasDaJusticaFederal {
 
 		public double getTotalDoDescontoDeTeto() {
 			return totalDoDescontoDeTeto;
+		}
+
+		public boolean isProrrogacao() {
+			return prorrogacao;
+		}
+
+		public double getValorJaRecebido() {
+			return valorJaRecebido;
+		}
+
+		public double getTotalFinal() {
+			return totalFinal;
 		}
 	}
 
@@ -204,10 +214,13 @@ public class DiariasDaJusticaFederal {
 		}
 	}
 
-	public DiariasDaJusticaFederalResultado calcular(final double valorUnitarioDaDiaria, final boolean internacional,
-			final DeslocamentoConjuntoEnum deslocamentoConjunto, final double cotacaoDoDolar,
-			final double valorUnitarioDoAuxilioAlimentacao, final double valorUnitarioDoAuxilioTransporte,
-			final double limiteDiario, final List<DiariasDaJusticaFederalParametroTrecho> trechos) {
+	public DiariasDaJusticaFederalResultado calcular(final double valorUnitatioDaDiaria,
+			final double valorUnitarioDaDiariaParaCalculoDoDeslocamento, FaixaEnum faixa,
+			final DeslocamentoConjuntoEnum deslocamentoConjunto, final boolean internacional,
+			final double cotacaoDoDolar, final boolean meiaDiariaAPedido, final boolean prorrogacao,
+			final double valorJaRecebido, final double valorUnitarioDoAuxilioAlimentacao,
+			final double valorUnitarioDoAuxilioTransporte, final double limiteDiario,
+			final List<DiariasDaJusticaFederalParametroTrecho> trechos) {
 		DiariasDaJusticaFederalResultado r = new DiariasDaJusticaFederalResultado();
 		try {
 			if (trechos == null)
@@ -232,10 +245,12 @@ public class DiariasDaJusticaFederal {
 			List<LocalDate> datas = listaDeDatas(trechos.get(0).data, trechos.get(trechos.size() - 1).data);
 			boolean semDespesasDeHospedagem = false;
 
-			double diaria = floor(valorUnitarioDaDiaria);
-			if (internacional)
-				diaria = floor(valorUnitarioDaDiaria * cotacaoDoDolar);
-
+			double diaria = valorUnitatioDaDiaria;
+			double diariaParaCalculoDoDeslocamento = valorUnitarioDaDiariaParaCalculoDoDeslocamento;
+			if (internacional) {
+				diaria = floor(valorUnitatioDaDiaria * cotacaoDoDolar);
+				diariaParaCalculoDoDeslocamento = floor(diariaParaCalculoDoDeslocamento * cotacaoDoDolar);
+			}
 			// § 1º O magistrado ou servidor que se deslocar em equipe de trabalho
 			// receberá diária equivalente ao maior valor pago entre os demais membros da
 			// equipe.
@@ -287,9 +302,10 @@ public class DiariasDaJusticaFederal {
 //					para os deslocamentos de embarque e/ou desembarque que tenham sido realizados
 //					com utilização de veículo oficial. 
 					if (!trecho.carroOficialAteOEmbarque)
-						dia.acrescimoDeDeslocamento += diaria * 0.25;
+						dia.acrescimoDeDeslocamento += diariaParaCalculoDoDeslocamento * 0.20;
 					if (!trecho.carroOficialAteODestino)
-						dia.acrescimoDeDeslocamento += diaria * 0.25;
+						dia.acrescimoDeDeslocamento += diariaParaCalculoDoDeslocamento * 0.20;
+					dia.acrescimoDeDeslocamento = floor(dia.acrescimoDeDeslocamento);
 				}
 
 //				Art. 6º As diárias serão concedidas por dia de afastamento da sede do
@@ -310,7 +326,7 @@ public class DiariasDaJusticaFederal {
 //			§ 1º As diárias internacionais serão concedidas a partir do dia do
 //				deslocamento do território nacional e contadas integralmente do dia da partida até o
 //				dia do retorno, inclusive. 				
-				boolean meiaDiaria = semDespesasDeHospedagem || (!internacional && primeiroDia);
+				boolean meiaDiaria = semDespesasDeHospedagem || (!internacional && ultimoDia) || meiaDiariaAPedido;
 				dia.diaria = meiaDiaria ? floor(diaria / 2) : diaria;
 
 				// Art. 13. As diárias sofrerão desconto correspondente ao auxílioalimentação,
@@ -349,6 +365,12 @@ public class DiariasDaJusticaFederal {
 			}
 		} catch (AplicacaoException ex) {
 			r.mensagemDeErro = ex.getMessage();
+		}
+		r.totalFinal = r.total;
+		if (prorrogacao && valorJaRecebido > 0.001) {
+			r.totalFinal = r.total - valorJaRecebido;
+			r.valorJaRecebido = valorJaRecebido;
+			r.prorrogacao = true;
 		}
 		return r;
 	}

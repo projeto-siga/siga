@@ -21,7 +21,6 @@ package br.gov.jfrj.siga.ex.util;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,6 +71,7 @@ import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DeslocamentoConjuntoEnum;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalParametroTrecho;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.FaixaEnum;
 import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
@@ -94,7 +94,6 @@ import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
-import freemarker.template.TemplateMethodModelEx;
 
 public class FuncoesEL {
 	private final static Logger log = Logger.getLogger(FuncoesEL.class);
@@ -1136,9 +1135,12 @@ public class FuncoesEL {
 	
 	// Rotina de cálculo específica para diárias da Justiça Federal
 	//
-	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final double valorUnitarioDaDiaria,
-			final boolean internacional, final String deslocamentoConjunto, 
-			final double cotacaoDoDolar, final double valorUnitarioDoAuxilioAlimentacao,
+	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final double valorUnitatioDaDiaria,
+			final double valorUnitarioDaDiariaParaCalculoDoDeslocamento,
+			final String faixa, final String deslocamentoConjunto, 
+			final boolean internacional, final double cotacaoDoDolar, final boolean meiaDiariaAPedido, 
+			final boolean prorrogacao, final double valorJaRecebido,
+			final double valorUnitarioDoAuxilioAlimentacao,
 			final double valorUnitarioDoAuxilioTransporte, final double limiteDiario, final String form) {
 		Map<String, Object> map = new TreeMap<String, Object>();
 		Utils.mapFromUrlEncodedForm(map, form.getBytes());
@@ -1159,7 +1161,9 @@ public class FuncoesEL {
 		}
 		
 		try {
-			return new DiariasDaJusticaFederal().calcular(valorUnitarioDaDiaria, internacional, DeslocamentoConjuntoEnum.find(deslocamentoConjunto), cotacaoDoDolar,
+			return new DiariasDaJusticaFederal().calcular(valorUnitatioDaDiaria, valorUnitarioDaDiariaParaCalculoDoDeslocamento,
+					FaixaEnum.find(faixa), DeslocamentoConjuntoEnum.find(deslocamentoConjunto), 
+					internacional, cotacaoDoDolar, meiaDiariaAPedido, prorrogacao, valorJaRecebido,
 					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, limiteDiario, l);
 		} catch (Exception ex) {
 			log.error(ex);

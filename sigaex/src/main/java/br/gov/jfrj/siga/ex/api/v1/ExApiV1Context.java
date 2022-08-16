@@ -2,6 +2,9 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import static java.util.Objects.isNull;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -175,15 +178,22 @@ public class ExApiV1Context extends ApiContextSupport {
 		if (getCtx() != null && getCtx().getAction().getClass().isAnnotationPresent(TrackRequest.class)){
 			UserRequestInterceptor userRequestInterceptor;
 			try {
-				//TODO: Melhorar obtenção da sigla
-				String[] uri = getCtx().getRequest().getRequestURI().split("/");
-				String sigla = uri[uri.length - 1];
-				RequestInfo requestInfo = CurrentRequest.get();
+				Method methodRun = getCtx().getAction().getClass()
+						.getMethod("run",
+								getCtx().getClazzRequest(),
+								getCtx().getClazzResponse(),
+								getCtx().getClazzContext());
+				
+				Parameter req = Arrays.stream(methodRun.getParameters())
+						.filter(p -> p.getType().equals(getCtx().getClazzRequest()))
+						.findFirst().get();
+				String sigla = req.getType().getField("sigla").get(getCtx().getReq()).toString();
 				
 				DpPessoa cadastrante = getCadastrante();
 				DpLotacao lotaCadastrante = getLotaCadastrante();
 				
-				userRequestInterceptor = new UserRequestInterceptor(getCtx().getRequest(), 
+				userRequestInterceptor = new UserRequestInterceptor(
+						getCtx().getRequest(), 
 						sigla, 
 						getCtx().getActionName(),
 						getCadastrante(), getLotaCadastrante());

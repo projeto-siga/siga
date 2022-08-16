@@ -8,9 +8,11 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
-import com.crivano.swaggerservlet.ISwaggerRequest;
-import com.crivano.swaggerservlet.ISwaggerResponse;
-import com.crivano.swaggerservlet.SwaggerException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
+import br.gov.jfrj.siga.ex.interceptor.UserRequestInterceptor;
+import br.gov.jfrj.siga.vraptor.TrackRequest;
+import com.crivano.swaggerservlet.*;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.context.ApiContextSupport;
@@ -166,4 +168,30 @@ public class ExApiV1Context extends ApiContextSupport {
 		return buscarEValidarMobil(sigla, req, resp, "Documento");
 	}
 
+	@Override
+	public void onTryEnd() throws Exception {
+		super.onTryEnd();
+
+		if (getCtx() != null && getCtx().getAction().getClass().isAnnotationPresent(TrackRequest.class)){
+			UserRequestInterceptor userRequestInterceptor;
+			try {
+				//TODO: Melhorar obtenção da sigla
+				String[] uri = getCtx().getRequest().getRequestURI().split("/");
+				String sigla = uri[uri.length - 1];
+				RequestInfo requestInfo = CurrentRequest.get();
+				
+				DpPessoa cadastrante = getCadastrante();
+				DpLotacao lotaCadastrante = getLotaCadastrante();
+				
+				userRequestInterceptor = new UserRequestInterceptor(getCtx().getRequest(), 
+						sigla, 
+						getCtx().getActionName(),
+						getCadastrante(), getLotaCadastrante());
+				
+				userRequestInterceptor.log();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 }

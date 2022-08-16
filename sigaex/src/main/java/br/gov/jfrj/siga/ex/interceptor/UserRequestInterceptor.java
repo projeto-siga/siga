@@ -29,6 +29,8 @@ public class UserRequestInterceptor {
     private DpPessoa cadastrante;
     private DpLotacao lotacaoCadastrante;
     private ExMobil mob;
+    private String sigla; 
+    private String nomeAcao;
     private ExPodeRegistrarRequisicaoUsuario exPodeRegistrarRequisicaoUsuario;
     private UserRequestPayload userRequestPayload;
 
@@ -38,21 +40,23 @@ public class UserRequestInterceptor {
     public UserRequestInterceptor() {
         this.userRequestPayload = null;
         this.mob = null;
+        this.sigla = null;
+        this.nomeAcao = null;
         this.exPodeRegistrarRequisicaoUsuario = null;
     }
 
-    public UserRequestInterceptor(HttpServletRequest request, DpPessoa cadastrante, DpLotacao lotacaoCadastrante) {
+    public UserRequestInterceptor(HttpServletRequest request, String sigla, String nomeAcao, 
+                                  DpPessoa cadastrante, DpLotacao lotacaoCadastrante) {
         this.request = request;
+        this.sigla = sigla;
+        this.nomeAcao = nomeAcao;
         this.cadastrante = cadastrante;
         this.lotacaoCadastrante = lotacaoCadastrante;
 
-        String sigla = this.request.getParameter("sigla");
         final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
         filter.setSigla(sigla);
 
         this.mob = ExDao.getInstance().consultarPorSigla(filter);
-
-        String nomeAcao = this.request.getParameter("nomeAcao");
 
         this.exPodeRegistrarRequisicaoUsuario = new ExPodeRegistrarRequisicaoUsuario(mob, nomeAcao,
                 cadastrante, lotacaoCadastrante);
@@ -61,7 +65,8 @@ public class UserRequestInterceptor {
 
     @Inject
     public UserRequestInterceptor(HttpServletRequest request, SigaObjects sigaObjects) {
-        this(request, sigaObjects.getCadastrante(), sigaObjects.getCadastrante().getLotacao());
+        this(request, request.getParameter("sigla"), request.getParameter("nomeAcao"), 
+                sigaObjects.getCadastrante(), sigaObjects.getCadastrante().getLotacao());
     }
 
     @AroundCall
@@ -77,7 +82,7 @@ public class UserRequestInterceptor {
         if (this.exPodeRegistrarRequisicaoUsuario != null &&
                 this.exPodeRegistrarRequisicaoUsuario.eval()) {
 
-            this.userRequestPayload = new UserRequestPayload(this.request, this.cadastrante);
+            this.userRequestPayload = new UserRequestPayload(this.request, this.sigla, this.nomeAcao, this.cadastrante);
             logger.log(BLAME, userRequestPayload);
         }
 

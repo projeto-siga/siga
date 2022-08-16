@@ -10,7 +10,7 @@ import com.crivano.jlogic.*;
 public class ExPodeRegistrarRequisicaoUsuario extends CompositeExpressionSupport {
 
     private final ExMobil mob;
-    private String nomeAcao;
+    private final String nomeAcao;
     private final DpPessoa titular;
     private final DpLotacao lotaTitular;
 

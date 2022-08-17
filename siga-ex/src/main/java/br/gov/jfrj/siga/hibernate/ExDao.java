@@ -2118,7 +2118,9 @@ public class ExDao extends CpDao {
 		StringBuilder sbQueryPrimeiraMarca = new StringBuilder();
 		
 		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca, ");
-		sbQueryPrimeiraMarca.append(!"".equals(queryMarcasAIgnorar) ? "CASE WHEN marcaAux.id_marcador in(" + queryMarcasAIgnorar + ") THEN 0 ELSE 1 END ignorar, ": "1 ignorar,");
+		// O grupo 5 - Caixa de Entrada deve mostrar o documento mesmo que ele já tenha aparecido em outro grupo prioritário (ex.: Alerta)
+		sbQueryPrimeiraMarca.append("CASE WHEN " + (!"".equals(queryMarcasAIgnorar) ?  "marcaAux.id_marcador in(" + queryMarcasAIgnorar 
+					+ ") OR " : "") + "(marcadorAux.GRUPO_MARCADOR = 5 and md.GRUPO_MARCADOR = 5) THEN 0 ELSE 1 END ignorar, ");
 		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcaAux.id_marcador = 1 THEN 0 ELSE 1 END temporario, " : "1 temporario, ");
 		sbQueryPrimeiraMarca.append("CASE WHEN marcaAux.");
 		sbQueryPrimeiraMarca.append(lotaTitular == null ? "id_pessoa_ini = :titular " : "id_lotacao_ini = :lotaTitular "); // Traz a marca com a Pessoa ou Lotação em questão para o TOPO pra depois distribuir nos grupos

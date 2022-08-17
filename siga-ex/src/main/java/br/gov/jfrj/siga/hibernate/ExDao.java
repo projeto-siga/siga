@@ -92,6 +92,7 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
+import br.gov.jfrj.siga.ex.ExportacaoPesquisaDTO;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2Ant;
@@ -693,40 +694,72 @@ public class ExDao extends CpDao {
 			DpLotacao lotaTitular) {
 
 		IMontadorQuery montadorQuery = carregarPlugin();
+		
+		boolean isNativeQuery = Prop.get("montador.query").toUpperCase().contains("NATIVE");
 
 		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
-		Query query = null;
+		Query queryFiltro = null;
+		Query queryPagina = null;
+		Query queryExportacao = null;
 		
 		if(itemPagina > 0) {
-			query = em().createQuery(
-					montadorQuery.montaQueryConsultaporFiltro(flt, false));
-			preencherParametros(flt, query);
+			
+			if (isNativeQuery) {
+				queryFiltro = em().createNativeQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			} else {
+				queryFiltro = em().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			}
+			
+			preencherParametros(flt, queryFiltro);
 	
 			if (offset > 0) {
-				query.setFirstResult(offset);
+				queryFiltro.setFirstResult(offset);
 			}
 			if (itemPagina > 0) {
-				query.setMaxResults(itemPagina);
+				queryFiltro.setMaxResults(itemPagina);
 			}
-			List l = query.getResultList();
+			
+			List listResult = queryFiltro.getResultList();
+			List l;
+			
+			if (isNativeQuery) {
+				l = (List<Object[]>) listResult.stream()
+						.map(k -> ((Number) k).longValue())
+						.collect(Collectors.toList());	
+			} else {
+				l = listResult;
+			}
 			 
 			if (l != null && l.size() > 0) {
-				query = em().createQuery("select doc, mob, label from ExMarca label"
+				queryPagina = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-						+ " where label.idMarca in (:listIdMarca)");
-				query.setParameter("listIdMarca", l);
-				l2 = query.getResultList();
-				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
-					    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+						+ " where label.idMarca in (:listIdMarca) ");
+				queryPagina.setParameter("listIdMarca", l);
+				
+				
+				l2 = queryPagina.getResultList();
+				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+				
 			}
 		} else { //exportar excel
 			flt.setOrdem(-1);
-			query = em().createQuery("select doc, mob, label from ExMarca label"
-					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-					+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
-			preencherParametros(flt, query);
-			l2 = query.getResultList();
+			
+			if (isNativeQuery) {
+				queryExportacao = em().createNativeQuery("select doc.*,label.* from corporativo.cp_marca label "
+						+ " inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref "
+						+ " inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc "
+						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )",ExportacaoPesquisaDTO.class);
+				
+			} else {
+				queryExportacao = em().createQuery("select doc, mob, label from ExMarca label"
+						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+						+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
+				
+			}
+
+			preencherParametros(flt, queryExportacao);
+			l2 = queryExportacao.getResultList();
 		}
 		long tempoTotal = System.nanoTime() - tempoIni;
 		
@@ -736,14 +769,12 @@ public class ExDao extends CpDao {
 			while (listaObjetos.hasNext()) {
 				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
 				   ExDocumento doc = ((ExDocumento) objeto[0]);
-				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
+				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular)) 
 				   		listaObjetos.remove();
 			}
 		
 		}
 
-		// System.out.println("consultarPorFiltroOtimizado: " +
-		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l)RExRR;
 		return l2;
 	}
 
@@ -759,12 +790,28 @@ public class ExDao extends CpDao {
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
 		IMontadorQuery montadorQuery = carregarPlugin();
+		
+		boolean isNativeQuery = Prop.get("montador.query").toUpperCase().contains("NATIVE");
+		Query query = null;
+		
 		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
-		Query query = em().createQuery(s);
+		
+		if (isNativeQuery) {
+			query = em().createNativeQuery(s);
+		} else {
+			query = em().createQuery(s);
+		}
 
 		preencherParametros(flt, query);
 
-		Long l = (Long) query.getSingleResult();
+		Long l = null;
+		
+		if (isNativeQuery) {
+			l = ((Number) query.getSingleResult()).longValue();
+		} else {
+			l = (Long) query.getSingleResult();
+		}
+		
 		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarQuantidadePorFiltroOtimizado: "
 		// + tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);

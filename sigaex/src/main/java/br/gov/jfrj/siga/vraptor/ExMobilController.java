@@ -374,6 +374,9 @@ public class ExMobilController extends
 			List lista = dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
+			
+			boolean isNativeQuery = Prop.get("montador.query").toUpperCase().contains("NATIVE");
+			
 			Set<?> items = new HashSet<>(lista); 
 			
 			InputStream inputStream = null;
@@ -389,10 +392,16 @@ public class ExMobilController extends
 			String marcadorFormatado = "";
 			
 			for (Object object : items) {
-				e = (ExDocumento)(((Object[])object)[0]);
-				m = (ExMobil)(((Object[])object)[1]);
-				ma = (ExMarca)(((Object[])object)[2]);
-				
+				if (isNativeQuery) {
+					ma = (ExMarca) object;
+					m = ma.getExMobil();
+					e = m.getDoc();	
+				} else {
+					e = (ExDocumento)(((Object[])object)[0]);
+					m = (ExMobil)(((Object[])object)[1]);
+					ma = (ExMarca)(((Object[])object)[2]);
+				}
+	
 				texto.append(m.getCodigo()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
 					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));

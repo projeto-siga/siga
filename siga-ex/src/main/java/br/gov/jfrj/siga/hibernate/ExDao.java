@@ -34,10 +34,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.LockModeType;
@@ -92,7 +94,6 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.ExportacaoPesquisaDTO;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2Ant;
@@ -746,10 +747,10 @@ public class ExDao extends CpDao {
 			flt.setOrdem(-1);
 			
 			if (isNativeQuery) {
-				queryExportacao = em().createNativeQuery("select doc.*,label.* from corporativo.cp_marca label "
+				queryExportacao = em().createNativeQuery("select label.* from corporativo.cp_marca label "
 						+ " inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref "
 						+ " inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc "
-						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )",ExportacaoPesquisaDTO.class);
+						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )",ExMarca.class);
 				
 			} else {
 				queryExportacao = em().createQuery("select doc, mob, label from ExMarca label"
@@ -761,16 +762,22 @@ public class ExDao extends CpDao {
 			preencherParametros(flt, queryExportacao);
 			l2 = queryExportacao.getResultList();
 		}
-		long tempoTotal = System.nanoTime() - tempoIni;
 		
 		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
-		
-			Iterator<Object[]> listaObjetos = l2.iterator();
+			
+			Iterator<?> listaObjetos = l2.iterator();
 			while (listaObjetos.hasNext()) {
-				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
-				   ExDocumento doc = ((ExDocumento) objeto[0]);
-				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular)) 
-				   		listaObjetos.remove();
+				ExDocumento doc = null;
+				if (isNativeQuery && queryExportacao != null) {
+					ExMarca marca = (ExMarca) listaObjetos.next();
+					doc = marca.getExMobil().getDoc();
+				} else {
+				    Object[] objeto = (Object[]) listaObjetos.next(); 
+				     doc = ((ExDocumento) objeto[0]);
+				}
+
+				if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular)) 
+			   		listaObjetos.remove();
 			}
 		
 		}

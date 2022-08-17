@@ -3,6 +3,10 @@
  */
 "use strict";
 const qtdMax = 20;
+document.onkeydown = pressionouTecla;
+document.onkeypress = pressionouTecla;
+document.onkeyup = pressionouTecla;
+
 setTimeout(function() {
 	$('#bem-vindo').fadeTo(1000, 0, function() {
 		$('#row-bem-vindo').slideUp(1000);
@@ -106,26 +110,28 @@ var appMesa = new Vue({
 	methods: {
 		getItensGrupo: function(grpNome, offset, qtd) {
 			var self = this
-			this.setParmsDefault();
 			let contar = true;
 
 			/* clean toast container before reload notification */
 			$('#toastContainer').empty();
-
-			let timeout = Math.abs(new Date() -
-				new Date(sessionStorage.getItem('timeout' + getUser())));
-			if (timeout < 600000 && grpNome)
-				// Se está obtendo mais documentos de um grupo pq rolou a tela, nao conta dentro de 10 min 
-				contar = false;
-			if (timeout < 300000 && !grpNome 
-					&& sessionStorage.getItem('mesa2' + getUser()) != undefined) {
-				// Se nao passou 5 min a partir do ultimo request e não é 
-				// solicitação de mais itens de um grupo, obtem mesa do cache na Session Storage
-				carregaFromJson(sessionStorage.getItem('mesa2' + getUser()), self); 
-				resetCacheLotacaoPessoaAtual(); 
-				return;
+ 
+			if (sessionStorage.getItem('timeout' + getUser())) {
+				let timeout = Math.abs(new Date() -
+					new Date(sessionStorage.getItem('timeout' + getUser())));
+				if (timeout < 600000 && grpNome)
+					// Se está obtendo mais documentos de um grupo pq rolou a tela, nao conta dentro de 10 min 
+					contar = false;
+				if (timeout < 300000 && !grpNome 
+						&& sessionStorage.getItem('mesa2' + getUser()) != undefined) {
+					// Se nao passou 5 min a partir do ultimo request e não é 
+					// solicitação de mais itens de um grupo, obtem mesa do cache na Session Storage
+					carregaFromJson(sessionStorage.getItem('mesa2' + getUser()), self); 
+					resetCacheLotacaoPessoaAtual(); 
+					return;
+				}
 			}
 				
+			this.setParmsDefault();
 			if (this.carregando)
 				return;
 			this.carregando = true;
@@ -325,7 +331,6 @@ var appMesa = new Vue({
 			if (listaLinhas.length > 0)
 				offset = parseInt(listaLinhas[listaLinhas.length - 1]
 						.getAttribute('data-numitem')) + 1;
-			sessionStorage.removeItem('timeout' + getUser());
 			if (this.exibeLota)
 				setValueGrupo(grupoNome, 'grupoQtdLota', listaLinhas.length + parseInt(this.qtdPag));
 			else
@@ -628,6 +633,12 @@ function getPrimeiroExibido(sel) {
 				return todos[i];
 		}
 	return null;
+}
+
+function pressionouTecla(e) {
+    if (e.keyCode == 116) {
+        sessionStorage.removeItem('mesa2' + getUser());
+    }
 }
 
 /**

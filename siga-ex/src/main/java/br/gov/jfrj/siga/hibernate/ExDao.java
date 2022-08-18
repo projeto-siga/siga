@@ -722,13 +722,13 @@ public class ExDao extends CpDao {
 			List listResult = queryFiltro.getResultList();
 			List l;
 			
+			//Conversão dos tipos nativos BigDecimal para Oracle e Integer para MySQL para Long
 			if (isNativeQuery) {
-				
+				//Tratamento para Offset com Oracle
 				if (!listResult.isEmpty() && listResult.get(0) instanceof Object[]) {
 					l = (List<Object[]>) listResult.stream()
 							.map(k -> ((Number) ((Object[]) k)[0]).longValue())
 							.collect(Collectors.toList());	
-					
 				} else {
 					l = (List<Object[]>) listResult.stream()
 							.map(k -> ((Number) k).longValue())

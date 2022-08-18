@@ -70,14 +70,21 @@ public class CarregadorPlugin {
 		}
 		return null;
 	}
+	
+	public IMontadorQuery getMontadorQueryImpl() {
+		return getMontadorQueryImpl(false);
+	}
 
 	/**
 	 * Retona a implementação disponibilizada pelo plugin
 	 * @return - instância personalizada pelo plugin
 	 */
-	public IMontadorQuery getMontadorQueryImpl() {
+	public IMontadorQuery getMontadorQueryImpl(boolean isNative) {
 		try {
-			return (IMontadorQuery) Class.forName(Prop.get("montador.query"),true,this.classloader).newInstance();
+			if (isNative) //Operação Assistida. Será removido após testes
+				return (IMontadorQuery) Class.forName("br.gov.jfrj.siga.hibernate.ext.MontadorQueryNative",true,this.classloader).newInstance();
+			else
+				return (IMontadorQuery) Class.forName(Prop.get("montador.query"),true,this.classloader).newInstance();
 		} catch (Exception e) {
 			log.warning("Não foi possível instanciar o MontadorQuery do plugin!");
 		}

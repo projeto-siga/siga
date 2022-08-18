@@ -375,8 +375,6 @@ public class ExMobilController extends
 					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
 			
-			boolean isNativeQuery = Prop.get("montador.query").toUpperCase().contains("NATIVE");
-			
 			Set<?> items = new HashSet<>(lista); 
 			
 			InputStream inputStream = null;
@@ -392,17 +390,11 @@ public class ExMobilController extends
 			String marcadorFormatado = "";
 			
 			for (Object object : items) {
-				if (isNativeQuery) {
-					ma = (ExMarca) object;
-					m = ma.getExMobil();
-					e = m.getDoc();	
-				} else {
-					e = (ExDocumento)(((Object[])object)[0]);
-					m = (ExMobil)(((Object[])object)[1]);
-					ma = (ExMarca)(((Object[])object)[2]);
-				}
+				e = (ExDocumento)(((Object[])object)[0]);
+				m = (ExMobil)(((Object[])object)[1]);
+				ma = (ExMarca)(((Object[])object)[2]);
 	
-				texto.append(m.getCodigo()+";");
+				texto.append(m.getDnmSigla()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
 					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
 				}

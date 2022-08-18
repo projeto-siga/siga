@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -99,6 +100,8 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2Ant;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.EntityResult;
 import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.query.ext.IMontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -698,7 +701,6 @@ public class ExDao extends CpDao {
 		
 		boolean isNativeQuery = Prop.get("montador.query").toUpperCase().contains("NATIVE");
 
-		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
 		Query queryFiltro = null;
 		Query queryPagina = null;
@@ -745,13 +747,12 @@ public class ExDao extends CpDao {
 			}
 		} else { //exportar excel
 			flt.setOrdem(-1);
-			
+
 			if (isNativeQuery) {
-				queryExportacao = em().createNativeQuery("select label.* from corporativo.cp_marca label "
+				queryExportacao = em().createNativeQuery("select doc.*, mob.*, label.* from corporativo.cp_marca label "
 						+ " inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref "
 						+ " inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc "
-						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )",ExMarca.class);
-				
+						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )","ExportacaoCsvResults");				
 			} else {
 				queryExportacao = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
@@ -765,19 +766,12 @@ public class ExDao extends CpDao {
 		
 		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
 			
-			Iterator<?> listaObjetos = l2.iterator();
+			Iterator<Object[]> listaObjetos = l2.iterator();
 			while (listaObjetos.hasNext()) {
-				ExDocumento doc = null;
-				if (isNativeQuery && queryExportacao != null) {
-					ExMarca marca = (ExMarca) listaObjetos.next();
-					doc = marca.getExMobil().getDoc();
-				} else {
-				    Object[] objeto = (Object[]) listaObjetos.next(); 
-				     doc = ((ExDocumento) objeto[0]);
-				}
-
-				if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular)) 
-			   		listaObjetos.remove();
+				   Object[] objeto = listaObjetos.next(); 
+				   ExDocumento doc = ((ExDocumento) objeto[0]);
+				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
+				   		listaObjetos.remove();
 			}
 		
 		}

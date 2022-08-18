@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class DiariasDaJusticaFederal {
+	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 //	Art. 10. As diárias nacionais e internacionais, pagas a servidores e
 //	magistrados, terão como valor máximo o correspondente à diária respectiva paga a
@@ -103,8 +104,6 @@ public class DiariasDaJusticaFederal {
 	}
 
 	public static class DiariasDaJusticaFederalParametroTrecho {
-		static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
-
 		public LocalDate data;
 		public String trecho;
 		public boolean carroOficialAteOEmbarque;
@@ -167,7 +166,7 @@ public class DiariasDaJusticaFederal {
 	}
 
 	public static class DiariasDaJusticaFederalResultadoDiario {
-		public LocalDate data;
+		public String data;
 		public String trecho;
 		public double diaria;
 		public double acrescimoDeDeslocamento;
@@ -181,7 +180,7 @@ public class DiariasDaJusticaFederal {
 			return acrescimoDeDeslocamento;
 		}
 
-		public LocalDate getData() {
+		public String getData() {
 			return data;
 		}
 
@@ -283,7 +282,7 @@ public class DiariasDaJusticaFederal {
 				DiariasDaJusticaFederalResultadoDiario dia = new DiariasDaJusticaFederalResultadoDiario();
 				boolean primeiroDia = d == datas.get(0);
 				boolean ultimoDia = d == datas.get(datas.size() - 1);
-				dia.data = d;
+				dia.data = d.format(formatter);
 
 				// Calcula acréscimo de deslocamento com base nas informações de cada trecho
 				DiariasDaJusticaFederalParametroTrecho trecho = mapaDeTrechos.get(d);

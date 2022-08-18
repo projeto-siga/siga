@@ -964,11 +964,16 @@ public class FuncoesEL {
 	public static NodeModel parseXML(String xml) throws Exception {
 		xml = URLDecoder.decode(xml, "UTF-8");
 		// Remover todos os namespaces
-		xml = xml.replaceAll("(</?)[a-z]+:", "$1");
-		xml = xml.replaceAll("( xmlns(:[a-z]+)?=\"[^\"]+\")", "");
-		xml = xml.replaceAll(" ([a-z]+:)([a-zA-Z]+=\"[^\"]+\")", " $2");
+		xml = xml.replaceAll("(</?)[a-z0-9]+:", "$1");
+		xml = xml.replaceAll("( xmlns(:[a-z0-9]+)?=\"[^\"]+\")", "");
+		xml = xml.replaceAll(" ([a-z0-9]+:)([a-zA-Z]+=\"[^\"]+\")", " $2");
+		
+//		xml="<result>oi</result>";
+		
 		InputSource inputSource = new InputSource(new StringReader(xml));
-		return freemarker.ext.dom.NodeModel.parse(inputSource);
+		NodeModel nodes = freemarker.ext.dom.NodeModel.parse(inputSource);
+	//	Object o = nodes.get("Envelope").get("Body").get("obtemValorATResponse").get("return");
+		return nodes;
 	}
 
 	public static Boolean podeAssinarComSenha(DpPessoa titular,

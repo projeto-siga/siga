@@ -72,7 +72,7 @@ public class MontadorQueryNative implements IMontadorQuery {
 		}
 		
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
-			sbf.append(" inner join siga.ex_modelo exMod on exMod.id_mod = documentos.id_mod ");
+			sbf.append(" inner join siga.ex_modelo exMod on exMod.id_mod = doc.id_mod ");
 		}
 		
 		sbf.append(" where");

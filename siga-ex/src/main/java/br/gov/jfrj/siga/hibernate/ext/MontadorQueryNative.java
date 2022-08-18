@@ -156,7 +156,7 @@ public class MontadorQueryNative implements IMontadorQuery {
 		}
 
 		if (flt.getDestinatarioSelId() != null && flt.getDestinatarioSelId() != 0) {
-			sbf.append(" and destinatario.id_pessoa_ini = :destinatarioSelId");
+			sbf.append(" and destinatario.id_pessoa_inicial = :destinatarioSelId");
 		}
 		
 		if (flt.getLotacaoDestinatarioSelId() != null && flt.getLotacaoDestinatarioSelId() != 0) {
@@ -172,7 +172,7 @@ public class MontadorQueryNative implements IMontadorQuery {
 		}
 
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
-			sbf.append(" and doc.cadastrante.idPessoaIni = :cadastranteSelId");
+			sbf.append(" and cadastrante.id_pessoa_inicial = :cadastranteSelId");
 		}
 
 		if (flt.getLotaCadastranteSelId() != null && flt.getLotaCadastranteSelId() != 0) {
@@ -180,7 +180,7 @@ public class MontadorQueryNative implements IMontadorQuery {
  		}
 
 		if (flt.getSubscritorSelId() != null && flt.getSubscritorSelId() != 0) {
-			sbf.append(" and subscritor.id_pessoa_ini = :subscritorSelId");
+			sbf.append(" and subscritor.id_pessoa_inicial = :subscritorSelId");
 		}
 
 		if (flt.getNmSubscritorExt() != null && !flt.getNmSubscritorExt().trim().equals("")) {

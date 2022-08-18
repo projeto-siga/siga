@@ -727,7 +727,8 @@ public class ExDao extends CpDao {
 			List l;
 			
 			if (isNativeQuery) {
-				if (offset > 0) {
+				
+				if (listResult.get(0) instanceof Object[]) {
 					l = (List<Object[]>) listResult.stream()
 							.map(k -> ((Number) ((Object[]) k)[0]).longValue())
 							.collect(Collectors.toList());	

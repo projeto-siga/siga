@@ -4,5 +4,6 @@ public enum CpArquivoTipoArmazenamentoEnum {
 
 	BLOB,
 	TABELA,
-	HCP;
+	HCP,
+	S3;
 }

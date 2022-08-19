@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -69,6 +70,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -95,6 +97,7 @@ import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoDOE;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivoAuxiliar;
@@ -3728,7 +3731,7 @@ public class ExMovimentacaoController extends ExController {
 	public void cancelarMovimentacaoGravar(Integer postback, Long id,
 			String sigla, String dtMovString, boolean substituicao,
 			String descrMov, DpPessoaSelecao subscritorSel,
-			DpPessoaSelecao titularSel) throws Exception {
+			DpPessoaSelecao titularSel, String urlRedirecionar) throws Exception {
 
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
@@ -3756,7 +3759,12 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		
+		if(urlRedirecionar == null || "".equals(urlRedirecionar)) {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} else {
+			result.redirectTo(urlRedirecionar);
+		}
 	}
 
 	@Get("app/expediente/mov/retirar_de_edital_eliminacao")
@@ -4348,6 +4356,117 @@ public class ExMovimentacaoController extends ExController {
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get("/app/expediente/mov/agendar_publicacao_doe")
+	public void agendarPublicacaoDOE(String sigla, Long id, String urlRedirecionar) throws Exception {
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
+				.setSigla(sigla);
+
+		ExDocumento doc = buscarDocumento(builder, true);
+		DpLotacaoSelecao lot = new DpLotacaoSelecao();
+		lot.setId(getLotaTitular().getId());
+		lot.buscar();
+		
+		Ex.getInstance()
+				.getComp()
+				.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
+						builder.getMob());
+
+		String html = new String();
+		
+		List<ExMovimentacao> listMov = new ArrayList<ExMovimentacao>();
+		listMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE));
+		if(!listMov.isEmpty())
+			id = listMov.get(0).getIdMov();
+		
+		if(id == null) {
+			html = doc.getConteudoBlobHtmlString();
+			html = html.substring(html.indexOf("FIM TITULO -->")+14, html.indexOf("<!-- INICIO ASSINATURA -->"));
+			html = HtmlToPlainText.getText(html);
+		} else {
+			ExMovimentacao exMov = ExDao.getInstance().consultar(id, ExMovimentacao.class, false);
+			try {
+				byte[] texto = exMov.getConteudoBlobMov2();
+				if (texto != null)
+					html =  new String(texto, "ISO-8859-1");
+				
+			} catch (UnsupportedEncodingException e) {
+				throw new AplicacaoException(
+						"Não foi possível recuperar o agendamento já cadastrado");
+			}
+		}
+		result.include("urlRedirecionar", urlRedirecionar);
+		result.include("id", id);
+		result.include("descrPublicacao", html);
+		result.include("dtDispon", Data.formatDDMMYYYY(dao().dt()));
+		result.include("lotaSubscritorSel", lot);
+		result.include("mob", builder.getMob());
+		result.include("request", getRequest());
+		result.include("sigla", sigla);
+	}
+	
+	@Transacional
+	@Post("/app/expediente/mov/agendar_publicacao_doe_gravar")
+	public void agendarPublicacaoDOEGravar(Integer postback, String sigla,
+			String dtDispon, Long idLotPublicacao,
+			String descrPublicacao, DpLotacaoSelecao lotaSubscritorSel, Long id, String urlRedirecionar)
+			throws Exception {
+		
+		BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		Long idPubl = lotaSubscritorSel.getId();
+		buscarDocumento(docBuilder, true);
+
+		ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+				.setMob(docBuilder.getMob()).setDtDispon(dtDispon)
+				.construir(dao());
+
+		String lotPublicacao = dao().consultar(idPubl, DpLotacao.class, false)
+				.getSigla();
+
+		Ex.getInstance().getComp()
+			.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
+					docBuilder.getMob());
+				
+		Ex.getInstance()
+			.getBL()
+			.gravarPublicacaoDOE(getCadastrante(), getLotaTitular(),
+					docBuilder.getMob(), dao().dt(), mov.getSubscritor(),
+					mov.getTitular(), getLotaTitular(),
+					mov.getDtDispPublicacao(), lotPublicacao,
+					descrPublicacao, id);
+		
+		if(urlRedirecionar != null && !"".equals(urlRedirecionar)) {
+			result.redirectTo(urlRedirecionar);
+		} else {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);	
+		}
+	}
+
+	@Get("/app/exMovimentacao/listarDOE")
+	public void listarDOE(Long idModelo) {
+		List<ExMovimentacao> listaMovs = 
+				dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, getTitular());
+		
+		List<ExMovimentacao> listFiltradaMovs = new ArrayList<ExMovimentacao>();
+		
+		List<ExModelo> listModelos = new ArrayList<ExModelo>();
+		for (ExMovimentacao exMovimentacao : listaMovs) {
+			if(!listModelos.contains(exMovimentacao.getExMobil().getDoc().getExModelo())) {
+				listModelos.add(exMovimentacao.getExMobil().getDoc().getExModelo());
+			}
+			if(idModelo != null && !idModelo.equals(0L)) {
+				if(idModelo.equals(exMovimentacao.getExMobil().getDoc().getExModelo().getId())) {
+					listFiltradaMovs.add(exMovimentacao);
+				}
+			}
+		}
+		result.include("idModelo", idModelo);
+		result.include("listMov", idModelo != null && !idModelo.equals(0L) ? listFiltradaMovs : listaMovs);
+		result.include("listModelos", listModelos);
+	}
+	
 
 	@Get("/app/expediente/mov/assinar_verificar")
 	public void aAssinarVerificar(Long id, boolean ajax) {

@@ -746,6 +746,9 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome("Agendar Publicação no Diário").icone("report_link").nameSpace("/app/expediente/mov").acao("agendar_publicacao")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAgendarPublicacao(mob, titular, lotaTitular)).classe("once").build());
 
+		vo.addAcao(AcaoVO.builder().nome("Agendar Publicação no DOE").icone("report_link").nameSpace("/app/expediente/mov").acao("agendar_publicacao_doe")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAgendarPublicacaoDOE(mob, titular, lotaTitular)).classe("once").build());
+		
 		vo.addAcao(AcaoVO.builder().nome("Solicitar Publicação no Diário").icone("report_add").nameSpace("/app/expediente/mov").acao("pedirPublicacao")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePedirPublicacao(mob, titular, lotaTitular)).classe("once").build());
 

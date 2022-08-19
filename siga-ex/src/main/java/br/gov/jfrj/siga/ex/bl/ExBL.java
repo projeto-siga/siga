@@ -1011,6 +1011,43 @@ public class ExBL extends CpBL {
 			throw e;
 		}
 	}
+	
+	public void gravarPublicacaoDOE(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular, final DpLotacao lotaTitular,
+			final Date dtDispPublicacao, final String lotPublicacao,
+			final String descrPublicacao, final Long id) throws Exception {
+
+		if(id != null) {
+			ExMovimentacao exMov = ExDao.getInstance().consultar(id,
+					ExMovimentacao.class, false);
+			
+			this.cancelar(titular, lotaTitular, mob, exMov,
+				dao().dt(), subscritor, titular, "");
+		}
+
+		
+		try {
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, cadastrante, lotaCadastrante, mob,
+					dtMov, subscritor, null, titular, lotaTitular, null);
+			
+			mov.setDtDispPublicacao(dtDispPublicacao);
+			mov.setNmArqMov(mob.getCodigoCompacto()+".txt");
+			mov.setConteudoTpMov("text/plain");
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {			
+				baos.write(descrPublicacao.getBytes());
+//				baos.toByteArray();
+				mov.setConteudoBlobMov2(baos.toByteArray());
+			}
+			
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov);
+			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw e;
+		}
+	}
 
 	public ExMovimentacao anexarArquivo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, final String nmArqMov, final DpPessoa titular,

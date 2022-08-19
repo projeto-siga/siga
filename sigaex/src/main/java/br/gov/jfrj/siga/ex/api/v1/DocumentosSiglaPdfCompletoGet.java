@@ -4,7 +4,9 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaPdfCompletoGet;
+import br.gov.jfrj.siga.vraptor.TrackRequest;
 
+@TrackRequest
 public class DocumentosSiglaPdfCompletoGet implements IDocumentosSiglaPdfCompletoGet {
 
 	@Override

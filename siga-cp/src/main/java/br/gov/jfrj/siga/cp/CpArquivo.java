@@ -250,7 +250,6 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			extensao = TipoConteudo.ZIP.getExtensao();
 
 		Calendar c = Calendar.getInstance();
-		c.set(Calendar.AM_PM, Calendar.PM);
 		this.caminho = c.get(Calendar.YEAR) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.DATE) + "/"
 				+ c.get(Calendar.HOUR_OF_DAY) + "/" + c.get(Calendar.MINUTE) + "/" + UUID.randomUUID().toString() + "."
 				+ extensao;

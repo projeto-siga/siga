@@ -23,13 +23,25 @@ import java.util.Date;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.SqlResultSetMapping;
 
 import br.gov.jfrj.siga.base.Data;
+
+
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
+
+@SqlResultSetMapping(name="ExportacaoCsvResults",
+	entities={
+	    @EntityResult(entityClass=ExDocumento.class),
+	    @EntityResult(entityClass=ExMobil.class),
+	    @EntityResult(entityClass=ExMarca.class)
+})
+
 @Entity
 @DiscriminatorValue("1")
 public class ExMarca extends AbstractExMarca implements Comparable {

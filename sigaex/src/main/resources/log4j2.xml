@@ -20,9 +20,7 @@
         <RollingFile name="json-file"
                      fileName="${logdir}/sigaex/user-request-track.log.json"
                      filePattern="sigaex-user-request-track-%d{yyyy-MM-dd}-%i.log.gz">
-            <JSONLayout charset="UTF-8" compact="true" eventEol="true" properties="true" complete="false">
-                <KeyValuePair key="@timestamp" value="${date:yyyy-MM-dd'T'HH:mm:ss.SSSZ}"/>
-            </JSONLayout>
+            <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
             <SizeBasedTriggeringPolicy size="100 MB"/>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>

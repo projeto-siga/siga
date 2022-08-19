@@ -81,8 +81,8 @@ public class CarregadorPlugin {
 	 */
 	public IMontadorQuery getMontadorQueryImpl(boolean isNative) {
 		try {
-			if (isNative) //Operação Assistida. Será removido após testes
-				return (IMontadorQuery) Class.forName("br.gov.jfrj.siga.hibernate.ext.MontadorQueryNative",true,this.classloader).newInstance();
+			if (isNative) 
+				return (IMontadorQuery) Class.forName(Prop.get("montador.query.nativa"),true,this.classloader).newInstance();
 			else
 				return (IMontadorQuery) Class.forName(Prop.get("montador.query"),true,this.classloader).newInstance();
 		} catch (Exception e) {

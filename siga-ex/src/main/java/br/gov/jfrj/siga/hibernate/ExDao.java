@@ -687,13 +687,27 @@ public class ExDao extends CpDao {
 			}
 		}
 	}
+	
+	private boolean orgaoPermiteQueryNativa(DpPessoa titular) {
+		List<String> orgaos = Prop.getList("montador.query.nativa.orgaos");
+		
+		if (orgaos == null) 
+			return false;
+		
+		if ("*".equals(orgaos.get(0)))
+			return true;
+		
+		final String sigla = titular !=null ? titular.getOrgaoUsuario().getSigla() : null;
+		if(orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla)))
+			return true;
+		return false;
+	}
 
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
-
-		//ZZ para Operação Assistida. Será removido após testes
-		boolean isNativeQuery = ("ZZ".equals(titular.getOrgaoUsuario().getSigla()) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
+		
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
 		
 		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);	
 
@@ -797,7 +811,7 @@ public class ExDao extends CpDao {
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
 		
-		boolean isNativeQuery = ("ZZ".equals(titular.getOrgaoUsuario().getSigla()) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); //ZZ para Operação assistida
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
 		
 		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);		
 		Query query = null;

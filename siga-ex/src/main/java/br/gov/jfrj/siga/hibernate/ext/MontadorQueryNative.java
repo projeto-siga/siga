@@ -220,8 +220,6 @@ public class MontadorQueryNative implements IMontadorQuery {
 		String s = sbf.toString();
 		s = s.replace("where and", "where");
 		
-		System.out.println(s);
-		
 		return s;
 
 	}

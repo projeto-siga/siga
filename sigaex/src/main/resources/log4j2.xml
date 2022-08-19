@@ -12,16 +12,17 @@
     <Appenders>
         <RollingFile name="file"
                      fileName="${logdir}/sigaex/user-request-track.log"
-                     filePattern="sigaex-user-request-track-%d{MM-dd-yy-HH-mm-ss}-%i.log">
+                     filePattern="sigaex-user-request-track-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout charset="UTF-8" pattern="%-5p %d %C{1} %m [%MDC]%n"/>
             <SizeBasedTriggeringPolicy size="100 MB"/>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
         <RollingFile name="json-file"
                      fileName="${logdir}/sigaex/user-request-track.log.json"
-                     filePattern="sigaex-user-request-track-%d{MM-dd-yy-HH-mm-ss}-%i.log.json">
-            <JSONLayout charset="UTF-8" compact="true" eventEol="true" properties="true"
-                        includeTimeMillis="true" complete="false"/>
+                     filePattern="sigaex-user-request-track-%d{yyyy-MM-dd}-%i.log.gz">
+            <JSONLayout charset="UTF-8" compact="true" eventEol="true" properties="true" complete="false">
+                <KeyValuePair key="@timestamp" value="${date:yyyy-MM-dd'T'HH:mm:ss.SSSZ}"/>
+            </JSONLayout>
             <SizeBasedTriggeringPolicy size="100 MB"/>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>

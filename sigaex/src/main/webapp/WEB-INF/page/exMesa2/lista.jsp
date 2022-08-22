@@ -157,13 +157,15 @@
 						</a>
 					</div>
 				</c:if>
-				<div class="input-group col-5 mb-1">
-					<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" @keyup.enter="recarregarMesa()" placeholder="Filtrar cód. ou descrição" v-model="filtro" @keyup.enter="getItensGrupo();">
-					<div class="input-group-append">
-						<button class="btn btn-secondary border-light" type="button" @click="recarregarMesa();"><i class="fas fa-search"></i></button>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;FILTRO:Permitir usar o filtro de pesquisa')}">
+					<div class="input-group col-5 mb-1">
+						<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" @keyup.enter="recarregarMesa()" placeholder="Filtrar cód. ou descrição" v-model="filtro" @keyup.enter="getItensGrupo();" />
+						<div class="input-group-append">
+							<button class="btn btn-secondary border-light" type="button" @click="recarregarMesa();"><i class="fas fa-search"></i></button>
+						</div>
 					</div>
-				</div>
-				<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
+				</c:if>				
+				<button type="button" class="btn btn-secondary btn-sm mb-1 ml-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
 					<i class="fas fa-sync-alt"></i>
 				</button>
 				<small id="ultima-atualizacao" class="my-auto d-none d-md-block fadein text-danger">
@@ -370,4 +372,4 @@
 	</script>
 </siga:pagina>
 <script src="/siga/bootstrap/4.6.0/js/bootstrap.bundle.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="/siga/javascript/mesa2.js?v=1646187984"></script>
+<script type="text/javascript" src="/siga/javascript/mesa2.js?v=1660161896"></script>

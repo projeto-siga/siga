@@ -19,7 +19,7 @@ public class ExPodeAssinarComSenha extends CompositeExpressionSupport {
 
 	public ExPodeAssinarComSenha(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado())
-			mob = mob.doc().getUltimoVolume();
+			mob = mob.doc().getUltimoVolumeOuGeral();
 		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;

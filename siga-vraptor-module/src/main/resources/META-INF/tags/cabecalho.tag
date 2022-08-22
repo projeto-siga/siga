@@ -76,7 +76,7 @@ ${meta}
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
 
 <c:if test="${empty incluirBS or incluirBS}" >
- 	<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection" />
+ 	<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css?v=4.1.1"	type="text/css" media="screen, projection, print" />
 </c:if> 
 
 
@@ -97,7 +97,7 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
-<c:set var="siga_version"  scope="request" value="10.2.7.0" />
+<c:set var="siga_version"  scope="request" value="10.2.8.0" />
 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">

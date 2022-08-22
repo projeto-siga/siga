@@ -687,54 +687,106 @@ public class ExDao extends CpDao {
 			}
 		}
 	}
+	
+	private boolean orgaoPermiteQueryNativa(DpPessoa titular) {
+		List<String> orgaos = Prop.getList("montador.query.nativa.orgaos");
+		
+		if (orgaos == null) 
+			return false;
+		
+		if ("*".equals(orgaos.get(0)))
+			return true;
+		
+		final String sigla = titular !=null ? titular.getOrgaoUsuario().getSigla() : null;
+		if(orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla)))
+			return true;
+		return false;
+	}
 
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
+		
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
+		
+		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);	
 
-		IMontadorQuery montadorQuery = carregarPlugin();
-
-		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
-		Query query = null;
+		Query queryFiltro = null;
+		Query queryPagina = null;
+		Query queryExportacao = null;
 		
 		if(itemPagina > 0) {
-			query = em().createQuery(
-					montadorQuery.montaQueryConsultaporFiltro(flt, false));
-			preencherParametros(flt, query);
+			
+			if (isNativeQuery) {
+				queryFiltro = em().createNativeQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			} else {
+				queryFiltro = em().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			}
+			
+			preencherParametros(flt, queryFiltro);
 	
 			if (offset > 0) {
-				query.setFirstResult(offset);
+				queryFiltro.setFirstResult(offset);
 			}
 			if (itemPagina > 0) {
-				query.setMaxResults(itemPagina);
+				queryFiltro.setMaxResults(itemPagina);
 			}
-			List l = query.getResultList();
+			
+			List listResult = queryFiltro.getResultList();
+			List l;
+			
+			//Conversão dos tipos nativos BigDecimal para Oracle e Integer para MySQL para Long
+			if (isNativeQuery) {
+				//Tratamento para Offset com Oracle
+				if (!listResult.isEmpty() && listResult.get(0) instanceof Object[]) {
+					l = (List<Object[]>) listResult.stream()
+							.map(k -> ((Number) ((Object[]) k)[0]).longValue())
+							.collect(Collectors.toList());	
+				} else {
+					l = (List<Object[]>) listResult.stream()
+							.map(k -> ((Number) k).longValue())
+							.collect(Collectors.toList());	
+				}
+			} else {
+				l = listResult;
+			}
 			 
 			if (l != null && l.size() > 0) {
-				query = em().createQuery("select doc, mob, label from ExMarca label"
+				queryPagina = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-						+ " where label.idMarca in (:listIdMarca)");
-				query.setParameter("listIdMarca", l);
-				l2 = query.getResultList();
-				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
-					    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+						+ " where label.idMarca in (:listIdMarca) ");
+				queryPagina.setParameter("listIdMarca", l);
+				
+				
+				l2 = queryPagina.getResultList();
+				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+				
 			}
 		} else { //exportar excel
 			flt.setOrdem(-1);
-			query = em().createQuery("select doc, mob, label from ExMarca label"
-					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-					+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
-			preencherParametros(flt, query);
-			l2 = query.getResultList();
+
+			if (isNativeQuery) {
+				queryExportacao = em().createNativeQuery("select doc.*, mob.*, label.* from corporativo.cp_marca label "
+						+ " inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref "
+						+ " inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc "
+						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )","ExportacaoCsvResults");				
+			} else {
+				queryExportacao = em().createQuery("select doc, mob, label from ExMarca label"
+						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+						+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
+				
+			}
+
+			preencherParametros(flt, queryExportacao);
+			l2 = queryExportacao.getResultList();
 		}
-		long tempoTotal = System.nanoTime() - tempoIni;
 		
 		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
-		
+			
 			Iterator<Object[]> listaObjetos = l2.iterator();
 			while (listaObjetos.hasNext()) {
-				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
+				   Object[] objeto = listaObjetos.next(); 
 				   ExDocumento doc = ((ExDocumento) objeto[0]);
 				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
 				   		listaObjetos.remove();
@@ -742,29 +794,46 @@ public class ExDao extends CpDao {
 		
 		}
 
-		// System.out.println("consultarPorFiltroOtimizado: " +
-		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l)RExRR;
 		return l2;
 	}
 
 	private IMontadorQuery carregarPlugin() {
+		return carregarPlugin(false);
+	}
+	private IMontadorQuery carregarPlugin(boolean isNative) {
 		CarregadorPlugin carregador = new CarregadorPlugin();
-		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl();
-		montadorQuery
-				.setMontadorPrincipal(carregador.getMontadorQueryDefault());
+		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl(isNative);
+		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
 		return montadorQuery;
 	}
 
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		IMontadorQuery montadorQuery = carregarPlugin();
+		
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
+		
+		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);		
+		Query query = null;
+		
 		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
-		Query query = em().createQuery(s);
+		
+		if (isNativeQuery) {
+			query = em().createNativeQuery(s);
+		} else {
+			query = em().createQuery(s);
+		}
 
 		preencherParametros(flt, query);
 
-		Long l = (Long) query.getSingleResult();
+		Long l = null;
+		
+		if (isNativeQuery) {
+			l = ((Number) query.getSingleResult()).longValue();
+		} else {
+			l = (Long) query.getSingleResult();
+		}
+		
 		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarQuantidadePorFiltroOtimizado: "
 		// + tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
@@ -2106,31 +2175,36 @@ public class ExDao extends CpDao {
 		StringBuilder sbQueryString = new StringBuilder();
 		
 		String queryMarcasAIgnorar = "";
-		String queryMarcasAIgnorarWhere = "";
-		
-		
 		
 		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
-			queryMarcasAIgnorar += " left join corporativo.cp_marca mx on"
-					+ " mx.id_ref = m.id_ref and mx.id_marcador in(";
+			// Se o mobil tiver uma das marcas contidas em marcasAIgnorar, não deve ser mostrado na mesa
 			for (Integer marcaAIgnorar : marcasAIgnorar)
 				queryMarcasAIgnorar += marcaAIgnorar.toString() + ",";
-			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1) + ") ";
-			queryMarcasAIgnorarWhere = " and mx.id_marca is null ";
+			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1);
 		}		
 
 		/* String Builder Query Primeira Marca entre os Grupos */
 		StringBuilder sbQueryPrimeiraMarca = new StringBuilder();
 		
-		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca ");
+		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca, ");
+		// O grupo 5 - Caixa de Entrada deve mostrar o documento mesmo que ele já tenha aparecido em outro grupo prioritário (ex.: Alerta)
+		sbQueryPrimeiraMarca.append("CASE WHEN " + (!"".equals(queryMarcasAIgnorar) ?  "marcaAux.id_marcador in(" + queryMarcasAIgnorar 
+					+ ") OR " : "") + "(marcadorAux.GRUPO_MARCADOR = 5 and md.GRUPO_MARCADOR = 5) THEN 0 ELSE 1 END ignorar, ");
+		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcaAux.id_marcador = 1 THEN 0 ELSE 1 END temporario, " : "1 temporario, ");
+		sbQueryPrimeiraMarca.append("CASE WHEN marcaAux.");
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? "id_pessoa_ini = :titular " : "id_lotacao_ini = :lotaTitular "); // Traz a marca com a Pessoa ou Lotação em questão para o TOPO pra depois distribuir nos grupos
+		sbQueryPrimeiraMarca.append("THEN 0 ELSE 1 END pessoa, ");
+		sbQueryPrimeiraMarca.append("marcadorAux.grupo_marcador grupo ");
+		
 		sbQueryPrimeiraMarca.append("FROM corporativo.cp_marca marcaAux INNER JOIN ");
 		sbQueryPrimeiraMarca.append("     corporativo.cp_marcador marcadorAux ");
 		sbQueryPrimeiraMarca.append("          ON marcaAux.id_marcador = marcadorAux.id_marcador ");
 		sbQueryPrimeiraMarca.append("WHERE marcaAux.id_ref = m.id_ref ");
 		
-		sbQueryPrimeiraMarca.append(contar ? " AND (marcaAux.id_pessoa_ini = :titular OR marcaAux.id_lotacao_ini = :lotaTitular) " : ""); // Se CONTAR filtra PESSOA e LOTACAO
-		sbQueryPrimeiraMarca.append(!contar && titular != null ? " AND marcaAux.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
-		sbQueryPrimeiraMarca.append(!contar && lotaTitular != null ? " AND marcaAux.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		sbQueryPrimeiraMarca.append(" AND ((marcaAux.id_pessoa_ini = :titular");
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? ")" : " OR marcaAux.id_lotacao_ini = :lotaTitular)");
+		sbQueryPrimeiraMarca.append(" OR marcaAux.id_marcador in(1" +
+				(!"".equals(queryMarcasAIgnorar) ? "," + queryMarcasAIgnorar : "") + ")) "); // Inclui temporarios tambem 
 		
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaAssinSenha ");
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaMovAssinSenha ");
@@ -2138,10 +2212,9 @@ public class ExDao extends CpDao {
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_ini_marca is null OR marcaAux.dt_ini_marca < :dbDatetime ) ");
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_fim_marca is null OR marcaAux.dt_fim_marca > :dbDatetime ) ");
 		
-		sbQueryPrimeiraMarca.append("ORDER BY ");
-		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcadorAux.grupo_marcador = 6 THEN 0 ELSE marcadorAux.grupo_marcador END" //Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
-												   : " marcadorAux.grupo_marcador ");
-		sbQueryPrimeiraMarca.append(", marcaAux.id_pessoa_ini, marcaAux.id_lotacao_ini) aux ");
+		sbQueryPrimeiraMarca.append("ORDER BY ignorar, temporario, pessoa, grupo");
+		
+		sbQueryPrimeiraMarca.append(") aux ");
 		
 		sbQueryPrimeiraMarca.append(isOracle() ? "WHERE rownum = 1 " : "LIMIT 1 "); //Obtém a primeira MARCA daquele ID_REF seguindo os critérios, desprezando as demais ocorrências
 		sbQueryPrimeiraMarca.append(")");
@@ -2151,13 +2224,10 @@ public class ExDao extends CpDao {
 		sbQueryString.append("WITH marca AS (SELECT m.*, md.grupo_marcador ");
 		sbQueryString.append(" FROM corporativo.cp_marca m ");
 		sbQueryString.append(" INNER JOIN corporativo.cp_marcador md ON m.id_marcador = md.id_marcador ");
-		
-		sbQueryString.append(queryMarcasAIgnorar);
-		
 		sbQueryString.append(" WHERE 1=1 ");
-		sbQueryString.append(contar ? " AND (m.id_pessoa_ini = :titular OR m.id_lotacao_ini = :lotaTitular)" : ""); // Se CONTAR filtra PESSOA e LOTACAO
-		sbQueryString.append(!contar && titular != null ? " and m.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
-		sbQueryString.append(!contar && lotaTitular != null ? " and m.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		
+		sbQueryString.append(lotaTitular == null ? " AND m.id_pessoa_ini = :titular" : " AND m.id_lotacao_ini = :lotaTitular"); 
+
 		
 		//MARCAS ativas
 		sbQueryString.append(" AND (m.dt_ini_marca is null OR m.dt_ini_marca < :dbDatetime)");
@@ -2166,28 +2236,28 @@ public class ExDao extends CpDao {
 		//Remove MARCAS de Assinatura e a ignorar
 		sbQueryString.append(" and m.id_marcador <> :marcaAssinSenha ");
 		sbQueryString.append(" and m.id_marcador <> :marcaMovAssinSenha ");
-		
-		sbQueryString.append(queryMarcasAIgnorarWhere);
+		sbQueryString.append(grupos != null && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "");
+		sbQueryString.append(!"".equals(queryMarcasAIgnorar) ? " and not m.id_marcador in(" + queryMarcasAIgnorar + ")" : "");
 		
 		sbQueryString.append(sbQueryPrimeiraMarca);
 		
 		sbQueryString.append(") SELECT");
-		sbQueryString.append(contar ?  " CONCAT(grupo_marcador,''),"
-				+ " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end), "  
-				+ " sum(case when marca.id_lotacao_ini = :lotaTitular then 1 else 0 end) " 
-				
-				: " CONCAT(grupo_marcador,''),"
-				+ " id_ref, "
-				+ " (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem");
+		
+		sbQueryString.append(" CONCAT(grupo_marcador,''),");
+		
+		sbQueryString.append(contar && lotaTitular == null ? " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end) ":"");
+		sbQueryString.append(contar && lotaTitular != null ? " sum(case when marca.id_lotacao_ini = :lotaTitular then 1 else 0 end)" : "");
+
+		sbQueryString.append(!contar ? "id_ref, (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem" : "");
 		
 		sbQueryString.append(" FROM marca ");
-		sbQueryString.append(" INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ");
+		//Qdo conta, não precisa ordenar mas precisa filtrar se for solicitado 
+		sbQueryString.append(!contar || (contar && filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ": "");
 		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc ": "");
-		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); //Se CONTANDO e SEM FILTROS, não adiciona
+		sbQueryString.append(!contar ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); 
 		
 		sbQueryString.append(" WHERE 1=1");
 		sbQueryString.append(filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "");
-		sbQueryString.append(grupos != null && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "");
 		sbQueryString.append(contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador " 
 									: " ORDER BY grupo_marcador, dtOrdem " + (ordemCrescenteData ? " ASC":" DESC" + ", marca.id_marca"));
 
@@ -2197,10 +2267,10 @@ public class ExDao extends CpDao {
 	
 		Query query = em().createNativeQuery(sbQueryString.toString());
 		
-		if (contar || titular != null)
+		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
 		
-		if (contar || lotaTitular != null)
+		if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
 		
 		if (grupos != null && grupos.size() > 0) {

@@ -459,6 +459,7 @@
 							</div>
 						</div>
 					</div>
+					<c:if test="${not empty exDocumentoDTO.listaTipoDest}">
 					<input type="hidden" name="campos" value="tipoDestinatario" />
 					<c:if
 						test='${exDocumentoDTO.tipoDocumento != "interno_capturado" }'>
@@ -528,6 +529,7 @@
 								</div>
 							</div>
 						</div>
+					</c:if>
 					</c:if>
 					<div id="tr_personalizacao"
 						style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">

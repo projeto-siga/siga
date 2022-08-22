@@ -73,14 +73,30 @@ function popitup(url) {
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	
+	const sigla = new URLSearchParams(url).get('sigla');
 	if(url.includes("/sigaex/app/arquivo/exibir?")) {
 		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
 	}
+
 	newwindow = window.open(url, nameWindow, winProp);
+	newwindow.addEventListener('click', function (e) {
+		if (e.target.id == 'print' || e.target.id == 'download') {
+			trackRequest(sigla, e.target.title);
+		}
+	});
 
 	if (window.focus) {
 		newwindow.focus()
 	}
+}
+
+function trackRequest(sigla, acao) {
+	let url;
+	url = "/sigaex/app/expediente/doc/registrar_requisicao_usuario?sigla=" + sigla + "&nomeAcao=" + acao;
+	$.ajax({
+		type: "GET",
+		url: url
+	});
 }
 
 function montarUrlDocPDF(url, visualizador) {
@@ -1893,4 +1909,4 @@ function passwordStrength(password,metodo) {
 
 		document.getElementById('passwordDescription' + metodo).innerHTML = desc[score];
 		document.getElementById('passwordStrength' + metodo).className = "strength" + score;
-	}
+}

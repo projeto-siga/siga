@@ -85,6 +85,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {
@@ -660,7 +661,7 @@ public class FuncoesEL {
 	public static Boolean criarWorkflow(String nomeProcesso, ExDocumento d,
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
-
+		
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,

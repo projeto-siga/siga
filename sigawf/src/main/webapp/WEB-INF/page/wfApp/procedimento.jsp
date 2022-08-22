@@ -33,8 +33,7 @@
 									style="color: white; text-decoration: underline;">${pi.principal}</a> -
 							</c:if>
 
-							${pi.definicaoDeProcedimento.nome} -
-							${pi.definicaoDeTarefaCorrente.nome}
+							<strong>${pi.definicaoDeTarefaCorrente.nome}</strong>
 						</div>
 						<div class="card-body bg-light text-black">
 							<form method="POST"

@@ -344,14 +344,12 @@ public class ExProcessoAutenticacaoController extends ExController {
 							exDocumentoDTO.getDoc().getSiglaAssinatura()
 					
 			);
-
+			
+			
             ExProtocolo prot = Ex.getInstance().getBL().obterProtocolo(exDocumentoDTO.getDoc());
-            if (prot == null) {
-                throw new AplicacaoException(
-                        "Ocorreu um erro ao obter protocolo do Documento: " + exDocumentoDTO.getDoc().getSigla());
-            }
+			String codigoProtocolo = ( prot != null ) ? prot.getCodigo() : null;
 
-            result.include("protocolo", prot.getCodigo());
+            result.include("protocolo", codigoProtocolo);
 			result.include("mob", exDocumentoDTO.getMob());
 			result.include("isProtocoloFilho", (idMovJuntada != null ? true : false));
 

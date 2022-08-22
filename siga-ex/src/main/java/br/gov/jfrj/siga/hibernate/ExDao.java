@@ -687,54 +687,106 @@ public class ExDao extends CpDao {
 			}
 		}
 	}
+	
+	private boolean orgaoPermiteQueryNativa(DpPessoa titular) {
+		List<String> orgaos = Prop.getList("montador.query.nativa.orgaos");
+		
+		if (orgaos == null) 
+			return false;
+		
+		if ("*".equals(orgaos.get(0)))
+			return true;
+		
+		final String sigla = titular !=null ? titular.getOrgaoUsuario().getSigla() : null;
+		if(orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla)))
+			return true;
+		return false;
+	}
 
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
+		
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
+		
+		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);	
 
-		IMontadorQuery montadorQuery = carregarPlugin();
-
-		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
-		Query query = null;
+		Query queryFiltro = null;
+		Query queryPagina = null;
+		Query queryExportacao = null;
 		
 		if(itemPagina > 0) {
-			query = em().createQuery(
-					montadorQuery.montaQueryConsultaporFiltro(flt, false));
-			preencherParametros(flt, query);
+			
+			if (isNativeQuery) {
+				queryFiltro = em().createNativeQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			} else {
+				queryFiltro = em().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			}
+			
+			preencherParametros(flt, queryFiltro);
 	
 			if (offset > 0) {
-				query.setFirstResult(offset);
+				queryFiltro.setFirstResult(offset);
 			}
 			if (itemPagina > 0) {
-				query.setMaxResults(itemPagina);
+				queryFiltro.setMaxResults(itemPagina);
 			}
-			List l = query.getResultList();
+			
+			List listResult = queryFiltro.getResultList();
+			List l;
+			
+			//Conversão dos tipos nativos BigDecimal para Oracle e Integer para MySQL para Long
+			if (isNativeQuery) {
+				//Tratamento para Offset com Oracle
+				if (!listResult.isEmpty() && listResult.get(0) instanceof Object[]) {
+					l = (List<Object[]>) listResult.stream()
+							.map(k -> ((Number) ((Object[]) k)[0]).longValue())
+							.collect(Collectors.toList());	
+				} else {
+					l = (List<Object[]>) listResult.stream()
+							.map(k -> ((Number) k).longValue())
+							.collect(Collectors.toList());	
+				}
+			} else {
+				l = listResult;
+			}
 			 
 			if (l != null && l.size() > 0) {
-				query = em().createQuery("select doc, mob, label from ExMarca label"
+				queryPagina = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-						+ " where label.idMarca in (:listIdMarca)");
-				query.setParameter("listIdMarca", l);
-				l2 = query.getResultList();
-				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
-					    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+						+ " where label.idMarca in (:listIdMarca) ");
+				queryPagina.setParameter("listIdMarca", l);
+				
+				
+				l2 = queryPagina.getResultList();
+				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+				
 			}
 		} else { //exportar excel
 			flt.setOrdem(-1);
-			query = em().createQuery("select doc, mob, label from ExMarca label"
-					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-					+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
-			preencherParametros(flt, query);
-			l2 = query.getResultList();
+
+			if (isNativeQuery) {
+				queryExportacao = em().createNativeQuery("select doc.*, mob.*, label.* from corporativo.cp_marca label "
+						+ " inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref "
+						+ " inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc "
+						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )","ExportacaoCsvResults");				
+			} else {
+				queryExportacao = em().createQuery("select doc, mob, label from ExMarca label"
+						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+						+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
+				
+			}
+
+			preencherParametros(flt, queryExportacao);
+			l2 = queryExportacao.getResultList();
 		}
-		long tempoTotal = System.nanoTime() - tempoIni;
 		
 		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
-		
+			
 			Iterator<Object[]> listaObjetos = l2.iterator();
 			while (listaObjetos.hasNext()) {
-				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
+				   Object[] objeto = listaObjetos.next(); 
 				   ExDocumento doc = ((ExDocumento) objeto[0]);
 				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
 				   		listaObjetos.remove();
@@ -742,29 +794,46 @@ public class ExDao extends CpDao {
 		
 		}
 
-		// System.out.println("consultarPorFiltroOtimizado: " +
-		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l)RExRR;
 		return l2;
 	}
 
 	private IMontadorQuery carregarPlugin() {
+		return carregarPlugin(false);
+	}
+	private IMontadorQuery carregarPlugin(boolean isNative) {
 		CarregadorPlugin carregador = new CarregadorPlugin();
-		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl();
-		montadorQuery
-				.setMontadorPrincipal(carregador.getMontadorQueryDefault());
+		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl(isNative);
+		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
 		return montadorQuery;
 	}
 
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		IMontadorQuery montadorQuery = carregarPlugin();
+		
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
+		
+		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);		
+		Query query = null;
+		
 		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
-		Query query = em().createQuery(s);
+		
+		if (isNativeQuery) {
+			query = em().createNativeQuery(s);
+		} else {
+			query = em().createQuery(s);
+		}
 
 		preencherParametros(flt, query);
 
-		Long l = (Long) query.getSingleResult();
+		Long l = null;
+		
+		if (isNativeQuery) {
+			l = ((Number) query.getSingleResult()).longValue();
+		} else {
+			l = (Long) query.getSingleResult();
+		}
+		
 		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarQuantidadePorFiltroOtimizado: "
 		// + tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);

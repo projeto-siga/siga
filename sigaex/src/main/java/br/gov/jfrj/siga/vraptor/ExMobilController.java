@@ -374,6 +374,7 @@ public class ExMobilController extends
 			List lista = dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
+			
 			Set<?> items = new HashSet<>(lista); 
 			
 			InputStream inputStream = null;
@@ -392,8 +393,8 @@ public class ExMobilController extends
 				e = (ExDocumento)(((Object[])object)[0]);
 				m = (ExMobil)(((Object[])object)[1]);
 				ma = (ExMarca)(((Object[])object)[2]);
-				
-				texto.append(m.getCodigo()+";");
+	
+				texto.append(m.getDnmSigla()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
 					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
 				}

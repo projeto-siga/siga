@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  *
  * @author Heverson Vasconcelos
  */
-@Target(ElementType.METHOD)
+@Target({ ElementType.TYPE_USE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TrackRequest {
 

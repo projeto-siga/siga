@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-Siga-Versao: 10.2.8.1
-=======
-Siga-Versao: 10.2.8.0
->>>>>>> develop
+Siga-Versao: 10.2.8.2
+

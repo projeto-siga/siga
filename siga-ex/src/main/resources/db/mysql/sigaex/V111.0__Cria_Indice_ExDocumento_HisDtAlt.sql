@@ -1,0 +1,1 @@
+CREATE INDEX EX_DOCUMENTO_HIS_DT_ALT ON siga.ex_documento (HIS_DT_ALT);

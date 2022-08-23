@@ -650,7 +650,7 @@ public class ExDocumentoController extends ExController {
 					.consultarAtivoPorIdInicial(ExModelo.class, 28L))
 					.getIdMod());
 		}
-		carregarBeans(exDocumentoDTO, mobilPaiSel);
+		carregarBeans(exDocumentoDTO, mobilPaiSel); 
 
 		if (exDocumentoDTO.getMobilPaiSel().getId() != null) {
 			hasPai = true;
@@ -2149,7 +2149,7 @@ public class ExDocumentoController extends ExController {
 					mobPai = daoMob(exDocumentoDTO.getMobilPaiSel().getId());
 
 					final Long idMod = paramLong("exDocumentoDTO.idMod");
-					if (idMod != null && exDocumentoDTO.getCriandoSubprocesso())
+					if (idMod == null && exDocumentoDTO.getCriandoSubprocesso())
 						exDocumentoDTO.setIdMod(exDocumentoDTO.getMobilPaiSel()
 								.getObjeto().getDoc().getExModelo().getId());
 

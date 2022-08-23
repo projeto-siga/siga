@@ -21,7 +21,7 @@ import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
-	static public final long TIMEOUT_MILLISECONDS = 15000;
+	static public final long TIMEOUT_MILLISECONDS = 50000;
 
 	@Override
 	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {

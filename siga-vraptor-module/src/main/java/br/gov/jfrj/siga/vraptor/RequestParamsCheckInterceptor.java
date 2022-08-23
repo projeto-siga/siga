@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -54,6 +56,9 @@ public class RequestParamsCheckInterceptor {
     private final Logger logger = LogManager.getLogger(RequestParamsCheckInterceptor.class);
     private boolean isRequestValid = true;
     
+    private static final String HTML_PATTERN = "<(\"[^\"]*\"|'[^']*'|[^'\">])*>";
+    private Pattern pattern = Pattern.compile(HTML_PATTERN);
+    
 
     @SuppressWarnings("unchecked")
 	@AroundCall
@@ -62,7 +67,7 @@ public class RequestParamsCheckInterceptor {
     	parameters = request.getParameterMap();
 
 		parameters.forEach((key, value) -> {
-			if (value[0] != null && !"".equals(value[0]) && value[0].contains("<") ) {	
+			if (value[0] != null && !"".equals(value[0]) && hasHTMLTags(value[0])) {	
 				if (method.containsAnnotation(RequestParamsPermissiveCheck.class)) 
 					isRequestValid = Jsoup.isValid(value[0],SafeListCustom.relaxedCustom());
 			    else 
@@ -82,6 +87,11 @@ public class RequestParamsCheckInterceptor {
     @Accepts
     public boolean accepts(ControllerMethod method) {
         return !method.containsAnnotation(RequestParamsNotCheck.class);
+    }
+    
+    public boolean hasHTMLTags(String text){
+        Matcher matcher = pattern.matcher(text);
+        return matcher.find();
     }
 
 }

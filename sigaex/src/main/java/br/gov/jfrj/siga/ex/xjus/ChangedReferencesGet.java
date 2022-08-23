@@ -93,7 +93,11 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 			RecordServiceEnum service = RecordServiceEnum.values()[Integer.valueOf(r.id.split("-")[1])];
 			aCursor[service.ordinal()] = r.id;
 		}
+
 		resp.cursor = String.join(";", aCursor);
+
+		if (resp.cursor == null || resp.cursor.isEmpty())
+			resp.cursor = AllReferencesGet.defaultCursor();
 	}
 
 	public String getContext() {

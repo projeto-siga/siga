@@ -29,13 +29,11 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		try {
 			ExDao dao = ExDao.getInstance();
 			Query q = dao.em().createQuery(HQL);
-			q.setParameter("tpmovs", EnumSet.of(
-					ExTipoDeMovimentacao.ANEXACAO,
-					ExTipoDeMovimentacao.DESPACHO,
-					ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA,
-					ExTipoDeMovimentacao.DESPACHO_INTERNO,
-					ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA,
-					ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA));
+			q.setParameter("tpmovs",
+					EnumSet.of(ExTipoDeMovimentacao.ANEXACAO, ExTipoDeMovimentacao.DESPACHO,
+							ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, ExTipoDeMovimentacao.DESPACHO_INTERNO,
+							ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA,
+							ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA));
 			q.setMaxResults(Integer.valueOf(req.max));
 			Date first = req.lastdate;
 			Long lastid = Long.valueOf(req.lastid);

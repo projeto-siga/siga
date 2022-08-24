@@ -12,6 +12,8 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.cp.logic.CpPodePorConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import com.mashape.unirest.http.Unirest;
 
 import br.com.caelum.vraptor.Consumes;
@@ -126,7 +128,7 @@ public class PrincipalController extends SigaController {
 			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula);
 
 			if (sel.getId() == null) {
-				if (Prop.getBool("/xjus.url") != null) {
+				if (podeUtilizarPesquisaGenericaViaXjus()) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
 					sel.setDescricao("/siga/app/xjus#!?filter=" + sigla);
@@ -275,6 +277,12 @@ public class PrincipalController extends SigaController {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		response.addHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+	}
+
+	private boolean podeUtilizarPesquisaGenericaViaXjus() throws Exception {
+		return new CpPodePorConfiguracao(getCadastrante(), getLotaCadastrante())
+				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_GENERICA_VIA_XJUS)
+				.eval();
 	}
 
 }

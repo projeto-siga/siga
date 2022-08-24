@@ -602,7 +602,10 @@ public class ExMobilController extends
 	}
 
 	private void pesquisarXjus(ExMobilDaoFiltro flt) {
-		if (!(new ExPodePorConfiguracao(getTitular(), getLotaTitular()).withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_AVANCADA_VIA_XJUS).eval())) {
+		if (!( new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_AVANCADA_VIA_XJUS)
+				.eval() )
+		) {
 			flt.setDescrPesquisaXjus(null);
 			return;
 		}
@@ -1055,12 +1058,6 @@ public class ExMobilController extends
 		result.include("lista", docs);
 		List<ExNivelAcesso> listaNivelAcesso = ExDao.getInstance().listarOrdemNivel();
 		result.include("listaNivelAcesso", listaNivelAcesso);
-	}
-
-	private boolean podeUtilizarPesquisaAvancadaViaXjus() throws Exception {
-		return Cp.getInstance().getConf().podePorConfiguracao(
-				getCadastrante(), getCadastrante().getLotacao(),
-				CpTipoDeConfiguracao.UTILIZAR_PESQUISA_AVANCADA_VIA_XJUS);
 	}
 
 }

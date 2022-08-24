@@ -128,7 +128,7 @@ public class PrincipalController extends SigaController {
 			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula);
 
 			if (sel.getId() == null) {
-				if (podeUtilizarPesquisaGenericaViaXjus()) {
+				if (podeUtilizarPesquisaGenericaViaXjus(pes, lot)) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
 					sel.setDescricao("/siga/app/xjus#!?filter=" + sigla);
@@ -279,10 +279,11 @@ public class PrincipalController extends SigaController {
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
 	}
 
-	private boolean podeUtilizarPesquisaGenericaViaXjus() throws Exception {
-		return new CpPodePorConfiguracao(getCadastrante(), getLotaCadastrante())
+	private boolean podeUtilizarPesquisaGenericaViaXjus(DpPessoa pessoa, DpLotacao lotacao) throws Exception {
+		return (Prop.getBool("/xjus.url") != null && new CpPodePorConfiguracao(pessoa, lotacao)
 				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_GENERICA_VIA_XJUS)
-				.eval();
+				.withOrgaoObjeto(lotacao.getLotacaoAtual().getOrgaoUsuario())
+				.eval());
 	}
 
 }

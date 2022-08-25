@@ -610,13 +610,16 @@ public class ExMobilController extends
 			return;
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		
+
 		String filter = flt.getDescrPesquisaXjus();
 		String acronimoOrgaoUsu = dao().consultarOrgaoUsuarioPorId(flt.getIdOrgaoUsu()).getAcronimoOrgaoUsu();
 		String descEspecie = flt.getIdFormaDoc() == null || flt.getIdFormaDoc() == 0 ? null : dao().consultarExFormaPorId(flt.getIdFormaDoc()).getDescrFormaDoc();
-		String descModelo = flt.getIdMod() == null  || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getNmMod();
+		String descModelo = flt.getIdMod() == null || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getNmMod();
 		String dataInicial = flt.getDtDoc() == null ? null : df.format(flt.getDtDoc());
 		String dataFinal = flt.getDtDocFinal() == null ? null : df.format(flt.getDtDocFinal());
+		String anoEmissao = flt.getAnoEmissao() == null ? null : flt.getAnoEmissao().toString();
+		String numeroExpediente = flt.getNumExpediente() == null ? null : String.format("%05d", flt.getNumExpediente());
+		String lotacaoSubscritor = flt.getLotaSubscritorSelId() == null || flt.getLotaSubscritorSelId() == 0 ? null : daoLot(flt.getLotaSubscritorSelId()).getSiglaLotacao();
 		String acl = "PUBLIC;O" + getTitular().getOrgaoUsuario().getId() + ";L"
 				+ getTitular().getLotacao().getIdInicial() + ";P"
 				+ getTitular().getIdInicial();
@@ -632,7 +635,10 @@ public class ExMobilController extends
 					descEspecie,
 					descModelo,
 					dataInicial, 
-					dataFinal, 
+					dataFinal,
+					anoEmissao,
+					numeroExpediente,
+					lotacaoSubscritor,
 					acl, 
 					page++, 
 					1000));

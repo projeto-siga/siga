@@ -8518,23 +8518,31 @@ public class ExBL extends CpBL {
 			String descEspecie,
 			String descModelo,
 			String dataInicial, 
-			String dataFinal, 
+			String dataFinal,
+			String anoEmissao,
+			String numeroExpediente,
+			String lotacaoSubscritor,
 			String acl, 
 			int page, 
 			int perpage) throws Exception {
 		
 		final SigaHTTP http = new SigaHTTP();
 		String url = Prop.get("/xjus.url");
-		
-		String facets = (acronimoOrgaoUsu == null ? "" : ("facet_orgao:" + acronimoOrgaoUsu)) +
-						(descEspecie == null ? "" : (",facet_especie:" + descEspecie)) +
-						(descModelo == null ? "" : (",facet_modelo:" + descModelo));
+
+		String facets = ( acronimoOrgaoUsu == null ? "" : ( "facet_orgao:" + acronimoOrgaoUsu ) ) +
+				( descEspecie == null ? "" : ( ",facet_especie:" + descEspecie ) ) +
+				( descModelo == null ? "" : ( ",facet_modelo:" + descModelo ) ) +
+				( anoEmissao == null ? "" : ( ",facet_ano:" + anoEmissao ) ) +
+				( lotacaoSubscritor == null ? "" : ( ",facet_subscritor_lotacao:" + lotacaoSubscritor ) );
 		
 		url += "?filter=" + URLEncoder.encode(filter, "UTF-8") + 
 			   "&facets=" + URLEncoder.encode(facets, "UTF-8") +
 			   "&page=" + page + 
 			   "&perpage=" + perpage;
 
+		if (numeroExpediente != null && !numeroExpediente.isEmpty())
+			url += "&code=" + numeroExpediente;
+				
 		if (dataInicial != null || dataFinal != null)
 			url += "&fromDate=" + ( dataInicial == null ? "" : dataInicial ) +
 					"&toDate=" + ( dataFinal == null ? "" : dataFinal );

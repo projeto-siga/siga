@@ -6,21 +6,12 @@ import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.HttpRequestUtils;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import org.jsoup.Jsoup;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import br.gov.jfrj.siga.uteis.SafeListCustom;
 
 
 /**
@@ -53,13 +44,9 @@ public class RequestParamsCheckInterceptor {
 	private ControllerMethod method;
     
     private Map<String, String[]> parameters;
-    private final Logger logger = LogManager.getLogger(RequestParamsCheckInterceptor.class);
-    private boolean isRequestValid = true;
+   // private final Logger logger = LogManager.getLogger(RequestParamsCheckInterceptor.class);
     
-    private static final String HTML_PATTERN = "<(\"[^\"]*\"|'[^']*'|[^'\">])*>";
-    private Pattern pattern = Pattern.compile(HTML_PATTERN);
     
-
     @SuppressWarnings("unchecked")
 	@AroundCall
     public void intercept(SimpleInterceptorStack stack) {
@@ -67,15 +54,8 @@ public class RequestParamsCheckInterceptor {
     	parameters = request.getParameterMap();
 
 		parameters.forEach((key, value) -> {
-			if (value[0] != null && !"".equals(value[0]) && hasHTMLTags(value[0])) {	
-				if (method.containsAnnotation(RequestParamsPermissiveCheck.class)) 
-					isRequestValid = Jsoup.isValid(value[0],SafeListCustom.relaxedCustom());
-			    else 
-			    	isRequestValid = Jsoup.isValid(value[0],SafeListCustom.simpleText());				
-			}
-			
-			if (!isRequestValid) {
-				logger.warn("Tentativa de Ataque XSS {}. IP de Origem: {}", value[0], HttpRequestUtils.getIpAudit(request));
+			if (!RequestParamsCheck.checkParameter(value[0],method.containsAnnotation(RequestParamsPermissiveCheck.class))) {
+				//logger.warn("Tentativa de Ataque XSS {}. IP de Origem: {}", value[0], HttpRequestUtils.getIpAudit(request));
 				throw new AplicacaoException("Conteúdo inválido. Por favor, revise os valores fornecidos.");
 			}
 		});
@@ -83,15 +63,11 @@ public class RequestParamsCheckInterceptor {
 		stack.next();
     }
     
-    
     @Accepts
     public boolean accepts(ControllerMethod method) {
         return !method.containsAnnotation(RequestParamsNotCheck.class);
     }
     
-    public boolean hasHTMLTags(String text){
-        Matcher matcher = pattern.matcher(text);
-        return matcher.find();
-    }
+
 
 }

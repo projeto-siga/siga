@@ -311,7 +311,10 @@ public class ExMobilController extends
 		try {
 			final ExMobilDaoFiltro flt = createDaoFiltro();
 			//long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,getTitular(), getLotaTitular()));
+
+			pesquisarXjus(flt);
+			Integer tamanhoResultado = flt.getListaIdDoc() == null ? null : flt.getListaIdDoc().size();
+			setTamanho(tamanhoResultado == null ? dao().consultarQuantidadePorFiltroOtimizado(flt, getTitular(), getLotaTitular()) : tamanhoResultado);
 			
 			
 			LocalDate dtIni = null;

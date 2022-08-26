@@ -50,28 +50,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		} catch (NullPointerException e) {
 			// Acontece quando estamos apenas rodando um /api/v1/test
 		}
-		
-		/****Check Request Params****/
-        Class<?> classe = getCtx().getReq().getClass();      
-        Field[] campos = classe.getDeclaredFields();  
-        
-        boolean permissiveCheck = getCtx().getAction().getClass().isAnnotationPresent(RequestParamsPermissiveCheck.class);
-        try {
-	        for (Field campo : campos) {  
-	        	campo.setAccessible(true); 
-	        					
-				if (!RequestParamsCheck.checkParameter(campo.get(getCtx().getReq()),permissiveCheck)) {
-					throw new AplicacaoException("Conteúdo inválido. Por favor, revise os valores fornecidos.");
-				}
-	        }
-        } catch (AplicacaoException e) {
-        	throw e;	
-        } catch (Exception e) {
-        	// Não bloqueia caso não consiga verificar os parametros passados
-        }
-        /********/
-        
-        
+		        
 		if (ctx != null && getCtx().getAction().getClass().isAnnotationPresent(Transacional.class))
 			this.transacional = true;
 
@@ -144,9 +123,10 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	public void assertAcesso(String acesso) throws Exception {
 		getSigaObjects().assertAcesso(acesso);
 	}
-
+	
 	@Override
 	public void onTryBegin() throws Exception {
+		
 		if (!getCtx().getAction().getClass().isAnnotationPresent(AcessoPublico.class)) {
 			try {
 				String token = AuthJwtFormFilter.extrairAuthorization(getCtx().getRequest());
@@ -165,6 +145,9 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 					throw e;
 			}
 		}
+		
+		//Verifica a conformidade dos parâmetros informados antes de continuar
+		checkRequestParams();
 
 		if (ContextoPersistencia.getUserPrincipal() != null)
 			assertAcesso("");
@@ -225,4 +208,24 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		return getSigaObjects().getIdentidadeCadastrante();
 	}
 
+	private void checkRequestParams() throws Exception {
+        Class<?> classe = getCtx().getReq().getClass();      
+        Field[] campos = classe.getDeclaredFields();  
+        
+        boolean permissiveCheck = getCtx().getAction().getClass().isAnnotationPresent(RequestParamsPermissiveCheck.class);
+        try {
+	        for (Field campo : campos) {  
+	        	campo.setAccessible(true); 
+	        					
+				if (!RequestParamsCheck.checkParameter(campo.get(getCtx().getReq()),permissiveCheck)) {
+					throw new SwaggerException("Conteúdo inválido. Por favor, revise os valores fornecidos.", 400, null, getCtx().getReq(), getCtx().getResp(), null);
+				}
+	        }
+        } catch (SwaggerException e) {
+        	throw e;	
+        } catch (Exception e) {
+        	// Não bloqueia caso não consiga verificar os parametros passados
+        }
+	}
+	
 }

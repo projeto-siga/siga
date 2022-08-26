@@ -14,7 +14,7 @@ public enum CpServicosNotificacaoPorEmail {
 			"Será enviado um e-mail quando um documento for tramitado para o seu usuário."),
 	COSSIG ("Fui incluído como cossignatário de um documento", SIGACEMAIL.getSigla() + "-" + "COSSIG", SIGACEMAIL.getChave() + ";" + "COSSIG:Fui incluído como cossignatário de um documento", true, 
 			"Será enviado um e-mail quando o seu usuário for incluído como cossignatário de algum documento assinado."),
-	RESPASS ("Fui incluído como responsável pela assinatura", SIGACEMAIL.getSigla() + "-" + "RESPASS", SIGACEMAIL.getChave() + ";" + "RESPASSI:Fui incluído como responsável pela assinatura", true, 
+	RESPASS ("Fui incluído como responsável pela assinatura", SIGACEMAIL.getSigla() + "-" + "RESPASSI", SIGACEMAIL.getChave() + ";" + "RESPASSI:Fui incluído como responsável pela assinatura", true, 
 			"Será enviado um e-mail quando o seu usuário for adicionado como responsável pela assinatura de um documento finalizado."),
 	EMAILALT ("Meu email foi alterado", SIGACEMAIL.getSigla() + "EMAILALT", "", false, 
 			"Será enviado um e-mail quando seu e-mail for alterado."),

@@ -81,6 +81,8 @@ public class ConfiguracaoNotificarPorEmailController extends SigaSelecionavelCon
 	@Transacional 
 	@Post({"/app/notificarPorEmail/editar"})
 	public void editar (String siglaServ, Integer idSituacao) throws Exception {
+		assertAcesso("CEMAIL:Módulo de notificação por email");
+		
 		CpServico servico = null;
 		DpPessoa pessoa = null;
 		DpLotacao lotacao = null; 

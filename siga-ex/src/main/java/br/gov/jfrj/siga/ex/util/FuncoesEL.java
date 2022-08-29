@@ -1151,7 +1151,7 @@ public class FuncoesEL {
 			final boolean internacional, final double cotacaoDoDolar, final boolean meiaDiariaAPedido, 
 			final boolean prorrogacao, final double valorJaRecebido,
 			final double valorUnitarioDoAuxilioAlimentacao,
-			final double valorUnitarioDoAuxilioTransporte, final double limiteDiario, final String form) {
+			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria, final String form) {
 		Map<String, Object> map = new TreeMap<String, Object>();
 		Utils.mapFromUrlEncodedForm(map, form.getBytes());
 
@@ -1174,7 +1174,7 @@ public class FuncoesEL {
 			return new DiariasDaJusticaFederal().calcular(valorUnitatioDaDiaria, valorUnitarioDaDiariaParaCalculoDoDeslocamento,
 					FaixaEnum.find(faixa), DeslocamentoConjuntoEnum.find(deslocamentoConjunto), 
 					internacional, cotacaoDoDolar, meiaDiariaAPedido, prorrogacao, valorJaRecebido,
-					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, limiteDiario, l);
+					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, tetoDiaria, tetoMeiaDiaria, l);
 		} catch (Exception ex) {
 			log.error(ex);
 			return null;

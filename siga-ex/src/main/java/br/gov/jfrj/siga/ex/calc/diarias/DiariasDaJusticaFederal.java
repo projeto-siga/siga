@@ -218,7 +218,7 @@ public class DiariasDaJusticaFederal {
 			final DeslocamentoConjuntoEnum deslocamentoConjunto, final boolean internacional,
 			final double cotacaoDoDolar, final boolean meiaDiariaAPedido, final boolean prorrogacao,
 			final double valorJaRecebido, final double valorUnitarioDoAuxilioAlimentacao,
-			final double valorUnitarioDoAuxilioTransporte, final double limiteDiario,
+			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria,
 			final List<DiariasDaJusticaFederalParametroTrecho> trechos) {
 		DiariasDaJusticaFederalResultado r = new DiariasDaJusticaFederalResultado();
 		try {
@@ -345,9 +345,9 @@ public class DiariasDaJusticaFederal {
 
 				// Calcula desconto em diarias
 				if (!internacional) {
-					double limiteDeGlosa = limiteDiario;
+					double limiteDeGlosa = tetoDiaria;
 					if (meiaDiaria)
-						limiteDeGlosa /= 2;
+						limiteDeGlosa = tetoMeiaDiaria;
 					if (limiteDeGlosa < dia.subtotalBruto) {
 						dia.descontoDeTeto = dia.subtotalBruto - limiteDeGlosa;
 					}

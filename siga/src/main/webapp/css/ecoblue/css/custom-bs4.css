@@ -763,3 +763,15 @@ div.divDoc p {
     padding-bottom: 0.3rem !important;
     padding-left: 0.3rem !important;
 }
+
+table.dac-table {
+  	width:100%;
+}
+
+table.doc-table th {
+	background-color: #ddd !important;
+}
+
+table.doc-table, table.doc-table th, table.doc-table td {
+  	border: 1px solid;
+}

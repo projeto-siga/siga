@@ -1896,14 +1896,13 @@ CKEDITOR.replace( '${var}',
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-
-        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
         <span style="font-size: ${tl}"> ${texto!} </span>
-                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
-        [/@estiloBrasaoCentralizado]
+        <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+    [/@estiloBrasaoCentralizado]
 [/#macro]
 
-[#macro requerimento texto fecho="" tamanhoLetra="Normal" _tipo=""]
+[#macro requerimento texto fecho="" tamanhoLetra="Normal" _tipo="" formatarOrgao=false]
 [#--
   Aplicação: Formatar documento para o tipo Formulário
   Autor:     André
@@ -1918,11 +1917,12 @@ CKEDITOR.replace( '${var}',
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-
-        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false dataAntesDaAssinatura=true]
-        <span style="font-size: ${tl}"> ${texto!} </span>
-                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
-        [/@estiloBrasaoCentralizado]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=formatarOrgao dataAntesDaAssinatura=true]
+    <span style="font-size: ${tl}"> ${texto!} </span>
+    [#if fecho?has_content]
+    <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+    [/#if]
+    [/@estiloBrasaoCentralizado]
 [/#macro]
 
 [#macro requerimento2 texto _tipo="REQUERIMENTO"]
@@ -4136,7 +4136,6 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro requerimentoTrf texto fecho="" tamanhoLetra="Normal" _tipo="" vocat=""]
-
     [#if tamanhoLetra! == "Normal"]
         [#assign tl = "11pt" /]
     [#elseif tamanhoLetra! == "Pequeno"]
@@ -4146,14 +4145,16 @@ Pede deferimento.</span><br/><br/><br/>
     [#else]     
         [#assign tl = "11pt" /]
     [/#if]
-
-[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
-    [@br/]
-    <center><b><p>${vocat!}</p></b></center>
-    <span style="font-size: tl"> ${texto!}</span>
-    <p style="align: justify; TEXT-INDENT: 0cm">${fecho}</p>
-[/@estiloBrasaoCentralizadoTrf]
-
+    PASSEI POR AQUI!
+	[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
+		[#if vocat?has_content]
+	    	<center><b><p>${vocat!}</p></b></center>
+	    [/#if]
+	    <div style="font-size: tl">${texto!}</div>
+		[#if fecho?has_content]
+	    	<p style="align: justify; TEXT-INDENT: 0cm">${fecho}</p>
+	    [/#if]
+	[/@estiloBrasaoCentralizadoTrf]
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPaginaTrf tipo=""]
@@ -4340,7 +4341,7 @@ Pede deferimento.</span><br/><br/><br/>
 	</div>	    
 [/#macro]
 
-[#macro webservice var url timeout cache=""]
+[#macro webservice var url timeout cache="" compactarXml=false]
   [#if cache?has_content]
     <input type="hidden" name="vars" value="${cache}" />
   [/#if]
@@ -4349,7 +4350,7 @@ Pede deferimento.</span><br/><br/><br/>
     <input type="hidden" name="${cache}" value="${str}">
   [#else]
     [#local payload][#nested][/#local]
-    [#local str=func.webservice(url,payload,timeout) /]
+    [#local str=func.webservice(url,payload,timeout,compactarXml) /]
     <input type="hidden" name="${cache}" value="${str?url('UTF-8')}">
   [/#if]
   [#if str?has_content]

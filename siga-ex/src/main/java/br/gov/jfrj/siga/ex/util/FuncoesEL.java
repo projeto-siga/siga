@@ -941,13 +941,18 @@ public class FuncoesEL {
 		return null;
 	}
 
-	public static String webservice(String url, String corpo, Integer timeout) {
+	public static String webservice(String url, String corpo, Integer timeout, boolean compactarXml) {
 		try {
 			HashMap<String, String> headers = new HashMap<String, String>();
 			if (corpo != null && corpo.isEmpty())
 				corpo = null;
-			if (corpo != null)
+			if (corpo != null) {
 				headers.put("Content-Type", "text/xml;charset=UTF-8");
+				if (compactarXml) {
+					corpo = corpo.trim();
+					corpo = corpo.replaceAll(">\\s+", ">").replaceAll("\\s+<", "<");
+				}
+			}
 			String auth = (String) resource("/siga.freemarker.webservice.password");
 			if (auth != null)
 				headers.put("Authorization", auth);

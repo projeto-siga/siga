@@ -200,7 +200,10 @@ public class Prop {
 		provider.addPrivateProperty("/xjus.password", null);
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
-		
+
+		// Propriedade que controla o acesso aos métodos de exportação para BI da API REST
+		provider.addPrivateProperty("/siga.bi.password", null);
+
 		/* Services
 		 * 
 		 * Declaração dos serviços e end-points SOAP e RESTful usados pelo back-end nos módulos

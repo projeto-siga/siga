@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.cp.model.enm;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum CpServicosNotificacaoPorEmail {
@@ -67,5 +70,12 @@ public enum CpServicosNotificacaoPorEmail {
 	public static CpSituacaoDeConfiguracaoEnum getById(Integer id) {
 		return IEnumWithId.getEnumFromId(id, CpSituacaoDeConfiguracaoEnum.class);
 	}
+	
+	
+    public static Optional<CpServicosNotificacaoPorEmail> getBySigla(String sigla) {
+        return Arrays.stream(CpServicosNotificacaoPorEmail.values())
+            .filter(servico -> servico.sigla.equals(sigla))
+            .findFirst();
+    }
 	
 }

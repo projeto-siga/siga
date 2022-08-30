@@ -72,7 +72,6 @@ public class FreemarkerIndent {
 		while (matcher.find()) {
 			String ftl = matcher.group(1);
 			lftl.add(ftl);
-			System.out.println(ftl);
 			boolean open = (ftl.startsWith("[#") || ftl.startsWith("[@"))
 					&& !ftl.endsWith("/]");
 			boolean close = ftl.startsWith("[/");

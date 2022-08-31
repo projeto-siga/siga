@@ -262,11 +262,9 @@ public class ExAssinadorExternoController extends ExController {
 			
 			String sigla = id2sigla(id) + ".pdf";
 			ExMobil mob = Documento.getMobil(sigla);
-			ExMovimentacao mov = Documento.getMov(mob, sigla);
 			ExDocumento doc = mob.getDoc();	
 			
-			DpPessoa cadastrante = obterCadastrante(null, mob, mov);
-			Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc,cadastrante,cadastrante);
+			Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc,null,null);
 
 			PdfData pdfd = getPdf(id);
 

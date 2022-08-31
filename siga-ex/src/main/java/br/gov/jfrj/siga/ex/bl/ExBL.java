@@ -8607,7 +8607,7 @@ public class ExBL extends CpBL {
 
 			if (! dataAtualSemTempo.equals(dataPrimeiraAssinatura)) {
 				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
-				gravar(cadastrante, titular, titular.getLotacao(), doc);
+				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
 			}
 		}
 	}

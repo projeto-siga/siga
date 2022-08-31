@@ -770,11 +770,15 @@ public class ExDao extends CpDao {
 				queryExportacao = em().createNativeQuery("select doc.*, mob.*, label.* from corporativo.cp_marca label "
 						+ " inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref "
 						+ " inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc "
-						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )","ExportacaoCsvResults");				
+						+ " where label.id_marca in ( "
+						+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )"
+						+ " order by doc.dtDoc desc, doc.idDoc desc", "ExportacaoCsvResults");				
 			} else {
 				queryExportacao = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-						+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
+						+ " where label.idMarca in ("
+						+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + ")"
+						+ " order by doc.dtDoc desc, doc.idDoc desc");
 				
 			}
 

@@ -768,8 +768,9 @@ table.dac-table {
   	width:100%;
 }
 
-table.doc-table th {
+table.doc-table th, table.doc-table tfoot {
 	background-color: #ddd !important;
+	font-weight: bold;
 }
 
 table.doc-table, table.doc-table th, table.doc-table td {

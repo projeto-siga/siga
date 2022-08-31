@@ -134,35 +134,66 @@ public class DiariasDaJusticaFederal {
 	public static class DiariasDaJusticaFederalResultado {
 		public ArrayList<DiariasDaJusticaFederalResultadoDiario> dias = new ArrayList<>();
 		public boolean prorrogacao;
-		public double totalDoDescontoDeTeto;
-		public double total;
+
+		public double totalDeDiariasBruto;
+		public double totalDeAcrescimoDeDeslocamento;
+		public double totalDeDescontoDeAuxilioAlimentacao;
+		public double totalDeDescontoDeAuxilioTransporte;
+		public double subtotalBruto;
+		public double totalDeDescontoDeTeto;
+		public double subtotalLiquido;
 		public double valorJaRecebido;
-		public double totalFinal;
+		public double total;
 		public String mensagemDeErro;
 
 		public ArrayList<DiariasDaJusticaFederalResultadoDiario> getDias() {
 			return dias;
 		}
 
-		public double getTotal() {
-			return total;
-		}
-
-		public double getTotalDoDescontoDeTeto() {
-			return totalDoDescontoDeTeto;
-		}
-
 		public boolean isProrrogacao() {
 			return prorrogacao;
+		}
+
+		public double getTotalDeDiariasBruto() {
+			return totalDeDiariasBruto;
+		}
+
+		public double getTotalDeAcrescimoDeDeslocamento() {
+			return totalDeAcrescimoDeDeslocamento;
+		}
+
+		public double getTotalDeDescontoDeAuxilioAlimentacao() {
+			return totalDeDescontoDeAuxilioAlimentacao;
+		}
+
+		public double getTotalDeDescontoDeAuxilioTransporte() {
+			return totalDeDescontoDeAuxilioTransporte;
+		}
+
+		public double getSubtotalBruto() {
+			return subtotalBruto;
+		}
+
+		public double getTotalDeDescontoDeTeto() {
+			return totalDeDescontoDeTeto;
+		}
+
+		public double getSubtotalLiquido() {
+			return subtotalLiquido;
 		}
 
 		public double getValorJaRecebido() {
 			return valorJaRecebido;
 		}
 
-		public double getTotalFinal() {
-			return totalFinal;
+		public double getTotal() {
+			return total;
 		}
+
+		public String getMensagemDeErro() {
+			return mensagemDeErro;
+		}
+
 	}
 
 	public static class DiariasDaJusticaFederalResultadoDiario {
@@ -359,15 +390,22 @@ public class DiariasDaJusticaFederal {
 				r.dias.add(dia);
 
 				// Calcula totalizadores
-				r.totalDoDescontoDeTeto += dia.descontoDeTeto;
+				r.totalDeDiariasBruto += dia.diaria;
+				r.totalDeAcrescimoDeDeslocamento += dia.acrescimoDeDeslocamento;
+				r.totalDeDescontoDeAuxilioAlimentacao += dia.descontoDeAuxilioAlimentacao;
+				r.totalDeDescontoDeAuxilioTransporte += dia.descontoDeAuxilioTransporte;
+				r.subtotalBruto += dia.subtotalBruto;
+				r.totalDeDescontoDeTeto += dia.descontoDeTeto;
+				r.subtotalLiquido += dia.subtotalLiquido;
+				r.totalDeDescontoDeTeto += dia.descontoDeTeto;
 				r.total += dia.subtotalLiquido;
 			}
 		} catch (AplicacaoException ex) {
 			r.mensagemDeErro = ex.getMessage();
 		}
-		r.totalFinal = r.total;
+		r.total = r.total;
 		if (prorrogacao && valorJaRecebido > 0.001) {
-			r.totalFinal = r.total - valorJaRecebido;
+			r.total = r.total - valorJaRecebido;
 			r.valorJaRecebido = valorJaRecebido;
 			r.prorrogacao = true;
 		}

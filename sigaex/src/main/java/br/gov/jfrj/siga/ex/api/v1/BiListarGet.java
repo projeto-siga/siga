@@ -58,8 +58,6 @@ public class BiListarGet implements IBiListarGet {
 						"Propriedade siga.bi.password não confere com o valor recebido no cabeçalho Authorization");
 		}
 
-		final ExMobilDaoFiltro builder = new ExMobilDaoFiltro();
-
 		// Modelo
 		ExModelo modelo = null;
 		if (req.modelo != null && !req.modelo.trim().isEmpty()) {
@@ -67,31 +65,6 @@ public class BiListarGet implements IBiListarGet {
 			if (modelo == null)
 				throw new SwaggerException("Não existe modelo com o nome especificado (" + req.modelo + ")", 400, null,
 						req, resp, null);
-			builder.setIdMod(modelo.getHisIdIni());
-			builder.setIdFormaDoc(modelo.getExFormaDocumento().getId());
-		}
-
-		// Lota Subscritor
-		if (req.lotaSubscritor != null && !req.lotaSubscritor.trim().isEmpty()) {
-			final DpLotacao fltLotaSubscritor = new DpLotacao();
-			fltLotaSubscritor.setSigla(req.lotaSubscritor.toUpperCase());
-			DpLotacao lotaSubscritor = CpDao.getInstance().consultarPorSigla(fltLotaSubscritor);
-			if (lotaSubscritor == null)
-				throw new SwaggerException("Nenhuma lotação foi encontrada contendo a sigla informada.", 400, null, req,
-						resp, null);
-			builder.setLotaSubscritorSelId(lotaSubscritor.getHisIdIni());
-		}
-
-		// Marcador
-		if (req.marcador != null && !req.marcador.trim().isEmpty()) {
-			List<CpMarcador> listMarcador = ExDao.getInstance().consultaCpMarcadorAtivoPorNome(req.marcador, null);
-			if (listMarcador.size() > 0) {
-				CpMarcador marcador = listMarcador.get(0);
-				builder.setUltMovIdEstadoDoc(marcador.getHisIdIni());
-			} else {
-				throw new SwaggerException("Não existe marcador com o nome especificado (" + req.marcador + ")", 400,
-						null, req, resp, null);
-			}
 		}
 
 		// Prepara a lista ordenada de campos e o mapa de títulos dos campos
@@ -113,33 +86,22 @@ public class BiListarGet implements IBiListarGet {
 		//
 		SortedSet<String> todosOsCampos = new TreeSet<>();
 		List<DocData> lista = new ArrayList<>();
-		int i = 0, t = 0;
 		int LINES = 1000;
-		while (true) {
-			List<Object[]> l = ExDao.getInstance().consultarPorFiltro(builder, i, LINES);
-			if (l.isEmpty()) {
-				if (i == 0)
-					throw new SwaggerException("Nenhum documento foi encontrado com os argumentos informados.", 404,
-							null, req, resp, null);
-				else
-					break;
+		List<ExDocumento> l = ExDao.getInstance().consultarDocumentosPorModeloEData(modelo, null, null);
+		if (l.isEmpty())
+			throw new SwaggerException("Nenhum documento foi encontrado com os argumentos informados.", 404, null, req,
+					resp, null);
+		for (ExDocumento doc : l) {
+			DocData dd = new DocData();
+			dd.codigo = doc.getCodigo();
+			for (Entry<String, String> entry : doc.getForm().entrySet()) {
+				if (entry.getValue() == null || entry.getValue().trim().isEmpty())
+					continue;
+				String key = "campo_" + Texto.slugify(entry.getKey(), true, true);
+				dd.campo.put(key, entry.getValue());
+				todosOsCampos.add(key);
 			}
-			for (Object[] o : l) {
-				ExDocumento doc = (ExDocumento) o[0];
-				ExMobil mob = (ExMobil) o[1];
-				t++;
-				DocData dd = new DocData();
-				dd.codigo = doc.getCodigo();
-				for (Entry<String, String> entry : doc.getForm().entrySet()) {
-					if (entry.getValue() == null || entry.getValue().trim().isEmpty())
-						continue;
-					String key = "campo_" + Texto.slugify(entry.getKey(), true, true);
-					dd.campo.put(key, entry.getValue());
-					todosOsCampos.add(key);
-				}
-				lista.add(dd);
-			}
-			i += l.size();
+			lista.add(dd);
 		}
 
 		// Prepara a lista ordenada de campos e o mapa de títulos dos campos quando o

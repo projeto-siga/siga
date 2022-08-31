@@ -1686,11 +1686,6 @@ public class ExBL extends CpBL {
 	
 				mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " [Digital]");
 				
-				if (doc.getDtPrimeiraAssinatura() == null) {
-					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
-					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
-				}
-				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -1933,6 +1928,9 @@ public class ExBL extends CpBL {
 			final ExMovimentacao mov;
 			try {
 				iniciarAlteracao();
+				
+				//Atualiza data da primeira assinatura antes de prosseguir com o Hash de Auditoria
+				atualizaDataPrimeiraAssinatura(doc,cadastrante,titular);
 	
 				// Hash de auditoria
 				//
@@ -1947,11 +1945,6 @@ public class ExBL extends CpBL {
 				String cpf = Long.toString(assinante.getCpfPessoa());
 				acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
 	
-				if (doc.getDtPrimeiraAssinatura() == null) {
-					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
-					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
-				}
-				
 				gravarMovimentacao(mov);
 	
 				concluirAlteracaoDocComRecalculoAcesso(mov);
@@ -8336,6 +8329,31 @@ public class ExBL extends CpBL {
 
 	public String obterNumeracaoExpediente(Long idOrgaoUsuario, Long idFormaDocumento, Long anoEmissao) throws Exception {
 		return Service.getExService().obterNumeracaoExpediente(idOrgaoUsuario, idFormaDocumento, anoEmissao);
+	}
+	
+	/*
+	 * 
+	 * Caso não tenha registro de Assinatura, processa a data da primeira assinatura com re-processamento do documento
+	   antes de tirar o Hash do documento para Assinatura Digital do Hash
+	 * 
+	 * Data será atualizada caso não tenha registros de assinatura e caso ja haja data, se forem iguais não atualiza para evitar
+	 * processamentos adicionais
+	 * 
+	 * */
+
+	public void atualizaDataPrimeiraAssinatura(ExDocumento doc, DpPessoa cadastrante, DpPessoa titular) throws Exception {
+
+		Date dataPrimeiraAssinatura = doc.getDtPrimeiraAssinatura();
+		if (dataPrimeiraAssinatura == null || doc. getAssinaturasDigitais().isEmpty()) {
+
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			Date dataAtualSemTempo = sdf.parse(sdf.format(CpDao.getInstance().dt()));
+
+			if (! dataAtualSemTempo.equals(dataPrimeiraAssinatura)) {
+				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
+				gravar(cadastrante, titular, titular.getLotacao(), doc);
+			}
+		}
 	}
 
 	public List<Long> pesquisarXjus(

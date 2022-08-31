@@ -379,24 +379,18 @@ public class ExMobilController extends
 					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
 			
-			Set<?> items = new HashSet<>(lista); 
 			
-			InputStream inputStream = null;
 			StringBuffer texto = new StringBuffer();
 			texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.lineSeparator());
 			texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.lineSeparator());
 			
 			
-			ExDocumento e = new ExDocumento();
-			ExMobil m = new ExMobil();
-			ExMarca ma = new ExMarca();
-			String descricao = "";
-			String marcadorFormatado = "";
-			
-			for (Object object : items) {
-				e = (ExDocumento)(((Object[])object)[0]);
-				m = (ExMobil)(((Object[])object)[1]);
-				ma = (ExMarca)(((Object[])object)[2]);
+			for (Object object : lista) {
+				ExDocumento e = (ExDocumento)(((Object[])object)[0]);
+				ExMobil m = (ExMobil)(((Object[])object)[1]);
+				ExMarca ma = (ExMarca)(((Object[])object)[2]);
+				String descricao;
+				String marcadorFormatado;
 	
 				texto.append(m.getDnmSigla()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
@@ -458,7 +452,7 @@ public class ExMobilController extends
 				texto.append(";");
 				texto.append(System.lineSeparator());
 			}
-			inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
+			InputStream inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
 			
 			return new InputStreamDownload(inputStream, "text/csv", "documentos.csv");	
 

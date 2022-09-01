@@ -1624,12 +1624,16 @@ public class ExDocumentoController extends ExController {
 		final ExBL exBL = ex.getBL();	
 		
 		if (!exDocumentoDTO.getCriandoSubprocesso() 
-				&& exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
-					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null)
-				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
-						+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
-						+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".", 
-						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto());
+				&& exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null) {
+			ExMobil mobPai = exDocumentoDTO.getMobilPaiSel().getObjeto();
+			if (mobPai != null) {
+				if (mobPai.isGeral() && mobPai.doc().isProcesso())
+					mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
+				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + mobPai.getSigla()
+						+ " pelo usuário " + getTitular().getSigla() + ".", 
+						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), mobPai);
+			}
+		}
 		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);

@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;

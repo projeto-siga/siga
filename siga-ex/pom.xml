@@ -134,10 +134,6 @@
 			<artifactId>kxml2</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
-			<artifactId>Tidy</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
 		</dependency>

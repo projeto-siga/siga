@@ -1792,8 +1792,15 @@ public class ExBL extends CpBL {
 
 	public ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
 		ValidateResponse validateresp = bluc.validate(validatereq);
-		if (validateresp.getErrormsg() != null)
-			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+		if (validateresp.getErrormsg() != null) {
+			if (Prop.isGovSP()) { 
+				throw new AplicacaoException("BluC não conseguiu validar a assinatura digital.");
+			} else {
+				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+			}
+			
+		}
+			
 		if (!"GOOD".equals(validateresp.getStatus()) && !"UNKNOWN".equals(validateresp.getStatus()))
 			throw new Exception("BluC não validou a assinatura digital. " + validateresp.getStatus());
 		return validateresp;

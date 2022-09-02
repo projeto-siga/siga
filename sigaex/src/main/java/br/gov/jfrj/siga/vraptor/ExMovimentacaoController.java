@@ -720,6 +720,7 @@ public class ExMovimentacaoController extends ExController {
 			autenticando = false;
 		boolean previamenteAssinado = !doc.isPendenteDeAssinatura();
 		boolean assinando = !autenticando;
+<<<<<<< HEAD
 		
 		if (autenticando && !permiteAutenticar(doc)) {				
 			throw new AplicacaoException(
@@ -734,6 +735,8 @@ public class ExMovimentacaoController extends ExController {
 		 */
 		if(doc.getDtPrimeiraAssinatura() == null)
 			doc.setDtPrimeiraAssinatura(dao.dt());
+=======
+>>>>>>> 05ed405d52... Encapsula, Unifica e Corrige Atualização da Data da Primeira Assinatura
 
 		if (devePreAssinar(doc, previamenteAssinado)) {
 			Ex.getInstance().getBL()
@@ -752,12 +755,9 @@ public class ExMovimentacaoController extends ExController {
 			afTramite.fixo = true;
 		}
 		afTramite.explicacao = AcaoVO.Helper.produzirExplicacao(podeTramitarPosAssinatura, podeTramitar);
-		if(Prop.isGovSP()
-				&& (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))
-				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA).isEmpty()
-				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO).isEmpty()) {
-			Ex.getInstance().getBL().gravar(getCadastrante(), getTitular(), getLotaTitular(), doc);
-		}
+		
+		Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc, getCadastrante(), getTitular());
+
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("titular", this.getTitular());

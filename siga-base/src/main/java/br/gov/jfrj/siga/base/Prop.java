@@ -263,10 +263,12 @@ public class Prop {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario", null);
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url", null);
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
 		} else {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket");
 		}
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");

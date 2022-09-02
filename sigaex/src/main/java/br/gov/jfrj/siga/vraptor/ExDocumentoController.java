@@ -56,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Controller;
@@ -2685,10 +2686,8 @@ public class ExDocumentoController extends ExController {
 								parametro = parametro.replaceAll(m, "");
 						}
 						if (!FuncoesEL.contemTagHTML(parametro)) {
-							if (parametro.contains("\"")) {
-								parametro = parametro.replace("\"", "&quot;");
-								setParam(s, parametro);
-							}
+							parametro = StringEscapeUtils.escapeHtml4(parametro);
+							setParam(s, parametro);
 						}
 
 						baos.write(URLEncoder.encode(parametro, "iso-8859-1")

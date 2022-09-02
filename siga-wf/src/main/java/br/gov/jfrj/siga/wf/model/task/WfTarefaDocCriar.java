@@ -46,7 +46,7 @@ public class WfTarefaDocCriar extends
 
 		Boolean finalizar = "FINALIZAR".equals(td.getParam());
 		if (finalizar && td.getRefId2() == null)
-			throw new Exception("preenchimento automático deve ser informado");
+			throw new Exception("preenchimento automático deve ser informado para que seja possível finalizar a elaboração do documento");
 
 		String nomePreenchimento = null;
 		if (td.getRefId2() != null)

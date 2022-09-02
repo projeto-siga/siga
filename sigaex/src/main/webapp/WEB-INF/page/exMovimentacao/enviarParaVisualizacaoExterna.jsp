@@ -114,7 +114,7 @@
                 </div>
             </div>
             <form name="frm" action="${pageContext.request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar"
-                  method="POST">
+                  method="post">
                 <input type="hidden" name="sigla" value="${sigla}" />
                 <input type="hidden" name="cod" value="${cod}" />
                 <input type="hidden" name="url" value="${url}" />

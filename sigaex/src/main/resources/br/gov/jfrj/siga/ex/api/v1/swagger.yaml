@@ -2500,9 +2500,12 @@ paths:
           schema:
             type: object
             properties:
-              sigla:
-                description: Sigla do documento assinado
+              idDoc:
+                description: Id do documento
                 type: string
+              idMov:
+                description: Id da movimentação da assinatura válida
+                type: string  
               status:
                 type: string
                 default: "ERRO!"  

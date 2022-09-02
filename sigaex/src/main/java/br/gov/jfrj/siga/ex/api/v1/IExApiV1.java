@@ -1488,7 +1488,22 @@ public interface IExApiV1 {
 
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
+	
+	public interface IDocumentosIdVerificarAssinaturaGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String id;
+			public boolean assinaturaDigital;
+		}
 
+		public static class Response implements ISwaggerResponse {
+			public String idDoc;
+			public String idMov;
+			public String status;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+	
 	public interface IDocumentosLocalizarMaisRecenteGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String modelo;

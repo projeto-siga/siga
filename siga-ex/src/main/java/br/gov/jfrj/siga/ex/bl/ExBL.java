@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
@@ -8645,7 +8646,9 @@ public class ExBL extends CpBL {
 			
 			if (! dataAtualSemTempo.equals(dataPrimeiraAssinatura)) {
 				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
-				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+				if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
+					gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+				}
 			}
 		}
 	}

@@ -719,12 +719,6 @@ public class ExMovimentacaoController extends ExController {
 		
 		boolean previamenteAssinado = !doc.isPendenteDeAssinatura();
 		boolean assinando = !autenticando;
-				
-		/*
-		 * 16/01/2020 - recebendo a data da assinatura
-		 */
-		if(doc.getDtPrimeiraAssinatura() == null)
-			doc.setDtPrimeiraAssinatura(dao.dt());
 
 		if (devePreAssinar(doc, previamenteAssinado)) {
 			Ex.getInstance().getBL()
@@ -743,12 +737,9 @@ public class ExMovimentacaoController extends ExController {
 			afTramite.fixo = true;
 		}
 		afTramite.explicacao = AcaoVO.Helper.produzirExplicacao(podeTramitarPosAssinatura, podeTramitar);
-		if(Prop.isGovSP()
-				&& (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))
-				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_COM_SENHA).isEmpty()
-				&& doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO).isEmpty()) {
-			Ex.getInstance().getBL().gravar(getCadastrante(), getTitular(), getLotaTitular(), doc);
-		}
+		
+		Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc, getCadastrante(), getTitular());
+
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("titular", this.getTitular());

@@ -212,6 +212,9 @@ public class Prop {
 		// Propriedade que controla o acesso aos métodos de exportação para BI da API REST
 		provider.addPrivateProperty("/siga.bi.password", null);
 
+		// Propriedade que controla o acesso ao método de conferência de assinaturas de Documentos da API REST
+		provider.addPrivateProperty("/sigaex.auditoria.assinaturas.password", null);
+
 		/* Services
 		 * 
 		 * Declaração dos serviços e end-points SOAP e RESTful usados pelo back-end nos módulos

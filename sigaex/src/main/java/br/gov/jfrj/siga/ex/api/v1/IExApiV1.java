@@ -1587,7 +1587,7 @@ public interface IExApiV1 {
 
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
 	}
-	
+
 	public interface INumeracaoExpedientePost extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String siglaorgao;
@@ -1612,6 +1612,70 @@ public interface IExApiV1 {
 		public static class Response implements ISwaggerResponse {
 			public String sequenciagenerica;
 			public String digitoverificador;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
+	public interface IBiListarGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String modelo;
+			public String lotaSubscritor;
+			public String marcador;
+			public String dataMin;
+			public String dataMax;
+			public String campos;
+			public String delimitador;
+			public String quebraDeLinha;
+		}
+
+		public static class Response implements ISwaggerResponse, ISwaggerResponseFile {
+			public String contenttype = "text/csv";
+			public String contentdisposition = "attachment";
+			public Long contentlength;
+			public InputStream inputstream;
+			public Map<String, List<String>> headerFields;
+
+			public String getContenttype() {
+				return contenttype;
+			}
+
+			public void setContenttype(String contenttype) {
+				this.contenttype = contenttype;
+			}
+
+			public String getContentdisposition() {
+				return contentdisposition;
+			}
+
+			public void setContentdisposition(String contentdisposition) {
+				this.contentdisposition = contentdisposition;
+			}
+
+			public Long getContentlength() {
+				return contentlength;
+			}
+
+			public void setContentlength(Long contentlength) {
+				this.contentlength = contentlength;
+			}
+
+			public InputStream getInputstream() {
+				return inputstream;
+			}
+
+			public void setInputstream(InputStream inputstream) {
+				this.inputstream = inputstream;
+			}
+
+			public Map<String, List<String>> getHeaderFields() {
+				return headerFields;
+			}
+
+			public void setHeaderFields(Map<String, List<String>> headerFields) {
+				this.headerFields = headerFields;
+			}
+
 		}
 
 		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;

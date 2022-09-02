@@ -37,6 +37,8 @@ tags:
     description: Informações sobre Modelos para a Criação de Documentos
   - name: classificacao
     description: Classificações Documentais
+  - name: bi
+    description: Inteligência de Negócios
   - name: utils
     description: Utilitários
     
@@ -2672,6 +2674,72 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /bi/listar:
+    get:
+      summary: Listar documentos e seus dados
+      tags: [bi]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: modelo
+          in: query
+          description: Nome do modelo
+          required: false
+          type: string
+        - name: lotaSubscritor
+          in: query
+          description: Sigla da lotação do subscritor
+          required: false
+          type: string
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+        - name: dataMin
+          in: query
+          description: Data mínima documento (formato aaaa-mm-dd, inclusive)
+          required: false
+          type: string
+        - name: dataMax
+          in: query
+          description: Data máxima do documento (exclusive)
+          required: false
+          type: string
+        - name: campos
+          in: query
+          description: Campos (default é todos)
+          required: false
+          type: string
+        - name: delimitador
+          in: query
+          description: Delimitador (default é vírgula)
+          required: false
+          type: string
+        - name: quebraDeLinha
+          in: query
+          description: Quebra de Linha (default é CRLF)
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: text/csv
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
             
 ################################################################################
 #                                     Definitions                              #

@@ -203,7 +203,7 @@ public class MontadorQueryNative implements IMontadorQuery {
 			sbf.append(" and (");
 			
 			for(int i=0; i <= flt.getListaIdDoc().size()/1000; i++)
-				sbf.append(" doc.id_doc = :listaIdDoc" + i + " or");
+				sbf.append(" doc.id_doc IN (:listaIdDoc" + i + ") or");
 			
 			sbf.delete(sbf.length()-3, sbf.length()).append(")");
 		}

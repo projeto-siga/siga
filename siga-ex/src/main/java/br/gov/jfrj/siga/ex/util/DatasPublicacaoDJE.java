@@ -111,7 +111,7 @@ public class DatasPublicacaoDJE {
 			corpo.append("</soapenv:Body>");
 			corpo.append("</soapenv:Envelope>");
 			
-			String retorno = FuncoesEL.webservice(Prop.get("dje.servidor.data.disponivel"), corpo.toString(), 6000);
+			String retorno = FuncoesEL.webservice(Prop.get("dje.servidor.data.disponivel"), corpo.toString(), 6000, false);
 			String tagDataInicial = "<ProximaDataDisponivelResult>";
 			String tagDataFinal = "</ProximaDataDisponivelResult>";
 			String proximaDataDisponibilizacaoString = null; 

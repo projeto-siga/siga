@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
@@ -10,7 +9,6 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 import java.util.Set;
 
-@AcessoPublico
 public class DocumentosIdVerificarAssinaturaGet implements IExApiV1.IDocumentosIdVerificarAssinaturaGet {
 
     @Override

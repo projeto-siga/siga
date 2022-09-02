@@ -2484,6 +2484,8 @@ paths:
     get:
       description: Verificar assinatura do documento
       tags: [ consulta ]
+      security:
+        - Bearer: [ ]
       parameters:
         - name: id
           in: path

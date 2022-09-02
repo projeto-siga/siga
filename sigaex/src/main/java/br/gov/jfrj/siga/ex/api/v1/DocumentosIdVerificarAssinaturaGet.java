@@ -31,11 +31,12 @@ public class DocumentosIdVerificarAssinaturaGet implements IExApiV1.IDocumentosI
 
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(exTipoDeAssinatura);
         
-        resp.id = req.id;
+        resp.idDoc = req.id;
         
         try {
             for (ExMovimentacao mov : movs) {
-                if (mov.assertAssinaturaValida() != null) {
+                if (mov.assertAssinaturaValida() != null && mov.assertAssinaturaValida().contains("OK")) {
+                    resp.idMov = mov.getIdMov().toString();
                     resp.status = "Ok";
                     return;
                 }

@@ -1496,7 +1496,8 @@ public interface IExApiV1 {
 		}
 
 		public static class Response implements ISwaggerResponse {
-			public String id;
+			public String idDoc;
+			public String idMov;
 			public String status;
 		}
 

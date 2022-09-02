@@ -1156,6 +1156,7 @@ public class FuncoesEL {
 		Utils.mapFromUrlEncodedForm(map, form.getBytes());
 
 		List<DiariasDaJusticaFederalParametroTrecho> l = new ArrayList<>();
+		List<LocalDate> feriados = new ArrayList<>();
 
 		if (map != null) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
@@ -1168,13 +1169,16 @@ public class FuncoesEL {
 				t.semDespesasDeHospedagem = "Sim".equals((String) map.get("sem_despesas_de_hospedagem" + i));
 				l.add(t);
 			}
+			for (int i = 1; map.containsKey("feriado" + i); i++) {
+				feriados.add(LocalDate.parse((String) map.get("feriado" + i), formatter));
+			}
 		}
 		
 		try {
 			return new DiariasDaJusticaFederal().calcular(valorUnitatioDaDiaria, valorUnitarioDaDiariaParaCalculoDoDeslocamento,
 					FaixaEnum.find(faixa), DeslocamentoConjuntoEnum.find(deslocamentoConjunto), 
 					internacional, cotacaoDoDolar, meiaDiariaAPedido, prorrogacao, valorJaRecebido,
-					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, tetoDiaria, tetoMeiaDiaria, l);
+					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, tetoDiaria, tetoMeiaDiaria, l, feriados);
 		} catch (Exception ex) {
 			log.error(ex);
 			return null;

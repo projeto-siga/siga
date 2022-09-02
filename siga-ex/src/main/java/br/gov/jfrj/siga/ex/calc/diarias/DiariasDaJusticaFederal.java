@@ -250,7 +250,7 @@ public class DiariasDaJusticaFederal {
 			final double cotacaoDoDolar, final boolean meiaDiariaAPedido, final boolean prorrogacao,
 			final double valorJaRecebido, final double valorUnitarioDoAuxilioAlimentacao,
 			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria,
-			final List<DiariasDaJusticaFederalParametroTrecho> trechos) {
+			final List<DiariasDaJusticaFederalParametroTrecho> trechos, final List<LocalDate> feriados) {
 		DiariasDaJusticaFederalResultado r = new DiariasDaJusticaFederalResultado();
 		try {
 			if (trechos == null)
@@ -363,7 +363,8 @@ public class DiariasDaJusticaFederal {
 				// ao auxílio-transporte e à indenização de transporte a que fizer jus o
 				// magistrado ou servidor, exceto aquelas eventualmente pagas em fins de semana
 				// e feriados.
-				if (d.getDayOfWeek() != DayOfWeek.SATURDAY && d.getDayOfWeek() != DayOfWeek.SUNDAY) {
+				if (d.getDayOfWeek() != DayOfWeek.SATURDAY && d.getDayOfWeek() != DayOfWeek.SUNDAY
+						&& !feriados.contains(d)) {
 					// Calcula desconto de auxílio alimentação
 					dia.descontoDeAuxilioAlimentacao = valorUnitarioDoAuxilioAlimentacao;
 					// Calcula desconto de auxílio transporte

@@ -44,8 +44,10 @@ import br.gov.jfrj.siga.base.SigaFormats;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.calc.diarias.FreemarkerFormatFactoryMoeda;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.cache.TemplateLoader;
+import freemarker.core.TemplateNumberFormatFactory;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -71,6 +73,10 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		cfg.setLocalizedLookup(false);
 		cfg.setLogTemplateExceptions(false);
 		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+		
+		Map<String, TemplateNumberFormatFactory> customNumberFormats = new HashMap<>();
+		customNumberFormats.put("moeda", FreemarkerFormatFactoryMoeda.INSTANCE);
+		cfg.setCustomNumberFormats(customNumberFormats);
 	}
 
 	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs,

@@ -2521,5 +2521,22 @@ public class ExDao extends CpDao {
 		
 		return query.getResultList();
 	}
-	
+
+	public List<ExDocumento> consultarDocumentosPorModeloEData(ExModelo mod, Date dataIniInclusive, Date dataFimExclusive){		
+		if (dataIniInclusive == null)
+			dataIniInclusive = new Date(0L);
+		if (dataFimExclusive == null)
+			dataFimExclusive = new Date(3000, 0, 1);
+		Query query = em().createQuery("from ExDocumento doc"
+				+ " where doc.exModelo.hisIdIni = :idIniModelo"
+				+ " and doc.dtFinalizacao is not null"
+				+ " and dtDoc >= :dtIni"
+				+ " and dtDoc < :dtFim"
+				+ " order by dtDoc");
+		query.setParameter("idIniModelo", mod.getHisIdIni());
+		query.setParameter("dtIni", dataIniInclusive);
+		query.setParameter("dtFim", dataFimExclusive);
+		return query.getResultList();
+	}
+
 }

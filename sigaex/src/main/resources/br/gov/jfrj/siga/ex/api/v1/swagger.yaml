@@ -2484,8 +2484,6 @@ paths:
     get:
       description: Verificar assinatura do documento
       tags: [ consulta ]
-      security:
-        - Basic: []
       parameters:
         - name: id
           in: path

@@ -29,7 +29,8 @@ public class DocumentosIdVerificarAssinaturaGet implements IExApiV1.IDocumentosI
         }
         
         final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
-
+        filter.setIdDoc(Long.valueOf(req.id));
+        
         ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
         if (mob == null)
             throw new AplicacaoException(

@@ -1617,6 +1617,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Transacional
+	@RequestParamsPermissiveCheck
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
@@ -1908,6 +1909,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Transacional
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/gravarpreench")
 	public void aGravarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,
@@ -1993,6 +1995,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Post("app/expediente/doc/preverPdf")
+	@RequestParamsPermissiveCheck 
 	public Download aPreverPdf(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException, IllegalAccessException,
 			InvocationTargetException {

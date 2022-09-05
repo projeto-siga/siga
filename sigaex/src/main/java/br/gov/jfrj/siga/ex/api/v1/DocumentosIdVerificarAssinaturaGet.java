@@ -27,10 +27,10 @@ public class DocumentosIdVerificarAssinaturaGet implements IExApiV1.IDocumentosI
                 throw new RuntimeException(
                         "Propriedade sigaex.auditoria.assinaturas.password não confere com o valor recebido no cabeçalho Authorization");
         }
-        
+
         final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
         filter.setIdDoc(Long.valueOf(req.id));
-        
+
         ExMobil mob = ExDao.getInstance().consultarPorSigla(filter);
         if (mob == null)
             throw new AplicacaoException(
@@ -41,9 +41,14 @@ public class DocumentosIdVerificarAssinaturaGet implements IExApiV1.IDocumentosI
                 ExTipoDeMovimentacao.ASSINATURA_COM_SENHA;
 
         Set<ExMovimentacao> movs = mob.getMovsNaoCanceladas(exTipoDeAssinatura);
-        
+        if(movs.isEmpty()){
+            throw new AplicacaoException(
+                    req.id + " não possui movimentação não cancelada de assinatura, " +
+                            "então não é possível verificar assinatura");
+        }
+
         resp.idDoc = req.id;
-        
+
         try {
             for (ExMovimentacao mov : movs) {
                 if (mov.assertAssinaturaValida() != null && mov.assertAssinaturaValida().contains("OK")) {
@@ -51,11 +56,11 @@ public class DocumentosIdVerificarAssinaturaGet implements IExApiV1.IDocumentosI
                     resp.status = "Ok";
                     return;
                 }
-            }    
+            }
         } catch (final Exception e) {
-            resp.status = "ERRO!";    
+            resp.status = "ERRO!";
         }
-        
+
     }
 
 

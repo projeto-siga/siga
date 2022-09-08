@@ -835,7 +835,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public void setDescrDocumento(final java.lang.String descrDocumento) {
 		this.descrDocumento = StringEscapeUtils.unescapeHtml4(descrDocumento);
-		setDescrDocumentoAI(descrDocumento);
+		setDescrDocumentoAI(this.descrDocumento);
 	}
 
 	/**

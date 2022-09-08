@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.HtmlToPlainText;
 
 public class SiafDoc {
 	private String unidadeGestora;
@@ -54,13 +55,13 @@ public class SiafDoc {
 			this.unidadeGestora = "00000" + get("unidadeGestora").split(" ")[0];
 			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
 			this.gestao = get("compraGestao");
-			this.objetoProcesso = get("objetoProcesso");
+			this.objetoProcesso = HtmlToPlainText.getText(get("objetoProcesso"));
 			this.tipoLicitacao = get("selecioneLicitacao").split("-")[0].trim();
 			this.tipoLicitacao = this.tipoLicitacao.matches("\\d+") ? this.tipoLicitacao : "";
 			this.id = ""; //Regra de negócio de integração SIAFEM: o campo ID deverá ser vazio
 			this.ata = get("ataTeste").matches("[1Ss]") ? "S" : "N";
 			this.convenio = get("especie").endsWith("Sim") ? "S" : "N";
-			this.finalidade = get("finalidadeProcesso");
+			this.finalidade = HtmlToPlainText.getText(get("finalidadeProcesso"));
 			this.processo = get("processoLegado");
 			this.desdobramento = get("desdobramento");
 			this.flagPresencial = (get("presencialEletronico")).contains("1") ? "X" : "";
@@ -72,8 +73,8 @@ public class SiafDoc {
 			this.naturezaDespesa4 = get("naturezaDespesa4").split(" ")[0];
 			this.naturezaDespesa5 = get("naturezaDespesa5").split(" ")[0];
 			this.codMunicipio = get("municipioSao").split(" ")[0];			
-			this.signatarioCedente = get("signatarioCedente");
-			this.signatarioConvenente = get("signatarioConvenente");
+			this.signatarioCedente = HtmlToPlainText.getText(get("signatarioCedente"));
+			this.signatarioConvenente = HtmlToPlainText.getText(get("signatarioConvenente"));
 			this.dataCelebracao = formatarData(get("data_da_celebracao")); 
 			this.dataPublicacao = formatarData(get("data_da_publicacao")); 
 			this.dataVigenciaInicial = formatarData(get("data_da_inicio")); 
@@ -81,10 +82,12 @@ public class SiafDoc {
 			this.valorTotal = get("valorTotal").replaceAll("[^\\d]", "");
 			this.valorContrapartida = get("valorContrapartida").replaceAll("[^\\d]", "");
 			this.situacao = get("situacaoConvenio").split(" ")[0];
-			this.objetoResumido1 = get("descricaoResumida");
-			this.objetoResumido2 = substring(this.objetoResumido1, 77, 154);
-			this.objetoResumido3 = substring(this.objetoResumido1, 154, 232);
-			this.objetoResumido1 = substring(this.objetoResumido1, 0, 77);
+			if (get("descricaoResumida") != null && !get("descricaoResumida").isEmpty()) {
+				this.objetoResumido1 = HtmlToPlainText.getText(get("descricaoResumida"));
+				this.objetoResumido2 = substring(this.objetoResumido1, 77, 154);
+				this.objetoResumido3 = substring(this.objetoResumido1, 154, 232);
+				this.objetoResumido1 = substring(this.objetoResumido1, 0, 77);
+			}
 			
 //			Quando for Legado o usuário deve preencher SOMENTE os campos
 //			- UG/Gestão

@@ -59,7 +59,7 @@ public class SiafDoc {
 			this.tipoLicitacao = this.tipoLicitacao.matches("\\d+") ? this.tipoLicitacao : "";
 			this.id = ""; //Regra de negócio de integração SIAFEM: o campo ID deverá ser vazio
 			this.ata = get("ataTeste").matches("[1Ss]") ? "S" : "N";
-			this.convenio = get("especie").equals("Convênio Sim") ? "S" : "N";
+			this.convenio = get("especie").equals("Convenio Sim") ? "S" : "N";
 			this.finalidade = get("finalidadeProcesso");
 			this.processo = get("processoLegado");
 			this.desdobramento = get("desdobramento");

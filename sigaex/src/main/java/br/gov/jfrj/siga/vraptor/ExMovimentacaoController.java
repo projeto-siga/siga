@@ -720,7 +720,7 @@ public class ExMovimentacaoController extends ExController {
 			autenticando = false;
 		boolean previamenteAssinado = !doc.isPendenteDeAssinatura();
 		boolean assinando = !autenticando;
-<<<<<<< HEAD
+
 		
 		if (autenticando && !permiteAutenticar(doc)) {				
 			throw new AplicacaoException(
@@ -729,14 +729,7 @@ public class ExMovimentacaoController extends ExController {
 					+ "Tipo de Configuração: Movimentar. "
 					+ "Tipo de Movimentação: Autenticação de Documento.");			
 		}
-					
-		/*
-		 * 16/01/2020 - recebendo a data da assinatura
-		 */
-		if(doc.getDtPrimeiraAssinatura() == null)
-			doc.setDtPrimeiraAssinatura(dao.dt());
-=======
->>>>>>> 05ed405d52... Encapsula, Unifica e Corrige Atualização da Data da Primeira Assinatura
+
 
 		if (devePreAssinar(doc, previamenteAssinado)) {
 			Ex.getInstance().getBL()

@@ -737,6 +737,7 @@ public interface IExApiV1 {
 			public String sigla;
 			public Boolean completo;
 			public Boolean auditar;
+			public Boolean exibe;
 		}
 
 		public static class Response implements ISwaggerResponse, ISwaggerResponseFile {

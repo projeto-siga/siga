@@ -1143,6 +1143,12 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/auditar"
+        - name: exibe
+          in: query
+          description: Informar true se deseja exibir lista de movimentações reduzidas no histórico
+          required: false
+          default: false
+          type: boolean
       responses:
         200:
           description: Successful response

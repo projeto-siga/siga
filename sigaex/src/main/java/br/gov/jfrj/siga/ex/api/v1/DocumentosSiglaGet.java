@@ -68,7 +68,9 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 			}
 		}
 
-		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, req.auditar != null && req.auditar, true, true);
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular,
+				req.completo != null && req.completo, req.auditar != null && req.auditar,
+				true, req.exibe != null && req.exibe);
 		// TODO: Resolver o problema declares multiple JSON fields named
 		// serialVersionUID
 		// Usado o Expose temporariamente

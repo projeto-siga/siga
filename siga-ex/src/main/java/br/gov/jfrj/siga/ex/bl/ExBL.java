@@ -3157,8 +3157,8 @@ public class ExBL extends CpBL {
 
 			// Pega a data sem horas, minutos e segundos...
 			if (doc.getDtDoc() == null) {
-				c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-				doc.setDtDoc(c.getTime());
+				final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				doc.setDtDoc(sdf.parse(sdf.format(c.getTime())));
 			}
 
 			if (doc.getOrgaoUsuario() == null)

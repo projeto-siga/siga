@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -394,6 +395,22 @@ public class ExServiceImpl implements ExService {
 					return null;
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return mob.doc().getForm().get(variavel);
+			} catch (Exception ex) {
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
+			}
+		}
+	}
+	
+	@Override
+	public Map<String, String> formAcumulativo(String codigoDocumento) throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
+			try {
+				if (codigoDocumento == null)
+					return null;
+				ExMobil mob = buscarMobil(codigoDocumento);
+				return mob.doc().getRef().getForm();
 			} catch (Exception ex) {
 				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
 				ctx.rollback(e);
@@ -1209,5 +1226,4 @@ public class ExServiceImpl implements ExService {
 					|| mobFilho.getMobilPrincipal().equals(mobPai.doc().getMobilGeral());
 		}
 	}
-
 }

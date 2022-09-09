@@ -103,6 +103,27 @@ public class DiariasDaJusticaFederal {
 
 	}
 
+	public enum TipoDeDiariaEnum {
+		PADRAO("Padrão"), MEIA_DIARIA_A_PEDIDO("Meia Diária a Pedido"), SEM_DIARIA("Sem Diária");
+
+		String descr;
+
+		TipoDeDiariaEnum(String descr) {
+			this.descr = descr;
+		}
+
+		public static TipoDeDiariaEnum find(String s) {
+//			if (valueOf(s) != null)
+//				return valueOf(s);
+
+			for (TipoDeDiariaEnum i : values())
+				if (i.descr.equals(s))
+					return i;
+			return null;
+		}
+
+	}
+
 	public static class DiariasDaJusticaFederalParametroTrecho {
 		public LocalDate data;
 		public String trecho;
@@ -247,7 +268,7 @@ public class DiariasDaJusticaFederal {
 	public DiariasDaJusticaFederalResultado calcular(final double valorUnitatioDaDiaria,
 			final double valorUnitarioDaDiariaParaCalculoDoDeslocamento, FaixaEnum faixa,
 			final DeslocamentoConjuntoEnum deslocamentoConjunto, final boolean internacional,
-			final double cotacaoDoDolar, final boolean meiaDiariaAPedido, final boolean prorrogacao,
+			final double cotacaoDoDolar, final TipoDeDiariaEnum tipoDeDiaria, final boolean prorrogacao,
 			final double valorJaRecebido, final double valorUnitarioDoAuxilioAlimentacao,
 			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria,
 			final List<DiariasDaJusticaFederalParametroTrecho> trechos, final List<LocalDate> feriados) {
@@ -356,7 +377,8 @@ public class DiariasDaJusticaFederal {
 //			§ 1º As diárias internacionais serão concedidas a partir do dia do
 //				deslocamento do território nacional e contadas integralmente do dia da partida até o
 //				dia do retorno, inclusive. 				
-				boolean meiaDiaria = semDespesasDeHospedagem || (!internacional && ultimoDia) || meiaDiariaAPedido;
+				boolean meiaDiaria = semDespesasDeHospedagem || (!internacional && ultimoDia)
+						|| tipoDeDiaria == TipoDeDiariaEnum.MEIA_DIARIA_A_PEDIDO;
 				dia.diaria = meiaDiaria ? floor(diaria / 2) : diaria;
 
 				// Art. 13. As diárias sofrerão desconto correspondente ao auxílioalimentação,

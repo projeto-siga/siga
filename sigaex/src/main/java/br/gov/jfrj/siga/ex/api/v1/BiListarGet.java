@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -17,19 +19,15 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.context.AcessoPublico;
-import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
-import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IBiListarGet;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @AcessoPublico
 public class BiListarGet implements IBiListarGet {
+	private static Pattern regexReal = Pattern
+			.compile("^(?:R\\$)?(?<valor>(([1-9]\\d{0,2}(\\.\\d{3})*)|(([1-9]\\d*)?\\d))(,\\d\\d))?$");
 
 	public static class DocData {
 		String codigo;
@@ -153,9 +151,14 @@ public class BiListarGet implements IBiListarGet {
 
 	private static void add(DocData dd, String campo, StringBuilder sb) {
 		String v;
-		if (campo.startsWith("campo_"))
+		if (campo.startsWith("campo_")) {
 			v = dd.campo.get(campo);
-		else
+			if (v != null) {
+				Matcher m = regexReal.matcher(v);
+				if (m.matches())
+					v = m.group("valor").replace(".", "").replace(",", ".");
+			}
+		} else
 			v = dd.getColuna(campo);
 		sb.append(v == null ? "" : v.trim());
 

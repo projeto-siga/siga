@@ -494,9 +494,6 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("_Juntar").descr("Junta o documento a um documento pai, formando ou complementando um dossiê.").icone("page_white_go").nameSpace("/app/expediente/mov").acao("juntar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeJuntar(mob, titular, lotaTitular)).classe("once").build());
 
-		addAcao(AcaoVO.builder().nome("Vi_ncular").descr("Relaciona este documento a um outro documento.").icone("page_find").nameSpace("/app/expediente/mov").acao("referenciar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReferenciar(mob, titular, lotaTitular)).build());
-
 		addAcao(AcaoVO.builder().nome("Apensar").descr("Agrupa este documento a um outro documento para fins de trâmite e aquivamento.").icone("link_add").nameSpace("/app/expediente/mov").acao("apensar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeApensar(mob, titular, lotaTitular)).classe("once").build());
 

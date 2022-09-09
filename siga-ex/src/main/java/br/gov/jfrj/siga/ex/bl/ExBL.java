@@ -3158,8 +3158,8 @@ public class ExBL extends CpBL {
 
 			// Pega a data sem horas, minutos e segundos...
 			if (doc.getDtDoc() == null) {
-				c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-				doc.setDtDoc(c.getTime());
+				final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				doc.setDtDoc(sdf.parse(sdf.format(c.getTime())));
 			}
 
 			if (doc.getOrgaoUsuario() == null)
@@ -8631,25 +8631,20 @@ public class ExBL extends CpBL {
 	 * Caso não tenha registro de Assinatura, processa a data da primeira assinatura com re-processamento do documento
 	   antes de tirar o Hash do documento para Assinatura Digital do Hash
 	 * 
-	 * Data será atualizada caso não tenha registros de assinatura e caso ja haja data, se forem iguais não atualiza para evitar
-	 * processamentos adicionais
+	 * Data será sempre atualizada caso não tenha registros de assinatura
+	 * Documento será reprocessado caso a data de Finalização seja diferente de hoje
 	 * 
 	 * */
 
 	public void atualizaDataPrimeiraAssinatura(ExDocumento doc, DpPessoa cadastrante, DpPessoa titular) throws Exception {
-		
-		Date dataPrimeiraAssinatura = doc.getDtPrimeiraAssinatura();
-		if (dataPrimeiraAssinatura == null || doc. getAssinaturasDigitais().isEmpty()) {
+
+		if (doc.getDtPrimeiraAssinatura() == null || doc.getAssinaturasDigitais().isEmpty()) {
+			doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
 			
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			Date dataAtualSemTempo = sdf.parse(sdf.format(CpDao.getInstance().dt()));
-			
-			if (! dataAtualSemTempo.equals(dataPrimeiraAssinatura)) {
-				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
-				if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
-					gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
-				}
+			if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
+				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
 			}
+
 		}
 	}
 

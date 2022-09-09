@@ -90,6 +90,8 @@ public class BiListarGet implements IBiListarGet {
 			throw new SwaggerException("Nenhum documento foi encontrado com os argumentos informados.", 404, null, req,
 					resp, null);
 		for (ExDocumento doc : l) {
+			if (doc.isCancelado() || doc.isSemEfeito())
+				continue;
 			DocData dd = new DocData();
 			dd.codigo = doc.getCodigo();
 			for (Entry<String, String> entry : doc.getForm().entrySet()) {

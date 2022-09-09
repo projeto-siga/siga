@@ -72,6 +72,7 @@ import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DeslocamentoConj
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalParametroTrecho;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.FaixaEnum;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.TipoDeDiariaEnum;
 import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
@@ -1148,7 +1149,7 @@ public class FuncoesEL {
 	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final double valorUnitatioDaDiaria,
 			final double valorUnitarioDaDiariaParaCalculoDoDeslocamento,
 			final String faixa, final String deslocamentoConjunto, 
-			final boolean internacional, final double cotacaoDoDolar, final boolean meiaDiariaAPedido, 
+			final boolean internacional, final double cotacaoDoDolar, final String tipoDeDiaria, 
 			final boolean prorrogacao, final double valorJaRecebido,
 			final double valorUnitarioDoAuxilioAlimentacao,
 			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria, final String form) {
@@ -1177,7 +1178,7 @@ public class FuncoesEL {
 		try {
 			return new DiariasDaJusticaFederal().calcular(valorUnitatioDaDiaria, valorUnitarioDaDiariaParaCalculoDoDeslocamento,
 					FaixaEnum.find(faixa), DeslocamentoConjuntoEnum.find(deslocamentoConjunto), 
-					internacional, cotacaoDoDolar, meiaDiariaAPedido, prorrogacao, valorJaRecebido,
+					internacional, cotacaoDoDolar, TipoDeDiariaEnum.find(tipoDeDiaria), prorrogacao, valorJaRecebido,
 					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, tetoDiaria, tetoMeiaDiaria, l, feriados);
 		} catch (Exception ex) {
 			log.error(ex);

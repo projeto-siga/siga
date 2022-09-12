@@ -359,7 +359,12 @@ public class SolicitacaoController extends SrController {
 		// MARRETA SOLICITACAO PARA PROPRIA LOTACAO
 		// voltando a pegar a lotacao do titular ao inves da do solicitante...
 		if ((solicitacao.getIdSolicitacao() == null)
-				&& solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")) {
+				&& solicitacao.getItemConfiguracao().getTituloItemConfiguracao().toLowerCase().startsWith("serviço interno"))
+			//	(solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")
+			//	|| 	solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("registrar projeto a ser demandado para a contratada")
+			//	|| 	solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("registrar manutenção a ser demandada para a contratada"))) 
+				 
+				{
 			// solicitacao.setAtendenteNaoDesignado(solicitacao.getSolicitante().getLotacao().getLotacaoAtual());
 			solicitacao.setAtendenteNaoDesignado(getTitular().getLotacao().getLotacaoAtual());
 		}

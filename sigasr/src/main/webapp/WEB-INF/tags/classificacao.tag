@@ -73,12 +73,15 @@
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-								<c:set var="atividadeLotacao" value="${fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'atividades da lotação')}" />
+							    <c:set var="itemServicoInterno" value="${fn:startsWith(fn:toLowerCase(solicitacao.itemConfiguracao.tituloItemConfiguracao), 'serviço interno')}" />
+								<c:set var="atividadeLotacao" value="${fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'atividades da lotação') 
+								|| fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'registrar projeto a ser demandado para a contratada')
+								|| fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'registrar manutenção a ser demandada para a contratada')}" />
 								
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao && !atividadeLotacao}">(${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta})</c:if>
-									<c:if test="${atividadeLotacao}"><!-- (${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta}) --></c:if>
+									<c:if test="${exibeLotacaoNaAcao && !itemServicoInterno}">(${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${itemServicoInterno}"><!-- (${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta}) --></c:if>
 								</option>
 							</c:forEach>
 						</optgroup>

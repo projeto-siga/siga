@@ -43,6 +43,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
@@ -833,8 +834,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * @param descrDocumento
 	 */
 	public void setDescrDocumento(final java.lang.String descrDocumento) {
-		this.descrDocumento = descrDocumento;
-		setDescrDocumentoAI(descrDocumento);
+		this.descrDocumento = StringEscapeUtils.unescapeHtml4(descrDocumento);
+		setDescrDocumentoAI(this.descrDocumento);
 	}
 
 	/**

@@ -94,6 +94,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
@@ -8355,20 +8356,6 @@ public class ExBL extends CpBL {
 	 * 
 	 * */
 
-	public void atualizaDataPrimeiraAssinatura(ExDocumento doc, DpPessoa cadastrante, DpPessoa titular) throws Exception {
-
-		Date dataPrimeiraAssinatura = doc.getDtPrimeiraAssinatura();
-		if (dataPrimeiraAssinatura == null || doc. getAssinaturasDigitais().isEmpty()) {
-
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			Date dataAtualSemTempo = sdf.parse(sdf.format(CpDao.getInstance().dt()));
-
-			if (! dataAtualSemTempo.equals(dataPrimeiraAssinatura)) {
-				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
-				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
-			}
-		}
-	}
 
 	public List<Long> pesquisarXjus(
 			String filter, 
@@ -8422,6 +8409,7 @@ public class ExBL extends CpBL {
 		return ret;
 	}
 
+
 	public void gravarMovimentacaoLinkPublico(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		try {
@@ -8435,6 +8423,35 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao gravar link público do documento", ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO.getId(), e);
 		}
 
+	}
+
+
+
+	/*
+	 * 
+	 * Caso não tenha registro de Assinatura, processa a data da primeira assinatura com re-processamento do documento
+	   antes de tirar o Hash do documento para Assinatura Digital do Hash
+	 * 
+	 * Data será atualizada caso não tenha registros de assinatura e caso ja haja data, se forem iguais não atualiza para evitar
+	 * processamentos adicionais
+	 * 
+	 * */
+
+	public void atualizaDataPrimeiraAssinatura(ExDocumento doc, DpPessoa cadastrante, DpPessoa titular) throws Exception {
+
+		Date dataPrimeiraAssinatura = doc.getDtPrimeiraAssinatura();
+		if (dataPrimeiraAssinatura == null || doc. getAssinaturasDigitais().isEmpty()) {
+
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			Date dataAtualSemTempo = sdf.parse(sdf.format(CpDao.getInstance().dt()));
+
+			if (! dataAtualSemTempo.equals(dataPrimeiraAssinatura)) {
+				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
+				if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
+					gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+				}
+			}
+		}
 	}
 
 }

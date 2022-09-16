@@ -8643,10 +8643,11 @@ public class ExBL extends CpBL {
 			
 			if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
 				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+
 			}
 
 		}
 	}
-	
+
 }
 

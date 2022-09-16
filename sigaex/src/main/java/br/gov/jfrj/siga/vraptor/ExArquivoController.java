@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
 
@@ -49,6 +51,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -60,6 +63,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadZip;
 import br.gov.jfrj.siga.vraptor.builder.ExInputStreamDownload;
@@ -517,9 +521,38 @@ public class ExArquivoController extends ExController {
 		}
 	}
 	
-	
-	
-	
+	@TrackRequest
+	@Get("/app/arquivo/downloadFormatoLivre")
+	public void downloadFormatoLivre(final String sigla, String hash) throws Exception {
+		boolean somenteHash = hash != null || getPar().containsKey("HASH_ALGORITHM");
+		String algoritmoHash = getAlgoritmoHash(hash);
+		ExMobil mob = Documento.getMobil(sigla);
+		validarDownload(somenteHash, algoritmoHash, mob);
+
+		CpArquivo cpArq = mob.getDoc().getCpArquivoFormatoLivre();
+		if (cpArq == null) {
+			result.include("mensagemCabec", "Arquivo não existente ou não autorizado para download.");
+			result.include("msgCabecClass", "alert-danger mt-2");
+			return;
+		}
+		
+		String caminho = cpArq.getCaminho();
+		if (caminho == null) {
+			result.include("mensagemCabec", "Não é um arquivo de formato livre (idArq: " + cpArq.getIdArq().toString() + ")");
+			result.include("msgCabecClass", "alert-danger mt-2");
+			return;
+		}
+		
+		String bucket = caminho.split("/")[0];
+		final JWTSigner signer = new JWTSigner(System.getProperty("siga.jwt.secret"));
+		final HashMap<String, Object> claims = new HashMap<String, Object>();
+		claims.put("iat", System.currentTimeMillis() / 1000L);
+		claims.put("bucket", bucket);
+		claims.put("key", caminho.replace(bucket + "/",  ""));
+        String tk = signer.sign(claims);
+		
+		result.include("token", tk);
+	}
 	
 
 }

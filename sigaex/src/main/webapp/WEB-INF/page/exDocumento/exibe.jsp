@@ -292,7 +292,7 @@
 								</div>
 							</div>
 						</c:when>
-						<c:when test="${docVO.doc.pdf}">
+						<c:when test="${docVO.doc.pdf && not docVO.doc.exModelo.extensoesArquivo}">
 							<c:set var="urlCapturado" value="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"/>
 							<iframe style="display: block;" name="painel" id="painel"
 								width="100%" frameborder="0" scrolling="auto"></iframe>			

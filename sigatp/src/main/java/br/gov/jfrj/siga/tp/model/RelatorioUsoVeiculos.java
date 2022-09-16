@@ -133,7 +133,7 @@ public class RelatorioUsoVeiculos {
                  + "INNER JOIN m.requisicoesTransporte r "
                  + "INNER JOIN r.andamentos a "
                  + "WHERE m.cpOrgaoUsuario = :orgao and m.estadoMissao = :estadoMissao "
-                 + "and   m.dataHoraRetorno BETWEEN :dataInicio AND :dataFim? "
+                 + "and   m.dataHoraRetorno BETWEEN :dataInicio AND :dataFim "
                  + "and   m.id = a.missao.id "
                  + "AND   a.estadoRequisicao in (:estadoRequisicao1, :estadoRequisicao2) "
                  + "ORDER BY m.id";

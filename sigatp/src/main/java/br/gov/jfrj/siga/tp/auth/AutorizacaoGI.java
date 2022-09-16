@@ -192,7 +192,7 @@ public class AutorizacaoGI {
         
         CpComplexo cpComplexo = null;
     	
-    	CpConfiguracao cpConf = tpbl.buscaConfiguracaoComplexoPadrao(dpPessoa, CpTipoDeConfiguracao.UTILIZAR_COMPLEXO);
+    	CpConfiguracao cpConf = tpbl.buscaConfiguracaoComplexoPadrao(dpPessoa, so.getLotaTitular(), CpTipoDeConfiguracao.UTILIZAR_COMPLEXO);
         
     	cpComplexo = cpConf.getComplexo();
             	

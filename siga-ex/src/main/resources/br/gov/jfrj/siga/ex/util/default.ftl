@@ -2549,11 +2549,13 @@ Pede deferimento.</span><br/><br/><br/>
 	    </style>     
 	  	<p class="texto-enderecamento">
 	      [#if (Vocativo!"") != ""]<b>${Vocativo!}<b><br />[/#if]
+	      [#if (NomeDestinatario!"") != ""]<b>${NomeDestinatario!}<b><br />[/#if]
 	      [#if (CargoDsp!"") != ""]<b>${CargoDsp!}<b><br />[/#if]
 	      [#if (Orgao!"") != ""]${Orgao!}<br />[/#if]
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
-	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}[/#if]    
+	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
+	      [#if (EmCopia!"") != ""]<b>${EmCopia!}<b>[/#if]   
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]

@@ -50,26 +50,35 @@ public class ExPodeReceber extends CompositeExpressionSupport {
 	@Override
 	protected Expression create() {
 
-		return If.of(
+		return And.of(
 
-				new ExEEletronico(mob.doc()),
+				If.of(
 
-				new ExPodeReceberEletronico(mob, titular, lotaTitular),
+						new ExEEletronico(mob.doc()),
 
-				And.of(
+						new ExPodeReceberEletronico(mob, titular, lotaTitular),
 
-						Or.of(new ExEMobilVia(mob), new ExEMobilVolume(mob)),
+						And.of(
 
-						Not.of(new ExEMobilCancelado(mob)),
+								Or.of(new ExEMobilVia(mob), new ExEMobilVolume(mob)),
 
-						Not.of(new ExEstaApensadoAVolumeDoMesmoProcesso(mob)),
+								Not.of(new ExEMobilCancelado(mob)),
 
-						Not.of(new ExEstaSobrestado(mob)),
+								Not.of(new ExEstaApensadoAVolumeDoMesmoProcesso(mob)),
 
-						Or.of(new ExEstaEmTransitoExterno(mob), new ExEstaResponsavel(mob, titular, lotaTitular)),
+								Not.of(new ExEstaSobrestado(mob)),
 
-						new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-								.withExTpMov(ExTipoDeMovimentacao.RECEBIMENTO)
-								.withExMod(mob.doc().getExModelo())));
+								Or.of(
+
+										And.of(
+
+												new ExEstaEmTransitoExterno(mob),
+
+												new ExEstaResponsavel(mob, titular, lotaTitular)),
+
+										new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular)))),
+
+				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+						.withExTpMov(ExTipoDeMovimentacao.RECEBIMENTO).withExMod(mob.doc().getExModelo()));
 	}
 }

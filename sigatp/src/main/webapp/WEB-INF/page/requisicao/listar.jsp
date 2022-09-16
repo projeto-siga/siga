@@ -196,7 +196,7 @@
 										   	    <td>
 										   	    	<tptags:link texto="${requisicaoTransporte.descricaoCompleta}"
 										   	    				 parteTextoLink="${requisicaoTransporte.buscarSequence()}"
-										   	    				 comando="${linkTo[RequisicaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${requisicaoTransporte.buscarSequence()}">
+										   	    				 comando="${linkTo[RequisicaoController].buscarPelaSequence(popUp,sequence)}?popUp=true&sequence=${requisicaoTransporte.buscarSequence()}"
 										   	    				 ehEditavel="true">
 										   	    	</tptags:link>
 												</td>

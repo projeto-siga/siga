@@ -135,4 +135,13 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		return getIdFormaDoc() != null; 
 	}	
 	
+	public boolean isCapturado() {
+		for (ExTipoDocumento tipo : getExTipoDocumentoSet()) {
+			if(tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO)
+					|| tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))
+				return true;
+		}
+		return false;
+	}
+
 }

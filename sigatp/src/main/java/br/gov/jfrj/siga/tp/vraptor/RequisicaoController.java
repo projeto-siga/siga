@@ -260,7 +260,7 @@ public class RequisicaoController extends TpController {
         ultimosdias.add(Calendar.DATE, -totalDias);
         HashMap<String, Object> parametros = new HashMap<String, Object>();
         parametros.put("ultimosdias", ultimosdias);
-        parametros.put("cpOrgaoUsuario", getTitular().getOrgaoUsuario());
+        parametros.put("cpOrgaoUsuario", getLotaTitular().getOrgaoUsuario());
         recuperarRequisicoes(criterioBusca, parametros, estadosRequisicao);
     }
 

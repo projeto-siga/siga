@@ -101,7 +101,7 @@ public class MissaoController extends TpController {
 	@Path("/listar")
 	public void listar() throws Exception {
 		HashMap<String, Object> parametros = new HashMap<String,Object>();
-		parametros.put("cpOrgaoUsuario", getTitular().getOrgaoUsuario());
+		parametros.put("cpOrgaoUsuario", getLotaTitular().getOrgaoUsuario());
 		parametros.put("estado1", EstadoMissao.PROGRAMADA);
 		parametros.put("estado2", EstadoMissao.INICIADA);	
 		parametros.put("estado3", EstadoMissao.FINALIZADA);
@@ -212,7 +212,7 @@ public class MissaoController extends TpController {
 		EstadoMissao estMis = EstadoMissao.CANCELADA;
 		
 		HashMap<String, Object> parametros = new HashMap<String,Object>();
-		parametros.put("cpOrgaoUsuario", getTitular().getOrgaoUsuario());
+		parametros.put("cpOrgaoUsuario", getLotaTitular().getOrgaoUsuario());
 		parametros.put("estadoMissao", estadoMissao);
 		StringBuilder criterio = new StringBuilder();
 		criterio.append("cpOrgaoUsuario = :cpOrgaoUsuario and estadoMissao = :estadoMissao");
@@ -852,7 +852,7 @@ public class MissaoController extends TpController {
 	protected void montarCombos() throws Exception {
 		Calendar ultimos7dias = Calendar.getInstance();
 		ultimos7dias.add(Calendar.DATE, -7);
-		CpOrgaoUsuario orgaoParametro = getTitular().getOrgaoUsuario();
+		CpOrgaoUsuario orgaoParametro = getLotaTitular().getOrgaoUsuario();
 		EstadoRequisicao[] estados = { EstadoRequisicao.AUTORIZADA, EstadoRequisicao.PROGRAMADA, EstadoRequisicao.EMATENDIMENTO, EstadoRequisicao.NAOATENDIDA, EstadoRequisicao.ATENDIDAPARCIALMENTE };
 		StringBuilder criterioBusca = new StringBuilder();
         HashMap<String, Object> parametros = new HashMap<String, Object>();

@@ -142,7 +142,7 @@ public class RelatorioRankingController extends TpController {
         Condutor condutor = null;
         Missao missao = null;
         RequisicaoTransporte requisicao = null;
-        CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+        CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
 
         relatorio.getDataInicio().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataInicio(), START_00_00_00));
         relatorio.getDataFim().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataFim(), END_23_59_59));
@@ -211,7 +211,7 @@ public class RelatorioRankingController extends TpController {
         Set<RequisicaoTransporte> setRequisicao = new HashSet<RequisicaoTransporte>();
         Veiculo veiculo = null;
         RequisicaoTransporte requisicao = null;
-        CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+        CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
 
         relatorio.getDataInicio().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataInicio(), START_00_00_00));
         relatorio.getDataFim().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataFim(), END_23_59_59));
@@ -273,7 +273,7 @@ public class RelatorioRankingController extends TpController {
         List<RankingFinalidadeRequisicao> listaRankingFinalidade = new ArrayList<RankingFinalidadeRequisicao>();
         FinalidadeRequisicao finalidade = null;
         int totalFinalidade = 0;
-        CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+        CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
 
         relatorio.getDataInicio().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataInicio(), START_00_00_00));
         relatorio.getDataFim().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataFim(), END_23_59_59));
@@ -312,7 +312,7 @@ public class RelatorioRankingController extends TpController {
         List<RequisicaoTransporte> lista;
         List<RankingTipoPassageiroRequisicao> listaRankingTipoPassageiro = new ArrayList<RankingTipoPassageiroRequisicao>();
         List<TipoDePassageiro> listaTipoDePassageiro = Arrays.asList(TipoDePassageiro.values());
-        CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+        CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
 
         relatorio.getDataInicio().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataInicio(), START_00_00_00));
         relatorio.getDataFim().setTime(FormatarDataHora.formatarDataHora(relatorio.getDataFim(), END_23_59_59));

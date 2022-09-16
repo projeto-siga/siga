@@ -45,7 +45,7 @@ public class RelatorioMissoesPendentesController extends TpController {
         List<RelatorioMissoesPendentes> missoesPendentes = new ArrayList<RelatorioMissoesPendentes>();
         Long totalMissoes = 0L;
         Condutor condutor = null;
-        CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+        CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
 
         String qrl = "SELECT     c.id, COUNT(m.id) AS TotalMissoes "
                    + "FROM       Condutor c, Missao m "

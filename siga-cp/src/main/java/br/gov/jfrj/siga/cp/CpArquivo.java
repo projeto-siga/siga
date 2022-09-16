@@ -42,6 +42,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.FilenameUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
@@ -51,9 +52,11 @@ import org.hibernate.engine.spi.PersistentAttributeInterceptable;
 import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.arquivo.*;
+import br.gov.jfrj.siga.cp.model.enm.CpExtensoesDeArquivoEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -102,6 +105,9 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	@Transient
 	protected byte[] cacheArquivo;
+
+	@Transient
+	protected boolean isFormatoLivre;
 	
 	@Transient
     private PersistentAttributeInterceptor persistentAttributeInterceptor;
@@ -124,6 +130,9 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	@PrePersist
 	private void salvarArquivo() {
+		if (isFormatoLivre)
+			return;
+		
 		long ini = System.currentTimeMillis();
 		switch (getTipoArmazenamento()) {
 		case TABELA:
@@ -245,6 +254,24 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			CpArquivo arq = CpArquivo.forUpdate(old);
 			arq.setConteudo(conteudo);
 			arq.setTamanho(conteudo.length);
+			arq.setFormatoLivre(false);
+			return arq;
+		}
+		return old;
+	}
+
+	public static CpArquivo updateFormatoLivre(CpArquivo old, String nomeArquivo, Integer tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
+		if (old == null) {
+			String bucket = Prop.get("/siga.armazenamento.arquivo.bucket");
+			CpArquivo arq = CpArquivo.forUpdate(old);
+			String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
+			if (extensao == null)
+				throw new AplicacaoException("Extensão de arquivo inválida: ." + FilenameUtils.getExtension(nomeArquivo));
+			arq.setConteudoTpArq(extensao);
+			arq.setCaminho(bucket + "/" + nomeArquivo);
+			arq.setTamanho(tamanhoArquivo);
+			arq.setTipoArmazenamento(tipoArmazenamento);
+			arq.setFormatoLivre(true);
 			return arq;
 		}
 		return old;
@@ -338,6 +365,14 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	private void setCacheArquivo(byte[] cacheArquivo) {
 		this.cacheArquivo = cacheArquivo;
+	}
+
+	private boolean isFormatoLivre() {
+		return isFormatoLivre;
+	}
+
+	private void setFormatoLivre(boolean isFormatoLivre) {
+		this.isFormatoLivre = isFormatoLivre;
 	}
 
 }

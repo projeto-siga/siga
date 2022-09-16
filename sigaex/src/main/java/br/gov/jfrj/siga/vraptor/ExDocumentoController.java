@@ -25,6 +25,8 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -137,6 +139,8 @@ public class ExDocumentoController extends ExController {
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+	private static final Long TAMANHO_MAXIMO_CAPTURADO = Prop.getLong("/siga.armazenamento.arquivo.tamanhomax");
+	private static final Long TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE = Prop.getLong("/siga.armazenamento.arquivo.formatolivre.tamanhomax");
 	private String url = null;
 	
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
@@ -879,6 +883,8 @@ public class ExDocumentoController extends ExController {
 		result.include("idMod", exDocumentoDTO.getIdMod());
 		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
 		result.include("podeExibirArvoreDocsSubscr", podeExibirArvoreDocsSubscr);
+		result.include("tamanhoMaximoArquivo", TAMANHO_MAXIMO_CAPTURADO);
+		result.include("tamanhoMaximoArquivoFormatoLivre", TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE);
 		
 
 		// Desabilita a proteção contra injeção maldosa de html e js
@@ -1620,7 +1626,7 @@ public class ExDocumentoController extends ExController {
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo) {
+			final UploadedFile arquivo, final String tokenArquivo) {
 		
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
@@ -1682,7 +1688,8 @@ public class ExDocumentoController extends ExController {
 			if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
 					.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
 					&& exDocumentoDTO.getDoc().getIdDoc() == null
-					&& arquivo == null)
+					&& arquivo == null
+					&& tokenArquivo == null)
 				throw new AplicacaoException(
 						"Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
 
@@ -1776,12 +1783,17 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getDoc().setExMobilAutuado(mobilAutuado);
 			}
 
+			// Se o arquivo é de formato e tamanho livre, faz o upload previamente e passa um token contendo localização do 
+			// arquivo e tamanho.
+			if (tokenArquivo != null) {
+				ExDocumento d = exDocumentoDTO.getDoc();
+				d.setConteudoBlobFormatoLivre(tokenArquivo);
+			}
 			// Insere PDF de documento capturado
-			//
 			if (arquivo != null) {
 				ExDocumento d = exDocumentoDTO.getDoc();
 
-				if (arquivo.getFile() == null) {
+				if (tokenArquivo != null && arquivo.getFile() == null) {
 					throw new AplicacaoException(
 							"O arquivo a ser anexado não foi selecionado!");
 				}
@@ -1794,9 +1806,14 @@ public class ExDocumentoController extends ExController {
 								"Arquivo vazio não pode ser anexado.");
 					}
 					numBytes = baArquivo.length;
-					if (numBytes > 10 * 1024 * 1024) {
+					Long tamMax = TAMANHO_MAXIMO_CAPTURADO;
+					if (d.getOrgaoUsuario().podeGravarHcp()) 
+						tamMax = TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE;
+					
+					if (numBytes > tamMax) {
 						throw new AplicacaoException(
-								"Não é permitida a anexação de arquivos com mais de 10MB.");
+								"Não é permitida a anexação de arquivos com mais de "
+								+ (Math.ceil((double) tamMax / 1024 / 1024)) + "MB");
 					}
 					d.setConteudoBlobPdf(baArquivo);
 					d.setConteudoBlobHtml(null);

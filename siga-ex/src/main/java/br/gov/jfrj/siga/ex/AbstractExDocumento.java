@@ -18,9 +18,14 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
@@ -47,6 +52,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JWTVerifyException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -441,6 +449,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
+	
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ_FMT_LIVRE")
+	private CpArquivo cpArquivoFormatoLivre;
 	
 	@Column(name = "CD_PRINCIPAL")
 	private String principal;
@@ -1146,6 +1158,39 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		}
 	}
 	
+	public CpArquivo getCpArquivoFormatoLivre() {
+		return cpArquivoFormatoLivre;
+	}
+	
+	/**
+	 * Grava informações do arquivo de formato livre que já foi feito upload previamente. Estas informações
+	 * vem em um token que é passado pelo sistema de upload. É gerado um registro na CpArquivo e associado ao campo CpArquivoFormatoLivre da ExDocumento.
+	 * 
+	 * @param tokenArquivo Contém caminho no storage, nome do arquivo, tamanho e tipo de conteudo
+	 * @throws JWTVerifyException 
+	 * @throws IOException 
+	 * @throws SignatureException 
+	 * @throws IllegalStateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
+	 */
+	public void setConteudoBlobFormatoLivre(String tokenArquivo) throws InvalidKeyException, NoSuchAlgorithmException, 
+			IllegalStateException, SignatureException, IOException, JWTVerifyException {
+		final JWTVerifier verifier = new JWTVerifier(System.getProperty("siga.jwt.secret"));
+		Map<String, Object> lst = verifier.verify(tokenArquivo);
+		String nomeArquivo = (String) lst.get("key");
+		Integer tamanhoArquivo = Integer.valueOf((String) lst.get("tamanho"));
+		CpArquivo cpArq = getCpArquivoFormatoLivre();
+		CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum
+				.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"));
+		
+		if (!orgaoPermiteHcp() || CpArquivoTipoArmazenamentoEnum.BLOB.equals(tipoArmazenamento) || 
+				CpArquivoTipoArmazenamentoEnum.TABELA.equals(tipoArmazenamento)) 
+			throw new AplicacaoException("Arquivos de formato livre só são permitidos quando o tipo de armazenamento não é em banco de dados (BLOB ou TABELAS).");
+		
+		if (nomeArquivo != null) 
+			cpArquivoFormatoLivre = CpArquivo.updateFormatoLivre(cpArq, nomeArquivo, tamanhoArquivo, CpArquivoTipoArmazenamentoEnum.HCP);
+	}
 	
 	private boolean orgaoPermiteHcp() {
 		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");

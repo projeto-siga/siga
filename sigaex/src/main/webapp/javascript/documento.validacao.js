@@ -160,7 +160,8 @@ function validarInputRadioECheckbox(elemento) {
 function validarDocumentoCapturado() {
 	var origem = document.getElementsByName('exDocumentoDTO.idTpDoc')[0].value;
 	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
-	if ((origem == 4 || origem == 5) && !id) {
+	let tokenArq = document.getElementById('tokenArquivo');
+	if ((origem == 4 || origem == 5) && !id && !tokenArq) {
 		var arquivo = document.getElementsByName('arquivo')[0];
 		if (!arquivo.classList.contains('is-invalid')) {
 			if (arquivo.value == "") {

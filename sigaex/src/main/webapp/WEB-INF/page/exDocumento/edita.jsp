@@ -19,6 +19,7 @@
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 
 	<c:set var="timeoutMod" scope="session" value="${f:resource('/siga.session.modelos.tempo.expiracao')}" />
+	<c:set var="urlUpload" scope="session" value="${f:resource('/siga.armazenamento.arquivo.formatolivre.url')}" />
 	<div class="container-fluid">
 		<c:if test="${not empty mensagem}">
 			<div class="row">
@@ -601,20 +602,50 @@
 					</div>
 					<c:if test='${podeTrocarPdfCapturado}'>
 						<div class="row  js-siga-sp-documento-analisa-alteracao">
-							<div class="col-sm-8">
+							<div class="col">
 								<div class="form-group">
 									<input type="hidden" name="campos" value="descrDocumento" /> <br>
 									<div class="form-group" style="margin-bottom: 0">
-										<div class="custom-file">
-											<input type="file" class="custom-file-input" id="arquivo"
-												name="arquivo" accept="application/pdf"
-												onchange="testpdf(this.form)" title="arquivo"> <label
-												class="custom-file-label" for="arquivo"><i
-												class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message
-													key="usuario.novodocumento.arquivo" /> (limite de 10MB)</label>
-											<div class="invalid-feedback  invalid-feedback-arquivo">Selecione
-												o arquivo</div>
-										</div>
+										<c:choose>
+											<c:when test="${exDocumentoDTO.modelo.extensoesArquivo == null}">
+												<div class="custom-file">
+													<input type="file" class="custom-file-input" id="arquivo"
+														name="arquivo" accept="application/pdf"
+														onchange="testpdf(this.form)" title="arquivo"> <label
+														class="custom-file-label" for="arquivo"><i
+														class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message
+															key="usuario.novodocumento.arquivo" /> (limite de ${tamanhoMaximoArquivo/1024/1024}MB)</label>
+													<div class="invalid-feedback  invalid-feedback-arquivo">Selecione
+														o arquivo</div>
+												</div>
+											</c:when>
+											<c:otherwise>
+												<script type="text/javascript" src="/siga/javascript/siga-arquivo.js"></script> 
+												<div class="custom-file ${tokenArquivo == null? '':'d-none'} col-lg-8">
+													<c:set var="extensoes" value="${fn:split(dateString, ',')}" />
+													<input type="file" class="custom-file-input" id="arqUpload" 
+														name="arqUpload" accept="${exDocumentoDTO.modelo.extensoesArquivoComPonto}"  
+														onchange="uploadArquivo('${urlUpload}', this, ${tamanhoMaximoArquivoFormatoLivre});" 
+														title="arqUpload"> <label 
+														class="custom-file-label" for="arqUpload"><i 
+														class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message 
+														key="usuario.novodocumento.arquivo" /> (limite de ${tamanhoMaximoArquivoFormatoLivre/1024/1024/1024}GB)</label>
+												</div>
+												<div class="${tokenArquivo != null? '':'d-none'} row">
+													<div id="linkArquivoDiv" class="col-lg-8">
+														<div class="form-group">
+															<label for="linkArquivo" title="campo: Arquivo" class="title">Arquivo</label>												
+															<div id="linkArquivo" class="form-control " disabled read-only>  
+		      	  												<i class="far fa-file-pdf mr-2"></i>${nomeArquivo}</div>
+														</div>
+													</div>
+													<div class="col-sm">
+	      	  											<button id="btnResetaArq" class='btn btn-secondary mt-lg-4' onclick='resetaArquivoUpload()'>Escolher Outro</button>
+	      	  										</div>
+												</div>
+												<small class="form-text text-muted">Tipos de arquivo permitidos para este documento: ${exDocumentoDTO.modelo.extensoesArquivoComPonto}</small>
+											</c:otherwise>
+										</c:choose>
 									</div>
 								</div>
 							</div>
@@ -758,7 +789,7 @@
 	<!--  tabela do rodapé -->
 
 	<script type="text/javascript"
-		src="../../../javascript/documento.validacao.js"></script>
+		src="../../../javascript/documento.validacao.js?v=1658432806"></script>
 </siga:pagina>
 
 <script type="text/javascript">

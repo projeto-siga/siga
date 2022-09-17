@@ -5,9 +5,11 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: #[ "develop" ]
+      - '**' #para verificar todas as branches, e não somente a develop
   pull_request:
-    branches: [ "develop" ]
+    branches: #[ "develop" ]
+      - '**' 
 
 jobs:
   build:

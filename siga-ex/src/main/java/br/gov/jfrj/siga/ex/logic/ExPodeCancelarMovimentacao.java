@@ -186,7 +186,15 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 								// Verifica se o mobil de referência já recebeu outras movimentações depois da
 								// movimentação que vai ser cancelada.
 								new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc))),
+				
+				And.of(
+						
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.JUNTADA),
 
+						new ExPodeCancelarJuntada(mob, titular, lotaTitular),
+
+						Not.of(new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc))),
+				
 				Or.of(
 
 						// Verifica se a última movimentação não cancelada é agendamento de publicação

@@ -183,9 +183,9 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.JUNTADA),
 
-						Not.of(new ExPodeCancelarJuntada(mob, titular, lotaTitular)),
-
 						new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc)),
+
+                        new ExPodeCancelarJuntada(mob, titular, lotaTitular),
 				
 				Or.of(
 

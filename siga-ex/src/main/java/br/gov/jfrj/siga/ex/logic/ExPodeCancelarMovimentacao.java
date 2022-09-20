@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.logic;
 
+import br.gov.jfrj.siga.cp.logic.CpIgual;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
@@ -186,14 +187,14 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 								// Verifica se o mobil de referência já recebeu outras movimentações depois da
 								// movimentação que vai ser cancelada.
 								new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc))),
-				
-				And.of(
-						
+
+				NAnd.of(
+
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.JUNTADA),
 
-						new ExPodeCancelarJuntada(mob, titular, lotaTitular),
+						Not.of(new ExPodeCancelarJuntada(mob, titular, lotaTitular)),
 
-						Not.of(new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc))),
+						new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc)),
 				
 				Or.of(
 

@@ -26,6 +26,8 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
+import br.gov.jfrj.siga.ex.logic.ExEAssinanteAtual;
+import br.gov.jfrj.siga.ex.logic.ExEstaOrdenadoAssinatura;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -463,7 +465,8 @@ public class ExMarcadorBL {
 			if (!mob.getDoc().isPrazoDeAssinaturaVencido()) {
 				acrescentarMarca(CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(), mob.doc().getDtRegDoc(),
 						mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), dtPrazo);
-				if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
+				if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha() 
+						&& (!new ExEstaOrdenadoAssinatura(mob.getDoc()).eval() || new ExEAssinanteAtual(mob.getDoc(), mob.getDoc().getSubscritor()).eval())
 						&& !(Prop.getBool("/siga.mesa.nao.revisar.temporarios")
 								&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor())
 								&& !mob.doc().isFinalizado())) {
@@ -522,7 +525,8 @@ public class ExMarcadorBL {
 				if (mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(mov.getSubscritor())
 						|| mob.getDoc().isPrazoDeAssinaturaVencido())
 					continue;
-				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
+				else if ((mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha() && !new ExEstaOrdenadoAssinatura(mob.getDoc()).eval())
+						|| (new ExEstaOrdenadoAssinatura(mob.getDoc()).eval() && new ExEAssinanteAtual(mob.getDoc(), mov.getSubscritor()).eval())) {
 					acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mov.getDtIniMov(), mov.getSubscritor(),
 							null, dtPrazo);
 				} else {

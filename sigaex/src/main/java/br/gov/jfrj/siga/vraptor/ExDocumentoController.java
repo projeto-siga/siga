@@ -79,6 +79,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -115,6 +116,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeOrdemAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
@@ -1366,6 +1368,19 @@ public class ExDocumentoController extends ExController {
 		else											
 			result.redirectTo("/app/expediente/doc/exibirProcesso?sigla=" + sigla + "&exibirReordenacao=true");
 	}
+	
+	@Transacional
+	@Post("/app/expediente/doc/reordenarAss")
+	public void reordenarAssinatura(String ids, String sigla) throws Exception {		
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();						
+		
+		exDocumentoDTO.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDTO);	
+		
+		Ex.getInstance().getBL().reordenarAss(exDocumentoDTO.getDoc().getMobilGeral(), getCadastrante(), getLotaCadastrante(), ids);		
+		Ex.getInstance().getBL().atualizarMarcas(exDocumentoDTO.getDoc());
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
 
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
@@ -1454,6 +1469,7 @@ public class ExDocumentoController extends ExController {
 		DpLotacaoSelecao lotaSubscritorSel = new DpLotacaoSelecao();
 		lotaSubscritorSel.buscarPorObjeto(getLotaTitular());
 
+		result.include("podeReordenar", Ex.getInstance().getComp().pode(ExPodeOrdemAssinatura.class, so.getTitular(), so.getLotaTitular(), exDocumentoDto.getDoc()));
 		result.include("docVO", docVO);
 		result.include("sigla", Sigla);
 		result.include("id", exDocumentoDto.getId());

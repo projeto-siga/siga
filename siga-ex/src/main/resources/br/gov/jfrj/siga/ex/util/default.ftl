@@ -2585,6 +2585,54 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro assinaturaCentro formatarOrgao=false incluirAssinaturaBIE=true]
+	[#if incluirAssinaturaBIE == true]
+	   <!-- INICIO ASSINATURA -->
+	[/#if]
+	<p style="font-family: Arial; font-size: 11pt;" align="center">
+	<br>
+	[#list doc.listaAssinantesOrdenados as pessoaVO]
+		<br/><br/><br/>
+		[@inicioSubscritor sigla=doc.codigoCompacto]${(pessoaVO.subscritor.idPessoa)!}[/@inicioSubscritor]
+		[#if (pessoaVO.nmSubscritor)??]
+        	${pessoaVO.nmSubscritor}
+    	[#else]
+	       	[#if (pessoaVO.subscritor.nomeExibicao)??]
+	        	${pessoaVO.subscritor.nomeExibicao}
+	       	[#else]
+	           	${(pessoaVO.subscritor.nomePessoa)!}
+	       	[/#if]
+	    [/#if]
+	    [#if (!apenasNome??)] 
+        	<br />
+        	[#if (apenasCargo?? && pessoaVO.subscritor.id == doc.subscritor.id) || (apenasNome?? && pessoaVO.subscritor.id != doc.subscritor.id)]
+                ${(pessoaVO.subscritor.cargo.nomeCargo)!}
+        	[#else]
+            	[#if (pessoaVO.nmFuncao)??]
+                	${pessoaVO.nmFuncao}
+	            [#elseif (pessoaVO.titular.funcaoConfianca.nomeFuncao)??]
+	                ${pessoaVO.titular.funcaoConfianca.nomeFuncao}
+	                [#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)! || substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
+            		[#elseif (pessoaVO.subscritor.funcaoConfianca.nomeFuncao)??]
+                		${pessoaVO.subscritor.funcaoConfianca.nomeFuncao}
+            		[#else]
+                		${(pessoaVO.subscritor.cargo.nomeCargo)!}
+            	[/#if]
+        	[/#if]
+         
+        	[#if formatarOrgao]
+	            <br>
+	            [#if (pessoaVO.nmLotacao)??]
+	                ${pessoaVO.nmLotacao}
+	            [#else]
+	                ${(pessoaVO.titular.lotacao.nomeLotacao)!}
+	            [/#if]
+	        [/#if]
+	        [@fimSubscritor]${(pessoaVO.subscritor.idPessoa)}[/@fimSubscritor]
+    	[/#if]
+	[/#list]
+[/#macro]
+
+[#macro assinaturaCentroOld formatarOrgao=false incluirAssinaturaBIE=true]
 [#if incluirAssinaturaBIE == true]
    <!-- INICIO ASSINATURA -->
 [/#if]

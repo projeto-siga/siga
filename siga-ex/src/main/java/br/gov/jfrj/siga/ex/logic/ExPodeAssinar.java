@@ -90,8 +90,13 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 						Not.of(new ExEstaAutenticadoComTokenOuSenha(mob.doc())))),
 
 				Or.of(
+						And.of(
+								new ExEstaOrdenadoAssinatura(mob.doc()),
+								
+								new ExEAssinanteAtual(mob.doc(), titular)),				
 
 						And.of(
+								Not.of(new ExEstaOrdenadoAssinatura(mob.doc())),
 
 								new ExEFisico(mob.doc()),
 
@@ -104,6 +109,7 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 										new ExECossignatario(mob.doc(), titular))),
 
 						And.of(
+								Not.of(new ExEstaOrdenadoAssinatura(mob.doc())),
 
 								Or.of(
 

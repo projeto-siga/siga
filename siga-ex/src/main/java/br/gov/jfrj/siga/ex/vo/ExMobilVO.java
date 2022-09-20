@@ -519,6 +519,7 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ENVIO_SIAFEM);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ORDEM_ASSINATURA);
 			
 			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getExTipoMovimentacao())) {
 				addAcao(AcaoVO.builder().nome("Desfa_zer "

@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex.vo;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -110,6 +111,7 @@ public class ExDocumentoVO extends ExVO {
 	String fisicoOuEletronico;
 	boolean fDigital;
 	Map<ExMovimentacaoVO, Boolean> cossignatarios = new HashMap<ExMovimentacaoVO, Boolean>();
+	LinkedHashMap<DpPessoa, Long> listaOrdenadaCossigSub = new LinkedHashMap<DpPessoa, Long>();
 	String dadosComplementares;
 	String forma;
 	String modelo;
@@ -372,6 +374,23 @@ public class ExDocumentoVO extends ExVO {
 			this.dotColaboracao = null;
 			this.dotRelacaoDocs = null;
 		}
+	}
+	
+	public LinkedHashMap<DpPessoa, Long> getListaOrdenadaCossigSub() {
+		List<AssinanteVO> listaAsssinantes = mob.getDoc().getListaAssinantesOrdenados();
+		
+		for (AssinanteVO assinanteVO : listaAsssinantes) {
+			for (Map.Entry<ExMovimentacaoVO, Boolean> cossig : this.cossignatarios.entrySet()) {
+				if(assinanteVO.getSubscritor().getSigla().equals(cossig.getKey().getMov().getSubscritor().getSigla())) {
+					this.listaOrdenadaCossigSub.put(cossig.getKey().getMov().getSubscritor(), cossig.getValue() ? cossig.getKey().getMov().getIdMov() : 0L);
+				}
+			}
+			if(assinanteVO.getSubscritor().getSigla().equals(doc.getSubscritor().getSigla())) {
+				this.listaOrdenadaCossigSub.put(doc.getSubscritor(), 0L);
+			}
+		}
+		
+		return this.listaOrdenadaCossigSub;
 	}
 	
 	/*

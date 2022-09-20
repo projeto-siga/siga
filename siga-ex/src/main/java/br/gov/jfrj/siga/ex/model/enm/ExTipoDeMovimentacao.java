@@ -184,7 +184,9 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	GERAR_LINK_PUBLICO_PROCESSO(86, "Gerar link público do Processo"),
 	//
-	ENVIO_PARA_VISUALIZACAO_EXTERNA(87, "Envio para visualização externa");
+	ENVIO_PARA_VISUALIZACAO_EXTERNA(87, "Envio para visualização externa"),
+	
+	ORDEM_ASSINATURA(89, "Ordem de Asssinatura");
 
 	private final int id;
 	private final String descr;

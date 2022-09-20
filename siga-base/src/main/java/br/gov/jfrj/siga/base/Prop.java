@@ -208,7 +208,13 @@ public class Prop {
 		provider.addPrivateProperty("/xjus.password", null);
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
-		
+
+		// Propriedade que controla o acesso aos métodos de exportação para BI da API REST
+		provider.addPrivateProperty("/siga.bi.password", null);
+
+		// Propriedade que controla o acesso ao método de conferência de assinaturas de Documentos da API REST
+		provider.addPrivateProperty("/sigaex.auditoria.assinaturas.password", null);
+
 		/* Services
 		 * 
 		 * Declaração dos serviços e end-points SOAP e RESTful usados pelo back-end nos módulos
@@ -263,10 +269,12 @@ public class Prop {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario", null);
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url", null);
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
 		} else {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket");
 		}
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");

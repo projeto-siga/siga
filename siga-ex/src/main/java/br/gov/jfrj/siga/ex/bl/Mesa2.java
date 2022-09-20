@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.crivano.swaggerservlet.ISwaggerModel;
 
 import br.gov.jfrj.siga.base.Data;
@@ -136,7 +139,7 @@ public class Mesa2 {
 				r.tempoRelativo = Data.calcularTempoRelativo(datahora);
 				r.codigo = mobil.getCodigoCompacto();
 				r.sigla = mobil.getSigla();
-				r.descr = mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " ");
+				r.descr = StringEscapeUtils.unescapeHtml4(mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " "));
 				r.tipoDoc = (mobil.doc().isComposto()? "Composto" : "Avulso");
 				r.offset = offsetItem.toString();
 				offsetItem++;

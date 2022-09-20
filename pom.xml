@@ -166,7 +166,8 @@
 			<dependency>
 				<groupId>br.jus.trf2.xjus</groupId>
 				<artifactId>x-jus-record-api</artifactId>
-				<version>1.2.0</version>
+				<version>1.3.0</version>
+
 				<exclusions>
 					<exclusion>
 						<groupId>com.crivano</groupId>

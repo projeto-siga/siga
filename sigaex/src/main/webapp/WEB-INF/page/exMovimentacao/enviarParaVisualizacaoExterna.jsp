@@ -95,7 +95,7 @@
                 </div>
             </div>
             <form name="frm" action="${pageContext.request.contextPath}/app/expediente/mov/enviar_para_visualizacao_externa_gravar"
-                  method="POST">
+                  method="post">
                 <input type="hidden" name="sigla" value="${sigla}" />
                 <div class="row">
                     <div class="col-sm-12">

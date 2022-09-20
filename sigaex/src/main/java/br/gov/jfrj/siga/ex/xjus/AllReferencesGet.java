@@ -21,7 +21,7 @@ import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
-	static public final long TIMEOUT_MILLISECONDS = 15000;
+	static public final long TIMEOUT_MILLISECONDS = 50000;
 
 	@Override
 	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
@@ -88,6 +88,16 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
 	static public String defaultLastId() {
 		return Utils.formatId(0L) + "-" + RecordServiceEnum.values()[RecordServiceEnum.values().length - 1].ordinal();
+	}
+
+	static public String defaultCursor() {
+		String s = "";
+		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+			if (!s.isEmpty())
+				s += ";";
+			s += Utils.formatId(0L) + "-" + service.ordinal();
+		}
+		return s;
 	}
 
 	public String getContext() {

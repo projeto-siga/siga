@@ -16,6 +16,8 @@
 <%@ attribute name="exibeLotacaoNaAcao" required="false"%>
 <%@ attribute name="exibeConhecimento" required="false"%>
 <%@ attribute name="lotacaoDoTitular" required="false"%>
+<%@ attribute name="itemServicoInterno" required="false"%>
+
 
 <div id="${metodo}">
 	<div class="form-group">
@@ -73,12 +75,15 @@
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-								<c:set var="atividadeLotacao" value="${fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'atividades da lotação')}" />
+							    <c:set var="itemServicoInterno" value="${fn:startsWith(fn:toLowerCase(solicitacao.itemConfiguracao.tituloItemConfiguracao), 'serviço interno')}" />
+								<c:set var="atividadeLotacao" value="${fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'atividades da lotação') 
+								|| fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'registrar projeto a ser demandado para a contratada')
+								|| fn:startsWith(fn:toLowerCase(tarefa.acao.tituloAcao), 'registrar manutenção a ser demandada para a contratada')}" />
 								
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao && !atividadeLotacao}">(${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta})</c:if>
-									<c:if test="${atividadeLotacao}"><!-- (${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta}) --></c:if>
+									<c:if test="${exibeLotacaoNaAcao && !itemServicoInterno}">(${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta})</c:if>
+									<c:if test="${itemServicoInterno}"><!-- (${tarefa.conf.lotacaoAtendente.lotacaoAtual.siglaCompleta}) --></c:if>
 								</option>
 							</c:forEach>
 						</optgroup>
@@ -272,12 +277,14 @@ function carregarLotacaoDaAcao() {
 	if ('${exibeLotacaoNaAcao}' === 'true') {
 		//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
 		var opcaoSelecionada = $("#${metodo} #selectAcao option:selected");
+	 	var opcaoItemConfiguracaoSelecionada = $("input[name='solicitacao.itemConfiguracao.descricao']").val();
 		if (typeof opcaoSelecionada.html() !== 'undefined' && opcaoSelecionada.html() !== '') {
 			var idAcao = opcaoSelecionada.val();
 			var siglaLotacao = getLotacaoDaAcao(opcaoSelecionada.html()); 
 			var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
 			var descLotacao = spanLotacao.html();
-			if (opcaoSelecionada.text().toLowerCase().includes('atividades da lotação'))
+	//	if (opcaoSelecionada.text().toLowerCase().includes('atividades da lotação'))
+	        if (opcaoItemConfiguracaoSelecionada.toLowerCase().includes('serviço interno'))
 				descLotacao = '${lotacaoDoTitular}';
 			var idLotacao = spanLotacao.next().html();
 			var idDesignacaoDaAcao = spanLotacao.prev().html();

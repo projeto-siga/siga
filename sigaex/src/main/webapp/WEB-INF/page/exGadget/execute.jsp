@@ -18,7 +18,7 @@
 	}
 </script>
 
-<c:set var="descr" value="${listEstado[4].descricao}" />
+<c:set var="descr" value="${listEstado[4].grupo.nome}" />
 
 <c:set var="situacao"><fmt:message key="quadro.situacao" /></c:set>
 
@@ -49,7 +49,7 @@
 										    </c:when>    
 										
 										    <c:otherwise>
-										         	 ${listEstado[4].descricao}
+										         	 ${listEstado[4].grupo.nome}
 										    </c:otherwise>
 										</c:choose>
 									</th>

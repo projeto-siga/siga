@@ -41,13 +41,17 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
 	@Override
 	public boolean evalCondition(WfProcedimento pi, String expression) {
-		return MVEL.eval(expression, pi.getVariable(), Boolean.class);
+		HashMap<String, Object> m = new HashMap<>();
+		m.putAll(pi.getVariable());
+		m.put("principal", new WfContextoPrincipal(pi));
+		return MVEL.eval(expression, m, Boolean.class);
 	}
 
 	@Override
 	public TaskResult evalTask(WfProcedimento pi, String expression) {
 		HashMap<String, Object> m = new HashMap<>();
 		m.putAll(pi.getVariable());
+		m.put("principal", new WfContextoPrincipal(pi));
 		m.put("context", new WfContext(pi));
 		return MVEL.eval(expression, m, TaskResult.class);
 	}
@@ -56,6 +60,7 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 	public String evalTemplate(WfProcedimento pi, String template) {
 		HashMap<String, Object> m = new HashMap<>();
 		m.putAll(pi.getVariable());
+		m.put("principal", new WfContextoPrincipal(pi));
 		m.put("context", new WfContext(pi));
 		m.put("td", pi.getCurrentTaskDefinition());
 		m.put("to", pi.calcResponsible(pi.getCurrentTaskDefinition()));

@@ -21,19 +21,20 @@
           <input type="hidden" id="parte_dependentes_${id}" class="parte_dependentes" value="${id}:${depende}:${bloquear?c}:${responsavel}"/>
           [@oculto var="parte_mensagem_${id}" /]
           
-          <table class="parte" width="100%">
-            <tr class="header">
-              <td>${titulo}
-                <span style="float: right"><input type="button" value="Solicitar Alteração" onclick="parte_solicitar_alteracao('${id}', '${titular}', '${lotaTitular}');"/> [@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_atualizar('${titular}', '${lotaTitular}');" /]</span>
-                <span style="float: right; padding-right: 2em;">Responsável: ${responsavel}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-              	<div id="parte_div_mensagem_${id}" class="gt-error"></div>
+          <div class="card mb-4 border-secondary" style="width: 100%;">
+          	<div class="card-header text-white bg-secondary">
+            	<span style="float: left;font-weight: bold;margin-top: 0.5em;">${titulo}</span>
+                <span style="float: right"><input type="button" class="btn btn-light" value="Solicitar Alteração" onclick="parte_solicitar_alteracao('${id}', '${titular}', '${lotaTitular}');"/></span>
+                <span style="float: right; padding-right: 2em;margin-top: 0.5em;">Responsável: ${responsavel}</span>
+            </div>
+            <div class="card-body">
+              	<div id="parte_div_mensagem_${id}" style="color: red; font-weight: bold;"></div>
 				<fieldset id="parte_fieldset_${id}">[#nested]</fieldset></td>
-            </tr>
-          </table>
+            </div>
+            <div class="card-footer">
+	             [@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_atualizar('${titular}', '${lotaTitular}');" /]
+            </div>
+          </div>
           [#local titular = .vars['sigla_titular']!""]
           [#local lotaTitular = .vars['sigla_lota_titular']!""]
             <script type="text/javascript">
@@ -1215,8 +1216,8 @@ LINHA  VARIÁVEL / CONTEÚDO
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 	    [#if !gerar_formulario!false]        	
 			<div class="custom-control custom-radio">
-	        	<input class="custom-control-input" type="radio" id="${id}" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; ${onclique}; ${jreler!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
-				<label title="campo: ${var}" class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+	        	<input class="form-check-input" type="radio" id="${id}" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; ${onclique}; ${jreler!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
+				<label title="campo: ${var}" class="form-check-label mr-4" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 				[#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]						
@@ -1895,14 +1896,13 @@ CKEDITOR.replace( '${var}',
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-
-        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
         <span style="font-size: ${tl}"> ${texto!} </span>
-                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
-        [/@estiloBrasaoCentralizado]
+        <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+    [/@estiloBrasaoCentralizado]
 [/#macro]
 
-[#macro requerimento texto fecho="" tamanhoLetra="Normal" _tipo=""]
+[#macro requerimento texto fecho="" tamanhoLetra="Normal" _tipo="" formatarOrgao=false]
 [#--
   Aplicação: Formatar documento para o tipo Formulário
   Autor:     André
@@ -1917,11 +1917,12 @@ CKEDITOR.replace( '${var}',
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-
-        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false dataAntesDaAssinatura=true]
-        <span style="font-size: ${tl}"> ${texto!} </span>
-                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
-        [/@estiloBrasaoCentralizado]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=formatarOrgao dataAntesDaAssinatura=true]
+    <span style="font-size: ${tl}"> ${texto!} </span>
+    [#if fecho?has_content]
+    <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+    [/#if]
+    [/@estiloBrasaoCentralizado]
 [/#macro]
 
 [#macro requerimento2 texto _tipo="REQUERIMENTO"]
@@ -1954,6 +1955,12 @@ Pede deferimento.</span><br/><br/><br/>
 <span style="color:${cor}"> [#if titulo?? && titulo!=""]<b>${titulo}</b>:[/#if] <b>${texto}</b></span>
 [/#macro]
 
+[#macro dica texto="" cor=""]
+	<p class="text-muted" style="color: ${cor}">
+    	[#if texto?? && texto != ""]${texto}[/#if]
+    	[#nested]
+    </p>
+[/#macro]
 
 [#-- macro obrigatorios texto="Os campos em negrito são de preenchimento obrigatório" titulo="Atenção" vermelho=false]
 <span style="[#if vermelho]color=#ff0000[/#if]">[#if titulo?? && titulo!=""]<b>${titulo}</b>: [/#if]${texto!""}</span>
@@ -2542,11 +2549,13 @@ Pede deferimento.</span><br/><br/><br/>
 	    </style>     
 	  	<p class="texto-enderecamento">
 	      [#if (Vocativo!"") != ""]<b>${Vocativo!}<b><br />[/#if]
+	      [#if (NomeDestinatario!"") != ""]<b>${NomeDestinatario!}<b><br />[/#if]
 	      [#if (CargoDsp!"") != ""]<b>${CargoDsp!}<b><br />[/#if]
 	      [#if (Orgao!"") != ""]${Orgao!}<br />[/#if]
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
-	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}[/#if]    
+	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
+	      [#if (EmCopia!"") != ""]<b>${EmCopia!}<b>[/#if]   
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]
@@ -4129,7 +4138,6 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro requerimentoTrf texto fecho="" tamanhoLetra="Normal" _tipo="" vocat=""]
-
     [#if tamanhoLetra! == "Normal"]
         [#assign tl = "11pt" /]
     [#elseif tamanhoLetra! == "Pequeno"]
@@ -4139,14 +4147,16 @@ Pede deferimento.</span><br/><br/><br/>
     [#else]     
         [#assign tl = "11pt" /]
     [/#if]
-
-[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
-    [@br/]
-    <center><b><p>${vocat!}</p></b></center>
-    <span style="font-size: tl"> ${texto!}</span>
-    <p style="align: justify; TEXT-INDENT: 0cm">${fecho}</p>
-[/@estiloBrasaoCentralizadoTrf]
-
+    PASSEI POR AQUI!
+	[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
+		[#if vocat?has_content]
+	    	<center><b><p>${vocat!}</p></b></center>
+	    [/#if]
+	    <div style="font-size: tl">${texto!}</div>
+		[#if fecho?has_content]
+	    	<p style="align: justify; TEXT-INDENT: 0cm">${fecho}</p>
+	    [/#if]
+	[/@estiloBrasaoCentralizadoTrf]
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPaginaTrf tipo=""]
@@ -4333,7 +4343,7 @@ Pede deferimento.</span><br/><br/><br/>
 	</div>	    
 [/#macro]
 
-[#macro webservice var url timeout cache=""]
+[#macro webservice var url timeout cache="" compactarXml=false]
   [#if cache?has_content]
     <input type="hidden" name="vars" value="${cache}" />
   [/#if]
@@ -4342,7 +4352,7 @@ Pede deferimento.</span><br/><br/><br/>
     <input type="hidden" name="${cache}" value="${str}">
   [#else]
     [#local payload][#nested][/#local]
-    [#local str=func.webservice(url,payload,timeout) /]
+    [#local str=func.webservice(url,payload,timeout,compactarXml) /]
     <input type="hidden" name="${cache}" value="${str?url('UTF-8')}">
   [/#if]
   [#if str?has_content]

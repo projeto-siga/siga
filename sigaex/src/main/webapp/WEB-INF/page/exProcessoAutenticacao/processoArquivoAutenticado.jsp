@@ -24,9 +24,11 @@
 							<p class="p-0 m-0">
 								<b>Documento ${docVO.tipoDocumento}:</b> ${sigla}
 							</p>
-							<p class="p-0 m-0">
-								<b>Protocolo:</b> ${protocolo}
-							</p>
+							<c:if test="${not empty protocolo}">
+								<p class="p-0 m-0">
+									<b>Protocolo:</b> ${protocolo}
+								</p>
+							</c:if>
 							<p class="p-0 m-0">
 								<b>Classifica&ccedil;&atilde;o:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>

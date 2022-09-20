@@ -27,11 +27,13 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 
 		if (req.lastdate == null)
 			req.lastdate = new Date(0L);
-		if (req.lastid == null)
-			req.lastid = AllReferencesGet.defaultLastId();
+		if (req.cursor == null)
+			req.cursor = AllReferencesGet.defaultCursor();
 
 		final CountDownLatch responseWaiter = new CountDownLatch(RecordServiceEnum.values().length);
 		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
+
+		String[] aCursor = req.cursor.split(";");
 
 		// Call Each System
 		for (RecordServiceEnum service : RecordServiceEnum.values()) {
@@ -39,10 +41,10 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 
 			Request q = new Request();
 			q.max = req.max;
-			String split[] = req.lastid.split("-");
+			String split[] = aCursor[service.ordinal()].split("-");
 			String lastid = split[0];
-			if (service.ordinal() > Integer.valueOf(split[1]))
-				lastid = Utils.formatId(Long.valueOf(lastid) - 1);
+//			if (service.ordinal() > Integer.valueOf(split[1]))
+//				lastid = Utils.formatId(Long.valueOf(lastid) - 1);
 			q.lastdate = req.lastdate;
 			q.lastid = lastid;
 			Future<SwaggerAsyncResponse<Response>> future = SwaggerCall.callAsync(
@@ -84,6 +86,18 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		// Drop items that exceed the maximum size
 		while (resp.list.size() > Integer.valueOf(req.max))
 			resp.list.remove(resp.list.size() - 1);
+
+		// Build a cursor by updating the previous one with new IDs that were returned
+		// at the current result list
+		for (Reference r : resp.list) {
+			RecordServiceEnum service = RecordServiceEnum.values()[Integer.valueOf(r.id.split("-")[1])];
+			aCursor[service.ordinal()] = r.id;
+		}
+
+		resp.cursor = String.join(";", aCursor);
+
+		if (resp.cursor == null || resp.cursor.isEmpty())
+			resp.cursor = AllReferencesGet.defaultCursor();
 	}
 
 	public String getContext() {

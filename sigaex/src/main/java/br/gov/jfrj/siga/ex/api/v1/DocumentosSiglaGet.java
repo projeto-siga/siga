@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import br.gov.jfrj.siga.vraptor.TrackRequest;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -29,6 +30,7 @@ import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
 
+@TrackRequest
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
 	@Override
@@ -66,7 +68,9 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 			}
 		}
 
-		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, req.auditar != null && req.auditar, true, true);
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular,
+				req.completo != null && req.completo, req.auditar != null && req.auditar,
+				true, req.exibe != null && req.exibe);
 		// TODO: Resolver o problema declares multiple JSON fields named
 		// serialVersionUID
 		// Usado o Expose temporariamente

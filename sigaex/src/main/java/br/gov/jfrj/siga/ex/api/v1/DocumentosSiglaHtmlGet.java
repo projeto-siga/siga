@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Map;
 
+import br.gov.jfrj.siga.vraptor.TrackRequest;
 import org.apache.http.HttpHeaders;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -23,6 +24,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @AcessoPublicoEPrivado
+@TrackRequest
 public class DocumentosSiglaHtmlGet implements IDocumentosSiglaHtmlGet {
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {

@@ -229,7 +229,7 @@ public class ExAutenticacaoController extends ExController {
 			case ASSINATURA_MOVIMENTACAO_COM_SENHA:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".jwt";
 				contentType = "application/jwt";
-				if (mov.getAuditHash() == null)
+				if (mov.getAuditHash() == null || mov.getDtMov().before(Prop.getData("data.validar.assinatura.com.senha")))
 					throw new AplicacaoException(
 							"Esta é uma assinatura digital com login e senha e não há nenhum artefato comprobatório disponível para download.");
 				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);

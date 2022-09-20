@@ -56,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Controller;
@@ -657,7 +658,7 @@ public class ExDocumentoController extends ExController {
 					.consultarAtivoPorIdInicial(ExModelo.class, 28L))
 					.getIdMod());
 		}
-		carregarBeans(exDocumentoDTO, mobilPaiSel);
+		carregarBeans(exDocumentoDTO, mobilPaiSel); 
 
 		if (exDocumentoDTO.getMobilPaiSel().getId() != null) {
 			hasPai = true;
@@ -1625,12 +1626,16 @@ public class ExDocumentoController extends ExController {
 		final ExBL exBL = ex.getBL();	
 		
 		if (!exDocumentoDTO.getCriandoSubprocesso() 
-				&& exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
-					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null)
-				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
-						+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
-						+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".", 
-						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto());
+				&& exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null) {
+			ExMobil mobPai = exDocumentoDTO.getMobilPaiSel().getObjeto();
+			if (mobPai != null) {
+				if (mobPai.isGeral() && mobPai.doc().isProcesso())
+					mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
+				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + mobPai.getSigla()
+						+ " pelo usuário " + getTitular().getSigla() + ".", 
+						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), mobPai);
+			}
+		}
 		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
@@ -2204,7 +2209,7 @@ public class ExDocumentoController extends ExController {
 					mobPai = daoMob(exDocumentoDTO.getMobilPaiSel().getId());
 
 					final Long idMod = paramLong("exDocumentoDTO.idMod");
-					if (idMod != null && exDocumentoDTO.getCriandoSubprocesso())
+					if (idMod == null && exDocumentoDTO.getCriandoSubprocesso())
 						exDocumentoDTO.setIdMod(exDocumentoDTO.getMobilPaiSel()
 								.getObjeto().getDoc().getExModelo().getId());
 
@@ -2685,10 +2690,8 @@ public class ExDocumentoController extends ExController {
 								parametro = parametro.replaceAll(m, "");
 						}
 						if (!FuncoesEL.contemTagHTML(parametro)) {
-							if (parametro.contains("\"")) {
-								parametro = parametro.replace("\"", "&quot;");
-								setParam(s, parametro);
-							}
+							parametro = StringEscapeUtils.escapeHtml4(parametro);
+							setParam(s, parametro);
 						}
 
 						baos.write(URLEncoder.encode(parametro, "iso-8859-1")

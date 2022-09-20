@@ -26,6 +26,8 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     permissions:
       actions: read
       contents: read
@@ -59,7 +61,11 @@ jobs:
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
       uses: github/codeql-action/autobuild@v2
-    - run: mvn clean compile package -DskipTests=true
+    
+    name: Setup Java JDK
+      uses: actions/setup-java@v1.3.0
+      with:
+        java-version: 8
       
     - if: matrix.language == 'java' 
       name: Build Java

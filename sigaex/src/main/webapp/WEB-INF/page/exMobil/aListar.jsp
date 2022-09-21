@@ -56,7 +56,12 @@
 			}
 			listar["paramoffset"].value = offset;
 			listar["p.offset"].value = offset;
-			listar.submit();
+			
+			if (limpaCampos()) {
+				listar.submit();
+			} else {
+				return;
+			}
 		}
 		
 		function submitBusca() {
@@ -71,7 +76,13 @@
 			}
 			$('#buscandoSpinner').removeClass('d-none');
 			document.getElementById("btnBuscar").disabled = true;
-			listar.submit();
+			
+			if (limpaCampos()) {
+				listar.submit();
+			} else {
+				return;
+			}
+			
 		}
 	</script>
 	

@@ -179,14 +179,15 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 								// movimentação que vai ser cancelada.
 								new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc))),
 
-				NAnd.of(
+				Or.of(
 
-						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.JUNTADA),
+						Not.of(new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.JUNTADA)),
 
-						new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc)),
+						And.of(
+								new ExPodeCancelarJuntada(mob, titular, lotaTitular),
 
-                        new ExPodeCancelarJuntada(mob, titular, lotaTitular),
-				
+								Not.of(new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc)))),	
+							
 				Or.of(
 
 						// Verifica se a última movimentação não cancelada é agendamento de publicação

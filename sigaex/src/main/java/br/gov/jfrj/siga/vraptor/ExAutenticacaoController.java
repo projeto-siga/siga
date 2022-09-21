@@ -138,11 +138,16 @@ public class ExAutenticacaoController extends ExController {
 		}
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
-		ExDocumento doc = (ExDocumento) arq;
 
-		boolean podeVisualizarExternamente = new ExPodeVisualizarExternamente(
-				doc.getMobilGeral(), getTitular(), getLotaTitular())
-				.eval();
+		ExMobil mob = null;
+		if (arq instanceof ExDocumento) {
+			mob = ( (ExDocumento) arq ).getMobilGeral();
+		} else if (arq instanceof ExMovimentacao) {
+			mob = ( (ExMovimentacao) arq ).getExMobil();
+		}
+
+		boolean podeVisualizarExternamente = mob == null ? true :
+				new ExPodeVisualizarExternamente(mob, getTitular(), getLotaTitular()).eval();
 
 		if (( cod == null || cod.trim().length() == 0 ) && ( !podeVisualizarExternamente )) {
 			result.include("podeVisualizarExternamente", false);

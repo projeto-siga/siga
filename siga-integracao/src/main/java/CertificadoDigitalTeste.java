@@ -1,6 +1,7 @@
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -14,6 +15,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
@@ -32,6 +35,66 @@ import sun.security.x509.AlgorithmId;
 import sun.security.x509.X500Name;
 
 public class CertificadoDigitalTeste {
+	
+	public static X509Certificate obterCertificado(String pass) throws Exception{
+		String path = "C:/Users/pascott/Documents/pascott informatica/certificado_digital/FERNANDO_HENRIQUE_PASCOTT_32417729857.p12";
+		Security.addProvider(new BouncyCastleProvider());
+		char[] password = pass.toCharArray();
+
+		FileInputStream fis = new FileInputStream(path);
+		KeyStore ks = KeyStore.getInstance("pkcs12");
+		ks.load(fis, password);
+
+		String alias = ks.aliases().nextElement();
+		//PrivateKey pKey = (PrivateKey) ks.getKey(alias, password);
+		X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+		return cert;
+	}
+
+	public String lerCertifica(String text) throws Exception {
+		String path = "C:/Users/pascott/Documents/pascott informatica/certificado_digital/FERNANDO_HENRIQUE_PASCOTT_32417729857.p12";
+		String passFile = "123456";
+		Security.addProvider(new BouncyCastleProvider());
+		char[] password = passFile.toCharArray();
+
+		FileInputStream fis = new FileInputStream(path);
+		KeyStore ks = KeyStore.getInstance("pkcs12");
+		ks.load(fis, password);
+
+		String alias = ks.aliases().nextElement();
+		PrivateKey pKey = (PrivateKey) ks.getKey(alias, password);
+		X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+		// System.out.println("certificate is: " + cert);
+
+		java.util.List certList = new ArrayList();
+
+		X509CertificateHolder certificateHolder = new X509CertificateHolder(cert.getEncoded());
+		certList.add(certificateHolder);
+		Store certs = new JcaCertStore(certList);
+
+		CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
+		JcaSimpleSignerInfoGeneratorBuilder builder = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
+				.setDirectSignature(true);
+
+		gen.addSignerInfoGenerator(builder.build("SHA1withRSA", pKey, cert));
+		gen.addCertificates(certs);
+
+		CMSTypedData msg = new CMSProcessableByteArray(text.getBytes());
+		CMSSignedData s = gen.generate(msg, true);
+		//System.out.println(s.getEncoded());
+
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+		DEROutputStream dOut = new DEROutputStream(bOut);
+		dOut.writeObject(s.toASN1Structure().toASN1Primitive());
+		dOut.close();
+		byte[] encoded = bOut.toByteArray();
+
+		saveFile(encoded);
+
+		String textCms = byteArrayToHex(encoded);
+		System.out.println("Print CMS" + textCms);
+		return textCms;
+	}
 
 	public String lerCertificado(String texto) throws Exception {
 
@@ -72,7 +135,7 @@ public class CertificadoDigitalTeste {
 		byte[] bytes = texto.getBytes(StandardCharsets.UTF_8);
 		sign.update(bytes);
 		byte[] signature = sign.sign();
-		
+
 		saveFile(signature);
 
 		String text = byteArrayToHex(signature);
@@ -113,11 +176,10 @@ public class CertificadoDigitalTeste {
 //        System.out.println("CERTIFICADO FIM*******************************************");
 
 		System.out.println("*****************>>>>>>>texto: " + texto);
-		
-		
+
 		// Data to sign
 		byte[] dataToSign = texto.getBytes("UTF8");
-		
+
 		int nread = dataToSign.length;
 		// compute signature:
 		Signature signature = Signature.getInstance("SHA1withRSA");
@@ -125,43 +187,48 @@ public class CertificadoDigitalTeste {
 		signature.update(dataToSign, 0, nread);
 		byte[] signedData = signature.sign();
 
-		
 		System.out.println(byteArrayToHex(dataToSign));
 		// load X500Name
 		X500Name xName = X500Name.asX500Name(c.getSubjectX500Principal());
 
 		// load serial number
 		BigInteger serial = c.getSerialNumber();
-		
+
 		// laod digest algorithm
-		AlgorithmId digestAlgorithmId = new AlgorithmId(AlgorithmId.sha1WithRSAEncryption_oid);//AlgorithmId.RSAEncryption_oid);
+		AlgorithmId digestAlgorithmId = new AlgorithmId(AlgorithmId.sha1WithRSAEncryption_oid);// AlgorithmId.RSAEncryption_oid);
 		// load signing algorithm
-		AlgorithmId signAlgorithmId = new AlgorithmId(AlgorithmId.sha1WithRSAEncryption_oid);//AlgorithmId.RSAEncryption_oid);
-		
+		AlgorithmId signAlgorithmId = new AlgorithmId(AlgorithmId.sha1WithRSAEncryption_oid);// AlgorithmId.RSAEncryption_oid);
+
 		// Create SignerInfo:
-		SignerInfo sInfo = new SignerInfo(xName, serial, digestAlgorithmId,  signAlgorithmId, signedData);
+		SignerInfo sInfo = new SignerInfo(xName, serial, digestAlgorithmId, signAlgorithmId, signedData);
 //		SignerInfo sInfo2 = new SignerInfo(xName1, serial, digestAlgorithmId, signAlgorithmId, signedData);
 		// Create ContentInfo:
 		ContentInfo cInfo = new ContentInfo(ContentInfo.DATA_OID, new DerValue(DerValue.TAG_CONTEXT, dataToSign));
 		// Create PKCS7 Signed data
 		PKCS7 p7 = new PKCS7(new AlgorithmId[] { digestAlgorithmId }, cInfo,
 				new java.security.cert.X509Certificate[] { c }, new SignerInfo[] { sInfo });
-		
 
 		// Write PKCS7 to bYteArray
-		
+
+//		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+//		DEROutputStream dOut = new DEROutputStream(bOut);
+//		dOut.writeObject(s.toASN1Structure().toASN1Primitive()); 
+//		dOut.close();
+//		byte[] encoded = bOut.toByteArray();
+
 		ByteArrayOutputStream bOut = new DerOutputStream();
 		p7.encodeSignedData(bOut);
+
 		byte[] encodedPKCS7 = bOut.toByteArray();
 		System.out.println(encodedPKCS7);
-		
+
 		saveFile(encodedPKCS7);
 
 		String text = byteArrayToHex(encodedPKCS7);
 		System.out.println(text);
 		return text;
 	}
-	
+
 	public byte[] calcSha256(byte[] content) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.reset();
@@ -196,6 +263,7 @@ public class CertificadoDigitalTeste {
 		PrivateKey pKey = (PrivateKey) ks.getKey(alias, password);
 		X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
 		java.util.List certList = new ArrayList();
+
 		Store certs = new JcaCertStore(certList);
 
 		CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
@@ -210,17 +278,26 @@ public class CertificadoDigitalTeste {
 		System.out.println(s.getEncoded());
 
 		saveFile(s.getEncoded());
-		
+
 		String text1 = byteArrayToHex(s.getEncoded());
 		System.out.println(text1);
 		return text1;
 	}
 
-	public String byteArrayToHex(byte[] byteArray) {
+	public static String byteArrayToHex(byte[] byteArray) {
 		StringBuilder hex = new StringBuilder(byteArray.length * 2);
 		for (byte b : byteArray)
 			hex.append(String.format("%02x", b));
+		System.out.println("Print Hex: " + hex.toString().toLowerCase());
 		return hex.toString().toLowerCase();
+	}
+
+	public static String CreateMD5(String input) throws NoSuchAlgorithmException {
+
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		md.update(input.getBytes());
+		byte[] digest = md.digest();
+		return byteArrayToHex(digest);
 	}
 
 }

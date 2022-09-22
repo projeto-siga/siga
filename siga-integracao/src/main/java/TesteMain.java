@@ -11,6 +11,7 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetCancelamentoService;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetEnvioService;
+import br.gov.jfrj.siga.integracao.ws.pubnet.utils.CertificadoDigitalUtils;
 
 public class TesteMain {
 	
@@ -20,35 +21,40 @@ public class TesteMain {
 
 		System.out.println("Chamando servico...");
 		AuthHeader user = new AuthHeader();
+		user.setUserName("FernandoHP2");
+		user.setPassword("bffb2B82E0");
+		String passCert = "123456";
 //		user.setUserName("WellingtonBdC");
 //		user.setPassword("123456");
-		user.setUserName("RICARDOBRT");
-		user.setPassword("d356fE4B8C");
+//		user.setUserName("RICARDOBRT");
+//		user.setPassword("d356fE4B8C");
 		
 		
 		
-		CertificadoDigitalTeste cert = new CertificadoDigitalTeste();
+		CertificadoDigitalUtils cert = new CertificadoDigitalUtils();
 
 		/************** Consultas ************/
 		PubnetConsultaService consultaService = new PubnetConsultaService();
 		
 		//TokenDto tok = consultaService.gerarToken("RICARDOBRT", "13432016832", "ricardobrasil@imprensaoficial.com.br");
-		//System.out.println(tok.getToken());d356fE4B8C
+//		TokenDto tok = consultaService.gerarToken("FernandoHP2", "32417729857", "fernando.pascott@apoioprodesp.sp.gov.br");
+//		System.out.println(tok.getToken());//bffb2B82E0
+//		System.exit(0);
 //		    - consultaPermissoesPublicante 
-//		    Caso já tenha carregado a lista anteriormente esse item não se faz necessario.
+//		    Caso jï¿½ tenha carregado a lista anteriormente esse item nï¿½o se faz necessario.
 //		System.out.println("\n\n consultarPermissaoPublicante");
 //		List<PermissaoPublicanteDto> permissaoPublicanteDtos = consultaService.consultarPermissaoPublicante(user);
 //		System.out.println(permissaoPublicanteDtos);
 
 //		    - consultaMaterialEnviado
-//		    Caso já tenha carregado a lista anteriormente esse item não se faz necessário, pode ser utilizado para confirmar que o material que se deseja publicar ainda não foi enviado.
+//		    Caso jï¿½ tenha carregado a lista anteriormente esse item nï¿½o se faz necessï¿½rio, pode ser utilizado para confirmar que o material que se deseja publicar ainda nï¿½o foi enviado.
 		System.out.println("\n\n consultarMaterialEnviado");
 		List<MaterialEnviadoDto> enviadoDtos = consultaService.consultarMaterialEnviado(user, "2019-01-01",
 				"2022-10-01");
 		System.out.println(enviadoDtos);
 
 //		    - listaJustificativasCancelamento
-//		    Caso já tenha carregado a lista anteriormente esse item não se faz necessario.
+//		    Caso jï¿½ tenha carregado a lista anteriormente esse item nï¿½o se faz necessario.
 		System.out.println("\n\n listarJustificativasCancelamento");
 		List<JustificativasCancelamentoDto> justificativasCancelamentoDtos = consultaService
 				.listarJustificativasCancelamento(user);
@@ -57,19 +63,19 @@ public class TesteMain {
 		/************** Envio ************/
 		PubnetEnvioService envioService = new PubnetEnvioService();
 //		    - montaReciboPublicacao
-//		    Com as referencias obtidas no consultaPermissoesPublicante, solicita-se a criação do recibo no formado definido pelo sistema. Sistema retorna texto que deverá ser assinado pelo publicante com certificado ICP-BRASIL
+//		    Com as referencias obtidas no consultaPermissoesPublicante, solicita-se a criaï¿½ï¿½o do recibo no formado definido pelo sistema. Sistema retorna texto que deverï¿½ ser assinado pelo publicante com certificado ICP-BRASIL
 		System.out.println("\n\n montarReciboPublicacao");
 		MontaReciboPublicacaoDto reciboPublicacaoDto = envioService.montarReciboPublicacao(user, "3308", "1", "3308",
-				"1", "317", "eaff34d51f435f94c410106117313239");
+				"1", "315", CertificadoDigitalUtils.CriarMD5DevolverHex("SÃ£o Paulo 21 de setembro de 2022. Teste de encode de arquivo texto gerado pelo WS. A aviaÃ§Ã£o Ã© muito importante para o Brasil! O brasilerio precisa ter uma boa saÃºde. Vai chover ? Uma nota de cinqÃ¼enta vale o mesmo que 2 de vinte ? Fim do teste."));
 		System.out.println(reciboPublicacaoDto);
 		
 		;
 
 //		    - enviaPublicacao
-//		    Monta a solicitação com as mesmas informações que foram passadas para a montagem do recibo, acrescenta a síntese que será publicada e o recibo assinado pelo publicante.
+//		    Monta a solicitaï¿½ï¿½o com as mesmas informaï¿½ï¿½es que foram passadas para a montagem do recibo, acrescenta a sï¿½ntese que serï¿½ publicada e o recibo assinado pelo publicante.
 		System.out.println("\n\n enviarPublicacao");
-		EnviaPublicacaoDto enviaPublicacaoDto = envioService.enviarPublicacao(user, "3308", "1", "3308", "1", "317",
-				"Usage : wsdl2java-fe", cert.lerCertificado(reciboPublicacaoDto.getTextoRecibo(), true), reciboPublicacaoDto.getHashRecibo());
+		EnviaPublicacaoDto enviaPublicacaoDto = envioService.enviarPublicacao(user, "3308", "1", "3308", "1", "315",
+				"SÃ£o Paulo 21 de setembro de 2022. Teste de encode de arquivo texto gerado pelo WS. A aviaÃ§Ã£o Ã© muito importante para o Brasil! O brasilerio precisa ter uma boa saÃºde. Vai chover ? Uma nota de cinqÃ¼enta vale o mesmo que 2 de vinte ? Fim do teste.", cert.assinarConteudoComCertificado(CertificadoDigitalTeste.obterCertificado(passCert), passCert, reciboPublicacaoDto.getTextoRecibo()), reciboPublicacaoDto.getHashRecibo());
 		System.out.println(enviaPublicacaoDto);
 		
 		System.exit(0);
@@ -77,14 +83,14 @@ public class TesteMain {
 		PubnetCancelamentoService cancelamentoService = new PubnetCancelamentoService();
 
 //		- montaReciboPublicacaoCancelamento
-//		Com a referencia obtidas no consultaMaterialEnviado, solicita-se a criação do recibo. O retorno deverá ser assinado pelo publicante com certificado ICP-BRASIL
+//		Com a referencia obtidas no consultaMaterialEnviado, solicita-se a criaï¿½ï¿½o do recibo. O retorno deverï¿½ ser assinado pelo publicante com certificado ICP-BRASIL
 		System.out.println("\n\n montarReciboPublicacaoCancelamento");
 		MontaReciboPublicacaoCancelamentoDto montaReciboPublicacaoCancelamentoDto = cancelamentoService
 				.montarReciboPublicacaoCancelamento(user, "E2.ZABNJ.18.001.********.TXT");
 		System.out.println(montaReciboPublicacaoCancelamentoDto);
 
 //		- cancelaMaterial
-//		Monta a solicitação com as mesmas informações que foram passadas para a montagem do recibo, acrescenta o recibo assinado pelo publicante.
+//		Monta a solicitaï¿½ï¿½o com as mesmas informaï¿½ï¿½es que foram passadas para a montagem do recibo, acrescenta o recibo assinado pelo publicante.
 		System.out.println("\n\n cancelarMaterial");
 		CancelaMaterialDto cancelaMaterialDto = cancelamentoService.cancelarMaterial(user,
 				"E2.ZABNJ.18.001.TXT", "justificativa", "recibo", "reciboHash");

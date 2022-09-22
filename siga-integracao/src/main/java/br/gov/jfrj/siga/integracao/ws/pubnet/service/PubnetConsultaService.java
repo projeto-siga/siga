@@ -22,18 +22,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
 
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativasCancelamentoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MensagemErroRetornoPubnetDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
-import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.Pubnet;
-import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.PubnetSoap;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ConsultaMaterialEnviadoResponse.ConsultaMaterialEnviadoResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ConsultaPermissoesPublicanteResponse.ConsultaPermissoesPublicanteResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.GeraTokenResponse.GeraTokenResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ListaJustificativasCancelamentoResponse.ListaJustificativasCancelamentoResult;
+import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.Pubnet;
+import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.PubnetSoap;
 
 public class PubnetConsultaService {
 
@@ -155,10 +156,22 @@ public class PubnetConsultaService {
 		if (nodeLista != null) {
 			json = jsonMapper.writeValueAsString(nodeLista.get(nomeNodeJson));
 		} else {
-			json = jsonMapper.writeValueAsString(node.get("erro").get("informacoes"));
-			MensagemErroRetornoPubnetDto err = new ObjectMapper().readValue(json, MensagemErroRetornoPubnetDto.class);
-			System.out.println(json);
-			throw new Exception(err.getCodRetorno() + " - " + err.getDescrRetorno());
+			nodeLista = node.get("erro");
+			if(nodeLista != null) {
+				json = jsonMapper.writeValueAsString(nodeLista.get("informacoes"));
+				MensagemErroRetornoPubnetDto err = new ObjectMapper().readValue(json, MensagemErroRetornoPubnetDto.class);
+				System.out.println(json);
+				throw new Exception(err.getCodRetorno() + " - " + err.getDescrRetorno());
+			} else {
+				nodeLista = node.get("Recibo");
+				if(nodeLista != null) {
+					json = jsonMapper.writeValueAsString(nodeLista.get("Recibo"));
+					EnviaPublicacaoDto recibo = new ObjectMapper().readValue(json, EnviaPublicacaoDto.class);
+					if (recibo != null && !recibo.getCodRetorno().equals("0000")) {
+						throw new Exception(recibo.getCodRetorno() + " - " + recibo.getDescricao());
+					}
+				}
+			}
 		}
 		// TODO Remover
 		System.out.println(json);

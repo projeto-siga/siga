@@ -30,7 +30,7 @@ public class EnviaPublicacaoDto implements Serializable {
 	@JsonProperty("eventolicitacao_identificador")
 	private Long eventoLicitacaoId;
 	
-	@JsonProperty("statuspublicacao_ identificador")
+	@JsonProperty("statuspublicacao")
 	private Integer statusPublicacaoId;
 	
 	@JsonProperty("recibo")

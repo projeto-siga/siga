@@ -524,10 +524,8 @@ public class ExArquivoController extends ExController {
 	@TrackRequest
 	@Get("/app/arquivo/downloadFormatoLivre")
 	public void downloadFormatoLivre(final String sigla, String hash) throws Exception {
-		boolean somenteHash = hash != null || getPar().containsKey("HASH_ALGORITHM");
-		String algoritmoHash = getAlgoritmoHash(hash);
 		ExMobil mob = Documento.getMobil(sigla);
-		validarDownload(somenteHash, algoritmoHash, mob);
+		validarDownload(true, null, mob);
 
 		CpArquivo cpArq = mob.getDoc().getCpArquivoFormatoLivre();
 		if (cpArq == null) {
@@ -549,9 +547,11 @@ public class ExArquivoController extends ExController {
 		claims.put("iat", System.currentTimeMillis() / 1000L);
 		claims.put("bucket", bucket);
 		claims.put("key", caminho.replace(bucket + "/",  ""));
+		claims.put("hash", hash);
         String tk = signer.sign(claims);
 		
 		result.include("token", tk);
+		result.redirectTo(Prop.get("/siga.armazenamento.arquivo.formatolivre.url") + "download?tokenArquivo=" + tk);
 	}
 	
 

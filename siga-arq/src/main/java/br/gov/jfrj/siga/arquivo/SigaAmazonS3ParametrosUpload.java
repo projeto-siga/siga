@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.amazonaws.services.s3.model.PartETag;
 
-public class SigaAmazonS3MultipartUpload {
+public class SigaAmazonS3ParametrosUpload {
 	private String arquivoNome;
 	private String arquivoNomeS3;
 	private String uploadId;

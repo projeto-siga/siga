@@ -1,30 +1,21 @@
 package br.gov.jfrj.siga.arquivo;
 
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.message.AuthException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthenticationException;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
-
-import br.gov.jfrj.siga.idp.jwt.SigaJwtOptions;
-import br.gov.jfrj.siga.idp.jwt.SigaJwtProvider;
 
 public class SigaAuthInterceptor extends HandlerInterceptorAdapter {
 	static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora	

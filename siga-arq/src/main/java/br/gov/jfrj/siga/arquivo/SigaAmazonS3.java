@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -30,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.event.ProgressEvent;
+import com.amazonaws.event.ProgressListener;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
@@ -44,6 +47,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.Upload;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
@@ -52,18 +58,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtOptions;
 
 public class SigaAmazonS3 {
-	private AmazonS3 hs3Client;
+	
+	private AmazonS3 s3Client;
 	static private SigaJwtOptions options;
 	static private String bucketName;
-	static long DEFAULT_TTL_TOKEN = 3600 * 30 * 100;	
-	
+	static long DEFAULT_TTL_TOKEN = 3600 * 30 * 100;
+	static String NOME_PASTA = "teste/"; 
+
 	/* 
 	 * 	Upload de arquivos
 	 */
-	public String uploadMultipartIniciar(MultipartFile arquivo, String multipartUploadObj) throws Exception {
-		AmazonS3 hs3Client = conectarS3();
+	public String upload(MultipartFile arquivo, String multipartUploadObj, UploadStatusRepository uploadStatusRepo) throws Exception {
+		AmazonS3 s3Client = conectarS3();
 		ObjectMapper objectMapper = new ObjectMapper();
-		SigaAmazonS3MultipartUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3MultipartUpload.class);
+		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3ParametrosUpload.class);
 		
 		String msgerro = validaParms(parms, true, false);
 		if (msgerro != null)
@@ -72,7 +80,71 @@ public class SigaAmazonS3 {
 	    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
 	    String fdatetime = fmt.format(LocalDateTime.now());
 	    
-        parms.setArquivoNomeS3("teste/" + fdatetime.replace(":", "").replace("/", "") + "-" +
+        parms.setArquivoNomeS3(NOME_PASTA + fdatetime.replace(":", "").replace("/", "") + "-" +
+        		parms.getArquivoNome());
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        // Content-Length deve ser setado para utilizar um InputStream, senão o arquivo será
+        // carregado em memória sem necessidade
+        metadata.setContentLength(Long.valueOf(parms.getTamanho()));
+//        String hashSHA256 = calcHashSha256(arquivo.getInputStream(), arquivo.getSize());
+//        if (!parms.getHash().equals(hashSHA256)) 
+//        	throw new Exception("O arquivo recebido para upload nao corresponde ao enviado.");
+//        metadata.setHeader("Expires", LocalDateTime.now().plusDays(2)
+//        		.atZone(ZoneId.systemDefault()).toInstant());
+        metadata.setHeader("x-amz-checksum-algorithm", "SHA256");
+        metadata.setHeader("x-amz-checksum-sha256", arquivo.hashCode());
+//        metadata.setContentMD5(parms.getHash());
+        TransferManager tm = TransferManagerBuilder.standard().withS3Client(s3Client).build();
+        Upload upl = tm.upload(
+				bucketName, 
+				parms.getArquivoNomeS3(),
+                arquivo.getInputStream(),
+                metadata);
+        
+        UploadStatus status = new UploadStatus();
+        String idStatus = UUID.randomUUID().toString();
+
+        upl.addProgressListener(new ProgressListener() {
+            public void progressChanged(ProgressEvent e) {
+                status.setId(idStatus);
+                status.setBytesTransferidos(e.getBytesTransferred());
+                System.out.println("bytesTransferred: " + e.getBytesTransferred() + " - " + e.getBytes());
+                uploadStatusRepo.save(status);
+            }
+        });
+
+//        upl.waitForCompletion();
+//        TransferState ts = upl.getState();     
+				
+//        parms.setHash(((Integer) upl.hashCode()).toString());
+        parms.setUploadId(idStatus);
+//        String uplResp = objectMapper.writeValueAsString(upl);
+        String resp = objectMapper.writeValueAsString(parms);
+
+        return resp;
+	}
+
+	public String verProgressoUpload(String multipartUploadObj, UploadStatusRepository uploadStatusRepo) throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper();
+		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3ParametrosUpload.class);
+		Long bytesTransferidos = uploadStatusRepo.findById(parms.getUploadId()).get().getBytesTransferidos();
+		return bytesTransferidos.toString();
+	}
+
+	public String uploadMultipartIniciar(MultipartFile arquivo, String multipartUploadObj) throws Exception {
+		AmazonS3 s3Client = conectarS3();
+		ObjectMapper objectMapper = new ObjectMapper();
+		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3ParametrosUpload.class);
+		
+		String msgerro = validaParms(parms, true, false);
+		if (msgerro != null)
+			throw new Exception(msgerro);
+
+	    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
+	    String fdatetime = fmt.format(LocalDateTime.now());
+	    
+        parms.setArquivoNomeS3(NOME_PASTA + fdatetime.replace(":", "").replace("/", "") + "-" +
         		parms.getArquivoNome());
 
         ObjectMetadata metadata = new ObjectMetadata();
@@ -88,7 +160,7 @@ public class SigaAmazonS3 {
         String uId = null;
         
         InitiateMultipartUploadRequest req = new InitiateMultipartUploadRequest(bucketName, parms.getArquivoNomeS3());
-        InitiateMultipartUploadResult res = hs3Client.initiateMultipartUpload(req);
+        InitiateMultipartUploadResult res = s3Client.initiateMultipartUpload(req);
         uId = res.getUploadId();
         metadata.setHeader("uploadId", uId);
         metadata.setHeader("Expires", LocalDateTime.now().plusDays(2)
@@ -114,7 +186,7 @@ public class SigaAmazonS3 {
         // O uploadId deve ser enviado nos próximos requests para identificar qual é o processo de multipart upload
         // As sequencias (part) e as ETags devem ser armazenadas em um array no javascript cliente e serão 
         // passadas na finalização do multipart upload
-        UploadPartResult uploadResult = hs3Client.uploadPart(uploadRequest);
+        UploadPartResult uploadResult = s3Client.uploadPart(uploadRequest);
         parms.setPartETag(uploadResult.getPartETag());
         parms.setUploadId(uId);
         String resp = objectMapper.writeValueAsString(parms);
@@ -122,9 +194,9 @@ public class SigaAmazonS3 {
 	}
 
 	public String uploadMultipartEnviarParte(MultipartFile arquivo, String multipartUploadObj) throws Exception {
-		AmazonS3 hs3Client = conectarS3();
+		AmazonS3 s3Client = conectarS3();
 		ObjectMapper objectMapper = new ObjectMapper();
-		SigaAmazonS3MultipartUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3MultipartUpload.class);
+		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3ParametrosUpload.class);
 		
 		String msgerro = validaParms(parms, true, true);
 		if (msgerro != null)
@@ -152,16 +224,16 @@ public class SigaAmazonS3 {
                 .withInputStream(arquivo.getInputStream())
                 .withPartSize(tam);
 
-        UploadPartResult uploadResult = hs3Client.uploadPart(uploadRequest);
+        UploadPartResult uploadResult = s3Client.uploadPart(uploadRequest);
         parms.setPartETag(uploadResult.getPartETag());
         String resp = objectMapper.writeValueAsString(parms);
         return resp;
 	}
 
 	public String uploadMultipartFinalizar(String multipartUploadObj) throws Exception {
-		AmazonS3 hs3Client = conectarS3();
+		AmazonS3 s3Client = conectarS3();
 		ObjectMapper objectMapper = new ObjectMapper();
-		SigaAmazonS3MultipartUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3MultipartUpload.class);
+		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3ParametrosUpload.class);
 		
 		String msgerro = validaParms(parms, true, true);
 		if (msgerro != null)
@@ -179,22 +251,24 @@ public class SigaAmazonS3 {
         }
         partETags.sort(Comparator.comparing(PartETag :: getPartNumber));
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentMD5(parms.getHash());
+		metadata.setHeader("x-amz-checksum-algorithm", "SHA256");
+		metadata.setHeader("x-amz-checksum-sha256", parms.getHash());
+//        metadata.setContentMD5(parms.getHash());
         CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest(bucketName, parms.getArquivoNomeS3(),
 	            parms.getUploadId(), partETags);
-        CompleteMultipartUploadResult res = hs3Client.completeMultipartUpload(compRequest);
-		return criarToken(res, parms.getTamanho());
+        CompleteMultipartUploadResult res = s3Client.completeMultipartUpload(compRequest);
+		return criarToken(res, parms.getTamanho(), parms.getHash());
 	}
 
 	public String uploadMultipartAbortar(String multipartUploadObj) throws Exception {
-		AmazonS3 hs3Client = conectarS3();
+		AmazonS3 s3Client = conectarS3();
 		ObjectMapper objectMapper = new ObjectMapper();
-		SigaAmazonS3MultipartUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3MultipartUpload.class);
+		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(multipartUploadObj, SigaAmazonS3ParametrosUpload.class);
 		
 		String msgerro = validaParms(parms, false, false);
 		if (msgerro != null)
 			throw new Exception(msgerro);
-		hs3Client.abortMultipartUpload(new AbortMultipartUploadRequest(
+		s3Client.abortMultipartUpload(new AbortMultipartUploadRequest(
 	            bucketName, parms.getArquivoNomeS3(), parms.getUploadId()));
 		return "OK";
 	}
@@ -202,7 +276,7 @@ public class SigaAmazonS3 {
 	 * 	Download de Arquivos
 	 */
 	public ResponseEntity<InputStreamResource> download(String tokenArquivo, Optional<String> range) throws Exception {
-		AmazonS3 hs3Client = conectarS3();
+		AmazonS3 s3Client = conectarS3();
 		
  		Map<String, Object> lst = decodificarTokenArquivo(tokenArquivo);
 		String objName = (String) lst.get("key");
@@ -210,11 +284,11 @@ public class SigaAmazonS3 {
  		String[] rng = null;
  		if (range.isPresent()) {
  			rng = range.orElseGet(() -> "").replace("bytes=","").split("-");
- 	        obj = hs3Client.getObject(
+ 	        obj = s3Client.getObject(
  	                new GetObjectRequest(bucketName, objName)
  	                	.withRange(Long.valueOf(rng[0]), Long.valueOf(rng[1])));
 		} else {
-	        obj = hs3Client.getObject(
+	        obj = s3Client.getObject(
 	                new GetObjectRequest(bucketName, objName));
 		}
 
@@ -237,7 +311,7 @@ public class SigaAmazonS3 {
         		.body(dataFile);
 	}
 	
-	private String criarToken(CompleteMultipartUploadResult res, String tamanho) {
+	private String criarToken(CompleteMultipartUploadResult res, String tamanho, String hash) {
 		final JWTSigner signer = new JWTSigner(System.getProperty("siga.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 		final long iat = System.currentTimeMillis() / 1000L;
@@ -245,7 +319,8 @@ public class SigaAmazonS3 {
 		claims.put("bucket", res.getBucketName());
 		claims.put("tamanho", tamanho);
 		claims.put("key", res.getKey());
-        return signer.sign(claims);
+		claims.put("hash", hash);
+		return signer.sign(claims);
 	}
 
 	private Map<String, Object> decodificarTokenArquivo(String token) throws InvalidKeyException, NoSuchAlgorithmException, 
@@ -290,7 +365,7 @@ public class SigaAmazonS3 {
 		return new String(Hex.encodeHexString(hash));  
 	}	
 
-	private String validaParms(SigaAmazonS3MultipartUpload parms, boolean validaSequencia, boolean validaUploadId) {
+	private String validaParms(SigaAmazonS3ParametrosUpload parms, boolean validaSequencia, boolean validaUploadId) {
 		if (parms.getArquivoNome() == null || "".equals(parms.getArquivoNome()))
 			return "Nome do arquivo não foi informado";
 		if (parms.getArquivoNome().length() > 150)
@@ -316,7 +391,7 @@ public class SigaAmazonS3 {
 	}
 
 	private AmazonS3 conectarS3() {
-		if (hs3Client == null) {
+		if (s3Client == null) {
 			String accessKey = Base64.getEncoder().encodeToString(System.getProperty("siga.armazenamento.arquivo.usuario").getBytes());
 			String secretKey = DigestUtils.md5Hex(System.getProperty("siga.armazenamento.arquivo.senha"));
 	        ClientConfiguration myClientConfig = new ClientConfiguration();
@@ -324,13 +399,13 @@ public class SigaAmazonS3 {
 	        myClientConfig.setProtocol(Protocol.HTTP);
 	        System.setProperty("com.amazonaws.sdk.disableCertChecking", "true");
 	
-	        hs3Client = new AmazonS3Client(
+	        s3Client = new AmazonS3Client(
 	                                     new BasicAWSCredentials(accessKey,
 	                                           secretKey), myClientConfig);
 	
-	        hs3Client.setEndpoint(System.getProperty("siga.armazenamento.arquivo.url"));
+	        s3Client.setEndpoint(System.getProperty("siga.armazenamento.arquivo.url"));
 	        bucketName = System.getProperty("siga.armazenamento.arquivo.bucket");
 		}
-		return hs3Client;
+		return s3Client;
 	}
 }

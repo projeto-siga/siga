@@ -15,9 +15,110 @@ var partETags = [];
 var sequenciasErro = [];
 var isCancelado = false;
 var jaAvisou = false;
+var qtdRequestsPendentes;
+var msgProgressBar;
+var hashArquivo;
 /*
  * 	Funções para upload de arquivos grandes em partes
  */
+function uploadArq(urlBase, inputArq, tamMaximo){
+	inputArquivo = inputArq;
+	blob = inputArq.files[0];
+	tamanhoTotal = blob.size;
+	if (blob) { 
+		dataArquivo = new Date(blob.lastModified) 
+		if((parseInt(tamanhoTotal)) > tamMaximo) { 
+			alert('Tamanho do arquivo excede o máximo permitido de ' + tamMaximo / 1024 * 1024 + ' MB');
+			return;
+		}
+	} else {
+		alert('Arquivo não informado. Escolha o arquivo para upload.');
+    }
+	inputArq.disabled = true;
+	isCancelado = false;
+	jaAvisou = false;
+//	insertProgressBar(true);
+
+    url = urlBase;
+	formData.set("arquivo", blob);
+	let parms = JSON.stringify({ arquivoNome: blob.name, tamanho: tamanhoTotal, sequencia: 1 });
+	formData.set("parms", parms);
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url + "upload");
+	xhr.onload = function(e) {
+	  if (this.readyState == 4 && this.status == 200) {
+		  let respobj = JSON.parse(this.responseText);
+	      uploadId = respobj.uploadId;
+	      atualizaBarraProgresso(uploadId)
+	  } else {
+	      if (this.readyState == 4 && this.status == 403) {
+	    	  window.location.href = "/siga/public/app/login" 
+	      } else {
+	    	  if (this.status >= 300) 
+		    	  alert('Ocorreu um erro no envio do arquivo (HTTP error ' + this.status + 
+		    			  '). Por favor tente mais tarde.');
+	      }
+	  }
+	};
+	xhr.onerror = function(e){
+		inputArq.disabled = true;
+		alertaServidorIndisponivel();
+	}
+	xhr.withCredentials = true;
+	xhr.send(formData);
+}
+
+function atualizaBarraProgresso(uploadId) {
+	insertProgressBar(true);
+	var qtdVezes = 0;
+	var intervalId = setInterval(function () {
+		qtdVezes++;
+        if (isCancelado) {
+        	clearInterval(intervalId);
+        	return;
+        }
+        verProgressoUpload(uploadId)
+        
+		if (qtdVezes > 200) { // Demorou, aborta upload
+			abortarUpload();
+			clearInterval(intervalId);
+		}
+	}, 2000);
+}
+
+function verProgressoUpload (uploadId) {
+	let parms = JSON.stringify({ arquivoNome: blob.name, sequencia: 1, uploadId: uploadId });
+	formData.delete("arquivo");
+	formData.set("parms", parms);
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", url + "verProgressoUpload");
+	xhr.onload = function(e) {
+	  if (this.readyState == 4 && this.status == 200) {
+	      bytesTransferidos = this.responseText;
+		  setaProgressBar(Math.round(100 / tamanhoTotal * bytesTransferidos));
+		  msgProgressBar.textContent = "Recebeu parte " + seq + "/" + totalChunks + "(qtd pendentes a receber : " + qtdRequestsPendentes
+	  } else {
+	      if (this.readyState == 4 && this.status == 403) {
+	    	  window.location.href = "/siga/public/app/login" 
+	      } else {
+	    	  if (this.status >= 300) {
+	    	  	if (!jaAvisou) { 
+	    	  		isCancelado = true;
+	    	  		jaAvisou = true;
+		    		alert('Ocorreu um erro no envio do arquivo (HTTP error ' + this.status + 
+		    			  '). Por favor tente mais tarde.');
+		   		}
+		   	  }
+	      }
+	  }
+	};
+	xhr.onerror = function(e){
+		alertaServidorIndisponivel();
+	}
+	xhr.withCredentials = true;
+	xhr.send(formData);
+}
+
 function uploadArquivo(urlBase, inputArq, tamMaximo){
 	if (trataUploadPendente(urlBase, inputArq))
 		return
@@ -83,7 +184,6 @@ function postPrimeiroChunk (chunk, hash) {
 
 function alertaServidorIndisponivel() {
 	if (!jaAvisou) {
-		document.getElementById("barraProgresso").innerHTML = "";
 		alert("Servidor de upload não está disponível. Por favor tente mais tarde.");
 		resetaArquivoUpload();
 		jaAvisou = true;
@@ -125,6 +225,7 @@ function continuaUpload(urlBase, inputArq, jsonUpload){
 	jaAvisou = false;
     url = urlBase;
     totalChunks = Math.max(Math.ceil(tamanhoTotal / tamanhoChunk), 1);
+    msgProgressBar.textContent = "Continuando o upload do arquivo " + arqNome
     enviaRestante();
 }
 
@@ -132,20 +233,23 @@ function continuaUpload(urlBase, inputArq, jsonUpload){
 function enviaRestante() {
     setaProgressBar(Math.round(100 / totalChunks * partETags.length));
     let seq = 1;
+    qtdRequestsPendentes = 0;
     
 	// Solicita o envio das outras partes
 	while( seq < totalChunks ) {
-        seq++;
         if (isCancelado)
         	return;
-       	enviaChunk(seq)
+		if (qtdRequestsPendentes < 20) { // Limita a qtd de requests concorrentes para nao sobrecarregar memoria
+	        seq++;
+	       	enviaChunk(seq)
+		}
 	}
 	enviouTodasPartes();
 }
 
-function existeEmPartETags(arg) {
-	for(var i = 0; i < partETags.length; i++) {
-	    if(partETags[i].partNumber === arg)
+function existeEmPartETags(seq) { // Verifica se ja enviou o chunk
+	for(let i = 0; i < partETags.length; i++) {
+	    if(partETags[i].partNumber === seq)
 	    	return true;
 	}
 	return false;
@@ -156,10 +260,13 @@ function retryPartesComErro() {
     // Tenta enviar novamente as partes que deram erro no upload
     counterRetry = 0;	
     for (let counterRetry = 0; counterRetry < 5; counterRetry++ ) {
-	    enviaChunk(sequenciasErro[i]);
         if (isCancelado)
         	return;
-	    i++;
+        msgProgressBar.textContent = "Solicitando novamente partes que deram erro..."
+   		if (qtdRequestsPendentes < 20) { // Limita a qtd de requests concorrentes para nao sobrecarregar memoria
+        	enviaChunk(sequenciasErro[i]);
+        	i++;
+   		}
     }
 	if (partETags.length < totalChunks) {
 		alert('Ocorreu um erro no envio do arquivo. Por favor tente mais tarde.');
@@ -177,11 +284,11 @@ function enviouTodasPartes() {
         	return;
         }
         	 
-		if (partETags.length >= totalChunks) {
+		if (partETags.length >= totalChunks) { // Aguarda recebimento de todos chunks para finalizar
 			finalizaUpload();
 			clearInterval(intervalId);
 		}
-		if (qtdVezes > 200) {
+		if (qtdVezes > 200) { // Demorou, aborta upload
 			abortarUpload();
 			clearInterval(intervalId);
 		}
@@ -222,13 +329,17 @@ function postChunk(seq, chunk, hash) {
 			setaProgressBar(Math.round(100 / totalChunks * partETags.length));
 			window.localStorage.setItem(getCadastrante() + "upload", 
 					JSON.stringify({arqNome:arqNome,uploadId:uploadId,partETags:partETags,sequenciasErro:sequenciasErro}));
+		    msgProgressBar.textContent = "Recebeu parte " + seq + "/" + totalChunks + "(qtd pendentes a receber : " + qtdRequestsPendentes
+			qtdRequestsPendentes--
         } else {
             if (this.readyState == 4 && this.status == 403) {
-            	window.location.href = "/siga/public/app/login" 
+            	window.location.href = "/siga/public/app/login"
+            	qtdRequestsPendentes--
         	} else {
 		    	if (this.status >= 300) 
 	        		// Ocorreu um erro no envio, guarda a sequencia para tentar novamente no final
 	        		sequenciasErro.push(seq);
+		    		qtdRequestsPendentes--
         	}
        }
     };
@@ -236,7 +347,9 @@ function postChunk(seq, chunk, hash) {
 		alertaServidorIndisponivel();
     }
     xhr.withCredentials = true;
+    msgProgressBar.textContent = "Enviando parte " + seq + "/" + totalChunks
     xhr.send(formData);
+    qtdRequestsPendentes++;
 }
 
 function finalizaUpload() {
@@ -290,6 +403,7 @@ function finalizaUpload() {
 		alertaServidorIndisponivel();
     }
     xhr.withCredentials = true;
+    msgProgressBar.textContent = "Solicitando finalização do upload..."
     xhr.send(formData);
 }
 
@@ -307,11 +421,13 @@ function abortarUpload() {
     	alertaServidorIndisponivel();
     }
     xhr.withCredentials = true;
+    msgProgressBar.textContent = "Solicitando cancelamento do upload..."
     xhr.send(formData);
 }
 
 function resetaArquivoUpload() {
-	document.getElementById("barraProgresso").innerHTML = "";
+	if (document.getElementById("barraProgresso"))
+		document.getElementById("barraProgresso").innerHTML = "";
 	isCancelado = true;
 	document.querySelectorAll(".uploadclass").forEach(el => el.remove());
 	inputArquivo.parentNode.classList.remove('d-none');
@@ -330,11 +446,12 @@ function setaProgressBar(percentualProgresso) {
 
 function insertProgressBar(isUpload) {
 	inputArquivo.parentNode.insertAdjacentHTML('afterend', '<div id="barraProgresso" name="barraProgresso" class="mt-2">'
-			+ '<div class="progress"><div class="progress-bar" ' 
+			+ '<small id="msgProgressBar" class="text-muted"></small><div class="progress"><div class="progress-bar" ' 
 			+ 'role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>'
 			+ '<button type="button" class="btn btn-sm btn-primary mt-1" onclick="abortar'
 			+ (isUpload ? 'Upload' : 'Download')
 			+ '();">Cancelar</button></div>');
+	msgProgressBar = document.getElementById('msgProgressBar');
 }
 
 async function calculaSHA256(arq) {

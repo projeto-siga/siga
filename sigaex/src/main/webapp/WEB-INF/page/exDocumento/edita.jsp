@@ -640,7 +640,7 @@
 														</div>
 													</div>
 													<div class="col-sm">
-	      	  											<button id="btnResetaArq" class='btn btn-secondary mt-lg-4' onclick='resetaArquivoUpload()'>Escolher Outro</button>
+	      	  											<button id="btnResetaArq" class='btn btn-secondary mt-lg-4' onclick='resetaArquivoUpload()'>Limpar</button>
 	      	  										</div>
 												</div>
 												<small class="form-text text-muted">Tipos de arquivo permitidos para este documento: ${exDocumentoDTO.modelo.extensoesArquivoComPonto}</small>

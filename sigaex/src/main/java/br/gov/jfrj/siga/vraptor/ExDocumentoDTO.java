@@ -578,6 +578,10 @@ public class ExDocumentoDTO {
 			return "interno_capturado";
 		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
 			return "externo_capturado";
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE)
+			return "interno_capturado_formato_livre";
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE)
+			return "externo_capturado_formato_livre";
 		return "";
 	}
 
@@ -1049,4 +1053,22 @@ public class ExDocumentoDTO {
 		this.podeIncluirSubscrArvoreDocs = podeIncluirSubscrArvoreDocs;
 	}
 
+	public boolean isCapturado() {
+		if (getIdTpDoc() == null && doc != null
+				&& doc.getExTipoDocumento() != null)
+			setIdTpDoc(doc.getExTipoDocumento().getId());
+		return (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || 
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO ||
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE || 
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
+	}
+
+	public boolean isCapturadoFormatoLivre() {
+		if (getIdTpDoc() == null && doc != null
+				&& doc.getExTipoDocumento() != null)
+			setIdTpDoc(doc.getExTipoDocumento().getId());
+		return (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE || 
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
+	}
+	
 }

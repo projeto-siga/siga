@@ -184,7 +184,9 @@
 					</c:if>
 					</div>
 					<div
-						class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
+						class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or 
+							((exDocumentoDTO.tipoDocumento != 'interno_capturado' or exDocumentoDTO.tipoDocumento != 'interno_capturado_formato_livre') and podeEditarData) or 
+							(fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
 						<div
 							class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1 ? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
@@ -203,7 +205,8 @@
 							</div>
 						</div>
 						<div
-							class="col-sm-2 ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData? '': 'd-none'}  ${hide_only_GOVSP}">
+							class="col-sm-2 ${(exDocumentoDTO.tipoDocumento != 'interno_capturado' or exDocumentoDTO.tipoDocumento != 'interno_capturado_formato_livre' ) and 
+								podeEditarData? '': 'd-none'}  ${hide_only_GOVSP}">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="dtDocString" /> <label
 									class=" " for="exDocumentoDTO.dtDocString">Data</label> <input
@@ -320,7 +323,8 @@
 					</div>
 					<c:choose>
 						<c:when
-							test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
+							test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado" 
+								or exDocumentoDTO.tipoDocumento == "externo_capturado_formato_livre"}'>
 						</c:when>
 						<c:otherwise>
 							<div class="row  js-siga-sp-documento-analisa-alteracao">
@@ -463,7 +467,7 @@
 					<c:if test="${not empty exDocumentoDTO.listaTipoDest}">
 					<input type="hidden" name="campos" value="tipoDestinatario" />
 					<c:if
-						test='${exDocumentoDTO.tipoDocumento != "interno_capturado" }'>
+						test='${exDocumentoDTO.tipoDocumento != "interno_capturado" or exDocumentoDTO.tipoDocumento != "interno_capturado_formato_livre"}'>
 						<div class="row ${hide_only_GOVSP}">
 							<div class="col-sm-2">
 								<div class="form-group">
@@ -607,7 +611,7 @@
 									<input type="hidden" name="campos" value="descrDocumento" /> <br>
 									<div class="form-group" style="margin-bottom: 0">
 										<c:choose>
-											<c:when test="${exDocumentoDTO.modelo.extensoesArquivo == null}">
+											<c:when test="${!exDocumentoDTO.capturadoFormatoLivre}">
 												<div class="custom-file">
 													<input type="file" class="custom-file-input" id="arquivo"
 														name="arquivo" accept="application/pdf"
@@ -732,7 +736,7 @@
 						</div>
 					</c:if>
 					<c:if
-						test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.tipoDocumento == "interno_capturado" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
+						test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.capturado}'>
 						<c:if
 							test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
 							<div class="row">

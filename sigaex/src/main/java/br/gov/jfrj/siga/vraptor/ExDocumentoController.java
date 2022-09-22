@@ -1685,13 +1685,12 @@ public class ExDocumentoController extends ExController {
 
 			lerForm(exDocumentoDTO, vars);
 
-			if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-					.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+			if (exDocumentoDTO.isCapturado()
 					&& exDocumentoDTO.getDoc().getIdDoc() == null
 					&& arquivo == null
 					&& tokenArquivo == null)
 				throw new AplicacaoException(
-						"Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
+						"Documento capturado não pode ser gravado sem que seja informado o arquivo " + (tokenArquivo != null ? ".":"PDF."));
 
 			if (!ex.getConf().podePorConfiguracao(getTitular(),
 					getLotaTitular(),
@@ -1882,8 +1881,7 @@ public class ExDocumentoController extends ExController {
 			}
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
-					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
+					&& exDocumentoDTO.isCapturado() && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 

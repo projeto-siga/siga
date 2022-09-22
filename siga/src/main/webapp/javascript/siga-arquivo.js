@@ -333,7 +333,7 @@ function postChunk(seq, chunk, hash) {
 			setaProgressBar(Math.round(100 / totalChunks * partETags.length));
 			window.localStorage.setItem(getCadastrante() + "upload", 
 					JSON.stringify({arqNome:arqNome,uploadId:uploadId,partETags:partETags,sequenciasErro:sequenciasErro}));
-		    msgProgressBar.textContent = "Recebeu parte " + seq + "/" + totalChunks + "(qtd pendentes a receber : " + qtdRequestsPendentes
+		    msgProgressBar.textContent = "Recebeu parte " + seq + "/" + totalChunks + " (qtd pendentes a receber : " + qtdRequestsPendentes + ")"
 			qtdRequestsPendentes--
         } else {
             if (this.readyState == 4 && this.status == 403) {

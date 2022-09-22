@@ -1180,6 +1180,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		Map<String, Object> lst = verifier.verify(tokenArquivo);
 		String nomeArquivo = (String) lst.get("key");
 		Integer tamanhoArquivo = Integer.valueOf((String) lst.get("tamanho"));
+		String hashArquivo = (String) lst.get("hash");
 		CpArquivo cpArq = getCpArquivoFormatoLivre();
 		CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum
 				.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"));
@@ -1189,7 +1190,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 			throw new AplicacaoException("Arquivos de formato livre só são permitidos quando o tipo de armazenamento não é em banco de dados (BLOB ou TABELAS).");
 		
 		if (nomeArquivo != null) 
-			cpArquivoFormatoLivre = CpArquivo.updateFormatoLivre(cpArq, nomeArquivo, tamanhoArquivo, CpArquivoTipoArmazenamentoEnum.HCP);
+			cpArquivoFormatoLivre = CpArquivo.updateFormatoLivre(cpArq, nomeArquivo, tamanhoArquivo, CpArquivoTipoArmazenamentoEnum.HCP, hashArquivo);
 	}
 	
 	private boolean orgaoPermiteHcp() {

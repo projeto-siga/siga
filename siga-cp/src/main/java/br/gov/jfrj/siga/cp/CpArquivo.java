@@ -103,6 +103,9 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	@Column(name = "TAMANHO_ARQ")
 	private Integer tamanho = 0;
 
+	@Column(name = "HASH_SHA256")
+	private String hashSha256;
+
 	@Transient
 	protected byte[] cacheArquivo;
 
@@ -197,6 +200,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 				arq.setOrgaoUsuario(old.getOrgaoUsuario());
 
 				arq.setConteudo(old.getConteudo());
+				arq.setHashSha256(old.getHashSha256());
 
 				ContextoPersistencia.em().remove(old);
 				return arq;
@@ -260,7 +264,8 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		return old;
 	}
 
-	public static CpArquivo updateFormatoLivre(CpArquivo old, String nomeArquivo, Integer tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
+	public static CpArquivo updateFormatoLivre(CpArquivo old, String nomeArquivo, Integer tamanhoArquivo, 
+			CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
 		if (old == null) {
 			String bucket = Prop.get("/siga.armazenamento.arquivo.bucket");
 			CpArquivo arq = CpArquivo.forUpdate(old);
@@ -272,6 +277,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			arq.setTamanho(tamanhoArquivo);
 			arq.setTipoArmazenamento(tipoArmazenamento);
 			arq.setFormatoLivre(true);
+			arq.setHashSha256(hashSha256);
 			return arq;
 		}
 		return old;
@@ -373,6 +379,14 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	private void setFormatoLivre(boolean isFormatoLivre) {
 		this.isFormatoLivre = isFormatoLivre;
+	}
+
+	public String getHashSha256() {
+		return hashSha256;
+	}
+
+	public void setHashSha256(String hashSha256) {
+		this.hashSha256 = hashSha256;
 	}
 
 }

@@ -143,15 +143,19 @@ function uploadArquivo(urlBase, inputArq, tamMaximo){
     url = urlBase;
     totalChunks = Math.max(Math.ceil(tamanhoTotal / tamanhoChunk), 1);
     let chunk = blob.slice(0, tamanhoChunk);
-
-	let hs = calculaSHA256(chunk)
-		.then(hash => {
-			postPrimeiroChunk(chunk, hash)
+	let ht = calculaSHA256(blob)
+		.then(ht => {
+			let hs = calculaSHA256(chunk)
+				.then(hash => {
+					postPrimeiroChunk(chunk, hash, ht)
+				})
+				.catch(err => console.log(err))
 		})
 		.catch(err => console.log(err))
 }
 
-function postPrimeiroChunk (chunk, hash) {
+function postPrimeiroChunk (chunk, hash, hashTotal) {
+	hashArquivo = hashTotal;
 	formData.set("arquivo", chunk, blob.name);
 	let parms = JSON.stringify({ arquivoNome: blob.name, sequencia: 1, hash: hash });
 	formData.set("parms", parms);
@@ -354,7 +358,7 @@ function postChunk(seq, chunk, hash) {
 
 function finalizaUpload() {
 	formData.delete("arquivo");
-	let parms = JSON.stringify({ arquivoNome: blob.name, arquivoNomeS3: arqNome, sequencia: totalChunks, uploadId: uploadId, tamanho: tamanhoTotal, partETags: partETags });
+	let parms = JSON.stringify({ arquivoNome: blob.name, arquivoNomeS3: arqNome, sequencia: totalChunks, uploadId: uploadId, tamanho: tamanhoTotal, hash: hashArquivo, partETags: partETags });
 	formData.set("parms", parms);
 	var xhr = new XMLHttpRequest();
     xhr.open("POST", url  + "uploadFinalizar");
@@ -378,6 +382,10 @@ function finalizaUpload() {
     			"<input type='hidden' name='vars' class='uploadclass' value='dataArquivo'>" +
     	  		"<input type='hidden' id='dataArquivo' class='uploadclass' " +
         	  		"name='dataArquivo' value='" + dataArquivo + "' >");
+    	  inputArquivo.parentNode.insertAdjacentHTML('afterend', 
+    			"<input type='hidden' name='vars' class='uploadclass' value='hashArquivo'>" +
+    	  		"<input type='hidden' id='hashArquivo' class='uploadclass' " +
+        	  		"name='hashArquivo' value='" + hashArquivo + "' >");
     	  let urlbase = window.location;
     	  inputArquivo.parentNode.insertAdjacentHTML('afterend', 
     			"<input type='hidden' name='vars' class='uploadclass' value='urlUpload'>" +

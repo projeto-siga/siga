@@ -167,8 +167,7 @@ public class ExModeloController extends ExSelecionavelController {
 			modelo.setNmDiretorio(diretorio);
 			modelo.setUuid(uuid);
 			modelo.setMarcaDagua(marcaDagua);
-			modelo.setExtensoesArquivo(Arrays.toString(extensoesArquivo).replace("[", "")
-					.replace("]", "").replace(" ", ""));
+			
 			modelo.setIdInicial(modAntigo != null ? modAntigo.getIdInicial() : null);
 			
 			if (conteudo != null && conteudo.trim().length() > 0) {
@@ -176,6 +175,11 @@ public class ExModeloController extends ExSelecionavelController {
 			}
 			if (forma != null && forma != 0) {
 				modelo.setExFormaDocumento(dao().consultar(forma, ExFormaDocumento.class, false));
+				if (extensoesArquivo != null && !modelo.getExFormaDocumento().isCapturadoFormatoLivre())
+					throw new AplicacaoException("O modelo não é um capturado de formato livre portanto não pode salvar extensões de arquivo.");
+				
+				modelo.setExtensoesArquivo(Arrays.toString(extensoesArquivo).replace("[", "")
+						.replace("]", "").replace(" ", ""));
 			}
 			if (nivel != null && nivel != 0) {
 				modelo.setExNivelAcesso(dao().consultar(nivel, ExNivelAcesso.class, false));

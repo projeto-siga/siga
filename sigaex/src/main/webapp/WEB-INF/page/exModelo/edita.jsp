@@ -106,7 +106,7 @@
 								<label>Espécie</label> <select name="forma"
 									class="custom-select  siga-select2" onchange="mudouForma(this.options[this.selectedIndex])">
 									<c:forEach var="item" items="${listaForma}">
-										<option value="${item.idFormaDoc}" data-iscapturado="${item.isCapturado()}"
+										<option value="${item.idFormaDoc}" data-isformatolivre="${item.isCapturadoFormatoLivre()}"
 											${item.idFormaDoc == forma ? 'selected' : ''}>${item.descrFormaDoc}</option>
 									</c:forEach>
 								</select>
@@ -408,10 +408,12 @@
 				    tags: true
 			});
 			function mudouForma(elem) {
-				if (elem.getAttribute("data-iscapturado"))
-					document.getElementById("extensoesArquivo").classList.remove("d-none");
+				if (elem.getAttribute("data-isformatolivre") === "true")
+					$("#extensoesArquivo").prop("disabled", false);
+// 					document.getElementById("extensoesArquivo").classList.remove("d-none");
 				else
-					document.getElementById("extensoesArquivo").classList.add("d-none");
+					$("#extensoesArquivo").prop("disabled", true);
+// 					document.getElementById("extensoesArquivo").classList.add("d-none");
 			}
 	</script>
 

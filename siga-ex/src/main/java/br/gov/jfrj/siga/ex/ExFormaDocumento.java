@@ -138,10 +138,21 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 	public boolean isCapturado() {
 		for (ExTipoDocumento tipo : getExTipoDocumentoSet()) {
 			if(tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO)
-					|| tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))
+					|| tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+					|| tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE)
+					|| tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE))
 				return true;
 		}
 		return false;
 	}
 
+	public boolean isCapturadoFormatoLivre() {
+		for (ExTipoDocumento tipo : getExTipoDocumentoSet()) {
+			if(tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE)
+					|| tipo.getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE))
+				return true;
+		}
+		return false;
+	}
+	
 }

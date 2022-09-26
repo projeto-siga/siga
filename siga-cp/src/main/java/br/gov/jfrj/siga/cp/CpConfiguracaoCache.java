@@ -199,7 +199,7 @@ public class CpConfiguracaoCache {
 		this.cpTipoConfiguracao = cfg.getCpTipoConfiguracao();
 		this.cpServico = longOrZero(cfg.getCpServico() != null ? cfg.getCpServico().getId() : null);
 		this.cpIdentidade = longOrZero(cfg.getCpIdentidade() != null ? cfg.getCpIdentidade().getIdInicial() : null);
-		this.cpTipoLotacao = longOrZero(cfg.getCpGrupo() != null ? cfg.getCpGrupo().getIdInicial() : null);
+		this.cpTipoLotacao = longOrZero(cfg.getCpTipoLotacao() != null ? cfg.getCpTipoLotacao().getIdTpLotacao() : null);
 		this.orgaoObjeto = longOrZero(cfg.getOrgaoObjeto() != null ? cfg.getOrgaoObjeto().getId() : null);
 		this.lotacaoObjeto = longOrZero(cfg.getLotacaoObjeto() != null ? cfg.getLotacaoObjeto().getIdInicial() : null);
 		this.complexoObjeto = longOrZero(

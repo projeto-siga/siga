@@ -36,9 +36,9 @@ public class AdUsuario extends AdObjeto {
 	@DesconsiderarParaSemelhanca
 	private String chaveCripto;
 	
-	@DesconsiderarParaSemelhanca(condicao={"criarEmail","false"})
+	@DesconsiderarParaSemelhanca // Desabilitado pois nao estava sendo corrigido o tipo de caixa postal: (condicao={"criarEmail","false"})
 	private String homeMDB;
-	@DesconsiderarParaSemelhanca(condicao={"criarEmail","false"})
+	@DesconsiderarParaSemelhanca // Desabilitado pois nao estava sendo corrigido o tipo de caixa postal: (condicao={"criarEmail","false"})
 	private String templateLink;
 	
 	/**

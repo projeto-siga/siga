@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.crypto.BadPaddingException;
@@ -104,48 +105,48 @@ public class LdapBL implements OperadorSemHistorico {
 
 	final static String ATTRIBUTE_FOR_USER = "sAMAccountName";
 
+//	private static LdapBL instance = null;
+	private SincProperties conf;
+
 	private ILdapDao ldap;
 
-	private static LdapBL instance = null;
-	private static SincProperties conf;
 	private final ResolvedorNomeEmail rNomeEmail = new ResolvedorNomeEmail();
 
-	private final static Map<String, Set<String>> cacheGetEmailPorCn = new HashMap<String, Set<String>>();
-	private final static Map<String, Set<String>> cacheGetDnPorEmail = new HashMap<String, Set<String>>();
-	private final static Map<String, Set<String>> cacheGetEmailPorDn = new HashMap<String, Set<String>>();
+	private final Map<String, Set<String>> cacheGetEmailPorCn = new HashMap<String, Set<String>>();
+	private final Map<String, Set<String>> cacheGetDnPorEmail = new HashMap<String, Set<String>>();
+	private final Map<String, Set<String>> cacheGetEmailPorDn = new HashMap<String, Set<String>>();
 
 	private List<AdReferencia> referencias = new ArrayList<AdReferencia>();
 
 	private static Logger log = Logger.getLogger("br.gov.jfrj.log.sinc.ldap.bl");
 
-	/**
-	 * Retorna uma instância única (singleton)
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public static LdapBL getInstance(SincProperties conf) {
-		if (instance == null)
-			try {
-				instance = new LdapBL(conf);
-				EXCH_VERSION = conf.getVersaoExchange();
-				if (EXCH_VERSION == null) {
-					throw new Exception(
-							"Favor configurar parametro siga.cp.sinc.ldap.jfrj.prod.versao_exchange no arquivo properties.");
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (AplicacaoException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		return instance;
-	}
+//	/**
+//	 * Retorna uma instância única (singleton)
+//	 * 
+//	 * @return
+//	 * @throws IOException
+//	 */
+//	public static LdapBL getInstance(SincProperties conf) {
+//		if (instance == null)
+//			try {
+//				instance = new LdapBL(conf);
+//				EXCH_VERSION = conf.getVersaoExchange();
+//				if (EXCH_VERSION == null) {
+//					throw new Exception(
+//							"Favor configurar parametro siga.cp.sinc.ldap.jfrj.prod.versao_exchange no arquivo properties.");
+//				}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} catch (AplicacaoException e) {
+//				e.printStackTrace();
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		return instance;
+//	}
 
-	public static LdapBL getInstance() {
-		return getInstance(conf == null ? SincProperties.getInstancia() : conf);
+	private LdapBL() throws Exception {
 	}
 
 	/**
@@ -154,8 +155,10 @@ public class LdapBL implements OperadorSemHistorico {
 	 * @param conf
 	 * @throws Exception
 	 */
-	private LdapBL(SincProperties conf) throws Exception {
+	public LdapBL(SincProperties conf) throws Exception {
 		this.conf = conf;
+		if (conf.isModoEscrita())
+			throw new Exception("Não queremos escrever no AD por enquanto.");
 		ldap = new LdapDaoImpl(!conf.isModoEscrita()).getProxy();
 		if (this.conf.isSSLAtivo()) {
 			ldap.conectarComSSL(conf.getServidorLdap(), conf.getPortaSSLLdap(), conf.getUsuarioLdap(),
@@ -163,6 +166,11 @@ public class LdapBL implements OperadorSemHistorico {
 		} else {
 			ldap.conectarSemSSL(conf.getServidorLdap(), conf.getPortaLdap(), conf.getUsuarioLdap(),
 					conf.getSenhaLdap());
+		}
+		EXCH_VERSION = conf.getVersaoExchange();
+		if (EXCH_VERSION == null) {
+			throw new Exception(
+					"Favor configurar parametro siga.cp.sinc.ldap.jfrj.prod.versao_exchange no arquivo properties.");
 		}
 	}
 
@@ -539,7 +547,10 @@ public class LdapBL implements OperadorSemHistorico {
 		List<AdObjeto> referenciasAdicionadas = new ArrayList<AdObjeto>();
 		for (AdObjeto o : l) {
 			if (o instanceof AdGrupo) {
-				extrairMembros((AdGrupo) o, membrosNaoIgnorados, referenciasAdicionadas);
+				AdGrupo g = (AdGrupo) o;
+				// Não devemos tentar extrair membros de grupos que estão no container "Extras", pois isso dá erro.
+				if (!g.getNomeCompleto().contains("OU=Extras,")) 
+					extrairMembros(g, membrosNaoIgnorados, referenciasAdicionadas);
 			}
 		}
 		l.addAll(referenciasAdicionadas);
@@ -1093,7 +1104,7 @@ public class LdapBL implements OperadorSemHistorico {
 
 	private List<AdObjeto> extrairMembros(AdGrupo g, Map<String, AdObjeto> membrosNaoIgnorados, List<AdObjeto> l) {
 		AdObjeto resultado = null;
-
+		
 		String searchFilter = "(objectCategory=*)";
 		SearchControls searchCtls = new SearchControls();
 
@@ -1109,7 +1120,6 @@ public class LdapBL implements OperadorSemHistorico {
 				Attributes attrs = sr.getAttributes();
 
 				if (attrs != null) {
-
 					List<AdObjeto> listaMembros = new ArrayList<AdObjeto>();
 					if (attrs.get("objectClass").contains("group") && attrs.get("member") != null) {
 						NamingEnumeration membros = attrs.get("member").getAll();
@@ -1141,8 +1151,7 @@ public class LdapBL implements OperadorSemHistorico {
 				}
 			}
 		} catch (NamingException e) {
-			System.err.println("Erro NamingException: " + e.getMessage());
-			// e.printStackTrace();
+			log.log(Level.SEVERE, "Erro NamingException: " + g.getNomeCompleto() + " -> " + e.getMessage());
 		}
 
 		return null;
@@ -1794,7 +1803,7 @@ public class LdapBL implements OperadorSemHistorico {
 	private void pesquisarObjeto(String dn, AdObjeto oPai, List<AdObjeto> l, List<String> ignorar)
 			throws NamingException, AplicacaoException {
 		dn = LdapUtils.escapeDN(dn);
-
+		
 		AdObjeto objetoAd = null;
 
 		Attributes attrs = null;
@@ -1918,10 +1927,6 @@ public class LdapBL implements OperadorSemHistorico {
 		return c;
 	}
 
-	public static SincProperties getConf() {
-		return conf;
-	}
-
 	class LDAPListener implements NamespaceChangeListener, ObjectChangeListener {
 
 		Logger log = Logger.getLogger(LDAPListener.class.getName());
@@ -1999,7 +2004,7 @@ public class LdapBL implements OperadorSemHistorico {
 
 	@SuppressWarnings("static-access")
 	public void limparSenhaSinc(Sincronizavel novo) {
-		if (LdapBL.getInstance().getConf().isModoEscrita()) {
+		if (conf.isModoEscrita()) {
 			try {
 				if (novo instanceof AdUsuario) {
 

@@ -118,18 +118,18 @@ public class AdModelo {
 		return instance;
 	}
 
-	/**
-	 * Retorna uma instância única (singleton)
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public static AdModelo getInstance() {
-		if (instance == null) {
-			instance = new AdModelo(SincProperties.getInstancia());
-		}
-		return instance;
-	}
+//	/**
+//	 * Retorna uma instância única (singleton)
+//	 * 
+//	 * @return
+//	 * @throws IOException
+//	 */
+//	public static AdModelo getInstance() {
+//		if (instance == null) {
+//			instance = new AdModelo(SincProperties.getInstancia());
+//		}
+//		return instance;
+//	}
 
 	public List<AdObjeto> gerarModelo(List<DpPessoa> pessoas, List<DpLotacao> lotacoes, boolean sincSenhas)
 			throws AplicacaoException {
@@ -662,6 +662,8 @@ public class AdModelo {
 	 * @return - grupo de segurança criado
 	 */
 	private void processarGrupoSegurancaAuto(DpPessoa pes, DpLotacao lotacao, AdUnidadeOrganizacional uo) {
+		
+//		System.out.println("processarGrupoSegurancaAuto: " + lotacao.getSigla() + " - " + uo.getNomeCompleto());
 
 		// cria os grupos de servicos
 		AdGrupoDeSeguranca gsSvc = null;
@@ -683,7 +685,7 @@ public class AdModelo {
 							|| Cp.getInstance().getConf().podePorConfiguracao(pes, lotacao, ss.getCpServico(),
 									CpTipoDeConfiguracao.UTILIZAR_SERVICO);
 				} catch (Exception e) {
-
+					throw new RuntimeException("Erro verificando se pode gerar grupo", e);
 				}
 
 				if (podeGerarGrupo) {

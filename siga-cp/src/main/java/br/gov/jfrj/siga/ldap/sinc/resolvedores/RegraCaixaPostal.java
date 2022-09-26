@@ -107,14 +107,15 @@ public class RegraCaixaPostal {
 //				long tInicio = System.currentTimeMillis();
 				pessoa.put("pessoa", p);
 				try {
-					if (MVEL.eval(getExpressao(), pessoa) == null) {
-						throw new AplicacaoException("Problema na expressão: " + getExpressao());
-					}
-					if ((Boolean) MVEL.eval(getExpressao(), pessoa)) {
+					Object result = MVEL.eval(getExpressao(), pessoa);
+					if (result == null) {
+						throw new AplicacaoException("Expressão retornou nulo: " + getExpressao());
+					} else if (!(result instanceof Boolean)) {
+						throw new AplicacaoException("Expressão não retornou boolean: " + getExpressao());
+					} else if ((Boolean) result)
 						pessoasAfetadas.add(p);
-					}
 				} catch (Exception e) {
-					throw new AplicacaoException("Problema na expressão: " + getExpressao());
+					throw new AplicacaoException("Problema na expressão: " + getExpressao(), 0, e);
 				}
 //				long tFim = System.currentTimeMillis();
 //				System.out.println(tFim-tInicio);

@@ -45,7 +45,7 @@ public class ResolvedorRegrasCaixaPostal {
 
 	private ResolvedorRegrasCaixaPostal(SincProperties conf) throws AplicacaoException {
 		this.conf = conf;
-		List<DpPessoa> listaPessoas = AdModelo.getInstance().getListaPessoas();
+		List<DpPessoa> listaPessoas = AdModelo.getInstance(conf).getListaPessoas();
 		for (String r : conf.getListaRegrasNovaCaixa()) {
 			RegraCaixaPostal regra = new RegraCaixaPostal(listaPessoas);
 			String homeMDB = conf.getListaHomeMdb().get(Integer.valueOf(r.substring(0, r.indexOf("."))) - 1);

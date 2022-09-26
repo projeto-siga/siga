@@ -25,36 +25,47 @@ import java.util.logging.Logger;
 
 import br.gov.jfrj.ldap.conf.LdapProperties;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Criptografia;
+import br.gov.jfrj.siga.base.Prop;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
-public class SincProperties extends LdapProperties {
+public class SincProperties  {
 
 	private Logger log = Logger.getLogger(SincProperties.class.getName());
 
-	private static SincProperties instancia;
+	private String prefixo;
+
+//	private static SincProperties instancia;
 
 	private SincProperties() throws IOException, AplicacaoException {
 
 	}
 
-	public static SincProperties getInstancia(String prefixo) {
-		if (instancia == null) {
-			try {
-				instancia = new SincProperties();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (AplicacaoException e) {
-				e.printStackTrace();
-			}
-		}
-		if (prefixo != null) {
-			instancia.setPrefixo(prefixo);
-		}
-		return instancia;
+	public SincProperties(String prefixo) {
+		super();
+		setPrefixo(getPrefixoModulo() + "." + prefixo);
 	}
 
-	public static SincProperties getInstancia() {
-		return getInstancia("");
-	}
+//	public static SincProperties getInstancia(String prefixo) {
+//		if (instancia == null) {
+//			try {
+//				instancia = new SincProperties();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} catch (AplicacaoException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		if (prefixo != null) {
+//			instancia.setPrefixo(prefixo);
+//		}
+//		return instancia;
+//	}
+//
+//	public static SincProperties getInstancia() {
+//		return getInstancia("");
+//	}
 
 	public String getPrefixoModulo() {
 		return "siga.cp.sinc.ldap";
@@ -567,17 +578,17 @@ public class SincProperties extends LdapProperties {
 		}
 	}
 
-	public String getNtfsSenha() {
-		try {
-			String senhaCriptografada = this.obterPropriedade("ntfs.senha").trim();
-			return descriptografarSenha(senhaCriptografada);
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public String getNtfsSenha() {
+//		try {
+//			String senhaCriptografada = this.obterPropriedade("ntfs.senha").trim();
+//			return descriptografarSenha(senhaCriptografada);
+//
+//		} catch (Exception e) {
+//
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 
 	public String getNtfsPathRaiz() {
 		try {
@@ -787,7 +798,7 @@ public class SincProperties extends LdapProperties {
 	}
 
 	private String obterPropriedade(String string) {
-		return System.getProperty(getPrefixoModulo() + "." + string);
+		return System.getProperty(getPrefixo() + "." + string);
 	}
 
 	/**
@@ -814,4 +825,103 @@ public class SincProperties extends LdapProperties {
 		return lista;
 	}
 
+	public String getPrefixo() {
+		return prefixo;
+	}
+
+	public void setPrefixo(String prefixo) {
+		this.prefixo = prefixo;
+	}
+
+	
+	
+	
+	
+	
+	
+	public String getServidorLdap()  {
+		try {
+			return obterPropriedade("servidor");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter o servidor LDAP", 9, e);
+		}
+	}
+
+	public String getPortaLdap()  {
+		try {
+			return obterPropriedade("porta");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter a porta LDAP", 9, e);
+		}
+	}
+
+	public String getPortaSSLLdap()  {
+		try {
+			return obterPropriedade("ssl.porta");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter a porta SSL LDAP", 9, e);
+		}
+	}
+
+	public String getUsuarioLdap()  {
+		try {
+			return obterPropriedade("usuario");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter o usuário LDAP", 9, e);
+		}
+	}
+
+	public String getSenhaLdap()  {
+		try {
+			String senhaCriptografada = obterPropriedade("senha");
+			if(senhaCriptografada != null){
+				senhaCriptografada= senhaCriptografada.trim();
+				return descriptografarSenha(senhaCriptografada);
+			}else{
+				return null;
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter a senha LDAP", 9, e);
+		}
+	}
+	
+	protected String getChaveCriptoParaSenha() {
+		try {
+			return obterPropriedade("chave.cripto.para.senha");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter a chave cripto para a senha", 9, e);
+		}
+	}
+
+	protected String descriptografarSenha(String senhaCriptografada)
+			 {
+		BASE64Encoder enc = new BASE64Encoder();
+		BASE64Decoder dec = new BASE64Decoder();
+		try {
+			return new String(Criptografia.desCriptografar(dec
+					.decodeBuffer(senhaCriptografada), enc.encode(getChaveCriptoParaSenha()
+					.getBytes())));
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao descriptografar a senha LDAP", 9, e);
+		} 
+	}
+
+	public String getKeyStore()  {
+		try {
+			return obterPropriedade("keystore");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter o keystore", 9, e);
+		}
+	}
+	
+	public Boolean isModoEscrita() {
+		try {
+			String p = obterPropriedade("modo.escrita");
+			if (p == null)
+				return null;
+			return Boolean.valueOf(p.trim());
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter a propriedade modo_escrita", 9, e);
+		}
+	}
 }

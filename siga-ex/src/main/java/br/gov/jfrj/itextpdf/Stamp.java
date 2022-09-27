@@ -56,6 +56,10 @@ public class Stamp {
 	private static float CM_UNIT = 72.0f / 2.54f;
 	private static float PAGE_BORDER_IN_CM = 0.8f;
 	private static float STAMP_BORDER_IN_CM = 0.2f;
+	private static PdfContentByte cb;
+	private static PdfWriter writer;
+	private static Document doc;
+	private static PdfImportedPage page;
 
 	static {
 		if (SigaMessages.isSigaSP()) { // Adequa marcas para SP
@@ -71,109 +75,127 @@ public class Stamp {
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
 			List<Long> idsAssinantes) throws DocumentException, IOException {
-
+		
+		Rectangle tamanhoPagina =  PageSize.A4;
+		
 		if (idsAssinantes != null && idsAssinantes.size() > 0 && Prop.getBool("assinatura.estampar"))
 			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
 
 		PdfReader pdfIn = new PdfReader(abPdf);
-		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
+		doc = new Document(tamanhoPagina, 0, 0, 0, 0);
 		// final SimpleDateFormat sdf = new SimpleDateFormat(
 		// "EEE MMM dd HH:mm:ss zzz yyyy");
 		// doc.add(new Meta("creationdate", sdf.format(new Date(0L))));
-		try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
+		try (ByteArrayOutputStream boGeneric = new ByteArrayOutputStream()) {
 			/*-- Alterado de PdfWriter p/ PdfCopy(Essa classe permite manter os "stamps" originais do arquivo importado) 
 			por Marcos(CMSP) em 21/02/19 --*/
 			// PdfCopy writer = new PdfCopy(doc, boA4);
 			/*-- Alerado de volta pois ficou desabilitado o redimensionamento do PDF de modo
 			 *   a que os códigos de barra 2D e 3D não ficassem por cima do texto. Por Renato em 25/04/2019 --*/
-			PdfWriter writer = PdfWriter.getInstance(doc, boA4);
+			writer = PdfWriter.getInstance(doc, boGeneric);
 			doc.open();
-			PdfContentByte cb = writer.getDirectContent();
+			cb = writer.getDirectContent();
 
 			// Resize every page to A4 size
 			//
 			// double thetaRotation = 0.0;
 			for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
-				int rot = pdfIn.getPageRotation(i);
-				float left = pdfIn.getPageSize(i).getLeft();
-				float bottom = pdfIn.getPageSize(i).getBottom();
-				float top = pdfIn.getPageSize(i).getTop();
-				float right = pdfIn.getPageSize(i).getRight();
-
-				PdfImportedPage page = writer.getImportedPage(pdfIn, i);
-				float w = page.getWidth();
-				float h = page.getHeight();
-
-				// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
-				// + ", " + h);
-
-				doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate() : PageSize.A4);
-				doc.newPage();
-
-				cb.saveState();
-
-				if (rot != 0 && rot != 180) {
-					float swap = w;
-					w = h;
-					h = swap;
+				
+				if(pdfIn.getPageSize(i).getWidth() == 1189 && pdfIn.getPageSize(i).getHeight() == 841) {
+					tamanhoPagina = PageSize.A0;
+					doc = new Document(tamanhoPagina, 0, 0, 0, 0);
+					writer = PdfWriter.getInstance(doc, boGeneric);
+					Stamp.SetOnePageA0(pdfIn, tamanhoPagina, i, internoProduzido);
 				}
-
-				float pw = doc.getPageSize().getWidth();
-				float ph = doc.getPageSize().getHeight();
-				double scale = Math.min(pw / w, ph / h);
-
-				// do my transformations :
-				cb.transform(AffineTransform.getScaleInstance(scale, scale));
-
-				if (!internoProduzido) {
-					cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
-					cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
-				}
-
-				if (rot != 0) {
-					double theta = -rot * (Math.PI / 180);
-					if (rot == 180) {
-						cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
-					} else {
-						cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+				
+				else {
+					tamanhoPagina = PageSize.A4;
+					doc = new Document(tamanhoPagina, 0, 0, 0, 0);
+					writer = PdfWriter.getInstance(doc, boGeneric);
+					
+					int rot = pdfIn.getPageRotation(i);
+					float left = pdfIn.getPageSize(i).getLeft();
+					float bottom = pdfIn.getPageSize(i).getBottom();
+					float top = pdfIn.getPageSize(i).getTop();
+					float right = pdfIn.getPageSize(i).getRight();
+	
+					page = writer.getImportedPage(pdfIn, i);
+					float w = page.getWidth();
+					float h = page.getHeight();
+	
+					// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
+					// + ", " + h);
+	
+					doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? tamanhoPagina.rotate() : tamanhoPagina);
+					doc.newPage();
+	
+					cb.saveState();
+	
+					if (rot != 0 && rot != 180) {
+						float swap = w;
+						w = h;
+						h = swap;
 					}
-					if (rot == 90) {
-						cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
-					} else if (rot == 270) {
-						cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+	
+					float pw = doc.getPageSize().getWidth();
+					float ph = doc.getPageSize().getHeight();
+					double scale = Math.min(pw / w, ph / h);
+	
+					// do my transformations :
+					cb.transform(AffineTransform.getScaleInstance(scale, scale));
+	
+					if (!internoProduzido) {
+						cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
+						cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
 					}
+	
+					if (rot != 0) {
+						double theta = -rot * (Math.PI / 180);
+						if (rot == 180) {
+							cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
+						} else {
+							cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+						}
+						if (rot == 90) {
+							cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
+						} else if (rot == 270) {
+							cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+						}
+					}
+	
+					// Logger.getRootLogger().error(
+					// "----- dimensoes: " + rot + ", " + w + ", " + h);
+					// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
+	
+					// cb.transform(AffineTransform.getTranslateInstance(
+					// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
+	
+					// put the page
+					cb.addTemplate(page, 0, 0);
+					/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
+					// writer.addPage(page);
+	
+					// draw a red rectangle at the page borders
+					//
+					// cb.saveState();
+					// cb.setColorStroke(Color.red);
+					// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
+					// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
+					// .getPageSize(i).getTop());
+					// cb.stroke();
+					// cb.restoreState();
+	
+					cb.restoreState();
 				}
-
-				// Logger.getRootLogger().error(
-				// "----- dimensoes: " + rot + ", " + w + ", " + h);
-				// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
-
-				// cb.transform(AffineTransform.getTranslateInstance(
-				// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
-
-				// put the page
-				cb.addTemplate(page, 0, 0);
-				/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
-				// writer.addPage(page);
-
-				// draw a red rectangle at the page borders
-				//
-				// cb.saveState();
-				// cb.setColorStroke(Color.red);
-				// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
-				// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
-				// .getPageSize(i).getTop());
-				// cb.stroke();
-				// cb.restoreState();
-
-				cb.restoreState();
 			}
 			doc.close();
 
-			abPdf = boA4.toByteArray();
+			abPdf = boGeneric.toByteArray();
 		}
 
-		try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
+		return abPdf;
+
+		/*try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
 			final PdfReader reader = new PdfReader(abPdf);
 
 			final int n = reader.getNumberOfPages();
@@ -426,7 +448,7 @@ public class Stamp {
 			stamp.close();
 			byte[] pdf = bo2.toByteArray();
 			return pdf;
-		}
+		}*/
 	}
 
 	private static byte[] estamparAssinaturas(byte[] pdf, List<Long> idsAssinantes) {
@@ -552,5 +574,82 @@ public class Stamp {
 		}
 		return;
 	}
+	
+	private static void SetOnePageA0(PdfReader pdf, Rectangle tamanhoPagina, int numberPage, boolean internoProduzido) { //setar uma página pra A0 quando for estampada
+		int rot = pdf.getPageRotation(numberPage);
+		float left = pdf.getPageSize(numberPage).getLeft();
+		float bottom = pdf.getPageSize(numberPage).getBottom();
+		float top = pdf.getPageSize(numberPage).getTop();
+		float right = pdf.getPageSize(numberPage).getRight();
+		
+		
 
+		page = writer.getImportedPage(pdf, numberPage);
+		float w = page.getWidth();
+		float h = page.getHeight();
+
+		// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
+		// + ", " + h);
+
+		doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? tamanhoPagina.rotate() : tamanhoPagina);
+		doc.newPage();
+
+		cb.saveState();
+
+		if (rot != 0 && rot != 180) {
+			float swap = w;
+			w = h;
+			h = swap;
+		}
+
+		float pw = doc.getPageSize().getWidth();
+		float ph = doc.getPageSize().getHeight();
+		double scale = Math.min(pw / w, ph / h);
+
+		// do my transformations :
+		cb.transform(AffineTransform.getScaleInstance(scale, scale));
+
+		if (!internoProduzido) {
+			cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
+			cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
+		}
+
+		if (rot != 0) {
+			double theta = -rot * (Math.PI / 180);
+			if (rot == 180) {
+				cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
+			} else {
+				cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+			}
+			if (rot == 90) {
+				cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
+			} else if (rot == 270) {
+				cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+			}
+		}
+
+		// Logger.getRootLogger().error(
+		// "----- dimensoes: " + rot + ", " + w + ", " + h);
+		// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
+
+		// cb.transform(AffineTransform.getTranslateInstance(
+		// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
+
+		// put the page
+		cb.addTemplate(page, 0, 0);
+		/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
+		// writer.addPage(page);
+
+		// draw a red rectangle at the page borders
+		//
+		// cb.saveState();
+		// cb.setColorStroke(Color.red);
+		// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
+		// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
+		// .getPageSize(i).getTop());
+		// cb.stroke();
+		// cb.restoreState();
+
+		cb.restoreState();		
+	}
 }

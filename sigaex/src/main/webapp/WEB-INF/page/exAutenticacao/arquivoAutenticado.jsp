@@ -64,7 +64,11 @@
 								</div>
 								<div class="card-body">
 									<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc" target="_blank">PDF
-									do documento</a>
+									do documento Original (Sem Marcas)</a>
+								</div>
+								<div class="card-body">
+									<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc2" target="_blank">PDF
+									do documento Original (Com Marcas)</a>
 								</div>
 							</div>
 						</c:if>
@@ -272,8 +276,11 @@
 	<tags:assinatura_rodape />
 	<script>
 	window.onload = function () { 
-		document.getElementById('frameDoc').src = montarUrlDocPDF('${pdfAssinado }',document.getElementById('visualizador').value); 
 		document.getElementById('linkDoc').href = montarUrlDocPDF('${pdf}', document.getElementById('visualizador').value);
+		document.getElementById('frameDoc').src = montarUrlDocPDF('${pdf }',document.getElementById('visualizador').value); 
+
+		document.getElementById('linkDoc2').href = montarUrlDocPDF('${pdfAssinado}', document.getElementById('visualizador').value);
+		document.getElementById('frameDoc').src = montarUrlDocPDF('${pdfAssinado }',document.getElementById('visualizador').value); 
 	} 
 </script>
 </siga:pagina>

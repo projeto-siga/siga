@@ -28,6 +28,15 @@
 		podeDescricao(false);
 		$(document.body).on("change","#idFormaDoc",function(){ podeDescricao(false);});	
 		$(document.body).on("change","#idMod",function(){ podeDescricao(false);});
+		//Add Event Change into form listar
+		if (document.getElementById('listar')) {
+			$(document.body).on("change","#listar",function(){validarFiltrosPesquisa();});
+		} 
+		//Add Event Change into form buscar
+		if (document.getElementById('buscar')) {
+			$(document.body).on("change","#buscar",function(){validarFiltrosPesquisa();});
+		} 
+		
 		if ($('a[data-toggle="tooltip"]'))
 			$('a[data-toggle="tooltip"]').tooltip({
 			    placement: 'bottom',
@@ -226,8 +235,7 @@
 			return;
 		
 		// Se pesquisa dos documentos de uma pessoa/lotação, não tem limite de data
-		if ((document.getElementById('formulario_ultMovLotaRespSel_id').value != 0
-				|| document.getElementById('formulario_ultMovRespSel_id').value != 0)
+		if ((document.getElementById('formulario_ultMovLotaRespSel_sigla').value != '' || document.getElementById('formulario_ultMovRespSel_sigla').value != '')	
 				&& document.getElementById('ultMovIdEstadoDoc').value != 0) { 
 			desabilitaTabMeses();
 			return;
@@ -591,6 +599,8 @@
 
 		if (document.getElementById('formulario_ultMovLotaRespSel_id').value != "")
 			count++;	
+		
+		validarFiltrosPesquisa();
 
 		if (count < 2 && ${formOrigem eq 'busca'}) {
 			alert('Esta pesquisa retornará muitos resultados. Favor restringi-la um pouco mais.');

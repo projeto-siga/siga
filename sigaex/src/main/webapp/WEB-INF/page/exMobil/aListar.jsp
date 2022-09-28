@@ -176,28 +176,24 @@
 											<div id="divUltMovResp" style="display:"
 												class="form-group col-md-4">
 												<label for="ultMovTipoResp"><fmt:message key="tela.pesquisa.pessoa"/></label>
-												<siga:selecao propriedade="ultMovResp" tema="simple"
-													paramList="buscarFechadas=true" modulo="siga" />
+												<siga:selecao propriedade="ultMovResp" tema="simple" onchange="validarFiltrosPesquisa()" paramList="buscarFechadas=true" modulo="siga" />
 											</div>
 											<div id="divUltMovLotaResp" style="display: none"
 												class="form-group col-md-4">
 												<label for="ultMovTipoResp"><fmt:message key="usuario.lotacao"/></label>
-												<siga:selecao propriedade="ultMovLotaResp" tema="simple"
-													paramList="buscarFechadas=true" modulo="siga" />
+												<siga:selecao propriedade="ultMovLotaResp" tema="simple" paramList="buscarFechadas=true" modulo="siga" />
 											</div>
 										</c:if>
 										<c:if test="${ultMovTipoResp == 2}">
 											<div id="divUltMovResp" style="display: none"
 												class="form-group col-md-4">
 												<label for="ultMovTipoResp"><fmt:message key="tela.pesquisa.pessoa"/></label>
-												<siga:selecao propriedade="ultMovResp" tema="simple"
-													paramList="buscarFechadas=true" modulo="siga" />
+												<siga:selecao propriedade="ultMovResp" tema="simple" paramList="buscarFechadas=true" modulo="siga" />
 											</div>
 											<div id="divUltMovLotaResp" style="display:"
 												class="form-group col-md-4">
 												<label for="ultMovTipoResp"><fmt:message key="usuario.lotacao"/></label>
-												<siga:selecao propriedade="ultMovLotaResp" tema="simple"
-													paramList="buscarFechadas=true" modulo="siga" />
+												<siga:selecao propriedade="ultMovLotaResp" tema="simple" onchange="validarFiltrosPesquisa()" paramList="buscarFechadas=true" modulo="siga" />
 											</div>
 										</c:if>
 									</div>
@@ -298,8 +294,7 @@
 										</div>
 											<div class="form-group col-md-3">
 												<label for="numExpediente"><fmt:message key="documento.numero"/></label>
-											    <input type="text" size="10" id="numExpediente" name="numExpediente" value="${numExpediente}" 
-											    	onchange="validarFiltrosPesquisa()" maxlength="10" class="form-control" />
+											    <input type="text" size="10" id="numExpediente" name="numExpediente" value="${numExpediente}" maxlength="10" class="form-control" />
 											</div>
 									</div>
 									<div class="form-row">

@@ -56,7 +56,7 @@ public class VeiculoController extends TpController {
 
 	@Path("/listar")
 	public void listar() throws Exception {
-		CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+		CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
 		result.include("veiculos", Veiculo.listarTodos(cpOrgaoUsuario));
 	}
 

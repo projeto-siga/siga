@@ -1164,21 +1164,16 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	/**
 	 * Grava informações do arquivo de formato livre que já foi feito upload previamente. Estas informações
-	 * vem em um token que é passado pelo sistema de upload. É gerado um registro na CpArquivo e associado ao campo CpArquivoFormatoLivre da ExDocumento.
+	 * vem em um token que é passado pelo sistema de upload. É gerado um registro na CpArquivo e associado a CpArquivoFormatoLivre na ExDocumento.
 	 * 
-	 * @param tokenArquivo Contém caminho no storage, nome do arquivo, tamanho e tipo de conteudo
-	 * @throws JWTVerifyException 
-	 * @throws IOException 
-	 * @throws SignatureException 
-	 * @throws IllegalStateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
+	 * @param tokenArquivo Token JWT contendo caminho no storage, nome do arquivo, tamanho e tipo de conteudo
 	 */
 	public void setConteudoBlobFormatoLivre(String tokenArquivo) throws InvalidKeyException, NoSuchAlgorithmException, 
 			IllegalStateException, SignatureException, IOException, JWTVerifyException {
 		final JWTVerifier verifier = new JWTVerifier(System.getProperty("siga.jwt.secret"));
 		Map<String, Object> lst = verifier.verify(tokenArquivo);
-		String nomeArquivo = (String) lst.get("key");
+		String nomeArquivo = (String) lst.get("nomeArq");
+		String caminho = (String) lst.get("nomeArqS3");
 		Integer tamanhoArquivo = Integer.valueOf((String) lst.get("tamanho"));
 		String hashArquivo = (String) lst.get("hash");
 		CpArquivo cpArq = getCpArquivoFormatoLivre();
@@ -1190,7 +1185,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 			throw new AplicacaoException("Arquivos de formato livre só são permitidos quando o tipo de armazenamento não é em banco de dados (BLOB ou TABELAS).");
 		
 		if (nomeArquivo != null) 
-			cpArquivoFormatoLivre = CpArquivo.updateFormatoLivre(cpArq, nomeArquivo, tamanhoArquivo, CpArquivoTipoArmazenamentoEnum.HCP, hashArquivo);
+			cpArquivoFormatoLivre = CpArquivo.updateFormatoLivre(cpArq, this.orgaoUsuario, caminho, nomeArquivo, tamanhoArquivo, CpArquivoTipoArmazenamentoEnum.HCP, hashArquivo);
 	}
 	
 	private boolean orgaoPermiteHcp() {

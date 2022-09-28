@@ -523,7 +523,7 @@ public class ExArquivoController extends ExController {
 	
 	@TrackRequest
 	@Get("/app/arquivo/downloadFormatoLivre")
-	public void downloadFormatoLivre(final String sigla, String hash) throws Exception {
+	public void downloadFormatoLivre(final String sigla) throws Exception {
 		ExMobil mob = Documento.getMobil(sigla);
 		validarDownload(true, null, mob);
 
@@ -534,20 +534,12 @@ public class ExArquivoController extends ExController {
 			return;
 		}
 		
-		String caminho = cpArq.getCaminho();
-		if (caminho == null) {
-			result.include("mensagemCabec", "Não é um arquivo de formato livre (idArq: " + cpArq.getIdArq().toString() + ")");
-			result.include("msgCabecClass", "alert-danger mt-2");
-			return;
-		}
-		
-		String bucket = caminho.split("/")[0];
 		final JWTSigner signer = new JWTSigner(System.getProperty("siga.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 		claims.put("iat", System.currentTimeMillis() / 1000L);
-		claims.put("bucket", bucket);
-		claims.put("key", caminho.replace(bucket + "/",  ""));
-		claims.put("hash", hash);
+		claims.put("nomeArqS3", cpArq.getCaminho());
+		claims.put("nomeArq", cpArq.getNomeArquivo());
+		claims.put("hash", cpArq.getHashSha256());
         String tk = signer.sign(claims);
 		
 		result.include("token", tk);

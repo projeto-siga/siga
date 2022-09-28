@@ -186,7 +186,7 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	ENVIO_PARA_VISUALIZACAO_EXTERNA(87, "Envio para visualização externa"),
 	
-	AGENDAR_PUBLICACAO_DOE(88, "Agendar Publicacao DOE");
+	AGENDAR_PUBLICACAO_DOE(88, "Agendar Publicação DOE");
 
 	private final int id;
 	private final String descr;

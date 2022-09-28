@@ -31,16 +31,106 @@
 			frm.sigla.value = sigla;
 			frm.action = '/sigaex/app/expediente/mov/cancelar_movimentacao_gravar';
 			frm.submit();
-
 		}
-
+		
+		function visualizarGrupo() {
+			var aChk = document.getElementsByName("movSelecionados");
+			var idsMov = "";
+			var linha1 = document.getElementById("linha1").value;
+			var linha2 = document.getElementById("linha2").value;
+			
+			for (var i=0;i<aChk.length;i++){
+				 var item = aChk[i];
+			     if (item.type == "checkbox" && item.checked) {
+			     	idsMov += item.value + ";";
+			     }
+			}
+			$.ajax({				     				  
+				  url:'${pageContext.request.contextPath}/app/expediente/mov/visualizar_grupo',
+				  type: "GET",
+				  data: {ids : idsMov , linha1: linha1, linha2: linha2},
+				  success: function(data) {
+					  retornoVisualizarGrupo(data);
+			 	 }
+			});
+		}
+		
+		function retornoVisualizarGrupo(response,param){
+			sigaModal.enviarHTMLEAbrir('grupoModal', response);
+		}
+		
+		function atualizarTipoAto() {
+			var select = frm.idModelo;
+			var option = select.children[select.selectedIndex];
+			var texto = option.textContent;
+			
+			var primeiro = "";
+			var aChk = document.getElementsByName("movSelecionados");
+			
+			for (var i=0;i<aChk.length;i++){
+				 var item = aChk[i];
+			     if (item.type == "checkbox" && item.checked) {
+			     	primeiro = item.value;
+			     	break;
+			     }
+			}
+			
+			if(texto == "Resolução" && primeiro != "") {
+				var hoje = new Date;
+				var mes = hoje.getMonth()+1;
+				hojeFormatado = hoje.getDate() + "-" + mes + "-" + hoje.getFullYear();
+				
+				$.ajax({				     				  
+					  url:'${pageContext.request.contextPath}/app/expediente/mov/atualizar_tipo_ato',
+					  type: "GET",
+					  data: {idMov : primeiro},
+					  success: function(data) {
+						document.getElementById("linha2").value = data;
+						document.getElementById("linha1").value = "Resoluções de " +  hojeFormatado;
+				 	 }
+				});
+			}
+		}
+		
+		function validarCampos() {
+			var idAnunciante = document.getElementsByName('idAnunciante')[0].value;
+			var idMateria = document.getElementsByName('idMateria')[0].value;	
+			var idCaderno = document.getElementsByName('idCaderno')[0].value;
+			var idSecao = document.getElementsByName('idSecao')[0].value;
+			
+			if (idAnunciante==0) {									
+				sigaModal.alerta("Atenção! O campo Anunciante precisa ser preenchido.");				
+				document.getElementById('idAnunciante').focus();
+				return;	
+			}
+			
+			if (idMateria==0) {									
+				sigaModal.alerta("Atenção! O campo Matéria precisa ser preenchido.");				
+				document.getElementById('idMateria').focus();
+				return;	
+			}
+			
+			if (idCaderno==0) {									
+				sigaModal.alerta("Atenção! O campo Caderno precisa ser preenchido.");				
+				document.getElementById('idCaderno').focus();
+				return;	
+			}
+			
+			if (idSecao==0) {									
+				sigaModal.alerta("Atenção! O campo Seção precisa ser preenchido.");				
+				document.getElementById('idCaderno').focus();
+				return;	
+			}
+			
+			$('#myModal').modal('show');
+		}		
 	</script>
 	
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h5>
-					Publicação Pendente
+					Publicação Pendente ${tst}
 				</h5>
 			</div>
 			<div class="card-body">
@@ -49,6 +139,7 @@
 					<input type="hidden" name="id" value="" />
 					<input type="hidden" name="sigla" value="" />
 					<input type="hidden" name="urlRedirecionar" value="/app/exMovimentacao/listarDOE"/>
+					
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="form-group">
@@ -61,59 +152,56 @@
 								</select>
 							</div>
 						</div>
+						<div class="col-sm-3" id="div1" style="display: none;">
+							<div class="form-group">
+								<label>Resolução/Data (1ª linha)</label>
+								<input type="text" id="linha1" name="linha1" value="" maxlength="60" class="form-control"/>
+							</div>
+						</div>
+						<div class="col-sm-3" id="div2" style="display: none;">
+							<div class="form-group">
+								<label>Tipo de Ato (2ª linha)</label>
+								<input type="text" id="linha2" name="linha2" value="" maxlength="60" class="form-control"/>
+							</div>
+						</div>
 					</div>
 					<c:if test="${(not empty listMov)}">
 						<table border="0" class="table table-sm table-striped">
 							<thead class="${thead_color}">
 								<tr>
 									<th class="text-center align-middle" style="width: 2%;"><input type="checkbox" name="checkall" onclick="checkUncheckAll(this)" /></th>
-									<th class="text-left" style="width: 15%;">Número</th>
-									<th class="text-left" style="width: 8%;">Data</th>
-									<th class="text-left" style="width: 17%;">Anúnciante</th>	
-									<th class="text-left" style="width: 17%;">Tipo de Matéria</th>	
-									<th class="text-left" style="width: 17%;">Caderno</th>
-									<th class="text-left" style="width: 17%;">Seção</th>
-									<th class="text-right" style="width: 7%;"></th>	
+									<th class="text-left" style="width: 25%;">Número</th>
+									<th class="text-left" style="width: 10%;">Data</th>
+									<th class="text-left" style="width: 55%;"></th>
+									<th class="text-right" style="width: 10%;"></th>	
 								</tr>
+								
 							</thead>
 				
-					
 						    <c:forEach var="mov" items="${listMov}"> 
 						    	<c:url var="urlAlterar" value="/app/expediente/mov/agendar_publicacao_doe">
 									<c:param name="id" value="${mov.idMov}"></c:param>
 									<c:param name="sigla" value="${mov.exMobil.exDocumento.sigla}"></c:param>
 									<c:param name="urlRedirecionar" value="/app/exMovimentacao/listarDOE"/>
 								</c:url>
+							
 						    	<tr class="even">
-						    		 <td class="text-center align-middle"><input type="checkbox" name="${x}" value="true" ${x_checked} /></td>
+									 <td class="text-center align-middle"><input type="checkbox" name="movSelecionados" id="${x}" value="${mov.idMov}" ${x_checked} onclick="atualizarTipoAto(this)"/></td>
      			        			 <td class="text-left align-middle">
      			        			 	<span data-toggle="tooltip" data-placement="bottom" title="${mov.exMobil.exDocumento.descrDocumento}">
-     			        			 		<!-- <a href="javascript:alterouMod(${mov.idMov})">${mov.exMobil.exDocumento.sigla}.txt</a>-->
      			        			 		<a href="/sigaex/app/arquivo/exibir?id=${mov.idMov}&arquivo=${mov.exMobil.exDocumento.sigla}:${mov.idMov}&sigla=${mov.exMobil.exDocumento.sigla}">${mov.exMobil.exDocumento.sigla}.txt</a>
      			        			 	</span>
      			        			 </td>
      			        			 <td class="text-left align-middle"><fmt:formatDate pattern = "dd/MM/yyyy" value="${mov.dtIniMov}"/></td>
-     			        			 <td class="text-left">
-	     			        			 <select class="form-control siga-select2" id="" name="">
-											<option value="0">Selecione</option>
-										 </select>
-     			        			 </td>
-     			        			 <td class="text-left">
-     			        			 	<select class="form-control siga-select2" id="" name="">
-											<option value="0">Selecione</option>
-										 </select>
-     			        			 </td>
-     			        			 <td class="text-left">
-     			        			 	<select class="form-control siga-select2" id="" name="">
-											<option value="0">Selecione</option>
-										 </select>
-     			        			 </td>
-     			        			 <td class="text-left">
-     			        			 	<select class="form-control siga-select2" id="" name="">
-											<option value="0">Selecione</option>
-										 </select>
-     			        			 </td>
-     			        			 <td class="text-left">
+     			        			 <th class="text-left" style="width: 65%;">
+     			        			 	<button type="button" class="btn up" data-toggle="tooltip" data-placement="top">
+											<i class="fas fa-caret-up"></i>
+										</button>
+										<button type="button" class="btn down" data-toggle="tooltip" data-placement="top">
+											<i class="fas fa-caret-down"></i>
+										</button>
+     			        			 </th>
+     			        			 <td class="text-right">
      			        			 <div class="btn-group">
      			        			 	<a href="javascript:cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" onclick="cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" class="btn btn-primary" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Cancelar</a>
 										<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -128,10 +216,46 @@
      			        			 </td>
 						    	</tr>
 						    </c:forEach>
+						   
 						</table>
 						<div class="form-group row">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Anunciante</label>
+									<select class="form-control siga-select2" id="idAnunciante" name="idAnunciante">
+										<option value="0">Selecione</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Tipo de Matéria</label>
+									<select class="form-control siga-select2" id="idMateria" name="idMateria">
+										<option value="0">Selecione</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Caderno</label>
+									<select class="form-control siga-select2" id="idCaderno" name="idCaderno">
+										<option value="0">Selecione</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Seção</label>
+									<select class="form-control siga-select2" id="idSecao" name="idSecao">
+										<option value="0">Selecione</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="form-group row">
 							<div class="col-sm">
-								<input type="button" value="Enviar Arquivos Selecionados" class="btn btn-primary" data-toggle="modal" data-target="#myModal"/>
+								<input type="button" value="Enviar Arquivos Selecionados" class="btn btn-primary" onclick="javascript:validarCampos();"/>
+								<input type="button" value="Visualizar Grupo de Arquivos" class="btn btn-primary" onclick="javascript:visualizarGrupo();"/>
 							</div>				
 						</div>
 						</div>
@@ -165,5 +289,32 @@
 				</form>
 			</div>
 		</div>
+		<siga:siga-modal id="grupoModal" tamanhoGrande="true" exibirRodape="true" descricaoBotaoFechaModalDoRodape="Voltar">
+			<div class="modal-body"></div>			
+		</siga:siga-modal>	
 	</div>
 </siga:pagina>
+
+<script>
+	window.onload = function () { 
+		var select = frm.idModelo;
+		var option = select.children[select.selectedIndex];
+		var texto = option.textContent;
+		if(texto == "Resolução") {
+			document.getElementById("div1").style.display = "block";
+		    document.getElementById("div2").style.display = "block";
+		}
+	} 
+	
+	$(document).ready(function() {
+	   $(".up,.down").click(function() {
+	      var row = $(this).parents("tr:first");
+	      if ($(this).is(".up")) {
+	         row.insertBefore(row.prev());
+	      } else if ($(this).is(".down")) {
+	         row.insertAfter(row.next());
+	      }
+	      atualizarTipoAto();
+	   });
+	});
+</script>

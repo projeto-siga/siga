@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,7 +60,6 @@ import java.util.regex.Pattern;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
-import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
@@ -97,6 +97,7 @@ import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Prop;
@@ -207,6 +208,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
+import br.gov.jfrj.siga.ex.model.enm.ConversaoDoeEnum;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
@@ -222,6 +224,7 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -1048,6 +1051,44 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw e;
 		}
+	}
+	
+	public String gerarTextoPublicacaoDOE(ExDocumento doc, ExMovimentacao mov) throws IOException {
+		String html = new String();
+	
+		if(mov == null) {
+			html = doc.getConteudoBlobHtmlString();
+			html = html.substring(html.indexOf("FIM TITULO -->")+14, html.indexOf("<!-- INICIO ASSINATURA -->"));
+			
+			Integer posicao = -1;
+			Integer posicaoFinal = -1;
+			ConversaoDoeEnum palavraFinal = null;
+			
+			List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
+			for (ConversaoDoeEnum palavra : listaPalavas) {
+				posicao = html.toLowerCase().indexOf(palavra.getImperativo());
+				if((posicaoFinal > posicao && posicao != -1) || (posicaoFinal == -1 && posicao != -1)) {
+					posicaoFinal = posicao;
+					palavraFinal = palavra;
+				}
+			}
+			if(posicaoFinal != -1)
+				html = palavraFinal.getGerundio() + ":\n"+ HtmlToPlainText.getText(html.substring(posicaoFinal + palavraFinal.getImperativo().length()));
+			else 
+				html = HtmlToPlainText.getText(html);
+		} else {
+			ExMovimentacao exMov = ExDao.getInstance().consultar(mov.getIdDoc(), ExMovimentacao.class, false);
+			try {
+				byte[] texto = exMov.getConteudoBlobMov2();
+				if (texto != null)
+					html =  new String(texto, "ISO-8859-1");
+				
+			} catch (UnsupportedEncodingException e) {
+				throw new AplicacaoException(
+						"Não foi possível recuperar o agendamento já cadastrado");
+			}
+		}
+		return html;
 	}
 
 	public ExMovimentacao anexarArquivo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,

@@ -6030,6 +6030,8 @@ public class ExBL extends CpBL {
 		attrs.put("titular", doc.getTitular());
 		attrs.put("lotaTitular", doc.getLotaTitular());
 
+		attrs.put("urlbase", Prop.get("/siga.base.url"));
+
 		params.put("processar_modelo", "1");
 		params.put("finalizacao", "1");
 		if (doc != null && doc.getIdDoc() != null)

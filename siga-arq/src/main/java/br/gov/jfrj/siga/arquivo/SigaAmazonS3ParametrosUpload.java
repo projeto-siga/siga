@@ -1,18 +1,12 @@
 package br.gov.jfrj.siga.arquivo;
 
-import java.util.List;
-
-import com.amazonaws.services.s3.model.PartETag;
-
 public class SigaAmazonS3ParametrosUpload {
 	private String arquivoNome;
 	private String arquivoNomeS3;
 	private String uploadId;
-	private String sequencia;
 	private String tamanho;	
 	private String hash;
-	private PartETag partETag;
-	private List<Object> partETags;
+	private String token;	
 
 	public String getArquivoNome() {
 		return arquivoNome;
@@ -25,24 +19,6 @@ public class SigaAmazonS3ParametrosUpload {
 	}
 	public void setUploadId(String uploadId) {
 		this.uploadId = uploadId;
-	}
-	public String getSequencia() {
-		return sequencia;
-	}
-	public void setSequencia(String sequencia) {
-		this.sequencia = sequencia;
-	}
-	public PartETag getPartETag() {
-		return partETag;
-	}
-	public void setPartETag(PartETag partETag) {
-		this.partETag = partETag;
-	}
-	public List<Object> getPartETags() {
-		return partETags;
-	}
-	public void setPartETags(List<Object> partETags) {
-		this.partETags = partETags;
 	}
 	public String getArquivoNomeS3() {
 		return arquivoNomeS3;
@@ -61,5 +37,11 @@ public class SigaAmazonS3ParametrosUpload {
 	}
 	public void setHash(String hash) {
 		this.hash = hash;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 }

@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -149,6 +150,8 @@ public class ExDocumentoDTO {
 	private String numExtDoc;
 
 	private Long idMob;
+
+	private CpArquivo CpArquivoFormatoLivre;
 
 	private String obsOrgao;
 
@@ -1070,5 +1073,13 @@ public class ExDocumentoDTO {
 		return (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE || 
 				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
 	}
-	
+
+	public CpArquivo getCpArquivoFormatoLivre() {
+		return CpArquivoFormatoLivre;
+	}
+
+	public void setCpArquivoFormatoLivre(CpArquivo cpArquivoFormatoLivre) {
+		CpArquivoFormatoLivre = cpArquivoFormatoLivre;
+	}
+
 }

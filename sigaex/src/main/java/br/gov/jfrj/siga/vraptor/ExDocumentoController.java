@@ -61,6 +61,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jboss.logging.Logger;
 
+import com.auth0.jwt.JWTVerifier;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -77,6 +79,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -1782,17 +1785,18 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getDoc().setExMobilAutuado(mobilAutuado);
 			}
 
-			// Se o arquivo é de formato e tamanho livre, faz o upload previamente e passa um token contendo localização do 
+			// Se o arquivo é de formato e tamanho livre, já fez o upload previamente e passou um token contendo localização do 
 			// arquivo e tamanho.
 			if (tokenArquivo != null) {
 				ExDocumento d = exDocumentoDTO.getDoc();
 				d.setConteudoBlobFormatoLivre(tokenArquivo);
+				exDocumentoDTO.setCpArquivoFormatoLivre(d.getCpArquivoFormatoLivre());
 			}
-			// Insere PDF de documento capturado
+			// Insere PDF de documento capturado (de formato não livre)
 			if (arquivo != null) {
 				ExDocumento d = exDocumentoDTO.getDoc();
 
-				if (tokenArquivo != null && arquivo.getFile() == null) {
+				if (arquivo.getFile() == null) {
 					throw new AplicacaoException(
 							"O arquivo a ser anexado não foi selecionado!");
 				}

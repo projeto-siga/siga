@@ -624,27 +624,39 @@
 												</div>
 											</c:when>
 											<c:otherwise>
-												<script type="text/javascript" src="/siga/javascript/siga-arquivo.js"></script> 
-												<div class="custom-file ${tokenArquivo == null? '':'d-none'} col-lg-8">
+												<script type="text/javascript" src="/siga/javascript/siga-arquivo.js"></script>
+												
+												<input type='hidden' name='vars' class='uploadclass' value='tokenArquivo'>
+    	  										<input type='hidden' id='tokenArquivo' name='tokenArquivo'>
+    	  										<input type='hidden' name='vars' class='uploadclass' value='urlUpload'>
+    	  										<input type='hidden' id='urlUpload' class='uploadclass' name='urlUpload'> 
+												<div class="custom-file ${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo == null && tokenArquivo == null? '':'d-none'} col-lg-8">
 													<c:set var="extensoes" value="${fn:split(dateString, ',')}" />
 													<input type="file" class="custom-file-input" id="arqUpload" 
 														name="arqUpload" accept="${exDocumentoDTO.modelo.extensoesArquivoComPonto}"  
-														onchange="uploadArquivo('${urlUpload}', this, ${tamanhoMaximoArquivoFormatoLivre});" 
+														onchange="uploadArq('${urlUpload}', this, ${tamanhoMaximoArquivoFormatoLivre});" 
 														title="arqUpload"> <label 
 														class="custom-file-label" for="arqUpload"><i 
 														class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message 
 														key="usuario.novodocumento.arquivo" /> (limite de ${tamanhoMaximoArquivoFormatoLivre/1024/1024/1024}GB)</label>
 												</div>
-												<div class="${tokenArquivo != null? '':'d-none'} row">
+												<div id="barraProgresso" name="barraProgresso" class="d-none mt-2">
+													<small id="msgProgressBar" class="text-muted"></small>
+													<div class="progress">
+														<div class="progress-bar"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+													</div>
+													<button type="button" class="btn btn-sm btn-primary mt-1" onclick="abortarUpload();">Cancelar</button>
+												</div>														
+												<div class="${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo != null || tokenArquivo != null? '':'d-none'} row">
 													<div id="linkArquivoDiv" class="col-lg-8">
 														<div class="form-group">
 															<label for="linkArquivo" title="campo: Arquivo" class="title">Arquivo</label>												
 															<div id="linkArquivo" class="form-control " disabled read-only>  
-		      	  												<i class="far fa-file-pdf mr-2"></i>${nomeArquivo}</div>
+		      	  												<i class="far fa-file-pdf mr-2"></i>${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo}</div>
 														</div>
 													</div>
 													<div class="col-sm">
-	      	  											<button id="btnResetaArq" class='btn btn-secondary mt-lg-4' onclick='resetaArquivoUpload()'>Limpar</button>
+	      	  											<button id="btnResetaArq" class='btn btn-secondary mt-lg-4' onclick='removerArq()'>Limpar</button>
 	      	  										</div>
 												</div>
 												<small class="form-text text-muted">Tipos de arquivo permitidos para este documento: ${exDocumentoDTO.modelo.extensoesArquivoComPonto}</small>
@@ -746,7 +758,7 @@
 										<c:if
 											test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
 											${f:processarModelo(exDocumentoDTO.doc, 'entrevista', par, exDocumentoDTO.preenchRedirect)}
-								</c:if>
+										</c:if>
 										<c:if
 											test="${exDocumentoDTO.modelo.conteudoTpBlob != 'template/freemarker'}">
 											<c:import

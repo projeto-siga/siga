@@ -1,74 +1,39 @@
 package br.gov.jfrj.siga.arquivo.controller;
-import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.HttpHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import br.gov.jfrj.siga.arquivo.SigaAmazonS3;
-import br.gov.jfrj.siga.arquivo.UploadStatusRepository;
 
 @RestController
 @RequestMapping("sigaAmazonS3/api/v1")
 public class SigaAmazonS3Controller {
 	
-	@Autowired
-	private UploadStatusRepository uploadStatusRepo;
-	
 	@PostMapping("/upload")
-    public ResponseEntity<String> upload(@RequestParam MultipartFile arquivo, @RequestParam String parms) throws Exception {
+    public ResponseEntity<String> upload(HttpServletRequest request, @RequestHeader String parms) throws Exception {
 		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-        String respParms = sigaS3.upload(arquivo, parms, uploadStatusRepo);
+        String respParms = sigaS3.upload(request.getInputStream(), parms);
         return ResponseEntity.ok(respParms);
     }
 	
-	@GetMapping("/verProgressoUpload")
-    public ResponseEntity<String> verProgressoUpload(@RequestParam String parms) throws Exception {
-		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-        String respParms = sigaS3.verProgressoUpload(parms, uploadStatusRepo);
-        return ResponseEntity.ok(respParms);
-    }
-	
-	@PostMapping("/uploadIniciar")
-    public ResponseEntity<String> uploadIniciar(@RequestParam MultipartFile arquivo, @RequestParam String parms) throws Exception {
-		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-        String respParms = sigaS3.uploadMultipartIniciar(arquivo, parms);
-        return ResponseEntity.ok(respParms);
-    }
-	
-	@PostMapping("/uploadEnviarParte")
-    public ResponseEntity<String> uploadEnviarParte(@RequestParam MultipartFile arquivo, @RequestParam String parms) throws Exception {
-		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-        String respParms = sigaS3.uploadMultipartEnviarParte(arquivo, parms);
-        return ResponseEntity.ok(respParms);
-    }
-
-	@PostMapping("/uploadFinalizar")
-    public ResponseEntity<String> uploadFinalizar(@RequestParam String parms) throws Exception {
-		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-        String respParms = sigaS3.uploadMultipartFinalizar(parms);
-        return ResponseEntity.ok(respParms);
-    }
-
-	@PostMapping("/uploadAbortar")
-    public ResponseEntity<String> uploadAbortar(@RequestParam String parms) throws Exception {
-		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-        String respParms = sigaS3.uploadMultipartAbortar(parms);
-        return ResponseEntity.ok(respParms);
-    }
-
 	@GetMapping("/download")
-    public ResponseEntity<InputStreamResource> download(@RequestParam String tokenArquivo, @RequestHeader(HttpHeaders.RANGE) Optional<String> range) throws Exception {
+    public ResponseEntity<InputStreamResource> download(@RequestParam String tokenArquivo) throws Exception {
 		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-		return sigaS3.download(tokenArquivo, range);
+		return sigaS3.download(tokenArquivo);
+    }
+	
+	@DeleteMapping("/remover")
+    public ResponseEntity<String> remover(@RequestHeader String tokenArquivo) throws Exception {
+		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
+		sigaS3.remover(tokenArquivo);
+		return ResponseEntity.ok("OK");
     }
 	
 }

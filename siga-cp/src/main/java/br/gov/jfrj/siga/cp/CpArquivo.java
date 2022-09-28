@@ -106,11 +106,14 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	@Column(name = "HASH_SHA256")
 	private String hashSha256;
 
+	@Column(name = "NOME_ARQ")
+	private String nomeArquivo;
+
 	@Transient
 	protected byte[] cacheArquivo;
 
 	@Transient
-	protected boolean isFormatoLivre;
+	private static boolean isFormatoLivre;
 	
 	@Transient
     private PersistentAttributeInterceptor persistentAttributeInterceptor;
@@ -133,7 +136,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	@PrePersist
 	private void salvarArquivo() {
-		if (isFormatoLivre)
+		if (isFormatoLivre())
 			return;
 		
 		long ini = System.currentTimeMillis();
@@ -190,17 +193,21 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			break;
 		}
 	}
-
 	public static CpArquivo forUpdate(CpArquivo old) {
+		return forUpdate(old, true);
+	}
+
+	public static CpArquivo forUpdate(CpArquivo old, boolean atualizarConteudo) {
 		if (old != null) {
 			if (old.getIdArq() != null) {
 				CpArquivo arq = new CpArquivo();
 				arq.setTipoArmazenamento(old.getTipoArmazenamento());
 				arq.setConteudoTpArq(old.getConteudoTpArq());
 				arq.setOrgaoUsuario(old.getOrgaoUsuario());
-
-				arq.setConteudo(old.getConteudo());
+				if (atualizarConteudo)
+					arq.setConteudo(old.getConteudo());
 				arq.setHashSha256(old.getHashSha256());
+				arq.setNomeArquivo(old.getNomeArquivo());
 
 				ContextoPersistencia.em().remove(old);
 				return arq;
@@ -264,23 +271,23 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		return old;
 	}
 
-	public static CpArquivo updateFormatoLivre(CpArquivo old, String nomeArquivo, Integer tamanhoArquivo, 
-			CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
-		if (old == null) {
-			String bucket = Prop.get("/siga.armazenamento.arquivo.bucket");
-			CpArquivo arq = CpArquivo.forUpdate(old);
+	public static CpArquivo updateFormatoLivre(CpArquivo old, CpOrgaoUsuario orgaoUsuario, String caminho, String nomeArquivo, 
+			Integer tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
+		CpArquivo arq = CpArquivo.forUpdate(old, false);
 			String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
 			if (extensao == null)
 				throw new AplicacaoException("Extensão de arquivo inválida: ." + FilenameUtils.getExtension(nomeArquivo));
+		arq.setOrgaoUsuario(orgaoUsuario);
 			arq.setConteudoTpArq(extensao);
-			arq.setCaminho(bucket + "/" + nomeArquivo);
+		arq.setNomeArquivo(nomeArquivo);
+		arq.setCaminho(caminho);
 			arq.setTamanho(tamanhoArquivo);
 			arq.setTipoArmazenamento(tipoArmazenamento);
 			arq.setFormatoLivre(true);
 			arq.setHashSha256(hashSha256);
 			return arq;
 		}
-		return old;
+
 	}
 
 	private void gerarCaminho() {
@@ -373,7 +380,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		this.cacheArquivo = cacheArquivo;
 	}
 
-	private boolean isFormatoLivre() {
+	private static boolean isFormatoLivre() {
 		return isFormatoLivre;
 	}
 
@@ -387,6 +394,14 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
 	public void setHashSha256(String hashSha256) {
 		this.hashSha256 = hashSha256;
+	}
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
 	}
 
 }

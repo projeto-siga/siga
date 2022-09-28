@@ -20,8 +20,8 @@ public class SigaArqApplication {
 				registry.addMapping("/sigaAmazonS3/api/**")
 					.allowedOrigins(System.getProperty("siga.allowed.origin.urls"))
                 	.allowCredentials(true)
-	                .allowedMethods("OPTIONS","POST","PUT","GET","HEAD")
-	                .allowedHeaders("Cookie","Content-Disposition")
+	                .allowedMethods("OPTIONS","POST","PUT","GET","DELETE","HEAD")
+	                .allowedHeaders("Cookie","Content-Disposition","content-type","parms","tokenArquivo")
 	                .maxAge(3600);
 			}
 		};

@@ -130,6 +130,7 @@ public class ExDocumentoVO extends ExVO {
 	String dtLimiteDemandaJudicial;
 	private ArrayList<ExMarcaVO> marcas;
 	String dtPrazoDeAssinatura;
+	Long idDoc;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel, boolean exibe) {
@@ -403,6 +404,15 @@ public class ExDocumentoVO extends ExVO {
 		}
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().pode(ExPodeAnexarArquivoAuxiliar.class, titular, lotaTitular, mob);
+	}
+
+	public ExDocumentoVO(String sigla, String classificacaoSigla, 
+						 String lotaCadastranteString, String cadastranteString, String descrDocumento) {
+		this.sigla = sigla;
+		this.classificacaoSigla = classificacaoSigla;
+		this.lotaCadastranteString = lotaCadastranteString;
+		this.cadastranteString = cadastranteString;
+		this.descrDocumento = descrDocumento;
 	}
 
 	public void exibe() {
@@ -1059,4 +1069,27 @@ public class ExDocumentoVO extends ExVO {
 		this.principalCompacto = principalCompacto;
 	}
 
+	public Long getIdDoc() {
+		return idDoc;
+	}
+
+	public void setIdDoc(Long idDoc) {
+		this.idDoc = idDoc;
+	}
+
+	public String getClassificacaoSigla() {
+		return classificacaoSigla;
+	}
+
+	public void setClassificacaoSigla(String classificacaoSigla) {
+		this.classificacaoSigla = classificacaoSigla;
+	}
+
+	public void setCadastranteString(String cadastranteString) {
+		this.cadastranteString = cadastranteString;
+	}
+
+	public void setLotaCadastranteString(String lotaCadastranteString) {
+		this.lotaCadastranteString = lotaCadastranteString;
+	}
 }

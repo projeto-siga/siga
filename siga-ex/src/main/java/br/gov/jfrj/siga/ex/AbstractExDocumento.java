@@ -23,26 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
@@ -238,6 +221,65 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "					and doc.dtFinalizacao is not null"
 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
 				+ "				order by  doc.dtFinalizacao") })
+		@NamedNativeQuery(name = "consultarDocumentosEMovimentacoesPorCodificacaoClassificacao",
+			query = " select " +
+					"		substr(mob.dnm_sigla, 1, 17) as sigla," +
+					"		classific.codificacao as classificacaoSigla, " +
+					"		lotacao.sigla_lotacao as lotaCadastranteString, " +
+					"		pessoa.sigla_pessoa as cadastranteString, " +
+					"		doc.descr_documento as descrDocumento" +
+					"	from siga.ex_documento doc " +
+					"	join siga.ex_classificacao classific " +
+					"		on classific.id_classificacao = doc.id_classificacao " +
+					"	join siga.ex_mobil mob " +
+					"		on mob.id_doc = doc.id_doc " +
+					"	join corporativo.dp_lotacao lotacao " +
+					"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
+					"	join corporativo.dp_pessoa pessoa " +
+					"		on pessoa.id_pessoa = doc.id_cadastrante" +
+					"	where doc.dt_finalizacao is not null " +
+					"		and doc.dt_primeiraassinatura is not null " +
+					"		and classific.codificacao like :mascara" +
+					" union" +
+					" select " +
+					"		substr(mob.dnm_sigla, 1, 17) as sigla," +
+					"		classific.codificacao as classificacaoSigla, " +
+					"		lotacao.sigla_lotacao as lotaCadastranteString, " +
+					"		pessoa.sigla_pessoa as cadastranteString, " +
+					"		doc.descr_documento as descrDocumento" +
+					"	from siga.ex_movimentacao mov " +
+					"	join siga.ex_classificacao classific " +
+					"		on classific.id_classificacao = mov.id_classificacao " +
+					"	join siga.ex_mobil mob " +
+					"		on mob.id_mobil = mov.id_mobil " +
+					"	join siga.ex_documento doc " +
+					"		on doc.id_doc = mob.id_doc " +
+					"	join corporativo.dp_lotacao lotacao " +
+					"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
+					"	join corporativo.dp_pessoa pessoa " +
+					"		on pessoa.id_pessoa = doc.id_cadastrante" +
+					"	where doc.dt_finalizacao is not null " +
+					"		and doc.dt_primeiraassinatura is not null " +
+					"		and (mov.id_tp_mov in (:enumList)) " +
+					"		and classific.codificacao like :mascara" +
+					"	order by sigla",
+				resultSetMapping = "DocumentosEMovimentacoesPorCodificacaoClassificacaoMapping"
+		)
+		@SqlResultSetMapping(
+				name="DocumentosEMovimentacoesPorCodificacaoClassificacaoMapping",
+				classes = {
+					@ConstructorResult(
+							targetClass = ExDocumentoVO.class,
+							columns = {
+									@ColumnResult(name="sigla"),
+									@ColumnResult(name="classificacaoSigla"),
+									@ColumnResult(name="lotaCadastranteString"),
+									@ColumnResult(name="cadastranteString"),
+									@ColumnResult(name="descrDocumento")
+							}
+					)	
+				}
+		)
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 	

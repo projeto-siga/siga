@@ -49,6 +49,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.gov.jfrj.siga.cp.logic.CpPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1068,5 +1069,32 @@ public class ExMobilController extends
 		List<ExNivelAcesso> listaNivelAcesso = ExDao.getInstance().listarOrdemNivel();
 		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
+
+	@Get("/app/expediente/doc/listar_docs_movs_por_classificacao")
+	public void listarDocumentosEMovimentacoesPorCodificacaoClassificacao(final String mascara, final int offset) {
+        assertAcesso("RECLALOTE:Reclassificar em Lote");
+		
+		if(mascara != null) {
+			int itemPagina = 50;
+
+			List<ExDocumentoVO> documentosFiltradosPorCodificacaoClassificacao;
+			documentosFiltradosPorCodificacaoClassificacao = dao()
+					.consultarDocumentosEMovimentacoesPorCodificacaoClassificacao(mascara, offset, itemPagina);
+
+			getP().setOffset(offset);
+			setItemPagina(itemPagina);
+			setItens(documentosFiltradosPorCodificacaoClassificacao);
+			setTamanho(getItens().size());
+			
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+			
+		}
+
+		result.use(Results.page())
+				.forwardTo("/WEB-INF/page/exMovimentacao/reclassificar_lote.jsp");
+    }
 
 }

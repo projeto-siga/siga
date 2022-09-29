@@ -5316,20 +5316,14 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/expediente/mov/reclassificar_lote")
-	public void reclassificar_lote(final ExClassificacaoSelecao classificacaoSel) {
+	public void reclassificar_lote(final String mascara, final int offset) {
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
-		
-		if(classificacaoSel != null){
-			
-		}
+
 
 		result.include("tipoResponsavel", 1);
 		result.include("substituicao", Boolean.FALSE);
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("subscritorSel", new DpPessoaSelecao());
 		result.include("classificacaoSel", new ExClassificacaoSelecao());
-
-		result.use(Results.page())
-				.forwardTo("/WEB-INF/page/exMovimentacao/reclassificar_lote.jsp");
 	}
 }

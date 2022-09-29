@@ -2614,7 +2614,9 @@ public class ExDao extends CpDao {
 		Query query = em().createNamedQuery("consultarDocumentosEMovimentacoesPorCodificacaoClassificacao");
 		
 		query.setParameter("mascara", mascaraCodificacaoClassificacao);
-		query.setParameter("enumList",ExTipoDeMovimentacao.RECLASSIFICACAO.getId());
+		query.setParameter("enumList", Arrays.asList(
+				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
+				ExTipoDeMovimentacao.AVALIACAO_COM_RECLASSIFICACAO.getId()));
 		query.setFirstResult(offset);
 		query.setMaxResults(itemPagina);
 		

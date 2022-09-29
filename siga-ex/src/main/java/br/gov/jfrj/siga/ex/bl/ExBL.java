@@ -6978,7 +6978,8 @@ public class ExBL extends CpBL {
 		if (modNovo.getDescMod() != null && modNovo.getDescMod().trim().length() > 256 )
 			throw new AplicacaoException("A Descrição deve conter no máximo 256 caracteres");
 		
-		if (!CpExtensoesDeArquivoEnum.validaLista(modNovo.getExtensoesArquivo()))
+		if (modNovo.getExtensoesArquivo() != null && !CpExtensoesDeArquivoEnum
+				.validaLista(modNovo.getExtensoesArquivo()))
 			throw new AplicacaoException ("Uma das extensões de arquivos informada é inválida.");
 		
 		try {

@@ -274,20 +274,18 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	public static CpArquivo updateFormatoLivre(CpArquivo old, CpOrgaoUsuario orgaoUsuario, String caminho, String nomeArquivo, 
 			Integer tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
 		CpArquivo arq = CpArquivo.forUpdate(old, false);
-			String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
-			if (extensao == null)
-				throw new AplicacaoException("Extensão de arquivo inválida: ." + FilenameUtils.getExtension(nomeArquivo));
+		String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
+		if (extensao == null)
+			throw new AplicacaoException("Extensão de arquivo inválida: ." + FilenameUtils.getExtension(nomeArquivo));
 		arq.setOrgaoUsuario(orgaoUsuario);
-			arq.setConteudoTpArq(extensao);
+		arq.setConteudoTpArq(extensao);
 		arq.setNomeArquivo(nomeArquivo);
 		arq.setCaminho(caminho);
-			arq.setTamanho(tamanhoArquivo);
-			arq.setTipoArmazenamento(tipoArmazenamento);
-			arq.setFormatoLivre(true);
-			arq.setHashSha256(hashSha256);
-			return arq;
-		}
-
+		arq.setTamanho(tamanhoArquivo);
+		arq.setTipoArmazenamento(tipoArmazenamento);
+		arq.setFormatoLivre(true);
+		arq.setHashSha256(hashSha256);
+		return arq;
 	}
 
 	private void gerarCaminho() {

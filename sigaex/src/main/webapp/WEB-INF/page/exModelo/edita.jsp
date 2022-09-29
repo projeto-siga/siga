@@ -103,7 +103,7 @@
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
-								<label>Espécie</label> <select name="forma"
+								<label>Espécie</label> <select name="forma" id="forma"
 									class="custom-select  siga-select2" onchange="mudouForma(this.options[this.selectedIndex])">
 									<c:forEach var="item" items="${listaForma}">
 										<option value="${item.idFormaDoc}" data-isformatolivre="${item.isCapturadoFormatoLivre()}"
@@ -406,15 +406,14 @@
 				var selExtensoes = $("#extensoesArquivo").select2({
 				    placeholder: "Escolha as extensões de arquivos possíveis para o arquivo capturado.",
 				    tags: true
-			});
-			function mudouForma(elem) {
-				if (elem.getAttribute("data-isformatolivre") === "true")
-					$("#extensoesArquivo").prop("disabled", false);
-// 					document.getElementById("extensoesArquivo").classList.remove("d-none");
-				else
-					$("#extensoesArquivo").prop("disabled", true);
-// 					document.getElementById("extensoesArquivo").classList.add("d-none");
-			}
+				});
+			
+				function mudouForma(elem) {
+					if (elem.getAttribute("data-isformatolivre") === "true")
+						$("#extensoesArquivo").prop("disabled", false);
+					else
+						$("#extensoesArquivo").prop("disabled", true);
+				}
 	</script>
 
 </siga:pagina>

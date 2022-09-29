@@ -294,8 +294,7 @@ function submitBusca(cliente) {
 		<div id="pesqFiltros" class="card-body collapse show">
 			<div class="tab-content" id="nav-tabContent">
 				<div class="tab-pane fade show active" id="content1">
-				  <form id="buscar" name="buscar" onsubmit="javascript: return limpaCampos()"
-						action="buscar" method="get" class="form100">
+				  <form id="buscar" name="buscar" action="buscar" method="get" class="form100">
 					<input type="hidden" name="popup" value="${popup}" />
 					<input type="hidden" name="propriedade" value="${propriedade}" />
 					<input type="hidden" name="postback" value="1" />

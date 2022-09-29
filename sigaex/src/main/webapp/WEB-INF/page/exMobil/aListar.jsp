@@ -103,7 +103,7 @@
 				</c:otherwise>
 			</c:choose>
 		</c:if>	
-		<form id="listar" name="listar" onsubmit="javascript: return limpaCampos()" action="listar" method="get" class="form100">
+		<form id="listar" name="listar" action="listar" method="get" class="form100">
 			<input type="hidden" name="popup" value="${popup}" /> 
 			<input type="hidden" name="propriedade" value="${propriedade}" /> 
 			<input type="hidden" name="postback" value="1" /> 

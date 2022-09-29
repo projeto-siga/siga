@@ -104,14 +104,20 @@ public class Stamp {
 				if(pdfIn.getPageSize(i).getWidth() == 1189 && pdfIn.getPageSize(i).getHeight() == 841) {
 					tamanhoPagina = PageSize.A0;
 					doc = new Document(tamanhoPagina, 0, 0, 0, 0);
+					doc.open();
 					writer = PdfWriter.getInstance(doc, boGeneric);
+					writer.open();
+					cb = writer.getDirectContent();
 					Stamp.SetOnePageA0(pdfIn, tamanhoPagina, i, internoProduzido);
 				}
 				
 				else {
 					tamanhoPagina = PageSize.A4;
 					doc = new Document(tamanhoPagina, 0, 0, 0, 0);
+					doc.open();
 					writer = PdfWriter.getInstance(doc, boGeneric);
+					writer.open();
+					cb = writer.getDirectContent();
 					
 					int rot = pdfIn.getPageRotation(i);
 					float left = pdfIn.getPageSize(i).getLeft();
@@ -188,7 +194,7 @@ public class Stamp {
 					cb.restoreState();
 				}
 			}
-			doc.close();
+			//doc.close();
 
 			abPdf = boGeneric.toByteArray();
 		}
@@ -581,12 +587,12 @@ public class Stamp {
 		float bottom = pdf.getPageSize(numberPage).getBottom();
 		float top = pdf.getPageSize(numberPage).getTop();
 		float right = pdf.getPageSize(numberPage).getRight();
-		
-		
+			
 
 		page = writer.getImportedPage(pdf, numberPage);
 		float w = page.getWidth();
 		float h = page.getHeight();
+		writer.close();
 
 		// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
 		// + ", " + h);
@@ -650,6 +656,7 @@ public class Stamp {
 		// cb.stroke();
 		// cb.restoreState();
 
-		cb.restoreState();		
+		cb.restoreState();	
+		doc.close();
 	}
 }

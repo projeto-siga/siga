@@ -2447,7 +2447,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean isInternoCapturado() {
 		if (getExTipoDocumento() == null)
 			return false;
-		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO);
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO ||
+				getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE);
 	}
 
 	/**
@@ -2456,11 +2457,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean isExternoCapturado() {
 		if (getExTipoDocumento() == null)
 			return false;
-		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO);
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO ||
+				getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
+	}
+
+	public boolean isCapturadoFormatoLivre() {
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE ||
+				getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
 	}
 
 	/**
-	 * Verifica se um documento é capturado de uma fonte externa.
+	 * Verifica se um documento é capturado.
 	 */
 	public boolean isCapturado() {
 		return isInternoCapturado() || isExternoCapturado();

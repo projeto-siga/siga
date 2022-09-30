@@ -199,4 +199,12 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecio
 	public String getDescricao() {
 		return null;
 	}
+
+	/**
+	 * Obtem as extensões de arquivo permitidas para este modelo, precedidas de um ponto
+	 */
+	public java.lang.String getExtensoesArquivoComPonto() {
+		return "." + getExtensoesArquivo().replaceAll(",", ",.");
+	}
+	
 }

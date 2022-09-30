@@ -1070,20 +1070,20 @@ public class ExMobilController extends
 		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
 
-	@Get("/app/expediente/doc/listar_docs_movs_por_classificacao")
-	public void listarDocumentosEMovimentacoesPorCodificacaoClassificacao(final String mascara, final int offset) {
+	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
+	public void listarDocumentosParaReclassificarEmLote(final String mascara, final int offset) {
         assertAcesso("RECLALOTE:Reclassificar em Lote");
 		
 		if(mascara != null) {
 			int itemPagina = 50;
 
-			List<ExDocumentoVO> documentosFiltradosPorCodificacaoClassificacao;
-			documentosFiltradosPorCodificacaoClassificacao = dao()
-					.consultarDocumentosEMovimentacoesPorCodificacaoClassificacao(mascara, offset, itemPagina);
+			List<ExDocumentoVO> documentosPorCodificacaoClassificacao;
+			documentosPorCodificacaoClassificacao = dao()
+					.consultarParaReclassificarEmLote(getCadastrante(), mascara, offset, itemPagina);
 
 			getP().setOffset(offset);
 			setItemPagina(itemPagina);
-			setItens(documentosFiltradosPorCodificacaoClassificacao);
+			setItens(documentosPorCodificacaoClassificacao);
 			setTamanho(getItens().size());
 			
 			result.include("itens", this.getItens());

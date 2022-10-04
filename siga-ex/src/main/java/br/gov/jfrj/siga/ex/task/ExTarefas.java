@@ -14,7 +14,7 @@ public class ExTarefas {
     public static void agendarTarefaGarbageCollector() {
         timer.schedule(getTask(() -> {
             if (Prop.getBool("garbage.tarefa")) {
-                log.info("[GarbageCollectorTask] [Periodicidade - "+ Prop.get("garbage.tarefa.periodo") +" minuto(s)] ");
+                log.info("[TarefaGarbageCollector] [Periodicidade - "+ Prop.get("garbage.tarefa.periodo") +" minuto(s)] ");
                 timer.scheduleAtFixedRate(getTask(() -> System.gc()), 0, Duration.ofMinutes(Prop.getInt("garbage.tarefa.periodo")).toMillis());
             }
         }), Duration.ofMinutes(1).toMillis());

@@ -226,7 +226,7 @@ import net.sf.jasperreports.engine.JRException;
 				listLinhas.add(listDados);
 				totalDocumentos = totalDocumentos + 1;
 
-				if(!Prop.getBool("garbage.task")) {
+				if(!Prop.getBool("garbage.tarefa")) {
 					if (gcCounter > 200) {
 						gcCounter = 0;
 						System.gc();

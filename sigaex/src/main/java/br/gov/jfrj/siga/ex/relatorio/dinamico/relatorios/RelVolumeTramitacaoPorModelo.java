@@ -351,7 +351,7 @@ import net.sf.jasperreports.engine.JRException;
 				listDados.add(qtdTram.toString()); 
 				listLinhas.add(listDados);
 				totalModeloTramites += qtdTram;
-				if(!Prop.getBool("garbage.task"))
+				if(!Prop.getBool("garbage.tarefa"))
 				{
 					if (gcCounter > 200) {
 					gcCounter = 0;

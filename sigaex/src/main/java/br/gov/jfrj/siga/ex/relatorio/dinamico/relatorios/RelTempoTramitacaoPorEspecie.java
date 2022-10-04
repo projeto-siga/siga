@@ -311,7 +311,7 @@ import net.sf.jasperreports.engine.JRException;
 							dtCancel = 0L;
 							tramitou = false;
 						}
-						if(!Prop.getBool("garbage.task")) {
+						if(!Prop.getBool("garbage.tarefa")) {
 							if (gcCounter > 200) {
 								gcCounter = 0;
 								System.gc();

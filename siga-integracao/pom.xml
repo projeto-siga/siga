@@ -29,12 +29,11 @@
 			<artifactId>commons-text</artifactId>
 			<version>1.9</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-codegen-plugin</artifactId>
-			<version>3.2.4</version>
-			<type>maven-plugin</type>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.cxf</groupId> -->
+<!-- 			<artifactId>cxf-codegen-plugin</artifactId> -->
+<!-- 			<version>3.2.4</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>

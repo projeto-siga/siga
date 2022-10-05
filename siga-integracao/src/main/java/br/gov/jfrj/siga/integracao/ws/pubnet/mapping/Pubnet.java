@@ -6,6 +6,9 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
+
+import br.gov.jfrj.siga.integracao.ws.pubnet.utils.PropriedadePubnet;
+
 import javax.xml.ws.Service;
 
 /**
@@ -19,15 +22,18 @@ import javax.xml.ws.Service;
                   targetNamespace = "http://pubnet.imprensaoficial.com.br/wspubnet")
 public class Pubnet extends Service {
 
-    public final static URL WSDL_LOCATION;
+    private final static URL WSDL_LOCATION;
 
-    public final static QName SERVICE = new QName("http://pubnet.imprensaoficial.com.br/wspubnet", "pubnet");
-    public final static QName PubnetSoap12 = new QName("http://pubnet.imprensaoficial.com.br/wspubnet", "pubnetSoap12");
-    public final static QName PubnetSoap = new QName("http://pubnet.imprensaoficial.com.br/wspubnet", "pubnetSoap");
+    private final static QName SERVICE = new QName(PropriedadePubnet.URL_NAMESPACE, PropriedadePubnet.LOCAL_PART);
+    
+    private final static QName PUBNET_SOAP_QNAME = new QName(PropriedadePubnet.URL_NAMESPACE, PropriedadePubnet.LOCAL_PART_SOAP);
+    
+    private final static QName PUBNET_SOAP12_QNAME = new QName(PropriedadePubnet.URL_NAMESPACE, PropriedadePubnet.LOCAL_PART_SOAP12);
+    
     static {
         URL url = null;
         try {
-            url = new URL("https://pubnetdes.imprensaoficial.com.br/wspubnet/pubnet.asmx?wsdl");
+            url = new URL(PropriedadePubnet.URL_WSDL);
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(Pubnet.class.getName())
                 .log(java.util.logging.Level.INFO,
@@ -61,8 +67,6 @@ public class Pubnet extends Service {
     }
 
 
-
-
     /**
      *
      * @return
@@ -70,7 +74,7 @@ public class Pubnet extends Service {
      */
     @WebEndpoint(name = "pubnetSoap12")
     public PubnetSoap getPubnetSoap12() {
-        return super.getPort(PubnetSoap12, PubnetSoap.class);
+        return super.getPort(PUBNET_SOAP12_QNAME, PubnetSoap.class);
     }
 
     /**
@@ -82,7 +86,7 @@ public class Pubnet extends Service {
      */
     @WebEndpoint(name = "pubnetSoap12")
     public PubnetSoap getPubnetSoap12(WebServiceFeature... features) {
-        return super.getPort(PubnetSoap12, PubnetSoap.class, features);
+        return super.getPort(PUBNET_SOAP12_QNAME, PubnetSoap.class, features);
     }
 
 
@@ -93,7 +97,7 @@ public class Pubnet extends Service {
      */
     @WebEndpoint(name = "pubnetSoap")
     public PubnetSoap getPubnetSoap() {
-        return super.getPort(PubnetSoap, PubnetSoap.class);
+        return super.getPort(PUBNET_SOAP_QNAME, PubnetSoap.class);
     }
 
     /**
@@ -105,7 +109,7 @@ public class Pubnet extends Service {
      */
     @WebEndpoint(name = "pubnetSoap")
     public PubnetSoap getPubnetSoap(WebServiceFeature... features) {
-        return super.getPort(PubnetSoap, PubnetSoap.class, features);
+        return super.getPort(PUBNET_SOAP_QNAME, PubnetSoap.class, features);
     }
 
 }

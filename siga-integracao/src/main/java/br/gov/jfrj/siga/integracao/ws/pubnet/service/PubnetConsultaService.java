@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativasCancelamentoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
@@ -50,7 +51,7 @@ public class PubnetConsultaService {
 		port = pubnet.getPubnetSoap();
 	}
 
-	public List<MaterialEnviadoDto> consultarMaterialEnviado(AuthHeader user, String dtInicio, String dtFim) {
+	public List<MaterialEnviadoDto> consultarMaterialEnviado(AuthHeader user, String dtInicio, String dtFim) throws Exception {
 		List<MaterialEnviadoDto> materialEnviadoDtos = new ArrayList<MaterialEnviadoDto>();
 		try {
 			ConsultaMaterialEnviadoResult resp = port.consultaMaterialEnviado(user, dtInicio, dtFim);
@@ -64,12 +65,12 @@ public class PubnetConsultaService {
 				consultarMaterialEnviado(user, dtInicio, dtFim);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new AplicacaoException(e.getMessage());
 		}
 		return materialEnviadoDtos;
 	}
 
-	public List<PermissaoPublicanteDto> consultarPermissaoPublicante(AuthHeader user) {
+	public List<PermissaoPublicanteDto> consultarPermissaoPublicante(AuthHeader user) throws Exception {
 		List<PermissaoPublicanteDto> permissaoPublicanteDtoList = new ArrayList<PermissaoPublicanteDto>();
 		try {
 			ConsultaPermissoesPublicanteResult resp = port.consultaPermissoesPublicante(user);
@@ -83,12 +84,12 @@ public class PubnetConsultaService {
 				consultarPermissaoPublicante(user);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new AplicacaoException(e.getMessage());
 		}
 		return permissaoPublicanteDtoList;
 	}
 
-	public List<JustificativasCancelamentoDto> listarJustificativasCancelamento(AuthHeader user) {
+	public List<JustificativasCancelamentoDto> listarJustificativasCancelamento(AuthHeader user) throws Exception {
 		List<JustificativasCancelamentoDto> permissaoPublicanteDtoList = new ArrayList<JustificativasCancelamentoDto>();
 		try {
 			ListaJustificativasCancelamentoResult resp = port.listaJustificativasCancelamento(user);
@@ -103,12 +104,12 @@ public class PubnetConsultaService {
 				listarJustificativasCancelamento(user);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new AplicacaoException(e.getMessage());
 		}
 		return permissaoPublicanteDtoList;
 	}
 
-	public TokenDto gerarToken(String userName, String documento, String email) {
+	public TokenDto gerarToken(String userName, String documento, String email) throws Exception {
 		TokenDto tokenDto = new TokenDto();
 		try {
 			GeraTokenResult resp = port.geraToken(userName, documento, email);
@@ -122,7 +123,7 @@ public class PubnetConsultaService {
 				gerarToken(userName, documento, email);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new AplicacaoException(e.getMessage());
 		}
 		return tokenDto;
 	}
@@ -180,6 +181,7 @@ public class PubnetConsultaService {
 		return json;
 	}
 
+	@SuppressWarnings("restriction")
 	protected JsonNode convertElementParaJsonNode(Object resp) throws TransformerException, IOException {
 		ElementNSImpl elementNSImpl = (ElementNSImpl) resp;
 		StringWriter writer = converterDocumentParaXmlString(elementNSImpl.getOwnerDocument());

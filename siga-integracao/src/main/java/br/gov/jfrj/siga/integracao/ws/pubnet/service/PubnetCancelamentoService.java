@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.integracao.ws.pubnet.service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.CancelaMaterialDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoCancelamentoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
@@ -16,7 +17,7 @@ public class PubnetCancelamentoService extends PubnetConsultaService {
 	}
 
 	public MontaReciboPublicacaoCancelamentoDto montarReciboPublicacaoCancelamento(AuthHeader user,
-			String nomeArquivo) {
+			String nomeArquivo) throws Exception {
 		MontaReciboPublicacaoCancelamentoDto reciboPublicCancelDto = new MontaReciboPublicacaoCancelamentoDto();
 		try {
 			MontaReciboPublicacaoCancelamentoResult resp = getPort().montaReciboPublicacaoCancelamento(user,
@@ -31,13 +32,13 @@ public class PubnetCancelamentoService extends PubnetConsultaService {
 				montarReciboPublicacaoCancelamento(user, nomeArquivo);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new AplicacaoException(e.getMessage());
 		}
 		return reciboPublicCancelDto;
 	}
 
 	public CancelaMaterialDto cancelarMaterial(AuthHeader user, String nomeArquivo,
-			String justificativaIdentificador, String recibo, String reciboHash) {
+			String justificativaIdentificador, String recibo, String reciboHash) throws Exception {
 		CancelaMaterialDto reciboPublicCancelDto = new CancelaMaterialDto();
 		try {
 			CancelarMaterialResult resp = getPort().cancelarMaterial(user, nomeArquivo, justificativaIdentificador, recibo,
@@ -52,7 +53,7 @@ public class PubnetCancelamentoService extends PubnetConsultaService {
 				cancelarMaterial(user, nomeArquivo, justificativaIdentificador, recibo, reciboHash);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new AplicacaoException(e.getMessage());
 		}
 		return reciboPublicCancelDto;
 	}

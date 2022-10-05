@@ -112,99 +112,543 @@ public class Stamp {
 		// "EEE MMM dd HH:mm:ss zzz yyyy");
 		// doc.add(new Meta("creationdate", sdf.format(new Date(0L))));
 
-			try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
-				/*-- Alterado de PdfWriter p/ PdfCopy(Essa classe permite manter os "stamps" originais do arquivo importado) 
-				por Marcos(CMSP) em 21/02/19 --*/
-				// PdfCopy writer = new PdfCopy(doc, boA4);
-				/*-- Alerado de volta pois ficou desabilitado o redimensionamento do PDF de modo
-				 *   a que os códigos de barra 2D e 3D não ficassem por cima do texto. Por Renato em 25/04/2019 --*/
-				PdfWriter writer = PdfWriter.getInstance(doc, boA4);
-				doc.open();
-				PdfContentByte cb = writer.getDirectContent();
-	
-				// Resize every page to A4 size
-				//
-				// double thetaRotation = 0.0;
-				for (int i = 1; i <= pdfIn1.getNumberOfPages(); i++) {		  				    				    
-					int rot = pdfIn1.getPageRotation(i);
-					float left = pdfIn1.getPageSize(i).getLeft();
-					float bottom = pdfIn1.getPageSize(i).getBottom();
-					float top = pdfIn1.getPageSize(i).getTop();
-					float right = pdfIn1.getPageSize(i).getRight();
-	
-					PdfImportedPage page = writer.getImportedPage(pdfIn1, i);
-					float w = page.getWidth();
-					float h = page.getHeight();
-	
-					// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
-					// + ", " + h);
-	
-					doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? size.rotate() : size);
-					doc.newPage();
-	
-					cb.saveState();
-	
-					if (rot != 0 && rot != 180) {
-						float swap = w;
-						w = h;
-						h = swap;
-					}
-	
-					float pw = doc.getPageSize().getWidth();
-					float ph = doc.getPageSize().getHeight();
-					double scale = Math.min(pw / w, ph / h);
-	
-					// do my transformations :
-					cb.transform(AffineTransform.getScaleInstance(scale, scale));
-	
-					if (!internoProduzido) {
-						cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
-						cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
-					}
-	
-					if (rot != 0) {
-						double theta = -rot * (Math.PI / 180);
-						if (rot == 180) {
-							cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
-						} else {
-							cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
-						}
-						if (rot == 90) {
-							cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
-						} else if (rot == 270) {
-							cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
-						}
-					}
-	
-					// Logger.getRootLogger().error(
-					// "----- dimensoes: " + rot + ", " + w + ", " + h);
-					// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
-	
-					// cb.transform(AffineTransform.getTranslateInstance(
-					// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
-	
-					// put the page
-					cb.addTemplate(page, 0, 0);
-					//-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --/
-					// writer.addPage(page);
-	
-					// draw a red rectangle at the page borders
-					//
-					// cb.saveState();
-					// cb.setColorStroke(Color.red);
-					// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
-					// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
-					// .getPageSize(i).getTop());
-					// cb.stroke();
-					// cb.restoreState();
-	
-					cb.restoreState();
-				}
-				doc.close();
-	
-				abPdf = boA4.toByteArray();
-			}		
-		return abPdf;
+			try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
+			    
+			    if(size == PageSize.A0) {
+			        /*QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
+			        BARCODE_HEIGHT_IN_CM = 2.0f;
+			        PAGE_BORDER_IN_CM = 0.5f;
+			        STAMP_BORDER_IN_CM = 0.2f;
+			        BARCODE_HEIGHT_IN_CM = 2.0f;
+			        QRCODE_SIZE_IN_CM = 12.5f;
+			        TEXT_HEIGHT = 50;
+			        CM_UNIT = 4f;*/		
+			        
+			        PAGE_BORDER_IN_CM = 0.5f;
+			        BARCODE_HEIGHT_IN_CM = 2.0f;
+			        QRCODE_SIZE_IN_CM = 30.5f;
+			        CM_UNIT = 4f;
+			        
+			        final PdfReader reader = new PdfReader(abPdf);
+                    
+                    final int n = reader.getNumberOfPages();
+                    final PdfStamper stamp = new PdfStamper(reader, bo2);
+    
+                    // adding content to each page
+                    int i = 0;
+                    PdfContentByte under;
+                    PdfContentByte over;
+                    final BaseFont helv = BaseFont.createFont("Helvetica", BaseFont.WINANSI, false);
+    
+                    // Image img = Image.getInstance("watermark.jpg");
+                    final BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+    
+                    byte maskr[] = { (byte) 0xff };
+                    
+                    Image mask = Image.getInstance(1, 1, 1, 1, maskr);    
+                    mask.makeMask();
+                    mask.setInverted(true);
+    
+                    while (i < n) {
+                        i++;
+                        // watermark under the existing page
+                        under = stamp.getUnderContent(i);
+                        over = stamp.getOverContent(i);
+    
+                        final Barcode39 code39 = new Barcode39();
+                        // code39.setCode(doc.getCodigo());
+                        code39.setCode(sigla.replace("-", "").replace("/", "").replace(".", ""));
+                        code39.setStartStopText(false);
+                        final Image image39 = code39.createImageWithBarcode(over, null, null);
+                        Rectangle r = stamp.getReader().getPageSizeWithRotation(i);
+    
+                        image39.setInitialRotation((float) Math.PI / 2.0f);
+                        image39.setAbsolutePosition(
+                                r.getWidth() - (image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT),
+                                BARCODE_HEIGHT_IN_CM * CM_UNIT);
+    
+                        image39.setBackgroundColor(Color.green);
+                        image39.setBorderColor(Color.RED);
+                        image39.setBorderWidth(0.5f * CM_UNIT);
+    
+                        image39.setImageMask(mask);
+    
+                        over.setRGBColorFill(255, 255, 255);
+                        mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT,
+                                (BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                        mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM * CM_UNIT,
+                                image39.getWidth() + 2 * STAMP_BORDER_IN_CM * CM_UNIT);
+                        over.addImage(mask);
+    
+                        over.setRGBColorFill(0, 0, 0);
+                        over.addImage(image39);
+    
+                        // Estampa o logo do Siga-Doc. Atenção, pedimos que esse logo seja preservado em
+                        // todos os órgãos que utilizarem o Siga-Doc. Não se trata aqui da marca do
+                        // TRF2,
+                        // mas sim da identificação do sistema Siga-Doc. É importante para a
+                        // continuidade
+                        // do projeto que se faça essa divulgação.
+    
+                        InputStream stream = Documento.class.getClassLoader()
+                                .getResourceAsStream("/br/gov/jfrj/itextpdf/logo-siga-novo-166px.png");
+                        if (stream != null) {
+                            byte[] ab = IOUtils.toByteArray(stream);
+                            final Image logo = Image.getInstance(ab);
+    //                
+                            logo.scaleToFit(image39.getHeight(), image39.getHeight());
+                            logo.setAbsolutePosition(
+                                    r.getWidth() - image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
+                                    PAGE_BORDER_IN_CM * CM_UNIT);
+    
+                            logo.setBackgroundColor(Color.green);
+                            logo.setBorderColor(Color.RED);
+                            logo.setBorderWidth(0.5f * CM_UNIT);
+                            logo.setImageMask(mask);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT,
+                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                            mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM * CM_UNIT,
+                                    image39.getHeight() * logo.getHeight() / logo.getWidth()
+                                            + 2 * STAMP_BORDER_IN_CM * CM_UNIT);
+                            over.addImage(mask);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            logo.setAnnotation(new Annotation(0, 0, 0, 0, "https://linksiga.trf2.jus.br"));
+    
+                            if (Prop.isGovSP()) {
+                                if (i == 1)
+                                    over.addImage(logo);
+                            } else {
+                                over.addImage(logo);
+                            }
+                        }
+                        // over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
+                        // mask.getScaledHeight() * 8, 100, 450);
+    
+                        if (qrCode != null) {
+                            java.awt.Image imgQRCode = createQRCodeImage(qrCode);
+                            Image imageQRCode = Image.getInstance(imgQRCode, Color.BLACK, true);
+                            imageQRCode.scaleAbsolute(QRCODE_SIZE_IN_CM * CM_UNIT, QRCODE_SIZE_IN_CM * CM_UNIT);
+                            imageQRCode.setAbsolutePosition(QRCODE_LEFT_MARGIN_IN_CM * CM_UNIT, PAGE_BORDER_IN_CM * CM_UNIT);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            mask.setAbsolutePosition((QRCODE_LEFT_MARGIN_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                            mask.scaleAbsolute((QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    (QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM) * CM_UNIT);
+                            over.addImage(mask);
+    
+                            over.setRGBColorFill(0, 0, 0);
+                            over.addImage(imageQRCode);
+                        }
+    
+                        if (mensagem != null) {
+                            PdfPTable table = new PdfPTable(1);
+                            table.setTotalWidth(r.getWidth() - image39.getHeight() - (QRCODE_LEFT_MARGIN_IN_CM
+                                    + QRCODE_SIZE_IN_CM + 4 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT);
+                            PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
+                                    FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, Color.BLACK)));
+                            cell.setBorderWidth(0);
+                            table.addCell(cell);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            mask.setAbsolutePosition(
+                                    (QRCODE_LEFT_MARGIN_IN_CM + QRCODE_SIZE_IN_CM + STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                            mask.scaleAbsolute(2 * STAMP_BORDER_IN_CM * CM_UNIT + table.getTotalWidth(),
+                                    2 * STAMP_BORDER_IN_CM * CM_UNIT + table.getTotalHeight());
+                            over.addImage(mask);
+    
+                            over.setRGBColorFill(0, 0, 0);
+                            table.writeSelectedRows(0, -1,
+                                    (QRCODE_LEFT_MARGIN_IN_CM + QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    table.getTotalHeight() + PAGE_BORDER_IN_CM * CM_UNIT, over);
+                        }
+    
+                        if (cancelado) {
+                            tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
+                        } else if (rascunho && copia) {
+                            tarjar("CÓPIA DE MINUTA", over, helv, r);
+                        } else if (rascunho) {
+                            tarjar("MINUTA", over, helv, r);
+                        } else if (semEfeito) {
+                            tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
+                        } else if (copia) {
+                            tarjar("CÓPIA", over, helv, r);
+                        } else if (SigaMessages.isSigaSP() && ("treinamento".equals(Prop.get("/siga.ambiente")))) {
+                            tarjar("CAPACITAÇÃO", over, helv, r);
+                        } else if (SigaMessages.isSigaSP() && ("homolog".equals(Prop.get("/siga.ambiente")))) {
+                            tarjar("HOMOLOGAÇÃO", over, helv, r);
+                        } else if (!marcaDaguaDoModelo.isEmpty()) {
+                            tarjar(marcaDaguaDoModelo, over, helv, r);
+                        } else if (!SigaMessages.isSigaSP() && !"prod".equals(Prop.get("/siga.ambiente"))) {
+                            tarjar("INVÁLIDO", over, helv, r);
+                        }
+    
+                        // Imprime um circulo com o numero da pagina dentro.
+    
+                        if (paginaInicial != null) {
+                            String sFl = String.valueOf(paginaInicial + i - 1);
+                            // Se for a ultima pagina e o numero nao casar, acrescenta "-" e
+                            // pagina final
+                            if (n == i) {
+                                if (paginaFinal != paginaInicial + n - 1) {
+                                    sFl = sFl + "-" + String.valueOf(paginaFinal);
+                                }
+                            }
+                            if (i > cOmitirNumeracao) {
+                                // tamanho fonte número
+                                int textHeight = 23;
+                                // Raio do circulo interno
+                                float radius = 18f;
+    
+                                if (SigaMessages.isSigaSP()) {
+                                    // tamanho fonte número
+                                    textHeight = 12;
+                                    // Raio do circulo interno
+                                    radius = 12f;
+                                    // não exibe órgão
+                                    orgaoUsu = "";
+                                }
+    
+                                // Distancia entre o circulo interno e o externo
+                                final float circleInterspace = Math.max(helv.getAscentPoint(instancia, TEXT_HEIGHT),
+                                        helv.getAscentPoint(orgaoUsu, TEXT_HEIGHT))
+                                        - Math.min(helv.getDescentPoint(instancia, TEXT_HEIGHT),
+                                                helv.getDescentPoint(orgaoUsu, TEXT_HEIGHT))
+                                        + 2 * TEXT_TO_CIRCLE_INTERSPACE;
+    
+                                // Centro do circulo
+                                float xCenter = r.getWidth() - 1.8f * (radius + circleInterspace);
+                                float yCenter = r.getHeight() - 1.8f * (radius + circleInterspace);
+    
+                                over.saveState();
+                                final PdfGState gs = new PdfGState();
+                                gs.setFillOpacity(1f);
+                                over.setGState(gs);
+                                over.setColorFill(Color.BLACK);
+    
+                                over.saveState();
+                                over.setColorStroke(Color.black);
+                                over.setLineWidth(1f);
+                                over.setColorFill(Color.WHITE);
+    
+                                // Circulo externo
+                                over.circle(xCenter, yCenter, radius + circleInterspace);
+                                over.fill();
+                                over.circle(xCenter, yCenter, radius + circleInterspace);
+                                over.stroke();
+    
+                                // Circulo interno
+                                over.circle(xCenter, yCenter, radius);
+                                over.stroke();
+                                over.restoreState();
+    
+                                {
+                                    over.saveState();
+                                    over.beginText();
+                                    over.setFontAndSize(helv, TEXT_HEIGHT);
+    
+                                    // Escreve o texto superior do carimbo
+                                    float fDescent = helv.getDescentPoint(instancia, TEXT_HEIGHT);
+                                    showTextOnArc(over, instancia, helv, TEXT_HEIGHT, xCenter, yCenter,
+                                            radius - fDescent + TEXT_TO_CIRCLE_INTERSPACE, true);
+    
+                                    // Escreve o texto inferior
+                                    float fAscent = helv.getAscentPoint(orgaoUsu, TEXT_HEIGHT);
+                                    showTextOnArc(over, orgaoUsu, helv, TEXT_HEIGHT, xCenter, yCenter,
+                                            radius + fAscent + TEXT_TO_CIRCLE_INTERSPACE, false);
+                                    over.endText();
+                                    over.restoreState();
+                                }
+    
+                                over.beginText();
+    
+                                // Diminui o tamanho do font ate que o texto caiba dentro do
+                                // circulo interno
+                                while (helv.getWidthPoint(sFl, textHeight) > (2 * (radius - TEXT_TO_CIRCLE_INTERSPACE)))
+                                    textHeight--;
+                                float fAscent = helv.getAscentPoint(sFl, textHeight) + helv.getDescentPoint(sFl, textHeight);
+                                over.setFontAndSize(helv, textHeight);
+                                over.showTextAligned(Element.ALIGN_CENTER, sFl, xCenter, yCenter - 0.5f * fAscent, 0);
+                                over.endText();
+                                over.restoreState();
+    	                    }
+    	                }
+    	            
+    	            }
+    	            stamp.close();
+    	            byte[] pdf = bo2.toByteArray();
+    	            return pdf;
+			    }
+			    
+			    else { //se a página não for A0, então trata como A4 = PageSize.A4
+			        QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
+                    BARCODE_HEIGHT_IN_CM = 2.0f;
+                    PAGE_BORDER_IN_CM = 0.5f;
+                    STAMP_BORDER_IN_CM = 0.2f;
+                    BARCODE_HEIGHT_IN_CM = 2.0f;
+                    QRCODE_SIZE_IN_CM = 12.5f;
+                    TEXT_HEIGHT = 50;
+                    CM_UNIT = 4f;
+			        
+			        final PdfReader reader = new PdfReader(abPdf);
+			        
+                    final int n = reader.getNumberOfPages();
+                    final PdfStamper stamp = new PdfStamper(reader, bo2);
+    
+                    // adding content to each page
+                    int i = 0;
+                    PdfContentByte under;
+                    PdfContentByte over;
+                    final BaseFont helv = BaseFont.createFont("Helvetica", BaseFont.WINANSI, false);
+    
+                    // Image img = Image.getInstance("watermark.jpg");
+                    final BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+    
+                    byte maskr[] = { (byte) 0xff };
+                    
+                    Image mask = Image.getInstance(1, 1, 1, 1, maskr);    
+                    mask.makeMask();
+                    mask.setInverted(true);
+    
+                    while (i < n) {
+                        i++;
+                        // watermark under the existing page
+                        under = stamp.getUnderContent(i);
+                        over = stamp.getOverContent(i);
+    
+                        final Barcode39 code39 = new Barcode39();
+                        // code39.setCode(doc.getCodigo());
+                        code39.setCode(sigla.replace("-", "").replace("/", "").replace(".", ""));
+                        code39.setStartStopText(false);
+                        final Image image39 = code39.createImageWithBarcode(over, null, null);
+                        Rectangle r = stamp.getReader().getPageSizeWithRotation(i);
+    
+                        image39.setInitialRotation((float) Math.PI / 2.0f);
+                        image39.setAbsolutePosition(
+                                r.getWidth() - image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
+                                BARCODE_HEIGHT_IN_CM * CM_UNIT);
+    
+                        image39.setBackgroundColor(Color.green);
+                        image39.setBorderColor(Color.RED);
+                        image39.setBorderWidth(0.5f * CM_UNIT);
+    
+                        image39.setImageMask(mask);
+    
+                        over.setRGBColorFill(255, 255, 255);
+                        mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT,
+                                (BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                        mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM * CM_UNIT,
+                                image39.getWidth() + 2 * STAMP_BORDER_IN_CM * CM_UNIT);
+                        over.addImage(mask);
+    
+                        over.setRGBColorFill(0, 0, 0);
+                        over.addImage(image39);
+    
+                        // Estampa o logo do Siga-Doc. Atenção, pedimos que esse logo seja preservado em
+                        // todos os órgãos que utilizarem o Siga-Doc. Não se trata aqui da marca do
+                        // TRF2,
+                        // mas sim da identificação do sistema Siga-Doc. É importante para a
+                        // continuidade
+                        // do projeto que se faça essa divulgação.
+    
+                        InputStream stream = Documento.class.getClassLoader()
+                                .getResourceAsStream("/br/gov/jfrj/itextpdf/logo-siga-novo-166px.png");
+                        if (stream != null) {
+                            byte[] ab = IOUtils.toByteArray(stream);
+                            final Image logo = Image.getInstance(ab);
+    //                
+                            logo.scaleToFit(image39.getHeight(), image39.getHeight());
+                            logo.setAbsolutePosition(
+                                    r.getWidth() - image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
+                                    PAGE_BORDER_IN_CM * CM_UNIT);
+    
+                            logo.setBackgroundColor(Color.green);
+                            logo.setBorderColor(Color.RED);
+                            logo.setBorderWidth(0.5f * CM_UNIT);
+                            logo.setImageMask(mask);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT,
+                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                            mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM * CM_UNIT,
+                                    image39.getHeight() * logo.getHeight() / logo.getWidth()
+                                            + 2 * STAMP_BORDER_IN_CM * CM_UNIT);
+                            over.addImage(mask);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            logo.setAnnotation(new Annotation(0, 0, 0, 0, "https://linksiga.trf2.jus.br"));
+    
+                            if (Prop.isGovSP()) {
+                                if (i == 1)
+                                    over.addImage(logo);
+                            } else {
+                                over.addImage(logo);
+                            }
+                        }
+                        // over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
+                        // mask.getScaledHeight() * 8, 100, 450);
+    
+                        if (qrCode != null) {
+                            java.awt.Image imgQRCode = createQRCodeImage(qrCode);
+                            Image imageQRCode = Image.getInstance(imgQRCode, Color.BLACK, true);
+                            imageQRCode.scaleAbsolute(QRCODE_SIZE_IN_CM * CM_UNIT, QRCODE_SIZE_IN_CM * CM_UNIT);
+                            imageQRCode.setAbsolutePosition(QRCODE_LEFT_MARGIN_IN_CM * CM_UNIT, PAGE_BORDER_IN_CM * CM_UNIT);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            mask.setAbsolutePosition((QRCODE_LEFT_MARGIN_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                            mask.scaleAbsolute((QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    (QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM) * CM_UNIT);
+                            over.addImage(mask);
+    
+                            over.setRGBColorFill(0, 0, 0);
+                            over.addImage(imageQRCode);
+                        }
+    
+                        if (mensagem != null) {
+                            PdfPTable table = new PdfPTable(1);
+                            table.setTotalWidth(r.getWidth() - image39.getHeight() - (QRCODE_LEFT_MARGIN_IN_CM
+                                    + QRCODE_SIZE_IN_CM + 4 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT);
+                            PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
+                                    FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, Color.BLACK)));
+                            cell.setBorderWidth(0);
+                            table.addCell(cell);
+    
+                            over.setRGBColorFill(255, 255, 255);
+                            mask.setAbsolutePosition(
+                                    (QRCODE_LEFT_MARGIN_IN_CM + QRCODE_SIZE_IN_CM + STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                            mask.scaleAbsolute(2 * STAMP_BORDER_IN_CM * CM_UNIT + table.getTotalWidth(),
+                                    2 * STAMP_BORDER_IN_CM * CM_UNIT + table.getTotalHeight());
+                            over.addImage(mask);
+    
+                            over.setRGBColorFill(0, 0, 0);
+                            table.writeSelectedRows(0, -1,
+                                    (QRCODE_LEFT_MARGIN_IN_CM + QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM) * CM_UNIT,
+                                    table.getTotalHeight() + PAGE_BORDER_IN_CM * CM_UNIT, over);
+                        }
+    
+                        if (cancelado) {
+                            tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
+                        } else if (rascunho && copia) {
+                            tarjar("CÓPIA DE MINUTA", over, helv, r);
+                        } else if (rascunho) {
+                            tarjar("MINUTA", over, helv, r);
+                        } else if (semEfeito) {
+                            tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
+                        } else if (copia) {
+                            tarjar("CÓPIA", over, helv, r);
+                        } else if (SigaMessages.isSigaSP() && ("treinamento".equals(Prop.get("/siga.ambiente")))) {
+                            tarjar("CAPACITAÇÃO", over, helv, r);
+                        } else if (SigaMessages.isSigaSP() && ("homolog".equals(Prop.get("/siga.ambiente")))) {
+                            tarjar("HOMOLOGAÇÃO", over, helv, r);
+                        } else if (!marcaDaguaDoModelo.isEmpty()) {
+                            tarjar(marcaDaguaDoModelo, over, helv, r);
+                        } else if (!SigaMessages.isSigaSP() && !"prod".equals(Prop.get("/siga.ambiente"))) {
+                            tarjar("INVÁLIDO", over, helv, r);
+                        }
+    
+                        // Imprime um circulo com o numero da pagina dentro.
+    
+                        if (paginaInicial != null) {
+                            String sFl = String.valueOf(paginaInicial + i - 1);
+                            // Se for a ultima pagina e o numero nao casar, acrescenta "-" e
+                            // pagina final
+                            if (n == i) {
+                                if (paginaFinal != paginaInicial + n - 1) {
+                                    sFl = sFl + "-" + String.valueOf(paginaFinal);
+                                }
+                            }
+                            if (i > cOmitirNumeracao) {
+                                // tamanho fonte número
+                                int textHeight = 23;
+                                // Raio do circulo interno
+                                float radius = 18f;
+    
+                                if (SigaMessages.isSigaSP()) {
+                                    // tamanho fonte número
+                                    textHeight = 12;
+                                    // Raio do circulo interno
+                                    radius = 12f;
+                                    // não exibe órgão
+                                    orgaoUsu = "";
+                                }
+    
+                                // Distancia entre o circulo interno e o externo
+                                final float circleInterspace = Math.max(helv.getAscentPoint(instancia, TEXT_HEIGHT),
+                                        helv.getAscentPoint(orgaoUsu, TEXT_HEIGHT))
+                                        - Math.min(helv.getDescentPoint(instancia, TEXT_HEIGHT),
+                                                helv.getDescentPoint(orgaoUsu, TEXT_HEIGHT))
+                                        + 2 * TEXT_TO_CIRCLE_INTERSPACE;
+    
+                                // Centro do circulo
+                                float xCenter = r.getWidth() - 1.8f * (radius + circleInterspace);
+                                float yCenter = r.getHeight() - 1.8f * (radius + circleInterspace);
+    
+                                over.saveState();
+                                final PdfGState gs = new PdfGState();
+                                gs.setFillOpacity(1f);
+                                over.setGState(gs);
+                                over.setColorFill(Color.BLACK);
+    
+                                over.saveState();
+                                over.setColorStroke(Color.black);
+                                over.setLineWidth(1f);
+                                over.setColorFill(Color.WHITE);
+    
+                                // Circulo externo
+                                over.circle(xCenter, yCenter, radius + circleInterspace);
+                                over.fill();
+                                over.circle(xCenter, yCenter, radius + circleInterspace);
+                                over.stroke();
+    
+                                // Circulo interno
+                                over.circle(xCenter, yCenter, radius);
+                                over.stroke();
+                                over.restoreState();
+    
+                                {
+                                    over.saveState();
+                                    over.beginText();
+                                    over.setFontAndSize(helv, TEXT_HEIGHT);
+    
+                                    // Escreve o texto superior do carimbo
+                                    float fDescent = helv.getDescentPoint(instancia, TEXT_HEIGHT);
+                                    showTextOnArc(over, instancia, helv, TEXT_HEIGHT, xCenter, yCenter,
+                                            radius - fDescent + TEXT_TO_CIRCLE_INTERSPACE, true);
+    
+                                    // Escreve o texto inferior
+                                    float fAscent = helv.getAscentPoint(orgaoUsu, TEXT_HEIGHT);
+                                    showTextOnArc(over, orgaoUsu, helv, TEXT_HEIGHT, xCenter, yCenter,
+                                            radius + fAscent + TEXT_TO_CIRCLE_INTERSPACE, false);
+                                    over.endText();
+                                    over.restoreState();
+                                }
+    
+                                over.beginText();
+    
+                                // Diminui o tamanho do font ate que o texto caiba dentro do
+                                // circulo interno
+                                while (helv.getWidthPoint(sFl, textHeight) > (2 * (radius - TEXT_TO_CIRCLE_INTERSPACE)))
+                                    textHeight--;
+                                float fAscent = helv.getAscentPoint(sFl, textHeight) + helv.getDescentPoint(sFl, textHeight);
+                                over.setFontAndSize(helv, textHeight);
+                                over.showTextAligned(Element.ALIGN_CENTER, sFl, xCenter, yCenter - 0.5f * fAscent, 0);
+                                over.endText();
+                                over.restoreState();
+                            }
+                        }
+                    
+                    }
+                    stamp.close();
+                    byte[] pdf = bo2.toByteArray();
+                    return pdf;
+			    }
+	        }	
 	}
 
 	private static byte[] estamparAssinaturas(byte[] pdf, List<Long> idsAssinantes) {

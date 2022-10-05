@@ -653,7 +653,8 @@ public class Documento {
 					sb.append("</div>");
 				}
 
-				if ((an.getArquivo() instanceof ExDocumento && !((ExDocumento)an.getArquivo()).isCapturado()) ||
+				if ((an.getArquivo() instanceof ExDocumento && (!((ExDocumento)an.getArquivo()).isCapturado() || 
+						(((ExDocumento)an.getArquivo()).isCapturadoFormatoLivre()))) ||
 						(an.getArquivo() instanceof ExMovimentacao && an.getArquivo().getHtml() != null)) {
 					String sHtml = fixHtml(contextpath, an);				
 					sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();

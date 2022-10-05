@@ -1,0 +1,2 @@
+ALTER TABLE corporativo.cp_arquivo ADD HASH_SHA256 VARCHAR(70) COMMENT 'Hash SHA256 dos binários do arquivo';
+ALTER TABLE corporativo.cp_arquivo ADD NOME_ARQ VARCHAR(255) COMMENT 'Nome do arquivo incluindo a extensao';

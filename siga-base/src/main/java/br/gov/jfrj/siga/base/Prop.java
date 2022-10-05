@@ -265,16 +265,22 @@ public class Prop {
 		/* Parâmetros para configuração do armazenamento de documento */
 		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");
 		String armaz = get("/siga.armazenamento.arquivo.tipo");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.tamanhomax", 
+				(Long.toString(10 * 1024 * 1024))); // 10MB
 		if ("BLOB".equals(armaz) || "TABELA".equals(armaz)) {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario", null);
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
+			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", null);
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", null);
 		} else {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket");
+			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", "10737418240"); //10GB
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", "/sigaAmazonS3/api/v1/");
 		}
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");

@@ -8,12 +8,19 @@ import java.util.StringJoiner;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpServicosNotificacaoPorEmail;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 
@@ -122,6 +129,46 @@ public class ExNotificar {
 						doc.getSubscritor().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
 			email.enviarAoResponsavelPelaAssinatura(
 					doc.getSubscritor(), cadastrante, doc.getSigla());
+		
+	}
+	
+	public static boolean verificaPermissaoParaNotificadorGeral(ExTipoFormaDoc tipoFormaDoc,
+			ExPapel papel, DpPessoa pessoa, ITipoDeMovimentacao tipoMovimentacao) throws Exception  {
+		
+		if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
+			return false;
+		
+		else if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()) && 
+				!Ex.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+				tipoFormaDoc,
+				papel,
+				pessoa,
+				tipoMovimentacao,
+				ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) 
+			return false;
+		else 
+			return true;
+	}
+	
+	public static boolean verificaPermissaoParaNotificadorGeral(DpPessoa pessoa, DpLotacao lotacao, 
+			ExModelo modelo, ITipoDeMovimentacao idTpMov)  {
+		
+		if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
+			return false;
+		
+		else if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()) && 
+				!Ex.getInstance().getConf().podePorConfiguracao(pessoa,
+						lotacao, modelo,idTpMov, 
+						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) 
+			return false;
+		else 
+			return true;
 		
 	}
 	

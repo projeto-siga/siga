@@ -1,9 +1,8 @@
 package br.gov.jfrj.siga.base;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public enum XjusRecordServiceEnum {
+public enum XjusRecordServiceEnum implements DisableableEnum {
 	EX_DOC("/sigaex/apis/x-jus/doc/v1/"),
 	//
 	EX_MOV("/sigaex/apis/x-jus/mov/v1/"),
@@ -17,14 +16,26 @@ public enum XjusRecordServiceEnum {
 	}
 
 	public static List<XjusRecordServiceEnum> enabledValues() {
-		List<XjusRecordServiceEnum> l = new ArrayList<>();
-		for (XjusRecordServiceEnum service : values())
-			if (service.isEnabled())
-				l.add(service);
-		return l;
+		return DisableableEnum.enabledValues(values());
 	}
+	
+//	public static List<XjusRecordServiceEnum> enabledValues() {
+//		List<XjusRecordServiceEnum> l = new ArrayList<>();
+//		for (XjusRecordServiceEnum service : values())
+//			if (!service.isDisabled())
+//				l.add(service);
+//		return l;
+//	}
 
-	public Boolean isEnabled() {
-		return Prop.getBool("/xjus.enable." + this.name().toLowerCase());
+//	public Boolean isDisabled() {
+//		List<String> list = Prop.getList("/xjus.service.disable");
+//		if (list == null)
+//			return false;
+//		return list.contains(this.name());
+//	}
+
+	@Override
+	public String getDisablerProperty() {
+		return "/xjus.service.disable";
 	}
 }

@@ -18,7 +18,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		int i = Integer.valueOf(split[1]);
 		XjusRecordServiceEnum service = XjusRecordServiceEnum.values()[i];
 
-		if (!service.isEnabled())
+		if (service.isDisabled())
 			throw new RuntimeException("Bloqueado pela propriedade xjus.index." + service.name().toLowerCase());
 
 		String url = Utils.buildUrl(service);

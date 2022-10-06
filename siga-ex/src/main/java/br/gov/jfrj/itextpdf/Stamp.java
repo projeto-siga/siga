@@ -115,19 +115,9 @@ public class Stamp {
 			try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
 			    
 			    if(size == PageSize.A0) {
-			        /*QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
-			        BARCODE_HEIGHT_IN_CM = 2.0f;
-			        PAGE_BORDER_IN_CM = 0.5f;
-			        STAMP_BORDER_IN_CM = 0.2f;
-			        BARCODE_HEIGHT_IN_CM = 2.0f;
-			        QRCODE_SIZE_IN_CM = 12.5f;
-			        TEXT_HEIGHT = 50;
-			        CM_UNIT = 4f;*/		
 			        
-			        PAGE_BORDER_IN_CM = 0.5f;
-			        BARCODE_HEIGHT_IN_CM = 2.0f;
-			        QRCODE_SIZE_IN_CM = 30.5f;
-			        CM_UNIT = 4f;
+			        //PAGE_BORDER_IN_CM = 4f;
+			        //TEXT_TO_CIRCLE_INTERSPACE = 0;
 			        
 			        final PdfReader reader = new PdfReader(abPdf);
                     
@@ -247,7 +237,7 @@ public class Stamp {
                         if (mensagem != null) {
                             PdfPTable table = new PdfPTable(1);
                             table.setTotalWidth(r.getWidth() - image39.getHeight() - (QRCODE_LEFT_MARGIN_IN_CM
-                                    + QRCODE_SIZE_IN_CM + 4 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT);
+                                    + QRCODE_SIZE_IN_CM + 1000 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT); //tive que colocar o valor de 100 para não pegar as bordas da tela direita e não sumir as informações
                             PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
                                     FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, Color.BLACK)));
                             cell.setBorderWidth(0);
@@ -268,23 +258,23 @@ public class Stamp {
                         }
     
                         if (cancelado) {
-                            tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r);
+                            tarjar(SigaMessages.getMessage("marcador.cancelado.label").toUpperCase(), over, helv, r, 75);
                         } else if (rascunho && copia) {
-                            tarjar("CÓPIA DE MINUTA", over, helv, r);
+                            tarjar("CÓPIA DE MINUTA", over, helv, r, 75);
                         } else if (rascunho) {
-                            tarjar("MINUTA", over, helv, r);
+                            tarjar("MINUTA", over, helv, r, 75);
                         } else if (semEfeito) {
-                            tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r);
+                            tarjar(SigaMessages.getMessage("marcador.semEfeito.label").toUpperCase(), over, helv, r, 75);
                         } else if (copia) {
-                            tarjar("CÓPIA", over, helv, r);
+                            tarjar("CÓPIA", over, helv, r, 75);
                         } else if (SigaMessages.isSigaSP() && ("treinamento".equals(Prop.get("/siga.ambiente")))) {
-                            tarjar("CAPACITAÇÃO", over, helv, r);
+                            tarjar("CAPACITAÇÃO", over, helv, r, 75);
                         } else if (SigaMessages.isSigaSP() && ("homolog".equals(Prop.get("/siga.ambiente")))) {
-                            tarjar("HOMOLOGAÇÃO", over, helv, r);
+                            tarjar("HOMOLOGAÇÃO", over, helv, r, 75);
                         } else if (!marcaDaguaDoModelo.isEmpty()) {
-                            tarjar(marcaDaguaDoModelo, over, helv, r);
+                            tarjar(marcaDaguaDoModelo, over, helv, r, 75);
                         } else if (!SigaMessages.isSigaSP() && !"prod".equals(Prop.get("/siga.ambiente"))) {
-                            tarjar("INVÁLIDO", over, helv, r);
+                            tarjar("INVÁLIDO", over, helv, r, 75);
                         }
     
                         // Imprime um circulo com o numero da pagina dentro.
@@ -748,6 +738,19 @@ public class Stamp {
 		over.endText();
 		over.restoreState();
 	}
+	
+	private static void tarjar(String tarja, PdfContentByte over, final BaseFont helv, Rectangle r, int tamanhoFonte) { //para colocar a fonte diferenciada pra folha A0
+        over.saveState();
+        final PdfGState gs = new PdfGState();
+        gs.setFillOpacity(0.5f);
+        over.setGState(gs);
+        over.setColorFill(Color.GRAY);
+        over.beginText();
+        over.setFontAndSize(helv, tamanhoFonte);
+        over.showTextAligned(Element.ALIGN_CENTER, tarja, r.getWidth(), r.getHeight() / 2, 45);
+        over.endText();
+        over.restoreState();
+    }
 
 	// Desenha texto ao redor de um circulo, acima ou abaixo
 	//
@@ -775,82 +778,4 @@ public class Stamp {
 		return;
 	}
 	
-	private static void SetOnePageA0(PdfReader pdf, Rectangle tamanhoPagina, int numberPage, boolean internoProduzido) { //setar uma página pra A0 quando for estampada
-		int rot = pdf.getPageRotation(numberPage);
-		float left = pdf.getPageSize(numberPage).getLeft();
-		float bottom = pdf.getPageSize(numberPage).getBottom();
-		float top = pdf.getPageSize(numberPage).getTop();
-		float right = pdf.getPageSize(numberPage).getRight();
-			
-
-		page = writer.getImportedPage(pdf, numberPage);
-		float w = page.getWidth();
-		float h = page.getHeight();
-		writer.close();
-
-		// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
-		// + ", " + h);
-
-		doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? tamanhoPagina.rotate() : tamanhoPagina);
-		doc.newPage();
-
-		cb.saveState();
-
-		if (rot != 0 && rot != 180) {
-			float swap = w;
-			w = h;
-			h = swap;
-		}
-
-		float pw = doc.getPageSize().getWidth();
-		float ph = doc.getPageSize().getHeight();
-		double scale = Math.min(pw / w, ph / h);
-
-		// do my transformations :
-		cb.transform(AffineTransform.getScaleInstance(scale, scale));
-
-		if (!internoProduzido) {
-			cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
-			cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
-		}
-
-		if (rot != 0) {
-			double theta = -rot * (Math.PI / 180);
-			if (rot == 180) {
-				cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
-			} else {
-				cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
-			}
-			if (rot == 90) {
-				cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
-			} else if (rot == 270) {
-				cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
-			}
-		}
-
-		// Logger.getRootLogger().error(
-		// "----- dimensoes: " + rot + ", " + w + ", " + h);
-		// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
-
-		// cb.transform(AffineTransform.getTranslateInstance(
-		// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
-
-		// put the page
-		cb.addTemplate(page, 0, 0);
-		/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
-		// writer.addPage(page);
-
-		// draw a red rectangle at the page borders
-		//
-		// cb.saveState();
-		// cb.setColorStroke(Color.red);
-		// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
-		// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
-		// .getPageSize(i).getTop());
-		// cb.stroke();
-		// cb.restoreState();
-
-		cb.restoreState();	
-		doc.close();
-	}
 }

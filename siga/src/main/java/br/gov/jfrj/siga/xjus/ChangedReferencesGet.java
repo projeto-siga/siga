@@ -15,6 +15,7 @@ import com.crivano.swaggerservlet.SwaggerCall;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.XjusRecordServiceEnum;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
@@ -30,13 +31,13 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		if (req.cursor == null)
 			req.cursor = AllReferencesGet.defaultCursor();
 
-		final CountDownLatch responseWaiter = new CountDownLatch(RecordServiceEnum.values().length);
-		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
+		final CountDownLatch responseWaiter = new CountDownLatch(XjusRecordServiceEnum.values().length);
+		Map<XjusRecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
 
 		String[] aCursor = req.cursor.split(";");
 
 		// Call Each System
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (XjusRecordServiceEnum service : XjusRecordServiceEnum.enabledValues()) {
 			Request q = new Request();
 			q.max = req.max;
 			String split[] = aCursor[service.ordinal()].split("-");
@@ -47,13 +48,13 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 			q.lastid = lastid;
 			Future<SwaggerAsyncResponse<Response>> future = SwaggerCall.callAsync(
 					service.name().toLowerCase() + "-changed-references", Prop.get("/xjus.password"), "GET",
-					service.buildUrl(), q, Response.class);
+					Utils.buildUrl(service), q, Response.class);
 			map.put(service, future);
 		}
 
 		Date dt1 = new Date();
 
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (XjusRecordServiceEnum service : XjusRecordServiceEnum.enabledValues()) {
 			long timeout = AllReferencesGet.TIMEOUT_MILLISECONDS - ((new Date()).getTime() - dt1.getTime());
 			if (timeout < 0L)
 				timeout = 0;
@@ -88,7 +89,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		// Build a cursor by updating the previous one with new IDs that were returned
 		// at the current result list
 		for (Reference r : resp.list) {
-			RecordServiceEnum service = RecordServiceEnum.values()[Integer.valueOf(r.id.split("-")[1])];
+			XjusRecordServiceEnum service = XjusRecordServiceEnum.values()[Integer.valueOf(r.id.split("-")[1])];
 			aCursor[service.ordinal()] = r.id;
 		}
 

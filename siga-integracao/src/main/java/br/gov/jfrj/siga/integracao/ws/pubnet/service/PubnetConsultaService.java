@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
+import org.apache.xerces.dom.ElementNSImpl;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
@@ -181,7 +181,6 @@ public class PubnetConsultaService {
 		return json;
 	}
 
-	@SuppressWarnings("restriction")
 	protected JsonNode convertElementParaJsonNode(Object resp) throws TransformerException, IOException {
 		ElementNSImpl elementNSImpl = (ElementNSImpl) resp;
 		StringWriter writer = converterDocumentParaXmlString(elementNSImpl.getOwnerDocument());

@@ -154,8 +154,8 @@ public class Stamp {
     
                         image39.setInitialRotation((float) Math.PI / 2.0f);
                         image39.setAbsolutePosition(
-                                r.getWidth() - (image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT),
-                                BARCODE_HEIGHT_IN_CM * CM_UNIT);
+                                r.getWidth() - (image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT), 120 + //botei 120 para que o
+                                BARCODE_HEIGHT_IN_CM * CM_UNIT); //código de barras não esconda as informações
     
                         image39.setBackgroundColor(Color.green);
                         image39.setBorderColor(Color.RED);
@@ -164,8 +164,8 @@ public class Stamp {
                         image39.setImageMask(mask);
     
                         over.setRGBColorFill(255, 255, 255);
-                        mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT,
-                                (BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                        mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT, 120 + //botei 120 para que o
+                                (BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT); //código de barras não esconda as informações
                         mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM * CM_UNIT,
                                 image39.getWidth() + 2 * STAMP_BORDER_IN_CM * CM_UNIT);
                         over.addImage(mask);
@@ -188,8 +188,8 @@ public class Stamp {
     //                
                             logo.scaleToFit(image39.getHeight(), image39.getHeight());
                             logo.setAbsolutePosition(
-                                    r.getWidth() - image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
-                                    PAGE_BORDER_IN_CM * CM_UNIT);
+                                    r.getWidth() - image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT, 120 + //botei 120 para que o
+                                    PAGE_BORDER_IN_CM * CM_UNIT); //código de barras não esconda as informações
     
                             logo.setBackgroundColor(Color.green);
                             logo.setBorderColor(Color.RED);
@@ -197,8 +197,8 @@ public class Stamp {
                             logo.setImageMask(mask);
     
                             over.setRGBColorFill(255, 255, 255);
-                            mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT,
-                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+                            mask.setAbsolutePosition(r.getWidth() - image39.getHeight() - (PAGE_BORDER_IN_CM) * CM_UNIT, 120 +  //botei 120 para que o
+                                    (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT); //código de barras não esconda as informações
                             mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM * CM_UNIT,
                                     image39.getHeight() * logo.getHeight() / logo.getWidth()
                                             + 2 * STAMP_BORDER_IN_CM * CM_UNIT);

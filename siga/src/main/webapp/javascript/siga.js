@@ -70,6 +70,14 @@ function popitup(url) {
 		winUp = 100;
 	}
 	
+	//Redimensionamento da janela pop up apenas para a opção de download de formato livre 
+	if(nameWindow.indexOf("downloadFormatoLivre") > -1){
+		popW = 450;
+		popH = 450;
+		winleft = 100;
+		winUp = 100;
+	}
+	
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	

@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <link rel="stylesheet" href="/siga/javascript/select2/select2.css"
 	type="text/css" media="screen, projection" />
@@ -102,10 +103,10 @@
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
-								<label>Espécie</label> <select name="forma"
-									class="custom-select  siga-select2">
+								<label>Espécie</label> <select name="forma" id="forma"
+									class="custom-select  siga-select2" onchange="mudouForma(this.options[this.selectedIndex])">
 									<c:forEach var="item" items="${listaForma}">
-										<option value="${item.idFormaDoc}"
+										<option value="${item.idFormaDoc}" data-isformatolivre="${item.isCapturadoFormatoLivre()}"
 											${item.idFormaDoc == forma ? 'selected' : ''}>${item.descrFormaDoc}</option>
 									</c:forEach>
 								</select>
@@ -119,6 +120,21 @@
 									<c:forEach var="item" items="${listaNivelAcesso}">
 										<option value="${item.idNivelAcesso}"
 											${item.idNivelAcesso == nivel ? 'selected' : ''}>${item.nmNivelAcesso}</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label for="extensoesArquivo">Extensões permitidas para o arquivo capturado de formato livre</label> <select
+									class="form-control siga-select2" id="extensoesArquivo" name="extensoesArquivo[]"
+									multiple="">
+									<c:forEach items="${listaExtensoes}" var="item">
+										<option value="${item}"
+												${fn:contains(extensoesArquivo, item) ? 'selected' : ''}
+										><div>${item}</div></option>
 									</c:forEach>
 								</select>
 							</div>
@@ -386,7 +402,18 @@
 			                }
 			                
 			            });
-			});
+				});
+				var selExtensoes = $("#extensoesArquivo").select2({
+				    placeholder: "Escolha as extensões de arquivos possíveis para o arquivo capturado.",
+				    tags: true
+				});
+			
+				function mudouForma(elem) {
+					if (elem.getAttribute("data-isformatolivre") === "true")
+						$("#extensoesArquivo").prop("disabled", false);
+					else
+						$("#extensoesArquivo").prop("disabled", true);
+				}
 	</script>
 
 </siga:pagina>

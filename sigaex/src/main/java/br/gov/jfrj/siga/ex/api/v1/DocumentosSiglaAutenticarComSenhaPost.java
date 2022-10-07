@@ -23,8 +23,7 @@ public class DocumentosSiglaAutenticarComSenhaPost extends DocumentosSiglaAssina
 	protected void assertDocumento(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
 		// Documento é Capturado?
 		Long idTipoDoc = mob.getDoc().getExTipoDocumento().getId();
-		if (!(idTipoDoc == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO
-				|| idTipoDoc == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO)) {
+		if (!mob.getDoc().isCapturado()) {
 			throw new SwaggerException("Documento não é Capturado", 400, null, null, null, null);
 		}
 

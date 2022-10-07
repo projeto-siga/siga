@@ -790,6 +790,8 @@ public class ExDocumentoVO extends ExVO {
 				.params("sigla", mob.getSigla()).params("popup", "true")
 				.exp(new ExPodeEnviarParaVisualizacaoExterna(mob, titular, lotaTitular)).build());
 		
+		vo.addAcao(AcaoVO.builder().nome("Download").descr("Faz o download do arquivo de formato livre associado a este documento.").icone("arrow_down").nameSpace("/app/arquivo").acao("downloadFormatoLivre")
+				.params("sigla", doc.getCodigoCompacto()).exp(new ExPodeFazerDownloadFormatoLivre(doc)).classe("once").build());
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {

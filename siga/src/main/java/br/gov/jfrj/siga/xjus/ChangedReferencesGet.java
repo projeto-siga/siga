@@ -14,6 +14,7 @@ import com.crivano.swaggerservlet.SwaggerAsyncResponse;
 import com.crivano.swaggerservlet.SwaggerCall;
 import com.crivano.swaggerservlet.SwaggerException;
 
+import br.gov.jfrj.siga.base.DisableableEnum;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.XjusRecordServiceEnum;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
@@ -37,7 +38,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		String[] aCursor = req.cursor.split(";");
 
 		// Call Each System
-		for (XjusRecordServiceEnum service : XjusRecordServiceEnum.enabledValues()) {
+		for (XjusRecordServiceEnum service : DisableableEnum.enabledValues(XjusRecordServiceEnum.values())) {
 			Request q = new Request();
 			q.max = req.max;
 			String split[] = aCursor[service.ordinal()].split("-");
@@ -54,7 +55,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 
 		Date dt1 = new Date();
 
-		for (XjusRecordServiceEnum service : XjusRecordServiceEnum.enabledValues()) {
+		for (XjusRecordServiceEnum service : DisableableEnum.enabledValues(XjusRecordServiceEnum.values())) {
 			long timeout = AllReferencesGet.TIMEOUT_MILLISECONDS - ((new Date()).getTime() - dt1.getTime());
 			if (timeout < 0L)
 				timeout = 0;

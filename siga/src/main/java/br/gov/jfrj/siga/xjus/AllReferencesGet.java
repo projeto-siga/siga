@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.xjus;
+package br.gov.jfrj.siga.xjus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit;
 import com.crivano.swaggerservlet.SwaggerAsyncResponse;
 import com.crivano.swaggerservlet.SwaggerCall;
 import com.crivano.swaggerservlet.SwaggerException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.DisableableEnum;
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.cp.util.XjusUtils;
+import br.gov.jfrj.siga.base.XjusRecordServiceEnum;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
@@ -30,28 +30,26 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 		if (req.lastid == null)
 			req.lastid = defaultLastId();
 
-		final CountDownLatch responseWaiter = new CountDownLatch(RecordServiceEnum.values().length);
-		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
+		final CountDownLatch responseWaiter = new CountDownLatch(XjusRecordServiceEnum.values().length);
+		Map<XjusRecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
 
 		// Call Each System
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
-			String url = serviceUrl(service);
-
+		for (XjusRecordServiceEnum service : DisableableEnum.enabledValues(XjusRecordServiceEnum.values())) {
 			Request q = new Request();
 			q.max = req.max;
 			String split[] = req.lastid.split("-");
 			q.lastid = split[0];
 			if (service.ordinal() > Integer.valueOf(split[1]))
-				q.lastid = XjusUtils.formatId(Long.valueOf(q.lastid) - 1);
+				q.lastid = Utils.formatId(Long.valueOf(q.lastid) - 1);
 			Future<SwaggerAsyncResponse<Response>> future = SwaggerCall.callAsync(
-					service.name().toLowerCase() + "-all-references", Prop.get("/xjus.password"), "GET", url, q,
-					Response.class);
+					service.name().toLowerCase() + "-all-references", Prop.get("/xjus.password"), "GET",
+					Utils.buildUrl(service), q, Response.class);
 			map.put(service, future);
 		}
 
 		Date dt1 = new Date();
 
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (XjusRecordServiceEnum service : DisableableEnum.enabledValues(XjusRecordServiceEnum.values())) {
 			long timeout = TIMEOUT_MILLISECONDS - ((new Date()).getTime() - dt1.getTime());
 			if (timeout < 0L)
 				timeout = 0;
@@ -81,22 +79,17 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 			resp.list.remove(resp.list.size() - 1);
 	}
 
-	static public String serviceUrl(RecordServiceEnum service) {
-		String url = SwaggerServlet.getHttpServletRequest().getRequestURL().toString().replace("/x-jus/v1/",
-				"/x-jus/" + service.name().toLowerCase() + "/v1/");
-		return url;
-	}
-
 	static public String defaultLastId() {
-		return XjusUtils.formatId(0L) + "-" + RecordServiceEnum.values()[RecordServiceEnum.values().length - 1].ordinal();
+		return Utils.formatId(0L) + "-"
+				+ XjusRecordServiceEnum.values()[XjusRecordServiceEnum.values().length - 1].ordinal();
 	}
 
 	static public String defaultCursor() {
 		String s = "";
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (XjusRecordServiceEnum service : XjusRecordServiceEnum.values()) {
 			if (!s.isEmpty())
 				s += ";";
-			s += XjusUtils.formatId(0L) + "-" + service.ordinal();
+			s += Utils.formatId(0L) + "-" + service.ordinal();
 		}
 		return s;
 	}

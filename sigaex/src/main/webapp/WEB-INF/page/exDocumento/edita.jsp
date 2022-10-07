@@ -14,6 +14,8 @@
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript"
 		src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
+	<script type="text/javascript" src="/siga/javascript/crypto-js/4.1.1/crypto-js.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/crypto-js/4.1.1/sha256.min.js"></script>
 
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
@@ -651,8 +653,8 @@
 													<div id="linkArquivoDiv" class="col-lg-8">
 														<div class="form-group">
 															<label for="linkArquivo" title="campo: Arquivo" class="title">Arquivo</label>												
-															<div id="linkArquivo" class="form-control " disabled read-only>  
-		      	  												<i class="far fa-file-pdf mr-2"></i>${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo}</div>
+															<div id="linkArquivo" class="form-control " disabled read-only><i
+																class="far fa-file-pdf mr-2"></i>${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo}</div>
 														</div>
 													</div>
 													<div class="col-sm">
@@ -660,6 +662,7 @@
 	      	  										</div>
 												</div>
 												<small class="form-text text-muted">Tipos de arquivo permitidos para este documento: ${exDocumentoDTO.modelo.extensoesArquivoComPonto}</small>
+												<div class="invalid-feedback  invalid-feedback-arqUpload"></div>
 											</c:otherwise>
 										</c:choose>
 									</div>
@@ -805,7 +808,7 @@
 	<!--  tabela do rodapé -->
 
 	<script type="text/javascript"
-		src="../../../javascript/documento.validacao.js?v=1658432806"></script>
+		src="../../../javascript/documento.validacao.js?v=1664993973"></script>
 </siga:pagina>
 
 <script type="text/javascript">

@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import br.gov.jfrj.siga.ex.xjus.Utils;
+import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
@@ -23,7 +23,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		if (req.lastdate == null)
 			req.lastdate = new Date(0L);
 		if (req.lastid == null)
-			req.lastid = Utils.formatId(0L);
+			req.lastid = XjusUtils.formatId(0L);
 		try {
 			ExDao dao = ExDao.getInstance();
 			Query q = dao.em().createQuery(HQL);
@@ -40,7 +40,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 				Long id = (Long) rs[0];
 				Date dt = (Date) rs[1];
 				// System.out.println(SwaggerUtils.format(dt));
-				ref.id = Utils.formatId(id);
+				ref.id = XjusUtils.formatId(id);
 				ref.date = dt;
 				resp.list.add(ref);
 			}

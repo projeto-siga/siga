@@ -4,12 +4,12 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
 
-<div>
+<div class="gt-content-box gt-for-table">
     <table class="table table-hover table-striped">
         <thead class="${thead_color} align-middle text-center">
         <tr>
             <th width="3%" align="center">
-                <input type="checkbox" name="checkall" onclick="checkUncheckAll(this)"/>
+                <input type="checkbox" id="checkall" onclick="checkUncheckAll(this)"/>
             </th>
             <th width="13%" align="right">N&uacute;mero</th>
             <th width="5%" align="center">Classifica&ccedil;&atilde;o Atual</th>
@@ -22,9 +22,14 @@
 
         <siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
                         itens="${itens}" var="documento">
+            <c:set var="x" scope="request">
+                chk_${documento.idDoc}
+            </c:set>
+            <c:set var="tpd_x" scope="request">tpd_${documento.idDoc}</c:set>
             <tr class="even">
                 <td width="3%" align="center">
-                    <input type="checkbox" name="${x}" value="true" ${x_checked} />
+                    <input type="checkbox" name="documentosSelecionados"
+                           value="${documento.idDoc}" id="${x}" class="chkDocumento" onclick="displaySel()"/>
                 </td>
                 <td width="13%" align="right">${documento.sigla}</td>
                 <td width="5%" align="center">${documento.classificacaoSigla}</td>
@@ -36,3 +41,19 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    function sbmt(offset) {
+        listarDocumentosParaReclassificarEmLote(offset);
+    }
+
+    function checkUncheckAll(theElement) {
+        let isChecked = theElement.checked;
+        Array.from(document.getElementsByClassName('chkDocumento')).forEach(chk => chk.checked = isChecked);
+    }
+
+    function displaySel() {
+        document.getElementById('checkall').checked =
+            Array.from(document.getElementsByClassName('chkDocumento')).every(chk => chk.checked);
+    }
+</script>

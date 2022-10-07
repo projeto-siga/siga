@@ -94,9 +94,10 @@
         </div>
     </div>
     <script type="text/javascript">
-        function listarDocumentosParaReclassificarEmLote() {
+        function listarDocumentosParaReclassificarEmLote(offset) {
+            offset = offset == null ? 0 : offset;
+
             let siglaClassificacao = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
-            let offset = 0;
             let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?siglaClassificacao='
                 + siglaClassificacao + '&offset=' + offset;
 

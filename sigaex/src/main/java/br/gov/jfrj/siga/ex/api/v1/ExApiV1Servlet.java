@@ -269,6 +269,9 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		//GC Control - Concatenação de PDF
 		addPublicProperty("arquivo.tamanho.gc", "26214400"); //PDF - 25MB
 		addPublicProperty("arquivo.contagem.gc", "25"); //HTML - 25 documentos
+		
+		//Pubnet (DOE)
+		addPublicProperty("ws.pubnet.url.wsdl", null);
 	}
 
 	@Override

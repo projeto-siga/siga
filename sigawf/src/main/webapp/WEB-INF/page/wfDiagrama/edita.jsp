@@ -87,7 +87,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 							remote-url-data-field="list" pause="200"
 							text-no-results="Não encontrei nenhuma Unidade."
 							selected-object-data="{context: data.workflow, variable: 'lotaResponsavel', full:false}"
-							remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
+							remote-url="/siga/app/lotacao/buscar-json-todos-os-orgaos/" angucomplete-alt
 							name="lotaResponsavel" placeholder="Pesquisar Unidade"
 							id="lotaResponsavel" class="angucomplete-ctrl p-0"
 							template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
@@ -309,7 +309,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									remote-url-data-field="list" pause="200"
 									text-no-results="Não encontrei nenhuma Unidade."
 									selected-object-data="{context:tarefaItem, variable: 'refUnidadeResponsavel', full:false}"
-									remote-url="/siga/app/lotacao/buscar-json/" angucomplete-alt
+									remote-url="/siga/app/lotacao/buscar-json-todos-os-orgaos/" angucomplete-alt
 									name="refUnidadeResponsavel" placeholder="Pesquisar Unidade"
 									id="refUnidadeResponsavel" class="angucomplete-ctrl p-0"
 									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>

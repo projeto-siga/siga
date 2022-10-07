@@ -158,8 +158,6 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 
 						new ExEstaResponsavel(mob, titular, lotaTitular)),
 
-				// Não deixa cancelar juntada quando o documento está juntado a um
-				// expediente/processo que já sofreu outra movimentação
 				NAnd.of(
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.ATUALIZACAO),
@@ -179,6 +177,8 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 								// movimentação que vai ser cancelada.
 								new ExMovMobRefRecebeuMovimentacoesPosteriores(exUltMovNaoCanc))),
 
+				// Não deixa cancelar juntada quando o documento está juntado a um
+				// processo que já sofreu outra movimentação
 				Or.of(
 
 						Not.of(new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.JUNTADA)),

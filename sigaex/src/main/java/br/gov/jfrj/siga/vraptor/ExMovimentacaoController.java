@@ -5316,14 +5316,23 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/expediente/mov/reclassificar_lote")
-	public void reclassificar_lote(final String mascara, final int offset) {
+	public void reclassificar_lote(final String motivo,
+								   final String dtMovString, final String obsOrgao,
+								   final boolean substituicao, final DpPessoaSelecao titularSel,
+								   final DpPessoaSelecao subscritorSel,
+								   final ExClassificacaoSelecao classificacaoAtualSel,
+								   final ExClassificacaoSelecao classificacaoNovaSel,
+								   final int offset) {
+		
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
 
-		result.include("tipoResponsavel", 1);
-		result.include("substituicao", Boolean.FALSE);
-		result.include("titularSel", new DpPessoaSelecao());
-		result.include("subscritorSel", new DpPessoaSelecao());
-		result.include("classificacaoSel", new ExClassificacaoSelecao());
+		result.include("substituicao", substituicao ? substituicao : Boolean.FALSE);
+		result.include("titularSel", Objects.isNull(titularSel) ? new DpPessoaSelecao() : titularSel);
+		result.include("subscritorSel", Objects.isNull(subscritorSel) ? new DpPessoaSelecao() : subscritorSel);
+		result.include("classificacaoAtualSel", Objects.isNull(classificacaoAtualSel) ? new ExClassificacaoSelecao() :
+				classificacaoAtualSel);
+		result.include("classificacaoNovaSel", Objects.isNull(classificacaoNovaSel) ? new ExClassificacaoSelecao() :
+				classificacaoNovaSel);
 	}
 }

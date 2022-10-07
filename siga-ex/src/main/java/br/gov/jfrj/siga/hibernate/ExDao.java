@@ -2609,9 +2609,9 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExDocumentoVO> consultarParaReclassificarEmLote(
-			final DpPessoa cadastrante, final String classificacaoSigla, 
-			final int offset, final int itemPagina) {
+	public List<ExDocumentoVO> consultarParaReclassificarEmLote(final DpPessoa cadastrante,
+																final String classificacaoSigla, 
+																final int offset, final int itemPagina) {
 		
 		/* Query para obter Documentos e Movimentações com Classificação 
 		* A consulta obtem primeiramente todos os documentos que possuem classificação pela sigla (codificação)
@@ -2676,6 +2676,60 @@ public class ExDao extends CpDao {
 		
 		return query.getResultList();
 	}
-	
 
+	public int consultarQuantidadeParaReclassificarEmLote(final DpPessoa cadastrante,
+														   final String classificacaoSigla) {
+
+		/* Query para obter a quantidade Documentos e Movimentações com Classificação
+		 * */
+		String sql = " select count(*) from (" +
+				"	select " +
+				"		doc.id_doc" +
+				"	from siga.ex_mobil mob " +
+				"	join siga.ex_documento doc " +
+				"		on doc.id_doc = mob.id_doc" +
+				"	join siga.ex_classificacao classific " +
+				"		on classific.id_classificacao = doc.id_classificacao " +
+				"	join corporativo.dp_lotacao lotacao " +
+				"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
+				"	join corporativo.dp_pessoa pessoa " +
+				"		on pessoa.id_pessoa = doc.id_cadastrante" +
+				"	where doc.dt_finalizacao is not null " +
+				"		and doc.dt_primeiraassinatura is not null " +
+				"		and pessoa.id_pessoa_inicial = :pessoaIni" +
+				"		and lotacao.id_lotacao_ini = :lotaIni" +
+				"		and classific.codificacao like :mascara" +
+				" union" +
+				" select " +
+				"		doc.id_doc " +
+				"	from siga.ex_mobil mob " +
+				"	join siga.ex_movimentacao mov " +
+				"		on mov.id_mobil = mob.id_mobil" +
+				"	join siga.ex_classificacao classific " +
+				"		on classific.id_classificacao = mov.id_classificacao " +
+				"	join siga.ex_documento doc " +
+				"		on doc.id_doc = mob.id_doc " +
+				"	join corporativo.dp_lotacao lotacao " +
+				"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
+				"	join corporativo.dp_pessoa pessoa " +
+				"		on pessoa.id_pessoa = doc.id_cadastrante" +
+				"	where doc.dt_finalizacao is not null " +
+				"		and doc.dt_primeiraassinatura is not null " +
+				"		and (mov.id_tp_mov in (:enumList)) " +
+				"		and pessoa.id_pessoa_inicial = :pessoaIni" +
+				"		and lotacao.id_lotacao_ini = :lotaIni" +
+				"		and classific.codificacao like :mascara" +
+				" )";
+
+		Query query = em().createNativeQuery(sql);
+
+		query.setParameter("pessoaIni", cadastrante.getId());
+		query.setParameter("lotaIni", cadastrante.getLotacao().getId());
+		query.setParameter("mascara", classificacaoSigla);
+		query.setParameter("enumList", Arrays.asList(
+				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
+				ExTipoDeMovimentacao.AVALIACAO_COM_RECLASSIFICACAO.getId()));
+
+		return ((BigDecimal) query.getSingleResult()).intValue();
+	}
 }

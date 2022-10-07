@@ -13,6 +13,7 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.XjusRecordServiceEnum;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
 import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
@@ -157,7 +158,6 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
 		addPublicProperty("senha.usuario.expiracao.dias", null);
 		addPrivateProperty("sinc.password", null);
-
 	}
 
 	@Override

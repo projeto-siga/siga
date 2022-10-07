@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,13 +63,13 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
+import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
@@ -2806,14 +2805,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		if (getExNivelAcessoAtual().getIdNivelAcesso().equals(
 				ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
-				&& ExAcesso.ACESSO_PUBLICO.equals(getDnmAcesso()))
+				&& XjusUtils.ACESSO_PUBLICO.equals(getDnmAcesso()))
 			return null;
 		ExDao dao = ExDao.getInstance();
 		List<Object> l = new ArrayList<Object>();
 		String a[] = getDnmAcesso().split(",");
 
 		for (String s : a) {
-			if (s.equals(ExAcesso.ACESSO_PUBLICO))
+			if (s.equals(XjusUtils.ACESSO_PUBLICO))
 				l.add(s);
 			else if (s.startsWith("O"))
 				l.add(dao.consultar(Long.parseLong(s.substring(1)),
@@ -2836,7 +2835,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		for (Object o : l) {
 			if (s.length() > 0)
 				s += ", ";
-			if (ExAcesso.ACESSO_PUBLICO.equals(o))
+			if (XjusUtils.ACESSO_PUBLICO.equals(o))
 				s += "Público";
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();

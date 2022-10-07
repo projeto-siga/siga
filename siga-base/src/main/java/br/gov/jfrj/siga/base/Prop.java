@@ -208,6 +208,10 @@ public class Prop {
 		provider.addPrivateProperty("/xjus.password", null);
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
+		
+		// Propriedade para desabilitar itens de enums. Informar uma lista, separada por vírgula, na qual cada item é 
+		// composto do nome simples do enum, um ponto final e a propriedade .name() a ser desabilitada
+		provider.addPublicProperty("/siga.enum.disable", null);
 
 		// Propriedade que controla o acesso aos métodos de exportação para BI da API REST
 		provider.addPrivateProperty("/siga.bi.password", null);

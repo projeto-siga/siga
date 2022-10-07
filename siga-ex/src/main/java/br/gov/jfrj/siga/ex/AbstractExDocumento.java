@@ -235,11 +235,12 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 						@ConstructorResult(
 								targetClass = ExDocumentoVO.class,
 								columns = {
-										@ColumnResult(name="sigla"),
-										@ColumnResult(name="classificacaoSigla"),
-										@ColumnResult(name="lotaCadastranteString"),
-										@ColumnResult(name="cadastranteString"),
-										@ColumnResult(name="descrDocumento")
+										@ColumnResult(name="idDoc", type = Long.class),
+										@ColumnResult(name="sigla", type = String.class),
+										@ColumnResult(name="classificacaoSigla", type = String.class),
+										@ColumnResult(name="lotaCadastranteString", type = String.class),
+										@ColumnResult(name="cadastranteString", type = String.class),
+										@ColumnResult(name="descrDocumento", type = String.class)
 								}
 						)
 				}) })

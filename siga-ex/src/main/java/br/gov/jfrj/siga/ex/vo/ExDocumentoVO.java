@@ -406,8 +406,9 @@ public class ExDocumentoVO extends ExVO {
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().pode(ExPodeAnexarArquivoAuxiliar.class, titular, lotaTitular, mob);
 	}
 
-	public ExDocumentoVO(String sigla, String classificacaoSigla, 
+	public ExDocumentoVO(Long idDoc, String sigla, String classificacaoSigla, 
 						 String lotaCadastranteString, String cadastranteString, String descrDocumento) {
+		this.idDoc = idDoc;
 		this.sigla = sigla;
 		this.classificacaoSigla = classificacaoSigla;
 		this.lotaCadastranteString = lotaCadastranteString;

@@ -2618,35 +2618,37 @@ public class ExDao extends CpDao {
 		* Depois adiciona ao resultado todas as movimentações com a mesma classificação  
 		* */
 		String sql = " select " +
-				"		substr(mob.dnm_sigla, 1, 17) as sigla," +
+				"		doc.id_doc as idDoc, " +
+				"		substr(mob.dnm_sigla, 1, 17) as sigla, " +
 				"		classific.codificacao as classificacaoSigla, " +
 				"		lotacao.sigla_lotacao as lotaCadastranteString, " +
 				"		pessoa.sigla_pessoa as cadastranteString, " +
-				"		doc.descr_documento as descrDocumento" +
+				"		doc.descr_documento as descrDocumento " +
 				"	from siga.ex_mobil mob " +
 				"	join siga.ex_documento doc " +
-				"		on doc.id_doc = mob.id_doc" +
+				"		on doc.id_doc = mob.id_doc " +
 				"	join siga.ex_classificacao classific " +
 				"		on classific.id_classificacao = doc.id_classificacao " +
 				"	join corporativo.dp_lotacao lotacao " +
 				"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
 				"	join corporativo.dp_pessoa pessoa " +
-				"		on pessoa.id_pessoa = doc.id_cadastrante" +
+				"		on pessoa.id_pessoa = doc.id_cadastrante " +
 				"	where doc.dt_finalizacao is not null " +
 				"		and doc.dt_primeiraassinatura is not null " +
-				"		and pessoa.id_pessoa_inicial = :pessoaIni" +
-				"		and lotacao.id_lotacao_ini = :lotaIni" +
-				"		and classific.codificacao like :mascara" +
+				"		and pessoa.id_pessoa_inicial = :pessoaIni " +
+				"		and lotacao.id_lotacao_ini = :lotaIni " +
+				"		and classific.codificacao like :mascara " +
 				" union" +
 				" select " +
-				"		substr(mob.dnm_sigla, 1, 17) as sigla," +
+				"		doc.id_doc as idDoc, " +
+				"		substr(mob.dnm_sigla, 1, 17) as sigla, " +
 				"		classific.codificacao as classificacaoSigla, " +
 				"		lotacao.sigla_lotacao as lotaCadastranteString, " +
 				"		pessoa.sigla_pessoa as cadastranteString, " +
-				"		doc.descr_documento as descrDocumento" +
+				"		doc.descr_documento as descrDocumento " +
 				"	from siga.ex_mobil mob " +
 				"	join siga.ex_movimentacao mov " +
-				"		on mov.id_mobil = mob.id_mobil" +
+				"		on mov.id_mobil = mob.id_mobil " +
 				"	join siga.ex_classificacao classific " +
 				"		on classific.id_classificacao = mov.id_classificacao " +
 				"	join siga.ex_documento doc " +
@@ -2654,14 +2656,14 @@ public class ExDao extends CpDao {
 				"	join corporativo.dp_lotacao lotacao " +
 				"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
 				"	join corporativo.dp_pessoa pessoa " +
-				"		on pessoa.id_pessoa = doc.id_cadastrante" +
+				"		on pessoa.id_pessoa = doc.id_cadastrante " +
 				"	where doc.dt_finalizacao is not null " +
 				"		and doc.dt_primeiraassinatura is not null " +
 				"		and (mov.id_tp_mov in (:enumList)) " +
-				"		and pessoa.id_pessoa_inicial = :pessoaIni" +
-				"		and lotacao.id_lotacao_ini = :lotaIni" +
-				"		and classific.codificacao like :mascara" +
-				" order by sigla";
+				"		and pessoa.id_pessoa_inicial = :pessoaIni " +
+				"		and lotacao.id_lotacao_ini = :lotaIni " +
+				"		and classific.codificacao like :mascara " +
+				" order by sigla ";
 		
 		Query query = em().createNativeQuery(sql, "DocumentosPorCodificacaoClassificacao");
 
@@ -2682,24 +2684,24 @@ public class ExDao extends CpDao {
 
 		/* Query para obter a quantidade Documentos e Movimentações com Classificação
 		 * */
-		String sql = " select count(*) from (" +
+		String sql = " select count(*) from ( " +
 				"	select " +
-				"		doc.id_doc" +
+				"		doc.id_doc " +
 				"	from siga.ex_mobil mob " +
 				"	join siga.ex_documento doc " +
-				"		on doc.id_doc = mob.id_doc" +
+				"		on doc.id_doc = mob.id_doc " +
 				"	join siga.ex_classificacao classific " +
 				"		on classific.id_classificacao = doc.id_classificacao " +
 				"	join corporativo.dp_lotacao lotacao " +
 				"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
 				"	join corporativo.dp_pessoa pessoa " +
-				"		on pessoa.id_pessoa = doc.id_cadastrante" +
+				"		on pessoa.id_pessoa = doc.id_cadastrante " +
 				"	where doc.dt_finalizacao is not null " +
 				"		and doc.dt_primeiraassinatura is not null " +
-				"		and pessoa.id_pessoa_inicial = :pessoaIni" +
-				"		and lotacao.id_lotacao_ini = :lotaIni" +
-				"		and classific.codificacao like :mascara" +
-				" union" +
+				"		and pessoa.id_pessoa_inicial = :pessoaIni " +
+				"		and lotacao.id_lotacao_ini = :lotaIni " +
+				"		and classific.codificacao like :mascara " +
+				" union " +
 				" select " +
 				"		doc.id_doc " +
 				"	from siga.ex_mobil mob " +
@@ -2712,14 +2714,14 @@ public class ExDao extends CpDao {
 				"	join corporativo.dp_lotacao lotacao " +
 				"		on lotacao.id_lotacao = doc.id_lota_cadastrante " +
 				"	join corporativo.dp_pessoa pessoa " +
-				"		on pessoa.id_pessoa = doc.id_cadastrante" +
+				"		on pessoa.id_pessoa = doc.id_cadastrante " +
 				"	where doc.dt_finalizacao is not null " +
 				"		and doc.dt_primeiraassinatura is not null " +
 				"		and (mov.id_tp_mov in (:enumList)) " +
-				"		and pessoa.id_pessoa_inicial = :pessoaIni" +
-				"		and lotacao.id_lotacao_ini = :lotaIni" +
-				"		and classific.codificacao like :mascara" +
-				" )";
+				"		and pessoa.id_pessoa_inicial = :pessoaIni " +
+				"		and lotacao.id_lotacao_ini = :lotaIni " +
+				"		and classific.codificacao like :mascara " +
+				" ) ";
 
 		Query query = em().createNativeQuery(sql);
 

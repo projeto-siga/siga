@@ -76,6 +76,13 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		aBuscarJson(sigla);
 	}
 
+	@Get
+	@Path({ "/app/lotacao/buscar-json-todos-os-orgaos/{sigla}"  })
+	public void buscaTodosOsOrgaos(String sigla) throws Exception {
+		getRequest().setAttribute("buscarTodosOrgaos", "true");
+		aBuscarJson(sigla);
+	}
+
 	protected void aBuscarJson(String sigla) throws Exception {
 		Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 
@@ -139,6 +146,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		String paramBuscarTodosOrgaos = param("buscarTodosOrgaos");
 		boolean buscarTodosOrgaos =  paramBuscarTodosOrgaos != null ? Boolean.valueOf(paramBuscarTodosOrgaos) : false;
+		
+		// Pesquisa também nos atributos do request, pois é a maneira como é passado quando
+		// vem pela consulta do Angular
+		paramBuscarTodosOrgaos = (String) getRequest().getAttribute("buscarTodosOrgaos");
+		buscarTodosOrgaos =  paramBuscarTodosOrgaos != null ? Boolean.valueOf(paramBuscarTodosOrgaos) : false;
+		
 		flt.setIdOrgaoUsu(orgaoUsu);
 		if (flt.getIdOrgaoUsu() == null && !buscarTodosOrgaos && getLotaTitular() != null ) {
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());

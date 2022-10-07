@@ -35,8 +35,8 @@ public class DocumentosIdVerificarAssinaturaGet implements IExApiV1.IDocumentosI
         if (mob == null)
             throw new AplicacaoException(
                     "Não foi possível encontrar o documento " + req.id);
-
-        ExTipoDeMovimentacao exTipoDeAssinatura = req.assinaturaDigital ?
+        
+        ExTipoDeMovimentacao exTipoDeAssinatura = (req.assinaturaDigital != null && req.assinaturaDigital) ?
                 ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO :
                 ExTipoDeMovimentacao.ASSINATURA_COM_SENHA;
 

@@ -565,7 +565,7 @@ public class ExMobilVO extends ExVO {
 							sb.append(" [<span title=\"");
 							sb.append(mar.getDpPessoaIni().getNomePessoa());
 							sb.append("\">");
-							sb.append(mar.getDpPessoaIni().getSigla());
+							sb.append(mar.getDpPessoaIni().getPessoaAtual().getSigla());
 							sb.append("</span>]");
 						}
 					}
@@ -595,7 +595,7 @@ public class ExMobilVO extends ExVO {
 						sb.append(" [<span title=\"");
 						sb.append(mar.getDpPessoaIni().getNomePessoa());
 						sb.append("\">");
-						sb.append(mar.getDpPessoaIni().getSigla());
+						sb.append(mar.getDpPessoaIni().getPessoaAtual().getSigla());
 						sb.append("</span>]");
 					}
 					sb.append("]");

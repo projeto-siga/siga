@@ -36,6 +36,7 @@
 		<module>siga-oidc</module>
 		<!-- Desativado do Deploy por Enquanto <module>siga-le</module> !-->
 		<module>siga-integracao</module>
+		<module>siga-arq</module>
 	</modules>
 
 
@@ -309,6 +310,11 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-integracao</artifactId>
+				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
+				<artifactId>siga-arq</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>

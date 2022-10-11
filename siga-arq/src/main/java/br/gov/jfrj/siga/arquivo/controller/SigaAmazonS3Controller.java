@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.gov.jfrj.siga.arquivo.SigaAmazonS3;
 
 @RestController
-@RequestMapping("sigaAmazonS3/api/v1")
+@RequestMapping("api/v1")
 public class SigaAmazonS3Controller {
 	
 	@PostMapping("/upload")

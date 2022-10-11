@@ -543,7 +543,7 @@ public class ExArquivoController extends ExController {
         String tk = signer.sign(claims);
 		
 		result.include("token", tk);
-		result.redirectTo(Prop.get("/siga.armazenamento.arquivo.formatolivre.url") + "download?tokenArquivo=" + tk);
+		result.redirectTo(Prop.get("/siga-arq.url") + "/api/v1/download?tokenArquivo=" + tk);
 	}
 	
 

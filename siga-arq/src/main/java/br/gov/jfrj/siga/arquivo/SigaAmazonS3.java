@@ -168,7 +168,7 @@ public class SigaAmazonS3 {
 	        	    .withCredentials(new AWSStaticCredentialsProvider(
 	        	    		new BasicAWSCredentials(accessKey, secretKey)))
 	        	    .withEndpointConfiguration(new EndpointConfiguration(
-	        	    		System.getProperty("siga.armazenamento.arquivo.url").replace(bucketName + ".", ""),
+	        	    		System.getProperty("siga.armazenamento.arquivo.formatolivre.url").replace(bucketName + ".", ""),
 	        	    		"us-west-1"))
 	        	    .build();
 		}

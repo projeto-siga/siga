@@ -104,8 +104,6 @@ function enviarArq (arquivo, hsh, tam) {
     	  setarProgressBar(100);
 		  let parmsObj = JSON.parse(this.responseText);
     	  document.getElementById("tokenArquivo").value = parmsObj.token;
-    	  let urlbase = window.location;
-    	  document.getElementById("urlUpload").value = urlbase.protocol + "//" + urlbase.host;
     	  document.getElementById('linkArquivo').innerHTML = '<i class="far fa-file-pdf mr-2"></i>' + parmsObj.arquivoNome;
     	  document.getElementById('linkArquivo').parentNode.parentNode.parentNode.classList.remove('d-none');
     	  inputArquivo.parentNode.classList.add('d-none');

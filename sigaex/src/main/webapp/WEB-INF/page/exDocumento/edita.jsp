@@ -21,7 +21,7 @@
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 
 	<c:set var="timeoutMod" scope="session" value="${f:resource('/siga.session.modelos.tempo.expiracao')}" />
-	<c:set var="urlUpload" scope="session" value="${f:resource('/siga.armazenamento.arquivo.formatolivre.url')}" />
+	<c:set var="urlSigaArq" scope="session" value="${f:resource('/siga-arq.url')}" />
 	<div class="container-fluid">
 		<c:if test="${not empty mensagem}">
 			<div class="row">
@@ -630,13 +630,11 @@
 												
 												<input type='hidden' name='vars' class='uploadclass' value='tokenArquivo'>
     	  										<input type='hidden' id='tokenArquivo' name='tokenArquivo'>
-    	  										<input type='hidden' name='vars' class='uploadclass' value='urlUpload'>
-    	  										<input type='hidden' id='urlUpload' class='uploadclass' name='urlUpload'> 
 												<div class="custom-file ${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo == null && tokenArquivo == null? '':'d-none'} col-lg-8">
 													<c:set var="extensoes" value="${fn:split(dateString, ',')}" />
 													<input type="file" class="custom-file-input" id="arqUpload" 
 														name="arqUpload" accept="${exDocumentoDTO.modelo.extensoesArquivoComPonto}"  
-														onchange="uploadArq('${urlUpload}', this, ${tamanhoMaximoArquivoFormatoLivre});" 
+														onchange="uploadArq('${urlSigaArq}/api/v1/', this, ${tamanhoMaximoArquivoFormatoLivre});" 
 														title="arqUpload"> <label 
 														class="custom-file-label" for="arqUpload"><i 
 														class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message 

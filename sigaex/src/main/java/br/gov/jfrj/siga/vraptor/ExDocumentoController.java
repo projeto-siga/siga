@@ -3076,8 +3076,8 @@ public class ExDocumentoController extends ExController {
 	}
 	
 	@TrackRequest
-	@Get("app/expediente/doc/registrar_requisicao_usuario")
+	@Get("/app/expediente/doc/registrar_requisicao_usuario")
 	public void registrarRequisicaoUsuario(final String sigla, final String nomeAcao){
-		result.include("status", "ok");
+		result.use(Results.status()).noContent();
 	}
 }

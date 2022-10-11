@@ -101,7 +101,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	private String caminho;
 
 	@Column(name = "TAMANHO_ARQ")
-	private Integer tamanho = 0;
+	private Long tamanho = 0L;
 
 	@Column(name = "HASH_SHA256")
 	private String hashSha256;
@@ -264,7 +264,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		if (old == null || !Arrays.equals(old.getConteudo(), conteudo)) {
 			CpArquivo arq = CpArquivo.forUpdate(old);
 			arq.setConteudo(conteudo);
-			arq.setTamanho(conteudo.length);
+			arq.setTamanho(Long.valueOf(conteudo.length));
 			arq.setFormatoLivre(false);
 			return arq;
 		}
@@ -272,7 +272,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	}
 
 	public static CpArquivo updateFormatoLivre(CpArquivo old, CpOrgaoUsuario orgaoUsuario, String caminho, String nomeArquivo, 
-			Integer tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
+			Long tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
 		CpArquivo arq = CpArquivo.forUpdate(old, false);
 		String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
 		if (extensao == null)
@@ -362,11 +362,11 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		this.caminho = caminho;
 	}
 
-	public Integer getTamanho() {
+	public Long getTamanho() {
 		return tamanho;
 	}
 
-	private void setTamanho(Integer tamanho) {
+	private void setTamanho(Long tamanho) {
 		this.tamanho = tamanho;
 	}
 

@@ -1172,7 +1172,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		Map<String, Object> lst = verifier.verify(tokenArquivo);
 		String nomeArquivo = (String) lst.get("nomeArq");
 		String caminho = (String) lst.get("nomeArqS3");
-		Integer tamanhoArquivo = Integer.valueOf((String) lst.get("tamanho"));
+		Long tamanhoArquivo = Long.valueOf((String) lst.get("tamanho"));
 		String hashArquivo = (String) lst.get("hash");
 		CpArquivo cpArq = getCpArquivoFormatoLivre();
 		CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum

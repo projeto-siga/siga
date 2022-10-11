@@ -187,5 +187,11 @@
 			<groupId>com.crivano</groupId>
 			<artifactId>swaggerservlet</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>br.jus.trf2.xjus</groupId>
+			<artifactId>x-jus-record-api</artifactId>
+		</dependency>
+		
 	</dependencies>
 </project>

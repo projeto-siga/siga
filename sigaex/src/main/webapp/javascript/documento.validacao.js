@@ -160,23 +160,30 @@ function validarInputRadioECheckbox(elemento) {
 function validarDocumentoCapturado() {
 	var origem = document.getElementsByName('exDocumentoDTO.idTpDoc')[0].value;
 	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
-	let tokenArq = document.getElementById('tokenArquivo');
 	if ((origem == 4 || origem == 5) && !id) {
-		let tipoArq = ""
-		if (tokenArq) { 
-			var arquivo = document.getElementsByName('arqUpload')[0]; // Capturado de formato livre
-			tipoArq = "PDF"
-		} else {
-			var arquivo = document.getElementsByName('arquivo')[0]; // Capturado PDF
-		}
-		
-		if (arquivo && !arquivo.classList.contains('is-invalid')) {
+		// Capturado PDF
+		var arquivo = document.getElementsByName('arquivo')[0]; 
+
+		if (!arquivo.classList.contains('is-invalid')) {
 			if (arquivo.value == "") {
-				var mensagem = 'Documento capturado não pode ser gravado sem que seja informado o arquivo ' + tipoArq;
+				var mensagem = 'Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.';
 				aplicarErro($(arquivo), mensagem);					
 			} else {
 				removerErro($(arquivo));
 			}						
+		}
+	} else {		
+		if (origem == 6 || origem == 7) {
+			// Capturado de formato livre
+			let linkArq = document.getElementById('linkArquivo');
+			let arqUpload = document.getElementById('arqUpload');
+			
+			if (linkArq && linkArq.innerText === "" && !linkArq.classList.contains('is-invalid')) {
+				var mensagem = 'Documento capturado não pode ser gravado sem que seja informado o arquivo.';
+				aplicarErro($(arqUpload), mensagem);
+			} else {
+				removerErro($(arqUpload));				
+			}					
 		}		
 	}
 }

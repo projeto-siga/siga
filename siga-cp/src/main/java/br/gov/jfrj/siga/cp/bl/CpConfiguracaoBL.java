@@ -804,7 +804,7 @@ public class CpConfiguracaoBL {
 	 * 
 	 * @throws Exception
 	 */
-	public ArrayList<ConfiguracaoGrupo> obterCfgGrupo(CpGrupo grp) throws Exception {
+	public ArrayList<ConfiguracaoGrupo> obterCfgGrupo(CpGrupo grp) {
 
 		ArrayList<ConfiguracaoGrupo> aCfgGrp = new ArrayList<ConfiguracaoGrupo>();
 		ConfiguracaoGrupoFabrica fabrica = new ConfiguracaoGrupoFabrica();

@@ -1,10 +1,6 @@
 package br.gov.jfrj.siga.arquivo;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -47,8 +43,6 @@ public class SigaAmazonS3 {
 
 	public String upload(InputStream is, String parmsJson) throws Exception {
 		AmazonS3 s3Client = conectarS3();
-		System.out.println(is.markSupported());
-		BufferedInputStream arquivo = new BufferedInputStream(is);
 		ObjectMapper objectMapper = new ObjectMapper();
 		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(parmsJson, SigaAmazonS3ParametrosUpload.class);
 		
@@ -63,28 +57,36 @@ public class SigaAmazonS3 {
         		UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(parms.getArquivoNome()));
 
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(Long.valueOf(parms.getTamanho()));
+        metadata.setContentLength(parms.getTamanhoLong());
 
-//        String hSha256 = calculaHashSha256(arquivo, Long.valueOf(parms.getTamanho()));
-//        if (!parms.getHash().equals(hSha256))
-//        	throw new Exception("O arquivo recebido para upload nao corresponde ao enviado.");
+        if (parms.getHash() != null) {
+        	metadata.setHeader("x-amz-checksum-mode", "enabled");
+        	metadata.setHeader("x-amz-checksum-algorithm", "SHA256");
+        	metadata.setHeader("x-amz-checksum-sha256", parms.getHash());
+        };
         
-//        metadata.setHeader("x-amz-checksum-algorithm", "SHA256");
-//        metadata.setHeader("x-amz-checksum-sha256", parms.getHash());
-//        metadata.addUserMetadata("nomeArquivo", parms.getArquivoNome());
-//        metadata.addUserMetadata("hashSha256", parms.getHash());
-//        InputStreamHash arquivoHash = new InputStreamHash (arquivo);
+        metadata.setContentDisposition(parms.getArquivoNome());
+        metadata.addUserMetadata("nomeArquivo", parms.getArquivoNome());
+        metadata.addUserMetadata("hashSha256", parms.getHash());
+        InputStreamHash arquivo = new InputStreamHash (is);
 
-        PutObjectResult res = s3Client.putObject(new PutObjectRequest(
+        PutObjectRequest req = new PutObjectRequest(
                 bucketName, 
                 parms.getArquivoNomeS3(),
                 arquivo,
-                metadata));
-
-//        String hs256 = new String(Hex.encodeHexString(bis.getSha256()));
+                metadata);
+        
+        PutObjectResult res = s3Client.putObject(req);
+        
+        String hs256 = new String(Hex.encodeHexString(arquivo.getSha256()));
+        if (parms.getHash() != null && !parms.getHash().equals(hs256))
+        	throw new Exception("O arquivo recebido para upload nao corresponde ao enviado.");
+    
         String tk = criarToken(bucketName, parms.getArquivoNome(), parms.getArquivoNomeS3(), 
         		Long.valueOf(parms.getTamanho()), parms.getHash());
+        
         parms.setToken(tk);
+        parms.setHash(hs256);
         String resp = objectMapper.writeValueAsString(parms);
         return resp;
 	}
@@ -144,25 +146,6 @@ public class SigaAmazonS3 {
 		
         s3Client.deleteObject(
                 new DeleteObjectRequest(bucketName, arquivoNomeS3));
-	}
-	
-	public static String calculaHashSha256(InputStream arq, Long tamanhoArq) throws NoSuchAlgorithmException, IOException {	
-		MessageDigest digest = MessageDigest.getInstance("SHA-256");
-	    final int TAMANHO_BUFFER = 1048576;
-		byte[] buffer = new byte[TAMANHO_BUFFER];
-	    byte[] hash = null;
-	    long offset = 0; 
-	    int tam; 
-	    while (offset < tamanhoArq) {
-	        tam = (int) (((tamanhoArq - offset) >= TAMANHO_BUFFER) ? TAMANHO_BUFFER : (tamanhoArq - offset));
-	        arq.read(buffer, 0, tam);
-	        digest.update(buffer, 0, tam);
-	        offset += tam;
-	    }	
-	    arq.close();
-	    hash = new byte[digest.getDigestLength()];
-	    hash = digest.digest();
-		return new String(Hex.encodeHexString(hash));  
 	}
 	
 	private String validaParms(SigaAmazonS3ParametrosUpload parms, boolean validaSequencia, boolean validaUploadId) {

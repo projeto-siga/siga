@@ -29,6 +29,9 @@ public class SigaAmazonS3ParametrosUpload {
 	public String getTamanho() {
 		return tamanho;
 	}
+	public Long getTamanhoLong() {
+		return Long.valueOf(tamanho);
+	}
 	public void setTamanho(String tamanho) {
 		this.tamanho = tamanho;
 	}

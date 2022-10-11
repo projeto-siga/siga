@@ -35,11 +35,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
 import br.com.caelum.vraptor.Controller;
@@ -1072,11 +1075,21 @@ public class ExMobilController extends
 			List<ExDocumentoVO> documentosPorCodificacaoClassificacao = ExDao.getInstance()
 					.consultarParaReclassificarEmLote(getCadastrante(), siglaClassificacao, offset, itemPagina);
 			
+			List<ExDocumentoVO> itens = new ArrayList<>();
+			for(ExDocumentoVO item : documentosPorCodificacaoClassificacao){
+				ExMobil mob = dao().consultar(item.getIdDoc(), ExDocumento.class, false).getMobilGeral();
+				
+				if(new ExPodeReclassificar(mob,getCadastrante(),getLotaCadastrante()).eval()){
+					itens.add(item);
+				}
+			}
 
+			documentosPorCodificacaoClassificacao = null;
+					
 			getP().setOffset(offset);
 			setItemPagina(itemPagina);
-			setItens(documentosPorCodificacaoClassificacao);
-			setTamanho(tamanho);
+			setItens(itens);
+			setTamanho(tamanho-itens.size());
 
 			result.include("itens", this.getItens());
 			result.include("itemPagina", this.getItemPagina());

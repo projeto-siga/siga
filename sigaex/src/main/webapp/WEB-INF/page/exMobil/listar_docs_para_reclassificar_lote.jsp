@@ -25,7 +25,6 @@
             <c:set var="x" scope="request">
                 chk_${documento.idDoc}
             </c:set>
-            <c:set var="tpd_x" scope="request">tpd_${documento.idDoc}</c:set>
             <tr class="even">
                 <td width="3%" align="center">
                     <input type="checkbox" name="documentosSelecionados"

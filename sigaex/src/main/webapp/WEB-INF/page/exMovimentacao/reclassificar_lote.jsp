@@ -12,7 +12,7 @@
                 <h5>Reclassifica&ccedil;&atilde;o em Lote</h5>
             </div>
             <div class="card-body">
-                <form name="frm" id="frm" class="form" theme="simple">
+                <form name="frm" id="frm" class="form" method="post" action="reclassificar_lote_gravar" theme="simple">
                     <div class="row">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -72,8 +72,9 @@
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <label for="motivo">Motivo</label>
-                                <input type="text" id="motivo" maxLength="128" class="form-control"/>
+                                <label>Motivo
+                                    <input type="text" name="motivo" maxLength="128" class="form-control"/>
+                                </label>
                             </div>
                         </div>
                     </div>

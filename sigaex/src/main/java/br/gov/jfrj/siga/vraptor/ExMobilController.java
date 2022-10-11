@@ -1060,7 +1060,6 @@ public class ExMobilController extends
 
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
-		List<ExDocumentoVO> documentosPorCodificacaoClassificacao;
 		int itemPagina = 10;
 		Integer tamanho = null;
 
@@ -1070,8 +1069,9 @@ public class ExMobilController extends
 
 		}
 		if (Objects.nonNull(tamanho)) {
-			documentosPorCodificacaoClassificacao = ExDao.getInstance().consultarParaReclassificarEmLote(getCadastrante(),
-					siglaClassificacao, offset, itemPagina);
+			List<ExDocumentoVO> documentosPorCodificacaoClassificacao = ExDao.getInstance()
+					.consultarParaReclassificarEmLote(getCadastrante(), siglaClassificacao, offset, itemPagina);
+			
 
 			getP().setOffset(offset);
 			setItemPagina(itemPagina);

@@ -2633,8 +2633,14 @@ public class ExDao extends CpDao {
 				+ "    classific_doc.id_classificacao = doc.id_classificacao" 
 				+ " full join siga.ex_movimentacao mov on" 
 				+ "    (mov.id_mobil = mob.id_mobil "
-				+ "    and mov.id_tp_mov in (:enumList) " //somente movimentações do tipo 51,53 Reclassificação
-				+ "    and mov.id_mov_canceladora is null)" //somente movimentações não canceladas
+				+ "    and mov.id_mov = ("
+				+ "        select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "        from siga.ex_movimentacao ultmovtipo"
+				+ "        where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "              and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "              and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "        )"
+				+ "    )"
 				+ " left join siga.ex_classificacao classific_mov on" 
 				+ "    classific_mov.id_classificacao = mov.id_classificacao" 
 				+ " join corporativo.dp_lotacao lotacao on" 
@@ -2681,8 +2687,14 @@ public class ExDao extends CpDao {
 				+ "    classific_doc.id_classificacao = doc.id_classificacao"
 				+ " full join siga.ex_movimentacao mov on"
 				+ "    (mov.id_mobil = mob.id_mobil "
-				+ "    and mov.id_tp_mov in (:enumList) " //somente movimentações do tipo 51,53 Reclassificação
-				+ "    and mov.id_mov_canceladora is null)" //somente movimentações não canceladas
+				+ "    and mov.id_mov = ("
+				+ "        select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "        from siga.ex_movimentacao ultmovtipo"
+				+ "        where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "              and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "              and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "        )"
+				+ "    )"
 				+ " left join siga.ex_classificacao classific_mov on"
 				+ "    classific_mov.id_classificacao = mov.id_classificacao"
 				+ " join corporativo.dp_lotacao lotacao on"

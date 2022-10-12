@@ -5349,9 +5349,10 @@ public class ExMovimentacaoController extends ExController {
 		
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 		
-		if(classificacaoAtualSel == null){
+		if(classificacaoAtualSel == null ||  classificacaoAtualSel.getId() == null || 
+                classificacaoNovaSel == null || classificacaoNovaSel.getId() == null){
 			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Não foram informados dados para a reclassificação ou avaliação");
+			result.include("mensagemCabec", "Não foram informados dados para a reclassificação");
 			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
 					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
 			return;
@@ -5360,6 +5361,14 @@ public class ExMovimentacaoController extends ExController {
 		if(classificacaoAtualSel.getSigla().equals(classificacaoNovaSel.getSigla())){
 			result.include("msgCabecClass", "alert-danger");
 			result.include("mensagemCabec", "Classificação selecionada para reclassificar é a mesma da atual");
+			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
+					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
+			return;
+		}
+
+		if(documentosSelecionados.isEmpty()){
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "Não foram selecionados documentos para a reclassificação");
 			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
 					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
 			return;

@@ -140,7 +140,7 @@
             let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla');
             let siglaClassificacaoNova = document.getElementById('formulario_classificacaoNovaSel_sigla');
             if (siglaClassificacaoAtual.value === siglaClassificacaoNova.value) {
-                sigaModal.alerta('As seleções de classificação atual e nova são iguais. ' +
+                sigaModal.alerta('Nova classificação selecionada para reclassificar é a mesma da atual. ' +
                     'Selecione valores diferentes para a reclassificação');
                 return;
             }

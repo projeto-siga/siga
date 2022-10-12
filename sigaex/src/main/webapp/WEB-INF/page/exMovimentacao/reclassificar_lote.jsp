@@ -81,8 +81,10 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Ok</button>
-                                <button type="button" onclick="history.back();" class="btn btn-primary">
+                                <button type="button" class="btn btn-primary" onclick="confirmar();">
+                                    Ok
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="history.back();">
                                     Cancela
                                 </button>
                             </div>
@@ -93,14 +95,26 @@
                 </form>
             </div>
         </div>
+        <siga:siga-modal id="confirmacaoModal" exibirRodape="false"
+                         tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
+            <div class="modal-body">
+                Todos os documentos ser&atilde;o Reclassificados. Deseja, confirmar?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
+                <a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true"
+                   onclick="document.frm.submit()">
+                    Sim</a>
+            </div>
+        </siga:siga-modal>
     </div>
     <script type="text/javascript">
         function listarDocumentosParaReclassificarEmLote(offset) {
             offset = offset == null ? 0 : offset;
 
-            let siglaClassificacao = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
+            let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
             let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?siglaClassificacao='
-                + siglaClassificacao + '&offset=' + offset;
+                + siglaClassificacaoAtual + '&offset=' + offset;
 
             $.ajax({
                 url: url,
@@ -108,7 +122,36 @@
                     $('#documentos').html(data);
                 }
             });
-
         }
+
+        function confirmar() {
+            let classificacaoAtualSelSpan = document.getElementById('classificacaoAtualSelSpan');
+            if (classificacaoAtualSelSpan.textContent.trim() === '') {
+                sigaModal.alerta('Selecione classificação atual');
+                return;
+            }
+
+            let classificacaoNovaSelSpan = document.getElementById('classificacaoNovaSelSpan');
+            if (classificacaoNovaSelSpan.textContent.trim() === '') {
+                sigaModal.alerta('Selecione a nova classificação');
+                return;
+            }
+
+            let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla');
+            let siglaClassificacaoNova = document.getElementById('formulario_classificacaoNovaSel_sigla');
+            if (siglaClassificacaoAtual.value === siglaClassificacaoNova.value) {
+                sigaModal.alerta('As seleções de classificação atual e nova são iguais. ' +
+                    'Selecione valores diferentes para a reclassificação');
+                return;
+            }
+
+            let checkedElements = $("input[name='documentosSelecionados']:checked");
+            if (checkedElements.length == 0) {
+                sigaModal.alerta('Selecione pelo menos um documento');
+            } else {
+                sigaModal.abrir('confirmacaoModal');
+            }
+        }
+
     </script>
 </siga:pagina>

@@ -2632,35 +2632,37 @@ public class ExDao extends CpDao {
 				+ " join siga.ex_classificacao classific_doc on" 
 				+ "    classific_doc.id_classificacao = doc.id_classificacao" 
 				+ " full join siga.ex_movimentacao mov on" 
-				+ "    (mov.id_mobil = mob.id_mobil "
-				+ "    and mov.id_mov = ("
-				+ "        select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
-				+ "        from siga.ex_movimentacao ultmovtipo"
-				+ "        where ultmovtipo.id_mobil = mob.id_mobil"
-				+ "              and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
-				+ "              and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
-				+ "        )"
-				+ "    )"
+				+ "    mov.id_mobil = mob.id_mobil and mov.id_tp_mov in (:enumList) and mov.id_mov_canceladora is null "
 				+ " left join siga.ex_classificacao classific_mov on" 
 				+ "    classific_mov.id_classificacao = mov.id_classificacao" 
 				+ " join corporativo.dp_lotacao lotacao on" 
 				+ "    lotacao.id_lotacao = doc.id_lota_cadastrante" 
 				+ " join corporativo.dp_pessoa pessoa on" 
 				+ "    pessoa.id_pessoa = doc.id_cadastrante" 
-				+ " where" 
-				+ "    doc.dt_finalizacao is not null" 
+				+ " where"
+				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.dt_finalizacao is not null" 
 				+ "    and doc.dt_primeiraassinatura is not null" 
-				+ "    and mob.id_tipo_mobil = 1" //somente mobil geral
 				+ "    and pessoa.id_pessoa_inicial = :pessoaIni" 
-				+ "    and lotacao.id_lotacao_ini = :lotaIni" 
-				+ "    and (classific_doc.codificacao like :mascara and classific_mov.codificacao is null)" 
-				+ "    or (classific_mov.codificacao like :mascara)"
+				+ "    and lotacao.id_lotacao_ini = :lotaIni"
+				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
+				+ "        or (classific_mov.codificacao is not null"
+				+ "            and mov.id_mov = ("
+				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "                from siga.ex_movimentacao ultmovtipo"
+				+ "                where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "                and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "            )"
+				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "        )"
+				+ "    )"
 				+ " order by mob.dnm_sigla";
 		
 		Query query = em().createNativeQuery(sql, "DocumentosPorCodificacaoClassificacao");
 
-		query.setParameter("pessoaIni", cadastrante.getId());
-		query.setParameter("lotaIni", cadastrante.getLotacao().getId());
+		query.setParameter("pessoaIni", cadastrante.getIdPessoaIni());
+		query.setParameter("lotaIni", cadastrante.getIdLotacaoIni());
 		query.setParameter("mascara", classificacaoSigla);
 		query.setParameter("enumList", Arrays.asList(
 				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
@@ -2686,15 +2688,7 @@ public class ExDao extends CpDao {
 				+ " join siga.ex_classificacao classific_doc on"
 				+ "    classific_doc.id_classificacao = doc.id_classificacao"
 				+ " full join siga.ex_movimentacao mov on"
-				+ "    (mov.id_mobil = mob.id_mobil "
-				+ "    and mov.id_mov = ("
-				+ "        select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
-				+ "        from siga.ex_movimentacao ultmovtipo"
-				+ "        where ultmovtipo.id_mobil = mob.id_mobil"
-				+ "              and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
-				+ "              and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
-				+ "        )"
-				+ "    )"
+				+ "    mov.id_mobil = mob.id_mobil and mov.id_tp_mov in (:enumList) and mov.id_mov_canceladora is null "
 				+ " left join siga.ex_classificacao classific_mov on"
 				+ "    classific_mov.id_classificacao = mov.id_classificacao"
 				+ " join corporativo.dp_lotacao lotacao on"
@@ -2702,19 +2696,29 @@ public class ExDao extends CpDao {
 				+ " join corporativo.dp_pessoa pessoa on"
 				+ "    pessoa.id_pessoa = doc.id_cadastrante"
 				+ " where"
-				+ "    doc.dt_finalizacao is not null"
+				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.dt_finalizacao is not null"
 				+ "    and doc.dt_primeiraassinatura is not null"
-				+ "    and mob.id_tipo_mobil = 1" //somente mobil geral
 				+ "    and pessoa.id_pessoa_inicial = :pessoaIni"
 				+ "    and lotacao.id_lotacao_ini = :lotaIni"
-				+ "    and (classific_doc.codificacao like :mascara and classific_mov.codificacao is null)"
-				+ "    or (classific_mov.codificacao like :mascara)"
+				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
+				+ "        or (classific_mov.codificacao is not null"
+				+ "            and mov.id_mov = ("
+				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "                from siga.ex_movimentacao ultmovtipo"
+				+ "                where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "                and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "            )"
+				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "        )"
+				+ "    )"
 				+ " )";
 
 		Query query = em().createNativeQuery(sql);
 
-		query.setParameter("pessoaIni", cadastrante.getId());
-		query.setParameter("lotaIni", cadastrante.getLotacao().getId());
+		query.setParameter("pessoaIni", cadastrante.getIdPessoaIni());
+		query.setParameter("lotaIni", cadastrante.getIdLotacaoIni());
 		query.setParameter("mascara", classificacaoSigla);
 		query.setParameter("enumList", Arrays.asList(
 				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),

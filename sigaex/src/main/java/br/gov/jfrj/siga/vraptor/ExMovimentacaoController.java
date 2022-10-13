@@ -5348,9 +5348,11 @@ public class ExMovimentacaoController extends ExController {
 										  final int offset) throws Exception {
 		
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
-		
-		if(classificacaoAtualSel == null ||  classificacaoAtualSel.getId() == null || 
-                classificacaoNovaSel == null || classificacaoNovaSel.getId() == null){
+
+		if (classificacaoAtualSel == null || classificacaoAtualSel.getId() == null || 
+				classificacaoNovaSel == null || classificacaoNovaSel.getId() == null || 
+				motivo == null || motivo.trim().equals("")) {
+			
 			result.include("msgCabecClass", "alert-danger");
 			result.include("mensagemCabec", "Não foram informados dados para a reclassificação");
 			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,

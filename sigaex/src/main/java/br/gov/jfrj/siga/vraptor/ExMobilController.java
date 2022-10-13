@@ -1058,8 +1058,7 @@ public class ExMobilController extends
 	}
 
 	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
-	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao,
-													final int offset) {
+	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao, final int offset) {
 
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 

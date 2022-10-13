@@ -73,7 +73,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label>Motivo
-                                    <input type="text" name="motivo" maxLength="128" class="form-control"/>
+                                    <input type="text" id="motivo" name="motivo" maxLength="128" class="form-control"/>
                                 </label>
                             </div>
                         </div>
@@ -142,6 +142,12 @@
             if (siglaClassificacaoAtual.value === siglaClassificacaoNova.value) {
                 sigaModal.alerta('Nova classificação selecionada para reclassificar é a mesma da atual. ' +
                     'Selecione valores diferentes para a reclassificação');
+                return;
+            }
+
+            let motivo = document.getElementById('motivo');
+            if (motivo.value.trim() === '') {
+                sigaModal.alerta('É necessário informar o motivo da reclassificação');
                 return;
             }
 

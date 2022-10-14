@@ -536,7 +536,7 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				if(Prop.get("arquivo.tamanho.gc") != null) {
+				if(!Prop.getBool("garbage.tarefa") && Prop.get("arquivo.tamanho.gc") != null) {
 					garbage += ab.length;
 					if (garbage > Long.valueOf(Prop.get("arquivo.tamanho.gc"))) {
 						garbage = 0;
@@ -701,7 +701,7 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				if(Prop.get("arquivo.contagem.gc") != null) {
+				if(!Prop.getBool("garbage.tarefa") && Prop.get("arquivo.contagem.gc") != null) {
 					garbage += 1;
 					if (garbage > Long.valueOf(Prop.get("arquivo.contagem.gc"))) {
 						garbage = 0;

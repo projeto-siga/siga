@@ -1067,18 +1067,18 @@ public class ExMobilController extends
 
 		if (siglaClassificacao != null) {
 			tamanho = ExDao.getInstance()
-					.consultarQuantidadeParaReclassificarEmLote(getCadastrante(), siglaClassificacao);
+					.consultarQuantidadeParaReclassificarEmLote(getTitular(), siglaClassificacao);
 
 		}
 		if (Objects.nonNull(tamanho)) {
 			List<ExDocumentoVO> documentosPorCodificacaoClassificacao = ExDao.getInstance()
-					.consultarParaReclassificarEmLote(getCadastrante(), siglaClassificacao, offset, itemPagina);
+					.consultarParaReclassificarEmLote(getTitular(), siglaClassificacao, offset, itemPagina);
 			
 			List<ExDocumentoVO> itens = new ArrayList<>();
 			for(ExDocumentoVO item : documentosPorCodificacaoClassificacao){
 				ExMobil mob = dao().consultar(item.getIdDoc(), ExDocumento.class, false).getMobilGeral();
-				
-				if(new ExPodeReclassificar(mob,getCadastrante(),getLotaCadastrante()).eval()){
+
+				if (new ExPodeReclassificar(mob, getTitular(), getLotaTitular()).eval()) {
 					itens.add(item);
 				}
 			}

@@ -33,6 +33,7 @@ import org.jboss.logging.Logger;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
@@ -4393,8 +4394,8 @@ public class ExMovimentacaoController extends ExController {
 		
 		listaIdMovs.addAll(Arrays.asList(ids.split(";")));
 		StringBuilder texto = new StringBuilder();
-		texto.append(linha1 != null ? "<b>"+linha1+"</b><br>" : "");
-		texto.append(linha2 != null ? "<b>"+linha2+"</b><br>" : "");
+		texto.append(linha1 != null ? "<div style=\"text-indent: 15px;\"><p><b>"+linha1+"</b></p><br>" : "");
+		texto.append(linha2 != null ? "<div style=\"text-indent: 15px;\"><p><b>"+linha2+"</b></p><br>" : "");
 		
 		for (String string : listaIdMovs) {
 			mov = dao().consultar(Long.valueOf(string), ExMovimentacao.class, false);
@@ -4408,7 +4409,8 @@ public class ExMovimentacaoController extends ExController {
 					}
 				}
 			}
-			texto.append(textoDoc.replace("\n", "<br>") + "<br><br>");
+			texto.append(linha1 != null ? "<div style=\"text-indent: 15px;\">" : "");
+			texto.append((textoDoc.replace("\n", "<br>")).replaceFirst("<br>", "") + "<br><br>");
 			
 		}
 		setMensagem(texto.toString());
@@ -4498,7 +4500,7 @@ public class ExMovimentacaoController extends ExController {
 				}
 			}
 		}
-		
+		result.include("listaPermissoes",new Gson().toJson(Ex.getInstance().getBL().listarPermissoesDOE()));
 		result.include("idModelo", idModelo);
 		result.include("listMov", idModelo != null && !idModelo.equals(0L) ? listFiltradaMovs : listaMovs);
 		result.include("listModelos", listModelos);

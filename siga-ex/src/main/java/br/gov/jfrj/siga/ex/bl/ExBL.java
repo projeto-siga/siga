@@ -228,6 +228,7 @@ import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
 import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
 import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -1063,13 +1064,14 @@ public class ExBL extends CpBL {
 			Integer posicao = -1;
 			Integer posicaoFinal = -1;
 			ConversaoDoeEnum palavraFinal = null;
-			
-			List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
-			for (ConversaoDoeEnum palavra : listaPalavas) {
-				posicao = html.toLowerCase().indexOf(palavra.getImperativo());
-				if((posicaoFinal > posicao && posicao != -1) || (posicaoFinal == -1 && posicao != -1)) {
-					posicaoFinal = posicao;
-					palavraFinal = palavra;
+			if(doc.getExModelo().getNmMod().contains("Resolução")) {
+				List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
+				for (ConversaoDoeEnum palavra : listaPalavas) {
+					posicao = html.toLowerCase().indexOf(palavra.getImperativo());
+					if((posicaoFinal > posicao && posicao != -1) || (posicaoFinal == -1 && posicao != -1)) {
+						posicaoFinal = posicao;
+						palavraFinal = palavra;
+					}
 				}
 			}
 			if(posicaoFinal != -1)
@@ -1129,6 +1131,45 @@ public class ExBL extends CpBL {
 			throw new RuntimeException("Erro ao anexar documento.", e);
 		}
 	}
+	
+	public List<PermissaoPublicanteDto> listarPermissoesDOE() {
+//		AuthHeader user = new AuthHeader();
+//		user.setUserName(usuario);
+//		user.setPassword(senha);
+//		PubnetConsultaService pub = new PubnetConsultaService();
+//		return pub.consultarPermissaoPublicante(user);
+		
+		List<PermissaoPublicanteDto> lista = new ArrayList<PermissaoPublicanteDto>();
+		lista.add(new PermissaoPublicanteDto("permissao1", 0, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ", 
+				"273ª Ciretran - Ferraz de Vasconcelos", 5L, 12L, "APOS", "Apostila", 2));
+		lista.add(new PermissaoPublicanteDto("permissao2", 1, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ZABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 5L, 12L, "APOS", "Apostila", 3));
+		lista.add(new PermissaoPublicanteDto("permissao3", 2, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 8L, 41L, "ATA", "Ata", 2));
+		lista.add(new PermissaoPublicanteDto("permissao4", 3, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 13L, 163L, "BALA", "Balanço", 2));
+		lista.add(new PermissaoPublicanteDto("permissao5", 4, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 18L, 19L, "COMU", "Comunicado", 2));
+		lista.add(new PermissaoPublicanteDto("permissao6", 5, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ZABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 18L, 19L, "COMU", "Comunicado", 3));
+		lista.add(new PermissaoPublicanteDto("permissao7", 6, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 30L, 15L, "DELB", "Deliberação", 2));
+		lista.add(new PermissaoPublicanteDto("permissao8", 7, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ZABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos",  30L, 15L, "DELB", "Deliberação", 3));
+		lista.add(new PermissaoPublicanteDto("permissao9", 8, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 31L, 13L, "DESP", "Despacho", 2));
+		lista.add(new PermissaoPublicanteDto("permissao20", 19, 28289L, "APTA-DEPARTAMENTO DE GESTAO ESTRATEGICA", "JEVA",
+				"Agência Paulista de Tecnologia dos Agronegócios", 5L, 12L, "APOS", "Apostila", 2));
+		lista.add(new PermissaoPublicanteDto("permissao2932", 2931, 22856L, "Departamento de Suprimentos e Licitações - Secr. Educação", "KHCS",
+				"Núcleo de Apoio Administrativo", 62L, 33L, "RETF", "Retificação", 3));
+		lista.add(new PermissaoPublicanteDto("permissao2933", 2932, 22856L, "Departamento de Suprimentos e Licitações - Secr. Educação", "KHCS",
+				"Núcleo de Apoio Administrativo", 63L, 29L, "RARE", "Retificação / Ratificação", 2));
+		lista.add(new PermissaoPublicanteDto("permissao2934", 2933, 22856L, "Departamento de Suprimentos e Licitações - Secr. Educação", "KHCS",
+				"Núcleo de Apoio Administrativo", 136L, 176L, "SUPE", "Suplemento", 2));
+		
+		return lista;
+	}
+
 
 	public void anexarArquivoAuxiliar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, String nmArqMov, final DpPessoa titular,

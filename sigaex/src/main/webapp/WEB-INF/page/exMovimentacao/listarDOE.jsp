@@ -75,7 +75,7 @@
 			     }
 			}
 			
-			if(texto == "Resolução" && primeiro != "") {
+			if(texto.indexOf("Resolução") != -1 && primeiro != "") {
 				var hoje = new Date;
 				var mes = hoje.getMonth()+1;
 				hojeFormatado = hoje.getDate() + "-" + mes + "-" + hoje.getFullYear();
@@ -89,26 +89,16 @@
 						document.getElementById("linha1").value = "Resoluções de " +  hojeFormatado;
 				 	 }
 				});
+			} else {
+				document.getElementById("linha2").value = "";
+				document.getElementById("linha1").value = "";
 			}
 		}
 		
 		function validarCampos() {
-			var idAnunciante = document.getElementsByName('idAnunciante')[0].value;
 			var idMateria = document.getElementsByName('idMateria')[0].value;	
 			var idCaderno = document.getElementsByName('idCaderno')[0].value;
 			var idSecao = document.getElementsByName('idSecao')[0].value;
-			
-			if (idAnunciante==0) {									
-				sigaModal.alerta("Atenção! O campo Anunciante precisa ser preenchido.");				
-				document.getElementById('idAnunciante').focus();
-				return;	
-			}
-			
-			if (idMateria==0) {									
-				sigaModal.alerta("Atenção! O campo Matéria precisa ser preenchido.");				
-				document.getElementById('idMateria').focus();
-				return;	
-			}
 			
 			if (idCaderno==0) {									
 				sigaModal.alerta("Atenção! O campo Caderno precisa ser preenchido.");				
@@ -122,8 +112,107 @@
 				return;	
 			}
 			
+			if (idMateria==0) {									
+				sigaModal.alerta("Atenção! O campo Tipo de Matéria precisa ser preenchido.");				
+				document.getElementById('idMateria').focus();
+				return;	
+			}
+			
+			var aChk = document.getElementsByName("movSelecionados");
+			var boolArquivo = true;
+			for (var i=0;i<aChk.length;i++){
+				 var item = aChk[i];
+			    if (item.type == "checkbox" && item.checked) {
+			    	boolArquivo = false;
+					break;
+			    }
+			}
+
+			if (boolArquivo) {									
+				sigaModal.alerta("Atenção! Selecione pelo menos um arquivo.");
+				return;	
+			}
+			
+			$('#confirmacaoModal').modal('show');
+		}
+		
+		function abrirLogin() {
+			$('#confirmacaoModal').modal('hide');
 			$('#myModal').modal('show');
-		}		
+		}
+		
+		function carregarCaderno(lista) {
+			var jaExiste = false;
+			var selectCaderno = document.getElementById("idCaderno");
+			
+			selectCaderno.innerHTML = "";
+			selectCaderno.add(new Option("Selecione", "0"));
+			
+			if(lista != null) {
+				for (var i = 0; i < lista.length; i++) {
+					jaExiste = false;
+					for (a = 0; a < selectCaderno.length; a = a + 1) {
+						if(selectCaderno.options[a].value == lista[i].cadernoIdentificador) {
+							jaExiste = true;
+					    	break;
+						}
+					}
+					if(!jaExiste) {
+					    var option = new Option(lista[i].cadernoIdentificador, lista[i].cadernoIdentificador);
+					    selectCaderno.add(option);
+					}
+				}
+			}
+		}
+		
+		function carregarSecao(lista) {
+			var jaExiste = false;
+			var selectSecao = document.getElementById("idSecao");
+			var selectCaderno = document.getElementById("idCaderno");
+			
+			selectSecao.innerHTML = "";
+			selectSecao.add(new Option("Selecione", "0"));
+			for (var i = 0; i < lista.length; i++) {
+				jaExiste = false;
+				for (a = 0; a < selectSecao.length; a = a + 1) {
+					if(selectSecao.options[a].value == lista[i].retrancaCodigo) {
+						jaExiste = true;
+				    	break;
+					}
+				}
+				if(!jaExiste && selectCaderno.value == lista[i].cadernoIdentificador) {
+				    var option = new Option(lista[i].retrancaDescricao, lista[i].retrancaCodigo);
+				    selectSecao.add(option);
+				}
+			}	
+			
+		}
+		
+		function carregarMateria(lista) {
+			var jaExiste = false;
+			var selectSecao = document.getElementById("idSecao");
+			var selectMateria = document.getElementById("idMateria");
+			
+			selectMateria.innerHTML = "";
+			selectMateria.add(new Option("Selecione", "0"));
+			
+			for (var i = 0; i < lista.length; i++) {
+				jaExiste = false;
+				for (a = 0; a < selectMateria.length; a = a + 1) {
+					if(selectMateria.options[a].value == lista[i].tipoMateriaCodigo) {
+						jaExiste = true;
+				    	break;
+					}
+				}
+				if(!jaExiste && selectSecao.value == lista[i].retrancaCodigo) {
+				    var option = new Option(lista[i].tipoMateriaDescr, lista[i].tipoMateriaCodigo);
+				    selectMateria.add(option);
+				}
+			}	
+			
+		}
+		
+
 	</script>
 	
 	<div class="container-fluid">
@@ -219,34 +308,26 @@
 						   
 						</table>
 						<div class="form-group row">
-							<div class="col-sm-3">
+							<div class="col-sm-4">
 								<div class="form-group">
-									<label>Anunciante</label>
-									<select class="form-control siga-select2" id="idAnunciante" name="idAnunciante">
+									<label>Caderno</label>
+									<select class="form-control siga-select2" id="idCaderno" name="idCaderno" onchange='carregarSecao(${listaPermissoes})'>
 										<option value="0">Selecione</option>
 									</select>
 								</div>
 							</div>
-							<div class="col-sm-3">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label>Seção</label>
+									<select class="form-control siga-select2" id="idSecao" name="idSecao" onchange='carregarMateria(${listaPermissoes})'>
+										<option value="0">Selecione</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-4">
 								<div class="form-group">
 									<label>Tipo de Matéria</label>
 									<select class="form-control siga-select2" id="idMateria" name="idMateria">
-										<option value="0">Selecione</option>
-									</select>
-								</div>
-							</div>
-							<div class="col-sm-3">
-								<div class="form-group">
-									<label>Caderno</label>
-									<select class="form-control siga-select2" id="idCaderno" name="idCaderno">
-										<option value="0">Selecione</option>
-									</select>
-								</div>
-							</div>
-							<div class="col-sm-3">
-								<div class="form-group">
-									<label>Seção</label>
-									<select class="form-control siga-select2" id="idSecao" name="idSecao">
 										<option value="0">Selecione</option>
 									</select>
 								</div>
@@ -260,6 +341,10 @@
 						</div>
 						</div>
 					</c:if>
+					<siga:siga-modal id="confirmacaoModal" exibirRodape="true" tituloADireita="Confirmação"
+						descricaoBotaoFechaModalDoRodape="Cancelar" linkBotaoDeAcao="javascript:abrirLogin();">
+						<div class="modal-body">Os arquivos selecionados serão enviados ao PubNet! Prosseguir?</div>
+					</siga:siga-modal>
 					<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					  <div class="modal-dialog">
 					    <div class="modal-content">
@@ -300,10 +385,11 @@
 		var select = frm.idModelo;
 		var option = select.children[select.selectedIndex];
 		var texto = option.textContent;
-		if(texto == "Resolução") {
+		if(texto.indexOf("Resolução") != -1) {
 			document.getElementById("div1").style.display = "block";
 		    document.getElementById("div2").style.display = "block";
 		}
+		carregarCaderno(${listaPermissoes});
 	} 
 	
 	$(document).ready(function() {

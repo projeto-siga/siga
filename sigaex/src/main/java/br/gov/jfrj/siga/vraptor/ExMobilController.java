@@ -1062,7 +1062,7 @@ public class ExMobilController extends
 
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
-		int itemPagina = 10;
+		int itemPagina = 50;
 		Integer tamanho = null;
 
 		if (siglaClassificacao != null) {

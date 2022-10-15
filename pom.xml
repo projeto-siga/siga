@@ -385,7 +385,7 @@
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcpkix-jdk15on</artifactId>
-				<version>1.50</version>
+				<version>1.70</version>
 				<scope>provided</scope>
 			</dependency>
 

@@ -21,6 +21,7 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -310,11 +311,13 @@ import net.sf.jasperreports.engine.JRException;
 							dtCancel = 0L;
 							tramitou = false;
 						}
-						if (gcCounter > 200) {
-							gcCounter = 0;
-							System.gc();
-						} else {
-							gcCounter += 1;
+						if(!Prop.getBool("garbage.tarefa")) {
+							if (gcCounter > 200) {
+								gcCounter = 0;
+								System.gc();
+							} else {
+								gcCounter += 1;
+							}
 						}
 						mov1 = mov2;
 						idDoc1 = idDoc2;

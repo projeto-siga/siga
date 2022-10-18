@@ -64,6 +64,11 @@
 						</c:otherwise>
 					</c:choose>
 				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;RECLALOTE:Reclassificar em Lote')}">
+					<li><a class="dropdown-item"
+						   href="/sigaex/app/expediente/mov/reclassificar_lote">Reclassificar em Lote</a></li>
+				</c:if>
 			</c:catch>
 
 

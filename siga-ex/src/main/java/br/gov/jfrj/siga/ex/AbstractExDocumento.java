@@ -28,26 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
@@ -246,6 +229,21 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "					and doc.dtFinalizacao is not null"
 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
 				+ "				order by  doc.dtFinalizacao") })
+@SqlResultSetMappings(value = {
+		@SqlResultSetMapping(name="DocumentosPorCodificacaoClassificacao",
+				classes = {
+						@ConstructorResult(
+								targetClass = ExDocumentoVO.class,
+								columns = {
+										@ColumnResult(name="idDoc", type = Long.class),
+										@ColumnResult(name="sigla", type = String.class),
+										@ColumnResult(name="classificacaoSigla", type = String.class),
+										@ColumnResult(name="lotaCadastranteString", type = String.class),
+										@ColumnResult(name="cadastranteString", type = String.class),
+										@ColumnResult(name="descrDocumento", type = String.class)
+								}
+						)
+				}) })
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 	

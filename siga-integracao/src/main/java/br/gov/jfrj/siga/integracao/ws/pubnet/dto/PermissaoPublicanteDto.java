@@ -45,37 +45,6 @@ public class PermissaoPublicanteDto implements Serializable {
 	@JsonProperty("caderno_identificador")
 	private Integer cadernoIdentificador;
 
-
-	
-	public PermissaoPublicanteDto(String idPermissao, Integer rowOrder, Long anuncianteId, String anuncianteRazaoSocial, String retrancaCodigo, String retrancaDescricao,
-			Long tipoMateriaIdr, Long tipoMateriaOrdem, String tipoMateriaCodigo, String tipoMateriaDescr, Integer cadernoIdentificador) {
-		this.idPermissao = idPermissao;
-		this.rowOrder = rowOrder;
-		this.anuncianteId = anuncianteId;
-		this.anuncianteRazaoSocial = anuncianteRazaoSocial;
-		this.retrancaCodigo = retrancaCodigo;
-		this.retrancaDescricao = retrancaDescricao;
-		this.tipoMateriaIdr = tipoMateriaIdr;
-		this.tipoMateriaOrdem = tipoMateriaOrdem;
-		this.tipoMateriaCodigo = tipoMateriaCodigo;
-		this.tipoMateriaDescr = tipoMateriaDescr;
-		this.cadernoIdentificador = cadernoIdentificador;
-	}
-
-//	@Override
-//	public String toString() {
-//		return "PermissaoPublicanteDto [idPermissao=" + idPermissao + ", rowOrder=" + rowOrder + ", anuncianteId="
-//				+ anuncianteId + "]";
-//	}
-//	
-//	publi String toString() {
-//	        return "[idPermissao: " + idPermissao + " rowOrder:" + "rowOrder" + " anuncianteId:" + anuncianteId + " anuncianteRazaoSocial:" + anuncianteRazaoSocial + " retrancaCodigo:" + retrancaCodigo 
-//	        		+ " retrancaDescricao:" + retrancaDescricao + " tipoMateriaIdr:" + tipoMateriaIdr + " tipoMateriaOrdem:" + tipoMateriaOrdem + " tipoMateriaCodigo:" + tipoMateriaCodigo 
-//	        		+ " tipoMateriaDescr:" + tipoMateriaDescr + " cadernoIdentificador:" + cadernoIdentificador + 
-//	        		"]";
-//	    }
-
-
 	public String getIdPermissao() {
 		return idPermissao;
 	}

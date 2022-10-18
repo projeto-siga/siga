@@ -13,16 +13,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.xerces.dom.ElementNSImpl;
 import org.json.JSONObject;
 import org.json.XML;
 import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.apache.xerces.dom.ElementNSImpl;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
@@ -137,7 +135,7 @@ public class PubnetConsultaService {
 		StringWriter writer = new StringWriter();
 		StreamResult result = new StreamResult(writer);
 
-		transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING_DEFAULT_XML);
+		transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING_UTF_8);
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		transformer.transform(new DOMSource(document), result);
 		// TODO Remover

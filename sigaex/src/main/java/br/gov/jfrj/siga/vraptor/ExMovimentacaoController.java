@@ -4484,27 +4484,31 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/exMovimentacao/listarDOE")
-	public void listarDOE(Long idModelo) {
-		List<ExMovimentacao> listaMovs = 
-				dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, getTitular());
-		
-		List<ExMovimentacao> listFiltradaMovs = new ArrayList<ExMovimentacao>();
-		
-		List<ExModelo> listModelos = new ArrayList<ExModelo>();
-		for (ExMovimentacao exMovimentacao : listaMovs) {
-			if(!listModelos.contains(exMovimentacao.getExMobil().getDoc().getExModelo())) {
-				listModelos.add(exMovimentacao.getExMobil().getDoc().getExModelo());
-			}
-			if(idModelo != null && !idModelo.equals(0L)) {
-				if(idModelo.equals(exMovimentacao.getExMobil().getDoc().getExModelo().getId())) {
-					listFiltradaMovs.add(exMovimentacao);
+	public void listarDOE(Long idModelo) throws Exception {
+		try {
+			List<ExMovimentacao> listaMovs = 
+					dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, getTitular());
+			
+			List<ExMovimentacao> listFiltradaMovs = new ArrayList<ExMovimentacao>();
+			
+			List<ExModelo> listModelos = new ArrayList<ExModelo>();
+			for (ExMovimentacao exMovimentacao : listaMovs) {
+				if(!listModelos.contains(exMovimentacao.getExMobil().getDoc().getExModelo())) {
+					listModelos.add(exMovimentacao.getExMobil().getDoc().getExModelo());
+				}
+				if(idModelo != null && !idModelo.equals(0L)) {
+					if(idModelo.equals(exMovimentacao.getExMobil().getDoc().getExModelo().getId())) {
+						listFiltradaMovs.add(exMovimentacao);
+					}
 				}
 			}
+			result.include("listaPermissoes", new Gson().toJson(Ex.getInstance().getBL().listarPermissoesDOE()));
+			result.include("idModelo", idModelo);
+			result.include("listMov", idModelo != null && !idModelo.equals(0L) ? listFiltradaMovs : listaMovs);
+			result.include("listModelos", listModelos);
+		} catch (final Exception e) {
+			throw e;
 		}
-		result.include("listaPermissoes",new Gson().toJson(Ex.getInstance().getBL().listarPermissoesDOE()));
-		result.include("idModelo", idModelo);
-		result.include("listMov", idModelo != null && !idModelo.equals(0L) ? listFiltradaMovs : listaMovs);
-		result.include("listModelos", listModelos);
 	}
 	
 

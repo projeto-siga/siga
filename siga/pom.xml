@@ -176,11 +176,6 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
-			<artifactId>Tidy</artifactId>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api -->
 		<dependency>
 			<groupId>javax.enterprise</groupId>
@@ -192,5 +187,11 @@
 			<groupId>com.crivano</groupId>
 			<artifactId>swaggerservlet</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>br.jus.trf2.xjus</groupId>
+			<artifactId>x-jus-record-api</artifactId>
+		</dependency>
+		
 	</dependencies>
 </project>

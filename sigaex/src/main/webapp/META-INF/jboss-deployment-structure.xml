@@ -5,6 +5,7 @@
 		<module-alias name="deployment.sigaex" />
 		<exclusions>
 			<module name="org.apache.xalan" />
+			<module name="org.apache.logging.log4j.api" />
 		</exclusions>
 		
 		<dependencies>

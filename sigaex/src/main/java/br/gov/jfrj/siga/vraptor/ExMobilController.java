@@ -48,6 +48,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.gov.jfrj.siga.cp.logic.CpPodePorConfiguracao;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -311,7 +312,10 @@ public class ExMobilController extends
 		try {
 			final ExMobilDaoFiltro flt = createDaoFiltro();
 			//long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,getTitular(), getLotaTitular()));
+
+			pesquisarXjus(flt);
+			Integer tamanhoResultado = flt.getListaIdDoc() == null ? null : flt.getListaIdDoc().size();
+			setTamanho(tamanhoResultado == null ? dao().consultarQuantidadePorFiltroOtimizado(flt, getTitular(), getLotaTitular()) : tamanhoResultado);
 			
 			
 			LocalDate dtIni = null;
@@ -601,7 +605,10 @@ public class ExMobilController extends
 	}
 
 	private void pesquisarXjus(ExMobilDaoFiltro flt) {
-		if (!(new ExPodePorConfiguracao(getTitular(), getLotaTitular()).withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_XJUS).eval())) {
+		if (!( new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_AVANCADA_VIA_XJUS)
+				.eval() )
+		) {
 			flt.setDescrPesquisaXjus(null);
 			return;
 		}
@@ -610,13 +617,16 @@ public class ExMobilController extends
 			return;
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		
+
 		String filter = flt.getDescrPesquisaXjus();
 		String acronimoOrgaoUsu = dao().consultarOrgaoUsuarioPorId(flt.getIdOrgaoUsu()).getAcronimoOrgaoUsu();
 		String descEspecie = flt.getIdFormaDoc() == null || flt.getIdFormaDoc() == 0 ? null : dao().consultarExFormaPorId(flt.getIdFormaDoc()).getDescrFormaDoc();
-		String descModelo = flt.getIdMod() == null  || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getNmMod();
+		String descModelo = flt.getIdMod() == null || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getNmMod();
 		String dataInicial = flt.getDtDoc() == null ? null : df.format(flt.getDtDoc());
 		String dataFinal = flt.getDtDocFinal() == null ? null : df.format(flt.getDtDocFinal());
+		String anoEmissao = flt.getAnoEmissao() == null || flt.getAnoEmissao() == 0 ? null : flt.getAnoEmissao().toString();
+		String numeroExpediente = flt.getNumExpediente() == null ? null : String.format("%05d", flt.getNumExpediente());
+		String lotacaoSubscritor = flt.getLotaSubscritorSelId() == null || flt.getLotaSubscritorSelId() == 0 ? null : daoLot(flt.getLotaSubscritorSelId()).getSiglaLotacao();
 		String acl = "PUBLIC;O" + getTitular().getOrgaoUsuario().getId() + ";L"
 				+ getTitular().getLotacao().getIdInicial() + ";P"
 				+ getTitular().getIdInicial();
@@ -632,7 +642,10 @@ public class ExMobilController extends
 					descEspecie,
 					descModelo,
 					dataInicial, 
-					dataFinal, 
+					dataFinal,
+					anoEmissao,
+					numeroExpediente,
+					lotacaoSubscritor,
 					acl, 
 					page++, 
 					1000));

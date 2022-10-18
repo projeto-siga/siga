@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
@@ -123,6 +124,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
+import br.gov.jfrj.siga.cp.model.enm.CpExtensoesDeArquivoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeGrupoEnum;
@@ -1692,11 +1694,6 @@ public class ExBL extends CpBL {
 	
 				mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " [Digital]");
 				
-				if (doc.getDtPrimeiraAssinatura() == null) {
-					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
-					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
-				}
-				
 				notificar = new ExNotificar();
 				notificar.cossignatario(doc, cadastrante);
 				
@@ -1797,8 +1794,15 @@ public class ExBL extends CpBL {
 
 	public ValidateResponse assertValid(BlucService bluc, ValidateRequest validatereq) throws Exception {
 		ValidateResponse validateresp = bluc.validate(validatereq);
-		if (validateresp.getErrormsg() != null)
-			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+		if (validateresp.getErrormsg() != null) {
+			if (Prop.isGovSP()) { 
+				throw new AplicacaoException("BluC não conseguiu validar a assinatura digital.");
+			} else {
+				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getErrormsg());
+			}
+			
+		}
+			
 		if (!"GOOD".equals(validateresp.getStatus()) && !"UNKNOWN".equals(validateresp.getStatus()))
 			throw new Exception("BluC não validou a assinatura digital. " + validateresp.getStatus());
 		return validateresp;
@@ -1954,7 +1958,10 @@ public class ExBL extends CpBL {
 			final ExMovimentacao mov;
 			try {
 				iniciarAlteracao();
-	
+				
+				//Atualiza data da primeira assinatura antes de prosseguir com o Hash de Auditoria
+				atualizaDataPrimeiraAssinatura(doc,cadastrante,titular);
+				
 				// Hash de auditoria
 				//
 				final byte[] pdf = doc.getConteudoBlobPdf();
@@ -1967,11 +1974,6 @@ public class ExBL extends CpBL {
 				mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla() + " ["+formaAssinaturaSenha+"]");
 				String cpf = Long.toString(assinante.getCpfPessoa());
 				acrescentarHashDeAuditoria(mov, sha256, autenticando, assinante.getNomePessoa(), cpf, null);
-	
-				if (doc.getDtPrimeiraAssinatura() == null) {
-					doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
-					Ex.getInstance().getBL().gravar(cadastrante, titular, mov.getLotaTitular(), doc);
-				}
 				
 				notificar = new ExNotificar();
 				notificar.cossignatario(doc, cadastrante);
@@ -3157,8 +3159,8 @@ public class ExBL extends CpBL {
 
 			// Pega a data sem horas, minutos e segundos...
 			if (doc.getDtDoc() == null) {
-				c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-				doc.setDtDoc(c.getTime());
+				final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				doc.setDtDoc(sdf.parse(sdf.format(c.getTime())));
 			}
 
 			if (doc.getOrgaoUsuario() == null)
@@ -5797,7 +5799,7 @@ public class ExBL extends CpBL {
 
 	public void processar(final ExDocumento doc, final boolean gravar, final boolean transacao) {
 		// Não existe processamento de modelo para documento capturado
-		if (doc.isCapturado())
+		if (doc.isCapturado() && doc.getExModelo().getExtensoesArquivo() == null)
 			return;
 
 		try {
@@ -6027,6 +6029,8 @@ public class ExBL extends CpBL {
 		attrs.put("lotaCadastrante", doc.getLotaCadastrante());
 		attrs.put("titular", doc.getTitular());
 		attrs.put("lotaTitular", doc.getLotaTitular());
+
+		attrs.put("urlbase", Prop.get("/siga.base.url"));
 
 		params.put("processar_modelo", "1");
 		params.put("finalizacao", "1");
@@ -6973,6 +6977,10 @@ public class ExBL extends CpBL {
 		
 		if (modNovo.getDescMod() != null && modNovo.getDescMod().trim().length() > 256 )
 			throw new AplicacaoException("A Descrição deve conter no máximo 256 caracteres");
+		
+		if (modNovo.getExtensoesArquivo() != null && !CpExtensoesDeArquivoEnum
+				.validaLista(modNovo.getExtensoesArquivo()))
+			throw new AplicacaoException ("Uma das extensões de arquivos informada é inválida.");
 		
 		try {
 			ExDao.iniciarTransacao();
@@ -8518,23 +8526,31 @@ public class ExBL extends CpBL {
 			String descEspecie,
 			String descModelo,
 			String dataInicial, 
-			String dataFinal, 
+			String dataFinal,
+			String anoEmissao,
+			String numeroExpediente,
+			String lotacaoSubscritor,
 			String acl, 
 			int page, 
 			int perpage) throws Exception {
 		
 		final SigaHTTP http = new SigaHTTP();
 		String url = Prop.get("/xjus.url");
-		
-		String facets = (acronimoOrgaoUsu == null ? "" : ("facet_orgao:" + acronimoOrgaoUsu)) +
-						(descEspecie == null ? "" : (",facet_especie:" + descEspecie)) +
-						(descModelo == null ? "" : (",facet_modelo:" + descModelo));
+
+		String facets = ( acronimoOrgaoUsu == null ? "" : ( "facet_orgao:" + acronimoOrgaoUsu ) ) +
+				( descEspecie == null ? "" : ( ",facet_especie:" + descEspecie ) ) +
+				( descModelo == null ? "" : ( ",facet_modelo:" + descModelo ) ) +
+				( anoEmissao == null ? "" : ( ",facet_ano:" + anoEmissao ) ) +
+				( lotacaoSubscritor == null ? "" : ( ",facet_subscritor_lotacao:" + lotacaoSubscritor ) );
 		
 		url += "?filter=" + URLEncoder.encode(filter, "UTF-8") + 
 			   "&facets=" + URLEncoder.encode(facets, "UTF-8") +
 			   "&page=" + page + 
 			   "&perpage=" + perpage;
 
+		if (numeroExpediente != null && !numeroExpediente.isEmpty())
+			url += "&code=" + numeroExpediente;
+				
 		if (dataInicial != null || dataFinal != null)
 			url += "&fromDate=" + ( dataInicial == null ? "" : dataInicial ) +
 					"&toDate=" + ( dataFinal == null ? "" : dataFinal );
@@ -8616,7 +8632,29 @@ public class ExBL extends CpBL {
 					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA.getId(), e);
 		}
 	}
-
 	
+	/*
+	 * 
+	 * Caso não tenha registro de Assinatura, processa a data da primeira assinatura com re-processamento do documento
+	   antes de tirar o Hash do documento para Assinatura Digital do Hash
+	 * 
+	 * Data será sempre atualizada caso não tenha registros de assinatura
+	 * Documento será reprocessado caso a data de Finalização seja diferente de hoje
+	 * 
+	 * */
+
+	public void atualizaDataPrimeiraAssinatura(ExDocumento doc, DpPessoa cadastrante, DpPessoa titular) throws Exception {
+
+		if (doc.getDtPrimeiraAssinatura() == null || doc.getAssinaturasDigitais().isEmpty()) {
+			doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
+			
+			if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
+				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+
+			}
+
+		}
+	}
+
 }
 

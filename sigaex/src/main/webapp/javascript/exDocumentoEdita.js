@@ -372,99 +372,119 @@ function parte_bloquear(partes, p, blocked) {
 }
 
 function parte_atualizar(titular, lotaTitular) {
-	// prepara um vetor com a informação sobre as partes
-	var partes = {};
-	$(".parte_dependentes").each(function(index) {
-		var info = $(this).val().split(":");
-		var id = info[0];
-		var adeps = info[1].split(";");
-		for (var i = 0; i < adeps.length; i++) {
-			adeps[i] = adeps[i].trim();
-			if (adeps[i] == "") {
-				adeps.splice(i, 1);
-				break;
-			}
-		}
-		partes[id] = {
-			id : id,
-			adeps : adeps,
-			block : info[2] == "true",
-			resp : ';' + info[3] + ';',
-			mensagem : $('#parte_mensagem_' + id).val(),
-			checked : $('#parte_chk_' + id).is(":checked"),
-			locked : false, // modificações proibidas pois está marcado como já
-			// preenchido
-			disabled : false, // disabilitado porque depende de algum que
-			// ainda não foi preenchido ou não é da alçada
-			// do responsável
-			blocked : false, // bloqueado por haver um dependente que força o
-			// bloquei dos predecessores
-			active : false
-		};
-		// console.log('checked: ' + id + ' - ' + partes[id].checked);
-	});
+  // prepara um vetor com a informação sobre as partes
+  var partes = {};
+  $(".parte_dependentes").each(function (index) {
+    var info = $(this).val().split(":");
+    var id = info[0];
+    var adeps = info[1].split(";");
+    for (var i = 0; i < adeps.length; i++) {
+      adeps[i] = adeps[i].trim();
+      if (adeps[i] == "") {
+        adeps.splice(i, 1);
+        break;
+      }
+    }
+    partes[id] = {
+      id: id,
+      adeps: adeps,
+      block: info[2] == "true",
+      resp: ";" + info[3] + ";",
+      mensagem: $("#parte_mensagem_" + id).val(),
+      checked: $("#parte_chk_" + id).is(":checked"),
+      locked: false, // modificações proibidas pois está marcado como já
+      // preenchido
+      disabled: false, // disabilitado porque depende de algum que
+      // ainda não foi preenchido ou não é da alçada
+      // do responsável
+      blocked: false, // bloqueado por haver um dependente que força o
+      // bloquei dos predecessores
+      active: false,
+    };
+    // console.log('checked: ' + id + ' - ' + partes[id].checked);
+  });
 
-	// para cada parte
-	for (p in partes) {
-		var id = partes[p].id;
+  // para cada parte
+  for (p in partes) {
+    var id = partes[p].id;
 
-		// verifica o responsavel
-		if (partes[p].resp.indexOf(';' + titular + ';') == -1
-				&& partes[p].resp.indexOf(';' + lotaTitular + ';') == -1) {
-			console.log(id + " desabilitado por ser outro responsável ("
-					+ partes[p].resp + ")" + " titular: " + titular
-					+ " lotaTitular: " + lotaTitular);
-			partes[p].disabled = true;
-		}
-		if (!partes[p].disabled && partes[p].checked) {
-			console.log(id + " trancado por estar preenchido");
-			partes[p].locked = true;
-		}
+    // verifica o responsavel
+    if (
+      partes[p].resp.indexOf(";" + titular + ";") == -1 &&
+      partes[p].resp.indexOf(";" + lotaTitular + ";") == -1
+    ) {
+      console.log(
+        id +
+          " desabilitado por ser outro responsável (" +
+          partes[p].resp +
+          ")" +
+          " titular: " +
+          titular +
+          " lotaTitular: " +
+          lotaTitular
+      );
+      partes[p].disabled = true;
+    }
+    if (!partes[p].disabled && partes[p].checked) {
+      console.log(id + " trancado por estar preenchido");
+      partes[p].locked = true;
+    }
 
-		// para cada dependencia
-		for (var i = 0; i < partes[p].adeps.length; i++) {
-			var d = partes[p].adeps[i];
-			if (!partes[d].checked) {
-				if (partes[p].checked) {
-					console.log(id + " limpo por ser dependente de :" + d);
-					partes[p].checked = false;
-					document.getElementById(id).value = 'Nao';
-				}
-				if (!partes[p].disabled) {
-					console.log(id + " desabilitado por ser dependente de :"
-							+ d);
-					partes[p].disabled = true;
-				}
-			}
-		}
+    // para cada dependencia
+    for (var i = 0; i < partes[p].adeps.length; i++) {
+      var d = partes[p].adeps[i];
+      if (!partes[d].checked) {
+        if (partes[p].checked) {
+          console.log(id + " limpo por ser dependente de :" + d);
+          partes[p].checked = false;
+          document.getElementById(id).value = "Nao";
+        }
+        if (!partes[p].disabled) {
+          console.log(id + " desabilitado por ser dependente de :" + d);
+          partes[p].disabled = true;
+        }
+      }
+    }
 
-		// bloquear
-		//
-		if (partes[p].block && partes[p].checked)
-			parte_bloquear(partes, p, false);
+    // bloquear
+    //
+    if (partes[p].block && partes[p].checked) parte_bloquear(partes, p, false);
 
-		// remover mensagem
-		if (partes[p].checked)
-			partes[p].mensagem = "";
-	}
+    // remover mensagem
+    if (partes[p].checked) partes[p].mensagem = "";
+  }
 
-	for (id in partes) {
-		$('#parte_chk_' + id).prop('checked', partes[id].checked);
-		$('#' + id).val(partes[id].checked ? 'Sim' : 'Nao');
-		if (partes[id].locked || partes[id].disabled || partes[id].blocked)
-			$('#parte_fieldset_' + id).attr('disabled', true);
-		else
-			$('#parte_fieldset_' + id).removeAttr('disabled');
-		console.log("*** " + id + ": locked(" + partes[id].locked
-				+ ") disabled(" + partes[id].disabled + ") blocked("
-				+ partes[id].blocked + ") fieldset(" + partes[id].locked
-				|| partes[id].disabled || partes[id].blocked + ")");
-		$('#parte_chk_' + id).prop('disabled',
-				partes[id].disabled || partes[id].blocked);
-		$('#parte_mensagem_' + id).val(partes[id].mensagem);
-		$('#parte_div_mensagem_' + id).html(partes[id].mensagem);
-	}
+  for (id in partes) {
+    $("#parte_chk_" + id).prop("checked", partes[id].checked);
+    $("#" + id).val(partes[id].checked ? "Sim" : "Nao");
+    if (partes[id].locked || partes[id].disabled || partes[id].blocked) {
+      $("#parte_fieldset_" + id).addClass("parte-disabled");
+    } else {
+      $("#parte_fieldset_" + id).removeClass("parte-disabled");
+    }
+    console.log(
+      "*** " +
+        id +
+        ": locked(" +
+        partes[id].locked +
+        ") disabled(" +
+        partes[id].disabled +
+        ") blocked(" +
+        partes[id].blocked +
+        ") fieldset(" +
+        partes[id].locked ||
+        partes[id].disabled ||
+        partes[id].blocked + ")"
+    );
+    $("#parte_chk_" + id).prop(
+      "readonly",
+      partes[id].disabled || partes[id].blocked
+    );
+    $("#parte_mensagem_" + id).val(partes[id].mensagem);
+    $("#parte_div_mensagem_" + id).html(partes[id].mensagem);
+  }
 }
+
 
 function parte_solicitar_alteracao(id, titular, lotaTitular) {
 

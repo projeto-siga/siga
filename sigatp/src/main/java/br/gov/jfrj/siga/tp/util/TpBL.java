@@ -12,6 +12,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -38,10 +39,10 @@ public class TpBL {
 		this.so = so;
 	}
 
-	public CpConfiguracao buscaConfiguracaoComplexoPadrao(DpPessoa dpPessoa, CpTipoDeConfiguracao utilizarComplexo) {
+	public CpConfiguracao buscaConfiguracaoComplexoPadrao(DpPessoa dpPessoa, DpLotacao dpLotacao, CpTipoDeConfiguracao utilizarComplexo) {
 
 		CpConfiguracao t_cfgConfigExemplo = new CpConfiguracao();
-		t_cfgConfigExemplo.setLotacao(dpPessoa.getLotacao());
+		t_cfgConfigExemplo.setLotacao(dpLotacao);
 		t_cfgConfigExemplo.setDpPessoa(dpPessoa);
 		t_cfgConfigExemplo.setCpTipoConfiguracao(utilizarComplexo);
 

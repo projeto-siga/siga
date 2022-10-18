@@ -94,6 +94,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigagc.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigawf.base.url", get("/siga.base.url"));
+		provider.addPublicProperty("/siga-arq.base.url", get("/siga.base.url"));
 		
 		//URL Interna (para back-end). Objetivo não usar Proxy, SSL, Firewall.. entre outras camandas de rede para chamadas internas
 		provider.addPublicProperty("/siga.service.base.url", get("/siga.base.url"));		
@@ -194,6 +195,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.url", get("/sigaex.base.url") + "/sigaex");
 		provider.addPublicProperty("/sigaex.autenticidade.url", get("/sigaex.base.url") + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigagc.url", get("/sigagc.base.url") + "/sigagc");
+		provider.addPublicProperty("/siga-arq.url", get("/siga-arq.base.url") + "/siga-arq");
 		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 		
 		/* Indica onde está armazenado o Manual de Operações* */
@@ -209,6 +211,16 @@ public class Prop {
 		provider.addPublicProperty("/xjus.permalink.url", null);
 		provider.addPublicProperty("/xjus.url", null);
 		
+		// Propriedade para desabilitar itens de enums. Informar uma lista, separada por vírgula, na qual cada item é 
+		// composto do nome simples do enum, um ponto final e a propriedade .name() a ser desabilitada
+		provider.addPublicProperty("/siga.enum.disable", null);
+
+		// Propriedade que controla o acesso aos métodos de exportação para BI da API REST
+		provider.addPrivateProperty("/siga.bi.password", null);
+
+		// Propriedade que controla o acesso ao método de conferência de assinaturas de Documentos da API REST
+		provider.addPrivateProperty("/sigaex.auditoria.assinaturas.password", null);
+
 		/* Services
 		 * 
 		 * Declaração dos serviços e end-points SOAP e RESTful usados pelo back-end nos módulos
@@ -259,14 +271,22 @@ public class Prop {
 		/* Parâmetros para configuração do armazenamento de documento */
 		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");
 		String armaz = get("/siga.armazenamento.arquivo.tipo");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.tamanhomax", 
+				(Long.toString(10 * 1024 * 1024))); // 10MB
 		if ("BLOB".equals(armaz) || "TABELA".equals(armaz)) {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario", null);
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url", null);
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
+			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", null);
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", null);
 		} else {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket");
+			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", "10737418240"); //10GB
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url");
 		}
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");

@@ -37,6 +37,8 @@ tags:
     description: Informações sobre Modelos para a Criação de Documentos
   - name: classificacao
     description: Classificações Documentais
+  - name: bi
+    description: Inteligência de Negócios
   - name: utils
     description: Utilitários
     
@@ -1141,6 +1143,12 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/auditar"
+        - name: exibe
+          in: query
+          description: Informar true se deseja exibir lista de movimentações reduzidas no histórico
+          required: false
+          default: false
+          type: boolean
       responses:
         200:
           description: Successful response
@@ -2477,7 +2485,43 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-
+            
+  /documentos/{id}/verificar-assinatura:
+    get:
+      description: Verificar assinatura do documento
+      tags: [ consulta ]
+      parameters:
+        - name: id
+          in: path
+          description: Id do documento
+          type: string
+          required: true
+        - name: assinaturaDigital
+          in: query
+          description: Flag para verificação de assinatura digital ou senha
+          type: boolean
+          default: false
+          required: false
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idDoc:
+                description: Id do documento
+                type: string
+              idMov:
+                description: Id da movimentação da assinatura válida
+                type: string  
+              status:
+                type: string
+                default: "ERRO!"  
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /documentos/localizar/mais-recente:
     get:
       description: "Exibe dados do móbil mais recente que atende às condições desejadas."
@@ -2634,6 +2678,72 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /bi/listar:
+    get:
+      summary: Listar documentos e seus dados
+      tags: [bi]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: modelo
+          in: query
+          description: Nome do modelo
+          required: false
+          type: string
+        - name: lotaSubscritor
+          in: query
+          description: Sigla da lotação do subscritor
+          required: false
+          type: string
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+        - name: dataMin
+          in: query
+          description: Data mínima documento (formato aaaa-mm-dd, inclusive)
+          required: false
+          type: string
+        - name: dataMax
+          in: query
+          description: Data máxima do documento (exclusive)
+          required: false
+          type: string
+        - name: campos
+          in: query
+          description: Campos (default é todos)
+          required: false
+          type: string
+        - name: delimitador
+          in: query
+          description: Delimitador (default é vírgula)
+          required: false
+          type: string
+        - name: quebraDeLinha
+          in: query
+          description: Quebra de Linha (default é CRLF)
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: text/csv
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
             
 ################################################################################
 #                                     Definitions                              #

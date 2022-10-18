@@ -139,11 +139,16 @@ public class ExAutenticacaoController extends ExController {
 		}
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
-		ExDocumento doc = (ExDocumento) arq;
 
-		boolean podeVisualizarExternamente = new ExPodeVisualizarExternamente(
-				doc.getMobilGeral(), getTitular(), getLotaTitular())
-				.eval();
+		ExMobil mob = null;
+		if (arq instanceof ExDocumento) {
+			mob = ( (ExDocumento) arq ).getMobilGeral();
+		} else if (arq instanceof ExMovimentacao) {
+			mob = ( (ExMovimentacao) arq ).getExMobil();
+		}
+
+		boolean podeVisualizarExternamente = mob == null ? true :
+				new ExPodeVisualizarExternamente(mob, getTitular(), getLotaTitular()).eval();
 
 		if (( cod == null || cod.trim().length() == 0 ) && ( !podeVisualizarExternamente )) {
 			result.include("podeVisualizarExternamente", false);
@@ -229,7 +234,7 @@ public class ExAutenticacaoController extends ExController {
 			case ASSINATURA_MOVIMENTACAO_COM_SENHA:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".jwt";
 				contentType = "application/jwt";
-				if (mov.getAuditHash() == null)
+				if (mov.getAuditHash() == null || mov.getDtMov().before(Prop.getData("data.validar.assinatura.com.senha")))
 					throw new AplicacaoException(
 							"Esta é uma assinatura digital com login e senha e não há nenhum artefato comprobatório disponível para download.");
 				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);
@@ -319,8 +324,8 @@ public class ExAutenticacaoController extends ExController {
 		result.include("n", n);
 		result.include("jwt", jwt);
 
+		ExMobil mob = null;
 		if (arq instanceof ExDocumento) {
-			ExMobil mob = null;
 			ExDocumento doc = (ExDocumento) arq;
 
 			if (doc.isFinalizado()) {
@@ -347,15 +352,6 @@ public class ExAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 
-			/*
-			 * Verifica se tem acesso ao Documento ou
-			 * se é permitido a visualização externa do Documento no Órgão
-			 */
-			result.include("podeVisualizarExternamente", 
-					new ExPodeVisualizarExternamente(
-							doc.getMobilGeral(), getTitular(), getLotaTitular(), cod).eval()
-			);
-			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
 			result.include("docVO", docVO);
 			result.include("autenticidade",
@@ -364,7 +360,18 @@ public class ExAutenticacaoController extends ExController {
 							docVO.getDoc().getSiglaAssinatura()
 
 			);
+		} else if (arq instanceof ExMovimentacao) {
+			mob = ( (ExMovimentacao) arq ).getExMobil();
 		}
+
+		/*
+		 * Verifica se tem acesso ao Documento ou
+		 * se é permitido a visualização externa do Documento no Órgão
+		 */
+		boolean podeVisualizarExternamente = mob == null ? true :
+				new ExPodeVisualizarExternamente(mob, getTitular(), getLotaTitular(), cod).eval();
+		
+		result.include("podeVisualizarExternamente", podeVisualizarExternamente);
 	}
 
 	private static String getRecaptchaSiteKey() {

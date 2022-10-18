@@ -16,12 +16,13 @@ import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
-	static public final long TIMEOUT_MILLISECONDS = 15000;
+	static public final long TIMEOUT_MILLISECONDS = 50000;
 
 	@Override
 	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
@@ -41,7 +42,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 			String split[] = req.lastid.split("-");
 			q.lastid = split[0];
 			if (service.ordinal() > Integer.valueOf(split[1]))
-				q.lastid = Utils.formatId(Long.valueOf(q.lastid) - 1);
+				q.lastid = XjusUtils.formatId(Long.valueOf(q.lastid) - 1);
 			Future<SwaggerAsyncResponse<Response>> future = SwaggerCall.callAsync(
 					service.name().toLowerCase() + "-all-references", Prop.get("/xjus.password"), "GET", url, q,
 					Response.class);
@@ -87,7 +88,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 	}
 
 	static public String defaultLastId() {
-		return Utils.formatId(0L) + "-" + RecordServiceEnum.values()[RecordServiceEnum.values().length - 1].ordinal();
+		return XjusUtils.formatId(0L) + "-" + RecordServiceEnum.values()[RecordServiceEnum.values().length - 1].ordinal();
 	}
 
 	static public String defaultCursor() {
@@ -95,7 +96,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 		for (RecordServiceEnum service : RecordServiceEnum.values()) {
 			if (!s.isEmpty())
 				s += ";";
-			s += Utils.formatId(0L) + "-" + service.ordinal();
+			s += XjusUtils.formatId(0L) + "-" + service.ordinal();
 		}
 		return s;
 	}

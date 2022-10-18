@@ -33,9 +33,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jboss.logging.Logger;
 import org.xml.sax.InputSource;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -45,6 +47,7 @@ import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaFormats;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -64,6 +67,12 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DeslocamentoConjuntoEnum;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalParametroTrecho;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.FaixaEnum;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.TipoDeDiariaEnum;
 import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
@@ -85,10 +94,11 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {
+	private final static Logger log = Logger.getLogger(FuncoesEL.class);
+	
 	public static ExDao dao() {
 		return ExDao.getInstance();
 	}
@@ -729,6 +739,7 @@ public class FuncoesEL {
 		} catch (NullPointerException ex) {
 			return "NullPointerException";
 		} catch (Exception ex) {
+			log.error(ex);
 			return ex.getMessage();
 		}
 		return null;
@@ -931,13 +942,18 @@ public class FuncoesEL {
 		return null;
 	}
 
-	public static String webservice(String url, String corpo, Integer timeout) {
+	public static String webservice(String url, String corpo, Integer timeout, boolean compactarXml) {
 		try {
 			HashMap<String, String> headers = new HashMap<String, String>();
 			if (corpo != null && corpo.isEmpty())
 				corpo = null;
-			if (corpo != null)
+			if (corpo != null) {
 				headers.put("Content-Type", "text/xml;charset=UTF-8");
+				if (compactarXml) {
+					corpo = corpo.trim();
+					corpo = corpo.replaceAll(">\\s+", ">").replaceAll("\\s+<", "<");
+				}
+			}
 			String auth = (String) resource("/siga.freemarker.webservice.password");
 			if (auth != null)
 				headers.put("Authorization", auth);
@@ -954,11 +970,16 @@ public class FuncoesEL {
 	public static NodeModel parseXML(String xml) throws Exception {
 		xml = URLDecoder.decode(xml, "UTF-8");
 		// Remover todos os namespaces
-		xml = xml.replaceAll("(</?)[a-z]+:", "$1");
-		xml = xml.replaceAll("( xmlns(:[a-z]+)?=\"[^\"]+\")", "");
-		xml = xml.replaceAll(" ([a-z]+:)([a-zA-Z]+=\"[^\"]+\")", " $2");
+		xml = xml.replaceAll("(</?)[a-z0-9]+:", "$1");
+		xml = xml.replaceAll("( xmlns(:[a-z0-9]+)?=\"[^\"]+\")", "");
+		xml = xml.replaceAll(" ([a-z0-9]+:)([a-zA-Z]+=\"[^\"]+\")", " $2");
+		
+//		xml="<result>oi</result>";
+		
 		InputSource inputSource = new InputSource(new StringReader(xml));
-		return freemarker.ext.dom.NodeModel.parse(inputSource);
+		NodeModel nodes = freemarker.ext.dom.NodeModel.parse(inputSource);
+	//	Object o = nodes.get("Envelope").get("Body").get("obtemValorATResponse").get("return");
+		return nodes;
 	}
 
 	public static Boolean podeAssinarComSenha(DpPessoa titular,
@@ -1120,6 +1141,49 @@ public class FuncoesEL {
 	public static String slugify(String string, Boolean lowercase,
 			Boolean underscore) {
 		return Texto.slugify(string, lowercase, underscore);
+	}
+
+	
+	// Rotina de cálculo específica para diárias da Justiça Federal
+	//
+	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final double valorUnitatioDaDiaria,
+			final double valorUnitarioDaDiariaParaCalculoDoDeslocamento,
+			final String faixa, final String deslocamentoConjunto, 
+			final boolean internacional, final double cotacaoDoDolar, final String tipoDeDiaria, 
+			final boolean prorrogacao, final double valorJaRecebido,
+			final double valorUnitarioDoAuxilioAlimentacao,
+			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria, final String form) {
+		Map<String, Object> map = new TreeMap<String, Object>();
+		Utils.mapFromUrlEncodedForm(map, form.getBytes());
+
+		List<DiariasDaJusticaFederalParametroTrecho> l = new ArrayList<>();
+		List<LocalDate> feriados = new ArrayList<>();
+
+		if (map != null) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+			for (int i = 1; map.containsKey("data_de_embarque" + i); i++) {
+				DiariasDaJusticaFederalParametroTrecho t = new DiariasDaJusticaFederalParametroTrecho();
+				t.data = LocalDate.parse((String) map.get("data_de_embarque" + i), formatter);
+				t.trecho = (String) map.get("trecho" + i);
+				t.carroOficialAteOEmbarque = "Sim".equals((String) map.get("veiculo_oficial_embarque" + i));
+				t.carroOficialAteODestino = "Sim".equals((String) map.get("veiculo_oficial_desembarque" + i));
+				t.semDespesasDeHospedagem = "Sim".equals((String) map.get("sem_despesas_de_hospedagem" + i));
+				l.add(t);
+			}
+			for (int i = 1; map.containsKey("feriado" + i); i++) {
+				feriados.add(LocalDate.parse((String) map.get("feriado" + i), formatter));
+			}
+		}
+		
+		try {
+			return new DiariasDaJusticaFederal().calcular(valorUnitatioDaDiaria, valorUnitarioDaDiariaParaCalculoDoDeslocamento,
+					FaixaEnum.find(faixa), DeslocamentoConjuntoEnum.find(deslocamentoConjunto), 
+					internacional, cotacaoDoDolar, TipoDeDiariaEnum.find(tipoDeDiaria), prorrogacao, valorJaRecebido,
+					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, tetoDiaria, tetoMeiaDiaria, l, feriados);
+		} catch (Exception ex) {
+			log.error(ex);
+			return null;
+		}
 	}
 
 }

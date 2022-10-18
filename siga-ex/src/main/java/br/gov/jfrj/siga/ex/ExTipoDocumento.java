@@ -54,6 +54,8 @@ public class ExTipoDocumento extends AbstractExTipoDocumento implements
 	final static public long TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO = 3;
 	final static public long TIPO_DOCUMENTO_EXTERNO_CAPTURADO = 4;
 	final static public long TIPO_DOCUMENTO_INTERNO_CAPTURADO = 5;	
+	final static public long TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE = 6;
+	final static public long TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE = 7;	
 	
 	/**
 	 * Simple constructor of ExTipoDocumento instances.
@@ -104,6 +106,12 @@ public class ExTipoDocumento extends AbstractExTipoDocumento implements
 			break;
 		case 5:
 			descricao = "Interno Capturado";
+			break;
+		case 6:
+			descricao =  "Externo Capturado Formato Livre";
+			break;
+		case 7:
+			descricao = "Interno Capturado Formato Livre";
 			break;
 		}
 		

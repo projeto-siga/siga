@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import br.gov.jfrj.siga.ex.xjus.Utils;
+import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
@@ -20,7 +20,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
 		resp.list = new ArrayList<>();
 		if (req.lastid == null)
-			req.lastid = Utils.formatId(0L);
+			req.lastid = XjusUtils.formatId(0L);
 		try {
 			ExDao dao = ExDao.getInstance();
 			Query q = dao.em().createQuery(HQL, Long.class);
@@ -31,7 +31,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 			// System.out.println(q.getQueryString());
 			for (Long id : (List<Long>) q.getResultList()) {
 				Reference ref = new Reference();
-				ref.id = Utils.formatId(id);
+				ref.id = XjusUtils.formatId(id);
 				resp.list.add(ref);
 			}
 		} finally {

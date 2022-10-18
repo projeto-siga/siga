@@ -6,6 +6,7 @@ import java.util.Map;
 
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -99,7 +100,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			if (sAcessos == null || sAcessos.trim().length() == 0)
 				throw new RuntimeException("Não foi possível calcular os acesos de " + doc.getSigla());
 		}
-		resp.acl = sAcessos.replace(ExAcesso.ACESSO_PUBLICO, "PUBLIC");
+		resp.acl = sAcessos.replace(XjusUtils.ACESSO_PUBLICO, "PUBLIC");
 	}
 
 	private void addMetadataForDoc(ExDocumento doc, Response resp) {

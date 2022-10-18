@@ -9,6 +9,9 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.crivano.swaggerservlet.SwaggerApiContextSupport;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
@@ -18,6 +21,7 @@ import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
@@ -39,11 +43,14 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	boolean transacional = false;
 	long inicio = System.currentTimeMillis();
 	SigaObjects sigaObjects = null;
+	
+    private final Level BLAME = Level.forName("BLAME", 450); 
+    private final Logger logger = LogManager.getLogger(ApiContextSupport.class);
 
 	@Override
 	public void init(SwaggerContext ctx) {
 		super.init(ctx);
-
+		
 		try {
 			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
 					SwaggerServlet.getHttpServletResponse()));
@@ -218,6 +225,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	        	campo.setAccessible(true); 
 	        					
 				if (!RequestParamsCheck.checkParameter(campo.get(getCtx().getReq()),permissiveCheck)) {
+					logXss(campo.get(getCtx().getReq()));
 					throw new SwaggerException("Conteúdo inválido. Por favor, revise os valores fornecidos.", 400, null, getCtx().getReq(), getCtx().getResp(), null);
 				}
 	        }
@@ -227,5 +235,16 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
         	// Não bloqueia caso não consiga verificar os parametros passados
         }
 	}
+	
+    private void logXss(Object param) {
+    	String siglaCadastrante;
+    	try {
+    		siglaCadastrante = getLotaCadastrante() .getSigla() + "/" + getCadastrante().getSigla();
+		} catch (Exception e) {
+			siglaCadastrante = "Não identificado";
+		}
+    	
+    	logger.log(BLAME, "[Detectado XSS] - Param: {}; IP de Origem: {}; Usuário: {};", param, HttpRequestUtils.getIpAudit(SwaggerServlet.getHttpServletRequest()), siglaCadastrante);
+    }
 	
 }

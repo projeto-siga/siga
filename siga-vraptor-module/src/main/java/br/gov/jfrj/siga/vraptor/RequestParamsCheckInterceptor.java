@@ -6,12 +6,18 @@ import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.dp.DpPessoa;
 
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -44,18 +50,18 @@ public class RequestParamsCheckInterceptor {
 	private ControllerMethod method;
     
     private Map<String, String[]> parameters;
-   // private final Logger logger = LogManager.getLogger(RequestParamsCheckInterceptor.class);
     
+    private final Level BLAME = Level.forName("BLAME", 450);
+    private final Logger logger = LogManager.getLogger(RequestParamsCheckInterceptor.class);
     
     @SuppressWarnings("unchecked")
 	@AroundCall
     public void intercept(SimpleInterceptorStack stack) {
     	
     	parameters = request.getParameterMap();
-
 		parameters.forEach((key, value) -> {
 			if (!RequestParamsCheck.checkParameter(value[0],method.containsAnnotation(RequestParamsPermissiveCheck.class))) {
-				//logger.warn("Tentativa de Ataque XSS {}. IP de Origem: {}", value[0], HttpRequestUtils.getIpAudit(request));
+				log(value[0]);
 				throw new AplicacaoException("Conteúdo inválido. Por favor, revise os valores fornecidos.");
 			}
 		});
@@ -68,6 +74,19 @@ public class RequestParamsCheckInterceptor {
         return !method.containsAnnotation(RequestParamsNotCheck.class);
     }
     
-
-
+    private void log(String param) {
+    	String siglaCadastrante;
+    	DpPessoa cadastrante;
+    	
+    	try {
+    		SigaObjects so = new SigaObjects(this.request);
+    		cadastrante = so.getCadastrante();
+    		siglaCadastrante = cadastrante.getLotacao().getSigla() + "/" + cadastrante.getSigla();
+		} catch (Exception e) {
+			siglaCadastrante = "Não identificado";
+		}
+    	
+    	logger.log(BLAME, "[Detectado XSS] - Param: {}; IP de Origem: {}; Usuário: {};", param, HttpRequestUtils.getIpAudit(request), siglaCadastrante);
+    }
+    
 }

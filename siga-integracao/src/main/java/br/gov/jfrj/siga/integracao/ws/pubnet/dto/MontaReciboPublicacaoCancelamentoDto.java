@@ -24,6 +24,9 @@ public class MontaReciboPublicacaoCancelamentoDto implements Serializable {
 	@JsonProperty("TextoRecibo")
 	private String textoRecibo;
 	
+	@JsonProperty("hash")
+	private String hashRecibo;
+	
 	public String getIdReciboPublicacao() {
 		return idReciboPublicacao;
 	}
@@ -54,6 +57,14 @@ public class MontaReciboPublicacaoCancelamentoDto implements Serializable {
 
 	public void setTextoRecibo(String textoRecibo) {
 		this.textoRecibo = textoRecibo;
+	}
+
+	public String getHashRecibo() {
+		return hashRecibo;
+	}
+
+	public void setHashRecibo(String hashRecibo) {
+		this.hashRecibo = hashRecibo;
 	}
 
 }

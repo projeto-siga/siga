@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.integracao.ws.pubnet.service;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -32,7 +34,7 @@ public class PubnetEnvioService extends PubnetConsultaService {
 		try {
 			MontaReciboPublicacaoResult resp = getPort().montaReciboPublicacao(user, anuncianteIdentificador,
 					cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, sequencial, hashMD5Sintese);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, MontaReciboPublicacaoDto.NOME_NODE_JSON);
 			reciboPublicDto = getObjectMapper().readValue(json, MontaReciboPublicacaoDto.class);
 		} catch (JsonParseException e) {
@@ -50,13 +52,13 @@ public class PubnetEnvioService extends PubnetConsultaService {
 
 	public EnviaPublicacaoDto enviarPublicacao(AuthHeader userName, String anuncianteIdentificador,
 			String cadernoIdentificador, String retrancaCodigo, String tipomaterialIdentificador, String sequencial,
-			String textoPublicacao, String reciboAssinado, String hashMontaRecibo) throws Exception {
+			String sintese, String recibo, String reciboHash)  throws Exception {
 		EnviaPublicacaoDto enviaPublicDto = new EnviaPublicacaoDto();
 		try {
 			EnviaPublicacaoResult resp = getPort().enviaPublicacao(userName, anuncianteIdentificador,
-					cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, sequencial, textoPublicacao,
-					reciboAssinado, hashMontaRecibo);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+					cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, sequencial, sintese, recibo,
+					reciboHash);
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, EnviaPublicacaoDto.NOME_NODE_JSON);
 			enviaPublicDto = getObjectMapper().readValue(json, EnviaPublicacaoDto.class);
 		} catch (JsonParseException e) {
@@ -64,11 +66,12 @@ public class PubnetEnvioService extends PubnetConsultaService {
 			if (!ENCODING_DEFAULT_XML.equals(ENCODING_UTF_8)) {
 				ENCODING_DEFAULT_XML = ENCODING_UTF_8;
 				enviarPublicacao(userName, anuncianteIdentificador, cadernoIdentificador, retrancaCodigo,
-						tipomaterialIdentificador, sequencial, textoPublicacao, reciboAssinado, hashMontaRecibo);
+						tipomaterialIdentificador, sequencial, sintese, recibo, reciboHash);
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage());
 		}
 		return enviaPublicDto;
 	}
+
 }

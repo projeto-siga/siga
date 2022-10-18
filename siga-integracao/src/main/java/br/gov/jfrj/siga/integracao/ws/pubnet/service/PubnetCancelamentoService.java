@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.integracao.ws.pubnet.service;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -22,7 +24,7 @@ public class PubnetCancelamentoService extends PubnetConsultaService {
 		try {
 			MontaReciboPublicacaoCancelamentoResult resp = getPort().montaReciboPublicacaoCancelamento(user,
 					nomeArquivo);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, MontaReciboPublicacaoCancelamentoDto.NOME_NODE_JSON);
 			reciboPublicCancelDto = getObjectMapper().readValue(json, MontaReciboPublicacaoCancelamentoDto.class);
 		} catch (JsonParseException e) {
@@ -43,7 +45,7 @@ public class PubnetCancelamentoService extends PubnetConsultaService {
 		try {
 			CancelarMaterialResult resp = getPort().cancelarMaterial(user, nomeArquivo, justificativaIdentificador, recibo,
 					reciboHash);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, CancelaMaterialDto.NOME_NODE_JSON);
 			reciboPublicCancelDto = getObjectMapper().readValue(json, CancelaMaterialDto.class);
 		} catch (JsonParseException e) {

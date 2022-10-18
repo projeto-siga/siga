@@ -13,6 +13,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.json.JSONObject;
+import org.json.XML;
 import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -55,7 +57,7 @@ public class PubnetConsultaService {
 		List<MaterialEnviadoDto> materialEnviadoDtos = new ArrayList<MaterialEnviadoDto>();
 		try {
 			ConsultaMaterialEnviadoResult resp = port.consultaMaterialEnviado(user, dtInicio, dtFim);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, MaterialEnviadoDto.NOME_NODE_JSON);
 			materialEnviadoDtos = Arrays.asList(getObjectMapper().readValue(json, MaterialEnviadoDto[].class));
 		} catch (JsonParseException e) {
@@ -74,7 +76,7 @@ public class PubnetConsultaService {
 		List<PermissaoPublicanteDto> permissaoPublicanteDtoList = new ArrayList<PermissaoPublicanteDto>();
 		try {
 			ConsultaPermissoesPublicanteResult resp = port.consultaPermissoesPublicante(user);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, PermissaoPublicanteDto.NOME_NODE_JSON);
 			permissaoPublicanteDtoList = Arrays.asList(getObjectMapper().readValue(json, PermissaoPublicanteDto[].class));
 		} catch (JsonParseException e) {
@@ -93,7 +95,7 @@ public class PubnetConsultaService {
 		List<JustificativasCancelamentoDto> permissaoPublicanteDtoList = new ArrayList<JustificativasCancelamentoDto>();
 		try {
 			ListaJustificativasCancelamentoResult resp = port.listaJustificativasCancelamento(user);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, JustificativasCancelamentoDto.NOME_NODE_JSON);
 			permissaoPublicanteDtoList = Arrays
 					.asList(getObjectMapper().readValue(json, JustificativasCancelamentoDto[].class));
@@ -113,7 +115,7 @@ public class PubnetConsultaService {
 		TokenDto tokenDto = new TokenDto();
 		try {
 			GeraTokenResult resp = port.geraToken(userName, documento, email);
-			JsonNode jsonNode = convertElementParaJsonNode(resp.getAny());
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, TokenDto.NOME_NODE_JSON);
 			tokenDto = getObjectMapper().readValue(json, TokenDto.class);
 		} catch (JsonParseException e) {
@@ -143,33 +145,35 @@ public class PubnetConsultaService {
 		return writer;
 	}
 
-	private JsonNode converterXMLParaNodeJson(String xmlResponse) throws IOException {
+	private JSONObject converterXMLParaNodeJson(String xmlResponse) throws IOException {
 		String xml = xmlResponse;
-		XmlMapper xmlMapper = new XmlMapper();
-		JsonNode node = xmlMapper.readTree(xml.getBytes());
-		return node;
+		JSONObject json = XML.toJSONObject(xml);
+		return json;
 	}
 
-	protected String converterNodeJsonParaStringJson(JsonNode node, String nomeNodeJson) throws Exception {
-		ObjectMapper jsonMapper = new ObjectMapper();
+	protected String converterNodeJsonParaStringJson(JSONObject node, String nomeNodeJson) throws Exception {
 		String json = "";
-		JsonNode nodeLista = node.get("lista");
-		if (nodeLista != null) {
-			json = jsonMapper.writeValueAsString(nodeLista.get(nomeNodeJson));
-		} else {
-			nodeLista = node.get("erro");
-			if(nodeLista != null) {
-				json = jsonMapper.writeValueAsString(nodeLista.get("informacoes"));
-				MensagemErroRetornoPubnetDto err = new ObjectMapper().readValue(json, MensagemErroRetornoPubnetDto.class);
+		JSONObject nodeDiffgr = (JSONObject) node.get("diffgr:diffgram");
+		if (nodeDiffgr != null) {
+			JSONObject nodeLista = getValueJSONObject(nodeDiffgr, "lista");
+			if (nodeLista != null) {
+				json = JSONObject.valueToString(nodeLista.get(nomeNodeJson));
 				System.out.println(json);
-				throw new Exception(err.getCodRetorno() + " - " + err.getDescrRetorno());
 			} else {
-				nodeLista = node.get("Recibo");
-				if(nodeLista != null) {
-					json = jsonMapper.writeValueAsString(nodeLista.get("Recibo"));
-					EnviaPublicacaoDto recibo = new ObjectMapper().readValue(json, EnviaPublicacaoDto.class);
-					if (recibo != null && !recibo.getCodRetorno().equals("0000")) {
-						throw new Exception(recibo.getCodRetorno() + " - " + recibo.getDescricao());
+				JSONObject nodeErr = getValueJSONObject(nodeDiffgr, "erro");
+				if(nodeErr != null) {
+					json = JSONObject.valueToString(getValueJSONObject(nodeErr, "informacoes"));
+					MensagemErroRetornoPubnetDto err = getObjectMapper().readValue(json, MensagemErroRetornoPubnetDto.class);
+					System.out.println(json);
+					throw new Exception(err.getCodRetorno() + " - " + err.getDescrRetorno());
+				} else {
+					JSONObject nodeRecibo = getValueJSONObject(nodeDiffgr, "Recibo");
+					if(nodeRecibo != null) {
+						json = JSONObject.valueToString(getValueJSONObject(nodeRecibo, "Recibo"));
+						EnviaPublicacaoDto recibo = getObjectMapper().readValue(json, EnviaPublicacaoDto.class);
+						if (recibo != null && !recibo.getCodRetorno().equals("0000")) {
+							throw new Exception(recibo.getCodRetorno() + " - " + recibo.getDescricao());
+						}
 					}
 				}
 			}
@@ -180,11 +184,18 @@ public class PubnetConsultaService {
 			throw new Exception("Json nulo ou vazio");
 		return json;
 	}
+	
+	private JSONObject getValueJSONObject(JSONObject object,String nomeNode) {
+		return !object.isNull(nomeNode) ? (JSONObject) object.get(nomeNode) : null;
+	}
 
-	protected JsonNode convertElementParaJsonNode(Object resp) throws TransformerException, IOException {
+	protected JSONObject convertElementParaJsonNode(Object resp) throws TransformerException, IOException {
 		ElementNSImpl elementNSImpl = (ElementNSImpl) resp;
 		StringWriter writer = converterDocumentParaXmlString(elementNSImpl.getOwnerDocument());
-		JsonNode jsonNode = converterXMLParaNodeJson(writer.toString());
+		
+		JSONObject jsonNode = converterXMLParaNodeJson(writer.toString());
+//		String nodeStr = jsonNode.getString("diffgr:diffgram");
+		System.out.println(jsonNode.toString());
 		return jsonNode;
 	}
 

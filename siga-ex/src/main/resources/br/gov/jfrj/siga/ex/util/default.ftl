@@ -4759,6 +4759,19 @@ Pede deferimento.</span><br/><br/><br/>
 ${texto} 
 [/#macro]
 
+[#macro dadosDownloadArquivo]
+    <div class="row">
+        <div class="col">
+        	<h6>Arquivo para download:</h6>
+        	<a href="/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}"
+            	>${urlbase}/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}&arquivo=${(doc.cpArquivoFormatoLivre.nomeArquivo)}</a>
+            <br />
+            <small>Hash (SHA-256) do Arquivo: ${(doc.cpArquivoFormatoLivre.hashSha256)}</small><br />
+            <small>Tamanho: ${(doc.cpArquivoFormatoLivre.tamanho)}</small><br />
+        </div>
+    </div><br /><br />	
+[/#macro]
+
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]
 [#assign _pathBrasaoSecundario = "contextpath/imagens/Logotipo_Prodesp_Governo_SP.png" /]
 [#assign _widthBrasao = "auto" /]

@@ -25,6 +25,8 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -59,6 +61,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jboss.logging.Logger;
 
+import com.auth0.jwt.JWTVerifier;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -75,6 +79,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -137,6 +142,8 @@ public class ExDocumentoController extends ExController {
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+	private static final Long TAMANHO_MAXIMO_CAPTURADO = Prop.getLong("/siga.armazenamento.arquivo.tamanhomax");
+	private static final Long TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE = Prop.getLong("/siga.armazenamento.arquivo.formatolivre.tamanhomax");
 	private String url = null;
 	
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
@@ -879,6 +886,8 @@ public class ExDocumentoController extends ExController {
 		result.include("idMod", exDocumentoDTO.getIdMod());
 		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
 		result.include("podeExibirArvoreDocsSubscr", podeExibirArvoreDocsSubscr);
+		result.include("tamanhoMaximoArquivo", TAMANHO_MAXIMO_CAPTURADO);
+		result.include("tamanhoMaximoArquivoFormatoLivre", TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE);
 		
 
 		// Desabilita a proteção contra injeção maldosa de html e js
@@ -1620,7 +1629,7 @@ public class ExDocumentoController extends ExController {
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo) {
+			final UploadedFile arquivo, final String tokenArquivo) {
 		
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
@@ -1679,12 +1688,12 @@ public class ExDocumentoController extends ExController {
 
 			lerForm(exDocumentoDTO, vars);
 
-			if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-					.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+			if (exDocumentoDTO.isCapturado()
 					&& exDocumentoDTO.getDoc().getIdDoc() == null
-					&& arquivo == null)
+					&& arquivo == null
+					&& tokenArquivo == null)
 				throw new AplicacaoException(
-						"Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
+						"Documento capturado não pode ser gravado sem que seja informado o arquivo " + (tokenArquivo != null ? ".":"PDF."));
 
 			if (!ex.getConf().podePorConfiguracao(getTitular(),
 					getLotaTitular(),
@@ -1776,8 +1785,14 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getDoc().setExMobilAutuado(mobilAutuado);
 			}
 
-			// Insere PDF de documento capturado
-			//
+			// Se o arquivo é de formato e tamanho livre, já fez o upload previamente e passou um token contendo localização do 
+			// arquivo e tamanho.
+			if (tokenArquivo != null) {
+				ExDocumento d = exDocumentoDTO.getDoc();
+				d.setConteudoBlobFormatoLivre(tokenArquivo);
+				exDocumentoDTO.setCpArquivoFormatoLivre(d.getCpArquivoFormatoLivre());
+			}
+			// Insere PDF de documento capturado (de formato não livre)
 			if (arquivo != null) {
 				ExDocumento d = exDocumentoDTO.getDoc();
 
@@ -1794,9 +1809,14 @@ public class ExDocumentoController extends ExController {
 								"Arquivo vazio não pode ser anexado.");
 					}
 					numBytes = baArquivo.length;
-					if (numBytes > 10 * 1024 * 1024) {
+					Long tamMax = TAMANHO_MAXIMO_CAPTURADO;
+					if (d.getOrgaoUsuario().podeGravarHcp()) 
+						tamMax = TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE;
+					
+					if (numBytes > tamMax) {
 						throw new AplicacaoException(
-								"Não é permitida a anexação de arquivos com mais de 10MB.");
+								"Não é permitida a anexação de arquivos com mais de "
+								+ (Math.ceil((double) tamMax / 1024 / 1024)) + "MB");
 					}
 					d.setConteudoBlobPdf(baArquivo);
 					d.setConteudoBlobHtml(null);
@@ -1865,8 +1885,7 @@ public class ExDocumentoController extends ExController {
 			}
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
-					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
+					&& exDocumentoDTO.isCapturado() && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 
@@ -3057,8 +3076,8 @@ public class ExDocumentoController extends ExController {
 	}
 	
 	@TrackRequest
-	@Get("app/expediente/doc/registrar_requisicao_usuario")
+	@Get("/app/expediente/doc/registrar_requisicao_usuario")
 	public void registrarRequisicaoUsuario(final String sigla, final String nomeAcao){
-		result.include("status", "ok");
+		result.use(Results.status()).noContent();
 	}
 }

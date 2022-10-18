@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -149,6 +150,8 @@ public class ExDocumentoDTO {
 	private String numExtDoc;
 
 	private Long idMob;
+
+	private CpArquivo CpArquivoFormatoLivre;
 
 	private String obsOrgao;
 
@@ -578,6 +581,10 @@ public class ExDocumentoDTO {
 			return "interno_capturado";
 		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
 			return "externo_capturado";
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE)
+			return "interno_capturado_formato_livre";
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE)
+			return "externo_capturado_formato_livre";
 		return "";
 	}
 
@@ -1047,6 +1054,32 @@ public class ExDocumentoDTO {
 
 	public void setPodeIncluirSubscrArvoreDocs(boolean podeIncluirSubscrArvoreDocs) {
 		this.podeIncluirSubscrArvoreDocs = podeIncluirSubscrArvoreDocs;
+	}
+
+	public boolean isCapturado() {
+		if (getIdTpDoc() == null && doc != null
+				&& doc.getExTipoDocumento() != null)
+			setIdTpDoc(doc.getExTipoDocumento().getId());
+		return (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || 
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO ||
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE || 
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
+	}
+
+	public boolean isCapturadoFormatoLivre() {
+		if (getIdTpDoc() == null && doc != null
+				&& doc.getExTipoDocumento() != null)
+			setIdTpDoc(doc.getExTipoDocumento().getId());
+		return (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE || 
+				getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
+	}
+
+	public CpArquivo getCpArquivoFormatoLivre() {
+		return CpArquivoFormatoLivre;
+	}
+
+	public void setCpArquivoFormatoLivre(CpArquivo cpArquivoFormatoLivre) {
+		CpArquivoFormatoLivre = cpArquivoFormatoLivre;
 	}
 
 }

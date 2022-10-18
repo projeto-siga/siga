@@ -52,6 +52,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -2610,6 +2611,7 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
+
 	
 	public List<ExMovimentacao> listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
@@ -2631,4 +2633,119 @@ public class ExDao extends CpDao {
 		return em().createQuery(criteriaQuery).getResultList();		
 	}
 	
+
+	public List<ExDocumentoVO> consultarParaReclassificarEmLote(final DpPessoa titular,
+																final String classificacaoSigla, 
+																final int offset, final int itemPagina) {
+		
+		/* Query para obter Documentos e Movimentações com determinada Classificação
+		* Caso o Documento possua uma movimentação de reclassificação a query irá retornar a sigla da movimentação reclassifada  
+		* */
+		String sql = "select" 
+				+ "    doc.id_doc as idDoc, mob.dnm_sigla as sigla," 
+				+ "    case" 
+				+ "        when classific_mov.codificacao is not null then classific_mov.codificacao" 
+				+ "        else classific_doc.codificacao" 
+				+ "    end as classificacaoSigla," 
+				+ "    lotacao.sigla_lotacao as lotaCadastranteString,"
+				+ "    pessoa.sigla_pessoa as cadastranteString,"
+				+ "    doc.descr_documento as descrDocumento" 
+				+ " from" 
+				+ "    siga.ex_mobil mob" 
+				+ " join siga.ex_documento doc on" 
+				+ "    doc.id_doc = mob.id_doc" 
+				+ " join siga.ex_classificacao classific_doc on" 
+				+ "    classific_doc.id_classificacao = doc.id_classificacao" 
+				+ " full join siga.ex_movimentacao mov on" 
+				+ "    mov.id_mobil = mob.id_mobil and mov.id_tp_mov in (:enumList) and mov.id_mov_canceladora is null "
+				+ " left join siga.ex_classificacao classific_mov on" 
+				+ "    classific_mov.id_classificacao = mov.id_classificacao" 
+				+ " join corporativo.dp_lotacao lotacao on" 
+				+ "    lotacao.id_lotacao = doc.id_lota_cadastrante" 
+				+ " join corporativo.dp_pessoa pessoa on" 
+				+ "    pessoa.id_pessoa = doc.id_cadastrante" 
+				+ " where"
+				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.dt_finalizacao is not null" 
+				+ "    and doc.dt_primeiraassinatura is not null" 
+				+ "    and doc.id_orgao_usu = :orgaoUsuarioLogado"
+				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
+				+ "        or (classific_mov.codificacao is not null"
+				+ "            and mov.id_mov = ("
+				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "                from siga.ex_movimentacao ultmovtipo"
+				+ "                where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "                and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "            )"
+				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "        )"
+				+ "    )"
+				+ " order by mob.dnm_sigla";
+		
+		Query query = em().createNativeQuery(sql, "DocumentosPorCodificacaoClassificacao");
+
+		query.setParameter("orgaoUsuarioLogado", titular.getOrgaoUsuario().getId());
+		query.setParameter("mascara", classificacaoSigla);
+		query.setParameter("enumList", Arrays.asList(
+				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
+				ExTipoDeMovimentacao.AVALIACAO_COM_RECLASSIFICACAO.getId()));
+		query.setFirstResult(offset);
+		query.setMaxResults(itemPagina);
+		
+		return query.getResultList();
+	}
+
+	public int consultarQuantidadeParaReclassificarEmLote(final DpPessoa titular,
+														   final String classificacaoSigla) {
+
+		/* Query para obter a quantidade Documentos e Movimentações com Classificação
+		 * */
+		String sql = " select count(*) from ( "
+				+ " select"
+				+ "    doc.id_doc"
+				+ " from"
+				+ "    siga.ex_mobil mob"
+				+ " join siga.ex_documento doc on"
+				+ "    doc.id_doc = mob.id_doc"
+				+ " join siga.ex_classificacao classific_doc on"
+				+ "    classific_doc.id_classificacao = doc.id_classificacao"
+				+ " full join siga.ex_movimentacao mov on"
+				+ "    mov.id_mobil = mob.id_mobil and mov.id_tp_mov in (:enumList) and mov.id_mov_canceladora is null "
+				+ " left join siga.ex_classificacao classific_mov on"
+				+ "    classific_mov.id_classificacao = mov.id_classificacao"
+				+ " join corporativo.dp_lotacao lotacao on"
+				+ "    lotacao.id_lotacao = doc.id_lota_cadastrante"
+				+ " join corporativo.dp_pessoa pessoa on"
+				+ "    pessoa.id_pessoa = doc.id_cadastrante"
+				+ " where"
+				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.dt_finalizacao is not null"
+				+ "    and doc.dt_primeiraassinatura is not null"
+				+ "    and doc.id_orgao_usu = :orgaoUsuarioLogado"
+				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
+				+ "        or (classific_mov.codificacao is not null"
+				+ "            and mov.id_mov = ("
+				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "                from siga.ex_movimentacao ultmovtipo"
+				+ "                where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "                and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "            )"
+				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "        )"
+				+ "    )"
+				+ " )";
+
+		Query query = em().createNativeQuery(sql);
+
+		query.setParameter("orgaoUsuarioLogado", titular.getOrgaoUsuario().getId());
+		query.setParameter("mascara", classificacaoSigla);
+		query.setParameter("enumList", Arrays.asList(
+				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
+				ExTipoDeMovimentacao.AVALIACAO_COM_RECLASSIFICACAO.getId()));
+
+		return ((BigDecimal) query.getSingleResult()).intValue();
+	}
+
 }

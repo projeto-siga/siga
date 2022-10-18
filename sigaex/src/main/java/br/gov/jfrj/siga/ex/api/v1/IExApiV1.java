@@ -1493,7 +1493,7 @@ public interface IExApiV1 {
 	public interface IDocumentosIdVerificarAssinaturaGet extends ISwaggerMethod {
 		public static class Request implements ISwaggerRequest {
 			public String id;
-			public boolean assinaturaDigital;
+			public Boolean assinaturaDigital;
 		}
 
 		public static class Response implements ISwaggerResponse {

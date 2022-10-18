@@ -151,6 +151,9 @@ public class ExArquivoController extends ExController {
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
 			final boolean isArquivoAuxiliar = mov != null && mov.getExTipoMovimentacao()
 					.equals(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR);
+			final boolean isArquivoDOE= mov != null && mov.getExTipoMovimentacao()
+					.equals(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE);
+			
 			final boolean imutavel = (mov != null) && !completo && !estampar && !somenteHash && !pacoteAssinavel;
 			String cacheControl = "private";
 			final Integer grauNivelAcesso = mob.doc().getExNivelAcesso().getGrauNivelAcesso();
@@ -159,7 +162,7 @@ public class ExArquivoController extends ExController {
 				cacheControl = "public";
 			}
 			byte ab[] = null;
-			if (isArquivoAuxiliar) {
+			if (isArquivoAuxiliar || isArquivoDOE) {
 				ab = mov.getConteudoBlobMov2();
 				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM,
 						mov.getNmArqMov().replaceAll(",", "").replaceAll(";", ""));

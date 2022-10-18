@@ -34,6 +34,7 @@ import org.jboss.logging.Logger;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
@@ -44,14 +45,17 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -70,6 +74,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -96,6 +101,7 @@ import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoDOE;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivoAuxiliar;
@@ -156,6 +162,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTramitarEmParalelo;
 import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPara;
 import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPosAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
+import br.gov.jfrj.siga.ex.model.enm.ConversaoDoeEnum;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
@@ -3720,7 +3727,7 @@ public class ExMovimentacaoController extends ExController {
 	public void cancelarMovimentacaoGravar(Integer postback, Long id,
 			String sigla, String dtMovString, boolean substituicao,
 			String descrMov, DpPessoaSelecao subscritorSel,
-			DpPessoaSelecao titularSel) throws Exception {
+			DpPessoaSelecao titularSel, String urlRedirecionar) throws Exception {
 
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
@@ -3748,7 +3755,12 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		
+		if(urlRedirecionar == null || "".equals(urlRedirecionar)) {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} else {
+			result.redirectTo(urlRedirecionar);
+		}
 	}
 
 	@Get("app/expediente/mov/retirar_de_edital_eliminacao")
@@ -4340,6 +4352,161 @@ public class ExMovimentacaoController extends ExController {
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get("/app/expediente/mov/agendar_publicacao_doe")
+	public void agendarPublicacaoDOE(String sigla, Long id, String urlRedirecionar) throws Exception {
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
+				.setSigla(sigla);
+
+		ExDocumento doc = buscarDocumento(builder, true);
+		DpLotacaoSelecao lot = new DpLotacaoSelecao();
+		lot.setId(getLotaTitular().getId());
+		lot.buscar();
+		
+		Ex.getInstance()
+				.getComp()
+				.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
+						builder.getMob());
+		
+		List<ExMovimentacao> listMov = new ArrayList<ExMovimentacao>();
+		listMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE));
+		if(!listMov.isEmpty())
+			id = listMov.get(0).getIdMov();
+		
+		result.include("urlRedirecionar", urlRedirecionar);
+		result.include("id", id);
+		result.include("descrPublicacao", Ex.getInstance().getBL().gerarTextoPublicacaoDOE(doc, !listMov.isEmpty() ? listMov.get(0) : null));
+		result.include("dtDispon", Data.formatDDMMYYYY(dao().dt()));
+		result.include("lotaSubscritorSel", lot);
+		result.include("mob", builder.getMob());
+		result.include("request", getRequest());
+		result.include("sigla", sigla);
+	}
+	
+	@Get("app/expediente/mov/visualizar_grupo")
+	public void visualizarGrupo(
+			final String ids, final String linha1, final String linha2) {
+		ExMovimentacao mov = new ExMovimentacao();
+		List<String> listaIdMovs = new ArrayList<String>();
+		List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
+		String textoDoc = "";
+		String textoAProcurar = "";
+		Integer indice = -1;
+		
+		listaIdMovs.addAll(Arrays.asList(ids.split(";")));
+		StringBuilder texto = new StringBuilder();
+		texto.append(linha1 != null ? "<div style=\"text-indent: 15px;\"><p><b>"+linha1+"</b></p><br>" : "");
+		texto.append(linha2 != null ? "<div style=\"text-indent: 15px;\"><p><b>"+linha2+"</b></p><br>" : "");
+		
+		for (String string : listaIdMovs) {
+			mov = dao().consultar(Long.valueOf(string), ExMovimentacao.class, false);
+			textoDoc = new String(mov.getConteudoBlobMov());
+			indice = textoDoc.indexOf(":");
+			if(indice != -1) {
+				textoAProcurar = textoDoc.substring(0, indice);
+				for (ConversaoDoeEnum conversaoDoeEnum : listaPalavas) {
+					if(textoAProcurar != null && conversaoDoeEnum.getGerundio().equals(textoAProcurar)) {
+						textoDoc = textoDoc.substring(textoDoc.indexOf(":")+1, textoDoc.length());
+					}
+				}
+			}
+			texto.append(linha1 != null ? "<div style=\"text-indent: 15px;\">" : "");
+			texto.append((textoDoc.replace("\n", "<br>")).replaceFirst("<br>", "") + "<br><br>");
+			
+		}
+		setMensagem(texto.toString());
+
+		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+	}
+	
+	@Get("app/expediente/mov/atualizar_tipo_ato") 
+	public void atualizarTipoAto(Long idMov) {
+		List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
+		String textoDoc = "";
+		String textoAProcurar = null;
+		Integer indice = -1;
+		
+		if(idMov != null) {
+			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
+			
+			textoDoc = new String(mov.getConteudoBlobMov());
+			indice = textoDoc.indexOf(":");
+			textoAProcurar = indice != -1 ? textoDoc.substring(0, indice) : textoDoc;
+			
+			for (ConversaoDoeEnum conversaoDoeEnum : listaPalavas) {
+				if(textoAProcurar != null && conversaoDoeEnum.getGerundio().equals(textoAProcurar)) {
+					setMensagem(textoDoc.substring(0, textoDoc.indexOf(":")+1));
+					break;
+				}
+			}
+		}
+		
+		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+	}
+	
+	@Transacional
+	@Post("/app/expediente/mov/agendar_publicacao_doe_gravar")
+	public void agendarPublicacaoDOEGravar(Integer postback, String sigla,
+			String dtDispon, Long idLotPublicacao,
+			String descrPublicacao, DpLotacaoSelecao lotaSubscritorSel, Long id, String urlRedirecionar)
+			throws Exception {
+		
+		BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		Long idPubl = lotaSubscritorSel.getId();
+		buscarDocumento(docBuilder, true);
+
+		ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+				.setMob(docBuilder.getMob()).setDtDispon(dtDispon)
+				.construir(dao());
+
+		String lotPublicacao = dao().consultar(idPubl, DpLotacao.class, false)
+				.getSigla();
+
+		Ex.getInstance().getComp()
+			.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
+					docBuilder.getMob());
+				
+		Ex.getInstance()
+			.getBL()
+			.gravarPublicacaoDOE(getCadastrante(), getLotaTitular(),
+					docBuilder.getMob(), dao().dt(), mov.getSubscritor(),
+					mov.getTitular(), getLotaTitular(),
+					mov.getDtDispPublicacao(), lotPublicacao,
+					descrPublicacao, id);
+		
+		if(urlRedirecionar != null && !"".equals(urlRedirecionar)) {
+			result.redirectTo(urlRedirecionar);
+		} else {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);	
+		}
+	}
+
+	@Get("/app/exMovimentacao/listarDOE")
+	public void listarDOE(Long idModelo) {
+		List<ExMovimentacao> listaMovs = 
+				dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, getTitular());
+		
+		List<ExMovimentacao> listFiltradaMovs = new ArrayList<ExMovimentacao>();
+		
+		List<ExModelo> listModelos = new ArrayList<ExModelo>();
+		for (ExMovimentacao exMovimentacao : listaMovs) {
+			if(!listModelos.contains(exMovimentacao.getExMobil().getDoc().getExModelo())) {
+				listModelos.add(exMovimentacao.getExMobil().getDoc().getExModelo());
+			}
+			if(idModelo != null && !idModelo.equals(0L)) {
+				if(idModelo.equals(exMovimentacao.getExMobil().getDoc().getExModelo().getId())) {
+					listFiltradaMovs.add(exMovimentacao);
+				}
+			}
+		}
+		result.include("listaPermissoes",new Gson().toJson(Ex.getInstance().getBL().listarPermissoesDOE()));
+		result.include("idModelo", idModelo);
+		result.include("listMov", idModelo != null && !idModelo.equals(0L) ? listFiltradaMovs : listaMovs);
+		result.include("listModelos", listModelos);
+	}
+	
 
 	@Get("/app/expediente/mov/assinar_verificar")
 	public void aAssinarVerificar(Long id, boolean ajax) {

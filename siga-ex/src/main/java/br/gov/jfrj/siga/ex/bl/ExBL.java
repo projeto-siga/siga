@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,7 +60,6 @@ import java.util.regex.Pattern;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
-import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
@@ -97,6 +97,7 @@ import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Prop;
@@ -208,6 +209,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeSerSubscritor;
 import br.gov.jfrj.siga.ex.logic.ExPodeSerTransferido;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
+import br.gov.jfrj.siga.ex.model.enm.ConversaoDoeEnum;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
@@ -223,9 +225,11 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
 import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
 import br.gov.jfrj.siga.integracao.ws.siafem.SiafDoc;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -1013,6 +1017,82 @@ public class ExBL extends CpBL {
 			throw e;
 		}
 	}
+	
+	public void gravarPublicacaoDOE(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular, final DpLotacao lotaTitular,
+			final Date dtDispPublicacao, final String lotPublicacao,
+			final String descrPublicacao, final Long id) throws Exception {
+
+		if(id != null) {
+			ExMovimentacao exMov = ExDao.getInstance().consultar(id,
+					ExMovimentacao.class, false);
+			
+			this.cancelar(titular, lotaTitular, mob, exMov,
+				dao().dt(), subscritor, titular, "");
+		}
+
+		
+		try {
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, cadastrante, lotaCadastrante, mob,
+					dtMov, subscritor, null, titular, lotaTitular, null);
+			
+			mov.setDtDispPublicacao(dtDispPublicacao);
+			mov.setNmArqMov(mob.getCodigoCompacto()+".txt");
+			mov.setConteudoTpMov("text/plain");
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {			
+				baos.write(descrPublicacao.getBytes());
+//				baos.toByteArray();
+				mov.setConteudoBlobMov2(baos.toByteArray());
+			}
+			
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov);
+			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw e;
+		}
+	}
+	
+	public String gerarTextoPublicacaoDOE(ExDocumento doc, ExMovimentacao mov) throws IOException {
+		String html = new String();
+	
+		if(mov == null) {
+			html = doc.getConteudoBlobHtmlString();
+			html = html.substring(html.indexOf("FIM TITULO -->")+14, html.indexOf("<!-- INICIO ASSINATURA -->"));
+			
+			Integer posicao = -1;
+			Integer posicaoFinal = -1;
+			ConversaoDoeEnum palavraFinal = null;
+			if(doc.getExModelo().getNmMod().contains("Resolução")) {
+				List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
+				for (ConversaoDoeEnum palavra : listaPalavas) {
+					posicao = html.toLowerCase().indexOf(palavra.getImperativo());
+					if((posicaoFinal > posicao && posicao != -1) || (posicaoFinal == -1 && posicao != -1)) {
+						posicaoFinal = posicao;
+						palavraFinal = palavra;
+					}
+				}
+			}
+			if(posicaoFinal != -1)
+				html = palavraFinal.getGerundio() + ":\n"+ HtmlToPlainText.getText(html.substring(posicaoFinal + palavraFinal.getImperativo().length()));
+			else 
+				html = HtmlToPlainText.getText(html);
+		} else {
+			ExMovimentacao exMov = ExDao.getInstance().consultar(mov.getIdDoc(), ExMovimentacao.class, false);
+			try {
+				byte[] texto = exMov.getConteudoBlobMov2();
+				if (texto != null)
+					html =  new String(texto, "ISO-8859-1");
+				
+			} catch (UnsupportedEncodingException e) {
+				throw new AplicacaoException(
+						"Não foi possível recuperar o agendamento já cadastrado");
+			}
+		}
+		return html;
+	}
 
 	public ExMovimentacao anexarArquivo(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, final String nmArqMov, final DpPessoa titular,
@@ -1052,6 +1132,45 @@ public class ExBL extends CpBL {
 			throw new RuntimeException("Erro ao anexar documento.", e);
 		}
 	}
+	
+	public List<PermissaoPublicanteDto> listarPermissoesDOE() {
+//		AuthHeader user = new AuthHeader();
+//		user.setUserName(usuario);
+//		user.setPassword(senha);
+//		PubnetConsultaService pub = new PubnetConsultaService();
+//		return pub.consultarPermissaoPublicante(user);
+		
+		List<PermissaoPublicanteDto> lista = new ArrayList<PermissaoPublicanteDto>();
+		lista.add(new PermissaoPublicanteDto("permissao1", 0, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ", 
+				"273ª Ciretran - Ferraz de Vasconcelos", 5L, 12L, "APOS", "Apostila", 2));
+		lista.add(new PermissaoPublicanteDto("permissao2", 1, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ZABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 5L, 12L, "APOS", "Apostila", 3));
+		lista.add(new PermissaoPublicanteDto("permissao3", 2, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 8L, 41L, "ATA", "Ata", 2));
+		lista.add(new PermissaoPublicanteDto("permissao4", 3, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 13L, 163L, "BALA", "Balanço", 2));
+		lista.add(new PermissaoPublicanteDto("permissao5", 4, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 18L, 19L, "COMU", "Comunicado", 2));
+		lista.add(new PermissaoPublicanteDto("permissao6", 5, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ZABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 18L, 19L, "COMU", "Comunicado", 3));
+		lista.add(new PermissaoPublicanteDto("permissao7", 6, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 30L, 15L, "DELB", "Deliberação", 2));
+		lista.add(new PermissaoPublicanteDto("permissao8", 7, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ZABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos",  30L, 15L, "DELB", "Deliberação", 3));
+		lista.add(new PermissaoPublicanteDto("permissao9", 8, 13306L, "273ª Circunscrição Regional de Transito - Ferraz de Vasconcelos/SP", "ABNJ",
+				"273ª Ciretran - Ferraz de Vasconcelos", 31L, 13L, "DESP", "Despacho", 2));
+		lista.add(new PermissaoPublicanteDto("permissao20", 19, 28289L, "APTA-DEPARTAMENTO DE GESTAO ESTRATEGICA", "JEVA",
+				"Agência Paulista de Tecnologia dos Agronegócios", 5L, 12L, "APOS", "Apostila", 2));
+		lista.add(new PermissaoPublicanteDto("permissao2932", 2931, 22856L, "Departamento de Suprimentos e Licitações - Secr. Educação", "KHCS",
+				"Núcleo de Apoio Administrativo", 62L, 33L, "RETF", "Retificação", 3));
+		lista.add(new PermissaoPublicanteDto("permissao2933", 2932, 22856L, "Departamento de Suprimentos e Licitações - Secr. Educação", "KHCS",
+				"Núcleo de Apoio Administrativo", 63L, 29L, "RARE", "Retificação / Ratificação", 2));
+		lista.add(new PermissaoPublicanteDto("permissao2934", 2933, 22856L, "Departamento de Suprimentos e Licitações - Secr. Educação", "KHCS",
+				"Núcleo de Apoio Administrativo", 136L, 176L, "SUPE", "Suplemento", 2));
+		
+		return lista;
+	}
+
 
 	public void anexarArquivoAuxiliar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, String nmArqMov, final DpPessoa titular,

@@ -54,12 +54,8 @@
                                 <siga:selecao titulo="Classifica&ccedil;&atilde;o Atual"
                                               propriedade="classificacaoAtual"
                                               modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
-                                <script type="text/javascript">
-                                    const classificacaoAtualSelElement = document.getElementById('formulario_classificacaoAtualSel_sigla');
-                                    classificacaoAtualSelElement.addEventListener('change', () => {
-                                        listarDocumentosParaReclassificarEmLote();
-                                    });
-                                </script>
+                                <a href="javascript: listarDocumentosParaReclassificarEmLote()"
+                                   class="btn btn-cancel btn-primary">Buscar Documentos</a>
                             </div>
                         </div>
                     </div>
@@ -110,6 +106,8 @@
     </div>
     <script type="text/javascript">
         function listarDocumentosParaReclassificarEmLote(offset) {
+            sigaSpinner.mostrar();
+            
             offset = offset == null ? 0 : offset;
 
             let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
@@ -120,7 +118,12 @@
                 url: url,
                 success: function (data) {
                     $('#documentos').html(data);
-                }
+                    sigaSpinner.ocultar();
+                },
+                error : function(result) {
+                    sigaSpinner.ocultar();
+                    console.log(result.errormsg);
+                },
             });
         }
 

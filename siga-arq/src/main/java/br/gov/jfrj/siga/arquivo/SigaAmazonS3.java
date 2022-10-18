@@ -34,6 +34,8 @@ import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.gov.jfrj.siga.base.Prop;
+
 public class SigaAmazonS3 {
 	
 	private AmazonS3 s3Client;
@@ -92,7 +94,7 @@ public class SigaAmazonS3 {
 	}
 	
 	private String criarToken(String nomeBucket, String nomeArquivo, String nomeArquivoS3, Long tamanho, String hash) {
-		final JWTSigner signer = new JWTSigner(System.getProperty("siga.jwt.secret"));
+		final JWTSigner signer = new JWTSigner(Prop.get("/siga.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 		final long iat = System.currentTimeMillis() / 1000L;
 		claims.put("iat", iat);
@@ -107,7 +109,7 @@ public class SigaAmazonS3 {
 	public ResponseEntity<InputStreamResource> download(String tokenArquivo) throws Exception {
 		AmazonS3 s3Client = conectarS3();
 		
-		final JWTVerifier verifier = new JWTVerifier(System.getProperty("siga.jwt.secret"));
+		final JWTVerifier verifier = new JWTVerifier(Prop.get("/siga.jwt.secret"));
  		Map<String, Object> lst = verifier.verify(tokenArquivo);
 		String arquivoNomeS3 = (String) lst.get("nomeArqS3");
 		String arquivoNome = (String) lst.get("nomeArq");
@@ -140,7 +142,7 @@ public class SigaAmazonS3 {
 	public void remover(String tokenArquivo) throws Exception {
 		AmazonS3 s3Client = conectarS3();
 		
-		final JWTVerifier verifier = new JWTVerifier(System.getProperty("siga.jwt.secret"));
+		final JWTVerifier verifier = new JWTVerifier(Prop.get("/siga.jwt.secret"));
  		Map<String, Object> lst = verifier.verify(tokenArquivo);
 		String arquivoNomeS3 = (String) lst.get("nomeArqS3");
 		
@@ -158,20 +160,24 @@ public class SigaAmazonS3 {
 
 	private AmazonS3 conectarS3() {
 		if (s3Client == null) {
-			String accessKey = Base64.getEncoder().encodeToString(System.getProperty("siga.armazenamento.arquivo.usuario").getBytes());
-			String secretKey = DigestUtils.md5Hex(System.getProperty("siga.armazenamento.arquivo.senha"));
+			String accessKey = Base64.getEncoder().encodeToString(Prop.get("armazenamento.arquivo.formatolivre.usuario").getBytes());
+			String secretKey = DigestUtils.md5Hex(Prop.get("armazenamento.arquivo.formatolivre.senha"));
 	        System.setProperty("com.amazonaws.sdk.disableCertChecking", "true");
-	        bucketName = System.getProperty("siga.armazenamento.arquivo.bucket");
+	        bucketName = Prop.get("armazenamento.arquivo.formatolivre.bucket");
 
 	        s3Client = AmazonS3ClientBuilder
 	        	    .standard()
 	        	    .withCredentials(new AWSStaticCredentialsProvider(
 	        	    		new BasicAWSCredentials(accessKey, secretKey)))
 	        	    .withEndpointConfiguration(new EndpointConfiguration(
-	        	    		System.getProperty("siga.armazenamento.arquivo.url").replace(bucketName + ".", ""),
+	        	    		Prop.get("/siga.armazenamento.arquivo.formatolivre.url").replace(bucketName + ".", ""),
 	        	    		"us-west-1"))
 	        	    .build();
 		}
 		return s3Client;
+	}
+
+	public AmazonS3 conectar() throws Exception {
+		return s3Client = conectarS3();
 	}
 }

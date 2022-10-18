@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.arquivo.controller;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +11,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import br.gov.jfrj.siga.arquivo.ArqApiV1Servlet;
 import br.gov.jfrj.siga.arquivo.SigaAmazonS3;
 
 @RestController
 @RequestMapping("api/v1")
 public class SigaAmazonS3Controller {
+	private ArqApiV1Servlet servlet;
+	SigaAmazonS3Controller() throws Exception {
+		servlet = new ArqApiV1Servlet();
+	}
 	
 	@PostMapping("/upload")
     public ResponseEntity<String> upload(HttpServletRequest request, @RequestHeader String parms) throws Exception {
@@ -34,6 +40,17 @@ public class SigaAmazonS3Controller {
 		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
 		sigaS3.remover(tokenArquivo);
 		return ResponseEntity.ok("OK");
+    }
+	
+	@GetMapping("/test")
+    public ResponseEntity<String> test(HttpServletRequest req, HttpServletResponse res) throws Exception {
+//		servlet.doGet(req, res);
+		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
+		sigaS3.conectar();
+		return ResponseEntity.ok("{" + System.lineSeparator()
+				+ "  \"service\": \"siga-arq\"," + System.lineSeparator()
+				+ "  \"url\": \"/siga-arq/api/v1/test\"" + System.lineSeparator()
+				+ "}");
     }
 	
 }

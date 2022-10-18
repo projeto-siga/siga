@@ -25,7 +25,7 @@ public class SigaArqApplication extends SpringBootServletInitializer  {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**")
-					.allowedOrigins(System.getProperty("siga.allowed.origin.urls"))
+					.allowedOrigins(System.getProperty("siga-arq.allowed.origin.urls"))
                 	.allowCredentials(true)
 	                .allowedMethods("OPTIONS","POST","PUT","GET","DELETE","HEAD")
 	                .allowedHeaders("Cookie","Content-Disposition","content-type","parms","tokenArquivo")

@@ -13,7 +13,6 @@
 	<artifactId>siga-arq</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>siga-arq</name>
 	<description>Upload e Download de Arquivos</description>
 
 	<properties>
@@ -57,12 +56,13 @@
 		    <artifactId>aws-java-sdk-s3</artifactId>
 		    <version>1.12.200</version>
 		</dependency>
-			
-		<dependency>
-		    <groupId>org.springframework.data</groupId>
-		    <artifactId>spring-data-redis</artifactId>
-		</dependency>
 		
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>swaggerservlet</artifactId>
+			    <version>2.0.3</version>
+		</dependency>
+			
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
@@ -74,6 +74,13 @@
 			<artifactId>siga-jwt</artifactId>
 			<version>1.2-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-base</artifactId>
+			<version>1.2-SNAPSHOT</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

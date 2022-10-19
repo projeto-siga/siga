@@ -81,6 +81,7 @@ public class RequestParamsCheckInterceptor {
     	try {
     		SigaObjects so = new SigaObjects(this.request);
     		cadastrante = so.getCadastrante();
+    		request.setAttribute("cadastrante", cadastrante);
     		siglaCadastrante = cadastrante.getLotacao().getSigla() + "/" + cadastrante.getSigla();
 		} catch (Exception e) {
 			siglaCadastrante = "Não identificado";

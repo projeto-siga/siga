@@ -76,38 +76,38 @@
 		  <c:if test="${hasMessage}"> 
 		  	<div class="${classMsg}" role="alert">${msgException}</div>
 		  </c:if>
-          <c:if test="${tipoException != 'AplicacaoException'}">  
-				<div class="card" >
-				  <div class="card-header bg-dark text-white">
-				  	Dados da Execução
-				  </div>
-				  <ul class="list-group list-group-flush">
-				  	<li class="list-group-item">
-				  		<strong>Usuário</strong> <c:out value="${cadastrante.lotacao}" /> / <c:out value="${cadastrante.sigla}" />
-				    	&nbsp;<strong>Data/Hora</strong>
-				    	<jsp:useBean id="now" class="java.util.Date" />  
-						<fmt:formatDate var="datahora" value="${now}" pattern="dd/MM/yyyy HH:mm:ss" /> 
-						<c:out value="${datahora}" />
-				    </li>
-				    <c:if test="${param.sigla != null}"> 
-				    	<li class="list-group-item"><strong>Documento </strong><c:out value="${param.sigla}" /></li>
-				    </c:if>  
-				    <li class="list-group-item">
-				    	<strong>Ambiente </strong>
-				    	<c:out value="${f:resource('/siga.ambiente')}" /> [<c:out value="${serverName}" />]
-				    	&nbsp;<strong>Versão </strong>SIGA <c:out value="${siga_version}" />
-				    </li>
-				  </ul>
-				  <div class="card-footer text-center pt-2">
-				   	<c:if test="${newWindow != 1}">
-						<input type="button" value="Voltar"	onclick="javascript:history.back();" class="btn btn-primary" />
-					</c:if>
-					<c:if test="${newWindow eq 1}">
-						<input type="button" value="Fechar"	onclick="javascript:window.close();" class="btn btn-primary" />
-					</c:if>
-				  </div>
-				</div> 
-			</c:if> 
+
+			<div class="card" >
+			  <div class="card-header bg-dark text-white">
+			  	Dados da Execução
+			  </div>
+			  <ul class="list-group list-group-flush">
+			  	<li class="list-group-item">
+			  		<strong>Usuário</strong> <c:out value="${cadastrante.lotacao}" /> / <c:out value="${cadastrante.sigla}" />
+			    	&nbsp;<strong>Data/Hora</strong>
+			    	<jsp:useBean id="now" class="java.util.Date" />  
+					<fmt:formatDate var="datahora" value="${now}" pattern="dd/MM/yyyy HH:mm:ss" /> 
+					<c:out value="${datahora}" />
+			    </li>
+			    <c:if test="${param.sigla != null}"> 
+			    	<li class="list-group-item"><strong>Documento </strong><c:out value="${param.sigla}" /></li>
+			    </c:if>  
+			    <li class="list-group-item">
+			    	<strong>Ambiente </strong>
+			    	<c:out value="${f:resource('/siga.ambiente')}" /> [<c:out value="${serverName}" />]
+			    	&nbsp;<strong>Versão </strong>SIGA <c:out value="${siga_version}" />
+			    </li>
+			  </ul>
+			  <div class="card-footer text-center pt-2">
+			   	<c:if test="${newWindow != 1}">
+					<input type="button" value="Voltar"	onclick="javascript:history.back();" class="btn btn-primary" />
+				</c:if>
+				<c:if test="${newWindow eq 1}">
+					<input type="button" value="Fechar"	onclick="javascript:window.close();" class="btn btn-primary" />
+				</c:if>
+			  </div>
+			</div> 
+
 		</div>
 
 

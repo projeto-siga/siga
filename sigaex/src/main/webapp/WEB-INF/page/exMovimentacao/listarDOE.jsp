@@ -212,6 +212,24 @@
 			
 		}
 		
+		function montarReciboArquivoDOE(){
+			
+			var anuncianteId = document.getElementById("idSecao").value;
+			var cadernoId = document.getElementById("idCaderno").value;
+			var retrancaCod = document.getElementById("idSecao").value;
+			var tipoMaterialId = 8 //Criar input select
+			//var sequencial = default1;
+			var textoPublicacao = "teste texto";
+			$.ajax({				     				  
+				  url:'${pageContext.request.contextPath}/app/exMovimentacao/montarReciboArquivoDOE',
+				  type: "GET",
+				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
+					  			tipoMaterialId : tipoMaterialId, textoPublicacao : textoPublicacao},
+				  success: function(data) {
+					  console.log(data);
+			 	 }
+			});
+		}
 
 	</script>
 	
@@ -365,7 +383,7 @@
 
 					      </div>
 					      <div class="modal-footer">
-					      	<button type="button" class="btn btn-primary">OK</button>
+					      	<button type="button" onclick="javascript:montarReciboArquivoDOE();" class="btn btn-primary">OK</button>
 					        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 					      </div>
 					    </div>

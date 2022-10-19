@@ -127,8 +127,13 @@ public class Mesa2 {
 		for (ExMobil mobil : references) {
 			MesaItem r = new MesaItem();
 			r.tipo = "Documento";
+			r.grupoOrdem = grupoOrdem;
+			r.offset = offsetItem.toString();
+			offsetItem++;
 
 			try {
+				r.sigla = mobil.getDnmSigla();
+				r.codigo = mobil.getCodigoCompacto();
 				Date datahora = null;
 				ExMovimentacao ultimaMov = mobil.getUltimaMovimentacaoNaoCanceladaENaoCanceladora();
 				datahora = mobil.getDnmDataUltimaMovimentacaoNaoCancelada();
@@ -137,12 +142,8 @@ public class Mesa2 {
 				r.datahora = datahora;
 				r.datahoraDDMMYYYHHMM = df.format(datahora);
 				r.tempoRelativo = Data.calcularTempoRelativo(datahora);
-				r.codigo = mobil.getCodigoCompacto();
-				r.sigla = mobil.getSigla();
 				r.descr = StringEscapeUtils.unescapeHtml4(mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " "));
 				r.tipoDoc = (mobil.doc().isComposto()? "Composto" : "Avulso");
-				r.offset = offsetItem.toString();
-				offsetItem++;
 				ExMovimentacao ultMovPosse = null;
 	
 				if (mobil.doc().getSubscritor() != null
@@ -206,8 +207,6 @@ public class Mesa2 {
 					}
 				}
 	
-				r.grupoOrdem = grupoOrdem;
-				
 				if (trazerAnotacoes && mobil.getDnmUltimaAnotacao() != null && !mobil.getDnmUltimaAnotacao().replace(" ", "").equals("")) { 
 					r.anotacao = mobil.getDnmUltimaAnotacao().replace("\r\f", "<br/>").replace("\n", "<br/>");
 				}
@@ -333,7 +332,8 @@ public class Mesa2 {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				r.descr = "*** Doc. corrompido *** " + (r.descr != null? r.descr : "");
+				r.descr = "*** Doc. corrompido (idMobil:" + mobil.getIdMobil().toString() + ") *** " 
+						+ (r.descr != null? r.descr : "");
 			}
 			l.add(r);
 		}

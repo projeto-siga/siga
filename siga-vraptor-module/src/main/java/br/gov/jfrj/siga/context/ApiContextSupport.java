@@ -243,8 +243,11 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		} catch (Exception e) {
 			siglaCadastrante = "Não identificado";
 		}
-    	
-    	logger.log(BLAME, "[Detectado XSS] - Param: {}; IP de Origem: {}; Usuário: {};", param, HttpRequestUtils.getIpAudit(SwaggerServlet.getHttpServletRequest()), siglaCadastrante);
+    	logger.log(BLAME, "[Detectado XSS] - Request: {}; Param XSS: {}; IP de Origem: {}; Usuário: {};", 
+    			SwaggerServlet.getHttpServletRequest(), 
+    			param, 
+    			HttpRequestUtils.getIpAudit(SwaggerServlet.getHttpServletRequest()), 
+    			siglaCadastrante);
     }
 	
 }

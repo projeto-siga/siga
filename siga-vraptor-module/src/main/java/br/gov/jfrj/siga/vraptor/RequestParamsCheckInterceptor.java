@@ -87,7 +87,11 @@ public class RequestParamsCheckInterceptor {
 			siglaCadastrante = "Não identificado";
 		}
     	
-    	logger.log(BLAME, "[Detectado XSS] - Param: {}; IP de Origem: {}; Usuário: {};", param, HttpRequestUtils.getIpAudit(request), siglaCadastrante);
+    	logger.log(BLAME, "[Detectado XSS] - Request: {}; Param XSS: {}; IP de Origem: {}; Usuário: {};", 
+    			request, 
+    			param, 
+    			HttpRequestUtils.getIpAudit(request), 
+    			siglaCadastrante);
     }
     
 }

@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import br.gov.jfrj.siga.ex.task.ExTarefas;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
@@ -37,6 +38,8 @@ public class ExStarter {
 		emf = Persistence.createEntityManagerFactory("default");
 		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_EX);
 		new MigrationThread().start();
+
+		ExTarefas.agendarTarefaGarbageCollector();
 	}
 
 	public static class MigrationThread extends Thread {

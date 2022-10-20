@@ -23,6 +23,7 @@ import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -223,12 +224,15 @@ import net.sf.jasperreports.engine.JRException;
 				listDados.add(subscritor);
 				listDados.add(dtAssinatura);
 				listLinhas.add(listDados);
-				totalDocumentos = totalDocumentos + 1; 
-				if (gcCounter > 200) {
-					gcCounter = 0;
-					System.gc();
-				} else {
-					gcCounter += 1;
+				totalDocumentos = totalDocumentos + 1;
+
+				if(!Prop.getBool("garbage.tarefa")) {
+					if (gcCounter > 200) {
+						gcCounter = 0;
+						System.gc();
+					} else {
+						gcCounter += 1;
+					}
 				}
 			}
 			if (listLinhas.size() == 0) {

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -5313,5 +5314,89 @@ public class ExMovimentacaoController extends ExController {
 		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 		
+	}
+
+	@Get("/app/expediente/mov/reclassificar_lote")
+	public void reclassificar_lote(final String motivo,
+								   final String dtMovString, final String obsOrgao, 
+								   final boolean substituicao, final DpPessoaSelecao titularSel,
+								   final DpPessoaSelecao subscritorSel,
+								   final ExClassificacaoSelecao classificacaoAtualSel,
+								   final ExClassificacaoSelecao classificacaoNovaSel,
+								   final int offset) {
+		
+		assertAcesso("RECLALOTE:Reclassificar em Lote");
+
+
+		result.include("substituicao", substituicao ? substituicao : Boolean.FALSE);
+		result.include("titularSel", Objects.isNull(titularSel) ? new DpPessoaSelecao() : titularSel);
+		result.include("subscritorSel", Objects.isNull(subscritorSel) ? new DpPessoaSelecao() : subscritorSel);
+		result.include("classificacaoAtualSel", Objects.isNull(classificacaoAtualSel) ? new ExClassificacaoSelecao() :
+				classificacaoAtualSel);
+		result.include("classificacaoNovaSel", Objects.isNull(classificacaoNovaSel) ? new ExClassificacaoSelecao() :
+				classificacaoNovaSel);
+	}
+
+	@Transacional
+	@Post("/app/expediente/mov/reclassificar_lote_gravar")
+	public void reclassificar_lote_gravar(final String motivo, final String dtMovString, final String obsOrgao, 
+										  final boolean substituicao, final DpPessoaSelecao titularSel, 
+										  final DpPessoaSelecao subscritorSel, 
+										  final ExClassificacaoSelecao classificacaoAtualSel, 
+										  final ExClassificacaoSelecao classificacaoNovaSel, 
+										  final List<Long> documentosSelecionados, 
+										  final int offset) throws Exception {
+		
+		assertAcesso("RECLALOTE:Reclassificar em Lote");
+
+		if (classificacaoAtualSel == null || classificacaoAtualSel.getId() == null || 
+				classificacaoNovaSel == null || classificacaoNovaSel.getId() == null || 
+				motivo == null || motivo.trim().equals("")) {
+			
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "Não foram informados dados para a reclassificação");
+			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
+					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
+			return;
+		}
+
+		if(classificacaoAtualSel.getSigla().equals(classificacaoNovaSel.getSigla())){
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "Classificação selecionada para reclassificar é a mesma da atual");
+			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
+					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
+			return;
+		}
+
+		if(documentosSelecionados.isEmpty()){
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "Não foram selecionados documentos para a reclassificação");
+			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
+					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
+			return;
+		}
+
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia().setDescrMov(motivo).setDtMovString(dtMovString).setObsOrgao(obsOrgao)
+				.setSubstituicao(substituicao).setTitularSel(titularSel).setSubscritorSel(subscritorSel)
+				.setClassificacaoSel(classificacaoNovaSel).construir(dao());
+		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
+		
+		try {
+			for (Long idDocumento : documentosSelecionados) {
+				final ExMobil mob = dao().consultar(idDocumento, ExDocumento.class, false).getMobilGeral();
+
+				if (Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mob) 
+						&& Ex.getInstance().getComp().pode(ExPodeReclassificar.class, getTitular(), getLotaTitular(), mob)) {
+
+					Ex.getInstance().getBL().avaliarReclassificar(mov.getTitular(), mov.getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);
+				}
+			}
+		} catch (Exception e) {
+
+		}
+		result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
+				subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
 	}
 }

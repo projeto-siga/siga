@@ -80,7 +80,7 @@ public class ExNotificar {
 						}); 
 					} 
 					email.enviarAoTramitarDocMarcado(
-							pessoa, mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");		
+							pessoa, mov.getCadastrante(), mov.getExDocumento().getSigla(), marcasDoDoc + "");		
 				} 
 				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 						pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCTUN.getChave())
@@ -109,14 +109,14 @@ public class ExNotificar {
 					});
 				}
 				email.enviarAoTramitarDocMarcado(
-						mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");	
+						mov.getResp(), mov.getCadastrante(), mov.getExDocumento().getSigla(), marcasDoDoc + "");	
 			}
 			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
 						mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCTUSU.getChave())
 					&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
 							mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()))  
 				email.enviarAoTramitarDocParaUsuario(
-						mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());
+						mov.getResp(), mov.getCadastrante(), mov.getExDocumento().getSigla());
 		}
 	}
 	

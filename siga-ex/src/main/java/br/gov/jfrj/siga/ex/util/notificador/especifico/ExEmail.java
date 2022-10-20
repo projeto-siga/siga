@@ -55,10 +55,10 @@ public class ExEmail implements ExEnviarEmail, ExMontarEmail {
 		}
 	}
 
-	public void enviarAoTramitarDocMarcado(DpPessoa pessoaDest, DpPessoa titular, String sigla, String marcador) {
+	public void enviarAoTramitarDocMarcado(DpPessoa pessoaDest, DpPessoa cadastrante, String sigla, String marcador) {
 		String assunto = "Documento tramitado para " + pessoaDest.getDescricao();
 		String[] destinanarios = { pessoaDest.getEmailPessoaAtual() };
-		String conteudoHTML = docMarcadoTramitadoParaUsuario(pessoaDest, titular, sigla, marcador);
+		String conteudoHTML = docMarcadoTramitadoParaUsuario(pessoaDest, cadastrante, sigla, marcador);
 		try {
 			if (!marcador.equals(""))
 			Correio.enviar(null,destinanarios, assunto, "", conteudoHTML);

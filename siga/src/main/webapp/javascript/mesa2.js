@@ -178,7 +178,7 @@ var appMesa = new Vue({
 					filtro: this.filtro,
 					idVisualizacao: ID_VISUALIZACAO
 				},
-				complete: function(response, status, request) {
+				complete: function(response, status) {
 					let cType = response.getResponseHeader('Content-Type');
 					self.errormsg = undefined;
 					if (status == 'timeout') {
@@ -552,11 +552,6 @@ function carregaFromJson(json, appMesa) {
 					preencheLinhasFantasmas(grp, appMesa);
 					Vue.set(appMesa.grupos, g, grp[0]);
 				}
-			}
-		} else {
-			for (let g in appMesa.grupos) {
-				if (appMesa.grupos[g].grupoOrdem == grp[0].grupoOrdem) 
-					appMesa.grupos[g].grupoDocs = [];
 			}
 		}
 	}

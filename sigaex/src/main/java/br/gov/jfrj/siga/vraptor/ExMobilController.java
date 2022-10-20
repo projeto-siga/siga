@@ -32,28 +32,18 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import br.gov.jfrj.siga.cp.logic.CpPodePorConfiguracao;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.auth0.jwt.JWTSigner;
+import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -62,13 +52,11 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
-import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
@@ -1069,4 +1057,44 @@ public class ExMobilController extends
 		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
 
+	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
+	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao, final int offset) {
+
+		assertAcesso("RECLALOTE:Reclassificar em Lote");
+
+		int itemPagina = 50;
+		Integer tamanho = null;
+
+		if (siglaClassificacao != null) {
+			tamanho = ExDao.getInstance()
+					.consultarQuantidadeParaReclassificarEmLote(getTitular(), siglaClassificacao);
+
+		}
+		if (Objects.nonNull(tamanho)) {
+			List<ExDocumentoVO> documentosPorCodificacaoClassificacao = ExDao.getInstance()
+					.consultarParaReclassificarEmLote(getTitular(), siglaClassificacao, offset, itemPagina);
+			
+			List<ExDocumentoVO> itens = new ArrayList<>();
+			for(ExDocumentoVO item : documentosPorCodificacaoClassificacao){
+				ExMobil mob = dao().consultar(item.getIdDoc(), ExDocumento.class, false).getMobilGeral();
+
+				if (new ExPodeReclassificar(mob, getTitular(), getLotaTitular()).eval()) {
+					itens.add(item);
+				}
+			}
+
+			documentosPorCodificacaoClassificacao = null;
+					
+			getP().setOffset(offset);
+			setItemPagina(itemPagina);
+			setItens(itens);
+			setTamanho(tamanho-itens.size());
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+			
+		}
+	}
 }

@@ -536,7 +536,7 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				if(Prop.get("arquivo.tamanho.gc") != null) {
+				if(!Prop.getBool("garbage.tarefa") && Prop.get("arquivo.tamanho.gc") != null) {
 					garbage += ab.length;
 					if (garbage > Long.valueOf(Prop.get("arquivo.tamanho.gc"))) {
 						garbage = 0;
@@ -653,7 +653,8 @@ public class Documento {
 					sb.append("</div>");
 				}
 
-				if ((an.getArquivo() instanceof ExDocumento && !((ExDocumento)an.getArquivo()).isCapturado()) ||
+				if ((an.getArquivo() instanceof ExDocumento && (!((ExDocumento)an.getArquivo()).isCapturado() || 
+						(((ExDocumento)an.getArquivo()).isCapturadoFormatoLivre()))) ||
 						(an.getArquivo() instanceof ExMovimentacao && an.getArquivo().getHtml() != null)) {
 					String sHtml = fixHtml(contextpath, an);				
 					sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();
@@ -700,7 +701,7 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				if(Prop.get("arquivo.contagem.gc") != null) {
+				if(!Prop.getBool("garbage.tarefa") && Prop.get("arquivo.contagem.gc") != null) {
 					garbage += 1;
 					if (garbage > Long.valueOf(Prop.get("arquivo.contagem.gc"))) {
 						garbage = 0;

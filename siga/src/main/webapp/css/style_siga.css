@@ -369,6 +369,13 @@ a.doc-sign:hover {
    	color: #555555!important;
 }
 
+.select2-container--bootstrap .select2-selection--single {
+   	height: 2.3rem !important;
+}
+.select2-results__option {
+   	height: 1.8rem !important;
+}
+
 
 /*
 ######################

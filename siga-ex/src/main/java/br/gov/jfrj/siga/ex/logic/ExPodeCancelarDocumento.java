@@ -56,6 +56,6 @@ public class ExPodeCancelarDocumento extends CompositeExpressionSupport {
 
 						And.of(Not.of(new ExEDocFilhoJuntadoAoPai(doc)), new ExECadastrante(doc, titular)),
 
-						new ExESubscritor(doc, titular)));
+						Or.of(new ExESubscritor(doc, titular),new ExECadastrante(doc, lotaTitular))));
 	}
 }

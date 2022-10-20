@@ -697,9 +697,9 @@ public class AppController extends GcController {
 		DpPessoa titular = getTitular();
 		DpLotacao lotaTitular = getLotaTitular();
 
-		if (sigla != null) {
+		if (sigla != null) 
 			informacao = GcInformacao.findBySigla(sigla);
-		} else
+		else
 			informacao = new GcInformacao();
 
 		if (informacao.getAutor() == null || informacao.podeRevisar(titular, lotaTitular) != null
@@ -712,7 +712,7 @@ public class AppController extends GcController {
 			if (conteudo == null)
 				conteudo = (informacao.getArq() != null) ? informacao.getArq().getConteudoTXT() : null;
 
-			if (tipo == null)
+			if (tipo.getId() == null)
 				tipo = (informacao.getTipo() != null) ? informacao.getTipo() : tiposInformacao.get(0);
 
 			if (informacao.getArq() == null)
@@ -1026,10 +1026,13 @@ public class AppController extends GcController {
 			else if (pessoa != null)
 				informacao.setOu(pessoa.getOrgaoUsuario());
 		}
-
-		informacao.setTipo(tipo);
-		informacao.setEdicao(edicao);
-		informacao.setVisualizacao(visualizacao);
+		
+		if (tipo.getId() != null)
+			informacao.setTipo(tipo);
+		if (edicao.getId() != null)
+			informacao.setEdicao(edicao);
+		if (visualizacao.getId() != null)
+			informacao.setVisualizacao(visualizacao);
 
 		// Atualiza a classificação com as hashTags encontradas
 		if (conteudo != null) {

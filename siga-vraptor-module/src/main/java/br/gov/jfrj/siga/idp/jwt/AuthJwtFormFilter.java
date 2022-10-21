@@ -182,10 +182,14 @@ public class AuthJwtFormFilter implements Filter {
 
 		return cookie;
 	}
+	
+	private static String removeSpecial(String str) {
+		return str.replaceAll("[^a-zA-Z ]", "");
+	}
 
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {
 		response.setHeader("Set-Cookie",
-				cookie.getName() + "=" + cookie.getValue() + "; Path=" + cookie.getPath() + "; Max-Age="
+				removeSpecial(cookie.getName()) + "=" + removeSpecial(cookie.getValue()) + "; Path=" + cookie.getPath() + "; Max-Age="
 						+ cookie.getMaxAge() + "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
 						+ "; HttpOnly" + (request.getServerName().equals("localhost") ? "" : "; Secure; SameSite=None"));
 	}

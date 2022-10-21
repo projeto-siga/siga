@@ -94,6 +94,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigagc.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigawf.base.url", get("/siga.base.url"));
+		provider.addPublicProperty("/siga-arq.base.url", get("/siga.base.url"));
 		
 		//URL Interna (para back-end). Objetivo não usar Proxy, SSL, Firewall.. entre outras camandas de rede para chamadas internas
 		provider.addPublicProperty("/siga.service.base.url", get("/siga.base.url"));		
@@ -194,6 +195,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.url", get("/sigaex.base.url") + "/sigaex");
 		provider.addPublicProperty("/sigaex.autenticidade.url", get("/sigaex.base.url") + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigagc.url", get("/sigagc.base.url") + "/sigagc");
+		provider.addPublicProperty("/siga-arq.url", get("/siga-arq.base.url") + "/siga-arq");
 		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 		
 		/* Indica onde está armazenado o Manual de Operações* */
@@ -284,7 +286,7 @@ public class Prop {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket");
 			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", "10737418240"); //10GB
-			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", "/sigaAmazonS3/api/v1/");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url");
 		}
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");

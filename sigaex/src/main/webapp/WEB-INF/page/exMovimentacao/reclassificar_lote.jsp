@@ -54,12 +54,8 @@
                                 <siga:selecao titulo="Classifica&ccedil;&atilde;o Atual"
                                               propriedade="classificacaoAtual"
                                               modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
-                                <script type="text/javascript">
-                                    const classificacaoAtualSelElement = document.getElementById('formulario_classificacaoAtualSel_sigla');
-                                    classificacaoAtualSelElement.addEventListener('change', () => {
-                                        listarDocumentosParaReclassificarEmLote();
-                                    });
-                                </script>
+                                <a href="javascript: listarDocumentosParaReclassificarEmLote()"
+                                   class="btn btn-cancel btn-primary">Buscar Documentos</a>
                             </div>
                         </div>
                     </div>
@@ -81,7 +77,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <button type="button" class="btn btn-primary" onclick="confirmar();">
+                                <button type="button" id="btnOk" class="btn btn-primary" onclick="validar();">
                                     Ok
                                 </button>
                                 <button type="button" class="btn btn-primary" onclick="history.back();">
@@ -103,13 +99,15 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
                 <a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true"
-                   onclick="document.frm.submit()">
+                   onclick="confirmar();">
                     Sim</a>
             </div>
         </siga:siga-modal>
     </div>
     <script type="text/javascript">
         function listarDocumentosParaReclassificarEmLote(offset) {
+            sigaSpinner.mostrar();
+
             offset = offset == null ? 0 : offset;
 
             let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
@@ -120,11 +118,16 @@
                 url: url,
                 success: function (data) {
                     $('#documentos').html(data);
-                }
+                    sigaSpinner.ocultar();
+                },
+                error: function (result) {
+                    sigaSpinner.ocultar();
+                    console.log(result.errormsg);
+                },
             });
         }
 
-        function confirmar() {
+        function validar() {
             let classificacaoAtualSelSpan = document.getElementById('classificacaoAtualSelSpan');
             if (classificacaoAtualSelSpan.textContent.trim() === '') {
                 sigaModal.alerta('Selecione classificação atual');
@@ -157,6 +160,13 @@
             } else {
                 sigaModal.abrir('confirmacaoModal');
             }
+        }
+
+        function confirmar() {
+            sigaSpinner.mostrar();
+            document.getElementById("btnOk").disabled = true;
+            sigaModal.fechar('confirmacaoModal');
+            document.frm.submit();
         }
 
     </script>

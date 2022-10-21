@@ -258,13 +258,19 @@ public class Prop {
 
 		provider.addPublicProperty("/siga.sgp.bnf.url", "/siga-beneficios");
 		provider.addPublicProperty("/siga.sgp.aq.url", "/sigarhaq");
-		provider.addPublicProperty("/siga.sgp.cad.url", "/sigarh");
+		provider.addPublicProperty("/siga.sgp.cad.url", "/sigarhcadastro/paginas/pesquisarRecursoHumano.jsf");
 		provider.addPublicProperty("/siga.sgp.bdp.url", "/sigarhaq1");
-		provider.addPublicProperty("/siga.sgp.dcn.url", "/sigarhaq2");
+		provider.addPublicProperty("/siga.sgp.dcn.url", "/sigarhdocencia/");
 		provider.addPublicProperty("/siga.sgp.cst.url", "/sigarhdadoscadastrais");
 		provider.addPublicProperty("/siga.sgp.lot.url", "/sigarhlotacao");
 		provider.addPublicProperty("/siga.sgp.trn.url", "/sigptreinamento");
 		provider.addPublicProperty("/siga.sgp.terc.url", "/sigarhterceirizados");
+		provider.addPublicProperty("/siga.sgp.est.url", "/sigarhest/");
+		provider.addPublicProperty("/siga.sgp.rhrelat.url", "/sigarhrelatorios/");
+		provider.addPublicProperty("/siga.sgp.rem.url", "/sigarhremocaojuizes/");
+		provider.addPublicProperty("/siga.sgp.recad.url", "/sigarhcadastro/");
+		provider.addPublicProperty("/siga.sgp.tcu.url", "/sigarhtcu/");		
+		
 
 		/* Parâmetros para configuração do armazenamento de documento */
 		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");

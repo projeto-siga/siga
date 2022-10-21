@@ -178,6 +178,8 @@ import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
@@ -4524,8 +4526,24 @@ public class ExMovimentacaoController extends ExController {
 			String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String textoPublicacao) throws Exception {
 		String sequencial = "1"; //default
 		try {
-			String textoRecibo = Ex.getInstance().getBL().montarReciboPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, textoPublicacao);
-			setMensagem(textoRecibo);
+			
+			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL().montarReciboPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, textoPublicacao);
+			setMensagem(new Gson().toJson(publicacaoDto));
+			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+		} catch (final Exception e) {
+			throw e;
+		}
+	}
+	
+	@Get("/app/exMovimentacao/enviarPublicacaoArquivoDOE")
+	public void enviarPublicacaoArquivoDOE(String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, 
+			String textoPublicacao, String recibo, String reciboHash) throws Exception {
+		String sequencial = "1"; //default
+		try {
+			
+			EnviaPublicacaoDto enviaPublicacaoDto = Ex.getInstance().getBL()
+					.enviarPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, textoPublicacao, recibo, reciboHash);
+			setMensagem(new Gson().toJson(enviaPublicacaoDto));
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		} catch (final Exception e) {
 			throw e;

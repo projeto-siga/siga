@@ -228,6 +228,7 @@ import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
@@ -1147,7 +1148,7 @@ public class ExBL extends CpBL {
 		return lista;
 	}
 	
-	public String montarReciboPublicacaoDOE(String anuncianteIdentificador,
+	public MontaReciboPublicacaoDto montarReciboPublicacaoDOE(String anuncianteIdentificador,
 			String cadernoIdentificador, String retrancaCodigo, String tipomaterialIdentificador, String sequencial,
 			String textoPublicacao) throws Exception {
 		//TODO Remover no futuro
@@ -1158,7 +1159,22 @@ public class ExBL extends CpBL {
 		PubnetEnvioService envioService = new PubnetEnvioService();
 		MontaReciboPublicacaoDto reciboPublicacaoDto = envioService.montarReciboPublicacao(user, anuncianteIdentificador, 
 									cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, sequencial, textoPublicacao);
-		return reciboPublicacaoDto.getTextoRecibo();
+		return reciboPublicacaoDto;
+	}
+	
+	public EnviaPublicacaoDto enviarPublicacaoDOE(String anuncianteIdentificador,
+			String cadernoIdentificador, String retrancaCodigo, String tipomaterialIdentificador, String sequencial,
+			String textoPublicacao, String recibo, String reciboHash) throws Exception {
+		//TODO Remover no futuro
+		AuthHeader user = new AuthHeader();
+		user.setUserName("FernandoHP2");
+		user.setPassword("bffb2B82E0");
+		
+		PubnetEnvioService envioService = new PubnetEnvioService();
+		EnviaPublicacaoDto reciboPublicacaoDto = envioService.enviarPublicacao(
+					user, anuncianteIdentificador, cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, 
+					sequencial, textoPublicacao, recibo, reciboHash);
+		return reciboPublicacaoDto;
 	}
 
 

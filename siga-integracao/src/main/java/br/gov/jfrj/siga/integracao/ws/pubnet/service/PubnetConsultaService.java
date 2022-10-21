@@ -163,7 +163,8 @@ public class PubnetConsultaService {
 					json = JSONObject.valueToString(getValueJSONObject(nodeErr, "informacoes"));
 					MensagemErroRetornoPubnetDto err = getObjectMapper().readValue(json, MensagemErroRetornoPubnetDto.class);
 					System.out.println(json);
-					throw new Exception(err.getCodRetorno() + " - " + err.getDescrRetorno());
+					throw new Exception("Erro ao acessar webservice DOE código retorno: " + err.getCodRetorno()
+											+ "\nDescrição Erro: " + err.getDescrRetorno());
 				} else {
 					JSONObject nodeRecibo = getValueJSONObject(nodeDiffgr, "Recibo");
 					if(nodeRecibo != null) {

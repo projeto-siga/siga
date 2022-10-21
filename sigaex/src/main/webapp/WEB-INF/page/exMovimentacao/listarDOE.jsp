@@ -6,7 +6,10 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <siga:pagina titulo="Movimentação">
-
+	<script type="text/javascript" src="../../../javascript/sdkdoe/base64js.min.js"></script>
+	<script type="text/javascript" src="../../../javascript/sdkdoe/text-encoder-lite.min.js"></script>
+	<script type="text/javascript" src="../../../javascript/sdkdoe/sdk-desktop.js"></script>
+	
 	<script type="text/javascript" language="Javascript1.1">
 		function alterouMod(idMov) {
 			frm.idMov.value = idMov;
@@ -213,7 +216,6 @@
 		}
 		
 		function montarReciboArquivoDOE(){
-			
 			var anuncianteId = document.getElementById("idSecao").value;
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
@@ -226,10 +228,53 @@
 				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
 					  			tipoMaterialId : tipoMaterialId, textoPublicacao : textoPublicacao},
 				  success: function(data) {
-					  console.log(data);
+					  var montaRecibo = JSON.parse(data);
+					  document.getElementById("idReciboHash").value = montaRecibo.hashRecibo;
+					  chamarAssinatura(montaRecibo.textoRecibo);
 			 	 }
 			});
 		}
+		
+		//Sdk para Doe
+		var parameters =  {
+				"config.type" : "local",
+				"detachedSignature" : "false",
+				"colCount" : "1",
+				"colName.0" : "Arquivo",
+				"colAlias.0" : "$arquivo",
+				"digestAlgorithm" : "SHA256",
+				"signingAlgorithm" : "SHA256WithRSA"};			
+
+		function chamarAssinatura(sMensagem) {
+			sdkDesktop.signPureContent(sMensagem, doSomethingWithSignature);			
+		}
+		
+		function doSomethingWithSignature(signature){				
+			console.log(signature);			
+			var json = JSON.parse(signature);
+			
+			var anuncianteId = document.getElementById("idSecao").value;
+			var cadernoId = document.getElementById("idCaderno").value;
+			var retrancaCod = document.getElementById("idSecao").value;
+			var tipoMaterialId = 8 //Criar input select
+			var textoPublicacao = "teste texto";
+			var recibo = json.signature;
+			var reciboHash = document.getElementById("idReciboHash").value;
+			document.getElementById("idReciboHash").value = "";
+			$.ajax({				     				  
+				  url:'${pageContext.request.contextPath}/app/exMovimentacao/enviarPublicacaoArquivoDOE',
+				  type: "GET",
+				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
+					  			tipoMaterialId : tipoMaterialId, textoPublicacao : textoPublicacao, recibo : recibo, reciboHash : reciboHash},
+				  success: function(data) {
+					  console.log(JSON.parse(data));
+			 	 }
+			});
+		}
+			
+// 		disableButtons();
+// 		sdkDesktop.checkStarted(enableButtons);
+		sdkDesktop.setParameters(parameters);
 
 	</script>
 	
@@ -246,6 +291,7 @@
 					<input type="hidden" name="id" value="" />
 					<input type="hidden" name="sigla" value="" />
 					<input type="hidden" name="urlRedirecionar" value="/app/exMovimentacao/listarDOE"/>
+					<input type="hidden" name="reciboHash" id="idReciboHash" value="" />
 					
 					<div class="row">
 						<div class="col-sm-3">

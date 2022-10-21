@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.InputStreamResource;
@@ -43,7 +42,7 @@ public class SigaAmazonS3 {
 	static long DEFAULT_TTL_TOKEN = 3600 * 30 * 100;
 	static String NOME_PASTA_UPLOAD = "upload/"; 
 
-	public String upload(InputStream is, String parmsJson) throws Exception {
+	public String upload(InputStream arquivo, String parmsJson) throws Exception {
 		AmazonS3 s3Client = conectarS3();
 		ObjectMapper objectMapper = new ObjectMapper();
 		SigaAmazonS3ParametrosUpload parms = objectMapper.readValue(parmsJson, SigaAmazonS3ParametrosUpload.class);
@@ -52,25 +51,22 @@ public class SigaAmazonS3 {
 		if (msgerro != null)
 			throw new Exception(msgerro);
 
-	    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
+	    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy/MM/dd/hh/mm/ss", Locale.ENGLISH);
 	    String fdatetime = fmt.format(LocalDateTime.now());
 	    
-        parms.setArquivoNomeS3(NOME_PASTA_UPLOAD + fdatetime.replace(":", "-").replace("/", "") + "-" +
+        parms.setArquivoNomeS3(NOME_PASTA_UPLOAD + fdatetime + "/" +
         		UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(parms.getArquivoNome()));
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(parms.getTamanhoLong());
 
-        if (parms.getHash() != null) {
-        	metadata.setHeader("x-amz-checksum-mode", "enabled");
-        	metadata.setHeader("x-amz-checksum-algorithm", "SHA256");
-        	metadata.setHeader("x-amz-checksum-sha256", parms.getHash());
-        };
+    	metadata.setHeader("x-amz-checksum-mode", "enabled");
+    	metadata.setHeader("x-amz-checksum-algorithm", "SHA256");
+    	metadata.setHeader("x-amz-checksum-sha256", parms.getHash());
         
         metadata.setContentDisposition(parms.getArquivoNome());
         metadata.addUserMetadata("nomeArquivo", parms.getArquivoNome());
         metadata.addUserMetadata("hashSha256", parms.getHash());
-        InputStreamHash arquivo = new InputStreamHash (is);
 
         PutObjectRequest req = new PutObjectRequest(
                 bucketName, 
@@ -80,15 +76,10 @@ public class SigaAmazonS3 {
         
         PutObjectResult res = s3Client.putObject(req);
         
-        String hs256 = new String(Hex.encodeHexString(arquivo.getSha256()));
-        if (parms.getHash() != null && !parms.getHash().equals(hs256))
-        	throw new Exception("O arquivo recebido para upload nao corresponde ao enviado.");
-    
         String tk = criarToken(bucketName, parms.getArquivoNome(), parms.getArquivoNomeS3(), 
         		Long.valueOf(parms.getTamanho()), parms.getHash());
         
         parms.setToken(tk);
-        parms.setHash(hs256);
         String resp = objectMapper.writeValueAsString(parms);
         return resp;
 	}

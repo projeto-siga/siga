@@ -65,7 +65,11 @@
 					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados') or 
 					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação') or 
 					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento') or
-					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;EST: Módulo de Estagiários') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;RHRELAT: Módulo de Relatórios do RH') or 
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;REM: Módulo de Remoção de Magistrados') or
+					f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TCU: Módulo de Dados para o TCU')}">
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
 			<ul class="dropdown-menu">
@@ -118,7 +122,11 @@
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DCN: Módulo de Docência de Magistrados') or 
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação') or 
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento') or
-						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados') or
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;EST: Módulo de Estagiários') or
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;RHRELAT: Módulo de Relatórios do RH') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;REM: Módulo de Remoção de Magistrados') or						
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TCU: Módulo de Dados para o TCU')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);"
 							class="dropdown-item dropdown-toggle">Pessoas</a>
 							<ul class="dropdown-menu">
@@ -168,6 +176,31 @@
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 									<li><a class="dropdown-item"
 										href="${f:getURLSistema('/siga.sgp.terc')}">Terceirizados</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;EST: Módulo de Estagiários')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('/siga.sgp.est')}">Estágio</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;RHRELAT:Módulo de Relatórios do RH')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('/siga.sgp.rhrelat')}">Relatórios</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;REM:Módulo de Remoção de Magistrados')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('/siga.sgp.rem')}">Remoção de Magistrados</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD:Módulo de Cadastro')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('/siga.sgp.recad')}">Recadastramento</a></li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TCU:Módulo de Dados para o TCU')}">
+									<li><a class="dropdown-item"
+										href="${f:getURLSistema('/siga.sgp.tcu')}">TCU</a></li>
 								</c:if>
 							</ul></li>
 					</c:if>

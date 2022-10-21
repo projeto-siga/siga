@@ -184,7 +184,8 @@ public class AuthJwtFormFilter implements Filter {
 	}
 	
 	private static String removeSpecial(String str) {
-		return str.replaceAll("[^a-zA-Z ]", "");
+		//return str.replaceAll("[a-zA-Z0-9]+", ""); Ajustar REGEX para suportar ., traço e Número
+		return str;
 	}
 
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {

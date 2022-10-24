@@ -326,7 +326,7 @@
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
 										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
-							          not mov.cancelada)}">
+							          mov.exTipoMovimentacao != 'CANCELAMENTO_JUNTADA' and not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
 											<td class="text-left" title="${mov.tempoRelativo}">${mov.dtRegMovDDMMYY}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>

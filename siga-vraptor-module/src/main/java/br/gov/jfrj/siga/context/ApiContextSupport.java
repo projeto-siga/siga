@@ -3,12 +3,15 @@ package br.gov.jfrj.siga.context;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
-import java.util.Date;
+import java.lang.reflect.Field;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.crivano.swaggerservlet.SwaggerApiContextSupport;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
@@ -16,7 +19,9 @@ import com.crivano.swaggerservlet.SwaggerContext;
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
@@ -27,6 +32,8 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.vraptor.RequestParamsCheck;
+import br.gov.jfrj.siga.vraptor.RequestParamsPermissiveCheck;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
@@ -36,18 +43,21 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	boolean transacional = false;
 	long inicio = System.currentTimeMillis();
 	SigaObjects sigaObjects = null;
+	
+    private final Level BLAME = Level.forName("BLAME", 450); 
+    private final Logger logger = LogManager.getLogger(ApiContextSupport.class);
 
 	@Override
 	public void init(SwaggerContext ctx) {
 		super.init(ctx);
-
+		
 		try {
 			CurrentRequest.set(new RequestInfo(null, SwaggerServlet.getHttpServletRequest(),
 					SwaggerServlet.getHttpServletResponse()));
 		} catch (NullPointerException e) {
 			// Acontece quando estamos apenas rodando um /api/v1/test
 		}
-
+		        
 		if (ctx != null && getCtx().getAction().getClass().isAnnotationPresent(Transacional.class))
 			this.transacional = true;
 
@@ -120,9 +130,10 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	public void assertAcesso(String acesso) throws Exception {
 		getSigaObjects().assertAcesso(acesso);
 	}
-
+	
 	@Override
 	public void onTryBegin() throws Exception {
+		
 		if (!getCtx().getAction().getClass().isAnnotationPresent(AcessoPublico.class)) {
 			try {
 				String token = AuthJwtFormFilter.extrairAuthorization(getCtx().getRequest());
@@ -141,6 +152,9 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 					throw e;
 			}
 		}
+		
+		//Verifica a conformidade dos parâmetros informados antes de continuar
+		checkRequestParams();
 
 		if (ContextoPersistencia.getUserPrincipal() != null)
 			assertAcesso("");
@@ -201,4 +215,39 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		return getSigaObjects().getIdentidadeCadastrante();
 	}
 
+	private void checkRequestParams() throws Exception {
+        Class<?> classe = getCtx().getReq().getClass();      
+        Field[] campos = classe.getDeclaredFields();  
+        
+        boolean permissiveCheck = getCtx().getAction().getClass().isAnnotationPresent(RequestParamsPermissiveCheck.class);
+        try {
+	        for (Field campo : campos) {  
+	        	campo.setAccessible(true); 
+	        					
+				if (!RequestParamsCheck.checkParameter(campo.get(getCtx().getReq()),permissiveCheck)) {
+					logXss(campo.get(getCtx().getReq()));
+					throw new SwaggerException("Conteúdo inválido. Por favor, revise os valores fornecidos.", 400, null, getCtx().getReq(), getCtx().getResp(), null);
+				}
+	        }
+        } catch (SwaggerException e) {
+        	throw e;	
+        } catch (Exception e) {
+        	// Não bloqueia caso não consiga verificar os parametros passados
+        }
+	}
+	
+    private void logXss(Object param) {
+    	String siglaCadastrante;
+    	try {
+    		siglaCadastrante = getLotaCadastrante() .getSigla() + "/" + getCadastrante().getSigla();
+		} catch (Exception e) {
+			siglaCadastrante = "Não identificado";
+		}
+    	logger.log(BLAME, "[Detectado XSS] - Request: {}; Param XSS: {}; IP de Origem: {}; Usuário: {};", 
+    			SwaggerServlet.getHttpServletRequest(), 
+    			param, 
+    			HttpRequestUtils.getIpAudit(SwaggerServlet.getHttpServletRequest()), 
+    			siglaCadastrante);
+    }
+	
 }

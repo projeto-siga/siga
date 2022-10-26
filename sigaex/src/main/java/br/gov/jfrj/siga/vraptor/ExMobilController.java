@@ -42,6 +42,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
@@ -93,6 +94,8 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
 	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
+
+	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 50;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1062,7 +1065,6 @@ public class ExMobilController extends
 
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
-		int itemPagina = 50;
 		Integer tamanho = null;
 
 		if (siglaClassificacao != null) {
@@ -1071,11 +1073,12 @@ public class ExMobilController extends
 
 		}
 		if (Objects.nonNull(tamanho)) {
-			List<ExDocumentoVO> documentosPorCodificacaoClassificacao = ExDao.getInstance()
-					.consultarParaReclassificarEmLote(getTitular(), siglaClassificacao, offset, itemPagina);
-			
+			List<ExDocumentoVO> documentosPorCodificacaoClassificacao =
+					ExDao.getInstance().consultarParaReclassificarEmLote(getTitular(), siglaClassificacao, offset,
+							MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE);
+
 			List<ExDocumentoVO> itens = new ArrayList<>();
-			for(ExDocumentoVO item : documentosPorCodificacaoClassificacao){
+			for (ExDocumentoVO item : documentosPorCodificacaoClassificacao) {
 				ExMobil mob = dao().consultar(item.getIdDoc(), ExDocumento.class, false).getMobilGeral();
 
 				if (new ExPodeReclassificar(mob, getTitular(), getLotaTitular()).eval()) {
@@ -1086,9 +1089,9 @@ public class ExMobilController extends
 			documentosPorCodificacaoClassificacao = null;
 					
 			getP().setOffset(offset);
-			setItemPagina(itemPagina);
+			setItemPagina(MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE);
 			setItens(itens);
-			setTamanho(tamanho-itens.size());
+			setTamanho(tamanho);
 
 			result.include("itens", this.getItens());
 			result.include("itemPagina", this.getItemPagina());

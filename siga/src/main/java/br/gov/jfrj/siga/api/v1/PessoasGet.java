@@ -124,6 +124,7 @@ public class PessoasGet implements IPessoasGet {
 		pessoa.sigla = p.getSiglaCompleta();
 		pessoa.nome = p.getNomePessoa();
 		pessoa.isExternaPessoa = p.isUsuarioExterno();
+		pessoa.dataInicioPessoa = p.getDataInicioPessoa();
 		
 		if(exibirDadosSensiveis) {
 			pessoa.email = p.getEmailPessoaAtual();

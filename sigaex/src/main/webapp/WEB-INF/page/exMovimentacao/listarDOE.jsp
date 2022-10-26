@@ -6,9 +6,10 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <siga:pagina titulo="Movimentação">
-	<script type="text/javascript" src="../../../javascript/sdkdoe/base64js.min.js"></script>
-	<script type="text/javascript" src="../../../javascript/sdkdoe/text-encoder-lite.min.js"></script>
-	<script type="text/javascript" src="../../../javascript/sdkdoe/sdk-desktop.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/base64js.min.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/text-encoder-lite.min.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/sdk-desktop.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/jquery-3.1.1.min.js"></script>
 	
 	<script type="text/javascript" language="Javascript1.1">
 		function alterouMod(idMov) {
@@ -215,23 +216,43 @@
 			
 		}
 		
+		function setAnuncianteTipoMaterial(lista) {
+			var selectMateria = document.getElementById("idMateria");
+			for (var i = 0; i < lista.length; i++) {
+				if(selectMateria.value == lista[i].tipoMateriaCodigo) {
+					document.getElementById("idAnuncianteId").value = lista[i].anuncianteId;
+					document.getElementById("idTipoMateriaIdr").value = lista[i].tipoMateriaIdr;
+					break;
+				}
+			}	
+			
+		}
+		
 		function montarReciboArquivoDOE(){
-			var anuncianteId = document.getElementById("idSecao").value;
+			limparCamposAlertaErro();
+			
+			var anuncianteId = document.getElementById("idAnuncianteId").value;
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
-			var tipoMaterialId = 8 //Criar input select
-			//var sequencial = default1;
+			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
+			var sequencial = 1;
 			var textoPublicacao = "teste texto";
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/montarReciboArquivoDOE',
-				  type: "GET",
+				  type: "POST",
 				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
-					  			tipoMaterialId : tipoMaterialId, textoPublicacao : textoPublicacao},
+					  			tipoMaterialId : tipoMaterialId, sequencial: sequencial, textoPublicacao : textoPublicacao},
 				  success: function(data) {
-					  var montaRecibo = JSON.parse(data);
-					  document.getElementById("idReciboHash").value = montaRecibo.hashRecibo;
-					  chamarAssinatura(montaRecibo.textoRecibo);
-			 	 }
+					  try {
+						  var montaRecibo = JSON.parse(data);
+						  document.getElementById("idReciboHash").value = montaRecibo.hashRecibo;
+						  var sMensagem = document.getElementById("idTextoRecibo").value = montaRecibo.textoRecibo;
+						  chamarAssinatura(sMensagem);
+					  } catch(err){
+						  inserirValueDivAlertaError(data);
+					  }
+					  $('#confirmacaoModal').modal('hide');
+			 	  }			 	 
 			});
 		}
 		
@@ -249,36 +270,68 @@
 			sdkDesktop.signPureContent(sMensagem, doSomethingWithSignature);			
 		}
 		
-		function doSomethingWithSignature(signature){				
-			console.log(signature);			
+		function doSomethingWithSignature(signature){	
+			limparCamposAlertaErro();
+			
+			//console.log(signature);			
 			var json = JSON.parse(signature);
 			
-			var anuncianteId = document.getElementById("idSecao").value;
+			var anuncianteId = document.getElementById("idAnuncianteId").value;
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
-			var tipoMaterialId = 8 //Criar input select
+			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
+			var sequencial = 1;
 			var textoPublicacao = "teste texto";
+			
 			var recibo = json.signature;
 			var reciboHash = document.getElementById("idReciboHash").value;
-			document.getElementById("idReciboHash").value = "";
+			
+			limparInputsHiddenAposAssinatura();
+			
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/enviarPublicacaoArquivoDOE',
-				  type: "GET",
+				  type: "POST",
 				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
-					  			tipoMaterialId : tipoMaterialId, textoPublicacao : textoPublicacao, recibo : recibo, reciboHash : reciboHash},
+					  			tipoMaterialId : tipoMaterialId, sequencial: sequencial, textoPublicacao : textoPublicacao, 
+					  			recibo : recibo, reciboHash : reciboHash},
 				  success: function(data) {
-					  console.log(JSON.parse(data));
-			 	 }
+					  try {
+						 console.log(JSON.parse(data));
+						 alert("Envio realizado com sucesso!")
+					  } catch(err){
+						  inserirValueDivAlertaError(data);
+					  }
+					  $('#confirmacaoModal').modal('hide');
+			 	  }
 			});
 		}
+		
+		function limparCamposAlertaErro() {
+			document.getElementById("alertError").classList.remove('alert', 'alert-warning');
+			document.getElementById("alertError").innerHTML = "";
+		}
+		
+		function inserirValueDivAlertaError(data) {
+			if(data != null || data != ""){
+				console.log(data);
+				document.getElementById("alertError").classList.add('alert', 'alert-warning');
+				document.getElementById("alertError").innerHTML  = data;
+				window.scrollTo(0, 0);
+			}
+		}
+		
+		function limparInputsHiddenAposAssinatura() {
+			document.getElementById("idAnuncianteId").value="";
+			document.getElementById("idReciboHash").value = "";
+			document.getElementById("idTipoMateriaIdr").value = "";
+		}
 			
-// 		disableButtons();
-// 		sdkDesktop.checkStarted(enableButtons);
 		sdkDesktop.setParameters(parameters);
 
 	</script>
 	
-	<div class="container-fluid">
+	<div class="container-fluid" id="content-doe">
+		<div id="alertError"></div>
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h5>
@@ -292,6 +345,9 @@
 					<input type="hidden" name="sigla" value="" />
 					<input type="hidden" name="urlRedirecionar" value="/app/exMovimentacao/listarDOE"/>
 					<input type="hidden" name="reciboHash" id="idReciboHash" value="" />
+					<input type="hidden" name="textoRecibo" id="idTextoRecibo" value="" />
+					<input type="hidden" name="anuncianteId" id="idAnuncianteId" value="" />
+					<input type="hidden" name="tipoMateriaIdr" id="idTipoMateriaIdr" value="" />
 					
 					<div class="row">
 						<div class="col-sm-3">
@@ -391,7 +447,7 @@
 							<div class="col-sm-4">
 								<div class="form-group">
 									<label>Tipo de Matéria</label>
-									<select class="form-control siga-select2" id="idMateria" name="idMateria">
+									<select class="form-control siga-select2" id="idMateria" name="idMateria" onchange='setAnuncianteTipoMaterial(${listaPermissoes})'>
 										<option value="0">Selecione</option>
 									</select>
 								</div>
@@ -406,7 +462,7 @@
 						</div>
 					</c:if>
 					<siga:siga-modal id="confirmacaoModal" exibirRodape="true" tituloADireita="Confirmação"
-						descricaoBotaoFechaModalDoRodape="Cancelar" linkBotaoDeAcao="javascript:abrirLogin();">
+						descricaoBotaoFechaModalDoRodape="Cancelar" linkBotaoDeAcao="javascript:montarReciboArquivoDOE();">
 						<div class="modal-body">Os arquivos selecionados serão enviados ao PubNet! Prosseguir?</div>
 					</siga:siga-modal>
 					<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -429,7 +485,7 @@
 
 					      </div>
 					      <div class="modal-footer">
-					      	<button type="button" onclick="javascript:montarReciboArquivoDOE();" class="btn btn-primary">OK</button>
+					      	<button type="button" onclick="javascript:return chamarAssinatura();" class="btn btn-primary">OK</button>
 					        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 					      </div>
 					    </div>

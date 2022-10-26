@@ -4521,24 +4521,26 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	@Get("/app/exMovimentacao/montarReciboArquivoDOE")
+	@Post("/app/exMovimentacao/montarReciboArquivoDOE")
 	public void montarReciboArquivoDOE(
-			String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String textoPublicacao) throws Exception {
-		String sequencial = "1"; //default
+			String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String sequencial, String textoPublicacao) throws Exception {
 		try {
-			
+			//TODO remover depois
+			System.out.println("anuncianteId:"+anuncianteId+"; cadernoId:"+cadernoId+"; retrancaCod:"+retrancaCod
+						+"; tipoMaterialId"+tipoMaterialId+"; textoPublicacao:"+textoPublicacao);
 			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL().montarReciboPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, textoPublicacao);
 			setMensagem(new Gson().toJson(publicacaoDto));
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		} catch (final Exception e) {
-			throw e;
+			setMensagem(e.getMessage());
+			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+			//throw e;
 		}
 	}
 	
-	@Get("/app/exMovimentacao/enviarPublicacaoArquivoDOE")
-	public void enviarPublicacaoArquivoDOE(String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, 
+	@Post("/app/exMovimentacao/enviarPublicacaoArquivoDOE")
+	public void enviarPublicacaoArquivoDOE(String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String sequencial, 
 			String textoPublicacao, String recibo, String reciboHash) throws Exception {
-		String sequencial = "1"; //default
 		try {
 			
 			EnviaPublicacaoDto enviaPublicacaoDto = Ex.getInstance().getBL()
@@ -4546,7 +4548,8 @@ public class ExMovimentacaoController extends ExController {
 			setMensagem(new Gson().toJson(enviaPublicacaoDto));
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		} catch (final Exception e) {
-			throw e;
+			setMensagem(e.getMessage());
+			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		}
 	}
 	

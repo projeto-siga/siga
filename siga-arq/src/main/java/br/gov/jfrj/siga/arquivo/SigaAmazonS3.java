@@ -34,6 +34,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
 
 public class SigaAmazonS3 {
 	
@@ -146,6 +147,9 @@ public class SigaAmazonS3 {
 			return "Nome do arquivo não foi informado";
 		if (parms.getArquivoNome().length() > 150)
 			return "Nome do arquivo maior que 150 caracteres";
+		String extensaoArq = FilenameUtils.getExtension(parms.getArquivoNome());
+		if (!CpExtensoesDeArquivoEnum.getList().contains(extensaoArq))
+			return "Extensão de arquivo não permitida para upload: ." + extensaoArq;
 		return null;
 	}
 

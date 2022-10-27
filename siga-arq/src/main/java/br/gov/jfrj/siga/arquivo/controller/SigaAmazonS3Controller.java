@@ -25,8 +25,12 @@ public class SigaAmazonS3Controller {
 	@PostMapping("/upload")
     public ResponseEntity<String> upload(HttpServletRequest request, @RequestHeader String parms) throws Exception {
 		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
-        String respParms = sigaS3.upload(request.getInputStream(), parms);
-        return ResponseEntity.ok(respParms);
+		try {
+			String respParms = sigaS3.upload(request.getInputStream(), parms);
+	        return ResponseEntity.ok(respParms);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
     }
 	
 	@GetMapping("/download")

@@ -28,12 +28,14 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativasCancelamentoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MensagemErroRetornoPubnetDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.ProximoSequencialDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ConsultaMaterialEnviadoResponse.ConsultaMaterialEnviadoResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ConsultaPermissoesPublicanteResponse.ConsultaPermissoesPublicanteResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.GeraTokenResponse.GeraTokenResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ListaJustificativasCancelamentoResponse.ListaJustificativasCancelamentoResult;
+import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.PegaProximoSequencialResponse.PegaProximoSequencialResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.Pubnet;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.PubnetSoap;
 
@@ -107,6 +109,25 @@ public class PubnetConsultaService {
 			throw new AplicacaoException(e.getMessage());
 		}
 		return permissaoPublicanteDtoList;
+	}
+	
+	public ProximoSequencialDto obterProximoSequencialPublicacao(AuthHeader user, String retrancaCodigo) throws Exception {
+		ProximoSequencialDto proximoSeqDto = new ProximoSequencialDto();
+		try {
+			PegaProximoSequencialResult resp = port.pegaProximoSequencial(user, retrancaCodigo);
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
+			String json = converterNodeJsonParaStringJson(jsonNode, ProximoSequencialDto.NOME_NODE_JSON);
+			proximoSeqDto = getObjectMapper().readValue(json, ProximoSequencialDto.class);
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+			if (!ENCODING_DEFAULT_XML.equals(ENCODING_UTF_8)) {
+				ENCODING_DEFAULT_XML = ENCODING_UTF_8;
+				listarJustificativasCancelamento(user);
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
+		}
+		return proximoSeqDto;
 	}
 
 	public TokenDto gerarToken(String userName, String documento, String email) throws Exception {

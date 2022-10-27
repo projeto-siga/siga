@@ -4523,12 +4523,13 @@ public class ExMovimentacaoController extends ExController {
 	
 	@Post("/app/exMovimentacao/montarReciboArquivoDOE")
 	public void montarReciboArquivoDOE(
-			String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String sequencial, String textoPublicacao) throws Exception {
+			String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String textoPublicacao) throws Exception {
 		try {
 			//TODO remover depois
 			System.out.println("anuncianteId:"+anuncianteId+"; cadernoId:"+cadernoId+"; retrancaCod:"+retrancaCod
 						+"; tipoMaterialId"+tipoMaterialId+"; textoPublicacao:"+textoPublicacao);
-			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL().montarReciboPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, textoPublicacao);
+			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL().montarReciboPublicacaoDOE(
+					anuncianteId, cadernoId, retrancaCod, tipoMaterialId, textoPublicacao);
 			setMensagem(new Gson().toJson(publicacaoDto));
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		} catch (final Exception e) {

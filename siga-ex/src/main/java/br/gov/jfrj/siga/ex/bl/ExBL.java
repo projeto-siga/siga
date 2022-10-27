@@ -231,6 +231,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.ProximoSequencialDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetEnvioService;
@@ -1149,16 +1150,19 @@ public class ExBL extends CpBL {
 	}
 	
 	public MontaReciboPublicacaoDto montarReciboPublicacaoDOE(String anuncianteIdentificador,
-			String cadernoIdentificador, String retrancaCodigo, String tipomaterialIdentificador, String sequencial,
-			String textoPublicacao) throws Exception {
+			String cadernoIdentificador, String retrancaCodigo, String tipomaterialIdentificador, String textoPublicacao) throws Exception {
 		//TODO Remover no futuro
 		AuthHeader user = new AuthHeader();
 		user.setUserName("FernandoHP2");
 		user.setPassword("bffb2B82E0");
 		
 		PubnetEnvioService envioService = new PubnetEnvioService();
+		
+		ProximoSequencialDto sequencialDto = envioService.obterProximoSequencialPublicacao(user, retrancaCodigo);
+		String sequencial = sequencialDto.getSequenciaPublicacao();
 		MontaReciboPublicacaoDto reciboPublicacaoDto = envioService.montarReciboPublicacao(user, anuncianteIdentificador, 
 									cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, sequencial, textoPublicacao);
+		reciboPublicacaoDto.setProximoSequencial(sequencial);
 		return reciboPublicacaoDto;
 	}
 	

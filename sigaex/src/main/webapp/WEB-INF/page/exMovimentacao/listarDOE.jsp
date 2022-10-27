@@ -235,21 +235,23 @@
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
 			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
-			var sequencial = 1;
 			var textoPublicacao = "teste texto";
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/montarReciboArquivoDOE',
 				  type: "POST",
 				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
-					  			tipoMaterialId : tipoMaterialId, sequencial: sequencial, textoPublicacao : textoPublicacao},
+					  			tipoMaterialId : tipoMaterialId, textoPublicacao : textoPublicacao},
 				  success: function(data) {
 					  try {
 						  var montaRecibo = JSON.parse(data);
 						  document.getElementById("idReciboHash").value = montaRecibo.hashRecibo;
+						  document.getElementById("idSequencial").value = montaRecibo.proximoSequencial;
 						  var sMensagem = document.getElementById("idTextoRecibo").value = montaRecibo.textoRecibo;
 						  chamarAssinatura(sMensagem);
 					  } catch(err){
 						  inserirValueDivAlertaError(data);
+						  //Necesario para nao travar plugin de assinatura
+						  atualizarTela(10000);
 					  }
 					  $('#confirmacaoModal').modal('hide');
 			 	  }			 	 
@@ -280,7 +282,7 @@
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
 			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
-			var sequencial = 1;
+			var sequencial = document.getElementById("idSequencial").value;
 			var textoPublicacao = "teste texto";
 			
 			var recibo = json.signature;
@@ -297,9 +299,12 @@
 				  success: function(data) {
 					  try {
 						 console.log(JSON.parse(data));
+						 alterouMod();
 						 alert("Envio realizado com sucesso!")
 					  } catch(err){
 						  inserirValueDivAlertaError(data);
+						  //Necesario para nao travar plugin de assinatura
+						  atualizarTela(10000);
 					  }
 					  $('#confirmacaoModal').modal('hide');
 			 	  }
@@ -325,7 +330,13 @@
 			document.getElementById("idReciboHash").value = "";
 			document.getElementById("idTipoMateriaIdr").value = "";
 		}
-			
+		
+		function atualizarTela(tempo){
+			window.setTimeout( function() {
+				window.location.reload();
+			}, tempo);
+		}
+		
 		sdkDesktop.setParameters(parameters);
 
 	</script>
@@ -348,6 +359,7 @@
 					<input type="hidden" name="textoRecibo" id="idTextoRecibo" value="" />
 					<input type="hidden" name="anuncianteId" id="idAnuncianteId" value="" />
 					<input type="hidden" name="tipoMateriaIdr" id="idTipoMateriaIdr" value="" />
+					<input type="hidden" name="sequencial" id="idSequencial" value="" />
 					
 					<div class="row">
 						<div class="col-sm-3">

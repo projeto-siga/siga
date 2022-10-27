@@ -26,6 +26,8 @@ public class MontaReciboPublicacaoDto implements Serializable {
 	
 	@JsonProperty("hash")
 	private String hashRecibo;
+	
+	private String proximoSequencial;
 
 	public String getIdReciboPublicacao() {
 		return idReciboPublicacao;
@@ -65,6 +67,14 @@ public class MontaReciboPublicacaoDto implements Serializable {
 
 	public void setHashRecibo(String hashRecibo) {
 		this.hashRecibo = hashRecibo;
+	}
+
+	public String getProximoSequencial() {
+		return proximoSequencial;
+	}
+
+	public void setProximoSequencial(String proximoSequencial) {
+		this.proximoSequencial = proximoSequencial;
 	}
 
 }

@@ -4763,8 +4763,12 @@ ${texto}
     <div class="row">
         <div class="col">
         	<h6>Arquivo para download:</h6>
+        	<h6><b><a href="/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}"
+            	>${(doc.cpArquivoFormatoLivre.nomeArquivo)}</a></b></h6>
+        	<br />
         	<a href="/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}"
-            	>${urlbase}/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}&arquivo=${(doc.cpArquivoFormatoLivre.nomeArquivo)}</a>
+            	>${urlbase}/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}</a>
+            <br />
             <br />
             <small>Hash (SHA-256) do Arquivo: ${(doc.cpArquivoFormatoLivre.hashSha256)}</small><br />
             <small>Tamanho: ${(doc.cpArquivoFormatoLivre.tamanho)}</small><br />

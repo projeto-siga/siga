@@ -5608,8 +5608,7 @@ public class ExMovimentacaoController extends ExController {
 			for (Long idDocumento : documentosSelecionados) {
 				final ExMobil mob = dao().consultar(idDocumento, ExDocumento.class, false).getMobilGeral();
 
-				if (Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mob) 
-						&& Ex.getInstance().getComp().pode(ExPodeReclassificar.class, getTitular(), getLotaTitular(), mob)) {
+				if (Ex.getInstance().getComp().pode(ExPodeReclassificar.class, getTitular(), getLotaTitular(), mob)) {
 
 					Ex.getInstance().getBL().avaliarReclassificar(mov.getTitular(), mov.getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);

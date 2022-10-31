@@ -1,18 +1,40 @@
-package br.gov.jfrj.siga.cp.model.enm;
+package br.gov.jfrj.siga.model.enm;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public enum CpExtensoesDeArquivoEnum {
-	PDF("pdf", "application/pdf"),
-	//
 	AVI("avi", "video/avi"),
+	//
+	AVIF("avif", "image/avif"),
+	//
+	BMP("bmp", "image/bmp"),
+	//
+	DWG("dwg", "image/vnd.dwg"),
+	//
+	JPEG("jpeg", "image/jpeg"),
+	//
+	MOV("mov", "video/quicktime"),
 	//
 	MP4("mp4", "video/mp4"),
 	//
+	MPG("mpg", "video/mpeg"),
+	//
 	MPEG4("mpeg4", "video/mpeg4-generic"),
 	//
-	MP3("mp3", "audio/mpeg");
+	MP3("mp3", "audio/mpeg"),
+	//
+	PDF("pdf", "application/pdf"),
+	//
+	PNG("png", "image/png"),
+	//
+	PSD("psd", "image/vnd.adobe.photoshop"),
+	//
+	TIFF("tiff", "image/tiff"),
+	//
+	WAV("wav", "audio/wav"),
+	//
+	WMV("wmv", "video/x-ms-asf");
 
 	private final String extensao;
 	private final String tipoConteudo;

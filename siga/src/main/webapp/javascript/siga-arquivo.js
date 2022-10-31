@@ -114,7 +114,7 @@ function enviarArq (arquivo, hsh, tam) {
 	    	  window.location.href = "/siga/public/app/login" 
 	      } else {
 	    	  if (this.status >= 300) { 
-		    	  alert('Ocorreu um erro no envio do arquivo (HTTP error ' + this.status + '). Por favor tente mais tarde.');
+		    	  alert(this.response);
 		    	  resetarArquivoUpload();
 		  	  }
 	      }

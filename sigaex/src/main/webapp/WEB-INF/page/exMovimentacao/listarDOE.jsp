@@ -162,7 +162,7 @@
 						}
 					}
 					if(!jaExiste) {
-					    var option = new Option(lista[i].cadernoIdentificador, lista[i].cadernoIdentificador);
+					    var option = new Option(lista[i].cadernoDescricao, lista[i].cadernoIdentificador);
 					    selectCaderno.add(option);
 					}
 				}
@@ -225,7 +225,6 @@
 					break;
 				}
 			}	
-			
 		}
 		
 		function montarReciboArquivoDOE(){
@@ -235,12 +234,13 @@
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
 			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
-			var textoPublicacao = "teste texto";
+			var idMov = obterCheckmov();
+			
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/montarReciboArquivoDOE',
 				  type: "POST",
 				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
-					  			tipoMaterialId : tipoMaterialId, textoPublicacao : textoPublicacao},
+					  			tipoMaterialId : tipoMaterialId, idMov : idMov},
 				  success: function(data) {
 					  try {
 						  var montaRecibo = JSON.parse(data);
@@ -256,6 +256,20 @@
 					  $('#confirmacaoModal').modal('hide');
 			 	  }			 	 
 			});
+		}
+		
+		function obterCheckmov(){
+			var primeiro = "";
+			var aChk = document.getElementsByName("movSelecionados");
+			
+			for (var i=0;i<aChk.length;i++){
+				 var item = aChk[i];
+			     if (item.type == "checkbox" && item.checked) {
+			     	primeiro = item.value;
+			     	break;
+			     }
+			}
+			return primeiro;
 		}
 		
 		//Sdk para Doe
@@ -283,7 +297,7 @@
 			var retrancaCod = document.getElementById("idSecao").value;
 			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
 			var sequencial = document.getElementById("idSequencial").value;
-			var textoPublicacao = "teste texto";
+			var idMov = obterCheckmov();
 			
 			var recibo = json.signature;
 			var reciboHash = document.getElementById("idReciboHash").value;
@@ -294,7 +308,7 @@
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/enviarPublicacaoArquivoDOE',
 				  type: "POST",
 				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
-					  			tipoMaterialId : tipoMaterialId, sequencial: sequencial, textoPublicacao : textoPublicacao, 
+					  			tipoMaterialId : tipoMaterialId, sequencial: sequencial, idMov : idMov, 
 					  			recibo : recibo, reciboHash : reciboHash},
 				  success: function(data) {
 					  try {
@@ -390,7 +404,7 @@
 						<table border="0" class="table table-sm table-striped">
 							<thead class="${thead_color}">
 								<tr>
-									<th class="text-center align-middle" style="width: 2%;"><input type="checkbox" name="checkall" onclick="checkUncheckAll(this)" /></th>
+									<th class="text-left" style="width: 2%;"></th>
 									<th class="text-left" style="width: 25%;">Número</th>
 									<th class="text-left" style="width: 10%;">Data</th>
 									<th class="text-left" style="width: 55%;"></th>
@@ -407,7 +421,7 @@
 								</c:url>
 							
 						    	<tr class="even">
-									 <td class="text-center align-middle"><input type="checkbox" name="movSelecionados" id="${x}" value="${mov.idMov}" ${x_checked} onclick="atualizarTipoAto(this)"/></td>
+									 <td class="text-center align-middle"><input type="checkbox" name="movSelecionados" id="${x}" class="chk" value="${mov.idMov}" ${x_checked} onclick="atualizarTipoAto(this)"/></td>
      			        			 <td class="text-left align-middle">
      			        			 	<span data-toggle="tooltip" data-placement="bottom" title="${mov.exMobil.exDocumento.descrDocumento}">
      			        			 		<a href="/sigaex/app/arquivo/exibir?id=${mov.idMov}&arquivo=${mov.exMobil.exDocumento.sigla}:${mov.idMov}&sigla=${mov.exMobil.exDocumento.sigla}">${mov.exMobil.exDocumento.sigla}.txt</a>
@@ -467,7 +481,7 @@
 						</div>
 						<div class="form-group row">
 							<div class="col-sm">
-								<input type="button" value="Enviar Arquivos Selecionados" class="btn btn-primary" onclick="javascript:validarCampos();"/>
+								<input type="button" value="Enviar Arquivo Selecionado" class="btn btn-primary" onclick="javascript:validarCampos();"/>
 								<input type="button" value="Visualizar Grupo de Arquivos" class="btn btn-primary" onclick="javascript:visualizarGrupo();"/>
 							</div>				
 						</div>
@@ -534,5 +548,9 @@
 	      }
 	      atualizarTipoAto();
 	   });
+	});
+	
+	$('input.chk').on('change', function() {
+	    $('input.chk').not(this).prop('checked', false);  
 	});
 </script>

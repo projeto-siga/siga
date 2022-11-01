@@ -130,13 +130,14 @@
 							<div class="form-group">
 								<label for="extensoesArquivo">Extensões permitidas para o arquivo capturado de formato livre</label> <select
 									class="form-control siga-select2" id="extensoesArquivo" name="extensoesArquivo[]"
-									multiple="">
+									multiple="" data-maximum-selection-length="20">
 									<c:forEach items="${listaExtensoes}" var="item">
 										<option value="${item}"
 												${fn:contains(extensoesArquivo, item) ? 'selected' : ''}
 										><div>${item}</div></option>
 									</c:forEach>
 								</select>
+								<small>Escolha até 20 extensões de arquivo</small>
 							</div>
 						</div>
 					</div>

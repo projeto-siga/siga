@@ -1117,6 +1117,10 @@ definitions:
       isExternaPessoa:
         type: boolean
         description: Devolve true se for pessoa externa e false se não for
+      dataInicioPessoa:
+        type: string
+        format: date-time
+        description: Data início da validade desta versão da pessoa (data da alteração)        
       lotacao:
         $ref: "#/definitions/Lotacao"
       cargo:

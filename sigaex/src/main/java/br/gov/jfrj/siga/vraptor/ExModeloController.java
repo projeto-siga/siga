@@ -175,11 +175,16 @@ public class ExModeloController extends ExSelecionavelController {
 			}
 			if (forma != null && forma != 0) {
 				modelo.setExFormaDocumento(dao().consultar(forma, ExFormaDocumento.class, false));
-				if (extensoesArquivo != null && !modelo.getExFormaDocumento().isCapturadoFormatoLivre())
+				if (extensoesArquivo != null && !modelo.getExFormaDocumento().isCapturadoFormatoLivre()) {
 					modelo.setExtensoesArquivo(null);
-				else
-					modelo.setExtensoesArquivo(Arrays.toString(extensoesArquivo).replace("[", "")
-						.replace("]", "").replace(" ", ""));
+				} else {
+					String extensoesArq = Arrays.toString(extensoesArquivo).replace("[", "")
+							.replace("]", "").replace(" ", "");
+					if (extensoesArq.length() > 200 || extensoesArquivo.length > 20)
+						throw new AplicacaoException("Quantidade de extensões de arquivo maior que 20 "
+								+ "ou excedeu o tamanho do campo na tabela de modelos");
+					modelo.setExtensoesArquivo(extensoesArq);
+				}
 			}
 			if (nivel != null && nivel != 0) {
 				modelo.setExNivelAcesso(dao().consultar(nivel, ExNivelAcesso.class, false));

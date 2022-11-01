@@ -12,6 +12,8 @@ public enum CpExtensoesDeArquivoEnum {
 	//
 	DWG("dwg", "image/vnd.dwg"),
 	//
+	JPG("jpg", "image/jpeg"),
+	//
 	JPEG("jpeg", "image/jpeg"),
 	//
 	MOV("mov", "video/quicktime"),
@@ -19,6 +21,8 @@ public enum CpExtensoesDeArquivoEnum {
 	MP4("mp4", "video/mp4"),
 	//
 	MPG("mpg", "video/mpeg"),
+	//
+	MPEG("mpeg", "video/mpeg"),
 	//
 	MPEG4("mpeg4", "video/mpeg4-generic"),
 	//

@@ -138,7 +138,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@Column(name = "MARCA_DAGUA", length = 13)
 	private java.lang.String marcaDagua;
 
-	@Column(name = "EXTENSOES_ARQUIVO", length = 50)
+	@Column(name = "EXTENSOES_ARQUIVO", length = 200)
 	@Basic(fetch = FetchType.LAZY)
 	private java.lang.String extensoesArquivo;
 

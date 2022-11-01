@@ -197,7 +197,7 @@ $(function(){
 						<div class="col col-3">
 							<div class="form-group mb-0">
 								<label>Data da devolução</label> 
-								<input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off"/>					 
+								<input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0,null,false);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off"/>					 
 							</div>
 						</div>
 					</div>	

@@ -207,8 +207,13 @@ function descarrega() {
 	carregando = false;
 }
 
-function verifica_data(data, naoObriga, retornarMensagem, podeRetroativa = true) {
+function verifica_data(data, naoObriga, retornarMensagem, podeRetroativa) {
 	mydata = new String(data.value);
+	
+	if(podeRetroativa == null){
+		podeRetroativa = true;
+	}
+	
 	var mySplit;
 	var msg = "";
 	if (mydata.length > 0) {

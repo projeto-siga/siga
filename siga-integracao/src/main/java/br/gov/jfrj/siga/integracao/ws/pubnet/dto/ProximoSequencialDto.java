@@ -19,7 +19,7 @@ public class ProximoSequencialDto implements Serializable {
 	private Integer rowOrder;
 	
 	@JsonProperty("retranca")
-	private Integer retrancaCodigo;
+	private String retrancaCodigo;
 	
 	@JsonProperty("sequenciaPublicacao")
 	private String sequenciaPublicacao;
@@ -43,11 +43,11 @@ public class ProximoSequencialDto implements Serializable {
 		this.rowOrder = rowOrder;
 	}
 
-	public Integer getRetrancaCodigo() {
+	public String getRetrancaCodigo() {
 		return retrancaCodigo;
 	}
 
-	public void setRetrancaCodigo(Integer retrancaCodigo) {
+	public void setRetrancaCodigo(String retrancaCodigo) {
 		this.retrancaCodigo = retrancaCodigo;
 	}
 

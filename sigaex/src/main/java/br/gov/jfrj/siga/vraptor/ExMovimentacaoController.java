@@ -4460,7 +4460,20 @@ public class ExMovimentacaoController extends ExController {
 			String dtDispon, Long idLotPublicacao,
 			String descrPublicacao, DpLotacaoSelecao lotaSubscritorSel, Long id, String urlRedirecionar)
 			throws Exception {
+		final String descrMov = "Aguardando envio de agendamento de publicação";
+		gravarMovPublicacaoDOE(sigla, dtDispon, descrPublicacao, descrMov, lotaSubscritorSel, id, 
+				ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, Boolean.FALSE);
 		
+		if(urlRedirecionar != null && !"".equals(urlRedirecionar)) {
+			result.redirectTo(urlRedirecionar);
+		} else {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);	
+		}
+	}
+
+	private void gravarMovPublicacaoDOE(String sigla, String dtDispon, String descrPublicacao, 
+			String descrMov, DpLotacaoSelecao lotaSubscritorSel, Long id, ExTipoDeMovimentacao exTipoDeMov, 
+			boolean isArqRecibo) throws Exception {
 		BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
@@ -4477,20 +4490,18 @@ public class ExMovimentacaoController extends ExController {
 		Ex.getInstance().getComp()
 			.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
 					docBuilder.getMob());
-				
+		
+		String nomeArqDoc = docBuilder.getMob().getCodigoCompacto() + 
+							(isArqRecibo ? "REC" + ".txt" : ".txt");
+		
 		Ex.getInstance()
 			.getBL()
 			.gravarPublicacaoDOE(getCadastrante(), getLotaTitular(),
 					docBuilder.getMob(), dao().dt(), mov.getSubscritor(),
 					mov.getTitular(), getLotaTitular(),
 					mov.getDtDispPublicacao(), lotPublicacao,
-					descrPublicacao, id);
+					descrPublicacao, descrMov, nomeArqDoc, id, exTipoDeMov);
 		
-		if(urlRedirecionar != null && !"".equals(urlRedirecionar)) {
-			result.redirectTo(urlRedirecionar);
-		} else {
-			ExDocumentoController.redirecionarParaExibir(result, sigla);	
-		}
 	}
 
 	@Get("/app/exMovimentacao/listarDOE")
@@ -4528,25 +4539,41 @@ public class ExMovimentacaoController extends ExController {
 			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL().montarReciboPublicacaoDOE(
 					anuncianteId, cadernoId, retrancaCod, tipoMaterialId, obterTextoArquivoMov(idMov));
 			setMensagem(new Gson().toJson(publicacaoDto));
-			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		} catch (final Exception e) {
+			e.printStackTrace();
 			setMensagem(e.getMessage());
+		} finally {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
-			//throw e;
 		}
 	}
 	
+	@Transacional
 	@Post("/app/exMovimentacao/enviarPublicacaoArquivoDOE")
-	public void enviarPublicacaoArquivoDOE(String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String sequencial, 
-			String idMov, String recibo, String reciboHash) throws Exception {
+	public void enviarPublicacaoArquivoDOE(String anuncianteId, String cadernoId, String retrancaCod, 
+			String tipoMaterialId, String sequencial, String idMov, String reciboAssinado, String reciboHash, 
+			String reciboTexto) throws Exception {
 		try {
-			
 			EnviaPublicacaoDto enviaPublicacaoDto = Ex.getInstance().getBL()
-					.enviarPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, obterTextoArquivoMov(idMov), recibo, reciboHash);
+					.enviarPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, obterTextoArquivoMov(idMov), reciboAssinado, reciboHash);
 			setMensagem(new Gson().toJson(enviaPublicacaoDto));
-			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+			
+			ExMovimentacao exMov = ExDao.getInstance().consultar(Long.parseLong(idMov),
+					ExMovimentacao.class, false);
+			
+			String sigla = exMov.getExDocumento().getSigla();
+			
+			final String descrMov = "Envio de agendamento de publicação DOE realizado com sucesso!";
+			
+			DpLotacaoSelecao lot = new DpLotacaoSelecao();
+			lot.setId(getLotaTitular().getId());
+			lot.buscar();
+				
+			gravarMovPublicacaoDOE(sigla, DateUtils.formatarDDMMYYYY(new Date()), reciboTexto, descrMov, lot, 
+					Long.parseLong(idMov), ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
+			
 		} catch (final Exception e) {
 			setMensagem(e.getMessage());
+		} finally {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		}
 	}

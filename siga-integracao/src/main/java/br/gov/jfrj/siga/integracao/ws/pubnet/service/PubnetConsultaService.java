@@ -78,6 +78,7 @@ public class PubnetConsultaService {
 			ConsultaPermissoesPublicanteResult resp = port.consultaPermissoesPublicante(user);
 			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, PermissaoPublicanteDto.NOME_NODE_JSON);
+			System.out.println(json);
 			permissaoPublicanteDtoList = Arrays.asList(getObjectMapper().readValue(json, PermissaoPublicanteDto[].class));
 		} catch (JsonParseException e) {
 			e.printStackTrace();
@@ -159,8 +160,6 @@ public class PubnetConsultaService {
 		transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING_UTF_8);
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		transformer.transform(new DOMSource(document), result);
-		// TODO Remover
-		// transformer.transform(new DOMSource(document), new StreamResult(System.out));
 		return writer;
 	}
 
@@ -214,7 +213,6 @@ public class PubnetConsultaService {
 		StringWriter writer = converterDocumentParaXmlString(elementNSImpl.getOwnerDocument());
 		
 		JSONObject jsonNode = converterXMLParaNodeJson(writer.toString());
-//		String nodeStr = jsonNode.getString("diffgr:diffgram");
 		System.out.println(jsonNode.toString());
 		return jsonNode;
 	}

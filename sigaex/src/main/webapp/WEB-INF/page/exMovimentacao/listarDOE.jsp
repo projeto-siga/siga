@@ -33,6 +33,10 @@
 		function cancelarMov(id, sigla) {
 			frm.id.value = id;
 			frm.sigla.value = sigla;
+			$('#confirmacaoModalCancelar').modal('show');
+		}
+		
+		function confirmarCancelarMov() {
 			frm.action = '/sigaex/app/expediente/mov/cancelar_movimentacao_gravar';
 			frm.submit();
 		}
@@ -236,6 +240,7 @@
 			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
 			var idMov = obterCheckmov();
 			
+			sigaSpinner.mostrar();
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/montarReciboArquivoDOE',
 				  type: "POST",
@@ -251,7 +256,8 @@
 					  } catch(err){
 						  inserirValueDivAlertaError(data);
 						  //Necesario para nao travar plugin de assinatura
-						  atualizarTela(10000);
+						  atualizarTela(30000);
+						  sigaSpinner.ocultar();
 					  }
 					  $('#confirmacaoModal').modal('hide');
 			 	  }			 	 
@@ -299,8 +305,9 @@
 			var sequencial = document.getElementById("idSequencial").value;
 			var idMov = obterCheckmov();
 			
-			var recibo = json.signature;
+			var reciboAssinado = json.signature;
 			var reciboHash = document.getElementById("idReciboHash").value;
+			var reciboTexto = document.getElementById("idTextoRecibo").value;
 			
 			limparInputsHiddenAposAssinatura();
 			
@@ -309,7 +316,7 @@
 				  type: "POST",
 				  data: {anuncianteId : anuncianteId, cadernoId : cadernoId, retrancaCod : retrancaCod, 
 					  			tipoMaterialId : tipoMaterialId, sequencial: sequencial, idMov : idMov, 
-					  			recibo : recibo, reciboHash : reciboHash},
+					  			reciboAssinado : reciboAssinado, reciboHash : reciboHash, reciboTexto : reciboTexto},
 				  success: function(data) {
 					  try {
 						 console.log(JSON.parse(data));
@@ -318,7 +325,8 @@
 					  } catch(err){
 						  inserirValueDivAlertaError(data);
 						  //Necesario para nao travar plugin de assinatura
-						  atualizarTela(10000);
+						  atualizarTela(30000);
+						  sigaSpinner.ocultar();
 					  }
 					  $('#confirmacaoModal').modal('hide');
 			 	  }
@@ -428,17 +436,10 @@
      			        			 	</span>
      			        			 </td>
      			        			 <td class="text-left align-middle"><fmt:formatDate pattern = "dd/MM/yyyy" value="${mov.dtIniMov}"/></td>
-     			        			 <th class="text-left" style="width: 65%;">
-     			        			 	<button type="button" class="btn up" data-toggle="tooltip" data-placement="top">
-											<i class="fas fa-caret-up"></i>
-										</button>
-										<button type="button" class="btn down" data-toggle="tooltip" data-placement="top">
-											<i class="fas fa-caret-down"></i>
-										</button>
-     			        			 </th>
+     			        			 <th class="text-left" style="width: 65%;"></th>
      			        			 <td class="text-right">
      			        			 <div class="btn-group">
-     			        			 	<a href="javascript:cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" onclick="cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" class="btn btn-primary" role="button" aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Cancelar</a>
+     			        			 	<a href="javascript:cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" onclick="cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Cancelar</a>
 										<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										    <span class="sr-only"></span>
 									    </button>
@@ -482,41 +483,18 @@
 						<div class="form-group row">
 							<div class="col-sm">
 								<input type="button" value="Enviar Arquivo Selecionado" class="btn btn-primary" onclick="javascript:validarCampos();"/>
-								<input type="button" value="Visualizar Grupo de Arquivos" class="btn btn-primary" onclick="javascript:visualizarGrupo();"/>
 							</div>				
 						</div>
 						</div>
 					</c:if>
 					<siga:siga-modal id="confirmacaoModal" exibirRodape="true" tituloADireita="Confirmação"
 						descricaoBotaoFechaModalDoRodape="Cancelar" linkBotaoDeAcao="javascript:montarReciboArquivoDOE();">
-						<div class="modal-body">Os arquivos selecionados serão enviados ao PubNet! Prosseguir?</div>
+						<div class="modal-body">O arquivo selecionado será enviado ao PubNet! Prosseguir?</div>
 					</siga:siga-modal>
-					<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-					  <div class="modal-dialog">
-					    <div class="modal-content">
-					    	<div class="modal-header"><div class="col-6  p-0"><img src="${uri_logo_siga_pequeno}" class="siga-modal__logo" alt="logo siga"></div>			
-								<button type="button" class="close  p-0  m-0  siga-modal__btn-close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>'
-							</div>
-					    <div class="modal-body">
-					        <div class="form-group">
-							<label for="siglaLotacao">Usuário</label>
-							<input type="text" id="usuario" name="usuario" class="form-control"/>	
-						</div>
-						<div class="form-group">
-							<label for="siglaLotacao">Senha</label>
-							<input type="password" id="senha" name="senha" class="form-control"/>
-						</div>
-
-					      </div>
-					      <div class="modal-footer">
-					      	<button type="button" onclick="javascript:return chamarAssinatura();" class="btn btn-primary">OK</button>
-					        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-					      </div>
-					    </div>
-					  </div>
-					</div>
+					<siga:siga-modal id="confirmacaoModalCancelar" exibirRodape="true" tituloADireita="Confirmação"
+						descricaoBotaoFechaModalDoRodape="Cancelar" linkBotaoDeAcao="javascript:confirmarCancelarMov();">
+						<div class="modal-body">Cancelar arquivo de agendamento DOE! Prosseguir?</div>
+					</siga:siga-modal>
 				</form>
 			</div>
 		</div>

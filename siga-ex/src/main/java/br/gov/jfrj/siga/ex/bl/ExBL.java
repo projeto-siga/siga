@@ -4674,15 +4674,10 @@ public class ExBL extends CpBL {
 					}
 				}
 				
-				// Se houver outros recebimentos pendentes para o destinatário, em vez de
-				// receber deve concluir direto
-				boolean fConcluirDireto = !mob.isEmTransitoExterno() && p.fIncluirCadastrante && (Utils.equivale(mob.getTitular(), titular)
-						|| Utils.equivale(mob.getLotaTitular(), lotaTitular));
-				if (!mob.isEmTransitoExterno() && !fConcluirDireto)
-					for (ExMovimentacao r : p.recebimentosPendentes)
-						// Existe um recebimento pendente e não é apenas de notificação
-						if (r.isResp(titular, lotaTitular) && !p.recebimentosDeNotificacoesPendentes.contains(r))
-							fConcluirDireto = true;
+				// Se o móbil ainda não foi movimentado e o titular e a lotaTitular forem as mesmas do móbil, é sinal de que houve uma notificação 
+				// ou um trâmite paralelo para o próprio cadastrante. Neste caso, em vez de receber deve concluir direto
+				boolean fConcluirDireto = p.fIncluirCadastrante && Utils.equivale(mob.getTitular(), titular)
+						&& Utils.equivale(mob.getLotaTitular(), lotaTitular) && !mob.isEmTransitoExterno();
 				
 				final ExMovimentacao mov = criarNovaMovimentacao(fConcluirDireto ? ExTipoDeMovimentacao.CONCLUSAO : ExTipoDeMovimentacao.RECEBIMENTO,
 						cadastrante, lotaTitular, m, dtMov, titular, null, null, null, null);
@@ -4775,7 +4770,7 @@ public class ExBL extends CpBL {
 			
 			ExMovimentacao recebimento = null;
 			if (p.fIncluirCadastrante && (Utils.equivale(mob.getLotaTitular(), lotaTitular)
-					|| Utils.equivale(mob.getTitular(), titular))) {
+					|| (mob.getLotaTitular() == null && Utils.equivale(mob.getTitular(), titular)))) {
 				recebimento = null;
 			} else {
 				// Localiza o recebimento que será concluído

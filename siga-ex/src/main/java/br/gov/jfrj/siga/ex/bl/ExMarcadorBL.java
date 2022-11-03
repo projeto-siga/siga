@@ -615,7 +615,8 @@ public class ExMarcadorBL {
 
 		for (ExMovimentacao recebimento : p.recebimentosPendentes) {
 			acrescentarMarcaTransferencia(
-					mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())
+					(mob.isAtendente(null, recebimento.getLotaResp()) ||
+					(recebimento.getLotaResp() == null && mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())))
 							? ((mob.getNumSequencia() > 1 || mob.doc().jaTransferido()) ? CpMarcadorEnum.EM_ANDAMENTO.getId()
 									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),

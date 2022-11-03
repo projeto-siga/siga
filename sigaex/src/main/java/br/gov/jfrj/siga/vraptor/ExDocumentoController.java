@@ -1382,6 +1382,7 @@ public class ExDocumentoController extends ExController {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
 				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
+				ContextoPersistencia.flushTransaction();
 			}														
 		} else {
 			ExMovimentacao mov = exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA);

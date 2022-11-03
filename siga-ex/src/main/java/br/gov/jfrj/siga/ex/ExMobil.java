@@ -2513,9 +2513,11 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					&& (ExTipoDeMovimentacao.hasTransferencia(mov.getExTipoMovimentacao())
 							|| ExTipoDeMovimentacao.hasRecebimento(mov.getExTipoMovimentacao()))
 					&& Utils.igual(mov.getExTipoMovimentacao(), movAnt.getExTipoMovimentacao())
-					&& Utils.igual(mov.getExMobilRef(), movAnt.getExMobilRef()))
+					&& Utils.igual(mov.getExMobil(), movAnt.getExMobil())
+					&& Utils.igual(mov.getExMovimentacaoRef(), movAnt.getExMovimentacaoRef()))
 				movsAExcluir.add(mov);
-			movAnt = mov;
+			else
+				movAnt = mov;
 		}
 		movs.removeAll(movsAExcluir);
 		
@@ -2553,14 +2555,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) {
 					// Existe a conclusão direta, que cancela um trâmite pendente, ou a conclusão
 					// normal que cancela um recebimento pendente
-					if (p.tramitesPendentes.contains(mov.getExMovimentacaoRef()))
-						p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
-					else
+					if (p.tramitesPendentes.contains(mov.getExMovimentacaoRef()) || p.recebimentosPendentes.contains(mov.getExMovimentacaoRef())) {
+						if (p.tramitesPendentes.contains(mov.getExMovimentacaoRef()))
+							p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
+						if (p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
+							p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
+					} else {
+						// Caso a movimentação não seja localizada, remover todas as pendências
+						// pois se trata de uma situação de erro
 						p.tramitesPendentes.clear();
-					if (p.recebimentosPendentes.contains(mov.getExMovimentacaoRef()))
-						p.recebimentosPendentes.remove(mov.getExMovimentacaoRef());
-					else
 						p.recebimentosPendentes.clear();
+					}
 				} 
 			} else {
 				if (t == ExTipoDeMovimentacao.CONCLUSAO) 

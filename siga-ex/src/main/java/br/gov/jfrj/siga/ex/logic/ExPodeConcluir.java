@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
+import com.crivano.jlogic.NAnd;
 import com.crivano.jlogic.Not;
 import com.crivano.jlogic.Or;
 
@@ -27,7 +28,21 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
 
 	@Override
 	protected Expression create() {
-		return And.of(new ExEEletronico(mob.doc()), Or.of(new ExEMobilVia(mob), new ExEMobilUltimoVolume(mob)),
+		return And.of(
+
+				new ExEEletronico(mob.doc()),
+
+				Or.of(
+
+						new ExEMobilVia(mob),
+
+						new ExEMobilUltimoVolume(mob)),
+
+				Or.of(
+
+						And.of(new ExEstaEmTramiteParalelo(mob), new ExPodeMovimentar(mob, titular, lotaTitular)),
+
+						new ExEstaNotificado(mob, titular, lotaTitular)),
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 
@@ -36,16 +51,28 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
 						new ExTemDespachosNaoAssinados(mob.doc().getMobilGeral()))),
 
 				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
-				Or.of(And.of(new ExEstaEmTramiteParalelo(mob), new ExPodeMovimentar(mob, titular, lotaTitular)),
-						new ExEstaNotificado(mob, titular, lotaTitular)),
 
-				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaJuntado(mob)),
+				Not.of(new ExEstaArquivado(mob)),
+
+				Not.of(new ExEstaSobrestado(mob)),
+
+				Not.of(new ExEstaJuntado(mob)),
+
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.COPIA, titular, lotaTitular),
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.CONCLUSAO, titular, lotaTitular),
 
-				Or.of(Not.of(new ExEstaAindaComOCadastrante(mob)),
-						new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular)),
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.RECEBIMENTO, titular, lotaTitular));
+				NAnd.of(
+
+						new ExEstaAindaComOCadastrante(mob),
+
+						new ExECadastrante(mob.doc(), null, lotaTitular),
+						
+						new ExECadastrante(mob.doc(), titular, null))
+
+//				And.of(new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular),
+//						new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.RECEBIMENTO, titular, lotaTitular))
+
+		);
 	}
 }

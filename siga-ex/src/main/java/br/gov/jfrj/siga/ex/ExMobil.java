@@ -1403,19 +1403,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * @param recursivo
 	 * @return
 	 */
-	public Set<ExMobil> getVinculados(ExTipoDeVinculo tipo) {
+	public Set<ExMobil> getVinculados(ExTipoDeVinculo tipo, Boolean inversa) {
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
 		for (ExMovimentacao mov : getCronologiaSet())
 			if (!mov.isCancelada()) {
 				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA 
-						&& (tipo == null || tipo == mov.getTipoDeVinculo())) {
+						&& (tipo == null || tipo == mov.getTipoDeVinculo()) 
+						&& (inversa == null || (inversa ? this.equals(mov.getExMobilRef()) : this.equals(mov.getExMobil())))) {
 					set.add(mov.getExMobilRef().doc().getMobilGeral());
 					set.add(mov.getExMobil());
 				}
 			}
 		set.remove(this);
 		if (!isGeral())
-			set.addAll(doc().getMobilGeral().getVinculados(tipo));
+			set.addAll(doc().getMobilGeral().getVinculados(tipo, inversa));
 		return set;
 	}
 

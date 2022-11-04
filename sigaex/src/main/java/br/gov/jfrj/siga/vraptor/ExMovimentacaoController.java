@@ -180,6 +180,8 @@ import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
@@ -4523,7 +4525,7 @@ public class ExMovimentacaoController extends ExController {
 					}
 				}
 			}
-			result.include("listaPermissoes", new Gson().toJson(Ex.getInstance().getBL().listarPermissoesDOE()));
+			result.include("listaPermissoes", new Gson().toJson(Ex.getInstance().getBL().listarPermissoesDOE(getAuthHeaderDOE())));
 			result.include("idModelo", idModelo);
 			result.include("listMov", idModelo != null && !idModelo.equals(0L) ? listFiltradaMovs : listaMovs);
 			result.include("listModelos", listModelos);
@@ -4536,8 +4538,9 @@ public class ExMovimentacaoController extends ExController {
 	public void montarReciboArquivoDOE(
 			String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String idMov) throws Exception {
 		try {
-			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL().montarReciboPublicacaoDOE(
-					anuncianteId, cadernoId, retrancaCod, tipoMaterialId, obterTextoArquivoMov(idMov));
+			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL()
+					.montarReciboPublicacaoDOE(getAuthHeaderDOE(), anuncianteId, cadernoId, retrancaCod, 
+							tipoMaterialId, obterTextoArquivoMov(idMov));
 			setMensagem(new Gson().toJson(publicacaoDto));
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -4554,28 +4557,39 @@ public class ExMovimentacaoController extends ExController {
 			String reciboTexto) throws Exception {
 		try {
 			EnviaPublicacaoDto enviaPublicacaoDto = Ex.getInstance().getBL()
-					.enviarPublicacaoDOE(anuncianteId, cadernoId, retrancaCod, tipoMaterialId, sequencial, obterTextoArquivoMov(idMov), reciboAssinado, reciboHash);
+					.enviarPublicacaoDOE(getAuthHeaderDOE(), anuncianteId, cadernoId, retrancaCod, 
+							tipoMaterialId, sequencial, obterTextoArquivoMov(idMov), reciboAssinado, reciboHash);
 			setMensagem(new Gson().toJson(enviaPublicacaoDto));
 			
-			ExMovimentacao exMov = ExDao.getInstance().consultar(Long.parseLong(idMov),
-					ExMovimentacao.class, false);
-			
+			ExMovimentacao exMov = ExDao.getInstance().consultar(Long.parseLong(idMov), ExMovimentacao.class, false);
 			String sigla = exMov.getExDocumento().getSigla();
-			
-			final String descrMov = "Envio de agendamento de publicação DOE realizado com sucesso!";
 			
 			DpLotacaoSelecao lot = new DpLotacaoSelecao();
 			lot.setId(getLotaTitular().getId());
 			lot.buscar();
 				
+			final String descrMov = "Envio de agendamento de publicação DOE realizado com sucesso!";		
 			gravarMovPublicacaoDOE(sigla, DateUtils.formatarDDMMYYYY(new Date()), reciboTexto, descrMov, lot, 
-					Long.parseLong(idMov), ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
+					null, ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
 			
+			exMov.setDtFimMov(new Date());
 		} catch (final Exception e) {
 			setMensagem(e.getMessage());
 		} finally {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		}
+	}
+	
+	private AuthHeader getAuthHeaderDOE() throws Exception {
+		String cpf = getCadastrante().getCpfPessoa().toString();
+		String email = getCadastrante().getEmailPessoa();
+		TokenDto token = Ex.getInstance().getBL().gerarTokenDOE("user", cpf, email);
+		
+		AuthHeader user = new AuthHeader();
+		user.setUserName("user");
+		user.setPassword(token.getToken());
+		
+		return user;
 	}
 	
 	private String obterTextoArquivoMov(String idMov) {

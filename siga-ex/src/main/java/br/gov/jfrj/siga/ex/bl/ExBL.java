@@ -231,6 +231,7 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.ProximoSequencialDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetEnvioService;
@@ -1139,23 +1140,14 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	public List<PermissaoPublicanteDto> listarPermissoesDOE() throws Exception {
-		//TODO Remover no futuro
-		AuthHeader user = new AuthHeader();
-		user.setUserName("FernandoHP2");
-		user.setPassword("bffb2B82E0");
-		
+	public List<PermissaoPublicanteDto> listarPermissoesDOE(AuthHeader user) throws Exception {
 		PubnetConsultaService consultaService = new PubnetConsultaService();
 		List<PermissaoPublicanteDto> lista = consultaService.consultarPermissaoPublicante(user);
 		return lista;
 	}
 	
-	public MontaReciboPublicacaoDto montarReciboPublicacaoDOE(String anuncianteIdentificador,
+	public MontaReciboPublicacaoDto montarReciboPublicacaoDOE(AuthHeader user, String anuncianteIdentificador,
 			String cadernoIdentificador, String retrancaCodigo, String tipomaterialIdentificador, String textoPublicacao) throws Exception {
-		//TODO Remover no futuro
-		AuthHeader user = new AuthHeader();
-		user.setUserName("FernandoHP2");
-		user.setPassword("bffb2B82E0");
 		
 		PubnetEnvioService envioService = new PubnetEnvioService();
 		
@@ -1167,19 +1159,21 @@ public class ExBL extends CpBL {
 		return reciboPublicacaoDto;
 	}
 	
-	public EnviaPublicacaoDto enviarPublicacaoDOE(String anuncianteIdentificador,
+	public EnviaPublicacaoDto enviarPublicacaoDOE(AuthHeader user, String anuncianteIdentificador,
 			String cadernoIdentificador, String retrancaCodigo, String tipomaterialIdentificador, String sequencial,
 			String textoPublicacao, String recibo, String reciboHash) throws Exception {
-		//TODO Remover no futuro
-		AuthHeader user = new AuthHeader();
-		user.setUserName("FernandoHP2");
-		user.setPassword("bffb2B82E0");
-		
+
 		PubnetEnvioService envioService = new PubnetEnvioService();
 		EnviaPublicacaoDto reciboPublicacaoDto = envioService.enviarPublicacao(
 					user, anuncianteIdentificador, cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, 
 					sequencial, textoPublicacao, recibo, reciboHash);
 		return reciboPublicacaoDto;
+	}
+	
+	public TokenDto gerarTokenDOE(String userName, String cpfUser, String email) throws Exception {
+		PubnetConsultaService consultaService = new PubnetConsultaService();
+		TokenDto token = consultaService.gerarToken(userName, cpfUser, email);
+		return token;
 	}
 
 

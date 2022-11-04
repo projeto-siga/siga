@@ -9,7 +9,6 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/base64js.min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/text-encoder-lite.min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/sdk-desktop.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/jquery-3.1.1.min.js"></script>
 	
 	<script type="text/javascript" language="Javascript1.1">
 		function alterouMod(idMov) {
@@ -140,13 +139,11 @@
 				sigaModal.alerta("Atenção! Selecione pelo menos um arquivo.");
 				return;	
 			}
-			
 			$('#confirmacaoModal').modal('show');
 		}
 		
 		function abrirLogin() {
 			$('#confirmacaoModal').modal('hide');
-			$('#myModal').modal('show');
 		}
 		
 		function carregarCaderno(lista) {
@@ -320,8 +317,9 @@
 				  success: function(data) {
 					  try {
 						 console.log(JSON.parse(data));
-						 alterouMod();
-						 alert("Envio realizado com sucesso!")
+						 sigaSpinner.ocultar();
+						 sigaModal.alerta("Envio realizado com sucesso!");
+						 atualizarTela(5000);
 					  } catch(err){
 						  inserirValueDivAlertaError(data);
 						  //Necesario para nao travar plugin de assinatura
@@ -331,6 +329,12 @@
 					  $('#confirmacaoModal').modal('hide');
 			 	  }
 			});
+		}
+		
+		function fecharAlertaModalRedirect() {
+			$('#alertaModalRedirect').modal('hide');
+			sigaSpinner.mostrar();
+			alterouMod();
 		}
 		
 		function limparCamposAlertaErro() {
@@ -356,9 +360,11 @@
 		function atualizarTela(tempo){
 			window.setTimeout( function() {
 				window.location.reload();
+				sigaSpinner.mostrar();
 			}, tempo);
 		}
 		
+		sdkDesktop.checkStarted(limparInputsHiddenAposAssinatura);
 		sdkDesktop.setParameters(parameters);
 
 	</script>
@@ -415,7 +421,7 @@
 									<th class="text-left" style="width: 2%;"></th>
 									<th class="text-left" style="width: 25%;">Número</th>
 									<th class="text-left" style="width: 10%;">Data</th>
-									<th class="text-left" style="width: 55%;"></th>
+									<th class="text-left" style="width: 55%;">Descrição</th>
 									<th class="text-right" style="width: 10%;"></th>	
 								</tr>
 								
@@ -436,7 +442,7 @@
      			        			 	</span>
      			        			 </td>
      			        			 <td class="text-left align-middle"><fmt:formatDate pattern = "dd/MM/yyyy" value="${mov.dtIniMov}"/></td>
-     			        			 <th class="text-left" style="width: 65%;"></th>
+     			        			 <th class="text-left align-middle" style="font-weight: normal;">${mov.exMobil.exDocumento.descrDocumento}</th>
      			        			 <td class="text-right">
      			        			 <div class="btn-group">
      			        			 	<a href="javascript:cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" onclick="cancelarMov(${mov.idMov}, '${mov.exMobil.exDocumento.sigla}')" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Cancelar</a>

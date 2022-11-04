@@ -62,6 +62,7 @@ import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -1668,6 +1669,12 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
 
+			List<Integer> listaTipo = new ArrayList<Integer>();
+			listaTipo.add(CpTipoIdentidade.FORMULARIO);
+			listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+			
+			qry.setParameter("listaTipo", listaTipo);
+			
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
 //			qry.setHint("org.hibernate.cacheable", true);
@@ -1701,6 +1708,12 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			
+			List<Integer> listaTipo = new ArrayList<Integer>();
+			listaTipo.add(CpTipoIdentidade.FORMULARIO);
+			listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+			
+			qry.setParameter("listaTipo", listaTipo);
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1731,6 +1744,12 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			
+			List<Integer> listaTipo = new ArrayList<Integer>();
+			listaTipo.add(CpTipoIdentidade.FORMULARIO);
+			listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+			
+			qry.setParameter("listaTipo", listaTipo);
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1747,6 +1766,13 @@ public class CpDao extends ModeloDao {
 	public List<CpIdentidade> consultaIdentidades(final DpPessoa pessoa) {
 		final Query qry = em().createNamedQuery("consultarIdentidades");
 		qry.setParameter("idPessoaIni", pessoa.getIdInicial());
+		
+		List<Integer> listaTipo = new ArrayList<Integer>();
+		listaTipo.add(CpTipoIdentidade.FORMULARIO);
+		listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+		
+		qry.setParameter("listaTipo", listaTipo);
+		
 		final List<CpIdentidade> lista = qry.getResultList();
 		return lista;
 	}
@@ -3083,4 +3109,36 @@ public class CpDao extends ModeloDao {
 		return em().createQuery(cq).getSingleResult();
 	}
 
+	public void gravarUsuarioDOE(String usuario, DpPessoa cadastrante, CpIdentidade identidadeCadastrante) {
+		CpIdentidade ident = new CpIdentidade();
+		ident.setCpTipoIdentidade(this.consultar(CpTipoIdentidade.LOGIN_DOE, CpTipoIdentidade.class, false));	
+		ident.setNmLoginIdentidade(usuario);
+		ident.setDpPessoa(cadastrante.getPessoaInicial());
+		ident.setCpOrgaoUsuario(cadastrante.getOrgaoUsuario());
+
+		Date dt = this.consultarDataEHoraDoServidor();
+		ident.setDtCriacaoIdentidade(dt);
+		
+		List<CpIdentidade> l = consultaUsuarioDOE(cadastrante);
+		CpIdentidade identAnt = null;
+		if(!l.isEmpty()) {
+			identAnt = l.get(0);
+		}
+		gravarComHistorico(ident, identAnt, null, identidadeCadastrante);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpIdentidade> consultaUsuarioDOE(final DpPessoa pessoa) {
+		CriteriaQuery<CpIdentidade> q = cb().createQuery(CpIdentidade.class);
+		Root<CpIdentidade> c = q.from(CpIdentidade.class);
+		q.select(c);
+		Join<CpIdentidade, DpPessoa> joinPessoa = c.join("dpPessoa", JoinType.INNER);
+		Join<CpIdentidade, CpTipoIdentidade> joinTipoIdentidade = c.join("cpTipoIdentidade", JoinType.INNER);
+		q.where(
+			cb().equal(joinPessoa.get("idPessoa"), pessoa.getIdPessoaIni()),
+			cb().equal(joinTipoIdentidade.get("idCpTpIdentidade"), CpTipoIdentidade.LOGIN_DOE),
+			cb().isNull(c.get("hisDtFim"))
+		);
+		return em().createQuery(q).getResultList();
+	}
 }

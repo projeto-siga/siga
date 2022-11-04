@@ -47,10 +47,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "     where u.nmLoginIdentidade = :nmUsuario"
 				+ "      and u.dpPessoa.cpfPessoa = pes.cpfPessoa"
 				+ "      and pes.sesbPessoa = :sesbPessoa"
-				+ "      and pes.dataFimPessoa is null"),
+				+ "      and pes.dataFimPessoa is null"
+				+ "		 and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
 		@NamedQuery(name = "consultarIdentidades", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "     where pes.idPessoaIni = :idPessoaIni"
-				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"),
+				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"
+				+ "      and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
 		@NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where ((u.nmLoginIdentidade = :nmUsuario and pes.sesbPessoa = :sesbPessoa and pes.sesbPessoa is not null) or "
 				+ " (pes.cpfPessoa is not null and pes.cpfPessoa <> :cpfZero and pes.cpfPessoa = :cpf)) "
@@ -65,11 +67,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36) "),
+				+ "or pes.situacaoFuncionalPessoa = :sfp36) "
+				+ "and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
         @NamedQuery(name = "consultarIdentidadeAtualPelaInicial", query = "from CpIdentidade u "
 				+ "		where u.hisDtIni = "
 				+ "		(select max(p.hisDtIni) from CpIdentidade p where p.hisIdIni = :idIni)"
-				+ "		 and u.hisIdIni = :idIni"),				
+				+ "		 and u.hisIdIni = :idIni"
+				+ "      and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),				
 		@NamedQuery(name = "consultarIdentidadeCpfEmail", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where (pes.cpfPessoa is not null and pes.cpfPessoa <> :cpfZero and pes.cpfPessoa = :cpf)"
 				+ "and pes.emailPessoa = :email "
@@ -84,7 +88,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36)")})
+				+ "or pes.situacaoFuncionalPessoa = :sfp36) "
+				+ "and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)")})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 

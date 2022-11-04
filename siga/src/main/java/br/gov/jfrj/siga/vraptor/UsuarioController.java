@@ -598,4 +598,22 @@ public class UsuarioController extends SigaController {
 					0, e);
 		}
 	}
+	
+	@Get("/app/usuario/associar_login")
+	public void associarLogin() {
+		List<CpIdentidade> lista = CpDao.getInstance().consultaUsuarioDOE(getCadastrante());
+		if(!lista.isEmpty()) {
+			result.include("usuarioPubNet", lista.get(0).getNmLoginIdentidade());
+		}
+	}
+	
+	@Transacional
+	@Post("/app/usuario/associar_login_gravar")
+	public void associarLoginGravar (String usuarioPubNet) {
+		if(usuarioPubNet.trim().length() > 20) {
+			throw new AplicacaoException("Tamanho máximo do Usuário Pubnet é de 20 caracteres");
+		}
+		CpDao.getInstance().gravarUsuarioDOE(usuarioPubNet, getCadastrante(), getIdentidadeCadastrante());
+		result.redirectTo(UsuarioController.class).associarLogin();
+	}
 }

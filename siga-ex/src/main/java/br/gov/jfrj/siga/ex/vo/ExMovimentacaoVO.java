@@ -472,7 +472,7 @@ public class ExMovimentacaoVO extends ExVO {
 						.exp(new CpPodeSempre()).pre(mov.getTipoDeVinculo().getAcao() + ": ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			} else {
 				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
-						.exp(new CpPodeSempre()).pre("Ver também: ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
+						.exp(new CpPodeSempre()).pre(mov.getTipoDeVinculo().getAcaoInversa() + ": ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			}
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 					.exp(new ExPodeCancelarVinculacao(mov, titular, lotaTitular)).build());

@@ -5052,7 +5052,7 @@ public class ExBL extends CpBL {
 					if (dt != null)
 						mov.setDtIniMov(dt);
 
-					if (dtFimMov != null)//
+					if (dtFimMov != null && dtFimMov.compareTo(dt) >= 0) //se o retorno da data é 0, quer dizer que é no mesmo dia, e se for mais, quer dizer que é posterior a data de inicio
 						mov.setDtFimMov(dtFimMov);//
 
 					if (orgaoExterno != null || obsOrgao != null) {

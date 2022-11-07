@@ -283,20 +283,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@Column(name = "ID_MOV", unique = true, nullable = false)
 	private Long idMov;
 	
-	@Transient
-	protected byte[] cacheConteudoBlobMov;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
-
-	@Lob
-	@Column(name = "conteudo_blob_mov")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobMov;
-
-	@Column(name = "conteudo_tp_mov", length = 128)
-	private String conteudoTpMov;
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
@@ -832,44 +821,27 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 
 	public String getConteudoTpMov() {
-		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
-			return conteudoTpMov;
+		if (getCpArquivo() == null)
+			return null;
 		return getCpArquivo().getConteudoTpArq();
 	}
 
 	public void setConteudoTpMov(final String conteudoTp) {
-	    this.conteudoTpMov = conteudoTp;
-	    if (orgaoPermiteHcp() && this.conteudoBlobMov == null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-	    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
-	    }
+    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
 	}
 
 	public byte[] getConteudoBlobMov() {
-		if(cacheConteudoBlobMov != null) {
-			return cacheConteudoBlobMov;
-		} else if (getCpArquivo() == null) {
-			cacheConteudoBlobMov = conteudoBlobMov;
-		} else {
-			try {
-				cacheConteudoBlobMov = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
+		try {
+			return getCpArquivo().getConteudo();
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
 		}
-		return cacheConteudoBlobMov;
 	}
 
 	public void setConteudoBlobMov(byte[] createBlob) {
-		cacheConteudoBlobMov = createBlob;
-		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
-			this.conteudoBlobMov = createBlob;
-		} else if(cacheConteudoBlobMov != null){
-			if (orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
-			else
-				this.conteudoBlobMov = createBlob;
+		if(createBlob != null){
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
 		}
-		
 	}
 
 	public Date getDtParam1() {

@@ -275,7 +275,7 @@ public class Prop {
 		
 
 		/* Parâmetros para configuração do armazenamento de documento */
-		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "TABELA");
 		String armaz = get("/siga.armazenamento.arquivo.tipo");
 		provider.addPublicProperty("/siga.armazenamento.arquivo.tamanhomax", 
 				(Long.toString(10 * 1024 * 1024))); // 10MB

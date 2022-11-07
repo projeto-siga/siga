@@ -325,6 +325,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/carregarpreench")
 	public void aCarregarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException, IllegalAccessException,

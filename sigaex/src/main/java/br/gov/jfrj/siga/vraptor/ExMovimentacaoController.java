@@ -4559,20 +4559,26 @@ public class ExMovimentacaoController extends ExController {
 			EnviaPublicacaoDto enviaPublicacaoDto = Ex.getInstance().getBL()
 					.enviarPublicacaoDOE(getAuthHeaderDOE(), anuncianteId, cadernoId, retrancaCod, 
 							tipoMaterialId, sequencial, obterTextoArquivoMov(idMov), reciboAssinado, reciboHash);
-			setMensagem(new Gson().toJson(enviaPublicacaoDto));
-			
-			ExMovimentacao exMov = ExDao.getInstance().consultar(Long.parseLong(idMov), ExMovimentacao.class, false);
-			String sigla = exMov.getExDocumento().getSigla();
-			
-			DpLotacaoSelecao lot = new DpLotacaoSelecao();
-			lot.setId(getLotaTitular().getId());
-			lot.buscar();
+			if (enviaPublicacaoDto == null || !"0000".equals(enviaPublicacaoDto.getCodRetorno())) {
+				System.out.println("Erro ao enviar publicação ao webservice DOE." + enviaPublicacaoDto);
+				throw new RuntimeException("Erro ao enviar publicação ao webservice DOE." 
+								+ enviaPublicacaoDto != null ? "Código Erro" + enviaPublicacaoDto.getCodRetorno() : "");
+			} else {
+				setMensagem(new Gson().toJson(enviaPublicacaoDto));
 				
-			final String descrMov = "Envio de agendamento de publicação DOE realizado com sucesso!";		
-			gravarMovPublicacaoDOE(sigla, DateUtils.formatarDDMMYYYY(new Date()), reciboTexto, descrMov, lot, 
-					null, ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
-			
-			exMov.setDtFimMov(new Date());
+				ExMovimentacao exMov = ExDao.getInstance().consultar(Long.parseLong(idMov), ExMovimentacao.class, false);
+				String sigla = exMov.getExDocumento().getSigla();
+				
+				DpLotacaoSelecao lot = new DpLotacaoSelecao();
+				lot.setId(getLotaTitular().getId());
+				lot.buscar();
+					
+				final String descrMov = "Envio de agendamento de publicação DOE realizado com sucesso! ";		
+				gravarMovPublicacaoDOE(sigla, DateUtils.formatarDDMMYYYY(new Date()), reciboTexto, descrMov, lot, 
+						null, ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
+				
+				exMov.setDtFimMov(new Date());
+			}
 		} catch (final Exception e) {
 			setMensagem(e.getMessage());
 		} finally {
@@ -4588,7 +4594,6 @@ public class ExMovimentacaoController extends ExController {
 		AuthHeader user = new AuthHeader();
 		user.setUserName("user");
 		user.setPassword(token.getToken());
-		
 		return user;
 	}
 	

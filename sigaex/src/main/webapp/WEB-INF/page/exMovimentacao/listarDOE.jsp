@@ -238,6 +238,7 @@
 			var idMov = obterCheckmov();
 			
 			sigaSpinner.mostrar();
+			$("#btEnviarArquivo").prop("disabled", true);
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/montarReciboArquivoDOE',
 				  type: "POST",
@@ -488,7 +489,7 @@
 						</div>
 						<div class="form-group row">
 							<div class="col-sm">
-								<input type="button" value="Enviar Arquivo Selecionado" class="btn btn-primary" onclick="javascript:validarCampos();"/>
+								<input type="button" value="Enviar Arquivo Selecionado" class="btn btn-primary" id="btEnviarArquivo" onclick="javascript:validarCampos();"/>
 							</div>				
 						</div>
 						</div>

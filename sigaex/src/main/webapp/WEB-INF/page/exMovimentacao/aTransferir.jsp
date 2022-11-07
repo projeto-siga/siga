@@ -174,7 +174,7 @@ $(function(){
 					          	<div class="col col-4">
 						          	<div class="form-group mb-0">
 							           <label>Selecione a Data:</label>
-							           <input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data_retroativa(this,null,false);" value="${dtDevolucaoMovString}" class="form-control campoData" placeholder="dd/mm/aaaa" autocomplete="off"/>
+							           <input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" placeholder="dd/mm/aaaa" autocomplete="off"/>
 						          	</div>
 					          	</div>
 					          </div>
@@ -197,7 +197,7 @@ $(function(){
 						<div class="col col-3">
 							<div class="form-group mb-0">
 								<label>Data da devolução</label> 
-								<input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off"/>					 
+								<input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data_retroativa(this,null,false);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off"/>					 
 							</div>
 						</div>
 					</div>	

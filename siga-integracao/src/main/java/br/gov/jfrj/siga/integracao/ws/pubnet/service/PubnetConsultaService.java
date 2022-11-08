@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativasCancelamentoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.ListaStatusPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MensagemErroRetornoPubnetDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
@@ -35,6 +36,7 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ConsultaMaterialEnviadoResp
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ConsultaPermissoesPublicanteResponse.ConsultaPermissoesPublicanteResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.GeraTokenResponse.GeraTokenResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ListaJustificativasCancelamentoResponse.ListaJustificativasCancelamentoResult;
+import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.ListaStatusPublicacaoResponse.ListaStatusPublicacaoResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.PegaProximoSequencialResponse.PegaProximoSequencialResult;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.Pubnet;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.PubnetSoap;
@@ -110,6 +112,26 @@ public class PubnetConsultaService {
 			throw new AplicacaoException(e.getMessage());
 		}
 		return permissaoPublicanteDtoList;
+	}
+	
+	public List<ListaStatusPublicacaoDto> listarStatusPublicacao(AuthHeader user) throws Exception {
+		List<ListaStatusPublicacaoDto> statusPublicacaoDtos = new ArrayList<ListaStatusPublicacaoDto>();
+		try {
+			ListaStatusPublicacaoResult resp = port.listaStatusPublicacao(user);
+			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
+			String json = converterNodeJsonParaStringJson(jsonNode, ListaStatusPublicacaoDto.NOME_NODE_JSON);
+			statusPublicacaoDtos = Arrays
+					.asList(getObjectMapper().readValue(json, ListaStatusPublicacaoDto[].class));
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+			if (!ENCODING_DEFAULT_XML.equals(ENCODING_UTF_8)) {
+				ENCODING_DEFAULT_XML = ENCODING_UTF_8;
+				listarStatusPublicacao(user);
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
+		}
+		return statusPublicacaoDtos;
 	}
 	
 	public ProximoSequencialDto obterProximoSequencialPublicacao(AuthHeader user, String retrancaCodigo) throws Exception {

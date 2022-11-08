@@ -4463,7 +4463,7 @@ public class ExMovimentacaoController extends ExController {
 			String descrPublicacao, DpLotacaoSelecao lotaSubscritorSel, Long id, String urlRedirecionar)
 			throws Exception {
 		final String descrMov = "Aguardando envio de agendamento de publicação";
-		gravarMovPublicacaoDOE(sigla, dtDispon, descrPublicacao, descrMov, lotaSubscritorSel, id, 
+		gravarMovPublicacaoDOE(sigla, dtDispon, descrPublicacao, descrMov, lotaSubscritorSel, id, null, 
 				ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, Boolean.FALSE);
 		
 		if(urlRedirecionar != null && !"".equals(urlRedirecionar)) {
@@ -4474,7 +4474,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	private void gravarMovPublicacaoDOE(String sigla, String dtDispon, String descrPublicacao, 
-			String descrMov, DpLotacaoSelecao lotaSubscritorSel, Long id, ExTipoDeMovimentacao exTipoDeMov, 
+			String descrMov, DpLotacaoSelecao lotaSubscritorSel, Long id, Long idComprovanteEnvioDoe, ExTipoDeMovimentacao exTipoDeMov, 
 			boolean isArqRecibo) throws Exception {
 		BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -4502,7 +4502,7 @@ public class ExMovimentacaoController extends ExController {
 					docBuilder.getMob(), dao().dt(), mov.getSubscritor(),
 					mov.getTitular(), getLotaTitular(),
 					mov.getDtDispPublicacao(), lotPublicacao,
-					descrPublicacao, descrMov, nomeArqDoc, id, exTipoDeMov);
+					descrPublicacao, descrMov, nomeArqDoc, id, idComprovanteEnvioDoe, exTipoDeMov);
 		
 	}
 
@@ -4575,7 +4575,7 @@ public class ExMovimentacaoController extends ExController {
 					
 				final String descrMov = "Envio de agendamento de publicação DOE realizado com sucesso! ";		
 				gravarMovPublicacaoDOE(sigla, DateUtils.formatarDDMMYYYY(new Date()), reciboTexto, descrMov, lot, 
-						null, ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
+						null, enviaPublicacaoDto.getComprovanteEnvio(), ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
 				
 				exMov.setDtFimMov(new Date());
 			}

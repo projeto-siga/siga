@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -126,7 +127,7 @@ public class LoginController extends SigaController {
 				result.include("loginUsuario", username);
 				result.forwardTo(this).login(cont);				
 			} else {
-				gravaCookieComToken(username, cont);
+				gravaCookieComToken(username, cont, false);
 				result.include("isPinNotDefined", true);
 			}
 		} catch (Exception e) {
@@ -193,7 +194,7 @@ public class LoginController extends SigaController {
 
 			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 
-			gravaCookieComToken(username, cont);
+			gravaCookieComToken(username, cont, true);
 			
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
@@ -201,7 +202,7 @@ public class LoginController extends SigaController {
 		}
 	}
 
-	private void gravaCookieComToken(String username, String cont) throws Exception {
+	private void gravaCookieComToken(String username, String cont, Boolean gravaCookie) throws Exception {
 		String modulo = SigaJwtBL.extrairModulo(request);
 		SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
 
@@ -212,7 +213,12 @@ public class LoginController extends SigaController {
 				(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
 				(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
 
-		AuthJwtFormFilter.addCookie(request, response, AuthJwtFormFilter.buildCookie(token));
+		Cookie cookie = AuthJwtFormFilter.buildCookie(token);
+		
+		if (gravaCookie)
+			response.addCookie(cookie);
+
+		AuthJwtFormFilter.addCookie(request, response, cookie);
 
 		if (cont != null) {
 			if (cont.contains("?"))
@@ -349,7 +355,7 @@ public class LoginController extends SigaController {
 				}
 				if (!usuarioPermitido)
 					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
-				gravaCookieComToken(cpf, cont);
+				gravaCookieComToken(cpf, cont, false);
 			}
 				
 			} catch(AplicacaoException a){

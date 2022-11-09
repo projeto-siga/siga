@@ -33,9 +33,12 @@ public class PessoaLotacaoParser extends SiglaParser {
 
 	public static final String LETTER = "[a-zA-Z]";
 
-	public static final String NUMBER = "[0-9]";
+    public static final String NUMBER = "[0-9]";
+    
+    //Nato: incluí isso até que JFES substitua siglas de lotação do tipo "2ª VF-CAC"
+    public static final String CARACTERES_INVALIDOS_QUE_DEVEM_SER_REMOVIDOS_EM_BREVE = "[ ª]";
 
-	public static final String CARACTER = "[" + LETTER + "|" + NUMBER + "]";
+	public static final String CARACTER = "[" + LETTER + "|" + NUMBER + "|" + CARACTERES_INVALIDOS_QUE_DEVEM_SER_REMOVIDOS_EM_BREVE + "]";
 
 	public static final String PESSOA = "(" + CARACTER + "{2}+" + ")" + "("
 			+ NUMBER + "+" + ")";

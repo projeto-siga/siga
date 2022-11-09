@@ -65,7 +65,9 @@ public class ExTramiteBL {
                             || ExTipoDeMovimentacao.hasRecebimento(mov.getExTipoMovimentacao()))
                     && Utils.igual(mov.getExTipoMovimentacao(), movAnt.getExTipoMovimentacao())
                     && Utils.igual(mov.getExMobil(), movAnt.getExMobil())
-                    && Utils.igual(mov.getExMovimentacaoRef(), movAnt.getExMovimentacaoRef()))
+                    && Utils.igual(mov.getExMovimentacaoRef(), movAnt.getExMovimentacaoRef())
+                    && Utils.igual(mov.getResp(), movAnt.getResp())
+                    && Utils.igual(mov.getLotaResp(), movAnt.getLotaResp()))
                 movsAExcluir.add(mov);
             else
                 movAnt = mov;

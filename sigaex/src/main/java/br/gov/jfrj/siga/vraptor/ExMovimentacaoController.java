@@ -72,6 +72,7 @@ import br.gov.jfrj.siga.base.TipoResponsavelEnum;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
@@ -4587,13 +4588,20 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	private AuthHeader getAuthHeaderDOE() throws Exception {
-		String cpf = getCadastrante().getCpfPessoa().toString();
-		String email = getCadastrante().getEmailPessoa();
-		TokenDto token = Ex.getInstance().getBL().gerarTokenDOE("user", cpf, email);
 		
+		List<CpIdentidade> lista = CpDao.getInstance().consultaUsuarioDOE(getCadastrante());
 		AuthHeader user = new AuthHeader();
-		user.setUserName("user");
-		user.setPassword(token.getToken());
+		if (lista.isEmpty()) {
+			throw new AplicacaoException("Login DOE não está associado ao login Sem Papel. Favor Acessar 'MENU->Administração->Associar Login de Publicação no DOE' e associe seu login.");
+		} else {
+			String loginDoe = lista.get(0).getNmLoginIdentidade();
+			String cpf = getCadastrante().getCpfPessoa().toString();
+			String email = getCadastrante().getEmailPessoa();
+			TokenDto token = Ex.getInstance().getBL().gerarTokenDOE(loginDoe, cpf, email);
+			
+			user.setUserName(loginDoe);
+			user.setPassword(token.getToken());
+		}
 		return user;
 	}
 	

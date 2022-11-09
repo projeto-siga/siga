@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,6 +67,7 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
+import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
@@ -179,9 +181,11 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
+import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
@@ -4506,6 +4510,53 @@ public class ExMovimentacaoController extends ExController {
 		
 	}
 
+	@Get("/app/exMovimentacao/consultarDOE")
+	@Post("/app/exMovimentacao/consultarDOE")
+	public void consultarDOE(String dataEnvio, String dataAte, String secao, Integer paramoffset) throws Exception {
+		Integer qtdePorPagina = 15;
+		PubnetConsultaService consultaService = new PubnetConsultaService();
+		AuthHeader auth = getAuthHeaderDOE();
+		
+		if(dataEnvio != null && !dataEnvio.isEmpty() && dataAte != null && !dataAte.isEmpty()) {
+			Date dateEnvio = new Date();
+			dateEnvio = SigaCalendar.converteStringEmData(dataEnvio);
+			Calendar envio = new GregorianCalendar();
+			envio.setTime(dateEnvio);
+			Date dateAte = new Date();
+			dateAte = SigaCalendar.converteStringEmData(dataAte);
+			Calendar ate = new GregorianCalendar();
+			ate.setTime(dateAte);
+				
+			List<MaterialEnviadoDto> lista = consultaService.consultarMaterialEnviado(auth, 
+					envio.get(Calendar.YEAR) + "-" + (envio.get(Calendar.MONTH)+1) + "-" + envio.get(Calendar.DAY_OF_MONTH),
+					ate.get(Calendar.YEAR) + "-" + (ate.get(Calendar.MONTH)+1) + "-" + ate.get(Calendar.DAY_OF_MONTH));
+			
+			List<MaterialEnviadoDto> listaPag = new ArrayList<MaterialEnviadoDto>();
+			
+			if(paramoffset != null && paramoffset != 0) {
+				for (int i = 0; i < qtdePorPagina; i++) {
+					if(lista.size() > paramoffset+i) {
+						listaPag.add(lista.get(paramoffset+i));
+					}
+				}
+			} else {
+				listaPag.addAll(lista);
+			}
+			
+			result.include("lista", listaPag);
+			result.include("tamanho", lista.size());
+		}
+		
+		result.include("usuarioDOE", auth.getUserName());
+		result.include("currentPageNumber", paramoffset == null ? 1 : (paramoffset / qtdePorPagina) + 1);		
+		result.include("dataEnvio", dataEnvio);
+		result.include("dataAte", dataAte);
+		result.include("secao", secao);
+		result.include("msgCabecClass", "alert-warning");
+		result.include("mensagemCabec", "ATENÇÃO: Só é permitido a seleção de um arquivo por vez para o cancelamento");
+	}	
+	
+	
 	@Get("/app/exMovimentacao/listarDOE")
 	public void listarDOE(Long idModelo) throws Exception {
 		try {

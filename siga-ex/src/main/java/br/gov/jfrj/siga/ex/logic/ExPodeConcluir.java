@@ -68,7 +68,14 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
 
 						new ExECadastrante(mob.doc(), null, lotaTitular),
 						
-						new ExECadastrante(mob.doc(), titular, null))
+						new ExECadastrante(mob.doc(), titular, null)),
+				
+				//Nato: o ideal é que existam diferentes movimentações de conclusão, para tramite paralelo e notificação, 
+				// da mesma forma que existem diferentes botões para tramitar em paralelo e para notificar. Talvez os
+				// recebimentos devessem ser diferentes também. Assim, as lógicas seriam mais simples. Enquanto
+				// isso não é feito, melhor impedir a conclusão de uma notificação para um colega da equipe, quando
+				// o documento está com o titular, pois estava provocando uma conclusão do trâmite principal.
+				Not.of(new ExPodeArquivarCorrente(mob, titular, lotaTitular))
 
 //				And.of(new ExEstaPendenteDeRecebimento(mob, titular, lotaTitular),
 //						new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.RECEBIMENTO, titular, lotaTitular))

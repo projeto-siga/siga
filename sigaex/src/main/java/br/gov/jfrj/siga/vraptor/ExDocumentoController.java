@@ -1381,8 +1381,8 @@ public class ExDocumentoController extends ExController {
 			if (Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
-				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 				ContextoPersistencia.flushTransaction();
+				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else {
 			ExMovimentacao mov = exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA);

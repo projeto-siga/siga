@@ -1381,8 +1381,15 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	
 	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
 		return Utils.equivale(getLotaResp(), lotaTitular)
-				|| Utils.equivale(getResp(),titular)
-				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
+				|| Utils.equivale(getResp(), titular)
+				|| Utils.equivale(getLotaDestinoFinal(), lotaTitular)
+				|| Utils.equivale(getDestinoFinal(), titular);
+	}
+	
+	public boolean isRespExato(DpPessoa titular, DpLotacao lotaTitular) {
+		return (getResp() == null && Utils.equivale(getLotaResp(), lotaTitular))
+				|| Utils.equivale(getResp(), titular)
+				|| (getDestinoFinal() == null && Utils.equivale(getLotaDestinoFinal(),lotaTitular))
 				|| Utils.equivale(getDestinoFinal(),titular);
 	}
 

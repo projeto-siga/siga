@@ -21,11 +21,11 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMobil.Pendencias;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
+import br.gov.jfrj.siga.ex.bl.ExTramiteBL.Pendencias;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -616,7 +616,8 @@ public class ExMarcadorBL {
 
 		for (ExMovimentacao recebimento : p.recebimentosPendentes) {
 			acrescentarMarcaTransferencia(
-					mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())
+					(mob.isAtendente(null, recebimento.getLotaResp()) ||
+					(recebimento.getLotaResp() == null && mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())))
 							? ((mob.getNumSequencia() > 1 || mob.doc().jaTransferido()) ? CpMarcadorEnum.EM_ANDAMENTO.getId()
 									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),

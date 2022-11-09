@@ -58,12 +58,14 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -2609,6 +2611,29 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
+
+	
+	public List<ExMovimentacao> listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<ExMovimentacao> criteriaQuery = criteriaBuilder.createQuery(ExMovimentacao.class);	
+		Root<ExMovimentacao> movRoot = criteriaQuery.from(ExMovimentacao.class);
+		
+		criteriaQuery.select(movRoot);
+		Join<ExMovimentacao, DpPessoa> joinCadastrante = movRoot.join("cadastrante", JoinType.INNER);
+	
+		Predicate predicateAnd;
+		Predicate predicateEqualTipo = criteriaBuilder.equal(movRoot.get("exTipoMovimentacao"), tipoDeMovimentacao);
+		Predicate predicateEqualNaoFinalizada = criteriaBuilder.isNull(movRoot.get("dtFimMov"));
+		Predicate predicateEqualNaoCancelada = criteriaBuilder.isNull(movRoot.get("exMovimentacaoCanceladora"));
+		Predicate predicateEqualsPessoa = criteriaBuilder.equal(joinCadastrante.get("idPessoaIni"),cadastrante.getIdInicial());
+		
+		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualNaoFinalizada, predicateEqualsPessoa, predicateEqualNaoCancelada);
+		criteriaQuery.where(predicateAnd);
+		
+		return em().createQuery(criteriaQuery).getResultList();		
+	}
+	
+
 	public List<ExDocumentoVO> consultarParaReclassificarEmLote(final DpPessoa titular,
 																final String classificacaoSigla, 
 																final int offset, final int itemPagina) {
@@ -2722,4 +2747,5 @@ public class ExDao extends CpDao {
 
 		return ((BigDecimal) query.getSingleResult()).intValue();
 	}
+
 }

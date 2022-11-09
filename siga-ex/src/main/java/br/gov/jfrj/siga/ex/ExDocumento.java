@@ -1251,6 +1251,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return false;
 	}
+	
+	public boolean isPublicacaoAgendadaEhCadastranteDOE(DpPessoa titular) {
+		final Set<ExMovimentacao> movs = getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, Boolean.TRUE);
+
+		if(movs.isEmpty()) {
+			return false;
+		} else {
+			for (ExMovimentacao exMovimentacao : movs) {
+				if(exMovimentacao.getDtFimMov() != null || !exMovimentacao.getCadastrante().equivale(titular)) {
+					return true;
+				}
+			}
+			return false;	
+		}
+	}
 
 	/**
 	 * Verifica se um documento possui <b>solicitação</b> de publicação no DJE.

@@ -452,6 +452,11 @@
 							href="/siga/app/marcador/listar">Cadastro de 
 								Marcadores</a></li>
 					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;PUB_DOE: Publicar DOE')}">
+						<li><a class="dropdown-item"
+							href="/sigaex/app/exMovimentacao/listarDOE">Publicar DOE</a></li>
+					</c:if>
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;ARMAZ:Armazenamento de Arquivos')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Armazenamento ${f:resource('/siga.armazenamento.arquivo.tipo')}</a>
 							<ul class="dropdown-menu">

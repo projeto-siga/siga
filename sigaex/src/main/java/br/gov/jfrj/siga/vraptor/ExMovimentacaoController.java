@@ -8,14 +8,26 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +38,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.cp.util.SigaUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -34,6 +45,7 @@ import org.jboss.logging.Logger;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
@@ -70,6 +82,7 @@ import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -96,6 +109,7 @@ import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoDOE;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivoAuxiliar;
@@ -156,6 +170,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTramitarEmParalelo;
 import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPara;
 import br.gov.jfrj.siga.ex.logic.ExPodeTramitarPosAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
+import br.gov.jfrj.siga.ex.model.enm.ConversaoDoeEnum;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
@@ -163,6 +178,10 @@ import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
@@ -3720,7 +3739,7 @@ public class ExMovimentacaoController extends ExController {
 	public void cancelarMovimentacaoGravar(Integer postback, Long id,
 			String sigla, String dtMovString, boolean substituicao,
 			String descrMov, DpPessoaSelecao subscritorSel,
-			DpPessoaSelecao titularSel) throws Exception {
+			DpPessoaSelecao titularSel, String urlRedirecionar) throws Exception {
 
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
@@ -3748,7 +3767,12 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		
+		if(urlRedirecionar == null || "".equals(urlRedirecionar)) {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} else {
+			result.redirectTo(urlRedirecionar);
+		}
 	}
 
 	@Get("app/expediente/mov/retirar_de_edital_eliminacao")
@@ -4340,6 +4364,250 @@ public class ExMovimentacaoController extends ExController {
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get("/app/expediente/mov/agendar_publicacao_doe")
+	public void agendarPublicacaoDOE(String sigla, Long id, String urlRedirecionar) throws Exception {
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
+				.setSigla(sigla);
+
+		ExDocumento doc = buscarDocumento(builder, true);
+		DpLotacaoSelecao lot = new DpLotacaoSelecao();
+		lot.setId(getLotaTitular().getId());
+		lot.buscar();
+		
+		Ex.getInstance()
+				.getComp()
+				.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
+						builder.getMob());
+		
+		List<ExMovimentacao> listMov = new ArrayList<ExMovimentacao>();
+		listMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE));
+		if(!listMov.isEmpty())
+			id = listMov.get(0).getIdMov();
+		
+		result.include("urlRedirecionar", urlRedirecionar);
+		result.include("id", id);
+		result.include("descrPublicacao", Ex.getInstance().getBL().gerarTextoPublicacaoDOE(doc, !listMov.isEmpty() ? listMov.get(0) : null));
+		result.include("dtDispon", Data.formatDDMMYYYY(dao().dt()));
+		result.include("lotaSubscritorSel", lot);
+		result.include("mob", builder.getMob());
+		result.include("request", getRequest());
+		result.include("sigla", sigla);
+	}
+	
+	@Get("app/expediente/mov/visualizar_grupo")
+	public void visualizarGrupo(
+			final String ids, final String linha1, final String linha2) {
+		ExMovimentacao mov = new ExMovimentacao();
+		List<String> listaIdMovs = new ArrayList<String>();
+		List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
+		String textoDoc = "";
+		String textoAProcurar = "";
+		Integer indice = -1;
+		
+		listaIdMovs.addAll(Arrays.asList(ids.split(";")));
+		StringBuilder texto = new StringBuilder();
+		texto.append(linha1 != null ? "<div style=\"text-indent: 15px;\"><p><b>"+linha1+"</b></p><br>" : "");
+		texto.append(linha2 != null ? "<div style=\"text-indent: 15px;\"><p><b>"+linha2+"</b></p><br>" : "");
+		
+		for (String string : listaIdMovs) {
+			mov = dao().consultar(Long.valueOf(string), ExMovimentacao.class, false);
+			textoDoc = new String(mov.getConteudoBlobMov());
+			indice = textoDoc.indexOf(":");
+			if(indice != -1) {
+				textoAProcurar = textoDoc.substring(0, indice);
+				for (ConversaoDoeEnum conversaoDoeEnum : listaPalavas) {
+					if(textoAProcurar != null && conversaoDoeEnum.getGerundio().equals(textoAProcurar)) {
+						textoDoc = textoDoc.substring(textoDoc.indexOf(":")+1, textoDoc.length());
+					}
+				}
+			}
+			texto.append(linha1 != null ? "<div style=\"text-indent: 15px;\">" : "");
+			texto.append((textoDoc.replace("\n", "<br>")).replaceFirst("<br>", "") + "<br><br>");
+			
+		}
+		setMensagem(texto.toString());
+
+		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+	}
+	
+	@Get("app/expediente/mov/atualizar_tipo_ato") 
+	public void atualizarTipoAto(Long idMov) {
+		List<ConversaoDoeEnum> listaPalavas = Arrays.asList(ConversaoDoeEnum.values());
+		String textoDoc = "";
+		String textoAProcurar = null;
+		Integer indice = -1;
+		
+		if(idMov != null) {
+			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
+			
+			textoDoc = new String(mov.getConteudoBlobMov());
+			indice = textoDoc.indexOf(":");
+			textoAProcurar = indice != -1 ? textoDoc.substring(0, indice) : textoDoc;
+			
+			for (ConversaoDoeEnum conversaoDoeEnum : listaPalavas) {
+				if(textoAProcurar != null && conversaoDoeEnum.getGerundio().equals(textoAProcurar)) {
+					setMensagem(textoDoc.substring(0, textoDoc.indexOf(":")+1));
+					break;
+				}
+			}
+		}
+		
+		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+	}
+	
+	@Transacional
+	@Post("/app/expediente/mov/agendar_publicacao_doe_gravar")
+	public void agendarPublicacaoDOEGravar(Integer postback, String sigla,
+			String dtDispon, Long idLotPublicacao,
+			String descrPublicacao, DpLotacaoSelecao lotaSubscritorSel, Long id, String urlRedirecionar)
+			throws Exception {
+		final String descrMov = "Aguardando envio de agendamento de publicação";
+		gravarMovPublicacaoDOE(sigla, dtDispon, descrPublicacao, descrMov, lotaSubscritorSel, id, null, 
+				ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, Boolean.FALSE);
+		
+		if(urlRedirecionar != null && !"".equals(urlRedirecionar)) {
+			result.redirectTo(urlRedirecionar);
+		} else {
+			ExDocumentoController.redirecionarParaExibir(result, sigla);	
+		}
+	}
+
+	private void gravarMovPublicacaoDOE(String sigla, String dtDispon, String descrPublicacao, 
+			String descrMov, DpLotacaoSelecao lotaSubscritorSel, Long id, Long idComprovanteEnvioDoe, ExTipoDeMovimentacao exTipoDeMov, 
+			boolean isArqRecibo) throws Exception {
+		BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		Long idPubl = lotaSubscritorSel.getId();
+		buscarDocumento(docBuilder, true);
+
+		ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+				.setMob(docBuilder.getMob()).setDtDispon(dtDispon)
+				.construir(dao());
+
+		String lotPublicacao = dao().consultar(idPubl, DpLotacao.class, false)
+				.getSigla();
+
+		Ex.getInstance().getComp()
+			.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
+					docBuilder.getMob());
+		
+		String nomeArqDoc = docBuilder.getMob().getCodigoCompacto() + 
+							(isArqRecibo ? "REC" + ".txt" : ".txt");
+		
+		Ex.getInstance()
+			.getBL()
+			.gravarPublicacaoDOE(getCadastrante(), getLotaTitular(),
+					docBuilder.getMob(), dao().dt(), mov.getSubscritor(),
+					mov.getTitular(), getLotaTitular(),
+					mov.getDtDispPublicacao(), lotPublicacao,
+					descrPublicacao, descrMov, nomeArqDoc, id, idComprovanteEnvioDoe, exTipoDeMov);
+		
+	}
+
+	@Get("/app/exMovimentacao/listarDOE")
+	public void listarDOE(Long idModelo) throws Exception {
+		try {
+			List<ExMovimentacao> listaMovs = 
+					dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, getTitular());
+			
+			List<ExMovimentacao> listFiltradaMovs = new ArrayList<ExMovimentacao>();
+			
+			List<ExModelo> listModelos = new ArrayList<ExModelo>();
+			for (ExMovimentacao exMovimentacao : listaMovs) {
+				if(!listModelos.contains(exMovimentacao.getExMobil().getDoc().getExModelo())) {
+					listModelos.add(exMovimentacao.getExMobil().getDoc().getExModelo());
+				}
+				if(idModelo != null && !idModelo.equals(0L)) {
+					if(idModelo.equals(exMovimentacao.getExMobil().getDoc().getExModelo().getId())) {
+						listFiltradaMovs.add(exMovimentacao);
+					}
+				}
+			}
+			result.include("listaPermissoes", new Gson().toJson(Ex.getInstance().getBL().listarPermissoesDOE(getAuthHeaderDOE())));
+			result.include("idModelo", idModelo);
+			result.include("listMov", idModelo != null && !idModelo.equals(0L) ? listFiltradaMovs : listaMovs);
+			result.include("listModelos", listModelos);
+		} catch (final Exception e) {
+			throw e;
+		}
+	}
+	
+	@Post("/app/exMovimentacao/montarReciboArquivoDOE")
+	public void montarReciboArquivoDOE(
+			String anuncianteId, String cadernoId, String retrancaCod, String tipoMaterialId, String idMov) throws Exception {
+		try {
+			MontaReciboPublicacaoDto publicacaoDto = Ex.getInstance().getBL()
+					.montarReciboPublicacaoDOE(getAuthHeaderDOE(), anuncianteId, cadernoId, retrancaCod, 
+							tipoMaterialId, obterTextoArquivoMov(idMov));
+			setMensagem(new Gson().toJson(publicacaoDto));
+		} catch (final Exception e) {
+			e.printStackTrace();
+			setMensagem(e.getMessage());
+		} finally {
+			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+		}
+	}
+	
+	@Transacional
+	@Post("/app/exMovimentacao/enviarPublicacaoArquivoDOE")
+	public void enviarPublicacaoArquivoDOE(String anuncianteId, String cadernoId, String retrancaCod, 
+			String tipoMaterialId, String sequencial, String idMov, String reciboAssinado, String reciboHash, 
+			String reciboTexto) throws Exception {
+		try {
+			EnviaPublicacaoDto enviaPublicacaoDto = Ex.getInstance().getBL()
+					.enviarPublicacaoDOE(getAuthHeaderDOE(), anuncianteId, cadernoId, retrancaCod, 
+							tipoMaterialId, sequencial, obterTextoArquivoMov(idMov), reciboAssinado, reciboHash);
+			if (enviaPublicacaoDto == null || !"0000".equals(enviaPublicacaoDto.getCodRetorno())) {
+				System.out.println("Erro ao enviar publicação ao webservice DOE." + enviaPublicacaoDto);
+				throw new RuntimeException("Erro ao enviar publicação ao webservice DOE." 
+								+ enviaPublicacaoDto != null ? "Código Erro" + enviaPublicacaoDto.getCodRetorno() : "");
+			} else {
+				setMensagem(new Gson().toJson(enviaPublicacaoDto));
+				
+				ExMovimentacao exMov = ExDao.getInstance().consultar(Long.parseLong(idMov), ExMovimentacao.class, false);
+				String sigla = exMov.getExDocumento().getSigla();
+				
+				DpLotacaoSelecao lot = new DpLotacaoSelecao();
+				lot.setId(getLotaTitular().getId());
+				lot.buscar();
+					
+				final String descrMov = "Envio de agendamento de publicação DOE realizado com sucesso! ";		
+				gravarMovPublicacaoDOE(sigla, DateUtils.formatarDDMMYYYY(new Date()), reciboTexto, descrMov, lot, 
+						null, enviaPublicacaoDto.getComprovanteEnvio(), ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, Boolean.TRUE);
+				
+				exMov.setDtFimMov(new Date());
+			}
+		} catch (final Exception e) {
+			setMensagem(e.getMessage());
+		} finally {
+			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+		}
+	}
+	
+	private AuthHeader getAuthHeaderDOE() throws Exception {
+		String cpf = getCadastrante().getCpfPessoa().toString();
+		String email = getCadastrante().getEmailPessoa();
+		TokenDto token = Ex.getInstance().getBL().gerarTokenDOE("user", cpf, email);
+		
+		AuthHeader user = new AuthHeader();
+		user.setUserName("user");
+		user.setPassword(token.getToken());
+		return user;
+	}
+	
+	private String obterTextoArquivoMov(String idMov) {
+		String textoDoc = "";
+		if (idMov != null) {
+			ExMovimentacao mov = null;
+			mov = ExDao.getInstance().consultar(Long.parseLong(idMov), ExMovimentacao.class, false);
+			if (mov != null)
+				textoDoc = new String(mov.getConteudoBlobMov());
+		}
+		return textoDoc;		
+	}
+	
 
 	@Get("/app/expediente/mov/assinar_verificar")
 	public void aAssinarVerificar(Long id, boolean ajax) {

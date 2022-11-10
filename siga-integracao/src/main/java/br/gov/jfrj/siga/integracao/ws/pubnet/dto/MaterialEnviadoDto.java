@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.integracao.ws.pubnet.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -27,11 +29,17 @@ public class MaterialEnviadoDto implements Serializable {
 	@JsonProperty("statusPublicacao")
 	private Integer statusPublicacao;
 	
+	@JsonProperty("dataRecebimento")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private Date dataRecebimento;
+	
 	@JsonProperty("dataprevista")
-	private String dataPrevista;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private Date dataPrevista;
 	
 	@JsonProperty("datapublicacao")
-	private String dataPublicacao;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private Date dataPublicacao;
 	
 	@JsonProperty("comprovanteenvio")
 	private Long comprovanteEnvio;
@@ -41,6 +49,18 @@ public class MaterialEnviadoDto implements Serializable {
 	
 	@JsonProperty("recibo")
 	private String recibo;
+	
+	@JsonProperty("reciboCancelamento")
+	private String reciboCancelamento;
+	
+	@JsonProperty("dataCancelamento")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private Date dataCancelamento;
+	
+	@JsonProperty("razaoSocial")
+	private String razaoSocial;
+	
+	private StatusPublicacaoDto statusPublicacaoDto;
 
 	public String getIdMaterial() {
 		return idMaterial;
@@ -82,19 +102,27 @@ public class MaterialEnviadoDto implements Serializable {
 		this.statusPublicacao = statusPublicacao;
 	}
 
-	public String getDataPrevista() {
+	public Date getDataRecebimento() {
+		return dataRecebimento;
+	}
+
+	public void setDataRecebimento(Date dataRecebimento) {
+		this.dataRecebimento = dataRecebimento;
+	}
+
+	public Date getDataPrevista() {
 		return dataPrevista;
 	}
 
-	public void setDataPrevista(String dataPrevista) {
+	public void setDataPrevista(Date dataPrevista) {
 		this.dataPrevista = dataPrevista;
 	}
 
-	public String getDataPublicacao() {
+	public Date getDataPublicacao() {
 		return dataPublicacao;
 	}
 
-	public void setDataPublicacao(String dataPublicacao) {
+	public void setDataPublicacao(Date dataPublicacao) {
 		this.dataPublicacao = dataPublicacao;
 	}
 
@@ -121,5 +149,36 @@ public class MaterialEnviadoDto implements Serializable {
 	public void setRecibo(String recibo) {
 		this.recibo = recibo;
 	}
-	
+
+	public String getReciboCancelamento() {
+		return reciboCancelamento;
+	}
+
+	public void setReciboCancelamento(String reciboCancelamento) {
+		this.reciboCancelamento = reciboCancelamento;
+	}
+
+	public Date getDataCancelamento() {
+		return dataCancelamento;
+	}
+
+	public void setDataCancelamento(Date dataCancelamento) {
+		this.dataCancelamento = dataCancelamento;
+	}
+
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
+
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
+
+	public StatusPublicacaoDto getStatusPublicacaoDto() {
+		return statusPublicacaoDto;
+	}
+
+	public void setStatusPublicacaoDto(StatusPublicacaoDto statusPublicacaoDto) {
+		this.statusPublicacaoDto = statusPublicacaoDto;
+	}
 }

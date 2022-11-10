@@ -76,20 +76,20 @@
 								<input type="text" id="loginDOE" name="loginDOE" value="${usuarioDOE}" class="form-control" readonly/>
 							</div>
 						</div>
-						<div class="col-sm-3">
-							<div class="form-group">
-								<label>Publicante</label>
-								<input type="text" id="publicante" name="publicante" value="${publicante}" class="form-control" readonly/>
-							</div>
-						</div>
+<!-- 						<div class="col-sm-3"> -->
+<!-- 							<div class="form-group"> -->
+<!-- 								<label>Publicante</label> -->
+<%-- 								<input type="text" id="publicante" name="publicante" value="${publicante}" class="form-control" readonly/> --%>
+<!-- 							</div> -->
+<!-- 						</div> -->
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
-							<div class="form-group">
-								<label>Seção/Nome do Arquivo/Numero do Documento</label>
-								<input type="text" id="secao" name="secao" value="${secao}" class="form-control"/>
-							</div>
-						</div>
+<!-- 						<div class="col-sm-6"> -->
+<!-- 							<div class="form-group"> -->
+<!-- 								<label>Seção/Nome do Arquivo/Numero do Documento</label> -->
+<%-- 								<input type="text" id="secao" name="secao" value="${secao}" class="form-control"/> --%>
+<!-- 							</div> -->
+<!-- 						</div> -->
 						<div class="col-sm-3">
 							<div class="form-group">
 								<label for="dataEnvio">Data de Envio de:</label> <input
@@ -109,7 +109,7 @@
 					<div class="row">
 						<div class="col-sm">
 							<input type="button" value="Buscar" class="btn btn-primary" id="buscar" onclick="javascript:sbmt(0);"/>
-							<input type="button" value="Cancelar Arquivo" class="btn btn-primary" id="cancelar" onclick="javascript:canc();"/>
+<!-- 							<input type="button" value="Cancelar Arquivo" class="btn btn-primary" id="cancelar" onclick="javascript:canc();"/> -->
 							<input type="button" value="Limpar" class="btn btn-primary" id="limpar" onclick="javascript:clr();"/>
 							<input type="button" value="Voltar" class="btn btn-primary" id="buscar" onclick="location.href='/siga/app/principal'"/>
 							
@@ -123,7 +123,7 @@
 			<table border="0" class="table table-sm table-striped">
 				<thead class="${thead_color}">
 					<tr>
-						<th class="text-left" style="width: 5%;"></th>
+<!-- 						<th class="text-left" style="width: 5%;"></th> -->
 						<th class="text-center" style="width: 25%;">Arquivo</th>
 						<th class="text-center" style="width: 25%;">Data de Recebimento</th>
 						<th class="text-center" style="width: 20%;">Status da Publicação</th>
@@ -134,11 +134,11 @@
 				<tbody class="table-bordered">
 					<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}" itens="${lista}" var="pub">
 				    	<tr class="even">
-							<td class="text-center align-middle"><input type="checkbox" name="pubSelecionados" id="${x}" class="chk" value="${pub.idMaterial}" ${x_checked} onclick="javascript:atualizarCheck(this);"/></td>
+<%-- 							<td class="text-center align-middle"><input type="checkbox" name="pubSelecionados" id="${x}" class="chk" value="${pub.idMaterial}" ${x_checked} onclick="javascript:atualizarCheck(this);"/></td> --%>
 	  			        	<td class="text-center align-middle" style="font-weight: normal;">${pub.nomeArquivo}</td>
-	  			        	<td class="text-center align-middle"></td>
-	  			        	<td class="text-center align-middle" style="font-weight: normal;">${pub.statusPublicacao}</td> 
-	  			        	<td class="text-center align-middle"></td>
+	  			        	<td class="text-center align-middle" style="font-weight: normal;"><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${pub.dataRecebimento}" /></td>
+	  			        	<td class="text-center align-middle" style="font-weight: normal;">${pub.statusPublicacaoDto.statusPublicacaoDescr}</td> 
+	  			        	<td class="text-center align-middle" style="font-weight: normal;"><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${pub.dataCancelamento}" /></td>
 	  			        </tr>
 					</siga:paginador>
 				</tbody>

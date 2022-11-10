@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativasCancelamentoDto;
-import br.gov.jfrj.siga.integracao.ws.pubnet.dto.ListaStatusPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.StatusPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MensagemErroRetornoPubnetDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
@@ -62,6 +62,7 @@ public class PubnetConsultaService {
 			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, MaterialEnviadoDto.NOME_NODE_JSON);
 			materialEnviadoDtos = Arrays.asList(getObjectMapper().readValue(json, MaterialEnviadoDto[].class));
+			popularStatusPublicacaoMaterialEnviado(user, materialEnviadoDtos);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 			if (!ENCODING_DEFAULT_XML.equals(ENCODING_UTF_8)) {
@@ -72,6 +73,17 @@ public class PubnetConsultaService {
 			throw new AplicacaoException(e.getMessage());
 		}
 		return materialEnviadoDtos;
+	}
+	
+	private void popularStatusPublicacaoMaterialEnviado(AuthHeader user, List<MaterialEnviadoDto> materialEnviadoDtos) throws Exception {
+		List<StatusPublicacaoDto> statusPublicacaoDtos = listarStatusPublicacao(user);
+		for (MaterialEnviadoDto materialEnviadoDto : materialEnviadoDtos) {
+			for (StatusPublicacaoDto statusPublicacaoDto : statusPublicacaoDtos) {
+				if (materialEnviadoDto.getStatusPublicacao().equals(statusPublicacaoDto.getStatusPublicacaoId())){
+					materialEnviadoDto.setStatusPublicacaoDto(statusPublicacaoDto);
+				}
+			}
+		}
 	}
 
 	public List<PermissaoPublicanteDto> consultarPermissaoPublicante(AuthHeader user) throws Exception {
@@ -114,14 +126,14 @@ public class PubnetConsultaService {
 		return permissaoPublicanteDtoList;
 	}
 	
-	public List<ListaStatusPublicacaoDto> listarStatusPublicacao(AuthHeader user) throws Exception {
-		List<ListaStatusPublicacaoDto> statusPublicacaoDtos = new ArrayList<ListaStatusPublicacaoDto>();
+	public List<StatusPublicacaoDto> listarStatusPublicacao(AuthHeader user) throws Exception {
+		List<StatusPublicacaoDto> statusPublicacaoDtos = new ArrayList<StatusPublicacaoDto>();
 		try {
 			ListaStatusPublicacaoResult resp = port.listaStatusPublicacao(user);
 			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
-			String json = converterNodeJsonParaStringJson(jsonNode, ListaStatusPublicacaoDto.NOME_NODE_JSON);
+			String json = converterNodeJsonParaStringJson(jsonNode, StatusPublicacaoDto.NOME_NODE_JSON);
 			statusPublicacaoDtos = Arrays
-					.asList(getObjectMapper().readValue(json, ListaStatusPublicacaoDto[].class));
+					.asList(getObjectMapper().readValue(json, StatusPublicacaoDto[].class));
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 			if (!ENCODING_DEFAULT_XML.equals(ENCODING_UTF_8)) {

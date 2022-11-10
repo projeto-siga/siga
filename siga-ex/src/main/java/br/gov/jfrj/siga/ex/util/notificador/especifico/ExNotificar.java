@@ -96,15 +96,13 @@ public class ExNotificar {
 	}
 	
 	public static boolean verificaPermissaoParaNotificadorGeral(ExTipoFormaDoc tipoFormaDoc,
-			ExPapel papel, DpPessoa pessoa, ITipoDeMovimentacao tipoMovimentacao) throws Exception  {
+			ExPapel papel, DpPessoa pessoa, ITipoDeMovimentacao tipoMovimentacao) throws Exception {
 
 		if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
 			return false;
 
-		else if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()) && 
-				!Ex.getInstance()
+		else if(!Ex.getInstance()
 				.getConf()
 				.podePorConfiguracao(
 				tipoFormaDoc,
@@ -118,15 +116,13 @@ public class ExNotificar {
 	}
 
 	public static boolean verificaPermissaoParaNotificadorGeral(DpPessoa pessoa, DpLotacao lotacao, 
-			ExModelo modelo, ITipoDeMovimentacao idTpMov)  {
+			ExModelo modelo, ITipoDeMovimentacao idTpMov) {
 
 		if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
 				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
 			return false;
 
-		else if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()) && 
-				!Ex.getInstance().getConf().podePorConfiguracao(pessoa,
+		else if(!Ex.getInstance().getConf().podePorConfiguracao(pessoa,
 						lotacao, modelo,idTpMov, 
 						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) 
 			return false;
@@ -135,14 +131,13 @@ public class ExNotificar {
 
 	}
 	
-	public String marcasDoDocumento(Set<ExMobil> exMobils) { 
+	public String marcasDoDocumento(Set<ExMobil> exMobils) {  
 		StringJoiner marcasConc = new StringJoiner(", "); 
-		for (ExMobil exMobil : exMobils) {
-			exMobil.getExMarcaSet().stream()
-				.filter(exMarca -> exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
-						|| exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
-				.forEach(exMarca -> marcasConc.add(exMarca.getCpMarcador().getDescrMarcador()));
-		}
+		exMobils.forEach(exMobil -> exMobil.getExMarcaSet().stream()
+			.filter(exMarca -> exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+					|| exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
+			.forEach(exMarca -> marcasConc.add(exMarca.getCpMarcador().getDescrMarcador())));
+			
 		return marcasConc.toString();
 	}
 	

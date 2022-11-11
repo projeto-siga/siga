@@ -60,6 +60,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnotacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 
 public class ExMovimentacaoVO extends ExVO {
 	private static final transient String JWT_FIXED_HEADER = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.";
@@ -467,12 +468,15 @@ public class ExMovimentacaoVO extends ExVO {
 
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.REFERENCIA) {
 			descricao = null;
-			if (originadaAqui) {
+			ExTipoDeVinculo tipoDeVinculo = mov.getTipoDeVinculo();
+			if (tipoDeVinculo == null)
+			    tipoDeVinculo = ExTipoDeVinculo.RELACIONAMENTO;
+            if (originadaAqui) {
 				addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
-						.exp(new CpPodeSempre()).pre(mov.getTipoDeVinculo().getAcao() + ": ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
+						.exp(new CpPodeSempre()).pre(tipoDeVinculo.getAcao() + ": ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			} else {
 				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
-						.exp(new CpPodeSempre()).pre(mov.getTipoDeVinculo().getAcaoInversa() + ": ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
+						.exp(new CpPodeSempre()).pre(tipoDeVinculo.getAcaoInversa() + ": ").pos(" Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento()).build());
 			}
 			addAcao(AcaoVO.builder().nome("Cancelar").nameSpace("/app/expediente/mov").acao("cancelar").params("sigla", mov.mob().getCodigoCompacto()).params("id", mov.getIdMov().toString())
 					.exp(new ExPodeCancelarVinculacao(mov, titular, lotaTitular)).build());

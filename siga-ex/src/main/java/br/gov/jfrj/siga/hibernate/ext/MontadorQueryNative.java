@@ -28,7 +28,12 @@ public class MontadorQueryNative implements IMontadorQuery {
 
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("select ");
-		sbf.append(" /*+ first_rows leading(doc mob label marcador) index (doc, IACS_EX_DOCUMENTO_00002) */ ");
+		
+		//Caso seja informado o idOrgaoUsu é add o Hint abaixo. IACS_EX_DOCUMENTO_00002 tem péssimo desempenho caso não seja
+		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
+			sbf.append(" /*+ first_rows leading(doc mob label marcador) index (label, IACS_CP_MARCA_00725B) index (marcador, IACS_CP_MARCADOR_00001) index (doc, IACS_EX_DOCUMENTO_00002) */ ");
+		}
+		
 		sbf.append((apenasCount  ? " count(1) " : " label.id_marca ") + " from corporativo.cp_marca label ");
 		sbf.append("inner join corporativo.cp_marcador marcador on marcador.id_marcador = label.id_marcador ");
 		sbf.append("inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc ");

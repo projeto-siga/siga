@@ -231,6 +231,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -5798,7 +5799,7 @@ public class ExBL extends CpBL {
 
 	public void processar(final ExDocumento doc, final boolean gravar, final boolean transacao) {
 		// Não existe processamento de modelo para documento capturado
-		if (doc.isCapturado())
+		if (doc.isCapturado() && doc.getExModelo().getExtensoesArquivo() == null)
 			return;
 
 		try {
@@ -6028,6 +6029,8 @@ public class ExBL extends CpBL {
 		attrs.put("lotaCadastrante", doc.getLotaCadastrante());
 		attrs.put("titular", doc.getTitular());
 		attrs.put("lotaTitular", doc.getLotaTitular());
+
+		attrs.put("urlbase", Prop.get("/siga.base.url"));
 
 		params.put("processar_modelo", "1");
 		params.put("finalizacao", "1");
@@ -6974,6 +6977,10 @@ public class ExBL extends CpBL {
 		
 		if (modNovo.getDescMod() != null && modNovo.getDescMod().trim().length() > 256 )
 			throw new AplicacaoException("A Descrição deve conter no máximo 256 caracteres");
+		
+		if (modNovo.getExtensoesArquivo() != null && !CpExtensoesDeArquivoEnum
+				.validaLista(modNovo.getExtensoesArquivo()))
+			throw new AplicacaoException ("Uma das extensões de arquivos informada é inválida.");
 		
 		try {
 			ExDao.iniciarTransacao();
@@ -8643,6 +8650,7 @@ public class ExBL extends CpBL {
 			
 			if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
 				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+
 			}
 
 		}

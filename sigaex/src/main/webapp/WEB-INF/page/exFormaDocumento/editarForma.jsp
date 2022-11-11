@@ -86,6 +86,16 @@
 										${temDocumentoVinculado ?  (origemExternoCapturado ?  'disabled' : '') : ''}/>
 									<label for="origemExternoCapturado" ${temDocumentoVinculado ?  (origemExternoCapturado ?  'class="label-disabled"' : '') : ''}>Externo Capturado</label>
 								</div>
+								<div class="form-check  form-check-inline">	
+									<input type="checkbox" id="origemInternoCapturadoFormatoLivre" class="form-check-input" name="origemInternoCapturadoFormatoLivre" value="true" ${origemInternoCapturadoFormatoLivre ? 'checked' : ''}
+										${temDocumentoVinculado ?  (origemInternoCapturadoFormatoLivre ?  'disabled' : '') : ''}/>
+									<label for="origemInternoCapturadoFormatoLivre" ${temDocumentoVinculado ?  (origemInternoCapturadoFormatoLivre ?  'class="label-disabled"' : '') : ''}>Interno Capturado Formato Livre</label>
+								</div>
+								<div class="form-check  form-check-inline">	 
+									<input type="checkbox" id="origemExternoCapturadoFormatoLivre" class="form-check-input" name="origemExternoCapturadoFormatoLivre" value="true" ${origemExternoCapturadoFormatoLivre ? 'checked' : ''} 
+										${temDocumentoVinculado ?  (origemExternoCapturadoFormatoLivre ?  'disabled' : '') : ''}/>
+									<label for="origemExternoCapturadoFormatoLivre" ${temDocumentoVinculado ?  (origemExternoCapturadoFormatoLivre ?  'class="label-disabled"' : '') : ''}>Externo Capturado Formato Livre</label>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -94,7 +104,7 @@
 							<div class="form-group">
 								<button type="button" class="btn btn-primary  btn-salvar" onclick="onBtnSalvarClicado()">Ok</button>
 								<button type="button" class="btn btn-primary  btn-salvar" onclick="onBtnSalvarClicado()">Aplicar</button>								
-								<a href="${linkTo[ExFormaDocumentoController].listarFormas()}?ordenar=descricao" class="btn btn-cancel">Cancela</a>
+								<a href="${linkTo[ExFormaDocumentoController].listarFormas()}?ordenar=descricao" class="btn btn-secondary btn-cancel">Cancela</a>
 							</div>
 						</div>
 					</div>
@@ -235,6 +245,8 @@ function habilitarCheckboxes() {
 	frm.elements["origemExterno"].disabled = false;
 	frm.elements["origemInternoCapturado"].disabled = false;
 	frm.elements["origemExternoCapturado"].disabled = false;	
+	frm.elements["origemInternoCapturadoFormatoLivre"].disabled = false;
+	frm.elements["origemExternoCapturadoFormatoLivre"].disabled = false;	
 }		
 </script>
 </siga:pagina>

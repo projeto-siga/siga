@@ -125,9 +125,11 @@ public class ExMarcadorBL {
 				m = CpMarcadorEnum.JUNTADO_EXTERNO.getId();
 			if (t == ExTipoDeMovimentacao.APENSACAO && apensadoAVolumeDoMesmoProcesso)
 				m = CpMarcadorEnum.APENSADO.getId();
-			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
-					|| t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
+			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
 				m = CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId();
+				// Quando é transferido para um órgão externo, a marca deve ficar
+				// com o cadastrante e sua lotação, em vez do responsável
+				acrescentarMarca(m, dt, mov.getCadastrante(), mov.getLotaCadastrante());
 			}
 //			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 //					|| t == ExTipoDeMovimentacao.TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {
@@ -181,11 +183,7 @@ public class ExMarcadorBL {
 				acrescentarMarca(m, dt, null, null);
 		} else {
 			for (PessoaLotacaoParser pl : mob.getAtendente()) {
-				if (m == CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()) {
-					// Quando é transferido para um órgão externo, a marca deve ficar
-					// com o cadastrante e sua lotação, em vez do responsável
-					acrescentarMarca(m, dt, pl.getPessoa(), pl.getLotacao());
-				} else if (m != 0L) {
+				if (m != 0L) {
 					// Edson: Os marcadores "Arq Corrente" e
 					// "Aguardando andamento" são mutuamente exclusivos
 					if (m != CpMarcadorEnum.EM_ANDAMENTO.getId()

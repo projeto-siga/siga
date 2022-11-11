@@ -138,6 +138,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@Column(name = "MARCA_DAGUA", length = 13)
 	private java.lang.String marcaDagua;
 
+	@Column(name = "EXTENSOES_ARQUIVO", length = 200)
+	@Basic(fetch = FetchType.LAZY)
+	private java.lang.String extensoesArquivo;
+
 	// private Set classificacaoSet;
 
 	/**
@@ -398,6 +402,11 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				return false;
 		} else if (!nmDiretorio.equals(other.nmDiretorio))
 			return false;
+		if (extensoesArquivo == null) {
+			if (other.extensoesArquivo != null)
+				return false;
+		} else if (!extensoesArquivo.equals(other.extensoesArquivo))
+			return false;
 		if (nmMod == null) {
 			if (other.nmMod != null)
 				return false;
@@ -451,4 +460,20 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		}
 	}
 	
+	/**
+	 * Obtem as extensões de arquivo permitidas para este modelo, caso seja um capturado
+	 */
+	public java.lang.String getExtensoesArquivo() {
+		return extensoesArquivo;
+	}
+
+	/**
+	 * Seta as extensões de arquivo permitidas para este modelo, caso seja um capturado
+	 * Devem ser separadas por vírgula sem espaços (ex.: avi,mp4)
+	 * Se nulo, não permite captura de arquivos diferente de pdf
+	 */
+	public void setExtensoesArquivo(java.lang.String extensoesArquivo) {
+		this.extensoesArquivo = extensoesArquivo;
+	}
+
 }

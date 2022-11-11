@@ -134,6 +134,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>br.jus.trf2.xjus</groupId>
+			<artifactId>x-jus-record-api</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
 			<version>10.11.1.1</version>

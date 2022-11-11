@@ -2549,11 +2549,13 @@ Pede deferimento.</span><br/><br/><br/>
 	    </style>     
 	  	<p class="texto-enderecamento">
 	      [#if (Vocativo!"") != ""]<b>${Vocativo!}<b><br />[/#if]
+	      [#if (NomeDestinatario!"") != ""]<b>${NomeDestinatario!}<b><br />[/#if]
 	      [#if (CargoDsp!"") != ""]<b>${CargoDsp!}<b><br />[/#if]
 	      [#if (Orgao!"") != ""]${Orgao!}<br />[/#if]
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
-	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}[/#if]    
+	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
+	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if]   
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]
@@ -4755,6 +4757,23 @@ Pede deferimento.</span><br/><br/><br/>
   }
 </style>
 ${texto} 
+[/#macro]
+
+[#macro dadosDownloadArquivo]
+    <div class="row">
+        <div class="col">
+        	<h6>Arquivo para download:</h6>
+        	<h6><b><a href="/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}"
+            	>${(doc.cpArquivoFormatoLivre.nomeArquivo)}</a></b></h6>
+        	<br />
+        	<a href="/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}"
+            	>${urlbase}/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}</a>
+            <br />
+            <br />
+            <small>Hash (SHA-256) do Arquivo: ${(doc.cpArquivoFormatoLivre.hashSha256)}</small><br />
+            <small>Tamanho: ${(doc.cpArquivoFormatoLivre.tamanho)}</small><br />
+        </div>
+    </div><br /><br />	
 [/#macro]
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]

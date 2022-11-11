@@ -92,8 +92,7 @@
 	$('[data-html="true"]').tooltip();
 </script>
 
-
-<c:if test="${siga_cliente == 'GOVSP' and popup != true}">
+<c:if test="${siga_cliente == 'GOVSP' and not (popup eq true or popup eq 'somenteComLogo')}">
 	<footer class="text-center text-white align-middle" style="background-color: #20313b;">
 		<div class="container">						
 			<div class="content pt-2">

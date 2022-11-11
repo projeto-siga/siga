@@ -42,7 +42,13 @@ public class ExPodeCapturarPDF extends CompositeExpressionSupport {
 								"interno capturado"),
 
 						new CpIgual(idTpDoc, "tipo do documento", ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO,
-								"externo capturado")),
+								"externo capturado"),
+
+						new CpIgual(idTpDoc, "tipo do documento", ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE,
+								"interno capturado formato livre"),
+
+						new CpIgual(idTpDoc, "tipo do documento", ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE,
+								"externo capturado formato livre")),
 
 				Or.of(
 

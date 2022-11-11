@@ -15,8 +15,10 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -95,26 +97,22 @@ public class LoginController extends SigaController {
 	@Post("public/app/login")
 	@Transacional
 	public void auth(String username, String password, String cont) throws IOException {
+		StringBuffer mensagem = new StringBuffer();
+		
 		try {
-			
 			if (loginSenhaVazios(username, password)) {
-				StringBuffer mensagem = new StringBuffer();
+				
 				mensagem.append(SigaMessages.getMessage("usuario.informarlogin"));
 				throw new RuntimeException(mensagem.toString());
 			}
-
-			
+		
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);
 
 			if (Pattern.matches("\\d+", username) && username.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
-				/* if (lista.size() > 1) {
-					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
-				}*/
 			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
-				StringBuffer mensagem = new StringBuffer();
 				mensagem.append(SigaMessages.getMessage("usuario.falhaautenticacao"));
 				if(giService.buscarModoAutenticacao(username).equals(GiService._MODO_AUTENTICACAO_LDAP)) {
 					mensagem.append(" ");
@@ -129,13 +127,14 @@ public class LoginController extends SigaController {
 				result.include("loginUsuario", username);
 				result.forwardTo(this).login(cont);				
 			} else {
-				gravaCookieComToken(username, cont);
+				gravaCookieComToken(username, cont, false);
 				result.include("isPinNotDefined", true);
 			}
-					
-			
 		} catch (Exception e) {
-			result.include("loginMensagem", e.getMessage()); // aqui adicionar tente com a senha de rede windows 
+			if (mensagem.length() == 0)
+				result.include("loginMensagem", SigaMessages.getMessage("usuario.falhaautenticacao")); 
+			else
+				result.include("loginMensagem", e.getMessage());
 			result.forwardTo(this).login(cont);
 		}
 	}
@@ -195,7 +194,7 @@ public class LoginController extends SigaController {
 
 			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
 
-			gravaCookieComToken(username, cont);
+			gravaCookieComToken(username, cont, true);
 			
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
@@ -203,7 +202,7 @@ public class LoginController extends SigaController {
 		}
 	}
 
-	private void gravaCookieComToken(String username, String cont) throws Exception {
+	private void gravaCookieComToken(String username, String cont, Boolean gravaCookie) throws Exception {
 		String modulo = SigaJwtBL.extrairModulo(request);
 		SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
 
@@ -214,7 +213,12 @@ public class LoginController extends SigaController {
 				(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
 				(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
 
-		response.addCookie(AuthJwtFormFilter.buildCookie(token));
+		Cookie cookie = AuthJwtFormFilter.buildCookie(token);
+		
+		if (gravaCookie)
+			response.addCookie(cookie);
+
+		AuthJwtFormFilter.addCookie(request, response, cookie);
 
 		if (cont != null) {
 			if (cont.contains("?"))
@@ -351,7 +355,7 @@ public class LoginController extends SigaController {
 				}
 				if (!usuarioPermitido)
 					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
-				gravaCookieComToken(cpf, cont);
+				gravaCookieComToken(cpf, cont, false);
 			}
 				
 			} catch(AplicacaoException a){

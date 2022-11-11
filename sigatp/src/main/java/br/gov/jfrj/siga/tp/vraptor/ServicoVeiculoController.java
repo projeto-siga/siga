@@ -195,7 +195,7 @@ public class ServicoVeiculoController extends TpController {
 
     @Path("/listar")
     public void listar() {
-        CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+        CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
         List<ServicoVeiculo> servicos = ServicoVeiculo.AR.find("cpOrgaoUsuario", cpOrgaoUsuario).fetch();
         EstadoServico situacaoServico = EstadoServico.AGENDADO;
         MenuMontador.instance(result).recuperarMenuServicosVeiculo(null);
@@ -207,7 +207,7 @@ public class ServicoVeiculoController extends TpController {
     @Path("/listarFiltrado/{parametroEstado}")
     public void listarFiltrado(String parametroEstado) {
         EstadoServico estado = null != parametroEstado ? EstadoServico.valueOf(parametroEstado) : EstadoServico.AGENDADO;
-        CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+        CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
 		Map<String, Object> parametros = new HashMap<String,Object>();
 		parametros.put("cpOrgaoUsuario", cpOrgaoUsuario);
 		parametros.put("estado", estado);

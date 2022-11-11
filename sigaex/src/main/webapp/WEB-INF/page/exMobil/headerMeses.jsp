@@ -28,6 +28,15 @@
 		podeDescricao(false);
 		$(document.body).on("change","#idFormaDoc",function(){ podeDescricao(false);});	
 		$(document.body).on("change","#idMod",function(){ podeDescricao(false);});
+		//Add Event Change into form listar
+		if (document.getElementById('listar')) {
+			$(document.body).on("change","#listar",function(){validarFiltrosPesquisa();});
+		} 
+		//Add Event Change into form buscar
+		if (document.getElementById('buscar')) {
+			$(document.body).on("change","#buscar",function(){validarFiltrosPesquisa();});
+		} 
+		
 		if ($('a[data-toggle="tooltip"]'))
 			$('a[data-toggle="tooltip"]').tooltip({
 			    placement: 'bottom',
@@ -226,8 +235,7 @@
 			return;
 		
 		// Se pesquisa dos documentos de uma pessoa/lotação, não tem limite de data
-		if ((document.getElementById('formulario_ultMovLotaRespSel_id').value != 0
-				|| document.getElementById('formulario_ultMovRespSel_id').value != 0)
+		if ((document.getElementById('formulario_ultMovLotaRespSel_sigla').value != '' || document.getElementById('formulario_ultMovRespSel_sigla').value != '')	
 				&& document.getElementById('ultMovIdEstadoDoc').value != 0) { 
 			desabilitaTabMeses();
 			return;
@@ -488,46 +496,48 @@
 		}
 
 		var listar_idTpDoc = document.getElementById('idTpDoc');
+		if (listar_idTpDoc !== null) {
+			switch (parseInt(listar_idTpDoc.value)) {
+			case 0:
+				document.getElementById('numExtDoc').value = '';
 
-		switch (parseInt(listar_idTpDoc.value)) {
-		case 0:
-			document.getElementById('numExtDoc').value = '';
+				document.getElementById('formulario_cpOrgaoSel_id').value = '';
+				document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+				document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+				document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
+				document.getElementById('cpOrgaoSelSpan').innerHTML = '';
+				document.getElementById('numAntigoDoc').value = '';
 
-			document.getElementById('formulario_cpOrgaoSel_id').value = '';
-			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
-			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
-			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
-			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
-			document.getElementById('numAntigoDoc').value = '';
+				break;
+			case 1:
+				document.getElementById('numExtDoc').value = '';
+				document.getElementById('formulario_cpOrgaoSel_id').value = '';
+				document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+				document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+				document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
+				document.getElementById('cpOrgaoSelSpan').innerHTML = '';
+				document.getElementById('numAntigoDoc').value = '';
 
-			break;
-		case 1:
-			document.getElementById('numExtDoc').value = '';
-			document.getElementById('formulario_cpOrgaoSel_id').value = '';
-			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
-			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
-			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
-			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
-			document.getElementById('numAntigoDoc').value = '';
+				break;
+			case 2:
+				document.getElementById('formulario_cpOrgaoSel_id').value = '';
+				document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+				document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+				document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
+				document.getElementById('cpOrgaoSelSpan').innerHTML = '';
 
-			break;
-		case 2:
-			document.getElementById('formulario_cpOrgaoSel_id').value = '';
-			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
-			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
-			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
-			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
+				break;
+			case 3:
+				document.getElementById('idFormaDoc').value = '5';
 
-			break;
-		case 3:
-			document.getElementById('idFormaDoc').value = '5';
-
-			break;
+				break;
+			}
+			
 		}
-	
+		
 		var count = 0;
 
-		if (document.getElementById('idTpDoc').value != 0)
+		if (document.getElementById('idTpDoc') !== null && document.getElementById('idTpDoc').value != 0)
 			count++;	
 		
 		if (document.getElementById('dtDocString').value != "")
@@ -536,7 +546,7 @@
 		if (document.getElementById('dtDocFinalString').value != "")
 			count++;
 		
-		if (document.getElementById('idTipoFormaDoc').value != 0)
+		if (document.getElementById('tipoForma').value != 0)
 			count++;
 		
 		if (document.getElementById('idMod') != null && document.getElementById('idMod').value != 0)
@@ -551,44 +561,46 @@
 		if (document.getElementById('numExpediente').value != "")
 			count++;		
 		
-		if (document.getElementById('subscritorSel_id').value != "")
+		if (document.getElementById('formulario_subscritorSel_id').value != "")
 			count++;	
 		
-		if (document.getElementById('cadastranteSel_id').value != "")
+		if (document.getElementById('formulario_cadastranteSel_id').value != "")
 			count++;	
 			
-		if (document.getElementById('lotaCadastranteSel_id').value != "")
+		if (document.getElementById('formulario_lotaCadastranteSel_id').value != "")
 			count++;	
 			
-		if (document.getElementById('destinatarioSel_id').value != "")
+		if (document.getElementById('formulario_destinatarioSel_id').value != "")
 			count++;	
 
-		if (document.getElementById('lotacaoDestinatarioSel_id').value != "")
+		if (document.getElementById('formulario_lotacaoDestinatarioSel_id').value != "")
 			count++;	
 
-		if (document.getElementById('orgaoExternoDestinatarioSel_id').value != "")
+		if (document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value != "")
 			count++;	
 
 		if (document.getElementById('nmDestinatario').value != "")
 			count++;	
 
-		if (document.getElementById('classificacaoSel_id').value != "")
+		if (document.getElementById('formulario_classificacaoSel_id').value != "")
 			count++;	
 
 		if (document.getElementById('descrDocumento').value != "")
 			count++;	
 			
-		if (document.getElementById('fullText').value != "")
+		if (document.getElementById('fullText') !== null && document.getElementById('fullText').value != "")
 			count++;
 
 		if (document.getElementById('ultMovIdEstadoDoc').value != 0)
 			count++;	
 
-		if (document.getElementById('ultMovRespSel_id').value != "")
+		if (document.getElementById('formulario_ultMovRespSel_id').value != "")
 			count++;	
 
-		if (document.getElementById('ultMovLotaRespSel_id').value != "")
+		if (document.getElementById('formulario_ultMovLotaRespSel_id').value != "")
 			count++;	
+		
+		validarFiltrosPesquisa();
 
 		if (count < 2 && ${formOrigem eq 'busca'}) {
 			alert('Esta pesquisa retornará muitos resultados. Favor restringi-la um pouco mais.');

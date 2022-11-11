@@ -110,7 +110,7 @@ public class RelatorioConsumoMedioController extends TpController {
             List<Object[]> lista;
             Set<Missao> setMissao = new HashSet<Missao>();
             Missao missao = null;
-            CpOrgaoUsuario cpOrgaoUsuario = getTitular().getOrgaoUsuario();
+            CpOrgaoUsuario cpOrgaoUsuario = getLotaTitular().getOrgaoUsuario();
             RelatorioConsumoMedio resultado = new RelatorioConsumoMedio();
 
             Calendar dataInicial = Calendar.getInstance();

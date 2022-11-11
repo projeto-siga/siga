@@ -1,6 +1,6 @@
 -- CADASTRO DE SERVICO SIGA-DOC-RECLALOTE
 Insert into corporativo.cp_servico (SIGLA_SERVICO, DESC_SERVICO, ID_SERVICO_PAI, ID_TP_SERVICO) 
-   SELECT  'SIGA-DOC-RECLALOTE','RECLASSIFICAR EM LOTE',  max(id_servico) , '2'
+   SELECT  'SIGA-DOC-RECLALOTE','Reclassificar em lote',  max(id_servico) , '2'
    FROM corporativo.cp_servico 
    WHERE SIGLA_SERVICO = 'SIGA-DOC'   
    ON DUPLICATE KEY UPDATE SIGLA_SERVICO = 'SIGA-DOC-RECLALOTE';

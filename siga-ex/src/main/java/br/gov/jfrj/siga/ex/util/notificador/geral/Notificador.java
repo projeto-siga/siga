@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 
@@ -385,26 +386,13 @@ public class Notificador {
 	private static boolean temPermissao(ExTipoFormaDoc tipoFormaDoc,
 			ExPapel papel, DpPessoa pessoa, ITipoDeMovimentacao tipoMovimentacao) throws AplicacaoException, Exception {		
 		
-				return (Ex.getInstance()
-						.getConf()
-						.podePorConfiguracao(
-						tipoFormaDoc,
-						papel,
-						pessoa,
-						tipoMovimentacao,
-						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL) || 
-						Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-								pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()));
+		return ExNotificar.verificaPermissaoParaNotificadorGeral(tipoFormaDoc, papel, pessoa, tipoMovimentacao);
 				
 	} 
 	
 	private static boolean temPermissao(DpPessoa pessoa, DpLotacao lotacao, ExModelo modelo, ITipoDeMovimentacao idTpMov) throws AplicacaoException, Exception {
 		
-			return (Ex.getInstance().getConf().podePorConfiguracao(pessoa,
-							lotacao, modelo,idTpMov,
-							ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) || 
-					Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-							pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave());		
+		return ExNotificar.verificaPermissaoParaNotificadorGeral(pessoa, lotacao, modelo, idTpMov);	
 				
 	}
 	

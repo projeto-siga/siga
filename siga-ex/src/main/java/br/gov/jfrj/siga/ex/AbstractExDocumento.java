@@ -18,35 +18,26 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JWTVerifyException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -238,6 +229,21 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "					and doc.dtFinalizacao is not null"
 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
 				+ "				order by  doc.dtFinalizacao") })
+@SqlResultSetMappings(value = {
+		@SqlResultSetMapping(name="DocumentosPorCodificacaoClassificacao",
+				classes = {
+						@ConstructorResult(
+								targetClass = ExDocumentoVO.class,
+								columns = {
+										@ColumnResult(name="idDoc", type = Long.class),
+										@ColumnResult(name="sigla", type = String.class),
+										@ColumnResult(name="classificacaoSigla", type = String.class),
+										@ColumnResult(name="lotaCadastranteString", type = String.class),
+										@ColumnResult(name="cadastranteString", type = String.class),
+										@ColumnResult(name="descrDocumento", type = String.class)
+								}
+						)
+				}) })
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 	
@@ -250,8 +256,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "ID_DOC")
 	private java.lang.Long idDoc;
 	
-	@Transient
-	protected byte[] cacheConteudoBlobDoc;
+//	@Transient
+//	protected byte[] cacheConteudoBlobDoc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_PAI")
@@ -262,9 +268,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "NUM_EXPEDIENTE")
 	private java.lang.Long numExpediente;
-
-	@Column(name = "CONTEUDO_TP_DOC", length = 128)
-	private java.lang.String conteudoTpDoc;
 
 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
 	private java.lang.String descrDocumento;
@@ -331,11 +334,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
-
-	@Lob
-	@Column(name = "CONTEUDO_BLOB_DOC")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -441,6 +439,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
+	
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ_FMT_LIVRE")
+	private CpArquivo cpArquivoFormatoLivre;
 	
 	@Column(name = "CD_PRINCIPAL")
 	private String principal;
@@ -1028,9 +1030,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
-		}
+		cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
 	}
 
 	/**
@@ -1107,45 +1107,56 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	public java.lang.String getConteudoTpDoc() {
 		if (getCpArquivo() == null)
-			return conteudoTpDoc;
-		else
-			return getCpArquivo().getConteudoTpArq();
+			return null;
+		return getCpArquivo().getConteudoTpArq();
 	}
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
-		this.conteudoTpDoc = conteudoTp;
-		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
-		}
+		cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
 	}
 	
 	public byte[] getConteudoBlobDoc() {
-		if(cacheConteudoBlobDoc != null) {
-			return cacheConteudoBlobDoc;
-		} else if (getCpArquivo() == null) { 
-			cacheConteudoBlobDoc = conteudoBlobDoc;
-		} else {
-			try {
-				cacheConteudoBlobDoc = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
+		try {
+			return getCpArquivo().getConteudo();
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
 		}
-		return cacheConteudoBlobDoc;
 	}
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
-		cacheConteudoBlobDoc = createBlob;
-		if (this.cpArquivo==null && (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
-			conteudoBlobDoc = createBlob;
-		} else if(cacheConteudoBlobDoc != null){
-			if(orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
-			else
-				conteudoBlobDoc = createBlob;
-		}
+		if(createBlob != null)
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
 	}
 	
+	public CpArquivo getCpArquivoFormatoLivre() {
+		return cpArquivoFormatoLivre;
+	}
+	
+	/**
+	 * Grava informações do arquivo de formato livre que já foi feito upload previamente. Estas informações
+	 * vem em um token que é passado pelo sistema de upload. É gerado um registro na CpArquivo e associado a CpArquivoFormatoLivre na ExDocumento.
+	 * 
+	 * @param tokenArquivo Token JWT contendo caminho no storage, nome do arquivo, tamanho e tipo de conteudo
+	 */
+	public void setConteudoBlobFormatoLivre(String tokenArquivo) throws InvalidKeyException, NoSuchAlgorithmException, 
+			IllegalStateException, SignatureException, IOException, JWTVerifyException {
+		final JWTVerifier verifier = new JWTVerifier(System.getProperty("siga.jwt.secret"));
+		Map<String, Object> lst = verifier.verify(tokenArquivo);
+		String nomeArquivo = (String) lst.get("nomeArq");
+		String caminho = (String) lst.get("nomeArqS3");
+		Long tamanhoArquivo = Long.valueOf((String) lst.get("tamanho"));
+		String hashArquivo = (String) lst.get("hash");
+		CpArquivo cpArq = getCpArquivoFormatoLivre();
+		CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum
+				.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"));
+		
+		if (!orgaoPermiteHcp() || CpArquivoTipoArmazenamentoEnum.BLOB.equals(tipoArmazenamento) || 
+				CpArquivoTipoArmazenamentoEnum.TABELA.equals(tipoArmazenamento)) 
+			throw new AplicacaoException("Arquivos de formato livre só são permitidos quando o tipo de armazenamento não é em banco de dados (BLOB ou TABELAS).");
+		
+		if (nomeArquivo != null) 
+			cpArquivoFormatoLivre = CpArquivo.updateFormatoLivre(cpArq, this.orgaoUsuario, caminho, nomeArquivo, tamanhoArquivo, CpArquivoTipoArmazenamentoEnum.HCP, hashArquivo);
+	}
 	
 	private boolean orgaoPermiteHcp() {
 		List<String> orgaos = Prop.getList("/siga.armazenamento.orgaos");

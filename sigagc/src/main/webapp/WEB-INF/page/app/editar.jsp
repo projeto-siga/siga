@@ -49,8 +49,8 @@
 							<div class="row">
 								<div class="col-sm-3 form-group">
 									<siga:select label="Tipo" name="tipo.id" list="tiposInformacao"
-										value="${tipo.id}" listKey="id" listValue="nome"
-										onchange="postback();" />
+										value="${tipo.id}" listKey="id" listValue="nome"  /> <%-- onchange="javascript:ocultaGrupo();"  --%>
+										 <%-- onchange="postback();" /> --%> 
 								</div>
 								<c:if
 									test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">

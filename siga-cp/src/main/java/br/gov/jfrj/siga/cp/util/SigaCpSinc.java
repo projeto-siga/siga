@@ -58,7 +58,7 @@ public class SigaCpSinc {
 	// renato (8)
 
 	private boolean modoLog = false;
-	private int maxSinc = -1;
+	protected int maxSinc = -1;
 
 	private String destinatariosExtras = "";
 

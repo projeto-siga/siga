@@ -705,7 +705,7 @@ INSERT INTO `ex_modelo` VALUES (2,'Ofício','Ofício',1,NULL,'template/freemarke
 (546,'Folha inicial de volume - EOF',NULL,NULL,NULL,NULL,'folhaInicialVolume.jsp',NULL,3,NULL,NULL,546,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),
 (663,'Memória de Reunião','Memória de Reunião',8,NULL,'template/freemarker',NULL,NULL,97,NULL,NULL,663,NULL,'2020-02-12 14:52:59',NULL,NULL,0,NULL,NULL),
 (665,'Despacho Automático','Despacho gerado automaticamente pela transferência',9,NULL,'template/freemarker',NULL,NULL,8,NULL,NULL,665,NULL,NULL,NULL,NULL,1,NULL,NULL),
-(666,'Planta','Planta',10,' ','template/freemarker',NULL,NULL,99,NULL,NULL,0,NULL,NULL,NULL,NULL,1,NULL,NULL);
+(666,'Planta','Planta',10,NULL,'template/freemarker',NULL,NULL,99,NULL,NULL,0,NULL,NULL,NULL,NULL,1,NULL,NULL);
 /*!40000 ALTER TABLE `ex_modelo` ENABLE KEYS */;
 UNLOCK TABLES;
 

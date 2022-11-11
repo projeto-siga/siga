@@ -84,9 +84,6 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "ID_PREENCHIMENTO", unique = true, nullable = false)
 	private java.lang.Long idPreenchimento;
 	
-	@Transient
-	protected byte[] cacheConteudoBlobPre;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTACAO", nullable = false)
 	private DpLotacao dpLotacao;
@@ -98,11 +95,6 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "EX_NOME_PREENCHIMENTO", nullable = false, length = 256)
 	private String nomePreenchimento;
 
-	@Lob
-	@Column(name = "PREENCHIMENTO_BLOB")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] preenchimentoBlob;
-	
 	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
@@ -185,27 +177,17 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	}
 
 	public byte[] getPreenchimentoBlob() {
-		if(cacheConteudoBlobPre != null) {
-			return cacheConteudoBlobPre;
-		} else if (getCpArquivo() == null) {
-			cacheConteudoBlobPre = preenchimentoBlob;
-		} else {
-			try {
-				cacheConteudoBlobPre = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
+		try {
+			return getCpArquivo().getConteudo();
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
 		}
-		return cacheConteudoBlobPre;
 	}
 
 	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
-		cacheConteudoBlobPre = preenchimentoBlob;
-		if (this.cpArquivo==null && (this.preenchimentoBlob!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))){
-			this.preenchimentoBlob = preenchimentoBlob;
-		} else if(cacheConteudoBlobPre != null){
+		if(preenchimentoBlob != null){
 			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, TipoConteudo.X_WWW_FORM_URLENCODED.getMimeType());
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobPre);
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, preenchimentoBlob);
 		}
 	}
 	

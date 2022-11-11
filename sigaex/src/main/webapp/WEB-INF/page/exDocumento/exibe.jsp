@@ -292,7 +292,7 @@
 								</div>
 							</div>
 						</c:when>
-						<c:when test="${docVO.doc.pdf}">
+						<c:when test="${docVO.doc.pdf && not docVO.doc.exModelo.extensoesArquivo}">
 							<c:set var="urlCapturado" value="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"/>
 							<iframe style="display: block;" name="painel" id="painel"
 								width="100%" frameborder="0" scrolling="auto"></iframe>			
@@ -326,7 +326,7 @@
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
 										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
-							          not mov.cancelada)}">
+							          mov.exTipoMovimentacao != 'CANCELAMENTO_JUNTADA' and not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
 											<td class="text-left" title="${mov.tempoRelativo}">${mov.dtRegMovDDMMYY}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>

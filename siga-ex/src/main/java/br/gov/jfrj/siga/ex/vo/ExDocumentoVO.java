@@ -130,6 +130,7 @@ public class ExDocumentoVO extends ExVO {
 	String dtLimiteDemandaJudicial;
 	private ArrayList<ExMarcaVO> marcas;
 	String dtPrazoDeAssinatura;
+	Long idDoc;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel, boolean exibe) {
@@ -403,6 +404,16 @@ public class ExDocumentoVO extends ExVO {
 		}
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().pode(ExPodeAnexarArquivoAuxiliar.class, titular, lotaTitular, mob);
+	}
+
+	public ExDocumentoVO(Long idDoc, String sigla, String classificacaoSigla, 
+						 String lotaCadastranteString, String cadastranteString, String descrDocumento) {
+		this.idDoc = idDoc;
+		this.sigla = sigla;
+		this.classificacaoSigla = classificacaoSigla;
+		this.lotaCadastranteString = lotaCadastranteString;
+		this.cadastranteString = cadastranteString;
+		this.descrDocumento = descrDocumento;
 	}
 
 	public void exibe() {
@@ -749,6 +760,9 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome("Agendar Publicação no Diário").descr("Agenda a publicação deste documento no diário eletrônico.").icone("report_link").nameSpace("/app/expediente/mov").acao("agendar_publicacao")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAgendarPublicacao(mob, titular, lotaTitular)).classe("once").build());
 
+		vo.addAcao(AcaoVO.builder().nome("Agendar Publicação DOE").icone("report_link").nameSpace("/app/expediente/mov").acao("agendar_publicacao_doe")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAgendarPublicacaoDOE(mob, titular, lotaTitular)).classe("once").build());
+		
 		vo.addAcao(AcaoVO.builder().nome("Solicitar Publicação no Diário").descr("Solicita a publicação deste documento no diário eletrônico.").icone("report_add").nameSpace("/app/expediente/mov").acao("pedirPublicacao")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePedirPublicacao(mob, titular, lotaTitular)).classe("once").build());
 
@@ -780,6 +794,8 @@ public class ExDocumentoVO extends ExVO {
 				.params("sigla", mob.getSigla()).params("popup", "true")
 				.exp(new ExPodeEnviarParaVisualizacaoExterna(mob, titular, lotaTitular)).build());
 		
+		vo.addAcao(AcaoVO.builder().nome("Download").descr("Faz o download do arquivo de formato livre associado a este documento.").icone("arrow_down").nameSpace("/app/arquivo").acao("downloadFormatoLivre")
+				.params("sigla", doc.getCodigoCompacto()).exp(new ExPodeFazerDownloadFormatoLivre(doc)).classe("once").build());
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {
@@ -1059,4 +1075,27 @@ public class ExDocumentoVO extends ExVO {
 		this.principalCompacto = principalCompacto;
 	}
 
+	public Long getIdDoc() {
+		return idDoc;
+	}
+
+	public void setIdDoc(Long idDoc) {
+		this.idDoc = idDoc;
+	}
+
+	public String getClassificacaoSigla() {
+		return classificacaoSigla;
+	}
+
+	public void setClassificacaoSigla(String classificacaoSigla) {
+		this.classificacaoSigla = classificacaoSigla;
+	}
+
+	public void setCadastranteString(String cadastranteString) {
+		this.cadastranteString = cadastranteString;
+	}
+
+	public void setLotaCadastranteString(String lotaCadastranteString) {
+		this.lotaCadastranteString = lotaCadastranteString;
+	}
 }

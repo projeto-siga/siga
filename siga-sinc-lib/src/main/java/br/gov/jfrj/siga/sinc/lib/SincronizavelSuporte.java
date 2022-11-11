@@ -32,6 +32,8 @@ import br.gov.jfrj.siga.model.Objeto;
 
 public abstract class SincronizavelSuporte extends Objeto implements
 		Sincronizavel, Serializable {
+	private static boolean LOG_DIFERENCAS = true;
+	
 	private Long id;
 	private Long idInicial;
 	private String idExterna;
@@ -176,30 +178,48 @@ public abstract class SincronizavelSuporte extends Objeto implements
 
 					Object o1 = fld.get(s);
 					Object o2 = fld.get(obj);
-
+					
 					if (o1 == null) {
-						if (o2 != null)
+						if (o2 != null) {
+							if (LOG_DIFERENCAS) 
+								System.out.println(objDescr(s, fld) + "diff-null: " + null + " - " + o2);
 							return false;
+						}
 					} else {
-						if (o2 == null)
+						if (o2 == null) {
+							if (LOG_DIFERENCAS) 
+								System.out.println(objDescr(s, fld) + "diff-null: " + o1 + " - null");
 							return false;
+						}
 						if (o1 instanceof Sincronizavel) {
-							if (((Sincronizavel) o1).getIdExterna() == null)
+							if (((Sincronizavel) o1).getIdExterna() == null) {
+								if (LOG_DIFERENCAS) 
+									System.out.println(objDescr(s, fld) + "diff-id-externa: " + ((Sincronizavel) o1).getIdExterna() + " - null");
 								return false;
+							}
 							if (!((Sincronizavel) o1).getIdExterna().equals(
-									((Sincronizavel) o2).getIdExterna()))
+									((Sincronizavel) o2).getIdExterna())) {
+								if (LOG_DIFERENCAS) 
+									System.out.println(objDescr(s, fld) + "diff-id-externa: " + ((Sincronizavel) o1).getIdExterna() + " - " + ((Sincronizavel) o2).getIdExterna());
 								return false;
+							}
 							if (fld.isAnnotationPresent(NaoRecursivo.class))
 								continue;
 							if (!((Assemelhavel) o1).semelhante(
-									(Assemelhavel) o2, nivel + 1))
+									(Assemelhavel) o2, nivel + 1)) {
+								if (LOG_DIFERENCAS) 
+									System.out.println(objDescr(s, fld) + "diff-assemelhavel: " + o1 + " - " + o2);
 								return false;
+							}
 						} else if (o1 instanceof Assemelhavel) {
 							if (fld.isAnnotationPresent(NaoRecursivo.class))
 								continue;
 							if (!((Assemelhavel) o1).semelhante(
-									(Assemelhavel) o2, nivel + 1))
+									(Assemelhavel) o2, nivel + 1)) {
+								if (LOG_DIFERENCAS) 
+									System.out.println(objDescr(s, fld) + "diff-assemelhavel: " + o1 + " - " + o2);
 								return false;
+							}
 						} else if (o1 instanceof Date) {
 							if (!o1.equals(o2)) {
 								// Nato: Esse "if" corrige um problema que
@@ -208,8 +228,11 @@ public abstract class SincronizavelSuporte extends Objeto implements
 								if (((Date) o2).getTimezoneOffset()
 										- ((Date) o1).getTimezoneOffset() != 60
 										|| (((Date) o1).getTime() - ((Date) o2)
-												.getTime()) != 3600000)
+												.getTime()) != 3600000) {
+									if (LOG_DIFERENCAS) 
+										System.out.println(objDescr(s, fld) + "diff-date: " + o1 + " - " + o2);
 									return false;
+								}
 							}
 						} else if (o1 instanceof String) {
 							// Nato: Esse "if" corrige um problema que
@@ -217,14 +240,19 @@ public abstract class SincronizavelSuporte extends Objeto implements
 							// que é do tipo CHAR, em vez de VARCHAR2.
 							if (!((String) o1).trim().equals(
 									((String) o2).trim())) {
+								if (LOG_DIFERENCAS) 
+									System.out.println(objDescr(s, fld) + "diff-string: " + o1 + " - " + o2);
 								return false;
 							}
 						} else if (o1 instanceof Collection) {
 							Collection c1 = (Collection) o1;
 							Collection c2 = (Collection) o2;
-
-							if (!semelhante(c1, c2, nivel + 1))
+							
+							if (!semelhante(c1, c2, nivel + 1)) {
+								if (LOG_DIFERENCAS) 
+									System.out.println(objDescr(s, fld) + "diff-col: " + c1 + " - " + c2);
 								return false;
+							}
 						} else {
 							if (!Objeto.getImplementation(o1).equals(
 									Objeto.getImplementation(o2)))
@@ -241,6 +269,10 @@ public abstract class SincronizavelSuporte extends Objeto implements
 		} while (!cls.equals(Object.class));
 		return true;
 	}
+
+	private static String objDescr(Assemelhavel s, Field fld) {
+		return s.getClass().getSimpleName() + "(" + s.toString() + "). " + fld.getName() + ": ";
+	};
 
 	private static boolean condicaoValida(Field fld,
 			Class<DesconsiderarParaSemelhanca> clazz, Assemelhavel obj) {

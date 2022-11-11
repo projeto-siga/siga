@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
 import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
 
 @Controller
@@ -141,6 +143,8 @@ public class ExModeloController extends ExSelecionavelController {
 			result.include("uuid", modelo.getUuid());
 			result.include("diretorio", modelo.getNmDiretorio());
 			result.include("marcaDagua", modelo.getMarcaDagua());
+			result.include("extensoesArquivo", modelo.getExtensoesArquivo());
+			result.include("listaExtensoes", CpExtensoesDeArquivoEnum.getList());
 		}
 	}
 
@@ -149,7 +153,7 @@ public class ExModeloController extends ExSelecionavelController {
 	public void editarGravar(final Long id, final String nome, final String tipoModelo, final String conteudo,
 			final ExClassificacaoSelecao classificacaoSel, final ExClassificacaoSelecao classificacaoCriacaoViasSel,
 			final String descricao, final Long forma, final Long nivel, final String arquivo, final String diretorio,
-			final String uuid, final String marcaDagua, final Integer postback) throws Exception {
+			final String uuid, final String marcaDagua, final String[] extensoesArquivo, final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		ExModelo modelo = new ExModelo();
 		final ExModelo modAntigo = buscarModeloAntigo(id);
@@ -163,6 +167,7 @@ public class ExModeloController extends ExSelecionavelController {
 			modelo.setNmDiretorio(diretorio);
 			modelo.setUuid(uuid);
 			modelo.setMarcaDagua(marcaDagua);
+			
 			modelo.setIdInicial(modAntigo != null ? modAntigo.getIdInicial() : null);
 			
 			if (conteudo != null && conteudo.trim().length() > 0) {
@@ -170,6 +175,16 @@ public class ExModeloController extends ExSelecionavelController {
 			}
 			if (forma != null && forma != 0) {
 				modelo.setExFormaDocumento(dao().consultar(forma, ExFormaDocumento.class, false));
+				if (extensoesArquivo != null && !modelo.getExFormaDocumento().isCapturadoFormatoLivre()) {
+					modelo.setExtensoesArquivo(null);
+				} else {
+					String extensoesArq = Arrays.toString(extensoesArquivo).replace("[", "")
+							.replace("]", "").replace(" ", "");
+					if (extensoesArq.length() > 200 || extensoesArquivo.length > 20)
+						throw new AplicacaoException("Quantidade de extensões de arquivo maior que 20 "
+								+ "ou excedeu o tamanho do campo na tabela de modelos");
+					modelo.setExtensoesArquivo(extensoesArq);
+				}
 			}
 			if (nivel != null && nivel != 0) {
 				modelo.setExNivelAcesso(dao().consultar(nivel, ExNivelAcesso.class, false));

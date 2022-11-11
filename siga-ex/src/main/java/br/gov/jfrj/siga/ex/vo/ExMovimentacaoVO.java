@@ -525,6 +525,12 @@ public class ExMovimentacaoVO extends ExVO {
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 		}
 		
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE) {
+			addAcao(AcaoVO.builder().nome("RECIBO").nameSpace("/app/arquivo").acao("download").params("arquivo", mov.getReferenciaZIP())
+					.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS())
+					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
+		}
+		
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.REORDENACAO_DOCUMENTO) {
 			String detalhe = mov.getExMobil().getDoc().temOrdenacao() ? "Ver última reordenação" : "Ver documento completo";
 			String complementoParam = mov.getExMobil().getDoc().temOrdenacao() ? "&exibirReordenacao=true" : "";

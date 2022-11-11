@@ -468,4 +468,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return SiglaParser.makeSigla(null, this);
 	}
 
+	public void addTodasLotacoesSubordinadas(Set<DpLotacao> set) {
+		for (DpLotacao lot : getDpLotacaoSubordinadosSet()) {
+			lot.addTodasLotacoesSubordinadas(set);
+		}
+	}
+
+
 }

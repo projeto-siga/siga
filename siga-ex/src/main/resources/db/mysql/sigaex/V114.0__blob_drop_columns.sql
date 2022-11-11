@@ -2,6 +2,12 @@
 --  Remove as colunas de blobs
 -- -------------------------------------------------------------------------
 
+/*
+ * O trecho abaixo está comentado pois se trata de uma alteração importante
+ * no banco de dados e deve ser feita com cuidado. O objetivo é remover os
+ * blobs de algumas tabelas e transferi-los para as tabelas cp_arquivo e 
+ * cp_arquivo_blob.
+ * 
 
 -- Primeiro precisamos mover os blobs das tabelas EX_MODELO, EX_DOCUMENTO, EX_MOVIMENTACAO e EX_PREENCHIMENTO para as tabelas CP_ARQUIVO e CP_ARQUIVO_BLOB
 
@@ -230,6 +236,7 @@ end  //
 delimiter ;
 call tmpproc();
 drop procedure tmpproc;
+*/
 
 -- Depois, vamos confirmar que nao restou nenhum blob nas tabelas
 

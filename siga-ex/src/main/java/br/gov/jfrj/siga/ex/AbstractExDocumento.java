@@ -256,8 +256,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "ID_DOC")
 	private java.lang.Long idDoc;
 	
-	@Transient
-	protected byte[] cacheConteudoBlobDoc;
+//	@Transient
+//	protected byte[] cacheConteudoBlobDoc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_PAI")
@@ -268,9 +268,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "NUM_EXPEDIENTE")
 	private java.lang.Long numExpediente;
-
-	@Column(name = "CONTEUDO_TP_DOC", length = 128)
-	private java.lang.String conteudoTpDoc;
 
 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
 	private java.lang.String descrDocumento;
@@ -337,11 +334,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
-
-	@Lob
-	@Column(name = "CONTEUDO_BLOB_DOC")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -1038,9 +1030,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
 		this.orgaoUsuario = orgaoUsuario;
-		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
-		}
+		cpArquivo = CpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
 	}
 
 	/**
@@ -1117,43 +1107,25 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	
 	public java.lang.String getConteudoTpDoc() {
 		if (getCpArquivo() == null)
-			return conteudoTpDoc;
-		else
-			return getCpArquivo().getConteudoTpArq();
+			return null;
+		return getCpArquivo().getConteudoTpArq();
 	}
 
 	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
-		this.conteudoTpDoc = conteudoTp;
-		if (orgaoPermiteHcp() && conteudoBlobDoc==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, this.conteudoTpDoc);
-		}
+		cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
 	}
 	
 	public byte[] getConteudoBlobDoc() {
-		if(cacheConteudoBlobDoc != null) {
-			return cacheConteudoBlobDoc;
-		} else if (getCpArquivo() == null) { 
-			cacheConteudoBlobDoc = conteudoBlobDoc;
-		} else {
-			try {
-				cacheConteudoBlobDoc = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
+		try {
+			return getCpArquivo().getConteudo();
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
 		}
-		return cacheConteudoBlobDoc;
 	}
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
-		cacheConteudoBlobDoc = createBlob;
-		if (this.cpArquivo==null && (conteudoBlobDoc!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
-			conteudoBlobDoc = createBlob;
-		} else if(cacheConteudoBlobDoc != null){
-			if(orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobDoc);
-			else
-				conteudoBlobDoc = createBlob;
-		}
+		if(createBlob != null)
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
 	}
 	
 	public CpArquivo getCpArquivoFormatoLivre() {

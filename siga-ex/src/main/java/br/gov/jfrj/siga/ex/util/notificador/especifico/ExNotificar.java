@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.ex.util.notificador.especifico;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -8,21 +7,17 @@ import java.util.StringJoiner;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpServicosNotificacaoPorEmail;
-import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
-import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
-
-/**
- * Essa classe tem a responsabilidade de realizar todas as 
- * rotinas no tocante quem  escolheu receber uma notificação por e-email assim também 
- * como se o órgão desse usuário está habilitado para essa configuração.
- * 
- */
+import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 
 public class ExNotificar {
 
@@ -30,7 +25,6 @@ public class ExNotificar {
 	
 	public ExNotificar() { }
 	
-	//Esse método notifica o(s) usuário(s) que foi incluido como cossignatário de um documento.
 	public void cossignatario (ExDocumento doc, DpPessoa cadastrante) {
 		email = new ExEmail();
 		List<DpPessoa> cossignatarios = doc.getCosignatarios();  
@@ -44,76 +38,52 @@ public class ExNotificar {
 		}
 	}
 	
-	//Esse método envia uma notificação para todos usuários da unidade que o documento foi tramitado.
-	//Existem dois tipos de notificações aqui. A primeira é quando o documento possui algum marcador Local ou Geral.
-	//A segunda é quando o documento simplesmente foi tramitado indepente se tem ou não marcadores.
 	public void usuarioDiretamenteOuPelaUnidade (ExMovimentacao mov) {
+		if (mov.getResp() == null) 
+			tramitarParaUnidade(mov); 
+		else if (mov.getResp() != null) 
+			tramitarParaPessoa(mov);
+	}
+
+	private void tramitarParaPessoa(ExMovimentacao mov) {
 		email = new ExEmail();
-		Set<ExMobil> exMobils = mov.getExDocumento().getExMobilSet();
-		Set<DpPessoa> pessoasLota = mov.getLotaResp().getDpPessoaLotadosSet();
-		Set<CpMarcador> marcas = new HashSet<>();
-		StringJoiner marcasDoDoc = new StringJoiner(", "); 
-		if (mov.getResp() == null) {
-			for (DpPessoa pessoa: pessoasLota) {
-				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-						pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())
-						&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-								pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) { 
-					for (ExMobil exMobil: exMobils) {
-						for (ExMarca exMarca: exMobil.getExMarcaSet()) {
-							if (exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO 
-									|| exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {
-								marcas.add(exMarca.getCpMarcador());
-							} 
-						}
-					}
-					if (marcasDoDoc.length() == 0) {
-						marcas.forEach(marc -> {
-							marcasDoDoc.add(marc.getDescrMarcador());
-						}); 
-					} 
-					email.enviarAoTramitarDocMarcado(
-							pessoa, mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");		
-				} 
-				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-						pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCTUN.getChave())
-						&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
-								pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
-					email.enviarAoTramitarDocParaUsuariosDaUnidade(
-							mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());
-			}
-		}
-		if (mov.getResp() != null) { 
-			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
-					mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())
-					&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
-							mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) {
-				for (ExMobil exMobil: exMobils) {
-					for (ExMarca exMarca: exMobil.getExMarcaSet()) {
-						if (exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO 
-								|| exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL) {
-							marcas.add(exMarca.getCpMarcador());
-						}
-					}
-				}
-				if (marcasDoDoc.length() == 0) {
-					marcas.forEach(marc -> {
-						marcasDoDoc.add(marc.getDescrMarcador());
-					});
-				}
+		String marcas = marcasDoDocumento(mov.getExDocumento().getExMobilSet());
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+				mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())
+				&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+						mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
+			
+			email.enviarAoTramitarDocMarcado(
+					mov.getResp(), mov.getCadastrante(), mov.getExDocumento().getSigla(), marcas + "");	
+		
+		if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+					mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCTUSU.getChave())
+				&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
+						mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()))  
+			email.enviarAoTramitarDocParaUsuario(
+					mov.getResp(), mov.getCadastrante(), mov.getExDocumento().getSigla());
+	}
+
+	private void tramitarParaUnidade(ExMovimentacao mov) {
+		email = new ExEmail();
+		String marcas = marcasDoDocumento(mov.getExDocumento().getExMobilSet());
+		for (DpPessoa pessoa: mov.getLotaResp().getDpPessoaLotadosSet()) {
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+					pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCMARC.getChave())
+					&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+							pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
 				email.enviarAoTramitarDocMarcado(
-						mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla(), marcasDoDoc + "");	
-			}
-			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
-						mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.DOCTUSU.getChave())
-					&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(mov.getResp(), 
-							mov.getResp().getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave()))  
-				email.enviarAoTramitarDocParaUsuario(
-						mov.getResp(), mov.getTitular(), mov.getExDocumento().getSigla());
+						pessoa, mov.getCadastrante(), mov.getExDocumento().getSigla(), marcas + "");		
+			 
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+					pessoa.getLotacao(), CpServicosNotificacaoPorEmail.DOCTUN.getChave())
+					&& Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+							pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
+				email.enviarAoTramitarDocParaUsuariosDaUnidade(
+						mov.getLotaResp(), pessoa, mov.getExDocumento().getSigla());
 		}
 	}
 	
-	//Esse método envia uma notificação para o responsável pela assinatura do documento.
 	public void responsavelPelaAssinatura (ExDocumento doc, DpPessoa cadastrante) {
 		email = new ExEmail();
 		if (doc.getSubscritor() != null && Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(doc.getSubscritor(), 
@@ -123,6 +93,52 @@ public class ExNotificar {
 			email.enviarAoResponsavelPelaAssinatura(
 					doc.getSubscritor(), cadastrante, doc.getSigla());
 		
+	}
+	
+	public static boolean verificaPermissaoParaNotificadorGeral(ExTipoFormaDoc tipoFormaDoc,
+			ExPapel papel, DpPessoa pessoa, ITipoDeMovimentacao tipoMovimentacao) throws Exception {
+
+		if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
+			return false;
+
+		else if(!Ex.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+				tipoFormaDoc,
+				papel,
+				pessoa,
+				tipoMovimentacao,
+				ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) 
+			return false;
+		else 
+			return true;
+	}
+
+	public static boolean verificaPermissaoParaNotificadorGeral(DpPessoa pessoa, DpLotacao lotacao, 
+			ExModelo modelo, ITipoDeMovimentacao idTpMov) {
+
+		if(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa, 
+				pessoa.getLotacao(), CpServicosNotificacaoPorEmail.SIGACEMAIL.getChave())) 
+			return false;
+
+		else if(!Ex.getInstance().getConf().podePorConfiguracao(pessoa,
+						lotacao, modelo,idTpMov, 
+						ExTipoDeConfiguracao.NOTIFICAR_POR_EMAIL)) 
+			return false;
+		else 
+			return true;
+
+	}
+	
+	public String marcasDoDocumento(Set<ExMobil> exMobils) {  
+		StringJoiner marcasConc = new StringJoiner(", "); 
+		exMobils.forEach(exMobil -> exMobil.getExMarcaSet().stream()
+			.filter(exMarca -> exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO
+					|| exMarca.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL)
+			.forEach(exMarca -> marcasConc.add(exMarca.getCpMarcador().getDescrMarcador())));
+			
+		return marcasConc.toString();
 	}
 	
 }

@@ -1663,7 +1663,8 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", 0L);
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
-			qry.setParameter("sfp4", "4");			
+			qry.setParameter("sfp4", "4");	
+			qry.setParameter("sfp11", "11");
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
@@ -1703,7 +1704,8 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
-			qry.setParameter("sfp4", "4");			
+			qry.setParameter("sfp4", "4");	
+			qry.setParameter("sfp11", "11");
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
@@ -1739,7 +1741,8 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
-			qry.setParameter("sfp4", "4");			
+			qry.setParameter("sfp4", "4");	
+			qry.setParameter("sfp11", "11");
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");

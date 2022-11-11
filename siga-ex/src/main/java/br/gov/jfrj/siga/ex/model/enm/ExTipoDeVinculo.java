@@ -6,16 +6,24 @@ import java.util.TreeMap;
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum ExTipoDeVinculo implements IEnumWithId {
-	RELACIONAMENTO(1, "Ver também", "Veja também"), ALTERACAO(2, "Alteracao", "Alterado por"), REVOGACAO(3, "Revogação", "Revogado por"), CANCELAMENTO(4, "Cancelamento", "Cancelado por");
+	RELACIONAMENTO(1, "Ver também", "Veja também", "Veja também"),
+
+	ALTERACAO(2, "Alteracao", "Alterado por", "Altera"),
+
+	REVOGACAO(3, "Revogação", "Revogado por", "Revoga"),
+
+	CANCELAMENTO(4, "Cancelamento", "Cancelado por", "Cancela");
 
 	private final int id;
 	private final String descr;
 	private final String acao;
+	private final String acaoInversa;
 
-	ExTipoDeVinculo(int id, String descr, String acao) {
+	ExTipoDeVinculo(int id, String descr, String acao, String acaoInversa) {
 		this.id = id;
 		this.descr = descr;
 		this.acao = acao;
+		this.acaoInversa = acaoInversa;
 	}
 
 	@Override
@@ -31,11 +39,14 @@ public enum ExTipoDeVinculo implements IEnumWithId {
 		return this.acao;
 	}
 
+	public String getAcaoInversa() {
+		return acaoInversa;
+	}
+
 	public static Map<String, String> toMap() {
 		final Map<String, String> map = new TreeMap<String, String>();
 		for (ExTipoDeVinculo i : values())
 			map.put(i.name(), i.descr);
 		return map;
 	}
-
 }

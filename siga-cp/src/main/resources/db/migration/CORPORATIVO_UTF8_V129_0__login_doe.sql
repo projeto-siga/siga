@@ -1,0 +1,1 @@
+insert into corporativo.cp_tipo_identidade (id_tp_identidade, desc_tp_identidade) values (3, 'Login DOE');

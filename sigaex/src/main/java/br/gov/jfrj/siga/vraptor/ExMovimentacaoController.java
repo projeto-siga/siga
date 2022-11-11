@@ -4645,7 +4645,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Login DOE não está associado ao login Sem Papel. Favor Acessar 'MENU->Administração->Associar Login de Publicação no DOE' e associe seu login.");
 		} else {
 			String loginDoe = lista.get(0).getNmLoginIdentidade();
-			String cpf = getCadastrante().getCpfPessoa().toString();
+			String cpf = StringUtils.leftPad(getCadastrante().getCpfPessoa().toString(), 11, "0");
 			String email = getCadastrante().getEmailPessoa();
 			TokenDto token = Ex.getInstance().getBL().gerarTokenDOE(loginDoe, cpf, email);
 			

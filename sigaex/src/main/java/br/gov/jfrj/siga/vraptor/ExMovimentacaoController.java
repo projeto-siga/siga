@@ -4554,7 +4554,6 @@ public class ExMovimentacaoController extends ExController {
 		result.include("dataAte", dataAte);
 		result.include("secao", secao);
 		result.include("msgCabecClass", "alert-warning");
-		result.include("mensagemCabec", "ATENÇÃO: Só é permitido a seleção de um arquivo por vez para o cancelamento");
 	}	
 	
 	

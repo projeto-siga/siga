@@ -20,6 +20,7 @@ public class UserRequestPayload {
 
     public static final String MATRICULA = "matricula";
     public static final String LOTACAO = "lotacao";
+    public static final String ORGAO = "orgao";
 
     public static final String NOME_PESSOA = "nomePessoa";
     public static final String SIGLA = "sigla";
@@ -33,6 +34,8 @@ public class UserRequestPayload {
     private final DpPessoa cadastrante;
     private final String matricula;
     private final String lotacao;
+
+    private final String orgao;
     private final String nomePessoa;
 
     private final String sigla;
@@ -49,6 +52,7 @@ public class UserRequestPayload {
         this.cadastrante = cadastrante;
         this.matricula = cadastrante.getMatricula().toString();
         this.lotacao = cadastrante.getLotacao().toString();
+        this.orgao = cadastrante.getOrgaoUsuario().getNmOrgaoUsu();
         this.nomePessoa = cadastrante.getNomePessoa();
         this.sigla = sigla;
         this.nomeAcao = nomeAcao;
@@ -74,6 +78,9 @@ public class UserRequestPayload {
         ThreadContext.put(MATRICULA, matricula);
         if (lotacao != null) {
             ThreadContext.put(LOTACAO, lotacao);
+        }
+        if(orgao != null){
+            ThreadContext.put(ORGAO, orgao);
         }
         if (nomePessoa != null) {
             ThreadContext.put(NOME_PESSOA, nomePessoa);
@@ -132,6 +139,10 @@ public class UserRequestPayload {
 
     public String getLotacao() {
         return lotacao;
+    }
+
+    public String getOrgao() {
+        return orgao;
     }
 
     public String getNomePessoa() {

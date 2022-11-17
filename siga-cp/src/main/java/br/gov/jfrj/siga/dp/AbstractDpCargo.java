@@ -86,12 +86,14 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable, Hi
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FIM_CARGO", length = 19)
+    @Desconsiderar
 	private Date dataFimCargo;
 	
 	@Column(name = "SIGLA_CARGO", length = 30)
 	private String siglaCargo;
 	
 	@Column(name = "IDE_CARGO", length = 256)
+    @Desconsiderar
 	private String ideCargo;
 	
 	/******** ********/

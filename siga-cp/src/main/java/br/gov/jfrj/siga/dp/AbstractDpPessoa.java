@@ -193,6 +193,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@Column(name = "DATA_FIM_PESSOA", length = 19)
 	@Temporal(TemporalType.TIMESTAMP)
+    @Desconsiderar
 	private Date dataFimPessoa;
 
 	@Column(name = "DATA_INI_PESSOA", length = 19)
@@ -201,6 +202,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	private Date dataInicioPessoa;
 
 	@Column(name = "IDE_PESSOA", length = 256)
+    @Desconsiderar
 	private String idePessoa;
 
 	@Temporal(TemporalType.DATE)
@@ -214,6 +216,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	 * Alteracao cartao 1041
 	 */
 	@Column(name = "NOME_PESSOA_AI", length = 60)
+    @Desconsiderar
 	private java.lang.String nomePessoaAI;
 	/*
 	 * Final Alteracao 1041 
@@ -351,10 +354,12 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_INI")
+    @Desconsiderar
 	private CpIdentidade hisIdcIni;
 
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_FIM")
+    @Desconsiderar
 	private CpIdentidade hisIdcFim;
 
 	public CpIdentidade getHisIdcIni() {

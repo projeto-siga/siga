@@ -1090,7 +1090,7 @@ public class SigaCpSinc {
 		} else {
 			try {
 				int parseIntSituacao = Integer.parseInt(situacaoFuncPessoa);
-				if (parseIntSituacao > 36) {
+				if (parseIntSituacao > 38) {
 					throw new Exception("Tag pessoa id " + idPessoa // parseStr(parser, "id")
 							+ " tem situacao funcional não tratada no roteiro: '" + situacaoFuncPessoa + "'");
 				}

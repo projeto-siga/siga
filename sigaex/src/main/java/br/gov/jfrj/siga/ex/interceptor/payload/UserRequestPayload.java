@@ -20,10 +20,11 @@ public class UserRequestPayload {
 
     public static final String MATRICULA = "matricula";
     public static final String LOTACAO = "lotacao";
-    public static final String ORGAO = "orgao";
+    public static final String NOME_ORGAO = "nomeOrgao";
+    public static final String SIGLA_ORGAO = "siglaOrgao";
 
     public static final String NOME_PESSOA = "nomePessoa";
-    public static final String SIGLA = "sigla";
+    public static final String SIGLA_DOCUMENTO = "siglaDocumento";
 
     private final HttpServletRequest request;
 
@@ -35,13 +36,14 @@ public class UserRequestPayload {
     private final String matricula;
     private final String lotacao;
 
-    private final String orgao;
+    private final String nomeOrgao;
+    private final String siglaOrgao;
     private final String nomePessoa;
 
-    private final String sigla;
+    private final String siglaDocumento;
 
 
-    public UserRequestPayload(HttpServletRequest request, String sigla, String nomeAcao, DpPessoa cadastrante) {
+    public UserRequestPayload(HttpServletRequest request, String siglaDocumento, String nomeAcao, DpPessoa cadastrante) {
         this.request = request;
         this.requestURL = request.getRequestURL().toString();
         this.requestParams = request.getQueryString();
@@ -52,9 +54,10 @@ public class UserRequestPayload {
         this.cadastrante = cadastrante;
         this.matricula = cadastrante.getMatricula().toString();
         this.lotacao = cadastrante.getLotacao().toString();
-        this.orgao = cadastrante.getOrgaoUsuario().getNmOrgaoUsu();
+        this.nomeOrgao = cadastrante.getOrgaoUsuario().getNmOrgaoUsu();
+        this.siglaOrgao = cadastrante.getOrgaoUsuario().getSiglaOrgaoUsu();
         this.nomePessoa = cadastrante.getNomePessoa();
-        this.sigla = sigla;
+        this.siglaDocumento = siglaDocumento;
         this.nomeAcao = nomeAcao;
 
         String uuidStr = ThreadContext.get(REQUEST_ID);
@@ -79,14 +82,17 @@ public class UserRequestPayload {
         if (lotacao != null) {
             ThreadContext.put(LOTACAO, lotacao);
         }
-        if(orgao != null){
-            ThreadContext.put(ORGAO, orgao);
+        if(nomeOrgao != null){
+            ThreadContext.put(NOME_ORGAO, nomeOrgao);
+        }
+        if(siglaOrgao != null){
+            ThreadContext.put(SIGLA_ORGAO, siglaOrgao);
         }
         if (nomePessoa != null) {
             ThreadContext.put(NOME_PESSOA, nomePessoa);
         }
-        if (sigla != null) {
-            ThreadContext.put(SIGLA, sigla);
+        if (siglaDocumento != null) {
+            ThreadContext.put(SIGLA_DOCUMENTO, siglaDocumento);
         }
 
     }
@@ -141,16 +147,20 @@ public class UserRequestPayload {
         return lotacao;
     }
 
-    public String getOrgao() {
-        return orgao;
+    public String getNomeOrgao() {
+        return nomeOrgao;
+    }
+
+    public String getSiglaOrgao() {
+        return siglaOrgao;
     }
 
     public String getNomePessoa() {
         return nomePessoa;
     }
 
-    public String getSigla() {
-        return sigla;
+    public String getSiglaDocumento() {
+        return siglaDocumento;
     }
 
     @Override

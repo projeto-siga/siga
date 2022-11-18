@@ -4147,7 +4147,6 @@ Pede deferimento.</span><br/><br/><br/>
     [#else]     
         [#assign tl = "11pt" /]
     [/#if]
-    PASSEI POR AQUI!
 	[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
 		[#if vocat?has_content]
 	    	<center><b><p>${vocat!}</p></b></center>

@@ -16,13 +16,13 @@
 				<table width="100%" border="0" cellpadding="2">
 					<tr>
 						<td width="100%" align="center" valign="bottom"><img
-							src="/sigaex/imagens/brasao_sp_128.png" width="65" height="65" />
+							src="/sigaex/imagens/logo_sp_sem_papel_200x200.png" width="65" height="65" />
 						</td>
 					</tr>
 					<tr>
 						<td width="100%" align="center">
 							<p style="font-size: 11pt;">
-								<b>GOVERNO DO ESTADO DE S&Atilde;O PAULO</b><br />
+								<b>${f:resource('modelos.cabecalho.subtitulo')}</b><br />
 							</p>
 						</td>
 					</tr>

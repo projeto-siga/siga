@@ -5,16 +5,18 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.ex.api.v1.AuthTest;
+import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 
 public class Tramitar extends AuthTest {
 
-    public static void tramitar(User user, String sigla, String lotacao, String matricula, String orgao,
+    public static void tramitar(
+            Pessoa pessoa, String sigla, String lotacaoDest, String pessoaDest, String orgao,
             String observacao, String dataDevolucao) {
-        givenFor(user)
+        givenFor(pessoa)
 
                 .pathParam("sigla", sigla)
-                .param("lotacao", lotacao)
-                .param("matricula", matricula)
+                .param("lotacao", lotacaoDest)
+                .param("matricula", pessoaDest)
                 .param("orgao", orgao)
                 .param("observacao", observacao)
                 .param("dataDevolucao", dataDevolucao)
@@ -27,17 +29,17 @@ public class Tramitar extends AuthTest {
                 .body("status", equalTo("OK"));
     }
 
-    public static void tramitarParaLotacao(User user, String sigla, String lotacao) {
-        tramitar(user, sigla, lotacao, null, null, null, null);
+    public static void tramitarParaLotacao(Pessoa pessoa, String sigla, Lotacao lotacao) {
+        tramitar(pessoa, sigla, lotacao.name(), null, null, null, null);
     }
 
     @Test
     public void test_TramitarParaLotacao_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario();
-        String sigla = AssinarComSenha.assinarComSenha(siglaTmp);
+        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String sigla = AssinarComSenha.assinarComSenha(Pessoa.ZZ99999, siglaTmp);
         sigla += "A";
 
-        tramitarParaLotacao(User.ZZ99999, sigla, Lotacao.ZZLTEST2.name());
+        tramitarParaLotacao(Pessoa.ZZ99999, sigla, Lotacao.ZZLTEST2);
     }
 
 }

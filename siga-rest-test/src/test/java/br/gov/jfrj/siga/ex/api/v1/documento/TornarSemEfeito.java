@@ -6,11 +6,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.ex.api.v1.AuthTest;
+import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 
 public class TornarSemEfeito extends AuthTest {
 
-    public static void tornarSemEfeito(User user, String sigla) {
-        givenFor(user)
+    public static void tornarSemEfeito(Pessoa pessoa, String sigla) {
+        givenFor(pessoa)
 
                 .pathParam("sigla", sigla)
                 .param("motivo", "Foi criado apenas para fins de teste automatizado.")
@@ -26,9 +27,9 @@ public class TornarSemEfeito extends AuthTest {
 
     @Test
     public void test_TornarSemEfeito_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario();
-        String sigla = AssinarComSenha.assinarComSenha(siglaTmp);
-        tornarSemEfeito(User.ZZ99999, sigla);
+        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String sigla = AssinarComSenha.assinarComSenha(Pessoa.ZZ99999, siglaTmp);
+        tornarSemEfeito(Pessoa.ZZ99999, sigla);
     }
 
 }

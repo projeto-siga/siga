@@ -3,15 +3,13 @@ package br.gov.jfrj.siga.ex.api.v1.documento;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import org.junit.Test;
-
 import br.gov.jfrj.siga.ex.api.v1.AuthTest;
 
 //TODO: O método de cancelar ainda não está implementado na API
 public class Cancelar extends AuthTest {
 
-    public static void cancelar(String sigla) {
-        givenZZ99999()
+    public static void cancelar(Pessoa pessoa, String sigla) {
+        givenFor(pessoa)
 
                 .pathParam("sigla", sigla)
                 .param("motivo", "Foi criado apenas para fins de teste automatizado.")
@@ -27,9 +25,9 @@ public class Cancelar extends AuthTest {
 
     // @Test
     public void test_Cancelar_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario();
-        String sigla = Finalizar.finalizar(siglaTmp);
-        cancelar(sigla);
+        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String sigla = Finalizar.finalizar(Pessoa.ZZ99999, siglaTmp);
+        cancelar(Pessoa.ZZ99999, sigla);
     }
 
 }

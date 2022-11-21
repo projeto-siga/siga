@@ -5,11 +5,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.ex.api.v1.AuthTest;
+import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 
 public class Criar extends AuthTest {
 
-    public static String criaMemorandoTemporario() {
-        return givenZZ99999()
+    public static String criaMemorandoTemporario(Pessoa pessoa) {
+        return givenFor(pessoa)
 
                 .param("modelo", "Memorando")
                 .param("subscritor", "ZZ99999")
@@ -36,6 +37,6 @@ public class Criar extends AuthTest {
 
     @Test
     public void test_CriarDocumento_OK() {
-        String siglaTmp = criaMemorandoTemporario();
+        String siglaTmp = criaMemorandoTemporario(Pessoa.ZZ99999);
     }
 }

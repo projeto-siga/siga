@@ -9,8 +9,8 @@ import br.gov.jfrj.siga.ex.api.v1.AuthTest;
 
 public class Receber extends AuthTest {
 
-    public static void receber(User user, String sigla) {
-        givenFor(user)
+    public static void receber(Pessoa pessoa, String sigla) {
+        givenFor(pessoa)
 
                 .pathParam("sigla", sigla)
 
@@ -24,13 +24,13 @@ public class Receber extends AuthTest {
 
     @Test
     public void test_TramitarParaLotacaoEReceber_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario();
-        String sigla = AssinarComSenha.assinarComSenha(siglaTmp);
+        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String sigla = AssinarComSenha.assinarComSenha(Pessoa.ZZ99999, siglaTmp);
         sigla += "A";
 
-        Tramitar.tramitarParaLotacao(User.ZZ99999, sigla, "LTEST2");
+        Tramitar.tramitarParaLotacao(Pessoa.ZZ99999, sigla, Lotacao.ZZLTEST2);
 
-        receber(User.ZZ99998, sigla);
+        receber(Pessoa.ZZ99998, sigla);
     }
 
 }

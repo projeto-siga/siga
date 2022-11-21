@@ -6,12 +6,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.ex.api.v1.AuthTest;
-import br.gov.jfrj.siga.ex.api.v1.AuthTest.User;
+import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 
 public class AssinarComSenha extends AuthTest {
 
-    public static String assinarComSenha(String siglaTmp) {
-        String sigla = givenZZ99999()
+    public static String assinarComSenha(Pessoa pessoa, String siglaTmp) {
+        String sigla = givenFor(pessoa)
 
                 .pathParam("sigla", siglaTmp)
 
@@ -32,22 +32,22 @@ public class AssinarComSenha extends AuthTest {
     @Test
     public void test_AssinarComSenhaDocumentoFinalizado_OK() {
 
-        String siglaTmp = Criar.criaMemorandoTemporario();
+        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
 
         // Finaliza
-        String sigla = Finalizar.finalizar(siglaTmp);
+        String sigla = Finalizar.finalizar(Pessoa.ZZ99999, siglaTmp);
 
         // Assina
-        sigla = assinarComSenha(sigla);
+        sigla = assinarComSenha(Pessoa.ZZ99999, sigla);
     }
 
     @Test
     public void test_AssinarComSenhaDocumentoTemporario_OK() {
 
-        String siglaTmp = Criar.criaMemorandoTemporario();
+        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
 
         // Assina
-        String sigla = assinarComSenha(siglaTmp);
+        String sigla = assinarComSenha(Pessoa.ZZ99999, siglaTmp);
     }
 
 }

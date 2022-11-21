@@ -17,12 +17,32 @@ public class AuthTest {
     private static RequestSpecification requestSpecZZ99998;
     private static RequestSpecification requestSpecZZ99997;
 
-    public static enum User {
-        ZZ99999, ZZ99998, ZZ99997
+    public static enum Pessoa {
+        ZZ99999(1), ZZ99998(2), ZZ99997(3);
+
+        int id;
+
+        Pessoa(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return this.id;
+        }
     }
 
     public static enum Lotacao {
-        ZZLTEST, ZZLTEST2, ZZLTEST3
+        ZZLTEST(1), ZZLTEST2(2), ZZLTEST3(3);
+
+        int id;
+
+        Lotacao(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return this.id;
+        }
     }
 
     @BeforeClass
@@ -82,8 +102,8 @@ public class AuthTest {
         return given().spec(requestSpecZZ99997);
     }
 
-    public static RequestSpecification givenFor(User user) {
-        switch (user) {
+    public static RequestSpecification givenFor(Pessoa pessoa) {
+        switch (pessoa) {
             case ZZ99999:
                 return givenZZ99999();
             case ZZ99998:

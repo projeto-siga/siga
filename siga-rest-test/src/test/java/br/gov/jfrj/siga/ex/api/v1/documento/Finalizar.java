@@ -9,8 +9,8 @@ import br.gov.jfrj.siga.ex.api.v1.AuthTest;
 
 public class Finalizar extends AuthTest {
 
-    public static String finalizar(String siglaTmp) {
-        String sigla = givenZZ99999()
+    public static String finalizar(Pessoa pessoa, String siglaTmp) {
+        String sigla = givenFor(pessoa)
 
                 .pathParam("sigla", siglaTmp)
 
@@ -31,10 +31,10 @@ public class Finalizar extends AuthTest {
     @Test
     public void test_Finalizar_OK() {
 
-        String siglaTmp = Criar.criaMemorandoTemporario();
+        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
 
         // Finaliza
-        String sigla = finalizar(siglaTmp);
+        String sigla = finalizar(Pessoa.ZZ99999, siglaTmp);
     }
 
 }

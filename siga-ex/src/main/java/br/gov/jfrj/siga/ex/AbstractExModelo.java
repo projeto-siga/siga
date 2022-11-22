@@ -422,6 +422,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public byte[] getConteudoBlobMod() {
 		try {
+			if (getCpArquivo() == null)
+				return null;
 			return getCpArquivo().getConteudo();
 		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage());

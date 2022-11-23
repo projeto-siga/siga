@@ -68,3 +68,189 @@ UPDATE SIGA.EX_MOBIL MOB
 			LEFT OUTER JOIN siga.ex_forma_documento FRM on FRM.ID_FORMA_DOC = MODELO.ID_FORMA_DOC
 			WHERE MOB.ID_DOC=DOC.ID_DOC);
 */
+
+-- ----------------------------------------------------------------------------------------------   
+-- O código abaixo substitui o update acima na versão 11 do Oracle. Foi executado no TRF2. 
+-- ----------------------------------------------------------------------------------------------   
+/*
+ merge into SIGA.EX_MOBIL f
+ using (
+ select b.ID_MOBIL, b.ID_MOV, b.DT_INI_MOV from 
+  (SELECT b.ID_MOBIL, b.ID_MOV, b.DT_INI_MOV, row_number() over (partition by b.ID_MOBIL order by b.DT_TIMESTAMP desc) rn
+   FROM SIGA.EX_MOVIMENTACAO b where b.ID_MOV_CANCELADORA IS NULL ) b 
+ where b.rn = 1
+ ) b
+ on (f.ID_MOBIL = b.ID_MOBIL)
+ when matched then update set
+   f.ID_ULT_MOV = b.ID_MOV,
+   f.DNM_DT_ULT_MOV = b.DT_INI_MOV;   
+   
+  merge into SIGA.EX_MOBIL f
+  using (
+  SELECT MOB.ID_MOBIL, 
+    CASE
+      WHEN DOC.ID_MOB_PAI   IS NOT NULL
+      AND DOC.NUM_SEQUENCIA IS NOT NULL
+      THEN
+        (SELECT
+          -- ORG.ACRONIMO_ORGAO_USU -- PARA QUEM UTILIZA PROPERTY codigo.acronimo.ano.inicial = true
+          ORG.SIGLA_ORGAO_USU
+          || '-'
+          || FRM.SIGLA_FORMA_DOC
+          || '-'
+          || DOCPAI.ANO_EMISSAO
+          || '/'
+          || TO_CHAR(DOCPAI.NUM_EXPEDIENTE, 'FM99900000')
+          || (
+          CASE MOBPAI.ID_TIPO_MOBIL
+            WHEN 2
+            THEN '-'
+              ||
+              CASE MOBPAI.NUM_SEQUENCIA
+                WHEN 1
+                THEN 'A'
+                WHEN 2
+                THEN 'B'
+                WHEN 3
+                THEN 'C'
+                WHEN 4
+                THEN 'D'
+                WHEN 5
+                THEN 'E'
+                WHEN 6
+                THEN 'F'
+                WHEN 7
+                THEN 'G'
+                WHEN 8
+                THEN 'H'
+                WHEN 9
+                THEN 'I'
+                WHEN 10
+                THEN 'J'
+                WHEN 11
+                THEN 'L'
+                WHEN 12
+                THEN 'M'
+                WHEN 13
+                THEN 'N'
+                WHEN 14
+                THEN 'O'
+                WHEN 15
+                THEN 'P'
+                WHEN 16
+                THEN 'Q'
+                WHEN 17
+                THEN 'R'
+                WHEN 18
+                THEN 'S'
+                WHEN 19
+                THEN 'T'
+                WHEN 20
+                THEN 'U'
+                WHEN 21
+                THEN 'Z'
+              END
+            WHEN 4
+            THEN '-'
+              || 'V'
+              || TO_CHAR(MOBPAI.NUM_SEQUENCIA, 'FM999999900')
+          END)
+          || '.'
+          || TO_CHAR(DOC.NUM_SEQUENCIA, 'FM999999900') AS SIGLA_DOC
+        FROM
+           siga.ex_documento DOCPAI   
+        INNER JOIN corporativo.cp_orgao_usuario ORG
+        ON ORG.ID_ORGAO_USU = DOCPAI.ID_ORGAO_USU
+        LEFT OUTER JOIN siga.ex_modelo MODELO
+        ON MODELO.ID_MOD = DOCPAI.ID_MOD
+        LEFT OUTER JOIN siga.ex_forma_documento FRM
+        ON FRM.ID_FORMA_DOC   = MODELO.ID_FORMA_DOC
+        WHERE MOBPAI.ID_MOBIL = DOC.ID_MOB_PAI AND
+              MOBPAI.ID_DOC = DOCPAI.ID_DOC
+        )
+      WHEN DOC.NUM_EXPEDIENTE IS NOT NULL
+      THEN
+        -- ORG.ACRONIMO_ORGAO_USU -- PARA QUEM UTILIZA PROPERTY codigo.acronimo.ano.inicial = true
+        ORG.SIGLA_ORGAO_USU
+        || '-'
+        || FRM.SIGLA_FORMA_DOC
+        || '-'
+        || DOC.ANO_EMISSAO
+        || '/'
+        || TO_CHAR(DOC.NUM_EXPEDIENTE, 'FM99900000')
+        ||
+        CASE MOB.ID_TIPO_MOBIL
+          WHEN 2
+          THEN '-'
+            ||
+            CASE MOB.NUM_SEQUENCIA
+              WHEN 1
+              THEN 'A'
+              WHEN 2
+              THEN 'B'
+              WHEN 3
+              THEN 'C'
+              WHEN 4
+              THEN 'D'
+              WHEN 5
+              THEN 'E'
+              WHEN 6
+              THEN 'F'
+              WHEN 7
+              THEN 'G'
+              WHEN 8
+              THEN 'H'
+              WHEN 9
+              THEN 'I'
+              WHEN 10
+              THEN 'J'
+              WHEN 11
+              THEN 'L'
+              WHEN 12
+              THEN 'M'
+              WHEN 13
+              THEN 'N'
+              WHEN 14
+              THEN 'O'
+              WHEN 15
+              THEN 'P'
+              WHEN 16
+              THEN 'Q'
+              WHEN 17
+              THEN 'R'
+              WHEN 18
+              THEN 'S'
+              WHEN 19
+              THEN 'T'
+              WHEN 20
+              THEN 'U'
+              WHEN 21
+              THEN 'Z'
+            END
+          WHEN 4
+          THEN '-'
+            || 'V'
+            || TO_CHAR(MOB.NUM_SEQUENCIA, 'FM999999900')
+        END
+      ELSE 'TMP-'
+        || TO_CHAR(DOC.ID_DOC, 'FM99900000')
+    END AS SIGLA_DOC
+  FROM siga.ex_documento DOC
+  INNER JOIN SIGA.EX_MOBIL MOB 
+  ON DOC.ID_DOC = MOB.ID_DOC
+  LEFT OUTER JOIN siga.ex_mobil MOBPAI ON MOBPAI.ID_MOBIL = DOC.ID_MOB_PAI
+  INNER JOIN corporativo.cp_orgao_usuario ORG
+  ON ORG.ID_ORGAO_USU = DOC.ID_ORGAO_USU
+  LEFT OUTER JOIN siga.ex_modelo modelo
+  ON MODELO.ID_MOD = DOC.ID_MOD
+  LEFT OUTER JOIN siga.ex_forma_documento FRM
+  ON FRM.ID_FORMA_DOC = MODELO.ID_FORMA_DOC
+
+
+  ) b
+  on (f.ID_MOBIL = b.ID_MOBIL)
+  when matched then update set
+     f.DNM_SIGLA = b.SIGLA_DOC;
+  
+ 
+*/

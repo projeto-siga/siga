@@ -6,8 +6,8 @@ import com.crivano.jlogic.JLogic;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMobil.Pendencias;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.bl.ExTramiteBL.Pendencias;
 
 public class ExEstaPendenteDeRecebimento implements Expression {
 
@@ -41,7 +41,7 @@ public class ExEstaPendenteDeRecebimento implements Expression {
 		Pendencias p = mob.calcularTramitesPendentes();
 		boolean f = false;
 		for (ExMovimentacao tramite : p.tramitesPendentes) {
-			if (tramite.isResp(titular, lotaTitular))
+			if (tramite.isRespExato(titular, lotaTitular))
 				return true;
 		}
 		return false;

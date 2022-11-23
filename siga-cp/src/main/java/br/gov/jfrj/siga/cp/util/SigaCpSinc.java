@@ -172,7 +172,7 @@ public class SigaCpSinc {
 				manterHistoricoSeNecessario(opr);
 
 			}
-
+			
 			if (modoLog) {
 				log("*** MODO LOG: as alterações não serão efetivadas! Executando rollback...");
 				ContextoPersistencia.em().getTransaction().rollback();
@@ -837,29 +837,34 @@ public class SigaCpSinc {
 
 	private CpPapel importarXmlPapel(XmlPullParser parser) throws Exception {
 
+	    String ide = parseStr(parser, "id");
+	    String tipo = parseStr(parser, "tipo");
+	    String ideCargo = parseStr(parser, "cargo");
+	    String ideLotacao = parseStr(parser, "lotacao");
+	    
 		CpPapel papel = new CpPapel();
-		papel.setIdExterna(parseStr(parser, "id"));
-		criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "tipo", "idExterna", parseStr(parser, "id"),
+		papel.setIdExterna(ide);
+		criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "tipo", "idExterna", ide,
 				dpPessoaCorrente.getIdExterna());
 		// if (parseStr(parser, "tipo") != null) {
 		// CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
 		// papel.setCpTipoPapel(o);
 		// }
-		if (parseStr(parser, "tipo") != null) {
-			CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
+        if (tipo != null) {
+			CpTipoPapel o = obterTipoPapelPorDescricao(tipo);
 			papel.setCpTipoPapel(o);
 		}
 		// papel.setSigla(parseStr(parser, "sigla"));
 		papel.setDpPessoa(dpPessoaCorrente);
 		papel.setOrgaoUsuario(cpOrgaoUsuario);
-		if (parseStr(parser, "cargo") != null) {
+        if (ideCargo != null) {
 			DpCargo o = new DpCargo();
-			o.setIdeCargo(parseStr(parser, "cargo"));
+			o.setIdeCargo(ideCargo);
 			papel.setDpCargo(o);
 		}
-		if (parseStr(parser, "lotacao") != null) {
+        if (ideLotacao != null) {
 			DpLotacao o = new DpLotacao();
-			o.setIdExterna(parseStr(parser, "lotacao"));
+			o.setIdExterna(ideLotacao);
 			papel.setDpLotacao(o);
 		}
 		papel.setHisAtivo(1);
@@ -869,6 +874,7 @@ public class SigaCpSinc {
 	StringBuilder sbLog = new StringBuilder();
 
 	public void log(String s) {
+	    System.out.println(s);
 		sbLog.append(s);
 		sbLog.append("\n");
 	}
@@ -1090,7 +1096,7 @@ public class SigaCpSinc {
 		} else {
 			try {
 				int parseIntSituacao = Integer.parseInt(situacaoFuncPessoa);
-				if (parseIntSituacao > 36) {
+				if (parseIntSituacao > 38) {
 					throw new Exception("Tag pessoa id " + idPessoa // parseStr(parser, "id")
 							+ " tem situacao funcional não tratada no roteiro: '" + situacaoFuncPessoa + "'");
 				}

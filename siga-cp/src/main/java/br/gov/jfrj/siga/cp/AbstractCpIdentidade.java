@@ -67,8 +67,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp11 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36) "
+                + "or pes.situacaoFuncionalPessoa = :sfp31 "                
+                + "or pes.situacaoFuncionalPessoa = :sfp36 "                
+                + "or pes.situacaoFuncionalPessoa = :sfp38) "
 				+ "and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
         @NamedQuery(name = "consultarIdentidadeAtualPelaInicial", query = "from CpIdentidade u "
 				+ "		where u.hisDtIni = "
@@ -90,7 +91,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36) "
+				+ "or pes.situacaoFuncionalPessoa = :sfp36 "				
+				+ "or pes.situacaoFuncionalPessoa = :sfp38) "
 				+ "and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)")})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {

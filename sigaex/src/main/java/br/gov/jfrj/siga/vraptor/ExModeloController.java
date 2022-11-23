@@ -148,6 +148,7 @@ public class ExModeloController extends ExSelecionavelController {
 		}
 	}
 
+	@RequestParamsNotCheck
 	@Transacional
 	@Post("app/modelo/gravar")
 	public void editarGravar(final Long id, final String nome, final String tipoModelo, final String conteudo,

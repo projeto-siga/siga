@@ -1669,6 +1669,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
 
 			List<Integer> listaTipo = new ArrayList<Integer>();
 			listaTipo.add(CpTipoIdentidade.FORMULARIO);
@@ -1710,6 +1711,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
 			
 			List<Integer> listaTipo = new ArrayList<Integer>();
 			listaTipo.add(CpTipoIdentidade.FORMULARIO);
@@ -1747,6 +1749,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
 			
 			List<Integer> listaTipo = new ArrayList<Integer>();
 			listaTipo.add(CpTipoIdentidade.FORMULARIO);

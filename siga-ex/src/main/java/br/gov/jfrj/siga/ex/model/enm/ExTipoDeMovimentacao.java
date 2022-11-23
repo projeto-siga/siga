@@ -188,7 +188,7 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	
 	AGENDAR_PUBLICACAO_DOE(88, "Agendar Publicação DOE"),
 	
-	ENVIAR_PUBLICACAO_DOE(89, "Enviar Publicação DOE");
+	ENVIAR_PUBLICACAO_DOE(89, "Enviar Publicação DOE"),
 	//
 	//TRAMITE_ENVIO_PEN(90, "Tramite Envio PEN");
 	//
@@ -201,6 +201,8 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//RECIBO_ENVIO_PEN(94, "Recibo Envio PEN");
 	//
 	//PDF_ESTAMPADO_PEN(95, "Geração PDF Estampado PEN");
+	
+	ORDEM_ASSINATURA(96, "Ordem de Asssinatura");
 
 	private final int id;
 	private final String descr;

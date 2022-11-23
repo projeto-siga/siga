@@ -3206,6 +3206,11 @@ public class ExBL extends CpBL {
 				// mob.getExDocumento().armazenar(); 
 				getExConsTempDocCompleto().removerCossigsVisTempDocsComplFluxoTelaCossignatarios(cadastrante, lotaCadastrante, Arrays.asList(mov), mob.doc());
 			}
+			
+			if(mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO)) {
+				this.excluirRegistroDaOrdenacaoAssinatura(mob, mov, cadastrante, lotaCadastrante);
+			}
+			
 			concluirAlteracao(mov);
 
 		} catch (final Exception e) {
@@ -4450,11 +4455,37 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(mov);
 			if (podeIncluirCossigArvoreDocs)
 				getExConsTempDocCompleto().incluirCossigsVisTempDocsCompl(cadastrante, lotaCadastrante, doc, podeIncluirCossigArvoreDocs, Boolean.TRUE);
+			
+			ExMovimentacao movOrdemAss = doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ORDEM_ASSINATURA);
+			if(movOrdemAss != null) {
+				reordenarAss(doc.getMobilGeral(), cadastrante, lotaCadastrante, movOrdemAss.getDescrMov() + ";" + subscritor.getSigla());
+			}
 		} catch (RegraNegocioException e) {
 			throw e;
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao incluir Cossignatário.", e);
+		}
+	}
+	
+	public ExMovimentacao reordenarAss(ExMobil mob, DpPessoa cadastrante, DpLotacao lotacao, String descricao) {
+		ExMovimentacao mov = gravarNovaMovimentacao(ExTipoDeMovimentacao.ORDEM_ASSINATURA, cadastrante, lotacao, mob, null, cadastrante, lotacao, cadastrante, lotacao, null, descricao);
+		processar(mob.doc(), true, false);
+		return mov;
+	}
+
+	public void excluirRegistroDaOrdenacaoAssinatura(ExMobil mob, ExMovimentacao mov, DpPessoa cadastrante, DpLotacao lotacao) {
+		ExMovimentacao movOrdem = mob.getDoc().getMobilGeral().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ORDEM_ASSINATURA);
+		if(movOrdem != null) {
+			List<String> listaMatricula = new ArrayList<String>();
+			listaMatricula.addAll(Arrays.asList(movOrdem.getDescrMov().split(";")));
+			listaMatricula.remove(mov.getSubscritor().getSigla());
+			String desc = "";
+			for (String string : listaMatricula) {
+				desc += string + ";";
+			}
+			desc = desc.substring(0, desc.length()-1);
+			reordenarAss(mob, cadastrante, lotacao, desc);
 		}
 	}
 

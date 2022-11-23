@@ -2585,97 +2585,51 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro assinaturaCentro formatarOrgao=false incluirAssinaturaBIE=true]
-[#if incluirAssinaturaBIE == true]
-   <!-- INICIO ASSINATURA -->
-[/#if]
-<p style="font-family: Arial; font-size: 11pt;" align="center">
-	<br/>
-    [#if (doc.subscritor)??]
-       [@inicioSubscritor sigla=doc.codigoCompacto]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
-    [/#if]
-    [#if (doc.nmSubscritor)??]
-        ${doc.nmSubscritor}
-    [#else]
-       [#if (doc.subscritor.nomeExibicao)??]
-           ${doc.subscritor.nomeExibicao}
-       [#else]
-           ${(doc.subscritor.nomePessoa)!}
-       [/#if]
-    [/#if]
-    [#if !apenasNome??] 
-        <br />
-        [#if apenasCargo??]
-                ${(doc.subscritor.cargo.nomeCargo)!}
-        [#else]
-            [#if (doc.nmFuncao)??]
-                ${doc.nmFuncao}
-            [#elseif (doc.titular.funcaoConfianca.nomeFuncao)??]
-                ${doc.titular.funcaoConfianca.nomeFuncao}
-                [#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)!] EM EXERCÍCIO [/#if]
-            [#elseif (doc.subscritor.funcaoConfianca.nomeFuncao)??]
-                ${doc.subscritor.funcaoConfianca.nomeFuncao}
-            [#else]
-                ${(doc.subscritor.cargo.nomeCargo)!}
-            [/#if]
-        [/#if]
-         
-        [#if formatarOrgao]
-            <br>
-            [#if (doc.nmLotacao)??]
-                ${doc.nmLotacao}
-            [#else]
-                ${(doc.titular.lotacao.nomeLotacao)!}
-            [/#if]
-        [/#if]
-        [#if (doc.subscritor)??]
-            [@fimSubscritor]${(doc.subscritor.idPessoa)}[/@fimSubscritor]
-        [/#if]
-        
-                [#if (doc.mobilGeral.exMovimentacaoSet)??]
-        [#list doc.mobilGeral.exMovimentacaoSet as mov]
-                    [#if (mov.exTipoMovimentacao.id)! == 24]
-                        <br/><br/><br/>
-                        [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
-                        [#if mov.nmSubscritor??]
-                            ${mov.nmSubscritor}
-                        [#else]
-                           [#if (mov.subscritor.nomeExibicao)??]
-                           		${mov.subscritor.nomeExibicao}
-                           [#else]
-                           ${(mov.subscritor.nomePessoa)!}
-                           [/#if]
-                        [/#if]      
-                        <br>
-                        [#if mov.nmFuncao??]
-                            ${mov.nmFuncao}
-                        [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
-                            ${mov.titular.funcaoConfianca.nomeFuncao} 
-                                [#if substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
-                        [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
-                            ${mov.subscritor.funcaoConfianca.nomeFuncao}
-                        [#else]
-                            ${(mov.subscritor.cargo.nomeCargo)!}
-                        [/#if]
-                        [#if formatarOrgao]
-                            <br>
-                            [#if mov.nmLotacao??]
-                                ${mov.nmLotacao}
-                            [#else]
-                                ${mov.titular.lotacao.nomeLotacao}
-                            [/#if]
-                        [/#if]
-                        [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
-            [/#if]
-        [/#list]
-            [/#if]
-    [/#if]
-    [#if textoFinal??]
-        <br/>${textoFinal}
-    [/#if]
-</p>
-[#if incluirAssinaturaBIE == true]
-   <!-- FIM ASSINATURA -->
-[/#if]
+	[#if incluirAssinaturaBIE == true]
+	   <!-- INICIO ASSINATURA -->
+	[/#if]
+	<p style="font-family: Arial; font-size: 11pt;" align="center">
+	<br>
+	[#list doc.listaAssinantesOrdenados as pessoaVO]
+		<br/><br/><br/>
+		[@inicioSubscritor sigla=doc.codigoCompacto]${(pessoaVO.subscritor.idPessoa)!}[/@inicioSubscritor]
+		[#if (pessoaVO.nmSubscritor)??]
+        	${pessoaVO.nmSubscritor}
+    	[#else]
+	       	[#if (pessoaVO.subscritor.nomeExibicao)??]
+	        	${pessoaVO.subscritor.nomeExibicao}
+	       	[#else]
+	           	${(pessoaVO.subscritor.nomePessoa)!}
+	       	[/#if]
+	    [/#if]
+	    [#if (!apenasNome??)] 
+        	<br />
+        	[#if (apenasCargo?? && pessoaVO.subscritor.id == doc.subscritor.id) || (apenasNome?? && pessoaVO.subscritor.id != doc.subscritor.id)]
+                ${(pessoaVO.subscritor.cargo.nomeCargo)!}
+        	[#else]
+            	[#if (pessoaVO.nmFuncao)??]
+                	${pessoaVO.nmFuncao}
+	            [#elseif (pessoaVO.titular.funcaoConfianca.nomeFuncao)??]
+	                ${pessoaVO.titular.funcaoConfianca.nomeFuncao}
+	                [#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)! || substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
+            		[#elseif (pessoaVO.subscritor.funcaoConfianca.nomeFuncao)??]
+                		${pessoaVO.subscritor.funcaoConfianca.nomeFuncao}
+            		[#else]
+                		${(pessoaVO.subscritor.cargo.nomeCargo)!}
+            	[/#if]
+        	[/#if]
+
+        	[#if formatarOrgao]
+	            <br>
+	            [#if (pessoaVO.nmLotacao)??]
+	                ${pessoaVO.nmLotacao}
+	            [#else]
+	                ${(pessoaVO.titular.lotacao.nomeLotacao)!}
+	            [/#if]
+	        [/#if]
+	        [@fimSubscritor]${(pessoaVO.subscritor.idPessoa)}[/@fimSubscritor]
+    	[/#if]
+	[/#list]
 [/#macro]
 
 [#macro assinaturaMovCentro formatarOrgao=false]

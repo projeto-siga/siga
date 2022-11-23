@@ -1,0 +1,9 @@
+-- https://jeap.rio.rj.gov.br/jira/browse/PROCESSO_RIO-2698
+-- Modelo - Licença Municipal de Instalação - LMI
+-- connect siga@srv000764.infra.rio.gov.br:1521/sigadoc.pcrj;
+-- Em siga.ex_forma_documento o códico 502 é Licença Municipal de Instalação 
+
+INSERT INTO SIGA.EX_DOCUMENTO_NUMERACAO
+( ID_ORGAO_USU, ID_FORMA_DOC, ANO_EMISSAO, NR_DOCUMENTO, NR_INICIAL, NR_FINAL, FL_ATIVO)
+VALUES( 5200, 421, 2022, 2220, 1, NULL, '1');
+commit;

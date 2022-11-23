@@ -1,14 +1,14 @@
-package br.gov.jfrj.siga.ex.api.v1.documento;
+package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
 
-import br.gov.jfrj.siga.ex.api.v1.AuthTest;
 import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
+import br.gov.jfrj.siga.ex.api.v1.DocTest;
 
-public class AssinarComSenha extends AuthTest {
+public class AssinarComSenha extends DocTest {
 
     public static String assinarComSenha(Pessoa pessoa, String siglaTmp) {
         String sigla = givenFor(pessoa)
@@ -31,22 +31,17 @@ public class AssinarComSenha extends AuthTest {
 
     @Test
     public void test_AssinarComSenhaDocumentoFinalizado_OK() {
+        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
 
-        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
-
-        // Finaliza
         String sigla = Finalizar.finalizar(Pessoa.ZZ99999, siglaTmp);
 
-        // Assina
         sigla = assinarComSenha(Pessoa.ZZ99999, sigla);
     }
 
     @Test
     public void test_AssinarComSenhaDocumentoTemporario_OK() {
+        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
 
-        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
-
-        // Assina
         String sigla = assinarComSenha(Pessoa.ZZ99999, siglaTmp);
     }
 

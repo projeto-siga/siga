@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1.documento;
+package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
@@ -22,6 +22,7 @@ public class Consultar extends AuthTest {
                 .pathParam("sigla", sigla)
                 .param("completo", completo)
                 .param("exibe", exibe)
+                .param("desabilitarRecebimentoAutomatico", true)
 
                 .when()
                 .get("/sigaex/api/v1/documentos/{sigla}")
@@ -84,9 +85,53 @@ public class Consultar extends AuthTest {
         }
     }
 
+    public static void contemVizNode(ValidatableResponse resp, String graphPath, String id, String shape,
+            String color) {
+        String viz = resp.extract().path("vizTramitacao");
+        viz = viz.replaceAll("\\]\\[", ", ");
+        String[] lines = viz.split(";");
+        for (int i = 0; i < lines.length; i++)
+            lines[i] = lines[i].trim();
+
+        String line = null;
+        for (int i = 0; i < lines.length; i++)
+            if (lines[i].startsWith("\"" + id + "\"[")) {
+                line = lines[i];
+                break;
+            }
+
+        if (line == null)
+            throw new RuntimeException("Nó '" + id + "' não encontrado no gráfico " + graphPath);
+
+        String[] attrs = line.substring(line.indexOf("[") + 1, line.length() - 1).replace("\", ", "\"|").split("\\|");
+
+        assertVizAttr(attrs, graphPath, id, "shape", shape);
+        assertVizAttr(attrs, graphPath, id, "color", color);
+    }
+
+    private static void assertVizAttr(String[] attrs, String graphPath, String id, String key, String value) {
+        String prefix = key + "=\"";
+        String desired = prefix + value + "\"";
+        for (int i = 0; i < attrs.length; i++) {
+            if (attrs[i].startsWith(prefix)) {
+                if (attrs[i].equals(desired))
+                    return;
+                else if (value != null)
+                    throw new RuntimeException("Nó '" + id + "' do gráfico " + graphPath + " deveria ter " + desired
+                            + " mas tem " + attrs[i]);
+                else
+                    throw new RuntimeException("Nó '" + id + "' do gráfico " + graphPath + " não deveria ter " + key
+                            + " mas tem " + attrs[i]);
+            }
+        }
+        if (value != null)
+            throw new RuntimeException("Nó '" + id + "' do gráfico " + graphPath + " deveria ter " + desired
+                    + " mas não tem esta propriedade");
+    }
+
     @Test
     public void test_Consultar_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
 
         ValidatableResponse resp = consultar(Pessoa.ZZ99999, siglaTmp);
 

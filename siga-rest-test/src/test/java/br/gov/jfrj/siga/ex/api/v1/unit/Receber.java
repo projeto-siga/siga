@@ -1,30 +1,29 @@
-package br.gov.jfrj.siga.ex.api.v1.documento;
+package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
 
-import br.gov.jfrj.siga.ex.api.v1.AuthTest;
+import br.gov.jfrj.siga.ex.api.v1.DocTest;
+import io.restassured.response.ValidatableResponse;
 
-public class Receber extends AuthTest {
+public class Receber extends DocTest {
 
     public static void receber(Pessoa pessoa, String sigla) {
-        givenFor(pessoa)
+        ValidatableResponse resp = givenFor(pessoa)
 
                 .pathParam("sigla", sigla)
 
-                .when()
-                .post("/sigaex/api/v1/documentos/{sigla}/receber")
+                .when().post("/sigaex/api/v1/documentos/{sigla}/receber").then();
 
-                .then()
-                .statusCode(200)
-                .body("status", equalTo("OK"));
+        assertStatusCode200(resp);
+
+        resp.body("status", equalTo("OK"));
     }
 
     @Test
     public void test_TramitarParaLotacaoEReceber_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
         String sigla = AssinarComSenha.assinarComSenha(Pessoa.ZZ99999, siglaTmp);
         sigla += "A";
 

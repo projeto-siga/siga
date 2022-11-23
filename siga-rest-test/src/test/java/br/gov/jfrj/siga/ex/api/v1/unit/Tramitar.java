@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1.documento;
+package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -35,7 +35,7 @@ public class Tramitar extends AuthTest {
 
     @Test
     public void test_TramitarParaLotacao_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
         String sigla = AssinarComSenha.assinarComSenha(Pessoa.ZZ99999, siglaTmp);
         sigla += "A";
 

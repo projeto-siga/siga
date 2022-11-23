@@ -1,19 +1,18 @@
-package br.gov.jfrj.siga.ex.api.v1.documento;
+package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
 
 import br.gov.jfrj.siga.ex.api.v1.AuthTest;
-import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 
 public class Criar extends AuthTest {
 
-    public static String criaMemorandoTemporario(Pessoa pessoa) {
+    public static String criarMemorandoTemporario(Pessoa pessoa) {
         return givenFor(pessoa)
 
                 .param("modelo", "Memorando")
-                .param("subscritor", "ZZ99999")
+                .param("subscritor", pessoa.name())
                 .param("classificacao", "00.01.01.01")
                 .param("texto_memorando", "Testando Rest Assured.")
                 .param("fecho", "Testando fecho")
@@ -29,6 +28,13 @@ public class Criar extends AuthTest {
                 .path("sigladoc");
     }
 
+    public static String criarMemorando(Pessoa pessoa) {
+        String siglaTmp = Criar.criarMemorandoTemporario(pessoa);
+        String sigla = AssinarComSenha.assinarComSenha(pessoa, siglaTmp);
+        sigla += "A";
+        return sigla;
+    }
+
     public static String compactarSigla(String sigla) {
         if (sigla == null)
             return null;
@@ -37,6 +43,6 @@ public class Criar extends AuthTest {
 
     @Test
     public void test_CriarDocumento_OK() {
-        String siglaTmp = criaMemorandoTemporario(Pessoa.ZZ99999);
+        String siglaTmp = criarMemorandoTemporario(Pessoa.ZZ99999);
     }
 }

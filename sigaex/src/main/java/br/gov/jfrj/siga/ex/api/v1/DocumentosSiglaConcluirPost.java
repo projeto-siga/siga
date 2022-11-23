@@ -7,7 +7,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaConcluirPost;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
+import br.gov.jfrj.siga.ex.logic.ExPodeConcluir;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 @Transacional
@@ -25,7 +25,7 @@ public class DocumentosSiglaConcluirPost implements IDocumentosSiglaConcluirPost
         Ex.getInstance().getComp().afirmar(
                 "O documento " + mob.getSigla() + " não pode ser concluído por "
                         + titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(),
-                ExPodeArquivarCorrente.class, titular, lotaTitular, mob);
+                ExPodeConcluir.class, titular, lotaTitular, mob);
 
         ctx.assertAcesso(mob, titular, lotaTitular);
 

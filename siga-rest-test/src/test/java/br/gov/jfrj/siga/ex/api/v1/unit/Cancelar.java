@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1.documento;
+package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -25,7 +25,7 @@ public class Cancelar extends AuthTest {
 
     // @Test
     public void test_Cancelar_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
         String sigla = Finalizar.finalizar(Pessoa.ZZ99999, siglaTmp);
         cancelar(Pessoa.ZZ99999, sigla);
     }

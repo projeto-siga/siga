@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1.documento;
+package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -24,7 +24,7 @@ public class Excluir extends AuthTest {
 
     @Test
     public void test_Excluir_OK() {
-        String siglaTmp = Criar.criaMemorandoTemporario(Pessoa.ZZ99999);
+        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
         excluir(Pessoa.ZZ99999, siglaTmp);
     }
 

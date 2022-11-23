@@ -738,6 +738,7 @@ public interface IExApiV1 {
             public Boolean completo;
             public Boolean auditar;
             public Boolean exibe;
+            public Boolean desabilitarRecebimentoAutomatico;
         }
 
         public static class Response implements ISwaggerResponse, ISwaggerResponseFile {

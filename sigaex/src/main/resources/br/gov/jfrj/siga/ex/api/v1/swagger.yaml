@@ -104,6 +104,13 @@ parameters:
     required: false
     default: false
     type: boolean
+  desabilitarRecebimentoAutomatico:
+    name: desabilitarRecebimentoAutomatico
+    in: query
+    description: Informar true se deseja desabilitar o recebimento automático
+    required: false
+    default: false
+    type: boolean
   estampa:
     name: estampa
     in: query
@@ -1143,6 +1150,7 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/auditar"
+        - $ref: "#/parameters/desabilitarRecebimentoAutomatico"
         - name: exibe
           in: query
           description: Informar true se deseja exibir lista de movimentações reduzidas no histórico

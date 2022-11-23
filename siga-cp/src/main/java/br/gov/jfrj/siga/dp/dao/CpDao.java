@@ -1668,6 +1668,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
@@ -1703,6 +1704,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1734,6 +1736,7 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);

@@ -6548,9 +6548,6 @@ public class ExBL extends CpBL {
 			set = docsParaAtualizacaoDeWorkflow.get();
 		}
 		if (mob != null && mob.doc() != null) {
-		    ContextoPersistencia.flushTransaction();
-            ExDao.getInstance().em().refresh(mob);
-
 			if (recalcularAcesso)
 				atualizarVariaveisDenormalizadas(mob.doc(), incluirAcesso, excluirAcesso);
 			if (mob.isGeral())
@@ -6600,8 +6597,6 @@ public class ExBL extends CpBL {
 
 	private void concluirAlteracao(ExDocumento doc, ExMobil mob, ExMovimentacao mov, boolean recalcularAcesso) throws Exception {
 		if (mob != null) {
-		    ContextoPersistencia.flushTransaction();
-            ExDao.getInstance().em().refresh(mob);
 			if (recalcularAcesso)
 				atualizarVariaveisDenormalizadas(mob.doc(), null, null);
 			if (mob.isGeral())
@@ -6609,8 +6604,6 @@ public class ExBL extends CpBL {
 			else
 				atualizarMarcas(mob);
 		} else if (doc != null) {
-            ContextoPersistencia.flushTransaction();
-            ExDao.getInstance().em().refresh(doc);
 			if (recalcularAcesso)
 				atualizarVariaveisDenormalizadas(doc, null, null);
 			atualizarMarcas(doc);

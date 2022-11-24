@@ -66,8 +66,6 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 			try {
 				ctx.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());
-				ContextoPersistencia.flushTransaction();
-				ExDao.getInstance().em().refresh(mob);
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 				throw e;

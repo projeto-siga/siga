@@ -1,18 +1,20 @@
 package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.ex.api.v1.DocTest;
+import io.restassured.response.ValidatableResponse;
 
 public class Notificar extends DocTest {
 
     public static void notificar(
             Pessoa pessoa, String sigla, String pessoaDest, String lotacaoDest, String orgao,
             String observacao, String dataDevolucao) {
-        givenFor(pessoa)
+        ValidatableResponse resp = givenFor(pessoa)
 
                 .pathParam("sigla", sigla)
                 .param("lotacao", lotacaoDest)
@@ -21,12 +23,11 @@ public class Notificar extends DocTest {
                 .param("observacao", observacao)
                 .param("dataDevolucao", dataDevolucao)
 
-                .when()
-                .post("/sigaex/api/v1/documentos/{sigla}/notificar")
+                .when().post("/sigaex/api/v1/documentos/{sigla}/notificar").then();
 
-                .then()
-                .statusCode(200)
-                .body("status", equalTo("OK"));
+        assertStatusCode200(resp);
+
+        resp.body("status", equalTo("OK"));
     }
 
     public static void notificar(Pessoa pessoa, String sigla, Pessoa pessoaDest) {

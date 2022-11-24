@@ -7,14 +7,10 @@ import static org.hamcrest.Matchers.not;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
-import br.gov.jfrj.siga.ex.api.v1.AuthTest;
+import br.gov.jfrj.siga.ex.api.v1.DocTest;
 import io.restassured.response.ValidatableResponse;
 
-public class Consultar extends AuthTest {
-
-    public static ValidatableResponse consultar(Pessoa pessoa, String sigla) {
-        return consultar(pessoa, sigla, true, true);
-    }
+public class Consultar extends DocTest {
 
     public static ValidatableResponse consultar(Pessoa pessoa, String sigla, boolean completo, boolean exibe) {
         ValidatableResponse resp = givenFor(pessoa)
@@ -27,8 +23,10 @@ public class Consultar extends AuthTest {
                 .when()
                 .get("/sigaex/api/v1/documentos/{sigla}")
 
-                .then()
-                .statusCode(200);
+                .then();
+
+        assertStatusCode200(resp);
+
         return resp;
     }
 
@@ -133,33 +131,14 @@ public class Consultar extends AuthTest {
     public void test_Consultar_OK() {
         String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
 
-        ValidatableResponse resp = consultar(Pessoa.ZZ99999, siglaTmp);
+        consultar(Pessoa.ZZ99999, siglaTmp);
 
-        contemMarca(resp, CpMarcadorEnum.EM_ELABORACAO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
-        contemMarca(resp, CpMarcadorEnum.PENDENTE_DE_ASSINATURA, Pessoa.ZZ99999, Lotacao.ZZLTEST);
-        contemMarca(resp, CpMarcadorEnum.COMO_SUBSCRITOR, Pessoa.ZZ99999);
-
-        contemAcao(resp, "assinar", true);
-        contemAcao(resp, "transferir", false);
-
-        String sigla = AssinarComSenha.assinarComSenha(Pessoa.ZZ99999, siglaTmp);
-        sigla += "A";
-
-        resp = consultar(Pessoa.ZZ99999, sigla);
-
-        contemMarca(resp, CpMarcadorEnum.ASSINADO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
-
-        contemAcao(resp, "assinar", false);
-        contemAcao(resp, "transferir", true);
-
-        Tramitar.tramitarParaLotacao(Pessoa.ZZ99999, sigla, Lotacao.ZZLTEST2);
-
-        resp = consultar(Pessoa.ZZ99998, sigla);
-
-        contemMarca(resp, CpMarcadorEnum.CAIXA_DE_ENTRADA, Lotacao.ZZLTEST2);
-        contemMarca(resp, CpMarcadorEnum.EM_TRANSITO_ELETRONICO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
-
-        contemAcao(resp, "receber", true);
+        contemMarca(CpMarcadorEnum.EM_ELABORACAO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
+        contemMarca(CpMarcadorEnum.PENDENTE_DE_ASSINATURA, Pessoa.ZZ99999, Lotacao.ZZLTEST);
+        contemMarca(CpMarcadorEnum.COMO_SUBSCRITOR, Pessoa.ZZ99999);
+        contemAcao("assinar", true);
+        contemAcao("transferir", false);
+        contemAcao("arquivar_corrente_gravar", false);
     }
 
 }

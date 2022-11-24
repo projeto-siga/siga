@@ -48,6 +48,15 @@ public class TramitarEmParalelo extends DocTest {
 
         consultar(Pessoa.ZZ99999, sigla);
         contemMarca(CpMarcadorEnum.CAIXA_DE_ENTRADA, Lotacao.ZZLTEST2);
+        contemMarca(CpMarcadorEnum.EM_TRANSITO_ELETRONICO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
+        contemAcao("receber", false);
+        contemAcao("concluir_gravar", false);
+        contemAcao("arquivar_corrente_gravar", false);
+
+        consultar(Pessoa.ZZ99998, sigla);
+        contemAcao("receber", true);
+        contemAcao("concluir_gravar", false);
+        contemAcao("arquivar_corrente_gravar", false);
     }
 
 }

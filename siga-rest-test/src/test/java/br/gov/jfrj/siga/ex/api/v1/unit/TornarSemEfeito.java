@@ -1,17 +1,19 @@
 package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
 
-import br.gov.jfrj.siga.ex.api.v1.AuthTest;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.ex.api.v1.DocTest;
+import br.gov.jfrj.siga.ex.api.v1.AuthTest.Lotacao;
 import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
+import io.restassured.response.ValidatableResponse;
 
-public class TornarSemEfeito extends AuthTest {
+public class TornarSemEfeito extends DocTest {
 
     public static void tornarSemEfeito(Pessoa pessoa, String sigla) {
-        givenFor(pessoa)
+        ValidatableResponse resp = givenFor(pessoa)
 
                 .pathParam("sigla", sigla)
                 .param("motivo", "Foi criado apenas para fins de teste automatizado.")
@@ -19,17 +21,24 @@ public class TornarSemEfeito extends AuthTest {
                 .when()
                 .post("/sigaex/api/v1/documentos/{sigla}/tornar-sem-efeito")
 
-                .then()
-                .statusCode(200)
-                .body("sigla", notNullValue())
-                .body("status", equalTo("OK"));
+                .then();
+
+        assertStatusCode200(resp);
+
+        resp.body("status", equalTo("OK"));
     }
 
     @Test
     public void test_TornarSemEfeito_OK() {
-        String siglaTmp = Criar.criarMemorandoTemporario(Pessoa.ZZ99999);
-        String sigla = AssinarComSenha.assinarComSenha(Pessoa.ZZ99999, siglaTmp);
+        String sigla = Criar.criarMemorando(Pessoa.ZZ99999);
+
         tornarSemEfeito(Pessoa.ZZ99999, sigla);
+
+        consultar(Pessoa.ZZ99999, sigla);
+        contemMarca(CpMarcadorEnum.SEM_EFEITO, Pessoa.ZZ99999);
+        contemAcao("receber", false);
+        contemAcao("concluir_gravar", false);
+        contemAcao("arquivar_corrente_gravar", false);
     }
 
 }

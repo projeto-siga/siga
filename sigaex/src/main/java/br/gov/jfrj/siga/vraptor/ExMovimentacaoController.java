@@ -182,6 +182,7 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativaCancelPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
@@ -4528,28 +4529,28 @@ public class ExMovimentacaoController extends ExController {
 			Calendar ate = new GregorianCalendar();
 			ate.setTime(dateAte);
 				
-			List<MaterialEnviadoDto> lista = consultaService.consultarMaterialEnviado(auth, 
+			List<MaterialEnviadoDto> listaPublicacoes = consultaService.consultarMaterialEnviado(auth, 
 					envio.get(Calendar.YEAR) + "-" + (envio.get(Calendar.MONTH)+1) + "-" + envio.get(Calendar.DAY_OF_MONTH),
 					ate.get(Calendar.YEAR) + "-" + (ate.get(Calendar.MONTH)+1) + "-" + ate.get(Calendar.DAY_OF_MONTH));
-			
 			List<MaterialEnviadoDto> listaPag = new ArrayList<MaterialEnviadoDto>();
 			
 			if(paramoffset != null && paramoffset != 0) {
 				for (int i = 0; i < qtdePorPagina; i++) {
-					if(lista.size() > paramoffset+i) {
-						listaPag.add(lista.get(paramoffset+i));
+					if(listaPublicacoes.size() > paramoffset+i) {
+						listaPag.add(listaPublicacoes.get(paramoffset+i));
 					}
 				}
 			} else {
-				listaPag.addAll(lista);
+				listaPag.addAll(listaPublicacoes);
 			}
 			
 			result.include("lista", listaPag);
-			result.include("tamanho", lista.size());
+			result.include("tamanho", listaPublicacoes.size());
 		}
 		
 		result.include("usuarioDOE", auth.getUserName());
-		result.include("currentPageNumber", paramoffset == null ? 1 : (paramoffset / qtdePorPagina) + 1);		
+		result.include("currentPageNumber", paramoffset == null ? 1 : (paramoffset / qtdePorPagina) + 1);	
+		result.include("listaJustifCancel", consultaService.listarJustificativasCancelamento(auth));
 		result.include("dataEnvio", dataEnvio);
 		result.include("dataAte", dataAte);
 		result.include("secao", secao);

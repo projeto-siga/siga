@@ -832,6 +832,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public byte[] getConteudoBlobMov() {
 		try {
+			if (getCpArquivo() == null)
+				return null;
 			return getCpArquivo().getConteudo();
 		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage());

@@ -1,6 +1,6 @@
 # SIGA-REST-TEST
 
-Este mótudo utiliza o "rest assured" para realizar testes unitário, de módulo e de sistema nos webservices REST do Siga.
+Este mótudo utiliza o "Rest Assured" para realizar testes unitários, de módulo e de sistema nos webservices REST do Siga.
 
 Por enquanto foram escritos apenas alguns testes para o módulo Siga-Doc.
 
@@ -28,13 +28,13 @@ E existem modelos de:
 
 ## Testes Unitários
 
-Todos os testes unitários devem ficar no package *br.gov.jfrj.siga.ex.api.v1.unit*
+Todos os testes unitários devem ficar no ```package br.gov.jfrj.siga.ex.api.v1.unit```.
 
-Os testes unitários deve contem um método estático que faz a chamada ao Rest Assured para chamar determinado webservice e verificar o retorno.
+Os testes unitários devem conter um método estático que faz a chamada ao Rest Assured para chamar determinado webservice e verificar o retorno.
 
 Além disso, devem conter um ou mais testes unitários para validar o funcionamento deste método estático.
 
-Vamos analisar o exemplo do testes do método de receber:
+Vamos analisar o exemplo do teste do método ```receber```:
 
 
 ```Java
@@ -72,27 +72,27 @@ public class Receber extends DocTest {
 }
 ```
 
-Temos o método estático "receber" que utilizando o método givenFor(Pessoa.ZZ99999) se autentica no webservice como o usuário ZZ9999.
+Temos o método estático ```receber``` que, utilizando o método ```givenFor(Pessoa.ZZ99999)```, se autentica no webservice como o usuário ZZ9999.
 
-Depois, chama o webservice "receber" e testa o resultado com "assertStatusCode200". 
-Este método é importante, pois ele reportará corretamente o erro contido no parâmetro "errormsg" do resultado JSON.
+Depois, chama o webservice ```receber``` e testa o resultado com ```assertStatusCode200```. 
+Este método é importante, pois ele reportará corretamente o erro contido no parâmetro ```errormsg``` do resultado JSON.
 
-Os outros métodos utilizados no "receber" estão no padrão do Rest Assured, e podem ser consultados na sua [documentação](https://rest-assured.io/).
+Os outros métodos utilizados no ```receber``` estão no padrão do Rest Assured, e podem ser consultados na sua [documentação](https://rest-assured.io/).
 
-Depois, temos o teste unitário "test_Receber_OK".
+Depois, temos o teste unitário ```test_Receber_OK```.
 
 Neste artefato só será realizado o teste até o momento do recebimento. Não teria sentido, por exemplo, fazer um arquivamento depois do recebimento.
 
-Mesmo assim, para testar o recebimento é necessário, antes, criar um documento e tramitá-lo para alguém. Isso pode ser feito chamando os metodos estáticos dos testes unitários de "Criar" e "Tramitar". Não é necessários testar detalhes sobre a criação ou o trâmite, pois isso já foi feito no "Criar" e no "Tramitar".
+Mesmo assim, para testar o recebimento é necessário, antes, criar um documento e tramitá-lo para alguém. Isso pode ser feito chamando os metodos estáticos dos testes unitários de ```Criar``` e ```Tramitar```. Não é necessários testar detalhes sobre a criação ou o trâmite, pois isso já foi feito no ```Criar``` e no ```Tramitar```.
 
-Depois de chamar o método "receber" são feitos testes minuciosos sobre o estado do documento. Para isso, foram preparados alguns métodos facilitadores:
+Depois de chamar o método ```receber``` são feitos testes minuciosos sobre o estado do documento. Para isso, foram preparados alguns métodos facilitadores:
 
 #### consultar
 
-Este método chama o método estático "Consultar.consultar" e armazena o resultado em uma propriedade ThreadLocal, de modo que não precisamos nos preocupar em guardar o 
+Este método chama o método estático ```Consultar.consultar``` e armazena o resultado em uma propriedade ```ThreadLocal```, de modo que não precisamos nos preocupar em guardar o 
 resultado em uma variável e repassá-la para todos os métodos subsequentes.
 
-Um detalhe é que quando chamamos o "consultar", precisamos informar quem é o usuário que está fazendo a consulta,
+Um detalhe é que quando chamamos o ```consultar```, precisamos informar quem é o usuário que está fazendo a consulta,
 já que o resultado é diferente dependendo da pessoa que está consultando.
 
 #### contemMarca
@@ -109,7 +109,7 @@ Verifica se um gráfico contém determinado nó. Além do identificador do nó, 
 
 ## Testes de Módulo
 
-Todos os testes de módulo devem ficar no package *br.gov.jfrj.siga.ex.api.v1.module*
+Todos os testes de módulo devem ficar no ```package br.gov.jfrj.siga.ex.api.v1.module```.
 
 Os testes de módulo não contêm métodos estáticos e nunca chamam o Rest Assured.
 
@@ -140,13 +140,13 @@ public class TramitarReceberEArquivar extends DocTest {
 }
 ```
 
-Neste caso, foi feita uma inspeção detalhada, utilizando os facilitadores "cosultar", "contemMarca" e "contemAcao", apenas para na última operação. 
+Neste caso, foi feita uma inspeção detalhada, utilizando os facilitadores ```cosultar```, ```contemMarca``` e ```contemAcao```, apenas para na última operação. 
 
-Nada nos impediria de testar estados anteriores mas, considerando que "tramitarParaLotacao" já foi testado em detalhes em "Tramitar" e que "receber" já foi testado na classe "Receber",  apenas o arquivamento deveria receber este tratamento especial.
+Nada nos impediria de testar estados anteriores mas, considerando que ```tramitarParaLotacao``` já foi testado em detalhes em ```Tramitar``` e que ```receber``` já foi testado na classe ```Receber```,  apenas o arquivamento deveria receber este tratamento especial.
 
 ## Testes de Sistema
 
-Todos os testes de sistema devem ficar no package *br.gov.jfrj.siga.ex.api.v1.system*
+Todos os testes de sistema devem ficar no ```package br.gov.jfrj.siga.ex.api.v1.system```.
 
 Os testes de sistema não contêm métodos estáticos e nunca chamam o Rest Assured.
 

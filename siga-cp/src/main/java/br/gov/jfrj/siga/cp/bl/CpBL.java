@@ -2111,14 +2111,18 @@ public class CpBL {
 			}
 			
 			popularLotacaoNova(idLotacao, nmLotacao, siglaLotacao, isExternaLotacao, lotacaoPai, idLocalidade,
-					cpOrgaoUsuario, lotacaoNova, lotacao, dataSistema);
+					cpOrgaoUsuario, lotacaoNova, lotacao, dataSistema, situacao);
 			
 			try {
-				if(lotacaoNova.getDataFimLotacao() != null) {
-					lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
-					dao().gravarComHistorico(lotacao, identidadeCadastrante);
-				} else {
+				if (lotacao != null) {
+					if (lotacaoNova.getDataFimLotacao() != null) {
+						lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
+					} else {
+						lotacao.setDataFimLotacao(null);
+					}
 					dao().gravarComHistorico(lotacaoNova, lotacao, dataSistema, identidadeCadastrante);
+				} else {
+					dao().gravarComHistorico(lotacaoNova, identidadeCadastrante);
 				}
 				
 				gravarLotacaoPessoaComHistorico(identidadeCadastrante, listPessoa, lotacaoNova, lotacao, dataSistema);
@@ -2173,8 +2177,9 @@ public class CpBL {
 	}
 
 	private void popularLotacaoNova(final Long idLotacao, final String nmLotacao, final String siglaLotacao,
-			final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade,
-			CpOrgaoUsuario cpOrgaoUsuario, DpLotacao lotacaoNova, DpLotacao lotacao, Date dataSistema) {
+									final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade, 
+									CpOrgaoUsuario cpOrgaoUsuario, DpLotacao lotacaoNova, DpLotacao lotacao, 
+									Date dataSistema, final String situacao) {
 		if(lotacaoPai != null) {
 			validarIdLotacaoPai(idLotacao, lotacaoPai);
 			lotacaoNova.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
@@ -2199,6 +2204,10 @@ public class CpBL {
 		}
 		
 		lotacaoNova.setDataInicioLotacao(dataSistema);
+
+		if ("false".equals(situacao)) {
+			lotacaoNova.setDataFimLotacao(dataSistema);
+		}
 	}
 
 	private void validarIdLotacaoPai(final Long idLotacao, final Long lotacaoPai) {
@@ -2237,7 +2246,7 @@ public class CpBL {
 			throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
 		}
 						
-		if(podeInativarLotacao(lotacaoNova, listPessoa, qtdeDocumentoCriadosPosse, situacao)) {
+		if(podeInativarLotacao(lotacao, listPessoa, qtdeDocumentoCriadosPosse, situacao)) {
 			lotacaoNova.setDataFimLotacao(dataSistema);
 		}
 		lotacaoNova.setIdLotacaoIni(lotacao.getIdLotacaoIni());

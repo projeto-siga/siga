@@ -559,7 +559,7 @@
 			<dependency>
 				<groupId>net.sourceforge.cssparser</groupId>
 				<artifactId>cssparser</artifactId>
-				<version>0.9.14</version>
+				<version>0.9.29</version>
 			</dependency>
 			<dependency>
 				<groupId>nl.captcha</groupId>

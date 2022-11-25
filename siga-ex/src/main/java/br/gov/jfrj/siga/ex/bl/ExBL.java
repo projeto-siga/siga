@@ -5118,7 +5118,7 @@ public class ExBL extends CpBL {
 							c++;
 						}
 					}
-					if (c < 2)
+					if (c == 0)
 						throw new AplicacaoException("Não é permitido concluir o último recebimento, em vez disso, deve ser realizado o arquivamento");
 				}
 	

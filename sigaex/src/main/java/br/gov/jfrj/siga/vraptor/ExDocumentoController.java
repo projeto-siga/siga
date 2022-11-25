@@ -1170,8 +1170,10 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 		}
-		
-		ContextoPersistencia.flushTransaction();
+
+		// Nato: provavelmente não é mais necessário fazer o flush depois que corrigi
+		// a ordenação das movimentações
+		// ContextoPersistencia.flushTransaction();
 
 		return msgDestinoDoc;
 
@@ -1434,8 +1436,6 @@ public class ExDocumentoController extends ExController {
 			if (Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
-				ContextoPersistencia.flushTransaction();
-				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else {
 			ExMovimentacao mov = exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA);

@@ -17,19 +17,6 @@ public class NotificarReceberEConcluir extends DocTest {
 
         Notificar.notificar(Pessoa.ZZ99999, sigla, Lotacao.ZZLTEST2);
 
-        consultar(Pessoa.ZZ99999, sigla);
-        contemMarca(CpMarcadorEnum.CAIXA_DE_ENTRADA, Lotacao.ZZLTEST2);
-        contemVizNode("vizTramitacao", Lotacao.ZZLTEST.name(), "oval", "red");
-        contemVizNode("vizTramitacao", Lotacao.ZZLTEST2.name(), "rectangle", "red");
-
-        consultar(Pessoa.ZZ99999, sigla);
-        contemAcao("receber", false);
-        contemAcao("concluir_gravar", false);
-
-        consultar(Pessoa.ZZ99998, sigla);
-        contemAcao("receber", true);
-        contemAcao("concluir_gravar", false);
-
         Receber.receber(Pessoa.ZZ99998, sigla);
 
         consultar(Pessoa.ZZ99998, sigla);

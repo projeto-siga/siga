@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.ex.api.v1.DocTest;
+import br.gov.jfrj.siga.ex.api.v1.AuthTest.Lotacao;
+import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 import io.restassured.response.ValidatableResponse;
 
 public class Notificar extends DocTest {
@@ -46,8 +48,15 @@ public class Notificar extends DocTest {
 
         consultar(Pessoa.ZZ99999, sigla);
         contemMarca(CpMarcadorEnum.CAIXA_DE_ENTRADA, Lotacao.ZZLTEST2);
+        contemAcao("receber", false);
+        contemAcao("concluir_gravar", false);
         contemVizNode("vizTramitacao", Lotacao.ZZLTEST.name(), "oval", "red");
         contemVizNode("vizTramitacao", Lotacao.ZZLTEST2.name(), "rectangle", "red");
+
+        consultar(Pessoa.ZZ99998, sigla);
+        contemAcao("receber", true);
+        contemAcao("concluir_gravar", false);
+
     }
 
 }

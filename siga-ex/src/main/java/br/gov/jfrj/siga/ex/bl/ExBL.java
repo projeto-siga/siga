@@ -227,12 +227,15 @@ import br.gov.jfrj.siga.ex.util.notificador.especifico.ExEmail;
 import br.gov.jfrj.siga.ex.util.notificador.especifico.ExNotificar;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.CancelaMaterialDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoCancelamentoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.PermissaoPublicanteDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.ProximoSequencialDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
+import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetCancelamentoService;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetEnvioService;
 import br.gov.jfrj.siga.integracao.ws.siafem.ServicoSiafemWs;
@@ -1169,6 +1172,20 @@ public class ExBL extends CpBL {
 					user, anuncianteIdentificador, cadernoIdentificador, retrancaCodigo, tipomaterialIdentificador, 
 					sequencial, textoPublicacao, recibo, reciboHash);
 		return reciboPublicacaoDto;
+	}
+	
+	public MontaReciboPublicacaoCancelamentoDto montarReciboCancelPublicacaoDOE(AuthHeader user, String nomeArq) throws Exception {
+		PubnetCancelamentoService cancelService = new PubnetCancelamentoService();
+		MontaReciboPublicacaoCancelamentoDto reciboCancel = cancelService.montarReciboPublicacaoCancelamento(user, nomeArq);
+		return reciboCancel;
+	}
+	
+	public CancelaMaterialDto cancelarPublicacaoArquivoDOE(AuthHeader user, String nomeArquivo,
+			String justificativaId, String recibo, String reciboHash) throws Exception {
+		PubnetCancelamentoService cancelService = new PubnetCancelamentoService();
+		CancelaMaterialDto cancelMaterialDto = cancelService.cancelarMaterial(
+										user, nomeArquivo, justificativaId, recibo, reciboHash);
+		return cancelMaterialDto;
 	}
 	
 	public TokenDto gerarTokenDOE(String userName, String cpfUser, String email) throws Exception {

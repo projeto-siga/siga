@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.integracao.ws.pubnet.service;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.CancelaMaterialDto;

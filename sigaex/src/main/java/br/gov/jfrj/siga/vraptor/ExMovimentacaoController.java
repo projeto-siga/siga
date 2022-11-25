@@ -181,9 +181,10 @@ import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.CancelaMaterialDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
-import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativaCancelPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoCancelamentoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
@@ -4632,6 +4633,43 @@ public class ExMovimentacaoController extends ExController {
 				exMov.setDtFimMov(new Date());
 			}
 		} catch (final Exception e) {
+			setMensagem(e.getMessage());
+		} finally {
+			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+		}
+	}
+	
+	@Post("/app/exMovimentacao/montarReciboCanceArquivoDOE")
+	public void montarReciboCancelArquivoDOE(String nomeArq) throws Exception {
+		try {
+			MontaReciboPublicacaoCancelamentoDto reciboCancel = Ex.getInstance().getBL()
+													.montarReciboCancelPublicacaoDOE(getAuthHeaderDOE(), nomeArq);
+			setMensagem(new Gson().toJson(reciboCancel));
+		} catch (final Exception e) {
+			e.printStackTrace();
+			setMensagem(e.getMessage());
+		} finally {
+			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+		}
+	}
+	
+	@Post("/app/exMovimentacao/cancelPublicacaoArquivoDOE")
+	public void cancelarPublicacaoArquivoDOE(String nomeArq, String justificativaId, 
+															String reciboAssinado, String reciboHash) throws Exception {
+		try {
+			CancelaMaterialDto reciboCancel = Ex.getInstance().getBL()
+													.cancelarPublicacaoArquivoDOE(getAuthHeaderDOE(), nomeArq, justificativaId, reciboAssinado, reciboHash);
+			
+			if (reciboCancel == null || !"0000".equals(reciboCancel.getCodRetorno())) {
+				System.out.println("Erro ao enviar publicação ao webservice DOE." + reciboCancel);
+				throw new RuntimeException("Erro ao enviar publicação ao webservice DOE." 
+								+ reciboCancel != null ? "Código Erro" + reciboCancel.getCodRetorno() : "");
+			} else {
+			
+				setMensagem(new Gson().toJson(reciboCancel));
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
 			setMensagem(e.getMessage());
 		} finally {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");

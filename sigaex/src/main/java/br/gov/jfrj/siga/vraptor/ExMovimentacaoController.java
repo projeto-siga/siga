@@ -4544,13 +4544,13 @@ public class ExMovimentacaoController extends ExController {
 				listaPag.addAll(listaPublicacoes);
 			}
 			
+			result.include("listaJustifCancel", consultaService.listarJustificativasCancelamento(auth));
 			result.include("lista", listaPag);
 			result.include("tamanho", listaPublicacoes.size());
 		}
 		
 		result.include("usuarioDOE", auth.getUserName());
 		result.include("currentPageNumber", paramoffset == null ? 1 : (paramoffset / qtdePorPagina) + 1);	
-		result.include("listaJustifCancel", consultaService.listarJustificativasCancelamento(auth));
 		result.include("dataEnvio", dataEnvio);
 		result.include("dataAte", dataAte);
 		result.include("secao", secao);

@@ -58,7 +58,7 @@ public class SincController extends SigaController {
 				arr.put(s);
 			json.put("log", arr);
 			String s = json.toString(4);
-			result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+			result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 
 		} catch (Exception ex) {
 			jsonError(ex);
@@ -92,7 +92,7 @@ public class SincController extends SigaController {
 				arr.put(s);
 			json.put("log", arr);
 			String s = json.toString(4);
-			result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+			result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 
 		} catch (Exception ex) {
 			jsonError(ex);

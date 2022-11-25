@@ -257,17 +257,17 @@ public class SigaCpSincLdap extends SigaCpSinc {
 //			carregaConfiguracoes();
 			validaRestricoes();
 			
-			String salvarLeiturasDir = "c:/tmp";
+//			String salvarLeiturasDir = "c:/tmp";
 
 			List<AdObjeto> dadosLDAP = lerDadosDoLDAP();
-			 logarArquivoJson(dadosLDAP, salvarLeiturasDir != null, salvarLeiturasDir +
-			 "\\leitura-ldap.json");
+//			 logarArquivoJson(dadosLDAP, salvarLeiturasDir != null, salvarLeiturasDir +
+//			 "\\leitura-ldap.json");
 
 //			 if (true) throw new RuntimeException("parando por aqui");
 			
 			List<AdObjeto> dadosBD = lerDadosDoBD();
-			 logarArquivoJson(dadosBD, salvarLeiturasDir != null, salvarLeiturasDir +
-			 "\\leitura-bd.json");
+//			 logarArquivoJson(dadosBD, salvarLeiturasDir != null, salvarLeiturasDir +
+//			 "\\leitura-bd.json");
 
 			if (restricao.size() > 0) {
 				// lBD = restringirGrupos(lBD);

@@ -403,7 +403,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 		Cp.getInstance().getBL().criarLotacao(getIdentidadeCadastrante(), getTitular(), getTitular().getLotacao(), id,
 				nmLotacao, idOrgaoUsu, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade);
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, idOrgaoUsu, siglaLotacao);
 	}
 
 	@Transacional
@@ -414,6 +414,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		// ativar
 		if (lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
 			DpLotacao lotacaoNova = new DpLotacao();
+			lotacao.setDataFimLotacao(null);
 			Cp.getInstance().getBL().copiaLotacao(lotacao, lotacaoNova);
 			dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
 		} else {// inativar
@@ -441,7 +442,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				}
 			}
 		}
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), lotacao.getSiglaLotacao());
 	}
 
 	@Transacional

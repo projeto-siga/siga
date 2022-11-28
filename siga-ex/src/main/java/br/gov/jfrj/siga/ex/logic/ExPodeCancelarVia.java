@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.logic;
 
+import br.gov.jfrj.siga.cp.logic.CpPodeNunca;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
@@ -55,6 +56,9 @@ public class ExPodeCancelarVia extends CompositeExpressionSupport {
 	 */
 	@Override
 	protected Expression create() {
+		if (exUltMovNaoCanc == null || exUltMov == null) 
+			return new CpPodeNunca();
+			
 		return And.of(
 
 				new ExEMobilVia(mob),
@@ -88,7 +92,8 @@ public class ExPodeCancelarVia extends CompositeExpressionSupport {
 
 				new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.CRIACAO),
 
-				new CpIgual(exUltMovNaoCanc, "última movimentação não cancelada", exUltMov, "última movimentação"),
+				new CpIgual(exUltMovNaoCanc.getIdMov(), "última movimentação não cancelada", 
+							exUltMov.getIdMov(), "última movimentação"),
 
 				new ExEstaResponsavel(mob, titular, lotaTitular),
 

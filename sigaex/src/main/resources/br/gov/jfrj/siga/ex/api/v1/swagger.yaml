@@ -104,6 +104,13 @@ parameters:
     required: false
     default: false
     type: boolean
+  desabilitarRecebimentoAutomatico:
+    name: desabilitarRecebimentoAutomatico
+    in: query
+    description: Informar true se deseja desabilitar o recebimento automático
+    required: false
+    default: false
+    type: boolean
   estampa:
     name: estampa
     in: query
@@ -1143,6 +1150,7 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/auditar"
+        - $ref: "#/parameters/desabilitarRecebimentoAutomatico"
         - name: exibe
           in: query
           description: Informar true se deseja exibir lista de movimentações reduzidas no histórico
@@ -1540,6 +1548,95 @@ paths:
             properties:
               status:
                 type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/tramitar-em-paralelo:
+    post:
+      description: "<p>O trâmite é feito em uma <b>via ou volume</b> do documento, portanto necessita ser informada no final da sigla (Ex.: letra 
+        <b>'A' ou  'V01'</b> no final da sigla).</p> <p>A sigla deve ser informada sem traços ou barras.</p>
+        <p>Para tramitar para um usuário específico, informar os campos <i>matricula</i> e <i>lotacao</i>.</p>
+        <p>Para tramitar para uma lotação, preencher somente o campo <i>lotacao</i>. Se quiser tramitar para uma lotação 
+        de outro órgão, informar a sigla completa da lotação incluindo o órgão no formato: XXYYYYY onde XX é a sigla do 
+        órgão e YYYYY é a sigla da lotação, sem traços.</p>
+        <p>Em São Paulo, lotação é chamada de unidade."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+      summary: Tramitar em paralelo documento para outro usuário ou lotação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/notificar:
+    post:
+      description: "<p>A notificação é feita em uma <b>via ou volume</b> do documento, portanto necessita ser informada no final da sigla (Ex.: letra 
+        <b>'A' ou  'V01'</b> no final da sigla).</p> <p>A sigla deve ser informada sem traços ou barras.</p>
+        <p>Para tramitar para um usuário específico, informar os campos <i>matricula</i> e <i>lotacao</i>.</p>
+        <p>Para tramitar para uma lotação, preencher somente o campo <i>lotacao</i>. Se quiser tramitar para uma lotação 
+        de outro órgão, informar a sigla completa da lotação incluindo o órgão no formato: XXYYYYY onde XX é a sigla do 
+        órgão e YYYYY é a sigla da lotação, sem traços.</p>
+        <p>Em São Paulo, lotação é chamada de unidade."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+      summary: Notificar documento para outro usuário ou lotação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/concluir:
+    post:
+      description: "Utilize este método para concluir um trâmite ou notificação pendente do documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Concluir trâmite ou notificação pendente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
         500:
           description: Error ocurred
           schema:

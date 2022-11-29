@@ -240,9 +240,9 @@ public enum CpMarcadorEnum {
 		return icone;
 	}
 
-	public long getId() {
-		return (long) id;
-	}
+    public long getId() {
+        return (long) id;
+    }
 
 	public String getNome() {
 		return nome;

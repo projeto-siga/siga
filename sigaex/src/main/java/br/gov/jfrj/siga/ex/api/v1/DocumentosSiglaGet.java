@@ -28,6 +28,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
 
 @TrackRequest
@@ -56,12 +57,15 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		}
 
 		// Recebimento automático
-		if (Prop.getBool("recebimento.automatico") 
+        Boolean recebimentoAutomatico = Prop.getBool("recebimento.automatico");
+        recebimentoAutomatico = recebimentoAutomatico == null ? false : recebimentoAutomatico;
+        if (recebimentoAutomatico && req.desabilitarRecebimentoAutomatico == true)
+            recebimentoAutomatico = false;
+		if (recebimentoAutomatico
 				&& Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob)) {
 			try {
 				ctx.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());
-				ExDao.getInstance().em().refresh(mob);
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 				throw e;

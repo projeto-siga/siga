@@ -57,7 +57,6 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_orgao_usuario")
-@Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements

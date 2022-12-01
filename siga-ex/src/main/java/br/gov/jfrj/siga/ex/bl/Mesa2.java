@@ -332,8 +332,7 @@ public class Mesa2 {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				r.descr = "*** Doc. corrompido (idMobil:" + mobil.getIdMobil().toString() + ") *** " 
-						+ (r.descr != null? r.descr : "");
+				r.descr = "*** Doc. corrompido (Mobil:" + mobil + ") *** " + ( r.descr != null ? r.descr : "" );
 			}
 			l.add(r);
 		}

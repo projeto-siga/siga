@@ -168,7 +168,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	}
 
 	public void setIdMobil(java.lang.Long idMobil) {
-		idMobil = idMobil;
+		this.idMobil = idMobil;
 	}
 
 	public ExDocumento getExDocumento() {

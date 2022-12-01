@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -4534,25 +4532,25 @@ public class ExMovimentacaoController extends ExController {
 				
 			List<MaterialEnviadoDto> listaPublicacoes = consultaService.consultarMaterialEnviado(auth, 
 					envio.get(Calendar.YEAR) + "-" + (envio.get(Calendar.MONTH)+1) + "-" + envio.get(Calendar.DAY_OF_MONTH),
-					ate.get(Calendar.YEAR) + "-" + (ate.get(Calendar.MONTH)+1) + "-" + ate.get(Calendar.DAY_OF_MONTH));
-			List<MaterialEnviadoDto> sortedList = listaPublicacoes.stream()
-					.sorted(Comparator.comparing(MaterialEnviadoDto::getPublicacaoId).reversed()).collect(Collectors.toList());
+					ate.get(Calendar.YEAR) + "-" + (ate.get(Calendar.MONTH)+1) + "-" + ate.get(Calendar.DAY_OF_MONTH+1));
+			
+			Collections.reverse(listaPublicacoes);
 			
 			List<MaterialEnviadoDto> listaPag = new ArrayList<MaterialEnviadoDto>();
 			
 			if(paramoffset != null && paramoffset != 0) {
 				for (int i = 0; i < qtdePorPagina; i++) {
-					if(sortedList.size() > paramoffset+i) {
-						listaPag.add(sortedList.get(paramoffset+i));
+					if(listaPublicacoes.size() > paramoffset+i) {
+						listaPag.add(listaPublicacoes.get(paramoffset+i));
 					}
 				}
 			} else {
-				listaPag.addAll(sortedList);
+				listaPag.addAll(listaPublicacoes);
 			}
 			
 			result.include("listaJustifCancel", consultaService.listarJustificativasCancelamento(auth));
 			result.include("lista", listaPag);
-			result.include("tamanho", sortedList.size());
+			result.include("tamanho", listaPublicacoes.size());
 		}
 		
 		result.include("usuarioDOE", auth.getUserName());

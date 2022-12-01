@@ -57,12 +57,12 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		}
 
 		// Recebimento automático
-        Boolean recebimentoAutomatico = Prop.getBool("recebimento.automatico");
-        recebimentoAutomatico = recebimentoAutomatico == null ? false : recebimentoAutomatico;
-        if (recebimentoAutomatico && req.desabilitarRecebimentoAutomatico == true)
-            recebimentoAutomatico = false;
-		if (recebimentoAutomatico
-				&& Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob)) {
+		Boolean podeRecebimentoAutomatico = ( 
+						Boolean.TRUE.equals(Prop.getBool("recebimento.automatico")) &&
+						!Boolean.TRUE.equals(req.desabilitarRecebimentoAutomatico) && 
+						Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob) );
+		
+        if (podeRecebimentoAutomatico) {
 			try {
 				ctx.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());

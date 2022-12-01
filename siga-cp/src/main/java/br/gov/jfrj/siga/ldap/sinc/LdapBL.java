@@ -157,8 +157,8 @@ public class LdapBL implements OperadorSemHistorico {
 	 */
 	public LdapBL(SincProperties conf) throws Exception {
 		this.conf = conf;
-		if (conf.isModoEscrita())
-			throw new Exception("Não queremos escrever no AD por enquanto.");
+//		if (conf.isModoEscrita())
+//			throw new Exception("Não queremos escrever no AD por enquanto.");
 		ldap = new LdapDaoImpl(!conf.isModoEscrita()).getProxy();
 		if (this.conf.isSSLAtivo()) {
 			ldap.conectarComSSL(conf.getServidorLdap(), conf.getPortaSSLLdap(), conf.getUsuarioLdap(),

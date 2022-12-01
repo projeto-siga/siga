@@ -921,7 +921,7 @@ public class SincProperties  {
 				return null;
 			return Boolean.valueOf(p.trim());
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro ao obter a propriedade modo_escrita", 9, e);
+			throw new AplicacaoException("Erro ao obter a propriedade modo.escrita", 9, e);
 		}
 	}
 }

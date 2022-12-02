@@ -4527,12 +4527,13 @@ public class ExMovimentacaoController extends ExController {
 			envio.setTime(dateEnvio);
 			Date dateAte = new Date();
 			dateAte = SigaCalendar.converteStringEmData(dataAte);
+			
 			Calendar ate = new GregorianCalendar();
 			ate.setTime(dateAte);
 				
 			List<MaterialEnviadoDto> listaPublicacoes = consultaService.consultarMaterialEnviado(auth, 
 					envio.get(Calendar.YEAR) + "-" + (envio.get(Calendar.MONTH)+1) + "-" + envio.get(Calendar.DAY_OF_MONTH),
-					ate.get(Calendar.YEAR) + "-" + (ate.get(Calendar.MONTH)+1) + "-" + ate.get(Calendar.DAY_OF_MONTH+1));
+					ate.get(Calendar.YEAR) + "-" + (ate.get(Calendar.MONTH)+1) + "-" + ate.get(Calendar.DAY_OF_MONTH));
 			
 			Collections.reverse(listaPublicacoes);
 			

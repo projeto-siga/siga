@@ -146,7 +146,7 @@
 					  try {
 						 console.log(JSON.parse(data));
 						 sigaSpinner.ocultar();
-						 sigaModal.alerta("Envio realizado com sucesso!");
+						 sigaModal.alerta("Cancelamento realizado com sucesso!");
 						 atualizarTela(5000);
 					  } catch(err){
 						  inserirValueDivAlertaError(data);

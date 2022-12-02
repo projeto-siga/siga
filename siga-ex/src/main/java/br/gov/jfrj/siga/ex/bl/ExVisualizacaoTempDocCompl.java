@@ -105,17 +105,19 @@ public class ExVisualizacaoTempDocCompl {
 	public void incluirCossigsVisTempDocsCompl(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
 							final ExDocumento doc, boolean podeIncluirSubscr, boolean fluxoInclusao) {
 		if (podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante))	{
-			//Verificacao se pode incluir mov
-			if (podeIncluirCossigSubscrVisTempDocsCompl(doc, podeIncluirSubscr, PAPEL_AUTORIZ_COSSIG)) {
-				//obtem todos os cossigs para inclusao de mov
-				List<DpPessoa> cossigs = doc.getCosignatarios();
-				// Valida se for usuario externo
-				if (fluxoInclusao)
-					validarExistenciaUsuarioExterno(cossigs);
-				//obtem vias doc ao qual deve se criar mov
-				List<ExDocumento> listaViasDocs = doc.isFinalizado() ? doc.getTodosOsPaisDasViasCossigsSubscritor() : Arrays.asList(doc);
-				incluirCossigsSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc,
-													listaViasDocs, cossigs, PAPEL_AUTORIZ_COSSIG);
+			//obtem todos os cossigs para inclusao de mov
+			List<DpPessoa> cossigs = doc.getCosignatarios();
+			if (cossigs != null) {
+				//Verificacao se pode incluir mov
+				if (podeIncluirCossigSubscrVisTempDocsCompl(doc, podeIncluirSubscr, PAPEL_AUTORIZ_COSSIG)) {
+					// Valida se for usuario externo
+					if (fluxoInclusao)
+						validarExistenciaUsuarioExterno(cossigs);
+					//obtem vias doc ao qual deve se criar mov
+					List<ExDocumento> listaViasDocs = doc.isFinalizado() ? doc.getTodosOsPaisDasViasCossigsSubscritor() : Arrays.asList(doc);
+					incluirCossigsSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc,
+														listaViasDocs, cossigs, PAPEL_AUTORIZ_COSSIG);
+				}
 			}
 		}
 	}
@@ -129,18 +131,21 @@ public class ExVisualizacaoTempDocCompl {
 	 */
 	public void incluirSubscritorVisTempDocsCompl(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc, boolean podeIncluirSubscr, boolean fluxoInclusao) {
+
 		if (podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
-			//Verificacao se pode incluir mov
-			if (podeIncluirCossigSubscrVisTempDocsCompl(doc, podeIncluirSubscr, PAPEL_AUTORIZ_SUBSCR)) {
-				DpPessoa subscritor = doc.getSubscritorDiffTitularDoc();
-				// Valida se for usuario externo
-				if (fluxoInclusao)
-					validarExistenciaUsuarioExterno(Arrays.asList(subscritor));
-				//obtem vias doc ao qual deve se criar mov
-				List<ExDocumento> listaViasDocs = doc.isFinalizado() ? doc.getTodosOsPaisDasViasCossigsSubscritor() : Arrays.asList(doc);
-				if(subscritor != null) 
-					incluirCossigsSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc,
-							listaViasDocs, Arrays.asList(subscritor), PAPEL_AUTORIZ_SUBSCR);
+			DpPessoa subscritor = doc.getSubscritorDiffTitularDoc();
+			if(subscritor != null) {
+				//Verificacao se pode incluir mov
+				if (podeIncluirCossigSubscrVisTempDocsCompl(doc, podeIncluirSubscr, PAPEL_AUTORIZ_SUBSCR)) {
+					
+					// Valida se for usuario externo
+					if (fluxoInclusao)
+						validarExistenciaUsuarioExterno(Arrays.asList(subscritor));
+					//obtem vias doc ao qual deve se criar mov
+					List<ExDocumento> listaViasDocs = doc.isFinalizado() ? doc.getTodosOsPaisDasViasCossigsSubscritor() : Arrays.asList(doc);
+					
+					incluirCossigsSubscritorVisTempDocsCompl(cadastrante, lotaCadastrante, doc, listaViasDocs, Arrays.asList(subscritor), PAPEL_AUTORIZ_SUBSCR);
+				}
 			}
 		}
 	}

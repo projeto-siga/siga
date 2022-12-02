@@ -127,7 +127,7 @@ public class LoginController extends SigaController {
 				result.include("loginUsuario", username);
 				result.forwardTo(this).login(cont);				
 			} else {
-				gravaCookieComToken(username, cont, false);
+				gravaCookieComToken(username, cont);
 				result.include("isPinNotDefined", true);
 			}
 		} catch (Exception e) {
@@ -147,8 +147,8 @@ public class LoginController extends SigaController {
 		request.getSession().setAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO, null);
 				
 		request.getSession(false);
-		this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
-		
+
+		AuthJwtFormFilter.addCookie(request, response, AuthJwtFormFilter.buildEraseCookie());
 		
 		result.redirectTo("/");					
 		
@@ -192,9 +192,7 @@ public class LoginController extends SigaController {
 			if (Prop.isGovSP() && !so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
 				throw new ServletException("Senha do usuário atual não confere com a do usuário da lotação.");
 
-			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
-
-			gravaCookieComToken(username, cont, true);
+			gravaCookieComToken(username, cont);
 			
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
@@ -202,7 +200,7 @@ public class LoginController extends SigaController {
 		}
 	}
 
-	private void gravaCookieComToken(String username, String cont, Boolean gravaCookie) throws Exception {
+	private void gravaCookieComToken(String username, String cont) throws Exception {
 		String modulo = SigaJwtBL.extrairModulo(request);
 		SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
 
@@ -214,9 +212,6 @@ public class LoginController extends SigaController {
 				(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
 
 		Cookie cookie = AuthJwtFormFilter.buildCookie(token);
-		
-		if (gravaCookie)
-			response.addCookie(cookie);
 
 		AuthJwtFormFilter.addCookie(request, response, cookie);
 
@@ -355,7 +350,7 @@ public class LoginController extends SigaController {
 				}
 				if (!usuarioPermitido)
 					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
-				gravaCookieComToken(cpf, cont, false);
+				gravaCookieComToken(cpf, cont);
 			}
 				
 			} catch(AplicacaoException a){

@@ -11,13 +11,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-
 import br.gov.jfrj.siga.cp.util.SigaCpSinc;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -34,6 +27,8 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
 
     private Logger log = Logger.getLogger(" br.gov.jfrj.siga.matrix.sinc");
     private boolean modoLog = true;
+
+    JdbcSimpleOrm orm;
 
     private static final String ACC_LVL_SEM_ACESSO = "NO ACC";
     private static final String ACC_LVL_SERVIDOR_SJRJ = "SJRJ-SERVI";
@@ -55,24 +50,28 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
     }
 
     public void matrix() throws Exception {
-        // try {
-        log("Importando matrix...");
-        carregarCards();
-        Map<String, String> idsDepartCorp = carregarDepartment();
-        Map<String, String> idsJobTitleCorp = carregarJobTitle();
+        try (JdbcSimpleOrm jdbcSimpleOrm = new JdbcSimpleOrm()) {
+            orm = jdbcSimpleOrm;
 
-        log("Importando corporativo...");
+            // try {
+            log("Importando matrix...");
+            carregarCards();
+            Map<String, String> idsDepartCorp = carregarDepartment();
+            Map<String, String> idsJobTitleCorp = carregarJobTitle();
 
-        List<Sincronizavel> sincs = new ArrayList<Sincronizavel>();
-        sincs.addAll(importarTabela());
+            log("Importando corporativo...");
 
-        carregarLotacoes(idsDepartCorp, sincs);
-        carregarCargos(idsJobTitleCorp, sincs);
-        carregarPessoas(idsDepartCorp, idsJobTitleCorp, sincs);
+            List<Sincronizavel> sincs = new ArrayList<Sincronizavel>();
+            sincs.addAll(importarTabela());
 
-        log("Gravando alterações...");
-        List<Item> list = gravarAlteracoes();
-        log("Total de alterações: " + list.size());
+            carregarLotacoes(idsDepartCorp, sincs);
+            carregarCargos(idsJobTitleCorp, sincs);
+            carregarPessoas(idsDepartCorp, idsJobTitleCorp, sincs);
+
+            log("Gravando alterações...");
+            List<Item> list = gravarAlteracoes();
+            log("Total de alterações: " + list.size());
+        }
     }
 
     private void carregarPessoas(Map<String, String> idsDepartCorp,
@@ -214,9 +213,7 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
         setNovo.addAll(departCorp);
     }
 
-    private void ajustarCards(final Criteria crit) {
-        @SuppressWarnings("unchecked")
-        List<Cards> cardsMatrix = crit.list();
+    private void ajustarCards(final List<Cards> cardsMatrix) {
         for (Cards c : cardsMatrix) {
             c.setStaffNumber(c.getStaffNumber());
             c.setCardNumber(fix(c.getCardNumber()));
@@ -298,20 +295,20 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
 
             if (fMinusculas) {
                 final char minuscula = (char) ('a' + i);
-                // Exclus�o das letras o e O na gera��o de senha
+                // Exclus�o das letras o e O na geração de senha
                 if (minuscula != 'o')
                     caracteres.append(minuscula);
             }
             if (fMaiusculas) {
                 final char maiuscula = (char) ('A' + i);
-                // Exclus�o das letras o e O na gera��o de senha
+                // Exclus�o das letras o e O na geração de senha
                 if (maiuscula != 'O')
                     caracteres.append(maiuscula);
             }
 
         }
 
-        // exclus�o do n�mero zero na gera��o de senha
+        // exclus�o do n�mero zero na geração de senha
         for (int i = 0; i < 10 - 1; i++) {
             caracteres.append('1' + i);
         }
@@ -356,13 +353,12 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
     //
     // Operações com o banco de dados do Matrix
     //
-    private Map<String, String> carregarJobTitle() {
-        final Criteria crit3 = (emMatrix.unwrap(Session.class)).createCriteria(JobTitle.class);
-        List<JobTitle> jobTitleMatrix = crit3.list();
-        List<JobTitle> jobTitleSelectedMatrix = new ArrayList<JobTitle>();
+
+    private Map<String, String> carregarJobTitle() throws Exception {
+        List<JobTitle> jobTitleMatrix = orm.loadAll(JobTitle.class, null);
+        List<JobTitle> jobTitleSelectedMatrix = new ArrayList<>();
         Map<String, String> idsJobTitleCorp = new HashMap<String, String>();
         for (JobTitle j : jobTitleMatrix) {
-            // c.setPositionCode(c.getPositionCode());
             j.setPositionDesc(fix(j.getPositionDesc()));
             idsJobTitleCorp.put(j.getPositionDesc(), j.getPositionCode());
             if (j.getPositionDesc().startsWith(
@@ -373,13 +369,11 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
         return idsJobTitleCorp;
     }
 
-    private Map<String, String> carregarDepartment() {
-        final Criteria crit2 = (emMatrix.unwrap(Session.class)).createCriteria(Department.class);
-        List<Department> departMatrix = crit2.list();
+    private Map<String, String> carregarDepartment() throws Exception {
+        List<Department> departMatrix = orm.loadAll(Department.class, null);
         List<Department> departSelectedMatrix = new ArrayList<Department>();
         Map<String, String> idsDepartCorp = new HashMap<String, String>();
         for (Department d : departMatrix) {
-            // c.setDepartCode(c.getDepartCode());
             d.setDepartDesc(fix(d.getDepartDesc()));
             idsDepartCorp.put(d.getDepartDesc(), d.getDepartCode());
             if (d.getDepartDesc().startsWith(
@@ -390,12 +384,9 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
         return idsDepartCorp;
     }
 
-    private void carregarCards() {
-        final Criteria crit = (emMatrix.unwrap(Session.class)).createCriteria(Cards.class);
-        crit.add(Restrictions.like("user2",
-                "SIGA-" + cpOrgaoUsuario.getSiglaOrgaoUsu() + "%"));
-        crit.add(Restrictions.eq("cardType", CARD_TYPE_USUARIO));
-        ajustarCards(crit);
+    private void carregarCards() throws Exception {
+        List<Cards> cardsMatrix = orm.loadAll(Cards.class, " WHERE user2 like ? and cardType = ?");
+        ajustarCards(cardsMatrix);
     }
 
     private List<Item> gravarAlteracoes() throws Exception {
@@ -407,33 +398,43 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
             sinc.setSetAntigo(setAntigo);
             list = sinc.getOperacoes(dt);
         } catch (Exception e) {
-            log("Transa��o abortada por erro: " + e.getMessage());
-            throw new Exception("Erro na grava��o", e);
+            log("Transação abortada por erro: " + e.getMessage());
+            throw new Exception("Erro na gravação", e);
         }
-        EntityTransaction tr = emMatrix.getTransaction();
-        tr.begin();
         try {
             OperadorSemHistorico o = new OperadorSemHistorico() {
 
                 @Override
                 public Sincronizavel incluir(Sincronizavel novo) {
-                    emMatrix.persist(novo);
+                    try {
+                        orm.insert(novo);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     return (Sincronizavel) novo;
                 }
 
                 @Override
                 public Sincronizavel excluir(Sincronizavel antigo) {
-                    // exclui apenas se j� for NO_ACC
+                    // exclui apenas se já for NO_ACC
                     if (antigo instanceof Cards) {
                         Cards c = (Cards) antigo;
                         if (!c.getAccessLevel().equals(ACC_LVL_SEM_ACESSO)) {
                             c.setAccessLevel(ACC_LVL_SEM_ACESSO);
-                            emMatrix.persist(c);
+                            try {
+                                orm.update(c);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                             return c;
                         }
                     }
 
-                    emMatrix.remove(antigo);
+                    try {
+                        orm.remove(antigo);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     return antigo;
                 }
 
@@ -450,7 +451,11 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                     // else if (novo instanceof JobTitle)
                     // ((JobTitle) antigo)
                     // .copiarPropriedades((JobTitle) novo);
-                    emMatrix.merge(antigo);
+                    try {
+                        orm.update(antigo);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     return antigo;
                 }
             };
@@ -463,7 +468,6 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                  * abaixo
                  * 
                  */
-
                 if ((opr.getNovo() instanceof Cards) && (opr.getAntigo() instanceof Cards)
                         && (opr.getOperacao() == Operacao.alterar)) {
                     Cards novo = (Cards) opr.getNovo();
@@ -478,24 +482,22 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
 
                 log(log);
                 sinc.gravar(opr, o, true);
-                emMatrix.flush();
             }
 
             if (modoLog) {
-                log("Transa��o em modoLog=true n�o confirmada");
-                tr.rollback();
+                log("Transação em modoLog=true não confirmada");
+                orm.rollback();
             } else {
-                tr.commit();
-                log("Transa��o confirmada");
+                orm.commit();
+                log("Transação confirmada");
             }
-
+            orm = null;
         } catch (Exception e) {
-            tr.rollback();
-            log("Transa��o abortada por erro: " + e.getMessage());
-            throw new Exception("Erro na grava��o", e);
+            if (orm != null)
+                orm.rollback();
+            log("Transação abortada por erro: " + e.getMessage());
+            throw new Exception("Erro na gravação", e);
         }
-
-        // emMatrix.flush();
         return list;
     }
 

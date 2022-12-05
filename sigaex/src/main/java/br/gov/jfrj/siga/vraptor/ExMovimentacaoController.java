@@ -4496,9 +4496,10 @@ public class ExMovimentacaoController extends ExController {
 		String lotPublicacao = dao().consultar(idPubl, DpLotacao.class, false)
 				.getSigla();
 
-		Ex.getInstance().getComp()
-			.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
-					docBuilder.getMob());
+		if(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE.equals(exTipoDeMov))
+			Ex.getInstance().getComp()
+				.afirmar("Não foi possível o agendamento de publicação no DOE.", ExPodeAgendarPublicacaoDOE.class, getTitular(), getLotaTitular(),
+						docBuilder.getMob());
 		
 		String nomeArqDoc = docBuilder.getMob().getCodigoCompacto() + 
 							(isArqRecibo ? "REC" + ".txt" : ".txt");
@@ -4551,6 +4552,7 @@ public class ExMovimentacaoController extends ExController {
 			
 			result.include("listaJustifCancel", consultaService.listarJustificativasCancelamento(auth));
 			result.include("lista", listaPag);
+			result.include("listaJson", new Gson().toJson(listaPag));
 			result.include("tamanho", listaPublicacoes.size());
 		}
 		
@@ -4657,11 +4659,13 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
+	@Transacional
 	@Post("/app/exMovimentacao/cancelPublicacaoArquivoDOE")
 	public void cancelarPublicacaoArquivoDOE(String nomeArq, String justificativaId, 
-															String reciboAssinado, String reciboHash) throws Exception {
+							String reciboAssinado, String reciboHash, String idComprovanteEnvio, String reciboTexto) throws Exception {
 		try {
-			CancelaMaterialDto reciboCancel = Ex.getInstance().getBL()
+			
+			CancelaMaterialDto reciboCancel = Ex.getInstance().getBL()//nomeArq
 													.cancelarPublicacaoArquivoDOE(getAuthHeaderDOE(), nomeArq, justificativaId, reciboAssinado, reciboHash);
 			
 			if (reciboCancel == null || !"0000".equals(reciboCancel.getCodRetorno())) {
@@ -4669,7 +4673,30 @@ public class ExMovimentacaoController extends ExController {
 				throw new RuntimeException("Erro ao enviar publicação ao webservice DOE." 
 								+ reciboCancel != null ? "Código Erro" + reciboCancel.getCodRetorno() : "");
 			} else {
-			
+				if(idComprovanteEnvio != null || !"".equals(idComprovanteEnvio)) {
+					Long idComprovanteEnvioLong = Long.valueOf(idComprovanteEnvio);
+					List<ExMovimentacao> listaMovs = 
+							dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, getTitular());
+
+					for (ExMovimentacao exMov : listaMovs) {
+						if(idComprovanteEnvioLong.equals(exMov.getNumTRFPublicacao())) {
+							String sigla = exMov.getExDocumento().getSigla();
+							System.out.println("***************Sigla****** " + sigla);
+							DpLotacaoSelecao lot = new DpLotacaoSelecao();
+							lot.setId(getLotaTitular().getId());
+							lot.buscar();
+							
+							final String descrMov = "Cancelamento de publicação DOE realizado com sucesso! ";		
+							gravarMovPublicacaoDOE(sigla, DateUtils.formatarDDMMYYYY(new Date()), reciboTexto, descrMov, lot, 
+									null, reciboCancel.getComprovanteCancelamento(), ExTipoDeMovimentacao.CANCELAR_PUBLICACAO_DOE, Boolean.TRUE);
+							
+							exMov.setDtFimMov(new Date());
+							
+							break;
+						}
+					}
+				}
+				
 				setMensagem(new Gson().toJson(reciboCancel));
 			}
 		} catch (final Exception e) {

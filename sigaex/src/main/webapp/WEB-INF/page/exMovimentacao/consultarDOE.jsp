@@ -12,6 +12,13 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/sdkdoe/sdk-desktop.js"></script>
 	
 	<script type="text/javascript" language="Javascript1.1">
+	
+		var listaPagJsonFinal;	
+		
+		function carregarListaPag(listaPagJson){
+			listaPagJsonFinal = listaPagJson;
+		}
+	
 		function sbmt(offset) {
 			
 			if(!data(document.getElementById("dataEnvio").value)) {
@@ -84,7 +91,8 @@
 		
 		function montarReciboCancelArquivoDOE(){
 			limparCamposAlertaErro();			
-			var nomeArq = obterCheckValue();
+			var idPublicacao = obterCheckValue();
+			var nomeArq = obterNomeArquivo(idPublicacao);
 			
 			sigaSpinner.mostrar();
 			$("#btCancelar").prop("disabled", true);
@@ -133,7 +141,9 @@
 			var reciboAssinado = json.signature;
 			var reciboHash = document.getElementById("idReciboHash").value;
 			var reciboTexto = document.getElementById("idTextoRecibo").value;
-			var nomeArq = obterCheckValue();
+			var idPublicacao = obterCheckValue();
+			var nomeArq = obterNomeArquivo(idPublicacao);
+			var idComprovanteEnvio = obterComprovanteEnvio(idPublicacao);
 			
 			limparInputsHiddenAposAssinatura();
 			
@@ -141,7 +151,7 @@
 				  url:'${pageContext.request.contextPath}/app/exMovimentacao/cancelPublicacaoArquivoDOE',
 				  type: "POST",
 				  data: {nomeArq : nomeArq, justificativaId : justificativaId, reciboAssinado : reciboAssinado, 
-					  			reciboHash : reciboHash},
+					  			reciboHash : reciboHash, idComprovanteEnvio : idComprovanteEnvio, reciboTexto : reciboTexto},
 				  success: function(data) {
 					  try {
 						 console.log(JSON.parse(data));
@@ -196,6 +206,34 @@
 			     }
 			}
 			return primeiro;
+		}
+		
+		function obterNomeArquivo(idPublicacao) {
+			var lista = listaPagJsonFinal;
+			var nomeArquivo = "";
+			if(lista != null) {
+				for (var i = 0; i < lista.length; i++) {
+					if(idPublicacao == lista[i].publicacaoId) {
+						nomeArquivo = lista[i].nomeArquivo;
+				    	break;
+					}
+				}
+			}
+			return nomeArquivo;
+		}
+		
+		function obterComprovanteEnvio(idPublicacao) {
+			var lista = listaPagJsonFinal;
+			var comprovanteEnvio = 0;
+			if(lista != null) {
+				for (var i = 0; i < lista.length; i++) {
+					if(idPublicacao == lista[i].publicacaoId) {
+						comprovanteEnvio = lista[i].comprovanteEnvio;
+				    	break;
+					}
+				}
+			}
+			return comprovanteEnvio;
 		}
 		
 		sdkDesktop.checkStarted(limparInputsHiddenAposAssinatura);
@@ -268,7 +306,7 @@
 				<tbody class="table-bordered" >
 					<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}" itens="${lista}" var="pub">
 				    	<tr class="even">
-							<td class="text-center align-middle"><input type="checkbox" name="pubSelecionados" id="${x}" class="chk" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'disabled="disabled"' : ''} value="${pub.nomeArquivo}"  onclick="javascript:atualizarCheck(this);"/></td>
+							<td class="text-center align-middle"><input type="checkbox" name="pubSelecionados" id="${x}" class="chk" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'disabled="disabled"' : ''} value="${pub.publicacaoId}"  onclick="javascript:atualizarCheck(this);"/></td>
 	  			        	<td class="text-center align-middle" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'style="font-weight: bold;"' : 'style="font-weight: normal;"'}>${pub.nomeArquivo}</td>
 	  			        	<td class="text-center align-middle" style="font-weight: normal;"><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${pub.dataRecebimento}" /></td>
 	  			        	<td class="text-center align-middle" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'style="font-weight: bold;"' : 'style="font-weight: normal;"'}>${pub.statusPublicacaoDto.statusPublicacaoDescr}</td> 
@@ -298,6 +336,10 @@
 	</div>
 </siga:pagina>
 <script>
+
+	window.onload = function () { 
+		carregarListaPag(${listaJson});
+	} 
 	$('input.chk').on('change', function() {
 	    $('input.chk').not(this).prop('checked', false);  
 	});

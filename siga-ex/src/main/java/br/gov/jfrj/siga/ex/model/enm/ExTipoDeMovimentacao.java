@@ -189,6 +189,8 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	AGENDAR_PUBLICACAO_DOE(88, "Agendar Publicação DOE"),
 	
 	ENVIAR_PUBLICACAO_DOE(89, "Enviar Publicação DOE"),
+	
+	CANCELAR_PUBLICACAO_DOE(90, "Cancelar Publicação DOE"),
 	//
 	//TRAMITE_ENVIO_PEN(90, "Tramite Envio PEN");
 	//

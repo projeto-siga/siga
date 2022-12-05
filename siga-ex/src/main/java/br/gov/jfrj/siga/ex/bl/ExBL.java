@@ -6583,8 +6583,16 @@ public class ExBL extends CpBL {
 				atualizarVariaveisDenormalizadas(mob.doc(), incluirAcesso, excluirAcesso);
 			if (mob.isGeral())
 				atualizarMarcas(mob.doc());
-			else
+			else {
 				atualizarMarcas(mob);
+				if(mob.isVolume()) {
+					for(ExMobil m : mob.getDoc().getExMobilSet()) {
+						if(!m.isGeralDeProcesso() && !mob.equals(m)) {
+							atualizarMarcas(m);
+						}			 
+					}	
+				}
+			}
 		}
 		set.add(mob.doc().getCodigo());
 	}

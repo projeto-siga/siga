@@ -1,3 +1,5 @@
+
+--grant select on siga.vw_documentos_int_sem_sicop to user_etl_bi;
 create or replace view siga.vw_documentos_int_sem_sicop
 as
 select 

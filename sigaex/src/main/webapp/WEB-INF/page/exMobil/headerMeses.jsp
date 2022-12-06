@@ -57,7 +57,8 @@
 						|| !$('#idFormaDoc-spinner').hasClass('d-none'))
 					&& document.getElementById('anoEmissaoString').value != 0) {
 				habilitaDescricao();
-				document.getElementById('tabAnos').value = document.getElementById('anoEmissaoString').value;
+				if (document.getElementById('tabAnos') != null)
+					document.getElementById('tabAnos').value = document.getElementById('anoEmissaoString').value;
 			} else {
 				desabilitaDescricao();
 				if (limpaDescricao)
@@ -216,19 +217,32 @@
 	}
 	
 	function validarFiltrosPesquisa() {
-		// Se preencher órgão, ano de emissão e espécie, poderá pesquisar por descrição
+		// Se preencher órgão, ano de emissão e Número, poderá pesquisar sem restrição de datas
 		if (document.getElementById('numExpediente').value != ''
-			|| (document.getElementById('orgaoUsu').value != 0 
-					&& (document.getElementById('idFormaDoc').value != "0" 
-						|| !$('#idFormaDoc-spinner').hasClass('d-none'))
-					&& document.getElementById('anoEmissaoString').value != 0)) { 
-			document.getElementById('limiteDias').value = 366;
+				&& document.getElementById('orgaoUsu').value != 0 
+				&& document.getElementById('anoEmissaoString').value != 0) { 
+
 			desabilitaTabMeses();
-			if (document.getElementById('numExpediente').value == '')
-				document.getElementById('tabAnos').disabled = true;
-			setDtDocAno(document.getElementById('tabAnos').value);
 			return;
 		}
+		
+		// Se preencher órgão, ano de emissão e Espécie, poderá pesquisar em 366 dias
+		if (document.getElementById('orgaoUsu').value != 0 
+			&& document.getElementById('anoEmissaoString').value != 0
+			&& (document.getElementById('idFormaDoc').value != "0" || !$('#idFormaDoc-spinner').hasClass('d-none'))) { 
+
+			if (document.getElementById('tabAnos') != null) {
+				desabilitaTabMeses();
+				document.getElementById('tabAnos').disabled = true;
+				document.getElementById('limiteDias').value = 366;
+				setDtDocAno(document.getElementById('tabAnos').value);
+				return;
+			}
+			
+			
+		}
+			
+
 
 		// Se usuário não tem limitação por data, não precisa validar regras abaixo
 		if (!${pesquisaLimitadaPorData})
@@ -243,7 +257,9 @@
 		
 		document.getElementById('limiteDias').value = ${limiteDias};
 		habilitaTabMeses();
-		document.getElementById('tabAnos').disabled = false;
+		
+		if (document.getElementById('tabAnos') != null)
+			document.getElementById('tabAnos').disabled = false;
 		setDtDoc($(".nav .nav-link.active").data('mes'), $(".nav .nav-link.active").data('ano'));
 	}
 	

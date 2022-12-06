@@ -18,12 +18,52 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base.util;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Texto {
 
+	public static Map<String, String> htmlEntities;
+	
+	static {
+		htmlEntities = new HashMap<String, String>();
+		
+		htmlEntities.put("&aacute;", "á");	htmlEntities.put("&Aacute;", "Á");
+		htmlEntities.put("&agrave;", "à");	htmlEntities.put("&Agrave;", "À");
+		htmlEntities.put("&acirc;" , "â");	htmlEntities.put("&Acirc;" , "Â");
+		htmlEntities.put("&atilde;", "ã");	htmlEntities.put("&Atilde;", "Ã");
+		htmlEntities.put("&auml;"  , "ä");	htmlEntities.put("&Auml;"  , "Ä");
+		htmlEntities.put("&aring;" , "å");	htmlEntities.put("&Aring;" , "Å");
+		htmlEntities.put("&aelig;" , "æ");	htmlEntities.put("&Aelig;" , "Æ");
+		
+		htmlEntities.put("&eacute;", "é");	htmlEntities.put("&Eacute;", "É");
+		htmlEntities.put("&egrave;", "è");	htmlEntities.put("&Egrave;", "È");
+		htmlEntities.put("&ecirc;" , "ê");	htmlEntities.put("&Ecirc;" , "Ê");
+		htmlEntities.put("&euml;"  , "ë");	htmlEntities.put("&Euml;"  , "Ë");
+		
+		htmlEntities.put("&iacute;", "í");	htmlEntities.put("&Iacute;", "Í");
+		htmlEntities.put("&igrave;", "ì");	htmlEntities.put("&Igrave;", "Ì");
+		htmlEntities.put("&icirc;" , "î");	htmlEntities.put("&Icirc;" , "Î");
+		htmlEntities.put("&iuml;"  , "ï");	htmlEntities.put("&Iuml;"  , "Ï");
+		
+		htmlEntities.put("&oacute;", "ó");	htmlEntities.put("&Oacute;", "Ó");
+		htmlEntities.put("&ograve;", "ò");	htmlEntities.put("&Ograve;", "Ò");
+		htmlEntities.put("&ocirc;" , "ô");	htmlEntities.put("&Ocirc;" , "Ô");
+		htmlEntities.put("&otilde;", "õ");	htmlEntities.put("&Otilde;", "Õ");
+		htmlEntities.put("&ouml;"  , "ö");	htmlEntities.put("&Ouml;"  , "Ö");
+		htmlEntities.put("&oslash;", "ø"); 	htmlEntities.put("&Oslash;", "Ø");
+		
+		htmlEntities.put("&uacute;", "ú");	htmlEntities.put("&Uacute;", "Ú");
+		htmlEntities.put("&ugrave;", "ù");	htmlEntities.put("&Ugrave;", "Ù");
+		htmlEntities.put("&ucirc;" , "û");	htmlEntities.put("&Ucirc;" , "Û");
+		htmlEntities.put("&uuml;"  , "ü");	htmlEntities.put("&Uuml;"  , "Ü");
+		
+		htmlEntities.put("&ccedil;", "ç"); 	htmlEntities.put("&Ccedil;", "Ç");
+	    htmlEntities.put("&szlig;" , "ß"); 	htmlEntities.put("&nbsp;"  , " ");
+	}
+	
 	/**
 	 * Remove os acentos da string e coloca os caracteres em letras minúsculas
 	 * 

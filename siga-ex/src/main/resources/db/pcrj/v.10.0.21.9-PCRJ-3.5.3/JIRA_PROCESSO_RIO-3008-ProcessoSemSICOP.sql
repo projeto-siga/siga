@@ -1,3 +1,5 @@
+create or replace view siga.vw_documentos_int_sem_sicop
+as
 select 
 SUBSTR(siga.ex_documento.descr_documento_ai,0,30) DESCRICAO,
 siga.ex_documento.dt_primeiraassinatura,
@@ -17,7 +19,7 @@ where
     AND siga.ex_documento.ID_MOD=siga.ex_modelo.ID_MOD
     AND siga.ex_documento.ano_emissao='2022' 
     AND siga.ex_documento.ID_FORMA_DOC=380
-    AND siga.ex_modelo.DESC_MOD='Geração de número de processo para o FINCON' 
+    AND siga.ex_modelo.DESC_MOD='Gerao de nmero de processo para o FINCON' 
     AND siga.ex_modelo.his_dt_fim is null
     AND siga.ex_documento.NUM_EXT_DOC NOT IN(
             SELECT

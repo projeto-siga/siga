@@ -327,5 +327,12 @@ public class DateUtils {
 		}
 		return Long.toString(l) + " dia" + (l == 1L ? "" : "s");
 	}
+	
+	public static Date addDia(Date data, int i) {
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(data); 
+		c.add(Calendar.DATE, i);
+		return c.getTime();
+	}
 
 }

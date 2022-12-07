@@ -2517,12 +2517,7 @@ public class ExDocumentoController extends ExController {
 					try {
 						if (param.length == 2) {
 							
-							String parametro = URLDecoder.decode(param[1], "iso-8859-1");
-							
-							parametro = StringEscapeUtils.unescapeHtml4(parametro);
-							for (Entry<String, String> entry : Texto.htmlEntities.entrySet()) {
-								parametro = parametro.replaceAll(entry.getKey(), entry.getValue());
-							}
+							String parametro = StringEscapeUtils.unescapeHtml4(URLDecoder.decode(param[1], "iso-8859-1"));
 							
 							exDocumentoDTO.getParamsEntrevista().put(param[0],parametro);
 						}

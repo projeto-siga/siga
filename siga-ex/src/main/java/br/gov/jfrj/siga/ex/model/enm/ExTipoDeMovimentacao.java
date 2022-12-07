@@ -204,7 +204,7 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	//PDF_ESTAMPADO_PEN(95, "Geração PDF Estampado PEN");
 	
-	ORDEM_ASSINATURA(96, "Ordem de Asssinatura");
+	ORDEM_ASSINATURA(96, "Ordem de Assinatura");
 
 	private final int id;
 	private final String descr;

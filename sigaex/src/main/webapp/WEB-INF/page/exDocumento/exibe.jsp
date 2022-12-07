@@ -1149,7 +1149,7 @@
 						<div class="card-sidebar card bg-light mb-3">
 							<c:if test="${podeReordenar}">
 								<c:set var="butOrdemAssinatura">
-										<a class="text-dark" title="Ordem Assinatura" id="ordemAssinatura" style="float: right; margin-top: 0px; padding-left: 1em; padding-right: 1em;">
+										<a class="text-dark" title="Reordenar itens" id="ordemAssinatura" style="float: right; margin-top: 0px; padding-left: 1em; padding-right: 1em;">
 										Ordem de Assinatura <i class="fas fa-sort"></i>
 									</button>
 								</c:set>

@@ -701,6 +701,12 @@ public class ExMobilController extends
 					&& flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0
 					&& flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0)
 			return;
+		
+		// Pesquisa dos documentos por descrição informando órgão, ano de emissão e número expediente
+		if ( (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0)
+					&& (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0)
+					&& (flt.getNumExpediente() != null && flt.getNumExpediente() != 0))
+			return;
 
 		// Pesquisa dos documentos da lotação/pessoa vinda do quadro quantitativo
 		if ((flt.getUltMovLotaRespSelId() != null && flt.getUltMovLotaRespSelId() != 0

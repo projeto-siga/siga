@@ -9,15 +9,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
 import javax.sql.DataSource;
 
 import com.google.common.base.CaseFormat;
@@ -25,6 +25,7 @@ import com.google.common.base.CaseFormat;
 import br.gov.jfrj.siga.base.Prop;
 
 public class JdbcSimpleOrm implements Closeable {
+    private static Map<Class<?>, List<Field>> fieldsMap = new HashMap<>();
     private Connection con;
 
     public JdbcSimpleOrm() throws Exception {
@@ -41,16 +42,16 @@ public class JdbcSimpleOrm implements Closeable {
     }
 
     public Connection getConnection() throws Exception {
-        try {
+        String dsName = Prop.get("matrix.datasource.name");
+        if (dsName != null) {
             Context initContext = new InitialContext();
             Context envContext = (Context) initContext.lookup("java:");
-            String dsName = Prop.get("matrix.datasource.name");
             DataSource ds = (DataSource) envContext.lookup(dsName);
             Connection connection = ds.getConnection();
             if (connection == null)
                 throw new Exception("Can't open connection to matrix database.");
             return connection;
-        } catch (NameNotFoundException nnfe) {
+        } else {
             Connection connection = null;
 
             Class.forName("oracle.jdbc.OracleDriver");
@@ -74,31 +75,33 @@ public class JdbcSimpleOrm implements Closeable {
         }
     }
 
-    public <T> List<T> loadAll(Class<T> clazz, String where) throws Exception {
+    public <T> List<T> loadAll(Class<T> clazz, String where, String... params) throws Exception {
         List<T> l = new ArrayList<>();
-
-        Connection con = null;
-        Statement stmt = null;
+        PreparedStatement ps = null;
         try {
-            stmt = con.createStatement();
-            String query = "SELECT * FROM "
+            String sql = "SELECT * FROM MATRIX."
                     + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, clazz.getSimpleName())
                     + (where == null ? "" : " " + where);
-            ResultSet rs = stmt.executeQuery(query);
+            ps = con.prepareStatement(sql);
+            if (params != null) {
+                int index = 0;
+                for (Object p : params) {
+                    ps.setString(index + 1, params[index]);
+                    index++;
+                }
+            }
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 T i = clazz.newInstance();
-                for (Field f : clazz.getDeclaredFields()) {
-                    f.setAccessible(true);
+                for (Field f : fields(i)) {
                     f.set(i, rs.getString(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, f.getName())));
                 }
                 l.add(i);
             }
             rs.close();
-            con.close();
-            stmt.close();
         } finally {
-            if (stmt != null)
-                stmt.close();
+            if (ps != null)
+                ps.close();
         }
         return l;
     }
@@ -107,7 +110,8 @@ public class JdbcSimpleOrm implements Closeable {
         List<Field> fields = fields(i);
 
         StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO " + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, i.getClass().getSimpleName())
+        sql.append("INSERT INTO MATRIX."
+                + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, i.getClass().getSimpleName())
                 + " (");
         {
             boolean first = true;
@@ -145,12 +149,12 @@ public class JdbcSimpleOrm implements Closeable {
         List<Field> fields = fields(i);
 
         StringBuilder sql = new StringBuilder();
-        sql.append("UPDATE " + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, i.getClass().getSimpleName())
-                + " SET ");
+        sql.append(
+                "UPDATE MATRIX." + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, i.getClass().getSimpleName())
+                        + " SET ");
         {
             boolean first = true;
             for (Field f : fields) {
-                f.setAccessible(true);
                 if (first)
                     first = false;
                 else
@@ -177,19 +181,26 @@ public class JdbcSimpleOrm implements Closeable {
         List<Field> fields = fields(i);
 
         StringBuilder sql = new StringBuilder();
-        sql.append("DELETE " + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, i.getClass().getSimpleName())
-                + " WHERE " + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, fields.get(0).getName())
-                + " = ?");
-
+        sql.append(
+                "DELETE MATRIX." + CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, i.getClass().getSimpleName())
+                        + " WHERE " + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, fields.get(0).getName())
+                        + " = ?");
+        // if (true) throw new RuntimeException("opa~!");
         PreparedStatement ps = con.prepareStatement(sql.toString());
         ps.setString(1, (String) fields.get(0).get(i));
         ps.execute();
     }
 
     private <T> List<Field> fields(T i) {
-        return Arrays.stream(i.getClass().getDeclaredFields())
+        List<Field> l = fieldsMap.get(i.getClass());
+        if (l != null)
+            return l;
+        l = Arrays.stream(i.getClass().getDeclaredFields())
                 .filter(f -> !Modifier.isStatic(f.getModifiers()))
                 .collect(Collectors.toList());
+        l.forEach(f -> f.setAccessible(true));
+        fieldsMap.put(i.getClass(), l);
+        return l;
     }
 
     @Override

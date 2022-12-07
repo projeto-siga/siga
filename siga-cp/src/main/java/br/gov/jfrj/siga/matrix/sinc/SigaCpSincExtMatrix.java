@@ -11,6 +11,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.hibernate.criterion.Restrictions;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.util.SigaCpSinc;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -23,11 +26,6 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
 public class SigaCpSincExtMatrix extends SigaCpSinc {
-    private static boolean LOG_SIMULACAO = false;
-
-    private Logger log = Logger.getLogger(" br.gov.jfrj.siga.matrix.sinc");
-    private boolean modoLog = true;
-
     JdbcSimpleOrm orm;
 
     private static final String ACC_LVL_SEM_ACESSO = "NO ACC";
@@ -36,12 +34,8 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
     private static final String ACC_LVL_SERVIDOR_TRF2 = "TRF2-SERVI";
     private static final String ACC_LVL_ESTAGIARIO_TRF2 = "TRF2-ESTAG";
 
-    private static final char CARD_TYPE_USUARIO = 'U';
-    private static final char CARD_TYPE_TEMPORARIO = 'T';
-    String[] args;
-
-    private Set<String> cardNumbersGeralSemAdvogados = new HashSet<String>(); // utilizado para resolver conflitos de
-                                                                              // card number de advogados
+    private static final String CARD_TYPE_USUARIO = "U";
+    private static final String CARD_TYPE_TEMPORARIO = "T";
 
     private static String fix(String s) {
         if (s == null)
@@ -49,29 +43,57 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
         return s.trim();
     }
 
-    public void matrix() throws Exception {
-        try (JdbcSimpleOrm jdbcSimpleOrm = new JdbcSimpleOrm()) {
-            orm = jdbcSimpleOrm;
+    public String matrix(String sigla, int maxSinc, boolean modoLog) throws Exception {
+        try {
+            dt = new Date();
+            log("--- Processando " + dt + " ---");
 
-            // try {
-            log("Importando matrix...");
-            carregarCards();
-            Map<String, String> idsDepartCorp = carregarDepartment();
-            Map<String, String> idsJobTitleCorp = carregarJobTitle();
+            this.maxSinc = maxSinc;
+            this.modoLog = modoLog;
+            if (modoLog) {
+                log("*** MODO LOG: use -modoLog=false para sair do modo LOG e escrever as alterações");
+            }
+            log("MAX SINC = " + maxSinc);
 
-            log("Importando corporativo...");
+            long inicio = System.currentTimeMillis();
+            log("Importando: XML");
+            cpOrgaoUsuario = obterOrgaoUsuario(sigla);
+            if (cpOrgaoUsuario == null)
+                throw new AplicacaoException(
+                        "Sigla de órgão usuário '" + sigla + "' do órgão Usuário não encontrado no banco de dados");
+            setOrgaoUsuario(cpOrgaoUsuario.getIdOrgaoUsu());
 
-            List<Sincronizavel> sincs = new ArrayList<Sincronizavel>();
-            sincs.addAll(importarTabela());
+            try (JdbcSimpleOrm jdbcSimpleOrm = new JdbcSimpleOrm()) {
+                orm = jdbcSimpleOrm;
 
-            carregarLotacoes(idsDepartCorp, sincs);
-            carregarCargos(idsJobTitleCorp, sincs);
-            carregarPessoas(idsDepartCorp, idsJobTitleCorp, sincs);
+                // try {
+                log("Importando matrix...");
+                carregarCards();
+                Map<String, String> idsDepartCorp = carregarDepartment();
+                Map<String, String> idsJobTitleCorp = carregarJobTitle();
 
-            log("Gravando alterações...");
-            List<Item> list = gravarAlteracoes();
-            log("Total de alterações: " + list.size());
+                log("Importando corporativo...");
+
+                List<Sincronizavel> sincs = new ArrayList<Sincronizavel>();
+                sincs.addAll(importarTabela());
+
+                carregarLotacoes(idsDepartCorp, sincs);
+                carregarCargos(idsJobTitleCorp, sincs);
+                carregarPessoas(idsDepartCorp, idsJobTitleCorp, sincs);
+
+                log("Gravando alterações...");
+                List<Item> list = gravarAlteracoes();
+                log("Total de alterações: " + list.size());
+            }
+            long total = (System.currentTimeMillis() - inicio) / 1000;
+            log("Tempo total de execução: " + total + " segundos (" + total / 60 + " min)");
+            log(" ---- Fim do Processamento --- ");
+        } catch (Exception e) {
+            if (orm != null)
+                orm.rollback();
+            log("Transação abortada por erro: " + e.getMessage());
         }
+        return logEnd();
     }
 
     private void carregarPessoas(Map<String, String> idsDepartCorp,
@@ -90,7 +112,7 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                 }
                 // apenas servidores e estagi�rios da sjrj
                 if (p.getOrgaoUsuario().getId() == 1 && (!p.getCpTipoPessoa().getDscTpPessoa().equals("Servidor")
-                        && !p.getCpTipoPessoa().getDscTpPessoa().equals("Estagi�rio"))) {
+                        && !p.getCpTipoPessoa().getDscTpPessoa().equals("Estagiário"))) {
                     continue;
                 }
 
@@ -101,8 +123,8 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                 c.setCardNumber(String.format("%010d", c.getId()));
                 String prefixo_Card = definirPrefixoCard(p);
 
-                // Aqui deve ser substituido por uma pesquisa nas informacoes que vem do matrix
-                // e, se estiver preechido, copiar de l� a informa�ao.
+                // Aqui deve ser substituido por uma pesquisa nas informações que vem do matrix
+                // e, se estiver preechido, copiar de lá a informação.
                 c.setCardNumber(prefixo_Card
                         + c.getCardNumber().substring(prefixo_Card.length()));
 
@@ -125,7 +147,7 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                     }
                 }
                 if (cpOrgaoUsuario.getAcronimoOrgaoUsu().equals("JFRJ")) {
-                    if (p.getCpTipoPessoa().getDscTpPessoa().equals("Estagi�rio")) {
+                    if (p.getCpTipoPessoa().getDscTpPessoa().equals("Estagiário")) {
                         c.setAccessLevel(ACC_LVL_ESTAGIARIO_SJRJ);
                         String estag = "RJE" + c.getId(); // aqui entra RJE + Matricula
                         // c.setStaffNumber(String.format("%1$-12s", estag));
@@ -153,7 +175,9 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                     log("null position code: " + c.getDescricaoExterna());
                 c.setUser1(String.format("%011d", p.getCpfPessoa()));
                 c.setUser2("SIGA-" + cpOrgaoUsuario.getSiglaOrgaoUsu());
-                c.setUser4(p.getEmailPessoaAtual());
+                String email = p.getEmailPessoaAtual();
+                if (email != null && email.length() <= 40)
+                    c.setUser4(email);
                 cardsCorp.add(c);
             }
         }
@@ -385,7 +409,8 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
     }
 
     private void carregarCards() throws Exception {
-        List<Cards> cardsMatrix = orm.loadAll(Cards.class, " WHERE user2 like ? and cardType = ?");
+        List<Cards> cardsMatrix = orm.loadAll(Cards.class, " WHERE USER2 like ? and CARD_TYPE = ?",
+                "SIGA-" + cpOrgaoUsuario.getSiglaOrgaoUsu() + "%", CARD_TYPE_USUARIO);
         ajustarCards(cardsMatrix);
     }
 
@@ -398,7 +423,7 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
             sinc.setSetAntigo(setAntigo);
             list = sinc.getOperacoes(dt);
         } catch (Exception e) {
-            log("Transação abortada por erro: " + e.getMessage());
+            log("Comparação abortada por erro: " + e.getMessage());
             throw new Exception("Erro na gravação", e);
         }
         try {
@@ -442,7 +467,10 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                 public Sincronizavel alterar(Sincronizavel antigo,
                         Sincronizavel novo) {
                     if (novo instanceof Cards) {
-                        ((Cards) novo).setCardNumber(((Cards) antigo).getCardNumber());
+                        // Desabilitei isso porque se o objetivo é manter o cardNumber, basta
+                        // não copiá-lo no copiarPropriedades() e desprezá-lo no semelhante().
+                        //
+                        // ((Cards) novo).setCardNumber(((Cards) antigo).getCardNumber());
 
                         ((Cards) antigo).copiarPropriedades((Cards) novo);
                     } else if (novo instanceof Department)
@@ -477,7 +505,10 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
                             " para: " + novo.getAccessLevel() +
                             " Lotação: " +
                             " de: " + antigo.getDepartCode() +
-                            " para: " + novo.getDepartCode();
+                            " para: " + novo.getDepartCode() +
+                            " Cargo: " +
+                            " de: " + antigo.getPositionCode() +
+                            " para: " + novo.getPositionCode();
                 }
 
                 log(log);
@@ -495,7 +526,7 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
         } catch (Exception e) {
             if (orm != null)
                 orm.rollback();
-            log("Transação abortada por erro: " + e.getMessage());
+            log("Gravação abortada por erro: " + e.getMessage());
             throw new Exception("Erro na gravação", e);
         }
         return list;

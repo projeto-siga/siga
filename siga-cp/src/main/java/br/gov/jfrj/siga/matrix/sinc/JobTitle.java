@@ -20,129 +20,129 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 @Table(name = "JOB_TITLE", schema = "MATRIX")
 public class JobTitle implements java.io.Serializable, Sincronizavel {
 
-	private String positionCode;
-	private String positionDesc;
+    private String positionCode;
+    private String positionDesc;
 
-	public JobTitle() {
-	}
+    public JobTitle() {
+    }
 
-	public JobTitle(String positionCode, String positionDesc) {
-		this.positionCode = positionCode;
-		this.positionDesc = positionDesc;
-	}
+    public JobTitle(String positionCode, String positionDesc) {
+        this.positionCode = positionCode;
+        this.positionDesc = positionDesc;
+    }
 
-	@Id
-	@Column(name = "POSITION_CODE", unique = true, nullable = false, length = 4)
-	public String getPositionCode() {
-		return this.positionCode;
-	}
+    @Id
+    @Column(name = "POSITION_CODE", unique = true, nullable = false, length = 4)
+    public String getPositionCode() {
+        return this.positionCode;
+    }
 
-	public void setPositionCode(String positionCode) {
-		this.positionCode = positionCode;
-	}
+    public void setPositionCode(String positionCode) {
+        this.positionCode = positionCode;
+    }
 
-	@Column(name = "POSITION_DESC", nullable = false, length = 128)
-	public String getPositionDesc() {
-		return this.positionDesc;
-	}
+    @Column(name = "POSITION_DESC", nullable = false, length = 128)
+    public String getPositionDesc() {
+        return this.positionDesc;
+    }
 
-	public void setPositionDesc(String positionDesc) {
-		this.positionDesc = positionDesc;
-	}
+    public void setPositionDesc(String positionDesc) {
+        this.positionDesc = positionDesc;
+    }
 
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		JobTitle other = (JobTitle) obj;
-		if (positionDesc == null) {
-			if (other.positionDesc != null)
-				return false;
-		} else if (!positionDesc.equals(other.positionDesc))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean semelhante(Assemelhavel obj, int profundidade) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        JobTitle other = (JobTitle) obj;
+        if (positionDesc == null) {
+            if (other.positionDesc != null)
+                return false;
+        } else if (!positionDesc.equals(other.positionDesc))
+            return false;
+        return true;
+    }
 
-	@Transient
-	@Override
-	public Long getId() {
-		return 0L;
-	}
+    @Transient
+    @Override
+    public Long getId() {
+        return 0L;
+    }
 
-	@Transient
-	@Override
-	public String getIdExterna() {
-		return positionDesc.trim();
-	}
+    @Transient
+    @Override
+    public String getIdExterna() {
+        return positionDesc.trim();
+    }
 
-	@Override
-	public void setIdExterna(String idExterna) {
-		positionCode = idExterna;
-	}
+    @Override
+    public void setIdExterna(String idExterna) {
+        positionCode = idExterna;
+    }
 
-	@Transient
-	@Override
-	public Long getIdInicial() {
-		return getId();
-	}
+    @Transient
+    @Override
+    public Long getIdInicial() {
+        return getId();
+    }
 
-	@Override
-	public void setIdInicial(Long idInicial) {
-	}
+    @Override
+    public void setIdInicial(Long idInicial) {
+    }
 
-	@Transient
-	@Override
-	public Date getDataInicio() {
-		return null;
-	}
+    @Transient
+    @Override
+    public Date getDataInicio() {
+        return null;
+    }
 
-	@Transient
-	@Override
-	public void setDataInicio(Date dataInicio) {
+    @Transient
+    @Override
+    public void setDataInicio(Date dataInicio) {
 
-	}
+    }
 
-	@Transient
-	@Override
-	public Date getDataFim() {
-		return null;
-	}
+    @Transient
+    @Override
+    public Date getDataFim() {
+        return null;
+    }
 
-	@Transient
-	@Override
-	public void setDataFim(Date dataFim) {
-	}
+    @Transient
+    @Override
+    public void setDataFim(Date dataFim) {
+    }
 
-	@Transient
-	@Override
-	public String getLoteDeImportacao() {
-		return null;
-	}
+    @Transient
+    @Override
+    public String getLoteDeImportacao() {
+        return null;
+    }
 
-	@Transient
-	@Override
-	public void setLoteDeImportacao(String loteDeImportacao) {
-	}
+    @Transient
+    @Override
+    public void setLoteDeImportacao(String loteDeImportacao) {
+    }
 
-	@Transient
-	@Override
-	public int getNivelDeDependencia() {
-		return 0;
-	}
+    @Transient
+    @Override
+    public int getNivelDeDependencia() {
+        return 0;
+    }
 
-	@Transient
-	@Override
-	public String getDescricaoExterna() {
-		return "CARGO: " + positionDesc + " (" + positionCode + ")";
-	}
+    @Transient
+    @Override
+    public String getDescricaoExterna() {
+        return "CARGO: " + positionDesc + " (" + positionCode + ")";
+    }
 
-	public void copiarPropriedades(JobTitle outro) {
-		this.positionCode = outro.positionCode;
-		this.positionDesc = outro.positionDesc;
-	}
+    public void copiarPropriedades(JobTitle outro) {
+        this.positionCode = outro.positionCode;
+        this.positionDesc = outro.positionDesc;
+    }
 
 }

@@ -20,128 +20,128 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 @Table(name = "DEPARTMENT", schema = "MATRIX")
 public class Department implements java.io.Serializable, Sincronizavel {
 
-	private String departCode;
-	private String departDesc;
+    private String departCode;
+    private String departDesc;
 
-	public Department() {
-	}
+    public Department() {
+    }
 
-	public Department(String departCode, String departDesc) {
-		this.departCode = departCode;
-		this.departDesc = departDesc;
-	}
+    public Department(String departCode, String departDesc) {
+        this.departCode = departCode;
+        this.departDesc = departDesc;
+    }
 
-	@Id
-	@Column(name = "DEPART_CODE", unique = true, nullable = false, length = 4)
-	public String getDepartCode() {
-		return this.departCode;
-	}
+    @Id
+    @Column(name = "DEPART_CODE", unique = true, nullable = false, length = 4)
+    public String getDepartCode() {
+        return this.departCode;
+    }
 
-	public void setDepartCode(String departCode) {
-		this.departCode = departCode;
-	}
+    public void setDepartCode(String departCode) {
+        this.departCode = departCode;
+    }
 
-	@Column(name = "DEPART_DESC", nullable = false, length = 128)
-	public String getDepartDesc() {
-		return this.departDesc;
-	}
+    @Column(name = "DEPART_DESC", nullable = false, length = 128)
+    public String getDepartDesc() {
+        return this.departDesc;
+    }
 
-	public void setDepartDesc(String departDesc) {
-		this.departDesc = departDesc;
-	}
+    public void setDepartDesc(String departDesc) {
+        this.departDesc = departDesc;
+    }
 
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Department other = (Department) obj;
-		if (departDesc == null) {
-			if (other.departDesc != null)
-				return false;
-		} else if (!departDesc.equals(other.departDesc))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean semelhante(Assemelhavel obj, int profundidade) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Department other = (Department) obj;
+        if (departDesc == null) {
+            if (other.departDesc != null)
+                return false;
+        } else if (!departDesc.equals(other.departDesc))
+            return false;
+        return true;
+    }
 
-	@Transient
-	@Override
-	public Long getId() {
-		return 0L;
-	}
+    @Transient
+    @Override
+    public Long getId() {
+        return 0L;
+    }
 
-	@Transient
-	@Override
-	public String getIdExterna() {
-		return departDesc.trim();
-	}
+    @Transient
+    @Override
+    public String getIdExterna() {
+        return departDesc.trim();
+    }
 
-	@Override
-	public void setIdExterna(String idExterna) {
-		departCode = idExterna;
-	}
+    @Override
+    public void setIdExterna(String idExterna) {
+        departCode = idExterna;
+    }
 
-	@Transient
-	@Override
-	public Long getIdInicial() {
-		return getId();
-	}
+    @Transient
+    @Override
+    public Long getIdInicial() {
+        return getId();
+    }
 
-	@Override
-	public void setIdInicial(Long idInicial) {
-	}
+    @Override
+    public void setIdInicial(Long idInicial) {
+    }
 
-	@Transient
-	@Override
-	public Date getDataInicio() {
-		return null;
-	}
+    @Transient
+    @Override
+    public Date getDataInicio() {
+        return null;
+    }
 
-	@Transient
-	@Override
-	public void setDataInicio(Date dataInicio) {
+    @Transient
+    @Override
+    public void setDataInicio(Date dataInicio) {
 
-	}
+    }
 
-	@Transient
-	@Override
-	public Date getDataFim() {
-		return null;
-	}
+    @Transient
+    @Override
+    public Date getDataFim() {
+        return null;
+    }
 
-	@Transient
-	@Override
-	public void setDataFim(Date dataFim) {
-	}
+    @Transient
+    @Override
+    public void setDataFim(Date dataFim) {
+    }
 
-	@Transient
-	@Override
-	public String getLoteDeImportacao() {
-		return null;
-	}
+    @Transient
+    @Override
+    public String getLoteDeImportacao() {
+        return null;
+    }
 
-	@Transient
-	@Override
-	public void setLoteDeImportacao(String loteDeImportacao) {
-	}
+    @Transient
+    @Override
+    public void setLoteDeImportacao(String loteDeImportacao) {
+    }
 
-	@Transient
-	@Override
-	public int getNivelDeDependencia() {
-		return 0;
-	}
+    @Transient
+    @Override
+    public int getNivelDeDependencia() {
+        return 0;
+    }
 
-	@Transient
-	@Override
-	public String getDescricaoExterna() {
-		return "LOTACAO: " + departDesc + " (" + departCode + ")";
-	}
+    @Transient
+    @Override
+    public String getDescricaoExterna() {
+        return "LOTACAO: " + departDesc + " (" + departCode + ")";
+    }
 
-	public void copiarPropriedades(Department outro) {
-		this.departCode = outro.departCode;
-		this.departDesc = outro.departDesc;
-	}
+    public void copiarPropriedades(Department outro) {
+        this.departCode = outro.departCode;
+        this.departDesc = outro.departDesc;
+    }
 }

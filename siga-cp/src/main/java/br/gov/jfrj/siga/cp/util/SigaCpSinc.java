@@ -57,7 +57,7 @@ public class SigaCpSinc {
 	// a rotina de sync está atribuindo um nível de dependencia estranho para
 	// renato (8)
 
-	private boolean modoLog = false;
+	protected boolean modoLog = false;
 	protected int maxSinc = -1;
 
 	private String destinatariosExtras = "";

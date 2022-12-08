@@ -47,6 +47,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
+import javax.naming.directory.NoSuchAttributeException;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.event.NamespaceChangeListener;
@@ -184,7 +185,6 @@ public class LdapBL implements OperadorSemHistorico {
 		} catch (NameNotFoundException e) {
 			log.fine("GRUPO NÃO ENCONTRADO PARA INCLUSÃO DE MEMBROS >>>>> " + adGrupo.getNomeCompleto());
 		} catch (AplicacaoException e) {
-			e.printStackTrace();
 			log.warning(e.getMessage());
 		}
 	}
@@ -320,7 +320,6 @@ public class LdapBL implements OperadorSemHistorico {
 			} catch (Exception e) {
 				log.warning(
 						"Objeto [" + r.getReferencia() + "] não pode ser inserido em [" + g.getNomeCompleto() + "]");
-				e.printStackTrace();
 			}
 		}
 
@@ -616,7 +615,12 @@ public class LdapBL implements OperadorSemHistorico {
 
 		} else if (isGrupoDistribuicaoAuto(adGrupo.getNome())) {
 			String dnGrpManualCorr = getGrpManualCorrespondente((AdGrupoDeDistribuicao) adGrupo);
-			attrsAntigos = ldap.pesquisar(dnGrpManualCorr);
+			try {
+			    attrsAntigos = ldap.pesquisar(dnGrpManualCorr);
+			} catch (NameNotFoundException e) {
+			    log.warning("Não foi possível localizar o grupo manual '" + dnGrpManualCorr + "' correspondente ao grupo automático '" + adGrupo.getNome() + "'");
+			    // Não é necessário lançar a exceção porque o tratamento do retorno nulo já é feito abaixo.
+			}
 			if (attrsAntigos != null) {
 				String cn = attrsAntigos.get("cn").get().toString();
 				String dn = attrsAntigos.get("distinguishedName").get().toString();
@@ -742,9 +746,11 @@ public class LdapBL implements OperadorSemHistorico {
 		}
 
 		if (adUsuario.getGrupoPai() != null && !(adUsuario.getGrupoPai() instanceof AdUnidadeOrganizacional)) {
-
-			definirGrupoPaiUsuario(adUsuario);
-
+		    try {
+		        definirGrupoPaiUsuario(adUsuario);
+		    } catch (Exception e) {
+                log.warning("Não foi possivel definir grupo pai do usuario [" + adUsuario.getNomeCompleto() + "].");
+            }
 		}
 
 		return adUsuario;
@@ -837,9 +843,8 @@ public class LdapBL implements OperadorSemHistorico {
 			ldap.alterarAtributo(dnGrupoDistribuicao, "msExchHideFromAddressLists", "TRUE");
 			ldap.excluirAtributo(dnGrupoDistribuicao, "showInAddressBook");
 		} catch (AplicacaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (NoSuchAttributeException e) {
+        }
 	}
 
 	private String resolverDnInativo(String cn) {

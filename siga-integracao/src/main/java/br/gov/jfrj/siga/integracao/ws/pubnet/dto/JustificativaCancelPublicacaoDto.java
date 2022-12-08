@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName(value = "justificativa")
-public class JustificativasCancelamentoDto implements Serializable {
+public class JustificativaCancelPublicacaoDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

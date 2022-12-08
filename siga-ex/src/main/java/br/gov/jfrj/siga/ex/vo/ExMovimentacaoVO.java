@@ -529,7 +529,7 @@ public class ExMovimentacaoVO extends ExVO {
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 		}
 		
-		if (exTipoMovimentacao == ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE || exTipoMovimentacao == ExTipoDeMovimentacao.CANCELAR_PUBLICACAO_DOE) {
 			addAcao(AcaoVO.builder().nome("RECIBO").nameSpace("/app/arquivo").acao("download").params("arquivo", mov.getReferenciaZIP())
 					.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS())
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());

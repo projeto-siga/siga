@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <siga:pagina titulo="Movimentação">
 	
@@ -38,14 +39,16 @@
 									<siga:selecao tema="simple" propriedade="lotaSubscritor" modulo="siga" />
 							</div>
 						</div>
-						<div class="col-sm-3">
-							<div class="form-group">
-								<label>Selecionar Macro</label>
-								<select class="form-control" id="macro" name="macro" onchange="aplicarMacro(this.value)">
-									<option value="0">Selecione</option>
-								</select>
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;PUB_DOE;MACROS:Disponibilizar Macros')}">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Selecionar Macro</label>
+									<select class="form-control" id="macro" name="macro" onchange="aplicarMacro(this.value)">
+										<option value="0">Selecione</option>
+									</select>
+								</div>
 							</div>
-						</div>
+						</c:if>
 					</div>
 					<div class="row">
 						<div class="col-sm-12">

@@ -110,8 +110,18 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true), 
 
-	UTILIZAR_PESQUISA_XJUS(212, "Utilizar X-JUS na Pesquisa Avançada",
+	UTILIZAR_PESQUISA_AVANCADA_VIA_XJUS(212, "Utilizar X-JUS na Pesquisa Avançada",
 			"Utilizada para ativar pesquisa avançada via X-JUS.\n"
+					+ "PODE: Ativa.\n"
+					+ "NÃO PODE: Não ativa.",
+			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO },
+			new CpParamCfg[] { CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
+	UTILIZAR_PESQUISA_GENERICA_VIA_XJUS(213, "Utilizar X-JUS na Pesquisa Genérica",
+			"Utilizada para ativar pesquisa genérica via X-JUS.\n"
 					+ "PODE: Ativa.\n"
 					+ "NÃO PODE: Não ativa.",
 			new CpParamCfg[] { CpParamCfg.ORGAO, CpParamCfg.PESSOA, CpParamCfg.LOTACAO },
@@ -128,7 +138,18 @@ public enum CpTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, false),
-	//
+	
+	EXIBIR_EM_CAMPO_DE_BUSCA(401, "Exibir em Campo de Pesquisa", "Esta configuração tem o objetivo de exibir [órgão(s), lotação(s), pessoa(s). O objeto preenchido no cadastro de configuração "
+			+ "não aparecerá na lista da combo. O padrão é pode. Implementado somente para limitar órgão na combo de pesquisa avançada.",
+			new CpParamCfg[] {CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO,
+					CpParamCfg.PESSOA_OBJETO, CpParamCfg.LOTACAO_OBJETO, CpParamCfg.CARGO_OBJETO,
+					CpParamCfg.FUNCAO_OBJETO, CpParamCfg.ORGAO_OBJETO},
+			new CpParamCfg[] { CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.PODE, false),
+	
+	// 
 //	AUTORIZAR_MOVIMENTACAO_POR_WS(?, "Autorizar Movimentação por WS",
 //			"Utilizada para ativar e configurar o uso do Personal Identification Number (PIN) no SIGA como segundo fator de autenticação e seu comportamento com uso na Assinatura com Senha e outras funcionalidades que requerem uma segunda validação de autenticação.\n"
 //					+ "PODE: Habilita uso do PIN como Segundo Fator e combinado com o Assinar com Senha libera o uso de autenticar com PIN.\n"

@@ -25,7 +25,7 @@ public class XjusRecordAPIContext implements br.jus.trf2.xjus.record.api.XjusRec
 
 	@Override
 	public void onCatch(Exception e) throws Exception {
-
+		throw e;
 	}
 
 	@Override

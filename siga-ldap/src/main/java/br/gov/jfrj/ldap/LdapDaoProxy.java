@@ -21,6 +21,7 @@ package br.gov.jfrj.ldap;
 import java.util.logging.Logger;
 
 import javax.naming.directory.Attributes;
+import javax.naming.directory.NoSuchAttributeException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 
@@ -147,7 +148,7 @@ public class LdapDaoProxy extends LdapDaoImpl {
 
 	@Override
 	public void excluirAtributo(String dn, String nomeAtributo)
-			throws AplicacaoException {
+			throws AplicacaoException, NoSuchAttributeException {
 		if (!isSomenteLeitura()) {
 			super.excluirAtributo(dn, nomeAtributo);
 		} else {

@@ -18,7 +18,7 @@
                 <li><a class="dropdown-item"
                     href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
             </c:if>
-			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
+			<li><a class="dropdown-item" href="/sigaex/app/mesa${fx:getMesaVersao(titular,lotaTitular)}">Mesa
 					Virtual </a></li>
 			
 			<c:if test="${not empty meusDelegados && f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
@@ -64,6 +64,11 @@
 						</c:otherwise>
 					</c:choose>
 				</c:if>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;RECLALOTE:Reclassificar em Lote')}">
+					<li><a class="dropdown-item"
+						   href="/sigaex/app/expediente/mov/reclassificar_lote">Reclassificar em Lote</a></li>
+				</c:if>
 			</c:catch>
 
 
@@ -88,7 +93,7 @@
 			</c:catch>
 			<c:catch>
 				<c:if
-					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
+					test="${f:podeArquivarIntermediarioPorConfiguracao(titular,lotaTitular)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_intermediario_lote">Arquivar
 							Intermediário em Lote</a></li>
@@ -104,7 +109,7 @@
 			</c:catch>
 			<c:catch>
 				<c:if
-					test="${f:testaCompetencia('atenderPedidoPublicacao',titular,lotaTitular,null)}">
+					test="${f:testaCompetencia('atenderPedidoPublicacaoNoDiario',titular,lotaTitular,null)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/atender_pedido_publicacao">Gerenciar
 							Publicação DJE</a></li>
@@ -113,7 +118,7 @@
 
 			<c:catch>
 				<c:if
-					test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
+					test="${f:testaCompetencia('gerenciarPublicacaoNoBoletimPorConfiguracao',titular,lotaTitular,null)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/configuracao/gerenciar_publicacao_boletim">Definir
 							Publicadores Boletim</a></li>

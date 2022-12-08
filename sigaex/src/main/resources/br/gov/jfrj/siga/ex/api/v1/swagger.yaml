@@ -37,6 +37,8 @@ tags:
     description: Informações sobre Modelos para a Criação de Documentos
   - name: classificacao
     description: Classificações Documentais
+  - name: bi
+    description: Inteligência de Negócios
   - name: utils
     description: Utilitários
     
@@ -99,6 +101,13 @@ parameters:
     name: auditar
     in: query
     description: Informar true se deseja receber dados para auditoria
+    required: false
+    default: false
+    type: boolean
+  desabilitarRecebimentoAutomatico:
+    name: desabilitarRecebimentoAutomatico
+    in: query
+    description: Informar true se deseja desabilitar o recebimento automático
     required: false
     default: false
     type: boolean
@@ -1141,6 +1150,13 @@ paths:
         - $ref: "#/parameters/sigla"
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/auditar"
+        - $ref: "#/parameters/desabilitarRecebimentoAutomatico"
+        - name: exibe
+          in: query
+          description: Informar true se deseja exibir lista de movimentações reduzidas no histórico
+          required: false
+          default: false
+          type: boolean
       responses:
         200:
           description: Successful response
@@ -1532,6 +1548,95 @@ paths:
             properties:
               status:
                 type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/tramitar-em-paralelo:
+    post:
+      description: "<p>O trâmite é feito em uma <b>via ou volume</b> do documento, portanto necessita ser informada no final da sigla (Ex.: letra 
+        <b>'A' ou  'V01'</b> no final da sigla).</p> <p>A sigla deve ser informada sem traços ou barras.</p>
+        <p>Para tramitar para um usuário específico, informar os campos <i>matricula</i> e <i>lotacao</i>.</p>
+        <p>Para tramitar para uma lotação, preencher somente o campo <i>lotacao</i>. Se quiser tramitar para uma lotação 
+        de outro órgão, informar a sigla completa da lotação incluindo o órgão no formato: XXYYYYY onde XX é a sigla do 
+        órgão e YYYYY é a sigla da lotação, sem traços.</p>
+        <p>Em São Paulo, lotação é chamada de unidade."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+      summary: Tramitar em paralelo documento para outro usuário ou lotação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/notificar:
+    post:
+      description: "<p>A notificação é feita em uma <b>via ou volume</b> do documento, portanto necessita ser informada no final da sigla (Ex.: letra 
+        <b>'A' ou  'V01'</b> no final da sigla).</p> <p>A sigla deve ser informada sem traços ou barras.</p>
+        <p>Para tramitar para um usuário específico, informar os campos <i>matricula</i> e <i>lotacao</i>.</p>
+        <p>Para tramitar para uma lotação, preencher somente o campo <i>lotacao</i>. Se quiser tramitar para uma lotação 
+        de outro órgão, informar a sigla completa da lotação incluindo o órgão no formato: XXYYYYY onde XX é a sigla do 
+        órgão e YYYYY é a sigla da lotação, sem traços.</p>
+        <p>Em São Paulo, lotação é chamada de unidade."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/lotacao"
+        - $ref: "#/parameters/matricula"
+      summary: Notificar documento para outro usuário ou lotação
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{sigla}/concluir:
+    post:
+      description: "Utilize este método para concluir um trâmite ou notificação pendente do documento."
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [acao]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/sigla"
+      summary: Concluir trâmite ou notificação pendente
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                description: Sigla do documento
+                type: string
+              status:
+                type: string
+                default: "OK"
         500:
           description: Error ocurred
           schema:
@@ -2477,7 +2582,133 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-
+            
+  /documentos/{id}/verificar-assinatura:
+    get:
+      description: Verificar assinatura do documento
+      tags: [ consulta ]
+      parameters:
+        - name: id
+          in: path
+          description: Id do documento
+          type: string
+          required: true
+        - name: assinaturaDigital
+          in: query
+          description: Flag para verificação de assinatura digital ou senha
+          type: boolean
+          default: false
+          required: false
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idDoc:
+                description: Id do documento
+                type: string
+              idMov:
+                description: Id da movimentação da assinatura válida
+                type: string  
+              status:
+                type: string
+                default: "ERRO!"  
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /documentos/localizar/mais-recente:
+    get:
+      description: "Exibe dados do móbil mais recente que atende às condições desejadas."
+      tags: [consulta]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: modelo
+          in: query
+          description: Nome do modelo
+          required: false
+          type: string
+        - name: ano
+          in: query
+          description: Ano de produção do documento
+          required: false
+          type: string
+        - name: lotaSubscritor
+          in: query
+          description: Sigla da lotação do subscritor
+          required: false
+          type: string
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: application/json
+            Content-Disposition:
+              type: string
+              description: attachment        
+        404:
+          description: Nenhum documento foi encontrado com os argumentos informados
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+  
+  /documentos/{sigla}/gerar-link-publico:
+    post:
+      description: Gera o link público do documento
+      tags: [ acao ]
+      security:
+        - Bearer: [ ]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              link:
+                description: Link público de acesso ao documento
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /documentos/{sigla}/link-publico:
+    get:
+      description: Obter o link público do documento
+      tags: [ consulta ]
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              link:
+                description: Link público de acesso ao documento
+                type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /numeracao-expediente:
     post:
       description: Utilize este método para gerar numeração de expediente.
@@ -2544,6 +2775,72 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
+            
+  /bi/listar:
+    get:
+      summary: Listar documentos e seus dados
+      tags: [bi]
+      security:
+        - Bearer: []      
+      parameters:
+        - name: modelo
+          in: query
+          description: Nome do modelo
+          required: false
+          type: string
+        - name: lotaSubscritor
+          in: query
+          description: Sigla da lotação do subscritor
+          required: false
+          type: string
+        - name: marcador
+          in: query
+          description: Nome do marcador (situacao)
+          required: false
+          type: string
+        - name: dataMin
+          in: query
+          description: Data mínima documento (formato aaaa-mm-dd, inclusive)
+          required: false
+          type: string
+        - name: dataMax
+          in: query
+          description: Data máxima do documento (exclusive)
+          required: false
+          type: string
+        - name: campos
+          in: query
+          description: Campos (default é todos)
+          required: false
+          type: string
+        - name: delimitador
+          in: query
+          description: Delimitador (default é vírgula)
+          required: false
+          type: string
+        - name: quebraDeLinha
+          in: query
+          description: Quebra de Linha (default é CRLF)
+          required: false
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+          headers:
+            Content-Type:
+              type: string
+              description: text/csv
+            Content-Disposition:
+              type: string
+              description: attachment
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+
             
 ################################################################################
 #                                     Definitions                              #

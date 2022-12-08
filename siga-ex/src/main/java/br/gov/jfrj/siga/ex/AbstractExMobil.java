@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
@@ -148,12 +152,23 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMarca> exMarcaSet;
 
+	@Column(name = "DNM_SIGLA", length = 40)
+	private String dnmSigla;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ULT_MOV")
+	private ExMovimentacao ultimaMovimentacaoNaoCancelada;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DNM_DT_ULT_MOV", length = 19)
+	private java.util.Date dnmDtUltMov;
+	
 	public java.lang.Long getIdMobil() {
 		return idMobil;
 	}
 
 	public void setIdMobil(java.lang.Long idMobil) {
-		idMobil = idMobil;
+		this.idMobil = idMobil;
 	}
 
 	public ExDocumento getExDocumento() {
@@ -226,6 +241,30 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 
 	public void setDnmNumPrimeiraPagina(Integer dnmNumPrimeiraPagina) {
 		this.dnmNumPrimeiraPagina = dnmNumPrimeiraPagina;
+	}
+
+	public String getDnmSigla() {
+		return dnmSigla;
+	}
+
+	public void setDnmSigla(String sigla) {
+		this.dnmSigla = sigla;
+	}
+
+	public ExMovimentacao getUltimaMovimentacaoNaoCancelada() {
+		return ultimaMovimentacaoNaoCancelada;
+	}
+
+	public void setUltimaMovimentacaoNaoCancelada(ExMovimentacao exMovimentacao) {
+		this.ultimaMovimentacaoNaoCancelada = exMovimentacao;
+	}
+
+	public java.util.Date getDnmDataUltimaMovimentacaoNaoCancelada() {
+		return this.dnmDtUltMov;
+	}
+
+	public void setDnmDataUltimaMovimentacaoNaoCancelada(java.util.Date dnmDtUltMov) {
+		this.dnmDtUltMov = dnmDtUltMov;
 	}
 
 }

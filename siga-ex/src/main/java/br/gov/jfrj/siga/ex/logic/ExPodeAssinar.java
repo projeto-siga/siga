@@ -19,8 +19,8 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 	private DpLotacao lotaTitular;
 
 	public ExPodeAssinar(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado())
-			mob = mob.doc().getUltimoVolume();
+		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado()) 
+			mob = mob.doc().getUltimoVolumeOuGeral();
 		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
@@ -53,6 +53,8 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 				Not.of(new ExEstaCancelado(mob.doc())),
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
+
+				Not.of(new ExEExterno(mob.doc())),
 
 				// Edson: este isEletronico() está aqui porque o físico deixa de estar pendente
 				// de
@@ -88,8 +90,13 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 						Not.of(new ExEstaAutenticadoComTokenOuSenha(mob.doc())))),
 
 				Or.of(
-
 						And.of(
+								new ExEstaOrdenadoAssinatura(mob.doc()),
+
+								new ExEAssinanteAtual(mob.doc(), titular)),
+						
+						And.of(
+								Not.of(new ExEstaOrdenadoAssinatura(mob.doc())),
 
 								new ExEFisico(mob.doc()),
 
@@ -102,7 +109,8 @@ public class ExPodeAssinar extends CompositeExpressionSupport {
 										new ExECossignatario(mob.doc(), titular))),
 
 						And.of(
-
+								Not.of(new ExEstaOrdenadoAssinatura(mob.doc())),
+								
 								Or.of(
 
 										new ExESubscritor(mob.doc(), titular),

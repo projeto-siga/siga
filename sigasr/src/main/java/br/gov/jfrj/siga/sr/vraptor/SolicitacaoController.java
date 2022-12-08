@@ -46,6 +46,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
+import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
@@ -358,7 +359,12 @@ public class SolicitacaoController extends SrController {
 		// MARRETA SOLICITACAO PARA PROPRIA LOTACAO
 		// voltando a pegar a lotacao do titular ao inves da do solicitante...
 		if ((solicitacao.getIdSolicitacao() == null)
-				&& solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")) {
+				&& solicitacao.getItemConfiguracao().getTituloItemConfiguracao().toLowerCase().startsWith("serviço interno"))
+			//	(solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("atividades da lotação")
+			//	|| 	solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("registrar projeto a ser demandado para a contratada")
+			//	|| 	solicitacao.getAcao().getTituloAcao().toLowerCase().startsWith("registrar manutenção a ser demandada para a contratada"))) 
+				 
+				{
 			// solicitacao.setAtendenteNaoDesignado(solicitacao.getSolicitante().getLotacao().getLotacaoAtual());
 			solicitacao.setAtendenteNaoDesignado(getTitular().getLotacao().getLotacaoAtual());
 		}
@@ -574,6 +580,9 @@ public class SolicitacaoController extends SrController {
 		if (filtro.getItemConfiguracao() != null && filtro.getItemConfiguracao().getIdItemConfiguracao() != null) {
 			filtro.setItemConfiguracao(
 					SrItemConfiguracao.AR.findById(filtro.getItemConfiguracao().getIdItemConfiguracao()));
+		}
+		if (filtro.getAtributoSolicitacao() != null && filtro.getAtributoSolicitacao().getAtributo() != null && filtro.getAtributoSolicitacao().getAtributo().getId() != null) {
+			filtro.getAtributoSolicitacao().setAtributo(SrAtributo.AR.findById(filtro.getAtributoSolicitacao().getAtributo().getId())); 
 		}
 		if (filtro.getAcao() != null && filtro.getAcao().getIdAcao() != null) {
 			filtro.setAcao(SrAcao.AR.findById(filtro.getAcao().getIdAcao()));

@@ -484,7 +484,7 @@ public class ExConfiguracaoController extends ExController {
 		ExFormaDocumento especie = c.getExFormaDocumento();
 
 		if (c.getExModelo() != null && especie == null)
-			especie = c.getExModelo().getExFormaDocumento();
+			especie = c.getExModelo().getModeloAtual().getExFormaDocumento();
 
 		if (especie != null && tipoEspecie == null)
 			tipoEspecie = especie.getExTipoFormaDoc();

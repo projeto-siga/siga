@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import br.gov.jfrj.siga.base.SigaHTTP;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -21,6 +23,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
@@ -29,7 +32,7 @@ import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.service.ExService;
-import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
+import br.gov.jfrj.siga.base.util.GoogleRecaptcha;
 
 @Controller
 public class SigaLinkPermanenteController extends SigaController {
@@ -128,14 +131,15 @@ public class SigaLinkPermanenteController extends SigaController {
 		}
 		
 		
-		CpToken cpToken = new CpToken();
-		cpToken = dao().obterCpTokenPorTipoToken(Long.valueOf(tipoLink), token);
+		CpToken cpToken = dao().obterCpTokenPorTipoToken(Long.valueOf(tipoLink), token);
 		if (cpToken != null) {
 			if ("1".equals(tipoLink)) {
 				ExService exService = Service.getExService();
 				String siglaDocumento = exService.obterSiglaMobilPorIdDoc(cpToken.getIdRef());
 
-				result.forwardTo(this).publicPermanenteURLPdfView(SigaUtil.buildJwtToken(tipoLink,token,siglaDocumento));			
+				final long tokenExp = 1 * 60 * 60L; //token expires in 1 hour
+				result.forwardTo(this)
+						.publicPermanenteURLPdfView(SigaUtil.buildJwtToken(tipoLink, token, tokenExp, siglaDocumento));			
 			}
 		} else {
 			throw new RuntimeException("Endereço permamente inválido");
@@ -169,18 +173,19 @@ public class SigaLinkPermanenteController extends SigaController {
 
 			if ("1".equals(tipoLink)) {
 				if (!"".equals(sigla)) {
-					/* Reaproveitado estrutura da ExArquivoController - Analisar levar para WebService */ 
-					/* Identidicar parametro interno de contexto JBoss */
-					String endPoint = System.getProperty("exservice.endpoint").replace("/sigaex/servicos/ExService?wsdl", "") + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
-					stream = new URL(endPoint).openStream();
-					
-					String fileName = sigla.replace("-", "").replace("/", "");
-					if (completo) 
-						fileName = fileName + "_completo.pdf";
-					else
+					final SigaHTTP http = new SigaHTTP();
+					String url = Prop.get("/siga.base.url") + END_POINT_SIGALINK_DOC + "?semmarcas="+ estampar +"&completo="+ completo +"&t="+jwt +"&mime=pdf";
+					if(!completo) {
+						stream = http.fetch(url, null, 5000, null); 
+						
+						String fileName = sigla.replace("-", "").replace("/", "");
 						fileName = fileName + ".pdf";
-
-					return new InputStreamDownload(stream, "application/pdf",fileName);
+	
+						return new InputStreamDownload(stream, "application/pdf",fileName);
+					} else {
+						result.redirectTo(url);
+						return null;
+					}
 				}
 			}
 		} catch (final Exception e) {

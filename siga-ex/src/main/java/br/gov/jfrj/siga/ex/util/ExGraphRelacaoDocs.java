@@ -1,13 +1,16 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 
 public class ExGraphRelacaoDocs extends ExGraph {
 
@@ -59,6 +62,27 @@ public class ExGraphRelacaoDocs extends ExGraph {
 				setEstilo(ESTILO_TRACEJADO);
 				setCor("gray");
 				setDirected(false);
+			} else if (tipo.equals("alteracao")) {
+				setTooltip("Alteração");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("blue");
+				setLabel(" " + ExTipoDeVinculo.ALTERACAO.getAcaoInversa() + " ");
+				setDirected(true);
+				setAoContrario(true);
+			} else if (tipo.equals("revogacao")) {
+				setTooltip("Revogação");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("orange");
+				setLabel(" " + ExTipoDeVinculo.REVOGACAO.getAcaoInversa() + " ");
+				setDirected(true);
+				setAoContrario(true);
+			} else if (tipo.equals("cancelamento")) {
+				setTooltip("Cancelamento");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("red");
+				setLabel(" " + ExTipoDeVinculo.CANCELAMENTO.getAcaoInversa() + " ");
+				setDirected(true);
+				setAoContrario(true);
 			} else if (tipo.equals("juntada")) {
 				setTooltip("Juntada");
 				setEstilo(ESTILO_TRACEJADO);
@@ -105,9 +129,39 @@ public class ExGraphRelacaoDocs extends ExGraph {
 		}
 
 		// Vinculações
-		for (ExMobil vinculado : mobBase.getVinculados()) {
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.RELACIONAMENTO, null)) {
 			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
 			adicionar(new TransicaoMob(mobBase, vinculado, "vinculacao"));
+		}
+
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.ALTERACAO, false)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(mobBase, vinculado, "alteracao"));
+		}
+
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.ALTERACAO, true)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(vinculado, mobBase, "alteracao"));
+		}
+
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.CANCELAMENTO, false)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(mobBase, vinculado, "cancelamento"));
+		}
+
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.CANCELAMENTO, true)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(vinculado, mobBase, "cancelamento"));
+		}
+
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.REVOGACAO, false)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(mobBase, vinculado, "revogacao"));
+		}
+
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.REVOGACAO, true)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(vinculado, mobBase, "revogacao"));
 		}
 
 		// Juntadas
@@ -166,7 +220,7 @@ public class ExGraphRelacaoDocs extends ExGraph {
 	}
 
 	public Map<String, List<ExMobil>> getAsMap() {
-		Map<String, List<ExMobil>> mapa = new HashMap<String, List<ExMobil>>();
+		Map<String, List<ExMobil>> mapa = new TreeMap<String, List<ExMobil>>();
 		String cat = "";
 		ExMobil mobilAAdicionar = null;
 		for (Transicao t : getTransicoes()) {
@@ -174,6 +228,30 @@ public class ExGraphRelacaoDocs extends ExGraph {
 			if (tMob.tipo.equals("vinculacao")) {
 				cat = "Veja também";
 				mobilAAdicionar = tMob.mob2;
+			} else if (tMob.tipo.equals("alteracao")) {
+				if (tMob.mob1.equals(mobBase)) {
+					cat = ExTipoDeVinculo.ALTERACAO.getAcao();
+					mobilAAdicionar = tMob.mob2;
+				} else {
+					cat = ExTipoDeVinculo.ALTERACAO.getAcaoInversa();
+					mobilAAdicionar = tMob.mob1;
+				}
+			} else if (tMob.tipo.equals("revogacao")) {
+				if (tMob.mob1.equals(mobBase)) {
+					cat = ExTipoDeVinculo.REVOGACAO.getAcao();
+					mobilAAdicionar = tMob.mob2;
+				} else {
+					cat = ExTipoDeVinculo.REVOGACAO.getAcaoInversa();
+					mobilAAdicionar = tMob.mob1;
+				}
+			} else if (tMob.tipo.equals("cancelamento")) {
+				if (tMob.mob1.equals(mobBase)) {
+					cat = ExTipoDeVinculo.CANCELAMENTO.getAcao();
+					mobilAAdicionar = tMob.mob2;
+				} else {
+					cat = ExTipoDeVinculo.CANCELAMENTO.getAcaoInversa();
+					mobilAAdicionar = tMob.mob1;
+				}
 			} else if (tMob.tipo.equals("juntada")) {
 				cat = "Juntado ao documento";
 				mobilAAdicionar = tMob.mob1;
@@ -200,6 +278,35 @@ public class ExGraphRelacaoDocs extends ExGraph {
 			mapa.get(cat).add(mobilAAdicionar);
 		}
 		return mapa;
+	}
+
+	public Map<String, List<ExMobil>> getPrincipaisAsMap() {
+		Map<String, List<ExMobil>> mapa = getAsMap();
+		Set<String> toRemove = new HashSet<>();
+		for (String key : mapa.keySet())
+			if (!isPrincipal(key))
+				toRemove.add(key);
+		toRemove.forEach(i -> mapa.remove(i));
+		return mapa;
+	}
+
+	public Map<String, List<ExMobil>> getSecundariosAsMap() {
+		Map<String, List<ExMobil>> mapa = getAsMap();
+		Set<String> toRemove = new HashSet<>();
+		for (String key : mapa.keySet())
+			if (isPrincipal(key))
+				toRemove.add(key);
+		toRemove.forEach(i -> mapa.remove(i));
+		return mapa;
+	}
+
+	private boolean isPrincipal(String key) {
+		return key.equals(ExTipoDeVinculo.ALTERACAO.getAcao()) 
+				|| key.equals(ExTipoDeVinculo.ALTERACAO.getAcaoInversa())
+				|| key.equals(ExTipoDeVinculo.REVOGACAO.getAcao())
+				|| key.equals(ExTipoDeVinculo.REVOGACAO.getAcaoInversa())
+				|| key.equals(ExTipoDeVinculo.CANCELAMENTO.getAcao())
+				|| key.equals(ExTipoDeVinculo.CANCELAMENTO.getAcaoInversa());
 	}
 
 }

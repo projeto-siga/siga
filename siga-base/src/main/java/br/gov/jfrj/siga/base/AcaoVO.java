@@ -35,6 +35,7 @@ public class AcaoVO {
 	private String nome;
 	private String descr;
 	private String nameSpace;
+	private String url;
 	private String acao;
 	boolean pode;
 	private String msgConfirmacao;
@@ -131,6 +132,13 @@ public class AcaoVO {
 		this.explicacao = explicacao;
 	}
 
+	public AcaoVO(String icone, String nome, String nameSpace, String url, String acao, boolean pode, String explicacao,
+				  String msgConfirmacao, TreeMap<String, String> params, String pre, String pos, String classe,
+				  String modal) {
+		this(icone, nome, nameSpace, acao, pode, explicacao, msgConfirmacao, params, pre, pos, classe, modal);
+		this.url = url;
+	}
+
 	public AcaoVO() {
 		// TODO Auto-generated constructor stub
 	}
@@ -148,6 +156,9 @@ public class AcaoVO {
 	}
 
 	public String getUrl() {
+		if(url != null && !url.isEmpty()){
+			return this.url;
+		}
 		String resultUrl = "";
 		if (this.params != null) {
 			String valueOfParameterToAdd;
@@ -200,6 +211,10 @@ public class AcaoVO {
 		this.nameSpace = nameSpace;
 	}
 
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	public void setAcao(String acao) {
 		this.acao = acao;
 	}
@@ -241,6 +256,7 @@ public class AcaoVO {
 		private String nome;
 		private String descr;
 		private String nameSpace;
+		private String url;
 		private String acao;
 		private boolean pode;
 		private String msgConfirmacao;
@@ -270,6 +286,11 @@ public class AcaoVO {
 		
 		public Builder nameSpace(String nameSpace) {
 			this.nameSpace = nameSpace;
+			return this;
+		}
+
+		public Builder url(String url) {
+			this.url = url;
 			return this;
 		}
 
@@ -343,6 +364,7 @@ public class AcaoVO {
 			acaoVO.setNome(nome);
 			acaoVO.setDescr(descr);
 			acaoVO.setNameSpace(nameSpace);
+			acaoVO.setUrl(url);
 			acaoVO.setAcao(acao);
 			acaoVO.setPode(pode);
 			acaoVO.setMsgConfirmacao(msgConfirmacao);
@@ -382,7 +404,11 @@ public class AcaoVO {
 		};
 		
 		public static String produzirExplicacao(Expression exp, boolean f) {
-			String s = exp.explain(f).replace("_not_", " não ");
+			String s = exp.explain(f);
+			if (s == null)
+				// Provavelmente a condição mudou entre o cálculo booleano e o cálculo da explicação
+				throw new RuntimeException("Explicação não pode ser calculada");
+			s = s.replace("_not_", " não ");
 			s = s.replace("_and_", "e").replace("_or_", " ou ");
 			s = Texto.removerEspacosExtra(s);
 			return s;

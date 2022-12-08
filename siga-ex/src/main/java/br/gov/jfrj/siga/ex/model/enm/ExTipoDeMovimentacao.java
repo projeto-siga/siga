@@ -180,7 +180,32 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	CONCLUSAO(84, "Conclusão de Trâmite"),
 	//
-	ENVIO_SIAFEM(85, "Envio ao SIAFEM");
+	ENVIO_SIAFEM(85, "Envio ao SIAFEM"),
+	//
+	GERAR_LINK_PUBLICO_PROCESSO(86, "Gerar link público do Processo"),
+	//
+	ENVIO_PARA_VISUALIZACAO_EXTERNA(87, "Envio para visualização externa"),
+	
+	AGENDAR_PUBLICACAO_DOE(88, "Agendar Publicação DOE"),
+	
+	ENVIAR_PUBLICACAO_DOE(89, "Enviar Publicação DOE"),
+	
+	//
+	//TRAMITE_ENVIO_PEN(90, "Tramite Envio PEN");
+	//
+	//TRAMITE_RECEBIMENTO_PEN(91, "Tramite Recebimento PEN");
+	//
+	//RECUSA_TRAMITE_PEN(92, "Recibo de Recusa PEN");
+	//
+	//RECIBO_TRAMITE_PEN(93, "Recibo de Tramite PEN");
+	//
+	//RECIBO_ENVIO_PEN(94, "Recibo Envio PEN");
+	//
+	//PDF_ESTAMPADO_PEN(95, "Geração PDF Estampado PEN");
+	
+	ORDEM_ASSINATURA(96, "Ordem de Assinatura"),
+	
+	CANCELAR_PUBLICACAO_DOE(97, "Cancelar Publicação DOE");
 
 	private final int id;
 	private final String descr;
@@ -227,10 +252,12 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	}
 
 	public static boolean hasTransferencia(ITipoDeMovimentacao id) {
-		return id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+		return id == ExTipoDeMovimentacao.TRANSFERENCIA
+				|| id == ExTipoDeMovimentacao.TRAMITE_PARALELO
+				|| id == ExTipoDeMovimentacao.NOTIFICACAO
+				|| id == ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-				|| id == ExTipoDeMovimentacao.TRANSFERENCIA
 				|| id == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA;
 	}
 
@@ -251,5 +278,10 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
          return listaTipoMovimentacoes;
 
     }
+
+	public static boolean hasRecebimentoOuCriacao(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.CRIACAO
+				|| id == ExTipoDeMovimentacao.RECEBIMENTO;
+	}
 
 }

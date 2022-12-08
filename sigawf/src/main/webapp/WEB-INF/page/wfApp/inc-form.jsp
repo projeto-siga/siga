@@ -1,19 +1,17 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <div>
-	<c:if test="${empty td}">
-		<c:set var="td" value="${pi.definicaoDeTarefaCorrente}" scope="request"/>
-	</c:if>
-
+	<c:set var="td" value="${pi.definicaoDeTarefaCorrente}" scope="request"/>
 	<c:set var="msgAviso" value="${pi.getMsgAviso(titular, lotaTitular)}" />
 	<c:set var="desabilitarFormulario" value="${pi.isDesabilitarFormulario(titular, lotaTitular)}" />
 	<c:if
 		test="${empty td.id or (not desabilitarFormulario and empty msgAviso)}">
 		<div class="gt-form-row gt-width-100">
 			<input type="hidden" value="${pi.id}" name="tiId" />
-
+			
 			<c:set var="fieldIndex" value="0" />
 			<c:forEach var="variavel" items="${td.definicaoDeVariavel}">
+		
 				<c:set var="valor" value="${pi.obterValorDeVariavel(variavel)}" />
 				<div class="form-group">
 					<c:choose>
@@ -185,10 +183,12 @@
 					</c:if>
 				</div>
 			</c:if>
-			<div class="col col-auto ${empty td.id ? '' : 'ml-auto'}">
-				<button type="submit" name="indiceDoDesvio" value="-1"
-					class="btn btn-${empty td.id ? 'primary' : 'light'}">Salvar</button>
-			</div>
+			<c:if test="${not empty td.definicaoDeVariavel}">
+				<div class="col col-auto ${empty td.id ? '' : 'ml-auto'}">
+					<button type="submit" name="indiceDoDesvio" value="-1"
+						class="btn btn-${empty td.id ? 'primary' : 'light'}">Salvar</button>
+				</div>
+			</c:if>
 		</div>
 		<%--</c:if> --%>
 	</c:if>

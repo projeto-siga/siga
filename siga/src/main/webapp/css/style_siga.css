@@ -193,6 +193,49 @@ a.doc-sign:hover {
 	opacity: 0;
 	animation: spinner-grow .75s linear infinite;
 }
+
+.spinner-dots {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #dee2e6;
+  color: #dee2e6;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: .5s;
+}
+
+.spinner-dots::before, .spinner-dots::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.spinner-dots::before {
+  left: -15px;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #dee2e6;
+  color: #dee2e6;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.spinner-dots::after {
+  left: 15px;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #dee2e6;
+  color: #dee2e6;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dotFlashing {0% {background-color: #dee2e6;} 50%, 100% {background-color: #c0c0c0;}}
+
 .mesa-config {
     position: fixed;
     right: -320px;
@@ -324,6 +367,13 @@ a.doc-sign:hover {
 */
 .select2-container--bootstrap .select2-selection--single .select2-selection__placeholder {
    	color: #555555!important;
+}
+
+.select2-container--bootstrap .select2-selection--single {
+   	height: 2.3rem !important;
+}
+.select2-results__option {
+   	height: 1.8rem !important;
 }
 
 

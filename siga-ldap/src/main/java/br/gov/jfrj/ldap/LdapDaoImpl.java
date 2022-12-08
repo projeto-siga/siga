@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.logging.Logger;
 
 import javax.naming.Context;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -33,6 +34,7 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
+import javax.naming.directory.NoSuchAttributeException;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
@@ -160,7 +162,7 @@ public class LdapDaoImpl implements ILdapDao {
 
 	}
 
-	public Attributes pesquisar(String dn) throws AplicacaoException {
+	public Attributes pesquisar(String dn) throws AplicacaoException, NameNotFoundException  {
 		// Map<String, Object> atributos = new HashMap<String, Object>();
 
 		Attributes attrs = null;
@@ -172,7 +174,8 @@ public class LdapDaoImpl implements ILdapDao {
 			// Attribute a = attrs.get(id);
 			// atributos.put(id, a.get());
 			// }
-
+        } catch (NameNotFoundException e) {
+            throw e;
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível ler os atributos de " + dn, 9, e);
@@ -438,6 +441,10 @@ public class LdapDaoImpl implements ILdapDao {
 				new BasicAttribute(nomeAtributo, valorAtributo));
 		try {
 			this.contexto.modifyAttributes(dn, member);
+//		} catch (NameAlreadyBoundException e) {
+//            log.warning(
+//                    "NameAlreadyBoundException >>>>>> dn: "
+//                            + dn + ", nomeAtributo: " + nomeAtributo + ", valorAtributo: " + valorAtributo + ")");
 		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível inserir o valor "
 					+ valorAtributo + " no atributo " + nomeAtributo
@@ -462,7 +469,15 @@ public class LdapDaoImpl implements ILdapDao {
 
 	public void alterarAtributo(String dn, String nomeAtributo,
 			Object valorAtributo) throws AplicacaoException {
-		Attributes ats = pesquisar(dn);
+	    Attributes ats = null;
+        try {
+            ats = pesquisar(dn);
+        } catch (NameNotFoundException e) {
+            throw new AplicacaoException(
+                    "Nome não encontrado tentando substitur o valor atual do atributo "
+                            + nomeAtributo + " pelo valor " + valorAtributo
+                            + " do objeto " + dn, 9, e);
+        }
 		ModificationItem member[] = new ModificationItem[1];
 		Attribute at = ats.get(nomeAtributo);
 		if (at==null){
@@ -617,8 +632,14 @@ public class LdapDaoImpl implements ILdapDao {
 
 	private String dnToSamAccountName(String dnUsuario)
 			throws AplicacaoException {
-		Attributes attrs = pesquisar(dnUsuario);
-
+	    Attributes attrs = null;
+        try {
+            attrs = pesquisar(dnUsuario);
+        } catch (NameNotFoundException e) {
+            throw new AplicacaoException(
+                    "Nome não encontrado tentando obter a sigla do usuário: " + dnUsuario, 9, e);
+        }
+	    
 		String siglaUsuario = null;
 		try {
 			siglaUsuario = attrs.get("samaccountname").get().toString();
@@ -708,12 +729,15 @@ public class LdapDaoImpl implements ILdapDao {
 
 	@Override
 	public void excluirAtributo(String dn, String nomeAtributo)
-			throws AplicacaoException {
+			throws AplicacaoException, NoSuchAttributeException {
 		ModificationItem member[] = new ModificationItem[1];
 		member[0] = new ModificationItem(DirContext.REMOVE_ATTRIBUTE,
 				new BasicAttribute(nomeAtributo));
 		try {
 			this.contexto.modifyAttributes(dn, member);
+		} catch (NoSuchAttributeException e) {
+          log.warning("Não é possível remover atributo inexistente: NoSuchAttributeException >>>>>> dn: " + dn + ", nomeAtributo: " + nomeAtributo+ ")");
+          throw e;
 		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível excluir o atributo "
 					+ nomeAtributo + " do objeto " + dn + "!", 9, e);

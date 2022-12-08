@@ -38,6 +38,8 @@
 		
 		function invalid(event) {
 			$("#alertFiltros").show();
+			$('#containerResult').remove();
+			$('#alertNaoEncontrado').remove();
 		}
 		
 		function submit(event) {
@@ -49,9 +51,19 @@
 			}
 		}
 		
+		function sbmt(offset) {
+			if (offset == null) {
+				offset = 0;
+			}
+			frm.elements["paramoffset"].value = offset;
+			frm.elements["p.offset"].value = offset;
+			frm.submit();
+		}
+		
 		$( document ).ready(function() {
+			$("#alertFiltros").hide();
 			frm.onsubmit = submit;
-	
+
 			$("#alertFiltros").hide();
 			if ($('#sigla').val().trim() === "" ) {
 				$('#sigla').focus();
@@ -62,7 +74,7 @@
 	
 	<!-- main content -->
 	<div class="container-fluid pt-3">
-		<div id="alertFiltros" class="alert alert-warning" role="alert">
+		<div id="alertFiltros" class="alert alert-warning" role="alert" style="display: none;">
 		  Obrigatório informar o <strong>Nome ou <fmt:message key="usuario.matricula"/></strong> e/ou <strong><fmt:message key="usuario.lotacao"/></strong> para realizar a pesquisa.
 		</div>
 		<div class="card bg-light mb-3" >
@@ -70,7 +82,7 @@
 				<h5>Dados do Usuário</h5>
 			</div>
 			<div class="card-body">
-				<form name="frm" id="frm" action="${request.contextPath}/app/pessoa/buscar" class="form100" method="POST" onsubmit="sbmt()" >
+				<form name="frm" id="frm" action="${request.contextPath}/app/pessoa/buscar" class="form100" method="POST">
 					<input type="hidden" name="propriedade" value="${param.propriedade}" />
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="paramoffset" value="0" />

@@ -5,6 +5,10 @@ File:		custom.css - Use this file to add any custom styles you need
 If you add styles to this template, be sure to include it in your template files.
 */
 
+.table-large-inputs input {
+	width:100%;
+}
+
 div.entrevista-grupo {
 	margin-top: 1em;
 } 
@@ -745,4 +749,30 @@ table .table-head th {
 div.divDoc p {
 	margin-top: 0.5rem !important;
 	margin-bottom: 0.5rem !important;
-} 
+}
+
+.parte-disabled {
+    pointer-events:none; 
+    opacity: 0.3;
+}
+
+.table-sm-siga td, .table-sm-siga th {
+    padding: 0.3rem !important;
+    padding-top: 0.3rem !important;
+    padding-right: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+    padding-left: 0.3rem !important;
+}
+
+table.doc-table {
+  	width:100%;
+}
+
+table.doc-table th, table.doc-table tfoot {
+	background-color: #ddd !important;
+	font-weight: bold;
+}
+
+table.doc-table, table.doc-table th, table.doc-table td {
+  	border: 1px solid;
+}

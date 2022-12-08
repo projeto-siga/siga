@@ -18,7 +18,7 @@
 	}
 </script>
 
-<c:set var="descr" value="${listEstado[4].descricao}" />
+<c:set var="descr" value="${listEstado[4].grupo.nome}" />
 
 <c:set var="situacao"><fmt:message key="quadro.situacao" /></c:set>
 
@@ -49,7 +49,7 @@
 										    </c:when>    
 										
 										    <c:otherwise>
-										         	 ${listEstado[4].descricao}
+										         	 ${listEstado[4].grupo.nome}
 										    </c:otherwise>
 										</c:choose>
 									</th>
@@ -148,13 +148,30 @@
 										<span class="mr-1"><i
 											class="${listEstado[7].codigoFontAwesome}"></i></span>
 									</c:if>${listEstado[1]}
-								<td align="right" class="count"><siga:monolink
-										titulo="${titulo2}" texto="${listEstado[2]}"
-										href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovRespSel.id=${titular.idPessoa}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
-								<td align="right" class="count"><siga:monolink
-										titulo="${titulo3}" texto="${listEstado[3]}"
-										href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
-								</td>
+								
+								<td align="right" class="count">
+										<c:choose>
+											<c:when test="${listEstado[2]>0}">
+												<siga:monolink titulo="${titulo2}" texto="${listEstado[2]}"
+												href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovRespSel.id=${titular.idPessoa}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
+											</c:when>
+											<c:otherwise>
+												 ${listEstado[2]} 
+											</c:otherwise>
+										</c:choose>
+								<td align="right" class="count">
+										<c:choose>
+											<c:when test="${listEstado[3]>0}">
+												<siga:monolink titulo="${titulo3}" texto="${listEstado[3]}"
+												href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
+											</c:when>
+											<c:otherwise>
+												 ${listEstado[3]} 
+											</c:otherwise>
+										</c:choose>
+								 </td>
+
+								
 							</tr>
  					</c:if>
 				</c:forEach>

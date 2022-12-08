@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -55,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Controller;
@@ -98,6 +100,7 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.ExVisualizacaoTempDocCompl;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeArquivarCorrente;
@@ -112,6 +115,8 @@ import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeOrdemAssinatura;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeRefazer;
 import br.gov.jfrj.siga.ex.logic.ExPodeRestringirAcesso;
@@ -133,6 +138,8 @@ public class ExDocumentoController extends ExController {
 	private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
+	private static final Long TAMANHO_MAXIMO_CAPTURADO = Prop.getLong("/siga.armazenamento.arquivo.tamanhomax");
+	private static final Long TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE = Prop.getLong("/siga.armazenamento.arquivo.formatolivre.tamanhomax");
 	private String url = null;
 	
 	private final static Logger log = Logger.getLogger(ExDocumentoController.class);
@@ -164,6 +171,10 @@ public class ExDocumentoController extends ExController {
 		}
 
 		return doc;
+	}
+	
+	private ExVisualizacaoTempDocCompl getExConsTempDocCompleto() {
+		return ExVisualizacaoTempDocCompl.getInstance();
 	}
 
 	@Transacional
@@ -310,6 +321,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/carregarpreench")
 	public void aCarregarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException, IllegalAccessException,
@@ -613,7 +625,7 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)
+		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)	
 			exDocumentoDTO.setId(exDocumentoDTO.getDoc().getIdDoc());
 
 		if (exDocumentoDTO.getId() == null) {
@@ -650,7 +662,7 @@ public class ExDocumentoController extends ExController {
 					.consultarAtivoPorIdInicial(ExModelo.class, 28L))
 					.getIdMod());
 		}
-		carregarBeans(exDocumentoDTO, mobilPaiSel);
+		carregarBeans(exDocumentoDTO, mobilPaiSel); 
 
 		if (exDocumentoDTO.getMobilPaiSel().getId() != null) {
 			hasPai = true;
@@ -800,6 +812,23 @@ public class ExDocumentoController extends ExController {
 				.getSigla() });
 		parFreeMarker.put("sigla_lota_titular", new String[] { getLotaTitular()
 				.getSiglaCompleta() });
+		
+		if(new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(ExTipoDeConfiguracao.HERDAR_PREENCHIMENTO)
+				.withExMod(exDocumentoDTO.getModelo())
+				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
+			
+			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
+				ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
+				
+				Map<String, String> form = Ex.getInstance().getBL().obterEntrevista(doc, false);
+				
+				for(Entry<String,String> entry : form.entrySet()) {
+					if(!parFreeMarker.containsKey(entry.getKey()))
+						parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
+				}
+			}
+		}
 
 		// result.include("param", exDocumentoDTO.getParamsEntrevista());
 
@@ -821,6 +850,13 @@ public class ExDocumentoController extends ExController {
 			l.add(p);
 			// System.out.println("*** " + p + ", "
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
+		}
+		
+		final boolean podeExibirArvoreDocsSubscr = getExConsTempDocCompleto().podeExibirCheckBoxVisTempDocsComplCossigsSubscritor(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc());
+		if (podeExibirArvoreDocsSubscr && exDocumentoDTO.getDoc() != null) {
+			exDocumentoDTO.setPodeIncluirSubscrArvoreDocs(exDocumentoDTO.getDoc().paiPossuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO) || exDocumentoDTO.getDoc().possuiMovsVinculacaoPapel(ExPapel.PAPEL_AUTORIZADO));
+			ExDocumento exPaiDasViasCossigsSubscritor = getExConsTempDocCompleto().getPaiDasViasCossigsSubscritor(exDocumentoDTO.getDoc());
+			result.include("paiDasViasCossigsSubscritor", exPaiDasViasCossigsSubscritor != null ? exPaiDasViasCossigsSubscritor.getCodigo() : "");
 		}
 		result.include("vars", l);
 
@@ -845,6 +881,11 @@ public class ExDocumentoController extends ExController {
 		result.include("podeTrocarPdfCapturado", podeTrocarPdfCapturado(exDocumentoDTO));
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		result.include("idMod", exDocumentoDTO.getIdMod());
+		//Exibir ou nao Checkbox para acesso que Cossignatarios acessem docs completos 
+		result.include("podeExibirArvoreDocsSubscr", podeExibirArvoreDocsSubscr);
+		result.include("tamanhoMaximoArquivo", TAMANHO_MAXIMO_CAPTURADO);
+		result.include("tamanhoMaximoArquivoFormatoLivre", TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE);
+		
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
@@ -1004,7 +1045,6 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
-		SigaTransacionalInterceptor.upgradeParaTransacional();
 		String msgDestinoDoc = "";
 		DpPessoa dest = null;
 		DpLotacao lotaDest = null;
@@ -1021,6 +1061,8 @@ public class ExDocumentoController extends ExController {
 		} else {
 			if (mob.doc().isProcesso()) {
 				mobUlt = mob.doc().getUltimoVolume();
+				if (mobUlt == null)
+					return "Último volume do processo " + mob.getCodigo() + " não encontrado.";
 				mobArq = mob.doc().getMobilGeral();
 			} else {
 				if (mob.isGeral()) {
@@ -1079,10 +1121,10 @@ public class ExDocumentoController extends ExController {
 								break;
 							}
 					}
-					if (!alguemPodeAcessar) { /*
-											 * ninguem pode acessar este
-											 * documento
-											 */
+					
+					// ninguem pode acessar este documento
+					if (!alguemPodeAcessar) {
+						SigaTransacionalInterceptor.upgradeParaTransacional();
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
 								if(mobUlt.isEmTransito(getTitular(), getLotaTitular())) { /*  em transito */
@@ -1128,8 +1170,10 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 		}
-		
-		ContextoPersistencia.flushTransaction();
+
+		// Nato: provavelmente não é mais necessário fazer o flush depois que corrigi
+		// a ordenação das movimentações
+		// ContextoPersistencia.flushTransaction();
 
 		return msgDestinoDoc;
 
@@ -1160,7 +1204,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true, false, true);
+				getLotaTitular(), true, true, false, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(
@@ -1208,7 +1252,7 @@ public class ExDocumentoController extends ExController {
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
 				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true, false, true);
+				getLotaTitular(), true, true, false, false);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
 			throw new AplicacaoException(
@@ -1330,10 +1374,24 @@ public class ExDocumentoController extends ExController {
 		else											
 			result.redirectTo("/app/expediente/doc/exibirProcesso?sigla=" + sigla + "&exibirReordenacao=true");
 	}
+	
+	@Transacional
+	@Post("/app/expediente/doc/reordenarAss")
+	public void reordenarAssinatura(String ids, String sigla) throws Exception {		
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();						
+
+		exDocumentoDTO.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDTO);	
+
+		Ex.getInstance().getBL().reordenarAss(exDocumentoDTO.getDoc().getMobilGeral(), getCadastrante(), getLotaCadastrante(), ids);		
+		Ex.getInstance().getBL().atualizarMarcas(exDocumentoDTO.getDoc());
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
 
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
-			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, boolean exibirReordenacao)
+			final ExDocumentoDTO exDocumentoDTO, final Long idmob, final Long idVisualizacao, 
+					  boolean exibirReordenacao, final String nomeAcao)
 			throws Exception {		
 		final boolean recebimentoAutomatico = Prop.getBool("recebimento.automatico");
 		boolean recebimentoPendente = false;
@@ -1378,14 +1436,13 @@ public class ExDocumentoController extends ExController {
 			if (Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, getTitular(), getLotaTitular(), exDocumentoDto.getMob())) {
 				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(getCadastrante(), getTitular(), getLotaTitular(),exDocumentoDto.getMob(), new Date());
-				ExDao.getInstance().em().refresh(exDocumentoDto.getMob());
 			}														
 		} else {
 			ExMovimentacao mov = exDocumentoDto.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.TRANSFERENCIA);
 		
 			if (Ex.getInstance().getComp().pode(ExPodeReceber.class, getTitular(), getLotaTitular(),exDocumentoDto.getMob())
 				&& !exDocumentoDto.getMob().isEmTransitoExterno()				
-				&& (mov.getCadastrante() == null || !mov.getCadastrante().equivale(getTitular()))
+				&& (mov != null && (mov.getCadastrante() == null || !mov.getCadastrante().equivale(getTitular())))
 				&& !exDocumentoDto.getMob().isJuntado()) {
 				recebimentoPendente = true;		
 			}
@@ -1412,6 +1469,7 @@ public class ExDocumentoController extends ExController {
 		DpLotacaoSelecao lotaSubscritorSel = new DpLotacaoSelecao();
 		lotaSubscritorSel.buscarPorObjeto(getLotaTitular());
 
+		result.include("podeReordenar", Ex.getInstance().getComp().pode(ExPodeOrdemAssinatura.class, so.getTitular(), so.getLotaTitular(), exDocumentoDto.getDoc()));
 		result.include("docVO", docVO);
 		result.include("sigla", Sigla);
 		result.include("id", exDocumentoDto.getId());
@@ -1426,8 +1484,10 @@ public class ExDocumentoController extends ExController {
 		result.include("lotaSubscritorSel", lotaSubscritorSel);
 	}
 
+	@TrackRequest
 	@Get("app/expediente/doc/exibirProcesso")
-	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, boolean exibirReordenacao)
+	public void exibeProcesso(final String sigla, final boolean podeExibir, Long idVisualizacao, 
+                              boolean exibirReordenacao, final String nomeAcao)
 			throws Exception {
 		
 		if(Prop.get("pdf.tamanho.maximo.completo") != null) {
@@ -1455,13 +1515,13 @@ public class ExDocumentoController extends ExController {
 		}
 
 		
-		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao);					
+		exibe(false, sigla, null, null, idVisualizacao, exibirReordenacao, nomeAcao);					
 	}
 
 	@Get("/app/expediente/doc/exibirResumoProcesso")
 	public void exibeResumoProcesso(final String sigla, final boolean podeExibir)
 			throws Exception {
-		exibe(false, sigla, null, null, null, false);
+		exibe(false, sigla, null, null, null, false, null);
 	}
 
 	private void buscarDocumentoOuNovo(final boolean fVerificarAcesso,
@@ -1573,21 +1633,26 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Transacional
+	@RequestParamsPermissiveCheck
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo) {
+			final UploadedFile arquivo, final String tokenArquivo) {
 		
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
 		
 		if (!exDocumentoDTO.getCriandoSubprocesso() 
-				&& exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null 
-					&& exDocumentoDTO.getMobilPaiSel().getObjeto() != null && exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc() != null)
-				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()
-						+ " pelo usuário " + getTitular().getSigla() + ". Usuário " + getTitular().getSigla() 
-						+ " não possui acesso ao documento " + exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getSigla()+".", 
-						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), exDocumentoDTO.getMobilPaiSel().getObjeto());
+				&& exDocumentoDTO.getId() == null && exDocumentoDTO.getMobilPaiSel() != null) {
+			ExMobil mobPai = exDocumentoDTO.getMobilPaiSel().getObjeto();
+			if (mobPai != null) {
+				if (mobPai.isGeral() && mobPai.doc().isProcesso())
+					mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
+				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + mobPai.getSigla()
+						+ " pelo usuário " + getTitular().getSigla() + ".", 
+						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), mobPai);
+			}
+		}
 		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
@@ -1631,12 +1696,12 @@ public class ExDocumentoController extends ExController {
 
 			lerForm(exDocumentoDTO, vars);
 
-			if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-					.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+			if (exDocumentoDTO.isCapturado()
 					&& exDocumentoDTO.getDoc().getIdDoc() == null
-					&& arquivo == null)
+					&& arquivo == null
+					&& tokenArquivo == null)
 				throw new AplicacaoException(
-						"Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
+						"Documento capturado não pode ser gravado sem que seja informado o arquivo " + (tokenArquivo != null ? ".":"PDF."));
 
 			if (!ex.getConf().podePorConfiguracao(getTitular(),
 					getLotaTitular(),
@@ -1728,8 +1793,14 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getDoc().setExMobilAutuado(mobilAutuado);
 			}
 
-			// Insere PDF de documento capturado
-			//
+			// Se o arquivo é de formato e tamanho livre, já fez o upload previamente e passou um token contendo localização do 
+			// arquivo e tamanho.
+			if (tokenArquivo != null) {
+				ExDocumento d = exDocumentoDTO.getDoc();
+				d.setConteudoBlobFormatoLivre(tokenArquivo);
+				exDocumentoDTO.setCpArquivoFormatoLivre(d.getCpArquivoFormatoLivre());
+			}
+			// Insere PDF de documento capturado (de formato não livre)
 			if (arquivo != null) {
 				ExDocumento d = exDocumentoDTO.getDoc();
 
@@ -1746,9 +1817,14 @@ public class ExDocumentoController extends ExController {
 								"Arquivo vazio não pode ser anexado.");
 					}
 					numBytes = baArquivo.length;
-					if (numBytes > 10 * 1024 * 1024) {
+					Long tamMax = TAMANHO_MAXIMO_CAPTURADO;
+					if (d.getOrgaoUsuario().podeGravarHcp()) 
+						tamMax = TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE;
+					
+					if (numBytes > tamMax) {
 						throw new AplicacaoException(
-								"Não é permitida a anexação de arquivos com mais de 10MB.");
+								"Não é permitida a anexação de arquivos com mais de "
+								+ (Math.ceil((double) tamMax / 1024 / 1024)) + "MB");
 					}
 					d.setConteudoBlobPdf(baArquivo);
 					d.setConteudoBlobHtml(null);
@@ -1796,14 +1872,28 @@ public class ExDocumentoController extends ExController {
 			/*
 			 * fim da alteracao
 			 */
+			final boolean podeExibirArvoreDocsCossig = getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(getCadastrante(), getLotaCadastrante());
+			if	(podeExibirArvoreDocsCossig) {		
+				//input checkbox selecionado  
+				if (exDocumentoDTO.isPodeIncluirSubscrArvoreDocs()) { 
+					getExConsTempDocCompleto().removerSubscrVisTempDocsComplFluxoGravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+					try {
+						getExConsTempDocCompleto()
+								.incluirSubscritorVisTempDocsCompl(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), exDocumentoDTO.isPodeIncluirSubscrArvoreDocs(), Boolean.TRUE);
+					} catch (RegraNegocioException e) {
+						result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+					}	
+				} else {
+					getExConsTempDocCompleto().removerSubscrVisTempDocsComplFluxoGravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
+				}
+			}
 			
 			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
 				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
 			}
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
-					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
-							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
+					&& exDocumentoDTO.isCapturado() && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 
@@ -1823,6 +1913,8 @@ public class ExDocumentoController extends ExController {
 						0, e);
 			}
 
+		} catch (final AplicacaoException e) {
+			throw e;
 		} catch (final Exception e) {
 			throw new RuntimeException("Erro na gravação", e);
 		}
@@ -1843,6 +1935,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Transacional
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/gravarpreench")
 	public void aGravarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,
@@ -1928,6 +2021,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Post("app/expediente/doc/preverPdf")
+	@RequestParamsPermissiveCheck 
 	public Download aPreverPdf(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException, IllegalAccessException,
 			InvocationTargetException {
@@ -2144,7 +2238,7 @@ public class ExDocumentoController extends ExController {
 					mobPai = daoMob(exDocumentoDTO.getMobilPaiSel().getId());
 
 					final Long idMod = paramLong("exDocumentoDTO.idMod");
-					if (idMod != null && exDocumentoDTO.getCriandoSubprocesso())
+					if (idMod == null && exDocumentoDTO.getCriandoSubprocesso())
 						exDocumentoDTO.setIdMod(exDocumentoDTO.getMobilPaiSel()
 								.getObjeto().getDoc().getExModelo().getId());
 
@@ -2422,8 +2516,10 @@ public class ExDocumentoController extends ExController {
 					final String param[] = s.split("=");
 					try {
 						if (param.length == 2) {
-							exDocumentoDTO.getParamsEntrevista().put(param[0],
-									URLDecoder.decode(param[1], "iso-8859-1"));
+							
+							String parametro = StringEscapeUtils.unescapeHtml4(URLDecoder.decode(param[1], "iso-8859-1"));
+							
+							exDocumentoDTO.getParamsEntrevista().put(param[0],parametro);
 						}
 					} catch (final UnsupportedEncodingException e) {
 					}
@@ -2625,10 +2721,8 @@ public class ExDocumentoController extends ExController {
 								parametro = parametro.replaceAll(m, "");
 						}
 						if (!FuncoesEL.contemTagHTML(parametro)) {
-							if (parametro.contains("\"")) {
-								parametro = parametro.replace("\"", "&quot;");
-								setParam(s, parametro);
-							}
+							parametro = StringEscapeUtils.escapeHtml4(parametro);
+							setParam(s, parametro);
 						}
 
 						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
@@ -2991,5 +3085,11 @@ public class ExDocumentoController extends ExController {
 	@Get("app/validar-assinatura")
 	public void aDesfazerCancelamentoDocumento(final Long pessoa, final String sigla) {
 		result.redirectTo(Prop.get("/siga.base.url") + "/siga/permalink/" + sigla);
+	}
+	
+	@TrackRequest
+	@Get("/app/expediente/doc/registrar_requisicao_usuario")
+	public void registrarRequisicaoUsuario(final String sigla, final String nomeAcao){
+		result.use(Results.status()).noContent();
 	}
 }

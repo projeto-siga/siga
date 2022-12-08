@@ -57,12 +57,15 @@ import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeVariavel;
+import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeEdicao;
 import br.gov.jfrj.siga.wf.model.enm.WfAcessoDeInicializacao;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
 import br.gov.jfrj.siga.wf.util.WfDefinicaoDeProcedimentoDaoFiltro;
+import br.gov.jfrj.siga.wf.util.WfTarefa;
 import br.gov.jfrj.siga.wf.util.WfUtil;
 
 @Controller
@@ -195,11 +198,12 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 	@Get("app/diagrama/exibir")
 	public void exibe(final String id) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
-		if (id != null) {
-			WfDefinicaoDeProcedimento pd = buscar(id);
-			result.include("pd", pd);
-			result.include("dot", util.getDot(pd));
-		}
+		if (id == null)
+			throw new AplicacaoException("Id não pode ser nula");
+
+		WfDefinicaoDeProcedimento pd = buscar(id);
+		result.include("pd", pd);
+		result.include("dot", util.getDot(pd));
 	}
 
 	@Get("app/diagrama/documentar")
@@ -301,12 +305,19 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 						td.setDefinicaoDeResponsavel(dao().consultar(td.getDefinicaoDeResponsavelId(),
 								WfDefinicaoDeResponsavel.class, false));
 
+					if (!td.getTipoDeTarefa().isSuportarVariaveis())
+						td.setDefinicaoDeVariavel(new ArrayList<>());
+
 					if (td.getDefinicaoDeVariavel() != null) {
 						for (WfDefinicaoDeVariavel vd : td.getDefinicaoDeVariavel()) {
 							vd.setDefinicaoDeTarefa(td);
 							setDepois.add(vd);
 						}
 					}
+
+					if (!td.getTipoDeTarefa().isSuportarDesvios())
+						td.setDefinicaoDeDesvio(new ArrayList<>());
+
 					if (td.getDefinicaoDeDesvio() != null) {
 						for (WfDefinicaoDeDesvio dd : td.getDefinicaoDeDesvio()) {
 							dd.setDefinicaoDeTarefa(td);

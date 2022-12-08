@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Cacheable;
@@ -42,6 +43,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpConvertableEntity;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -54,7 +57,6 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_orgao_usuario")
-@Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
@@ -85,6 +87,8 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
+	private static List<String> listaOrgaosPermitidosHcp;
+	private static Boolean isArmazenamentoBlob;
 
 	public CpOrgaoUsuario() {
 		super();
@@ -187,4 +191,19 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		}
 	}
 
+	public boolean podeGravarHcp() {
+		if (isArmazenamentoBlob == null)
+				isArmazenamentoBlob = CpArquivoTipoArmazenamentoEnum.BLOB.equals(
+						CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
+		
+		if (listaOrgaosPermitidosHcp == null)
+			listaOrgaosPermitidosHcp = Prop.getList("/siga.armazenamento.orgaos");
+		if ("*".equals(listaOrgaosPermitidosHcp.get(0)))
+			return true;
+		final String sigla = this.getSigla();
+		if(listaOrgaosPermitidosHcp.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla)) )
+			return true;
+		return false;
+	}
+	
 }

@@ -52,47 +52,6 @@
 				</c:otherwise>	
 			</c:choose>	
 		</div>
-		
-		<div class="col">	
-			<c:if test="${(not empty juntarAtivo and siga_cliente != 'GOVSP') or (not empty tramitarAtivo) or (not empty exibirNoProtocoloAtivo)}">
-				<h5>Após ${(not empty assinar and assinar)? 'assinatura':'autenticação'}:</h5>
-			</c:if>
-			<c:if test="${not empty juntarAtivo}">
-				<div class="custom-control custom-checkbox ${hide_only_GOVSP}">
-					<input class="form-check-input " type="checkbox" name="ad_juntar_0"
-						id="ad_juntar_0" <c:if test="${juntarAtivo}">checked</c:if>
-						<c:if test="${juntarFixo}">disabled</c:if> /> <label
-						class="form-check-label" for="ad_juntar_0">Juntar</label>
-				</div>
-			</c:if>
-		
-			<c:if test="${not empty tramitarAtivo}">
-				<div class="custom-control custom-checkbox ">
-					<input class="form-check-input" type="checkbox" name="ad_tramitar_0"
-						id="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>
-						<c:if test="${tramitarFixo}">disabled</c:if> /> <label
-						class="form-check-label" for="ad_tramitar_0" <siga:tooltip title="Tramitar Automaticamente" explicacao="${tramitarExplicacao}"/> >Tramitar</label>
-				</div>
-				<c:set var="exibirOpcoes" scope="request" value="d-block" />
-			</c:if>
-			<c:if test="${not empty exibirNoProtocoloAtivo}">
-				<div class="custom-control custom-checkbox ">
-					<input class="form-check-input" type="checkbox" name="ad_exibirNoProtocolo_0"
-						id="ad_exibirNoProtocolo_0" onchange="confirmaExibirNoProtocolo(this)" <c:if test="${exibirNoProtocoloAtivo}">checked</c:if>
-						<c:if test="${exibirNoProtocoloFixo}">disabled</c:if> /> <label 
-						class="form-check-label" for="ad_exibirNoProtocolo_0">Disponibilizar no Acompanhamento do Protocolo</label>
-				</div>
-				<script type="text/javascript">
-					function confirmaExibirNoProtocolo(checkbox) {
-					  if (checkbox.checked) {
-					    if (!confirm("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do protocolo de acompanhamento. Deseja continuar? ")) {
-						  checkbox.checked = false;
-					    }
-					  }
-					}	
-				</script>
-			</c:if>
-		</div>
 		<c:if test="${assinarCertDigital or assinarComSenha or assinarComSenhaPin or autenticarComSenha or autenticarComSenhaPin or autenticar}">
 			<div class="col-auto my-auto mr-5">
 				<h5>Formas de ${(not empty assinar and assinar)? 'assinatura': (not empty autenticar and autenticar) ? 'autenticação':''}:</h5>
@@ -105,7 +64,7 @@
 					<div class="custom-control custom-radio">
 						<input class="custom-control-input" type="radio" 
 							   accesskey="c" name="radioProviderAssinatura" id="ad_password_0" 
-							   <c:if test="${SenhaChecked}">checked</c:if> /> 
+							   <c:if test="${SenhaChecked}">checked</c:if> onclick="setUserLocalStorage('tipo-assinatura', 'senha')" /> 
 						<label class="custom-control-label" for="ad_password_0">Senha</label>
 	
 					</div>
@@ -118,7 +77,7 @@
 							accesskey="p" name="radioProviderAssinatura" id="ad_pin_0" 
 							<c:if test="${PinChecked}">checked</c:if>
 							<c:if test="${empty identidadeCadastrante.pinIdentidade}">disabled</c:if>
-							identidadeCadastrante /> 
+							identidadeCadastrante onclick="setUserLocalStorage('tipo-assinatura', 'pin')" /> 
 						<label class="custom-control-label" for="ad_pin_0">PIN</label>
 						<c:if test="${empty identidadeCadastrante.pinIdentidade}">
 							<small class="text-muted"> - Clique <strong><a href='/siga/app/pin/cadastro'>aqui</a></strong> saber mais e definir seu PIN.</small>
@@ -126,16 +85,37 @@
 					</div>
 				</c:if>
 				
-				
 				<c:if test="${assinarCertDigital || autenticar}">
 					<div class="custom-control custom-radio">
 						<input class="custom-control-input" type="radio" 
 							accesskey="d" name="radioProviderAssinatura" id="ad_certificado_0" 
-							<c:if test="${CertificadoChecked}">checked</c:if> /> 
+							<c:if test="${CertificadoChecked}">checked</c:if> onclick="setUserLocalStorage('tipo-assinatura', 'certificado-digital')" /> 
 						<label class="custom-control-label" for="ad_certificado_0">Certificado Digital</label>
 					</div>
 				</c:if>
+				
 			</div>
+
+			<script>
+				$(document).ready(function() {
+					var tipoAssinatura = getUserLocalStorage('tipo-assinatura');
+					var i = undefined;
+					
+					switch (tipoAssinatura) {
+					case 'certificado-digital': 
+						i = $('#ad_certificado_0');
+						break;						
+					case 'senha': 
+						i = $('#ad_password_0');
+						break;						
+					case 'pin': 
+						i = $('#ad_pin_0');
+						break;						
+					}
+					if (i && !i.prop('checked') && !i.prop('disabled'))
+						i.prop('checked', true);
+				});
+			</script>
 			
 			<div class="col">	
 				<c:if test="${(not empty juntarAtivo and siga_cliente != 'GOVSP') or (not empty tramitarAtivo) or (not empty exibirNoProtocoloAtivo)}">
@@ -155,7 +135,7 @@
 						<input class="form-check-input" type="checkbox" name="ad_tramitar_0"
 							id="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>
 							<c:if test="${tramitarFixo}">disabled</c:if> /> <label
-							class="form-check-label" for="ad_tramitar_0">Tramitar</label>
+							class="form-check-label" for="ad_tramitar_0" <siga:tooltip title="Tramitar Automaticamente" explicacao="${tramitarExplicacao}"/> >Tramitar</label>
 					</div>
 					<c:set var="exibirOpcoes" scope="request" value="d-block" />
 				</c:if>

@@ -33,15 +33,17 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilApiBuilder;
 
 public class DocumentosGet implements IDocumentosGet {
-	final private static String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
 	final private static String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
-	final static public Long MAXIMO_DIAS_PESQUISA = 30L;
+	final static public Long MAXIMO_DIAS_PESQUISA = Prop.getLong("/siga.pesquisa.limite.dias") != null ? Prop.getLong("/siga.pesquisa.limite.dias"):30L;
 	DpPessoa titular;
 	DpLotacao lotaTitular;
-
+	
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		final ExMobilApiBuilder builder = new ExMobilApiBuilder();
+		titular = ctx.getTitular();
+		lotaTitular = titular.getLotacao();
+		
 		Date dtIni = null;
 		Date dtFim = null;
 		Long qtdMaxima = req.qtdmax;
@@ -82,9 +84,9 @@ public class DocumentosGet implements IDocumentosGet {
 			}
 		}
 		Long idLota = req.idlotacao;
-		if (req.idlotacao == null)
+		if (idLota == null)
 			idLota = lotaTitular.getIdInicial();
-		if (req.idlotacao != null && !req.idlotacao.equals(lotaTitular.getIdInicial()))
+		if (idLota != null && !idLota.equals(lotaTitular.getIdInicial()))
 			throw new SwaggerException("Usuário não autorizado a pesquisar documentos de outra lotação.", 400, null,
 					req, resp, null);
 

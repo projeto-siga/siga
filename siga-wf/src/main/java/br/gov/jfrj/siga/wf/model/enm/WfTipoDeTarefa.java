@@ -21,31 +21,31 @@ public enum WfTipoDeTarefa implements TaskKind {
 
 	//
 	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", "Aguardar Assinatura",
-			WfTarefaDocAguardarAssinatura.class, true, true),
+			WfTarefaDocAguardarAssinatura.class, true, true, false, false),
 	//
-	TRAMITAR_PRINCIPAL("Enviar", "rectangle", "Enviar", WfTarefaTramitar.class, true, true),
+	TRAMITAR_PRINCIPAL("Enviar", "rectangle", "Enviar", WfTarefaTramitar.class, true, true, false, false),
 	//
-	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", "Arquivar", WfTarefaArquivar.class, false, true),
+	ARQUIVAR_PRINCIPAL("Arquivar", "rectangle", "Arquivar", WfTarefaArquivar.class, false, true, false, false),
 	//
-	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", "Incluir Documento", WfTarefaDocAguardarJuntada.class, true, true),
+	INCLUIR_DOCUMENTO("Incluir Documento", "rectangle", "Incluir Documento", WfTarefaDocAguardarJuntada.class, true, true, false, false),
 	//
-	INCLUIR_COPIA("Incluir Cópia", "rectangle", "Incluir Cópia", WfTarefaDocIncluirCopia.class, false, true),
+	INCLUIR_COPIA("Incluir Cópia", "rectangle", "Incluir Cópia", WfTarefaDocIncluirCopia.class, false, true, false, false),
 	//
-	CRIAR_DOCUMENTO("Criar Documento", "rectangle", "Criar Documento", WfTarefaDocCriar.class, true, true),
+	CRIAR_DOCUMENTO("Criar Documento", "rectangle", "Criar Documento", WfTarefaDocCriar.class, true, true, false, false),
 	//
-	AUTUAR_DOCUMENTO("Autuar Documento", "rectangle", "Autuar", WfTarefaDocAutuar.class, true, false),
+	AUTUAR_DOCUMENTO("Autuar Documento", "rectangle", "Autuar", WfTarefaDocAutuar.class, true, false, false, false),
 	//
-	FORMULARIO("Formulário", "tab", null, WfTarefaFormulario.class, true, true),
+	FORMULARIO("Formulário", "tab", null, WfTarefaFormulario.class, true, true, true, true),
 	//
-	DECISAO("Decisão", "diamond", null, TaskDecision.class, false, true),
+	DECISAO("Decisão", "diamond", null, TaskDecision.class, false, true, false, true),
 	//
-	EXECUTAR("Executar", "rectangle", null, TaskEval.class, false, true),
+	EXECUTAR("Executar", "rectangle", null, TaskEval.class, false, true, true, false),
 	//
-	EMAIL("Email", "folder", null, TaskEmail.class, true, true),
+	EMAIL("Email", "folder", null, TaskEmail.class, true, true, false, false),
 	//
-	SUBPROCEDIMENTO("Subprocedimento", "rectangle", "Subprocedimento", WfTarefaSubprocedimento.class, false, true),
+	SUBPROCEDIMENTO("Subprocedimento", "rectangle", "Subprocedimento", WfTarefaSubprocedimento.class, false, true, false, false),
 	//
-	INCLUIR_AUXILIAR("Incluir Auxiliar", "rectangle", "Incluir Auxiliar", WfTarefaDocAguardarAuxiliar.class, true, true);
+	INCLUIR_AUXILIAR("Incluir Auxiliar", "rectangle", "Incluir Auxiliar", WfTarefaDocAguardarAuxiliar.class, true, true, false, false);
 
 
 	private final String descr;
@@ -59,14 +59,19 @@ public enum WfTipoDeTarefa implements TaskKind {
 	
 	private boolean tramitarPrincipal;
 
+	private boolean suportarVariaveis;
+	private boolean suportarDesvios;
+
 	WfTipoDeTarefa(String descr, String graphKind, String graphTitle, Class<? extends Task> clazz,
-			boolean exigirResponsavel, boolean tramitarPrincipal) {
+			boolean exigirResponsavel, boolean tramitarPrincipal, boolean suportarVariaveis, boolean suportarDesvios) {
 		this.descr = descr;
 		this.graphKind = graphKind;
 		this.graphTitle = graphTitle;
 		this.clazz = clazz;
 		this.exigirResponsavel = exigirResponsavel;
 		this.tramitarPrincipal = tramitarPrincipal;
+		this.suportarVariaveis = suportarVariaveis;
+		this.suportarDesvios = suportarDesvios;
 	}
 
 	@Override
@@ -95,5 +100,13 @@ public enum WfTipoDeTarefa implements TaskKind {
 	
 	public boolean isTramitarPrincipal() {
 		return tramitarPrincipal;
+	}
+
+	public boolean isSuportarVariaveis() {
+		return suportarVariaveis;
+	}
+
+	public boolean isSuportarDesvios() {
+		return suportarDesvios;
 	}
 }

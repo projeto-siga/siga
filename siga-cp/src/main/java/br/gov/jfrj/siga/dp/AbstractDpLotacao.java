@@ -92,15 +92,20 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacaoInclusiveFechadas", query = "from DpLotacao lotacao"
-				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lotacao.siglaLotacao) like upper('%'  || :sigla || '%')))"
+				+ "  where ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lotacao.siglaLotacao) like upper('%' || :sigla || '%')) " 
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lotacao.orgaoUsuario.acronimoOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%')"
+				+ " or upper(concat(lotacao.orgaoUsuario.siglaOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni"
 				+ "	 group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"
 				+ "  order by upper(nomeLotacaoAI)"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacaoInclusiveFechadas", query = "select count(distinct lotacao.idLotacaoIni) from DpLotacao lotacao"
-				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lotacao.siglaLotacao) like upper('%'  || :sigla || '%')))"
-				+ "	and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni)"),
+				+ "  where ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lotacao.siglaLotacao) like upper('%' || :sigla || '%')) " 
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lotacao.orgaoUsuario.acronimoOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%')"
+				+ " or upper(concat(lotacao.orgaoUsuario.siglaOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%'))))"
+				+ "	and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni"
+				+ "	 group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpLotacao", query = "select lot from DpLotacao lot where upper(REMOVE_ACENTO(lot.nomeLotacao)) = upper(REMOVE_ACENTO(:nome)) and lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu")})
 		@NamedNativeQueries({
 		@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
@@ -112,7 +117,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
 				+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
 				+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
+				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao"),
+		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
+						+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+						+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
+						+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
+						+ " where lot.id_lotacao_ini = :idLotacao or (marca.ID_LOTACAO_INI = :idLotacao"
+				        + " and marca.ID_MARCADOR not in (:listMarcadores))")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {
@@ -184,17 +195,21 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private CpLocalidade localidade;
 	
 	@Column(name = "IS_EXTERNA_LOTACAO")
+    @Desconsiderar
 	private Integer isExternaLotacao;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_INI")
+    @Desconsiderar
 	private CpIdentidade hisIdcIni;
 
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_FIM")
+    @Desconsiderar
 	private CpIdentidade hisIdcFim;
 	
 	@Column(name = "IS_SUSPENSA")
+    @Desconsiderar
 	private Integer isSuspensa;
 
 	public Integer getIsExternaLotacao() {

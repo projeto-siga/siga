@@ -70,17 +70,41 @@ function popitup(url) {
 		winUp = 100;
 	}
 	
+	//Redimensionamento da janela pop up apenas para a opção de download de formato livre 
+	if(nameWindow.indexOf("downloadFormatoLivre") > -1){
+		popW = 450;
+		popH = 450;
+		winleft = 100;
+		winUp = 100;
+	}
+	
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	
+	const sigla = new URLSearchParams(url).get('sigla');
 	if(url.includes("/sigaex/app/arquivo/exibir?")) {
 		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
 	}
+
 	newwindow = window.open(url, nameWindow, winProp);
+	newwindow.addEventListener('click', function (e) {
+		if (e.target.id == 'print' || e.target.id == 'download') {
+			trackRequest(sigla, e.target.title);
+		}
+	});
 
 	if (window.focus) {
 		newwindow.focus()
 	}
+}
+
+function trackRequest(sigla, acao) {
+	let url;
+	url = "/sigaex/app/expediente/doc/registrar_requisicao_usuario?sigla=" + sigla + "&nomeAcao=" + acao;
+	$.ajax({
+		type: "GET",
+		url: url
+	});
 }
 
 function montarUrlDocPDF(url, visualizador) {
@@ -1850,7 +1874,7 @@ function setInputFilter(textbox, inputFilter) {
 }
 
 //Verificador de força de senha
-function passwordStrength(password) {
+function passwordStrength(password,metodo) {
 		var desc = new Array();
 		desc[0] = "Inaceitável";
 		desc[1] = "Muito Fraca";
@@ -1859,6 +1883,10 @@ function passwordStrength(password) {
 		desc[4] = "Boa";
 		desc[5] = "Forte";
 		var score = 0;
+		
+		if (metodo === undefined || metodo == null) {
+			metodo = "";
+		}
 
 		//if password bigger than 6 give 1 point
 		if (password.length >= 6)
@@ -1887,7 +1915,6 @@ function passwordStrength(password) {
 						|| !password.match(/[A-Z]/) || !password.match(/\d+/)))
 			score = 2;
 
-		document.getElementById("passwordDescription").innerHTML = desc[score];
-		document.getElementById("passwordStrength").className = "strength"
-				+ score;
-	}
+		document.getElementById('passwordDescription' + metodo).innerHTML = desc[score];
+		document.getElementById('passwordStrength' + metodo).className = "strength" + score;
+}

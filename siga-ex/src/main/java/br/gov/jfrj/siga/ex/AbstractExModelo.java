@@ -64,19 +64,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@Column(name = "ID_MOD", unique = true, nullable = false)
 	private java.lang.Long idMod;
 
-	@Transient
-	protected byte[] cacheConteudoBlobMod;
-	
-	/** The value of the simple conteudoBlobMod property. */
-	@Lob
-	@Column(name = "CONTEUDO_BLOB_MOD")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobMod;
-
-	/** The value of the simple conteudoTpBlob property. */
-	@Column(name = "CONTEUDO_TP_BLOB", length = 128)
-	private java.lang.String conteudoTpBlob;
-
 	/** The value of the simple descMod property. */
 	@Size(min=0, max=256, message="A Descrição deve conter no máximo 256 caracteres")
 	@Column(name = "DESC_MOD", length = 256)
@@ -137,6 +124,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	@Column(name = "MARCA_DAGUA", length = 13)
 	private java.lang.String marcaDagua;
+
+	@Column(name = "EXTENSOES_ARQUIVO", length = 200)
+	@Basic(fetch = FetchType.LAZY)
+	private java.lang.String extensoesArquivo;
 
 	// private Set classificacaoSet;
 
@@ -398,6 +389,11 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				return false;
 		} else if (!nmDiretorio.equals(other.nmDiretorio))
 			return false;
+		if (extensoesArquivo == null) {
+			if (other.extensoesArquivo != null)
+				return false;
+		} else if (!extensoesArquivo.equals(other.extensoesArquivo))
+			return false;
 		if (nmMod == null) {
 			if (other.nmMod != null)
 				return false;
@@ -415,40 +411,44 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	public java.lang.String getConteudoTpBlob() {
-		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
-			return conteudoTpBlob;
+		if (getCpArquivo() == null)
+			return null;
 		return getCpArquivo().getConteudoTpArq();
 	}
 
 	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
-		this.conteudoTpBlob = conteudoTpMod;
-		if (conteudoBlobMod==null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod);
-	    }
+		cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTpMod);
 	}
 
 	public byte[] getConteudoBlobMod() {
-		if(cacheConteudoBlobMod != null) {
-			return cacheConteudoBlobMod;
-		} else if (getCpArquivo() == null) {
-			cacheConteudoBlobMod = conteudoBlobMod;
-		} else {
-			try {
-				cacheConteudoBlobMod = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
+		try {
+			if (getCpArquivo() == null)
+				return null;
+			return getCpArquivo().getConteudo();
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
 		}
-		return cacheConteudoBlobMod;
 	}
 
 	public void setConteudoBlobMod(byte[] createBlob) {
-		cacheConteudoBlobMod = createBlob;
-		if (this.cpArquivo==null && (this.conteudoBlobMod!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
-			this.conteudoBlobMod = createBlob;
-		} else if(cacheConteudoBlobMod != null){
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMod);
-		}
+		if(createBlob != null)
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
 	}
 	
+	/**
+	 * Obtem as extensões de arquivo permitidas para este modelo, caso seja um capturado
+	 */
+	public java.lang.String getExtensoesArquivo() {
+		return extensoesArquivo;
+	}
+
+	/**
+	 * Seta as extensões de arquivo permitidas para este modelo, caso seja um capturado
+	 * Devem ser separadas por vírgula sem espaços (ex.: avi,mp4)
+	 * Se nulo, não permite captura de arquivos diferente de pdf
+	 */
+	public void setExtensoesArquivo(java.lang.String extensoesArquivo) {
+		this.extensoesArquivo = extensoesArquivo;
+	}
+
 }

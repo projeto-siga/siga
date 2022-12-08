@@ -36,6 +36,7 @@ import com.crivano.jlogic.And;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.logic.CpPodeBoolean;
 import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
@@ -51,7 +52,9 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.logic.ExEstaFinalizado;
+import br.gov.jfrj.siga.ex.logic.ExEstaOrdenadoAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoDOE;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoNoBoletim;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivoAuxiliar;
@@ -68,14 +71,17 @@ import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerConcelamentoDeDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeDesfazerRestricaoDeAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
+import br.gov.jfrj.siga.ex.logic.ExPodeEnviarParaVisualizacaoExterna;
 import br.gov.jfrj.siga.ex.logic.ExPodeEnviarSiafem;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluir;
 import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeFazerAnotacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeFazerDownloadFormatoLivre;
 import br.gov.jfrj.siga.ex.logic.ExPodeFazerVinculacaoDePapel;
 import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
 import br.gov.jfrj.siga.ex.logic.ExPodeGerarProtocolo;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirCossignatario;
+import br.gov.jfrj.siga.ex.logic.ExPodeOrdemAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodePedirPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
@@ -140,12 +146,14 @@ public class ExDocumentoVO extends ExVO {
 	String nmArqMod;
 	String conteudoBlobHtmlString;
 	String conteudoBlobFormString;
+	Map<String, String> form;
 	String sigla;
 	String codigoUnico;
 	String fisicoOuEletronico;
 	boolean fDigital;
 	Map<ExMovimentacaoVO, Boolean> cossignatarios = new HashMap<ExMovimentacaoVO, Boolean>();
 	String dadosComplementares;
+	LinkedHashMap<DpPessoa, Long> listaOrdenadaCossigSub = new LinkedHashMap<DpPessoa, Long>();
 	String forma;
 	String modelo;
 	String idModelo;
@@ -165,6 +173,7 @@ public class ExDocumentoVO extends ExVO {
 	String dtLimiteDemandaJudicial;
 	private ArrayList<ExMarcaVO> marcas;
 	String dtPrazoDeAssinatura;
+	Long idDoc;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel, boolean exibe) {
@@ -274,9 +283,13 @@ public class ExDocumentoVO extends ExVO {
 		this.conteudoBlobHtmlString = doc
 				.getConteudoBlobHtmlStringComReferencias();
 
-		byte[] form = doc.getConteudoBlobForm();
-		if (form != null)
-			this.conteudoBlobFormString = new String(form, StandardCharsets.ISO_8859_1);
+		byte[] conteudoBlobForm = doc.getConteudoBlobForm();
+		if (conteudoBlobForm != null) {
+			Map<String, String> map = new HashMap<>();
+			this.conteudoBlobFormString = new String(conteudoBlobForm, StandardCharsets.ISO_8859_1);
+			Utils.mapFromUrlEncodedForm(map, conteudoBlobForm);
+			this.form = map;
+		}
 		
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";
@@ -363,14 +376,16 @@ public class ExDocumentoVO extends ExVO {
 		List<ExDocumento> documentosPublicadosNoBoletim = doc.getDocumentosPublicadosNoBoletim();
 		if (documentosPublicadosNoBoletim != null) {
 			for (ExDocumento documentoPublicado : documentosPublicadosNoBoletim) {
-				documentosPublicados.add(new ExDocumentoVO(documentoPublicado));
+				documentosPublicados.add(new ExDocumentoVO(documentoPublicado, documentoPublicado.getMobilGeral(), cadastrante, titular,
+						lotaTitular, false, exibirAntigo, serializavel, exibe));
 			}
 		}
 
 		ExDocumento bol = doc.getBoletimEmQueDocFoiPublicado();
 		if (bol != null)
-			boletim = new ExDocumentoVO(bol);
-		
+			boletim = new ExDocumentoVO(bol, bol.getMobilGeral(), cadastrante, titular,
+					lotaTitular, false, exibirAntigo, serializavel, exibe);
+					
 		this.originalNumero = doc.getNumExtDoc();
 		this.originalData = doc.getDtDocOriginalDDMMYYYY();
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
@@ -404,6 +419,24 @@ public class ExDocumentoVO extends ExVO {
 		}
 	}
 	
+	public LinkedHashMap<DpPessoa, Long> getListaOrdenadaCossigSub() {
+		List<AssinanteVO> listaAsssinantes = mob.getDoc().getListaAssinantesOrdenados();
+
+		for (AssinanteVO assinanteVO : listaAsssinantes) {
+			for (Map.Entry<ExMovimentacaoVO, Boolean> cossig : this.cossignatarios.entrySet()) {
+				if(assinanteVO.getSubscritor().getSigla().equals(cossig.getKey().getMov().getSubscritor().getSigla())) {
+					this.listaOrdenadaCossigSub.put(cossig.getKey().getMov().getSubscritor(), cossig.getValue() ? cossig.getKey().getMov().getIdMov() : 0L);
+				}
+			}
+			if((Ex.getInstance().getComp().pode(ExPodeOrdemAssinatura.class, this.titular, this.lotaTitular, this.doc) || 
+					new ExEstaOrdenadoAssinatura(this.doc).eval()) && assinanteVO.getSubscritor().getSigla().equals(doc.getSubscritor().getSigla())) {
+				this.listaOrdenadaCossigSub.put(doc.getSubscritor(), 0L);
+			}
+		}
+
+		return this.listaOrdenadaCossigSub;
+	}
+	
 	/*
 	 * Adicionado 14/02/2020
 	 */
@@ -433,6 +466,16 @@ public class ExDocumentoVO extends ExVO {
 		}
 		
 		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().pode(ExPodeAnexarArquivoAuxiliar.class, titular, lotaTitular, mob);
+	}
+
+	public ExDocumentoVO(Long idDoc, String sigla, String classificacaoSigla, 
+						 String lotaCadastranteString, String cadastranteString, String descrDocumento) {
+		this.idDoc = idDoc;
+		this.sigla = sigla;
+		this.classificacaoSigla = classificacaoSigla;
+		this.lotaCadastranteString = lotaCadastranteString;
+		this.cadastranteString = cadastranteString;
+		this.descrDocumento = descrDocumento;
 	}
 
 	public void exibe() {
@@ -569,7 +612,7 @@ public class ExDocumentoVO extends ExVO {
 	
 		for (ExMobil cadaMobil : doc.getExMobilSet()) {
 			SortedSet<ExMarca> setSistema = new TreeSet<>();
-			SortedSet<ExMarca> set = cadaMobil.getExMarcaSet();
+			SortedSet<ExMarca> set = cadaMobil.getExMarcaSetAtivas();
 			for (ExMarca m : set) {
 				if ((m.getDtIniMarca() == null || !m.getDtIniMarca().after(now))
 						&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(now))) {
@@ -594,15 +637,19 @@ public class ExDocumentoVO extends ExVO {
 		ExVO vo = new ExVO();
 		
 		int numUltMobil = doc.getNumUltimoMobil();
-		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
+		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).descr("Exibe mais detalhes e possibilita auditar todas as movimentações.").icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
 				.params("sigla", doc.toString()).params("idVisualizacao", doc.getSigla()).exp(new CpPodeSempre()).pre(numUltMobil < 20 ? "" : "Exibir todos os " + numUltMobil + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?").classe("once").build());
 		
-		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
-				.params("popup", "true").params("arquivo", doc.getReferenciaPDF()).params("idVisualizacao", Long.toString(idVisualizacao))
+		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).descr("Apresenta a versão em PDF do documento para fins de impressão.")
+				.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
+				.params("popup", "true").params("arquivo", doc.getReferenciaPDF())
+				.params("idVisualizacao", Long.toString(idVisualizacao))
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.impressao"))
 				.exp(new CpPodeSempre()).build());
 		
-		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify").nameSpace("/app/expediente/doc").acao("exibirProcesso")
+		addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).descr("Exibe um índice de todos os documentos juntados.").icone("folder_magnify").nameSpace("/app/expediente/doc").acao("exibirProcesso")
 				.params("sigla", doc.toString()).params("idVisualizacao", Long.toString(idVisualizacao))
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.dossie"))
 				.exp(new CpPodeSempre()).build());
 		
 		docVO.getMobs().get(0).setAcoes(vo.getAcoes());
@@ -683,59 +730,69 @@ public class ExDocumentoVO extends ExVO {
 
 		ExMobil mob = doc.getMobilGeral();
 		
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).icone("folder_magnify").nameSpace("/app/expediente/doc").acao("exibirProcesso")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie"))
+				.descr("Exibe um índice de todos os documentos juntados.")
+				.icone("folder_magnify")
+				.nameSpace("/app/expediente/doc").acao("exibirProcesso")
+				.params("sigla", mob.getCodigoCompacto())
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.dossie"))				
+				.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 		
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
-				.params("sigla", mob.getCodigoCompacto()).params("popup", "true").params("arquivo", doc.getReferenciaPDF()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao"))
+				.descr("Apresenta a versão em PDF do documento para fins de impressão.")
+				.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
+				.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
+				.params("arquivo", doc.getReferenciaPDF())
+				.params("nomeAcao", SigaMessages.getMessage("documento.ver.impressao"))
+				.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 		
-		vo.addAcao(AcaoVO.builder().nome("Fina_lizar").icone("lock").nameSpace("/app/expediente/doc").acao("finalizar")
+		vo.addAcao(AcaoVO.builder().nome("Fina_lizar").icone("lock").descr("Conclui a elaboração do documento fazendo com que ele deixe de ser temporário (TMP) e atribui seu código definitivo.").nameSpace("/app/expediente/doc").acao("finalizar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeFinalizar(doc, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Edita_r").icone("pencil").nameSpace("/app/expediente/doc").acao("editar")
+		vo.addAcao(AcaoVO.builder().nome("Edita_r").descr("Exibe a página de edição para que ajustes possam ser feitos.").icone("pencil").nameSpace("/app/expediente/doc").acao("editar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeEditar(mob, titular, lotaTitular)).build());
 
-		vo.addAcao(AcaoVO.builder().nome("Excluir").icone("delete").nameSpace("/app/expediente/doc").acao("excluir")
+		vo.addAcao(AcaoVO.builder().nome("Excluir").descr("Exclui definitivamente o documento temporário. Atenção, esta ação não pode ser desfeita.").icone("delete").nameSpace("/app/expediente/doc").acao("excluir")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeExcluir(mob, titular, lotaTitular)).msgConfirmacao("Confirma a exclusão do documento?").classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Incluir Cossignatário").icone("user_add").nameSpace("/app/expediente/mov").acao("incluir_cosignatario")
+		vo.addAcao(AcaoVO.builder().nome("Incluir Cossignatário").descr("Acrescenta um novo cossignatário (assinante) ao documento.").icone("user_add").nameSpace("/app/expediente/mov").acao("incluir_cosignatario")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeIncluirCossignatario(doc, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Ane_xar").icone("attach").nameSpace("/app/expediente/mov").acao("anexar")
+		vo.addAcao(AcaoVO.builder().nome("Ane_xar").descr("Captura um novo PDF e junta ele ao documento.").icone("attach").nameSpace("/app/expediente/mov").acao("anexar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnexarArquivo(mob, titular, lotaTitular)).build());
 
-		vo.addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").nameSpace("/app/expediente/mov").acao("anotar")
+		vo.addAcao(AcaoVO.builder().nome("_Anotar").descr("Acrescentar uma movimentação de anotação ao documento. As anotações podem ser excluídas a qualquer momento.").icone("note_add").nameSpace("/app/expediente/mov").acao("anotar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeFazerAnotacao(mob, titular, lotaTitular)).build());
 
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.definir.perfil")).icone("folder_user").nameSpace("/app/expediente/mov").acao("vincularPapel")
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.definir.perfil")).descr("Indica que uma pessoa ou lotação desempenha um determinado papel em relação ao documento.").icone("folder_user").nameSpace("/app/expediente/mov").acao("vincularPapel")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeFazerVinculacaoDePapel(mob, titular, lotaTitular)).build());
 
-		vo.addAcao(AcaoVO.builder().nome("Criar Via").icone("add").nameSpace("/app/expediente/doc").acao("criar_via")
+		vo.addAcao(AcaoVO.builder().nome("Criar Via").descr("Cria uma via adicional que pode ser tramitada de forma independente.").icone("add").nameSpace("/app/expediente/doc").acao("criar_via")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCriarVia(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Abrir Novo Volume").icone("add").nameSpace("/app/expediente/doc").acao("criar_volume")
+		vo.addAcao(AcaoVO.builder().nome("Abrir Novo Volume").descr("Inicia um novo volume no processo.").icone("add").nameSpace("/app/expediente/doc").acao("criar_volume")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCriarVolume(mob, titular, lotaTitular)).msgConfirmacao("Confirma a abertura de um novo volume?").classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Criar Subprocesso").icone("link_add").nameSpace("/app/expediente/doc").acao("editar")
-				.params("sigla", mob.getCodigoCompacto()).params("mobilPaiSel.sigla", mob.getCodigoCompacto()).params("idForma", Long.toString(mob.doc().getExFormaDocumento().getIdFormaDoc()))
+		vo.addAcao(AcaoVO.builder().nome("Criar Subprocesso").descr("Cria um subprocesso, filho do processo atual. Os subprocessos tem numeração semelhante, mas que é acrescida de um sufixo indicativo do número de sequência.").icone("link_add").nameSpace("/app/expediente/doc").acao("editar")
+				.params("mobilPaiSel.sigla", mob.getCodigoCompacto()).params("idForma", Long.toString(mob.doc().getExFormaDocumento().getIdFormaDoc()))
 				.params("criandoSubprocesso", "true").exp(new ExPodeCriarSubprocesso(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Registrar A_ssinatura Manual").icone("script_edit").nameSpace("/app/expediente/mov").acao("registrar_assinatura")
+		vo.addAcao(AcaoVO.builder().nome("Registrar A_ssinatura Manual").descr("Informa que a assinatura manual já foi realizada no documento físico original.").icone("script_edit").nameSpace("/app/expediente/mov").acao("registrar_assinatura")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeRegistrarAssinatura(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("A_ssinar").icone("script_key").nameSpace("/app/expediente/mov").acao("assinar")
+		vo.addAcao(AcaoVO.builder().nome("A_ssinar").descr("Assina o documento utilizando certificado digital ou usuário e senha.").icone("script_key").nameSpace("/app/expediente/mov").acao("assinar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAssinar(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("A_utenticar").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_documento")
+        vo.addAcao(AcaoVO.builder().nome("A_utenticar").descr("Autentica o documento utilizando certificado digital ou usuário e senha.").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_documento")
 				.params("sigla", mob.getCodigoCompacto()).exp(serializavel ? new ExPodeAutenticarComSenha(doc, titular, lotaTitular) : new ExPodeAutenticarDocumento(doc, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Solicitar Assinatura").icone("page_go").nameSpace("/app/expediente/mov").acao("solicitar_assinatura")
+		vo.addAcao(AcaoVO.builder().nome("Solicitar Assinatura").descr("Confirma que o documento já está revisado e solicita que o subscritor produza a assinatura.").icone("page_go").nameSpace("/app/expediente/mov").acao("solicitar_assinatura")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSolicitarAssinatura(doc, titular, lotaTitular)).msgConfirmacao("Ao clicar em prosseguir, você estará sinalizando que revisou este documento e que ele deve ser incluído na lista para ser assinado em lote. Prosseguir?").classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Assinar Anexos Gerais").icone("script_key").nameSpace("/app/expediente/mov").acao("assinarAnexos")
+		vo.addAcao(AcaoVO.builder().nome("Assinar Anexos Gerais").descr("Exibe a página de Anexos Pendentes de Assinatura.").icone("script_key").nameSpace("/app/expediente/mov").acao("assinarAnexos")
 				.params("sigla", mob.getCodigoCompacto()).params("assinandoAnexosGeral", "true").exp(And.of(new ExEstaFinalizado(doc), new ExTemAnexos(mob))).build());
 
-		vo.addAcao(AcaoVO.builder().nome("Redefinir Acesso").icone("shield").nameSpace("/app/expediente/mov").acao("redefinir_nivel_acesso")
+		vo.addAcao(AcaoVO.builder().nome("Redefinir Acesso").descr("Altera o nível de sigilo do documento.").icone("shield").nameSpace("/app/expediente/mov").acao("redefinir_nivel_acesso")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeRedefinirNivelDeAcesso(mob, titular, lotaTitular)).build());
 
 		vo.addAcao(AcaoVO.builder().nome("Restrição de Acesso").icone("group_link").nameSpace("/app/expediente/mov").acao("restringir_acesso")
@@ -744,47 +801,63 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome("Redefinir Acesso Padrão").icone("arrow_undo").nameSpace("/app/expediente/mov").acao("desfazer_restricao_acesso")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDesfazerRestricaoDeAcesso(mob, titular, lotaTitular)).msgConfirmacao("Esta operação anulará as Restrições de Acesso. Prosseguir?").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Solicitar Publicação no Boletim").icone("book_add").nameSpace("/app/expediente/mov").acao("boletim_agendar")
+		vo.addAcao(AcaoVO.builder().nome("Solicitar Publicação no Boletim").descr("Solicita que seja incluído na lista de documentos que serão publicados no próximo boletim interno.").icone("book_add").nameSpace("/app/expediente/mov").acao("boletim_agendar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAgendarPublicacaoNoBoletim(mob, titular, lotaTitular)).build());
 
-		vo.addAcao(AcaoVO.builder().nome("Registrar Publicação do Boletim").icone("book_link").nameSpace("/app/expediente/mov").acao("boletim_publicar")
+		vo.addAcao(AcaoVO.builder().nome("Registrar Publicação do Boletim").descr("Informa que o documento foi publicado no boletim interno.").icone("book_link").nameSpace("/app/expediente/mov").acao("boletim_publicar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePublicar(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Refazer").icone("error_go").nameSpace("/app/expediente/doc").acao("refazer")
+		vo.addAcao(AcaoVO.builder().nome("Refazer").descr("Cancela este documento e cria uma cópia dele em um documento temporário.").icone("error_go").nameSpace("/app/expediente/doc").acao("refazer")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeRefazer(mob, titular, lotaTitular)).msgConfirmacao(SigaMessages.getMessage("mensagem.cancela.documento")).classe("once siga-btn-refazer").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Duplicar").icone("arrow_divide").nameSpace("/app/expediente/doc").acao("duplicar")
+		vo.addAcao(AcaoVO.builder().nome("Duplicar").descr("Cria um documento temporário que é uma cópia exata deste.").icone("arrow_divide").nameSpace("/app/expediente/doc").acao("duplicar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDuplicar(mob, titular, lotaTitular)).msgConfirmacao(SigaMessages.getMessage("documento.confirma.duplica")).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).descr("Exibe mais detalhes e possibilita auditar todas as movimentações.").icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
 				.params("sigla", mob.getCodigoCompacto()).exp(new CpPodeSempre()).msgConfirmacao(doc.getNumUltimoMobil() < 20 ? "" : "Exibir todos os " + doc.getNumUltimoMobil() + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?").classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Auditar").icone("magnifier").nameSpace("/app/expediente/doc").acao("exibirAntigo")
+		vo.addAcao(AcaoVO.builder().nome("Auditar").descr("Apresenta informações mais detalhadas sobre o documento, inclusive exibindo movimenções canceladas.").icone("magnifier").nameSpace("/app/expediente/doc").acao("exibirAntigo")
 				.params("sigla", mob.getCodigoCompacto()).params("exibirCompleto", "true").exp(new CpPodeBoolean(exibirAntigo, "auditando")).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Agendar Publicação no Diário").icone("report_link").nameSpace("/app/expediente/mov").acao("agendar_publicacao")
+		vo.addAcao(AcaoVO.builder().nome("Agendar Publicação no Diário").descr("Agenda a publicação deste documento no diário eletrônico.").icone("report_link").nameSpace("/app/expediente/mov").acao("agendar_publicacao")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAgendarPublicacao(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Solicitar Publicação no Diário").icone("report_add").nameSpace("/app/expediente/mov").acao("pedirPublicacao")
+		vo.addAcao(AcaoVO.builder().nome("Agendar Publicação DOE").icone("report_link").nameSpace("/app/expediente/mov").acao("agendar_publicacao_doe")
+				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAgendarPublicacaoDOE(mob, titular, lotaTitular)).classe("once").build());
+		
+		vo.addAcao(AcaoVO.builder().nome("Solicitar Publicação no Diário").descr("Solicita a publicação deste documento no diário eletrônico.").icone("report_add").nameSpace("/app/expediente/mov").acao("pedirPublicacao")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePedirPublicacao(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Desfazer Cancelamento").icone("arrow_undo").nameSpace("/app/expediente/doc").acao("desfazerCancelamentoDocumento")
+		vo.addAcao(AcaoVO.builder().nome("Desfazer Cancelamento").descr("Anula o cancelamento e torna o documento novamente editável.").icone("arrow_undo").nameSpace("/app/expediente/doc").acao("desfazerCancelamentoDocumento")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDesfazerConcelamentoDeDocumento(mob, titular, lotaTitular)).msgConfirmacao("Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?").classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Cancelar").icone("delete").nameSpace("/app/expediente/doc").acao("tornarDocumentoSemEfeito")
+		vo.addAcao(AcaoVO.builder().nome("Cancelar").descr("Cancela documento já assinado, tornando ele sem efeito.").icone("delete").nameSpace("/app/expediente/doc").acao("tornarDocumentoSemEfeito")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeTornarDocumentoSemEfeito(mob, titular, lotaTitular)).msgConfirmacao(SigaMessages.getMessage("mensagem.semEfeito.documento")).classe("once siga-btn-tornar-documento-sem-efeito").build());
 
-		vo.addAcao(AcaoVO.builder().nome("Cancelar").icone("cancel").nameSpace("/app/expediente/doc").acao("cancelarDocumento")
+		vo.addAcao(AcaoVO.builder().nome("Cancelar").descr("Cancela documento pendente de assinatura.").icone("cancel").nameSpace("/app/expediente/doc").acao("cancelarDocumento")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarDocumento(doc, titular, lotaTitular)).msgConfirmacao("Esta operação cancelará o documento pendente de assinatura. Prosseguir?").classe("once").build());
 		
-		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.publicar.portaltransparencia")).icone("report_link").nameSpace("/app/expediente/mov").acao("publicacao_transparencia")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodePublicarPortalDaTransparencia(mob, titular, lotaTitular)).classe("once").build());
+//		vo.addAcao(AcaoVO.builder().nome("Vi_ncular").icone("page_find").nameSpace("/app/expediente/mov").acao("referenciar")
+//				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReferenciar(mob, titular, lotaTitular)).build());
+
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.publicar.portaltransparencia"))
+				.icone("report_link").nameSpace("/app/expediente/mov").acao("publicacao_transparencia")
+				.params("sigla", mob.getCodigoCompacto())
+				.exp(new ExPodePublicarPortalDaTransparencia(mob, titular, lotaTitular)).classe("once").build());
 		
 		vo.addAcao(AcaoVO.builder().nome("Gerar Protocolo").icone("printer").nameSpace("/app/expediente/doc").acao("gerarProtocolo")
 				.params("sigla", mob.getCodigoCompacto()).params("popup", "true").exp(And.of(new CpPodeBoolean(mostrarGerarProtocolo(doc), "pode mostrar protocolo"), new ExPodeGerarProtocolo(doc, titular, lotaTitular))).classe("once").build());
 		
 		vo.addAcao(AcaoVO.builder().nome("Enviar ao SIAFEM").icone("email_go").nameSpace("/app/expediente/integracao").acao("integracaows")
 				.params("sigla", mob.getCodigoCompacto()).exp(And.of(new CpPodeBoolean(mostrarEnviarSiafem(doc), "pode mostrar Siafem"), new ExPodeEnviarSiafem(doc, titular, lotaTitular))).classe("once").build());
+
+		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.enviar.visualizacaoexterna"))
+				.icone("email_go").nameSpace("/app/expediente/mov").acao("enviar_para_visualizacao_externa")
+				.params("sigla", mob.getSigla()).params("popup", "true")
+				.exp(new ExPodeEnviarParaVisualizacaoExterna(mob, titular, lotaTitular)).build());
+		
+		vo.addAcao(AcaoVO.builder().nome("Download").descr("Faz o download do arquivo de formato livre associado a este documento.").icone("arrow_down").nameSpace("/app/arquivo").acao("downloadFormatoLivre")
+				.params("sigla", doc.getCodigoCompacto()).exp(new ExPodeFazerDownloadFormatoLivre(doc)).classe("once").build());
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {
@@ -1064,4 +1137,27 @@ public class ExDocumentoVO extends ExVO {
 		this.principalCompacto = principalCompacto;
 	}
 
+	public Long getIdDoc() {
+		return idDoc;
+	}
+
+	public void setIdDoc(Long idDoc) {
+		this.idDoc = idDoc;
+	}
+
+	public String getClassificacaoSigla() {
+		return classificacaoSigla;
+	}
+
+	public void setClassificacaoSigla(String classificacaoSigla) {
+		this.classificacaoSigla = classificacaoSigla;
+	}
+
+	public void setCadastranteString(String cadastranteString) {
+		this.cadastranteString = cadastranteString;
+	}
+
+	public void setLotaCadastranteString(String lotaCadastranteString) {
+		this.lotaCadastranteString = lotaCadastranteString;
+	}
 }

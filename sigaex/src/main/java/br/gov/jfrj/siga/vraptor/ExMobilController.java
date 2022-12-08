@@ -32,27 +32,19 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.auth0.jwt.JWTSigner;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -61,13 +53,11 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
-import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
@@ -77,6 +67,7 @@ import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -91,7 +82,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.GenericoSelecao;
+import br.gov.jfrj.siga.model.GenericoSelecao; 
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
@@ -103,6 +94,8 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
 	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
+
+	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 50;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -197,6 +190,7 @@ public class ExMobilController extends
         				+ maxDiasPesquisa.toString() + " dias anterior à hoje.");
 			}
 		}
+		
 	    DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
 	    result.include("primeiraVez", primeiraVez);
@@ -309,7 +303,10 @@ public class ExMobilController extends
 		try {
 			final ExMobilDaoFiltro flt = createDaoFiltro();
 			//long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,getTitular(), getLotaTitular()));
+
+			pesquisarXjus(flt);
+			Integer tamanhoResultado = flt.getListaIdDoc() == null ? null : flt.getListaIdDoc().size();
+			setTamanho(tamanhoResultado == null ? dao().consultarQuantidadePorFiltroOtimizado(flt, getTitular(), getLotaTitular()) : tamanhoResultado);
 			
 			
 			LocalDate dtIni = null;
@@ -372,6 +369,7 @@ public class ExMobilController extends
 			List lista = dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
+			
 			Set<?> items = new HashSet<>(lista); 
 			
 			InputStream inputStream = null;
@@ -390,8 +388,8 @@ public class ExMobilController extends
 				e = (ExDocumento)(((Object[])object)[0]);
 				m = (ExMobil)(((Object[])object)[1]);
 				ma = (ExMarca)(((Object[])object)[2]);
-				
-				texto.append(m.getCodigo()+";");
+	
+				texto.append(m.getDnmSigla()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
 					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
 				}
@@ -474,8 +472,8 @@ public class ExMobilController extends
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
 		
 		assertAcesso("PESQ:Pesquisar");
-		if (getCadastrante().isUsuarioExterno()) {
-			throw new RegraNegocioException("Pesquisa indisponível para Usuários Externos.");
+		if (getCadastrante().isUsuarioExterno() && Prop.isGovSP()) {
+			throw new AplicacaoException("Pesquisa indisponível para Usuários Externos.");
 		}
 		
 		if (Prop.getBool("atualiza.anotacao.pesquisa"))
@@ -522,7 +520,11 @@ public class ExMobilController extends
         				+ maxDiasPesquisa.toString() + " dias. Será assumida uma data inicial "
         				+ maxDiasPesquisa.toString() + " dias anterior à hoje.");
 			}
-		}
+		} 
+		
+		List<CpOrgaoUsuario> orgaos = Cp.getInstance().getBL().
+				removeOrgaosQueNaoSeraoExibidos(this.getOrgaosUsu(), getCadastrante(), getLotaCadastrante());
+		 
 	    DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
 		result.include("primeiraVez", primeiraVez);
@@ -537,7 +539,7 @@ public class ExMobilController extends
 		result.include("ultMovTipoResp", builder.getUltMovTipoResp());
 		result.include("ultMovRespSel", builder.getUltMovRespSel());
 		result.include("orgaoUsu", builder.getOrgaoUsu());
-		result.include("orgaosUsu", this.getOrgaosUsu());
+		result.include("orgaosUsu", orgaos);
 		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
 		result.include("dtDocString", (flt.getDtDoc() != null ? df.format(flt.getDtDoc()) : null));
@@ -575,7 +577,9 @@ public class ExMobilController extends
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", idFormaDoc);
-		result.include("idMod", idMod);		
+		result.include("idMod", idMod);	
+		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());	
+		
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();
@@ -592,7 +596,10 @@ public class ExMobilController extends
 	}
 
 	private void pesquisarXjus(ExMobilDaoFiltro flt) {
-		if (!(new ExPodePorConfiguracao(getTitular(), getLotaTitular()).withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_XJUS).eval())) {
+		if (!( new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_AVANCADA_VIA_XJUS)
+				.eval() )
+		) {
 			flt.setDescrPesquisaXjus(null);
 			return;
 		}
@@ -601,13 +608,16 @@ public class ExMobilController extends
 			return;
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		
+
 		String filter = flt.getDescrPesquisaXjus();
 		String acronimoOrgaoUsu = dao().consultarOrgaoUsuarioPorId(flt.getIdOrgaoUsu()).getAcronimoOrgaoUsu();
 		String descEspecie = flt.getIdFormaDoc() == null || flt.getIdFormaDoc() == 0 ? null : dao().consultarExFormaPorId(flt.getIdFormaDoc()).getDescrFormaDoc();
-		String descModelo = flt.getIdMod() == null  || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getDescMod();
+		String descModelo = flt.getIdMod() == null || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getNmMod();
 		String dataInicial = flt.getDtDoc() == null ? null : df.format(flt.getDtDoc());
 		String dataFinal = flt.getDtDocFinal() == null ? null : df.format(flt.getDtDocFinal());
+		String anoEmissao = flt.getAnoEmissao() == null || flt.getAnoEmissao() == 0 ? null : flt.getAnoEmissao().toString();
+		String numeroExpediente = flt.getNumExpediente() == null ? null : String.format("%05d", flt.getNumExpediente());
+		String lotacaoSubscritor = flt.getLotaSubscritorSelId() == null || flt.getLotaSubscritorSelId() == 0 ? null : daoLot(flt.getLotaSubscritorSelId()).getSiglaLotacao();
 		String acl = "PUBLIC;O" + getTitular().getOrgaoUsuario().getId() + ";L"
 				+ getTitular().getLotacao().getIdInicial() + ";P"
 				+ getTitular().getIdInicial();
@@ -623,7 +633,10 @@ public class ExMobilController extends
 					descEspecie,
 					descModelo,
 					dataInicial, 
-					dataFinal, 
+					dataFinal,
+					anoEmissao,
+					numeroExpediente,
+					lotacaoSubscritor,
 					acl, 
 					page++, 
 					1000));
@@ -687,6 +700,12 @@ public class ExMobilController extends
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0
 					&& flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0
 					&& flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0)
+			return;
+		
+		// Pesquisa dos documentos por descrição informando órgão, ano de emissão e número expediente
+		if ( (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0)
+					&& (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0)
+					&& (flt.getNumExpediente() != null && flt.getNumExpediente() != 0))
 			return;
 
 		// Pesquisa dos documentos da lotação/pessoa vinda do quadro quantitativo
@@ -1047,4 +1066,44 @@ public class ExMobilController extends
 		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
 
+	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
+	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao, final int offset) {
+
+		assertAcesso("RECLALOTE:Reclassificar em Lote");
+
+		Integer tamanho = null;
+
+		if (siglaClassificacao != null) {
+			tamanho = ExDao.getInstance()
+					.consultarQuantidadeParaReclassificarEmLote(getTitular(), siglaClassificacao);
+
+		}
+		if (Objects.nonNull(tamanho)) {
+			List<ExDocumentoVO> documentosPorCodificacaoClassificacao =
+					ExDao.getInstance().consultarParaReclassificarEmLote(getTitular(), siglaClassificacao, offset,
+							MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE);
+
+			List<ExDocumentoVO> itens = new ArrayList<>();
+			for (ExDocumentoVO item : documentosPorCodificacaoClassificacao) {
+				ExMobil mob = dao().consultar(item.getIdDoc(), ExDocumento.class, false).getMobilGeral();
+
+				if (new ExPodeReclassificar(mob, getTitular(), getLotaTitular()).eval()) {
+					itens.add(item);
+				}
+			}
+
+			documentosPorCodificacaoClassificacao = null;
+					
+			getP().setOffset(offset);
+			setItemPagina(MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE);
+			setItens(itens);
+			setTamanho(tamanho);
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+			
+		}
+	}
 }

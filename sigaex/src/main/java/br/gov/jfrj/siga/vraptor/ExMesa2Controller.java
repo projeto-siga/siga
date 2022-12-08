@@ -56,7 +56,8 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
 public class ExMesa2Controller extends ExController {
-
+	private static final String ACESSO_MESA2BETA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;BETA:Utilizar versão beta";
+	private static final String PERMITE_FILTRO = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;FILTRO:Permitir usar o filtro de pesquisa";
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -72,6 +73,13 @@ public class ExMesa2Controller extends ExController {
 
 	@Get("app/mesa2")
 	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao, String msg) throws Exception {
+		if( !Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+				ACESSO_MESA2BETA) ) {
+			result.redirectTo("/app/mesa2ant" + (exibirAcessoAnterior != null? 
+					"?exibirAcessoAnterior=" + exibirAcessoAnterior.toString() : "")); 
+			return;
+		}
+		
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {
 			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
@@ -105,26 +113,26 @@ public class ExMesa2Controller extends ExController {
 		}
 	}
 
-	@Post("app/mesa2.json")
-	public void json(Long idVisualizacao, boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerArquivados, 
-			boolean trazerComposto, boolean trazerCancelados, boolean ordemCrescenteData, 
-			boolean usuarioPosse, String parms) throws Exception {
+	@Get("app/mesa2.json")
+	public void json(final boolean contar, final Integer qtd, final Integer offset, final Long idVisualizacao, final boolean exibeLotacao, boolean trazerAnotacoes, final boolean trazerArquivados, 
+			final boolean trazerComposto, final boolean trazerCancelados, final boolean ordemCrescenteData, 
+			final boolean usuarioPosse, final String parms, final String filtro) throws Exception {
 		
-		List<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem> g = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa2.GrupoItem>();
+		List<Mesa2.GrupoItem> g = new ArrayList<Mesa2.GrupoItem>();
 		Map<String, Mesa2.SelGrupo> selGrupos = null;
-		List<Mesa2.GrupoItem> gruposMesa = new ArrayList<Mesa2.GrupoItem>();
+		
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		List<Integer> marcasAIgnorar = new ArrayList<Integer>();
 
-		if (SigaMessages.isSigaSP()) { 
-			if (!trazerArquivados) {
-				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
-				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
-				marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
-			}
-			if (!trazerCancelados) 
-				marcasAIgnorar.add((int) CpMarcadorEnum.CANCELADO.getId());
+		if (!trazerArquivados) {
+			marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()); 
+			marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId()); 
+			marcasAIgnorar.add((int) CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()); 
 		}
+		
+		if (!trazerCancelados) 
+			marcasAIgnorar.add((int) CpMarcadorEnum.CANCELADO.getId());
+		
 		try {
 			if (parms != null) {
 				ObjectMapper mapper = new ObjectMapper();
@@ -140,24 +148,25 @@ public class ExMesa2Controller extends ExController {
 					.setStatusCode(200);				
 				return;
 			}
-			DpLotacao lotaTitular = null;
+			if(filtro != null && !"".equals(filtro) 
+					&& !Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
+							getTitular(), getLotaTitular(),	PERMITE_FILTRO)) {
+					result.use(Results.http()).addHeader("Content-Type", "text/plain")
+					.body("Usuário não autorizado a utilizar o filtro de pesquisa.")
+					.setStatusCode(200);
+				return;
+			}
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) 
 					&& Cp.getInstance().getConf().podePorConfiguracao
 						(getCadastrante(), 
 						 getCadastrante().getLotacao(), 
 						 ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
-				lotaTitular = vis.getTitular().getLotacao();
-				gruposMesa = Mesa2.getContadores(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						exibeLotacao, marcasAIgnorar);
-				g = Mesa2.getMesa(dao(), vis.getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar);
+				g = Mesa2.getMesa(contar, qtd, offset, vis.getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
+						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
 			} else {
-				lotaTitular = getTitular().getLotacao();
-				gruposMesa = Mesa2.getContadores(dao(), getTitular(), lotaTitular, selGrupos, 
-						exibeLotacao, marcasAIgnorar);
-				g = Mesa2.getMesa(dao(), getTitular(), lotaTitular, selGrupos, 
-						gruposMesa, exibeLotacao, trazerAnotacoes, trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar);
+				g = Mesa2.getMesa(contar, qtd, offset, getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
+						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
 			}
 	
 			String s = ExAssinadorExternoController.gson.toJson(g);

@@ -12,6 +12,8 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.cp.logic.CpPodePorConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import com.mashape.unirest.http.Unirest;
 
 import br.com.caelum.vraptor.Consumes;
@@ -34,6 +36,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.jee.SigaLibsEL;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Controller
@@ -55,10 +58,19 @@ public class PrincipalController extends SigaController {
 	}
 
 	@Get("app/principal")
+
 	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) {
+		
+		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());
+		
 		if (redirecionar == null || redirecionar) {
 			String paginaInicialUrl = Prop.get("/siga.pagina.inicial.url");
+			
 			if (paginaInicialUrl != null) {
+
+				if (paginaInicialUrl.contains("/mesa"))
+					paginaInicialUrl = paginaInicialUrl.replace("/mesa2", "/mesa") + SigaLibsEL.getMesaVersao(getTitular(), getLotaTitular());
+				
 				result.redirectTo(paginaInicialUrl + ((exibirAcessoAnterior != null && exibirAcessoAnterior) ? "?exibirAcessoAnterior=true" : ""));
 				return;
 			}
@@ -116,7 +128,7 @@ public class PrincipalController extends SigaController {
 			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula);
 
 			if (sel.getId() == null) {
-				if (Prop.getBool("/xjus.url") != null) {
+				if (podeUtilizarPesquisaGenericaViaXjus(pes, lot)) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
 					sel.setDescricao("/siga/app/xjus#!?filter=" + sigla);
@@ -265,6 +277,13 @@ public class PrincipalController extends SigaController {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		response.addHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+	}
+
+	private boolean podeUtilizarPesquisaGenericaViaXjus(DpPessoa pessoa, DpLotacao lotacao) throws Exception {
+		return (Prop.getBool("/xjus.url") != null && new CpPodePorConfiguracao(pessoa, lotacao)
+				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_GENERICA_VIA_XJUS)
+				.withOrgaoObjeto(lotacao.getLotacaoAtual().getOrgaoUsuario())
+				.eval());
 	}
 
 }

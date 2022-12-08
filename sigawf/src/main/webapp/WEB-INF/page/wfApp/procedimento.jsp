@@ -33,8 +33,7 @@
 									style="color: white; text-decoration: underline;">${pi.principal}</a> -
 							</c:if>
 
-							${pi.definicaoDeProcedimento.nome} -
-							${pi.definicaoDeTarefaCorrente.nome}
+							<strong>${pi.definicaoDeTarefaCorrente.nome}</strong>
 						</div>
 						<div class="card-body bg-light text-black">
 							<form method="POST"
@@ -180,14 +179,6 @@
 						<p>
 							<b>Titular:</b> ${pi.titular} (${pi.lotaTitular})
 						</p>
-						<c:if test="${not empty pi.eventoData}">
-							<p>
-								<b>Tarefa:</b> ${pi.definicaoDeTarefaCorrente.nome}
-							</p>
-							<p>
-								<b>Início da tarefa:</b> ${f:espera(pi.eventoData)}
-							</p>
-						</c:if>
 						<p>
 							<b>Início do procedimento:</b> ${f:espera(pi.hisDtIni)}
 						</p>
@@ -197,7 +188,7 @@
 					</div>
 				</div>
 
-				<c:if test="${not empty pi.eventoData}">
+				<c:if test="${not empty pi.definicaoDeTarefaCorrente}">
 					<div class="card-sidebar card bg-light mb-3">
 						<div class="card-header">Dados da Tarefa</div>
 						<div class="card-body">
@@ -205,7 +196,7 @@
 								<b>Tarefa:</b> ${pi.definicaoDeTarefaCorrente.nome}
 							</p>
 							<p>
-								<b>Início da tarefa:</b> ${f:espera(pi.eventoData)}
+								<b>Início da tarefa:</b> ${f:espera(pi.dtInicioDaTarefa)}
 							</p>
 						</div>
 					</div>

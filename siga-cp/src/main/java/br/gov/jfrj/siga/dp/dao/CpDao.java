@@ -24,6 +24,7 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +62,7 @@ import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.cp.CpToken;
@@ -69,6 +71,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
@@ -1660,12 +1663,20 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", 0L);
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
-			qry.setParameter("sfp4", "4");			
+			qry.setParameter("sfp4", "4");	
+			qry.setParameter("sfp11", "11");
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
 
+			List<Integer> listaTipo = new ArrayList<Integer>();
+			listaTipo.add(CpTipoIdentidade.FORMULARIO);
+			listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+			
+			qry.setParameter("listaTipo", listaTipo);
+			
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
 //			qry.setHint("org.hibernate.cacheable", true);
@@ -1694,11 +1705,19 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
-			qry.setParameter("sfp4", "4");			
+			qry.setParameter("sfp4", "4");	
+			qry.setParameter("sfp11", "11");
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
+			
+			List<Integer> listaTipo = new ArrayList<Integer>();
+			listaTipo.add(CpTipoIdentidade.FORMULARIO);
+			listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+			
+			qry.setParameter("listaTipo", listaTipo);
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1724,11 +1743,19 @@ public class CpDao extends ModeloDao {
 			qry.setParameter("cpfZero", Long.valueOf(0));
 			qry.setParameter("sfp1", "1");
 			qry.setParameter("sfp2", "2");
-			qry.setParameter("sfp4", "4");			
+			qry.setParameter("sfp4", "4");	
+			qry.setParameter("sfp11", "11");
 			qry.setParameter("sfp12", "12");
 			qry.setParameter("sfp22", "22");
 			qry.setParameter("sfp31", "31");
 			qry.setParameter("sfp36", "36");
+			qry.setParameter("sfp38", "38");
+			
+			List<Integer> listaTipo = new ArrayList<Integer>();
+			listaTipo.add(CpTipoIdentidade.FORMULARIO);
+			listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+			
+			qry.setParameter("listaTipo", listaTipo);
 
 			qry.setHint("org.hibernate.cacheable", true);
 			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
@@ -1745,6 +1772,13 @@ public class CpDao extends ModeloDao {
 	public List<CpIdentidade> consultaIdentidades(final DpPessoa pessoa) {
 		final Query qry = em().createNamedQuery("consultarIdentidades");
 		qry.setParameter("idPessoaIni", pessoa.getIdInicial());
+		
+		List<Integer> listaTipo = new ArrayList<Integer>();
+		listaTipo.add(CpTipoIdentidade.FORMULARIO);
+		listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+		
+		qry.setParameter("listaTipo", listaTipo);
+		
 		final List<CpIdentidade> lista = qry.getResultList();
 		return lista;
 	}
@@ -1865,8 +1899,7 @@ public class CpDao extends ModeloDao {
 			return ContextoPersistencia.dt();
 
 		String sql = "SELECT sysdate from dual";
-		String dialect = System.getProperty("siga.hibernate.dialect");
-		if (dialect != null && dialect.contains("MySQL"))
+		if (isMySQL())
 			sql = "SELECT CURRENT_TIMESTAMP";
 		Query query = em().createNativeQuery(sql);
 		query.setFlushMode(FlushModeType.COMMIT);
@@ -2746,6 +2779,14 @@ public class CpDao extends ModeloDao {
 		qry.setParameter("idTpLotacao", idTpLotacao);
 		return qry.getResultList();
 	}
+	
+	public List<CpConfiguracao> consultarCpConfiguracoesPorPessoa(long idPessoa) {
+		final Query qry = em().createNamedQuery(
+				"consultarCpConfiguracoesPorPessoa");
+		qry.setParameter("idPessoa", idPessoa);
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		return qry.getResultList();
+	}
 
 	public Integer quantidadeDocumentos(DpPessoa pes) {
 		try {
@@ -2766,6 +2807,21 @@ public class CpDao extends ModeloDao {
 			sql.setParameter("idLotacao", idLotacao);
 			
 			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+
+	public Integer consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(Long idLotacao) {
+		try {
+			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacaoECpMarca");
+			sql.setParameter("idLotacao", idLotacao);
+			sql.setParameter("listMarcadores", Arrays.asList(
+					CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId(),
+					CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()));
+			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
@@ -2868,7 +2924,7 @@ public class CpDao extends ModeloDao {
 	
 	public CpMarcador obterPastaPadraoDaLotacao(DpLotacao lotacao) {
 		for (CpMarcador m : listarCpMarcadoresPorLotacao(lotacao, false))
-			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO)
+			if (m.getIdFinalidade() == CpMarcadorFinalidadeEnum.PASTA_PADRAO && obterAtual(m).isAtivo())
 				return m;
 		return null;
 	}
@@ -2918,12 +2974,17 @@ public class CpDao extends ModeloDao {
 		Predicate predicateEqualNome = criteriaBuilder.equal(cpMarcadorRoot.get("descrMarcador"), nome);
 		Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
 
-		Predicate predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
-				criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
-				criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
-		
-		Predicate predicateAnd = criteriaBuilder.and(predicateEqualNome, 
-				predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		Predicate predicateAnd;
+		Predicate predicateGeralOuLotacaoEspecifica = null;
+		if (lota != null) { 
+			predicateGeralOuLotacaoEspecifica = criteriaBuilder.or(
+					criteriaBuilder.isNull(cpMarcadorRoot.get("dpLotacaoIni")),
+					criteriaBuilder.equal(cpMarcadorRoot.get("dpLotacaoIni"), lota.getLotacaoInicial()));
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, 
+					predicateNullHisDtFim, predicateGeralOuLotacaoEspecifica);
+		} else {
+			predicateAnd = criteriaBuilder.and(predicateEqualNome, predicateNullHisDtFim);
+		}
 		criteriaQuery.where(predicateAnd);
 		
 		criteriaQuery.orderBy(criteriaBuilder.asc(cpMarcadorRoot.get("idFinalidade"))); 
@@ -3010,4 +3071,80 @@ public class CpDao extends ModeloDao {
 		return sql.getResultList();
 	}
 
+
+	public Long qtdeMarcasMarcadorPessoa(DpPessoa pessoa, List<Long> marcadores) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<CpMarca> c = cq.from(CpMarca.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa);
+		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
+		predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+	
+	public Long qtdeMarcasMarcadorLotacao(DpLotacao lotacao, List<Long> marcadores) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<CpMarca> c = cq.from(CpMarca.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao);
+		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
+		predicateAnd = cb().and(predicateEqualLotacao, predicateEqualMarca);
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+	
+	public Long qtdePessoaLotacao(DpLotacao lotacao, Boolean somenteAtivas) {
+		CriteriaBuilder qb = em().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+		Root<DpPessoa> c = cq.from(DpPessoa.class);
+		cq.select(qb.count(c));
+		Predicate predicateAnd;
+		Predicate predicateEqualPessoa  = cb().equal(c.get("lotacao"), lotacao);
+		if(somenteAtivas) {
+			Predicate predicateEqualMarca  = cb().isNull(c.get("dataFimPessoa"));
+			predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		} else {
+			predicateAnd = predicateEqualPessoa;
+		}
+		cq.where(predicateAnd);
+		return em().createQuery(cq).getSingleResult();
+	}
+
+	public void gravarUsuarioDOE(String usuario, DpPessoa cadastrante, CpIdentidade identidadeCadastrante) {
+		CpIdentidade ident = new CpIdentidade();
+		ident.setCpTipoIdentidade(this.consultar(CpTipoIdentidade.LOGIN_DOE, CpTipoIdentidade.class, false));	
+		ident.setNmLoginIdentidade(usuario);
+		ident.setDpPessoa(cadastrante.getPessoaInicial());
+		ident.setCpOrgaoUsuario(cadastrante.getOrgaoUsuario());
+
+		Date dt = this.consultarDataEHoraDoServidor();
+		ident.setDtCriacaoIdentidade(dt);
+		
+		List<CpIdentidade> l = consultaUsuarioDOE(cadastrante);
+		CpIdentidade identAnt = null;
+		if(!l.isEmpty()) {
+			identAnt = l.get(0);
+		}
+		gravarComHistorico(ident, identAnt, null, identidadeCadastrante);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpIdentidade> consultaUsuarioDOE(final DpPessoa pessoa) {
+		CriteriaQuery<CpIdentidade> q = cb().createQuery(CpIdentidade.class);
+		Root<CpIdentidade> c = q.from(CpIdentidade.class);
+		q.select(c);
+		Join<CpIdentidade, DpPessoa> joinPessoa = c.join("dpPessoa", JoinType.INNER);
+		Join<CpIdentidade, CpTipoIdentidade> joinTipoIdentidade = c.join("cpTipoIdentidade", JoinType.INNER);
+		q.where(
+			cb().equal(joinPessoa.get("idPessoa"), pessoa.getIdPessoaIni()),
+			cb().equal(joinTipoIdentidade.get("idCpTpIdentidade"), CpTipoIdentidade.LOGIN_DOE),
+			cb().isNull(c.get("hisDtFim"))
+		);
+		return em().createQuery(q).getResultList();
+	}
 }

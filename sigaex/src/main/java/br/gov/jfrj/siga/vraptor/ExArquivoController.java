@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
 
@@ -49,6 +51,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -60,6 +63,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadZip;
 import br.gov.jfrj.siga.vraptor.builder.ExInputStreamDownload;
@@ -87,10 +91,12 @@ public class ExArquivoController extends ExController {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
+	@TrackRequest
 	@Get("/app/arquivo/exibir")
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
-			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, boolean iframe) throws Exception {
+			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, 
+							boolean iframe, final String nomeAcao) throws Exception {
 		try {						
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();
@@ -145,6 +151,9 @@ public class ExArquivoController extends ExController {
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
 			final boolean isArquivoAuxiliar = mov != null && mov.getExTipoMovimentacao()
 					.equals(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR);
+			final boolean isArquivoDOE= mov != null && mov.getExTipoMovimentacao()
+					.equals(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE);
+			
 			final boolean imutavel = (mov != null) && !completo && !estampar && !somenteHash && !pacoteAssinavel;
 			String cacheControl = "private";
 			final Integer grauNivelAcesso = mob.doc().getExNivelAcesso().getGrauNivelAcesso();
@@ -153,7 +162,7 @@ public class ExArquivoController extends ExController {
 				cacheControl = "public";
 			}
 			byte ab[] = null;
-			if (isArquivoAuxiliar) {
+			if (isArquivoAuxiliar || isArquivoDOE) {
 				ab = mov.getConteudoBlobMov2();
 				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM,
 						mov.getNmArqMov().replaceAll(",", "").replaceAll(";", ""));
@@ -299,26 +308,27 @@ public class ExArquivoController extends ExController {
 			}
 			
 			
-			/*TODO: Implementar bloco para escrita em disco e controle do status 
 			if ((isPdf || isHtml) && completo && mob != null) {
 				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
-				DocumentosSiglaArquivoGetRequest req = new DocumentosSiglaArquivoGetRequest();
-				DocumentosSiglaArquivoGetResponse resp = new DocumentosSiglaArquivoGetResponse();
+				DocumentosSiglaArquivoGet.Request req = new DocumentosSiglaArquivoGet.Request();
+				DocumentosSiglaArquivoGet.Response resp = new DocumentosSiglaArquivoGet.Response();
 				req.sigla = mob.getSigla();
 				req.contenttype = isPdf ? "application/pdf" : "text/html";
-				req.estampa = semmarcas;
+				req.estampa = true;
 				req.completo = completo;
 				req.volumes = volumes;
-				req.exibirReordenacao = exibirReordenacao;
+				req.exibirReordenacao = false;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
-				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
+				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, null,
 						filename, contextpath, servernameport);
-				result.redirectTo("/app/arquivo/status/" + URLEncoder.encode(req.sigla, "utf-8") + "/" + resp.uuid + "/"
-						+ resp.jwt + "/" + filename);
+			
+				result.forwardTo(this).status(mob.getCodigoCompacto(), resp.uuid, resp.jwt, filename);
+
 				return null;
 			}
-			*/
+			
+		
 			
 			byte ab[] = null;
 	
@@ -514,9 +524,30 @@ public class ExArquivoController extends ExController {
 		}
 	}
 	
-	
-	
-	
+	@TrackRequest
+	@Get("/app/arquivo/downloadFormatoLivre")
+	public void downloadFormatoLivre(final String sigla) throws Exception {
+		ExMobil mob = Documento.getMobil(sigla);
+		validarDownload(true, null, mob);
+
+		CpArquivo cpArq = mob.getDoc().getCpArquivoFormatoLivre();
+		if (cpArq == null) {
+			result.include("mensagemCabec", "Arquivo não existente ou não autorizado para download.");
+			result.include("msgCabecClass", "alert-danger mt-2");
+			return;
+		}
+		
+		final JWTSigner signer = new JWTSigner(System.getProperty("siga.jwt.secret"));
+		final HashMap<String, Object> claims = new HashMap<String, Object>();
+		claims.put("iat", System.currentTimeMillis() / 1000L);
+		claims.put("nomeArqS3", cpArq.getCaminho());
+		claims.put("nomeArq", cpArq.getNomeArquivo());
+		claims.put("hash", cpArq.getHashSha256());
+        String tk = signer.sign(claims);
+		
+		result.include("token", tk);
+		result.redirectTo(Prop.get("/siga-arq.url") + "/api/v1/download?tokenArquivo=" + tk);
+	}
 	
 
 }

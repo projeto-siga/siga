@@ -10,6 +10,17 @@ public class CronologiaComparator implements Comparator<ExMovimentacao> {
 	public int compare(ExMovimentacao o1, ExMovimentacao o2) {
 		try {
 			int i = 0;
+			
+			// Nato: quando estamos gravando uma nova movimentação, ela precisa ser
+			// inserida no final da lista, caso o contrário, se for um recebimento,
+			// não será correlacionada com a transferência anterior. A falta
+			// desta ordenação estava fazendo com que as marcas não fossem calculadas
+			// corretamente logo depois do recebimento.
+			//
+			if (o1.getDtTimestamp() == null && o2.getDtTimestamp() != null)
+			    return -1;
+			else if (o1.getDtTimestamp() != null && o2.getDtTimestamp() == null)
+			    return 1;
 
 			// Pela data
 			if (o2.getDtTimestamp() != null) {

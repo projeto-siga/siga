@@ -85,6 +85,16 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
 
+	public final static ITipoDeMovimentacao[] tpMovimentacoesDePosse = new ITipoDeMovimentacao[] {ExTipoDeMovimentacao.CRIACAO, 
+			ExTipoDeMovimentacao.TRANSFERENCIA,
+			ExTipoDeMovimentacao.RECEBIMENTO,
+			ExTipoDeMovimentacao.TRAMITE_PARALELO,
+			ExTipoDeMovimentacao.NOTIFICACAO,
+			ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA,
+			ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA,
+			ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA,
+			ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+		};
 	/**
 	 * Simple constructor of ExMovimentacao instances.
 	 */
@@ -1369,10 +1379,51 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return retorno +" (" + validateresp.getPolicy() + " v" + validateresp.getPolicyversion() + ")";
 	}
 	
-	public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
-		return Utils.equivale(getLotaResp(), lotaTitular)
-				|| Utils.equivale(getResp(),titular)
-				|| Utils.equivale(getLotaDestinoFinal(),lotaTitular)
+   public boolean isResp(DpPessoa titular) {
+        return Utils.equivale(getResp(),titular)
+                || Utils.equivale(getDestinoFinal(),titular);
+    }
+        
+    public boolean isResp(DpLotacao lotaTitular) {
+        return Utils.equivale(getLotaResp(), lotaTitular)
+                || Utils.equivale(getLotaDestinoFinal(),lotaTitular);
+    }
+    
+    public boolean isResp(DpPessoa titular, DpLotacao lotaTitular) {
+        return isResp(titular) || isResp(lotaTitular);
+    }	
+	public boolean isRespExato(DpPessoa titular, DpLotacao lotaTitular) {
+		return (getResp() == null && Utils.equivale(getLotaResp(), lotaTitular))
+				|| Utils.equivale(getResp(), titular)
+				|| (getDestinoFinal() == null && Utils.equivale(getLotaDestinoFinal(),lotaTitular))
 				|| Utils.equivale(getDestinoFinal(),titular);
+	}
+	
+	public boolean isRespPreferencialmentePelaLotacao(DpPessoa titular, DpLotacao lotaTitular) {
+        return getLotaResp() != null ? isResp(lotaTitular) : isResp(titular);
+    }
+    
+	public boolean isMovimentacaoDePosse() {
+		if (ExTipoDeMovimentacao.hasTransferencia(this.getExTipoMovimentacao())) 
+			return true;
+		if (ExTipoDeMovimentacao.hasRecebimentoOuCriacao(this.getExTipoMovimentacao())) 
+			return true;
+		return false;
+	}
+	
+	public boolean isTramite() {
+		if (!(getExTipoMovimentacao() instanceof ExTipoDeMovimentacao))
+			return false;
+		ExTipoDeMovimentacao l = (ExTipoDeMovimentacao) getExTipoMovimentacao();
+		switch (l) {
+		case TRANSFERENCIA:
+		case TRAMITE_PARALELO:
+		case NOTIFICACAO:
+		case DESPACHO_INTERNO_TRANSFERENCIA:
+		case DESPACHO_TRANSFERENCIA:
+		case DESPACHO_TRANSFERENCIA_EXTERNA:
+			return true;
+		}
+		return false;
 	}
 }

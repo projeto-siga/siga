@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.gc.model;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -916,5 +917,13 @@ public class GcInformacao extends Objeto {
 			}
 		}
 		return "[sem descrição]";
+	}
+	
+	public String getDtYYYYMMDD() {
+		if (getElaboracaoFim() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			return df.format(getElaboracaoFim());
+		}
+		return "";
 	}
 }

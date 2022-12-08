@@ -220,6 +220,8 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("modelo.interno.importado", null);
 		addPublicProperty("modelo.processo.administrativo", null);
 		addPublicProperty("montador.query", "br.gov.jfrj.siga.hibernate.ext.MontadorQuery");
+		addPublicProperty("montador.query.nativa.orgaos", null);
+		addPublicProperty("montador.query.nativa", "br.gov.jfrj.siga.hibernate.ext.MontadorQueryNative");
 		addPublicProperty("pdf.tamanho.maximo", "5000000");
 		addPublicProperty("pdf.tamanho.maximo.completo", null);
 		addPublicProperty("relarmaz.qtd.bytes.pagina", "51200");
@@ -263,6 +265,22 @@ public class ExApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 		addPublicProperty("ws.siafem.service.localpartsoap", null);
 		
 		addPublicProperty("documento.novo.modelo.padrao", "Memorando");
+		
+		//GC Control - Concatenação de PDF
+		addPublicProperty("arquivo.tamanho.gc", "26214400"); //PDF - 25MB
+		addPublicProperty("arquivo.contagem.gc", "25"); //HTML - 25 documentos
+
+							
+		//Pubnet (DOE)
+		addPublicProperty("ws.pubnet.url.wsdl", null);
+
+
+        //GC Control por periodo
+		/* Propriedade para permitir a execução da tarefa de chamada ao garbage collector, caso ativo inibe implementacao por concatenacao de PDF  */
+		addPublicProperty("garbage.tarefa", "false");
+		/* Propriedade para ajustar o periodo em minutos da chamada ao garbage collector  */
+		addPublicProperty("garbage.tarefa.periodo", "10");
+
 	}
 
 	@Override

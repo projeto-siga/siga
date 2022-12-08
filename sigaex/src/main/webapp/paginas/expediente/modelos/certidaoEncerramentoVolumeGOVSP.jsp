@@ -28,11 +28,11 @@
 				<td width="100%">
 				<table width="100%" border="0" cellpadding="2">
 					<tr>
-						<td width="100%" align="center" valign="bottom"><img src="contextpath/imagens/brasao_sp.png" width="65" height="65" /></td>
+						<td width="100%" align="center" valign="bottom"><img src="contextpath/imagens/logo_sp_sem_papel_200x200.png" width="65" height="65" /></td>
 					</tr>
 					<tr>
 						<td width="100%" align="center">
-							<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt; font-weight: bold;">GOVERNO DO ESTADO DE SÃO PAULO</p>
+							<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt; font-weight: bold;">${f:resource('modelos.cabecalho.subtitulo')}</p>
 						</td>
 					</tr>
 					<tr>

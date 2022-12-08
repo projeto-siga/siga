@@ -1,0 +1,48 @@
+package br.gov.jfrj.siga.ex.api.v1;
+
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.ex.api.v1.unit.Consultar;
+import io.restassured.response.ValidatableResponse;
+
+public class DocTest extends AuthTest {
+
+    private static ThreadLocal<ValidatableResponse> tlResp = new ThreadLocal<>();
+
+    public static void assertStatusCode200(ValidatableResponse resp) {
+        try {
+            resp.statusCode(200);
+        } catch (AssertionError e) {
+            String errormsg = resp.extract().path("errormsg");
+            throw new RuntimeException(errormsg);
+        }
+    }
+
+    public static ValidatableResponse consultar(Pessoa pessoa, String sigla) {
+        ValidatableResponse resp = Consultar.consultar(pessoa, sigla, true, true);
+        tlResp.set(resp);
+        return resp;
+    }
+
+    public static void contemMarca(CpMarcadorEnum idMarcador, Pessoa pessoa,
+            Lotacao lotacao) {
+        Consultar.contemMarca(tlResp.get(), idMarcador, pessoa, lotacao);
+    }
+
+    public static void contemMarca(CpMarcadorEnum idMarcador, Pessoa pessoa) {
+        contemMarca(idMarcador, pessoa, null);
+    }
+
+    public static void contemMarca(CpMarcadorEnum idMarcador,
+            Lotacao lotacao) {
+        contemMarca(idMarcador, null, lotacao);
+    }
+
+    public static void contemAcao(String acao, Boolean pode) {
+        Consultar.contemAcao(tlResp.get(), acao, pode);
+    }
+
+    public static void contemVizNode(String graphPath, String id, String shape,
+            String color) {
+        Consultar.contemVizNode(tlResp.get(), graphPath, id, shape, color);
+    }
+}

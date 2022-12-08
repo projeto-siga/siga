@@ -519,14 +519,11 @@ public class UsuarioController extends SigaController {
 			if (Cp.getInstance().getBL().isTokenValido(CpToken.TOKEN_SENHA, cpf, token)) {
 				
 				//Obter Todas as identidade para o CPF e redefinir a senha
-				List<CpIdentidade> listaIdentidadesCpf = new ArrayList<CpIdentidade>();
-				listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(strCpf);
+				List<CpIdentidade> listaIdentidadesCpf = CpDao.getInstance().consultaIdentidadesPorCpf(strCpf);
 				
 				Cp.getInstance().getBL().redefinirSenha(token, senhaNova, senhaConfirma, strCpf, listaIdentidadesCpf);
-				
-				
-				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_SENHA, cpf, token);
-				
+
+				Cp.getInstance().getBL().invalidarTokenUtilizado(CpToken.TOKEN_SENHA, token);
 				
 				//Redefinir senha de rede de todas as matrículas envolvidas
 				if (!listaIdentidadesCpf.isEmpty()) {
@@ -600,5 +597,23 @@ public class UsuarioController extends SigaController {
 					"Erro obtendo propriedade siga.recaptcha.pwd",
 					0, e);
 		}
+	}
+	
+	@Get("/app/usuario/associar_login")
+	public void associarLogin() {
+		List<CpIdentidade> lista = CpDao.getInstance().consultaUsuarioDOE(getCadastrante());
+		if(!lista.isEmpty()) {
+			result.include("usuarioPubNet", lista.get(0).getNmLoginIdentidade());
+		}
+	}
+	
+	@Transacional
+	@Post("/app/usuario/associar_login_gravar")
+	public void associarLoginGravar (String usuarioPubNet) {
+		if(usuarioPubNet.trim().length() > 20) {
+			throw new AplicacaoException("Tamanho máximo do Usuário Pubnet é de 20 caracteres");
+		}
+		CpDao.getInstance().gravarUsuarioDOE(usuarioPubNet, getCadastrante(), getIdentidadeCadastrante());
+		result.redirectTo(UsuarioController.class).associarLogin();
 	}
 }

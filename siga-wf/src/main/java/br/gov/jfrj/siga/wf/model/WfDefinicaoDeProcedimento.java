@@ -35,6 +35,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -254,7 +255,7 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 
 	@Override
 	public String getDescricaoExterna() {
-		return getNome();
+		return getSigla() + " - " + getNome();
 	}
 
 	@Override
@@ -415,6 +416,9 @@ public class WfDefinicaoDeProcedimento extends HistoricoAuditavelSuporte impleme
 
 		set.add(AcaoVO.builder().nome("Documentar").icone("book_open").acao("/app/diagrama/documentar?id=" + id)
 				.exp(new WfPodeEditarDiagrama(this, titular, lotaTitular)).build());
+
+		set.add(AcaoVO.builder().nome("Procedimentos").icone("magnifier").acao("/app/pesquisar-procedimentos?ativos=true&idDefinicaoDeProcedimento=" + id)
+				.exp(new CpPodeSempre()).build());
 		return set;
 	}
 

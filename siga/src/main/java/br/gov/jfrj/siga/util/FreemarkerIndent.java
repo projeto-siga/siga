@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -9,8 +7,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.w3c.tidy.Configuration;
-import org.w3c.tidy.Tidy;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings.Syntax;
+import org.jsoup.parser.ParseSettings;
+import org.jsoup.parser.Parser;
 
 public class FreemarkerIndent {
 	static Pattern patternBody = Pattern.compile(
@@ -71,7 +72,6 @@ public class FreemarkerIndent {
 		while (matcher.find()) {
 			String ftl = matcher.group(1);
 			lftl.add(ftl);
-			System.out.println(ftl);
 			boolean open = (ftl.startsWith("[#") || ftl.startsWith("[@"))
 					&& !ftl.endsWith("/]");
 			boolean close = ftl.startsWith("[/");
@@ -111,7 +111,7 @@ public class FreemarkerIndent {
 		matcher.appendTail(output);
 		return output.toString();
 	}
-
+	
 	private static String unmarshal(String input, List<String> lftl) {
 		StringBuffer output = new StringBuffer();
 		Matcher matcher = patternUnmarshall.matcher(input);
@@ -235,40 +235,47 @@ public class FreemarkerIndent {
 
 	protected static String tidy(String s) throws UnsupportedEncodingException,
 			IOException {
-		final Tidy tidy = new Tidy();
-		tidy.setXmlOut(true);
-		tidy.setXmlPi(true);
-		tidy.setXmlPIs(true);
-		tidy.setXHTML(true);
-		tidy.setFixComments(true);
-		tidy.setFixBackslash(true);
-		tidy.setTidyMark(false);
-		tidy.setCharEncoding(Configuration.LATIN1);
-		tidy.setRawOut(false);
-		tidy.setIndentAttributes(false);
-		tidy.setEncloseBlockText(false);
-		tidy.setEncloseText(false);
-		tidy.setMakeClean(true);
-		tidy.setShowWarnings(false);
-		tidy.setSmartIndent(false);
-		tidy.setSpaces(2);
-		tidy.setTabsize(2);
-		tidy.setTidyMark(false);
-		tidy.setIndentContent(true);
-		tidy.setWraplen(0);
-		tidy.setWrapSection(false);
-
-		try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-				ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("iso-8859-1"))) {
-			tidy.parse(bais, os);
-			os.flush();
-			String sResult = new String(os.toByteArray(), "iso-8859-1");
-			return sResult;
-		}
+//		final Tidy tidy = new Tidy();
+//		tidy.setXmlOut(true);
+//		tidy.setXmlPi(true);
+//		tidy.setXmlPIs(true);
+//		tidy.setXHTML(true);
+//		tidy.setFixComments(true);
+//		tidy.setFixBackslash(true);
+//		tidy.setTidyMark(false);
+//		tidy.setCharEncoding(Configuration.LATIN1);
+//		tidy.setRawOut(false);
+//		tidy.setIndentAttributes(false);
+//		tidy.setEncloseBlockText(false);
+//		tidy.setEncloseText(false);
+//		tidy.setMakeClean(true);
+//		tidy.setShowWarnings(false);
+//		tidy.setSmartIndent(false);
+//		tidy.setSpaces(2);
+//		tidy.setTabsize(2);
+//		tidy.setTidyMark(false);
+//		tidy.setIndentContent(true);
+//		tidy.setWraplen(0);
+//		tidy.setWrapSection(false);
+//
+//		try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+//				ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("iso-8859-1"))) {
+//			tidy.parse(bais, os);
+//			os.flush();
+//			String sResult = new String(os.toByteArray(), "iso-8859-1");
+//			return sResult;
+//		}
+		
+		Parser parser = Parser.htmlParser();
+		parser.settings(new ParseSettings(true, true));
+		Document document = parser.parseInput(s, "");
 		
 //	    final Document document = Jsoup.parse(s);
-//	    document.outputSettings().prettyPrint(true);    
-//	    return document.html();
+	    document.outputSettings().prettyPrint(true);    
+	    document.outputSettings().syntax(Syntax.xml);    
+	    document.outputSettings().indentAmount(2);    
+	    String html = document.body().html();
+		return html;
 	}
 
 	public static String indent(String s) throws IOException {
@@ -278,7 +285,7 @@ public class FreemarkerIndent {
 		s = "<body>" + s + "</body>";
 
 		String sResult = tidy(s);
-		sResult = bodyOnly(sResult);
+//		sResult = bodyOnly(sResult);
 		// if (true) return sResult;
 		while (true) {
 			String sLastResult = multipleTags(sResult);
@@ -289,10 +296,11 @@ public class FreemarkerIndent {
 		}
 
 		sResult = singleTag(sResult);
-		sResult = removeOddSpace(sResult);
+		//sResult = removeOddSpace(sResult);
 		// sResult = afterOpen(sResult);
 		// sResult = beforeClose(sResult);
 		sResult = indentBasedOnFreemarkerTags(sResult);
+		sResult = sResult.replace("<br />", "<br/>");
 
 		sResult = convertHtml2Ftl(sResult, lftl);
 		return sResult;

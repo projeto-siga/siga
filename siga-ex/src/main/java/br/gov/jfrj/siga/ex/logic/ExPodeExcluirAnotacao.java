@@ -21,7 +21,7 @@ public class ExPodeExcluirAnotacao extends CompositeExpressionSupport {
 
 	public ExPodeExcluirAnotacao(ExMobil mob, ExMovimentacao mov, DpPessoa titular, DpLotacao lotaTitular) {
 		if (mob.isGeralDeProcesso() && mob.doc().isFinalizado())
-			mob = mob.doc().getUltimoVolume();
+			mob = mob.doc().getUltimoVolumeOuGeral();
 		this.mob = mob;
 		this.mov = mov;
 		this.titular = titular;
@@ -61,7 +61,9 @@ public class ExPodeExcluirAnotacao extends CompositeExpressionSupport {
 						
 						new ExMovimentacaoELotaCadastrante(mov, titular.getLotacao()),
 						
-						new ExMovimentacaoELotaSubscritor(mov, titular.getLotacao())),
+						new ExMovimentacaoELotaSubscritor(mov, titular.getLotacao()),
+				
+						new ExMovimentacaoELotaTitular(mov, lotaTitular)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.EXCLUIR_ANOTACAO));
 	}

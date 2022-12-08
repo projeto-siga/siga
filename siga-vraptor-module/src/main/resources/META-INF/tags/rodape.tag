@@ -27,7 +27,7 @@
 
 <script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 
-<script src="/siga/javascript/siga.js?v=1622040065" type="text/javascript" charset="utf-8"></script>
+<script src="/siga/javascript/siga.js?v=1654106630" type="text/javascript" charset="utf-8"></script>
 
 <script src="/siga/javascript/picketlink.js" type="text/javascript" charset="utf-8"></script>
 
@@ -92,12 +92,12 @@
 	$('[data-html="true"]').tooltip();
 </script>
 
-
-<c:if test="${siga_cliente == 'GOVSP' and popup != true}">
+<c:if test="${siga_cliente == 'GOVSP' and not (popup eq true or popup eq 'somenteComLogo')}">
 	<footer class="text-center text-white align-middle" style="background-color: #20313b;">
 		<div class="container">						
 			<div class="content pt-2">
 					<div class="row pt-5">
+					 <br>
 						<div class="col-md-4 pb-4">
 							<a href="https://linksiga.trf2.jus.br" role="link" target="_Blank" class="text-decoration-none">
 								<img src="/siga/imagens/logo-siga-novo-38px.png" />
@@ -105,11 +105,11 @@
 									alt="Logo TRF2" height="38" class="ml-2" />
 							</a>
 						</div>
-						<div class="col-md-4  pb-4">		
+						<div class="col-md-4  pb-4">
 							<a href="http://www.prodesp.sp.gov.br/" role="link" target="_Blank"><img class="mx-auto d-block" src="/siga/imagens/logo-prodesp-web-novo-assinado-branco.png" style="width:80%"></a>
 						</div>
 						<div class="col-md-4  pb-4">
-							<a href="http://www.saopaulo.sp.gov.br/" role="link" target="_Blank"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="Governo do Estado de São Paulo" width="50%"></a></p>
+							<a href="http://www.saopaulo.sp.gov.br/" role="link" target="_Blank"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco-r1.png" alt="Governo do Estado de São Paulo" width="50%"></a>
 						</div>			
 					</div>
 			</div>

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -63,7 +64,9 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.logic.CpExibirEmCampoDePesquisa;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorIconeEnum;
@@ -393,7 +396,7 @@ public class CpBL {
 								"Esqueci Minha Senha", "",
 								"<table>" + "<tbody>" + "<tr>"
 										+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-										+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
+										+ "<img style='padding: 10px 0px; text-align: center;' src='" + Prop.get("/siga.base.url") + "/" + Prop.get("/siga.email.logo")+ "' "
 										+ "alt='SP Sem Papel' width='108' height='50' /></td>" + "</tr>" + "<tr>"
 										+ "<td style='background-color: #bbb; padding: 0 20px;'>"
 										+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
@@ -605,7 +608,7 @@ public class CpBL {
 		retorno.append("<tr>");
 		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
 		retorno.append(
-				"<img style='padding: 10px 0px; text-align: center;' src='https://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
+				"<img style='padding: 10px 0px; text-align: center;' src='" + Prop.get("/siga.base.url") + "/" + Prop.get("/siga.email.logo")+ "' ");
 		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
 		retorno.append("</tr>");
 		retorno.append("<tr>");
@@ -643,6 +646,56 @@ public class CpBL {
 			retorno.append("Sua senha &eacute; a mesma usada para logon na rede (Windows).");
 			retorno.append("</span></p>");
 		}
+		retorno.append("</div>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>");
+		retorno.append(
+				"<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("</tbody>");
+		retorno.append("</table>");
+		return retorno.toString();
+	}
+	
+	private String textoEmailAltOrgaoUsuarioSP(CpIdentidade identidade, String matricula) {
+		StringBuffer retorno = new StringBuffer();
+
+		retorno.append("<table>");
+		retorno.append("<tbody>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
+		retorno.append(
+				"<img style='padding: 10px 0px; text-align: center;' src='" + Prop.get( "/siga.base.url") + "/" + Prop.get("/siga.email.logo")+ "' ");
+		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='background-color: #bbb; padding: 0 20px;'>");
+		retorno.append("<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr style='height: 310px;'>");
+		retorno.append("<td style='height: 310px; padding: 10px 20px;'>");
+		retorno.append("<div>");
+		retorno.append("<p><span style='color: #808080;'>Prezado Servidor(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getNomePessoa() + "</strong>");
+		retorno.append(" do(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>");
+		retorno.append(".</span></h4>");
+		retorno.append(
+				"<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua Nova matr&iacute;cula para acesso ");
+		retorno.append("ao Portal SP Sem Papel, a senha permanece a mesma.</span></p>");
+		retorno.append(
+				"<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; ");
+		retorno.append("produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade ");
+		retorno.append("antes de iniciar o uso e assinar documentos.</span></p>");
+		
+		retorno.append("<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>");
+		retorno.append(matricula);
+		retorno.append("</strong></span></p>");
+		
 		retorno.append("</div>");
 		retorno.append("</td>");
 		retorno.append("</tr>");
@@ -1092,7 +1145,7 @@ public class CpBL {
 	}
 
 	public CpModelo alterarCpModelo(CpModelo mod, String conteudo, CpIdentidade identidadeCadastrante)
-			throws AplicacaoException {
+			throws AplicacaoException { 
 		try {
 			Date dt = dao().consultarDataEHoraDoServidor();
 			CpModelo modNew = new CpModelo();
@@ -1193,6 +1246,10 @@ public class CpBL {
 		if (nmPessoa != null && !nmPessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS))
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 
+		Boolean podeAlterarOrgaoPessoa = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(identidadeCadastrante.getPessoaAtual(),
+				identidadeCadastrante.getPessoaAtual().getLotacao(), 
+				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa;ALT:Alterar Órgão Cadastro Pessoa");
+		
 		DpPessoa pessoa = new DpPessoa();
 		DpPessoa pessoaAnt = new DpPessoa();
 		List<CpIdentidade> lista = new ArrayList<CpIdentidade>();
@@ -1202,13 +1259,29 @@ public class CpBL {
 			
 			if(pessoaAnt != null) {
 				Integer qtde = CpDao.getInstance().quantidadeDocumentos(pessoaAnt);
-				if (qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) {
+				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) 
+						&& (!podeAlterarOrgaoPessoa || pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu))) {
 					throw new AplicacaoException(
 							"A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
 				}
 				pessoa.setIdInicial(pessoaAnt.getIdInicial());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
-				
+			
+				if(podeAlterarOrgaoPessoa && !idLotacao.equals(pessoaAnt.getLotacao().getId())) {
+
+					List<Long> marcadores = new ArrayList<Long>();
+					marcadores.add(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
+					marcadores.add(CpMarcadorEnum.EM_ELABORACAO.getId());
+					
+					Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().qtdeMarcasMarcadorPessoa(pessoaAnt.getPessoaInicial(), marcadores);
+					Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().qtdeMarcasMarcadorLotacao(pessoaAnt.getLotacao().getLotacaoInicial(), marcadores);
+					Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);
+					
+					if(qtdeCaixaEntradaTMPPessoa > 0 || (qtdeCaixaEntradaTMPLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
+						throw new AplicacaoException(
+								"O Órgão da Pessoa não pode ser alterado, pois existem documentos pendentes na Caixa de Entrada/TMP do Usuário/" + SigaMessages.getMessage("usuario.lotacao"));
+					}
+				}
 			}
 		}
 		
@@ -1276,7 +1349,7 @@ public class CpBL {
 		ou = CpDao.getInstance().consultarPorId(ou);
 		
 		if (!"ZZ".equals(identidadeCadastrante.getCpOrgaoUsuario().getSigla())){
-			if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu())) {
+			if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu()) && !podeAlterarOrgaoPessoa) {
 				throw new AplicacaoException("Usuário não pode cadastrar nesse órgão.");
 			}
 		}
@@ -1358,6 +1431,16 @@ public class CpBL {
 					ident.setDpPessoa(pessoa);
 					CpDao.getInstance().gravar(ident);
 				}
+				
+				if (ident != null && !pessoa.getOrgaoUsuario().equivale(pessoaAnt.getOrgaoUsuario())) {
+					this.desativarConfiguracoesPessoa(identidadeCadastrante, pessoaAnt.getPessoaInicial() != null ? pessoaAnt.getPessoaInicial() : pessoaAnt, data);
+					
+					//enviar e-mail informado alteracao de orgao
+					if (SigaMessages.isSigaSP()) {
+						String[] destinanarios = { pessoa.getEmailPessoaAtual() };
+						Correio.enviar(null, destinanarios, "Alteração Usuário", "", textoEmailAltOrgaoUsuarioSP(ident, ident.getNmLoginIdentidade()));
+					}
+				}
 			} else {
 				pessoa.setHisIdcIni(identidadeCadastrante);
 				CpDao.getInstance().gravar(pessoa);
@@ -1419,22 +1502,29 @@ public class CpBL {
 			}
 		
 			return pessoa;
-		//	dao().em().getTransaction().commit();
 		} catch (final Exception e) {
 			if (e.getCause() instanceof ConstraintViolationException 
 					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
 				throw new AplicacaoException("Ocorreu um problema no cadastro da pessoa.");
 			} else if (e.getCause() instanceof ConstraintViolationException 
-					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("SIGA_VALID_UNIQUE")) {
+					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("PESSOA_ATIVA_CHAVES_UNICA")) {
 				throw new AplicacaoException(
-						"Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
-			}else {
-		//	dao().em().getTransaction().rollback();
+						"Pessoa já cadastrada e ativa com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+			} else {
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
 		}
 	}
 	
+	public void desativarConfiguracoesPessoa(CpIdentidade identidadeCadastrante, DpPessoa pessoa, Date dataAtual) {
+		List<CpConfiguracao> listConfig = CpDao.getInstance().consultarCpConfiguracoesPorPessoa(pessoa.getId());
+			
+		for (CpConfiguracao cpConfiguracao : listConfig) {
+			cpConfiguracao.setDtFimVigConfiguracao(dataAtual);
+			cpConfiguracao.setHisDtFim(dataAtual);
+			CpDao.getInstance().gravarComHistorico(cpConfiguracao, identidadeCadastrante);	
+		}
+	}
 		
 	public String inativarUsuario(final Long idUsuario) {
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
@@ -1476,11 +1566,14 @@ public class CpBL {
 				
 				sigaUrlPermanente.setToken(SigaUtil.randomAlfanumerico(128));
 				sigaUrlPermanente.setIdRef(idRef);
+				
+				Date dt = dao().consultarDataEHoraDoServidor();
+				
+				sigaUrlPermanente.setDtIat(dt);
 
 				try {
 					dao().gravar(sigaUrlPermanente);
 				} catch (final Exception e) {
-	
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			} 
@@ -1756,6 +1849,37 @@ public class CpBL {
 			throw new AplicacaoException("Ocorreu um erro ao gerar o Token.", 0, e);
 		}
 	}
+
+	public CpToken gravarNovoToken(Long idTpToken, Long idRef, int tokenExpCalendarField,
+								   int tokenExpCalendarFieldAmount, String token) {
+		
+		invalidarTokenAtivo(idTpToken, idRef);
+
+		CpToken cpToken = new CpToken();
+
+		cpToken.setIdTpToken(idTpToken);
+		cpToken.setToken(token);
+		cpToken.setIdRef(idRef);
+
+		/* HORA ATUAL */
+		GregorianCalendar gc = new GregorianCalendar();
+		Date dt = dao().consultarDataEHoraDoServidor();
+		gc.setTime(dt);
+		cpToken.setDtIat(dt);
+
+		/* EXP - Expiração do Token */
+		gc.add(tokenExpCalendarField, tokenExpCalendarFieldAmount);
+		cpToken.setDtExp(gc.getTime());
+
+		try {
+			dao().gravar(cpToken);
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro na gravação do token", 0, e);
+		}
+
+		return cpToken;
+
+	}
 	
 	/**** Controle de Validade Token ****/
 	public Boolean isTokenValido(Long tipoToken, Long cpf, String token) {
@@ -1781,30 +1905,29 @@ public class CpBL {
 	}
 	
 	public void invalidarTokenAtivo(Long tipoToken, Long idRef) {
-		CpToken tokenResetPin = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
-		if (tokenResetPin != null) {
-			tokenResetPin.setDtExp(tokenResetPin.getDtIat());
+		CpToken cpToken = dao().obterCpTokenPorTipoIdRef(tipoToken,idRef);
+		if (cpToken != null) {
+			cpToken.setDtExp(dao().consultarDataEHoraDoServidor());
 			try {
-				dao().gravar(tokenResetPin);
+				dao().gravar(cpToken);
 			} catch (final Exception e) {
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
 		} 
 	}
-	
-	public void invalidarTokenUtilizado(Long tipoToken, Long cpf, String token) {
+
+	public void invalidarTokenUtilizado(Long tipoToken, String token) {
 		try {
-			CpToken tokenResetPin = new CpToken();
-			tokenResetPin = dao().obterCpTokenPorTipoToken(tipoToken,token); 
-			if (tokenResetPin != null ) {
-				tokenResetPin.setDtExp(tokenResetPin.getDtIat());
+			CpToken cpToken = dao().obterCpTokenPorTipoToken(tipoToken, token);
+			if (cpToken != null) {
+				cpToken.setDtExp(dao().consultarDataEHoraDoServidor());
 				try {
-					dao().gravar(tokenResetPin);
+					dao().gravar(cpToken);
 				} catch (final Exception e) {
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			}
-			
+
 		} catch (final Exception e) {
 			throw new AplicacaoException("Ocorreu um erro ao validar o Token.", 0, e);
 		}
@@ -1988,14 +2111,18 @@ public class CpBL {
 			}
 			
 			popularLotacaoNova(idLotacao, nmLotacao, siglaLotacao, isExternaLotacao, lotacaoPai, idLocalidade,
-					cpOrgaoUsuario, lotacaoNova, lotacao, dataSistema);
+					cpOrgaoUsuario, lotacaoNova, lotacao, dataSistema, situacao);
 			
 			try {
-				if(lotacaoNova.getDataFimLotacao() != null) {
-					lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
-					dao().gravarComHistorico(lotacao, identidadeCadastrante);
-				} else {
+				if (lotacao != null) {
+					if (lotacaoNova.getDataFimLotacao() != null) {
+						lotacao.setDataFimLotacao(lotacaoNova.getDataFimLotacao());
+					} else {
+						lotacao.setDataFimLotacao(null);
+					}
 					dao().gravarComHistorico(lotacaoNova, lotacao, dataSistema, identidadeCadastrante);
+				} else {
+					dao().gravarComHistorico(lotacaoNova, identidadeCadastrante);
 				}
 				
 				gravarLotacaoPessoaComHistorico(identidadeCadastrante, listPessoa, lotacaoNova, lotacao, dataSistema);
@@ -2050,8 +2177,9 @@ public class CpBL {
 	}
 
 	private void popularLotacaoNova(final Long idLotacao, final String nmLotacao, final String siglaLotacao,
-			final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade,
-			CpOrgaoUsuario cpOrgaoUsuario, DpLotacao lotacaoNova, DpLotacao lotacao, Date dataSistema) {
+									final Boolean isExternaLotacao, final Long lotacaoPai, final Long idLocalidade, 
+									CpOrgaoUsuario cpOrgaoUsuario, DpLotacao lotacaoNova, DpLotacao lotacao, 
+									Date dataSistema, final String situacao) {
 		if(lotacaoPai != null) {
 			validarIdLotacaoPai(idLotacao, lotacaoPai);
 			lotacaoNova.setLotacaoPai(CpDao.getInstance().consultarLotacaoPorId(lotacaoPai));
@@ -2076,6 +2204,10 @@ public class CpBL {
 		}
 		
 		lotacaoNova.setDataInicioLotacao(dataSistema);
+
+		if ("false".equals(situacao)) {
+			lotacaoNova.setDataFimLotacao(dataSistema);
+		}
 	}
 
 	private void validarIdLotacaoPai(final Long idLotacao, final Long lotacaoPai) {
@@ -2114,7 +2246,7 @@ public class CpBL {
 			throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
 		}
 						
-		if(podeInativarLotacao(lotacaoNova, listPessoa, qtdeDocumentoCriadosPosse, situacao)) {
+		if(podeInativarLotacao(lotacao, listPessoa, qtdeDocumentoCriadosPosse, situacao)) {
 			lotacaoNova.setDataFimLotacao(dataSistema);
 		}
 		lotacaoNova.setIdLotacaoIni(lotacao.getIdLotacaoIni());
@@ -2459,7 +2591,19 @@ public class CpBL {
 			throw e;
 		}
 
-	}
+	}  
 	
+	//Não persistindo no banco esse método remove da coleção que será iterada e renderizada na view 
+	//os órgão que não querem ser exibidos por outros órgãos no sistema.
+	public List<CpOrgaoUsuario> removeOrgaosQueNaoSeraoExibidos(List<CpOrgaoUsuario> orgaos, DpPessoa pessoa, DpLotacao lotacao) {
+		Iterator<CpOrgaoUsuario> i = orgaos.iterator(); 
+		while (i.hasNext()) { 
+		    CpOrgaoUsuario org = i.next();  
+			if (!new CpExibirEmCampoDePesquisa(pessoa, lotacao, org).eval()) 
+				i.remove();
+				
+		}
+		return orgaos;
+	} 
 	
 }

@@ -23,6 +23,7 @@
 		}
 	}
 	function validate() {
+		sigaSpinner.mostrar();
 		var sigaCliente = document.getElementById('sigaCliente');
 		if (sigaCliente.value == 'GOVSP') {
 			var personalizacao = document.getElementById('exDocumentoDTO.personalizacao');
@@ -34,6 +35,25 @@
 			}
 		}
 		return true;
+	}	
+	function incluirExcluirAcessoTempArvoreDocs(thisElement) {
+		if (confirm('Ao clicar em OK você habilitará ou desabilitará o acesso ao documento completo para o(s) cossignatário(s). Deseja continuar?')) {
+			var podeChamarServico = ${!listaCossignatarios.isEmpty()};
+			if (podeChamarServico) {
+				var incluirCossig = false;
+				if (thisElement.checked) {
+					incluirCossig = true;
+				}
+				sigaSpinner.mostrar();
+				//Chama servico caso ja exista cossigs presentes na table
+				window.location.href='${pageContext.request.contextPath}/app/expediente/mov/incluir_excluir_acesso_temp_arvore_docs?sigla=${sigla}&incluirCossig='+incluirCossig;
+			} else {
+				//Hidden para dar submit dentro do form incluir_cosignatario_gravar
+				document.getElementById('podeIncluirCossigArvoreDocs').value = thisElement.checked;
+			}
+		} else {
+			thisElement.checked = !thisElement.checked;
+		}
 	}
 	
 </script>
@@ -60,6 +80,7 @@
 				<form action="incluir_cosignatario_gravar" namespace="/expediente/mov" cssClass="form" method="post" onsubmit="return validate();" >
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
+					<input type="hidden" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" value="${podeIncluirCossigArvoreDocs}"/>
 					<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="row">
 						<div class="col-sm-6">
@@ -115,6 +136,25 @@
 			</div>
 		</div>
 		<h3 class="gt-table-head">Cossignatários adicionados</h3>
+		<c:if test="${podeExibirArvoreDocsCossig}">
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="form-group">
+						<div class="form-check form-check-inline mt-1">
+							<input type="checkbox" id="podeIncluirCossigArvoreDocsCheck" name="podeIncluirCossigArvoreDocsCheck" class="form-check-input ml-3" <c:if test="${podeIncluirCossigArvoreDocs}">checked</c:if>
+													onchange="javascript:incluirExcluirAcessoTempArvoreDocs(this);" />
+							<label class="form-check-label" for="podeIncluirCossigArvoreDocsCheck">Acessar Documento ${paiDasViasCossigsSubscritor}</label>
+							<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
+													title='Selecionar esse campo se houver a necessidade de permitir que o(s) cossignatário(s) acesse(m) o documento completo, enquanto o mesmo estiver pendente 
+															de assinatura. Atenção: Para habilitar ou desabilitar essa função, o documento deverá estar com status "Finalizado"'></a>
+						</div>
+						<div class="ml-3 mb-4">
+							<small class="form-text text-muted">Selecionar esse campo se houver a necessidade de permitir que o(s) Cossignatário(s) acesse(m) o documento completo.</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</c:if>
 		<div class="table-responsive">
 			<table border="0" class="table table-sm table-striped">
 				<thead class="thead-dark">
@@ -136,7 +176,7 @@
 							<td>${mov.nmFuncao }</td>
 							<td><c:if test="${siga_cliente != 'GOVSP'}">${mov.nmLocalidade}</c:if></td>
 							<td><input type="button" value="Excluir" 
-								onclick="javascript:location.href='${pageContext.request.contextPath}/app/expediente/mov/excluir?id=${mov.idMov}&redirectURL=/app/expediente/mov/incluir_cosignatario?sigla=${sigla}'" class="btn btn-danger"/>					
+								onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/excluir?id=${mov.idMov}&redirectURL=/app/expediente/mov/incluir_cosignatario?sigla=${sigla}'" class="btn btn-danger"/>					
 							</td>
 						</tr>
 					</c:forEach>

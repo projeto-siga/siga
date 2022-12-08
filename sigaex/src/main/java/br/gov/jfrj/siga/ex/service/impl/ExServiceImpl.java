@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -62,6 +63,7 @@ import br.gov.jfrj.siga.ex.ExSequencia;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.logic.ExPodeMovimentar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
@@ -169,7 +171,10 @@ public class ExServiceImpl implements ExService {
 				}
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 				PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(siglaDestino);
-				Ex.getInstance().getBL().arquivarCorrente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(),
+				
+				ExBL bl = Ex.getInstance().getBL();
+				bl.cancelarTramitesPendentes(mob, "Cancelamento automático de trâmite pendente para arquivamento");
+				bl.arquivarCorrente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(),
 						mob, null, null, destinoParser.getPessoa(), false);
 				return true;
 			} catch (Exception ex) {
@@ -203,7 +208,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return !mob.getExDocumento().isPendenteDeAssinatura();
@@ -216,7 +221,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isSemEfeito(String codigoDocumento) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob == null)
@@ -231,7 +236,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean podeMovimentar(String codigoDocumento, String siglaCadastrante) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -292,7 +297,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public Boolean isAtendente(String codigoDocumento, String siglaTitular) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -306,7 +311,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String getAtendente(String codigoDocumento, String siglaTitular) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular); 
 				ExMobil mob = buscarMobil(codigoDocumento);
@@ -334,7 +339,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				return Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(num);
 			} catch (Exception ex) {
@@ -346,7 +351,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String buscarPorCodigo(String codigo) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobilSelecao sel = new ExMobilSelecao();
 				sel.setSigla(codigo);
@@ -384,12 +389,28 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String form(String codigoDocumento, String variavel) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				if (codigoDocumento == null)
 					return null;
 				ExMobil mob = buscarMobil(codigoDocumento);
 				return mob.doc().getForm().get(variavel);
+			} catch (Exception ex) {
+				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
+				ctx.rollback(e);
+				throw e;
+			}
+		}
+	}
+	
+	@Override
+	public Map<String, String> formAcumulativo(String codigoDocumento) throws Exception {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
+			try {
+				if (codigoDocumento == null)
+					return null;
+				ExMobil mob = buscarMobil(codigoDocumento);
+				return mob.doc().getRef().getForm();
 			} catch (Exception ex) {
 				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
 				ctx.rollback(e);
@@ -418,7 +439,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public String toJSON(String codigo) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = null;
 				{
@@ -886,7 +907,7 @@ public class ExServiceImpl implements ExService {
 	}
 
 	public Boolean isModeloIncluso(String codigoDocumento, Long idModelo, Date depoisDaData) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento);
 				if (mob.isGeral())
@@ -900,7 +921,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	public Boolean isAuxiliarIncluso(String codigoDocumento, Date depoisDaData) throws Exception {
-		try (ExSoapContext ctx = new ExSoapContext(true)) {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
 				ExMobil mob = buscarMobil(codigoDocumento).getDoc().getMobilGeral();
 
@@ -1123,15 +1144,11 @@ public class ExServiceImpl implements ExService {
 						listaMarcadores = marcadoresStr.split(",");
 					}
 
-					CpToken sigaUrlPermanente = new CpToken();
-					sigaUrlPermanente = Ex.getInstance().getBL().publicarTransparencia(mob, cadastrante,
-							cadastrante.getLotacao(), listaMarcadores, true);
-					String url = System.getProperty("siga.ex.enderecoAutenticidadeDocs")
-							.replace("/sigaex/public/app/autenticar", "");
-					String caminho = url + "/siga/public/app/sigalink/1/" + sigaUrlPermanente.getToken();
+					String url = Ex.getInstance().getBL()
+							.publicarTransparencia(mob, cadastrante, cadastrante.getLotacao(), false);
 
 					return "Documento " + siglaDocumento
-							+ " enviado para publicação. Gerado para acesso externo ao documento: " + caminho;
+							+ " enviado para publicação. Gerado para acesso externo ao documento: " + url;
 				}
 			} catch (Exception ex) {
 				ctx.rollback(ex);
@@ -1205,5 +1222,4 @@ public class ExServiceImpl implements ExService {
 					|| mobFilho.getMobilPrincipal().equals(mobPai.doc().getMobilGeral());
 		}
 	}
-
 }

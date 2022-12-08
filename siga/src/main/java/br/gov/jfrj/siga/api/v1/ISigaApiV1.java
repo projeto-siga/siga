@@ -29,7 +29,9 @@ public interface ISigaApiV1 {
 		public String sigla;
 		public String nome;
 		public String siglaLotacao;
+		public String email;
 		public Boolean isExternaPessoa;
+		public Date dataInicioPessoa;
 		public Lotacao lotacao;
 		public Cargo cargo;
 		public FuncaoConfianca funcaoConfianca;

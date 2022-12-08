@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.ex.service;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -66,6 +67,9 @@ public interface ExService extends Remote {
 
 	@WebMethod
 	public String form(String codigoDocumento, String variavel) throws Exception;
+
+	@WebMethod
+	public Map<String, String> formAcumulativo(String codigoDocumento) throws Exception;
 
 	@WebMethod
 	public String toJSON(String codigo) throws Exception;

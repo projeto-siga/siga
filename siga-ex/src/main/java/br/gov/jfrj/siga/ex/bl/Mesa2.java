@@ -3,13 +3,14 @@ package br.gov.jfrj.siga.ex.bl;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.crivano.swaggerservlet.ISwaggerModel;
 
@@ -19,7 +20,6 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
-import br.gov.jfrj.siga.cp.model.enm.TipoDePainelEnum;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -30,12 +30,13 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class Mesa2 {
+	private static final int MESA_QTD_MAX_INICIAL = 20;
 	private static List<GrupoItem> gruposBase;
 	
 	public static class SelGrupo implements ISwaggerModel {
 		public String grupoOrdem;
 		public Long grupoQtd;
-		public Long grupoQtdPag;
+		public Long grupoQtdLota;
 		public boolean grupoCollapsed;
 		public boolean grupoHide;
 	}
@@ -44,12 +45,12 @@ public class Mesa2 {
 		public String grupo;
 		public String grupoNome;
 		public String grupoIcone;
-		public Long grupoCounterUser;
-		public Long grupoCounterLota;
-		public Long grupoCounterAtivo;
-		public Long grupoQtd;
-		public Long grupoQtdPag;
-		public String grupoOrdem;
+		public Long grupoCounterUser;	// Qtd de docs para o usuario (Contador na barra de titulo)
+		public Long grupoCounterLota;	// Qtd de docs para a lotação (Contador na barra de título)
+		public Long grupoCounterAtivo;	// Qtd de docs para o usuário ou lotação (o que estiver ativo)
+		public Long grupoQtd; 			// Qtd possivel de rolagem na tela (pessoa)
+		public Long grupoQtdLota;		// Qtd possivel de rolagem na tela (lotacao)
+		public String grupoOrdem;		// Ordem e id do grupo
 		public boolean grupoCollapsed;
 		public boolean grupoHide;
 		public boolean grupoAtingiuLimite;
@@ -58,6 +59,7 @@ public class Mesa2 {
 	}
 	
 	public static class MesaItem implements ISwaggerModel {
+		public String offset;
 		public String grupoOrdem;
 		public String tipo;
 		public Date datahora;
@@ -112,247 +114,258 @@ public class Mesa2 {
 		Date dtRef2;
 	}
 
-	private static List<MesaItem> listarReferencias(TipoDePainelEnum tipo,
-			Map<ExMobil, DocDados> references, DpPessoa pessoa,
-			DpLotacao unidade, Date currentDate, String grupoOrdem, boolean trazerAnotacoes, 
-			boolean ordemCrescenteData, boolean usuarioPosse,
-			List<Integer> marcasAIgnorar) {
+	private static List<MesaItem> listarReferencias(
+			final List<ExMobil> references, final DpPessoa pessoa,
+			final DpLotacao lota, final String grupoOrdem, final boolean trazerAnotacoes, 
+			final boolean ordemCrescenteData, final boolean usuarioPosse, final Integer offset) {
+		ExDao dao = ExDao.getInstance();
+		Date currentDate = dao.consultarDataEHoraDoServidor();
 		List<MesaItem> l = new ArrayList<>();
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		Integer offsetItem = offset;
 
-		for (ExMobil mobil : references.keySet()) {
+		for (ExMobil mobil : references) {
 			MesaItem r = new MesaItem();
 			r.tipo = "Documento";
+			r.grupoOrdem = grupoOrdem;
+			r.offset = offsetItem.toString();
+			offsetItem++;
 
-			Date datahora = null;
-			if (references.get(mobil).movUltimaDtIniMov != null)
-				datahora = references.get(mobil).movUltimaDtIniMov;
-			else
-				datahora = mobil.getDoc().getDtAltDoc();
-			r.datahora = datahora;
-			r.datahoraDDMMYYYHHMM = df.format(datahora);
-			r.tempoRelativo = Data.calcularTempoRelativo(datahora);
-
-			r.codigo = mobil.getCodigoCompacto();
-			r.sigla = mobil.getSigla();
-			r.descr = mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " ");
-			if (references.get(mobil).isComposto) {
-				r.tipoDoc = "Composto";
-			} else {
-				r.tipoDoc = "Avulso";
-			}
-
-			if (mobil.doc().getSubscritor() != null
-					&& mobil.doc().getSubscritor().getLotacao() != null)
-
-				if (SigaMessages.isSigaSP()) {
-					if (references.get(mobil).movTramiteSiglaLotacao != null) {
-						r.origem = references.get(mobil).movTramiteSiglaOrgao + " / "
-								+ references.get(mobil).movTramiteSiglaLotacao;
+			try {
+				r.sigla = mobil.getDnmSigla();
+				r.codigo = mobil.getCodigoCompacto();
+				Date datahora = null;
+				ExMovimentacao ultimaMov = mobil.getUltimaMovimentacaoNaoCanceladaENaoCanceladora();
+				datahora = mobil.getDnmDataUltimaMovimentacaoNaoCancelada();
+				if (datahora == null)
+					datahora = mobil.getDoc().getDtAltDoc();
+				r.datahora = datahora;
+				r.datahoraDDMMYYYHHMM = df.format(datahora);
+				r.tempoRelativo = Data.calcularTempoRelativo(datahora);
+				r.descr = StringEscapeUtils.unescapeHtml4(mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " "));
+				r.tipoDoc = (mobil.doc().isComposto()? "Composto" : "Avulso");
+				ExMovimentacao ultMovPosse = null;
+	
+				if (mobil.doc().getSubscritor() != null
+						&& mobil.doc().getSubscritor().getLotacao() != null) {
+					if (SigaMessages.isSigaSP()) {
+						ultMovPosse = mobil
+								.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+										new ITipoDeMovimentacao[] {}, mobil, false, null, false);
+						
+						if (ultMovPosse != null) {
+							r.origem = ultMovPosse.getLotacao()
+									.getOrgaoUsuario().getSigla() + " / "
+									+ ultMovPosse.getLotacao().getSigla();
+						} else {
+							r.origem = mobil.doc().getSubscritor().getLotacao()
+									.getOrgaoUsuario() + " / "
+									+ mobil.doc().getSubscritor().getLotacao()
+											.getSigla();
+						}
 					} else {
 						r.origem = mobil.doc().getSubscritor().getLotacao()
-								.getOrgaoUsuario() + " / "
-								+ mobil.doc().getSubscritor().getLotacao()
-										.getSigla();
+								.getSigla();
 					}
-				} else {
-					r.origem = mobil.doc().getSubscritor().getLotacao()
-							.getSigla();
 				}
-			
-			r.dataDevolucao = "ocultar";
-			
-			if (mobil.doc().getSubscritor() != null
-					&& mobil.doc().getLotacao() != null)
-
-				if (SigaMessages.isSigaSP()) {
-					if (references.get(mobil).movTramiteSiglaLotacao != null) {
-						r.lotaCadastrante = references.get(mobil).movTramiteSiglaOrgao;
+				
+				r.dataDevolucao = "ocultar";
+				
+				if (mobil.doc().getSubscritor() != null
+						&& mobil.doc().getLotacao() != null) {
+					if (SigaMessages.isSigaSP()) {
+						if (ultMovPosse != null && ultMovPosse.getLotacao() != null) {
+							r.lotaCadastrante = ultMovPosse.getLotacao().getSigla();
+						} else {
+							r.lotaCadastrante = mobil.doc().getLotacao().getSigla();
+						}
 					} else {
 						r.lotaCadastrante = mobil.doc().getLotacao().getSigla();
 					}
-				} else {
-					r.lotaCadastrante = mobil.doc().getLotacao().getSigla();
-				}
-			
-			r.dataDevolucao = "ocultar";
-
-			if (references.get(mobil).movUltimaDtFimMov != null
-					&& references.get(mobil).movUltimaDtFimMov != null) {
-				Date dataMovimentacao;
-				dataMovimentacao = references.get(mobil).movUltimaDtFimMov;
-
-				Date dataHoje = new Timestamp(System.currentTimeMillis());
-
-				int dias;
-				if (dataHoje.compareTo(dataMovimentacao) <= 0) {
-					dias = Integer
-							.parseInt(((dataMovimentacao.getTime() - dataHoje.getTime() - +3600000L) / 86400000L)
-									+ "");
-
-					String qtdDias = Prop.get("/siga.devolucao.dias");
-					
-					if(qtdDias == null){
-						qtdDias = "5";
-					}
-					
-					if (dias <= Integer.parseInt(qtdDias)) {
-						r.dataDevolucao = "alerta";
-					}
-
-				} else {
-					r.dataDevolucao = "atrasado";
-				}
-
-			}
-
-			r.grupoOrdem = grupoOrdem;
-			
-			if (trazerAnotacoes && mobil.getDnmUltimaAnotacao() != null && !mobil.getDnmUltimaAnotacao().replace(" ", "").equals("")) { 
-				r.anotacao = mobil.getDnmUltimaAnotacao().replace("\r\f", "<br/>").replace("\n", "<br/>");
-			}
-
-			if (usuarioPosse) {
-				ExMovimentacao ultMov = mobil
-					.getUltimaMovimentacao(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.TRANSFERENCIA,
-							ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA,
-							ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA,
-							ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA,
-							ExTipoDeMovimentacao.RECEBIMENTO
-						}, new ITipoDeMovimentacao[] {}, mobil, false, null);
-				if (ultMov != null && ultMov.getCadastrante() != null) {
-					r.nomePessoaPosse = ultMov.getCadastrante().getNomePessoa(); 
-				} else {
-					r.nomePessoaPosse = mobil.getDoc().getCadastrante().getNomePessoa();
-				}
-				if (ultMov != null && ultMov.getCadastrante() != null) {
-					r.lotaPosse = ultMov.getCadastrante().getLotacao().getSigla();
-				} else {
-					r.lotaPosse = mobil.getDoc().getCadastrante().getLotacao().getSigla();
-				}
-			}
-					
-			
-			r.list = new ArrayList<Marca>();
-
-			for (MeM tag : references.get(mobil).listMeM) {
-				if (tag.marca.getDtIniMarca() != null
-						&& tag.marca.getDtIniMarca().getTime() > currentDate
-								.getTime())
-					continue;
-				if (tag.marca.getDtFimMarca() != null
-						&& tag.marca.getDtFimMarca().getTime() < currentDate
-								.getTime())
-					continue;
-
-				Marca t = new Marca();
-				CpMarcadorEnum mar = CpMarcadorEnum.getById(tag.marcador
-						.getIdInicial().intValue());
-				if (mar != null) {
-					t.nome = mar.getNome();
-					t.icone = mar.getIcone();
-					if(mar.getId() == CpMarcadorEnum.SEM_EFEITO.id) {
-						t.nome = SigaMessages.getMessage("marcador.semEfeito.label");
-					} else if(mar.getId() == CpMarcadorEnum.CANCELADO.id) {
-						t.nome = SigaMessages.getMessage("marcador.cancelado.label");
-					}
-				} else {
-					t.nome = tag.marcador.getDescrMarcador();
-					t.icone = tag.marcador.getIdIcone().getCodigoFontAwesome();
-					t.cor = tag.marcador.getIdCor().getDescricao();
-				}
-				t.titulo = Data.formatDDMMYY(tag.marca.getDtIniMarca()) + " (" 
-							+ Data.calcularTempoRelativo(tag.marca.getDtIniMarca()) + ")";
-
-				if (tag.marca.getDpPessoaIni() != null) {
-					t.pessoa = tag.marca.getDpPessoaIni().getIdInicial().toString();
-
-				}
-				if (tag.marca.getDpLotacaoIni() != null) {
-					t.lotacao = tag.marca.getDpLotacaoIni().getIdInicial().toString();
 				}
 				
-				t.inicio = tag.marca.getDtIniMarca();
-				t.termino = tag.marca.getDtFimMarca();
-				if (tag.dtRef1 != null)
-					t.ref1 = Data.calcularTempoRelativoEmDias(tag.dtRef1);
-					t.ref1DDMMYYYY = Data.formatDDMMYY(tag.dtRef1);
-				if (tag.dtRef2 != null)
-					t.ref2 = Data.calcularTempoRelativoEmDias(tag.dtRef2);
-					t.ref2DDMMYYYY = Data.formatDDMMYY(tag.dtRef2);
-				if(tag.marca.getCpMarcador().isDemandaJudicial()) {
-					t.nome += " até " + tag.marca.getExMobil().getDoc().getMobilGeral()
-							.getExMovimentacaoSet().stream() //
-							.filter(mov -> mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO)
-							.filter(mov -> !mov.isCancelada()) //
-							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
-							.map(ExMovimentacao::getDtFimMovDDMMYY) //
-							.findFirst().orElse("[indeterminado]");
+				r.dataDevolucao = "ocultar";
+	
+				if (ultimaMov != null && ultimaMov.getDtFimMov() != null) {
+					Date dataMovimentacao = ultimaMov.getDtFimMov();
+					Date dataHoje = new Timestamp(System.currentTimeMillis());
+					int dias;
+					if (dataHoje.compareTo(dataMovimentacao) <= 0) {
+						dias = Integer
+								.parseInt(((dataMovimentacao.getTime() - dataHoje.getTime() - +3600000L) / 86400000L)
+										+ "");
+						String qtdDias = Prop.get("/siga.devolucao.dias");
+						if(qtdDias == null){
+							qtdDias = "5";
+						}
+						
+						if (dias <= Integer.parseInt(qtdDias)) {
+							r.dataDevolucao = "alerta";
+						}
+					} else {
+						r.dataDevolucao = "atrasado";
+					}
 				}
+	
+				if (trazerAnotacoes && mobil.getDnmUltimaAnotacao() != null && !mobil.getDnmUltimaAnotacao().replace(" ", "").equals("")) { 
+					r.anotacao = mobil.getDnmUltimaAnotacao().replace("\r\f", "<br/>").replace("\n", "<br/>");
+				}
+	
+				if (usuarioPosse) {
+					if (ultMovPosse == null)
+						ultMovPosse = mobil
+								.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+										new ITipoDeMovimentacao[] {}, mobil, false, null, false);
+						
+					if (ultMovPosse != null && ultMovPosse.getCadastrante() != null) {
+						r.nomePessoaPosse = ultMovPosse.getCadastrante().getNomePessoa(); 
+						r.lotaPosse = ultMovPosse.getCadastrante().getLotacao().getSigla();
+					} else {
+						r.nomePessoaPosse = mobil.getDoc().getCadastrante().getNomePessoa();
+						r.lotaPosse = mobil.getDoc().getCadastrante().getLotacao().getSigla();
+					}
+				}
+				
+				r.list = new ArrayList<Marca>();
+				Set<ExMarca> lstMarcas = mobil.getExMarcaSetAtivas();
+	
+				for (ExMarca marca : lstMarcas) {
+					if (!((pessoa != null && marca.getDpPessoaIni() != null
+							&& pessoa.equivale(
+									marca.getDpPessoaIni()))
+						|| (lota != null && marca.getDpLotacaoIni() != null
+							&& lota.equivale(
+									marca.getDpLotacaoIni()))))
+						continue;
+					
+					ExMovimentacao mov = marca.getExMovimentacao();
+					if (marca.getDtIniMarca() != null
+							&& marca.getDtIniMarca().getTime() > currentDate
+									.getTime())
+						continue;
+					if (marca.getDtFimMarca() != null
+							&& marca.getDtFimMarca().getTime() < currentDate
+									.getTime())
+						continue;
+	
+					Marca t = new Marca();
+					CpMarcador marcador = marca.getCpMarcador();
+					CpMarcadorEnum mar = CpMarcadorEnum.getById(marcador
+							.getIdInicial().intValue());
+					
+					if (mar != null) {
+						if(mar.getId() == CpMarcadorEnum.MOVIMENTACAO_ASSINADA_COM_SENHA.id
+								|| mar.getId() == CpMarcadorEnum.DOCUMENTO_ASSINADO_COM_SENHA.id) 
+							continue;
+							
+						t.nome = mar.getNome();
+						t.icone = mar.getIcone();
+						if(mar.getId() == CpMarcadorEnum.SEM_EFEITO.id) {
+							t.nome = SigaMessages.getMessage("marcador.semEfeito.label");
+						} else if(mar.getId() == CpMarcadorEnum.CANCELADO.id) {
+							t.nome = SigaMessages.getMessage("marcador.cancelado.label");
+						}
+					} else {
+						t.nome = marcador.getDescrMarcador();
+						t.icone = marcador.getIdIcone().getCodigoFontAwesome();
+						t.cor = marcador.getIdCor().getDescricao();
+					}
+					t.titulo = Data.formatDDMMYY(marca.getDtIniMarca()) + " (" 
+								+ Data.calcularTempoRelativo(marca.getDtIniMarca()) + ")";
+	
+					if (marca.getDpPessoaIni() != null) {
+						t.pessoa = marca.getDpPessoaIni().getIdInicial().toString();
+	
+					}
+					if (marca.getDpLotacaoIni() != null) {
+						t.lotacao = marca.getDpLotacaoIni().getIdInicial().toString();
+					}
+					
+					t.inicio = marca.getDtIniMarca();
+					t.termino = marca.getDtFimMarca();
+					if (mov != null) {
+						if (mov.getDtParam1() != null) {
+							t.ref1 = Data.calcularTempoRelativoEmDias(mov.getDtParam1());
+							t.ref1DDMMYYYY = Data.formatDDMMYY(mov.getDtParam1());
+						}
+						if (mov.getDtParam2() != null) {
+							t.ref2 = Data.calcularTempoRelativoEmDias(mov.getDtParam2());
+							t.ref2DDMMYYYY = Data.formatDDMMYY(mov.getDtParam2());
+						}
+						if(marca.getCpMarcador().isDemandaJudicial()) {
+							t.nome += " até " + marca.getExMobil().getDoc().getMobilGeral()
+									.getExMovimentacaoSet().stream() //
+									.filter(mv -> mv.getExTipoMovimentacao() ==
+											ExTipoDeMovimentacao.MARCACAO)
+									.filter(mv -> !mv.isCancelada()) //
+									.filter(mv -> marca.getCpMarcador().equals(mv.getMarcador())) //
+									.map(ExMovimentacao::getDtFimMovDDMMYY) //
+									.findFirst().orElse("[indeterminado]");
+						}
 
-				if(tag.marca.getCpMarcador().isADevolverForaDoPrazo()) {
-					t.nome += ", atribuído pela unidade " + tag.marca.getExMobil()
-							.getExMovimentacaoSet().stream() //
-							.filter(mov -> mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.MARCACAO)
-							.filter(mov -> !mov.isCancelada()) //
-							.filter(mov -> tag.marca.getCpMarcador().equals(mov.getMarcador())) //
-							.map(ExMovimentacao::getCadastranteString) //
-							.findFirst().orElse(r.lotaCadastrante);
+						if(marca.getCpMarcador().isADevolverForaDoPrazo()) {
+							t.nome += ", atribuído pela unidade " + marca.getExMobil()
+									.getExMovimentacaoSet().stream() //
+									.filter(mv -> mv.getExTipoMovimentacao() ==
+											ExTipoDeMovimentacao.MARCACAO)
+									.filter(mv -> !mv.isCancelada()) //
+									.filter(mv -> marca.getCpMarcador().equals(mv.getMarcador())) //
+									.map(ExMovimentacao::getCadastranteString) //
+									.findFirst().orElse(r.lotaCadastrante);
+						}
+					}
+	
+					if (pessoa != null && marca.getDpPessoaIni() != null) {
+						if (pessoa.getIdInicial().equals(
+								marca.getDpPessoaIni().getId()))
+							t.daPessoa = true;
+						else
+							t.deOutraPessoa = marca.getDpPessoaIni() != null;
+					}
+					if (lota != null
+							&& marca.getDpLotacaoIni() != null
+							&& lota.getId().equals(
+									marca.getDpLotacaoIni().getId()))
+						t.daLotacao = true;
+					
+					r.list.add(t);
 				}
-
-				r.list.add(t);
-				if (pessoa != null && tag.marca.getDpPessoaIni() != null) {
-					if (pessoa.getIdInicial().equals(
-							tag.marca.getDpPessoaIni().getId()))
-						t.daPessoa = true;
-					else
-						t.deOutraPessoa = tag.marca.getDpPessoaIni() != null;
-				}
-				if (unidade != null
-						&& tag.marca.getDpLotacaoIni() != null
-						&& unidade.getId().equals(
-								tag.marca.getDpLotacaoIni().getId()))
-					t.daLotacao = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				r.descr = "*** Doc. corrompido (Mobil:" + mobil + ") *** " + ( r.descr != null ? r.descr : "" );
 			}
 			l.add(r);
 		}
-
-		Collections.sort(l, new Comparator<MesaItem>() {
-			@Override
-			public int compare(MesaItem o1, MesaItem o2) {
-				int i;
-				if (ordemCrescenteData) {
-					i = o1.datahora.compareTo(o2.datahora);
-				} else {
-					i = o2.datahora.compareTo(o1.datahora);
-				}
-				if (i != 0)
-					return i;
-				return 0;
-			}
-		});
 		return l;
 	}
 
-	public static List<GrupoItem> getContadores(ExDao dao, DpPessoa titular, DpLotacao lotaTitular, 
-			Map<String, SelGrupo> selGrupos, boolean exibeLotacao, 
-			List<Integer> marcasAIgnorar) throws Exception {
+	public static List<GrupoItem> getContadores(final boolean contar, final DpPessoa titular, 
+			final DpLotacao lotaTitular, final Map<String, SelGrupo> selGrupos, final boolean exibeLotacao, 
+			final List<Integer> marcasAIgnorar, final String filtro) throws Exception {
 		List<GrupoItem> gruposMesa = new ArrayList<GrupoItem>();
 		gruposMesa = montaGruposUsuario(selGrupos);
-		List<Object[]> l = dao.consultarTotaisPorMarcador(titular, lotaTitular, gruposMesa, 
-				exibeLotacao, marcasAIgnorar);
-		if (l == null)
+		if (!contar)
+			return gruposMesa;
+		
+		List<Object[]> listaPessoa = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular, null, true, marcasAIgnorar, null, filtro);
+		List<Object[]> listaLotacao = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular, titular.getLotacao(), true, marcasAIgnorar, null, filtro);
+		
+		if (listaPessoa == null && listaLotacao == null)
 			return gruposMesa;
 		
 		for (GrupoItem gItem : gruposMesa) {
 			gItem.grupoCounterUser = 0L;
 			gItem.grupoCounterLota = 0L;
-			for (Object[] reference : l) {
+			for (Object[] reference : listaPessoa) {
 				if (gItem.grupoOrdem.equals(reference[0].toString())) {
 					if (reference[1] != null)  
 						gItem.grupoCounterUser = Long.valueOf(reference[1].toString());
-					if (reference[2] != null)  
-						gItem.grupoCounterLota = Long.valueOf(reference[2].toString());
+				}
+			}
+			for (Object[] reference : listaLotacao) {
+				if (gItem.grupoOrdem.equals(reference[0].toString())) {
+					if (reference[1] != null)  
+						gItem.grupoCounterLota = Long.valueOf(reference[1].toString());
 				}
 			}
 			if (exibeLotacao) {
@@ -364,160 +377,57 @@ public class Mesa2 {
 		return gruposMesa;
 	}
 
-	public static List<GrupoItem> getMesa(ExDao dao, DpPessoa titular,
-			DpLotacao lotaTitular, Map<String, SelGrupo> selGrupos, List<Mesa2.GrupoItem> gruposMesa, 
-			boolean exibeLotacao, boolean trazerAnotacoes, boolean trazerComposto, boolean ordemCrescenteData,
-			boolean usuarioPosse, List<Integer> marcasAIgnorar) throws Exception {
+	public static List<GrupoItem> getMesa(final boolean contar, final Integer qtd, final Integer offset, final DpPessoa titular, final Map<String, SelGrupo> selGrupos, 
+			final boolean exibeLotacao, final boolean trazerAnotacoes, final boolean trazerComposto, final boolean ordemCrescenteData,
+			final boolean usuarioPosse, List<Integer> marcasAIgnorar, final String filtro) throws Exception {
 //		long tempoIni = System.nanoTime();
-		Date dtNow = dao.consultarDataEHoraDoServidor();
-		final int qtdMaxGrupo = 1000;
+		ExDao dao = ExDao.getInstance();
 
-		List<Object[]> l = dao.listarMobilsPorMarcas(titular,
-				lotaTitular, exibeLotacao, ordemCrescenteData, marcasAIgnorar);
+		List<Mesa2.GrupoItem> gruposMesa = getContadores(contar, titular, titular.getLotacao(), selGrupos, exibeLotacao, marcasAIgnorar, filtro);
 
-		Map<ExMobil, DocDados> map = new HashMap<>();
-		// Cria hashmap para pesquisa do mobil nos grupos
-		Map<Long, List<Long>> hashMobGrp = l.stream()
-		        .collect(Collectors.groupingBy(k -> (Long.valueOf(((ExMobil) k[2]).getIdMobil())), 
-		                Collectors.mapping(v -> (Long.valueOf(((CpMarcador) v[1]).getIdGrupo().getId())), 
-		                		Collectors.toList())));
-		
-		List<Long> listIdMobil = new ArrayList<Long>();
-		Long idMob = 0L;
-
-		if (l != null && l.size() > 0) {
-			// Para cada grupo da mesa, pesquisa no resultado da query
-			for (GrupoItem gItem : gruposMesa) {
-				Object[] reference = l.get(0);
-				ExMarca marca = (ExMarca) reference[0];
-				CpMarcador marcador = (CpMarcador) reference[1];
-				ExMobil mobil = (ExMobil) reference[2];
-				idMob = mobil.getIdMobil();
-				
-				for (Integer i = 0; i < l.size(); i++) {
-					reference = l.get(i);
-					// Inclui o mobil no grupo da mesa
-					mobil = (ExMobil) reference[2];
-					idMob = mobil.getIdMobil();
-					// Se for TMP e o grupo nao for Em Elaboracao, nao deve mostrar no grupo (só GOVSP).
-					if (SigaMessages.isSigaSP()
-							&& reference[4] == null 
-							&& !gItem.grupoNome.equals(CpMarcadorGrupoEnum.EM_ELABORACAO.getNome())) 
-						continue;
-					// Se for do grupo Aguardando Andamento e tiver marcador da caixa de entrada, nao inclui
-					if (gItem.grupoNome.equals(CpMarcadorGrupoEnum.AGUARDANDO_ANDAMENTO.getNome())
-							&& temMarcador(hashMobGrp, idMob, Integer.valueOf(CpMarcadorGrupoEnum.CAIXA_DE_ENTRADA.getId()))) 
-						continue;
-					
-					if (temMarcador(hashMobGrp, idMob, Integer.valueOf(gItem.grupoOrdem)) && !map.containsKey(mobil)) {
-						// Se o mobil possui um marcador do grupo e ele ainda nao foi incluido,
-						// inclui junto com as outras marcas que estao no resultado da query
-						for (Integer i2 = 0; i2 < l.size(); i2++) {  
-							reference = l.get(i2);
-							mobil = (ExMobil) reference[2];
-							if (mobil.getIdMobil() == idMob) {
-								marca = (ExMarca) reference[0];
-								marcador = (CpMarcador) reference[1];
-								if (!map.containsKey(mobil)) {
-									// Mobil ainda nao foi incluido no grupo, inclui
-									if (listIdMobil.size() < gItem.grupoQtd 
-											&& listIdMobil.size() < qtdMaxGrupo) {
-										DocDados docDados = new DocDados();
-										MeM mm = new MeM();
-										mm.marca = marca;
-										mm.marcador = marcador;
-										mm.dtRef1 = (Date) reference[5];
-										mm.dtRef2 = (Date) reference[6];
-										docDados.listMeM = new ArrayList<MeM>();
-										docDados.listMeM.add(mm);
-										map.put(mobil, docDados);
-										listIdMobil.add(mobil.getId());
-									} else {
-										break;
-									} 
-								} else {
-									// Mobil ja foi incluido no grupo, inclui so a marca no mobil
-									MeM mm = new MeM();
-									mm.marca = marca;
-									mm.marcador = marcador;
-									mm.dtRef1 = (Date) reference[5];
-									mm.dtRef2 = (Date) reference[6];
-									map.get(mobil).listMeM.add(mm);
-								}
-							}
-						}
-					}
-				}
-				if (!map.isEmpty()) {
-					Integer iMobs = 0;
-					while (iMobs < listIdMobil.size()) {
-						Integer iMobsFim = listIdMobil.size();
-						if ( iMobs + 1000 < iMobsFim )
-							iMobsFim = iMobs + 1000;
-						List<Object[]> refs = dao.listarMovimentacoesMesa(
-								listIdMobil.subList(iMobs, iMobsFim), trazerComposto);
+		int qtTotal = 0;
+		for (Mesa2.GrupoItem g : gruposMesa) {
+			if (g.grupoCollapsed || g.grupoHide)
+				continue;
+			List<CpMarcadorGrupoEnum> lGrp = Arrays.asList(new CpMarcadorGrupoEnum[] 
+					{CpMarcadorGrupoEnum.getById(Integer.valueOf(g.grupoOrdem))});
+			List<Object[]> l;
+			int parmOffset = (offset != null? offset : 0);
+			int q = (qtd != null && qtd < MESA_QTD_MAX_INICIAL? qtd : MESA_QTD_MAX_INICIAL);
+			if (exibeLotacao) {
+				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, titular,
+						titular.getLotacao(), ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
+			} else {
+				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, titular,
+						null, ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
+			}
 			
-						for (Object[] ref : refs) {
-							incluiMovimentacoesMesa(map, ref);
-						}
-						iMobs = iMobsFim;
-					}
-					if (map.size() < qtdMaxGrupo)
-						gItem.grupoAtingiuLimite = false;
-					else
-						gItem.grupoAtingiuLimite = true;
-					
-					gItem.grupoDocs = Mesa2.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
-							titular.getLotacao(), dtNow, gItem.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
-							usuarioPosse, marcasAIgnorar);
-					map = new HashMap<>();
-					listIdMobil = new ArrayList<Long>();
+			// Cria hashmap contendo grupo e mobils do grupo
+			Map<String, List<ExMobil>> hashMobGrp = l.stream()
+			        .collect(Collectors.groupingBy(k -> ((k[0]).toString()), 
+			                Collectors.mapping(v -> dao.consultar(Long.valueOf(v[1].toString()), ExMobil.class, false), 
+			                		Collectors.toList())));
+	
+			// Insere no grupo os documentos e seus dados a serem apresentados na mesa
+			for (Map.Entry<String, List<ExMobil>> entry : hashMobGrp.entrySet()) {
+				g.grupoDocs = Mesa2.listarReferencias(entry.getValue(), titular,
+						titular.getLotacao(), g.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
+						usuarioPosse, parmOffset);
+				if (exibeLotacao) {
+					g.grupoQtdLota = g.grupoQtdLota > 0 ? g.grupoQtdLota : l.size();
+				} else {
+					g.grupoQtd = g.grupoQtd > 0 ? g.grupoQtd : l.size();
 				}
 			}
+			qtTotal = qtTotal + l.size();
+			if (qtTotal >= MESA_QTD_MAX_INICIAL)
+				break;
 		}
 //		long tempoTotal = System.nanoTime() - tempoIni;
-//		System.out.println("getMesa: " + tempoTotal
-//		/ 1000000 + " ms ==> ");
-
+//		System.out.println("getMesa: " + tempoTotal	/ 1000000 + " ms ==> ");
 		return gruposMesa;
 	}
 
-	private static void incluiMovimentacoesMesa(Map<ExMobil, DocDados> map, Object[] ref) {
-		ExMobil mob = (ExMobil) ref[0];
-		ExMovimentacao movUltima = null;
-		ExMovimentacao movTramite = null;
-		if (ref[2] != null)
-			movUltima = (ExMovimentacao) ref[2];
-		if (ref[3] != null)
-			movTramite = (ExMovimentacao) ref[3];
-		if (map.containsKey(mob)) {
-			DocDados docDados = map.get(mob); 
-			if (ref[1] != null) {
-				docDados.isComposto = (((Integer) ref[1]) == 1);
-			}
-			if (movUltima != null) {
-				docDados.movUltimaDtIniMov = movUltima.getDtIniMov();
-				docDados.movUltimaDtFimMov = movUltima.getDtFimMov();
-			}
-			if (movTramite != null) {
-				if(movTramite.getLotacao() != null) {
-					docDados.movTramiteSiglaLotacao = movTramite.getLotacao().getSigla();
-					
-					if(movTramite.getLotacao().getOrgaoUsuario() != null) {
-						docDados.movTramiteSiglaOrgao = movTramite.getLotacao().getOrgaoUsuario().getSigla();
-					}
-				}
-			}
-		}
-	}
-
-	private static boolean temMarcador(Map<Long, List<Long>> hashMobGrp, Long idMobil, Integer grupoId) {
-		// Pesquisa na lista retornada pela query se um determinado mobil (idMobil) tem
-		// algum marcador do grupoId informado. Devolve true se existir.
-		return ((List<Long>) hashMobGrp
-				.get(idMobil))
-				.contains(grupoId.longValue());
-	}
 	public static void carregaGruposBase() {
 		if (gruposBase == null) {
 			gruposBase = new ArrayList<GrupoItem>();
@@ -531,10 +441,11 @@ public class Mesa2 {
 					grpItem.grupoCollapsed = gEnum.isCollapsed();
 					if (gEnum.isCollapsed()) {
 						grpItem.grupoQtd = 0L;
+						grpItem.grupoQtdLota = 0L;
 					} else {
 						grpItem.grupoQtd = 15L;
+						grpItem.grupoQtdLota = 15L;
 					}
-					grpItem.grupoQtdPag = 15L;
 					grpItem.grupoHide = gEnum.isHide();
 					grpItem.grupoMarcadores = CpMarcadorEnum.getListIdByGrupo(gEnum.getNome());
 					gruposBase.add(grpItem);
@@ -564,13 +475,13 @@ public class Mesa2 {
 					if (selGrupos != null && selGrupos.size() > 0) {
 						grpItem.grupoCollapsed = selGrupos.get(grp.grupoNome).grupoCollapsed;
 						grpItem.grupoHide = selGrupos.get(grp.grupoNome).grupoHide;
-						grpItem.grupoQtdPag = selGrupos.get(grp.grupoNome).grupoQtdPag;
 						grpItem.grupoQtd = selGrupos.get(grp.grupoNome).grupoQtd;
+						grpItem.grupoQtdLota = selGrupos.get(grp.grupoNome).grupoQtdLota;
 					} else {
 						grpItem.grupoCollapsed = grp.grupoCollapsed;
 						grpItem.grupoHide = grp.grupoHide;
-						grpItem.grupoQtdPag = grp.grupoQtdPag;
 						grpItem.grupoQtd = grp.grupoQtd;
+						grpItem.grupoQtdLota = grp.grupoQtdLota;
 					}
 					grpItem.grupoMarcadores = grp.grupoMarcadores;
 					lGrupo.add(grpItem);

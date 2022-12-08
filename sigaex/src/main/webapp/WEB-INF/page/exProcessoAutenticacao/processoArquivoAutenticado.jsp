@@ -16,40 +16,35 @@
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
-							Acompanhamento e Autenticação de Protocolo - Documento <b>${sigla}</b> 
+							Acompanhamento e Autentica&ccedil;&atilde;o de Protocolo - Documento <b>${sigla}</b>
 						</h5>
 					</div>
-					<!--
 					<div class="card-body">
-						<div>
-							<c:url var='pdfAssinado'
-								value='/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
-							<c:url var='pdf'
-								value='/public/app/processoArquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
-							<iframe src="${pdfAssinado}" width="100%" height="600" align="center" style="margin-top: 10px;"> </iframe>
-						</div>
+						<c:if test="${not empty docVO}">
+							<p class="p-0 m-0">
+								<b>Documento ${docVO.tipoDocumento}:</b> ${sigla}
+							</p>
+							<c:if test="${not empty protocolo}">
+								<p class="p-0 m-0">
+									<b>Protocolo:</b> ${protocolo}
+								</p>
+							</c:if>
+							<p class="p-0 m-0">
+								<b>Classifica&ccedil;&atilde;o:</b> ${docVO.classificacaoDescricaoCompleta}
+							</p>
+							<p class="p-0 m-0">
+								<b>Descri&ccedil;&atilde;o:</b> ${docVO.descrDocumento}
+							</p>
+							<p class="${hide_only_GOVSP}">
+								<b>Espécie:</b> ${docVO.forma}
+							</p>
+							<p class="p-0 m-0">
+								<b>Autentica&ccedil;&atilde;o/Assinatura:</b> ${autenticidade}
+							</p>
+						</c:if>
 					</div>
-					-->
 				</div>
 			</div>
-			<!--
-			<div class="col">
-				<div class="row">
-					<div class="col">
-						<div class="card bg-light mb-3" >
-							<div class="card-header">
-								<h5>
-									<i class="fa fa-file-pdf"></i> Arquivos para Download
-								</h5>
-							</div>
-							<div class="card-body">
-								<i class="fa fa-angle-double-right"></i> <a href="${pdf}" target="_blank">PDF do documento</a>
-							</div>
-						</div>
-					</div>
-				</div>				
-			</div>
-			-->
 		</div>
 		<div class="row">
 			<div class="col-12">

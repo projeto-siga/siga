@@ -36,6 +36,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.mvel2.MVEL;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
@@ -803,7 +804,7 @@ public class CpConfiguracaoBL {
 	 * 
 	 * @throws Exception
 	 */
-	public ArrayList<ConfiguracaoGrupo> obterCfgGrupo(CpGrupo grp) throws Exception {
+	public ArrayList<ConfiguracaoGrupo> obterCfgGrupo(CpGrupo grp) {
 
 		ArrayList<ConfiguracaoGrupo> aCfgGrp = new ArrayList<ConfiguracaoGrupo>();
 		ConfiguracaoGrupoFabrica fabrica = new ConfiguracaoGrupoFabrica();
@@ -866,14 +867,15 @@ public class CpConfiguracaoBL {
 					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracaoCache c : configs) {
 				DpLotacao lotacaoAtual = CpDao.getInstance().consultarPorIdInicial(DpLotacao.class, c.lotacao);
-				System.out.println("Lotação atual : " + lotacaoAtual);
-				if (c.hisDtFim == null && lotacaoAtual.getDataFim() == null && c.dpPessoa == pes.getIdInicial()) {
-					resultado.add(lotacaoAtual);
+				if (lotacaoAtual != null) {
+					// System.out.println("Lotação atual : " + lotacaoAtual);
+					if (c.hisDtFim == null && lotacaoAtual.getDataFim() == null && c.dpPessoa == pes.getIdInicial()) {
+						resultado.add(lotacaoAtual);
+					}
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 		return resultado;
 
@@ -932,11 +934,50 @@ public class CpConfiguracaoBL {
 		List<CpConfiguracao> todasConfig = CpDao.getInstance().consultar(exemplo);
 		List<CpConfiguracao> configVigentes = new ArrayList<CpConfiguracao>();
 
-		for (CpConfiguracao cfg : todasConfig) {
+		for (CpConfiguracao cfg : todasConfig) { 
 			if (!cfg.ativaNaData(hoje))
 				continue;
 			configVigentes.add(cfg);
 		}
 		return (configVigentes);
 	}
+	
+	public CpSituacaoDeConfiguracaoEnum situacaoPorConfiguracao(CpServico cpServico, DpCargo cargo,
+			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
+			DpLotacao dpLotacao, DpPessoa dpPessoa, CpTipoLotacao cpTpLotacao,
+			ITipoDeConfiguracao idTpConf, DpPessoa pessoaObjeto, 
+			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
+			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
+
+		CpConfiguracao config = new CpConfiguracao();
+		config.setCargo(cargo);
+		config.setOrgaoUsuario(cpOrgaoUsu);
+		config.setFuncaoConfianca(dpFuncaoConfianca);
+		config.setLotacao(dpLotacao);
+		config.setDpPessoa(dpPessoa);
+		config.setCpTipoConfiguracao(idTpConf);
+		config.setCpTipoLotacao(cpTpLotacao);
+
+		config.setCpServico(cpServico);
+		
+		config.setPessoaObjeto(pessoaObjeto);
+		config.setLotacaoObjeto(lotacaoObjeto);
+		config.setComplexoObjeto(complexoObjeto);
+		config.setCargoObjeto(cargoObjeto);
+		config.setFuncaoConfiancaObjeto(funcaoConfiancaObjeto);
+		config.setOrgaoObjeto(orgaoObjeto);
+
+		CpConfiguracaoCache cfg = (CpConfiguracaoCache) buscaConfiguracao(config,
+				new int[] { 0 }, null);
+
+		CpSituacaoDeConfiguracaoEnum situacao = null;
+		if (cfg != null)
+			situacao = cfg.situacao;
+		else
+			if (config.getCpTipoConfiguracao() != null)
+				situacao = config.getCpTipoConfiguracao().getSituacaoDefault();
+		
+		return situacao;
+	}
+	
 }

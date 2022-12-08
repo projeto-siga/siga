@@ -81,11 +81,15 @@
 						<a class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/editar'"
 							title="Criar novo expediente ou processo administrativo">
-							<fmt:message key = "documento.novo"/></a> <a
-							class="btn btn-primary float-right btn-sm ml-2"
-							href="javascript: window.location.href='/sigaex/app/expediente/doc/listar?primeiraVez=sim'"
-							title="Pesquisar expedientes e processos administrativos">
-							<fmt:message key = "documento.pesquisar"/></a>
+							<fmt:message key = "documento.novo"/></a> 
+							<c:if test="${!ehPublicoExterno}">
+								<a
+								class="btn btn-primary float-right btn-sm ml-2"
+								href="javascript: window.location.href='/sigaex/app/expediente/doc/listar?primeiraVez=sim'"
+								title="Pesquisar expedientes e processos administrativos">
+								Pesquisar</a>
+							</c:if>
+							
 							<a
 							class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/mesa'"

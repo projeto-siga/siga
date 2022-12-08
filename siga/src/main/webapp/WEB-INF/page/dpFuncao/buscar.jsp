@@ -32,6 +32,8 @@
 		
 		function invalid(event) {
 			$("#alertFiltros").show();
+			$('#containerResult').remove();
+			$('#alertNaoEncontrado').remove();
 		}
 		
 		function submit(event) {
@@ -42,9 +44,19 @@
 			}
 		}
 		
+		function sbmt(offset) {
+			if (offset == null) {
+				offset = 0;
+			}
+			frm.elements["paramoffset"].value = offset;
+			frm.elements["p.offset"].value = offset;
+			frm.submit();
+		}
+		
 		$( document ).ready(function() {
+			$("#alertFiltros").hide();
 			frm.onsubmit = submit;
-	
+
 			$("#alertFiltros").hide();
 			if ($('#nome').val().trim() === "" ) {
 				$('#nome').focus();
@@ -72,7 +84,7 @@
 	<input type="hidden" name="modal" value="${param['modal']}" />	
 
 	<div class="container-fluid">
-		<div id="alertFiltros" class="alert alert-warning" role="alert">
+		<div id="alertFiltros" class="alert alert-warning" role="alert" style="display: none;">
 		  Obrigatório informar o <strong>Nome</strong> para realizar a pesquisa.
 		</div>
 		<div class="card bg-light mb-3" >

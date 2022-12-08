@@ -40,7 +40,7 @@ public class CarregadorPlugin {
 				if (!url.getPath().contains("siga-ext")){
 					iterator.remove();
 				}else{
-					iterator.set(new URL(url.getPath().replaceAll("\\.jar.*", ".jar")));
+					iterator.set(new URL("file://"+ url.getPath().replaceAll("\\.jar.*", ".jar").replace("file:", "")));
 				}
 			}
 			URL implDefault = Thread.currentThread().getContextClassLoader().getResource("br/gov/jfrj/siga/hibernate/ext/MontadorQuery.class");
@@ -70,14 +70,21 @@ public class CarregadorPlugin {
 		}
 		return null;
 	}
+	
+	public IMontadorQuery getMontadorQueryImpl() {
+		return getMontadorQueryImpl(false);
+	}
 
 	/**
 	 * Retona a implementação disponibilizada pelo plugin
 	 * @return - instância personalizada pelo plugin
 	 */
-	public IMontadorQuery getMontadorQueryImpl() {
+	public IMontadorQuery getMontadorQueryImpl(boolean isNative) {
 		try {
-			return (IMontadorQuery) Class.forName(Prop.get("montador.query"),true,this.classloader).newInstance();
+			if (isNative) 
+				return (IMontadorQuery) Class.forName(Prop.get("montador.query.nativa"),true,this.classloader).newInstance();
+			else
+				return (IMontadorQuery) Class.forName(Prop.get("montador.query"),true,this.classloader).newInstance();
 		} catch (Exception e) {
 			log.warning("Não foi possível instanciar o MontadorQuery do plugin!");
 		}

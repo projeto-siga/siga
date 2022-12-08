@@ -1,10 +1,13 @@
 package br.gov.jfrj.siga.base;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtils {
-    
+	private static String month[] = new String[] { "Jan", "Fev", "Mar", "Abr",
+			"Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" };
+	
     /**
      * <p>Checks if two dates are on the same day ignoring time.</p>
      * @param date1  the first date, not altered, not null
@@ -251,5 +254,85 @@ public class DateUtils {
 
     /** The maximum date possible. */
     public static Date MAX_DATE = new Date(Long.MAX_VALUE);
-    
+
+	public static String formatarDDMMYY(Date dt) {
+		if (dt == null) 
+			return null;
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+		return df.format(dt);
+	}
+
+	public static String formatarDDMMYYYY(Date dt) {
+		if (dt == null) 
+			return null;
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		return df.format(dt);
+	}
+
+	public static String formatarDDMMYYYYHHMMSS(Date dt) {
+		if (dt == null) 
+			return null;
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		return df.format(dt);
+	}
+
+	public static String tempoRelativo(Date dt) {
+		if (dt == null)
+			return null;
+		return Data.calcularTempoRelativo(dt);
+	}
+
+	public static String espera(Date dt) {
+		if (dt == null)
+			return null;
+		SigaCalendar c = new SigaCalendar();
+		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
+		// long l = -c.diffDayPeriods(lAnterior);
+		long l = c.getUnixDay() - lAnterior.getUnixDay();
+		if (l == 0) {
+			if (lAnterior.getJulianDay() == c.getJulianDay())
+				return (lAnterior.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "")
+						+ lAnterior.get(Calendar.HOUR_OF_DAY) + ":"
+						+ (lAnterior.get(Calendar.MINUTE) < 10 ? "0" : "")
+						+ lAnterior.get(Calendar.MINUTE);
+		}
+		return lAnterior.get(Calendar.DAY_OF_MONTH) + "/"
+				+ month[lAnterior.get(Calendar.MONTH)] + " ("
+				+ Long.toString(l) + " dia" + (l == 1L ? "" : "s") + ")";
+	}
+
+	public static String esperaSimples(Date dt) {
+		if (dt == null)
+			return null;
+		SigaCalendar c = new SigaCalendar();
+		SigaCalendar lAnterior = new SigaCalendar(dt.getTime());
+		// long l = -c.diffDayPeriods(lAnterior);
+		long l = c.getUnixDay() - lAnterior.getUnixDay();
+		if (l == 0) {
+			if (lAnterior.getJulianDay() == c.getJulianDay())
+				return lAnterior.get(Calendar.HOUR_OF_DAY) + ":"
+						+ (lAnterior.get(Calendar.MINUTE) < 10 ? "0" : "")
+						+ lAnterior.get(Calendar.MINUTE);
+		}
+		return Long.toString(l) + " dia" + (l == 1L ? "" : "s");
+	}
+
+	public static String intervalo(Date dtIni, Date dtFim) {
+		SigaCalendar lFim = new SigaCalendar(dtIni.getTime());
+		SigaCalendar lIni = new SigaCalendar(dtFim.getTime());
+
+		long l = lFim.getUnixDay() - lIni.getUnixDay();
+		if (l == 0) {
+			return lIni.diffHHMMSS(lFim);
+		}
+		return Long.toString(l) + " dia" + (l == 1L ? "" : "s");
+	}
+	
+	public static Date addDia(Date data, int i) {
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(data); 
+		c.add(Calendar.DATE, i);
+		return c.getTime();
+	}
+
 }

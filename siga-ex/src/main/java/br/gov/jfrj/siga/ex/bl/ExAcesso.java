@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -23,7 +24,6 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExAcesso {
-	public static final String ACESSO_PUBLICO = "PUBLICO";
 
 	// Armazena os acessos específicos de um documento. Para calcular o acesso
 	// ainda é necessário acrescentar os acessos do documento ao qual este está
@@ -34,7 +34,7 @@ public class ExAcesso {
 	private Set<Object> acessos = null;
 
 	private void add(Object o) {
-		if (acessos.contains(ACESSO_PUBLICO)) {
+		if (acessos.contains(XjusUtils.ACESSO_PUBLICO)) {
 			return;
 		}
 
@@ -251,7 +251,7 @@ public class ExAcesso {
 		
 			// Aberto
 			if (doc.isPendenteDeAssinatura()) {
-				switch (doc.getExNivelAcesso().getGrauNivelAcesso()) {
+				switch (doc.getExNivelAcessoAtual().getGrauNivelAcesso()) {
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
 					add(doc.getCadastrante());
@@ -311,7 +311,7 @@ public class ExAcesso {
 	
 					switch (d.getExNivelAcessoAtual().getGrauNivelAcesso().intValue()) {
 					case (int) ExNivelAcesso.NIVEL_ACESSO_PUBLICO:
-						add(ACESSO_PUBLICO);
+						add(XjusUtils.ACESSO_PUBLICO);
 						break;
 					case (int) ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS:
 						add(d.getLotaCadastrante().getOrgaoUsuario());
@@ -435,60 +435,7 @@ public class ExAcesso {
 	}
 	public String getAcessosString(ExDocumento doc, Date dt, Object incluirAcesso, Object excluirAcesso) {
 		calcularAcessos(doc, dt);
-
-		if (acessos.contains(ACESSO_PUBLICO)) {
-			return ACESSO_PUBLICO;
-		}
-
-		acessos.remove(null);
-
-		// Otimizar a lista removendo todas as pessoas e lotações de um órgão,
-		// quando este órgão todo pode acessar o documento
-		Set<Object> toRemove = new HashSet<Object>();
-		for (Object o : acessos) {
-			if (o instanceof CpOrgaoUsuario) {
-				CpOrgaoUsuario ou = (CpOrgaoUsuario) o;
-				for (Object oo : acessos) {
-					if (oo instanceof DpLotacao) {
-						if (((DpLotacao) oo).getOrgaoUsuario().getId()
-								.equals(ou.getId()))
-							toRemove.add(oo);
-					} else if (oo instanceof DpPessoa) {
-						if (((DpPessoa) oo).getOrgaoUsuario().getId()
-								.equals(ou.getId()))
-							toRemove.add(oo);
-					}
-				}
-			}
-		}
-		if (incluirAcesso != null)
-			acessos.add(incluirAcesso);
-		if (excluirAcesso != null)
-			toRemove.add(excluirAcesso);
-		
-		acessos.removeAll(toRemove);
-
-		SortedSet<String> result = new TreeSet<String>();
-		for (Object o : acessos) {
-			if (o instanceof String)
-				result.add((String) o);
-			else if (o instanceof CpOrgaoUsuario)
-				result.add("O" + ((CpOrgaoUsuario) o).getId());
-			else if (o instanceof DpLotacao)
-				result.add("L" + ((DpLotacao) o).getIdInicial());
-			else if (o instanceof DpPessoa)
-				result.add("P" + ((DpPessoa) o).getIdInicial());
-		}
-
-		StringBuilder sb = new StringBuilder();
-
-		for (String each : result) {
-			if (sb.length() > 0)
-				sb.append(",");
-			sb.append(each);
-		}
-
-		return sb.toString();
+		return XjusUtils.getAcessosString(acessos, dt, incluirAcesso, excluirAcesso);
 	}
 
 }

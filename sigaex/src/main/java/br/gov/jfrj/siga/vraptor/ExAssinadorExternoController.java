@@ -52,6 +52,7 @@ import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -232,7 +233,11 @@ public class ExAssinadorExternoController extends ExController {
 			
 			if (mov == null && !doc.isFinalizado()) {
 				DpPessoa cadastrante = obterCadastrante(null, mob, mov);
+				doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt()); 
 				Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);
+			} else {
+				DpPessoa cadastrante = obterCadastrante(null, mob, mov);
+				Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc,cadastrante,cadastrante);
 			}
 			
 			PdfData pdfd = getPdf(id);
@@ -247,12 +252,19 @@ public class ExAssinadorExternoController extends ExController {
 			jsonError(e);
 		}
 	}
-
+	
+	@Transacional
 	@Get("/public/app/assinador-externo/doc/{id}/hash")
 	public void assinadorExternoHash(String id) throws Exception {
 		try {
 			assertPassword();
 			JSONObject req = getJsonReq(request);
+			
+			String sigla = id2sigla(id) + ".pdf";
+			ExMobil mob = Documento.getMobil(sigla);
+			ExDocumento doc = mob.getDoc();	
+			
+			Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc,null,null);
 
 			PdfData pdfd = getPdf(id);
 

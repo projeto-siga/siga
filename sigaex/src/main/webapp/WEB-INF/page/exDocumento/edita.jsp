@@ -14,11 +14,14 @@
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript"
 		src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
+	<script type="text/javascript" src="/siga/javascript/crypto-js/4.1.1/crypto-js.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/crypto-js/4.1.1/sha256.min.js"></script>
 
 	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 
 	<c:set var="timeoutMod" scope="session" value="${f:resource('/siga.session.modelos.tempo.expiracao')}" />
+	<c:set var="urlSigaArq" scope="session" value="${f:resource('/siga-arq.url')}" />
 	<div class="container-fluid">
 		<c:if test="${not empty mensagem}">
 			<div class="row">
@@ -183,7 +186,9 @@
 					</c:if>
 					</div>
 					<div
-						class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
+						class="row ${((fn:length(exDocumentoDTO.tiposDocumento) != 1) or 
+							((exDocumentoDTO.tipoDocumento != 'interno_capturado' or exDocumentoDTO.tipoDocumento != 'interno_capturado_formato_livre') and podeEditarData) or 
+							(fn:length(exDocumentoDTO.listaNivelAcesso) != 1) or (!exDocumentoDTO.eletronicoFixo)) ? '' : 'd-none'}">
 						<div
 							class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1 ? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
@@ -202,7 +207,8 @@
 							</div>
 						</div>
 						<div
-							class="col-sm-2 ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData? '': 'd-none'}  ${hide_only_GOVSP}">
+							class="col-sm-2 ${(exDocumentoDTO.tipoDocumento != 'interno_capturado' or exDocumentoDTO.tipoDocumento != 'interno_capturado_formato_livre' ) and 
+								podeEditarData? '': 'd-none'}  ${hide_only_GOVSP}">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="dtDocString" /> <label
 									class=" " for="exDocumentoDTO.dtDocString">Data</label> <input
@@ -319,7 +325,8 @@
 					</div>
 					<c:choose>
 						<c:when
-							test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
+							test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado" 
+								or exDocumentoDTO.tipoDocumento == "externo_capturado_formato_livre"}'>
 						</c:when>
 						<c:otherwise>
 							<div class="row  js-siga-sp-documento-analisa-alteracao">
@@ -338,29 +345,52 @@
 													tema="simple" />
 											</div>
 										</div>
-										<div class="col-sm-2">
-											<div class="form-group">
-												<div class="form-check form-check-inline mt-4">
-													<fmt:message key="documento.help.substituto"
-														var="documento_help_substituto" />
-													<input type="checkbox" name="exDocumentoDTO.substituicao"
-														class="form-check-input"
-														onclick="javascript:displayTitular(this);"
-														<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
-													<label class="form-check-label"
-														for="exDocumentoDTO.substituicao">Substituto </label> <a
-														class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}"
-														data-toggle="tooltip" data-trigger="click"
-														data-placement="bottom"
-														title="${documento_help_substituto}"></a> <input
-														type="checkbox" name="exDocumentoDTO.personalizacao"
-														class="form-check-input ml-3"
-														onclick="javascript:displayPersonalizacao(this);"
-														<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if> />
-													<label class="form-check-label"
-														for="exDocumentoDTO.personalizacao">Personalizar</label>
+										<div class="col-sm-12">
+											<div class="row">
+												<div class="col-sm-3">
+													<div class="form-group">
+														<div class="form-check form-check-inline">
+															<fmt:message key="documento.help.substituto"
+																var="documento_help_substituto" />
+															<input type="checkbox" name="exDocumentoDTO.substituicao"
+																class="form-check-input"
+																onclick="javascript:displayTitular(this);"
+																<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
+															<label class="form-check-label"
+																for="exDocumentoDTO.substituicao">Substituto </label> <a
+																class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}"
+																data-toggle="tooltip" data-trigger="click"
+																data-placement="bottom"
+																title="${documento_help_substituto}"></a> <input
+																type="checkbox" name="exDocumentoDTO.personalizacao"
+																class="form-check-input ml-3"
+																onclick="javascript:displayPersonalizacao(this);"
+																<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if> />
+															<label class="form-check-label"
+																for="exDocumentoDTO.personalizacao">Personalizar</label>
+														</div>
+													</div>
 												</div>
 											</div>
+											<c:choose>
+												<c:when test="${!ehPublicoExterno && podeExibirArvoreDocsSubscr}">
+													<div class="row">
+													    <div class="col-sm-8 "> 
+													    	<div class="form-group">
+													    		<div class="form-check form-check-inline">
+													    			<input type="checkbox" name="exDocumentoDTO.podeIncluirSubscrArvoreDocs" class="form-check-input" <c:if test="${exDocumentoDTO.podeIncluirSubscrArvoreDocs}">checked</c:if>/>
+																	<label class="form-check-label" for="exDocumentoDTO.podeIncluirSubscrArvoreDocs">Acessar Documento ${paiDasViasCossigsSubscritor}</label>
+																	<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
+																							title='Selecionar esse campo se houver a necessidade de permitir que o Responsável pela Assinatura acesse o documento completo, enquanto o mesmo estiver pendente 
+																									de assinatura. Atenção: Para habilitar ou desabilitar essa função, o documento deverá estar com status "Finalizado"'></a>
+													    			
+													    		</div>
+													    		<small class="form-text text-muted">Selecionar esse campo se houver a necessidade de permitir que o Responsável pela Assinatura acesse o documento completo.</small>
+													    	</div>
+													    </div>
+												    </div>
+												</c:when>
+											</c:choose>
 										</div>
 									</c:when>
 									<c:otherwise>
@@ -382,6 +412,7 @@
 									</c:otherwise>
 								</c:choose>
 							</div>
+							
 						</c:otherwise>
 					</c:choose>
 					<input type="hidden" name="campos" value="titularSel.id" />
@@ -435,9 +466,10 @@
 							</div>
 						</div>
 					</div>
+					<c:if test="${not empty exDocumentoDTO.listaTipoDest}">
 					<input type="hidden" name="campos" value="tipoDestinatario" />
 					<c:if
-						test='${exDocumentoDTO.tipoDocumento != "interno_capturado" }'>
+						test='${exDocumentoDTO.tipoDocumento != "interno_capturado" or exDocumentoDTO.tipoDocumento != "interno_capturado_formato_livre"}'>
 						<div class="row ${hide_only_GOVSP}">
 							<div class="col-sm-2">
 								<div class="form-group">
@@ -504,6 +536,7 @@
 								</div>
 							</div>
 						</div>
+					</c:if>
 					</c:if>
 					<div id="tr_personalizacao"
 						style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
@@ -575,20 +608,61 @@
 					</div>
 					<c:if test='${podeTrocarPdfCapturado}'>
 						<div class="row  js-siga-sp-documento-analisa-alteracao">
-							<div class="col-sm-8">
+							<div class="col">
 								<div class="form-group">
 									<input type="hidden" name="campos" value="descrDocumento" /> <br>
 									<div class="form-group" style="margin-bottom: 0">
-										<div class="custom-file">
-											<input type="file" class="custom-file-input" id="arquivo"
-												name="arquivo" accept="application/pdf"
-												onchange="testpdf(this.form)" title="arquivo"> <label
-												class="custom-file-label" for="arquivo"><i
-												class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message
-													key="usuario.novodocumento.arquivo" /> (limite de 10MB)</label>
-											<div class="invalid-feedback  invalid-feedback-arquivo">Selecione
-												o arquivo</div>
-										</div>
+										<c:choose>
+											<c:when test="${!exDocumentoDTO.capturadoFormatoLivre}">
+												<div class="custom-file">
+													<input type="file" class="custom-file-input" id="arquivo"
+														name="arquivo" accept="application/pdf"
+														onchange="testpdf(this.form)" title="arquivo"> <label
+														class="custom-file-label" for="arquivo"><i
+														class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message
+															key="usuario.novodocumento.arquivo" /> (limite de ${tamanhoMaximoArquivo/1024/1024}MB)</label>
+													<div class="invalid-feedback  invalid-feedback-arquivo">Selecione
+														o arquivo</div>
+												</div>
+											</c:when>
+											<c:otherwise>
+												<script type="text/javascript" src="/siga/javascript/siga-arquivo.js"></script>
+												
+												<input type='hidden' name='vars' class='uploadclass' value='tokenArquivo'>
+    	  										<input type='hidden' id='tokenArquivo' name='tokenArquivo'>
+												<div class="custom-file ${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo == null && tokenArquivo == null? '':'d-none'} col-lg-8">
+													<c:set var="extensoes" value="${fn:split(dateString, ',')}" />
+													<input type="file" class="custom-file-input" id="arqUpload" 
+														name="arqUpload" accept="${exDocumentoDTO.modelo.extensoesArquivoComPonto}"  
+														onchange="uploadArq('${urlSigaArq}/api/v1/', this, ${tamanhoMaximoArquivoFormatoLivre});" 
+														title="arqUpload"> <label 
+														class="custom-file-label" for="arqUpload"><i 
+														class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message 
+														key="usuario.novodocumento.arquivo" /> (limite de ${tamanhoMaximoArquivoFormatoLivre/1024/1024/1024}GB)</label>
+												</div>
+												<div id="barraProgresso" name="barraProgresso" class="d-none mt-2">
+													<small id="msgProgressBar" class="text-muted"></small>
+													<div class="progress">
+														<div class="progress-bar"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+													</div>
+													<button type="button" class="btn btn-sm btn-primary mt-1" onclick="abortarUpload();">Cancelar</button>
+												</div>														
+												<div class="${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo != null || tokenArquivo != null? '':'d-none'} row">
+													<div id="linkArquivoDiv" class="col-lg-8">
+														<div class="form-group">
+															<label for="linkArquivo" title="campo: Arquivo" class="title">Arquivo</label>												
+															<div id="linkArquivo" class="form-control " disabled read-only><i
+																class="far fa-file-pdf mr-2"></i>${exDocumentoDTO.cpArquivoFormatoLivre.nomeArquivo}</div>
+														</div>
+													</div>
+													<div class="col-sm">
+	      	  											<button id="btnResetaArq" class='btn btn-secondary mt-lg-4' onclick='removerArq()'>Limpar</button>
+	      	  										</div>
+												</div>
+												<small class="form-text text-muted">Tipos de arquivo permitidos para este documento: ${exDocumentoDTO.modelo.extensoesArquivoComPonto}</small>
+												<div class="invalid-feedback  invalid-feedback-arqUpload"></div>
+											</c:otherwise>
+										</c:choose>
 									</div>
 								</div>
 							</div>
@@ -675,7 +749,7 @@
 						</div>
 					</c:if>
 					<c:if
-						test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.tipoDocumento == "interno_capturado" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
+						test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.capturado}'>
 						<c:if
 							test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
 							<div class="row">
@@ -685,7 +759,7 @@
 										<c:if
 											test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
 											${f:processarModelo(exDocumentoDTO.doc, 'entrevista', par, exDocumentoDTO.preenchRedirect)}
-								</c:if>
+										</c:if>
 										<c:if
 											test="${exDocumentoDTO.modelo.conteudoTpBlob != 'template/freemarker'}">
 											<c:import
@@ -732,7 +806,7 @@
 	<!--  tabela do rodapé -->
 
 	<script type="text/javascript"
-		src="../../../javascript/documento.validacao.js"></script>
+		src="../../../javascript/documento.validacao.js?v=1664993973"></script>
 </siga:pagina>
 
 <script type="text/javascript">

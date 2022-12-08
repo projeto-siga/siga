@@ -21,19 +21,20 @@
           <input type="hidden" id="parte_dependentes_${id}" class="parte_dependentes" value="${id}:${depende}:${bloquear?c}:${responsavel}"/>
           [@oculto var="parte_mensagem_${id}" /]
           
-          <table class="parte" width="100%">
-            <tr class="header">
-              <td>${titulo}
-                <span style="float: right"><input type="button" value="Solicitar Alteração" onclick="parte_solicitar_alteracao('${id}', '${titular}', '${lotaTitular}');"/> [@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_atualizar('${titular}', '${lotaTitular}');" /]</span>
-                <span style="float: right; padding-right: 2em;">Responsável: ${responsavel}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-              	<div id="parte_div_mensagem_${id}" class="gt-error"></div>
+          <div class="card mb-4 border-secondary" style="width: 100%;">
+          	<div class="card-header text-white bg-secondary">
+            	<span style="float: left;font-weight: bold;margin-top: 0.5em;">${titulo}</span>
+                <span style="float: right"><input type="button" class="btn btn-light" value="Solicitar Alteração" onclick="parte_solicitar_alteracao('${id}', '${titular}', '${lotaTitular}');"/></span>
+                <span style="float: right; padding-right: 2em;margin-top: 0.5em;">Responsável: ${responsavel}</span>
+            </div>
+            <div class="card-body">
+              	<div id="parte_div_mensagem_${id}" style="color: red; font-weight: bold;"></div>
 				<fieldset id="parte_fieldset_${id}">[#nested]</fieldset></td>
-            </tr>
-          </table>
+            </div>
+            <div class="card-footer">
+	             [@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_atualizar('${titular}', '${lotaTitular}');" /]
+            </div>
+          </div>
           [#local titular = .vars['sigla_titular']!""]
           [#local lotaTitular = .vars['sigla_lota_titular']!""]
             <script type="text/javascript">
@@ -907,7 +908,8 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro documento formato="A4" orientacao="retrato" margemEsquerda="3cm" margemDireita="2cm" margemSuperior="1cm" margemInferior="2cm"]
+[#macro documento formato="A4" orientacao="portrait" margemEsquerda="3cm" margemDireita="2cm" margemSuperior="1cm" margemInferior="2cm"]
+	<!-- size: ${formato} ${orientacao}; -->
     [#if !gerar_entrevista!false || gerar_finalizacao!false || gerar_assinatura!false]
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <head>
@@ -1214,8 +1216,8 @@ LINHA  VARIÁVEL / CONTEÚDO
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 	    [#if !gerar_formulario!false]        	
 			<div class="custom-control custom-radio">
-	        	<input class="custom-control-input" type="radio" id="${id}" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; ${onclique}; ${jreler!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
-				<label title="campo: ${var}" class="custom-control-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
+	        	<input class="form-check-input" type="radio" id="${id}" name="${var}_chk" value="${valor}" [#if v == valor]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; ${onclique}; ${jreler!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
+				<label title="campo: ${var}" class="form-check-label mr-4" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 				[#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
 				[/#if]						
@@ -1894,14 +1896,13 @@ CKEDITOR.replace( '${var}',
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-
-        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
         <span style="font-size: ${tl}"> ${texto!} </span>
-                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
-        [/@estiloBrasaoCentralizado]
+        <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+    [/@estiloBrasaoCentralizado]
 [/#macro]
 
-[#macro requerimento texto fecho="" tamanhoLetra="Normal" _tipo=""]
+[#macro requerimento texto fecho="" tamanhoLetra="Normal" _tipo="" formatarOrgao=false]
 [#--
   Aplicação: Formatar documento para o tipo Formulário
   Autor:     André
@@ -1916,11 +1917,12 @@ CKEDITOR.replace( '${var}',
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-
-        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false dataAntesDaAssinatura=true]
-        <span style="font-size: ${tl}"> ${texto!} </span>
-                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
-        [/@estiloBrasaoCentralizado]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=formatarOrgao dataAntesDaAssinatura=true]
+    <span style="font-size: ${tl}"> ${texto!} </span>
+    [#if fecho?has_content]
+    <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+    [/#if]
+    [/@estiloBrasaoCentralizado]
 [/#macro]
 
 [#macro requerimento2 texto _tipo="REQUERIMENTO"]
@@ -1953,6 +1955,12 @@ Pede deferimento.</span><br/><br/><br/>
 <span style="color:${cor}"> [#if titulo?? && titulo!=""]<b>${titulo}</b>:[/#if] <b>${texto}</b></span>
 [/#macro]
 
+[#macro dica texto="" cor=""]
+	<p class="text-muted" style="color: ${cor}">
+    	[#if texto?? && texto != ""]${texto}[/#if]
+    	[#nested]
+    </p>
+[/#macro]
 
 [#-- macro obrigatorios texto="Os campos em negrito são de preenchimento obrigatório" titulo="Atenção" vermelho=false]
 <span style="[#if vermelho]color=#ff0000[/#if]">[#if titulo?? && titulo!=""]<b>${titulo}</b>: [/#if]${texto!""}</span>
@@ -2541,10 +2549,13 @@ Pede deferimento.</span><br/><br/><br/>
 	    </style>     
 	  	<p class="texto-enderecamento">
 	      [#if (Vocativo!"") != ""]<b>${Vocativo!}<b><br />[/#if]
-	      [#if (Orgao!"") != ""]${Orgao!}[/#if]<br />
+	      [#if (NomeDestinatario!"") != ""]<b>${NomeDestinatario!}<b><br />[/#if]
+	      [#if (CargoDsp!"") != ""]<b>${CargoDsp!}<b><br />[/#if]
+	      [#if (Orgao!"") != ""]${Orgao!}<br />[/#if]
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
-	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}[/#if]    
+	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
+	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if]   
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]
@@ -2574,97 +2585,51 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro assinaturaCentro formatarOrgao=false incluirAssinaturaBIE=true]
-[#if incluirAssinaturaBIE == true]
-   <!-- INICIO ASSINATURA -->
-[/#if]
-<p style="font-family: Arial; font-size: 11pt;" align="center">
-	<br/>
-    [#if (doc.subscritor)??]
-       [@inicioSubscritor sigla=doc.codigoCompacto]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
-    [/#if]
-    [#if (doc.nmSubscritor)??]
-        ${doc.nmSubscritor}
-    [#else]
-       [#if (doc.subscritor.nomeExibicao)??]
-           ${doc.subscritor.nomeExibicao}
-       [#else]
-           ${(doc.subscritor.nomePessoa)!}
-       [/#if]
-    [/#if]
-    [#if !apenasNome??] 
-        <br />
-        [#if apenasCargo??]
-                ${(doc.subscritor.cargo.nomeCargo)!}
-        [#else]
-            [#if (doc.nmFuncao)??]
-                ${doc.nmFuncao}
-            [#elseif (doc.titular.funcaoConfianca.nomeFuncao)??]
-                ${doc.titular.funcaoConfianca.nomeFuncao}
-                [#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)!] EM EXERCÍCIO [/#if]
-            [#elseif (doc.subscritor.funcaoConfianca.nomeFuncao)??]
-                ${doc.subscritor.funcaoConfianca.nomeFuncao}
-            [#else]
-                ${(doc.subscritor.cargo.nomeCargo)!}
-            [/#if]
-        [/#if]
-         
-        [#if formatarOrgao]
-            <br>
-            [#if (doc.nmLotacao)??]
-                ${doc.nmLotacao}
-            [#else]
-                ${(doc.titular.lotacao.nomeLotacao)!}
-            [/#if]
-        [/#if]
-        [#if (doc.subscritor)??]
-            [@fimSubscritor]${(doc.subscritor.idPessoa)}[/@fimSubscritor]
-        [/#if]
-        
-                [#if (doc.mobilGeral.exMovimentacaoSet)??]
-        [#list doc.mobilGeral.exMovimentacaoSet as mov]
-                    [#if (mov.exTipoMovimentacao.id)! == 24]
-                        <br/><br/><br/>
-                        [@inicioSubscritor sigla=doc.codigoCompacto]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
-                        [#if mov.nmSubscritor??]
-                            ${mov.nmSubscritor}
-                        [#else]
-                           [#if (mov.subscritor.nomeExibicao)??]
-                           		${mov.subscritor.nomeExibicao}
-                           [#else]
-                           ${(mov.subscritor.nomePessoa)!}
-                           [/#if]
-                        [/#if]      
-                        <br>
-                        [#if mov.nmFuncao??]
-                            ${mov.nmFuncao}
-                        [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
-                            ${mov.titular.funcaoConfianca.nomeFuncao} 
-                                [#if substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
-                        [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
-                            ${mov.subscritor.funcaoConfianca.nomeFuncao}
-                        [#else]
-                            ${(mov.subscritor.cargo.nomeCargo)!}
-                        [/#if]
-                        [#if formatarOrgao]
-                            <br>
-                            [#if mov.nmLotacao??]
-                                ${mov.nmLotacao}
-                            [#else]
-                                ${mov.titular.lotacao.nomeLotacao}
-                            [/#if]
-                        [/#if]
-                        [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
-            [/#if]
-        [/#list]
-            [/#if]
-    [/#if]
-    [#if textoFinal??]
-        <br/>${textoFinal}
-    [/#if]
-</p>
-[#if incluirAssinaturaBIE == true]
-   <!-- FIM ASSINATURA -->
-[/#if]
+	[#if incluirAssinaturaBIE == true]
+	   <!-- INICIO ASSINATURA -->
+	[/#if]
+	<p style="font-family: Arial; font-size: 11pt;" align="center">
+	<br>
+	[#list doc.listaAssinantesOrdenados as pessoaVO]
+		<br/><br/><br/>
+		[@inicioSubscritor sigla=doc.codigoCompacto]${(pessoaVO.subscritor.idPessoa)!}[/@inicioSubscritor]
+		[#if (pessoaVO.nmSubscritor)??]
+        	${pessoaVO.nmSubscritor}
+    	[#else]
+	       	[#if (pessoaVO.subscritor.nomeExibicao)??]
+	        	${pessoaVO.subscritor.nomeExibicao}
+	       	[#else]
+	           	${(pessoaVO.subscritor.nomePessoa)!}
+	       	[/#if]
+	    [/#if]
+	    [#if (!apenasNome??)] 
+        	<br />
+        	[#if (apenasCargo?? && pessoaVO.subscritor.id == doc.subscritor.id) || (apenasNome?? && pessoaVO.subscritor.id != doc.subscritor.id)]
+                ${(pessoaVO.subscritor.cargo.nomeCargo)!}
+        	[#else]
+            	[#if (pessoaVO.nmFuncao)??]
+                	${pessoaVO.nmFuncao}
+	            [#elseif (pessoaVO.titular.funcaoConfianca.nomeFuncao)??]
+	                ${pessoaVO.titular.funcaoConfianca.nomeFuncao}
+	                [#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)! || substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
+            		[#elseif (pessoaVO.subscritor.funcaoConfianca.nomeFuncao)??]
+                		${pessoaVO.subscritor.funcaoConfianca.nomeFuncao}
+            		[#else]
+                		${(pessoaVO.subscritor.cargo.nomeCargo)!}
+            	[/#if]
+        	[/#if]
+
+        	[#if formatarOrgao]
+	            <br>
+	            [#if (pessoaVO.nmLotacao)??]
+	                ${pessoaVO.nmLotacao}
+	            [#else]
+	                ${(pessoaVO.titular.lotacao.nomeLotacao)!}
+	            [/#if]
+	        [/#if]
+	        [@fimSubscritor]${(pessoaVO.subscritor.idPessoa)}[/@fimSubscritor]
+    	[/#if]
+	[/#list]
 [/#macro]
 
 [#macro assinaturaMovCentro formatarOrgao=false]
@@ -4127,7 +4092,6 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 [#macro requerimentoTrf texto fecho="" tamanhoLetra="Normal" _tipo="" vocat=""]
-
     [#if tamanhoLetra! == "Normal"]
         [#assign tl = "11pt" /]
     [#elseif tamanhoLetra! == "Pequeno"]
@@ -4137,14 +4101,16 @@ Pede deferimento.</span><br/><br/><br/>
     [#else]     
         [#assign tl = "11pt" /]
     [/#if]
-
-[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
-    [@br/]
-    <center><b><p>${vocat!}</p></b></center>
-    <span style="font-size: tl"> ${texto!}</span>
-    <p style="align: justify; TEXT-INDENT: 0cm">${fecho}</p>
-[/@estiloBrasaoCentralizadoTrf]
-
+    PASSEI POR AQUI!
+	[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
+		[#if vocat?has_content]
+	    	<center><b><p>${vocat!}</p></b></center>
+	    [/#if]
+	    <div style="font-size: tl">${texto!}</div>
+		[#if fecho?has_content]
+	    	<p style="align: justify; TEXT-INDENT: 0cm">${fecho}</p>
+	    [/#if]
+	[/@estiloBrasaoCentralizadoTrf]
 [/#macro]
 
 [#macro cabecalhoCentralizadoPrimeiraPaginaTrf tipo=""]
@@ -4331,7 +4297,7 @@ Pede deferimento.</span><br/><br/><br/>
 	</div>	    
 [/#macro]
 
-[#macro webservice var url timeout cache=""]
+[#macro webservice var url timeout cache="" compactarXml=false]
   [#if cache?has_content]
     <input type="hidden" name="vars" value="${cache}" />
   [/#if]
@@ -4340,7 +4306,7 @@ Pede deferimento.</span><br/><br/><br/>
     <input type="hidden" name="${cache}" value="${str}">
   [#else]
     [#local payload][#nested][/#local]
-    [#local str=func.webservice(url,payload,timeout) /]
+    [#local str=func.webservice(url,payload,timeout,compactarXml) /]
     <input type="hidden" name="${cache}" value="${str?url('UTF-8')}">
   [/#if]
   [#if str?has_content]
@@ -4639,9 +4605,7 @@ Pede deferimento.</span><br/><br/><br/>
 			<span>&nbsp;</span>
 			[@br/]
 			<center><span style="font-size: 15px;">********************************* FIM *********************************</span></center>
-		
-		
-			<!-- INICIO PRIMEIRO RODAPE
+			
 			[#assign idOrgaoUsu=""/]
 			[#assign acronimoOrgaoUsu=""/]
 			[#assign descricaoOrgaoUsu=""/]
@@ -4658,19 +4622,18 @@ Pede deferimento.</span><br/><br/><br/>
 				[#assign acronimoOrgaoUsu=mov.lotaCadastrante.orgaoUsuario.acronimoOrgaoUsu/]
 			[/#if]
 	
-			<span align="center">
-			<table bgcolor="#000000" width="96%">
+			<table width="96%" style="page-break-inside: avoid" >
 				<tr>
-					<td width="100%">
-						<table width="100%" align="left" bgcolor="#FFFFFF">
+					<td width="100%" style="border: 1px solid black;">
+						<table width="100%" align="left">
 							<col width="15%"></col>
 							<col width="85%"></col>
-							<tr bgcolor="#FFFFFF">
+							<tr>
 								<td width="15%" align="left" valign="bottom"><img
 									src="${_pathBrasao}" width="65" height="65" />
 								</td>
 								<td>
-									<table align="left" width="100%" bgcolor="#FFFFFF">
+									<table align="left" width="100%">
 										<tr>
 											<td width="18%" width="100%" align="left">
 											<p style="font-size: 11pt;">${func.resource('modelos.cabecalho.titulo')!}</p>
@@ -4707,9 +4670,11 @@ Pede deferimento.</span><br/><br/><br/>
 					</td>
 				</tr>
 			</table>			
-	        </span>		
-		FIM PRIMEIRO RODAPE -->
-	
+		
+		
+		
+		<!-- INICIO PRIMEIRO RODAPE			
+		FIM PRIMEIRO RODAPE -->	
 		<!-- INICIO RODAPE
 			<table width="100%" border="0" cellpadding="0" bgcolor="#000000">
 				<col></col>
@@ -4718,6 +4683,7 @@ Pede deferimento.</span><br/><br/><br/>
 				</tr>
 			</table>
 		FIM RODAPE -->		
+	
 	[/@documento]													
 [/#macro]
 
@@ -4745,6 +4711,23 @@ Pede deferimento.</span><br/><br/><br/>
   }
 </style>
 ${texto} 
+[/#macro]
+
+[#macro dadosDownloadArquivo]
+    <div class="row">
+        <div class="col">
+        	<h6>Arquivo para download:</h6>
+        	<h6><b><a href="/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}"
+            	>${(doc.cpArquivoFormatoLivre.nomeArquivo)}</a></b></h6>
+        	<br />
+        	<a href="/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}"
+            	>${urlbase}/sigaex/app/arquivo/downloadFormatoLivre?sigla=${(doc.sigla)}</a>
+            <br />
+            <br />
+            <small>Hash (SHA-256) do Arquivo: ${(doc.cpArquivoFormatoLivre.hashSha256)}</small><br />
+            <small>Tamanho: ${(doc.cpArquivoFormatoLivre.tamanho)}</small><br />
+        </div>
+    </div><br /><br />	
 [/#macro]
 
 [#assign _pathBrasao = "contextpath/imagens/brasaoColoridoTRF2.png" /]

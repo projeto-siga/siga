@@ -32,18 +32,14 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
-import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
-import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport.RetornoJson;
-import br.gov.jfrj.siga.vraptor.SigaSelecionavelControllerSupport.RetornoJsonItem;
 
 @Controller
 public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLotacao, DpLotacaoDaoFiltro> {
@@ -73,6 +69,13 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get
 	@Path({ "/app/lotacao/buscar-json/{sigla}" })
 	public void busca(String sigla) throws Exception {
+		aBuscarJson(sigla);
+	}
+
+	@Get
+	@Path({ "/app/lotacao/buscar-json-todos-os-orgaos/{sigla}"  })
+	public void buscaTodosOsOrgaos(String sigla) throws Exception {
+		getRequest().setAttribute("buscarTodosOrgaos", "true");
 		aBuscarJson(sigla);
 	}
 
@@ -139,6 +142,12 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		String paramBuscarTodosOrgaos = param("buscarTodosOrgaos");
 		boolean buscarTodosOrgaos =  paramBuscarTodosOrgaos != null ? Boolean.valueOf(paramBuscarTodosOrgaos) : false;
+		
+		// Pesquisa também nos atributos do request, pois é a maneira como é passado quando
+		// vem pela consulta do Angular
+		paramBuscarTodosOrgaos = (String) getRequest().getAttribute("buscarTodosOrgaos");
+		buscarTodosOrgaos =  paramBuscarTodosOrgaos != null ? Boolean.valueOf(paramBuscarTodosOrgaos) : false;
+		
 		flt.setIdOrgaoUsu(orgaoUsu);
 		if (flt.getIdOrgaoUsu() == null && !buscarTodosOrgaos && getLotaTitular() != null ) {
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
@@ -394,7 +403,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 		Cp.getInstance().getBL().criarLotacao(getIdentidadeCadastrante(), getTitular(), getTitular().getLotacao(), id,
 				nmLotacao, idOrgaoUsu, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade);
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, idOrgaoUsu, siglaLotacao);
 	}
 
 	@Transacional
@@ -405,6 +414,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		// ativar
 		if (lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
 			DpLotacao lotacaoNova = new DpLotacao();
+			lotacao.setDataFimLotacao(null);
 			Cp.getInstance().getBL().copiaLotacao(lotacao, lotacaoNova);
 			dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
 		} else {// inativar
@@ -432,7 +442,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				}
 			}
 		}
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), lotacao.getSiglaLotacao());
 	}
 
 	@Transacional
@@ -540,35 +550,54 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 //		if(idUf != null && !Long.valueOf("0").equals(idUf)) {
 
-			CpUF uf = new CpUF();
-			uf.setIdUF(Long.valueOf(idUf));
-			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+        CpUF uf = new CpUF();
+        uf.setIdUF(Long.valueOf(idUf));
+        result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
 //		}
-		result.include("idLocalidade", idLocalidade);
+        result.include("idLocalidade", idLocalidade);
 
-		result.include("idUf", idUf);
-		result.include("listaUF", dao().consultarUF());
-		
-		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+        result.include("idUf", idUf);
+        result.include("listaUF", dao().consultarUF());
 
-			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
-		} else {
-			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
-			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
-			list.add(ou);
-			result.include("orgaosUsu", list);
-		}
-		result.include("idOrgaoUsu", idOrgaoUsu);
+        if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 
-		CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(idOrgaoUsu);
-		List<DpLotacao> lista = new ArrayList<DpLotacao>(CpDao.getInstance().consultarLotacaoPorOrgao(u));
-		result.include("listaLotacao", lista);
-		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/edita.jsp");
-	}
+            result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+        } else {
+            CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+            List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+            list.add(ou);
+            result.include("orgaosUsu", list);
+        }
+        result.include("idOrgaoUsu", idOrgaoUsu);
 
-	protected List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario) {
-		CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(orgaoUsuario.getIdOrgaoUsu());
-		return (List<DpLotacao>) CpDao.getInstance().consultarLotacaoPorOrgao(u);
-	}
+        CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(idOrgaoUsu);
+        List<DpLotacao> lista = new ArrayList<DpLotacao>(CpDao.getInstance().consultarLotacaoPorOrgao(u));
+        result.include("listaLotacao", lista);
+        result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/edita.jsp");
+    }
+
+    protected List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario) {
+        CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(orgaoUsuario.getIdOrgaoUsu());
+        return (List<DpLotacao>) CpDao.getInstance().consultarLotacaoPorOrgao(u);
+    }
+
+
+    /**
+     * Consulta quantidade de documentos criados que estão em posse da lotação
+     *
+     * @param lotacao
+     * @return
+     */
+    private Integer consultarQtdeDocumentoCriadosPosse(DpLotacao lotacao) {
+
+        Integer qtdeDocumentoCriadosPosse;
+
+        if (Prop.getBool("/siga.lotacao.inativacao.marcadores.permitidos"))
+            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(lotacao.getIdInicial());
+        else
+            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+
+        return qtdeDocumentoCriadosPosse;
+    }
 
 }

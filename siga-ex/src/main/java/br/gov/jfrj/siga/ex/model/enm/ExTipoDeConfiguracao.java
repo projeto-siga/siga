@@ -39,7 +39,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
 	//
-	CANCELAR_MOVIMENTACAO(29, "Cancelar Movimentação",
+	CANCELAR_MOVIMENTACAO(29, "Cancelar Movimentação", 
 			"Por padão as movimentações não podem ser canceladas. Utilizando essa configuração, é possível habilitar o cancelamento de movimentações de determinado tipo, dependendo ainda de regras de negócios específicas. Por exemplo, para que seja possível excluir \"Arquivos Auxiliares\" é necessário criar uma configuração habilitando o cancelamento de \"Anexação de Arquivo Auxiliar\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO },
@@ -123,7 +123,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.OBRIGATORIO,
-					CpSituacaoDeConfiguracaoEnum.OPCIONAL },
+					CpSituacaoDeConfiguracaoEnum.OPCIONAL, CpSituacaoDeConfiguracaoEnum.PROIBIDO},
 			CpSituacaoDeConfiguracaoEnum.OPCIONAL, true),
 	//
 	DUPLICAR(9, "Duplicar",
@@ -565,10 +565,44 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.CARGO,CpParamCfg.FUNCAO, CpParamCfg.ORGAO},
 			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
+	VISUALIZAR_TEMP_DOCS_COMPL_SUBSCRITOR_COSSIGNATARIO(60,"Exibir Documentos Completo para Subscritores e Cossignatários", 
+			"Essa configuração permite exibir Documentos Completo para Subscritores e Cossignatários, tendo como vínculo movimentação de juntadas e documentos inclusos. Você pode configurar "
+			+ "para Orgão, Unidade/Lotação e Usuário.  ",
+			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
+	VISUALIZACAO_EXTERNA_DOCUMENTOS(61, "Visualização externa de Documentos",
+			"Esta configuração tem o objetivo de permitir a visualização externa (sem autenticação) de Documentos.\n" +
+					"Essa visualização é feita através do link de autenticidade contido no rodapé dos Documentos.\n" +
+					"O padrão é PODE. Esta configuração foi adicionada para possibilitar a restrição da visualição externa a Documentos de um determinado Órgão.",
+			new Enum[] { CpParamCfg.ORGAO },
+			new Enum[] { CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.PODE, true),
+	
+	HERDAR_PREENCHIMENTO(62, "Herdar Preenchimento", "",
+			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
+					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+			new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+
+	REGISTRAR_REQUISICOES_USUARIO(63, "Registrar requisições do usuário",
+			"Esta configuração tem o objetivo de registrar em logs as requisições do usuário.\n" +
+					"O padrão é NAO PODE. Esta configuração foi adicionada para possibilitar o registro de logs de ações do usuário no sistema.",
+			new Enum[]{ CpParamCfg.ORGAO },
+			new Enum[]{ CpParamCfg.SITUACAO },
+			new CpSituacaoDeConfiguracaoEnum[]{ CpSituacaoDeConfiguracaoEnum.PODE,
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
+
 	
-	
-	private final int id;
+	private final int id; 
 	private final String descr;
 	private final String explicacao;
 	private final Enum[] params;

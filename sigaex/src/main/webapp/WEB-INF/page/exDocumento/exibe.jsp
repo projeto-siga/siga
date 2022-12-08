@@ -101,7 +101,26 @@
 		.files .btn.btn-sm.btn-light {
 			width: 75%;											
 		}
-	}											
+	}			
+		
+	.tabela-ordenavel tbody {
+		cursor: move;
+	}
+		
+	.tabela-ordenavel tbody tr {
+		border: 2px dashed #A9A9A9;				
+	}
+		
+	.tabela-ordenavel tbody tr:hover,
+	.tabela-ordenavel tbody tr:focus {
+		border-left: 3px dashed #007BFF;	
+		border-right: 3px dashed #007BFF;		
+		background-color: #CED4DA;	
+	}
+		
+	.tabela-ordenavel tbody a {
+		pointer-events: none;
+	}								
 </style>						
 
 <script>
@@ -292,7 +311,7 @@
 								</div>
 							</div>
 						</c:when>
-						<c:when test="${docVO.doc.pdf}">
+						<c:when test="${docVO.doc.pdf && not docVO.doc.exModelo.extensoesArquivo}">
 							<c:set var="urlCapturado" value="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}"/>
 							<iframe style="display: block;" name="painel" id="painel"
 								width="100%" frameborder="0" scrolling="auto"></iframe>			
@@ -316,7 +335,7 @@
 							<table class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
-										<th class="text-left">Tempo</th>
+										<th class="text-left">Data</th>
 										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
 										<th class="text-left">Evento</th>
 										<th class="text-left">Descrição</th>
@@ -326,9 +345,9 @@
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
 										test="${ (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and mov.exTipoMovimentacao != 'ANEXACAO_DE_ARQUIVO_AUXILIAR' and
-							          not mov.cancelada)}">
+							          mov.exTipoMovimentacao != 'CANCELAMENTO_JUNTADA' and not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td class="text-left" title="${mov.tempoRelativo}">${mov.dtRegMovDDMMYY}</td>
 											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td class="text-left" >${mov.mov.exTipoMovimentacao.descr}</td>
 											<td class="text-left" 
@@ -345,7 +364,7 @@
 															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
 																pos="${acao.pos}"
 																url="${pageContext.request.contextPath}${acao.url}"
-																test="${acao.pode}" explicacao="${acao.explicacao}" popup="${acao.popup}"
+																test="${acao.pode}" popup="${acao.popup}"
 																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 																idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" />
 															<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}"> ${mov.complemento}
@@ -783,9 +802,9 @@
 						<div class="card-sidebar card bg-light mb-3">
 							<tags:collapse title="Documentos Relacionados" id="DocsRelacionados" collapseMode="${collapse_Expanded}">
 								<div id="outputRelacaoDocs" class="bg-light" style="border: 0px; padding: 0px">
-									<c:forEach items="${docVO.dotRelacaoDocs.asMap}" var="mapa">
-										<p style="margin-bottom: 3px;">
-											<b>${mapa.key}:</b>
+									<c:forEach items="${docVO.dotRelacaoDocs.secundariosAsMap}" var="mapa">
+										<p style="margin-top: .5em;">
+											${mapa.key}:
 										</p>
 										<ul>
 											<c:forEach var="mobRelacionado" items="${mapa.value}">
@@ -797,6 +816,19 @@
 										</ul>
 									</c:forEach>
 								</div>
+								<c:forEach items="${docVO.dotRelacaoDocs.principaisAsMap}" var="mapa">
+									<p style="margin-top: .5em;">
+										${mapa.key}:
+									</p>
+									<ul>
+										<c:forEach var="mobRelacionado" items="${mapa.value}">
+											<li><a
+												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobRelacionado.sigla}"
+												title="${mobRelacionado.doc.descrDocumento}"
+												style="text-decoration: none"> ${mobRelacionado.sigla} </a></li>
+										</c:forEach>
+									</ul>
+								</c:forEach>
 							</tags:collapse>
 						</div>
 
@@ -1115,16 +1147,53 @@
 
 					<c:if test="${not empty docVO.cossignatarios}">
 						<div class="card-sidebar card bg-light mb-3">
-							<tags:collapse title="Cossignatários" id="Cossignatários" collapseMode="${collapse_Expanded}">
-								<ul>
-									<c:forEach var="cossig" items="${docVO.cossignatarios}">
-										<li>${cossig.key.subscritor}
-										<c:if test="${cossig.value}">&nbsp;
-											<a class="btn btn-sm btn-light mb-2" href="/sigaex/app/expediente/mov/excluir?id=${cossig.key.idMov}">Excluir</a>
-										</c:if>
-										</li>
-									</c:forEach>
-								</ul>
+							<c:if test="${podeReordenar}">
+								<c:set var="butOrdemAssinatura">
+										<a class="text-dark" title="Reordenar itens" id="ordemAssinatura" style="float: right; margin-top: 0px; padding-left: 1em; padding-right: 1em;">
+										Ordem de Assinatura <i class="fas fa-sort"></i>
+									</button>
+								</c:set>
+							</c:if>
+							<tags:collapse title="Cossignatários" id="Cossignatários" collapseMode="${collapse_Expanded}" addToTitle="${butOrdemAssinatura}">
+
+
+								<c:if test="${podeReordenar}">
+								<div class="menu-ordenacao  pb-2" style="text-align: center;height: auto;max-height: 0;opacity: 0;position: relative;left: -999px;transition: left .3s, opacity .3s, max-height .5s;">
+									Clique e arraste os itens tracejados para reordená-los<br />							
+									<form action="${pageContext.request.contextPath}/app/expediente/doc/reordenarAss" id="formReordenarAss" class="form" method="POST">									
+										<input type="hidden" name="ids" id="inputHiddenIds" />													
+										<input type="hidden" name="sigla" value="${sigla}" />
+										<button type="submit" class="mt-3 ml-2 btn btn-success btn-sm align-center" id="btnSalvarOrdenacao" disabled>
+											<i class="fas fa-check"></i> Salvar
+										</button>
+										<button type="button" class="mt-3 ml-2 btn btn-danger btn-sm align-center" id="btnCancelarOrdenacao">
+												<i class="fas fa-times"></i> Cancelar
+										</button>																					
+									</form>
+								</div>
+								</c:if>
+								<div class="card-body pl-1 pr-1 pt-0 pb-0  container-tabela-lista-assinaturas">
+									<table class="mov tabela-assinaturas">
+										<tbody id="${podeReordenar ? 'sortable' : ''}">
+											<ul>
+											<c:forEach var="ord" items="${docVO.getListaOrdenadaCossigSub()}">
+												<tr>										
+													<td style="display: none;">
+														${ord.key.sigla}											
+													</td>
+													<td>
+														<li>${ord.key.nomePessoa} <c:if test="${ord.key.sigla == docVO.doc.subscritor.sigla}"><a class="btn btn-sm btn-light mb-2">Subscritor</a></c:if>
+														<c:if test="${ord.value != 0}">&nbsp;
+															<a class="btn btn-sm btn-light mb-2" href="/sigaex/app/expediente/mov/excluir?id=${ord.value}">Excluir</a>
+														</c:if>
+														</li>
+													</td>
+												</tr>
+											</c:forEach>
+											</ul>
+										</tbody>
+									</table>
+								</div>
 							</tags:collapse>
 						</div>
 					</c:if>
@@ -1625,4 +1694,7 @@
 			document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
 	} 
 </script>
+<c:if test="${podeReordenar}"> 
+	<script src="/siga/javascript/assinatura.reordenar-ass.js"></script>
+</c:if>
 </siga:pagina>

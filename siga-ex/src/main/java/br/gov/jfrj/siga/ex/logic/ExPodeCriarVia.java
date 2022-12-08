@@ -77,7 +77,10 @@ public class ExPodeCriarVia extends CompositeExpressionSupport {
 
 						new ExESubscritor(mob.doc(), titular, lotaTitular)),
 
-				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.CRIAR_VIA));
+				new ExPodePorConfiguracao(titular, lotaTitular)
+					.withExFormaDoc(mob.doc().getExFormaDocumento())
+					.withExMod(mob.doc().getExModelo())
+					.withIdTpConf(ExTipoDeConfiguracao.CRIAR_VIA));
 
 	}
 

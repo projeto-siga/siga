@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import br.gov.jfrj.siga.vraptor.TrackRequest;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -27,8 +28,10 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
 
+@TrackRequest
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 
 	@Override
@@ -54,19 +57,24 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		}
 
 		// Recebimento automático
-		if (Prop.getBool("recebimento.automatico") 
-				&& Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob)) {
+		Boolean podeRecebimentoAutomatico = ( 
+						Boolean.TRUE.equals(Prop.getBool("recebimento.automatico")) &&
+						!Boolean.TRUE.equals(req.desabilitarRecebimentoAutomatico) && 
+						Ex.getInstance().getComp().pode(ExDeveReceberEletronico.class, titular, lotaTitular, mob) );
+		
+        if (podeRecebimentoAutomatico) {
 			try {
 				ctx.upgradeParaTransacional();
 				Ex.getInstance().getBL().receber(cadastrante, titular, lotaTitular, mob, new Date());
-				ExDao.getInstance().em().refresh(mob);
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 				throw e;
 			}
 		}
 
-		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular, true, req.auditar != null && req.auditar, true, true);
+		final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, cadastrante, titular, lotaTitular,
+				req.completo != null && req.completo, req.auditar != null && req.auditar,
+				true, req.exibe != null && req.exibe);
 		// TODO: Resolver o problema declares multiple JSON fields named
 		// serialVersionUID
 		// Usado o Expose temporariamente

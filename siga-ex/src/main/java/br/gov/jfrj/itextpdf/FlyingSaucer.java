@@ -317,6 +317,12 @@ public class FlyingSaucer implements ConversorHtml {
 		String strEstilosPadrao = null;
 		String padrao = SwaggerUtils.convertStreamToString(FlyingSaucer.class.getResourceAsStream("pagina.html"));
 
+		Pattern MY_PATTERN = Pattern.compile("<!-- size: (?<format>[^;]+); -->");
+		Matcher m = MY_PATTERN.matcher(html);
+		while (m.find()) {
+		    padrao = padrao.replace("size: A4 portrait;", "size: " + m.group("format") + ";");
+		}
+
 		Extraido estilosPadrao = extrair(padrao, "<style>", "</style>", "");
 		if (estilosPadrao != null) {
 			strEstilosPadrao = estilosPadrao.strExtraida;

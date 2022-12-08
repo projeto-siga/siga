@@ -55,5 +55,13 @@ public class StatusPublicacaoDto implements Serializable {
 	public void setStatusPublicacaoDescr(String statusPublicacaoDescr) {
 		this.statusPublicacaoDescr = statusPublicacaoDescr;
 	}
+	
+	public boolean isPublicadoOrCancel() {
+		if (statusPublicacaoDescr != null && 
+					(statusPublicacaoDescr.contains("Cance") || statusPublicacaoDescr.contains("Publi"))) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
 
 }

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
-import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativasCancelamentoDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.JustificativaCancelPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.StatusPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MensagemErroRetornoPubnetDto;
@@ -106,14 +106,14 @@ public class PubnetConsultaService {
 		return permissaoPublicanteDtoList;
 	}
 
-	public List<JustificativasCancelamentoDto> listarJustificativasCancelamento(AuthHeader user) throws Exception {
-		List<JustificativasCancelamentoDto> permissaoPublicanteDtoList = new ArrayList<JustificativasCancelamentoDto>();
+	public List<JustificativaCancelPublicacaoDto> listarJustificativasCancelamento(AuthHeader user) throws Exception {
+		List<JustificativaCancelPublicacaoDto> permissaoPublicanteDtoList = new ArrayList<JustificativaCancelPublicacaoDto>();
 		try {
 			ListaJustificativasCancelamentoResult resp = port.listaJustificativasCancelamento(user);
 			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
-			String json = converterNodeJsonParaStringJson(jsonNode, JustificativasCancelamentoDto.NOME_NODE_JSON);
+			String json = converterNodeJsonParaStringJson(jsonNode, JustificativaCancelPublicacaoDto.NOME_NODE_JSON);
 			permissaoPublicanteDtoList = Arrays
-					.asList(getObjectMapper().readValue(json, JustificativasCancelamentoDto[].class));
+					.asList(getObjectMapper().readValue(json, JustificativaCancelPublicacaoDto[].class));
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 			if (!ENCODING_DEFAULT_XML.equals(ENCODING_UTF_8)) {
@@ -157,7 +157,7 @@ public class PubnetConsultaService {
 			e.printStackTrace();
 			if (!ENCODING_DEFAULT_XML.equals(ENCODING_UTF_8)) {
 				ENCODING_DEFAULT_XML = ENCODING_UTF_8;
-				listarJustificativasCancelamento(user);
+				obterProximoSequencialPublicacao(user, retrancaCodigo);
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage());

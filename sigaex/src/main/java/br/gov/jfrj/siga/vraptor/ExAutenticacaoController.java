@@ -15,7 +15,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.cp.logic.CpPodeSempre;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarExternamente;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
@@ -94,16 +97,12 @@ public class ExAutenticacaoController extends ExController {
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		result.include("n", n);
 		result.include("cod", cod);
-		
-		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
-		ExDocumento doc = (ExDocumento) arq;
-		
-		result.include("podeVisualizarExternamente", new ExPodeVisualizarExternamente(
-				doc.getMobilGeral(), getTitular(), getLotaTitular()).eval());
-
 
 		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();
+
+			result.include("podeVisualizarExternamente", true);
+
 			return;
 		}
 
@@ -134,6 +133,25 @@ public class ExAutenticacaoController extends ExController {
 			}
 		}
 		if (!success) {
+			setDefaultResults();
+			return;
+		}
+
+		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
+
+		ExMobil mob = null;
+		if (arq instanceof ExDocumento) {
+			mob = ( (ExDocumento) arq ).getMobilGeral();
+		} else if (arq instanceof ExMovimentacao) {
+			mob = ( (ExMovimentacao) arq ).getExMobil();
+		}
+
+		boolean podeVisualizarExternamente = mob == null ? true :
+				new ExPodeVisualizarExternamente(mob, getTitular(), getLotaTitular()).eval();
+
+		if (( cod == null || cod.trim().length() == 0 ) && ( !podeVisualizarExternamente )) {
+			result.include("podeVisualizarExternamente", false);
+
 			setDefaultResults();
 			return;
 		}
@@ -184,6 +202,7 @@ public class ExAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
+
 		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n), cod);
 	}
 
@@ -304,8 +323,8 @@ public class ExAutenticacaoController extends ExController {
 		result.include("n", n);
 		result.include("jwt", jwt);
 
+		ExMobil mob = null;
 		if (arq instanceof ExDocumento) {
-			ExMobil mob = null;
 			ExDocumento doc = (ExDocumento) arq;
 
 			if (doc.isFinalizado()) {
@@ -332,15 +351,6 @@ public class ExAutenticacaoController extends ExController {
 				l = lista.get(0).getLotaSubscritor();
 			}
 
-			/*
-			 * Verifica se tem acesso ao Documento ou
-			 * se é permitido a visualização externa do Documento no Órgão
-			 */
-			result.include("podeVisualizarExternamente", 
-					new ExPodeVisualizarExternamente(
-							doc.getMobilGeral(), getTitular(), getLotaTitular(), cod).eval()
-			);
-			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob, getCadastrante(), p, l, true, false, false, true);
 			result.include("docVO", docVO);
 			result.include("autenticidade",
@@ -349,7 +359,18 @@ public class ExAutenticacaoController extends ExController {
 							docVO.getDoc().getSiglaAssinatura()
 
 			);
+		} else if (arq instanceof ExMovimentacao) {
+			mob = ( (ExMovimentacao) arq ).getExMobil();
 		}
+
+		/*
+		 * Verifica se tem acesso ao Documento ou
+		 * se é permitido a visualização externa do Documento no Órgão
+		 */
+		boolean podeVisualizarExternamente = mob == null ? true :
+				new ExPodeVisualizarExternamente(mob, getTitular(), getLotaTitular(), cod).eval();
+		
+		result.include("podeVisualizarExternamente", podeVisualizarExternamente);
 	}
 
 	private static String getRecaptchaSiteKey() {

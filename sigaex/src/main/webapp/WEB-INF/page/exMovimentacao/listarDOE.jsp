@@ -155,8 +155,7 @@
 		
 		function carregarAnunciante(lista) {
 			var jaExiste = false;
-			var selectAnunciante = document.getElementById("idAnunciante");
-			
+			var selectAnunciante = document.getElementById("idAnunciante");			
 			selectAnunciante.innerHTML = "";
 			selectAnunciante.add(new Option("Selecione", "0"));
 			
@@ -184,6 +183,8 @@
 			
 			selectCaderno.innerHTML = "";
 			selectCaderno.add(new Option("Selecione", "0"));
+			var event = new Event('change');
+			selectCaderno.dispatchEvent(event);
 			
 			if(lista != null) {
 				for (var i = 0; i < lista.length; i++) {
@@ -210,6 +211,9 @@
 			
 			selectSecao.innerHTML = "";
 			selectSecao.add(new Option("Selecione", "0"));
+			var event = new Event('change');
+			selectSecao.dispatchEvent(event);
+			
 			for (var i = 0; i < lista.length; i++) {
 				jaExiste = false;
 				for (a = 0; a < selectSecao.length; a = a + 1) {
@@ -260,7 +264,6 @@
 			var selectMateria = document.getElementById("idMateria");
 			for (var i = 0; i < lista.length; i++) {
 				if(selectMateria.value == lista[i].tipoMateriaCodigo) {
-// 					document.getElementById("idAnuncianteId").value = lista[i].anuncianteId;
 					document.getElementById("idTipoMateriaIdr").value = lista[i].tipoMateriaIdr;
 					break;
 				}
@@ -392,7 +395,6 @@
 		}
 		
 		function limparInputsHiddenAposAssinatura() {
-// 			document.getElementById("idAnuncianteId").value="";
 			document.getElementById("idReciboHash").value = "";
 			document.getElementById("idTipoMateriaIdr").value = "";
 		}

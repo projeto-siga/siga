@@ -103,9 +103,16 @@
 		}
 		
 		function validarCampos() {
+			var idAnunciante = document.getElementsByName('idAnunciante')[0].value;
 			var idMateria = document.getElementsByName('idMateria')[0].value;	
 			var idCaderno = document.getElementsByName('idCaderno')[0].value;
 			var idSecao = document.getElementsByName('idSecao')[0].value;
+			
+			if (idAnunciante==0) {									
+				sigaModal.alerta("Atenção! O campo Anunciante precisa ser preenchido.");				
+				document.getElementById('idAnunciante').focus();
+				return;	
+			}
 			
 			if (idCaderno==0) {									
 				sigaModal.alerta("Atenção! O campo Caderno precisa ser preenchido.");				
@@ -146,8 +153,33 @@
 			$('#confirmacaoModal').modal('hide');
 		}
 		
+		function carregarAnunciante(lista) {
+			var jaExiste = false;
+			var selectAnunciante = document.getElementById("idAnunciante");
+			
+			selectAnunciante.innerHTML = "";
+			selectAnunciante.add(new Option("Selecione", "0"));
+			
+			if(lista != null) {
+				for (var i = 0; i < lista.length; i++) {
+					jaExiste = false;
+					for (a = 0; a < selectAnunciante.length; a = a + 1) {
+						if(selectAnunciante.options[a].value == lista[i].anuncianteId) {
+							jaExiste = true;
+					    	break;
+						}
+					}
+					if(!jaExiste) {
+					    var option = new Option(lista[i].anuncianteRazaoSocial, lista[i].anuncianteId);
+					    selectAnunciante.add(option);
+					}
+				}
+			}
+		}
+		
 		function carregarCaderno(lista) {
 			var jaExiste = false;
+			var selectAnunciante = document.getElementById("idAnunciante");
 			var selectCaderno = document.getElementById("idCaderno");
 			
 			selectCaderno.innerHTML = "";
@@ -162,7 +194,7 @@
 					    	break;
 						}
 					}
-					if(!jaExiste) {
+					if(!jaExiste && selectAnunciante.value == lista[i].anuncianteId) {
 					    var option = new Option(lista[i].cadernoDescricao, lista[i].cadernoIdentificador);
 					    selectCaderno.add(option);
 					}
@@ -173,6 +205,7 @@
 		function carregarSecao(lista) {
 			var jaExiste = false;
 			var selectSecao = document.getElementById("idSecao");
+			var selectAnunciante = document.getElementById("idAnunciante");
 			var selectCaderno = document.getElementById("idCaderno");
 			
 			selectSecao.innerHTML = "";
@@ -185,7 +218,8 @@
 				    	break;
 					}
 				}
-				if(!jaExiste && selectCaderno.value == lista[i].cadernoIdentificador) {
+				if(!jaExiste && selectAnunciante.value == lista[i].anuncianteId 
+									&& selectCaderno.value == lista[i].cadernoIdentificador) {
 				    var option = new Option(lista[i].retrancaDescricao, lista[i].retrancaCodigo);
 				    selectSecao.add(option);
 				}
@@ -193,9 +227,12 @@
 			
 		}
 		
+		
 		function carregarMateria(lista) {
 			var jaExiste = false;
+			var selectAnunciante = document.getElementById("idAnunciante");
 			var selectSecao = document.getElementById("idSecao");
+			var selectCaderno = document.getElementById("idCaderno");
 			var selectMateria = document.getElementById("idMateria");
 			
 			selectMateria.innerHTML = "";
@@ -209,7 +246,9 @@
 				    	break;
 					}
 				}
-				if(!jaExiste && selectSecao.value == lista[i].retrancaCodigo) {
+				if(!jaExiste && selectAnunciante.value == lista[i].anuncianteId 
+									&& selectCaderno.value == lista[i].cadernoIdentificador
+									&& selectSecao.value == lista[i].retrancaCodigo) {
 				    var option = new Option(lista[i].tipoMateriaDescr, lista[i].tipoMateriaCodigo);
 				    selectMateria.add(option);
 				}
@@ -221,7 +260,7 @@
 			var selectMateria = document.getElementById("idMateria");
 			for (var i = 0; i < lista.length; i++) {
 				if(selectMateria.value == lista[i].tipoMateriaCodigo) {
-					document.getElementById("idAnuncianteId").value = lista[i].anuncianteId;
+// 					document.getElementById("idAnuncianteId").value = lista[i].anuncianteId;
 					document.getElementById("idTipoMateriaIdr").value = lista[i].tipoMateriaIdr;
 					break;
 				}
@@ -231,7 +270,7 @@
 		function montarReciboArquivoDOE(){
 			limparCamposAlertaErro();
 			
-			var anuncianteId = document.getElementById("idAnuncianteId").value;
+			var anuncianteId = document.getElementById("idAnunciante").value;
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
 			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
@@ -296,7 +335,7 @@
 			//console.log(signature);			
 			var json = JSON.parse(signature);
 			
-			var anuncianteId = document.getElementById("idAnuncianteId").value;
+			var anuncianteId = document.getElementById("idAnunciante").value;
 			var cadernoId = document.getElementById("idCaderno").value;
 			var retrancaCod = document.getElementById("idSecao").value;
 			var tipoMaterialId = document.getElementById("idTipoMateriaIdr").value;
@@ -353,7 +392,7 @@
 		}
 		
 		function limparInputsHiddenAposAssinatura() {
-			document.getElementById("idAnuncianteId").value="";
+// 			document.getElementById("idAnuncianteId").value="";
 			document.getElementById("idReciboHash").value = "";
 			document.getElementById("idTipoMateriaIdr").value = "";
 		}
@@ -386,7 +425,7 @@
 					<input type="hidden" name="urlRedirecionar" value="/app/exMovimentacao/listarDOE"/>
 					<input type="hidden" name="reciboHash" id="idReciboHash" value="" />
 					<input type="hidden" name="textoRecibo" id="idTextoRecibo" value="" />
-					<input type="hidden" name="anuncianteId" id="idAnuncianteId" value="" />
+<!-- 					<input type="hidden" name="anuncianteId" id="idAnuncianteId" value="" /> -->
 					<input type="hidden" name="tipoMateriaIdr" id="idTipoMateriaIdr" value="" />
 					<input type="hidden" name="sequencial" id="idSequencial" value="" />
 					
@@ -462,7 +501,15 @@
 						   
 						</table>
 						<div class="form-group row">
-							<div class="col-sm-4">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Anunciante</label>
+									<select class="form-control siga-select2" id="idAnunciante" name="idAnunciante" onchange='carregarCaderno(${listaPermissoes})'>
+										<option value="0">Selecione</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-3">
 								<div class="form-group">
 									<label>Caderno</label>
 									<select class="form-control siga-select2" id="idCaderno" name="idCaderno" onchange='carregarSecao(${listaPermissoes})'>
@@ -470,7 +517,7 @@
 									</select>
 								</div>
 							</div>
-							<div class="col-sm-4">
+							<div class="col-sm-3">
 								<div class="form-group">
 									<label>Seção</label>
 									<select class="form-control siga-select2" id="idSecao" name="idSecao" onchange='carregarMateria(${listaPermissoes})'>
@@ -478,7 +525,7 @@
 									</select>
 								</div>
 							</div>
-							<div class="col-sm-4">
+							<div class="col-sm-3">
 								<div class="form-group">
 									<label>Tipo de Matéria</label>
 									<select class="form-control siga-select2" id="idMateria" name="idMateria" onchange='setAnuncianteTipoMaterial(${listaPermissoes})'>
@@ -520,7 +567,7 @@
 			document.getElementById("div1").style.display = "block";
 		    document.getElementById("div2").style.display = "block";
 		}
-		carregarCaderno(${listaPermissoes});
+		carregarAnunciante(${listaPermissoes});
 	} 
 	
 	$(document).ready(function() {

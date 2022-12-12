@@ -103,10 +103,16 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	@Column(name = "TAMANHO_ARQ")
 	private Long tamanho = 0L;
 
-	@Column(name = "HASH_SHA256")
+//  ATENCAO: REMOVI ISSO SO PARA PODER TESTAR NA BASE DE PROD DO TRF. NÃO COMITTAR!
+//
+//	@Column(name = "HASH_SHA256")
+    @Transient
 	private String hashSha256;
 
-	@Column(name = "NOME_ARQ")
+//  ATENCAO: REMOVI ISSO SO PARA PODER TESTAR NA BASE DE PROD DO TRF. NÃO COMITTAR!
+//
+//	@Column(name = "NOME_ARQ")
+    @Transient
 	private String nomeArquivo;
 
 	@Transient

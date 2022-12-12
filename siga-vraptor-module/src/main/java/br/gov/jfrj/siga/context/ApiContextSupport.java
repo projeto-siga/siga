@@ -149,7 +149,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			} catch (Exception e) {
 				if (!getCtx().getAction().getClass().isAnnotationPresent(AcessoPublicoEPrivado.class))
-					throw e;
+					throw new SwaggerAuthorizationException(e.getMessage(), e, null);
 			}
 		}
 		

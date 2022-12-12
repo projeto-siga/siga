@@ -439,9 +439,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQ")
 	private CpArquivo cpArquivo;
+
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ID_ARQ_FMT_LIVRE")
+//  ATENCAO: REMOVI ISSO SO PARA PODER TESTAR NA BASE DE PROD DO TRF. NÃO COMITTAR!
+//
+//	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+//	@JoinColumn(name = "ID_ARQ_FMT_LIVRE")
+	@Transient
 	private CpArquivo cpArquivoFormatoLivre;
 	
 	@Column(name = "CD_PRINCIPAL")

@@ -94,7 +94,7 @@ function sbmt(offset) {
 							<c:url var="url" value="/app/lotacao/editar">
 								<c:param name="id" value="${lotacao.id}"></c:param>
 							</c:url>
-							<c:url var="urlAtivarInativar" value="/app/lotacao/ativarInativar">
+							<c:url var="urlAtivarInativar" value="/app/lotacao/inativar">
 								<c:param name="id" value="${lotacao.id}"></c:param>
 							</c:url>
 							<c:url var="urlSuspender" value="/app/lotacao/suspender">
@@ -104,7 +104,7 @@ function sbmt(offset) {
 							<div class="btn-group">								  
 							  <c:choose>
 								<c:when test="${empty lotacao.dataFimLotacao}">
-									<a href="${urlAtivarInativar}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlAtivarInativar}\")","Deseja inativar o cadastro selecionado?");return false;' class="btn btn-primary" role="button" 
+									<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" 
 										aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Inativar</a>
 									<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									    <span class="sr-only"></span>
@@ -149,7 +149,7 @@ function sbmt(offset) {
 		</table>				
 		<div class="gt-table-buttons">
 			<c:url var="url" value="/app/lotacao/editar"></c:url>
-			<c:url var="urlAtivarInativar" value="/app/lotacao/ativarInativar"></c:url>
+			<c:url var="urlAtivarInativar" value="/app/lotacao/inativar"></c:url>
 			<input type="button" value="Incluir" onclick="javascript:window.location.href='${url}'" class="btn btn-primary">
 		</div>				
 		</form>

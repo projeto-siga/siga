@@ -405,6 +405,28 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				nmLotacao, idOrgaoUsu, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade);
 		this.result.redirectTo(this).lista(0, idOrgaoUsu, siglaLotacao);
 	}
+	
+	@Get("/app/lotacao/inativar")
+	public void inativar(final Long id){
+		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+		
+		Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE).size();
+		Integer qtdeDocumentoPosse = Cp.getInstance().getBL().consultarQtdeDocumentoPosse(lotacao); 
+		
+		if (qtdePessoa > 0 || qtdeDocumentoPosse > 0) {
+			throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
+					+ SigaMessages.getMessage("usuario.lotacao"), 0);
+		} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {
+			throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao")
+							+ " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),0);
+		} else {
+			result.include("lotacao",lotacao);
+		}
+	
+		
+	}
+	
+
 
 	@Transacional
 	@Post("/app/lotacao/ativarInativar")
@@ -419,9 +441,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
 		} else {// inativar
 			Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE).size();
-			Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+			Integer qtdeDocumentoPosse = Cp.getInstance().getBL().consultarQtdeDocumentoPosse(lotacao); 
 
-			if (qtdePessoa > 0 || qtdeDocumentoCriadosPosse > 0) {
+			if (qtdePessoa > 0 || qtdeDocumentoPosse > 0) {
 				throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
 						+ SigaMessages.getMessage("usuario.lotacao"), 0);
 			} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {
@@ -579,25 +601,6 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
     protected List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario) {
         CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(orgaoUsuario.getIdOrgaoUsu());
         return (List<DpLotacao>) CpDao.getInstance().consultarLotacaoPorOrgao(u);
-    }
-
-
-    /**
-     * Consulta quantidade de documentos criados que estão em posse da lotação
-     *
-     * @param lotacao
-     * @return
-     */
-    private Integer consultarQtdeDocumentoCriadosPosse(DpLotacao lotacao) {
-
-        Integer qtdeDocumentoCriadosPosse;
-
-        if (Prop.getBool("/siga.lotacao.inativacao.marcadores.permitidos"))
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(lotacao.getIdInicial());
-        else
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
-
-        return qtdeDocumentoCriadosPosse;
     }
 
 }

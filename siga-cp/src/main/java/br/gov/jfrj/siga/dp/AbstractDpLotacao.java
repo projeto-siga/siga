@@ -118,12 +118,10 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
 				+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
 				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao"),
-		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
-						+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+		@NamedNativeQuery(name = "consultarQtdeDocPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
 						+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
 						+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-						+ " where lot.id_lotacao_ini = :idLotacao or (marca.ID_LOTACAO_INI = :idLotacao"
-				        + " and marca.ID_MARCADOR not in (:listMarcadores))")})
+						+ " where marca.ID_LOTACAO_INI = :idLotacao and marca.ID_MARCADOR not in (:listMarcadores)")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {

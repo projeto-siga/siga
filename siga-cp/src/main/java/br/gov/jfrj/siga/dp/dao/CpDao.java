@@ -51,6 +51,7 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -2680,7 +2681,7 @@ public class CpDao extends ModeloDao {
 		return result;
 	}
 
-	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
+	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) { 
 		try {
 			String consultarQuantidadeDocumentosPorDpLotacao = "SELECT count(1) FROM DpLotacao lotacao"
 					+ " left join CpMarca marca on lotacao.idLotacao = marca.dpLotacaoIni"
@@ -2813,15 +2814,21 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public Integer consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(Long idLotacao) {
+	public Integer consultarQtdeDocPossePorDpLotacaoECpMarca(Long idLotacao) {
 		try {
-			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacaoECpMarca");
+			Query sql = em().createNamedQuery("consultarQtdeDocPossePorDpLotacaoECpMarca");
 			sql.setParameter("idLotacao", idLotacao);
-			sql.setParameter("listMarcadores", Arrays.asList(
+			/*
+			 * 
+			 * Arrays.asList(
 					CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId(),
 					CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
-					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()));
-			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
+					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId(),
+					CpMarcadorEnum.CANCELADO.getId(),
+					CpMarcadorEnum.SEM_EFEITO.getId())
+			 */
+			sql.setParameter("listMarcadores", CpMarcadorEnum.getListMarcadoresByListChaves(Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos")));
+			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
 			return l;
 		} catch (final NullPointerException e) {
 			return null;

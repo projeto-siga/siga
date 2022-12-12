@@ -2239,7 +2239,7 @@ public class CpBL {
 			final Long idLotacao, final String nmLotacao, final String siglaLotacao, final String situacao,
 			DpLotacao lotacao, DpLotacao lotacaoNova, Date dataSistema) {
 		List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(idLotacao, Boolean.TRUE, Boolean.FALSE);
-		Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+		Integer qtdeDocumentoCriadosPosse = consultarQtdeDocumentoPosse(lotacao);
 		
 		if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
 				(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
@@ -2605,5 +2605,25 @@ public class CpBL {
 		}
 		return orgaos;
 	} 
+	
+	
+    /**
+     * Consulta quantidade de documentos criados que estão em posse da lotação
+     *
+     * @param lotacao
+     * @return
+     */
+	public Integer consultarQtdeDocumentoPosse(DpLotacao lotacao) { 
+
+        Integer qtdeDocumentoCriadosPosse;
+
+        if (!Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos").isEmpty())
+            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocPossePorDpLotacaoECpMarca(lotacao.getIdInicial());
+        else
+            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+
+        return qtdeDocumentoCriadosPosse;
+    }
+
 	
 }

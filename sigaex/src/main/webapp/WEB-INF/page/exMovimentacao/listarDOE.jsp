@@ -427,7 +427,6 @@
 					<input type="hidden" name="urlRedirecionar" value="/app/exMovimentacao/listarDOE"/>
 					<input type="hidden" name="reciboHash" id="idReciboHash" value="" />
 					<input type="hidden" name="textoRecibo" id="idTextoRecibo" value="" />
-<!-- 					<input type="hidden" name="anuncianteId" id="idAnuncianteId" value="" /> -->
 					<input type="hidden" name="tipoMateriaIdr" id="idTipoMateriaIdr" value="" />
 					<input type="hidden" name="sequencial" id="idSequencial" value="" />
 					

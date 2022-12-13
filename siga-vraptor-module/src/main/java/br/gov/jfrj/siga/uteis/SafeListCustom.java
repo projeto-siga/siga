@@ -16,10 +16,11 @@ public class SafeListCustom extends Safelist {
     			.addTags("hr")
 
     			//Add Atributos Gerais - modo permissivo
-    			.addAttributes(":all", "style","class","id","name","class","align","valign","width","heigth","bgcolor","valign")
+    			.addAttributes(":all", "style","class","id","name","class","align","valign","width","heigth","bgcolor","valign", "tabindex", 
+    					"aria-label",  "aria-invalid", "aria-labelledby", "aria-describedby", "role" )
 
     			//Add Atributos Específicos
-    			.addAttributes("a", "rel")
+    			.addAttributes("a", "rel", "target")
     			.addAttributes("div", "page-break-after","word-wrap")
     			.addAttributes("sup", "data-footnote-id")
     			.addAttributes("li", "data-footnote-id")

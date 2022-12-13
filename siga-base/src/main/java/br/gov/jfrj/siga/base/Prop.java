@@ -340,6 +340,6 @@ public class Prop {
 
 		/* Permite inativar lotação com determinadas marcações*/
 		/* Trocado de Bool para List String que deve conter as chaves de marcadores permitidas separadas por virgula no padrao do getList() */
-		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "");
+		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", null);
 	}
 }

@@ -2616,8 +2616,9 @@ public class CpBL {
 	public Integer consultarQtdeDocumentoPosse(DpLotacao lotacao) { 
 
         Integer qtdeDocumentoCriadosPosse;
+        List<String> listaMarcadores = Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos");
 
-        if (!Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos").isEmpty())
+        if (listaMarcadores != null && !listaMarcadores.isEmpty())
             qtdeDocumentoCriadosPosse = dao().consultarQtdeDocPossePorDpLotacaoECpMarca(lotacao.getIdInicial());
         else
             qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());

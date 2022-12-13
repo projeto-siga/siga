@@ -242,7 +242,7 @@ public enum CpMarcadorEnum {
 		final List<Long> listaMarcadores = new ArrayList<Long>();
 		if (chaves != null) {
 			for(String chave : chaves) {
-				CpMarcadorEnum marcador = CpMarcadorEnum.valueOf(chave);
+				CpMarcadorEnum marcador = CpMarcadorEnum.valueOf(chave.trim());
 				if(marcador != null) {
 					listaMarcadores.add(marcador.getId());
 				}

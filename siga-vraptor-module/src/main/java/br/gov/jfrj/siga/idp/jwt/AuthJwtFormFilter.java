@@ -190,8 +190,11 @@ public class AuthJwtFormFilter implements Filter {
 
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {
 		response.setHeader("Set-Cookie",
-				removeSpecial(cookie.getName()) + "=" + removeSpecial(cookie.getValue()) + "; Path=" + cookie.getPath() + "; Max-Age="
-						+ cookie.getMaxAge() + "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
+				removeSpecial(cookie.getName()) + "=" + removeSpecial(cookie.getValue()) 
+						+ "; Path=" + cookie.getPath() 
+						+ (cookie.getDomain() == null ? "" : "; Domain="+removeSpecial(cookie.getDomain()))
+						+ "; Max-Age="+ cookie.getMaxAge() 
+						+ "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
 						+ "; HttpOnly" + (!Prop.get("/siga.base.url").contains("https") ? "" : "; Secure; SameSite=None"));
 	}
 	

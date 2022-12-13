@@ -3256,7 +3256,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 			}
 		} else {
-			listaOrdenada.add(new AssinanteVO(this.getSubscritor(), this.getTitular(), this.getNmFuncao(), this.getNmLotacao(), this.getNmSubscritor()));
+			if (this.getSubscritor() != null && this.getTitular() != null) {
+				listaOrdenada.add(new AssinanteVO(this.getSubscritor(), this.getTitular(), this.getNmFuncao(), this.getNmLotacao(), this.getNmSubscritor()));
+			}
+			
 			for (ExMovimentacao movCossig : this.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, true)) {
 				listaOrdenada.add(new AssinanteVO(movCossig.getSubscritor(), movCossig.getTitular(), movCossig.getNmFuncao(), movCossig.getNmLotacao(), movCossig.getNmSubscritor()));
 			}

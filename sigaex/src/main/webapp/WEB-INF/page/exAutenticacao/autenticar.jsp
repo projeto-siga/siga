@@ -44,7 +44,7 @@
 									</div>
 								</div>
 							</div>
-							<c:if test="${!podeVisualizarExternamente}">
+							<c:if test="${podeVisualizarExternamente != null && !podeVisualizarExternamente}">
 								<div class="row">
 									<div class="col">
 										<div class="form-group">

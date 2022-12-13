@@ -96,13 +96,14 @@ public class ExAutenticacaoController extends ExController {
 		String recaptchaSitePassword = getRecaptchaSitePassword();
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		result.include("n", n);
-		result.include("cod", cod);
+
+		if ( cod != null && !cod.trim().isEmpty() ) {
+			result.include("cod", cod);
+			result.include("podeVisualizarExternamente", false);
+		}
 
 		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();
-
-			result.include("podeVisualizarExternamente", true);
-
 			return;
 		}
 

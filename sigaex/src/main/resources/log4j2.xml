@@ -40,7 +40,11 @@
             <AppenderRef ref="json-file"/>
         </AsyncLogger>
         
-        <Logger name="br.gov.jfrj.siga.context.ApiContextSupport" level="BLAME">
+
+    	<Logger name="br.gov.jfrj.siga.vraptor.RequestParamsCheckInterceptor" level="BLAME">
+    		<AppenderRef ref="file-request"/>
+    	</Logger>
+    	<Logger name="br.gov.jfrj.siga.context.ApiContextSupport" level="BLAME">
     		<AppenderRef ref="file-request"/>
     	</Logger>
     	

@@ -340,5 +340,11 @@ public class Prop {
 
 		/* Permite inativar lotação com determinadas marcações */
 		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "false");
+	
+		/* Permite realizar o upload das extensões declaradas */
+		provider.addPublicProperty("/sigagc.todos.extensoes.anexo.permitidas", "jpg,bmp,png,doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+		provider.addPublicProperty("/sigagc.imagem.extensoes.anexo.permitidas", "jpg,bmp,png");
+		provider.addPublicProperty("/sigagc.documento.extensoes.anexo.permitidas", "doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+	
 	}
 }

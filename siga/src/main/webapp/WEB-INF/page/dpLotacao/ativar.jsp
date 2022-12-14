@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 
-<siga:pagina titulo="Inativar">
+<siga:pagina titulo="Ativar">
 
 	<script type="text/javascript">
 		function sbmt() {
@@ -41,17 +41,17 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Inativar <fmt:message key="usuario.lotacao"/> - ${lotacao.sigla}</h5>
+				<h5>Ativar <fmt:message key="usuario.lotacao"/> - ${lotacao.sigla}</h5>
 			</div>
 			<div class="card-body">
-				<form name="frm" action="${request.contextPath}/app/lotacao/inativar_gravar" method="post">
+				<form name="frm" action="${request.contextPath}/app/lotacao/ativar_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="id" value="${id}" />
 					<div class="form-group">
 						<div class="form-group">
-							<p><strong>Informações de Inativação</strong></p>
+							<p><strong>Informações de ativação</strong></p>
 							<label for="motivo">Motivo</label>
-							<textarea placeholder="Preencher o campo com o motivo da Inativação"
+							<textarea placeholder="Preencher o campo com o motivo da ativação"
 								class="form-control" name="motivo" id="motivo" cols="60" rows="5" onkeydown="corrige();tamanho();" maxlength="500"onblur="tamanho();" onclick="tamanho();"></textarea>
 							<small class="form-text text-muted float-right" id="Qtd">Restam 500 Caracteres</small>
 						</div>

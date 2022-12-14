@@ -426,6 +426,16 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 	}
 	
+	
+	@Get("/app/lotacao/ativar")
+	public void ativar(final Long id){
+		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+
+		//if (lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
+			result.include("lotacao",lotacao);
+		//}
+		
+	}
 
 
 	@Transacional

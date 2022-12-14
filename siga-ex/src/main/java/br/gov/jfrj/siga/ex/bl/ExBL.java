@@ -1884,7 +1884,7 @@ public class ExBL extends CpBL {
 				// Receber o móbil pai caso ele tenha sido tramitado para o cadastrante ou sua lotação
 				if (Ex.getInstance().getComp().pode(ExPodeReceber.class, cadastrante, lotaCadastrante, doc.getExMobilPai())) 
 					receber(cadastrante, cadastrante, lotaCadastrante, doc.getExMobilPai(), null);
-				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
+				juntarAoDocumentoPai(doc.getCadastrante(), doc.getLotaCadastrante(), doc, dtMov, cadastrante, cadastrante, mov);
 			}
 
 			if (doc.getExMobilAutuado() != null) {

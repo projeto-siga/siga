@@ -42,37 +42,14 @@ public class JdbcSimpleOrm implements Closeable {
     }
 
     public Connection getConnection() throws Exception {
-        String dsName = Prop.get("matrix.datasource.name");
-        if (dsName != null) {
-            Context initContext = new InitialContext();
-            Context envContext = (Context) initContext.lookup("java:");
-            DataSource ds = (DataSource) envContext.lookup(dsName);
-            Connection connection = ds.getConnection();
-            if (connection == null)
-                throw new Exception("Can't open connection to matrix database.");
-            return connection;
-        } else {
-            Connection connection = null;
-
-            Class.forName("oracle.jdbc.xa.client.OracleXADataSource");
-
-            String dbURL = Prop.get("matrix.datasource.url");
-            String username = Prop.get("matrix.datasource.username");
-            String password = Prop.get("matrix.datasource.password");
-            connection = DriverManager.getConnection(dbURL, username, password);
-            if (connection == null)
-                throw new Exception("Can't open connection to Oracle.");
-            PreparedStatement pstmt = null;
-            try {
-                pstmt = connection.prepareStatement(
-                        "alter session set current_schema=" + Prop.get("matrix.datasource.schema"));
-                pstmt.execute();
-            } finally {
-                if (pstmt != null)
-                    pstmt.close();
-            }
-            return connection;
-        }
+        String dsName = "java:jboss/datasources/SigaMatrixDS";
+        Context initContext = new InitialContext();
+        Context envContext = (Context) initContext.lookup("java:");
+        DataSource ds = (DataSource) envContext.lookup(dsName);
+        Connection connection = ds.getConnection();
+        if (connection == null)
+            throw new Exception("Can't open connection to matrix database.");
+        return connection;
     }
 
     public <T> List<T> loadAll(Class<T> clazz, String where, String... params) throws Exception {

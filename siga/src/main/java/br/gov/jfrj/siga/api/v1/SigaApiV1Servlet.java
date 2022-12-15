@@ -163,12 +163,6 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
 		addPublicProperty("senha.usuario.expiracao.dias", null);
 		addPrivateProperty("sinc.password", null);
-		
-        addPublicProperty("matrix.datasource.name", null);
-        addRestrictedProperty("matrix.datasource.url", null);
-        addRestrictedProperty("matrix.datasource.username", null);
-        addRestrictedProperty("matrix.datasource.schema", null);
-        addPrivateProperty("matrix.datasource.password", null);
 	}
 
 	@Override

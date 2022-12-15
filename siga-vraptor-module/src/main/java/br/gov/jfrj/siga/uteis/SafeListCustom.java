@@ -18,7 +18,7 @@ public class SafeListCustom extends Safelist {
     			//Add Atributos Gerais - modo permissivo
     			.addAttributes(":all", "style","class","id","name","class","align","valign","width","heigth","bgcolor","valign", "tabindex", 
     					"aria-label",  "aria-invalid", "aria-labelledby", "aria-describedby", "role", 
-    					"data-delay" , "data-html" , "data-original-title" , "data-original-title", "data-toggle", "data-placement", "data-description", "data-dismiss", "data-siga-modal-abrir")
+    					"data-delay" , "data-html" , "data-original-title" , "data-original-title", "data-toggle", "data-placement", "data-description", "data-dismiss", "data-siga-modal-abrir", "dir")
 
     			//Add Atributos Específicos
     			.addAttributes("a", "rel", "target")

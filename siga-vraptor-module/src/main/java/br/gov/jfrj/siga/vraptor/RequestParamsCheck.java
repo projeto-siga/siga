@@ -40,7 +40,8 @@ public class RequestParamsCheck {
     
     public static boolean isValid(String paramDirty, Safelist safelist) {
     	Document dirty = Jsoup.parseBodyFragment(paramDirty, ""); //pré-formata parâmetro HTML para desconsiderar HTMLs com problemas semânticos
-    	String bodyHtml = dirty.body().html(); //extrai body para checagem
+    	String bodyHtml = dirty.body().html() //extrai body para checagem 
+    						.replaceAll("<!--", ""); //Retira tag comentário
 
     	return Jsoup.isValid(bodyHtml, safelist);
     }

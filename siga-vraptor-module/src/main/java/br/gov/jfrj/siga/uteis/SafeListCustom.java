@@ -8,6 +8,7 @@ public class SafeListCustom extends Safelist {
     	
     	return Safelist.relaxed()
     			.preserveRelativeLinks(true)
+    			.addProtocols("a", "href", "#")
     			
     			//Add Tags
     			.addTags("s")

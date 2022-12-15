@@ -91,7 +91,7 @@ public class SigaCpSincExtMatrix extends SigaCpSinc {
         } catch (Exception e) {
             if (orm != null)
                 orm.rollback();
-            log("Transação abortada por erro: " + e.getMessage());
+            log("Transação abortada por erro: " + e.getMessage(), e);
         }
         return logEnd();
     }

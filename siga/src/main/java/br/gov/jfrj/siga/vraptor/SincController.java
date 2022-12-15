@@ -61,7 +61,7 @@ public class SincController extends SigaController {
 				arr.put(s);
 			json.put("log", arr);
 
-            notificarPorEmail(emails, sigla, log, json);
+            notificarPorEmail("Log de Importação - XML -> " + sigla.toUpperCase(), emails, sigla, log, json);
 
 			String s = json.toString(4);
 			result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
@@ -98,7 +98,7 @@ public class SincController extends SigaController {
                 arr.put(s);
             json.put("log", arr);
 
-            notificarPorEmail(emails, sigla, log, json);
+            notificarPorEmail("Log de Importação - " + sigla.toUpperCase() + " -> AD", emails, sigla, log, json);
 
             String s = json.toString(4);
             result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
@@ -128,7 +128,7 @@ public class SincController extends SigaController {
                 arr.put(s);
             json.put("log", arr);
 
-            notificarPorEmail(emails, sigla, log, json);
+            notificarPorEmail("Log de Importação - " + sigla.toUpperCase() + " -> Matrix", emails, sigla, log, json);
 
             String s = json.toString(4);
             result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
@@ -137,18 +137,17 @@ public class SincController extends SigaController {
         }
     }
 
-    private void notificarPorEmail(String emails, String sigla, String log, JSONObject json) throws JSONException {
+    private void notificarPorEmail(String assunto, String emails, String sigla, String log, JSONObject json) throws JSONException {
         if (Prop.get("/siga.smtp") == null) {
             json.put("email", "Não enviado já que o parâmetro 'siga.smtp' não foi informado.");
             return;
         }
-        if (emails != null && !emails.trim().isEmpty()) {
+        if (emails == null || emails.trim().isEmpty()) {
             json.put("email", "Não enviado já que o parâmetro 'emails' não foi informado.");
             return;
         }
-
-    try {
-            Correio.enviar(emails.split(","), "Log de Importação - " + sigla.toUpperCase() + "-> Matrix", log);
+        try {
+            Correio.enviar(emails.split(","), assunto, log);
             json.put("email", "Enviado para: " + emails);
         } catch (Exception ex) {
             json.put("email", "Erro no envio: " + ex.getMessage());

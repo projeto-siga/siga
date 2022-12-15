@@ -54,7 +54,7 @@ public class JdbcSimpleOrm implements Closeable {
         } else {
             Connection connection = null;
 
-            Class.forName("oracle.jdbc.OracleDriver");
+            Class.forName("oracle.jdbc.xa.client.OracleXADataSource");
 
             String dbURL = Prop.get("matrix.datasource.url");
             String username = Prop.get("matrix.datasource.username");

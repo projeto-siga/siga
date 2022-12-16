@@ -1,0 +1,1 @@
+ALTER TABLE siga.`ex_mobil` MODIFY `NUM_SEQUENCIA` smallint(3);

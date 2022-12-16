@@ -8643,7 +8643,8 @@ public class ExBL extends CpBL {
 			if (!dataAtualSemTempo.equals(dataPrimeiraAssinatura) || !dataAtualSemTempo.equals(doc.getDtDoc())) {
 				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
 				
-				boolean podePorConfiguracao = new ExPodePorConfiguracao(titular, titular.getLotacao()).withExMod(doc.getExModelo())
+				boolean podePorConfiguracao = new ExPodePorConfiguracao(titular, titular != null ? titular.getLotacao() : null)
+				        .withExMod(doc.getExModelo())
 				        .withExFormaDoc(doc.getExFormaDocumento())
 				        .withIdTpConf(ExTipoDeConfiguracao.ATUALIZAR_DATA_AO_ASSINAR).eval();
 				

@@ -51,12 +51,6 @@ public class PermissaoPublicanteDto implements Serializable {
 	@JsonProperty("caderno_descricao")
 	private String cadernoDescricao;
 	
-	@JsonProperty("retranca_hieraquia")
-	private String retrancaHierarquia;
-	
-	@JsonProperty("retranca_nivel")
-	private String retrancaNivel;
-
 	public String getIdPermissao() {
 		return idPermissao;
 	}
@@ -161,20 +155,5 @@ public class PermissaoPublicanteDto implements Serializable {
 		this.cadernoDescricao = cadernoDescricao;
 	}
 
-	public String getRetrancaHierarquia() {
-		return retrancaHierarquia;
-	}
-
-	public void setRetrancaHierarquia(String retrancaHierarquia) {
-		this.retrancaHierarquia = retrancaHierarquia;
-	}
-
-	public String getRetrancaNivel() {
-		return retrancaNivel;
-	}
-
-	public void setRetrancaNivel(String retrancaNivel) {
-		this.retrancaNivel = retrancaNivel;
-	}
 }
 

@@ -50,6 +50,10 @@
 			desabilitaDescricao();
 			return;
 		}
+		
+		if (document.getElementById('tabAnos') != null && document.getElementById('anoEmissaoString').value != 0) {
+			document.getElementById('tabAnos').value = document.getElementById('anoEmissaoString').value;
+		}
 
 		if ("${podePesquisarDescricaoLimitada}" == "true") {
 			if (document.getElementById('orgaoUsu').value != 0 
@@ -57,8 +61,6 @@
 						|| !$('#idFormaDoc-spinner').hasClass('d-none'))
 					&& document.getElementById('anoEmissaoString').value != 0) {
 				habilitaDescricao();
-				if (document.getElementById('tabAnos') != null)
-					document.getElementById('tabAnos').value = document.getElementById('anoEmissaoString').value;
 			} else {
 				desabilitaDescricao();
 				if (limpaDescricao)

@@ -852,9 +852,19 @@ public class ExMarcadorBL {
 
 	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob) {
 		ExMovimentacao movRetorno = null;
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, false));
-		transferencias.removeAll(mob.getMovimentacoesCanceladas());
+		List<ExMovimentacao> transferencias = new ArrayList<>();
+		
+		if(mob.isVolume()) {
+			for(ExMobil m : mob.getDoc().getExMobilSet()) {
+				if(!m.isGeralDeProcesso() && m.getNumSequencia() >= mob.getNumSequencia()) {
+					transferencias.addAll(m.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, true));
+				}
+			}
+		} else {
+			transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, true));
+		}
+		transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, true));
+//		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 
 		Iterator it = transferencias.iterator();
 		while (it.hasNext()) {

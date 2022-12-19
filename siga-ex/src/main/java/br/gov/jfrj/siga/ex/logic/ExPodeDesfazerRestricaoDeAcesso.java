@@ -30,8 +30,8 @@ public class ExPodeDesfazerRestricaoDeAcesso extends CompositeExpressionSupport 
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 
-		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
-		lista.addAll(mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
+		this.lista = new ArrayList();
+		this.lista.addAll(mob.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
 	}
 
 	@Override

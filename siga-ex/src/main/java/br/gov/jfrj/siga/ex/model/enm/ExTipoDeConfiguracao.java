@@ -599,8 +599,16 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[]{ CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[]{ CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
-
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+ 
+	
+	ATUALIZAR_DATA_AO_ASSINAR(64, "Atualizar Data ao Assinar", "Esta configuração tem o objetivo de habilitar a atualização automática da data do documento para que seja igual a data da primeira assinatura",
+            new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
+                    ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+            new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+                    CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+            CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
+ 
 	
 	private final int id; 
 	private final String descr;

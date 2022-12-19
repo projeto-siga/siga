@@ -97,8 +97,9 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
+ 
 <c:set var="siga_version"  scope="request" value="10.3.1.0" />
-
+ 
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">

@@ -195,17 +195,21 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private CpLocalidade localidade;
 	
 	@Column(name = "IS_EXTERNA_LOTACAO")
+    @Desconsiderar
 	private Integer isExternaLotacao;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_INI")
+    @Desconsiderar
 	private CpIdentidade hisIdcIni;
 
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="HIS_IDC_FIM")
+    @Desconsiderar
 	private CpIdentidade hisIdcFim;
 	
 	@Column(name = "IS_SUSPENSA")
+    @Desconsiderar
 	private Integer isSuspensa;
 
 	public Integer getIsExternaLotacao() {

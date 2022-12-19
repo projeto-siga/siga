@@ -4,7 +4,7 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.JLogic;
 
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMobil.Pendencias;
+import br.gov.jfrj.siga.ex.bl.ExTramiteBL.Pendencias;
 
 public class ExEstaAindaComOCadastrante implements Expression {
 

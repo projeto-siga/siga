@@ -21,11 +21,11 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
-import br.gov.jfrj.siga.ex.ExMobil.Pendencias;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
+import br.gov.jfrj.siga.ex.bl.ExTramiteBL.Pendencias;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -125,9 +125,11 @@ public class ExMarcadorBL {
 				m = CpMarcadorEnum.JUNTADO_EXTERNO.getId();
 			if (t == ExTipoDeMovimentacao.APENSACAO && apensadoAVolumeDoMesmoProcesso)
 				m = CpMarcadorEnum.APENSADO.getId();
-			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
-					|| t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
+			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
 				m = CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId();
+				// Quando é transferido para um órgão externo, a marca deve ficar
+				// com o cadastrante e sua lotação, em vez do responsável
+				acrescentarMarca(m, dt, mov.getCadastrante(), mov.getLotaCadastrante());
 			}
 //			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 //					|| t == ExTipoDeMovimentacao.TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {
@@ -181,11 +183,7 @@ public class ExMarcadorBL {
 				acrescentarMarca(m, dt, null, null);
 		} else {
 			for (PessoaLotacaoParser pl : mob.getAtendente()) {
-				if (m == CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()) {
-					// Quando é transferido para um órgão externo, a marca deve ficar
-					// com o cadastrante e sua lotação, em vez do responsável
-					acrescentarMarca(m, dt, pl.getPessoa(), pl.getLotacao());
-				} else if (m != 0L) {
+				if (m != 0L) {
 					// Edson: Os marcadores "Arq Corrente" e
 					// "Aguardando andamento" são mutuamente exclusivos
 					if (m != CpMarcadorEnum.EM_ANDAMENTO.getId()
@@ -623,7 +621,8 @@ public class ExMarcadorBL {
 		recebidos.removeAll(p.recebimentosDeNotificacoesPendentes);
 		for (ExMovimentacao recebimento : recebidos) {
 			acrescentarMarcaTransferencia(
-					mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())
+					(mob.isAtendente(null, recebimento.getLotaResp()) ||
+					(recebimento.getLotaResp() == null && mob.isAtendente(recebimento.getResp(), recebimento.getLotaResp())))
 							? ((mob.getNumSequencia() > 1 || mob.doc().jaTransferido()) ? CpMarcadorEnum.EM_ANDAMENTO.getId()
 									: CpMarcadorEnum.ASSINADO.getId())
 							: CpMarcadorEnum.AGUARDANDO_CONCLUSAO.getId(),

@@ -62,10 +62,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "and (pes.situacaoFuncionalPessoa = :sfp1 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp2 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp4 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp11 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36) "),
+				+ "or pes.situacaoFuncionalPessoa = :sfp36 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp38) "),
         @NamedQuery(name = "consultarIdentidadeAtualPelaInicial", query = "from CpIdentidade u "
 				+ "		where u.hisDtIni = "
 				+ "		(select max(p.hisDtIni) from CpIdentidade p where p.hisIdIni = :idIni)"
@@ -80,11 +82,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "and pes.dataFimPessoa is null "
 				+ "and (pes.situacaoFuncionalPessoa = :sfp1 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp2 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp4 "				
+				+ "or pes.situacaoFuncionalPessoa = :sfp4 "	
+				+ "or pes.situacaoFuncionalPessoa = :sfp11 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36)")})
+				+ "or pes.situacaoFuncionalPessoa = :sfp36 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp38)")})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 

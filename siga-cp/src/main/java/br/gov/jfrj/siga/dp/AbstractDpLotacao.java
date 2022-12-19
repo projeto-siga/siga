@@ -207,6 +207,14 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	
 	@Column(name = "IS_SUSPENSA")
 	private Integer isSuspensa;
+	
+	@Column(name = "MOTIVO_INATIVACAO", length = 500)
+	@Desconsiderar
+	private String motivoInativacao;
+	
+	@Column(name = "MOTIVO_ATIVACAO", length = 500)
+	@Desconsiderar
+	private String motivoAtivacao;
 
 	public Integer getIsExternaLotacao() {
 		return isExternaLotacao;
@@ -440,5 +448,26 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	public void setIsSuspensa(Integer isSuspensa) {
 		this.isSuspensa = isSuspensa;
 	}
+	
+	
+	/* 
+	 * Motivo da Inativação/Ativação de Lotações para Histórico
+	 * */
+	public String getMotivoInativacao() {
+		return motivoInativacao;
+	}
+
+	public void setMotivoInativacao(String motivoInativacao) {
+		this.motivoInativacao = motivoInativacao;
+	}
+
+	public String getMotivoAtivacao() {
+		return motivoAtivacao;
+	}
+
+	public void setMotivoAtivacao(String motivoAtivacao) {
+		this.motivoAtivacao = motivoAtivacao;
+	}
+
 
 }

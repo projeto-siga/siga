@@ -405,78 +405,67 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				nmLotacao, idOrgaoUsu, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade);
 		this.result.redirectTo(this).lista(0, idOrgaoUsu, siglaLotacao);
 	}
+		
+	@Get("/app/lotacao/ativar")
+	public void ativar(final Long id) throws Exception {
+		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+
+		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular())) {
+			result.include("lotacao",lotacao);
+		} 
+	}
 	
 	@Get("/app/lotacao/inativar")
-	public void inativar(final Long id){
+	public void inativar(final Long id) throws Exception {
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 		
-		Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE).size();
-		Integer qtdeDocumentoPosse = Cp.getInstance().getBL().consultarQtdeDocumentoPosse(lotacao); 
-		
-		if (qtdePessoa > 0 || qtdeDocumentoPosse > 0) {
-			throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
-					+ SigaMessages.getMessage("usuario.lotacao"), 0);
-		} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {
-			throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao")
-							+ " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),0);
-		} else {
+		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular())) {
 			result.include("lotacao",lotacao);
-		}
-	
-		
+		}	
 	}
 	
-	
-	@Get("/app/lotacao/ativar")
-	public void ativar(final Long id){
-		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
-
-		//if (lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
-			result.include("lotacao",lotacao);
-		//}
-		
-	}
-
-
 	@Transacional
-	@Post("/app/lotacao/ativarInativar")
-	public void ativarInativar(final Long id) throws Exception {
+	@Post("/app/lotacao/ativar_gravar")
+	public void ativarGravar(final Long id, final String motivo) throws Exception {	
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
-
-		// ativar
-		if (lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
+		
+		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular())) {
 			DpLotacao lotacaoNova = new DpLotacao();
 			lotacao.setDataFimLotacao(null);
-			Cp.getInstance().getBL().copiaLotacao(lotacao, lotacaoNova);
-			dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
-		} else {// inativar
-			Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE).size();
-			Integer qtdeDocumentoPosse = Cp.getInstance().getBL().consultarQtdeDocumentoPosse(lotacao); 
+			try {
+				Cp.getInstance().getBL().copiaLotacao(lotacao, lotacaoNova);
+				lotacao.setMotivoAtivacao(motivo);
+				
+				dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
+				
+				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "");
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		}	
+		
+	}
+	
+	@Transacional
+	@Post("/app/lotacao/inativar_gravar")
+	public void inativarGravar(final Long id, final String motivo) throws Exception {
+		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);		
 
-			if (qtdePessoa > 0 || qtdeDocumentoPosse > 0) {
-				throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
-						+ SigaMessages.getMessage("usuario.lotacao"), 0);
-			} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {
-				throw new AplicacaoException(
-						"Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao")
-								+ " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),
-						0);
-			} else {
-				Calendar calendar = new GregorianCalendar();
-				Date date = new Date();
-				calendar.setTime(date);
-				lotacao.setDataFimLotacao(calendar.getTime());
+		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular())) {
 
-				try {
-					dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
-				} catch (final Exception e) {
-					throw new AplicacaoException("Erro na gravação", 0, e);
-				}
+			lotacao.setDataFimLotacao(dao.consultarDataEHoraDoServidor());
+			lotacao.setMotivoInativacao(motivo);
+
+			try {
+				dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
+				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "");
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
 		}
-		this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), lotacao.getSiglaLotacao());
-	}
 
+	}
+	
 	@Transacional
 	@Post("/app/lotacao/suspender")
 	public void suspender(final Long id) throws Exception {

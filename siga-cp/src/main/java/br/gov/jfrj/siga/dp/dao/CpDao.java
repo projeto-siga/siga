@@ -2818,15 +2818,6 @@ public class CpDao extends ModeloDao {
 		try {
 			Query sql = em().createNamedQuery("consultarQtdeDocPossePorDpLotacaoECpMarca");
 			sql.setParameter("idLotacao", idLotacao);
-			/*
-			 * 
-			 * Arrays.asList(
-					CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId(),
-					CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
-					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId(),
-					CpMarcadorEnum.CANCELADO.getId(),
-					CpMarcadorEnum.SEM_EFEITO.getId())
-			 */
 			sql.setParameter("listMarcadores", CpMarcadorEnum.getListMarcadoresByListChaves(Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos")));
 			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
 			return l;

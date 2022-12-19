@@ -297,6 +297,8 @@
 					<tr>
 						<th class="text-left" style="width: 5%;"></th>
 						<th class="text-center" style="width: 25%;">Arquivo</th>
+						<th class="text-center" style="width: 25%;">Número</th>
+						<th class="text-center" style="width: 25%;">Descrição</th>
 						<th class="text-center" style="width: 25%;">Data de Recebimento</th>
 						<th class="text-center" style="width: 20%;">Status da Publicação</th>
 						<th class="text-center" style="width: 25%;">Data Cancelamento</th>	
@@ -308,6 +310,8 @@
 				    	<tr class="even">
 							<td class="text-center align-middle"><input type="checkbox" name="pubSelecionados" id="${x}" class="chk" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'disabled="disabled"' : ''} value="${pub.publicacaoId}"  onclick="javascript:atualizarCheck(this);"/></td>
 	  			        	<td class="text-center align-middle" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'style="font-weight: bold;"' : 'style="font-weight: normal;"'}>${pub.nomeArquivo}</td>
+	  			        	<td class="text-center align-middle" ><a href="/sigaex/app/expediente/doc/exibir?sigla=${pub.codDocSemPapel}">${pub.siglaDocSemPapel}</a></td>
+	  			        	<td class="text-center align-middle" >${pub.descrDocSemPapel}</td>
 	  			        	<td class="text-center align-middle" style="font-weight: normal;"><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${pub.dataRecebimento}" /></td>
 	  			        	<td class="text-center align-middle" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'style="font-weight: bold;"' : 'style="font-weight: normal;"'}>${pub.statusPublicacaoDto.statusPublicacaoDescr}</td> 
 	  			        	<td class="text-center align-middle" style="font-weight: normal;"><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${pub.dataCancelamento}" /></td>

@@ -4557,7 +4557,7 @@ public class ExMovimentacaoController extends ExController {
 			}
 			
 			result.include("listaJustifCancel", consultaService.listarJustificativasCancelamento(auth));
-			result.include("lista", listaPag);
+			result.include("lista", popularDadosDocSemPapelDoe(listaPag));
 			result.include("listaJson", new Gson().toJson(listaPag));
 			result.include("tamanho", listaPublicacoes.size());
 		}
@@ -4568,7 +4568,22 @@ public class ExMovimentacaoController extends ExController {
 		result.include("dataAte", dataAte);
 		result.include("secao", secao);
 		result.include("msgCabecClass", "alert-warning");
-	}	
+	}
+	
+	private List<MaterialEnviadoDto> popularDadosDocSemPapelDoe(List<MaterialEnviadoDto> listaPag) {
+		List<ExMovimentacao> listaMovs = 
+				dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, getTitular());
+		for (MaterialEnviadoDto materialEnviadoDto : listaPag)
+			for (ExMovimentacao exMov : listaMovs) {
+				if(materialEnviadoDto.getComprovanteEnvio() != null 
+						&& materialEnviadoDto.getComprovanteEnvio().equals(exMov.getNumTRFPublicacao())) {
+					materialEnviadoDto.setSiglaDocSemPapel(exMov.getExDocumento().getPrimeiraVia().getDnmSigla());
+					materialEnviadoDto.setCodDocSemPapel(exMov.getExDocumento().getPrimeiraVia().getCodigoCompacto());
+					materialEnviadoDto.setDescrDocSemPapel(exMov.getExDocumento().getDescrDocumento());
+				}
+			}
+		return listaPag;
+	}
 	
 	
 	@Get("/app/exMovimentacao/listarDOE")

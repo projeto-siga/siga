@@ -61,6 +61,12 @@ public class MaterialEnviadoDto implements Serializable {
 	private String razaoSocial;
 	
 	private StatusPublicacaoDto statusPublicacaoDto;
+	
+	private String codDocSemPapel;
+	
+	private String siglaDocSemPapel;
+	
+	private String descrDocSemPapel;
 
 	public String getIdMaterial() {
 		return idMaterial;
@@ -181,4 +187,29 @@ public class MaterialEnviadoDto implements Serializable {
 	public void setStatusPublicacaoDto(StatusPublicacaoDto statusPublicacaoDto) {
 		this.statusPublicacaoDto = statusPublicacaoDto;
 	}
+
+	public String getCodDocSemPapel() {
+		return codDocSemPapel;
+	}
+
+	public void setCodDocSemPapel(String codDocSemPapel) {
+		this.codDocSemPapel = codDocSemPapel;
+	}
+
+	public String getDescrDocSemPapel() {
+		return descrDocSemPapel;
+	}
+
+	public void setDescrDocSemPapel(String descrDocSemPapel) {
+		this.descrDocSemPapel = descrDocSemPapel;
+	}
+
+	public String getSiglaDocSemPapel() {
+		return siglaDocSemPapel;
+	}
+
+	public void setSiglaDocSemPapel(String siglaDocSemPapel) {
+		this.siglaDocSemPapel = siglaDocSemPapel;
+	}
+	
 }

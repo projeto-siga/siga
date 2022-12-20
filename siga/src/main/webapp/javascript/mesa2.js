@@ -552,7 +552,13 @@ function carregaFromJson(json, appMesa) {
 					preencheLinhasFantasmas(grp, appMesa);
 					Vue.set(appMesa.grupos, g, grp[0]);
 				}
-			}
+			} 
+		} else { 
+			let grpVue = getGrupoVue(grp[0].grupoNome); 
+			// Se ainda houver linha a preencher no grupo e nao encontrou, reduz 1 do contador. 
+			// Provavelmente existe marca sem mobil no grupo 
+			if (grpVue.grupoDocs[grpVue.grupoCounterAtivo - 1].codigo == "") 
+				grpVue.grupoDocs.length--;
 		}
 	}
 	

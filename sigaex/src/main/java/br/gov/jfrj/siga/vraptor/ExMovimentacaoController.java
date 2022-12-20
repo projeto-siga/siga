@@ -182,6 +182,7 @@ import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.CancelaMaterialDto;
+import br.gov.jfrj.siga.integracao.ws.pubnet.dto.DocumentoSemPapelDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.EnviaPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MaterialEnviadoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoCancelamentoDto;
@@ -4571,15 +4572,17 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	private List<MaterialEnviadoDto> popularDadosDocSemPapelDoe(List<MaterialEnviadoDto> listaPag) {
-		List<ExMovimentacao> listaMovs = 
-				dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, getTitular());
+		List<ExMovimentacao> listaMovs = dao().listarMovPorTipo(ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, getTitular(), Boolean.FALSE);
 		for (MaterialEnviadoDto materialEnviadoDto : listaPag)
 			for (ExMovimentacao exMov : listaMovs) {
 				if(materialEnviadoDto.getComprovanteEnvio() != null 
 						&& materialEnviadoDto.getComprovanteEnvio().equals(exMov.getNumTRFPublicacao())) {
-					materialEnviadoDto.setSiglaDocSemPapel(exMov.getExDocumento().getPrimeiraVia().getDnmSigla());
-					materialEnviadoDto.setCodDocSemPapel(exMov.getExDocumento().getPrimeiraVia().getCodigoCompacto());
-					materialEnviadoDto.setDescrDocSemPapel(exMov.getExDocumento().getDescrDocumento());
+					DocumentoSemPapelDto docSemPapelDto = new DocumentoSemPapelDto();
+					docSemPapelDto.setIdMov(exMov.getIdMov());
+					docSemPapelDto.setSiglaDocSemPapel(exMov.getExDocumento().getMobilGeral().getDnmSigla());
+					docSemPapelDto.setCodDocSemPapel(exMov.getExDocumento().getMobilGeral().getCodigoCompacto());
+					docSemPapelDto.setDescrDocSemPapel(exMov.getExDocumento().getDescrDocumento());
+					materialEnviadoDto.setDocSemPapelDto(docSemPapelDto);
 				}
 			}
 		return listaPag;
@@ -4676,32 +4679,23 @@ public class ExMovimentacaoController extends ExController {
 	@Transacional
 	@Post("/app/exMovimentacao/cancelPublicacaoArquivoDOE")
 	public void cancelarPublicacaoArquivoDOE(String nomeArq, String justificativaId, 
-							String reciboAssinado, String reciboHash, String idComprovanteEnvio, String reciboTexto) throws Exception {
+							String reciboAssinado, String reciboHash, String idMov, String reciboTexto) throws Exception {
 		try {
-			
 			CancelaMaterialDto reciboCancel = Ex.getInstance().getBL()
 													.cancelarPublicacaoArquivoDOE(getAuthHeaderDOE(), nomeArq, justificativaId, reciboAssinado, reciboHash);
-			
 			if (reciboCancel == null || !"0000".equals(reciboCancel.getCodRetorno())) {
 				System.out.println("Erro ao enviar publicação ao webservice DOE." + reciboCancel);
 				throw new RuntimeException("Erro ao enviar publicação ao webservice DOE." 
 								+ reciboCancel != null ? "Código Erro" + reciboCancel.getCodRetorno() : "");
 			} else {
-				if(idComprovanteEnvio != null || !"".equals(idComprovanteEnvio)) {
-					Long idComprovanteEnvioLong = Long.valueOf(idComprovanteEnvio);
-					List<ExMovimentacao> listaMovs = 
-							dao().listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE, getTitular());
-
-					for (ExMovimentacao exMov : listaMovs) {
-						if(idComprovanteEnvioLong.equals(exMov.getNumTRFPublicacao())) {
-							String sigla = exMov.getExDocumento().getSigla();
-							final String descrMov = "Cancelamento de publicação DOE realizado com sucesso! ";		
-							criarMovimentoDoe(reciboTexto, descrMov, null, exMov, sigla, ExTipoDeMovimentacao.CANCELAR_PUBLICACAO_DOE);
-							break;
-						}
+				if(idMov != null || !"".equals(idMov)) {
+					ExMovimentacao mov = ExDao.getInstance().consultar(Long.parseLong(idMov), ExMovimentacao.class, false);
+					if (mov != null) {
+						String sigla = mov.getExDocumento().getSigla();
+						final String descrMov = "Cancelamento de publicação DOE realizado com sucesso! ";		
+						criarMovimentoDoe(reciboTexto, descrMov, null, mov, sigla, ExTipoDeMovimentacao.CANCELAR_PUBLICACAO_DOE);
 					}
 				}
-				
 				setMensagem(new Gson().toJson(reciboCancel));
 			}
 		} catch (final Exception e) {

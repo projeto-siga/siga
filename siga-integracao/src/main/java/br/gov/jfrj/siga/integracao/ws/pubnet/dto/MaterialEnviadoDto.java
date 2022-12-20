@@ -62,11 +62,7 @@ public class MaterialEnviadoDto implements Serializable {
 	
 	private StatusPublicacaoDto statusPublicacaoDto;
 	
-	private String codDocSemPapel;
-	
-	private String siglaDocSemPapel;
-	
-	private String descrDocSemPapel;
+	private DocumentoSemPapelDto docSemPapelDto;
 
 	public String getIdMaterial() {
 		return idMaterial;
@@ -188,28 +184,12 @@ public class MaterialEnviadoDto implements Serializable {
 		this.statusPublicacaoDto = statusPublicacaoDto;
 	}
 
-	public String getCodDocSemPapel() {
-		return codDocSemPapel;
+	public DocumentoSemPapelDto getDocSemPapelDto() {
+		return docSemPapelDto;
 	}
 
-	public void setCodDocSemPapel(String codDocSemPapel) {
-		this.codDocSemPapel = codDocSemPapel;
-	}
-
-	public String getDescrDocSemPapel() {
-		return descrDocSemPapel;
-	}
-
-	public void setDescrDocSemPapel(String descrDocSemPapel) {
-		this.descrDocSemPapel = descrDocSemPapel;
-	}
-
-	public String getSiglaDocSemPapel() {
-		return siglaDocSemPapel;
-	}
-
-	public void setSiglaDocSemPapel(String siglaDocSemPapel) {
-		this.siglaDocSemPapel = siglaDocSemPapel;
+	public void setDocSemPapelDto(DocumentoSemPapelDto semPapelDto) {
+		this.docSemPapelDto = semPapelDto;
 	}
 	
 }

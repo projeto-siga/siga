@@ -236,6 +236,16 @@ public enum CpMarcadorEnum {
 		return listMar;
 	}
 	
+	public static List<Long> getListLongIdByGrupo(CpMarcadorGrupoEnum grupo) {
+		List<Long> listMar = new ArrayList<Long>();
+		for (CpMarcadorEnum mar : CpMarcadorEnum.values()) {
+			if (mar.getGrupo().getNome().equals(grupo.getNome())) {
+				listMar.add(mar.getId());
+			}
+		}
+		return listMar;
+	}
+	
 	public static List<Long> getListMarcadoresByListChaves(List<String> chaves){
 		final List<Long> listaMarcadores = new ArrayList<Long>();
 		if (chaves != null) {

@@ -1259,10 +1259,8 @@ public class CpBL {
 			
 			if(pessoaAnt != null) {
 				Integer qtde = CpDao.getInstance().quantidadeDocumentos(pessoaAnt);
-				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) 
-						&& (!podeAlterarOrgaoPessoa || pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu))) {
-					throw new AplicacaoException(
-							"A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
+				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) && (!podeAlterarOrgaoPessoa || pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu))) {
+					throw new AplicacaoException("A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
 				}
 				pessoa.setIdInicial(pessoaAnt.getIdInicial());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
@@ -1273,8 +1271,8 @@ public class CpBL {
 					marcadores.add(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
 					marcadores.add(CpMarcadorEnum.EM_ELABORACAO.getId());
 					
-					Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().qtdeMarcasMarcadorPessoa(pessoaAnt.getPessoaInicial(), marcadores);
-					Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().qtdeMarcasMarcadorLotacao(pessoaAnt.getLotacao().getLotacaoInicial(), marcadores);
+					Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().quantidadeMarcasPorPessoaMarcadores(pessoaAnt.getPessoaInicial(), marcadores, true);
+					Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().quantidadeMarcasPorLotacaoMarcadores(pessoaAnt.getLotacao().getLotacaoInicial(), marcadores, true);
 					Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);
 					
 					if(qtdeCaixaEntradaTMPPessoa > 0 || (qtdeCaixaEntradaTMPLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
@@ -2239,7 +2237,8 @@ public class CpBL {
 			final Long idLotacao, final String nmLotacao, final String siglaLotacao, final String situacao,
 			DpLotacao lotacao, DpLotacao lotacaoNova, Date dataSistema) {
 		List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(idLotacao, Boolean.TRUE, Boolean.FALSE);
-		Integer qtdeDocumentoCriadosPosse = consultarQtdeDocumentoPosse(lotacao);
+		
+		Integer qtdeDocumentoCriadosPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, Boolean.FALSE, Boolean.FALSE); // Não restringe Marcadores
 		
 		if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
 				(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
@@ -2608,22 +2607,22 @@ public class CpBL {
 	
 	
     /**
-     * Consulta quantidade de documentos criados que estão em posse da lotação
+     * Consulta quantidade de documentos criados OU que estão em posse da lotação, conforme parâmetros e propriedades
      *
      * @param lotacao
      * @return
      */
-	public Integer consultarQtdeDocumentoPosse(DpLotacao lotacao) { 
+	public Integer quatidadeMarcasOuDocumentosEmPosseDaLotacao(DpLotacao lotacao, boolean restringirMarcadores, boolean restringirMarcadoresGrupoNenhum) { 
 
-        Integer qtdeDocumentoCriadosPosse;
+		Integer quantidade;
         List<String> listaMarcadores = Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos");
 
-        if (listaMarcadores != null && !listaMarcadores.isEmpty())
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocPossePorDpLotacaoECpMarca(lotacao.getIdInicial());
+        if (restringirMarcadores && listaMarcadores != null && !listaMarcadores.isEmpty())
+        	quantidade = dao().quatidadeMarcasEmPosseDaLotacaoMarcadores(lotacao,listaMarcadores,restringirMarcadoresGrupoNenhum);
         else
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+        	quantidade = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
 
-        return qtdeDocumentoCriadosPosse;
+        return quantidade;
     }
 	
 	
@@ -2644,9 +2643,9 @@ public class CpBL {
 		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
 		
 		Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(lotacao.getId(), Boolean.TRUE, Boolean.FALSE).size();
-		Integer qtdeDocumentoPosse = Cp.getInstance().getBL().consultarQtdeDocumentoPosse(lotacao); 
+		Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, Boolean.TRUE, Boolean.TRUE); 
 		
-		if (qtdePessoa > 0 || qtdeDocumentoPosse > 0) {
+		if (qtdePessoa > 0 || quantidadeEmPosse > 0) {
 			throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
 					+ SigaMessages.getMessage("usuario.lotacao"), 0);
 		} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {

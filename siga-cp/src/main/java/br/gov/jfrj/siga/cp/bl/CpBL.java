@@ -2239,7 +2239,7 @@ public class CpBL {
 			final Long idLotacao, final String nmLotacao, final String siglaLotacao, final String situacao,
 			DpLotacao lotacao, DpLotacao lotacaoNova, Date dataSistema) {
 		List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(idLotacao, Boolean.TRUE, Boolean.FALSE);
-		Integer qtdeDocumentoCriadosPosse = consultarQtdeDocumentoPosse(lotacao);
+		Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
 		
 		if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
 				(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
@@ -2605,56 +2605,5 @@ public class CpBL {
 		}
 		return orgaos;
 	} 
-	
-	
-    /**
-     * Consulta quantidade de documentos criados que estão em posse da lotação
-     *
-     * @param lotacao
-     * @return
-     */
-	public Integer consultarQtdeDocumentoPosse(DpLotacao lotacao) { 
-
-        Integer qtdeDocumentoCriadosPosse;
-        List<String> listaMarcadores = Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos");
-
-        if (listaMarcadores != null && !listaMarcadores.isEmpty())
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocPossePorDpLotacaoECpMarca(lotacao.getIdInicial());
-        else
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
-
-        return qtdeDocumentoCriadosPosse;
-    }
-	
-	
-	public boolean podeAtivarLotacao(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {	
-		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação";
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
-		
-		if (lotacao.getDataFimLotacao() == null) {
-			throw new AplicacaoException("Ativação não permitida. " + SigaMessages.getMessage("usuario.lotacao") + " não encontra-se inativa.", 0);
-		}
-		
-		return true;
-		
-	}
-	
-	public boolean podeInativarLotacao(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {		
-		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação";
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
-		
-		Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(lotacao.getId(), Boolean.TRUE, Boolean.FALSE).size();
-		Integer qtdeDocumentoPosse = Cp.getInstance().getBL().consultarQtdeDocumentoPosse(lotacao); 
-		
-		if (qtdePessoa > 0 || qtdeDocumentoPosse > 0) {
-			throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
-					+ SigaMessages.getMessage("usuario.lotacao"), 0);
-		} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {
-			throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao")
-							+ " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),0);
-		}
-		return true;	
-	}
-
 	
 }

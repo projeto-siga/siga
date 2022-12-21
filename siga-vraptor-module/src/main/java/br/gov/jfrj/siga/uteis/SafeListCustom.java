@@ -17,7 +17,7 @@ public class SafeListCustom extends Safelist {
     			.addTags("hr")
 
     			//Add Atributos Gerais - modo permissivo
-    			.addAttributes(":all", "style", "class","id", "name","class","align","valign","width","heigth","bgcolor","valign", "tabindex", "size",
+    			.addAttributes(":all", "style","class","id","name","class","align","valign","width","heigth","bgcolor","valign", "tabindex", 
     					"aria-label",  "aria-invalid", "aria-labelledby", "aria-describedby", "aria-controls", "aria-expanded", "aria-setsize", "role", 
     					"data-delay" , "data-html" , "data-original-title" , "data-original-title", "data-toggle", "data-placement", "data-description", "data-dismiss", "data-siga-modal-abrir",
     					"data-aria-level", "data-aria-posinset", "data-font", "data-leveltext", "data-list-defn-props", "data-listid",  "dir")

@@ -235,19 +235,6 @@ public enum CpMarcadorEnum {
 		}
 		return listMar;
 	}
-	
-	public static List<Long> getListMarcadoresByListChaves(List<String> chaves){
-		final List<Long> listaMarcadores = new ArrayList<Long>();
-		if (chaves != null) {
-			for(String chave : chaves) {
-				CpMarcadorEnum marcador = CpMarcadorEnum.valueOf(chave.trim());
-				if(marcador != null) {
-					listaMarcadores.add(marcador.getId());
-				}
-			}	
-		}
-		return listaMarcadores;
-	}
 
 	public String getIcone() {
 		return icone;

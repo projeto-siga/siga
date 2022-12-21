@@ -94,7 +94,9 @@ function sbmt(offset) {
 							<c:url var="url" value="/app/lotacao/editar">
 								<c:param name="id" value="${lotacao.id}"></c:param>
 							</c:url>
-
+							<c:url var="urlAtivarInativar" value="/app/lotacao/ativarInativar">
+								<c:param name="id" value="${lotacao.id}"></c:param>
+							</c:url>
 							<c:url var="urlSuspender" value="/app/lotacao/suspender">
 								<c:param name="id" value="${lotacao.id}"></c:param>
 							</c:url>
@@ -102,21 +104,14 @@ function sbmt(offset) {
 							<div class="btn-group">								  
 							  <c:choose>
 								<c:when test="${empty lotacao.dataFimLotacao}">
-									<c:url var="urlAtivarInativar" value="/app/lotacao/inativar">
-										<c:param name="id" value="${lotacao.id}"></c:param>
-									</c:url>
-									
-									<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" aria-pressed="true" style="min-width: 80px;">Inativar</a>
+									<a href="${urlAtivarInativar}" onclick='javascript:atualizarUrl("javascript:submitPost(\"${urlAtivarInativar}\")","Deseja inativar o cadastro selecionado?");return false;' class="btn btn-primary" role="button" 
+										aria-pressed="true" data-siga-modal-abrir="confirmacaoModal" style="min-width: 80px;">Inativar</a>
 									<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									    <span class="sr-only"></span>
 								    </button>
 								</c:when>
 								<c:otherwise>
-									<c:url var="urlAtivarInativar" value="/app/lotacao/ativar">
-										<c:param name="id" value="${lotacao.id}"></c:param>
-									</c:url>
-									
-									<a href="${urlAtivarInativar}" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+									<a href="javascript:submitPost('${urlAtivarInativar}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
 									<button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									    <span class="sr-only"></span>
 								    </button>
@@ -154,7 +149,7 @@ function sbmt(offset) {
 		</table>				
 		<div class="gt-table-buttons">
 			<c:url var="url" value="/app/lotacao/editar"></c:url>
-			<c:url var="urlAtivarInativar" value="/app/lotacao/inativar"></c:url>
+			<c:url var="urlAtivarInativar" value="/app/lotacao/ativarInativar"></c:url>
 			<input type="button" value="Incluir" onclick="javascript:window.location.href='${url}'" class="btn btn-primary">
 		</div>				
 		</form>

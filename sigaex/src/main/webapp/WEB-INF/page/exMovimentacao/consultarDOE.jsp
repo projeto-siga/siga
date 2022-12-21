@@ -325,7 +325,7 @@
 				    	<tr class="even">
 							<td class="text-center align-middle"><input type="checkbox" name="pubSelecionados" id="${x}" class="chk" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'disabled="disabled"' : ''} value="${pub.publicacaoId}"  onclick="javascript:atualizarCheck(this);"/></td>
 	  			        	<td class="text-center align-middle" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'style="font-weight: bold;"' : 'style="font-weight: normal;"'}>${pub.nomeArquivo}</td>
-	  			        	<td class="text-center align-middle" ><a href="/sigaex/app/expediente/doc/exibir?sigla=${pub.docSemPapelDto.codDocSemPapel}">${pub.docSemPapelDto.siglaDocSemPapel}</a></td>
+	  			        	<td class="text-center align-middle" ><a href="/sigaex/app/expediente/doc/exibir?sigla=${pub.docSemPapelDto.codDocSemPapel}&linkVolta=location.href='/sigaex/app/exMovimentacao/consultarDOE?dataEnvio=${dataEnvio}%26dataAte=${dataAte}'">${pub.docSemPapelDto.siglaDocSemPapel}</a></td>
 	  			        	<td class="text-center align-middle" >${pub.docSemPapelDto.descrDocSemPapel}</td>
 	  			        	<td class="text-center align-middle" style="font-weight: normal;"><fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${pub.dataRecebimento}" /></td>
 	  			        	<td class="text-center align-middle" ${(pub.statusPublicacaoDto.publicadoOrCancel) ? 'style="font-weight: bold;"' : 'style="font-weight: normal;"'}>${pub.statusPublicacaoDto.statusPublicacaoDescr}</td> 

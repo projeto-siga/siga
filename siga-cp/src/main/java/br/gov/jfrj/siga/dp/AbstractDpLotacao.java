@@ -118,12 +118,10 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
 				+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
 				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao"),
-		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
-						+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+		@NamedNativeQuery(name = "consultarQtdeDocPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
 						+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
 						+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-						+ " where lot.id_lotacao_ini = :idLotacao or (marca.ID_LOTACAO_INI = :idLotacao"
-				        + " and marca.ID_MARCADOR not in (:listMarcadores))")})
+						+ " where marca.ID_LOTACAO_INI = :idLotacao and marca.ID_MARCADOR not in (:listMarcadores)")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {
@@ -209,6 +207,14 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	
 	@Column(name = "IS_SUSPENSA")
 	private Integer isSuspensa;
+	
+	@Column(name = "MOTIVO_INATIVACAO", length = 500)
+	@Desconsiderar
+	private String motivoInativacao;
+	
+	@Column(name = "MOTIVO_ATIVACAO", length = 500)
+	@Desconsiderar
+	private String motivoAtivacao;
 
 	public Integer getIsExternaLotacao() {
 		return isExternaLotacao;
@@ -442,5 +448,26 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	public void setIsSuspensa(Integer isSuspensa) {
 		this.isSuspensa = isSuspensa;
 	}
+	
+	
+	/* 
+	 * Motivo da Inativação/Ativação de Lotações para Histórico
+	 * */
+	public String getMotivoInativacao() {
+		return motivoInativacao;
+	}
+
+	public void setMotivoInativacao(String motivoInativacao) {
+		this.motivoInativacao = motivoInativacao;
+	}
+
+	public String getMotivoAtivacao() {
+		return motivoAtivacao;
+	}
+
+	public void setMotivoAtivacao(String motivoAtivacao) {
+		this.motivoAtivacao = motivoAtivacao;
+	}
+
 
 }

@@ -2642,15 +2642,23 @@ public class CpBL {
 		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação";
 		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
 		
-		Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(lotacao.getId(), Boolean.TRUE, Boolean.FALSE).size();
+		if (dao().listarLotacoesPorPai(lotacao).size() > 0) 
+			throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),0);
+		
+		List<DpPessoa> listaPessoasLotacao = CpDao.getInstance().pessoasPorLotacao(lotacao.getId(), Boolean.TRUE, Boolean.FALSE);
+		Integer quantidadePessoas = listaPessoasLotacao.size();
+		
+		if (quantidadePessoas > 0 ) {
+			for (DpPessoa pessoa : listaPessoasLotacao) {
+				
+			}
+		}
+		
 		Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, Boolean.TRUE, Boolean.TRUE); 
 		
-		if (qtdePessoa > 0 || quantidadeEmPosse > 0) {
-			throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
-					+ SigaMessages.getMessage("usuario.lotacao"), 0);
-		} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {
-			throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao")
-							+ " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),0);
+		if (quantidadePessoas > 0 || quantidadeEmPosse > 0) {
+			throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa " + SigaMessages.getMessage("usuario.lotacao"), 0);
+			
 		}
 		return true;	
 	}

@@ -1259,10 +1259,8 @@ public class CpBL {
 			
 			if(pessoaAnt != null) {
 				Integer qtde = CpDao.getInstance().quantidadeDocumentos(pessoaAnt);
-				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) 
-						&& (!podeAlterarOrgaoPessoa || pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu))) {
-					throw new AplicacaoException(
-							"A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
+				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) && (!podeAlterarOrgaoPessoa || pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu))) {
+					throw new AplicacaoException("A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
 				}
 				pessoa.setIdInicial(pessoaAnt.getIdInicial());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
@@ -1273,8 +1271,8 @@ public class CpBL {
 					marcadores.add(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
 					marcadores.add(CpMarcadorEnum.EM_ELABORACAO.getId());
 					
-					Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().qtdeMarcasMarcadorPessoa(pessoaAnt.getPessoaInicial(), marcadores);
-					Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().qtdeMarcasMarcadorLotacao(pessoaAnt.getLotacao().getLotacaoInicial(), marcadores);
+					Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().quantidadeMarcasPorPessoaMarcadores(pessoaAnt, marcadores, true);
+					Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().quantidadeMarcasPorLotacaoMarcadores(pessoaAnt.getLotacao(), marcadores, true);
 					Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);
 					
 					if(qtdeCaixaEntradaTMPPessoa > 0 || (qtdeCaixaEntradaTMPLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
@@ -2239,7 +2237,8 @@ public class CpBL {
 			final Long idLotacao, final String nmLotacao, final String siglaLotacao, final String situacao,
 			DpLotacao lotacao, DpLotacao lotacaoNova, Date dataSistema) {
 		List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(idLotacao, Boolean.TRUE, Boolean.FALSE);
-		Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+		
+		Integer qtdeDocumentoCriadosPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, Boolean.FALSE); // Não restringe Marcadores
 		
 		if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
 				(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
@@ -2605,5 +2604,142 @@ public class CpBL {
 		}
 		return orgaos;
 	} 
+	
+	
+    /**
+     * Consulta quantidade de documentos criados OU que estão em posse da lotação, conforme parâmetros e propriedades
+     *
+     * @param lotacao
+     * @return
+     */
+	public Integer quatidadeMarcasOuDocumentosEmPosseDaLotacao(DpLotacao lotacao, boolean excluirMarcadoresDaContagem) { 
+
+		Integer quantidade;
+		List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
+
+        if (excluirMarcadoresDaContagem && listaMarcadores != null)
+        	quantidade = dao().quatidadeMarcasEmPosseDaLotacaoMarcadores(lotacao,listaMarcadores);
+        else
+        	quantidade = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+
+        return quantidade;
+    }
+	
+	
+    /**
+     * Consulta quantidade de documentos criados OU que estão em posse da lotação, conforme parâmetros e propriedades
+     *
+     * @param lotacao
+     * @return
+     */
+	public Integer quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(DpPessoa pessoa, boolean excluirMarcadoresDaContagem) { 
+
+		Integer quantidade;		
+        List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
+
+        if (excluirMarcadoresDaContagem && listaMarcadores != null)
+        	quantidade = dao().quatidadeMarcasEmPosseDaPessoaMarcadores(pessoa,listaMarcadores);
+        else
+        	quantidade = dao().quantidadeDocumentos(pessoa);
+
+        return quantidade;
+    }
+	
+	public boolean restringeMarcadoresParaInativacaoLotacao() {
+		final String TODOS_MARCADORES = "*";
+		final String marcadoresPermitidos = Prop.get("/siga.lotacao.inativacao.marcadores.permitidos");
+		
+		return !TODOS_MARCADORES.equals(marcadoresPermitidos);
+		
+	}
+	
+	
+	public List<Long> getListaMarcadoresPermitidosInativacaoLotacao() {
+
+        List<String> listaMarcadores = null;
+        List<String> listaGrupoMarcadores = null;
+        List<Long> listaMarcadoresPermitidos = null;
+		
+		if (restringeMarcadoresParaInativacaoLotacao()) {
+			
+	        listaMarcadores = Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos");
+	        
+	        if (listaMarcadores != null) {
+		        listaGrupoMarcadores = Prop.getList("/siga.lotacao.inativacao.grupo.marcadores.permitidos");
+		        listaMarcadoresPermitidos = CpMarcadorEnum.getListIdByListChaves(listaMarcadores);
+		        
+				//Soma-se aos Marcadores Permitidos os marcadores relacionados aos grupos definidos
+				if (!listaGrupoMarcadores.isEmpty()) {
+					for (String grupo : listaGrupoMarcadores) {
+						if (!"".equals(grupo)) {
+							listaMarcadoresPermitidos.addAll(CpMarcadorEnum.getListIdByGrupo(CpMarcadorGrupoEnum.valueOf(grupo.trim())));
+						}			
+					}			
+				}
+	        }
+		}
+			
+		return listaMarcadoresPermitidos;
+		
+	}
+	
+	
+	public boolean podeAtivarLotacao(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {	
+		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação";
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
+		
+		if (lotacao.getDataFimLotacao() == null) {
+			throw new AplicacaoException("Ativação não permitida. " + SigaMessages.getMessage("usuario.lotacao") + " não encontra-se inativa.", 0);
+		}
+		
+		return true;
+		
+	}
+	
+	public boolean podeInativarLotacao(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {		
+		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação";
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
+		
+		/* Verifica Lotações Filhas */
+		if (dao().listarLotacoesPorPai(lotacao).size() > 0) 
+			throw new AplicacaoException("Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao") + " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),0);
+		
+		/* Verifica Pessoas Ativas */
+		List<DpPessoa> listaPessoasAtivasLotacao = CpDao.getInstance().pessoasPorLotacao(lotacao.getId(), Boolean.TRUE, Boolean.FALSE);
+		Integer quantidadePessoasAtivas = listaPessoasAtivasLotacao.size();
+		if (quantidadePessoasAtivas > 0) {
+			throw new AplicacaoException("Inativação não permitida. Existem usuários ativos vinculados nessa " + SigaMessages.getMessage("usuario.lotacao"), 0);
+			
+		}
+		
+		if (restringeMarcadoresParaInativacaoLotacao()) {	
+			/* Verifica Quantidade de Marcas para Lotação */
+			Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, Boolean.TRUE); 
+			if (quantidadeEmPosse > 0) {
+				throw new AplicacaoException("Inativação não permitida. Existem documentos vinculados nessa " + SigaMessages.getMessage("usuario.lotacao"), 0);
+				
+			}
+			
+			/* Verifica Quantidade de Marcas para as Pessoas Inativas da Lotação */
+			final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+			flt.setBuscarFechadas(Boolean.TRUE);
+			flt.setLotacao(lotacao);	
+			flt.setNome("");
+			List<DpPessoa> listaPessoasInativasDaLotacao = CpDao.getInstance().consultarPorFiltro(flt);
+			
+			if (listaPessoasInativasDaLotacao != null && listaPessoasInativasDaLotacao.size() > 0 ) {
+				for (DpPessoa pessoa : listaPessoasInativasDaLotacao) {
+					quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, Boolean.TRUE); 
+					if (quantidadeEmPosse > 0) {
+						throw new AplicacaoException("Inativação não permitida. Existem documentos de usuários inativos vinculados nessa " + SigaMessages.getMessage("usuario.lotacao"), 0);
+						
+					}	
+				}
+			}
+		}
+		
+		return true;	
+	}
+
 	
 }

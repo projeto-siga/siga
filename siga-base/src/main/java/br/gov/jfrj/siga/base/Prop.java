@@ -338,7 +338,12 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 
-		/* Permite inativar lotação com determinadas marcações */
-		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "false");
+		/* Permite inativar lotação com determinadas marcações*/
+		/* Trocado de Bool para List String que deve conter as chaves de marcadores permitidas separadas por virgula no padrao do getList() */
+		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", null);
+		/* Permitir Inativar Lotação com Marcas nos Grupos de Marcadores. 
+		 * É ligada caso property siga.lotacao.inativacao.marcadores.permitidos seja diferente de null e soma-se as listas
+		 * Default: Documentos não apresentados na Mesa.*/
+		provider.addPublicProperty("/siga.lotacao.inativacao.grupo.marcadores.permitidos", "NENHUM");
 	}
 }

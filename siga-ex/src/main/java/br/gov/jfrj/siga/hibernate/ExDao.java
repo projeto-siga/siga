@@ -2614,6 +2614,10 @@ public class ExDao extends CpDao {
 
 	
 	public List<ExMovimentacao> listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante) {
+		return listarMovPorTipo(tipoDeMovimentacao, cadastrante, Boolean.TRUE);	
+	}
+	
+	public List<ExMovimentacao> listarMovPorTipo(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante, Boolean naoCancNaoFinal) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<ExMovimentacao> criteriaQuery = criteriaBuilder.createQuery(ExMovimentacao.class);	
 		Root<ExMovimentacao> movRoot = criteriaQuery.from(ExMovimentacao.class);
@@ -2627,7 +2631,8 @@ public class ExDao extends CpDao {
 		Predicate predicateEqualNaoCancelada = criteriaBuilder.isNull(movRoot.get("exMovimentacaoCanceladora"));
 		Predicate predicateEqualsPessoa = criteriaBuilder.equal(joinCadastrante.get("idPessoaIni"),cadastrante.getIdInicial());
 		
-		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualNaoFinalizada, predicateEqualsPessoa, predicateEqualNaoCancelada);
+		predicateAnd = naoCancNaoFinal ? criteriaBuilder.and(predicateEqualTipo,predicateEqualNaoFinalizada, predicateEqualsPessoa, predicateEqualNaoCancelada)
+							: criteriaBuilder.and(predicateEqualTipo, predicateEqualsPessoa);
 		criteriaQuery.where(predicateAnd);
 		
 		return em().createQuery(criteriaQuery).getResultList();		

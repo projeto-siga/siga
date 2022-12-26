@@ -61,6 +61,8 @@ public class MaterialEnviadoDto implements Serializable {
 	private String razaoSocial;
 	
 	private StatusPublicacaoDto statusPublicacaoDto;
+	
+	private DocumentoSemPapelDto docSemPapelDto;
 
 	public String getIdMaterial() {
 		return idMaterial;
@@ -181,4 +183,13 @@ public class MaterialEnviadoDto implements Serializable {
 	public void setStatusPublicacaoDto(StatusPublicacaoDto statusPublicacaoDto) {
 		this.statusPublicacaoDto = statusPublicacaoDto;
 	}
+
+	public DocumentoSemPapelDto getDocSemPapelDto() {
+		return docSemPapelDto;
+	}
+
+	public void setDocSemPapelDto(DocumentoSemPapelDto semPapelDto) {
+		this.docSemPapelDto = semPapelDto;
+	}
+	
 }

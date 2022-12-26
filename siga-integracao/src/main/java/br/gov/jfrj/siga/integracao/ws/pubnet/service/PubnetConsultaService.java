@@ -92,7 +92,6 @@ public class PubnetConsultaService {
 			ConsultaPermissoesPublicanteResult resp = port.consultaPermissoesPublicante(user);
 			JSONObject jsonNode = convertElementParaJsonNode(resp.getAny());
 			String json = converterNodeJsonParaStringJson(jsonNode, PermissaoPublicanteDto.NOME_NODE_JSON);
-			System.out.println(json);
 			permissaoPublicanteDtoList = Arrays.asList(getObjectMapper().readValue(json, PermissaoPublicanteDto[].class));
 		} catch (JsonParseException e) {
 			e.printStackTrace();
@@ -210,7 +209,6 @@ public class PubnetConsultaService {
 			JSONObject nodeLista = getValueJSONObject(nodeDiffgr, "lista");
 			if (nodeLista != null) {
 				json = JSONObject.valueToString(nodeLista.get(nomeNodeJson));
-				System.out.println(json);
 			} else {
 				JSONObject nodeErr = getValueJSONObject(nodeDiffgr, "erro");
 				if(nodeErr != null) {
@@ -225,16 +223,18 @@ public class PubnetConsultaService {
 						json = JSONObject.valueToString(getValueJSONObject(nodeRecibo, "Recibo"));
 						EnviaPublicacaoDto recibo = getObjectMapper().readValue(json, EnviaPublicacaoDto.class);
 						if (recibo != null && !recibo.getCodRetorno().equals("0000")) {
+							System.out.println(json);
 							throw new Exception(recibo.getCodRetorno() + " - " + recibo.getDescricao());
 						}
 					}
 				}
 			}
 		}
-		// TODO Remover
-		System.out.println(json);
-		if (json == null || "".equals(json) || "null".equals(json))
+		
+		if (json == null || "".equals(json) || "null".equals(json)) {
+			System.out.println(json);
 			throw new Exception("Json nulo ou vazio");
+		}
 		return json;
 	}
 	
@@ -245,9 +245,7 @@ public class PubnetConsultaService {
 	protected JSONObject convertElementParaJsonNode(Object resp) throws TransformerException, IOException {
 		ElementNSImpl elementNSImpl = (ElementNSImpl) resp;
 		StringWriter writer = converterDocumentParaXmlString(elementNSImpl.getOwnerDocument());
-		
 		JSONObject jsonNode = converterXMLParaNodeJson(writer.toString());
-		System.out.println(jsonNode.toString());
 		return jsonNode;
 	}
 

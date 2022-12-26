@@ -5721,6 +5721,21 @@ public class ExBL extends CpBL {
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final DpPessoa subscritor,
 			final DpPessoa titular, final String descrMov, String nmFuncaoSubscritor, ExPapel papel)
 			throws AplicacaoException {
+		List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, true);
+		StringBuilder msg = new StringBuilder();
+		movs.forEach(m -> {
+			if(responsavel != null && responsavel.equals(m.getSubscritor()) && papel.equals(m.getExPapel())) {
+				msg.append("Usuário ").append(m.getSubscritor().getNomePessoa()).append(" já foi definido");
+			} else {
+				if(responsavel == null && m.getSubscritor() == null && lotaResponsavel.equals(m.getLotaSubscritor()) && papel.equals(m.getExPapel())) {
+					msg.append("Unidade ").append(m.getLotaSubscritor().getNomeLotacao()).append(" já foi definida");
+				}
+			};
+			if (msg.length() > 0 ) {
+				msg.append(" como ").append(papel.getDescPapel()).append(" no acompanhamento do documento ").append(mob.getDnmSigla());
+				throw new AplicacaoException(msg.toString());
+			}
+		});
 		vincularPapel(cadastrante, lotaCadastrante, mob, dtMov, lotaResponsavel, 
 				responsavel, subscritor, titular, descrMov, nmFuncaoSubscritor, papel, null);
 	}

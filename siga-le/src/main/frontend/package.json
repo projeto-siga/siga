@@ -19,7 +19,7 @@
     "font-awesome": "~4.7.0",
     "awesome-mask": "~1.1.1",
     "ckeditor4-vue": "~1.2.0",
-    "pdfvuer": "1.6.1",
+    "pdfvuer": "1.7.2",
     "jwt-decode": "~2.2.0",
     "v-autocomplete": "~1.8.2",
     "vee-validate": "~3.3.11",

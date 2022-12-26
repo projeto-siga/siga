@@ -5730,7 +5730,7 @@ public class ExBL extends CpBL {
 				if(responsavel == null && m.getSubscritor() == null && lotaResponsavel.equals(m.getLotaSubscritor()) && papel.equals(m.getExPapel())) {
 					msg.append("Unidade ").append(m.getLotaSubscritor().getNomeLotacao()).append(" já foi definida");
 				}
-			};
+			}
 			if (msg.length() > 0 ) {
 				msg.append(" como ").append(papel.getDescPapel()).append(" no acompanhamento do documento ").append(mob.getDnmSigla());
 				throw new AplicacaoException(msg.toString());

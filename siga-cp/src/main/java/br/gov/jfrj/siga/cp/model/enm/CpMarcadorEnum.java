@@ -225,15 +225,28 @@ public enum CpMarcadorEnum {
 		}
 		return null;
 	}
-
-	public static List<Integer> getListIdByGrupo(String nomegrupo) {
-		List<Integer> listMar = new ArrayList<Integer>();
+	
+	public static List<Long> getListIdByGrupo(CpMarcadorGrupoEnum grupo) {
+		List<Long> listMar = new ArrayList<Long>();
 		for (CpMarcadorEnum mar : CpMarcadorEnum.values()) {
-			if (mar.getGrupo().getNome().equals(nomegrupo)) {
-				listMar.add(mar.id);
+			if (mar.getGrupo().getNome().equals(grupo.getNome())) {
+				listMar.add(mar.getId());
 			}
 		}
 		return listMar;
+	}
+	
+	public static List<Long> getListIdByListChaves(List<String> chaves){
+		final List<Long> listaMarcadores = new ArrayList<Long>();
+		if (chaves != null) {
+			for(String chave : chaves) {
+				CpMarcadorEnum marcador = CpMarcadorEnum.valueOf(chave.trim());
+				if(marcador != null) {
+					listaMarcadores.add(marcador.getId());
+				}
+			}	
+		}
+		return listaMarcadores;
 	}
 
 	public String getIcone() {

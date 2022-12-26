@@ -2617,7 +2617,7 @@ public class CpBL {
 		Integer quantidade;
 		List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
 
-        if (excluirMarcadoresDaContagem && listaMarcadores != null && !listaMarcadores.isEmpty())
+        if (excluirMarcadoresDaContagem && listaMarcadores != null)
         	quantidade = dao().quatidadeMarcasEmPosseDaLotacaoMarcadores(lotacao,listaMarcadores);
         else
         	quantidade = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
@@ -2637,7 +2637,7 @@ public class CpBL {
 		Integer quantidade;		
         List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
 
-        if (excluirMarcadoresDaContagem && listaMarcadores != null && !listaMarcadores.isEmpty())
+        if (excluirMarcadoresDaContagem && listaMarcadores != null)
         	quantidade = dao().quatidadeMarcasEmPosseDaPessoaMarcadores(pessoa,listaMarcadores);
         else
         	quantidade = dao().quantidadeDocumentos(pessoa);

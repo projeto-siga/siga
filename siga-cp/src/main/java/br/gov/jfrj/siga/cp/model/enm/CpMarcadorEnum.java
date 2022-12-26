@@ -238,11 +238,13 @@ public enum CpMarcadorEnum {
 	
 	public static List<Long> getListIdByListChaves(List<String> chaves){
 		final List<Long> listaMarcadores = new ArrayList<Long>();
-		if (chaves != null) {
+		if (chaves != null && !chaves.isEmpty()) {
 			for(String chave : chaves) {
-				CpMarcadorEnum marcador = CpMarcadorEnum.valueOf(chave.trim());
-				if(marcador != null) {
-					listaMarcadores.add(marcador.getId());
+				if (!"".equals(chave)) {
+	 				CpMarcadorEnum marcador = CpMarcadorEnum.valueOf(chave.trim());
+					if(marcador != null) {
+						listaMarcadores.add(marcador.getId());
+					}
 				}
 			}	
 		}

@@ -3090,9 +3090,12 @@ public class CpDao extends ModeloDao {
 				predicateMarcadores  = cb().and(c.get("cpMarcador").in(marcadores));
 			else
 				predicateMarcadores  = cb().and(cb().not(c.get("cpMarcador").in(marcadores)));
+			
+			predicateAnd = cb().and(predicateEqualPessoa, predicateMarcadores);
+		} else {
+			predicateAnd = predicateEqualPessoa;
 		}
 		
-		predicateAnd = cb().and(predicateEqualPessoa, predicateMarcadores);
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();
 	}
@@ -3119,9 +3122,12 @@ public class CpDao extends ModeloDao {
 				predicateMarcadores  = cb().and(c.get("cpMarcador").in(marcadores));
 			else
 				predicateMarcadores  = cb().and(cb().not(c.get("cpMarcador").in(marcadores)));
+			
+			predicateAnd = cb().and(predicateEqualLotacao, predicateMarcadores);
+		} else {
+			predicateAnd = predicateEqualLotacao;
 		}
 		
-		predicateAnd = cb().and(predicateEqualLotacao, predicateMarcadores);
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();
 	}

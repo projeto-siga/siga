@@ -74,6 +74,7 @@ import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
@@ -2681,7 +2682,7 @@ public class CpDao extends ModeloDao {
 		return result;
 	}
 
-	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) { 
+	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
 		try {
 			String consultarQuantidadeDocumentosPorDpLotacao = "SELECT count(1) FROM DpLotacao lotacao"
 					+ " left join CpMarca marca on lotacao.idLotacao = marca.dpLotacaoIni"
@@ -2814,16 +2815,12 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public Integer consultarQtdeDocPossePorDpLotacaoECpMarca(Long idLotacao) {
-		try {
-			Query sql = em().createNamedQuery("consultarQtdeDocPossePorDpLotacaoECpMarca");
-			sql.setParameter("idLotacao", idLotacao);
-			sql.setParameter("listMarcadores", CpMarcadorEnum.getListMarcadoresByListChaves(Prop.getList("/siga.lotacao.inativacao.marcadores.permitidos")));
-			final Integer l = ((Number) sql.getSingleResult()).intValue(); //Number pq no MySQL NativeQuery retorna BigInteger e no Oracle BigDecimal
-			return l;
-		} catch (final NullPointerException e) {
-			return null;
-		}
+	public Integer quatidadeMarcasEmPosseDaLotacaoMarcadores(DpLotacao lotacao, List<Long> marcadoresPermitidos) {
+		return quantidadeMarcasPorLotacaoMarcadores(lotacao, marcadoresPermitidos, false).intValue();
+	}
+	
+	public Integer quatidadeMarcasEmPosseDaPessoaMarcadores(DpPessoa pessoa, List<Long> marcadoresPermitidos) {		
+		return quantidadeMarcasPorPessoaMarcadores(pessoa, marcadoresPermitidos, false).intValue();
 	}
 	
 	public CpToken obterCpTokenPorTipoToken(final Long idTpToken, final String token) {
@@ -3069,29 +3066,68 @@ public class CpDao extends ModeloDao {
 		return sql.getResultList();
 	}
 
-
-	public Long qtdeMarcasMarcadorPessoa(DpPessoa pessoa, List<Long> marcadores) {
+	
+	/*
+	 * 
+	 * Conta quantas Marcas a Pessoa tem em Posse
+	 * 
+	 * Caso seja passada Lista de Marcadores, os Marcadores são contados ou retirados da contagem conforme parâmetro [contarComMarcadoresPresente]
+	 *         True: Contar Marcas que estejam com os Marcadores da Lista
+	 *         False: Contar Marcas com os Marcadores diferentes dos Marcadores da Lista
+	 */
+	public Long quantidadeMarcasPorPessoaMarcadores(DpPessoa pessoa, List<Long> marcadores, boolean contarComMarcadoresPresente) { 
 		CriteriaBuilder qb = em().getCriteriaBuilder();
 		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
 		Root<CpMarca> c = cq.from(CpMarca.class);
 		cq.select(qb.count(c));
+		
 		Predicate predicateAnd;
-		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa);
-		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
-		predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa.getPessoaInicial());
+		Predicate predicateMarcadores = null;
+		
+		if (marcadores != null && !marcadores.isEmpty()) {
+			if (contarComMarcadoresPresente)
+				predicateMarcadores  = cb().and(c.get("cpMarcador").in(marcadores));
+			else
+				predicateMarcadores  = cb().and(cb().not(c.get("cpMarcador").in(marcadores)));
+			
+			predicateAnd = cb().and(predicateEqualPessoa, predicateMarcadores);
+		} else {
+			predicateAnd = predicateEqualPessoa;
+		}
+		
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();
 	}
 	
-	public Long qtdeMarcasMarcadorLotacao(DpLotacao lotacao, List<Long> marcadores) {
+	/*
+	 * 
+	 * Conta quantas Marcas a Lotação tem em Posse
+	 * 
+	 * Caso seja passada Lista de Marcadores, os Marcadores são contados ou retirados da contagem conforme parâmetro [contarComMarcadoresPresente]
+	 *         True: Contar Marcas que estejam com os Marcadores da Lista
+	 *         False: Contar Marcas com os Marcadores diferentes dos Marcadores da Lista
+	 */
+	public Long quantidadeMarcasPorLotacaoMarcadores(DpLotacao lotacao, List<Long> marcadores, boolean contarComMarcadoresPresente) {
 		CriteriaBuilder qb = em().getCriteriaBuilder();
 		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
 		Root<CpMarca> c = cq.from(CpMarca.class);
 		cq.select(qb.count(c));
 		Predicate predicateAnd;
-		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao);
-		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
-		predicateAnd = cb().and(predicateEqualLotacao, predicateEqualMarca);
+		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
+		Predicate predicateMarcadores = null;
+		
+		if (marcadores != null && !marcadores.isEmpty()) {
+			if (contarComMarcadoresPresente)
+				predicateMarcadores  = cb().and(c.get("cpMarcador").in(marcadores));
+			else
+				predicateMarcadores  = cb().and(cb().not(c.get("cpMarcador").in(marcadores)));
+			
+			predicateAnd = cb().and(predicateEqualLotacao, predicateMarcadores);
+		} else {
+			predicateAnd = predicateEqualLotacao;
+		}
+		
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();
 	}

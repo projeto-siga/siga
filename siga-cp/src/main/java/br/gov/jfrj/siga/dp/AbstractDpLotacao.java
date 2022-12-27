@@ -108,20 +108,16 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	 group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpLotacao", query = "select lot from DpLotacao lot where upper(REMOVE_ACENTO(lot.nomeLotacao)) = upper(REMOVE_ACENTO(:nome)) and lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu")})
 		@NamedNativeQueries({
-		@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
-				+ " left join corporativo.dp_lotacao lotacao on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
-				+ " WHERE id_marcador not in (1,10,32)"
-				+ " AND lotacao.id_lotacao_ini = :idLotacao"
-				+ " AND id_tp_marca = :idTipoMarca "),
-		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
-				+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
-				+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
-				+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao"),
-		@NamedNativeQuery(name = "consultarQtdeDocPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
-						+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
-						+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-						+ " where marca.ID_LOTACAO_INI = :idLotacao and marca.ID_MARCADOR not in (:listMarcadores)")})
+			@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
+					+ " left join corporativo.dp_lotacao lotacao on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
+					+ " WHERE id_marcador not in (1,10,32)"
+					+ " AND lotacao.id_lotacao_ini = :idLotacao"
+					+ " AND id_tp_marca = :idTipoMarca "),
+			@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
+					+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+					+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
+					+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
+					+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {

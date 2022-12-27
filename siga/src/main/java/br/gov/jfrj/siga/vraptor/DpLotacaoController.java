@@ -52,7 +52,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	public DpLotacaoController() {
 		super();
 	}
-
+ 
 	@Inject
 	public DpLotacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

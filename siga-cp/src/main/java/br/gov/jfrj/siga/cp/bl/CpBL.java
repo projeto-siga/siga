@@ -1258,10 +1258,13 @@ public class CpBL {
 			pessoaAnt = CpDao.getInstance().consultar(id, DpPessoa.class, false).getPessoaAtual();
 			
 			if(pessoaAnt != null) {
-				Integer qtde = CpDao.getInstance().quantidadeDocumentos(pessoaAnt);
-				if ((qtde > 0 && !idLotacao.equals(pessoaAnt.getLotacao().getId())) && (!podeAlterarOrgaoPessoa || pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu))) {
-					throw new AplicacaoException("A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");
-				}
+				
+				if (!idLotacao.equals(pessoaAnt.getLotacao().getId()) && pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu)) {
+					if (!podeAlterarLotacaoPessoaDentroMesmoOrgao(pessoaAnt, identidadeCadastrante.getDpPessoa())) {
+						throw new AplicacaoException("A "+ SigaMessages.getMessage("usuario.lotacao").toLowerCase()  +" da pessoa não pode ser alterada, pois existem documentos pendentes", 0);
+					}
+				}		
+				
 				pessoa.setIdInicial(pessoaAnt.getIdInicial());
 				pessoa.setMatricula(pessoaAnt.getMatricula());
 			
@@ -2618,9 +2621,9 @@ public class CpBL {
 		List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
 
         if (excluirMarcadoresDaContagem && listaMarcadores != null)
-        	quantidade = dao().quatidadeMarcasEmPosseDaLotacaoMarcadores(lotacao,listaMarcadores);
+        	quantidade = CpDao.getInstance().quatidadeMarcasEmPosseDaLotacaoMarcadores(lotacao,listaMarcadores);
         else
-        	quantidade = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+        	quantidade = CpDao.getInstance().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
 
         return quantidade;
     }
@@ -2638,9 +2641,9 @@ public class CpBL {
         List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
 
         if (excluirMarcadoresDaContagem && listaMarcadores != null)
-        	quantidade = dao().quatidadeMarcasEmPosseDaPessoaMarcadores(pessoa,listaMarcadores);
+        	quantidade = CpDao.getInstance().quatidadeMarcasEmPosseDaPessoaMarcadores(pessoa,listaMarcadores);
         else
-        	quantidade = dao().quantidadeDocumentos(pessoa);
+        	quantidade = CpDao.getInstance().quantidadeDocumentos(pessoa);
 
         return quantidade;
     }
@@ -2740,6 +2743,13 @@ public class CpBL {
 		
 		return true;	
 	}
-
 	
+	public boolean podeAlterarLotacaoPessoaDentroMesmoOrgao(DpPessoa pessoa, DpPessoa cadastrante) {	
+		Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, Boolean.TRUE); 
+		if (quantidadeEmPosse > 0) {
+			return false; 
+		}	
+		
+		return true; 
+	}
 }

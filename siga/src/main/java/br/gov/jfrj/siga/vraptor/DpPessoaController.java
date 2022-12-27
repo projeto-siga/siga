@@ -317,25 +317,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			pessoaAnt = dao().consultar(id, DpPessoa.class, false).getPessoaAtual();
 			// inativar
 			if (pessoaAnt.getDataFimPessoa() == null || "".equals(pessoaAnt.getDataFimPessoa())) {
-				Calendar calendar = new GregorianCalendar();
-				Date date = new Date();
-				calendar.setTime(date);
-				pessoaAnt.setDataFimPessoa(calendar.getTime());
-				pessoaAnt.setHisIdcFim(getIdentidadeCadastrante());
-				
-				try {
-					dao().iniciarTransacao();
-					dao().gravar(pessoaAnt);
-					dao().commitTransacao();
-				} catch (final Exception e) {
-					if (e.getCause() instanceof ConstraintViolationException 
-							&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
-						result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
-	    			} else {
-	    				throw new AplicacaoException("Erro na gravação", 0, e);
-	    			}
-					dao().rollbackTransacao();	
-				}
+				inativa(pessoaAnt);
 
 			} else {// ativar
 				// não pode ativar caso já exista uma pessoa com mesmo órgão, cargo, função de
@@ -414,11 +396,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	@Transacional
 	@Get("/app/pessoa/inativarLote")
-	public void InativarLote(List<Long> idPessoasSelecionadas, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, 
-			Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa, String identidadePesquisa, Boolean idStatusPesquisa) throws Exception{
-		
-		//DpPessoa pessoaAnt = dao().consultar(id, DpPessoa.class, false).getPessoaAtual();
-		//DpPessoa pessoa = new DpPessoa();
+	public void InativarLote(List<Long> idPessoasSelecionadas, Boolean idStatusPesquisa) throws Exception{
 		
 		result.include("request", getRequest());
 		Map<String,Object> retorno = new HashMap<String, Object>(getRequest().getParameterMap());
@@ -430,12 +408,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			
 			for(int i = 0; i < idsArray.length; i++) {
 				if(!StringUtils.isEmpty(idsArray[i])) {
-					System.out.println(idsArray[i]);
-					//ativarInativar(Long.parseLong(idsArray[i]), 0, 0L, "", "", 0L, 0L, 0L, "", "");
-				
+					if(idsArray[i].equals("true"))
+						continue;
+					
 					CpOrgaoUsuario ou = new CpOrgaoUsuario();
 					DpPessoa pessoaAnt = dao().consultar(Long.parseLong(idsArray[i]), DpPessoa.class, false).getPessoaAtual();
-					DpPessoa pessoa = new DpPessoa();
 					ou.setIdOrgaoUsu(pessoaAnt.getOrgaoUsuario().getId());
 					ou = CpDao.getInstance().consultarPorId(ou);
 
@@ -444,35 +421,36 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 						pessoaAnt = dao().consultar(Long.parseLong(idsArray[i]), DpPessoa.class, false).getPessoaAtual();
 						// inativar
 						if (pessoaAnt.getDataFimPessoa() == null || "".equals(pessoaAnt.getDataFimPessoa())) {
-							Calendar calendar = new GregorianCalendar();
-							Date date = new Date();
-							calendar.setTime(date);
-							pessoaAnt.setDataFimPessoa(calendar.getTime());
-							pessoaAnt.setHisIdcFim(getIdentidadeCadastrante());
-							
-							try {
-								dao().iniciarTransacao();
-								dao().gravar(pessoaAnt);
-								dao().commitTransacao();
-							} catch (final Exception e) {
-								if (e.getCause() instanceof ConstraintViolationException 
-										&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
-									result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
-				    			} else {
-				    				throw new AplicacaoException("Erro na gravação", 0, e);
-				    			}
-								dao().rollbackTransacao();	
-							}
+							inativa(pessoaAnt);
 						}
 					}
 				}
 			} 
 			contador++;
 		}
-		this.result.redirectTo(this).lista(offset, idOrgaoUsu, nome, cpfPesquisa, idCargoPesquisa, idFuncaoPesquisa, idLotacaoPesquisa, emailPesquisa, identidadePesquisa, idStatusPesquisa);
-		//retorno = request.getParameter("listIdPessoa");
+		lista(0, null, "", "", null, null, null, "", null, idStatusPesquisa);
+	}
+
+	private void inativa(DpPessoa pessoaAnt) {
+		Calendar calendar = new GregorianCalendar();
+		Date date = new Date();
+		calendar.setTime(date);
+		pessoaAnt.setDataFimPessoa(calendar.getTime());
+		pessoaAnt.setHisIdcFim(getIdentidadeCadastrante());
 		
-		//ativarInativar(orgaoUsu, getPostback(), orgaoUsu, cpf, cpf, orgaoUsu, orgaoUsu, orgaoUsu, cpf, cpf)
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(pessoaAnt);
+			dao().commitTransacao();
+		} catch (final Exception e) {
+			if (e.getCause() instanceof ConstraintViolationException 
+					&& ((ConstraintViolationException) e.getCause()).getConstraintName().toUpperCase().contains("DP_PESSOA_UNIQUE_PESSOA_ATIVA")) {
+				result.include(SigaModal.ALERTA, SigaModal.mensagem("Ocorreu um problema no cadastro da pessoa"));
+			} else {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+			dao().rollbackTransacao();	
+		}
 	}
 	@Get("/app/pessoa/editar")
 	public void edita(final Long id) {

@@ -193,13 +193,13 @@
 					</div>
 					
 					<div class="row">
-						<div class="col-sm-10">
+						<div class="col col-12 col-md-6">
 							<button type="submit" class="btn btn-primary">Pesquisar</button>
 							<c:if test="${temPermissaoParaExportarDados}">
 								<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
 							</c:if>
 						</div>
-						<div class="col col-12 col-sm-4 col-md-auto pl-md-0">
+						<div class="col col-12 col-md-6 text-right">
 							<c:url var="urlInativarLote" value="/app/pessoa/inativarLote">
 							</c:url>
 								

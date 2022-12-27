@@ -10,7 +10,7 @@
 	</parent>
 	
 	<groupId>br.gov.jfrj.siga</groupId>
-	<artifactId>siga-arq</artifactId>
+	<artifactId>sigaarq</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<description>Upload e Download de Arquivos</description>

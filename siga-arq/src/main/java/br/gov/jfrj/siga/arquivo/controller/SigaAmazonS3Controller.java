@@ -52,8 +52,8 @@ public class SigaAmazonS3Controller {
 		SigaAmazonS3 sigaS3 = new SigaAmazonS3();
 		sigaS3.conectar();
 		return ResponseEntity.ok("{" + System.lineSeparator()
-				+ "  \"service\": \"siga-arq\"," + System.lineSeparator()
-				+ "  \"url\": \"/siga-arq/api/v1/test\"" + System.lineSeparator()
+				+ "  \"service\": \"sigaarq\"," + System.lineSeparator()
+				+ "  \"url\": \"/sigaarq/api/v1/test\"" + System.lineSeparator()
 				+ "}");
     }
 	

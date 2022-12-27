@@ -94,7 +94,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigagc.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigawf.base.url", get("/siga.base.url"));
-		provider.addPublicProperty("/siga-arq.base.url", get("/siga.base.url"));
+		provider.addPublicProperty("/sigaarq.base.url", get("/siga.base.url"));
 		
 		//URL Interna (para back-end). Objetivo não usar Proxy, SSL, Firewall.. entre outras camandas de rede para chamadas internas
 		provider.addPublicProperty("/siga.service.base.url", get("/siga.base.url"));		
@@ -195,7 +195,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.url", get("/sigaex.base.url") + "/sigaex");
 		provider.addPublicProperty("/sigaex.autenticidade.url", get("/sigaex.base.url") + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigagc.url", get("/sigagc.base.url") + "/sigagc");
-		provider.addPublicProperty("/siga-arq.url", get("/siga-arq.base.url") + "/siga-arq");
+		provider.addPublicProperty("/sigaarq.url", get("/sigaarq.base.url") + "/sigaarq");
 		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 		
 		/* Indica onde está armazenado o Manual de Operações* */

@@ -117,7 +117,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	and (:situacaoFuncionalPessoa = null or :situacaoFuncionalPessoa = '' or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),
-		@NamedQuery(name = "consultarPorFiltroDpPessoaInclusiveFechadas", query = "from DpPessoa pes"
+		@NamedQuery(name = "consultarPorFiltroDpPessoaAtivoInativo", query = "from DpPessoa pes"
 				+ "		where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ " 		and (:cpf = null or :cpf = 0L or pes.cpfPessoa like '%' || :cpf || '%') "
 				+ "  		and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
@@ -128,7 +128,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 	      		+ " 		and ((pes.nomePessoaAI like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
 	      		+ " 		and (:identidade = null or (upper(pes.identidade) like upper('%' || :identidade || '%')) ) "
 	      		+ " 		and exists (select 1 from DpPessoa pAux where pAux.idPessoaIni = pes.idPessoaIni "
-				+ "				group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa)" 
+				+ "				group by pAux.idPessoaIni having max(pAux.dataInicioPessoa) = pes.dataInicioPessoa)"
+				+ "			and ((:status = 'Ativo' and data_fim_pessoa IS NULL) OR (:status = 'Inativo' AND data_fim_pessoa IS NOT null))"
 				+ " 	order by pes.nomePessoaAI"),
 		@NamedQuery(name = "consultarPessoaComOrgaoFuncaoCargo", query = "from DpPessoa pes"
 				+ " inner join fetch pes.orgaoUsuario orgao "

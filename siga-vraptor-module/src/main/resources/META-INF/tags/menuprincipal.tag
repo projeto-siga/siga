@@ -353,11 +353,12 @@
 						<li><a class="dropdown-item" href="/siga/app/funcao/listar">Cadastro
 								de Função de Confiança</a></li>
 					</c:if>
-					<c:if
+					<c:if 
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_PESSOA:Cadastrar Pessoa')}">
-						<li><a class="dropdown-item" href="/siga/app/pessoa/listar">Cadastro
-								de Pessoa</a></li>
-					</c:if>
+						<li class="dropdown-submenu">
+							<li><a class="dropdown-item" href="/siga/app/pessoa/listar">Cadastro de Pessoa</a>
+						</li>
+					</c:if>					
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ENV:Envio de E-mail para Novos Usuários')}">
 						<li><a class="dropdown-item"

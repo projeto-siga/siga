@@ -2241,7 +2241,7 @@ public class CpBL {
 			DpLotacao lotacao, DpLotacao lotacaoNova, Date dataSistema) {
 		List<DpPessoa> listPessoa = CpDao.getInstance().pessoasPorLotacao(idLotacao, Boolean.TRUE, Boolean.FALSE);
 		
-		Integer qtdeDocumentoCriadosPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, Boolean.FALSE); // Não restringe Marcadores
+		Integer qtdeDocumentoCriadosPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, null, Boolean.FALSE); // Não restringe Marcadores
 		
 		if(!Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotaTitular,"SIGA;GI;CAD_LOTACAO;ALT") && qtdeDocumentoCriadosPosse > 0 && 
 				(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
@@ -2615,10 +2615,9 @@ public class CpBL {
      * @param lotacao
      * @return
      */
-	public Integer quatidadeMarcasOuDocumentosEmPosseDaLotacao(DpLotacao lotacao, boolean excluirMarcadoresDaContagem) { 
+	public Integer quatidadeMarcasOuDocumentosEmPosseDaLotacao(DpLotacao lotacao, List<Long> listaMarcadores, boolean excluirMarcadoresDaContagem) { 
 
 		Integer quantidade;
-		List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
 
         if (excluirMarcadoresDaContagem && listaMarcadores != null)
         	quantidade = CpDao.getInstance().quatidadeMarcasEmPosseDaLotacaoMarcadores(lotacao,listaMarcadores);
@@ -2632,13 +2631,12 @@ public class CpBL {
     /**
      * Consulta quantidade de documentos criados OU que estão em posse da lotação, conforme parâmetros e propriedades
      *
-     * @param lotacao
+     * @param pessoa
      * @return
      */
-	public Integer quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(DpPessoa pessoa, boolean excluirMarcadoresDaContagem) { 
+	public Integer quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(DpPessoa pessoa, List<Long> listaMarcadores, boolean excluirMarcadoresDaContagem) { 
 
 		Integer quantidade;		
-        List<Long> listaMarcadores = getListaMarcadoresPermitidosInativacaoLotacao();
 
         if (excluirMarcadoresDaContagem && listaMarcadores != null)
         	quantidade = CpDao.getInstance().quatidadeMarcasEmPosseDaPessoaMarcadores(pessoa,listaMarcadores);
@@ -2651,6 +2649,14 @@ public class CpBL {
 	public boolean restringeMarcadoresParaInativacaoLotacao() {
 		final String TODOS_MARCADORES = "*";
 		final String marcadoresPermitidos = Prop.get("/siga.lotacao.inativacao.marcadores.permitidos");
+		
+		return !TODOS_MARCADORES.equals(marcadoresPermitidos);
+		
+	}
+	
+	public boolean restringeMarcadoresParaAlteracaoLotacaoPessoa() {
+		final String TODOS_MARCADORES = "*";
+		final String marcadoresPermitidos = Prop.get("/siga.alteracao.lotacao.pessoa.marcadores.permitidos");
 		
 		return !TODOS_MARCADORES.equals(marcadoresPermitidos);
 		
@@ -2669,6 +2675,35 @@ public class CpBL {
 	        
 	        if (listaMarcadores != null) {
 		        listaGrupoMarcadores = Prop.getList("/siga.lotacao.inativacao.grupo.marcadores.permitidos");
+		        listaMarcadoresPermitidos = CpMarcadorEnum.getListIdByListChaves(listaMarcadores);
+		        
+				//Soma-se aos Marcadores Permitidos os marcadores relacionados aos grupos definidos
+				if (!listaGrupoMarcadores.isEmpty()) {
+					for (String grupo : listaGrupoMarcadores) {
+						if (!"".equals(grupo)) {
+							listaMarcadoresPermitidos.addAll(CpMarcadorEnum.getListIdByGrupo(CpMarcadorGrupoEnum.valueOf(grupo.trim())));
+						}			
+					}			
+				}
+	        }
+		}
+			
+		return listaMarcadoresPermitidos;
+		
+	}
+	
+	public List<Long> getListaMarcadoresPermitidosAlteracaoLotacaoPessoa() {
+
+        List<String> listaMarcadores = null;
+        List<String> listaGrupoMarcadores = null;
+        List<Long> listaMarcadoresPermitidos = null;
+		
+		if (restringeMarcadoresParaAlteracaoLotacaoPessoa()) {
+			
+	        listaMarcadores = Prop.getList("/siga.alteracao.lotacao.pessoa.marcadores.permitidos");
+	        
+	        if (listaMarcadores != null) {
+		        listaGrupoMarcadores = Prop.getList("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos");
 		        listaMarcadoresPermitidos = CpMarcadorEnum.getListIdByListChaves(listaMarcadores);
 		        
 				//Soma-se aos Marcadores Permitidos os marcadores relacionados aos grupos definidos
@@ -2717,7 +2752,8 @@ public class CpBL {
 		
 		if (restringeMarcadoresParaInativacaoLotacao()) {	
 			/* Verifica Quantidade de Marcas para Lotação */
-			Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, Boolean.TRUE); 
+			List<Long> listaMarcadoresPermitidos = getListaMarcadoresPermitidosInativacaoLotacao();
+			Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaLotacao(lotacao, listaMarcadoresPermitidos, Boolean.TRUE); 
 			if (quantidadeEmPosse > 0) {
 				throw new AplicacaoException("Inativação não permitida. Existem documentos vinculados nessa " + SigaMessages.getMessage("usuario.lotacao"), 0);
 				
@@ -2732,7 +2768,7 @@ public class CpBL {
 			
 			if (listaPessoasInativasDaLotacao != null && listaPessoasInativasDaLotacao.size() > 0 ) {
 				for (DpPessoa pessoa : listaPessoasInativasDaLotacao) {
-					quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, Boolean.TRUE); 
+					quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, listaMarcadoresPermitidos, Boolean.TRUE); 
 					if (quantidadeEmPosse > 0) {
 						throw new AplicacaoException("Inativação não permitida. Existem documentos de usuários inativos vinculados nessa " + SigaMessages.getMessage("usuario.lotacao"), 0);
 						
@@ -2745,7 +2781,7 @@ public class CpBL {
 	}
 	
 	public boolean podeAlterarLotacaoPessoaDentroMesmoOrgao(DpPessoa pessoa, DpPessoa cadastrante) {	
-		Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, Boolean.TRUE); 
+		Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, getListaMarcadoresPermitidosAlteracaoLotacaoPessoa(), Boolean.TRUE); 
 		if (quantidadeEmPosse > 0) {
 			return false; 
 		}	

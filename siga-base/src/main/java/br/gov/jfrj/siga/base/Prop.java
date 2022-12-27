@@ -345,5 +345,10 @@ public class Prop {
 		 * É ligada caso property siga.lotacao.inativacao.marcadores.permitidos seja diferente de null e soma-se as listas
 		 * Default: Documentos não apresentados na Mesa.*/
 		provider.addPublicProperty("/siga.lotacao.inativacao.grupo.marcadores.permitidos", "NENHUM");
+		
+		/* Permite Alterar a lotação da Pessoa com determinadas marcações*/
+		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.marcadores.permitidos", get("/siga.lotacao.inativacao.marcadores.permitidos"));
+		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos", get("/siga.lotacao.inativacao.grupo.marcadores.permitidos"));
+		
 	}
 }

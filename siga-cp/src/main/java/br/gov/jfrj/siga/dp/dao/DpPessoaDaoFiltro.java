@@ -36,6 +36,7 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	private Long id;
 	private String email;
 	private String identidade;
+	private Boolean status;
 	
 	
 	private boolean buscarFechadas;
@@ -134,6 +135,14 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 
 	public void setFuncaoConfianca(DpFuncaoConfianca funcaoConfianca) {
 		this.funcaoConfianca = funcaoConfianca;
+	}
+
+	public Boolean getStatus() {
+		return status;
+	}
+
+	public void setStatus(Boolean status) {
+		this.status = status;
 	}
 
 	public Long getId() {

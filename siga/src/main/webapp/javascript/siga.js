@@ -1678,6 +1678,21 @@ var sigaModal = {
 				return (typeof modal.data('bs.modal') !== 'undefined' && modal.data('bs.modal')._isShown);				
 			}
 		},
+		reabilitarBotaoAposFecharModal: function(idModal,botaoASerHabilitado) {
+		
+			if (idModal) {
+				var modal = $('#'.concat(idModal));
+				var botao = $('#'.concat(botaoASerHabilitado));
+				
+				if (botao.length > 0) {
+					modal.on('hidden.bs.modal', function (e) {
+						botao[0].disabled = false;			
+					});
+				}	
+			}
+
+		
+		},
 		obterCabecalhoPadrao: function(tituloADireita) {
 			if (typeof uriLogoSiga !== 'undefined') {
 				var detalheEsquerda = uriLogoSiga ? '<div class="col-6  p-0"><img src="' + uriLogoSiga + '" class="siga-modal__logo" alt="logo siga"></div>' : '<h5 class="modal-title">Siga</h5>';

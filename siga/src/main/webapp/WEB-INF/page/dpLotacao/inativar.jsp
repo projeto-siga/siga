@@ -11,7 +11,8 @@
 		function sbmt() {
 			document.getElementById("btnOk").disabled = true;
 			if (validaMotivo()) {
-				sigaModal.abrir('confirmacaoModal');		
+				sigaModal.abrir('confirmacaoModal');	
+				sigaModal.reabilitarBotaoAposFecharModal('confirmacaoModal','btnOk');
 			}
 		}
 		

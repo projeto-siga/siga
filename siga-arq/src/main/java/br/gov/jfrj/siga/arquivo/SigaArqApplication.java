@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import br.gov.jfrj.siga.base.Prop;
+
 @SpringBootApplication
 public class SigaArqApplication extends SpringBootServletInitializer  {
 
@@ -24,8 +26,10 @@ public class SigaArqApplication extends SpringBootServletInitializer  {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
+				for (String url: Prop.get("/sigaarq.allowed.origin.urls").split(","))
+					System.out.println("CORS: " + url);
 				registry.addMapping("/api/**")
-					.allowedOrigins(System.getProperty("siga-arq.allowed.origin.urls"))
+					.allowedOrigins(Prop.get("/sigaarq.allowed.origin.urls").split(","))
                 	.allowCredentials(true)
 	                .allowedMethods("OPTIONS","POST","PUT","GET","DELETE","HEAD")
 	                .allowedHeaders("Cookie","Content-Disposition","content-type","parms","tokenArquivo")

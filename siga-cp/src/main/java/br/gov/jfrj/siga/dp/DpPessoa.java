@@ -74,6 +74,9 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	
 	@Transient
 	private Long idSitConfiguracaoConfManual;
+	
+	@Transient
+	private boolean selecionado;
 
 	@Transient
 	private List <List<String>> listaLotacoes = new ArrayList <List<String>>();
@@ -764,4 +767,13 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public String getSiglaDePessoaEOuLotacao() {
 		return SiglaParser.makeSigla(this, this.getLotacao());
 	}
+
+	public boolean isSelecionado() {
+		return selecionado;
+	}
+
+	public void setSelecionado(boolean selecionado) {
+		this.selecionado = selecionado;
+	}
+	
 }

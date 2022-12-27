@@ -21,7 +21,7 @@
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 
 	<c:set var="timeoutMod" scope="session" value="${f:resource('/siga.session.modelos.tempo.expiracao')}" />
-	<c:set var="urlSigaArq" scope="session" value="${f:resource('/siga-arq.url')}" />
+	<c:set var="urlSigaArq" scope="session" value="${f:resource('/sigaarq.url')}" />
 	<div class="container-fluid">
 		<c:if test="${not empty mensagem}">
 			<div class="row">

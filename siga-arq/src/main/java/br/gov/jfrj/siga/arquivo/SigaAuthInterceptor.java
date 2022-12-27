@@ -30,7 +30,7 @@ public class SigaAuthInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest requestServlet, HttpServletResponse responseServlet, Object handler) throws Exception
     {
         if ("OPTIONS".equals(requestServlet.getMethod()) 
-        		|| "/siga-arq/api/v1/test".equals(requestServlet.getRequestURI())) 
+        		|| "/sigaarq/api/v1/test".equals(requestServlet.getRequestURI())) 
         	return true;
 
         String token = getCookieValido(requestServlet);

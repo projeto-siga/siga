@@ -6,7 +6,6 @@
 
 <script type="text/javascript">
 	function validar() {		
-		sigaSpinner.mostrar();
 		document.getElementById("btnOk").disabled = true;
 		var idOrgaoUsu = document.getElementsByName('idOrgaoUsu')[0].value;
 		var nmPessoa = document.getElementsByName('nmPessoa')[0].value;	
@@ -81,9 +80,23 @@
 		}
 			
 		document.getElementById("email").disabled = false
-		frm.submit();
+		
+		sigaModal.abrir('confirmacaoAlteracaoModal');
+		sigaModal.reabilitarBotaoAposFecharModal('confirmacaoAlteracaoModal','btnOk');
 	}
 			
+    function confirmarAlteracao() {
+        sigaSpinner.mostrar();
+        sigaModal.fechar('confirmacaoAlteracaoModal');
+        document.frm.submit();
+    }
+    
+    function cancelar() {
+    	document.getElementById("btnOk").disabled = false;
+        sigaModal.fechar('confirmacaoModal');
+    }
+	
+	
 	function habilitarBotaoOk() {		
 		sigaSpinner.ocultar();
 		document.getElementById("btnOk").disabled = false;
@@ -376,6 +389,15 @@
 							</div>
 						</div>
 					</c:if>
+					<siga:siga-modal id="confirmacaoAlteracaoModal" exibirRodape="false" tituloADireita="Confirmação">
+						<div id="msg" class="modal-body">
+				       		Deseja alterar cadastro?
+				     	</div>
+				     	<div class="modal-footer">
+				       		<button type="button" class="btn btn-danger" data-dismiss="modal" onclick="cancelar();">Não</button>		        
+				       		<a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true" onclick="confirmarAlteracao();">Sim</a>
+						</div>
+					</siga:siga-modal>
 				</form>	
 			</div>
 		</div>					

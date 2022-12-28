@@ -241,6 +241,8 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 	@Get("app/lotacao/listar")
 	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
+		
+		result.include("podeInativarLotacaoLote", Cp.getInstance().getBL().podeInativarLotacaoLote(getTitular(),getLotaCadastrante()));
 
 		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());

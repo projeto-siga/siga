@@ -8,14 +8,54 @@
 <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 <script type="text/javascript" language="Javascript1.1">
-function sbmt(offset) {
-	if (offset == null) {
-		offset = 0;
+	function sbmt(offset) {
+		if (offset == null) {
+			offset = 0;
+		}
+		frm.elements["paramoffset"].value = offset;
+		frm.elements["p.offset"].value = offset;
+		frm.submit();
 	}
-	frm.elements["paramoffset"].value = offset;
-	frm.elements["p.offset"].value = offset;
-	frm.submit();
-}
+	
+	function checkUncheckAll(element) { 
+		var form = element.form, z = 0; 
+		for (z = 0; z < form.length; z++) { 
+			if (form[z].type == 'checkbox' && form[z].name != 'checkall') { 
+				form[z].checked = !(element.checked); 
+				form[z].click(); 
+			} 
+		}
+		showActionButtons(form);
+	} 
+	
+	function showActionButtons(form) {
+		let countActiveChecked = 0;
+		let countInactiveChecked = 0;
+		let totalChecked = 0;
+		
+		for (z = 0; z < form.length; z++) { 
+			if (form[z].type == 'checkbox' && form[z].name != 'checkall' && form[z].checked) { 
+				if (form[z].dataset.lotacaoAtivo == 'true') {
+					countActiveChecked++;
+				} else {
+					countInactiveChecked++;
+				}
+				totalChecked++;
+			} 
+		}
+		
+		var header = document.getElementById('headerResultado');
+		
+		if (totalChecked == 0) {
+			header.innerHTML = '<h3><fmt:message key="usuario.lotacoes"/>cadastradas</h3>'
+		} else {
+			header.innerHTML = '<div>' + (countActiveChecked + countInactiveChecked) + ' <fmt:message key="usuario.lotacoes"/> selecionadas'	
+			+ '<button type="button" class="btn btn-outline-primary">Inativar <span class="badge badge-light">'+countActiveChecked +'</span></button>&nbsp;'
+	    	+ '<button type="button" class="btn btn-outline-danger">Ativar <span class="badge badge-light">'+countInactiveChecked +'</span></button></div>';
+		}
+		
+	}
+	
 </script>
 	<!-- main content -->
 	<div class="container-fluid">
@@ -23,7 +63,10 @@ function sbmt(offset) {
 		<input type="hidden" name="paramoffset" value="0" />
 		<input type="hidden" name="p.offset" value="0" />
 		<div class="card bg-light mb-3" >
-			<div class="card-header">
+			<c:if test="${podeInativarLotacaoLote}">
+				<h5>Tem Permissão para Inativar em Lote</h5>
+			</c:if>
+			<div class="card-header mb-4">
 				<h5>Cadastro de <fmt:message key="usuario.lotacao"/></h5>
 			</div>
 			<div class="card-body">
@@ -70,10 +113,22 @@ function sbmt(offset) {
 			</div>
 		</div>
 		
-		<h3 class="gt-table-head"><fmt:message key="usuario.lotacoes"/> cadastradas</h3>
+		<div id="headerResultado">
+			<h3 class="gt-table-head"><fmt:message key="usuario.lotacoes"/> cadastradas</h3>
+		</div>
+		
 		<table border="0" class="table table-sm table-striped">
 			<thead class="${thead_color}">
 				<tr>
+					<c:if test="${podeInativarLotacaoLote}">
+						<th align="center" style="text-align:center;vertical-align:middle;">
+							<div class="form-group">
+							    <div class="form-check">
+								    <input class="form-check-input" type="checkbox" id="checkall" name="checkall" value="true" onclick="checkUncheckAll(this)" />
+							    </div>
+							 </div>
+						</th>
+					</c:if>
 					<th align="left">Nome</th>
 					<th align="left">Sigla</th>
 					<th align="left">Externa</th>
@@ -86,6 +141,15 @@ function sbmt(offset) {
 				<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
 					itens="${itens}" var="lotacao">
 					<tr>
+						<c:if test="${podeInativarLotacaoLote}">
+							<td align="center">
+							   <div class="form-group">
+							    <div class="form-check">
+							      <input class="form-check-input" type="checkbox" id="chk_${lotacao.id}" data-lotacao-ativo="${empty lotacao.dataFimLotacao}" >
+							    </div>
+							  </div>
+							</td>
+						</c:if>
 						<td align="left">${lotacao.descricao}</td>
 						<td align="left">${lotacao.sigla}</td>
 						<td align="left">${lotacao.isExternaLotacao == 1 ? 'SIM' : 'NÃO'}</td>

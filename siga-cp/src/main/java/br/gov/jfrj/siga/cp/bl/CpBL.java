@@ -2788,4 +2788,10 @@ public class CpBL {
 		
 		return true; 
 	}
+	
+	public boolean podeInativarLotacaoLote(DpPessoa titular, DpLotacao lotacaoTitular) {
+		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação;INATIVA_LOTE:Inativar Lotação em Lote";
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, titular.getLotacao(), servico);
+		
+	}
 }

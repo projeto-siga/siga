@@ -1260,7 +1260,7 @@ public class CpBL {
 			if(pessoaAnt != null) {
 				
 				if (!idLotacao.equals(pessoaAnt.getLotacao().getId()) && pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu)) {
-					if (!podeAlterarLotacaoPessoaDentroMesmoOrgao(pessoaAnt, identidadeCadastrante.getDpPessoa())) {
+					if (!podeAlterarLotacaoPessoaDentroMesmoOrgao(pessoaAnt)) {
 						throw new AplicacaoException("A "+ SigaMessages.getMessage("usuario.lotacao").toLowerCase()  +" da pessoa não pode ser alterada, pois existem documentos pendentes", 0);
 					}
 				}		
@@ -2722,9 +2722,9 @@ public class CpBL {
 	}
 	
 	
-	public boolean podeAtivarLotacao(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {	
+	public boolean podeAtivarLotacao(DpLotacao lotacao, DpPessoa titular, DpLotacao lotacaoTitular) throws Exception {	
 		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação";
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotacaoTitular, servico);
 		
 		if (lotacao.getDataFimLotacao() == null) {
 			throw new AplicacaoException("Ativação não permitida. " + SigaMessages.getMessage("usuario.lotacao") + " não encontra-se inativa.", 0);
@@ -2734,9 +2734,9 @@ public class CpBL {
 		
 	}
 	
-	public boolean podeInativarLotacao(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {		
+	public boolean podeInativarLotacao(DpLotacao lotacao, DpPessoa titular, DpLotacao lotacaoTitular) throws Exception {		
 		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação";
-		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(cadastrante, cadastrante.getLotacao(), servico);
+		Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, lotacaoTitular, servico);
 		
 		/* Verifica Lotações Filhas */
 		if (dao().listarLotacoesPorPai(lotacao).size() > 0) 
@@ -2780,7 +2780,7 @@ public class CpBL {
 		return true;	
 	}
 	
-	public boolean podeAlterarLotacaoPessoaDentroMesmoOrgao(DpPessoa pessoa, DpPessoa cadastrante) {	
+	public boolean podeAlterarLotacaoPessoaDentroMesmoOrgao(DpPessoa pessoa) {	
 		Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, getListaMarcadoresPermitidosAlteracaoLotacaoPessoa(), Boolean.TRUE); 
 		if (quantidadeEmPosse > 0) {
 			return false; 

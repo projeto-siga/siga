@@ -410,7 +410,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	public void ativar(final Long id) throws Exception {
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 
-		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular())) {
+		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular(), getLotaTitular())) {
 			result.include("lotacao",lotacao);
 		} 
 	}
@@ -419,7 +419,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	public void inativar(final Long id) throws Exception {
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 		
-		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular())) {
+		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular(),getLotaTitular())) {
 			result.include("lotacao",lotacao);
 		}	
 	}
@@ -429,7 +429,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	public void ativarGravar(final Long id, final String motivo) throws Exception {	
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 		
-		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular())) {
+		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular(), getLotaTitular())) {
 			DpLotacao lotacaoNova = new DpLotacao();
 			lotacao.setDataFimLotacao(null);
 			try {
@@ -451,7 +451,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	public void inativarGravar(final Long id, final String motivo) throws Exception {
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);		
 
-		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular())) {
+		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular(), getLotaTitular())) {
 
 			lotacao.setDataFimLotacao(dao.consultarDataEHoraDoServidor());
 			lotacao.setMotivoInativacao(motivo);

@@ -85,7 +85,6 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements
 	/** Campos que geram versionamento de registro **/
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FIM_FUNCAO_CONFIANCA", length = 19)
-    @Desconsiderar
 	private Date dataFimFuncao;
 	
 	@Column(name = "CATEGORIA_FUNCAO_CONFIANCA", length = 15)

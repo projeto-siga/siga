@@ -41,7 +41,7 @@ public class ExEstaPendenteDeRecebimento implements Expression {
 		Pendencias p = mob.calcularTramitesPendentes();
 		boolean f = false;
 		for (ExMovimentacao tramite : p.tramitesPendentes) {
-			if (tramite.isRespExato(titular, lotaTitular))
+			if (tramite.isResp(titular, lotaTitular))
 				return true;
 		}
 		return false;

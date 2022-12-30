@@ -400,7 +400,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	@Transacional
 	@Post("/app/pessoa/inativarLote")
-	public void InativarLote(List<Long> idPessoasSelecionadas) throws Exception {
+	public void inativarLote(List<Long> idPessoasSelecionadas) throws Exception {
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 		
 		if (idPessoasSelecionadas != null && !idPessoasSelecionadas.isEmpty()) {

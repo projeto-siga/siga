@@ -82,7 +82,7 @@ public class ExMesa2Controller extends ExController {
 		
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {
-			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
+			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(),
 					ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO));
 		} catch (Exception e) {
 			throw e;
@@ -107,6 +107,15 @@ public class ExMesa2Controller extends ExController {
 		} else {
 			result.include("idVisualizacao", 0);
 		}
+		
+		if( !getLotaTitular().equivale(getCadastrante().getLotacao()) &&
+				getTitular().equivale(getCadastrante())) {
+			// É substituição de lotação
+			result.include("mostrarUsuario", false);
+		} else {
+			result.include("mostrarUsuario", true);
+		}
+		
 		if (msg != null) {
 			result.include("mensagemCabec", msg);
 			result.include("msgCabecClass", "alert-info fade-close");
@@ -162,10 +171,10 @@ public class ExMesa2Controller extends ExController {
 						 getCadastrante().getLotacao(), 
 						 ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
-				g = Mesa2.getMesa(contar, qtd, offset, vis.getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
+				g = Mesa2.getMesa(contar, qtd, offset, vis.getTitular(), vis.getTitular().getLotacao(), selGrupos,	exibeLotacao, trazerAnotacoes, 
 						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
 			} else {
-				g = Mesa2.getMesa(contar, qtd, offset, getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
+				g = Mesa2.getMesa(contar, qtd, offset, getTitular(), getLotaTitular(), selGrupos, exibeLotacao, trazerAnotacoes, 
 						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
 			}
 	

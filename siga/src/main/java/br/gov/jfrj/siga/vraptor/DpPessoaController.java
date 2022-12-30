@@ -282,7 +282,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
 			dpPessoa.setId(Long.valueOf(0));
-			dpPessoa.setStatus(statusPesquisa);
+			
+			if (statusPesquisa != null && statusPesquisa) {
+				dpPessoa.setBuscarFechadas(Boolean.FALSE);
+			}
+			
 			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, paramoffset, 15));
 			result.include("itens", getItens());
 			Integer tamanho = dao().consultarQuantidade(dpPessoa);
@@ -305,7 +309,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	@Transacional
 	@Get("/app/pessoa/ativarInativar")
-	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa, String identidadePesquisa, Boolean idStatusPesquisa) throws Exception{
+	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa, String emailPesquisa, String identidadePesquisa, Boolean idStatusPesquisa) throws Exception {
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		DpPessoa pessoaAnt = dao().consultar(id, DpPessoa.class, false).getPessoaAtual();
 		DpPessoa pessoa = new DpPessoa();
@@ -395,40 +399,24 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Transacional
-	@Get("/app/pessoa/inativarLote")
-	public void InativarLote(List<Long> idPessoasSelecionadas, Boolean idStatusPesquisa) throws Exception{
+	@Post("/app/pessoa/inativarLote")
+	public void InativarLote(List<Long> idPessoasSelecionadas) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 		
-		result.include("request", getRequest());
-		Map<String,Object> retorno = new HashMap<String, Object>(getRequest().getParameterMap());
-		int contador = 0;
-		for(String key : retorno.keySet()){
-			String[] idsArray = (String[]) retorno.get(key);
+		if (idPessoasSelecionadas != null && !idPessoasSelecionadas.isEmpty()) {
 			
-			idsArray = idsArray[contador].split(Pattern.quote(","));
-			
-			for(int i = 0; i < idsArray.length; i++) {
-				if(!StringUtils.isEmpty(idsArray[i])) {
-					if(idsArray[i].equals("true"))
-						continue;
-					
-					CpOrgaoUsuario ou = new CpOrgaoUsuario();
-					DpPessoa pessoaAnt = dao().consultar(Long.parseLong(idsArray[i]), DpPessoa.class, false).getPessoaAtual();
-					ou.setIdOrgaoUsu(pessoaAnt.getOrgaoUsuario().getId());
-					ou = CpDao.getInstance().consultarPorId(ou);
-
-					if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
-							|| CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(ou.getId())) {
-						pessoaAnt = dao().consultar(Long.parseLong(idsArray[i]), DpPessoa.class, false).getPessoaAtual();
-						// inativar
-						if (pessoaAnt.getDataFimPessoa() == null || "".equals(pessoaAnt.getDataFimPessoa())) {
-							inativa(pessoaAnt);
-						}
+			for (Long idPessoa : idPessoasSelecionadas) {
+				DpPessoa pessoa = dao().consultar(idPessoa, DpPessoa.class, false);
+				if (pessoa != null && "ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || getTitular().getOrgaoUsuario().equals(pessoa.getOrgaoUsuario())) {
+					if (pessoa.getDataFimPessoa() == null ) {
+						inativa(pessoa);
 					}
 				}
-			} 
-			contador++;
+
+			}
 		}
-		lista(0, null, "", "", null, null, null, "", null, idStatusPesquisa);
+		
+		lista(0, null, "", "", null, null, null, "", null, true);
 	}
 
 	private void inativa(DpPessoa pessoaAnt) {

@@ -1387,7 +1387,7 @@ public class CpDao extends ModeloDao {
 					query.setParameter("id", 0L);
 				}
 			} else
-				query = em().createNamedQuery("consultarPorFiltroDpPessoaAtivoInativo");
+				query = em().createNamedQuery("consultarPorFiltroDpPessoaInclusiveFechadas");
 
 			if (offset > 0) {
 				query.setFirstResult(offset);
@@ -1437,11 +1437,6 @@ public class CpDao extends ModeloDao {
 				query.setParameter("funcao", flt.getFuncaoConfianca().getId());
 			else
 				query.setParameter("funcao", 0L);
-
-			if (flt.getStatus())
-				query.setParameter("status", "Ativo");
-			else
-				query.setParameter("status", "Inativo");
 
 			final List<DpPessoa> l = query.getResultList();
 			return l;

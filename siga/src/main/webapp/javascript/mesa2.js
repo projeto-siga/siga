@@ -558,7 +558,7 @@ function carregaFromJson(json, appMesa) {
 			// Se ainda houver linha a preencher no grupo e nao encontrou, reduz 1 do contador. 
 			// Provavelmente existe marca sem mobil no grupo 
 			if (grpVue && grpVue.grupoDocs && grpVue.grupoDocs.length > 0 
-				&& grpVue.grupoDocs[grpVue.grupoCounterAtivo - 1].codigo == "") {
+				&& grpVue.grupoDocs[grpVue.grupoDocs.length - 1].codigo == "") {
 				grpVue.grupoDocs.length--;
 				grpVue.grupoCounterAtivo--;
 				if (appMesa.exibeLota)

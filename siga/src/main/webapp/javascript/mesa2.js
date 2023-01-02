@@ -561,8 +561,15 @@ function carregaFromJson(json, appMesa) {
 			let grpVue = getGrupoVue(grp[0].grupoNome); 
 			// Se ainda houver linha a preencher no grupo e nao encontrou, reduz 1 do contador. 
 			// Provavelmente existe marca sem mobil no grupo 
-			if (grpVue.grupoDocs[grpVue.grupoCounterAtivo - 1].codigo == "") 
+			if (grpVue && grpVue.grupoDocs && grpVue.grupoDocs.length > 0 
+				&& grpVue.grupoDocs[grpVue.grupoDocs.length - 1].codigo == "") {
 				grpVue.grupoDocs.length--;
+				grpVue.grupoCounterAtivo--;
+				if (appMesa.exibeLota)
+					grpVue.grupoCounterLota--
+				else
+					grpVue.grupoCounterUser--
+			}
 		}
 	}
 	

@@ -28,11 +28,14 @@ var appMesa = new Vue({
 		var self = this;
 		self.exibeLota = getParmUser('exibeLota');
 		if (self.exibeLota == null) {
-			setParmUser('exibeLota', false); 
 			self.exibeLota = false; 
 		}
 		self.getItensGrupo();
 		self.contar = false;
+		self.mostrarUsuario = MOSTRAR_USUARIO;
+		if (!self.mostrarUsuario)
+			self.exibeLota = true;
+		setParmUser('exibeLota', self.exibeLota); 
 		// Carrega todas linhas não preenchidas que estiverem na tela
 		var timeoutId;
 		window.addEventListener('scroll', function ( event ) {
@@ -66,7 +69,8 @@ var appMesa = new Vue({
 			trazerCancelados: false,
 			ordemCrescenteData: false,
 			usuarioPosse: false,
-			dtDMA: false
+			dtDMA: false,
+			mostrarUsuario: true
 		};
 	},
 	watch: {

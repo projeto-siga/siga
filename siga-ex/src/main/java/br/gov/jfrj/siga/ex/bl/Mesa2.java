@@ -348,7 +348,7 @@ public class Mesa2 {
 			return gruposMesa;
 		
 		List<Object[]> listaPessoa = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular, null, true, marcasAIgnorar, null, filtro);
-		List<Object[]> listaLotacao = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular, titular.getLotacao(), true, marcasAIgnorar, null, filtro);
+		List<Object[]> listaLotacao = ExDao.getInstance().listarMobilsPorGrupoEMarcas(true, null, null, titular, lotaTitular, true, marcasAIgnorar, null, filtro);
 		
 		if (listaPessoa == null && listaLotacao == null)
 			return gruposMesa;
@@ -377,13 +377,14 @@ public class Mesa2 {
 		return gruposMesa;
 	}
 
-	public static List<GrupoItem> getMesa(final boolean contar, final Integer qtd, final Integer offset, final DpPessoa titular, final Map<String, SelGrupo> selGrupos, 
+	public static List<GrupoItem> getMesa(final boolean contar, final Integer qtd, final Integer offset, final DpPessoa titular, 
+			final DpLotacao lotaTitular, final Map<String, SelGrupo> selGrupos, 
 			final boolean exibeLotacao, final boolean trazerAnotacoes, final boolean trazerComposto, final boolean ordemCrescenteData,
 			final boolean usuarioPosse, List<Integer> marcasAIgnorar, final String filtro) throws Exception {
 //		long tempoIni = System.nanoTime();
 		ExDao dao = ExDao.getInstance();
 
-		List<Mesa2.GrupoItem> gruposMesa = getContadores(contar, titular, titular.getLotacao(), selGrupos, exibeLotacao, marcasAIgnorar, filtro);
+		List<Mesa2.GrupoItem> gruposMesa = getContadores(contar, titular, lotaTitular, selGrupos, exibeLotacao, marcasAIgnorar, filtro);
 
 		int qtTotal = 0;
 		for (Mesa2.GrupoItem g : gruposMesa) {
@@ -396,7 +397,7 @@ public class Mesa2 {
 			int q = (qtd != null && qtd < MESA_QTD_MAX_INICIAL? qtd : MESA_QTD_MAX_INICIAL);
 			if (exibeLotacao) {
 				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, titular,
-						titular.getLotacao(), ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
+						lotaTitular, ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
 			} else {
 				l = dao.listarMobilsPorGrupoEMarcas(false, q, parmOffset, titular,
 						null, ordemCrescenteData, marcasAIgnorar, lGrp, filtro);
@@ -411,7 +412,7 @@ public class Mesa2 {
 			// Insere no grupo os documentos e seus dados a serem apresentados na mesa
 			for (Map.Entry<String, List<ExMobil>> entry : hashMobGrp.entrySet()) {
 				g.grupoDocs = Mesa2.listarReferencias(entry.getValue(), titular,
-						titular.getLotacao(), g.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
+						lotaTitular, g.grupoOrdem, trazerAnotacoes, ordemCrescenteData, 
 						usuarioPosse, parmOffset);
 				if (exibeLotacao) {
 					g.grupoQtdLota = g.grupoQtdLota > 0 ? g.grupoQtdLota : l.size();

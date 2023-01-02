@@ -2473,6 +2473,37 @@ public class ExMovimentacaoController extends ExController {
 		result.include("substituicao", substituicao);
 		result.redirectTo("/app/expediente/mov/anotar_lote");
 	}
+	
+	@Get("/app/expediente/mov/vincularPapelLote")
+	public void aVincularPapelLote(final String sigla, final DpPessoaSelecao responsavelSel,
+			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel) {
+
+		//Ex.getInstance().getComp().afirmar("Não é possível fazer vinculação de papel", ExPodeFazerVinculacaoDePapel.class, getTitular(), getLotaTitular(), builder.getMob());
+
+		final List<ExPapel> papeis = this.obterApenasPapeisParaVinculo();
+		
+		result.include("sigla", sigla);
+		//result.include("mob", builder.getMob());
+		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
+		result.include("listaExPapel", papeis);
+		result.include("responsavelSel", responsavelSel != null ? responsavelSel : new DpPessoaSelecao());
+		result.include("lotaResponsavelSel", lotaResponsavelSel != null ? lotaResponsavelSel : new DpLotacaoSelecao());
+		result.include("tipoResponsavel", tipoResponsavel);
+		result.include("idPapel", idPapel);
+	}
+	
+	private List<ExPapel> obterApenasPapeisParaVinculo(){
+		final List<ExPapel> papeis = this.getListaExPapel();
+		if (SigaMessages.isSigaSP()) {
+			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
+			    ExPapel p = iter.next();
+			    if (p.getIdPapel() != ExPapel.PAPEL_GESTOR && p.getIdPapel() != ExPapel.PAPEL_INTERESSADO) {
+			        iter.remove();
+			    }
+			}
+		}
+		return papeis;
+	}
 
 	@Get("/app/expediente/mov/vincularPapel")
 	public void aVincularPapel(final String sigla, final DpPessoaSelecao responsavelSel,

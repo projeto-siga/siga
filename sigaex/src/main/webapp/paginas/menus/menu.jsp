@@ -65,10 +65,6 @@
 					</c:choose>
 				</c:if>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;DEFLOTE:Definir Acomanhamento em Lote')}"> 
-						<li><a class="dropdown-item" href="/sigaex/app/expediente/mov/definir_acompanhamento_lote">Definir Acomanhamento em Lote</a></li>
-				</c:if>
-				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;RECLALOTE:Reclassificar em Lote')}">
 					<li><a class="dropdown-item"
 						   href="/sigaex/app/expediente/mov/reclassificar_lote">Reclassificar em Lote</a></li>
@@ -87,6 +83,12 @@
 								Despacho em lote</a></li></span>
 				</c:if>
 			</c:catch> -->
+			<c:catch>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;DEFLOTE:Definir Acomanhamento em Lote')}"> 
+						<li><a class="dropdown-item" href="/sigaex/app/expediente/mov/vincularPapelLote">Definir Acomanhamento em Lote</a></li>
+				</c:if>
+			</c:catch>
 			<c:catch>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ARQLOTE:Arquivar em Lote')}">

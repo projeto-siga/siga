@@ -5805,4 +5805,46 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
 				subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
 	}
+
+	@Get("/app/expediente/mov/listar_docs_transferidos")
+	public void listar_docs_transferidos(final String siglasDocumentosTransferidos,
+										 final String siglasDocumentosNaoTransferidos) throws Exception {
+		
+		String[] arraySiglasDocumentosTransferidos = siglasDocumentosTransferidos.split(",");
+		String[] arraySiglasDocumentosNaoTransferidos = siglasDocumentosNaoTransferidos.split(",");
+		
+		final List<ExMobil> mobisDocumentosTransferidos = new ArrayList<ExMobil>();
+		final List<ExMobil> mobisDocumentosNaoTransferidos = new ArrayList<ExMobil>();
+
+		BuscaDocumentoBuilder documentoBuilder;
+				
+		for(String sigla : arraySiglasDocumentosTransferidos){
+			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			buscarDocumento(documentoBuilder);
+			ExMobil mob = documentoBuilder.getMob();
+			mobisDocumentosTransferidos.add(mob);
+		}
+
+		for(String sigla : arraySiglasDocumentosNaoTransferidos){
+			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			buscarDocumento(documentoBuilder);
+			ExMobil mob = documentoBuilder.getMob();
+			mobisDocumentosNaoTransferidos.add(mob);
+		}
+
+		ExMobil mob = mobisDocumentosTransferidos.get(0);
+		ExMovimentacao mov = null;
+		if(mob != null){
+			mov = mob.getUltimaMovimentacao();
+		}
+
+		result.include("mobisDocumentosTransferidos", mobisDocumentosTransferidos);
+		result.include("mobisDocumentosNaoTransferidos", mobisDocumentosNaoTransferidos);
+
+
+		result.include("lotaTitular", getLotaTitular());
+		result.include("mov", mov);
+		
+	}
+	
 }

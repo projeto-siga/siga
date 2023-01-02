@@ -16,7 +16,7 @@
                 <h5>${titulo}</h5>
             </div>
             <div class="card-body">
-                <form name="frm" action="transferir2_gravar" method="post">
+                <form name="frm" id="frm">
                     <input type="hidden" name="postback" value="1"/>
                     <input type="hidden" name="paramoffset" value="0"/>
                     <input type="hidden" name="p.offset" value="0"/>
@@ -100,7 +100,6 @@
                     <div class="gt-content-box gt-for-table">
                         <br/>
                         <h5>Destinatário: ${titular.descricao}</h5>
-                        <h5>Documentos selecionados: </h5>
                         <div>
 
                             <table class="table table-hover table-striped">
@@ -220,9 +219,10 @@
             if (offset == null) {
                 offset = 0;
             }
-            frm.elements["paramoffset"].value = offset;
-            frm.elements["p.offset"].value = offset;
-            frm.submit();
+            // frm.elements["paramoffset"].value = offset;
+            // frm.elements["p.offset"].value = offset;
+
+            // frm.submit();
         }
 
         function checkUncheckAll(theElement) {
@@ -278,18 +278,20 @@
             }
         }
 
+        let siglasDocumentosTransferidos = [];
+        let siglasDocumentosNaoTransferidos = [];
+
         function confirmar() {
-            // document.getElementById("btnOk").disabled = true;
+            document.getElementById('btnOk').disabled = true;
             sigaModal.fechar('confirmacaoModal');
             enviarParaTramitacaoLote();
-
         }
 
         function enviarParaTramitacaoLote() {
 
             let lotacaoDestinoSelSigla = document.getElementById('formulario_lotaResponsavelSel_sigla').value;
-            lotacaoDestinoSelSigla = lotacaoDestinoSelSigla.replaceAll('-','');
-            
+            lotacaoDestinoSelSigla = lotacaoDestinoSelSigla.replaceAll('-', '');
+
             let usuarioDestinoSelSigla = document.getElementById('formulario_responsavelSel_sigla').value;
             let orgaoDestinoSelSigla = document.getElementById('formulario_cpOrgaoSel_sigla').value;
 
@@ -306,8 +308,16 @@
             Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
                 chk => {
                     process.push(function () {
-                        return ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
+                        let result = ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
                             orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
+
+                        if (result == "OK") {
+                            siglasDocumentosTransferidos.push(chk.value);
+                        } else {
+                            siglasDocumentosNaoTransferidos.push(chk.value);
+                        }
+
+                        return result;
                     });
                     process.push(function () {
                         chk.checked = false;
@@ -320,13 +330,27 @@
             });
 
             process.push(function () {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'text',
+                    data: {
+                        siglasDocumentosTransferidos: siglasDocumentosTransferidos.toString(),
+                        siglasDocumentosNaoTransferidos: siglasDocumentosNaoTransferidos.toString()
+                    }
+                });
+            });
+
+            process.push(function () {
                 Log("Concluído...");
             });
 
             process.run();
+
         }
 
-        function ExecutarPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla, 
+        function ExecutarPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
                               orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao) {
             let result = "OK";
             $.ajax({
@@ -339,9 +363,22 @@
                     orgao: orgaoDestinoSelSigla,
                     observacao: obsOrgao,
                     dataDevolucao: dtDevolucaoMovString
+                },
+                error: function (result) {
+                    console.log(result.errormsg);
                 }
             });
             return result;
+        }
+
+        function apresentarResultadosTransferencia() {
+            $.ajax({
+                url: '${pageContext.request.contextPath}/app/expediente/doc/listar_docs_transferidos',
+                contentType: 'application/json',
+                dataType: 'json',
+                type: 'POST',
+                data: JSON.stringify({siglasDocumentosTransferidos, siglasDocumentosNaoTransferidos})
+            });
         }
 
     </script>

@@ -5809,9 +5809,16 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/listar_docs_transferidos")
 	public void listar_docs_transferidos(final String siglasDocumentosTransferidos,
 										 final String siglasDocumentosNaoTransferidos) throws Exception {
+
+		String[] arraySiglasDocumentosTransferidos = { };
+		if (siglasDocumentosTransferidos != null) {
+			siglasDocumentosTransferidos.split(",");
+		}
 		
-		String[] arraySiglasDocumentosTransferidos = siglasDocumentosTransferidos.split(",");
-		String[] arraySiglasDocumentosNaoTransferidos = siglasDocumentosNaoTransferidos.split(",");
+		String[] arraySiglasDocumentosNaoTransferidos = { };
+		if (siglasDocumentosNaoTransferidos != null) {
+			siglasDocumentosNaoTransferidos.split(",");
+		}
 		
 		final List<ExMobil> mobisDocumentosTransferidos = new ArrayList<ExMobil>();
 		final List<ExMobil> mobisDocumentosNaoTransferidos = new ArrayList<ExMobil>();

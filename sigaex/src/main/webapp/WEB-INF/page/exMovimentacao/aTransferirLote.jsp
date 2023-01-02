@@ -330,20 +330,9 @@
             });
 
             process.push(function () {
-                $.ajax({
-                    url: '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos',
-                    type: 'GET',
-                    async: false,
-                    dataType: 'text',
-                    data: {
-                        siglasDocumentosTransferidos: siglasDocumentosTransferidos.toString(),
-                        siglasDocumentosNaoTransferidos: siglasDocumentosNaoTransferidos.toString()
-                    }
-                });
-            });
-
-            process.push(function () {
-                Log("Concluído...");
+                let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos';
+                location.href = url + '?siglasDocumentosTransferidos=' + siglasDocumentosTransferidos
+                    + '&siglasDocumentosNaoTransferidos=' + siglasDocumentosNaoTransferidos;
             });
 
             process.run();

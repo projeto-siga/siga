@@ -143,7 +143,7 @@
 				<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">
 					<c:set var="varLotacaoUnidade"><fmt:message key='usuario.lotacao'/></c:set>
 					<div id="radioBtn" class="btn-group mb-1">
-						<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
+						<a v-if="mostrarUsuario" class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
 							accesskey="u" @click="carregarMesaUser('#btnUser');" 
 							title="Visualiza somente os documentos do Usuário">
 							<i class="fas fa-user my-1"></i>
@@ -212,7 +212,7 @@
 									<i class="h5 mb-0" :class="g.grupoIcone"></i>
 									<span class="grupo-nome mr-3">{{g.grupoNome}}</span>
 									<small> 
-										<span class="badge badge-light btn-sm align-middle" :class="{disabled: exibeLota}">
+										<span v-if="mostrarUsuario" class="badge badge-light btn-sm align-middle" :class="{disabled: exibeLota}">
 											<small class="fas fa-user"></small>
 											<span class="badge badge-light">{{g.grupoCounterUser}}</span>
 										</span>
@@ -365,6 +365,7 @@
 		<div id="toastContainer" style="position: fixed; top: 135px; right: 0;z-index: 999999;"></div>
 	</div>
 	<script type="text/javascript">
+		const MOSTRAR_USUARIO = ${mostrarUsuario};
 		const ID_VISUALIZACAO = ${idVisualizacao};
 		$( document ).ready(function() {
 			initPopovers();

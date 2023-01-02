@@ -206,6 +206,8 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	ORDEM_ASSINATURA(96, "Ordem de Assinatura"),
 	
 	CANCELAR_PUBLICACAO_DOE(97, "Cancelar Publicação DOE");
+	
+	//NOTIFICACAO_PETICIONAMENTO(100, "Notificação Peticionamento");
 
 	private final int id;
 	private final String descr;

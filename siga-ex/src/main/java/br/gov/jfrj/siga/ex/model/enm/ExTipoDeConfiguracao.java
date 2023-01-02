@@ -609,6 +609,11 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
                     CpSituacaoDeConfiguracaoEnum.NAO_PODE },
             CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
  
+	/* RESERVAR PCRJ PETICIONAMENTO DO 991 ATÉ O 999
+	PETICIONAMENTO(991 - 999, ...) 
+	*/
+	
+	
 	
 	private final int id; 
 	private final String descr;

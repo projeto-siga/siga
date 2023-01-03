@@ -1554,6 +1554,8 @@ public class ExDao extends CpDao {
 					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
+		dtFim = (dtFim == null) ? dtIni : dtFim;
+
 		final Query query = em().createNamedQuery("consultarMovimentacoesPorCadastranteEntreDatas");
 
 		query.setParameter("pessoaIni", pes.getIdPessoaIni());

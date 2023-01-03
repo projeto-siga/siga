@@ -202,7 +202,7 @@ public class ExMovimentacaoController extends ExController {
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
 	
-	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
+	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 100;
 	
 	/**
 	 * @deprecated CDI eyes only

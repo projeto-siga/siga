@@ -219,10 +219,14 @@
             if (offset == null) {
                 offset = 0;
             }
-            // frm.elements["paramoffset"].value = offset;
-            // frm.elements["p.offset"].value = offset;
 
-            // frm.submit();
+            let form = document.forms['frm'];
+            form ["paramoffset"].value = offset;
+            form.action = "transferir_lote";
+            form.method = "GET";
+            form ["p.offset"].value = offset;
+
+            form.submit();
         }
 
         function checkUncheckAll(theElement) {
@@ -255,6 +259,22 @@
                     Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = '');
                     break;
             }
+        }
+        
+        function limparCampos(){
+            document.getElementById('checkall').checked = false;
+            
+            document.getElementById('formulario_lotaResponsavelSel_sigla').value = "";
+            document.getElementById('lotaResponsavelSelSpan').value = "";
+            
+            document.getElementById('formulario_responsavelSel_sigla').value = "";
+            document.getElementById('responsavelSelSpan').value = "";
+            
+            document.getElementById('formulario_cpOrgaoSel_sigla').value = "";
+            document.getElementById('cpOrgaoSelSpan').value = "";
+            
+            document.getElementsByName('dtDevolucaoMovString')[0].value = "";
+            document.getElementById('obsOrgao').value = "";
         }
 
         function validar() {
@@ -330,6 +350,9 @@
             });
 
             process.push(function () {
+                sigaSpinner.mostrar();
+                limparCampos();
+                
                 let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos';
                 location.href = url + '?siglasDocumentosTransferidos=' + siglasDocumentosTransferidos
                     + '&siglasDocumentosNaoTransferidos=' + siglasDocumentosNaoTransferidos;
@@ -359,16 +382,7 @@
             });
             return result;
         }
-
-        function apresentarResultadosTransferencia() {
-            $.ajax({
-                url: '${pageContext.request.contextPath}/app/expediente/doc/listar_docs_transferidos',
-                contentType: 'application/json',
-                dataType: 'json',
-                type: 'POST',
-                data: JSON.stringify({siglasDocumentosTransferidos, siglasDocumentosNaoTransferidos})
-            });
-        }
+        
 
     </script>
 </siga:pagina>

@@ -1459,6 +1459,24 @@ public class ExDao extends CpDao {
 				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId())
 				.getSingleResult();
 	}
+	
+	public List<ExMobil> consultarParaAcompanhamentoEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaAcompanhamentoEmLote")
+				.setParameter("pessoaIni", pes.getIdPessoaIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+		return query.getResultList();
+	}
+
+	public Long consultarQuantidadeParaAcompanhamentoEmLote(DpPessoa pes) {
+		return (Long) em().createNamedQuery("consultarQuantidadeParaAcompanhamentoEmLote", Long.class)
+				.setParameter("pessoaIni", pes.getIdPessoaIni())
+				.getSingleResult();
+	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {
 		final Query query = em().createNamedQuery(

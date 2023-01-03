@@ -3,6 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
+<%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -13,10 +14,24 @@
 <%-- </c:if> --%>
 
 <script type="text/javascript" language="Javascript1.1">
-function sbmt() {
-	frm.action='${pageContext.request.contextPath}/app/expediente/mov/vincularPapel';
-	frm.submit();
-}
+// function sbmt() {
+// 	frm.action='${pageContext.request.contextPath}/app/expediente/mov/vincularPapelLote';
+// 	frm.submit();
+// }
+
+function sbmt(offset) {
+		if (offset == null) {
+			offset = 0;
+		}
+
+		let form = document.forms['frm'];
+		form ["paramoffset"].value = offset;
+		form.action = "vincularPapelLote";
+		form.method = "GET";
+		form ["p.offset"].value = offset;
+
+		form.submit();
+	}
 
 function tamanho() {
 	var i = tamanho2();
@@ -94,9 +109,6 @@ function alteraResponsavel()
 
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
-<!-- 		<h5> -->
-<%-- 			<fmt:message key="documento.definicao.perfil"/> - ${mob.siglaEDescricaoCompleta} --%>
-<!-- 		</h5> -->
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h5><fmt:message key="documento.vinculacao"/></h5>
@@ -104,7 +116,9 @@ function alteraResponsavel()
 			<div class="card-body">
 				<form name="frm" action="vincularPapel_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
-					<input type="hidden" name="sigla" value="${sigla}"/>
+<%-- 					<input type="hidden" name="sigla" value="${sigla}"/> --%>
+					<input type="hidden" name="paramoffset" value="0" /> 
+					<input type="hidden" name="p.offset" value="0" />
 					<div class="row">
 						<c:if test="${siga_cliente != 'GOVSP'}">
 						<div class="col-md-2 col-sm-3">
@@ -160,6 +174,81 @@ function alteraResponsavel()
 							<input type="button" value=<fmt:message key="botao.cancela"/> onclick="javascript:history.back();" class="btn btn-cancel ml-2"/>
 						</div>
 					</div>
+					
+					<div class="gt-content-box gt-for-table">
+						<br />
+						<div>
+							<table class="table table-hover table-striped">
+								<thead class="${thead_color} align-middle text-center">
+									<tr>
+										<th rowspan="2" class="text-center" style="width: 5%;">
+											<input type="checkbox" 	id="checkall" name="checkall" value="true"
+											onclick="checkUncheckAll(this)" />
+										</th>
+										<th class="text-center" style="width: 15%;" colspan="1">Número</th>
+										<th class="text-center" style="width: 25%;" colspan="4">Cadastrante</th>
+										<th class="text-center" style="width: 25%;" rowspan="2">Descrição</th>
+									</tr>
+									<tr>
+										<th class="text-center" style="width: 16%;"></th>
+										<th class="text-center">Data</th>
+										<th class="text-center"><fmt:message key="usuario.lotacao" /></th>
+										<th class="text-center"><fmt:message key="usuario.pessoa2" /></th>
+										<th class="text-center">Tipo</th>
+									</tr>
+								</thead>
+								<tbody class="table-bordered">
+									<siga:paginador maxItens="${maxItems}" maxIndices="10"
+										totalItens="${tamanho}" itens="${itens}" var="documento">
+										<c:set var="x" scope="request">chk_${documento.id}</c:set>
+										<c:set var="tpd_x" scope="request">tpd_${documento.id}</c:set>
+										<tr>
+											<td align="center" class="align-middle text-center"><input
+												type="checkbox" name="documentosSelecionados"
+												value="${documento.id}" id="${x}" class="chkDocumento"
+												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
+											<td class="text-center align-middle"><c:choose>
+													<c:when test='${param.popup!="true"}'>
+														<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
+															${documento.sigla} </a>
+													</c:when>
+													<c:otherwise>
+														<a
+															href="javascript:opener.retorna_${param.propriedade}('${documento.id}','${documento.sigla},'');">
+															${documento.sigla} </a>
+													</c:otherwise>
+												</c:choose></td>
+											<td class="text-center">${documento.doc.dtDocDDMMYY}</td>
+											<td class="text-center"><siga:selecionado
+														isVraptor="true"
+														sigla="${documento.doc.lotaSubscritor.sigla}"
+														descricao="${documento.doc.lotaSubscritor.descricao}" />
+											</td>
+											<td class="text-center"><siga:selecionado
+														isVraptor="true"
+														sigla="${documento.doc.subscritor.iniciais}"
+														descricao="${documento.doc.subscritor.descricao}" />
+											</td>
+											<td>
+												${documento.doc.exFormaDocumento.descrFormaDoc}
+											</td>
+											<td>
+												<c:choose>
+													<c:when test="${siga_cliente == 'GOVSP'}">
+														${documento.doc.descrDocumento}
+													</c:when>
+													<c:otherwise>
+														${f:descricaoConfidencial(documento.doc, lotaTitular)}
+													</c:otherwise>
+												</c:choose>
+											</td>
+										</tr>
+									</siga:paginador>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					
 				</form>
 			</div>
 		</div>

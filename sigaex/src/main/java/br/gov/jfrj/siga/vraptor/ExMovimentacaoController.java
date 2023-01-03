@@ -204,6 +204,8 @@ public class ExMovimentacaoController extends ExController {
 	
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
 	
+	private static final int MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE = 50;
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -2476,20 +2478,36 @@ public class ExMovimentacaoController extends ExController {
 	
 	@Get("/app/expediente/mov/vincularPapelLote")
 	public void aVincularPapelLote(final String sigla, final DpPessoaSelecao responsavelSel,
-			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel) {
+			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel, Integer paramoffset) {
 
 		//Ex.getInstance().getComp().afirmar("Não é possível fazer vinculação de papel", ExPodeFazerVinculacaoDePapel.class, getTitular(), getLotaTitular(), builder.getMob());
 
 		final List<ExPapel> papeis = this.obterApenasPapeisParaVinculo();
 		
+		Long tamanho = dao().consultarQuantidadeParaAcompanhamentoEmLote(getTitular());
+
+		LOGGER.debug("TAMANHO : " + tamanho);
+
+		int offset = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+						: paramoffset) : 0;
+
+		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+				? dao().consultarParaAcompanhamentoEmLote(getTitular(), null, null)
+				: dao().consultarParaAcompanhamentoEmLote(getTitular(), offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		
 		result.include("sigla", sigla);
-		//result.include("mob", builder.getMob());
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
 		result.include("listaExPapel", papeis);
 		result.include("responsavelSel", responsavelSel != null ? responsavelSel : new DpPessoaSelecao());
 		result.include("lotaResponsavelSel", lotaResponsavelSel != null ? lotaResponsavelSel : new DpLotacaoSelecao());
 		result.include("tipoResponsavel", tipoResponsavel);
 		result.include("idPapel", idPapel);
+		
+		result.include("itens", provItens);
+		result.include("maxItems", MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		result.include("tamanho", tamanho);
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE + 1));
 	}
 	
 	private List<ExPapel> obterApenasPapeisParaVinculo(){

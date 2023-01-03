@@ -374,8 +374,11 @@ public class CpDao extends ModeloDao {
 		try {
 			Query query = em()
 					.createQuery("select org, (select dtContrato from CpContrato contrato "
-							+ " where contrato.idOrgaoUsu = org.idOrgaoUsu) from CpOrgaoUsuario org "
+							+ " where contrato.idOrgaoUsu = org.idOrgaoUsuIni) from CpOrgaoUsuario org "
 							+ " where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))"
+							+ " and (exists (select 1 from CpOrgaoUsuario oAux where oAux.idOrgaoUsuIni = org.idOrgaoUsuIni"
+							+ "			group by oAux.idOrgaoUsuIni having max(oAux.hisDtIni) = org.hisDtIni) "
+							+ " or org.hisDtFim is null)"
 							+ "	order by org.nmOrgaoUsu");
 			if (offset > 0) {
 				query.setFirstResult(offset);
@@ -413,6 +416,23 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CpOrgaoUsuario consultarOrgaoAtual(final CpOrgaoUsuario o) {
+		CriteriaQuery<CpOrgaoUsuario> q = cb().createQuery(CpOrgaoUsuario.class);
+		Root<CpOrgaoUsuario> c = q.from(CpOrgaoUsuario.class);
+		q.select(c);
+		q.where(
+		    cb().equal(c.get("idOrgaoUsuIni"), o.getIdOrgaoUsuIni()),
+		    cb().isNull(c.get("hisDtFim"))
+		);
+		
+		final List<CpOrgaoUsuario> l = em().createQuery(q).getResultList();
+		
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpOrgaoUsuario consultarPorSigla(final CpOrgaoUsuario o) {
@@ -423,7 +443,7 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
 		final List<CpOrgaoUsuario> l = query.getResultList();
-		if (l.size() != 1)
+		if (l.size() < 1)
 			return null;
 		return l.get(0);
 	}
@@ -437,7 +457,7 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
 		final List<CpOrgaoUsuario> l = query.getResultList();
-		if (l.size() != 1)
+		if (l.size() < 1)
 			return null;
 		return l.get(0);
 	}
@@ -1644,6 +1664,22 @@ public class CpDao extends ModeloDao {
 		final CpIdentidade id = lista.get(0);
 		return id;
 	}
+	
+	public CpIdentidade consultarIdentidadeAtual(final String nmUsuario) {
+		final Query qry = em().createNamedQuery("consultarIdentidadeAtual");
+		qry.setParameter("nmUsuario", nmUsuario);
+		List<Integer> listaTipo = new ArrayList<Integer>();
+		listaTipo.add(CpTipoIdentidade.FORMULARIO);
+		listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+		
+		qry.setParameter("listaTipo", listaTipo);
+		
+		final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
+		if (lista.size() == 0) {
+			return null;
+		}
+		return lista.get(0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<CpIdentidade> consultaIdentidadesCadastrante(final String nmUsuario, boolean fAtiva)
@@ -2279,7 +2315,22 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
+		
+        Query query = em().createNamedQuery("consultarCpOrgaoUsuario")        	
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);                
+        return (List<CpOrgaoUsuario>) query.getResultList();
+//		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpOrgaoUsuario> listarOrgaosUsuariosTodos() {
+		
+        Query query = em().createNamedQuery("consultarCpOrgaoUsuarioTodos")        	
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);                
+        return (List<CpOrgaoUsuario>) query.getResultList();
+//		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -3179,6 +3230,17 @@ public class CpDao extends ModeloDao {
 			cb().equal(joinTipoIdentidade.get("idCpTpIdentidade"), CpTipoIdentidade.LOGIN_DOE),
 			cb().isNull(c.get("hisDtFim"))
 		);
+		return em().createQuery(q).getResultList();
+	}
+	
+	public List<CpOrgaoUsuario> listarHistoricoOrgaoUsuario(Long idInicial) {
+		CriteriaQuery<CpOrgaoUsuario> q = cb().createQuery(CpOrgaoUsuario.class);
+		Root<CpOrgaoUsuario> c = q.from(CpOrgaoUsuario.class);
+		q.select(c);
+		q.where(
+		    cb().equal(c.get("idOrgaoUsuIni"), idInicial)
+		);
+		q.orderBy(cb().desc(c.get("hisDtIni")));
 		return em().createQuery(q).getResultList();
 	}
 }

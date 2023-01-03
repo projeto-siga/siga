@@ -322,7 +322,7 @@
             process.reset();
 
             process.push(function () {
-                Log("Iniciando operação em lote")
+                Log("Executando a tramitação em lote dos documentos selecionados")
             });
 
             Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(

@@ -5812,12 +5812,12 @@ public class ExMovimentacaoController extends ExController {
 
 		String[] arraySiglasDocumentosTransferidos = { };
 		if (siglasDocumentosTransferidos != null) {
-			siglasDocumentosTransferidos.split(",");
+			arraySiglasDocumentosTransferidos = siglasDocumentosTransferidos.split(",");
 		}
 		
 		String[] arraySiglasDocumentosNaoTransferidos = { };
 		if (siglasDocumentosNaoTransferidos != null) {
-			siglasDocumentosNaoTransferidos.split(",");
+			arraySiglasDocumentosNaoTransferidos = siglasDocumentosNaoTransferidos.split(",");
 		}
 		
 		final List<ExMobil> mobisDocumentosTransferidos = new ArrayList<ExMobil>();

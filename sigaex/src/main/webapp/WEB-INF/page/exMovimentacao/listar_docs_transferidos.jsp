@@ -56,18 +56,18 @@
                             <th>Descrição</th>
                         </tr>
                         </thead>
-                        <c:forEach var="documento" items="${mobisDocumentosNaoTransferidos}">
+                        <c:forEach var="mob" items="${mobisDocumentosNaoTransferidos}">
                             <tr>
                                 <td align="center">
-                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
-                                            ${documento.codigo}
+                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}">
+                                            ${mob.codigo}
                                     </a>
                                 <td align="center">
-                                    <siga:selecionado sigla="${documentodoc.lotaSubscritor.sigla}"
-                                                      descricao="${documento.doc.lotaSubscritor.descricao}"/>
+                                    <siga:selecionado sigla="${mob.lotaSubscritor.sigla}"
+                                                      descricao="${mob.doc.lotaSubscritor.descricao}"/>
                                 </td>
                                 <td align="center">
-                                    <siga:selecionado sigla="${documento}" descricao="${documento}"/>
+                                    <siga:selecionado sigla="${mob}" descricao="${mob}"/>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -114,56 +114,56 @@
                             <th>Pessoa</th>
                         </tr>
                         </thead>
-                        <c:forEach var="documento" items="${mobisDocumentosTransferidos}">
+                        <c:forEach var="mob" items="${mobisDocumentosTransferidos}">
                             <tr>
                                 <td class="text-right">
-                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.exMobil.sigla}">
-                                            ${documento.exMobil.codigo}
+                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}">
+                                            ${mob.codigo}
                                     </a>
-                                    <c:if test="${not documento.exMobil.geral}">
-                                    <input type="hidden" name="itens" value="${documento.exMobil.idMobil}"/>
+                                    <c:if test="${not mob.geral}">
+                                    <input type="hidden" name="itens" value="${mob.idMobil}"/>
                                 <td>
-                                        ${documento.dtDocDDMMYY}
+                                        ${mob.doc.dtDocDDMMYY}
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${documento.lotaSubscritor.sigla}"
-                                                      descricao="${documento.lotaSubscritor.descricao}"/>
+                                    <siga:selecionado sigla="${mob.doc.lotaSubscritor.sigla}"
+                                                      descricao="${mob.doc.lotaSubscritor.descricao}"/>
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${documento.subscritor.iniciais}"
-                                                      descricao="${documento.subscritor.descricao}"/>
+                                    <siga:selecionado sigla="${mob.doc.subscritor.iniciais}"
+                                                      descricao="${mob.doc.subscritor.descricao}"/>
                                 </td>
                                 <td>
-                                        ${documento.dtMovDDMMYY}
+                                        ${mov.dtMovDDMMYY}
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${documento.lotaSubscritor.sigla}"
-                                                      descricao="${documento.lotaSubscritor.descricao}"/>
+                                    <siga:selecionado sigla="${mov.lotaSubscritor.sigla}"
+                                                      descricao="${mov.lotaSubscritor.descricao}"/>
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${documento.subscritor.iniciais}"
-                                                      descricao="${documento.subscritor.descricao}"/>
+                                    <siga:selecionado sigla="${mov.subscritor.iniciais}"
+                                                      descricao="${mov.subscritor.descricao}"/>
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${documento.lotaResp.sigla}"
-                                                      descricao="${documento.lotaResp.descricao}"/>
+                                    <siga:selecionado sigla="${mov.lotaResp.sigla}"
+                                                      descricao="${mov.lotaResp.descricao}"/>
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${documento.resp.iniciais}"
-                                                      descricao="${documento.resp.descricao}"/>
+                                    <siga:selecionado sigla="${mov.resp.iniciais}"
+                                                      descricao="${mov.resp.descricao}"/>
                                 </td>
                                 </c:if>
-                                <c:if test="${documento.exMobil.geral}">
+                                <c:if test="${mob.geral}">
                                     <td>
-                                            ${documento.dtDocDDMMYY}
+                                            ${mob.doc.dtDocDDMMYY}
                                     </td>
                                     <td>
-                                        <siga:selecionado sigla="${documento.subscritor.iniciais}"
-                                                          descricao="${documento.subscritor.descricao}"/>
+                                        <siga:selecionado sigla="${mob.subscritor.iniciais}"
+                                                          descricao="${mob.subscritor.descricao}"/>
                                     </td>
                                     <td>
-                                        <siga:selecionado sigla="${documento.lotaSubscritor.sigla}"
-                                                          descricao="${documento.lotaSubscritor.descricao}"/>
+                                        <siga:selecionado sigla="${mob.lotaSubscritor.sigla}"
+                                                          descricao="${mob.lotaSubscritor.descricao}"/>
                                     </td>
                                     <td></td>
                                     <td></td>
@@ -173,10 +173,10 @@
                                 <td class="text-left">
                                     <c:choose>
                                         <c:when test="${siga_cliente == 'GOVSP'}">
-                                            ${documento.descrDocumento}
+                                            ${mob.doc.descrDocumento}
                                         </c:when>
                                         <c:otherwise>
-                                            ${f:descricaoConfidencial(documento, lotaTitular)}
+                                            ${f:descricaoConfidencial(mob, lotaTitular)}
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
@@ -192,7 +192,7 @@
             <button type="submit" class="btn btn-primary">Gerar Protocolo</button>
 
             </c:if>
-            <button type="button" class="btn btn-primary" onclick="javascript:history.back();">Voltar</button>
+            <button type="button" class="btn btn-primary" onclick="history.back();">Voltar</button>
     </form>
     </div>
     <br/>

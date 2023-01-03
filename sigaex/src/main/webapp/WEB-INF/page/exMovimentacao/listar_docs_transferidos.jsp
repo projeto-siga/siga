@@ -28,12 +28,13 @@
                             <input type="hidden" name="sigla" id="pessoa" value="${cadastrante.sigla}"/>
                         </tr>
                         <td>Para</td>
-                        <td>${mov.respString}</td>
+                        <td>${movIni.respString}</td>
                         </tr>
                         <tr>
                             <td>Data</td>
-                            <td colspan="2">${mov.dtRegMovDDMMYYYYHHMMSS}</td>
-                            <input type="hidden" name="dt" id="id" value="${mov.dtRegMovDDMMYYYYHHMMSS}"/>
+                            <td colspan="2">${movIni.dtRegMovDDMMYYYYHHMMSS}</td>
+                            <input type="hidden" name="dtIni" value="${dtIni}" />
+                            <input type="hidden" name="dtFim" value="${dtFim}" />
                         </tr>
                     </table>
 
@@ -77,7 +78,6 @@
 
 
             <c:if test="${not empty mobisDocumentosTransferidos}">
-            <input type="hidden" name="itens" value="${mobisDocumentosTransferidos}"/>
             <div class="card bg-light mb-3">
                 <div class="card-header">
                     <h5><fmt:message key='documentos.transferidos'/></h5>
@@ -121,7 +121,6 @@
                                             ${mob.codigo}
                                     </a>
                                     <c:if test="${not mob.geral}">
-                                    <input type="hidden" name="itens" value="${mob.idMobil}"/>
                                 <td>
                                         ${mob.doc.dtDocDDMMYY}
                                 </td>
@@ -134,23 +133,23 @@
                                                       descricao="${mob.doc.subscritor.descricao}"/>
                                 </td>
                                 <td>
-                                        ${mov.dtMovDDMMYY}
+                                        ${movIni.dtMovDDMMYY}
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${mov.lotaSubscritor.sigla}"
-                                                      descricao="${mov.lotaSubscritor.descricao}"/>
+                                    <siga:selecionado sigla="${movIni.lotaSubscritor.sigla}"
+                                                      descricao="${movIni.lotaSubscritor.descricao}"/>
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${mov.subscritor.iniciais}"
-                                                      descricao="${mov.subscritor.descricao}"/>
+                                    <siga:selecionado sigla="${movIni.subscritor.iniciais}"
+                                                      descricao="${movIni.subscritor.descricao}"/>
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${mov.lotaResp.sigla}"
-                                                      descricao="${mov.lotaResp.descricao}"/>
+                                    <siga:selecionado sigla="${movIni.lotaResp.sigla}"
+                                                      descricao="${movIni.lotaResp.descricao}"/>
                                 </td>
                                 <td>
-                                    <siga:selecionado sigla="${mov.resp.iniciais}"
-                                                      descricao="${mov.resp.descricao}"/>
+                                    <siga:selecionado sigla="${movIni.resp.iniciais}"
+                                                      descricao="${movIni.resp.descricao}"/>
                                 </td>
                                 </c:if>
                                 <c:if test="${mob.geral}">
@@ -187,8 +186,8 @@
             </div>
             <input type="hidden" name="campoDe" id="campoDe"
                    value="${lotaTitular.descricao} - ${cadastrante.descricao}"/>
-            <input type="hidden" name="campoPara" id="campoPara" value="${mov.respString}"/>
-            <input type="hidden" name="campoData" id="campoData" value="${mov.dtRegMovDDMMYYYYHHMMSS}"/>
+            <input type="hidden" name="campoPara" id="campoPara" value="${movIni.respString}"/>
+            <input type="hidden" name="campoData" id="campoData" value="${movIni.dtRegMovDDMMYYYYHHMMSS}"/>
             <button type="submit" class="btn btn-primary">Gerar Protocolo</button>
 
             </c:if>

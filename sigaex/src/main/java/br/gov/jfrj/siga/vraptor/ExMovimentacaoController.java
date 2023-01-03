@@ -1104,9 +1104,10 @@ public class ExMovimentacaoController extends ExController {
 					"Não foi localizada pessoa com a sigla informada.");
 		}
 
-		Date dt = paramDate("dt");
+		Date dtIni = paramDate("dtIni");
+		Date dtFim = paramDate("dtFim");
 		ExMovimentacao movQualquer = null;
-		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
+		final List<ExMovimentacao> movs = dao().consultarMovimentacoesPorCadastranteEntreDatas(pes, dtIni, dtFim);
 		for (ExMovimentacao m : movs) {
 			if (mov == null && !m.isCancelada() && m.isTramite())
 				mov = m;
@@ -5839,10 +5840,17 @@ public class ExMovimentacaoController extends ExController {
 			mobisDocumentosNaoTransferidos.add(mob);
 		}
 
-		ExMobil mob = mobisDocumentosTransferidos.get(0);
-		ExMovimentacao mov = null;
-		if(mob != null){
-			mov = mob.getUltimaMovimentacao();
+		ExMobil mobIni = mobisDocumentosTransferidos.isEmpty() ? null : mobisDocumentosTransferidos.get(0);
+		ExMovimentacao movIni = null;
+		if(mobIni != null){
+			movIni = mobIni.getUltimaMovimentacao();
+		}
+
+		ExMobil mobFim = mobisDocumentosTransferidos.isEmpty() ? null :
+				mobisDocumentosTransferidos.get(mobisDocumentosTransferidos.size() - 1);
+		ExMovimentacao movFim = null;
+		if (mobFim != null) {
+			movFim = mobFim.getUltimaMovimentacao();
 		}
 
 		result.include("mobisDocumentosTransferidos", mobisDocumentosTransferidos);
@@ -5850,7 +5858,9 @@ public class ExMovimentacaoController extends ExController {
 
 
 		result.include("lotaTitular", getLotaTitular());
-		result.include("mov", mov);
+		result.include("movIni", movIni);
+		result.include("dtIni", movIni.getDtRegMovDDMMYYYYHHMMSS());
+		result.include("dtFim", movFim.getDtRegMovDDMMYYYYHHMMSS());
 		
 	}
 	

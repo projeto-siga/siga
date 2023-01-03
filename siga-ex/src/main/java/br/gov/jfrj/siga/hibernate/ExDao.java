@@ -1547,17 +1547,18 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
+	public List<ExMovimentacao> consultarMovimentacoesPorCadastranteEntreDatas(DpPessoa pes, Date dtIni, Date dtFim) {
 
-		if (pes == null || dt == null) {
+		if (pes == null || dtIni == null) {
 			throw new IllegalStateException(
 					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
-		final Query query = em().createNamedQuery("consultarMovimentacoes");
+		final Query query = em().createNamedQuery("consultarMovimentacoesPorCadastranteEntreDatas");
 
 		query.setParameter("pessoaIni", pes.getIdPessoaIni());
-		query.setParameter("data", dt);
+		query.setParameter("dtIni", dtIni);
+		query.setParameter("dtFim", dtFim);
 		return query.getResultList();
 	}
 

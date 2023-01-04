@@ -108,7 +108,6 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable, Hi
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
-	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@ManyToOne(fetch=FetchType.LAZY)

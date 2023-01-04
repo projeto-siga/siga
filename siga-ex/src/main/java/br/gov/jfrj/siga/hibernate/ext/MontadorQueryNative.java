@@ -18,7 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
+import java.util.Iterator;
+import java.util.List;
+
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.query.ext.IMontadorQuery;
 
@@ -107,7 +112,15 @@ public class MontadorQueryNative implements IMontadorQuery {
 		}
 
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
-			sbf.append(" and doc.id_orgao_usu = :idOrgaoUsu");
+			
+			List<CpOrgaoUsuario> lista = CpDao.getInstance().listarHistoricoOrgaoUsuario(flt.getIdOrgaoUsu());
+			
+			sbf.append(" and (");
+			for (int i = 0; i < lista.size(); i++) {
+				sbf.append(" doc.id_orgao_usu = :idOrgaoUsu" + i + " or");
+			}
+			sbf.delete(sbf.length()-3, sbf.length()).append(")");
+			
 		}
 
 		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {

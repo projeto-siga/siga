@@ -64,7 +64,7 @@
                                             ${mob.codigo}
                                     </a>
                                 <td align="center">
-                                    <siga:selecionado sigla="${mob.lotaSubscritor.sigla}"
+                                    <siga:selecionado sigla="${mob.doc.lotaSubscritor.sigla}"
                                                       descricao="${mob.doc.lotaSubscritor.descricao}"/>
                                 </td>
                                 <td align="center">

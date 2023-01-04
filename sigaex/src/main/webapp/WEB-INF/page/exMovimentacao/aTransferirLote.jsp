@@ -45,14 +45,17 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label>&nbsp;</label>
-                                <span id="selecaoLotaResponsavel">
-									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+                                <span id="lotaResponsavel">
+									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"
+                                                  onchange="updateResponsavelSelecionado('formulario_lotaResponsavelSel_sigla')"/>
 								</span>
-                                <span id="selecaoResponsavel" style="display: none;">
-                                    <siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+                                <span id="responsavel" style="display: none;">
+                                    <siga:selecao propriedade="responsavel" tema="simple" modulo="siga"
+                                                  onchange="updateResponsavelSelecionado('formulario_responsavelSel_sigla')"/>
 								</span>
-                                <span id="selecaoCpOrgao" style="display: none;">
-                                    <siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/>
+                                <span id="cpOrgao" style="display: none;">
+                                    <siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"
+                                                  onchange="updateResponsavelSelecionado('formulario_cpOrgaoSel_sigla')"/>
 								</span>
                             </div>
                         </div>
@@ -99,7 +102,7 @@
 
                     <div class="gt-content-box gt-for-table">
                         <br/>
-                        <h5>Destinatário: ${titular.descricao}</h5>
+                        <h5>Destinatário: <span id="responsavelSelecionado"></span></h5>
                         <div>
 
                             <table class="table table-hover table-striped">
@@ -239,40 +242,66 @@
                 Array.from(document.getElementsByClassName('chkDocumento')).every(chk => chk.checked);
         }
 
-        function updateTipoResponsavel() {
-            document.getElementById('selecaoLotaResponsavel').style.display = 'none';
-            document.getElementById('selecaoResponsavel').style.display = 'none';
-            document.getElementById('selecaoCpOrgao').style.display = 'none';
-            Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = 'none');
+        function responsavelSelecionado() {
+            let tipoResponsavelSelecionado = document.getElementById('tipoResponsavel');
 
-            let objSelecionado = document.getElementById('tipoResponsavel');
-
-            switch (parseInt(objSelecionado.value)) {
-                case 1:
-                    document.getElementById('selecaoLotaResponsavel').style.display = '';
-                    break;
+            let elementoResponsavelSelecionado = document.getElementById('lotaResponsavel');
+            switch (parseInt(tipoResponsavelSelecionado.value)) {
                 case 2:
-                    document.getElementById('selecaoResponsavel').style.display = '';
+                    elementoResponsavelSelecionado = document.getElementById('responsavel');
                     break;
                 case 3:
-                    document.getElementById('selecaoCpOrgao').style.display = '';
-                    Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = '');
+                    elementoResponsavelSelecionado = document.getElementById('cpOrgao');
                     break;
             }
+
+            return elementoResponsavelSelecionado;
+        }
+
+        function updateTipoResponsavel() {
+            document.getElementById('lotaResponsavel').style.display = 'none';
+            document.getElementById('responsavel').style.display = 'none';
+            document.getElementById('cpOrgao').style.display = 'none';
+            Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = 'none');
+
+            limparSelecao();
+
+            let elementoResponsavelSelecionado = responsavelSelecionado();
+            elementoResponsavelSelecionado.style.display = '';
+
+            if (elementoResponsavelSelecionado.id === 'cpOrgao') {
+                Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = '');
+            }
+        }
+
+        function updateResponsavelSelecionado(id) {
+            document.getElementById('responsavelSelecionado').innerHTML = document.getElementById(id).value;
         }
         
-        function limparCampos(){
-            document.getElementById('checkall').checked = false;
-            
+        function limparSelecao(){
+            document.getElementById('formulario_lotaResponsavelSel_id').value = "";
             document.getElementById('formulario_lotaResponsavelSel_sigla').value = "";
-            document.getElementById('lotaResponsavelSelSpan').value = "";
-            
+            document.getElementById('formulario_lotaResponsavelSel_descricao').value = "";
+            document.getElementById('lotaResponsavelSelSpan').innerHTML = "";
+
+            document.getElementById('formulario_responsavelSel_id').value = "";
             document.getElementById('formulario_responsavelSel_sigla').value = "";
-            document.getElementById('responsavelSelSpan').value = "";
-            
+            document.getElementById('formulario_responsavelSel_descricao').value = "";
+            document.getElementById('responsavelSelSpan').innerHTML = "";
+
+            document.getElementById('formulario_cpOrgaoSel_id').value = "";
             document.getElementById('formulario_cpOrgaoSel_sigla').value = "";
-            document.getElementById('cpOrgaoSelSpan').value = "";
+            document.getElementById('formulario_cpOrgaoSel_descricao').value = "";
+            document.getElementById('cpOrgaoSelSpan').innerHTML = "";
+
+            document.getElementById('responsavelSelecionado').innerHTML = "";
+        }
+
+        function limparCampos() {
+            limparSelecao();
             
+            document.getElementById('checkall').checked = false;
+
             document.getElementsByName('dtDevolucaoMovString')[0].value = "";
             document.getElementById('obsOrgao').value = "";
         }
@@ -352,7 +381,7 @@
             process.push(function () {
                 sigaSpinner.mostrar();
                 limparCampos();
-                
+
                 let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos';
                 location.href = url + '?siglasDocumentosTransferidos=' + siglasDocumentosTransferidos
                     + '&siglasDocumentosNaoTransferidos=' + siglasDocumentosNaoTransferidos;
@@ -382,7 +411,7 @@
             });
             return result;
         }
-        
+
 
     </script>
 </siga:pagina>

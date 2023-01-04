@@ -126,7 +126,6 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
-	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@ManyToOne(fetch=FetchType.LAZY)

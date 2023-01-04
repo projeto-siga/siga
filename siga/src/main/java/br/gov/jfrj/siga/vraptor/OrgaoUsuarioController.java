@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,15 +10,18 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.PropertyUtils;
+
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpContrato;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
@@ -66,9 +70,10 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	
 	@Get("/app/orgaoUsuario/editar")
 	public void edita(final Long id){
+		List<CpOrgaoUsuario> listaHistorico = new ArrayList<CpOrgaoUsuario>();
 		if (id != null) {
-			CpContrato contrato = daoContrato(id);
 			CpOrgaoUsuario orgaoUsuario = daoOrgaoUsuario(id);
+			CpContrato contrato = daoContrato(orgaoUsuario.getIdOrgaoUsuIni());
 			result.include("nmOrgaoUsuario",orgaoUsuario.getDescricao());
 			result.include("siglaOrgaoUsuario",orgaoUsuario.getSigla());
 			result.include("isExternoOrgaoUsu",orgaoUsuario.getIsExternoOrgaoUsu());
@@ -77,13 +82,11 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			} catch (final Exception e) {
 				result.include("dtContrato","");
 			}
+			
+			listaHistorico.addAll(CpDao.getInstance().listarHistoricoOrgaoUsuario(orgaoUsuario.getHisIdIni()));
 		}
 		
-		List<DpPessoa> listaPessoa = CpDao.getInstance().consultarPorMatriculaEOrgao(null,id,Boolean.FALSE,Boolean.FALSE);
-		
-		if(listaPessoa.size() == 0) {
-			result.include("podeAlterarSigla", Boolean.TRUE);
-		}
+		result.include("listaHistorico", listaHistorico);
 		result.include("request",getRequest());
 		result.include("id",id);
 	}
@@ -115,9 +118,13 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 							 final String siglaOrgaoUsuario,
 							 final String dtContrato,
 							 final String acao,
-							 final Boolean isExternoOrgaoUsu
+							 final Boolean isExternoOrgaoUsu,
+							 final String dataAlteracao,
+							 final String marco
 						) throws Exception{
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
+		
+		CpOrgaoUsuario novoOU = null;
 		
 		if(nmOrgaoUsuario == null)
 			throw new AplicacaoException("Nome do órgão usuário não informado");
@@ -128,17 +135,23 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		if(!siglaOrgaoUsuario.matches("[a-zA-Z]{1,10}"))
 			throw new AplicacaoException("Sigla do órgão inválida");
 
-		if(dtContrato != null && !dtContrato.matches("(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[012])\\/(19|20)\\d{2,2}"))
+		if(dtContrato != null && !"".equals(dtContrato.trim()) && !dtContrato.matches("(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[012])\\/(19|20)\\d{2,2}"))
 			throw new AplicacaoException("Data do contrato inválida");
 
 		Date dataContrato = null;
-		if(dtContrato != null) {
+		if(dtContrato != null && !"".equals(dtContrato.trim())) {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			dataContrato = formatter.parse(dtContrato);
+			dataContrato = formatter.parse(dtContrato.trim());
 		}
 		
 		CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 		
+		CpOrgaoUsuario orgaoUsuarioAtual = null;
+		if(id != null && !"".equals(id)) {
+			orgaoUsuarioAtual = new CpOrgaoUsuario();
+			orgaoUsuarioAtual.setIdOrgaoUsu(id);
+			orgaoUsuarioAtual = dao().consultarPorId(orgaoUsuarioAtual);
+		}
 //		CpContrato contrato = new CpContrato();
 		
 		orgaoUsuario.setSiglaOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase().trim()));
@@ -146,9 +159,8 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			orgaoUsuario = dao().consultarPorSigla(orgaoUsuario);
 		} catch (final Exception e) {}
 		
-		if((orgaoUsuario != null &&
-				!orgaoUsuario.getIdOrgaoUsu().equals(id)) || (orgaoUsuario != null &&
-				orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("i"))) {
+		if((orgaoUsuario != null && orgaoUsuarioAtual != null && !orgaoUsuario.getIdOrgaoUsuIni().equals(orgaoUsuarioAtual.getIdOrgaoUsuIni())) 
+				|| (orgaoUsuario != null && orgaoUsuarioAtual == null)) {
 			throw new AplicacaoException("Sigla já cadastrada para outro órgão");
 		}
 		
@@ -156,59 +168,43 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		orgaoUsuario.setNmOrgaoUsu(Texto.removeAcento(Texto.removerEspacosExtra(nmOrgaoUsuario).trim()));
 		orgaoUsuario = dao().consultarPorNome(orgaoUsuario);
 		
-		if(orgaoUsuario != null && 
-				!orgaoUsuario.getIdOrgaoUsu().equals(id)) {
+		if((orgaoUsuario != null && orgaoUsuarioAtual != null && !orgaoUsuario.getIdOrgaoUsuIni().equals(orgaoUsuarioAtual.getIdOrgaoUsuIni())) 
+				|| (orgaoUsuario != null && orgaoUsuarioAtual == null)) {
 			throw new AplicacaoException("Nome já cadastrado para outro órgão");
 		}
-		
-		orgaoUsuario = new CpOrgaoUsuario();
-		orgaoUsuario.setIdOrgaoUsu(id);
-		orgaoUsuario = dao().consultarPorId(orgaoUsuario);
-		
-		if(orgaoUsuario != null && !orgaoUsuario.getSiglaOrgaoUsu().equalsIgnoreCase(siglaOrgaoUsuario) &&
-				((!orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("a")) || (orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("i")))  ) {
-			throw new AplicacaoException("ID já cadastrado para outro órgão");
-		}
-		
-		if(orgaoUsuario != null && acao.equalsIgnoreCase("i") && orgaoUsuario.getIdOrgaoUsu().equals(id) &&
-				orgaoUsuario.getSiglaOrgaoUsu().equalsIgnoreCase(siglaOrgaoUsuario) && orgaoUsuario.getNmOrgaoUsu().equals(nmOrgaoUsuario)) {
-			throw new AplicacaoException("ID já cadastrado para outro órgão");
 
-		}
+		Date dtCont = null;
+		CpContrato contrato = null;
 
-		if(orgaoUsuario == null || orgaoUsuario.getIdOrgaoUsu() == null) {
-			orgaoUsuario = new CpOrgaoUsuario();
-			orgaoUsuario.setIdOrgaoUsu(id);
-			orgaoUsuario.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
-			orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
-			orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
-		} else {
-			orgaoUsuario = daoOrgaoUsuario(id);
-			orgaoUsuario.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
-			orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
-			orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
+		novoOU = new CpOrgaoUsuario();
+		
+		if(orgaoUsuarioAtual != null) {
+			PropertyUtils.copyProperties(novoOU, orgaoUsuarioAtual); 
+			orgaoUsuarioAtual.setMarcoRegulatorio(marco);
+			orgaoUsuarioAtual.setDataAlteracao(Data.parse(dataAlteracao));
+			contrato = daoContrato(orgaoUsuarioAtual.getIdOrgaoUsuIni());
 		}
+		
+
+		novoOU.setId(null);
+		novoOU.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
+		novoOU.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
+		novoOU.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 		
 		if (isExternoOrgaoUsu != null) {
-			orgaoUsuario.setIsExternoOrgaoUsu(1);
+			novoOU.setIsExternoOrgaoUsu(1);
 		} else {
-			orgaoUsuario.setIsExternoOrgaoUsu(0);	
+			novoOU.setIsExternoOrgaoUsu(0);	
 		}
 		
-		
-//		contrato.setIdOrgaoUsu(id);
-//		contrato.setDtContrato(dataContrato);
+		dtCont = contrato != null ? contrato.getDtContrato() : dataContrato;
 
 		try {
-			dao().iniciarTransacao();
-			dao().gravar(orgaoUsuario);
-			atualizarContrato(id, dataContrato);
-			dao().commitTransacao();
+			Cp.getInstance().getBL().gravarOrgaoUsuario(novoOU, orgaoUsuarioAtual, getIdentidadeCadastrante());
+			atualizarContrato(orgaoUsuarioAtual != null ? orgaoUsuarioAtual.getIdOrgaoUsuIni() : novoOU.getIdOrgaoUsuIni(), dtCont);
 		} catch (final Exception e) {
-			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-
 		
 		this.result.redirectTo(this).lista(0, "");
 	}

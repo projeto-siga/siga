@@ -216,24 +216,6 @@
 			       		<a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true">Sim</a>
 					</div>
 				</siga:siga-modal>
-				<siga:siga-modal id="confirmacaoModalInativacao" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
-					<div class="modal-body">
-			       		
-			       		
-			       		<div class="form-group row">
-							<div class="col-12">
-								<p><strong>Deseja inativar os cadastros selecionados?</strong></p>
-								<label for="motivo">Motivo</label>
-								<textarea placeholder="Preencher o campo com o motivo da Inativação" class="form-control" name="motivo" id="motivo" cols="60" rows="2"></textarea>
-							</div>
-						</div>
-			     	</div>
-			     	<div class="modal-footer">
-			       		<button type="button" class="btn btn-success" data-dismiss="modal">Não</button>		        
-			       		<a href="#" class="btn btn-danger btn-confirmacao-inativacao-cadastro" role="button" aria-pressed="true">Sim</a>
-					</div>
-				</siga:siga-modal>
-				
 			</tbody>
 		</table>				
 		<div class="gt-table-buttons">
@@ -243,6 +225,22 @@
 		</div>				
 		</form>
 	</div>
+
+	<siga:siga-modal id="confirmacaoModalInativacao" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
+		<div class="modal-body">
+	      		<div class="form-group row">
+				<div class="col-12">
+					<p><strong>Deseja inativar os cadastros selecionados?</strong></p>
+					<label for="motivo">Motivo</label>
+					<textarea placeholder="Preencher o campo com o motivo da Inativação" class="form-control" name="motivo" id="motivo" cols="60" rows="2"></textarea>
+				</div>
+			</div>
+	    	</div>
+	    	<div class="modal-footer">
+	      		<button type="button" class="btn btn-success" data-dismiss="modal">Não</button>		        
+	      		<a href="#" class="btn btn-danger btn-confirmacao-inativacao-cadastro" role="button" aria-pressed="true">Sim</a>
+		</div>
+	</siga:siga-modal>
 
 	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
@@ -296,26 +294,38 @@
 			return selecionados;
 		}
 		
+		function validaMotivo() {
+			var motivo = document.getElementById("motivo").value;
+			if (motivo.length > 500) {
+				sigaModal.alerta('Motivo com mais de 500 caracteres');
+				return false;
+			}
+			return true;
+		}
+		
 		function inativarLotacoesSelecionadas(listaIdLotacoesSelecionadas) {
 			motivo = document.getElementById('motivo').value;
-			$.ajax({
-				method:'POST',
-				url: '/siga/app/lotacao/inativarLote',
-				data: {'idLotacoesSelecionadas':listaIdLotacoesSelecionadas,'motivo':motivo},
-				beforeSend: function(result){	
-					document.getElementById("btnInativarLote").disabled = true;
-					sigaSpinner.mostrar();
-					sigaModal.fechar('confirmacaoModalInativacao');
-		        },
-				success: function(result){	
-					location.reload();
-		        },
-				error: 'erro',
-		        complete: function(result){	
-		        	document.getElementById("btnInativarLote").disabled = false;
-		        	sigaSpinner.ocultar();
-		        }
-			});
+			
+			if (validaMotivo()) {
+				$.ajax({
+					method:'POST',
+					url: '/siga/app/lotacao/inativarLote',
+					data: {'idLotacoesSelecionadas':listaIdLotacoesSelecionadas,'motivo':motivo},
+					beforeSend: function(result){	
+						document.getElementById("btnInativarLote").disabled = true;
+						sigaSpinner.mostrar();
+						sigaModal.fechar('confirmacaoModalInativacao');
+			        },
+					success: function(result){	
+						location.reload();
+			        },
+					error: 'erro',
+			        complete: function(result){	
+			        	document.getElementById("btnInativarLote").disabled = false;
+			        	sigaSpinner.ocultar();
+			        }
+				});
+			}
 		}
 		
 	

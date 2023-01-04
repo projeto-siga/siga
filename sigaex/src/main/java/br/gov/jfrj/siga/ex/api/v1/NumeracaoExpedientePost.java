@@ -57,7 +57,7 @@ public class NumeracaoExpedientePost implements INumeracaoExpedientePost {
 			if(cpOrgaoUsuario == null)
 				throw new AplicacaoException("Não foi encontrado órgão para a sigla: " + req.siglaorgao);
 				
-			String numeracaoExpediente = "0000" + exBL.obterNumeracaoExpediente(cpOrgaoUsuario.getId(), exFormaDocumento.getId(), numrAnoEmissao);
+			String numeracaoExpediente = "0000" + exBL.obterNumeracaoExpediente(cpOrgaoUsuario.getIdOrgaoUsuIni(), exFormaDocumento.getId(), numrAnoEmissao);
 			numeracaoExpediente = numeracaoExpediente.substring(numeracaoExpediente.length()-5, numeracaoExpediente.length());
 			
 			resp.sigladoc = cpOrgaoUsuario.getSigla() + "-" + exFormaDocumento.getSigla() + "-" + numrAnoEmissao + "/" + numeracaoExpediente;

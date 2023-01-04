@@ -50,7 +50,7 @@ public class DpPessoaSelecao extends Selecao<DpPessoa> {
 		if (o == null)
 			return false;
 
-		buscarPorObjeto(o);
+		buscarPorObjeto(o.getPessoaAtual());
 		return true;
 	}
 

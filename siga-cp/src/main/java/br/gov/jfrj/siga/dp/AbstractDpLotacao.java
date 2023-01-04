@@ -168,7 +168,6 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
-	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoPai")

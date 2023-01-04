@@ -18,7 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
-import static org.apache.commons.lang3.math.NumberUtils.*;
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ONE;
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ZERO;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,8 +35,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -84,6 +87,9 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpCargoDaoFiltro;
+import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
@@ -1514,6 +1520,138 @@ public class CpBL {
 			} else {
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
+		}
+	}
+	
+	public void gravarOrgaoUsuario(CpOrgaoUsuario orgaoNovo, CpOrgaoUsuario orgaoAntigo, CpIdentidade identidadeCadastrante) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		CpDao.getInstance().gravarComHistorico(orgaoNovo, orgaoAntigo, null, identidadeCadastrante);
+		
+		if(orgaoAntigo != null) {
+			DpCargoDaoFiltro dpCargo = new DpCargoDaoFiltro();
+			dpCargo.setIdOrgaoUsu(orgaoAntigo.getId());
+			dpCargo.setBuscarInativos(true);
+			List<DpCargo> listaCargo = CpDao.getInstance().consultarPorFiltro(dpCargo, 0, 0);
+			
+			DpFuncaoConfiancaDaoFiltro dpFuncao = new DpFuncaoConfiancaDaoFiltro();
+			dpFuncao.setIdOrgaoUsu(orgaoAntigo.getId());
+			dpFuncao.setBuscarInativas(true);
+			List<DpFuncaoConfianca> listaFuncao = CpDao.getInstance().consultarPorFiltro(dpFuncao, 0, 0);
+			
+			DpLotacaoDaoFiltro dpLotacao = new DpLotacaoDaoFiltro();
+			dpLotacao.setIdOrgaoUsu(orgaoAntigo.getId());
+			dpLotacao.setBuscarFechadas(true);
+			List<DpLotacao> listaLotacao = CpDao.getInstance().consultarPorFiltro(dpLotacao, 0, 0);
+			
+			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+			dpPessoa.setIdOrgaoUsu(orgaoAntigo.getId());
+			dpPessoa.setBuscarFechadas(true);
+			dpPessoa.setNome("");
+			List<DpPessoa> listaPessoa = CpDao.getInstance().consultarPorFiltro(dpPessoa, 0, 0);
+			
+			HashMap<DpPessoa, DpPessoa> hashPessoa = new HashMap<DpPessoa, DpPessoa>();
+			
+			if(listaPessoa != null) {
+				for (DpPessoa pessoa : listaPessoa) {
+					DpPessoa pessoaNovo = new DpPessoa();
+					copiarPessoa(pessoa,pessoaNovo);
+					pessoaNovo.setOrgaoUsuario(orgaoNovo);
+					hashPessoa.put(pessoa, pessoaNovo);
+				}
+			}
+
+			
+			for (DpCargo cargo : listaCargo) {
+				DpCargo cargoNovo = new DpCargo();
+				PropertyUtils.copyProperties(cargoNovo, cargo); 
+				cargoNovo.setId(null);
+				cargoNovo.setOrgaoUsuario(orgaoNovo);
+				CpDao.getInstance().gravarComHistorico(cargoNovo, cargo, null, identidadeCadastrante);
+				
+				hashPessoa.forEach((key, value) -> {
+					
+					if(key.getCargo().getId().equals(cargo.getId())) {	
+						DpPessoa p = new DpPessoa();
+						copiarPessoa(value,p);
+						p.setCargo(cargo.getCargoAtual());
+						hashPessoa.put(key, p);
+					}
+				});
+				
+			}
+			
+			for (DpFuncaoConfianca funcao : listaFuncao) {
+				DpFuncaoConfianca funcaoNovo = new DpFuncaoConfianca();
+				PropertyUtils.copyProperties(funcaoNovo, funcao); 
+				funcaoNovo.setOrgaoUsuario(orgaoNovo);
+				funcaoNovo.setId(null);
+				CpDao.getInstance().gravarComHistorico(funcaoNovo, funcao, null, identidadeCadastrante);
+				
+				hashPessoa.forEach((key, value) -> {
+					DpPessoa p = new DpPessoa();
+					copiarPessoa(value,p);
+					if(p.getFuncaoConfianca() != null && p.getFuncaoConfianca().getId().equals(funcao.getId())) {
+						
+						p.setFuncaoConfianca(funcao.getFuncaoConfiancaAtual());
+						hashPessoa.put(key, p);
+					}
+				});
+				
+			}
+			
+			for (DpLotacao lotacao : listaLotacao) {
+				DpLotacao lotacaoNovo = new DpLotacao();
+				PropertyUtils.copyProperties(lotacaoNovo, lotacao); 
+				lotacaoNovo.setOrgaoUsuario(orgaoNovo);
+				lotacaoNovo.setId(null);
+				
+				lotacaoNovo.setDpLotacaoSubordinadosSet(null);
+				lotacaoNovo.setDpPessoaLotadosSet(null);
+				lotacaoNovo.setLotacoesPosteriores(null);
+				
+				CpDao.getInstance().gravarComHistorico(lotacaoNovo, lotacao, null, identidadeCadastrante);
+				
+				hashPessoa.forEach((key, value) -> {
+					if(key.getLotacao().getId().equals(lotacao.getId())) {
+						DpPessoa p = new DpPessoa();
+						copiarPessoa(value,p);
+						p.setLotacao(lotacao.getLotacaoAtual());
+						p.setHisDtFim(key.getHisDtFim());
+						p.setHisIdcFim(key.getHisIdcFim());
+						p.setOrgaoUsuario(orgaoNovo);
+						if(orgaoAntigo != null && !orgaoNovo.getSigla().equals(orgaoAntigo.getSigla())) {
+							p.setSesbPessoa(orgaoNovo.getSigla());
+						}
+						hashPessoa.put(key, p);
+					}
+				});
+				
+			}
+						
+			hashPessoa.forEach((key, value) -> {
+				if(orgaoAntigo != null && !orgaoNovo.getSigla().equals(orgaoAntigo.getSigla())) {
+					CpIdentidade ident = new CpIdentidade();
+					CpIdentidade identAnt = new CpIdentidade();
+					identAnt = CpDao.getInstance().consultarIdentidadeAtual(key.getSesbPessoa() + key.getMatricula());
+					
+					if(identAnt != null) {
+						CpDao.getInstance().gravarComHistorico(value, key, null, identidadeCadastrante);
+						
+						try {
+							PropertyUtils.copyProperties(ident, identAnt);
+						} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						ident.setCpOrgaoUsuario(orgaoNovo);
+						ident.setNmLoginIdentidade(value.getSesbPessoa() + value.getMatricula());
+						ident.setId(null);
+						CpDao.getInstance().gravarComHistorico(ident, identAnt, null , identidadeCadastrante);
+					}
+				} else {
+					CpDao.getInstance().gravarComHistorico(value, key, null, identidadeCadastrante);
+				}
+			});
+			
 		}
 	}
 	

@@ -3467,7 +3467,7 @@ public class ExBL extends CpBL {
 		ExService exService = Service.getExService();
 		String numeroDocumento = null;
 
-		numeroDocumento = exService.obterNumeracaoExpediente(doc.getOrgaoUsuario().getIdOrgaoUsu(),
+		numeroDocumento = exService.obterNumeracaoExpediente(doc.getOrgaoUsuario().getIdOrgaoUsuIni(),
 				doc.getExFormaDocumento().getIdFormaDoc(), doc.getAnoEmissao());
 
 		return Long.parseLong(numeroDocumento);

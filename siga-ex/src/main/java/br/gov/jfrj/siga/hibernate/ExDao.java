@@ -576,8 +576,10 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
-
-			query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
+			List<CpOrgaoUsuario> lista = CpDao.getInstance().listarHistoricoOrgaoUsuario(flt.getIdOrgaoUsu());
+			for (int i = 0; i < lista.size(); i++) {
+				query.setParameter("idOrgaoUsu"+i, lista.get(i).getId());
+			}
 		}
 
 		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {

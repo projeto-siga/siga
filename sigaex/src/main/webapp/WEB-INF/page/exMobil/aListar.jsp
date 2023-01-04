@@ -206,8 +206,8 @@
 													<option value="0">[Todos]</option>
 												</c:if>
 												<c:forEach items="${orgaosUsu}" var="item">
-													<option value="${item.idOrgaoUsu}"
-														${item.idOrgaoUsu == orgaoUsu ? 'selected' : ''}>
+													<option value="${item.idOrgaoUsuIni}"
+														${item.idOrgaoUsuIni == orgaoUsu ? 'selected' : ''}>
 														${item.nmOrgaoUsu}</option>
 												</c:forEach>
 											</select>

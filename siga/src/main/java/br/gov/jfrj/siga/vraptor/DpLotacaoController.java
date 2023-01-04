@@ -494,6 +494,30 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Transacional
+	@Post("/app/lotacao/inativarLote")
+	public void inativarLoteGravar(final List<Long> idLotacoesSelecionadas, final String motivo ) throws Exception {
+		
+		Long idOrgaoUsuarioParaRedirect = null;
+		for (Long id : idLotacoesSelecionadas) {
+			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+
+			if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular(), getLotaTitular())) {
+
+				lotacao.setDataFimLotacao(dao.consultarDataEHoraDoServidor());
+				lotacao.setMotivoInativacao(motivo);
+
+				try {
+					dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
+				} catch (final Exception e) {
+					throw new AplicacaoException("Erro na gravação", 0, e);
+				}
+			}
+			idOrgaoUsuarioParaRedirect = lotacao.getIdOrgaoUsuario();
+		}
+		this.result.redirectTo(this).lista(0, idOrgaoUsuarioParaRedirect, "",false);
+	}
+	
+	@Transacional
 	@Post("/app/lotacao/ativar_gravar")
 	public void ativarGravar(final Long id, final String motivo) throws Exception {	
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);

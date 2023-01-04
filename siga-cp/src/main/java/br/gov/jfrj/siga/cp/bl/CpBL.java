@@ -1265,30 +1265,35 @@ public class CpBL {
 			
 			if(pessoaAnt != null) {
 				
+				//Dentro do Mesmo Órgão
 				if (!idLotacao.equals(pessoaAnt.getLotacao().getId()) && pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu)) {
 					if (!podeAlterarLotacaoPessoaDentroMesmoOrgao(pessoaAnt)) {
 						throw new AplicacaoException("A "+ SigaMessages.getMessage("usuario.lotacao").toLowerCase()  +" da pessoa não pode ser alterada, pois existem documentos pendentes", 0);
 					}
 				}		
 				
-				pessoa.setIdInicial(pessoaAnt.getIdInicial());
-				pessoa.setMatricula(pessoaAnt.getMatricula());
-			
-				if(podeAlterarOrgaoPessoa && !idLotacao.equals(pessoaAnt.getLotacao().getId())) {
-
-					List<Long> marcadores = new ArrayList<Long>();
-					marcadores.add(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
-					marcadores.add(CpMarcadorEnum.EM_ELABORACAO.getId());
-					
-					Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().quantidadeMarcasPorPessoaMarcadores(pessoaAnt, marcadores, true);
-					Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().quantidadeMarcasPorLotacaoMarcadores(pessoaAnt.getLotacao(), marcadores, true);
-					Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);
-					
-					if(qtdeCaixaEntradaTMPPessoa > 0 || (qtdeCaixaEntradaTMPLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
-						throw new AplicacaoException(
-								"O Órgão da Pessoa não pode ser alterado, pois existem documentos pendentes na Caixa de Entrada/TMP do Usuário/" + SigaMessages.getMessage("usuario.lotacao"));
+				//Para outro órgão
+				if(!pessoaAnt.getOrgaoUsuario().getId().equals(idOrgaoUsu)) {
+					if (podeAlterarOrgaoPessoa) {
+						List<Long> marcadores = new ArrayList<Long>();
+						marcadores.add(CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
+						marcadores.add(CpMarcadorEnum.EM_ELABORACAO.getId());
+						
+						Long qtdeCaixaEntradaTMPPessoa = CpDao.getInstance().quantidadeMarcasPorPessoaMarcadores(pessoaAnt, marcadores, true);
+						Long qtdeCaixaEntradaTMPLotacao = CpDao.getInstance().quantidadeMarcasPorLotacaoMarcadores(pessoaAnt.getLotacao(), marcadores, true);
+						Long qtdePessoaLotacao = CpDao.getInstance().qtdePessoaLotacao(pessoaAnt.getLotacao().getLotacaoAtual(), Boolean.TRUE);
+						
+						if(qtdeCaixaEntradaTMPPessoa > 0 || (qtdeCaixaEntradaTMPLotacao > 0 && qtdePessoaLotacao.equals(Long.valueOf(1L)))) {
+							throw new AplicacaoException(
+									"O Órgão da Pessoa não pode ser alterado, pois existem documentos pendentes na Caixa de Entrada/TMP do Usuário/" + SigaMessages.getMessage("usuario.lotacao"));
+						}
+					} else {
+						throw new AplicacaoException("Usuário não possui permissão para Alterar o Órgão da Pessoa.");
 					}
 				}
+				
+				pessoa.setIdInicial(pessoaAnt.getIdInicial());
+				pessoa.setMatricula(pessoaAnt.getMatricula());
 			}
 		}
 		

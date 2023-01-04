@@ -2781,10 +2781,12 @@ public class CpBL {
 	}
 	
 	public boolean podeAlterarLotacaoPessoaDentroMesmoOrgao(DpPessoa pessoa) {	
-		Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, getListaMarcadoresPermitidosAlteracaoLotacaoPessoa(), Boolean.TRUE); 
-		if (quantidadeEmPosse > 0) {
-			return false; 
-		}	
+		if (restringeMarcadoresParaAlteracaoLotacaoPessoa()) {	
+			Integer quantidadeEmPosse = quatidadeMarcasOuDocumentosEmPosseDaPessoaDaLotacao(pessoa, getListaMarcadoresPermitidosAlteracaoLotacaoPessoa(), Boolean.TRUE);
+			if (quantidadeEmPosse > 0) {
+				return false; 
+			}
+		}
 		
 		return true; 
 	}

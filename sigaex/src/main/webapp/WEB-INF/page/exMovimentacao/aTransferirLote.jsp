@@ -277,8 +277,8 @@
         function updateResponsavelSelecionado(id) {
             document.getElementById('responsavelSelecionado').innerHTML = document.getElementById(id).value;
         }
-        
-        function limparSelecao(){
+
+        function limparSelecao() {
             document.getElementById('formulario_lotaResponsavelSel_id').value = "";
             document.getElementById('formulario_lotaResponsavelSel_sigla').value = "";
             document.getElementById('formulario_lotaResponsavelSel_descricao').value = "";
@@ -299,7 +299,7 @@
 
         function limparCampos() {
             limparSelecao();
-            
+
             document.getElementById('checkall').checked = false;
 
             document.getElementsByName('dtDevolucaoMovString')[0].value = "";
@@ -357,26 +357,15 @@
             Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
                 chk => {
                     process.push(function () {
-                        let result = ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
+                        return ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
                             orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
 
-                        if (result == "OK") {
-                            siglasDocumentosTransferidos.push(chk.value);
-                        } else {
-                            siglasDocumentosNaoTransferidos.push(chk.value);
-                        }
-
-                        return result;
                     });
                     process.push(function () {
                         chk.checked = false;
                     });
                 }
             );
-
-            process.push(function () {
-                return "OK";
-            });
 
             process.push(function () {
                 sigaSpinner.mostrar();
@@ -393,7 +382,6 @@
 
         function ExecutarPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
                               orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao) {
-            let result = "OK";
             $.ajax({
                 url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/tramitar',
                 type: 'POST',
@@ -405,11 +393,14 @@
                     observacao: obsOrgao,
                     dataDevolucao: dtDevolucaoMovString
                 },
-                error: function (result) {
-                    console.log(result.errormsg);
+                success: function () {
+                    siglasDocumentosTransferidos.push(documentoSelSigla);
+                },
+                error: function (textStatus, errorThrown) {
+                    console.log(textStatus + errorThrown)
+                    siglasDocumentosNaoTransferidos.push(documentoSelSigla);
                 }
             });
-            return result;
         }
 
 

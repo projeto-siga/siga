@@ -5859,8 +5859,12 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("lotaTitular", getLotaTitular());
 		result.include("movIni", movIni);
-		result.include("dtIni", movIni.getDtRegMovDDMMYYYYHHMMSS());
-		result.include("dtFim", movFim.getDtRegMovDDMMYYYYHHMMSS());
+		
+		String dtIni = movIni != null ? movIni.getDtRegMovDDMMYYYYHHMMSS() : null;
+		String dtFim = movFim != null ? movFim.getDtRegMovDDMMYYYYHHMMSS() : null;
+		
+		result.include("dtIni", dtIni);
+		result.include("dtFim", dtFim);
 		
 	}
 	

@@ -168,10 +168,37 @@ function alteraResponsavel()
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-sm">
-							<input type="submit" value="Ok" class="btn btn-primary"/>
-							<input type="button" value=<fmt:message key="botao.cancela"/> onclick="javascript:history.back();" class="btn btn-cancel ml-2"/>
+<!-- 					<div class="row"> -->
+<!-- 						<div class="col-sm"> -->
+<!-- 							<input type="submit" value="Ok" class="btn btn-primary"/> -->
+<!-- 							<input type="button" value=<fmt:message key="botao.cancela"/> onclick="javascript:history.back();" class="btn btn-cancel ml-2"/> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+
+					<div class="gt-content-box gt-for-table">
+						<br />
+						<h5>Usuário(s)/Unidade(s) adicionado(s)</h5>
+						<div>
+							<table class="table table-hover table-striped">
+								<thead class="${thead_color} align-middle text-center">
+									<tr>
+										<th class="text-center" style="width: 10%;">Matrícula</th>
+										<th class="text-center">Nome</th>
+										<th class="text-center">Unidade</th>
+										<th class="text-center" style="width: 15%;">Função</th>
+										<th class="text-center" style="width: 8%;">Excluir</th>
+									</tr>
+								</thead>
+								<tbody class="table-bordered">
+									<tr>
+										<td>Matricula</td>
+										<td>Nome</td>
+										<td>Unidade</td>
+										<td>Função</td>
+										<td>Botão</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 					

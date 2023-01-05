@@ -33,7 +33,6 @@ public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 	 * 
 	 * 
 	 * <ul>
-	 * <li>Documento tem de estar assinado</li>
 	 * <li>Móbil tem de ser via ou volume (não pode ser geral)</li>
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
 	 * <li>Móbil não pode estar juntado</li>
@@ -55,7 +54,13 @@ public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 
 				new ExEEletronico(mob.doc()),
 
-				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
+				Or.of(new ExECadastrante(mob.doc(), titular),
+
+						new ExESubscritor(mob.doc(), titular),
+
+						new ExECossignatario(mob.doc(), titular),
+
+						new ExELotacaoCadastrante(mob.doc(), lotaTitular)),
 
 				If.of(new ExECapturado(mob.doc()),
 

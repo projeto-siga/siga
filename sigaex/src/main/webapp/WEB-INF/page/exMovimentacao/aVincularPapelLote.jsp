@@ -19,6 +19,8 @@
 // 	frm.submit();
 // }
 
+var array = new Array();
+
 function sbmt(offset) {
 		if (offset == null) {
 			offset = 0;
@@ -31,12 +33,97 @@ function sbmt(offset) {
 		form ["p.offset"].value = offset;
 
 		form.submit();
-	}
+}
 
 function tamanho() {
 	var i = tamanho2();
 	if (i<0) {i=0};
 	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
+}
+
+function inserirResponsavelTable(){
+	var responsavelSelSigla = document.getElementById("formulario_responsavelSel_sigla")
+	var responsavelSelId = document.getElementById("formulario_responsavelSel_id");
+	var responsavelSelDescr = document.getElementById("formulario_responsavelSel_descricao");
+	var lotaResponsavelSelId = document.getElementById("formulario_lotaResponsavelSel_id");
+	var lotaResponsavelSelDescr = document.getElementById("formulario_lotaResponsavelSel_descricao");
+	
+	var idPapel = document.getElementById("idPapel"); 
+	var tipoResponsavel = document.getElementById("tipoResponsavel"); 
+	
+	if (isNullOrVazio(responsavelSelId.value) && isNullOrVazio(lotaResponsavelSelId.value)) {									
+		sigaModal.alerta("Atenção! Informe um responsável");
+		return;	
+	}
+	
+	if (existeResponsavelArray(responsavelSelId.value, lotaResponsavelSelId.value, tipoResponsavel.value)){
+		sigaModal.alerta("Atenção! Responsável já foi incluído na tabela");
+		return;	
+	}
+	
+	var myMap = new Map();
+	myMap.set("responsavelSelSigla", responsavelSelSigla.value);
+	myMap.set("responsavelSelId", responsavelSelId.value);
+	myMap.set("responsavelSelDescr", responsavelSelDescr.value);
+	myMap.set("lotaResponsavelSelId", lotaResponsavelSelId.value);
+	myMap.set("lotaResponsavelSelDescr", lotaResponsavelSelDescr.value);
+	myMap.set("idPapel", idPapel.value);
+	myMap.set("tipoResponsavel", tipoResponsavel.value);
+	myMap.set("vazio","");
+	
+	var myJson = {};
+	myJson = mapToObj(myMap);
+	array.push(myJson);	
+	
+	localStorage.setItem('dataRespJson', JSON.stringify(array));
+	gerarTable();
+}
+
+function existeResponsavelArray(responsavelSelId, lotaResponsavelSelId, tipoResponsavel){
+	let respSelId = array.find(o => o.responsavelSelId === responsavelSelId);
+	let lotaRespSelId = array.find(o => o.lotaResponsavelSelId === lotaResponsavelSelId);
+	
+	if((!isNullOrVazio(respSelId) && tipoResponsavel == 1) 
+				|| (!isNullOrVazio(lotaRespSelId) && tipoResponsavel == 2))
+		return true;
+	return false;
+}
+
+function isNullOrVazio(obj){
+	if (obj == null || obj == "")
+		return true;
+	return false;
+}
+
+function gerarTable(){
+	var data = JSON.parse(localStorage.getItem('dataRespJson'));
+	var idx = 0;
+	const warehouseQuant = data =>
+	  document.getElementById("idTbodyResponsavel").innerHTML = data.map(
+	    item => ([
+	      '<tr>',
+	      ['responsavelSelSigla','responsavelSelDescr','lotaResponsavelSelDescr','vazio'].map(
+	        key => '<td>'+item[key]+'</td>'
+	      ),
+	      "<td><button type='button' class='btn btn-danger' onclick='javascript:removerResponsavel(".concat(idx++,");'>Excluir</button></td>"),
+	      '</tr>',
+	    ])
+	  ).flat(Infinity).join('');
+	  
+	warehouseQuant(data);
+}
+
+function mapToObj(map){
+	  const obj = {}
+	  for (let [k,v] of map)
+	    obj[k] = v
+	  return obj
+}
+
+function removerResponsavel(index){
+	array.splice(index, 1);
+	localStorage.setItem('dataRespJson', JSON.stringify(array));
+	gerarTable();
 }
 
 function tamanho2() {
@@ -82,8 +169,7 @@ function popitup_movimentacao() {
 	return false;
 }	
 
-function alteraResponsavel()
-{
+function alteraResponsavel() {
 	var objSelecionado = document.getElementById('tipoResponsavel');
 	
 	switch (parseInt(objSelecionado.value))
@@ -93,7 +179,8 @@ function alteraResponsavel()
 			document.getElementById('selecaoLotaResponsavel').style.display = 'none';
 			document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
 			document.getElementById('lotaResponsavelSelSpan').textContent = '';
-			document.getElementById('formulario_lotaResponsavelSel_id').value = '';	
+			document.getElementById('formulario_lotaResponsavelSel_id').value = '';
+			document.getElementById("formulario_lotaResponsavelSel_descricao").value ='';
 			break;
 		case 2:
 			document.getElementById('selecaoResponsavel').style.display = 'none';
@@ -101,6 +188,7 @@ function alteraResponsavel()
 			document.getElementById('formulario_responsavelSel_sigla').value = '';
 			document.getElementById('responsavelSelSpan').textContent = '';
 			document.getElementById('formulario_responsavelSel_id').value = '';
+			document.getElementById("formulario_responsavelSel_descricao").value ='';
 			break;
 	}
 }
@@ -158,7 +246,7 @@ function alteraResponsavel()
 						<div class="col-sm-3">
 							<div class="form-group">
 								<label for="idPapel">Perfil</label>
-								<select class="form-control" name="idPapel">
+								<select class="form-control" name="idPapel" id="idPapel">
 									<c:forEach items="${listaExPapel}" var="item">
 										<option value="${item.idPapel}" ${item.idPapel == idPapel ? 'selected' : ''}>
 											${item.descPapel}
@@ -166,6 +254,9 @@ function alteraResponsavel()
 									</c:forEach>
 								</select>
 							</div>
+						</div>
+						<div class="col-sm align-self-center">
+							<input type="button" value="Incluir" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
 						</div>
 					</div>
 <!-- 					<div class="row"> -->
@@ -179,7 +270,7 @@ function alteraResponsavel()
 						<br />
 						<h5>Usuário(s)/Unidade(s) adicionado(s)</h5>
 						<div>
-							<table class="table table-hover table-striped">
+							<table class="table table-hover table-striped" id="idTableResponsavel">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
 										<th class="text-center" style="width: 10%;">Matrícula</th>
@@ -189,16 +280,14 @@ function alteraResponsavel()
 										<th class="text-center" style="width: 8%;">Excluir</th>
 									</tr>
 								</thead>
-								<tbody class="table-bordered">
-									<tr>
-										<td>Matricula</td>
-										<td>Nome</td>
-										<td>Unidade</td>
-										<td>Função</td>
-										<td>Botão</td>
-									</tr>
+								<tbody class="table-bordered" id="idTbodyResponsavel">
+									
 								</tbody>
 							</table>
+						</div>
+						<br/>
+						<div class="col-sm align-self-center">
+							<input type="button" value="Ok" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
 						</div>
 					</div>
 					
@@ -281,3 +370,9 @@ function alteraResponsavel()
 		</div>
 	</div>
 </siga:pagina>
+<script>
+
+	window.onload = function () { 
+		localStorage.removeItem('dataRespJson');
+	} 
+</script>

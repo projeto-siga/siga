@@ -64,7 +64,7 @@
 							<div class="form-group"><label>Órgão Solicitante</label>
 								<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2">
 									<c:forEach items="${orgaosUsu}" var="item">
-										<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+										<option value="${item.idOrgaoUsuIni}" ${item.idOrgaoUsuIni == idOrgaoUsu ? 'selected' : ''}>
 											${item.nmOrgaoUsu}
 										</option>  
 									</c:forEach>

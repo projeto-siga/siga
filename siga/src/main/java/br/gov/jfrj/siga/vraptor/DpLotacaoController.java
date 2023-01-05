@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -238,10 +239,13 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			graphAcrescentarLotacao(sb, lotsub);
 		}
 	}
+	
 
 	@Get("app/lotacao/listar")
-	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
-
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, Boolean apenasAptasInativacao) throws Exception {
+		
+		result.include("podeInativarLotacaoLote", Cp.getInstance().getBL().podeInativarLotacaoLote(getTitular(),getLotaCadastrante()));
+		
 		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
@@ -250,6 +254,19 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			list.add(ou);
 			result.include("orgaosUsu", list);
 		}
+		
+		boolean paginaInicial = false;
+
+		if (apenasAptasInativacao == null) {
+			apenasAptasInativacao = false;
+		}
+		
+		result.include("maxIndices", 10);
+		result.include("itemPagina", 15);
+		result.include("quantidadeLista", 15);
+		
+
+		
 		if (idOrgaoUsu != null) {
 			DpLotacaoDaoFiltro dpLotacao = new DpLotacaoDaoFiltro();
 			if (paramoffset == null) {
@@ -258,21 +275,73 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
 			dpLotacao.setNome(nome);
 			dpLotacao.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15));  
-			result.include("itens", getItens());
-			result.include("tamanho", dao().consultarQuantidade(dpLotacao));
+			
+			if (apenasAptasInativacao) { //Inativação em Lote
+				
+				dpLotacao.setBuscarFechadas(Boolean.FALSE);
+				List<DpLotacao> consultaLotacaoAtivas = null;
+				List<DpLotacao> listaLotacaoAtivas = new ArrayList<DpLotacao>();
+				
+				if (paramoffset == 0) {
+					paginaInicial = true;
+					result.include("paginaInicial", paginaInicial);
+				}
+				
+				while (listaLotacaoAtivas.size() < 15) { //Navega nas páginas da query para manter uma listagem próxima à 15 itens por página
+					consultaLotacaoAtivas = CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15);
+					
+					if (consultaLotacaoAtivas.isEmpty()) {
+						break;
+					}
+					
+					removeLotacoesInaptaParaInativacao(consultaLotacaoAtivas); //mantém aptas na listagem
+					listaLotacaoAtivas.addAll(consultaLotacaoAtivas);
+					
+					paramoffset = paramoffset + 15;
+				}
+				
+				setItens(listaLotacaoAtivas); 
+				result.include("maxIndices", 0);
+				result.include("itemPagina", 15);
+				result.include("quantidadeLista", 30);
+				result.include("tamanho",  dao().consultarQuantidade(dpLotacao) );
+				
+			} else { //Listagem Normal
+				setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15)); 
+				result.include("tamanho", dao().consultarQuantidade(dpLotacao));
+			}
 
+			result.include("itens", getItens());
+			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
+			result.include("apenasAptasInativacao", apenasAptasInativacao);
 
 			if (getItens().size() == 0)
 				result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
+			
+			
+			//Fim da listagem de itens aptos para inativação em Lote
+			if (apenasAptasInativacao && !paginaInicial && getItens().size() == 0) 
+				result.include("mensagemPesquisa", "Não há mais registros aptos para inativação.");
 		}
 		setItemPagina(15);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
 	}
 
+	private void removeLotacoesInaptaParaInativacao(List<DpLotacao> listaLotacaoAtivas) throws Exception {
+		Iterator<DpLotacao> iterator = listaLotacaoAtivas.iterator();
+		while (iterator.hasNext()) {
+			DpLotacao lotacao = iterator.next();
+			try {
+				Cp.getInstance().getBL().podeInativarLotacao(lotacao,getTitular(),getLotaTitular());
+			} catch (AplicacaoException ex) {
+				iterator.remove();
+			}
+		}	
+	}
+	
 	@Post
 	@Path("app/lotacao/exportarCsv")
 	public Download exportarCsv(Long idOrgaoUsu, String nome) throws Exception {
@@ -403,7 +472,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 		Cp.getInstance().getBL().criarLotacao(getIdentidadeCadastrante(), getTitular(), getTitular().getLotacao(), id,
 				nmLotacao, idOrgaoUsu, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade);
-		this.result.redirectTo(this).lista(0, idOrgaoUsu, siglaLotacao);
+		this.result.redirectTo(this).lista(0, idOrgaoUsu, siglaLotacao,false);
 	}
 		
 	@Get("/app/lotacao/ativar")
@@ -425,6 +494,30 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Transacional
+	@Post("/app/lotacao/inativarLote")
+	public void inativarLoteGravar(final List<Long> idLotacoesSelecionadas, final String motivo ) throws Exception {
+		
+		Long idOrgaoUsuarioParaRedirect = null;
+		for (Long id : idLotacoesSelecionadas) {
+			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+
+			if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular(), getLotaTitular())) {
+
+				lotacao.setDataFimLotacao(dao.consultarDataEHoraDoServidor());
+				lotacao.setMotivoInativacao(motivo);
+
+				try {
+					dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
+				} catch (final Exception e) {
+					throw new AplicacaoException("Erro na gravação", 0, e);
+				}
+			}
+			idOrgaoUsuarioParaRedirect = lotacao.getIdOrgaoUsuario();
+		}
+		this.result.redirectTo(this).lista(0, idOrgaoUsuarioParaRedirect, "",false);
+	}
+	
+	@Transacional
 	@Post("/app/lotacao/ativar_gravar")
 	public void ativarGravar(final Long id, final String motivo) throws Exception {	
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
@@ -438,7 +531,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				
 				dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
 				
-				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "");
+				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "",false);
 			} catch (final Exception e) {
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
@@ -458,7 +551,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 			try {
 				dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
-				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "");
+				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "",false);
 			} catch (final Exception e) {
 				throw new AplicacaoException("Erro na gravação", 0, e);
 			}
@@ -513,7 +606,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			Cp.getInstance().getBL().copiarPessoa(dpPessoa, pessoaNova);
 			dao().gravarComHistorico(pessoaNova, dpPessoa, data, getIdentidadeCadastrante());
 		}
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, null, "",false);
 	}
 
 	@Get("/app/lotacao/carregarExcel")

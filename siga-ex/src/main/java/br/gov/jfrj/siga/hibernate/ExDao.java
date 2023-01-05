@@ -576,8 +576,10 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
-
-			query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
+			List<CpOrgaoUsuario> lista = CpDao.getInstance().listarHistoricoOrgaoUsuario(flt.getIdOrgaoUsu());
+			for (int i = 0; i < lista.size(); i++) {
+				query.setParameter("idOrgaoUsu"+i, lista.get(i).getId());
+			}
 		}
 
 		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {
@@ -1547,17 +1549,20 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
+	public List<ExMovimentacao> consultarMovimentacoesPorCadastranteEntreDatas(DpPessoa pes, Date dtIni, Date dtFim) {
 
-		if (pes == null || dt == null) {
+		if (pes == null || dtIni == null) {
 			throw new IllegalStateException(
 					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
-		final Query query = em().createNamedQuery("consultarMovimentacoes");
+		dtFim = (dtFim == null) ? dtIni : dtFim;
+
+		final Query query = em().createNamedQuery("consultarMovimentacoesPorCadastranteEntreDatas");
 
 		query.setParameter("pessoaIni", pes.getIdPessoaIni());
-		query.setParameter("data", dt);
+		query.setParameter("dtIni", dtIni);
+		query.setParameter("dtFim", dtFim);
 		return query.getResultList();
 	}
 

@@ -2156,6 +2156,12 @@ public class ExMovimentacaoController extends ExController {
 			grupo = dao.consultar(grupoSel.getId(), CpGrupoDeEmail.class, false);
 		}
 
+		if (titularSel.getSigla() == null) { 
+			if (!getCadastrante().equivale(getTitular())) 
+				mov.setTitular(getTitular());
+			if (!getLotaCadastrante().equivale(getLotaTitular())) 
+				mov.setLotaTitular(getLotaTitular());
+		}
 
 		Ex.getInstance()
 				.getBL()

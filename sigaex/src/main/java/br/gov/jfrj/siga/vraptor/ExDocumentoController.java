@@ -272,6 +272,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Transacional
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/alterarpreench")
 	public void aAlterarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,

@@ -202,7 +202,7 @@ public class ExMovimentacaoController extends ExController {
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
 	
-	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 50;
+	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -1104,9 +1104,10 @@ public class ExMovimentacaoController extends ExController {
 					"Não foi localizada pessoa com a sigla informada.");
 		}
 
-		Date dt = paramDate("dt");
+		Date dtIni = paramDate("dtIni");
+		Date dtFim = paramDate("dtFim");
 		ExMovimentacao movQualquer = null;
-		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
+		final List<ExMovimentacao> movs = dao().consultarMovimentacoesPorCadastranteEntreDatas(pes, dtIni, dtFim);
 		for (ExMovimentacao m : movs) {
 			if (mov == null && !m.isCancelada() && m.isTramite())
 				mov = m;
@@ -5805,4 +5806,66 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
 				subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
 	}
+
+	@Get("/app/expediente/mov/listar_docs_transferidos")
+	public void listar_docs_transferidos(final String siglasDocumentosTransferidos,
+										 final String siglasDocumentosNaoTransferidos) throws Exception {
+
+		String[] arraySiglasDocumentosTransferidos = { };
+		if (siglasDocumentosTransferidos != null) {
+			arraySiglasDocumentosTransferidos = siglasDocumentosTransferidos.split(",");
+		}
+		
+		String[] arraySiglasDocumentosNaoTransferidos = { };
+		if (siglasDocumentosNaoTransferidos != null) {
+			arraySiglasDocumentosNaoTransferidos = siglasDocumentosNaoTransferidos.split(",");
+		}
+		
+		final List<ExMobil> mobisDocumentosTransferidos = new ArrayList<ExMobil>();
+		final List<ExMobil> mobisDocumentosNaoTransferidos = new ArrayList<ExMobil>();
+
+		BuscaDocumentoBuilder documentoBuilder;
+				
+		for(String sigla : arraySiglasDocumentosTransferidos){
+			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			buscarDocumento(documentoBuilder);
+			ExMobil mob = documentoBuilder.getMob();
+			mobisDocumentosTransferidos.add(mob);
+		}
+
+		for(String sigla : arraySiglasDocumentosNaoTransferidos){
+			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			buscarDocumento(documentoBuilder);
+			ExMobil mob = documentoBuilder.getMob();
+			mobisDocumentosNaoTransferidos.add(mob);
+		}
+
+		ExMobil mobIni = mobisDocumentosTransferidos.isEmpty() ? null : mobisDocumentosTransferidos.get(0);
+		ExMovimentacao movIni = null;
+		if(mobIni != null){
+			movIni = mobIni.getUltimaMovimentacao();
+		}
+
+		ExMobil mobFim = mobisDocumentosTransferidos.isEmpty() ? null :
+				mobisDocumentosTransferidos.get(mobisDocumentosTransferidos.size() - 1);
+		ExMovimentacao movFim = null;
+		if (mobFim != null) {
+			movFim = mobFim.getUltimaMovimentacao();
+		}
+
+		result.include("mobisDocumentosTransferidos", mobisDocumentosTransferidos);
+		result.include("mobisDocumentosNaoTransferidos", mobisDocumentosNaoTransferidos);
+
+
+		result.include("lotaTitular", getLotaTitular());
+		result.include("movIni", movIni);
+		
+		String dtIni = movIni != null ? movIni.getDtRegMovDDMMYYYYHHMMSS() : null;
+		String dtFim = movFim != null ? movFim.getDtRegMovDDMMYYYYHHMMSS() : null;
+		
+		result.include("dtIni", dtIni);
+		result.include("dtFim", dtFim);
+		
+	}
+	
 }

@@ -50,12 +50,21 @@ public class ExPodeCancelarDocumento extends CompositeExpressionSupport {
 				
 				new ExEstaFinalizado(doc),
 	
-				Or.of(Not.of(new ExEEletronico(doc)), new ExEstaPendenteDeAssinatura(doc)),
+				Or.of(Not.of(new ExEEletronico(doc))),
 
 				If.of(new ExECapturado(doc),
 
 						And.of(Not.of(new ExEDocFilhoJuntadoAoPai(doc)), new ExECadastrante(doc, titular)),
 
-						Or.of(new ExESubscritor(doc, titular),new ExECadastrante(doc, lotaTitular))));
+						Or.of(new ExESubscritor(doc, titular),new ExECadastrante(doc, lotaTitular))),
+
+				Or.of(new ExECadastrante(doc, titular),
+
+						new ExESubscritor(doc, titular),
+
+						new ExECossignatario(doc, titular),
+
+						new ExELotacaoCadastrante(doc, lotaTitular))
+		);
 	}
 }

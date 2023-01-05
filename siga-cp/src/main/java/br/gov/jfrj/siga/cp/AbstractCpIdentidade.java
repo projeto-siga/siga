@@ -49,6 +49,10 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "      and pes.sesbPessoa = :sesbPessoa"
 				+ "      and pes.dataFimPessoa is null"
 				+ "		 and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
+		@NamedQuery(name = "consultarIdentidadeAtual", query = "select u from CpIdentidade u"
+				+ "     where u.nmLoginIdentidade = :nmUsuario"
+				+ "		 and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"
+				+ "		 and u.hisDtIni = (select max(p.hisDtIni) from CpIdentidade p where p.nmLoginIdentidade = :nmUsuario)"),
 		@NamedQuery(name = "consultarIdentidades", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "     where pes.idPessoaIni = :idPessoaIni"
 				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"

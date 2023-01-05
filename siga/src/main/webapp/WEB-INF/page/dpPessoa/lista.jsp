@@ -58,7 +58,7 @@
 	function checkUncheckAll(theElement) {
 		var theForm = theElement.form, z = 0;
 		for (z = 0; z < theForm.length; z++) {
-			if (theForm[z].type == 'checkbox' && theForm[z].name != 'checkall') {
+			if (theForm[z].type == 'checkbox' && theForm[z].id.startsWith('chk_')) {
 				theForm[z].checked = !(theElement.checked);
 				theForm[z].click();
 			}
@@ -72,6 +72,7 @@
 		document.getElementById('chk_' + el).checked = chk.checked;
 		
 	}
+
 </script>
 
 <siga:pagina titulo="Listar Pessoas">
@@ -179,18 +180,19 @@
 								<label for="nmPessoa">RG (Incluindo dígito)</label>
 								<input type="text" id="identidadePesquisa" name="identidadePesquisa" value="${identidadePesquisa}" maxlength="20" class="form-control"/>
 							</div>
-						</div>			
-						
-						<div class="col-md-2">
-							<div class="form-group">
-								<label for="idCargoPesquisa">Status</label>
-								<select class="form-control  siga-select2" id="idStatusPesquisa" name="statusPesquisa" value="${statusPesquisa}">
-										<option value="true">Ativo</option>
-										<option value="false">Inativo</option>
-								</select>
-							</div>
-						</div>			
+						</div>					
 					</div>
+					
+					
+					<div class="form-group">
+						<div class="form-check">
+					    	<input class="form-check-input" type="checkbox" value="1" id="idStatusPesquisa" name="statusPesquisa" <c:if test="${statusPesquisa}">checked</c:if> />
+					     	<label class="form-check-label" for="idStatusPesquisa">
+					        	Listar apenas pessoas ativas
+					      	</label>
+						</div>
+					</div>
+					
 					
 					<div class="row">
 						<div class="col col-12 col-md-6">
@@ -199,13 +201,16 @@
 								<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
 							</c:if>
 						</div>
+			
 						<div class="col col-12 col-md-6 text-right">
 							<c:url var="urlInativarLote" value="/app/pessoa/inativarLote">
 							</c:url>
 								
 							<c:if test="${statusPesquisa}">
-								<button type="button" class="btn btn-primary" onclick="javascript:selecionaPessoa(this, '${urlInativarLote}');" role="button" 
-									aria-pressed="true" 	data-siga-modal-abrir="confirmacaoModal">Inativar em lote</button>			
+								<button type="button" class="btn btn-primary" 
+									onclick="javascript:atualizarUrlDeInativarPessoa('javascript:inativarPessoasSelecionadas(getIdPessoasSelecionadas());');return false;"
+									role="button" 
+									aria-pressed="true" data-siga-modal-abrir="confirmacaoModal">Inativar itens selecionados</button>			
 							</c:if>
 						</div>
 					</div>				
@@ -286,16 +291,7 @@
 									  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>								   
 									  </div>
 									</div>								
-								</td>
-							<%--	<td align="left">									
-					 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
-										<img style="display: inline;"
-										src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
-										onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
-										onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
-									</a>															
-								</td>
-							 --%>							
+								</td>						
 							</tr>
 						</siga:paginador>									
 					</tbody>
@@ -360,8 +356,8 @@
 		$('.btn-confirmacao-inativacao-cadastro').attr("href", url);		
 	}
 	
-	function getIdPessoaSelecionada() {
-		var els = document.querySelectorAll("input[type='checkbox'");
+	function getIdPessoasSelecionadas() {
+		var els = document.getElementsByName("pessoaSelecionada");
 		var selecionados = new Array();
 		for (var i = 0; i < els.length; i++) {
 		  if (els[i].checked) {
@@ -371,24 +367,27 @@
 		return selecionados;
 	}
 	
-	function selecionaPessoa(elemento, url){
-		$('.btn-confirmacao-inativacao-cadastro').attr("href", url);
-		var els = document.querySelectorAll("input[type='checkbox'");
-		var selecionados = new Array();
-		for (var i = 0; i < els.length; i++) {
-		  if (els[i].checked) {
-			  console.log(els[i]);
-			  console.log(els[i].value);
-			  selecionados.push(els[i].value);
-		  }
-		}
+	function inativarPessoasSelecionadas(listaIdPessoasSelecionadas) {
+		
 		
 		$.ajax({
-			method:'GET',
-			url: 'inativarLote?pessoas=' + selecionados,
-			success: 'sucess',
-			error: 'erro' 
+			method:'POST',
+			url: '/siga/app/pessoa/inativarLote',
+			data: {'idPessoasSelecionadas':listaIdPessoasSelecionadas},
+			beforeSend: function(result){	
+				sigaSpinner.mostrar();
+				sigaModal.fechar('confirmacaoModal');
+	        },
+			success: function(result){	
+				location.reload();
+	        },
+			error: 'erro',
+	        complete: function(result){	
+	        	sigaSpinner.ocultar();
+	        }
 		});
 	}
+	
+	
 </script>
 </siga:pagina>

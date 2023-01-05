@@ -26,18 +26,21 @@ var appMesa = new Vue({
 	mounted: function() {
 		this.errormsg = undefined;
 		var self = this;
+		self.mostrarUsuario = MOSTRAR_USUARIO;
 		self.exibeLota = getParmUser('exibeLota');
 		if (self.exibeLota == null) {
 			self.exibeLota = false; 
 		}
-		self.getItensGrupo();
-		self.contar = false;
-		self.mostrarUsuario = MOSTRAR_USUARIO;
 		if (!self.mostrarUsuario)
 			self.exibeLota = true;
 		setParmUser('exibeLota', self.exibeLota); 
+		
+		self.getItensGrupo();
+		self.contar = false;
 		// Carrega todas linhas não preenchidas que estiverem na tela
 		var timeoutId;
+		this.setParmsDefault();
+
 		window.addEventListener('scroll', function ( event ) {
 			window.clearTimeout( timeoutId );
 			timeoutId = setTimeout(function() {
@@ -135,7 +138,6 @@ var appMesa = new Vue({
 				}
 			}
 				
-			this.setParmsDefault();
 			if (this.carregando)
 				return;
 			this.carregando = true;
@@ -561,8 +563,16 @@ function carregaFromJson(json, appMesa) {
 			let grpVue = getGrupoVue(grp[0].grupoNome); 
 			// Se ainda houver linha a preencher no grupo e nao encontrou, reduz 1 do contador. 
 			// Provavelmente existe marca sem mobil no grupo 
-			if (grpVue.grupoDocs[grpVue.grupoCounterAtivo - 1].codigo == "") 
+			if (grpVue && grpVue.grupoDocs && grpVue.grupoDocs.length > 0
+				&& grpVue.grupoCounterAtivo > 0 
+				&& grpVue.grupoDocs[grpVue.grupoDocs.length - 1].codigo == "") {
 				grpVue.grupoDocs.length--;
+				grpVue.grupoCounterAtivo--;
+				if (appMesa.exibeLota)
+					grpVue.grupoCounterLota--
+				else
+					grpVue.grupoCounterUser--
+			}
 		}
 	}
 	

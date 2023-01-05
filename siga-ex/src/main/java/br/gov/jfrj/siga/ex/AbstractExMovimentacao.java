@@ -182,9 +182,9 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		// Voltar todas as movimentacoes realizadas por uma determinada pessoa
 		// em um exato momento. Usado principalmente para gerar segunda-via de
 		// protocolos. 
-		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
-				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov= :data"
-				+ "                order by mov.dtTimestamp"), 
+		@NamedQuery(name = "consultarMovimentacoesPorCadastranteEntreDatas", query = "from ExMovimentacao mov"
+				+ "                where mov.cadastrante.idPessoaIni = :pessoaIni " 
+				+ "                and mov.dtIniMov between :dtIni and :dtFim"), 
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY),
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
 })

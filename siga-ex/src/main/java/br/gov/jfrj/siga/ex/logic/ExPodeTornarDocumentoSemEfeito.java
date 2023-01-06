@@ -38,6 +38,7 @@ public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usuário / móbil</li>
 	 * <li>Móbil não pode estar juntado</li>
 	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Usuário que executará o cancelamento poderá ser o cadastrante, subscritor, cossignatário ou da mesma lotação do cadastrante</li>
 	 * <li>Não pode haver configuração impeditiva</li>
 	 * </ul>
 	 * 
@@ -69,7 +70,13 @@ public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 										.withExFormaDoc(mob.doc().getExFormaDocumento())
 										.withExMod(mob.doc().getExModelo())),
 
-						new ExESubscritor(mob.doc(), titular)
+						Or.of(new ExECadastrante(mob.doc(), titular),
+
+								new ExESubscritor(mob.doc(), titular),
+
+								new ExECossignatario(mob.doc(), titular),
+
+								new ExELotacaoCadastrante(mob.doc(), lotaTitular))
 
 				),
 

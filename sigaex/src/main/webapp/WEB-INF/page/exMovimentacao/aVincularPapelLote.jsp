@@ -7,204 +7,323 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<siga:pagina titulo="Movimentação">
+<fmt:message key="documento.vinculacao" var="titulo"/>
 
-<%-- <c:if test="${not mob.doc.eletronico}"> --%>
-<!-- 	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script> -->
-<%-- </c:if> --%>
+<siga:pagina titulo="${titulo}">
+	<script type="text/javascript" src="/sigaex/javascript/sequential-ajax-calls.js"></script>
 
-<script type="text/javascript" language="Javascript1.1">
-// function sbmt() {
-// 	frm.action='${pageContext.request.contextPath}/app/expediente/mov/vincularPapelLote';
-// 	frm.submit();
-// }
+     <script type="text/javascript">
+		var array = new Array();
+        var siglasDocumentosTransferidos = new Array();
+        var siglasDocumentosNaoTransferidos = new Array();
+		
+		function sbmt(offset) {
+				if (offset == null) {
+					offset = 0;
+				}
+		
+				let form = document.forms['frm'];
+				form ["paramoffset"].value = offset;
+				form.action = "vincularPapelLote";
+				form.method = "GET";
+				form ["p.offset"].value = offset;
+		
+				form.submit();
+		}
+		
+		function tamanho() {
+			var i = tamanho2();
+			if (i<0) {i=0};
+			document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
+		}
+		
+		function inserirResponsavelTable(){
+			sigaSpinner.mostrar();
+			
+			var responsavelSelSigla = document.getElementById("formulario_responsavelSel_sigla")
+			var responsavelSelId = document.getElementById("formulario_responsavelSel_id");
+			var responsavelSelDescr = document.getElementById("formulario_responsavelSel_descricao");
+			var lotaResponsavelSelSigla = document.getElementById("formulario_lotaResponsavelSel_sigla");
+			var lotaResponsavelSelId = document.getElementById("formulario_lotaResponsavelSel_id");
+			var lotaResponsavelSelDescr = document.getElementById("formulario_lotaResponsavelSel_descricao");
+			
+			var idPapel = document.getElementById("idPapel"); 
+			var tipoResponsavel = document.getElementById("tipoResponsavel"); 
+			
+			if (isNullOrVazio(responsavelSelId.value) && isNullOrVazio(lotaResponsavelSelId.value)) {									
+				sigaModal.alerta("Atenção! Informe um responsável");
+				sigaSpinner.ocultar();
+				return;	
+			}
+			
+			if (existeResponsavelArray(responsavelSelId.value, lotaResponsavelSelId.value, tipoResponsavel.value)){
+				sigaModal.alerta("Atenção! Responsável já foi incluído na tabela");
+				sigaSpinner.ocultar();
+				return;	
+			}
+			
+			var myMap = new Map();
+			myMap.set("responsavelSelSigla", responsavelSelSigla.value);
+			myMap.set("responsavelSelId", responsavelSelId.value);
+			myMap.set("responsavelSelDescr", responsavelSelDescr.value);
+			myMap.set("lotaResponsavelSelSigla", lotaResponsavelSelSigla.value);
+			myMap.set("lotaResponsavelSelId", lotaResponsavelSelId.value);
+			myMap.set("lotaResponsavelSelDescr", lotaResponsavelSelDescr.value);
+			myMap.set("idPapel", idPapel.value);
+			myMap.set("tipoResponsavel", tipoResponsavel.value);
+			myMap.set("vazio","");
+			
+			var myJson = {};
+			myJson = mapToObj(myMap);
+			array.push(myJson);	
+			
+			localStorage.setItem('dataRespJson', JSON.stringify(array));
+			gerarTable();
+			limparCamposSelResponsavel();
+			
+			sigaSpinner.ocultar();
+		}
+		
+		function limparCamposSelResponsavel() {
+			document.getElementById("formulario_responsavelSel_sigla").value = "";
+			document.getElementById("formulario_responsavelSel_id").value = "";
+			document.getElementById("formulario_responsavelSel_descricao").value = "";
+			$("#responsavelSelSpan").html("");
+			document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
+			document.getElementById("formulario_lotaResponsavelSel_id").value = "";
+			document.getElementById("formulario_lotaResponsavelSel_descricao").value = "";
+			$("#lotaResponsavelSelSpan").html("");
+		}
+		
+		function existeResponsavelArray(responsavelSelId, lotaResponsavelSelId, tipoResponsavel){
+			let respSelId = array.find(o => o.responsavelSelId === responsavelSelId);
+			let lotaRespSelId = array.find(o => o.lotaResponsavelSelId === lotaResponsavelSelId);
+			
+			if((!isNullOrVazio(respSelId) && tipoResponsavel == 1) 
+						|| (!isNullOrVazio(lotaRespSelId) && tipoResponsavel == 2))
+				return true;
+			return false;
+		}
+		
+		function isNullOrVazio(obj){
+			if (obj == null || obj == "")
+				return true;
+			return false;
+		}
+		
+		function gerarTable(){
+			var data = JSON.parse(localStorage.getItem('dataRespJson'));
+			var idx = 0;
+			const warehouseQuant = data =>
+			  document.getElementById("idTbodyResponsavel").innerHTML = data.map(
+			    item => ([
+			      '<tr>',
+			      ['responsavelSelSigla','responsavelSelDescr','lotaResponsavelSelDescr','vazio'].map(
+			        key => '<td>'+item[key]+'</td>'
+			      ),
+			      "<td><button type='button' class='btn btn-danger' onclick='javascript:removerResponsavel(".concat(idx++,");'>Excluir</button></td>"),
+			      '</tr>',
+			    ])
+			  ).flat(Infinity).join('');
+			  
+			warehouseQuant(data);
+		}
+		
+		function mapToObj(map){
+			  const obj = {}
+			  for (let [k,v] of map)
+			    obj[k] = v
+			  return obj
+		}
+		
+		function removerResponsavel(index){
+			array.splice(index, 1);
+			localStorage.setItem('dataRespJson', JSON.stringify(array));
+			gerarTable();
+		}
+		
+		function checkUncheckAll(theElement) {
+		    let isChecked = theElement.checked;
+		    Array.from(document.getElementsByClassName('chkDocumento')).forEach(chk => chk.checked = isChecked);
+		}
+		
+		function displaySel() {
+		    document.getElementById('checkall').checked =
+		        Array.from(document.getElementsByClassName('chkDocumento')).every(chk => chk.checked);
+		}
+		
+		function validar() {
+			if (!Array.isArray(array) || !array.length) {
+				sigaModal.alerta("Atenção! Informe pelo menos um responsável");
+				return;
+			}
+			
+			var checkedElements = $("input[name='documentosSelecionados']:checked");
+			if (checkedElements.length === 0) {
+			    sigaModal.alerta('Selecione pelo menos um documento');
+			    return;
+			} else {
+			    sigaModal.abrir('confirmacaoModal');
+			}
+		}
+		
+		function confirmar() {
+		    $("#btnOk").prop("disabled", true);
+		    $("#btnIncluir").prop("disabled", true);
+		    sigaModal.fechar('confirmacaoModal');
+		    vincularPapeisLote();
+		}
+		
+		function vincularPapeisLote(){
+			process.reset();
 
-var array = new Array();
+            process.push(function () {
+                Log("Executando a viculação em lote dos documentos selecionados");
+            });
+            
+            var cont = 1;
+            array.forEach(
+            		res => {
+			            Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
+			                    chk => {
+			                        process.push(function () {
+			                            return ExecutarPost(chk.value, res.tipoResponsavel, res.responsavelSelId, 
+			                            		res.responsavelSelDescr, res.responsavelSelSigla, res.lotaResponsavelSelId, 
+			                            		res.lotaResponsavelSelDescr, res.lotaResponsavelSelSigla, res.idPapel);			
+			                        });
+			                        process.push(function () {
+			                            chk.checked = false;
+			                            cont++;
+			                        });
+			                    }
+			             );
+            		}
+			);
+            
+            
+            
+            process.push(function () {
+                
+                console.log("process.push");
+                console.log("Contador: " + cont);
+                //limparCampos();
 
-function sbmt(offset) {
-		if (offset == null) {
-			offset = 0;
+//                 let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos';
+//                 location.href = url + '?siglasDocumentosTransferidos=' + siglasDocumentosTransferidos
+//                     + '&siglasDocumentosNaoTransferidos=' + siglasDocumentosNaoTransferidos;
+            });
+
+            process.run();
+			
+		}
+		
+		function ExecutarPost(documentoSelSigla, tipoResponsavel, responsavelSelId, responsavelSelDescr, responsavelSelSigla,
+				lotaResponsavelSelId, lotaResponsavelSelDescr, lotaResponsavelSelSigla, idPapel) {
+			//console.log("ExecutarPost" + documentoSelSigla);
+			$.ajax({
+				  url: '${pageContext.request.contextPath}/app/expediente/mov/vincularPapel_gravar',
+				  type: 'POST',
+				  data: {
+					  postback: 1,
+				      sigla: documentoSelSigla,
+				      tipoResponsavel: tipoResponsavel,
+				      'responsavelSel.id': responsavelSelId,
+				      'responsavelSel.descricao': responsavelSelDescr,
+				      'responsavelSel.sigla': responsavelSelSigla,
+				      'lotaResponsavelSel.id': lotaResponsavelSelId,
+				      'lotaResponsavelSel.descricao': lotaResponsavelSelDescr,
+				      'lotaResponsavelSel.sigla': lotaResponsavelSelSigla,
+				      idPapel: idPapel
+				    	  
+				  },
+				  success: function () {
+				      siglasDocumentosTransferidos.push(documentoSelSigla);
+				  },
+				  error: function (textStatus, errorThrown) {
+				      console.log(textStatus + errorThrown)
+				      siglasDocumentosNaoTransferidos.push(documentoSelSigla);
+				  }
+			});
 		}
 
-		let form = document.forms['frm'];
-		form ["paramoffset"].value = offset;
-		form.action = "vincularPapelLote";
-		form.method = "GET";
-		form ["p.offset"].value = offset;
-
-		form.submit();
-}
-
-function tamanho() {
-	var i = tamanho2();
-	if (i<0) {i=0};
-	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
-}
-
-function inserirResponsavelTable(){
-	var responsavelSelSigla = document.getElementById("formulario_responsavelSel_sigla")
-	var responsavelSelId = document.getElementById("formulario_responsavelSel_id");
-	var responsavelSelDescr = document.getElementById("formulario_responsavelSel_descricao");
-	var lotaResponsavelSelId = document.getElementById("formulario_lotaResponsavelSel_id");
-	var lotaResponsavelSelDescr = document.getElementById("formulario_lotaResponsavelSel_descricao");
-	
-	var idPapel = document.getElementById("idPapel"); 
-	var tipoResponsavel = document.getElementById("tipoResponsavel"); 
-	
-	if (isNullOrVazio(responsavelSelId.value) && isNullOrVazio(lotaResponsavelSelId.value)) {									
-		sigaModal.alerta("Atenção! Informe um responsável");
-		return;	
-	}
-	
-	if (existeResponsavelArray(responsavelSelId.value, lotaResponsavelSelId.value, tipoResponsavel.value)){
-		sigaModal.alerta("Atenção! Responsável já foi incluído na tabela");
-		return;	
-	}
-	
-	var myMap = new Map();
-	myMap.set("responsavelSelSigla", responsavelSelSigla.value);
-	myMap.set("responsavelSelId", responsavelSelId.value);
-	myMap.set("responsavelSelDescr", responsavelSelDescr.value);
-	myMap.set("lotaResponsavelSelId", lotaResponsavelSelId.value);
-	myMap.set("lotaResponsavelSelDescr", lotaResponsavelSelDescr.value);
-	myMap.set("idPapel", idPapel.value);
-	myMap.set("tipoResponsavel", tipoResponsavel.value);
-	myMap.set("vazio","");
-	
-	var myJson = {};
-	myJson = mapToObj(myMap);
-	array.push(myJson);	
-	
-	localStorage.setItem('dataRespJson', JSON.stringify(array));
-	gerarTable();
-}
-
-function existeResponsavelArray(responsavelSelId, lotaResponsavelSelId, tipoResponsavel){
-	let respSelId = array.find(o => o.responsavelSelId === responsavelSelId);
-	let lotaRespSelId = array.find(o => o.lotaResponsavelSelId === lotaResponsavelSelId);
-	
-	if((!isNullOrVazio(respSelId) && tipoResponsavel == 1) 
-				|| (!isNullOrVazio(lotaRespSelId) && tipoResponsavel == 2))
-		return true;
-	return false;
-}
-
-function isNullOrVazio(obj){
-	if (obj == null || obj == "")
-		return true;
-	return false;
-}
-
-function gerarTable(){
-	var data = JSON.parse(localStorage.getItem('dataRespJson'));
-	var idx = 0;
-	const warehouseQuant = data =>
-	  document.getElementById("idTbodyResponsavel").innerHTML = data.map(
-	    item => ([
-	      '<tr>',
-	      ['responsavelSelSigla','responsavelSelDescr','lotaResponsavelSelDescr','vazio'].map(
-	        key => '<td>'+item[key]+'</td>'
-	      ),
-	      "<td><button type='button' class='btn btn-danger' onclick='javascript:removerResponsavel(".concat(idx++,");'>Excluir</button></td>"),
-	      '</tr>',
-	    ])
-	  ).flat(Infinity).join('');
-	  
-	warehouseQuant(data);
-}
-
-function mapToObj(map){
-	  const obj = {}
-	  for (let [k,v] of map)
-	    obj[k] = v
-	  return obj
-}
-
-function removerResponsavel(index){
-	array.splice(index, 1);
-	localStorage.setItem('dataRespJson', JSON.stringify(array));
-	gerarTable();
-}
-
-function tamanho2() {
-	nota= new String();
-	nota = this.frm.descrMov.value;
-	var i = 255 - nota.length;
-	return i;
-}
-function corrige() {
-	if (tamanho2()<0) {
-		alert('Descrição com mais de 255 caracteres');
-		nota = new String();
-		nota = document.getElementById("descrMov").value;
-		document.getElementById("descrMov").value = nota.substring(0,255);
-	}
-}
-
-var newwindow = '';
-function popitup_movimentacao() {
-	if (!newwindow.closed && newwindow.location) {
-	} else {
-		var popW = 600;
-		var popH = 400;
-		var winleft = (screen.width - popW) / 2;
-		var winUp = (screen.height - popH) / 2;
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow=window.open('','${propriedade}',winProp);
-		newwindow.name='mov';
-	}
-	
-	newwindow.opener = self;
-	t = frm.target; 
-	a = frm.action;
-	frm.target = newwindow.name;
-	frm.action='${pageContext.request.contextPath}/app/expediente/mov/prever?id=${mov.idMov}';
-	frm.submit();
-	frm.target = t; 
-	frm.action = a;
-	
-	if (window.focus) {
-		newwindow.focus()
-	}
-	return false;
-}	
-
-function alteraResponsavel() {
-	var objSelecionado = document.getElementById('tipoResponsavel');
-	
-	switch (parseInt(objSelecionado.value))
-	{
-		case 1:
-			document.getElementById('selecaoResponsavel').style.display = '';
-			document.getElementById('selecaoLotaResponsavel').style.display = 'none';
-			document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
-			document.getElementById('lotaResponsavelSelSpan').textContent = '';
-			document.getElementById('formulario_lotaResponsavelSel_id').value = '';
-			document.getElementById("formulario_lotaResponsavelSel_descricao").value ='';
-			break;
-		case 2:
-			document.getElementById('selecaoResponsavel').style.display = 'none';
-			document.getElementById('selecaoLotaResponsavel').style.display = '';
-			document.getElementById('formulario_responsavelSel_sigla').value = '';
-			document.getElementById('responsavelSelSpan').textContent = '';
-			document.getElementById('formulario_responsavelSel_id').value = '';
-			document.getElementById("formulario_responsavelSel_descricao").value ='';
-			break;
-	}
-}
-
-</script>
+		
+		function tamanho2() {
+			nota= new String();
+			nota = this.frm.descrMov.value;
+			var i = 255 - nota.length;
+			return i;
+		}
+		function corrige() {
+			if (tamanho2()<0) {
+				alert('Descrição com mais de 255 caracteres');
+				nota = new String();
+				nota = document.getElementById("descrMov").value;
+				document.getElementById("descrMov").value = nota.substring(0,255);
+			}
+		}
+		
+		var newwindow = '';
+		function popitup_movimentacao() {
+			if (!newwindow.closed && newwindow.location) {
+			} else {
+				var popW = 600;
+				var popH = 400;
+				var winleft = (screen.width - popW) / 2;
+				var winUp = (screen.height - popH) / 2;
+				winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
+				newwindow=window.open('','${propriedade}',winProp);
+				newwindow.name='mov';
+			}
+			
+			newwindow.opener = self;
+			t = frm.target; 
+			a = frm.action;
+			frm.target = newwindow.name;
+			frm.action='${pageContext.request.contextPath}/app/expediente/mov/prever?id=${mov.idMov}';
+			frm.submit();
+			frm.target = t; 
+			frm.action = a;
+			
+			if (window.focus) {
+				newwindow.focus()
+			}
+			return false;
+		}	
+		
+		function alteraResponsavel() {
+			var objSelecionado = document.getElementById('tipoResponsavel');
+			
+			switch (parseInt(objSelecionado.value))
+			{
+				case 1:
+					document.getElementById('selecaoResponsavel').style.display = '';
+					document.getElementById('selecaoLotaResponsavel').style.display = 'none';
+					document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
+					document.getElementById('lotaResponsavelSelSpan').textContent = '';
+					document.getElementById('formulario_lotaResponsavelSel_id').value = '';
+					document.getElementById("formulario_lotaResponsavelSel_descricao").value ='';
+					break;
+				case 2:
+					document.getElementById('selecaoResponsavel').style.display = 'none';
+					document.getElementById('selecaoLotaResponsavel').style.display = '';
+					document.getElementById('formulario_responsavelSel_sigla').value = '';
+					document.getElementById('responsavelSelSpan').textContent = '';
+					document.getElementById('formulario_responsavelSel_id').value = '';
+					document.getElementById("formulario_responsavelSel_descricao").value ='';
+					break;
+			}
+		}
+	</script>
 
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5><fmt:message key="documento.vinculacao"/></h5>
+				<h5>${titulo}</h5>
 			</div>
 			<div class="card-body">
 				<form name="frm" action="vincularPapel_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
-<%-- 					<input type="hidden" name="sigla" value="${sigla}"/> --%>
 					<input type="hidden" name="paramoffset" value="0" /> 
 					<input type="hidden" name="p.offset" value="0" />
 					<div class="row">
@@ -256,7 +375,7 @@ function alteraResponsavel() {
 							</div>
 						</div>
 						<div class="col-sm align-self-center">
-							<input type="button" value="Incluir" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
+							<input type="button" value="Incluir" id="btnIncluir" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
 						</div>
 					</div>
 <!-- 					<div class="row"> -->
@@ -287,11 +406,12 @@ function alteraResponsavel() {
 						</div>
 						<br/>
 						<div class="col-sm align-self-center">
-							<input type="button" value="Ok" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
+							<input type="button" value="Ok" id="btnOk" onclick="javascript:validar();" class="btn btn-primary" />
 						</div>
 					</div>
 					
 					<div class="gt-content-box gt-for-table">
+						<br />
 						<br />
 						<div>
 							<table class="table table-hover table-striped">
@@ -321,8 +441,8 @@ function alteraResponsavel() {
 										<tr>
 											<td align="center" class="align-middle text-center"><input
 												type="checkbox" name="documentosSelecionados"
-												value="${documento.id}" id="${x}" class="chkDocumento"
-												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
+												value="${documento.codigoCompacto}" id="${x}" class="chkDocumento"
+												onclick="javascript:displaySel();" /></td>
 											<td class="text-center align-middle"><c:choose>
 													<c:when test='${param.popup!="true"}'>
 														<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
@@ -368,11 +488,25 @@ function alteraResponsavel() {
 				</form>
 			</div>
 		</div>
+		<siga:siga-modal id="confirmacaoModal" exibirRodape="false"
+                         tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
+	         <div class="modal-body">
+	             O(s) documento(s) selecionado(s) será(ão) acompanhado(s) pelo(s) respectivo(s) responsável(eis). Deseja, confirmar?
+	         </div>
+	         <div class="modal-footer">
+	             <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
+	             <a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true"
+	                onclick="confirmar();">
+	                 Sim</a>
+	         </div>
+	     </siga:siga-modal>
 	</div>
+    
 </siga:pagina>
-<script>
-
-	window.onload = function () { 
-		localStorage.removeItem('dataRespJson');
-	} 
+ <script type="text/javascript">
+	    window.onload = function () { 
+				localStorage.removeItem('dataRespJson');
+		} 
 </script>
+
+

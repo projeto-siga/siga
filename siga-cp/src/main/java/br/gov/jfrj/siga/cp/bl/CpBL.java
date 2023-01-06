@@ -1570,11 +1570,18 @@ public class CpBL {
 				PropertyUtils.copyProperties(cargoNovo, cargo); 
 				cargoNovo.setId(null);
 				cargoNovo.setOrgaoUsuario(orgaoNovo);
-				CpDao.getInstance().gravarComHistorico(cargoNovo, cargo, null, identidadeCadastrante);
+				cargoNovo.setDataFim(cargo.getDataFim() != null ? CpDao.getInstance().consultarDataEHoraDoServidor() : null);
+				cargoNovo.setDataInicio(CpDao.getInstance().consultarDataEHoraDoServidor());
+				if(cargo.getDataFim() == null) {
+					CpDao.getInstance().gravarComHistorico(cargoNovo, cargo, null, identidadeCadastrante);
+				} else {
+					CpDao.getInstance().gravarComHistorico(cargoNovo, identidadeCadastrante);
+				}
+				
 				
 				hashPessoa.forEach((key, value) -> {
 					
-					if(key.getCargo().getId().equals(cargo.getId())) {	
+					if(key.getCargo().getIdCargoIni().equals(cargo.getIdCargoIni())) {	
 						DpPessoa p = new DpPessoa();
 						copiarPessoa(value,p);
 						p.setCargo(cargo.getCargoAtual());
@@ -1589,12 +1596,18 @@ public class CpBL {
 				PropertyUtils.copyProperties(funcaoNovo, funcao); 
 				funcaoNovo.setOrgaoUsuario(orgaoNovo);
 				funcaoNovo.setId(null);
-				CpDao.getInstance().gravarComHistorico(funcaoNovo, funcao, null, identidadeCadastrante);
+				funcaoNovo.setDataFim(funcao.getDataFim() != null ? CpDao.getInstance().consultarDataEHoraDoServidor() : null);
+				funcaoNovo.setDataInicio(CpDao.getInstance().consultarDataEHoraDoServidor());
+				if(funcao.getDataFim() == null) {
+					CpDao.getInstance().gravarComHistorico(funcaoNovo, funcao, null, identidadeCadastrante);
+				} else {
+					CpDao.getInstance().gravarComHistorico(funcaoNovo, identidadeCadastrante);
+				}
 				
 				hashPessoa.forEach((key, value) -> {
 					DpPessoa p = new DpPessoa();
 					copiarPessoa(value,p);
-					if(p.getFuncaoConfianca() != null && p.getFuncaoConfianca().getId().equals(funcao.getId())) {
+					if(p.getFuncaoConfianca() != null && p.getFuncaoConfianca().getIdFuncaoIni().equals(funcao.getIdFuncaoIni())) {
 						
 						p.setFuncaoConfianca(funcao.getFuncaoConfiancaAtual());
 						hashPessoa.put(key, p);
@@ -1608,19 +1621,25 @@ public class CpBL {
 				PropertyUtils.copyProperties(lotacaoNovo, lotacao); 
 				lotacaoNovo.setOrgaoUsuario(orgaoNovo);
 				lotacaoNovo.setId(null);
-				
+				lotacaoNovo.setDataFim(lotacao.getDataFim() != null ? CpDao.getInstance().consultarDataEHoraDoServidor() : null);
+				lotacaoNovo.setDataInicio(CpDao.getInstance().consultarDataEHoraDoServidor());
 				lotacaoNovo.setDpLotacaoSubordinadosSet(null);
 				lotacaoNovo.setDpPessoaLotadosSet(null);
 				lotacaoNovo.setLotacoesPosteriores(null);
 				
-				CpDao.getInstance().gravarComHistorico(lotacaoNovo, lotacao, null, identidadeCadastrante);
+				if(lotacao.getDataFim() == null) {
+					CpDao.getInstance().gravarComHistorico(lotacaoNovo, lotacao, null, identidadeCadastrante);
+				} else {
+					CpDao.getInstance().gravarComHistorico(lotacaoNovo, identidadeCadastrante);
+				}
 				
 				hashPessoa.forEach((key, value) -> {
-					if(key.getLotacao().getId().equals(lotacao.getId())) {
+					if(key.getLotacao().getIdLotacaoIni().equals(lotacao.getIdLotacaoIni())) {
 						DpPessoa p = new DpPessoa();
 						copiarPessoa(value,p);
 						p.setLotacao(lotacao.getLotacaoAtual());
-						p.setHisDtFim(key.getHisDtFim());
+						p.setHisDtFim(key.getHisDtFim() != null ? CpDao.getInstance().consultarDataEHoraDoServidor() : null);
+						p.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
 						p.setHisIdcFim(key.getHisIdcFim());
 						p.setOrgaoUsuario(orgaoNovo);
 						if(orgaoAntigo != null && !orgaoNovo.getSigla().equals(orgaoAntigo.getSigla())) {
@@ -1650,7 +1669,14 @@ public class CpBL {
 						ident.setCpOrgaoUsuario(orgaoNovo);
 						ident.setNmLoginIdentidade(value.getSesbPessoa() + value.getMatricula());
 						ident.setId(null);
-						CpDao.getInstance().gravarComHistorico(ident, identAnt, null , identidadeCadastrante);
+						ident.setHisDtFim(identAnt.getHisDtFim() != null ? CpDao.getInstance().consultarDataEHoraDoServidor() : null);
+						ident.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
+						if(identAnt.getHisDtFim() == null) {
+							CpDao.getInstance().gravarComHistorico(ident, identAnt, null , identidadeCadastrante);
+						} else {
+							CpDao.getInstance().gravarComHistorico(ident, identidadeCadastrante);
+						}
+						
 					}
 				} else {
 					CpDao.getInstance().gravarComHistorico(value, key, null, identidadeCadastrante);

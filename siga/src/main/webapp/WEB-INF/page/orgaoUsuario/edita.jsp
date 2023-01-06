@@ -130,7 +130,7 @@
 							<div class="col-md-2">
 								<div class="form-group">
 									<label>Data de Alteração</label>
-									<input type="text" id="dataAlteracao" name="dataAlteracao" value="${dataAlteracao}" class="form-control"/>
+									<input type="text" id="dataAlteracao" name="dataAlteracao" value="${dataAlteracao}" class="form-control" onblur="javascript:verifica_data(this,0);"/>
 								</div>
 							</div>
 						</c:if>

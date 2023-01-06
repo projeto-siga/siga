@@ -58,14 +58,12 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -1441,10 +1439,11 @@ public class ExDao extends CpDao {
 		return ((Long) query.getSingleResult()).intValue();
 	}
 
-	public List<ExMobil> consultarParaTransferirEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
-		final Query query = em().createNamedQuery("consultarParaTransferirEmLote")
-				.setParameter("pessoaIni",pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId());
+	public List<ExMobil> consultarParaTramitarEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaTramitarEmLote")
+				.setParameter("pessoaIni", pes.getIdPessoaIni())
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId());
+		
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
 		}
@@ -1455,11 +1454,10 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public Long consultarQuantidadeParaTransferirEmLote(DpPessoa pes) {
-		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
+	public int consultarQuantidadeParaTramitarEmLote(DpPessoa pes) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaTramitarEmLote", Long.class)
 				.setParameter("pessoaIni", pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId())
-				.getSingleResult();
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId()).getSingleResult() ).intValue();
 	}
 	
 	public List<ExMobil> consultarParaAcompanhamentoEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {

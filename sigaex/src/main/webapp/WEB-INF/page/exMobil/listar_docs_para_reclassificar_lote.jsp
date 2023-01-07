@@ -7,7 +7,7 @@
 <c:if test="${not empty itens}">
     <div class="gt-content-box gt-for-table">
         <table class="table table-hover table-striped">
-            <thead class="${thead_color} align-middle text-center">
+            <thead class="thead-dark align-middle text-center">
             <tr>
                 <th width="3%" align="center">
                     <input type="checkbox" id="checkall" onclick="checkUncheckAll(this)"/>

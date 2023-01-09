@@ -2767,6 +2767,56 @@ public class ExMovimentacaoController extends ExController {
 		result.include("tamanho", tamanho);
 		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_TRAMITACAO_LOTE + 1));
 	}
+	
+	private static List<ExMobil> docArquivadosParaTransferir;
+	private static int offsetTransferencia;
+	@Get("app/expediente/mov/transferir_doc_arquivado_lote")
+	public void aTransferirDocArquivadoLote(Integer paramoffset) {
+		
+		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
+		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		final DpLotacaoSelecao lotaResponsavelSel = new DpLotacaoSelecao();
+		final DpPessoaSelecao responsavelSel = new DpPessoaSelecao();
+
+		result.include("listaTipoResp", this.getListaTipoTransferencia());
+		result.include("tiposDespacho", this.getTiposDespacho(null));
+		result.include("itens", docArquivadosParaTransferir);
+		result.include("titularSel", titularSel);
+		result.include("subscritorSel", subscritorSel);
+		result.include("lotaResponsavelSel", lotaResponsavelSel);
+		result.include("responsavelSel", responsavelSel);
+
+		result.include("maxItems", MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+		result.include("tamanho", null);
+		result.include("currentPageNumber", (offsetTransferencia / MAX_ITENS_PAGINA_TRAMITACAO_LOTE + 1));
+		
+		docArquivadosParaTransferir = new ArrayList<ExMobil>();
+	}
+	
+	@Get("app/expediente/mov/pesquisa_documentos_arquivados_transferencia")   
+	public void pesquisaDocArquivadosParaTransferir(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel) {
+		//final DpPessoaSelecao responsavelSelFinal = Optional.fromNullable(responsavelSel).or(new DpPessoaSelecao());
+		Long idOrigem = null;
+		if(responsavelSel.getId() != null)
+			idOrigem = responsavelSel.getId();
+		else if (lotaResponsavelSel.getId() != null)
+			idOrigem = lotaResponsavelSel.getId();
+			
+		Long tamanho = dao().consultarQuantidadeParaTransferirEmLote(getTitular());
+
+		LOGGER.debug("TAMANHO : " + tamanho);
+
+		offsetTransferencia = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_TRAMITACAO_LOTE - 1) * MAX_ITENS_PAGINA_TRAMITACAO_LOTE)
+						: paramoffset)
+				: 0;
+
+		docArquivadosParaTransferir = (tamanho <= MAX_ITENS_PAGINA_TRAMITACAO_LOTE)
+				? dao().consultarParaTransferirEmLote(getTitular(), null, null)
+				: dao().consultarParaTransferirEmLote(getTitular(), offsetTransferencia, MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+
+		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset);
+	}
 
 	@Transacional
 	@Post("app/expediente/mov/transferir_lote_gravar")
@@ -4911,6 +4961,13 @@ public class ExMovimentacaoController extends ExController {
 		return map;
 	}
 
+	protected Map<Integer, String> getListaTipoTransferencia() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, TipoResponsavelEnum.LOTACAO.getDescricao());
+		map.put(2, TipoResponsavelEnum.MATRICULA.getDescricao());
+		return map;
+	}
+	
 	private Map<Integer, String> getListaTipoRespPerfil() {
 		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}

@@ -1461,6 +1461,12 @@ public class ExDao extends CpDao {
 				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId())
 				.getSingleResult();
 	}
+	
+	public Long consultarQuantidadeArquivadosParaTransferirEmLote(Long idOrigem) {
+		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
+				.setParameter("pessoaIni", idOrigem)
+				.getSingleResult();
+	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {
 		final Query query = em().createNamedQuery(

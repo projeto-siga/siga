@@ -357,7 +357,7 @@ public class ExDao extends CpDao {
 		
 		Calendar c = Calendar.getInstance();
 		
-		query.setParameter("anoEmissao", c.get(Calendar.YEAR));
+		query.setParameter("anoEmissao", Long.valueOf(c.get(Calendar.YEAR)));
 		query.setParameter("flAtivo", "1");
 		query.setParameter("increment", 1L);
 		query.setParameter("id", idSeq);

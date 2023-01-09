@@ -8,6 +8,9 @@
 
 <fmt:message key="documento.transferencia.lote" var="titulo"/>
 <siga:pagina titulo="${titulo}">
+    
+    <c:set var="thead_color" value="${thead_color}" scope="session" />
+    
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">

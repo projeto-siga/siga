@@ -57,7 +57,7 @@
                             <th>Descrição</th>
                         </tr>
                         </thead>
-                        <c:forEach var="mob" items="${mobisDocumentosNaoTransferidos}">
+                        <c:forEach var="mob" items="${mobisDocumentosNaoTramitados}">
                             <tr>
                                 <td align="center">
                                     <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}">
@@ -77,7 +77,7 @@
             </div>
 
 
-            <c:if test="${not empty mobisDocumentosTransferidos}">
+            <c:if test="${not empty mobisDocumentosTramitados}">
             <div class="card bg-light mb-3">
                 <div class="card-header">
                     <h5><fmt:message key='documentos.transferidos'/></h5>
@@ -114,7 +114,7 @@
                             <th>Pessoa</th>
                         </tr>
                         </thead>
-                        <c:forEach var="mob" items="${mobisDocumentosTransferidos}">
+                        <c:forEach var="mob" items="${mobisDocumentosTramitados}">
                             <tr>
                                 <td class="text-right">
                                     <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}">

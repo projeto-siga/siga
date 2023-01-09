@@ -8,7 +8,6 @@
 
 <fmt:message key="documento.transferencia.lote" var="titulo"/>
 <siga:pagina titulo="${titulo}">
-    <script type="text/javascript" src="/sigaex/javascript/sequential-ajax-calls.js"></script>
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -117,13 +116,20 @@
                     Sim</a>
             </div>
         </siga:siga-modal>
+        <siga:siga-modal id="progressModal" exibirRodape="false" centralizar="true" tamanhoGrande="true"
+                         tituloADireita="Tramitação em lote" linkBotaoDeAcao="#" botaoFecharNoCabecalho="false">
+            <div class="modal-body">
+                <div id="progressbar-ad"></div>
+            </div>
+        </siga:siga-modal>
+    </div>
     </div>
 
     <script type="text/javascript">
         window.onload = function () {
             listarDocumentosParaTramitarEmLote();
         }
-        
+
         function listarDocumentosParaTramitarEmLote(offset) {
             sigaSpinner.mostrar();
 
@@ -253,14 +259,17 @@
             process.reset();
 
             process.push(function () {
-                Log("Executando a tramitação em lote dos documentos selecionados")
+                $('#progressModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
             });
 
             Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
                 chk => {
                     process.push(function () {
                         return ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
-                            orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
+                         orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
 
                     });
                     process.push(function () {
@@ -270,6 +279,7 @@
             );
 
             process.push(function () {
+                sigaModal.fechar('progressModal');
                 sigaSpinner.mostrar();
                 limparCampos();
 
@@ -304,6 +314,51 @@
             });
         }
 
+        let process = {
+            steps: [],
+            index: 0,
+            title: "Executando a tramitação em lote dos documentos selecionados",
+            errormsg: "Não foi possível completar a operação",
+            urlRedirect: null,
+            reset: function () {
+                this.steps = [];
+                this.index = 0;
+            },
+            push: function (x) {
+                this.steps.push(x);
+            },
+            run: function () {
+                this.progressbar = $('#progressbar-ad').progressbar();
+                this.nextStep();
+            },
+            finalize: function () {
+                this.dialogo.dialog('destroy');
+            },
+            nextStep: function () {
+                if (typeof this.steps[this.index] == 'string')
+                    eval(this.steps[this.index++]);
+                else {
+                    let ret = this.steps[this.index++]();
+                    if ((typeof ret == 'string') && ret != "OK") {
+                        this.finalize();
+                        alert(ret, 0, this.errormsg);
+                        return;
+                    }
+                }
+
+                this.progressbar.progressbar("value",
+                    100 * (this.index / this.steps.length));
+
+                if (this.index != this.steps.length) {
+                    let me = this;
+                    window.setTimeout(function () {
+                        me.nextStep();
+                    }, 100);
+                } else {
+                    this.finalize();
+                }
+            }
+        };
 
     </script>
 </siga:pagina>

@@ -13,9 +13,10 @@
 	<script type="text/javascript" src="/sigaex/javascript/sequential-ajax-calls.js"></script>
 
      <script type="text/javascript">
+     	var cont = 0;
 		var array = new Array();
-        var siglasDocumentosTransferidos = new Array();
-        var siglasDocumentosNaoTransferidos = new Array();
+        var listaExecucaoLote = new Array();
+        
 		
 		function sbmt(offset) {
 				if (offset == null) {
@@ -29,12 +30,6 @@
 				form ["p.offset"].value = offset;
 		
 				form.submit();
-		}
-		
-		function tamanho() {
-			var i = tamanho2();
-			if (i<0) {i=0};
-			document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
 		}
 		
 		function inserirResponsavelTable(){
@@ -175,16 +170,17 @@
 		}
 		
 		function vincularPapeisLote(){
+			listaExecucaoLote = new Array();
 			process.reset();
 
             process.push(function () {
                 Log("Executando a viculação em lote dos documentos selecionados");
             });
+            let arrayDocs = Array.from($(".chkDocumento:checkbox").filter(":checked"));
             
-            var cont = 1;
             array.forEach(
             		res => {
-			            Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
+            			arrayDocs.forEach(
 			                    chk => {
 			                        process.push(function () {
 			                            return ExecutarPost(chk.value, res.tipoResponsavel, res.responsavelSelId, 
@@ -193,102 +189,97 @@
 			                        });
 			                        process.push(function () {
 			                            chk.checked = false;
-			                            cont++;
 			                        });
 			                    }
 			             );
             		}
 			);
             
-            
-            
             process.push(function () {
-                
-                console.log("process.push");
-                console.log("Contador: " + cont);
-                //limparCampos();
-
-//                 let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos';
-//                 location.href = url + '?siglasDocumentosTransferidos=' + siglasDocumentosTransferidos
-//                     + '&siglasDocumentosNaoTransferidos=' + siglasDocumentosNaoTransferidos;
+            	var erroTimeout = false;
+            	var start = new Date().getTime();
+            	var end = start;
+            	do {
+            		end = new Date().getTime();
+            		if((end > start + 30000)){
+            			erroTimeout = true;
+            			break;
+            		}
+            	} while (cont < arrayDocs.length);
+            	
+            	if(erroTimeout)
+            		sigaModal.alerta("Ocorreu um erro de timeout no processamento em Lote. Por favor, verifique na tabela de status se todos os registros foram processados com sucesso.");
+            	else
+            		sigaModal.alerta("Processamento de Acompanhamento em Lote realizado com sucesso!");
+            	
+            	cont = 0;
+            	//gerarTableStatus();
+            	location.href = "#idTableStatus";
+            	$("#btnOk").prop("disabled", false);
+    		    $("#btnIncluir").prop("disabled", false);
             });
 
             process.run();
-			
 		}
 		
 		function ExecutarPost(documentoSelSigla, tipoResponsavel, responsavelSelId, responsavelSelDescr, responsavelSelSigla,
 				lotaResponsavelSelId, lotaResponsavelSelDescr, lotaResponsavelSelSigla, idPapel) {
-			//console.log("ExecutarPost" + documentoSelSigla);
 			$.ajax({
-				  url: '${pageContext.request.contextPath}/app/expediente/mov/vincularPapel_gravar',
+				  url: '${pageContext.request.contextPath}/app/expediente/mov/vincularPapel_gravar_ajax',
 				  type: 'POST',
 				  data: {
-					  postback: 1,
-				      sigla: documentoSelSigla,
-				      tipoResponsavel: tipoResponsavel,
+					  'postback': 1,
+				      'sigla': documentoSelSigla,
+				      'tipoResponsavel': tipoResponsavel,
 				      'responsavelSel.id': responsavelSelId,
 				      'responsavelSel.descricao': responsavelSelDescr,
 				      'responsavelSel.sigla': responsavelSelSigla,
 				      'lotaResponsavelSel.id': lotaResponsavelSelId,
 				      'lotaResponsavelSel.descricao': lotaResponsavelSelDescr,
 				      'lotaResponsavelSel.sigla': lotaResponsavelSelSigla,
-				      idPapel: idPapel
-				    	  
+				      'idPapel': idPapel
 				  },
 				  success: function () {
-				      siglasDocumentosTransferidos.push(documentoSelSigla);
+					  adicionarListaExecucaoLote(++cont, responsavelSelSigla, lotaResponsavelSelSigla, documentoSelSigla, "OK", "");
 				  },
-				  error: function (textStatus, errorThrown) {
-				      console.log(textStatus + errorThrown)
-				      siglasDocumentosNaoTransferidos.push(documentoSelSigla);
+				  error: function (err) {
+				      //console.log(err);
+				      adicionarListaExecucaoLote(++cont, responsavelSelSigla, lotaResponsavelSelSigla, documentoSelSigla, "NOK", err.responseText);
 				  }
 			});
 		}
-
 		
-		function tamanho2() {
-			nota= new String();
-			nota = this.frm.descrMov.value;
-			var i = 255 - nota.length;
-			return i;
-		}
-		function corrige() {
-			if (tamanho2()<0) {
-				alert('Descrição com mais de 255 caracteres');
-				nota = new String();
-				nota = document.getElementById("descrMov").value;
-				document.getElementById("descrMov").value = nota.substring(0,255);
-			}
+		function adicionarListaExecucaoLote(idSeq, responsavelSelSigla, lotaResponsavelSelSigla, nrDoc, status, descrErr){
+			var myMap = new Map();
+			myMap.set("idSeq", idSeq);
+			myMap.set("responsavelSelSigla", responsavelSelSigla);
+			myMap.set("lotaResponsavelSelSigla", lotaResponsavelSelSigla);
+			myMap.set("nrDoc", nrDoc);
+			myMap.set("status", status);
+			myMap.set("descrErr", descrErr);
+			myMap.set("vazio","");
+			
+			var myJson = mapToObj(myMap);
+			listaExecucaoLote.push(myJson);	
+			localStorage.setItem('listaExecucaoLote', JSON.stringify(listaExecucaoLote));
 		}
 		
-		var newwindow = '';
-		function popitup_movimentacao() {
-			if (!newwindow.closed && newwindow.location) {
-			} else {
-				var popW = 600;
-				var popH = 400;
-				var winleft = (screen.width - popW) / 2;
-				var winUp = (screen.height - popH) / 2;
-				winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-				newwindow=window.open('','${propriedade}',winProp);
-				newwindow.name='mov';
-			}
-			
-			newwindow.opener = self;
-			t = frm.target; 
-			a = frm.action;
-			frm.target = newwindow.name;
-			frm.action='${pageContext.request.contextPath}/app/expediente/mov/prever?id=${mov.idMov}';
-			frm.submit();
-			frm.target = t; 
-			frm.action = a;
-			
-			if (window.focus) {
-				newwindow.focus()
-			}
-			return false;
-		}	
+		function gerarTableStatus(){
+			var data = JSON.parse(JSON.stringify(listaExecucaoLote));
+			var idx = 0;
+			const warehouseQuant = data =>
+			  document.getElementById("idTbodyStatus").innerHTML = data.map(
+			    item => ([
+			      '<tr>',
+			      ['responsavelSelSigla','lotaResponsavelSelSigla','nrDoc','status','descrErr'].map(
+			        key => '<td>'+item[key]+'</td>'
+			      ),
+			      '</tr>',
+			    ])
+			  ).flat(Infinity).join('');
+			  
+			warehouseQuant(data);
+		}
 		
 		function alteraResponsavel() {
 			var objSelecionado = document.getElementById('tipoResponsavel');
@@ -378,12 +369,6 @@
 							<input type="button" value="Incluir" id="btnIncluir" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
 						</div>
 					</div>
-<!-- 					<div class="row"> -->
-<!-- 						<div class="col-sm"> -->
-<!-- 							<input type="submit" value="Ok" class="btn btn-primary"/> -->
-<!-- 							<input type="button" value=<fmt:message key="botao.cancela"/> onclick="javascript:history.back();" class="btn btn-cancel ml-2"/> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
 
 					<div class="gt-content-box gt-for-table">
 						<br />
@@ -414,7 +399,7 @@
 						<br />
 						<br />
 						<div>
-							<table class="table table-hover table-striped">
+							<table class="table table-hover table-striped" id="idTableDocumento">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
 										<th rowspan="2" class="text-center" style="width: 5%;">
@@ -485,6 +470,28 @@
 						</div>
 					</div>
 					
+					<div class="gt-content-box gt-for-table">
+						<br />
+						<br />
+						<h5>Lista de Execução com Status</h5>
+						<div>
+							<table class="table table-hover table-striped" id="idTableStatus">
+								<thead class="thead-dark align-middle text-center">
+									<tr>
+										<th class="text-center" style="width: 10%;">Matrícula</th>
+										<th class="text-center">Unidade</th>
+										<th class="text-center">Número</th>
+										<th class="text-center">Status</th>
+										<th class="text-center">Descrição erro</th>
+									</tr>
+								</thead>
+								<tbody class="table-bordered" id="idTbodyStatus">
+									
+								</tbody>
+							</table>
+						</div>
+					</div>
+					
 				</form>
 			</div>
 		</div>
@@ -504,9 +511,14 @@
     
 </siga:pagina>
  <script type="text/javascript">
-	    window.onload = function () { 
-				localStorage.removeItem('dataRespJson');
-		} 
+    window.onload = function () { 
+			localStorage.removeItem('dataRespJson');
+			localStorage.removeItem('listaExecucaoLote');
+	} 
+    $(".siga-modal__btn-fechar-rodape").click(function(){
+    	gerarTableStatus();
+        //alert("button");
+    }); 
 </script>
 
 

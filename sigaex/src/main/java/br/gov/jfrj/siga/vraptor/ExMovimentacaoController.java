@@ -2561,6 +2561,21 @@ public class ExMovimentacaoController extends ExController {
 		result.include("tipoResponsavel", tipoResponsavel);
 		result.include("idPapel", idPapel);
 	}
+	
+	@Transacional
+	@Post("/app/expediente/mov/vincularPapel_gravar_ajax")
+	public void vincularPapelGravarAjax(final int postback, final String sigla,
+			final String dtMovString, final int tipoResponsavel,
+			final DpPessoaSelecao responsavelSel,
+			final DpLotacaoSelecao lotaResponsavelSel, final Long idPapel) {
+		try {
+			vincularPapel_gravar(postback, sigla, dtMovString, tipoResponsavel, responsavelSel, lotaResponsavelSel, idPapel);
+//			setMensagem(new Gson().toJson(publicacaoDto));
+//			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+		} catch (final Exception e) {
+			result.use(Results.status()).forbidden(e.getMessage());
+		} 		
+	}
 
 	@Transacional
 	@Post("/app/expediente/mov/vincularPapel_gravar")

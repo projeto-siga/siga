@@ -202,7 +202,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			result.include("idOrgaoUsu", funcao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", funcao.getOrgaoUsuario().getNmOrgaoUsu());
 			
-			List<DpPessoa> list = CpDao.getInstance().consultarPessoasComFuncaoConfianca(id);
+			List<DpPessoa> list = CpDao.getInstance().consultarPessoasPorIdInicialDeFuncaoConfianca(funcao.getIdFuncaoIni());
 			if(list.size() == 0) {
 				result.include("podeAlterarOrgao", Boolean.TRUE);
 			}

@@ -14,8 +14,26 @@
 
      <script type="text/javascript">
      	var cont = 0;
+     	var qtdTotalExecucao = 0;
 		var array = new Array();
         var listaExecucaoLote = new Array();
+        var strHtmlTableStatus = '<br /><br />' +
+		'<h5>Lista de Execução com Status</h5>' +
+		'<div>' +
+			'<table class="table table-hover table-striped" id="idTableStatus">' +
+				'<thead class="thead-dark align-middle text-center">' +
+					'<tr>' +
+						'<th class="text-center" style="width: 10%;">Matrícula</th>' +
+						'<th class="text-center">Unidade</th>' +
+						'<th class="text-center">Número</th>' +
+						'<th class="text-center">Status</th>' +
+						'<th class="text-center">Descrição erro</th>' +
+					'</tr>' +
+				'</thead>' +
+				'<tbody class="table-bordered" id="idTbodyStatus">' +					
+				'</tbody>' +
+			'</table>' +
+		'</div>';
         
 		
 		function sbmt(offset) {
@@ -30,6 +48,40 @@
 				form ["p.offset"].value = offset;
 		
 				form.submit();
+		}
+		
+		function alteraResponsavel() {
+			var objSelecionado = document.getElementById('tipoResponsavel');
+			
+			switch (parseInt(objSelecionado.value)) {
+				case 1:
+					document.getElementById('selecaoResponsavel').style.display = '';
+					document.getElementById('selecaoLotaResponsavel').style.display = 'none';
+					document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
+					document.getElementById('lotaResponsavelSelSpan').textContent = '';
+					document.getElementById('formulario_lotaResponsavelSel_id').value = '';
+					document.getElementById("formulario_lotaResponsavelSel_descricao").value ='';
+					break;
+				case 2:
+					document.getElementById('selecaoResponsavel').style.display = 'none';
+					document.getElementById('selecaoLotaResponsavel').style.display = '';
+					document.getElementById('formulario_responsavelSel_sigla').value = '';
+					document.getElementById('responsavelSelSpan').textContent = '';
+					document.getElementById('formulario_responsavelSel_id').value = '';
+					document.getElementById("formulario_responsavelSel_descricao").value ='';
+					break;
+			}
+		}
+		
+		function limparCamposSelResponsavel() {
+			document.getElementById("formulario_responsavelSel_sigla").value = "";
+			document.getElementById("formulario_responsavelSel_id").value = "";
+			document.getElementById("formulario_responsavelSel_descricao").value = "";
+			$("#responsavelSelSpan").html("");
+			document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
+			document.getElementById("formulario_lotaResponsavelSel_id").value = "";
+			document.getElementById("formulario_lotaResponsavelSel_descricao").value = "";
+			$("#lotaResponsavelSelSpan").html("");
 		}
 		
 		function inserirResponsavelTable(){
@@ -72,22 +124,11 @@
 			myJson = mapToObj(myMap);
 			array.push(myJson);	
 			
-			localStorage.setItem('dataRespJson', JSON.stringify(array));
-			gerarTable();
+			localStorage.setItem('listaResponsavelJson', JSON.stringify(array));
+			gerarTableResponsavel();
 			limparCamposSelResponsavel();
 			
 			sigaSpinner.ocultar();
-		}
-		
-		function limparCamposSelResponsavel() {
-			document.getElementById("formulario_responsavelSel_sigla").value = "";
-			document.getElementById("formulario_responsavelSel_id").value = "";
-			document.getElementById("formulario_responsavelSel_descricao").value = "";
-			$("#responsavelSelSpan").html("");
-			document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
-			document.getElementById("formulario_lotaResponsavelSel_id").value = "";
-			document.getElementById("formulario_lotaResponsavelSel_descricao").value = "";
-			$("#lotaResponsavelSelSpan").html("");
 		}
 		
 		function existeResponsavelArray(responsavelSelId, lotaResponsavelSelId, tipoResponsavel){
@@ -100,41 +141,10 @@
 			return false;
 		}
 		
-		function isNullOrVazio(obj){
-			if (obj == null || obj == "")
-				return true;
-			return false;
-		}
-		
-		function gerarTable(){
-			var data = JSON.parse(localStorage.getItem('dataRespJson'));
-			var idx = 0;
-			const warehouseQuant = data =>
-			  document.getElementById("idTbodyResponsavel").innerHTML = data.map(
-			    item => ([
-			      '<tr>',
-			      ['responsavelSelSigla','responsavelSelDescr','lotaResponsavelSelDescr','vazio'].map(
-			        key => '<td>'+item[key]+'</td>'
-			      ),
-			      "<td><button type='button' class='btn btn-danger' onclick='javascript:removerResponsavel(".concat(idx++,");'>Excluir</button></td>"),
-			      '</tr>',
-			    ])
-			  ).flat(Infinity).join('');
-			  
-			warehouseQuant(data);
-		}
-		
-		function mapToObj(map){
-			  const obj = {}
-			  for (let [k,v] of map)
-			    obj[k] = v
-			  return obj
-		}
-		
 		function removerResponsavel(index){
 			array.splice(index, 1);
-			localStorage.setItem('dataRespJson', JSON.stringify(array));
-			gerarTable();
+			localStorage.setItem('listaResponsavelJson', JSON.stringify(array));
+			gerarTableResponsavel();
 		}
 		
 		function checkUncheckAll(theElement) {
@@ -171,13 +181,16 @@
 		
 		function vincularPapeisLote(){
 			listaExecucaoLote = new Array();
+			qtdTotalExecucao = 0;
+			cont = 0;
 			process.reset();
 
             process.push(function () {
                 Log("Executando a viculação em lote dos documentos selecionados");
             });
             let arrayDocs = Array.from($(".chkDocumento:checkbox").filter(":checked"));
-            
+			qtdTotalExecucao = arrayDocs.length * array.length;
+
             array.forEach(
             		res => {
             			arrayDocs.forEach(
@@ -196,27 +209,10 @@
 			);
             
             process.push(function () {
-            	var erroTimeout = false;
-            	var start = new Date().getTime();
-            	var end = start;
-            	do {
-            		end = new Date().getTime();
-            		if((end > start + 30000)){
-            			erroTimeout = true;
-            			break;
-            		}
-            	} while (cont < arrayDocs.length);
-            	
-            	if(erroTimeout)
-            		sigaModal.alerta("Ocorreu um erro de timeout no processamento em Lote. Por favor, verifique na tabela de status se todos os registros foram processados com sucesso.");
-            	else
-            		sigaModal.alerta("Processamento de Acompanhamento em Lote realizado com sucesso!");
-            	
-            	cont = 0;
-            	//gerarTableStatus();
-            	location.href = "#idTableStatus";
             	$("#btnOk").prop("disabled", false);
     		    $("#btnIncluir").prop("disabled", false);
+    		    gerarTableStatus();
+    		    location.href = "#idTableStatus";
             });
 
             process.run();
@@ -243,7 +239,6 @@
 					  adicionarListaExecucaoLote(++cont, responsavelSelSigla, lotaResponsavelSelSigla, documentoSelSigla, "OK", "");
 				  },
 				  error: function (err) {
-				      //console.log(err);
 				      adicionarListaExecucaoLote(++cont, responsavelSelSigla, lotaResponsavelSelSigla, documentoSelSigla, "NOK", err.responseText);
 				  }
 			});
@@ -264,16 +259,17 @@
 			localStorage.setItem('listaExecucaoLote', JSON.stringify(listaExecucaoLote));
 		}
 		
-		function gerarTableStatus(){
-			var data = JSON.parse(JSON.stringify(listaExecucaoLote));
+		function gerarTableResponsavel(){
+			var data = JSON.parse(localStorage.getItem('listaResponsavelJson'));
 			var idx = 0;
 			const warehouseQuant = data =>
-			  document.getElementById("idTbodyStatus").innerHTML = data.map(
+			  document.getElementById("idTbodyResponsavel").innerHTML = data.map(
 			    item => ([
 			      '<tr>',
-			      ['responsavelSelSigla','lotaResponsavelSelSigla','nrDoc','status','descrErr'].map(
+			      ['responsavelSelSigla','responsavelSelDescr','lotaResponsavelSelDescr','vazio'].map(
 			        key => '<td>'+item[key]+'</td>'
 			      ),
+			      "<td><button type='button' class='btn btn-danger' onclick='javascript:removerResponsavel(".concat(idx++,");'>Excluir</button></td>"),
 			      '</tr>',
 			    ])
 			  ).flat(Infinity).join('');
@@ -281,29 +277,56 @@
 			warehouseQuant(data);
 		}
 		
-		function alteraResponsavel() {
-			var objSelecionado = document.getElementById('tipoResponsavel');
-			
-			switch (parseInt(objSelecionado.value))
-			{
-				case 1:
-					document.getElementById('selecaoResponsavel').style.display = '';
-					document.getElementById('selecaoLotaResponsavel').style.display = 'none';
-					document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
-					document.getElementById('lotaResponsavelSelSpan').textContent = '';
-					document.getElementById('formulario_lotaResponsavelSel_id').value = '';
-					document.getElementById("formulario_lotaResponsavelSel_descricao").value ='';
-					break;
-				case 2:
-					document.getElementById('selecaoResponsavel').style.display = 'none';
-					document.getElementById('selecaoLotaResponsavel').style.display = '';
-					document.getElementById('formulario_responsavelSel_sigla').value = '';
-					document.getElementById('responsavelSelSpan').textContent = '';
-					document.getElementById('formulario_responsavelSel_id').value = '';
-					document.getElementById("formulario_responsavelSel_descricao").value ='';
-					break;
+		function gerarTableStatus(){
+			sigaSpinner.mostrar();
+			if (isTableStatusPopulado(30)){
+				var data = JSON.parse(JSON.stringify(listaExecucaoLote));
+				var idx = 0;
+				document.getElementById("idTableStatus").innerHTML = strHtmlTableStatus;
+				const warehouseQuant = data =>
+				  document.getElementById("idTbodyStatus").innerHTML = data.map(
+				    item => ([
+				      '<tr>',
+				      ['responsavelSelSigla','lotaResponsavelSelSigla','nrDoc','status','descrErr'].map(
+				        key => '<td>'+item[key]+'</td>'
+				      ),
+				      '</tr>',
+				    ])
+				  ).flat(Infinity).join('');
+				  
+				warehouseQuant(data);
 			}
+			sigaSpinner.ocultar();
+			sigaModal.alerta("Processamento de Acompanhamento em Lote realizado com sucesso!");
 		}
+		
+		//Functions Utils
+		function isTableStatusPopulado(tempoSec){
+			var start = new Date().getTime();
+        	var end = start;
+			do {
+        		end = new Date().getTime();
+        		if(end > start + (tempoSec * 1000)){
+        			break;
+        		}
+        	} while (listaExecucaoLote.length < qtdTotalExecucao);
+        	
+        	return true;
+		}
+		
+		function isNullOrVazio(obj){
+			if (obj == null || obj == "")
+				return true;
+			return false;
+		}
+		
+		function mapToObj(map){
+			  const obj = {}
+			  for (let [k,v] of map)
+			    obj[k] = v
+			  return obj
+		}
+		
 	</script>
 
 	<!-- main content bootstrap -->
@@ -470,26 +493,26 @@
 						</div>
 					</div>
 					
-					<div class="gt-content-box gt-for-table">
-						<br />
-						<br />
-						<h5>Lista de Execução com Status</h5>
-						<div>
-							<table class="table table-hover table-striped" id="idTableStatus">
-								<thead class="thead-dark align-middle text-center">
-									<tr>
-										<th class="text-center" style="width: 10%;">Matrícula</th>
-										<th class="text-center">Unidade</th>
-										<th class="text-center">Número</th>
-										<th class="text-center">Status</th>
-										<th class="text-center">Descrição erro</th>
-									</tr>
-								</thead>
-								<tbody class="table-bordered" id="idTbodyStatus">
+					<div class="gt-content-box gt-for-table" id="idTableStatus">
+<!-- 						<br /> -->
+<!-- 						<br /> -->
+<!-- 						<h5>Lista de Execução com Status</h5> -->
+<!-- 						<div> -->
+<!-- 							<table class="table table-hover table-striped" id="idTableStatus"> -->
+<!-- 								<thead class="thead-dark align-middle text-center"> -->
+<!-- 									<tr> -->
+<!-- 										<th class="text-center" style="width: 10%;">Matrícula</th> -->
+<!-- 										<th class="text-center">Unidade</th> -->
+<!-- 										<th class="text-center">Número</th> -->
+<!-- 										<th class="text-center">Status</th> -->
+<!-- 										<th class="text-center">Descrição erro</th> -->
+<!-- 									</tr> -->
+<!-- 								</thead> -->
+<!-- 								<tbody class="table-bordered" id="idTbodyStatus"> -->
 									
-								</tbody>
-							</table>
-						</div>
+<!-- 								</tbody> -->
+<!-- 							</table> -->
+<!-- 						</div> -->
 					</div>
 					
 				</form>
@@ -512,13 +535,9 @@
 </siga:pagina>
  <script type="text/javascript">
     window.onload = function () { 
-			localStorage.removeItem('dataRespJson');
+			localStorage.removeItem('listaResponsavelJson');
 			localStorage.removeItem('listaExecucaoLote');
 	} 
-    $(".siga-modal__btn-fechar-rodape").click(function(){
-    	gerarTableStatus();
-        //alert("button");
-    }); 
 </script>
 
 

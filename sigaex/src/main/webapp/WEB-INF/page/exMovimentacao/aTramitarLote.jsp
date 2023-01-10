@@ -8,6 +8,9 @@
 
 <fmt:message key="documento.transferencia.lote" var="titulo"/>
 <siga:pagina titulo="${titulo}">
+    
+    <c:set var="thead_color" value="${thead_color}" scope="session" />
+    
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -63,7 +66,7 @@
                             <div class="form-group">
                                 <label>Data da devolução</label>
                                 <input type="text" name="dtDevolucaoMovString"
-                                       onblur="verifica_data(this,0)" value="${dtDevolucaoMovString}"
+                                       onblur="verifica_data(this,0,false,false)" value="${dtDevolucaoMovString}"
                                        class="form-control"/>
                                 <small class="form-text text-muted">Atenção: somente preencher
                                     a data de devolução se a intenção for, realmente, que o

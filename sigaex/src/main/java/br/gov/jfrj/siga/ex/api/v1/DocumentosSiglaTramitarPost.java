@@ -101,51 +101,55 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-		validarPreenchimentoDestino(req, resp);
+		try {
+			validarPreenchimentoDestino(req, resp);
 
-		DpPessoa cadastrante = ctx.getCadastrante();
-		DpLotacao lotaCadastrante = ctx.getLotaCadastrante();
-		DpPessoa titular = ctx.getTitular();
-		DpLotacao lotaTitular = ctx.getLotaTitular();
+			DpPessoa cadastrante = ctx.getCadastrante();
+			DpLotacao lotaCadastrante = ctx.getLotaCadastrante();
+			DpPessoa titular = ctx.getTitular();
+			DpLotacao lotaTitular = ctx.getLotaTitular();
 
-		ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Tramitar");
+			ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Tramitar");
 
-		validarAcesso(ctx, req, titular, lotaTitular, mob);
+			validarAcesso(ctx, req, titular, lotaTitular, mob);
 
-		CpOrgao orgaoExterno = this.getOrgaoExterno(req, resp);
-		DpLotacao lot = getLotacao(req, orgaoExterno);
-		DpPessoa pes = getResponsavel(req, orgaoExterno);
-		String observacao = Objects.isNull(orgaoExterno) ? null : req.observacao;
-		Date dtDevolucao = this.getDataDevolucao(req, resp);
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+			CpOrgao orgaoExterno = this.getOrgaoExterno(req, resp);
+			DpLotacao lot = getLotacao(req, orgaoExterno);
+			DpPessoa pes = getResponsavel(req, orgaoExterno);
+			String observacao = Objects.isNull(orgaoExterno) ? null : req.observacao;
+			Date dtDevolucao = this.getDataDevolucao(req, resp);
+			Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
-		Ex.getInstance().getBL().transferir(//
-				orgaoExterno, // CpOrgao orgaoExterno
-				observacao, // String obsOrgao
-				cadastrante, // DpPessoa cadastrante
-				lotaCadastrante, // DpLotacao lotaCadastrante
-				mob, // ExMobil mob
-				dt, // final Date dtMov
-				dt, // Date dtMovIni
-				dtDevolucao, // Date dtFimMov
-				lot, // DpLotacao lotaResponsavel
-				pes, // final DpPessoa responsavel
-				null, // Ainda falta implementar a notificação para grupo de email
-				null, // DpLotacao lotaDestinoFinal
-				null, // DpPessoa destinoFinal
-				null, // DpPessoa subscritor
-				titular, // DpPessoa titular
-				null, // ExTipoDespacho tpDespacho.
-				true, // final boolean fInterno
-				null, // String descrMov
-				null, // String conteudo
-				null, // String nmFuncaoSubscritor
-				false, // boolean forcarTransferencia
-				false, // boolean automatico,
-				ExTipoDeMovimentacao.TRANSFERENCIA
-		);
+			Ex.getInstance().getBL().transferir(//
+					orgaoExterno, // CpOrgao orgaoExterno
+					observacao, // String obsOrgao
+					cadastrante, // DpPessoa cadastrante
+					lotaCadastrante, // DpLotacao lotaCadastrante
+					mob, // ExMobil mob
+					dt, // final Date dtMov
+					dt, // Date dtMovIni
+					dtDevolucao, // Date dtFimMov
+					lot, // DpLotacao lotaResponsavel
+					pes, // final DpPessoa responsavel
+					null, // Ainda falta implementar a notificação para grupo de email
+					null, // DpLotacao lotaDestinoFinal
+					null, // DpPessoa destinoFinal
+					null, // DpPessoa subscritor
+					titular, // DpPessoa titular
+					null, // ExTipoDespacho tpDespacho.
+					true, // final boolean fInterno
+					null, // String descrMov
+					null, // String conteudo
+					null, // String nmFuncaoSubscritor
+					false, // boolean forcarTransferencia
+					false, // boolean automatico,
+					ExTipoDeMovimentacao.TRANSFERENCIA);
 
-		resp.status = "OK";
+			resp.status = "OK";
+
+		} catch (Exception ex) {
+			throw new SwaggerException(ex.getMessage(), 403, null, req, resp, null);
+		}
 	}
 
 	@Override

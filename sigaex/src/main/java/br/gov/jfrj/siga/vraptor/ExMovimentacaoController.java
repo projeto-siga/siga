@@ -203,7 +203,7 @@ public class ExMovimentacaoController extends ExController {
 			.getLogger(ExMovimentacaoController.class);
 	
 	
-	private static final int MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE = 50;
+	private static final int MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE = 30;
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -2570,8 +2570,6 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel, final Long idPapel) {
 		try {
 			vincularPapel_gravar(postback, sigla, dtMovString, tipoResponsavel, responsavelSel, lotaResponsavelSel, idPapel);
-//			setMensagem(new Gson().toJson(publicacaoDto));
-//			result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 		} catch (final Exception e) {
 			result.use(Results.status()).forbidden(e.getMessage());
 		} 		

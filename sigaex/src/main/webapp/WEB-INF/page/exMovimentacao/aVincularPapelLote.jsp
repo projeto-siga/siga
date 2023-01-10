@@ -10,7 +10,6 @@
 <fmt:message key="documento.vinculacao" var="titulo"/>
 
 <siga:pagina titulo="${titulo}">
-	<script type="text/javascript" src="/sigaex/javascript/sequential-ajax-calls.js"></script>
 
      <script type="text/javascript">
      	var cont = 0;
@@ -18,7 +17,15 @@
 		var array = new Array();
         var listaExecucaoLote = new Array();
         var strHtmlTableStatus = '<br /><br />' +
-		'<h5>Lista de Execução com Status</h5>' +
+		'<div class="row">' +
+        	'<div class="col-sm-7">' +
+				'<h5>Status de Processamento - Acompanhamento do Documento em Lote</h5>' +
+			'</div>' +
+        	'<div class="col-sm-1">' +
+				'<button type="button" onclick="javascript:gerarTableStatus(false);" title="Status de Processamento" class="btn btn-secondary btn-sm mb-1 ml-1 mr-2"><i class="fas fa-sync-alt"></i></button>' +
+			'</div>' +
+			'<div class="col-sm-4" id="idDivAvisoStatus"> </div>' +
+        '</div>' +
 		'<div>' +
 			'<table class="table table-hover table-striped" id="idTableStatus">' +
 				'<thead class="thead-dark align-middle text-center">' +
@@ -34,6 +41,8 @@
 				'</tbody>' +
 			'</table>' +
 		'</div>';
+		
+		var strDivAvisoStatusProc = '<span><i class="fa fa-exclamation-triangle text-danger"></i></span>    Atualize a tabela em instantes, processamento em execução...';
         
 		
 		function sbmt(offset) {
@@ -105,6 +114,12 @@
 			
 			if (existeResponsavelArray(responsavelSelId.value, lotaResponsavelSelId.value, tipoResponsavel.value)){
 				sigaModal.alerta("Atenção! Responsável já foi incluído na tabela");
+				sigaSpinner.ocultar();
+				return;	
+			}
+			
+			if (array.length >= 3){
+				sigaModal.alerta("Atenção! Você pode incluir 3 Responsáveis para Acompanhamento de Documentos");
 				sigaSpinner.ocultar();
 				return;	
 			}
@@ -184,10 +199,14 @@
 			qtdTotalExecucao = 0;
 			cont = 0;
 			process.reset();
+			
+		 	process.push(function () {
+                $('#progressModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+           	});
 
-            process.push(function () {
-                Log("Executando a viculação em lote dos documentos selecionados");
-            });
             let arrayDocs = Array.from($(".chkDocumento:checkbox").filter(":checked"));
 			qtdTotalExecucao = arrayDocs.length * array.length;
 
@@ -211,7 +230,8 @@
             process.push(function () {
             	$("#btnOk").prop("disabled", false);
     		    $("#btnIncluir").prop("disabled", false);
-    		    gerarTableStatus();
+    		    gerarTableStatus(true);
+    		    sigaModal.fechar('progressModal');
     		    location.href = "#idTableStatus";
             });
 
@@ -277,27 +297,30 @@
 			warehouseQuant(data);
 		}
 		
-		function gerarTableStatus(){
-			sigaSpinner.mostrar();
-			if (isTableStatusPopulado(30)){
-				var data = JSON.parse(JSON.stringify(listaExecucaoLote));
-				var idx = 0;
-				document.getElementById("idTableStatus").innerHTML = strHtmlTableStatus;
-				const warehouseQuant = data =>
-				  document.getElementById("idTbodyStatus").innerHTML = data.map(
-				    item => ([
-				      '<tr>',
-				      ['responsavelSelSigla','lotaResponsavelSelSigla','nrDoc','status','descrErr'].map(
-				        key => '<td>'+item[key]+'</td>'
-				      ),
-				      '</tr>',
-				    ])
-				  ).flat(Infinity).join('');
-				  
-				warehouseQuant(data);
-			}
-			sigaSpinner.ocultar();
-			sigaModal.alerta("Processamento de Acompanhamento em Lote realizado com sucesso!");
+		function gerarTableStatus(exibeMsg){
+			var data = JSON.parse(JSON.stringify(listaExecucaoLote));
+			var idx = 0;
+			
+			document.getElementById("idTableStatus").innerHTML = strHtmlTableStatus;
+			
+			if (listaExecucaoLote.length < qtdTotalExecucao)
+				document.getElementById("idDivAvisoStatus").innerHTML = '<small>' + strDivAvisoStatusProc + ' ' + listaExecucaoLote.length + ' de ' + qtdTotalExecucao + ' registros</small>';
+			
+			const warehouseQuant = data =>
+			  document.getElementById("idTbodyStatus").innerHTML = data.map(
+			    item => ([
+			      '<tr>',
+			      ['responsavelSelSigla','lotaResponsavelSelSigla','nrDoc','status','descrErr'].map(
+			        key => '<td>'+item[key]+'</td>'
+			      ),
+			      '</tr>',
+			    ])
+			  ).flat(Infinity).join('');
+			  
+			warehouseQuant(data);
+			
+			if (exibeMsg && listaExecucaoLote.length >= qtdTotalExecucao)
+				sigaModal.alerta("Processamento de Acompanhamento em Lote realizado com sucesso!");
 		}
 		
 		//Functions Utils
@@ -326,7 +349,6 @@
 			    obj[k] = v
 			  return obj
 		}
-		
 	</script>
 
 	<!-- main content bootstrap -->
@@ -388,8 +410,11 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm align-self-center">
+						<div class="col-sm-2 align-self-center text-center">
 							<input type="button" value="Incluir" id="btnIncluir" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
+						</div>
+						<div class="col-sm-4 align-self-center text-center">
+							<input type="button" value="Executar Processamento" id="btnOk" onclick="javascript:validar();" class="btn btn-success" />
 						</div>
 					</div>
 
@@ -411,10 +436,6 @@
 									
 								</tbody>
 							</table>
-						</div>
-						<br/>
-						<div class="col-sm align-self-center">
-							<input type="button" value="Ok" id="btnOk" onclick="javascript:validar();" class="btn btn-primary" />
 						</div>
 					</div>
 					
@@ -494,25 +515,6 @@
 					</div>
 					
 					<div class="gt-content-box gt-for-table" id="idTableStatus">
-<!-- 						<br /> -->
-<!-- 						<br /> -->
-<!-- 						<h5>Lista de Execução com Status</h5> -->
-<!-- 						<div> -->
-<!-- 							<table class="table table-hover table-striped" id="idTableStatus"> -->
-<!-- 								<thead class="thead-dark align-middle text-center"> -->
-<!-- 									<tr> -->
-<!-- 										<th class="text-center" style="width: 10%;">Matrícula</th> -->
-<!-- 										<th class="text-center">Unidade</th> -->
-<!-- 										<th class="text-center">Número</th> -->
-<!-- 										<th class="text-center">Status</th> -->
-<!-- 										<th class="text-center">Descrição erro</th> -->
-<!-- 									</tr> -->
-<!-- 								</thead> -->
-<!-- 								<tbody class="table-bordered" id="idTbodyStatus"> -->
-									
-<!-- 								</tbody> -->
-<!-- 							</table> -->
-<!-- 						</div> -->
 					</div>
 					
 				</form>
@@ -530,6 +532,12 @@
 	                 Sim</a>
 	         </div>
 	     </siga:siga-modal>
+	     <siga:siga-modal id="progressModal" exibirRodape="false" centralizar="true" tamanhoGrande="true"
+                         tituloADireita="Acompanhamento em lote" linkBotaoDeAcao="#" botaoFecharNoCabecalho="false">
+            <div class="modal-body">
+                <div id="progressbar-ad"></div>
+            </div>
+        </siga:siga-modal>
 	</div>
     
 </siga:pagina>
@@ -538,6 +546,52 @@
 			localStorage.removeItem('listaResponsavelJson');
 			localStorage.removeItem('listaExecucaoLote');
 	} 
+    
+    let process = {
+            steps: [],
+            index: 0,
+            title: "Executando a Acompanhamento do Documento em lote dos documentos selecionados",
+            errormsg: "Não foi possível completar a operação",
+            urlRedirect: null,
+            reset: function () {
+                this.steps = [];
+                this.index = 0;
+            },
+            push: function (x) {
+                this.steps.push(x);
+            },
+            run: function () {
+                this.progressbar = $('#progressbar-ad').progressbar();
+                this.nextStep();
+            },
+            finalize: function () {
+                this.dialogo.dialog('destroy');
+            },
+            nextStep: function () {
+                if (typeof this.steps[this.index] == 'string')
+                    eval(this.steps[this.index++]);
+                else {
+                    let ret = this.steps[this.index++]();
+                    if ((typeof ret == 'string') && ret != "OK") {
+                        this.finalize();
+                        alert(ret, 0, this.errormsg);
+                        return;
+                    }
+                }
+
+                this.progressbar.progressbar("value",
+                    100 * (this.index / this.steps.length));
+
+                if (this.index != this.steps.length) {
+                    let me = this;
+                    window.setTimeout(function () {
+                        me.nextStep();
+                    }, 100);
+                } else {
+                    this.finalize();
+                }
+            }
+        };
 </script>
 
 

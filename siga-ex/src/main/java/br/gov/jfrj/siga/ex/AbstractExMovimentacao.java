@@ -71,7 +71,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		+ "                inner join fetch mob.exDocumento doc" + "                where ("
 		+ "                mob.numSequencia=:numSequencia"
 		+ "                and mob.exTipoMobil.idTipoMobil=:idTipoMobil"
-		+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+		+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsuIni = :idOrgaoUsu)"
 		+ "                and doc.idDoc=mob.exDocumento.idDoc" + "                and doc.anoEmissao=:anoEmissao"
 		+ "                and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
 		+ "                and doc.numExpediente=:numExpediente)"),

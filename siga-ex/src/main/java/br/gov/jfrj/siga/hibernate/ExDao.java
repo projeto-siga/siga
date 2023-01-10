@@ -911,6 +911,11 @@ public class ExDao extends CpDao {
 			if (flt.getAnoEmissao() == null)
 				flt.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
 
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			orgaoUsuario.setId(flt.getIdOrgaoUsu());
+			orgaoUsuario = CpDao.getInstance().consultarPorId(orgaoUsuario);
+			flt.setIdOrgaoUsu(orgaoUsuario.getIdInicial());
+			
 			if (flt.getNumSequencia() == null) {
 				final Query query = em().createNamedQuery(
 						"consultarPorSiglaDocumento");

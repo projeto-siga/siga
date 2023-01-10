@@ -39,7 +39,7 @@
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRALOTE:Tramitar em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/transferir_lote"><fmt:message key="documento.transferencia.lote" /></a></li>
+						href="/sigaex/app/expediente/mov/tramitar_lote"><fmt:message key="documento.transferencia.lote" /></a></li>
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;RECLOTE:Receber em Lote')}">

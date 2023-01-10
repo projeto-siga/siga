@@ -5,11 +5,12 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
 <%@ taglib uri="http://localhost/functiontag" prefix="f" %>
-<%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg" %>
 
 <fmt:message key="documento.transferencia.lote" var="titulo"/>
 <siga:pagina titulo="${titulo}">
-    <script type="text/javascript" src="/sigaex/javascript/sequential-ajax-calls.js"></script>
+    
+    <c:set var="thead_color" value="${thead_color}" scope="session" />
+    
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -100,105 +101,8 @@
                         </div>
                     </div>
 
-                    <div class="gt-content-box gt-for-table">
-                        <br/>
-                        <h5>Destinatário: <span id="responsavelSelecionado"></span></h5>
-                        <div>
-
-                            <table class="table table-hover table-striped">
-                                <thead class="${thead_color} align-middle text-center">
-                                <tr>
-                                    <th rowspan="2" align="center">
-                                        <input type="checkbox" id="checkall" onclick="checkUncheckAll(this)"/>
-                                    </th>
-                                    <th rowspan="2" class="text-right">Número</th>
-                                    <th colspan="3">Documento</th>
-                                    <th colspan="2">Última Movimentação</th>
-                                    <th rowspan="2">Descrição</th>
-                                    <th rowspan="2" class="col-5 d-none">Despacho <c:if test="${secao==0}"/></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">Data</th>
-                                    <th class="text-center"><fmt:message key="usuario.lotacao"/></th>
-                                    <th class="text-center"><fmt:message key="usuario.pessoa2"/></th>
-                                    <th class="text-center">Data</th>
-                                    <th class="text-center"><fmt:message key="usuario.pessoa2"/></th>
-                                </tr>
-                                </thead>
-                                <tbody class="table-bordered">
-
-                                <siga:paginador maxItens="${maxItems}" maxIndices="10"
-                                                totalItens="${tamanho}" itens="${itens}" var="documento">
-
-                                    <c:set var="chk" scope="request">process_chk_${documento.id}</c:set>
-
-                                    <tr>
-                                        <td align="center" class="align-middle text-center">
-                                            <input type="checkbox" name="documentosSelecionados"
-                                                   value="${documento.codigoCompacto}" id="${chk}" class="chkDocumento"
-                                                   onclick="displaySel()"/></td>
-                                        <td class="text-right">
-                                            <c:choose>
-                                                <c:when test='${param.popup!="true"}'>
-                                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
-                                                            ${documento.sigla}
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a href="javascript:opener.retorna_${param.propriedade}('${documento.id}','${documento.sigla}','');">
-                                                            ${documento.sigla}
-                                                    </a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <c:if test="${not documento.geral}">
-                                            <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
-                                            <td class="text-center">
-                                                <siga:selecionado isVraptor="true"
-                                                                  sigla="${documento.doc.lotaSubscritor.sigla}"
-                                                                  descricao="${documento.doc.lotaSubscritor.descricao}"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <siga:selecionado isVraptor="true"
-                                                                  sigla="${documento.doc.subscritor.iniciais}"
-                                                                  descricao="${documento.doc.subscritor.descricao}"/></td>
-                                            <td class="text-center">${documento.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
-                                            <td class="text-center">
-                                                <siga:selecionado isVraptor="true"
-                                                                  sigla="${documento.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-                                                                  descricao="${documento.ultimaMovimentacaoNaoCancelada.resp.descricao}"/>
-                                            </td>
-                                        </c:if>
-                                        <c:if test="${documento.geral}">
-                                            <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
-                                            <td class="text-center">
-                                                <siga:selecionado isVraptor="true"
-                                                                  sigla="${documento.doc.subscritor.iniciais}"
-                                                                  descricao="${documento.doc.subscritor.descricao}"/></td>
-                                            <td class="text-center">
-                                                <siga:selecionado isVraptor="true"
-                                                                  sigla="${documento.doc.lotaSubscritor.sigla}"
-                                                                  descricao="${documento.doc.lotaSubscritor.descricao}"/></td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center"></td>
-                                            <td class="text-center"></td>
-                                        </c:if>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${siga_cliente == 'GOVSP'}">
-                                                    ${documento.doc.descrDocumento}
-                                                </c:when>
-                                                <c:otherwise>
-                                                    ${f:descricaoConfidencial(documento.doc, lotaTitular)}
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                    </tr>
-                                </siga:paginador>
-                                </tbody>
-                            </table>
-                        </div>
+                    <h5>Destinatário: <span id="responsavelSelecionado"></span></h5>
+                    <div id="documentos">
                     </div>
                 </form>
             </div>
@@ -215,31 +119,38 @@
                     Sim</a>
             </div>
         </siga:siga-modal>
+        <siga:siga-modal id="progressModal" exibirRodape="false" centralizar="true" tamanhoGrande="true"
+                         tituloADireita="Tramitação em lote" linkBotaoDeAcao="#" botaoFecharNoCabecalho="false">
+            <div class="modal-body">
+                <div id="progressbar-ad"></div>
+            </div>
+        </siga:siga-modal>
+    </div>
     </div>
 
     <script type="text/javascript">
-        function sbmt(offset) {
-            if (offset == null) {
-                offset = 0;
-            }
-
-            let form = document.forms['frm'];
-            form ["paramoffset"].value = offset;
-            form.action = "transferir_lote";
-            form.method = "GET";
-            form ["p.offset"].value = offset;
-
-            form.submit();
+        window.onload = function () {
+            listarDocumentosParaTramitarEmLote();
         }
 
-        function checkUncheckAll(theElement) {
-            let isChecked = theElement.checked;
-            Array.from(document.getElementsByClassName('chkDocumento')).forEach(chk => chk.checked = isChecked);
-        }
+        function listarDocumentosParaTramitarEmLote(offset) {
+            sigaSpinner.mostrar();
 
-        function displaySel() {
-            document.getElementById('checkall').checked =
-                Array.from(document.getElementsByClassName('chkDocumento')).every(chk => chk.checked);
+            offset = offset == null ? 0 : offset;
+
+            let url = '/sigaex/app/expediente/doc/listar_docs_para_tramitar_lote?offset=' + offset;
+
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $('#documentos').html(data);
+                    sigaSpinner.ocultar();
+                },
+                error: function (result) {
+                    sigaSpinner.ocultar();
+                    console.log(result.errormsg);
+                },
+            });
         }
 
         function responsavelSelecionado() {
@@ -315,7 +226,7 @@
                 && responsavelSelSpan.textContent.trim() === ''
                 && lotaResponsavelSelSpan.textContent.trim() === '') {
 
-                sigaModal.alerta('Selecione o destinatário da transferência');
+                sigaModal.alerta('Selecione o destinatário da tramitação');
                 return;
             }
 
@@ -327,8 +238,8 @@
             }
         }
 
-        let siglasDocumentosTransferidos = [];
-        let siglasDocumentosNaoTransferidos = [];
+        let siglasDocumentosTramitados = [];
+        let siglasDocumentosNaoTramitados = [];
 
         function confirmar() {
             document.getElementById('btnOk').disabled = true;
@@ -351,14 +262,17 @@
             process.reset();
 
             process.push(function () {
-                Log("Executando a tramitação em lote dos documentos selecionados")
+                $('#progressModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
             });
 
             Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
                 chk => {
                     process.push(function () {
                         return ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
-                            orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
+                         orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
 
                     });
                     process.push(function () {
@@ -368,12 +282,13 @@
             );
 
             process.push(function () {
+                sigaModal.fechar('progressModal');
                 sigaSpinner.mostrar();
                 limparCampos();
 
-                let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_transferidos';
-                location.href = url + '?siglasDocumentosTransferidos=' + siglasDocumentosTransferidos
-                    + '&siglasDocumentosNaoTransferidos=' + siglasDocumentosNaoTransferidos;
+                let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_tramitados';
+                location.href = url + '?siglasDocumentosTramitados=' + siglasDocumentosTramitados
+                    + '&siglasDocumentosNaoTramitados=' + siglasDocumentosNaoTramitados;
             });
 
             process.run();
@@ -394,15 +309,59 @@
                     dataDevolucao: dtDevolucaoMovString
                 },
                 success: function () {
-                    siglasDocumentosTransferidos.push(documentoSelSigla);
+                    siglasDocumentosTramitados.push(documentoSelSigla);
                 },
                 error: function (textStatus, errorThrown) {
-                    console.log(textStatus + errorThrown)
-                    siglasDocumentosNaoTransferidos.push(documentoSelSigla);
+                    siglasDocumentosNaoTramitados.push(documentoSelSigla);
                 }
             });
         }
 
+        let process = {
+            steps: [],
+            index: 0,
+            title: "Executando a tramitação em lote dos documentos selecionados",
+            errormsg: "Não foi possível completar a operação",
+            urlRedirect: null,
+            reset: function () {
+                this.steps = [];
+                this.index = 0;
+            },
+            push: function (x) {
+                this.steps.push(x);
+            },
+            run: function () {
+                this.progressbar = $('#progressbar-ad').progressbar();
+                this.nextStep();
+            },
+            finalize: function () {
+                this.dialogo.dialog('destroy');
+            },
+            nextStep: function () {
+                if (typeof this.steps[this.index] == 'string')
+                    eval(this.steps[this.index++]);
+                else {
+                    let ret = this.steps[this.index++]();
+                    if ((typeof ret == 'string') && ret != "OK") {
+                        this.finalize();
+                        alert(ret, 0, this.errormsg);
+                        return;
+                    }
+                }
+
+                this.progressbar.progressbar("value",
+                    100 * (this.index / this.steps.length));
+
+                if (this.index != this.steps.length) {
+                    let me = this;
+                    window.setTimeout(function () {
+                        me.nextStep();
+                    }, 100);
+                } else {
+                    this.finalize();
+                }
+            }
+        };
 
     </script>
 </siga:pagina>

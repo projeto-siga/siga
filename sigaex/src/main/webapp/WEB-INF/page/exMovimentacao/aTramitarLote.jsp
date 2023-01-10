@@ -66,7 +66,7 @@
                             <div class="form-group">
                                 <label>Data da devolução</label>
                                 <input type="text" name="dtDevolucaoMovString"
-                                       onblur="verifica_data(this,0)" value="${dtDevolucaoMovString}"
+                                       onblur="verifica_data(this,0,false,false)" value="${dtDevolucaoMovString}"
                                        class="form-control"/>
                                 <small class="form-text text-muted">Atenção: somente preencher
                                     a data de devolução se a intenção for, realmente, que o

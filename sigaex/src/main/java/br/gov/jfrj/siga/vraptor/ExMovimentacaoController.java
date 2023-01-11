@@ -2480,13 +2480,8 @@ public class ExMovimentacaoController extends ExController {
 	public void aVincularPapelLote(final String sigla, final DpPessoaSelecao responsavelSel,
 			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel, Integer paramoffset) {
 
-		//Ex.getInstance().getComp().afirmar("Não é possível fazer vinculação de papel", ExPodeFazerVinculacaoDePapel.class, getTitular(), getLotaTitular(), builder.getMob());
-
 		final List<ExPapel> papeis = this.obterApenasPapeisParaVinculo();
-		
 		Long tamanho = dao().consultarQuantidadeParaAcompanhamentoEmLote(getTitular());
-
-		LOGGER.debug("TAMANHO : " + tamanho);
 
 		int offset = Objects.nonNull(paramoffset)
 				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)

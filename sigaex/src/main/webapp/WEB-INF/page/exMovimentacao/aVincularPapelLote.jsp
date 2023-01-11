@@ -17,39 +17,36 @@
 		var array = new Array();
         var listaExecucaoLote = new Array();
         var strHtmlTableStatus = '<br /><br />' +
-		'<div class="row">' +
-        	'<div class="col-sm-7">' +
-				'<h5>Status de Processamento - Acompanhamento do Documento em Lote</h5>' +
-			'</div>' +
-        	'<div class="col-sm-1">' +
-				'<button type="button" onclick="javascript:gerarTableStatus(false);" title="Status de Processamento" class="btn btn-secondary btn-sm mb-1 ml-1 mr-2"><i class="fas fa-sync-alt"></i></button>' +
-			'</div>' +
-			'<div class="col-sm-4" id="idDivAvisoStatus"> </div>' +
-        '</div>' +
-		'<div>' +
-			'<table class="table table-hover table-striped" id="idTableStatus">' +
-				'<thead class="thead-dark align-middle text-center">' +
-					'<tr>' +
-						'<th class="text-center" style="width: 10%;">Matrícula</th>' +
-						'<th class="text-center">Unidade</th>' +
-						'<th class="text-center">Número</th>' +
-						'<th class="text-center">Status</th>' +
-						'<th class="text-center">Descrição erro</th>' +
-					'</tr>' +
-				'</thead>' +
-				'<tbody class="table-bordered" id="idTbodyStatus">' +					
-				'</tbody>' +
-			'</table>' +
-		'</div>';
-		
+								'<div class="row">' +
+						        	'<div class="col-sm-7">' +
+										'<h5>Status de Processamento - Acompanhamento do Documento em Lote</h5>' +
+									'</div>' +
+						        	'<div class="col-sm-1">' +
+										'<button type="button" onclick="javascript:gerarTableStatus(false);" title="Status de Processamento" class="btn btn-secondary btn-sm mb-1 ml-1 mr-2"><i class="fas fa-sync-alt"></i></button>' +
+									'</div>' +
+									'<div class="col-sm-4" id="idDivAvisoStatus"> </div>' +
+						        '</div>' +
+								'<div>' +
+									'<table class="table table-hover table-striped" id="idTableStatus">' +
+										'<thead class="thead-dark align-middle text-center">' +
+											'<tr>' +
+												'<th class="text-center" style="width: 10%;">Matrícula</th>' +
+												'<th class="text-center">Unidade</th>' +
+												'<th class="text-center">Número</th>' +
+												'<th class="text-center">Status</th>' +
+												'<th class="text-center">Descrição erro</th>' +
+											'</tr>' +
+										'</thead>' +
+										'<tbody class="table-bordered" id="idTbodyStatus">' +					
+										'</tbody>' +
+									'</table>' +
+								'</div>';
 		var strDivAvisoStatusProc = '<span><i class="fa fa-exclamation-triangle text-danger"></i></span>    Atualize a tabela em instantes, processamento em execução...';
-        
 		
 		function sbmt(offset) {
 				if (offset == null) {
 					offset = 0;
 				}
-		
 				let form = document.forms['frm'];
 				form ["paramoffset"].value = offset;
 				form.action = "vincularPapelLote";
@@ -162,6 +159,15 @@
 			gerarTableResponsavel();
 		}
 		
+		function checkUncheckGestorInter(theElement) {
+		    let isChecked = theElement.checked;
+		    let form = document.forms['frm'];
+			form.action = "vincularPapelLote";
+			form.method = "GET";
+			form ["chkGestorInteressado"].value = isChecked;
+			form.submit();
+		}
+		
 		function checkUncheckAll(theElement) {
 		    let isChecked = theElement.checked;
 		    Array.from(document.getElementsByClassName('chkDocumento')).forEach(chk => chk.checked = isChecked);
@@ -230,6 +236,7 @@
             process.push(function () {
             	$("#btnOk").prop("disabled", false);
     		    $("#btnIncluir").prop("disabled", false);
+    		    $('#checkall').prop('checked', false);
     		    gerarTableStatus(true);
     		    sigaModal.fechar('progressModal');
     		    location.href = "#idTableStatus";
@@ -286,7 +293,7 @@
 			  document.getElementById("idTbodyResponsavel").innerHTML = data.map(
 			    item => ([
 			      '<tr>',
-			      ['responsavelSelSigla','responsavelSelDescr','lotaResponsavelSelDescr','vazio'].map(
+			      ['responsavelSelSigla','responsavelSelDescr', 'lotaResponsavelSelDescr','vazio'].map(
 			        key => '<td>'+item[key]+'</td>'
 			      ),
 			      "<td><button type='button' class='btn btn-danger' onclick='javascript:removerResponsavel(".concat(idx++,");'>Excluir</button></td>"),
@@ -410,11 +417,13 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-2 align-self-center text-center">
+						<div class="col-sm-2 align-self-center text-left">
 							<input type="button" value="Incluir" id="btnIncluir" onclick="javascript:inserirResponsavelTable();" class="btn btn-primary" />
 						</div>
-						<div class="col-sm-4 align-self-center text-center">
-							<input type="button" value="Executar Processamento" id="btnOk" onclick="javascript:validar();" class="btn btn-success" />
+						<div class="align-self-center col-md-auto">
+							<a href="javascript:validar();" class="btn btn-success form-control">
+								<i class="fas fa-poll-h mr-1"></i>Executar Processamento
+							</a>
 						</div>
 					</div>
 
@@ -438,8 +447,13 @@
 							</table>
 						</div>
 					</div>
-					
-					<div class="gt-content-box gt-for-table">
+<!-- 					<div class="row"> -->
+<!-- 						<div class="col-sm-6 mt-5 text-left"> -->
+<!-- 							<input type="checkbox" name="chkGestorInteressado" value="" onclick="javascript:checkUncheckGestorInter(this);"> -->
+<!-- 							<label class="form-check-label" for="substituicao">Mostrar apenas Documentos que estou como Interessado/Gestor</label>  -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+					<div class="gt-content-box gt-for-table mt-2">
 						<br />
 						<br />
 						<div>

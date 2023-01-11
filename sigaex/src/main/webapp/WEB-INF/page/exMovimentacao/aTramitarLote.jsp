@@ -224,23 +224,25 @@
                 sigaModal.alerta('Selecione o destinatário da tramitação');
                 return;
             }
-            
-            let lotacaoIsSupensa;
-            
-            if (elementoResponsavelSelecionado.id === 'lotaResponsavel') {
-                let siglaLotacao = document.getElementById('formulario_lotaResponsavelSel_sigla').value;
-                lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa(siglaLotacao, '');
-            } else if (elementoResponsavelSelecionado.id === 'responsavel') {
-                let matriculaResponsavel = document.getElementById('formulario_responsavelSel_sigla').value;
-                lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa('', matriculaResponsavel);
-            }
 
-            if (lotacaoIsSupensa == 1) {
-                sigaModal.alerta('Lotação suspensa para tramitação');
-                return;
-            } else if (lotacaoIsSupensa != 0) {
-                sigaModal.alerta('Não foi possível obter a lotação para tramitação');
-                return;
+            if (elementoResponsavelSelecionado.id !== 'cpOrgao') {
+                let lotacaoIsSupensa;
+
+                if (elementoResponsavelSelecionado.id === 'lotaResponsavel') {
+                    let siglaLotacao = document.getElementById('formulario_lotaResponsavelSel_sigla').value;
+                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa(siglaLotacao, '');
+                } else if (elementoResponsavelSelecionado.id === 'responsavel') {
+                    let matriculaResponsavel = document.getElementById('formulario_responsavelSel_sigla').value;
+                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa('', matriculaResponsavel);
+                }
+
+                if (lotacaoIsSupensa == 1) {
+                    sigaModal.alerta('Lotação suspensa para tramitação');
+                    return;
+                } else if (lotacaoIsSupensa != 0) {
+                    sigaModal.alerta('Não foi possível obter a lotação para tramitação');
+                    return;
+                }
             }
             
             let checkedElements = $("input[name='documentosSelecionados']:checked");

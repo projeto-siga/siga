@@ -39,9 +39,9 @@ public class ExPodeEnviarParaVisualizacaoExterna extends CompositeExpressionSupp
 
                 new ExPodeAcessarDocumento(mob, titular, lotaTitular),
 
-                Not.of(new ExPodePorConfiguracao(titular, lotaTitular)
-                        .withIdTpConf(ExTipoDeConfiguracao.VISUALIZACAO_EXTERNA_DOCUMENTOS)
-                        .withCpOrgaoUsu(mob.getDoc().getOrgaoUsuario()))
+                new ExPodePorConfiguracao(titular, lotaTitular)
+                    .withIdTpConf(ExTipoDeConfiguracao.VISUALIZACAO_EXTERNA_DOCUMENTOS)
+                    .withCpOrgaoUsu(mob.getDoc().getOrgaoUsuario())
         );
     }
 }

@@ -373,8 +373,10 @@ public class CpDao extends ModeloDao {
 			final int itemPagina) {
 		try {
 			Query query = em()
-					.createQuery("select org, (select dtContrato from CpContrato contrato "
-							+ " where contrato.idOrgaoUsu = org.idOrgaoUsuIni) from CpOrgaoUsuario org "
+					.createQuery("select org, (select dtContrato from CpContrato contrato where contrato.idOrgaoUsu = org.idOrgaoUsuIni), "
+							+ " (select count(1) from DpPessoa pes where pes.orgaoUsuario.idOrgaoUsu = org.idOrgaoUsu and pes.dataFimPessoa is null), "
+							+ " (select count(1) from DpLotacao lot where lot.orgaoUsuario.idOrgaoUsu = org.idOrgaoUsu and lot.dataFimLotacao is null)  "
+							+ " from CpOrgaoUsuario org "
 							+ " where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))"
 							+ " and (exists (select 1 from CpOrgaoUsuario oAux where oAux.idOrgaoUsuIni = org.idOrgaoUsuIni"
 							+ "			group by oAux.idOrgaoUsuIni having max(oAux.hisDtIni) = org.hisDtIni) "

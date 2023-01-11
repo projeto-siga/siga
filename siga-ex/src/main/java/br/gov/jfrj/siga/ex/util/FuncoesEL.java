@@ -37,6 +37,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.gov.jfrj.siga.ex.logic.*;
 import org.jboss.logging.Logger;
 import org.xml.sax.InputSource;
 
@@ -73,22 +74,6 @@ import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJustica
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.FaixaEnum;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.TipoDeDiariaEnum;
-import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
-import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
-import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
-import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarComSenha;
-import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarMovimentacaoComSenha;
-import br.gov.jfrj.siga.ex.logic.ExDeveUtilizarSegundoFatorPIN;
-import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
-import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
-import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
-import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPor;
-import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
-import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
-import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
-import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
-import br.gov.jfrj.siga.ex.logic.ExPodeUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
@@ -1184,6 +1169,11 @@ public class FuncoesEL {
 			log.error(ex);
 			return null;
 		}
+	}
+
+	public static Boolean podeTransferir(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp()
+				.pode(ExPodeTransferir.class, titular, lotaTitular, mob);
 	}
 
 }

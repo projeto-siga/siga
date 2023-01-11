@@ -91,6 +91,28 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		result.include("id",id);
 	}
 	
+	@Get("/app/orgaoUsuario/historico")
+	public void historico(final Long id){
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
+		result.include("listaHistorico", CpDao.getInstance().listarHistoricoOrgaoUsuario(daoOrgaoUsuario(id).getHisIdIni()));
+	}
+	
+	@Post("/app/orgaoUsuario/ativarInativar")
+	public void ativarInativar(final Long id) {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
+		CpOrgaoUsuario orgaoUsuario = daoOrgaoUsuario(id);
+		result.include("orgaoUsuario", orgaoUsuario);
+	}
+	
+	@Transacional
+	@Post("/app/orgaoUsuario/ativarInativarGravar")
+	public void ativarInativarGravar(final Long id, String marco, String dataAlteracao) throws Exception {
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
+		CpOrgaoUsuario orgaoUsuario = daoOrgaoUsuario(id);
+		Cp.getInstance().getBL().ativarInativarOrgaoUsuario(orgaoUsuario, marco, dataAlteracao, getIdentidadeCadastrante());
+		this.result.redirectTo(this).lista(0, "");
+	}
+	
 	private void atualizarContrato(Long id, Date dataContrato) {
 		CpContrato contrato = daoContrato(id);
 

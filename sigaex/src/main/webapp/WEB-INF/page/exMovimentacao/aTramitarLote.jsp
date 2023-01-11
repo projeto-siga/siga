@@ -218,24 +218,54 @@
         }
 
         function validar() {
-            let lotaResponsavelSelSpan = document.getElementById('lotaResponsavelSelSpan');
-            let responsavelSelSpan = document.getElementById('responsavelSelSpan');
-            let cpOrgaoSelSpan = document.getElementById('cpOrgaoSelSpan');
+            let elementoResponsavelSelecionado = responsavelSelecionado();
 
-            if (cpOrgaoSelSpan.textContent.trim() === ''
-                && responsavelSelSpan.textContent.trim() === ''
-                && lotaResponsavelSelSpan.textContent.trim() === '') {
-
+            if (document.getElementById('responsavelSelecionado').innerHTML.trim() === '') {
                 sigaModal.alerta('Selecione o destinatário da tramitação');
                 return;
             }
 
+            if (elementoResponsavelSelecionado.id !== 'cpOrgao') {
+                let lotacaoIsSupensa;
+
+                if (elementoResponsavelSelecionado.id === 'lotaResponsavel') {
+                    let siglaLotacao = document.getElementById('formulario_lotaResponsavelSel_sigla').value;
+                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa(siglaLotacao, '');
+                } else if (elementoResponsavelSelecionado.id === 'responsavel') {
+                    let matriculaResponsavel = document.getElementById('formulario_responsavelSel_sigla').value;
+                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa('', matriculaResponsavel);
+                }
+
+                if (lotacaoIsSupensa == 1) {
+                    sigaModal.alerta('Lotação suspensa para tramitação');
+                    return;
+                } else if (lotacaoIsSupensa != 0) {
+                    sigaModal.alerta('Não foi possível obter a lotação para tramitação');
+                    return;
+                }
+            }
+            
             let checkedElements = $("input[name='documentosSelecionados']:checked");
             if (checkedElements.length === 0) {
                 sigaModal.alerta('Selecione pelo menos um documento');
             } else {
                 sigaModal.abrir('confirmacaoModal');
             }
+        }
+        
+        function verificarSeLotacaoEstaSuspensa(sigla, matricula){
+            let jqXHR = $.ajax({
+                url: '/siga/app/lotacao/isSuspensa?sigla=' + sigla + '&matricula=' + matricula,
+                type: 'GET',
+                async: false,
+                success: function (result) {
+                },
+                error: function (result) {
+                    console.log(result);
+                }
+            });
+
+            return jqXHR.responseText;
         }
 
         let siglasDocumentosTramitados = [];

@@ -1695,6 +1695,55 @@ public class CpBL {
 			CpDao.getInstance().gravarComHistorico(cpConfiguracao, identidadeCadastrante);	
 		}
 	}
+	
+	public void ativarInativarOrgaoUsuario(CpOrgaoUsuario orgaoUsuario, String marco, String dataAlteracao, CpIdentidade identCadastrante) {
+		
+		
+		if(!Data.validaDDMMYYYY(dataAlteracao)) {
+			throw new AplicacaoException("Data inválida!");
+		}
+		
+		
+		if(orgaoUsuario.getDtFim() == null) {
+			//inativar
+			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+			dpPessoa.setIdOrgaoUsu(orgaoUsuario.getId());
+			dpPessoa.setBuscarFechadas(false);
+			dpPessoa.setNome("");
+			
+			DpLotacaoDaoFiltro dpLotacao = new DpLotacaoDaoFiltro();
+			dpLotacao.setIdOrgaoUsu(orgaoUsuario.getId());
+			dpLotacao.setBuscarFechadas(false);
+			
+			if(dao().consultarQuantidade(dpPessoa) > 0 || dao().consultarQuantidade(dpLotacao) > 0) {
+				throw new AplicacaoException("Órgão: "+ orgaoUsuario.getDescricao() +" <br>Possui " + SigaMessages.getMessage("usuario.lotacao") + " e/ou Usuário ativo. A ação solicitada não será realizada");
+			}
+			
+			orgaoUsuario.setDtFim(CpDao.getInstance().consultarDataEHoraDoServidor());
+			orgaoUsuario.setMarcoRegulatorio(marco);
+			orgaoUsuario.setDataAlteracao(Data.parse(dataAlteracao));
+			CpDao.getInstance().gravarComHistorico(orgaoUsuario, identCadastrante);
+			
+		} else {
+			//ativar
+			CpOrgaoUsuario orgaoNovo = new CpOrgaoUsuario();
+			try {
+				PropertyUtils.copyProperties(orgaoNovo, orgaoUsuario);
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			orgaoNovo.setDtFim(null);
+			orgaoNovo.setHisIdcFim(null);
+			orgaoNovo.setHisAtivo(1);
+			orgaoNovo.setHisDtIni(CpDao.getInstance().consultarDataEHoraDoServidor());
+			orgaoNovo.setHisIdcIni(identCadastrante);
+			orgaoNovo.setId(null);
+			orgaoNovo.setMarcoRegulatorio(marco);
+			orgaoNovo.setDataAlteracao(Data.parse(dataAlteracao));
+			CpDao.getInstance().gravarComHistorico(orgaoNovo, identCadastrante);
+		}
+	}
 		
 	public String inativarUsuario(final Long idUsuario) {
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();

@@ -34,71 +34,72 @@
                                 totalItens="${tamanho}" itens="${itens}" var="documento">
 
                     <c:set var="chk" scope="request">process_chk_${documento.id}</c:set>
-
-                    <tr class="even">
-                        <td align="center" class="align-middle text-center">
-                            <input type="checkbox" name="documentosSelecionados"
-                                   value="${documento.codigoCompacto}" id="${chk}" class="chkDocumento"
-                                   onclick="displaySel()"/>
-                        </td>
-                        <td class="text-right">
-                            <c:choose>
-                                <c:when test='${param.popup!="true"}'>
-                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
-                                            ${documento.sigla}
-                                    </a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="javascript:opener.retorna_${param.propriedade}('${documento.id}','${documento.sigla}','');">
-                                            ${documento.sigla}
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <c:if test="${not documento.geral}">
-                            <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.lotaSubscritor.sigla}"
-                                                  descricao="${documento.doc.lotaSubscritor.descricao}"/>
+                    <c:if test="${f:podeTransferir(titular, lotaTitular, documento)}">
+                        <tr class="even">
+                            <td align="center" class="align-middle text-center">
+                                <input type="checkbox" name="documentosSelecionados"
+                                       value="${documento.codigoCompacto}" id="${chk}" class="chkDocumento"
+                                       onclick="displaySel()"/>
                             </td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.subscritor.iniciais}"
-                                                  descricao="${documento.doc.subscritor.descricao}"/></td>
-                            <td class="text-center">${documento.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-                                                  descricao="${documento.ultimaMovimentacaoNaoCancelada.resp.descricao}"/>
+                            <td class="text-right">
+                                <c:choose>
+                                    <c:when test='${param.popup!="true"}'>
+                                        <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
+                                                ${documento.sigla}
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="javascript:opener.retorna_${param.propriedade}('${documento.id}','${documento.sigla}','');">
+                                                ${documento.sigla}
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
-                        </c:if>
-                        <c:if test="${documento.geral}">
-                            <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.subscritor.iniciais}"
-                                                  descricao="${documento.doc.subscritor.descricao}"/></td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.lotaSubscritor.sigla}"
-                                                  descricao="${documento.doc.lotaSubscritor.descricao}"/></td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                        </c:if>
-                        <td>
-                            <c:choose>
-                                <c:when test="${siga_cliente == 'GOVSP'}">
-                                    ${documento.doc.descrDocumento}
-                                </c:when>
-                                <c:otherwise>
-                                    ${f:descricaoConfidencial(documento.doc, lotaTitular)}
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
+                            <c:if test="${not documento.geral}">
+                                <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${documento.doc.lotaSubscritor.sigla}"
+                                                      descricao="${documento.doc.lotaSubscritor.descricao}"/>
+                                </td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${documento.doc.subscritor.iniciais}"
+                                                      descricao="${documento.doc.subscritor.descricao}"/></td>
+                                <td class="text-center">${documento.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${documento.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
+                                                      descricao="${documento.ultimaMovimentacaoNaoCancelada.resp.descricao}"/>
+                                </td>
+                            </c:if>
+                            <c:if test="${documento.geral}">
+                                <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${documento.doc.subscritor.iniciais}"
+                                                      descricao="${documento.doc.subscritor.descricao}"/></td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${documento.doc.lotaSubscritor.sigla}"
+                                                      descricao="${documento.doc.lotaSubscritor.descricao}"/></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
+                            </c:if>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${siga_cliente == 'GOVSP'}">
+                                        ${documento.doc.descrDocumento}
+                                    </c:when>
+                                    <c:otherwise>
+                                        ${f:descricaoConfidencial(documento.doc, lotaTitular)}
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:if>
                 </siga:paginador>
                 </tbody>
             </table>

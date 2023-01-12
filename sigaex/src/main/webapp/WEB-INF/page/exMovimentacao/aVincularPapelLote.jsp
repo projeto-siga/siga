@@ -14,7 +14,7 @@
      <script type="text/javascript">
      	var cont = 0;
      	var qtdTotalExecucao = 0;
-		var array = new Array();
+		var listaResponsavel = new Array();
         var listaExecucaoLote = new Array();
         var strHtmlTableStatus = '<br /><br />' +
 								'<div class="row">' +
@@ -115,12 +115,23 @@
 				return;	
 			}
 			
-			if (array.length >= 3){
+			if (listaResponsavel.length >= 3){
 				sigaModal.alerta("Atenção! Você pode incluir 3 Responsáveis para Acompanhamento de Documentos");
 				sigaSpinner.ocultar();
 				return;	
 			}
 			
+			popularResponsavelMap(responsavelSelSigla, responsavelSelId, responsavelSelDescr, lotaResponsavelSelSigla,
+					lotaResponsavelSelId, lotaResponsavelSelDescr, idPapel, tipoResponsavel);
+			
+			gerarTableResponsavel();
+			limparCamposSelResponsavel();
+			
+			sigaSpinner.ocultar();
+		}
+		
+		function popularResponsavelMap(responsavelSelSigla, responsavelSelId, responsavelSelDescr, lotaResponsavelSelSigla,
+				lotaResponsavelSelId, lotaResponsavelSelDescr, idPapel, tipoResponsavel){
 			var myMap = new Map();
 			myMap.set("responsavelSelSigla", responsavelSelSigla.value);
 			myMap.set("responsavelSelId", responsavelSelId.value);
@@ -130,22 +141,17 @@
 			myMap.set("lotaResponsavelSelDescr", lotaResponsavelSelDescr.value);
 			myMap.set("idPapel", idPapel.value);
 			myMap.set("tipoResponsavel", tipoResponsavel.value);
-			myMap.set("vazio","");
 			
 			var myJson = {};
 			myJson = mapToObj(myMap);
-			array.push(myJson);	
 			
-			localStorage.setItem('listaResponsavelJson', JSON.stringify(array));
-			gerarTableResponsavel();
-			limparCamposSelResponsavel();
-			
-			sigaSpinner.ocultar();
+			listaResponsavel.push(myJson);
+			localStorage.setItem('listaResponsavelJson', JSON.stringify(listaResponsavel));
 		}
 		
 		function existeResponsavelArray(responsavelSelId, lotaResponsavelSelId, tipoResponsavel){
-			let respSelId = array.find(o => o.responsavelSelId === responsavelSelId);
-			let lotaRespSelId = array.find(o => o.lotaResponsavelSelId === lotaResponsavelSelId);
+			let respSelId = listaResponsavel.find(o => o.responsavelSelId === responsavelSelId);
+			let lotaRespSelId = listaResponsavel.find(o => o.lotaResponsavelSelId === lotaResponsavelSelId);
 			
 			if((!isNullOrVazio(respSelId) && tipoResponsavel == 1) 
 						|| (!isNullOrVazio(lotaRespSelId) && tipoResponsavel == 2))
@@ -154,8 +160,8 @@
 		}
 		
 		function removerResponsavel(index){
-			array.splice(index, 1);
-			localStorage.setItem('listaResponsavelJson', JSON.stringify(array));
+			listaResponsavel.splice(index, 1);
+			localStorage.setItem('listaResponsavelJson', JSON.stringify(listaResponsavel));
 			gerarTableResponsavel();
 		}
 		
@@ -179,7 +185,7 @@
 		}
 		
 		function validar() {
-			if (!Array.isArray(array) || !array.length) {
+			if (!Array.isArray(listaResponsavel) || !listaResponsavel.length) {
 				sigaModal.alerta("Atenção! Informe pelo menos um responsável");
 				return;
 			}
@@ -214,9 +220,9 @@
            	});
 
             let arrayDocs = Array.from($(".chkDocumento:checkbox").filter(":checked"));
-			qtdTotalExecucao = arrayDocs.length * array.length;
+			qtdTotalExecucao = arrayDocs.length * listaResponsavel.length;
 
-            array.forEach(
+			listaResponsavel.forEach(
             		res => {
             			arrayDocs.forEach(
 			                    chk => {
@@ -279,7 +285,6 @@
 			myMap.set("nrDoc", nrDoc);
 			myMap.set("status", status);
 			myMap.set("descrErr", descrErr);
-			myMap.set("vazio","");
 			
 			var myJson = mapToObj(myMap);
 			listaExecucaoLote.push(myJson);	
@@ -293,7 +298,7 @@
 			  document.getElementById("idTbodyResponsavel").innerHTML = data.map(
 			    item => ([
 			      '<tr>',
-			      ['responsavelSelSigla','responsavelSelDescr', 'lotaResponsavelSelDescr','vazio'].map(
+			      ['responsavelSelSigla','responsavelSelDescr', 'lotaResponsavelSelDescr'].map(
 			        key => '<td>'+item[key]+'</td>'
 			      ),
 			      "<td><button type='button' class='btn btn-danger' onclick='javascript:removerResponsavel(".concat(idx++,");'>Excluir</button></td>"),
@@ -435,9 +440,8 @@
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
 										<th class="text-center" style="width: 10%;">Matrícula</th>
-										<th class="text-center">Nome</th>
-										<th class="text-center">Unidade</th>
-										<th class="text-center" style="width: 15%;">Função</th>
+										<th class="text-center" style="width: 41%;">Nome</th>
+										<th class="text-center" style="width: 41%;">Unidade</th>
 										<th class="text-center" style="width: 8%;">Excluir</th>
 									</tr>
 								</thead>

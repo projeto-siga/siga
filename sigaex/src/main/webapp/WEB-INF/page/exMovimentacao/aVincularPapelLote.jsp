@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<fmt:message key="documento.vinculacao" var="titulo"/>
+<fmt:message key="documento.vinculacao.lote" var="titulo"/>
 
 <siga:pagina titulo="${titulo}">
 

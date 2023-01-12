@@ -308,15 +308,26 @@
 		var dtPlanejada = document.getElementById('planejada');
 		var dtLimite = document.getElementById('limite');
 		
-		if (!${podeRetroativa} && dtPlanejada != null)
-			if (!verifica_data(dtPlanejada,0,false,false))
+		if (!${podeRetroativa} && dtPlanejada != null) {
+			if (!verifica_data(dtPlanejada,0,false,false)) {
+				reestabeleceBotoes()
 				return;
-
-		if (!${podeRetroativa} && dtLimite != null)
-			if (!verifica_data(dtLimite,0,false,false))
+			}
+		}
+				
+		if (!${podeRetroativa} && dtLimite != null) {
+			if (!verifica_data(dtLimite,0,false,false)) {
+				reestabeleceBotoes()
 				return;
+			}
+		}
 		
 		document.getElementById('marcarForm').submit();
 	}
-	
+
+	function reestabeleceBotoes() {
+		document.getElementById('btnMarcarGravar-spinner').classList.add('d-none');
+		document.getElementById('btnMarcarGravar').disabled = false;
+		document.getElementById('btnMarcarCancelar').disabled = false;
+	}
 </script>

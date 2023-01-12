@@ -88,9 +88,11 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-primary"
-					onclick="javascript: sbmt();">Gravar</button>
+				<button id="btnMarcarCancelar" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button id="btnMarcarGravar" type="button" class="btn btn-primary"
+					onclick="javascript: sbmtMarcar();">
+					<span id="btnMarcarGravar-spinner" class="spinner-border d-none" role="status"></span>
+					Gravar</button>
 			</div>
 		</div>
 	</div>
@@ -299,7 +301,10 @@
 	window.initdefinirMarcaModal = function() {
 	}
 
-	function sbmt() {
+	function sbmtMarcar() {
+		document.getElementById('btnMarcarGravar-spinner').classList.remove('d-none');
+		document.getElementById('btnMarcarGravar').disabled = true;
+		document.getElementById('btnMarcarCancelar').disabled = true;
 		var dtPlanejada = document.getElementById('planejada');
 		var dtLimite = document.getElementById('limite');
 		

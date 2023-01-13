@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.util;
+package br.gov.jfrj.siga.base.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

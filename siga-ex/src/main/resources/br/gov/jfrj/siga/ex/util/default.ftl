@@ -1,3 +1,8 @@
+[#macro markdown]
+	[#local body][#nested/][/#local]
+	${func.markdown(body)}
+[/#macro]
+
 [#macro parte id titulo depende="" responsavel="" bloquear=true esconder=false]
     [#if !esconder]
       [#if gerar_partes!false]

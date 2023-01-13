@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.util;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import br.gov.jfrj.siga.base.util.FreemarkerIndent;
+import br.gov.jfrj.siga.base.util.FreemarkerMarker;
 import junit.framework.TestCase;
 
 public class IndentTest extends TestCase {

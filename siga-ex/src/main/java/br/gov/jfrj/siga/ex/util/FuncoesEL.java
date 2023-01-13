@@ -1186,4 +1186,8 @@ public class FuncoesEL {
 		}
 	}
 
+	public static String markdown(String string) {
+	    return ModeloMarkdown.markdownToFreemarker(string);
+    }
+
 }

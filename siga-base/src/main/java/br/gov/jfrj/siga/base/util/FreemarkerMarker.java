@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.util;
+package br.gov.jfrj.siga.base.util;
 
 public class FreemarkerMarker {
 	private String template;

@@ -1,6 +1,6 @@
 ---CADASTRO DE SERVICO SIGA-DOC-DEFLOTE
 Insert into corporativo.cp_servico (SIGLA_SERVICO, DESC_SERVICO, ID_SERVICO_PAI, ID_TP_SERVICO) 
-   SELECT  'SIGA-DOC-DEFLOTE','Definir Acomanhamento em Lote',  max(id_servico) , '2'
+   SELECT  'SIGA-DOC-DEFLOTE','Definir Acompanhamento em Lote',  max(id_servico) , '2'
    FROM corporativo.cp_servico 
    WHERE SIGLA_SERVICO = 'SIGA-DOC'   
    ON DUPLICATE KEY UPDATE SIGLA_SERVICO = 'SIGA-DOC-DEFLOTE';

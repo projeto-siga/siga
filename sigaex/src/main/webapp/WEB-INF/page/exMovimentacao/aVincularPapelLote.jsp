@@ -272,7 +272,7 @@
 					  adicionarListaExecucaoLote(++cont, responsavelSelSigla, lotaResponsavelSelSigla, documentoSelSigla, "OK", "");
 				  },
 				  error: function (err) {
-				      adicionarListaExecucaoLote(++cont, responsavelSelSigla, lotaResponsavelSelSigla, documentoSelSigla, "NOK", err.responseText);
+				      adicionarListaExecucaoLote(++cont, responsavelSelSigla, lotaResponsavelSelSigla, documentoSelSigla, "ERRO", err.responseText);
 				  }
 			});
 		}

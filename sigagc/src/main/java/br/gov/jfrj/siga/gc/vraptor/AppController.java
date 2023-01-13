@@ -1204,6 +1204,12 @@ public class AppController extends GcController {
 	public void anexar(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		result.include("informacao", informacao);
+		String extensaoTodos = Prop.get("/sigagc.todos.extensoes.anexo.permitidas");
+		result.include("extensaoTodos", extensaoTodos);
+		String extensaoImagem = Prop.get("/sigagc.imagem.extensoes.anexo.permitidas");
+		result.include("extensaoImagem", extensaoImagem);
+		String extensaoDocumento = Prop.get("/sigagc.documento.extensoes.anexo.permitidas");
+		result.include("extensaoDocumento", extensaoDocumento);
 	}
 
 	@Transacional

@@ -338,6 +338,11 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 
+		/* Permite realizar o upload das extensões declaradas */
+		provider.addPublicProperty("/sigagc.todos.extensoes.anexo.permitidas", "jpg,bmp,png,doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+		provider.addPublicProperty("/sigagc.imagem.extensoes.anexo.permitidas", "jpg,bmp,png");
+		provider.addPublicProperty("/sigagc.documento.extensoes.anexo.permitidas", "doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+	
 		/* Permite inativar lotação com determinadas marcações*/
 		/* Trocado de Bool para List String que deve conter as chaves de marcadores permitidas separadas por virgula no padrao do getList() */
 		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", null);
@@ -349,6 +354,6 @@ public class Prop {
 		/* Permite Alterar a lotação da Pessoa com determinadas marcações*/
 		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.marcadores.permitidos", get("/siga.lotacao.inativacao.marcadores.permitidos"));
 		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos", get("/siga.lotacao.inativacao.grupo.marcadores.permitidos"));
-		
+
 	}
 }

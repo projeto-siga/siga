@@ -15,7 +15,7 @@ public class ArqApiV1Servlet extends SwaggerServlet implements IPropertyProvider
 	
 	public ArqApiV1Servlet () throws ServletException {
 		setActionPackage("br.gov.jfrj.siga.arquivo");
-		servletContext = "siga-arq";
+		servletContext = "sigaarq";
 		Prop.setProvider(this);
 		Prop.defineGlobalProperties();
 		defineProperties();
@@ -36,11 +36,13 @@ public class ArqApiV1Servlet extends SwaggerServlet implements IPropertyProvider
 			Prop.get("/siga.armazenamento.arquivo.senha"));
 		addRestrictedProperty("armazenamento.arquivo.formatolivre.bucket", 
 			Prop.get("/siga.armazenamento.arquivo.bucket"));
+		addRestrictedProperty("allowed.origin.urls", 
+			Prop.get("/siga.base.url"));
 	}
 
 	@Override
 	public String getService() {
-		return "siga-arq";
+		return "sigaarq";
 	}
 
 	@Override

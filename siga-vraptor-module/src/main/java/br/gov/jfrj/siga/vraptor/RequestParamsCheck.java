@@ -3,7 +3,10 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Safelist;
 
 import br.gov.jfrj.siga.uteis.SafeListCustom;
 
@@ -21,9 +24,9 @@ public class RequestParamsCheck {
 	    	
 			if (!"".equals(requestParameter) && hasHTMLTags(requestParameterStr)) {	
 				if (permissiveCheck) 
-					isRequestValid = Jsoup.isValid(requestParameterStr,SafeListCustom.relaxedCustom());
+					isRequestValid = isValid(requestParameterStr,SafeListCustom.relaxedCustom());
 			    else 
-			    	isRequestValid = Jsoup.isValid(requestParameterStr,SafeListCustom.simpleText());				
+			    	isRequestValid = isValid(requestParameterStr,SafeListCustom.simpleText());				
 			}
 		}
     	
@@ -34,5 +37,14 @@ public class RequestParamsCheck {
         Matcher matcher = pattern.matcher(text);
         return matcher.find();
     }
+    
+    public static boolean isValid(String paramDirty, Safelist safelist) {
+    	Document dirty = Jsoup.parseBodyFragment(paramDirty, ""); //pré-formata parâmetro HTML para desconsiderar HTMLs com problemas semânticos
+    	String bodyHtml = dirty.body().html() //extrai body para checagem 
+    						.replaceAll("<!--", ""); //Retira tag comentário
+
+    	return Jsoup.isValid(bodyHtml, safelist);
+    }
+    
 
 }

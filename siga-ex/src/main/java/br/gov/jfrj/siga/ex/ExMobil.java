@@ -373,7 +373,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			sigla = sigla.split(":")[0];
 
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
-		for (CpOrgaoUsuario ou : ExDao.getInstance().listarOrgaosUsuarios()) {
+		for (CpOrgaoUsuario ou : ExDao.getInstance().listarOrgaosUsuariosTodos()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
@@ -388,7 +388,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		// https://regex101.com/r/NJidBr/2
 		// Ao acessar, clique em "Switch to unit tests"
 		final Pattern p1 = Pattern.compile("^(?<orgao>" + acronimos
-				+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?<sonumero>[0-9]{1,8})|(?:(?<ano>\\d{4}?)/?)(?<numero>[0-9]{1,8})(?<subnumero>\\.?[0-9]{1,3})??)(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,2})))?$");
+				+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?<sonumero>[0-9]{1,8})|(?:(?<ano>\\d{4}?)/?)(?<numero>[0-9]{1,8})(?<subnumero>\\.?[0-9]{1,3})??)(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,3})))?$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 

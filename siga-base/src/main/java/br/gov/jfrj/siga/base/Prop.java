@@ -94,7 +94,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigagc.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigawf.base.url", get("/siga.base.url"));
-		provider.addPublicProperty("/siga-arq.base.url", get("/siga.base.url"));
+		provider.addPublicProperty("/sigaarq.base.url", get("/siga.base.url"));
 		
 		//URL Interna (para back-end). Objetivo não usar Proxy, SSL, Firewall.. entre outras camandas de rede para chamadas internas
 		provider.addPublicProperty("/siga.service.base.url", get("/siga.base.url"));		
@@ -195,7 +195,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.url", get("/sigaex.base.url") + "/sigaex");
 		provider.addPublicProperty("/sigaex.autenticidade.url", get("/sigaex.base.url") + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigagc.url", get("/sigagc.base.url") + "/sigagc");
-		provider.addPublicProperty("/siga-arq.url", get("/siga-arq.base.url") + "/siga-arq");
+		provider.addPublicProperty("/sigaarq.url", get("/sigaarq.base.url") + "/sigaarq");
 		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 		
 		/* Indica onde está armazenado o Manual de Operações* */
@@ -338,13 +338,22 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 
-		/* Permite inativar lotação com determinadas marcações */
-		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "false");
-	
 		/* Permite realizar o upload das extensões declaradas */
 		provider.addPublicProperty("/sigagc.todos.extensoes.anexo.permitidas", "jpg,bmp,png,doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
 		provider.addPublicProperty("/sigagc.imagem.extensoes.anexo.permitidas", "jpg,bmp,png");
 		provider.addPublicProperty("/sigagc.documento.extensoes.anexo.permitidas", "doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
 	
+		/* Permite inativar lotação com determinadas marcações*/
+		/* Trocado de Bool para List String que deve conter as chaves de marcadores permitidas separadas por virgula no padrao do getList() */
+		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", null);
+		/* Permitir Inativar Lotação com Marcas nos Grupos de Marcadores. 
+		 * É ligada caso property siga.lotacao.inativacao.marcadores.permitidos seja diferente de null e soma-se as listas
+		 * Default: Documentos não apresentados na Mesa.*/
+		provider.addPublicProperty("/siga.lotacao.inativacao.grupo.marcadores.permitidos", "NENHUM");
+		
+		/* Permite Alterar a lotação da Pessoa com determinadas marcações*/
+		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.marcadores.permitidos", get("/siga.lotacao.inativacao.marcadores.permitidos"));
+		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos", get("/siga.lotacao.inativacao.grupo.marcadores.permitidos"));
+
 	}
 }

@@ -54,6 +54,25 @@
 	    }
 		return v;
 	}
+	
+	function checkUncheckAll(theElement) {
+		var theForm = theElement.form, z = 0;
+		for (z = 0; z < theForm.length; z++) {
+			if (theForm[z].type == 'checkbox' && theForm[z].id.startsWith('chk_')) {
+				theForm[z].checked = !(theElement.checked);
+				theForm[z].click();
+			}
+		}
+	}
+	
+	function displaySel(chk, el) {
+		console.log(chk);
+		console.log(chk.checked);
+		console.log(document.getElementsByClassName("pessoaSelecionada"));
+		document.getElementById('chk_' + el).checked = chk.checked;
+		
+	}
+
 </script>
 
 <siga:pagina titulo="Listar Pessoas">
@@ -161,14 +180,38 @@
 								<label for="nmPessoa">RG (Incluindo dígito)</label>
 								<input type="text" id="identidadePesquisa" name="identidadePesquisa" value="${identidadePesquisa}" maxlength="20" class="form-control"/>
 							</div>
-						</div>							
+						</div>					
 					</div>
+					
+					
+					<div class="form-group">
+						<div class="form-check">
+					    	<input class="form-check-input" type="checkbox" value="1" id="idStatusPesquisa" name="statusPesquisa" <c:if test="${statusPesquisa}">checked</c:if> />
+					     	<label class="form-check-label" for="idStatusPesquisa">
+					        	Listar apenas pessoas ativas
+					      	</label>
+						</div>
+					</div>
+					
+					
 					<div class="row">
-						<div class="col-sm-12">
+						<div class="col col-12 col-md-6">
 							<button type="submit" class="btn btn-primary">Pesquisar</button>
 							<c:if test="${temPermissaoParaExportarDados}">
 								<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" onclick="javascript:csv('listar', '/siga/app/pessoa/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>
-							</c:if>						
+							</c:if>
+						</div>
+			
+						<div class="col col-12 col-md-6 text-right">
+							<c:url var="urlInativarLote" value="/app/pessoa/inativarLote">
+							</c:url>
+								
+							<c:if test="${statusPesquisa}">
+								<button type="button" class="btn btn-primary" 
+									onclick="javascript:atualizarUrlDeInativarPessoa('javascript:inativarPessoasSelecionadas(getIdPessoasSelecionadas());');return false;"
+									role="button" 
+									aria-pressed="true" data-siga-modal-abrir="confirmacaoModal">Inativar itens selecionados</button>			
+							</c:if>
 						</div>
 					</div>				
 	
@@ -181,6 +224,11 @@
 				<table border="0" class="table table-sm table-striped">
 					<thead class="thead-dark">
 						<tr>
+							<c:if test="${statusPesquisa}">
+								<th rowspan="2" align="center"><input type="checkbox"
+												id="checkall" name="checkall" value="true"
+												onclick="checkUncheckAll(this)" /></th>
+							</c:if>
 							<th align="left">Nome</th>
 							<th align="left">Nome Abreviado</th>						
 							<th align="left">Unidade</th>
@@ -197,6 +245,16 @@
 						<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
 							itens="${itens}" var="pessoa">
 							<tr>
+								<c:if test="${statusPesquisa}">
+									<c:set var="idPessoaSelect" scope="request">
+					                    chk_${pessoa.id}
+					                </c:set>
+				              
+									<td align="center" class="align-middle text-center">
+										<input type="checkbox" name="pessoaSelecionada"
+													value="${pessoa.id}" id="${idPessoaSelect}" class="chkPessoa"/>
+									</td>
+								</c:if>
 								<td align="left">${pessoa.descricao}</td>
 								<td align="left">${pessoa.nomeExibicao}</td>							
 								<td align="left"><span data-toggle="tooltip" data-placement="bottom" title="${pessoa.lotacao.siglaLotacao} / ${pessoa.lotacao.nomeLotacao}">${pessoa.lotacao.siglaLotacao}</span></td>
@@ -233,16 +291,7 @@
 									  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>								   
 									  </div>
 									</div>								
-								</td>
-							<%--	<td align="left">									
-					 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
-										<img style="display: inline;"
-										src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
-										onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
-										onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
-									</a>															
-								</td>
-							 --%>							
+								</td>						
 							</tr>
 						</siga:paginador>									
 					</tbody>
@@ -306,6 +355,39 @@
 	function atualizarUrlDeInativarPessoa(url){	
 		$('.btn-confirmacao-inativacao-cadastro').attr("href", url);		
 	}
+	
+	function getIdPessoasSelecionadas() {
+		var els = document.getElementsByName("pessoaSelecionada");
+		var selecionados = new Array();
+		for (var i = 0; i < els.length; i++) {
+		  if (els[i].checked) {
+			  selecionados.push(els[i].value);
+		  }
+		}
+		return selecionados;
+	}
+	
+	function inativarPessoasSelecionadas(listaIdPessoasSelecionadas) {
+		
+		
+		$.ajax({
+			method:'POST',
+			url: '/siga/app/pessoa/inativarLote',
+			data: {'idPessoasSelecionadas':listaIdPessoasSelecionadas},
+			beforeSend: function(result){	
+				sigaSpinner.mostrar();
+				sigaModal.fechar('confirmacaoModal');
+	        },
+			success: function(result){	
+				location.reload();
+	        },
+			error: 'erro',
+	        complete: function(result){	
+	        	sigaSpinner.ocultar();
+	        }
+		});
+	}
+	
 	
 </script>
 </siga:pagina>

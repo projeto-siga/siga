@@ -25,7 +25,7 @@ public abstract class MatriculaUtils {
 		Separado separado = new Separado();
 
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
-		for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
+		for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuariosTodos()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}

@@ -40,6 +40,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Max;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
@@ -131,6 +132,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@JoinColumn(name = "ID_TIPO_MOBIL", nullable = false)
 	private ExTipoMobil exTipoMobil;
 
+	@Max(999)
 	@Column(name = "NUM_SEQUENCIA", nullable = false)
 	private java.lang.Integer numSequencia;
 

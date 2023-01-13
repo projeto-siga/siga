@@ -193,7 +193,6 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@Column(name = "DATA_FIM_PESSOA", length = 19)
 	@Temporal(TemporalType.TIMESTAMP)
-    @Desconsiderar
 	private Date dataFimPessoa;
 
 	@Column(name = "DATA_INI_PESSOA", length = 19)

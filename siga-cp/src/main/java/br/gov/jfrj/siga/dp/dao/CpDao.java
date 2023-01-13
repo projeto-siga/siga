@@ -51,6 +51,7 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -73,6 +74,7 @@ import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
@@ -371,9 +373,14 @@ public class CpDao extends ModeloDao {
 			final int itemPagina) {
 		try {
 			Query query = em()
-					.createQuery("select org, (select dtContrato from CpContrato contrato "
-							+ " where contrato.idOrgaoUsu = org.idOrgaoUsu) from CpOrgaoUsuario org "
+					.createQuery("select org, (select dtContrato from CpContrato contrato where contrato.idOrgaoUsu = org.idOrgaoUsuIni), "
+							+ " (select count(1) from DpPessoa pes where pes.orgaoUsuario.idOrgaoUsu = org.idOrgaoUsu and pes.dataFimPessoa is null), "
+							+ " (select count(1) from DpLotacao lot where lot.orgaoUsuario.idOrgaoUsu = org.idOrgaoUsu and lot.dataFimLotacao is null)  "
+							+ " from CpOrgaoUsuario org "
 							+ " where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))"
+							+ " and (exists (select 1 from CpOrgaoUsuario oAux where oAux.idOrgaoUsuIni = org.idOrgaoUsuIni"
+							+ "			group by oAux.idOrgaoUsuIni having max(oAux.hisDtIni) = org.hisDtIni) "
+							+ " or org.hisDtFim is null)"
 							+ "	order by org.nmOrgaoUsu");
 			if (offset > 0) {
 				query.setFirstResult(offset);
@@ -411,6 +418,23 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CpOrgaoUsuario consultarOrgaoAtual(final CpOrgaoUsuario o) {
+		CriteriaQuery<CpOrgaoUsuario> q = cb().createQuery(CpOrgaoUsuario.class);
+		Root<CpOrgaoUsuario> c = q.from(CpOrgaoUsuario.class);
+		q.select(c);
+		q.where(
+		    cb().equal(c.get("idOrgaoUsuIni"), o.getIdOrgaoUsuIni()),
+		    cb().isNull(c.get("hisDtFim"))
+		);
+		
+		final List<CpOrgaoUsuario> l = em().createQuery(q).getResultList();
+		
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpOrgaoUsuario consultarPorSigla(final CpOrgaoUsuario o) {
@@ -421,7 +445,7 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
 		final List<CpOrgaoUsuario> l = query.getResultList();
-		if (l.size() != 1)
+		if (l.size() < 1)
 			return null;
 		return l.get(0);
 	}
@@ -435,7 +459,7 @@ public class CpDao extends ModeloDao {
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
 		final List<CpOrgaoUsuario> l = query.getResultList();
-		if (l.size() != 1)
+		if (l.size() < 1)
 			return null;
 		return l.get(0);
 	}
@@ -1642,6 +1666,22 @@ public class CpDao extends ModeloDao {
 		final CpIdentidade id = lista.get(0);
 		return id;
 	}
+	
+	public CpIdentidade consultarIdentidadeAtual(final String nmUsuario) {
+		final Query qry = em().createNamedQuery("consultarIdentidadeAtual");
+		qry.setParameter("nmUsuario", nmUsuario);
+		List<Integer> listaTipo = new ArrayList<Integer>();
+		listaTipo.add(CpTipoIdentidade.FORMULARIO);
+		listaTipo.add(CpTipoIdentidade.CERTIFICADO);
+		
+		qry.setParameter("listaTipo", listaTipo);
+		
+		final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
+		if (lista.size() == 0) {
+			return null;
+		}
+		return lista.get(0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<CpIdentidade> consultaIdentidadesCadastrante(final String nmUsuario, boolean fAtiva)
@@ -2277,7 +2317,22 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
+		
+        Query query = em().createNamedQuery("consultarCpOrgaoUsuario")        	
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);                
+        return (List<CpOrgaoUsuario>) query.getResultList();
+//		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpOrgaoUsuario> listarOrgaosUsuariosTodos() {
+		
+        Query query = em().createNamedQuery("consultarCpOrgaoUsuarioTodos")        	
+        		.setHint("org.hibernate.cacheable", true)
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);                
+        return (List<CpOrgaoUsuario>) query.getResultList();
+//		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -2813,19 +2868,12 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public Integer consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(Long idLotacao) {
-		try {
-			Query sql = em().createNamedQuery("consultarQtdeDocCriadosPossePorDpLotacaoECpMarca");
-			sql.setParameter("idLotacao", idLotacao);
-			sql.setParameter("listMarcadores", Arrays.asList(
-					CpMarcadorEnum.RECOLHER_PARA_ARQUIVO_PERMANENTE.getId(),
-					CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
-					CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId()));
-			final int l = ((BigDecimal) sql.getSingleResult()).intValue();
-			return l;
-		} catch (final NullPointerException e) {
-			return null;
-		}
+	public Integer quatidadeMarcasEmPosseDaLotacaoMarcadores(DpLotacao lotacao, List<Long> marcadoresPermitidos) {
+		return quantidadeMarcasPorLotacaoMarcadores(lotacao, marcadoresPermitidos, false).intValue();
+	}
+	
+	public Integer quatidadeMarcasEmPosseDaPessoaMarcadores(DpPessoa pessoa, List<Long> marcadoresPermitidos) {		
+		return quantidadeMarcasPorPessoaMarcadores(pessoa, marcadoresPermitidos, false).intValue();
 	}
 	
 	public CpToken obterCpTokenPorTipoToken(final Long idTpToken, final String token) {
@@ -3071,29 +3119,68 @@ public class CpDao extends ModeloDao {
 		return sql.getResultList();
 	}
 
-
-	public Long qtdeMarcasMarcadorPessoa(DpPessoa pessoa, List<Long> marcadores) {
+	
+	/*
+	 * 
+	 * Conta quantas Marcas a Pessoa tem em Posse
+	 * 
+	 * Caso seja passada Lista de Marcadores, os Marcadores são contados ou retirados da contagem conforme parâmetro [contarComMarcadoresPresente]
+	 *         True: Contar Marcas que estejam com os Marcadores da Lista
+	 *         False: Contar Marcas com os Marcadores diferentes dos Marcadores da Lista
+	 */
+	public Long quantidadeMarcasPorPessoaMarcadores(DpPessoa pessoa, List<Long> marcadores, boolean contarComMarcadoresPresente) { 
 		CriteriaBuilder qb = em().getCriteriaBuilder();
 		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
 		Root<CpMarca> c = cq.from(CpMarca.class);
 		cq.select(qb.count(c));
+		
 		Predicate predicateAnd;
-		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa);
-		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
-		predicateAnd = cb().and(predicateEqualPessoa, predicateEqualMarca);
+		Predicate predicateEqualPessoa  = cb().equal(c.get("dpPessoaIni"), pessoa.getPessoaInicial());
+		Predicate predicateMarcadores = null;
+		
+		if (marcadores != null && !marcadores.isEmpty()) {
+			if (contarComMarcadoresPresente)
+				predicateMarcadores  = cb().and(c.get("cpMarcador").in(marcadores));
+			else
+				predicateMarcadores  = cb().and(cb().not(c.get("cpMarcador").in(marcadores)));
+			
+			predicateAnd = cb().and(predicateEqualPessoa, predicateMarcadores);
+		} else {
+			predicateAnd = predicateEqualPessoa;
+		}
+		
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();
 	}
 	
-	public Long qtdeMarcasMarcadorLotacao(DpLotacao lotacao, List<Long> marcadores) {
+	/*
+	 * 
+	 * Conta quantas Marcas a Lotação tem em Posse
+	 * 
+	 * Caso seja passada Lista de Marcadores, os Marcadores são contados ou retirados da contagem conforme parâmetro [contarComMarcadoresPresente]
+	 *         True: Contar Marcas que estejam com os Marcadores da Lista
+	 *         False: Contar Marcas com os Marcadores diferentes dos Marcadores da Lista
+	 */
+	public Long quantidadeMarcasPorLotacaoMarcadores(DpLotacao lotacao, List<Long> marcadores, boolean contarComMarcadoresPresente) {
 		CriteriaBuilder qb = em().getCriteriaBuilder();
 		CriteriaQuery<Long> cq = qb.createQuery(Long.class);
 		Root<CpMarca> c = cq.from(CpMarca.class);
 		cq.select(qb.count(c));
 		Predicate predicateAnd;
-		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao);
-		Predicate predicateEqualMarca  = cb().and(c.get("cpMarcador").in(marcadores));
-		predicateAnd = cb().and(predicateEqualLotacao, predicateEqualMarca);
+		Predicate predicateEqualLotacao  = cb().equal(c.get("dpLotacaoIni"), lotacao.getLotacaoInicial());
+		Predicate predicateMarcadores = null;
+		
+		if (marcadores != null && !marcadores.isEmpty()) {
+			if (contarComMarcadoresPresente)
+				predicateMarcadores  = cb().and(c.get("cpMarcador").in(marcadores));
+			else
+				predicateMarcadores  = cb().and(cb().not(c.get("cpMarcador").in(marcadores)));
+			
+			predicateAnd = cb().and(predicateEqualLotacao, predicateMarcadores);
+		} else {
+			predicateAnd = predicateEqualLotacao;
+		}
+		
 		cq.where(predicateAnd);
 		return em().createQuery(cq).getSingleResult();
 	}
@@ -3145,6 +3232,17 @@ public class CpDao extends ModeloDao {
 			cb().equal(joinTipoIdentidade.get("idCpTpIdentidade"), CpTipoIdentidade.LOGIN_DOE),
 			cb().isNull(c.get("hisDtFim"))
 		);
+		return em().createQuery(q).getResultList();
+	}
+	
+	public List<CpOrgaoUsuario> listarHistoricoOrgaoUsuario(Long idInicial) {
+		CriteriaQuery<CpOrgaoUsuario> q = cb().createQuery(CpOrgaoUsuario.class);
+		Root<CpOrgaoUsuario> c = q.from(CpOrgaoUsuario.class);
+		q.select(c);
+		q.where(
+		    cb().equal(c.get("idOrgaoUsuIni"), idInicial)
+		);
+		q.orderBy(cb().desc(c.get("hisDtIni")));
 		return em().createQuery(q).getResultList();
 	}
 }

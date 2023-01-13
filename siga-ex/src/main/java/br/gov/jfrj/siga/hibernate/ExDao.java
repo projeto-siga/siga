@@ -58,14 +58,12 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -267,16 +265,16 @@ public class ExDao extends CpDao {
 	public void updateMantemRangeNumeroDocumento(Long docNumeracao)
 			throws SQLException {
 		
-		final Query query = em().createNamedQuery("ExDocumentoNumeracao.mantemRangeNumeroDocumento");
-		
-		Calendar c = Calendar.getInstance();
-		
-		query.setParameter("anoEmissao", c.get(Calendar.YEAR));
-		query.setParameter("flAtivo", 1);
-		query.setParameter("increment", 1L);
-		query.setParameter("id", docNumeracao);
-		
-		query.executeUpdate();
+	    final Query query = em().createNamedQuery("ExDocumentoNumeracao.mantemRangeNumeroDocumento");
+
+        Calendar c = Calendar.getInstance();
+
+        query.setParameter("anoEmissao", Long.valueOf(c.get(Calendar.YEAR)));
+        query.setParameter("flAtivo", "1");
+        query.setParameter("increment", 1L);
+        query.setParameter("id", docNumeracao);
+
+        query.executeUpdate();
 		
 	}
 	
@@ -359,7 +357,7 @@ public class ExDao extends CpDao {
 		
 		Calendar c = Calendar.getInstance();
 		
-		query.setParameter("anoEmissao", c.get(Calendar.YEAR));
+		query.setParameter("anoEmissao", Long.valueOf(c.get(Calendar.YEAR)));
 		query.setParameter("flAtivo", "1");
 		query.setParameter("increment", 1L);
 		query.setParameter("id", idSeq);
@@ -576,8 +574,10 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
-
-			query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
+			List<CpOrgaoUsuario> lista = CpDao.getInstance().listarHistoricoOrgaoUsuario(flt.getIdOrgaoUsu());
+			for (int i = 0; i < lista.size(); i++) {
+				query.setParameter("idOrgaoUsu"+i, lista.get(i).getId());
+			}
 		}
 
 		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {
@@ -911,6 +911,11 @@ public class ExDao extends CpDao {
 			if (flt.getAnoEmissao() == null)
 				flt.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
 
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			orgaoUsuario.setId(flt.getIdOrgaoUsu());
+			orgaoUsuario = CpDao.getInstance().consultarPorId(orgaoUsuario);
+			flt.setIdOrgaoUsu(orgaoUsuario.getIdInicial());
+			
 			if (flt.getNumSequencia() == null) {
 				final Query query = em().createNamedQuery(
 						"consultarPorSiglaDocumento");
@@ -1439,10 +1444,11 @@ public class ExDao extends CpDao {
 		return ((Long) query.getSingleResult()).intValue();
 	}
 
-	public List<ExMobil> consultarParaTransferirEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
-		final Query query = em().createNamedQuery("consultarParaTransferirEmLote")
-				.setParameter("pessoaIni",pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId());
+	public List<ExMobil> consultarParaTramitarEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaTramitarEmLote")
+				.setParameter("pessoaIni", pes.getIdPessoaIni())
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId());
+		
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
 		}
@@ -1453,10 +1459,27 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public Long consultarQuantidadeParaTransferirEmLote(DpPessoa pes) {
-		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
+	public int consultarQuantidadeParaTramitarEmLote(DpPessoa pes) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaTramitarEmLote", Long.class)
 				.setParameter("pessoaIni", pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId())
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId()).getSingleResult() ).intValue();
+	}
+	
+	public List<ExMobil> consultarParaAcompanhamentoEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaAcompanhamentoEmLote")
+				.setParameter("pessoaIni", pes.getIdPessoaIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+		return query.getResultList();
+	}
+
+	public Long consultarQuantidadeParaAcompanhamentoEmLote(DpPessoa pes) {
+		return (Long) em().createNamedQuery("consultarQuantidadeParaAcompanhamentoEmLote", Long.class)
+				.setParameter("pessoaIni", pes.getIdPessoaIni())
 				.getSingleResult();
 	}
 
@@ -1547,17 +1570,20 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
+	public List<ExMovimentacao> consultarMovimentacoesPorCadastranteEntreDatas(DpPessoa pes, Date dtIni, Date dtFim) {
 
-		if (pes == null || dt == null) {
+		if (pes == null || dtIni == null) {
 			throw new IllegalStateException(
 					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
-		final Query query = em().createNamedQuery("consultarMovimentacoes");
+		dtFim = (dtFim == null) ? dtIni : dtFim;
+
+		final Query query = em().createNamedQuery("consultarMovimentacoesPorCadastranteEntreDatas");
 
 		query.setParameter("pessoaIni", pes.getIdPessoaIni());
-		query.setParameter("data", dt);
+		query.setParameter("dtIni", dtIni);
+		query.setParameter("dtFim", dtFim);
 		return query.getResultList();
 	}
 
@@ -2614,6 +2640,10 @@ public class ExDao extends CpDao {
 
 	
 	public List<ExMovimentacao> listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante) {
+		return listarMovPorTipo(tipoDeMovimentacao, cadastrante, Boolean.TRUE);	
+	}
+	
+	public List<ExMovimentacao> listarMovPorTipo(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante, Boolean naoCancNaoFinal) {
 		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<ExMovimentacao> criteriaQuery = criteriaBuilder.createQuery(ExMovimentacao.class);	
 		Root<ExMovimentacao> movRoot = criteriaQuery.from(ExMovimentacao.class);
@@ -2627,7 +2657,8 @@ public class ExDao extends CpDao {
 		Predicate predicateEqualNaoCancelada = criteriaBuilder.isNull(movRoot.get("exMovimentacaoCanceladora"));
 		Predicate predicateEqualsPessoa = criteriaBuilder.equal(joinCadastrante.get("idPessoaIni"),cadastrante.getIdInicial());
 		
-		predicateAnd = criteriaBuilder.and(predicateEqualTipo,predicateEqualNaoFinalizada, predicateEqualsPessoa, predicateEqualNaoCancelada);
+		predicateAnd = naoCancNaoFinal ? criteriaBuilder.and(predicateEqualTipo,predicateEqualNaoFinalizada, predicateEqualsPessoa, predicateEqualNaoCancelada)
+							: criteriaBuilder.and(predicateEqualTipo, predicateEqualsPessoa);
 		criteriaQuery.where(predicateAnd);
 		
 		return em().createQuery(criteriaQuery).getResultList();		

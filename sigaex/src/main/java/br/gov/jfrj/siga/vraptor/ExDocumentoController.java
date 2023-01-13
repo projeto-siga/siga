@@ -272,6 +272,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Transacional
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/alterarpreench")
 	public void aAlterarPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos) throws IOException,
@@ -496,6 +497,7 @@ public class ExDocumentoController extends ExController {
 
 	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
+	@RequestParamsPermissiveCheck
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO,
 			final String sigla, String[] vars,
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
@@ -953,6 +955,7 @@ public class ExDocumentoController extends ExController {
 
 	@Transacional
 	@Post("app/expediente/doc/excluirpreench")
+	@RequestParamsPermissiveCheck
 	public void aExcluirPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IllegalAccessException,
 			InvocationTargetException, IOException {

@@ -40,7 +40,7 @@ function sbmt(offset) {
 						<tr>
 							<td align="left">${orgao.descricao}</td>
 							<td align="left">${orgao.sigla}</td>
-							<td align="left">${orgao.orgaoUsuario.descricao}</td>
+							<td align="left">${orgao.orgaoUsuario.orgaoUsuarioAtual.descricao}</td>
 							<c:choose>
 						      	<c:when test="${orgao.registroAtivo == 'S'}">
 						      		<td align="left">Sim</td>

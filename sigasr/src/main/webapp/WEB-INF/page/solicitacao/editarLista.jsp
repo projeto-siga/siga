@@ -7,176 +7,139 @@
 <script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 <script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 
-<div class="gt-form gt-content-box"
-	style="width: 800px !important; max-width: 800px !important;">
+
+<div class="">
 	<form id="formLista" method="post" enctype="multipart/form-data">
 
-		<input type="hidden" id="idLista" name="lista.id" value="${lista.idLista}"> 
-		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista.hisIdIni}">
+		<input type="hidden" id="idLista" name="lista.id"
+			value="${lista.idLista}"> <input type="hidden" id="hisIdIni"
+			name="lista.hisIdIni" value="${lista.hisIdIni}">
 
-		<div class="gt-form-row gt-width-66">
+		<div class="form-group">
 			<label>Nome <span>*<span></label> <input type="text"
 				id="nomeLista" name="lista.nomeLista" value="${nomeLista}" size="98"
-				maxlength="255" required />
+				maxlength="255" required class="form-control" />
 		</div>
-		<div class="gt-form-row gt-width-66">
+		<div class="form-group">
 			<label>Abrang&ecirc;ncia</label>
 			<textarea cols="98" rows="5" name="lista.descrAbrangencia"
-				id="descrAbrangencia" maxlength="8192">${descrAbrangencia}</textarea>
+				id="descrAbrangencia" maxlength="8192" class="form-control">${descrAbrangencia}</textarea>
 		</div>
-		<div class="gt-form-row gt-width-66">
+		<div class="form-group">
 			<label>Justificativa</label>
 			<textarea cols="98" rows="5" name="lista.descrJustificativa"
-				id="descrJustificativa" maxlength="8192">${descrJustificativa}</textarea>
+				id="descrJustificativa" maxlength="8192" class="form-control">${descrJustificativa}</textarea>
 		</div>
-		<div class="gt-form-row gt-width-66">
+
+		<div class="form-group">
 			<label>Prioriza&ccedil;&atilde;o</label>
 			<textarea cols="98" rows="5" name="lista.descrPriorizacao"
-				id="descrPriorizacao" maxlength="8192">${descrPriorizacao}</textarea>
+				id="descrPriorizacao" maxlength="8192" class="form-control">${descrPriorizacao}</textarea>
 		</div>
 
-		<div class="container">
-			<div class="title-table">
-				<h3 style="padding-top: 25px;">Permiss&otilde;es</h3>
+		<div class="card mb-4">
+			<div class="card-header">
+				<h3>Permiss&otilde;es</h3>
+			</div>
+			<div class="card-body">
+				<div class="gt-form-row dataTables_length">
+					<label> <siga:checkbox name="mostrarAssocDesativada"
+							value="${mostrarAssocDesativada}"></siga:checkbox> <b>Incluir
+							Inativas</b>
+					</label>
+				</div>
+				<div class="table-responsive">
+					<table id="permissoes_table" border="0" class="table">
+						<thead>
+							<tr>
+								<th>ID Org&atilde;o</th>
+								<th>Org&atilde;o</th>
+								<th>ID Local</th>
+								<th>Local</th>
+								<th>ID Lota&ccedil;&atilde;o</th>
+								<th>Nome Lota&ccedil;&atilde;o</th>
+								<th>Lota&ccedil;&atilde;o</th>
+								<th>ID Pessoa</th>
+								<th>Nome Pessoa</th>
+								<th>Pessoa</th>
+								<th>ID Cargo</th>
+								<th>Cargo</th>
+								<th>Cargo</th>
+								<th>ID Fun&ccedil;&atilde;o</th>
+								<th>Fun&ccedil;&atilde;o</th>
+								<th>Fun&ccedil;&atilde;o</th>
+								<th>Tipo Permiss&atilde;o JSON</th>
+								<th>ID Tipo Permissao</th>
+								<th>Tipo Permiss&atilde;o</th>
+								<th>Tipo Permiss&atilde;o</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach items="${lista.getPermissoes()}" var="perm">
+								<tr style="cursor: pointer !important;">
+									<td>${perm.orgaoUsuario.id}</td>
+									<td>${perm.orgaoUsuario.acronimoOrgaoUsu}</td>
+									<td>${perm.complexo.idComplexo}</td>
+									<td>${perm.complexo.nomeComplexo}</td>
+									<td>${perm.lotacao.lotacaoAtual.id}</td>
+									<td>${perm.lotacao.lotacaoAtual.nomeLotacao}</td>
+									<td>${perm.lotacao.lotacaoAtual.siglaLotacao}</td>
+									<td>${perm.dpPessoa.id}</td>
+									<td>${perm.dpPessoa.nomePessoa}</td>
+									<td>${perm.dpPessoa.nomeAbreviado}</td>
+									<td>${perm.cargo.id}</td>
+									<td>${perm.cargo.sigla}</td>
+									<td>${perm.cargo.descricao}</td>
+									<td>${perm.funcaoConfianca.id}</td>
+									<td>${perm.funcaoConfianca.sigla}</td>
+									<td>${perm.funcaoConfianca.descricao}</td>
+									<td>${perm.getSrConfiguracaoTipoPermissaoJson()}</td>
+									<td>${perm.id}</td>
+									<td></td>
+									<td>${perm.descrTipoPermissao}</td>
+									<td class="gt-celula-nowrap"
+										style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+										<a class="once desassociarPermissao"
+										onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})"
+										title="Remover permiss&atilde;o"> <input
+											class="idPermissao" type="hidden" value="${perm.id}" /> <img
+											id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png"
+											style="margin-right: 5px;">
+									</a>
+									</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+
+				<div>
+					<a href="javascript: controleAcessoModalAbrir(false)"
+						class="btn btn-primary" style="color: #fff">Incluir</a>
+				</div>
+
 			</div>
 		</div>
 
-		<div class="gt-content-box gt-for-table dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label> <siga:checkbox name="mostrarAssocDesativada"
-						value="${mostrarAssocDesativada}"></siga:checkbox> <b>Incluir
-						Inativas</b>
-				</label>
-			</div>
-			<table id="permissoes_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th>ID Org&atilde;o</th>
-						<th>Org&atilde;o</th>
-						<th>ID Local</th>
-						<th>Local</th>
-						<th>ID Lota&ccedil;&atilde;o</th>
-						<th>Nome Lota&ccedil;&atilde;o</th>
-						<th>Lota&ccedil;&atilde;o</th>
-						<th>ID Pessoa</th>
-						<th>Nome Pessoa</th>
-						<th>Pessoa</th>
-						<th>ID Cargo</th>
-						<th>Cargo</th>
-						<th>Cargo</th>
-						<th>ID Fun&ccedil;&atilde;o</th>
-						<th>Fun&ccedil;&atilde;o</th>
-						<th>Fun&ccedil;&atilde;o</th>
-						<th>Tipo Permiss&atilde;o JSON</th>
-						<th>ID Tipo Permissao</th>
-						<th>Tipo Permiss&atilde;o</th>
-						<th>Tipo Permiss&atilde;o</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach items="${lista.getPermissoes()}" var="perm">
-						<tr style="cursor: pointer !important;">
-							<td>${perm.orgaoUsuario.id}</td>
-							<td>${perm.orgaoUsuario.acronimoOrgaoUsu}</td>
-							<td>${perm.complexo.idComplexo}</td>
-							<td>${perm.complexo.nomeComplexo}</td>
-							<td>${perm.lotacao.lotacaoAtual.id}</td>
-							<td>${perm.lotacao.lotacaoAtual.nomeLotacao}</td>
-							<td>${perm.lotacao.lotacaoAtual.siglaLotacao}</td>
-							<td>${perm.dpPessoa.id}</td>
-							<td>${perm.dpPessoa.nomePessoa}</td>
-							<td>${perm.dpPessoa.nomeAbreviado}</td>
-							<td>${perm.cargo.id}</td>
-							<td>${perm.cargo.sigla}</td>
-							<td>${perm.cargo.descricao}</td>
-							<td>${perm.funcaoConfianca.id}</td>
-							<td>${perm.funcaoConfianca.sigla}</td>
-							<td>${perm.funcaoConfianca.descricao}</td>
-							<td>${perm.getSrConfiguracaoTipoPermissaoJson()}</td>
-							<td>${perm.id}</td>
-							<td></td>
-							<td>${perm.descrTipoPermissao}</td>
-							<td class="gt-celula-nowrap"
-								style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-								<a class="once desassociarPermissao"
-								onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})"
-								title="Remover permiss&atilde;o"> <input class="idPermissao"
-									type="hidden" value="${perm.id}" /> <img id="imgCancelar"
-									src="/siga/css/famfamfam/icons/delete.png"
-									style="margin-right: 5px;">
-							</a>
-							</td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		</div>
-		<div class="gt-table-buttons">
-			<a href="javascript: controleAcessoModalAbrir(false)"
-				class="gt-btn-small gt-btn-left">Incluir</a>
-		</div>
+		<input type="submit" value="Gravar" class="btn btn-primary"
+			onclick="listaService.gravar()" /> <input type="button"
+			value="Cancelar" class="btn btn-secondary" style="color: #fff"
+			onclick="listaService.cancelarGravacao()" /> <input type="button"
+			value="Aplicar" class="btn btn-primary"
+			onclick="listaService.aplicar()" />
 
-		<%-- <div class="container">
-			<div class="title-table">
-				<h3 style="padding-top: 25px;">Configura&ccedil;&otilde;es de
-					inclus&atilde;o autom&aacute;tica</h3>
-			</div>
-		</div>
-		<div class="gt-content-box gt-for-table dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label> <input
-					id="incluirConfiguracaoInclusaoAutomaticaInativas" type="checkbox"
-					onchange="configuracaoInclusaoAutomaticaService.incluirInativas()" /><b>&nbspIncluir
-						Inativas</b>
-				</label>
-			</div>
-			<table id="configuracao_inclusao_automatica_table"
-				class="gt-table display">
-				<thead>
-					<tr>
-						<th style="color: #333" class="hide-sort-arrow">
-							<button class="bt-expandir" type="button">
-								<span id="iconeBotaoExpandirTodos">+</span>
-							</button>
-						</th>
-						<th>Solicitante</th>
-						<th>Org&atilde;o</th>
-						<th>Item</th>
-						<th>A&ccedil;&atilde;o</th>
-						<th>Lota&ccedil;&atilde;o atendente</th>
-						<th>Prioridade</th>
-						<th>Prioridade na lista</th>
-						<th>A&ccedil;&otilde;es</th>
-					</tr>
-				</thead>
-
-				<tbody>
-				</tbody>
-			</table>
-		</div>
-		<div class="gt-table-buttons">
-			<a
-				href="javascript: configuracaoInclusaoAutomaticaService.cadastrar('Cadastro de configura\u00e7\u00e3o de inclus\u00e3o autom\u00e1tica')"
-				class="gt-btn-small gt-Sbtn-left">Incluir</a>
-		</div>
-		--%>
-		<div class="gt-form-row">
-			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left"
-				onclick="listaService.gravar()" /> <a
-				class="gt-btn-medium gt-btn-left"
-				onclick="listaService.cancelarGravacao()">Cancelar</a> <input
-				type="button" value="Aplicar" class="gt-btn-medium gt-btn-left"
-				onclick="listaService.aplicar()" />
-		</div>
-		<div class="gt-form-row gt-width-100">
+		<!-- <div class="gt-form-row gt-width-100">
 			<p class="gt-error" style="display: none;" id="erroAoSalvar">N&atilde;o
 				foi poss&iacute;vel salvar o registro.</p>
-		</div>
+		</div> -->
+
 	</form>
+
 </div>
 
-<sigasr:modal nome="controleAcesso" titulo="Cadastrar PermissÃ£o">
+<sigasr:modal nome="controleAcesso" titulo="Cadastrar PermissÃ£o"
+	largura="80%">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -189,7 +152,7 @@
 						listValue="acronimoOrgaoUsu" theme="simple"
 						value="${orgaoUsuario.idOrgaoUsu}" />
 				</div>
-				<siga:error name="orgaoUsuario"/>
+				<siga:error name="orgaoUsuario" />
 				<div class="gt-form-row div-modal-table">
 					<label>Local</label>
 					<siga:select name="complexo" list="locais" listKey="idComplexo"
@@ -199,40 +162,48 @@
 				</div>
 				<div class="gt-form-row div-modal-table">
 					<label>Lota&ccedil;&atilde;o</label>
-					<siga:selecao propriedade="lotacao" tema="simple"
-						modulo="siga"  inputName="lotacaoAtual" />
+					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga"
+						inputName="lotacaoAtual" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
-					<label>Pessoa</label>
-					<input type="hidden" name="Pessoa" id="Pessoa" class="selecao">
-						<siga:selecao propriedade="dpPessoa" tema="simple" modulo="siga" urlAcao="buscar" 
-						inputName="dpPessoaAtual"/>
+					<label>Pessoa</label> <input type="hidden" name="Pessoa"
+						id="Pessoa" class="selecao">
+					<siga:selecao propriedade="dpPessoa" tema="simple" modulo="siga"
+						urlAcao="buscar" inputName="dpPessoaAtual" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Cargo</label>
-					<siga:selecao propriedade="cargo" tema="simple" modulo="siga" inputName="cargoAtual" />
+					<siga:selecao propriedade="cargo" tema="simple" modulo="siga"
+						inputName="cargoAtual" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
-					<label>Fun&ccedil;&atilde;o</label>					
+					<label>Fun&ccedil;&atilde;o</label>
 					<siga:selecao propriedade="funcaoConfianca" tema="simple"
- 						modulo="siga" inputName="funcaoConfiancaAtual"/> 
+						modulo="siga" inputName="funcaoConfiancaAtual" />
 				</div>
-
-				<div class="gt-form-row div-modal-table">
-					<label>Tipo Permiss&atilde;o</label>
-					<ul id="ulPermissoes" style="color: #365b6d" name="ulPermissoes"></ul>
-					<input type="button" value="Incluir" id="botaoIncluir"
-						class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+				<div class="card mb-4">
+					<div class="card-header">
+						<h3>Tipo Permiss&atilde;o</h3>
+					</div>
+					<div class="card-body">
+						<div class="gt-form-row div-modal-table">
+							<ul id="ulPermissoes" style="color: #365b6d" name="ulPermissoes"></ul>
+							<div>
+								<input type="button" value="Incluir" id="botaoIncluir"
+									class="btn btn-primary" style="color: #fff" />
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="gt-form-row">
-				<a href="javascript: inserirAcesso()"
-					class="gt-btn-medium gt-btn-left">Gravar</a> <a
+				<a href="javascript: inserirAcesso()" class="btn btn-primary"
+					style="color: #fff">Gravar</a> <a
 					href="javascript: controleAcessoModalFechar()"
-					class="gt-btn-medium gt-btn-left">Cancelar</a>
+					class="btn btn-secondary" style="color: #fff">Cancelar</a>
 				<c:if test="${idConfiguracao}">
 					<input type="button" value="Desativar"
 						class="gt-btn-medium gt-btn-left"
@@ -240,31 +211,31 @@
 				</c:if>
 			</div>
 
-			<div id="dialog">
-				<div class="gt-content">
-					<div class="gt-form gt-content-box">
-						<div class="gt-form-row">
+			<sigasr:modal nome="tipoPermissaoModal" titulo="Tipo Permissão">
+				<div id="dialog">
+					<div class="">
+						<div id="tiposPermissaoContainer"
+							data-json='${tiposPermissaoJson}'></div>
+						<div class="mb-2">
+							<label><h3>Tipo de Permiss&atilde;o</h3></label>
 
-							<div id="tiposPermissaoContainer"
-								data-json='${tiposPermissaoJson}'></div>
+							<siga:select name="itemTipoPermissao" list="tiposPermissao"
+								listKey="idTipoPermissaoLista" id="itemTipoPermissao"
+								headerKey="0" listValue="idTipoPermissaoLista" theme="simple" />
+						</div>
 
-							<div class="gt-form-row gt-width-66">
-								<label>Tipo de Permiss&atilde;o</label>
-
-								<siga:select name="itemTipoPermissao" list="tiposPermissao"
-									listKey="idTipoPermissaoLista" id="itemTipoPermissao"
-									headerKey="0" listValue="idTipoPermissaoLista" theme="simple" />
-							</div>
-							<div class="gt-form-row">
-								<input type="button" id="modalOk" value="Ok"
-									class="gt-btn-medium gt-btn-left" /> <input type="button"
-									value="Cancelar" id="modalCancel"
-									class="gt-btn-medium gt-btn-left" />
-							</div>
+						<div class="mb-2 mt-3">
+							<input type="button" id="modalOk" value="Ok"
+								class="btn btn-primary btn-block" style="color: #fff" />
+						</div>
+						<div>
+							<input type="button" value="Cancelar" id="modalCancel"
+								class="btn btn-secondary btn-block" style="color: #fff" />
 						</div>
 					</div>
 				</div>
-			</div>
+			</sigasr:modal>
+
 			<div class="gt-content-box" id="modal-permissao-error"
 				style="display: none;">
 				<table width="100%">
@@ -285,68 +256,6 @@
 	</form>
 </sigasr:modal>
 
-<%-- 
-<sigasr:modal nome="configuracao_inclusao_automatica"
-	titulo="Configura&ccedil;&atilde;o para inclus&atilde;o autom&aacute;tica">
-	<form id="formConfiguracaoInclusaoAutomatica">
-		<div class="gt-form gt-content-box"
-			style="width: 800px !important; max-width: 800px !important;">
-			<input id="configuracao" type="hidden" name="configuracao" value="0"/>
-			<input id="configuracao.hisIdIni" type="hidden" name="configuracao.hisIdIni"/>
-
-			<div id="divSolicitante" class="gt-form-row gt-width-100">
-				<label>Solicitante</label>
-				<siga:pessoaLotaFuncCargoSelecao nomeSelLotacao="lotacao"
-					nomeSelPessoa="dpPessoa" nomeSelFuncao="funcaoConfianca"
-					nomeSelCargo="cargo" nomeSelGrupo="cpGrupo"
-					valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
-					valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
-					valueFuncao="${funcaoConfianca }" 
-					valueCargo="${cargo}"
-					valueGrupo="${cpGrupo}" disabled="disabled">
-				</siga:pessoaLotaFuncCargoSelecao>
-			</div>
-
-			<div class="gt-form-row gt-width-100">
-				<label>&Oacute;rg&atilde;o</label>
-				<siga:select name="configuracao.orgaoUsuario" list="orgaos" listKey="idOrgaoUsu"
-					id="idOrgaoUsu" headerValue="" headerKey="0"
-					listValue="nmOrgaoUsu" theme="simple" value="${orgaoUsuario.idOrgaoUsu}"
-					style="width: 100%" />
-			</div>
-
-			<div class="gt-form-row gt-width-100">
-				<label>Prioridade</label>
-			    <select name="configuracao.prioridade" id="prioridade" class="select-siga">
-					<option value="0"></option>
-					<c:forEach items="${prioridades}" var="item">
-					   <option value="${item}">${item.descPrioridade}</option>
-					</c:forEach>
-			    </select>
-			</div>
-			
-			<div class="gt-form-row gt-width-100">
-				<label>Prioridade na lista</label>
-			    <select name="configuracao.prioridadeNaLista" id="prioridade" class="select-siga">
-					<option value="0"></option>
-					<c:forEach items="${prioridades}" var="item">
-					   <option value="${item}">${item.descPrioridade}</option>
-					</c:forEach>
-			    </select>
-			</div>
-
-			<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></sigasr:configuracaoItemAcao>
-
-			<div class="gt-form-row">
-				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()"
-					class="gt-btn-medium gt-btn-left">Gravar</a> 
-				<a href="javascript: configuracaoInclusaoAutomaticaService.cancelarGravacao()"
-					class="gt-btn-medium gt-btn-left">Cancelar</a>
-			</div>
-		</div>
-	</form>
-</sigasr:modal>
---%>
 
 <script language="javascript"> 
 	function ConfiguracaoInclusaoAutomaticaDecorator(configuracaoInclusaoAutomatica, service) {
@@ -1069,7 +978,7 @@
 	                jDialog.data('tipoPermissao','');
 	        },
 	        open: function(){
-	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss&atilde;o');
+	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permissão');
 	                jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
 	        }
 	    });

@@ -195,6 +195,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeJuntar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMovimentar;
 import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceberDocumentoSemAssinatura;
@@ -1884,7 +1885,7 @@ public class ExBL extends CpBL {
 				// Receber o móbil pai caso ele tenha sido tramitado para o cadastrante ou sua lotação
 				if (Ex.getInstance().getComp().pode(ExPodeReceber.class, cadastrante, lotaCadastrante, doc.getExMobilPai())) 
 					receber(cadastrante, cadastrante, lotaCadastrante, doc.getExMobilPai(), null);
-				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
+				juntarAoDocumentoPai(doc.getCadastrante(), doc.getLotaCadastrante(), doc, dtMov, cadastrante, cadastrante, mov);
 			}
 
 			if (doc.getExMobilAutuado() != null) {
@@ -6600,8 +6601,16 @@ public class ExBL extends CpBL {
 				atualizarVariaveisDenormalizadas(mob.doc(), incluirAcesso, excluirAcesso);
 			if (mob.isGeral())
 				atualizarMarcas(mob.doc());
-			else
+			else {
 				atualizarMarcas(mob);
+				if(mob.isVolume()) {
+					for(ExMobil m : mob.getDoc().getExMobilSet()) {
+						if(!m.isGeralDeProcesso() && !mob.equals(m)) {
+							atualizarMarcas(m);
+						}			 
+					}	
+				}
+			}
 		}
 		set.add(mob.doc().getCodigo());
 	}
@@ -8850,14 +8859,25 @@ public class ExBL extends CpBL {
 
 	public void atualizaDataPrimeiraAssinatura(ExDocumento doc, DpPessoa cadastrante, DpPessoa titular) throws Exception {
 
-		if (doc.getDtPrimeiraAssinatura() == null || doc.getAssinaturasDigitais().isEmpty()) {
-			doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt());  
+		Date dataPrimeiraAssinatura = doc.getDtPrimeiraAssinatura();
+		if (dataPrimeiraAssinatura == null || doc. getAssinaturasDigitais().isEmpty()) {
 			
-			if (Prop.isGovSP() && doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao())) {
-				gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			Date dataAtualSemTempo = sdf.parse(sdf.format(CpDao.getInstance().dt()));
 
+			if (!dataAtualSemTempo.equals(dataPrimeiraAssinatura) || !dataAtualSemTempo.equals(doc.getDtDoc())) {
+				doc.setDtPrimeiraAssinatura(dataAtualSemTempo);  
+				
+				boolean podePorConfiguracao = new ExPodePorConfiguracao(titular, titular != null ? titular.getLotacao() : null)
+				        .withExMod(doc.getExModelo())
+				        .withExFormaDoc(doc.getExFormaDocumento())
+				        .withIdTpConf(ExTipoDeConfiguracao.ATUALIZAR_DATA_AO_ASSINAR).eval();
+				
+				if ((Prop.isGovSP() || podePorConfiguracao) && doc.getDtDoc() != null && !DateUtils.isToday(doc.getDtDoc())) {
+				    doc.setDtDoc(dataAtualSemTempo);
+					gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+				}
 			}
-
 		}
 	}
 

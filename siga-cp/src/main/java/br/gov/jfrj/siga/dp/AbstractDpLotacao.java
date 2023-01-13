@@ -195,7 +195,6 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private CpLocalidade localidade;
 	
 	@Column(name = "IS_EXTERNA_LOTACAO")
-    @Desconsiderar
 	private Integer isExternaLotacao;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -209,7 +208,6 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private CpIdentidade hisIdcFim;
 	
 	@Column(name = "IS_SUSPENSA")
-    @Desconsiderar
 	private Integer isSuspensa;
 
 	public Integer getIsExternaLotacao() {

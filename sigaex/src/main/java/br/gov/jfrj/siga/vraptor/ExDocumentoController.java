@@ -467,6 +467,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getSigla());
 	}
 
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/recarregar")
 	public ExDocumentoDTO recarregar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars)
@@ -952,6 +953,7 @@ public class ExDocumentoController extends ExController {
 
 	@Transacional
 	@Post("app/expediente/doc/excluirpreench")
+	@RequestParamsPermissiveCheck
 	public void aExcluirPreenchimento(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IllegalAccessException,
 			InvocationTargetException, IOException {

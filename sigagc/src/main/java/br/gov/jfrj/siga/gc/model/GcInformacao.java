@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.gc.model;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -38,6 +39,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -611,7 +613,7 @@ public class GcInformacao extends Objeto {
         return sb.toString();
 	}
 
-	public String getConteudoHTML() throws Exception {
+	public String getConteudoHTML() {
 		if (this.arq == null || this.arq.getConteudo() == null)
 			return null;
 
@@ -894,7 +896,29 @@ public class GcInformacao extends Objeto {
 		}
 		arq.setClassificacao(s.toString());
 	}
-
+	
+	/**
+	 * Retorna um descrição da informação com no máximo 40 caracteres.
+	 */
+	public java.lang.String getDescrCurta() {
+		String html = getConteudoHTML();
+		if (html != null) {
+			String text;
+			try {
+				text = HtmlToPlainText.getText(html);
+				if (text != null) {
+					if (text.length() > 40)
+						return text.substring(0, 39) + "...";
+					else
+						return text;
+				}
+			} catch (IOException e) {
+				return "[descrição inválida]";
+			}
+		}
+		return "[sem descrição]";
+	}
+	
 	public String getDtYYYYMMDD() {
 		if (getElaboracaoFim() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");

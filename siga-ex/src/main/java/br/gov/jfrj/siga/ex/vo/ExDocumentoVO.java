@@ -60,6 +60,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivo;
 import br.gov.jfrj.siga.ex.logic.ExPodeAnexarArquivoAuxiliar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
@@ -109,6 +110,7 @@ public class ExDocumentoVO extends ExVO {
 	transient Map<ExMobil, Set<ExMarca>> marcasDeSistemaPorMobil = new LinkedHashMap<ExMobil, Set<ExMarca>>();
 	transient Set<ExMarca> marcasDoMobil = new TreeSet<ExMarca>(ExMarca.MARCADOR_DO_MOBIL_COMPARATOR);
 	transient List<Object> listaDeAcessos;
+	transient boolean serializavel;
 	
 	List<ExMobilVO> mobs = new ArrayList<ExMobilVO>();
 	transient List<ExDocumentoVO> documentosPublicados = new ArrayList<ExDocumentoVO>();
@@ -176,6 +178,7 @@ public class ExDocumentoVO extends ExVO {
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo, boolean serializavel, boolean exibe) {
+		this.serializavel = serializavel;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 		this.doc = doc;
@@ -781,8 +784,8 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(AcaoVO.builder().nome("A_ssinar").descr("Assina o documento utilizando certificado digital ou usuário e senha.").icone("script_key").nameSpace("/app/expediente/mov").acao("assinar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAssinar(mob, titular, lotaTitular)).classe("once").build());
 
-		vo.addAcao(AcaoVO.builder().nome("A_utenticar").descr("Autentica o documento utilizando certificado digital ou usuário e senha.").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_documento")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAutenticarDocumento(doc, titular, lotaTitular)).classe("once").build());
+        vo.addAcao(AcaoVO.builder().nome("A_utenticar").descr("Autentica o documento utilizando certificado digital ou usuário e senha.").icone("script_key").nameSpace("/app/expediente/mov").acao("autenticar_documento")
+				.params("sigla", mob.getCodigoCompacto()).exp(serializavel ? new ExPodeAutenticarComSenha(doc, titular, lotaTitular) : new ExPodeAutenticarDocumento(doc, titular, lotaTitular)).classe("once").build());
 
 		vo.addAcao(AcaoVO.builder().nome("Solicitar Assinatura").descr("Confirma que o documento já está revisado e solicita que o subscritor produza a assinatura.").icone("page_go").nameSpace("/app/expediente/mov").acao("solicitar_assinatura")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSolicitarAssinatura(doc, titular, lotaTitular)).msgConfirmacao("Ao clicar em prosseguir, você estará sinalizando que revisou este documento e que ele deve ser incluído na lista para ser assinado em lote. Prosseguir?").classe("once").build());

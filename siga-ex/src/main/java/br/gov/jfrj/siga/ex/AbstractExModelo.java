@@ -126,7 +126,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	private java.lang.String marcaDagua;
 
 	@Column(name = "EXTENSOES_ARQUIVO", length = 200)
-	@Basic(fetch = FetchType.LAZY)
+    @Basic(fetch = FetchType.LAZY)
 	private java.lang.String extensoesArquivo;
 
 	// private Set classificacaoSet;

@@ -165,8 +165,10 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "  and  ((pes.dataInicioPessoa < :dt and pes.dataFimPessoa >= :dt )"
 				+ "  or (pes.dataInicioPessoa < :dt and pes.dataFimPessoa = null ))"),
-		@NamedQuery(name = "consultarPessoasComFuncaoConfianca", query = "from DpPessoa p where p.funcaoConfianca.idFuncao = :idFuncaoConfianca and p.dataFimPessoa = null"),
-		@NamedQuery(name = "consultarPessoasComCargo", query = "from DpPessoa p where p.cargo.id = :idCargo and p.dataFimPessoa = null"),
+        @NamedQuery(name = "consultarPessoasComFuncaoConfianca", query = "from DpPessoa p where p.funcaoConfianca.idFuncaoIni = :idFuncaoConfianca and p.dataFimPessoa = null"),
+        @NamedQuery(name = "consultarPessoasPorIdInicialFuncaoConfianca", query = "from DpPessoa p where p.funcaoConfianca.idFuncao = :idFuncaoConfiancaIni and p.dataFimPessoa = null"),
+        @NamedQuery(name = "consultarPessoasComCargo", query = "from DpPessoa p where p.cargo.id = :idCargo and p.dataFimPessoa = null"),
+        @NamedQuery(name = "consultarPessoasPorIdInicialDeCargo", query = "from DpPessoa p where p.cargo.idCargoIni = :idCargoIni and p.dataFimPessoa = null"),
 		@NamedQuery(name = "consultarDadosBasicos", query = "select u,  pes from CpIdentidade as u join u.dpPessoa.pessoaInicial pes"
 				+ "  where u.nmLoginIdentidade = :nmUsuario"
 				+ "   and pes.sesbPessoa = :sesbPessoa"

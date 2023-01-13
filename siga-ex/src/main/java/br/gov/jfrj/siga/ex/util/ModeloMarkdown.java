@@ -3,11 +3,13 @@ package br.gov.jfrj.siga.ex.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -22,11 +24,23 @@ public class ModeloMarkdown {
     public static String markdownToFreemarker(String input) {
 
         String mdWithCommandsInFreemarker = processCommands(input, (cmd) -> {
-            switch (cmd.get("command").getAsString()) {
-                case "var":
-                    return "[@campo var='" + cmd.get("name").getAsString() + "' /]";
+            String comando = cmd.get("comando").getAsString();
+            if (comando == null)
+                return "COMANDO_DESCONHECIDO";
+            StringBuilder sb = new StringBuilder();
+            sb.append("[@");
+            sb.append(comando);
+            for (Entry<String, JsonElement> entry : cmd.entrySet()) {
+                if (entry.getKey().equals("comando"))
+                    continue;
+                sb.append(" ");
+                sb.append(entry.getKey());
+                sb.append("='");
+                sb.append(entry.getValue().getAsString());
+                sb.append("'");
             }
-            return "COMANDO_DESCONHECIDO";
+            sb.append(" /]");
+            return sb.toString();
         });
 
         List<String> lftl = new ArrayList<>();
@@ -86,26 +100,27 @@ public class ModeloMarkdown {
         if (m.find()) {
             MatchResult matches = m.toMatchResult();
             if (matches.group(1) != null) {
-                String ss = "{command:\"" + matches.group(1) + "\", " +
+                String ss = "{comando:\"" + matches.group(1) + "\", " +
                         matches.group(2) + '}';
-                return (JsonObject) gson.toJsonTree(ss);
+                ss = ss.replaceAll("([{, ])([a-z]+):\"", "$1\"$2\":\"");
+                return gson.fromJson(ss, JsonObject.class);
             }
 
             // Variables
             if (matches.group(3) != null) {
                 JsonObject obj = new JsonObject();
-                obj.addProperty("command", "var");
-                obj.addProperty("name", matches.group(3));
+                obj.addProperty("comando", "campo");
+                obj.addProperty("var", matches.group(3));
                 return obj;
             }
 
         } else {
             if (command.charAt(1) == '"') {
-                return (JsonObject) gson.toJsonTree(command);
+                return gson.fromJson(command, JsonObject.class);
             } else {
                 JsonObject obj = new JsonObject();
-                obj.addProperty("command", "write");
-                obj.addProperty("value", command.substring(2, command.length() - 2));
+                obj.addProperty("comando", "escrever");
+                obj.addProperty("valor", command.substring(2, command.length() - 2));
                 return obj;
             }
         }

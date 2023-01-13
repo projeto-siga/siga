@@ -49,4 +49,16 @@ public class ModeloMarkdownTest extends TestCase {
                 + "[/@documento]", s);
     }
 
+    public void testGeraModeloComDefinicaoDeMacro() throws Exception {
+        String s = ModeloMarkdown.markdownToFreemarker("Olá {campo var:\"nome\", opcoes:\"Fulano;Beltrano\"}");
+        assertEquals(""
+                + "[@entrevista]\n"
+                + "  [@campo var='nome' opcoes='Fulano;Beltrano' /]\n"
+                + "[/@entrevista]\n"
+                + "\n"
+                + "[@documento]\n"
+                + "<p>Olá [@valor var='nome' opcoes='Fulano;Beltrano' /]</p>\n"
+                + "[/@documento]", s);
+    }
+
 }

@@ -14,8 +14,23 @@ function sbmt(offset) {
 	frm.elements["p.offset"].value = offset;
 	frm.submit();
 }
+
+function submitPost(url) {
+	var frm = document.getElementById('frm');
+	frm.method = "POST";
+	frm.action = url;
+	frm.submit();
+}
+
+function inativar(url, orgao, qtdeUsuario, qtdeLotacao) {
+	if(qtdeUsuario == "0" && qtdeLotacao == "0") {
+		submitPost(url);
+	} else {
+		sigaModal.enviarHTMLEAbrir('confirmacaoModal', 'Órgão: ' +orgao+ '<br>Possui <fmt:message key="usuario.lotacao"/> e/ou Usuário ativo. A ação solicitada não será realizada');
+	}
+}
 </script>
-<form name="frm" action="listar" class="form" method="GET">
+<form name="frm" id="frm" action="listar" class="form" method="GET">
 	<input type="hidden" name="paramoffset" value="0" />
 	<input type="hidden" name="p.offset" value="0" />
 	<div class="container-fluid">
@@ -47,8 +62,11 @@ function sbmt(offset) {
 							<th class="text-left w-10">ID</th>
 							<th class="text-left w-60">Nome</th>
 							<th class="text-center w-10">Sigla</th>
-							<th class="text-center w-10">Externo</th>
-							<th class="text-left w-10">Data Contrato</th>
+							<th class="text-center w-10">Situação Órgão</th>
+							<th class="text-center w-10">Qtd. Usuários Ativos</th>
+							<th class="text-center w-10">Qtd. <fmt:message key="usuario.lotacoes"/> Ativas</th>
+							<!-- <th class="text-center w-10">Externo</th>
+							<th class="text-left w-10">Data Contrato</th> -->
 							<th colspan="2" class="text-left w-10">Op&ccedil;&otilde;es</th>					
 						</tr>
 					</thead>
@@ -61,17 +79,51 @@ function sbmt(offset) {
 								<td class="text-left w-10">${orgaoUsuario[0].id}</td>
 								<td class="text-left w-60">${orgaoUsuario[0].descricao}</td>
 								<td class="text-center w-10">${orgaoUsuario[0].sigla}</td>
-								<td class="text-center w-10">${orgaoUsuario[0].isExternoOrgaoUsu  == 1 ? 'SIM' : 'NÃO'}</td>
-								<td class="text-left w-10"><fmt:formatDate value="${orgaoUsuario[1]}" pattern="dd/MM/yyyy" /></td>
+								<!-- <td class="text-center w-10">${orgaoUsuario[0].isExternoOrgaoUsu  == 1 ? 'SIM' : 'NÃO'}</td>
+								<td class="text-left w-10"><fmt:formatDate value="${orgaoUsuario[1]}" pattern="dd/MM/yyyy" /></td> -->
+								<td class="text-center w-10">${empty orgaoUsuario[0].hisDtFim ? "Ativo" : "Inativo"}</td>
+								<td class="text-center w-10">${orgaoUsuario[2]}</td>
+								<td class="text-center w-10">${orgaoUsuario[3]}</td>
 								<td class="text-left w-10">
 									<c:url var="url" value="/app/orgaoUsuario/editar">
 										<c:param name="id" value="${orgaoUsuario[0].id}"></c:param>
 									</c:url>
-									<c:if test="${empty orgaoUsuarioSiglaLogado || orgaoUsuarioSiglaLogado eq orgaoUsuario[0].sigla}">
+									<c:url var="urlAtivarInativar" value="/app/orgaoUsuario/ativarInativar">
+										<c:param name="id" value="${orgaoUsuario[0].id}"></c:param>
+									</c:url>
+									<c:url var="urlHistorico" value="/app/orgaoUsuario/historico">
+										<c:param name="id" value="${orgaoUsuario[0].id}"></c:param>
+									</c:url>
+									<!--<c:if test="${empty orgaoUsuarioSiglaLogado || orgaoUsuarioSiglaLogado eq orgaoUsuario[0].sigla}">
 									<input type="button" value="Alterar"
 										onclick="javascript:window.location.href='${url}'"
 										class="btn btn-primary">
-									</c:if>					
+									</c:if>-->
+									
+									<div class="btn-group">								  
+								  <c:choose>
+									<c:when test="${empty orgaoUsuario[0].hisDtFim}">
+										<a href='javascript:inativar("${urlAtivarInativar}", "${orgaoUsuario[0].descricao}", "${orgaoUsuario[2]}", "${orgaoUsuario[3]}")' class="btn btn-primary" role="button" 
+											aria-pressed="true" style="min-width: 80px;">Inativar</a>
+										<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										    <span class="sr-only"></span>
+									    </button>
+									</c:when>
+									<c:otherwise>
+										<a href="javascript:submitPost('${urlAtivarInativar}')" class="btn btn-danger" role="button" aria-pressed="true" style="min-width: 80px;">Ativar</a>
+										<button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										    <span class="sr-only"></span>
+									    </button>
+									</c:otherwise>
+								  </c:choose>	  
+								  <div class="dropdown-menu">						  
+								  	<a href="${url}" class="dropdown-item" role="button" aria-pressed="true">Alterar</a>	
+								  	<div class="dropdown-divider"></div>	
+								  	<a href="${urlHistorico}" class="dropdown-item" role="button" aria-pressed="true" style="min-width: 80px;">Histórico</a>						   
+								  </div>
+								</div>		
+									
+												
 								</td>
 							<%--	<td align="left">									
 	 			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
@@ -96,6 +148,13 @@ function sbmt(offset) {
 				</div>	
 			</c:if>			
 		</div>
-
 </form>
+<siga:siga-modal id="confirmacaoModal" exibirRodape="false" tituloADireita="Informa&ccedil;&atilde;o">
+	<div class="modal-body">
+     		
+   	</div>
+   	<div class="modal-footer">
+     		<button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
+	</div>
+</siga:siga-modal>
 </siga:pagina>

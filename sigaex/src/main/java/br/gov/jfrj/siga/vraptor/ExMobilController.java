@@ -35,14 +35,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
@@ -95,6 +92,7 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
 
+	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 50;
 	/**
 	 * @deprecated CDI eyes only
@@ -1106,4 +1104,26 @@ public class ExMobilController extends
 			
 		}
 	}
+
+    @Get("/app/expediente/doc/listar_docs_para_tramitar_lote")
+    public void listar_docs_para_tramitar_lote(final int offset) {
+
+        Integer tamanho = dao().consultarQuantidadeParaTramitarEmLote(getTitular());
+
+        if (Objects.nonNull(tamanho)) {
+			final List<ExMobil> itens = dao().consultarParaTramitarEmLote(getTitular(), offset,
+					MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+
+            getP().setOffset(offset);
+            setItemPagina(MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+            setItens(itens);
+            setTamanho(tamanho);
+            
+            result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+            result.include("tamanho", this.getTamanho());
+            result.include("currentPageNumber", calculaPaginaAtual(offset));
+
+        }
+    }
 }

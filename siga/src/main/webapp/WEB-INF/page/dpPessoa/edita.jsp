@@ -81,8 +81,14 @@
 			
 		document.getElementById("email").disabled = false
 		
-		sigaModal.abrir('confirmacaoAlteracaoModal');
-		sigaModal.reabilitarBotaoAposFecharModal('confirmacaoAlteracaoModal','btnOk');
+		if (document.getElementById('id').value != null && document.getElementById('id').value !== '') { //Alteração
+			sigaModal.abrir('confirmacaoAlteracaoModal'); 
+			sigaModal.reabilitarBotaoAposFecharModal('confirmacaoAlteracaoModal','btnOk');
+		} else {
+			sigaSpinner.mostrar();
+			document.frm.submit();
+		}
+
 	}
 			
     function confirmarAlteracao() {

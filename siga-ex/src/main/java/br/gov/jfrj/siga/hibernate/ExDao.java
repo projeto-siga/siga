@@ -58,14 +58,12 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -267,16 +265,16 @@ public class ExDao extends CpDao {
 	public void updateMantemRangeNumeroDocumento(Long docNumeracao)
 			throws SQLException {
 		
-		final Query query = em().createNamedQuery("ExDocumentoNumeracao.mantemRangeNumeroDocumento");
-		
-		Calendar c = Calendar.getInstance();
-		
-		query.setParameter("anoEmissao", c.get(Calendar.YEAR));
-		query.setParameter("flAtivo", 1);
-		query.setParameter("increment", 1L);
-		query.setParameter("id", docNumeracao);
-		
-		query.executeUpdate();
+	    final Query query = em().createNamedQuery("ExDocumentoNumeracao.mantemRangeNumeroDocumento");
+
+        Calendar c = Calendar.getInstance();
+
+        query.setParameter("anoEmissao", Long.valueOf(c.get(Calendar.YEAR)));
+        query.setParameter("flAtivo", "1");
+        query.setParameter("increment", 1L);
+        query.setParameter("id", docNumeracao);
+
+        query.executeUpdate();
 		
 	}
 	
@@ -359,7 +357,7 @@ public class ExDao extends CpDao {
 		
 		Calendar c = Calendar.getInstance();
 		
-		query.setParameter("anoEmissao", c.get(Calendar.YEAR));
+		query.setParameter("anoEmissao", Long.valueOf(c.get(Calendar.YEAR)));
 		query.setParameter("flAtivo", "1");
 		query.setParameter("increment", 1L);
 		query.setParameter("id", idSeq);
@@ -913,6 +911,11 @@ public class ExDao extends CpDao {
 			if (flt.getAnoEmissao() == null)
 				flt.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
 
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			orgaoUsuario.setId(flt.getIdOrgaoUsu());
+			orgaoUsuario = CpDao.getInstance().consultarPorId(orgaoUsuario);
+			flt.setIdOrgaoUsu(orgaoUsuario.getIdInicial());
+			
 			if (flt.getNumSequencia() == null) {
 				final Query query = em().createNamedQuery(
 						"consultarPorSiglaDocumento");
@@ -1441,10 +1444,11 @@ public class ExDao extends CpDao {
 		return ((Long) query.getSingleResult()).intValue();
 	}
 
-	public List<ExMobil> consultarParaTransferirEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
-		final Query query = em().createNamedQuery("consultarParaTransferirEmLote")
-				.setParameter("pessoaIni",pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId());
+	public List<ExMobil> consultarParaTramitarEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaTramitarEmLote")
+				.setParameter("pessoaIni", pes.getIdPessoaIni())
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId());
+		
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
 		}
@@ -1455,11 +1459,10 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public Long consultarQuantidadeParaTransferirEmLote(DpPessoa pes) {
-		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
+	public int consultarQuantidadeParaTramitarEmLote(DpPessoa pes) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaTramitarEmLote", Long.class)
 				.setParameter("pessoaIni", pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId())
-				.getSingleResult();
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId()).getSingleResult() ).intValue();
 	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {

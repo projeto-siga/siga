@@ -125,11 +125,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@Column(name = "MARCA_DAGUA", length = 13)
 	private java.lang.String marcaDagua;
 
-    //  ATENCAO: REMOVI ISSO SO PARA PODER TESTAR NA BASE DE PROD DO TRF. NÃO COMITTAR!
-    //
-	// @Column(name = "EXTENSOES_ARQUIVO", length = 200)
-	// @Basic(fetch = FetchType.LAZY)
-	@Transient
+	@Column(name = "EXTENSOES_ARQUIVO", length = 200)
+    @Basic(fetch = FetchType.LAZY)
 	private java.lang.String extensoesArquivo;
 
 	// private Set classificacaoSet;

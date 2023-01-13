@@ -441,11 +441,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private CpArquivo cpArquivo;
 
 	
-//  ATENCAO: REMOVI ISSO SO PARA PODER TESTAR NA BASE DE PROD DO TRF. NÃO COMITTAR!
-//
-//	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
-//	@JoinColumn(name = "ID_ARQ_FMT_LIVRE")
-	@Transient
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ_FMT_LIVRE")
 	private CpArquivo cpArquivoFormatoLivre;
 	
 	@Column(name = "CD_PRINCIPAL")

@@ -8,9 +8,9 @@
 
 <fmt:message key="documento.transferencia.lote" var="titulo"/>
 <siga:pagina titulo="${titulo}">
-    
-    <c:set var="thead_color" value="${thead_color}" scope="session" />
-    
+
+    <c:set var="thead_color" value="${thead_color}" scope="session"/>
+
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -47,16 +47,15 @@
                             <div class="form-group">
                                 <label>&nbsp;</label>
                                 <span id="lotaResponsavel">
-									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"
-                                                  onchange="updateResponsavelSelecionado('formulario_lotaResponsavelSel_sigla')"/>
+									<siga:selecao propriedade="lotaResponsavel" tema="simple"
+                                                  modulo="siga" urlAcao="buscar"/>
 								</span>
                                 <span id="responsavel" style="display: none;">
-                                    <siga:selecao propriedade="responsavel" tema="simple" modulo="siga"
-                                                  onchange="updateResponsavelSelecionado('formulario_responsavelSel_sigla')"/>
+                                    <siga:selecao propriedade="responsavel" tema="simple"
+                                                  modulo="siga" urlAcao="buscar"/>
 								</span>
                                 <span id="cpOrgao" style="display: none;">
-                                    <siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"
-                                                  onchange="updateResponsavelSelecionado('formulario_cpOrgaoSel_sigla')"/>
+                                    <siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga" urlAcao="buscar"/>
 								</span>
                             </div>
                         </div>
@@ -84,7 +83,6 @@
                                     </label>
                                 </div>
                             </div>
-
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group campo-orgao-externo" style="display: none;">
@@ -94,14 +92,14 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-1">
-                            <button type="button" id="btnOk" class="btn btn-primary" onclick="validar();">
-                                <fmt:message key="documento.transferir"/>
-                            </button>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <button type="button" id="btnOk" class="btn btn-primary" onclick="validar();">
+                                    <fmt:message key="documento.transferir"/>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <h5>Destinatário: <span id="responsavelSelecionado"></span></h5>
                     <div id="documentos">
                     </div>
                 </form>
@@ -110,7 +108,8 @@
         <siga:siga-modal id="confirmacaoModal" exibirRodape="false"
                          tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
             <div class="modal-body">
-                Todos os documentos selecionados ser&atilde;o Tramitados. Deseja, confirmar?
+                Os documentos selecionados ser&atilde;o tramitados para <span id="responsavelSelecionado"></span>.
+                Deseja, confirmar?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
@@ -153,7 +152,7 @@
             });
         }
 
-        function responsavelSelecionado() {
+        function getResponsavelSelecionado() {
             let tipoResponsavelSelecionado = document.getElementById('tipoResponsavel');
 
             let elementoResponsavelSelecionado = document.getElementById('lotaResponsavel');
@@ -169,6 +168,12 @@
             return elementoResponsavelSelecionado;
         }
 
+        function getSiglaResponsavelSelecionado() {
+            let elementoResponsavelSelecionado = getResponsavelSelecionado();
+            let idFormularioResponsavelSelSigla = 'formulario_' + elementoResponsavelSelecionado.id + 'Sel_sigla';
+            return document.getElementById(idFormularioResponsavelSelSigla).value;
+        }
+
         function updateTipoResponsavel() {
             document.getElementById('lotaResponsavel').style.display = 'none';
             document.getElementById('responsavel').style.display = 'none';
@@ -177,7 +182,7 @@
 
             limparSelecao();
 
-            let elementoResponsavelSelecionado = responsavelSelecionado();
+            let elementoResponsavelSelecionado = getResponsavelSelecionado();
             elementoResponsavelSelecionado.style.display = '';
 
             if (elementoResponsavelSelecionado.id === 'cpOrgao') {
@@ -185,8 +190,8 @@
             }
         }
 
-        function updateResponsavelSelecionado(id) {
-            document.getElementById('responsavelSelecionado').innerHTML = document.getElementById(id).value;
+        function updateResponsavelSelecionado() {
+            document.getElementById('responsavelSelecionado').innerHTML = getSiglaResponsavelSelecionado();
         }
 
         function limparSelecao() {
@@ -218,9 +223,10 @@
         }
 
         function validar() {
-            let elementoResponsavelSelecionado = responsavelSelecionado();
+            let elementoResponsavelSelecionado = getResponsavelSelecionado();
+            let siglaResponsavelSelecionado = getSiglaResponsavelSelecionado();
 
-            if (document.getElementById('responsavelSelecionado').innerHTML.trim() === '') {
+            if (siglaResponsavelSelecionado.trim() === '') {
                 sigaModal.alerta('Selecione o destinatário da tramitação');
                 return;
             }
@@ -229,10 +235,9 @@
                 let lotacaoIsSupensa;
 
                 if (elementoResponsavelSelecionado.id === 'lotaResponsavel') {
-                    let siglaLotacao = document.getElementById('formulario_lotaResponsavelSel_sigla').value;
-                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa(siglaLotacao, '');
+                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa(siglaResponsavelSelecionado, '');
                 } else if (elementoResponsavelSelecionado.id === 'responsavel') {
-                    let matriculaResponsavel = document.getElementById('formulario_responsavelSel_sigla').value;
+                    let matriculaResponsavel = siglaResponsavelSelecionado;
                     lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa('', matriculaResponsavel);
                 }
 
@@ -244,16 +249,17 @@
                     return;
                 }
             }
-            
+
             let checkedElements = $("input[name='documentosSelecionados']:checked");
             if (checkedElements.length === 0) {
                 sigaModal.alerta('Selecione pelo menos um documento');
             } else {
+                updateResponsavelSelecionado();
                 sigaModal.abrir('confirmacaoModal');
             }
         }
-        
-        function verificarSeLotacaoEstaSuspensa(sigla, matricula){
+
+        function verificarSeLotacaoEstaSuspensa(sigla, matricula) {
             let jqXHR = $.ajax({
                 url: '/siga/app/lotacao/isSuspensa?sigla=' + sigla + '&matricula=' + matricula,
                 type: 'GET',
@@ -280,7 +286,7 @@
         function enviarParaTramitacaoLote() {
 
             let lotacaoDestinoSelSigla = document.getElementById('formulario_lotaResponsavelSel_sigla').value;
-            lotacaoDestinoSelSigla = lotacaoDestinoSelSigla.replaceAll('-', '');
+            lotacaoDestinoSelSigla = lotacaoDestinoSelSigla.replace('-', '');
 
             let usuarioDestinoSelSigla = document.getElementById('formulario_responsavelSel_sigla').value;
             let orgaoDestinoSelSigla = document.getElementById('formulario_cpOrgaoSel_sigla').value;
@@ -302,7 +308,7 @@
                 chk => {
                     process.push(function () {
                         return ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
-                         orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
+                            orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
 
                     });
                     process.push(function () {

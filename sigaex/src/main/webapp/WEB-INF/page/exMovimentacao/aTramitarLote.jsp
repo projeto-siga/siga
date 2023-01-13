@@ -330,6 +330,7 @@
             $.ajax({
                 url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/tramitar',
                 type: 'POST',
+                async: false,
                 data: {
                     sigla: documentoSelSigla,
                     lotacao: lotacaoDestinoSelSigla,
@@ -343,6 +344,9 @@
                 },
                 error: function (textStatus, errorThrown) {
                     siglasDocumentosNaoTramitados.push(documentoSelSigla);
+                    console.error(
+                        "Ocorreu um erro na tramitação: " + textStatus, errorThrown
+                    );
                 }
             });
         }

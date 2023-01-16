@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.uteis.SafeListCustom;
 public class RequestParamsCheck {
 	
     
-    private static final String HTML_PATTERN = "<(\"[^\"]*\"|'[^']*'|[^'\">])*>";
+    private static final String HTML_PATTERN = "<([a-zA-Z\\/]+)(?:[^>]*)?>";
     private static Pattern pattern = Pattern.compile(HTML_PATTERN);
 	
     public static boolean checkParameter(final Object requestParameter, final boolean permissiveCheck) {
@@ -40,8 +40,7 @@ public class RequestParamsCheck {
     
     public static boolean isValid(String paramDirty, Safelist safelist) {
     	Document dirty = Jsoup.parseBodyFragment(paramDirty, ""); //pré-formata parâmetro HTML para desconsiderar HTMLs com problemas semânticos
-    	String bodyHtml = dirty.body().html() //extrai body para checagem 
-    						.replaceAll("<!--", ""); //Retira tag comentário
+    	String bodyHtml = dirty.body().html(); //extrai body para checagem 
 
     	return Jsoup.isValid(bodyHtml, safelist);
     }

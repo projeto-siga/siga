@@ -424,7 +424,7 @@ public class ProcessadorHtml {
 	public static String bodyOnly(String s) {
 		
 		//ativa edição nota de rodapé
-		s = s.replace("FIM FOOTNOTE -->", "<!-- FIM FOOTNOTE -->");
+		s = s.replace(">FIM FOOTNOTE -->", "><!-- FIM FOOTNOTE -->");
 		s = s.replace("<!-- div style=\"font-size:11pt;\" class=\"footnotes\"", "<div style=\"font-size:11pt;\" class=\"footnotes\">");
 
 		Pattern p = Pattern.compile("<body[^>]*>\n?(\\s*+.*?)\\s*+</body>",

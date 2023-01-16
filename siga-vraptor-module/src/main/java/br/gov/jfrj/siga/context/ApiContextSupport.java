@@ -12,6 +12,8 @@ import javax.servlet.http.Cookie;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document.OutputSettings;
 
 import com.crivano.swaggerservlet.SwaggerApiContextSupport;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
@@ -19,7 +21,6 @@ import com.crivano.swaggerservlet.SwaggerContext;
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -32,6 +33,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.uteis.SafeListCustom;
 import br.gov.jfrj.siga.vraptor.RequestParamsCheck;
 import br.gov.jfrj.siga.vraptor.RequestParamsPermissiveCheck;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -142,7 +144,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 				if ((Integer) decodedToken.get("exp") < now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S) {
 					// Seria bom incluir o attributo HttpOnly
 					String tokenNew = AuthJwtFormFilter.renovarToken(token);
-					Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
+					AuthJwtFormFilter.validarToken(token);
 					Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
 					AuthJwtFormFilter.addCookie(getCtx().getRequest(), getCtx().getResponse(), cookie);
 				}
@@ -219,15 +221,56 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
         Class<?> classe = getCtx().getReq().getClass();      
         Field[] campos = classe.getDeclaredFields();  
         
-        boolean permissiveCheck = getCtx().getAction().getClass().isAnnotationPresent(RequestParamsPermissiveCheck.class);
+        boolean permissiveCheckControl = getCtx().getAction().getClass().isAnnotationPresent(RequestParamsPermissiveCheck.class);
         try {
 	        for (Field campo : campos) {  
 	        	campo.setAccessible(true); 
-	        					
-				if (!RequestParamsCheck.checkParameter(campo.get(getCtx().getReq()),permissiveCheck)) {
-					logXss(campo.get(getCtx().getReq()));
-					throw new SwaggerException("Conteúdo inválido. Por favor, revise os valores fornecidos.", 400, null, getCtx().getReq(), getCtx().getResp(), null);
-				}
+	        	
+				/*URLs permissivas aplica apenas o Clean de acordo com a SafeList */
+				String dirtyParam = campo.get(getCtx().getReq()) instanceof String ? 
+						(String) campo.get(getCtx().getReq()) 
+						: campo.get(getCtx().getReq()).toString();	
+	        	
+	        	
+	        	if (permissiveCheckControl) {
+	        		if (!"".equals(dirtyParam) && RequestParamsCheck.hasHTMLTags(dirtyParam)) {
+	        			
+						//Ajusta saída do Clean
+						OutputSettings outputSettings = new OutputSettings();
+						outputSettings.prettyPrint(false);
+	
+						//Preserve Comments
+						dirtyParam = dirtyParam
+							.replaceAll("<!--", "<commenttag>")
+							.replaceAll("-->", "</commenttag>");	
+						
+						/*URLs permissivas aplica apenas o Clean de acordo com a SafeList */
+						String cleanParam = Jsoup.clean(dirtyParam, "", SafeListCustom.relaxedCustom(),outputSettings);
+						
+						//Restore Comments
+						cleanParam = cleanParam
+								.replaceAll("<commenttag>", "<!--")
+								.replaceAll("</commenttag>", "-->");
+						
+						//Devolve param safe
+						campo.set(getCtx().getReq(),cleanParam);
+						
+						//Por hora, registra alterações para verificar possíveis ajustes na Safelist e CKEDITOR.config.disallowedContent
+						if (!Jsoup.parseBodyFragment(dirtyParam, "").outputSettings(outputSettings).body().html().equals(cleanParam)) {
+							logXss(dirtyParam,permissiveCheckControl); 
+						}
+						
+	        		}
+					
+	        	} else {
+					if (!RequestParamsCheck.checkParameter(dirtyParam,permissiveCheckControl)) {
+						logXss(dirtyParam,permissiveCheckControl);
+						throw new SwaggerException("Conteúdo inválido. Por favor, revise os valores fornecidos.", 400, null, getCtx().getReq(), getCtx().getResp(), null);
+					}	        		
+	        	}	
+	        	
+	        	dirtyParam= null;	
+
 	        }
         } catch (SwaggerException e) {
         	throw e;	
@@ -236,14 +279,14 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
         }
 	}
 	
-    private void logXss(Object param) {
+    private void logXss(Object param, boolean permissive) {
     	String siglaCadastrante;
     	try {
     		siglaCadastrante = getLotaCadastrante() .getSigla() + "/" + getCadastrante().getSigla();
 		} catch (Exception e) {
 			siglaCadastrante = "Não identificado";
 		}
-    	logger.log(BLAME, "[Detectado XSS] - Request: {}; Param XSS: {}; IP de Origem: {}; Usuário: {};", 
+    	logger.log(BLAME, (permissive ? "[Clean Param]" : "[Detectado XSS]") + " - Request: {}; Param XSS: {}; IP de Origem: {}; Usuário: {};", 
     			SwaggerServlet.getHttpServletRequest(), 
     			param, 
     			HttpRequestUtils.getIpAudit(SwaggerServlet.getHttpServletRequest()), 

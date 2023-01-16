@@ -38,7 +38,9 @@
                                 <select class="custom-select" id="tipoResponsavel" name="tipoResponsavel"
                                         value="${tipoResponsavel}" onchange="updateTipoResponsavel()">
                                     <c:forEach var="item" items="${listaTipoResp}">
-                                        <option value="${item.key}">${item.value}</option>
+                                        <option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
+                                                ${item.value}
+                                        </option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -175,10 +177,6 @@
         }
 
         function updateTipoResponsavel() {
-            document.getElementById('lotaResponsavel').style.display = 'none';
-            document.getElementById('responsavel').style.display = 'none';
-            document.getElementById('cpOrgao').style.display = 'none';
-            Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = 'none');
 
             limparSelecao();
 
@@ -211,15 +209,11 @@
             document.getElementById('cpOrgaoSelSpan').innerHTML = "";
 
             document.getElementById('responsavelSelecionado').innerHTML = "";
-        }
 
-        function limparCampos() {
-            limparSelecao();
-
-            document.getElementById('checkall').checked = false;
-
-            document.getElementsByName('dtDevolucaoMovString')[0].value = "";
-            document.getElementById('obsOrgao').value = "";
+            document.getElementById('lotaResponsavel').style.display = 'none';
+            document.getElementById('responsavel').style.display = 'none';
+            document.getElementById('cpOrgao').style.display = 'none';
+            Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = 'none');
         }
 
         function validar() {
@@ -320,7 +314,6 @@
             process.push(function () {
                 sigaModal.fechar('progressModal');
                 sigaSpinner.mostrar();
-                limparCampos();
 
                 let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_tramitados';
                 location.href = url + '?siglasDocumentosTramitados=' + siglasDocumentosTramitados

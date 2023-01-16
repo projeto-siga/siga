@@ -33,8 +33,8 @@
                         <tr>
                             <td>Data</td>
                             <td colspan="2">${movIni.dtRegMovDDMMYYYYHHMMSS}</td>
-                            <input type="hidden" name="dtIni" value="${dtIni}" />
-                            <input type="hidden" name="dtFim" value="${dtFim}" />
+                            <input type="hidden" name="dtIni" value="${dtIni}"/>
+                            <input type="hidden" name="dtFim" value="${dtFim}"/>
                         </tr>
                     </table>
 
@@ -191,7 +191,7 @@
             <button type="submit" class="btn btn-primary">Gerar Protocolo</button>
 
             </c:if>
-            <button type="button" class="btn btn-primary" onclick="history.back();">Voltar</button>
+            <a href="/sigaex/app/expediente/mov/tramitar_lote" class="btn btn-cancel btn-primary">Voltar</a>
     </form>
     </div>
     <br/>

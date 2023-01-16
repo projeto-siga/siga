@@ -40,6 +40,8 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -350,6 +352,8 @@ public class AdModelo {
 				if (grp instanceof CpGrupoDeEmail) {
 					nomeGrupo = conf.getPfxGrpDistrManualEmail() + grp.getSigla().toLowerCase()
 							+ conf.getSfxGrpDistrManualEmail();
+					if ("juizes_email_gd".equals(nomeGrupo))
+					    System.out.println("juizes_email_gd");
 					adGrupo = new AdGrupoDeDistribuicao(nomeGrupo, nomeGrupo, uoGrpDistr, conf.getDnDominio());
 					verificarSobreposicaoGrupo(adGrupo);
 				}
@@ -417,6 +421,7 @@ public class AdModelo {
 						}
 						DpLotacao l = dao.consultar(Long.valueOf(cfgGrupo.getConteudoConfiguracao()), DpLotacao.class,
 								false);
+						l = l.getLotacaoAtual();
 						adMembro = recuperarPorNome(prefixo + l.getSigla() + sufixo);
 						if (adMembro == null) {
 							prefixo = conf.getPfxGrpDistrAuto();
@@ -429,8 +434,9 @@ public class AdModelo {
 					}
 
 					if (cfgGrupo.getTipo().equals(TipoConfiguracaoGrupoEnum.FUNCAOCONFIANCA)) {
+					    DpFuncaoConfianca funcao = dao.consultar(Long.valueOf(cfgGrupo.getConteudoConfiguracao()), DpFuncaoConfianca.class, false);
 						List<DpPessoa> listaPessoas = dao
-								.consultarPessoasComFuncaoConfianca(Long.valueOf(cfgGrupo.getConteudoConfiguracao()));
+								.consultarPessoasPorIdInicialDeFuncaoConfianca(funcao.getIdInicial());
 
 						for (DpPessoa p : listaPessoas) {
 							adMembro = null;
@@ -443,8 +449,8 @@ public class AdModelo {
 					}
 
 					if (cfgGrupo.getTipo().equals(TipoConfiguracaoGrupoEnum.CARGO)) {
-						List<DpPessoa> listaPessoas = dao
-								.consultarPessoasComCargo(Long.valueOf(cfgGrupo.getConteudoConfiguracao()));
+					    DpCargo cargo = dao.consultar(Long.valueOf(cfgGrupo.getConteudoConfiguracao()), DpCargo.class, false);
+						List<DpPessoa> listaPessoas = dao.consultarPessoasPorIdInicialDeCargo(cargo.getIdInicial());
 
 						for (DpPessoa p : listaPessoas) {
 							adMembro = null;

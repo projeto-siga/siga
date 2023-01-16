@@ -31,6 +31,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Where;
 
 import com.crivano.jflow.model.ProcessInstance;
 import com.crivano.jflow.model.enm.ProcessInstanceStatus;
@@ -145,6 +146,12 @@ public class WfProcedimento extends Objeto
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "LOTA_ID_TITULAR")
 	private DpLotacao lotaTitular;
+
+	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
+	// entre os modulos, e o Hibernate acaba trazendo tambem marcas do Siga-Doc
+	@OneToMany(mappedBy = "procedimento", fetch = FetchType.LAZY)
+	@Where(clause = "ID_TP_MARCA=4")
+	private Set<WfMarca> marcas = new TreeSet<>();
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "HIS_DT_INI")
@@ -642,7 +649,7 @@ public class WfProcedimento extends Objeto
 		return status == ProcessInstanceStatus.PAUSED
 				&& getCurrentTaskDefinition().getTipoDeTarefa() == WfTipoDeTarefa.FORMULARIO;
 	}
-	
+
 	public boolean isDesabilitarFormulario(DpPessoa titular, DpLotacao lotaTitular) {
 		if (getDefinicaoDeTarefaCorrente() == null
 				|| getDefinicaoDeTarefaCorrente().getTipoDeTarefa() != WfTipoDeTarefa.FORMULARIO)
@@ -899,6 +906,14 @@ public class WfProcedimento extends Objeto
 		if (i != 0)
 			return i;
 		return getId().compareTo(o.getId());
+	}
+
+	public Set<WfMarca> getMarcas() {
+		return marcas;
+	}
+
+	public void setMarcas(Set<WfMarca> marcas) {
+		this.marcas = marcas;
 	}
 
 	public Date getDtInicioDaTarefa() {

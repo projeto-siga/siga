@@ -5,7 +5,7 @@
 
 <siga:pagina titulo="${lista.nomeLista}">
 	<jsp:include page="../main.jsp"></jsp:include>
-	
+
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
@@ -13,95 +13,102 @@
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
-	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>		
-	
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		<h2 id="tituloPagina"> ${lista.nomeLista}</h2>
-		
-			<p class="gt-table-action-list">
-				<c:if test="${podeEditar}">
-					<a href="#" onclick='javascript: editarLista(event, ${lista.toJson()})'> 
-						<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">Editar
-					</a>
-				</c:if>
-			</p>
-			<sigasr:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="lista"></sigasr:solicitacao>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+
+	<div class="container-fluid mb-2">
+		<div class="gt-bd clearfix">
+			<div class="gt-content clearfix">
+				<h2 id="tituloPagina">${lista.nomeLista}</h2>
+
+				<p class="gt-table-action-list">
+					<c:if test="${podeEditar}">
+						<a href="#"
+							onclick='javascript: editarLista(event, ${lista.toJson()})'>
+							<img src="/siga/css/famfamfam/icons/pencil.png"
+							style="margin-right: 5px;">Editar 
+						</a>
+					</c:if>
+				</p>
+				<sigasr:solicitacao solicitacaoListaVO="solicitacaoListaVO"
+					filtro="filtro" modoExibicao="lista"></sigasr:solicitacao>
+			</div>
+
+			<!-- /content box -->
+			<div class="gt-table-buttons">
+				<input type="hidden" name="idLista" value="${lista.idLista}">
+					<c:if test="${podePriorizar}">
+						<input type="button" id="btn" value="Gravar"
+							class="btn btn-primary" style="color: #fff" />
+					</c:if> <a href="${linkTo[SolicitacaoController].listarLista(false)}"
+					class="btn btn-secondary" style="color: #fff">Cancelar</a>
+			</div>
 		</div>
-		
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-			<input type="hidden" name="idLista" value="${lista.idLista}">
-			<c:if test="${podePriorizar}">
-				<input type="button" id="btn" value="Gravar" class="gt-btn-medium gt-btn-left" />
-			</c:if>
-			<a href="${linkTo[SolicitacaoController].listarLista(false)}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-		</div>
-	</div>
-	
-	<sigasr:modal nome="editarLista" titulo="Editar Lista">
-		<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>		
-	</sigasr:modal>
-	
-	<!-- modal de posicao -->	
-	<sigasr:modal nome="posicao" titulo="Posição de Solicitação na Lista">
-		<div class="gt-form gt-content-box" style="width: 280px; height: 100px;">
-			<form id="posicaoForm">
-				<input id="idPrioridadePosicao" type="hidden" name="idSolicitacao" />
-				
-				<div id="numPosicao" class="gt-form-row gt-width-66">
-					<label>Mover Para</label> 
-					<input type="number" min="0" name="posicaoNaLista"/>
-				</div>
-				
-				<div class="gt-form-row">
-					<input type="button" value="Ok" class="gt-btn-medium gt-btn-left" 
-						onclick="reposicionar()" />
-					<a class="gt-btn-medium gt-btn-left" onclick="modalPosicaoFechar()">Cancelar</a>
-				</div>
-			</form>
-		</div>	
-	</sigasr:modal>
-	
-	<!-- modal de prioridade -->
-	<sigasr:modal nome="prioridade" titulo="Alterar Prioridade">
-		<div class="gt-form gt-content-box">
-			<form id="prioridadeForm">
-				<input id="idPrioridadePrior" type="hidden" name="idSolicitacao" />
-				
-				<div id="prioridade" class="gt-form-row gt-width-66">
-					<label>Prioridade</label> 
-					<td>
-						<siga:select name="prioridadeNaLista" id="selectPrioridade" list="prioridadeList"
+
+		<sigasr:modal nome="editarLista" titulo="Editar Lista">
+			<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>
+		</sigasr:modal>
+
+		<!-- modal de posicao -->
+		<sigasr:modal nome="posicao"
+			titulo="Posição de Solicitação na Lista">
+			<div class="gt-form gt-content-box"
+				style="width: 280px; height: 100px;">
+				<form id="posicaoForm">
+					<input id="idPrioridadePosicao" type="hidden" name="idSolicitacao" />
+
+					<div id="numPosicao" class="gt-form-row gt-width-66">
+						<label>Mover Para</label> <input type="number" min="0"
+							name="posicaoNaLista" />
+					</div>
+
+					<div class="gt-form-row">
+						<input type="button" value="Ok" class="gt-btn-medium gt-btn-left"
+							onclick="reposicionar()" /> <a class="gt-btn-medium gt-btn-left"
+							onclick="modalPosicaoFechar()">Cancelar</a>
+					</div>
+				</form>
+			</div>
+		</sigasr:modal>
+
+		<!-- modal de prioridade -->
+		<sigasr:modal nome="prioridade" titulo="Alterar Prioridade">
+			<div class="gt-form gt-content-box">
+				<form id="prioridadeForm">
+					<input id="idPrioridadePrior" type="hidden" name="idSolicitacao" />
+
+					<div id="prioridade" class="gt-form-row gt-width-66">
+						<label>Prioridade</label>
+						<td><siga:select name="prioridadeNaLista"
+								id="selectPrioridade" list="prioridadeList"
 								listKey="idPrioridade" listValue="descPrioridade" theme="simple"
-								headerValue="[Nenhuma]" headerKey="0" value="${solicitacao.prioridade.idPrioridade}" isEnum="true"/>
-							 
-					</td>					
-				</div>
-				<div id="naoReposicionarAutomatico" class="gt-width-250">
-					<label>
-						<siga:checkbox name="naoReposicionarAutomatico"
-									   value="${naoReposicionarAutomatico}">
-						</siga:checkbox> 
-						<b>N&atilde;o reposicionar automaticamente</b>
-					</label>
-				</div>				
-				
-				<div class="gt-form-row">
-					<input type="button" value="Ok" class="gt-btn-medium gt-btn-left" 
-						onclick="gravarPrioridade()" />
-					<a class="gt-btn-medium gt-btn-left" onclick="modalPrioridadeFechar()">Cancelar</a>					
-				</div>
+								headerValue="[Nenhuma]" headerKey="0"
+								value="${solicitacao.prioridade.idPrioridade}" isEnum="true" />
+
+						</td>
+					</div>
+					<div id="naoReposicionarAutomatico" class="gt-width-250">
+						<label> <siga:checkbox name="naoReposicionarAutomatico"
+								value="${naoReposicionarAutomatico}">
+							</siga:checkbox> <b>N&atilde;o reposicionar automaticamente</b>
+						</label>
+					</div>
+
+					<div class="gt-form-row">
+						<input type="button" value="Ok" class="btn btn-primary"
+							onclick="gravarPrioridade()" /> <a class="btn btn-primary"
+							onclick="modalPrioridadeFechar()">Cancelar</a>
+					</div>
+				</form>
+			</div>
+
+			<div id="jsonPrioridades" data-json='${jsonPrioridades}'></div>
+			<form id="frm">
+				<input type="hidden" name="filtro.idListaPrioridade"
+					value="${filtro.idListaPrioridade}" /> <input type="hidden"
+					name="telaDeListas" value="true" />
 			</form>
-		</div>
-		
-		<div id="jsonPrioridades" data-json='${jsonPrioridades}'></div>
-		<form id="frm">
-			<input type="hidden" name="filtro.idListaPrioridade" value="${filtro.idListaPrioridade}" />
-			<input type="hidden" name="telaDeListas" value="true" />
-		</form>
-	</sigasr:modal>	
-	
+		</sigasr:modal>
+	</div>
 </siga:pagina>
 
 <script type="text/javascript">

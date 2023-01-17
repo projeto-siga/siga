@@ -154,8 +154,15 @@ public class Mesa2 {
 
 				if (SigaMessages.isSigaSP()) {
 					movUltTramite = mobil
-							.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDeTramite, 
-									new ITipoDeMovimentacao[] {}, mobil, false, null, false);
+							.getUltimaMovimentacao(new ITipoDeMovimentacao[] {ExTipoDeMovimentacao.CRIACAO, 
+									ExTipoDeMovimentacao.TRANSFERENCIA,
+									ExTipoDeMovimentacao.TRAMITE_PARALELO,
+									ExTipoDeMovimentacao.NOTIFICACAO,
+									ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA,
+									ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA,
+									ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA,
+									ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
+								}, new ITipoDeMovimentacao[] {}, mobil, false, null, false);
 
 					if (movUltTramite != null) {
 						r.origem = movUltTramite.getLotacao()

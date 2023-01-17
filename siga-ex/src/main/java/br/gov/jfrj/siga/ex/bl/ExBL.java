@@ -30,7 +30,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -60,6 +62,7 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.logging.Logger;
@@ -70,6 +73,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import com.auth0.jwt.JWTSigner;
 import com.crivano.swaggerservlet.ISwaggerRequest;
@@ -106,6 +110,7 @@ import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.base.util.SetUtils;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
@@ -1071,8 +1076,15 @@ public class ExBL extends CpBL {
 		String html = new String();
 	
 		if(mov == null) {
+			String nomeModelo = "";
+			nomeModelo = doc.getExModelo().getNmMod();
+			if(nomeModelo.contains(":")) {
+				nomeModelo = StringEscapeUtils.escapeHtml4(nomeModelo.substring(nomeModelo.indexOf(":")+1, nomeModelo.length()).trim());
+			}
+			
 			html = doc.getConteudoBlobHtmlString();
-			html = html.substring(html.indexOf("FIM TITULO -->")+14, html.indexOf("<!-- INICIO ASSINATURA -->"));
+			html = html.substring(html.toLowerCase().indexOf(nomeModelo.toLowerCase())+nomeModelo.length(), html.indexOf("<!-- INICIO ASSINATURA -->"));
+			html = html.replace(" <strong>Assunto:</strong> ", "");
 			
 			Integer posicao = -1;
 			Integer posicaoFinal = -1;
@@ -1089,19 +1101,18 @@ public class ExBL extends CpBL {
 			}
 			if(posicaoFinal != -1)
 				html = palavraFinal.getGerundio() + ":\n"+ HtmlToPlainText.getText(html.substring(posicaoFinal + palavraFinal.getImperativo().length()));
-			else 
-				html = HtmlToPlainText.getText(html);
+			else {
+				
+				html = new HtmlToPlainText().getPlainText(Jsoup.parse(html), 0);
+
+				html = Texto.removerQuebraDeLinhasExtras(html);
+				html = html.substring(0, html.lastIndexOf("\n"));
+			}
 		} else {
 			ExMovimentacao exMov = ExDao.getInstance().consultar(mov.getIdDoc(), ExMovimentacao.class, false);
-			try {
-				byte[] texto = exMov.getConteudoBlobMov2();
-				if (texto != null)
-					html =  new String(texto, "ISO-8859-1");
-				
-			} catch (UnsupportedEncodingException e) {
-				throw new AplicacaoException(
-						"Não foi possível recuperar o agendamento já cadastrado");
-			}
+			byte[] texto = exMov.getConteudoBlobMov2();
+			if (texto != null)
+				html =  StringEscapeUtils.escapeHtml4(new String(texto, "ISO-8859-1"));
 		}
 		return html;
 	}

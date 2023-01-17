@@ -145,31 +145,36 @@ public class Mesa2 {
 				r.descr = StringEscapeUtils.unescapeHtml4(mobil.doc().getDescrCurta(255).replace("\r", " ").replace("\f", " ").replace("\n", " "));
 				r.tipoDoc = (mobil.doc().isComposto()? "Composto" : "Avulso");
 				ExMovimentacao ultMovPosse = null;
-	
-				if (mobil.doc().getSubscritor() != null
-						&& mobil.doc().getSubscritor().getLotacao() != null) {
-					if (SigaMessages.isSigaSP()) {
-						ultMovPosse = mobil
-								.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
-										new ITipoDeMovimentacao[] {}, mobil, false, null, false);
-						
-						if (ultMovPosse != null) {
-							r.origem = ultMovPosse.getLotacao()
-									.getOrgaoUsuario().getSigla() + " / "
-									+ ultMovPosse.getLotacao().getSigla();
-						} else {
+				if (SigaMessages.isSigaSP()) 
+					ultMovPosse = mobil
+							.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDePosse, 
+									new ITipoDeMovimentacao[] {}, mobil, false, null, false);
+				
+				ExMovimentacao movUltTramite = null;
+
+				if (SigaMessages.isSigaSP()) {
+					movUltTramite = mobil
+							.getUltimaMovimentacao(ExMovimentacao.tpMovimentacoesDeTramite, 
+									new ITipoDeMovimentacao[] {}, mobil, false, null, false);
+
+					if (movUltTramite != null) {
+						r.origem = movUltTramite.getLotacao()
+								.getOrgaoUsuario().getSigla() + " / "
+								+ movUltTramite.getLotacao().getSigla();
+					} else {
+						if (mobil.doc().getSubscritor() != null
+								&& mobil.doc().getSubscritor().getLotacao() != null) 
 							r.origem = mobil.doc().getSubscritor().getLotacao()
 									.getOrgaoUsuario() + " / "
 									+ mobil.doc().getSubscritor().getLotacao()
 											.getSigla();
-						}
-					} else {
+					}
+				} else {
+					if (mobil.doc().getSubscritor() != null
+							&& mobil.doc().getSubscritor().getLotacao() != null) 
 						r.origem = mobil.doc().getSubscritor().getLotacao()
 								.getSigla();
-					}
 				}
-				
-				r.dataDevolucao = "ocultar";
 				
 				if (mobil.doc().getSubscritor() != null
 						&& mobil.doc().getLotacao() != null) {

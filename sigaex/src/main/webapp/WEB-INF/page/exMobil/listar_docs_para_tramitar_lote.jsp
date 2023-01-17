@@ -8,6 +8,9 @@
 
 <siga:pagina desabilitarbusca="sim" desabilitarmenu="sim" desabilitarComplementoHEAD="sim" iframe="sim">
     <c:if test="${not empty itens}">
+        <input type="hidden" name="paramoffset" value="0"/>
+        <input type="hidden" name="p.offset" value="0"/>
+        
         <div class="gt-content-box gt-for-table">
             <table class="table table-hover table-striped">
                 <thead class="${thead_color} align-middle text-center">

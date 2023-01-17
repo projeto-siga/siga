@@ -5659,9 +5659,21 @@ public class ExMovimentacaoController extends ExController {
 				subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
 	}
 
-	@Get("/app/expediente/mov/listar_docs_tramitados")
-	public void listar_docs_tramitados(final String siglasDocumentosTramitados,
-										 final String siglasDocumentosNaoTramitados) throws Exception {
+	@Post("/app/expediente/mov/listar_docs_tramitados")
+	public void listar_docs_tramitados(final String siglasDocumentosTramitados, 
+									   final String siglasDocumentosNaoTramitados,
+									   final DpLotacaoSelecao lotaResponsavelSel,
+									   final DpPessoaSelecao responsavelSel,
+									   final CpOrgaoSelecao cpOrgaoSel) throws Exception {
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
+		movimentacaoBuilder.setLotaResponsavelSel(lotaResponsavelSel)
+				.setResponsavelSel(responsavelSel)
+				.setCpOrgaoSel(cpOrgaoSel)
+				.setCadastrante(getCadastrante());
+		ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
 
 		String[] arraySiglasDocumentosTramitados = { };
 		if (siglasDocumentosTramitados != null) {
@@ -5717,7 +5729,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.include("dtIni", dtIni);
 		result.include("dtFim", dtFim);
-		
+		result.include("mov", mov);
 	}
 	
 }

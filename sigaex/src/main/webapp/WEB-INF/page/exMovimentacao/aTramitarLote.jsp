@@ -17,10 +17,11 @@
                 <h5>${titulo}</h5>
             </div>
             <div class="card-body">
-                <form name="frm" id="frm">
-                    <input type="hidden" name="postback" value="1"/>
-                    <input type="hidden" name="paramoffset" value="0"/>
-                    <input type="hidden" name="p.offset" value="0"/>
+                <form name="frm" id="frm" class="form" method="post" action="listar_docs_tramitados" theme="simple">
+                    <input type="hidden" id="siglasDocumentosTramitados" name="siglasDocumentosTramitados"
+                           value=""/>
+                    <input type="hidden" id="siglasDocumentosNaoTramitados" name="siglasDocumentosNaoTramitados"
+                           value=""/>
 
                     <div class="row campo-orgao-externo" style="display: none;">
                         <div class="col-sm">
@@ -301,7 +302,7 @@
             Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
                 chk => {
                     process.push(function () {
-                        return ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
+                        return tramitarDocumentoPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
                             orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
 
                     });
@@ -314,18 +315,15 @@
             process.push(function () {
                 sigaModal.fechar('progressModal');
                 sigaSpinner.mostrar();
-
-                let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_tramitados';
-                location.href = url + '?siglasDocumentosTramitados=' + siglasDocumentosTramitados
-                    + '&siglasDocumentosNaoTramitados=' + siglasDocumentosNaoTramitados;
+                enviarParaListagemDocumentosTramitados();
             });
 
             process.run();
 
         }
 
-        function ExecutarPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
-                              orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao) {
+        function tramitarDocumentoPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
+                                       orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao) {
             $.ajax({
                 url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/tramitar',
                 type: 'POST',
@@ -350,6 +348,12 @@
             });
         }
 
+        function enviarParaListagemDocumentosTramitados() {
+            document.getElementsByName('siglasDocumentosTramitados')[0].value = siglasDocumentosTramitados;
+            document.getElementsByName('siglasDocumentosNaoTramitados')[0].value = siglasDocumentosNaoTramitados;
+            document.frm.submit();
+        }
+
         let process = {
             steps: [],
             index: 0,
@@ -368,7 +372,6 @@
                 this.nextStep();
             },
             finalize: function () {
-                this.dialogo.dialog('destroy');
             },
             nextStep: function () {
                 if (typeof this.steps[this.index] == 'string')

@@ -3,6 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<deployment>
 		<module-alias name="deployment.siga" />
+		<exclusions>
+			<module name="org.apache.xalan" />
+			<module name="org.apache.logging.log4j.api" />
+		</exclusions>
+
 
 		<dependencies>
 			<module name="org.hibernate" export="true" />

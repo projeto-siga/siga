@@ -28,11 +28,11 @@
                             <input type="hidden" name="sigla" id="pessoa" value="${cadastrante.sigla}"/>
                         </tr>
                         <td>Para</td>
-                        <td>${movIni.respString}</td>
+                        <td>${mov.respString}</td>
                         </tr>
                         <tr>
                             <td>Data</td>
-                            <td colspan="2">${movIni.dtRegMovDDMMYYYYHHMMSS}</td>
+                            <td colspan="2">${mov.dtRegMovDDMMYYYYHHMMSS}</td>
                             <input type="hidden" name="dtIni" value="${dtIni}"/>
                             <input type="hidden" name="dtFim" value="${dtFim}"/>
                         </tr>
@@ -184,10 +184,6 @@
                     </table>
                 </div>
             </div>
-            <input type="hidden" name="campoDe" id="campoDe"
-                   value="${lotaTitular.descricao} - ${cadastrante.descricao}"/>
-            <input type="hidden" name="campoPara" id="campoPara" value="${movIni.respString}"/>
-            <input type="hidden" name="campoData" id="campoData" value="${movIni.dtRegMovDDMMYYYYHHMMSS}"/>
             <button type="submit" class="btn btn-primary">Gerar Protocolo</button>
 
             </c:if>

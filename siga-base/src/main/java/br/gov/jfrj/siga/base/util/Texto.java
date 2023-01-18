@@ -240,6 +240,15 @@ public class Texto {
 		return string.replaceAll("[\\r\\n]+", " ");
 	}
 	
+	public static String removerQuebraDeLinhasExtras(String string) {
+		String retorno = string.replaceAll("\n\n", "\n");
+		if(retorno.contains("\n\n")) {
+			return removerQuebraDeLinhasExtras(retorno);
+		} else {
+			return retorno;
+		}
+	}
+	
 	public static String maximoCaracteres(String string, int max) {
 		return string.length() > max ? (string.substring(0, max) + "...") : string;
 	}

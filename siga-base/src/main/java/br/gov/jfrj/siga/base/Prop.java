@@ -290,9 +290,9 @@ public class Prop {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
-			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
 			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", "10737418240"); //10GB
-			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", get("/siga.armazenamento.arquivo.url"));
 		}
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");

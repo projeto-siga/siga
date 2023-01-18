@@ -10,59 +10,6 @@
 
 <fmt:message key="documento.transferencia.arquivados.lote" var="titulo" />
 <siga:pagina titulo="${titulo}">
-
-	<script type="text/javascript" language="Javascript1.1">
-	/*function sbmt(offset) {
-		if (offset == null) {
-			offset = 0;
-		}
-
-		let form = document.forms['frm'];
-		form ["paramoffset"].value = offset;
-		form.action = "transferir_lote";
-		form.method = "GET";
-		form ["p.offset"].value = offset;
-
-		form.submit();
-	}*/
-
-		function checkUncheckAll(theElement) {
-			let isChecked = theElement.checked;
-			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
-		}
-
-		function displaySel(chk, el) {
-			document.getElementById("checkall").checked = 
-				Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
-		}
-
-		function updateResponsavelSelecionado(id) {
-            document.getElementById('responsavelSelecionado').innerHTML = document.getElementById(id).value;
-        }
-		
-		function updateTipoResponsavel() {
-			document.getElementById("lotaResponsavel").style.display = 'none';
-			document.getElementById("responsavel").style.display = 'none';
-			//document.getElementById("selecaoCpOrgao").style.display = 'none';
-			//Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = 'none'); 
-
-			var objSelecionado = document.getElementById("tipoResponsavel");
-
-			switch (parseInt(objSelecionado.value)) {
-			case 1:
-				document.getElementById("lotaResponsavel").style.display = '';
-				break;
-			case 2:
-				document.getElementById("responsavel").style.display = '';
-				break;
-			/*case 3:
-				document.getElementById("selecaoCpOrgao").style.display = '';
-				Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = ''); 
-				break;*/
-			}
-		}
-	</script>
-
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -70,7 +17,14 @@
 				<h5>${titulo}</h5>
 			</div>
 			<div class="card-body">
-				<form name="frm" action="pesquisa_documentos_arquivados_transferencia" method="get">
+				<c:choose>
+					<c:when test="${not empty itens}">
+						<form name="frm" action="transferir_lote_documentos_arquivados" method="POST">
+					</c:when>
+					<c:otherwise>	
+						<form name="frm" action="pesquisa_documentos_arquivados_transferencia" method="get">
+					</c:otherwise>
+				</c:choose>
 					<input type="hidden" name="postback" value="1" /> 
 					<input type="hidden" name="paramoffset" value="0" /> 
 					<input type="hidden" name="p.offset" value="0" />
@@ -85,7 +39,7 @@
 									id="tipoResponsavel" name="tipoResponsavel"
 									value="${tipoResponsavel}"
 									onchange="javascript:updateTipoResponsavel();">
-									<c:forEach var="item" items="${listaTipoResp}">
+									<c:forEach var="item" items="${listaTipoRespOrigem}">
 										<option value="${item.key}">${item.value}</option>
 									</c:forEach>
 								</select>
@@ -94,13 +48,13 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>&nbsp;</label> 
-								 <span id="lotaResponsavel">
-									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga" 
-										/>
-								</span> 
-								<span id="responsavel" style="display: none;"> 
-									<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
-								</span>
+									 <span id="lotaResponsavel" style="display:">
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga" 
+											/>
+									</span> 
+									<span id="responsavel" style="display: none;"> 
+										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+									</span>
 							</div>
 						</div>
 					</div>
@@ -111,15 +65,15 @@
 									<h4>DESTINO:</h4>
 								</div>
 							</div>
-							<!-- <div class="row ">
+							<div class="row ">
 								<div class="col-sm-3">
 									<div class="form-group">
-										<label for="tipoDestinatario">unidade</label> 
-										<select class="custom-select"
+										<label for="tipoDestinatario">Unidade</label> 
+										 <select class="custom-select"
 											id="tipoDestinatario" name="tipoDestinatario"
 											value="${tipoDestinatario}"
 											onchange="javascript:updateTipoResponsavel();">
-											<c:forEach var="item" items="${listaTipoResp}">
+											<c:forEach var="item" items="${listaTipoRespDestino}">
 												<option value="${item.key}">${item.value}</option>
 											</c:forEach>
 										</select>
@@ -128,28 +82,24 @@
 								<div class="col-sm-6">
 									<div class="form-group">
 										<label>&nbsp;</label> 
-										 <span id="lotacaoDestinatario">
-											<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga" 
-												/>
-										</span> 
-										<span id="destinatario" style="display: none;"> 
-											<siga:selecao propriedade="destinatario" tema="simple" modulo="siga"/>
-										</span>
+										<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/>
 									</div>
 								</div>
 							</div>
-							 -->
 							<div class="row">
 								<div class="col-sm-9">
 									<h4>Motivo da Transferência:</h4>
 		                            <div class="form-group campo-orgao-externo">
-		                                <input type="text" size="30" name="obsOrgao" id="obsOrgao" class="form-control"/>
+		                                <input type="text" size="30" name="motivoTransferencia" id="motivoTransferencia" class="form-control"/>
 		                            </div>
 		                        </div>
 		                    </div>
 		                    
 		                    <div class="row">
 								<div class="col-sm-1">
+									<button type="submit" class="btn btn-primary">Transfererir</button>
+								</div>
+								<div class="col-sm-1 ml-3 my-2 my-sm-0">
 		                    		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
 								</div>
 							</div>
@@ -195,13 +145,13 @@
 									<siga:paginador maxItens="${maxItems}" maxIndices="10"
 										totalItens="${tamanho}" itens="${itens}" var="documento">
 										<c:set var="x" scope="request">
-												chk_${documento.id}
+												chk_${documento.idMobil}
 											</c:set>
-										<c:set var="tpd_x" scope="request">tpd_${documento.id}</c:set>
+										<c:set var="tpd_x" scope="request">tpd_${documento.idMobil}</c:set>
 										<tr>
 											<td align="center" class="align-middle text-center"><input
 												type="checkbox" name="documentosSelecionados"
-												value="${documento.id}" id="${x}" class="chkDocumento"
+												value="${documento.idMobil}" id="${x}" class="chkDocumento"
 												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
 											<td class="text-right"><c:choose>
 													<c:when test='${param.popup!="true"}'>
@@ -211,7 +161,7 @@
 													</c:when>
 													<c:otherwise>
 														<a
-															href="javascript:opener.retorna_${param.propriedade}('${documento.id}','${documento.sigla},'');">
+															href="javascript:opener.retorna_${param.propriedade}('${documento.idMobil}','${documento.sigla},'');">
 															${documento.sigla} </a>
 													</c:otherwise>
 												</c:choose></td>
@@ -269,4 +219,57 @@
 			</div>
 		</div>
 	</div>
+	
+		<script type="text/javascript" language="Javascript1.1">
+	/*function sbmt(offset) {
+		if (offset == null) {
+			offset = 0;
+		}
+
+		let form = document.forms['frm'];
+		form ["paramoffset"].value = offset;
+		form.action = "transferir_lote";
+		form.method = "GET";
+		form ["p.offset"].value = offset;
+
+		form.submit();
+	}*/
+
+		function checkUncheckAll(theElement) {
+			let isChecked = theElement.checked;
+			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
+		}
+
+		function displaySel(chk, el) {
+			document.getElementById("checkall").checked = 
+				Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
+		}
+
+		function updateResponsavelSelecionado(id) {
+            document.getElementById('responsavelSelecionado').innerHTML = document.getElementById(id).value;
+        }
+		
+		function updateTipoResponsavel() {			
+			document.getElementById("lotaResponsavel").style.display = 'none';
+			document.getElementById("responsavel").style.display = 'none';
+			//document.getElementById("selecaoCpOrgao").style.display = 'none';
+			//Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = 'none'); 
+
+			var objSelecionado = document.getElementById("tipoResponsavel");
+			console.log(objSelecionado.value);
+			switch (parseInt(objSelecionado.value)) {
+			case 1:
+				document.getElementById("lotaResponsavel").style.display = '';
+				break;
+			case 2:
+				document.getElementById("responsavel").style.display = '';
+				break;
+			/*case 3:
+				document.getElementById("selecaoCpOrgao").style.display = '';
+				Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = ''); 
+				break;*/
+			}
+		}
+	</script>
+	
 </siga:pagina>

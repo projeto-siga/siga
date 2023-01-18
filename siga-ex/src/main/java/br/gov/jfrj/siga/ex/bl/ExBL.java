@@ -4242,8 +4242,10 @@ public class ExBL extends CpBL {
 		mov.getExMobil().getExMovimentacaoSet().add(mov);
 		
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
-			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
-			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(mov.getDtIniMov());
+			if (!mov.getExMobil().isMovimentacaoTransferenciaDocumentoArquivado()) {
+				mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
+				mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(mov.getDtIniMov());
+			}
 			dao().gravar(mov.getExMobil());
 		} else {
 			ExMovimentacao movUlt = mov.getExMobil()
@@ -5436,18 +5438,21 @@ public class ExBL extends CpBL {
 						if (lotaResponsavel.isFechada())
 							throw new AplicacaoException("não é permitido tramitar documento para lotação fechada");
 
-						if (forcarTransferencia) {
-							if (!new ExPodeSerTransferido(mob).eval())
-								throw new AplicacaoException("Trâmite não pode ser realizado (" + m.getSigla()
-										+ " ID_MOBIL: " + m.getId() + ")");
-						} else {
-							if (tipoTramite == ExTipoDeMovimentacao.NOTIFICACAO) {
-								if (!Ex.getInstance().getComp().pode(ExPodeNotificar.class, cadastrante, lotaCadastrante, m)) 
-									throw new AplicacaoException("Não é possível notificar");			
-							} else 
-								getComp().afirmar("Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")", 
-										ExPodeTransferir.class, cadastrante, lotaCadastrante, m);
+						if (!mob.isMovimentacaoTransferenciaDocumentoArquivado()) {
+							if (forcarTransferencia) {
+								if (!new ExPodeSerTransferido(mob).eval())
+									throw new AplicacaoException("Trâmite não pode ser realizado (" + m.getSigla()
+											+ " ID_MOBIL: " + m.getId() + ")");
+							} else {
+								if (tipoTramite == ExTipoDeMovimentacao.NOTIFICACAO) {
+									if (!Ex.getInstance().getComp().pode(ExPodeNotificar.class, cadastrante, lotaCadastrante, m)) 
+										throw new AplicacaoException("Não é possível notificar");			
+								} else 
+									getComp().afirmar("Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")", 
+											ExPodeTransferir.class, cadastrante, lotaCadastrante, m);
+							}
 						}
+					
 						if (m.getExDocumento().isPendenteDeAssinatura()
 								&& !lotaResponsavel.equivale(m.getExDocumento().getLotaTitular()))
 							getComp().afirmar("não é permitido tramitar documento que ainda não foi assinado", ExPodeReceberDocumentoSemAssinatura.class, responsavel, lotaResponsavel, m);

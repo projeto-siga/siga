@@ -85,10 +85,6 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		@NamedQuery(name = "consultarQuantidadeParaTransferirEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where ((mar.dpPessoaIni.idPessoa=:pessoaIni)"
-				+ "                and (mar.cpMarcador.idMarcador IN (6, 12, 13, 2))"
-				+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os "a receber"
 		@NamedQuery(name = "consultarParaReceberEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"

@@ -74,6 +74,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	@Transient
 	private static boolean isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso = false;
 
+	@Transient
+	private static boolean isMovimentacaoTransferenciaDocumentoArquivado = false;
+
 	/**
 	 * Retorna A penúltima movimentação não cancelada de um Mobil.
 	 * 
@@ -2318,6 +2321,15 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso;
 	}
 	
+	public static boolean isMovimentacaoTransferenciaDocumentoArquivado() {
+		return isMovimentacaoTransferenciaDocumentoArquivado;
+	}
+
+	public static void setMovimentacaoTransferenciaDocumentoArquivado(
+			boolean isMovimentacaoTransferenciaDocumentoArquivado) {
+		ExMobil.isMovimentacaoTransferenciaDocumentoArquivado = isMovimentacaoTransferenciaDocumentoArquivado;
+	}
+
 	public void indicarSeDeveExibirDocumentoCompletoReordenado(boolean exibirReordenacao) {
 		this.getDoc().setPodeExibirReordenacao(exibirReordenacao);
 	}

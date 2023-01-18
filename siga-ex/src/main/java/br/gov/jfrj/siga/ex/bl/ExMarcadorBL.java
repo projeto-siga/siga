@@ -171,8 +171,11 @@ public class ExMarcadorBL {
 		}
 
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
-				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado())
+				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado()) {
 			calcularMarcadoresDeTramite();
+		} else if (mob.isArquivado() && mob.isMovimentacaoTransferenciaDocumentoArquivado()) {
+			calcularMarcadoresDeTramite();
+		}
 		calcularMarcadoresDeNotificacao();
 
 		if (!mob.isArquivado())

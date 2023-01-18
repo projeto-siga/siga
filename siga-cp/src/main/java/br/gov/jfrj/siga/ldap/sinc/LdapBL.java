@@ -604,7 +604,12 @@ public class LdapBL implements OperadorSemHistorico {
 		if (isGrupoDistribuicaoManualEmail(adGrupo.getNome())) {
 
 			String dnGrpAutoCorr = getGrpAutoCorrespondente((AdGrupoDeDistribuicao) adGrupo);
-			attrsAntigos = ldap.pesquisar(dnGrpAutoCorr);
+            try {
+                attrsAntigos = ldap.pesquisar(dnGrpAutoCorr);
+            } catch (NameNotFoundException e) {
+                log.warning("Não foi possível localizar o grupo automático '" + dnGrpAutoCorr + "' correspondente ao grupo manual '" + adGrupo.getNome() + "'");
+                // Não é necessário lançar a exceção porque o tratamento do retorno nulo já é feito abaixo.
+            }
 			if (attrsAntigos != null) {
 				String cn = attrsAntigos.get("cn").get().toString();
 				String dn = attrsAntigos.get("distinguishedName").get().toString();

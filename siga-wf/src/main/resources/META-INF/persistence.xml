@@ -74,6 +74,8 @@
 		<class>br.gov.jfrj.siga.wf.model.WfConfiguracao</class>
 		<class>br.gov.jfrj.siga.wf.model.WfConfiguracaoCache</class>
 
+		<class>br.gov.jfrj.siga.wf.model.WfMarca</class>
+
 		<class>br.gov.jfrj.siga.cp.CpMarcadorCorEnum</class>
 		<class>br.gov.jfrj.siga.cp.CpMarcadorIconeEnum</class>
 		<class>br.gov.jfrj.siga.cp.CpMarcadorTipoAplicacaoEnum</class>

@@ -3,82 +3,84 @@
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <style>
-	#sortable ul {
-			height: 1.5em;
-			line-height: 1.2em;
-	}
+#sortable ul {
+	height: 1.5em;
+	line-height: 1.2em;
+}
 
-	.ui-state-highlight {
-			height: 1.5em;
-			line-height: 1.2em;
-	}
+.ui-state-highlight {
+	height: 1.5em;
+	line-height: 1.2em;
+}
 </style>
 
 <style>
-	#sortable ul {
-			height: 1.5em;
-			line-height: 1.2em;
-	}
+#sortable ul {
+	height: 1.5em;
+	line-height: 1.2em;
+}
 
-	.ui-state-highlight {
-			height: 1.5em;
-			line-height: 1.2em;
-	}
+.ui-state-highlight {
+	height: 1.5em;
+	line-height: 1.2em;
+}
 </style>
 
-<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+<div class="container-fluid">
 	<form id="pesquisaForm" action="#" enctype="multipart/form-data">
-
-		<input type="hidden" name="pesquisa.idPesquisa" id="idPesquisa" value="${idAtributo}">
-		<input type="hidden" name="pesquisa.hisIdIni" id="hisIdIni" value="${hisIdIni}">
-
+		<input type="hidden" name="pesquisa.idPesquisa" id="idPesquisa"
+			value="${idAtributo}"> <input type="hidden"
+			name="pesquisa.hisIdIni" id="hisIdIni" value="${hisIdIni}">
 		<div class="gt-form-row gt-width-66">
-			<label>Nome <span>*</span></label>
-			<input type="text"
-					name="pesquisa.nomePesquisa"
-					id="nomePesquisa"
-					value="${nomePesquisa}" size="50" maxlength="255" required/>
+			<label>Nome <span>*</span></label> <input type="text"
+				name="pesquisa.nomePesquisa" id="nomePesquisa"
+				value="${nomePesquisa}" size="50" maxlength="255" required
+				class="form-control" />
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descri&ccedil;&atilde;o</label>
-			<input type="text"
-					name="pesquisa.descrPesquisa"
-					id="descrPesquisa"
-					value="${descrPesquisa}" size="60" maxlength="255"/>
+			<label>Descri&ccedil;&atilde;o</label> <input type="text"
+				name="pesquisa.descrPesquisa" id="descrPesquisa"
+				value="${descrPesquisa}" size="60" maxlength="255"
+				class="form-control" />
 		</div>
-
-		<div class="gt-form-row">
-			<label>Perguntas</label>
-			<ul id="perguntas" style="color: #365b6d"></ul>
-			<input type="button" value="Incluir" id="botaoIncluir" class="gt-btn-small gt-btn-left" style="font-size: 10px;">
+		<div class="card mt-4 mb-2">
+			<div class="card-header">
+				<label>Perguntas</label>
+			</div>
+			<div class="card-body">
+				<ul id="perguntas" style="color: #365b6d"></ul>
+				<input type="button" value="Incluir" id="botaoIncluir"
+					class="btn btn-primary">
+			</div>
 		</div>
 	</form>
 
-	<sigasr:configuracaoAssociacao orgaos="${orgaos}"
-								 locais="${locais}"
-								 itemConfiguracaoSet="${itemConfiguracaoSet}"
-								 acoesSet="${acoesSet}"
-								 modoExibicao='pesquisa'
-								 urlGravar="${linkTo[AssociacaoController].gravarAssociacaoPesquisa}"></sigasr:configuracaoAssociacao>
+	<sigasr:configuracaoAssociacao orgaos="${orgaos}" locais="${locais}"
+		itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"
+		modoExibicao='pesquisa'
+		urlGravar="${linkTo[AssociacaoController].gravarAssociacaoPesquisa}"></sigasr:configuracaoAssociacao>
 
 	<div class="gt-form-row">
-		<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
-		<a class="gt-btn-medium gt-btn-left" onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
-		<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="pesquisaService.aplicar()"/>
+		<input type="button" value="Gravar" onclick="pesquisaService.gravar()"
+			class="btn btn-primary" />
+		<a class="btn btn-secondary" style="color: #fff"
+			onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
+		<input type="button" value="Aplicar" class="btn btn-primary"
+			style="color: #fff" onclick="pesquisaService.aplicar()" />
 	</div>
 </div>
 
 <sigasr:modal nome="pergunta" titulo="Incluir Pergunta">
-	<div id="dialog">
-		<div class="gt-content">
-			<div class="gt-form gt-content-box">
+	<div id="dialog" class="container-fluid">
+		<div class="card mt-2 mb-2">
+			<div class="card-body">
 				<form id="perguntaForm">
-					<div class="gt-form-row">
+					<div class="gt-form-row gt-width-66">
 						<label>Pergunta <span>*</span></label> <input type="text"
-							id="descrPergunta" name="descrPergunta" value="${descrPergunta}" size="60"
-							maxlength="255" required />
+							id="descrPergunta" name="descrPergunta" value="${descrPergunta}"
+							size="60" maxlength="255" required class="form-control"/>
 					</div>
-					<div class="gt-form-row">
+					<div class="gt-form-row gt-width-66">
 						<label>Tipo</label>
 						<siga:select name="tipoPergunta" list="tipos"
 							listKey="idTipoPergunta" id="tipoPergunta"
@@ -86,9 +88,10 @@
 							listValue="nomeTipoPergunta" theme="simple"
 							value="${idTipoPergunta}" />
 					</div>
-					<div class="gt-form-row">
-						<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
-						<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+					<div class="gt-form-row gt-width-66 mt-2">
+						<input type="button" id="modalOk" value="Ok"
+							class="btn btn-primary" /> <input type="button" value="Cancelar"
+							id="modalCancel" class="btn btn-secondary" style="color: #fff" />
 					</div>
 				</form>
 			</div>

@@ -206,6 +206,8 @@ public class ExMovimentacaoController extends ExController {
 	
 	private static final int TAMANHO_MAX_CARACTER = 500;
 	
+	private static final int MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE = 30;
+	
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -2476,6 +2478,48 @@ public class ExMovimentacaoController extends ExController {
 		result.include("substituicao", substituicao);
 		result.redirectTo("/app/expediente/mov/anotar_lote");
 	}
+	
+	@Get("/app/expediente/mov/vincularPapelLote")
+	public void aVincularPapelLote(final String sigla, final DpPessoaSelecao responsavelSel,
+			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel, Integer paramoffset) {
+
+		final List<ExPapel> papeis = this.obterApenasPapeisParaVinculo();
+		Long tamanho = dao().consultarQuantidadeParaAcompanhamentoEmLote(getTitular());
+
+		int offset = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+						: paramoffset) : 0;
+
+		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+				? dao().consultarParaAcompanhamentoEmLote(getTitular(), null, null)
+				: dao().consultarParaAcompanhamentoEmLote(getTitular(), offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		
+		result.include("sigla", sigla);
+		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
+		result.include("listaExPapel", papeis);
+		result.include("responsavelSel", responsavelSel != null ? responsavelSel : new DpPessoaSelecao());
+		result.include("lotaResponsavelSel", lotaResponsavelSel != null ? lotaResponsavelSel : new DpLotacaoSelecao());
+		result.include("tipoResponsavel", tipoResponsavel);
+		result.include("idPapel", idPapel);
+		
+		result.include("itens", provItens);
+		result.include("maxItems", MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		result.include("tamanho", tamanho);
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE + 1));
+	}
+	
+	private List<ExPapel> obterApenasPapeisParaVinculo(){
+		final List<ExPapel> papeis = this.getListaExPapel();
+		if (SigaMessages.isSigaSP()) {
+			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
+			    ExPapel p = iter.next();
+			    if (p.getIdPapel() != ExPapel.PAPEL_GESTOR && p.getIdPapel() != ExPapel.PAPEL_INTERESSADO) {
+			        iter.remove();
+			    }
+			}
+		}
+		return papeis;
+	}
 
 	@Get("/app/expediente/mov/vincularPapel")
 	public void aVincularPapel(final String sigla, final DpPessoaSelecao responsavelSel,
@@ -2514,6 +2558,19 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaResponsavelSel", lotaResponsavelSel != null ? lotaResponsavelSel : new DpLotacaoSelecao());
 		result.include("tipoResponsavel", tipoResponsavel);
 		result.include("idPapel", idPapel);
+	}
+	
+	@Transacional
+	@Post("/app/expediente/mov/vincularPapel_gravar_ajax")
+	public void vincularPapelGravarAjax(final int postback, final String sigla,
+			final String dtMovString, final int tipoResponsavel,
+			final DpPessoaSelecao responsavelSel,
+			final DpLotacaoSelecao lotaResponsavelSel, final Long idPapel) {
+		try {
+			vincularPapel_gravar(postback, sigla, dtMovString, tipoResponsavel, responsavelSel, lotaResponsavelSel, idPapel);
+		} catch (final Exception e) {
+			result.use(Results.status()).forbidden(e.getMessage());
+		} 		
 	}
 
 	@Transacional
@@ -5794,9 +5851,21 @@ public class ExMovimentacaoController extends ExController {
 				subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
 	}
 
-	@Get("/app/expediente/mov/listar_docs_tramitados")
-	public void listar_docs_tramitados(final String siglasDocumentosTramitados,
-										 final String siglasDocumentosNaoTramitados) throws Exception {
+	@Post("/app/expediente/mov/listar_docs_tramitados")
+	public void listar_docs_tramitados(final String siglasDocumentosTramitados, 
+									   final String siglasDocumentosNaoTramitados,
+									   final DpLotacaoSelecao lotaResponsavelSel,
+									   final DpPessoaSelecao responsavelSel,
+									   final CpOrgaoSelecao cpOrgaoSel) throws Exception {
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
+		movimentacaoBuilder.setLotaResponsavelSel(lotaResponsavelSel)
+				.setResponsavelSel(responsavelSel)
+				.setCpOrgaoSel(cpOrgaoSel)
+				.setCadastrante(getCadastrante());
+		ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
 
 		String[] arraySiglasDocumentosTramitados = { };
 		if (siglasDocumentosTramitados != null) {
@@ -5852,7 +5921,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.include("dtIni", dtIni);
 		result.include("dtFim", dtFim);
-		
+		result.include("mov", mov);
 	}
 	
 }

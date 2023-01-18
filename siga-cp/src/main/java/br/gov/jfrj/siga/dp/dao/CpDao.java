@@ -373,8 +373,10 @@ public class CpDao extends ModeloDao {
 			final int itemPagina) {
 		try {
 			Query query = em()
-					.createQuery("select org, (select dtContrato from CpContrato contrato "
-							+ " where contrato.idOrgaoUsu = org.idOrgaoUsuIni) from CpOrgaoUsuario org "
+					.createQuery("select org, (select dtContrato from CpContrato contrato where contrato.idOrgaoUsu = org.idOrgaoUsuIni), "
+							+ " (select count(1) from DpPessoa pes where pes.orgaoUsuario.idOrgaoUsu = org.idOrgaoUsu and pes.dataFimPessoa is null), "
+							+ " (select count(1) from DpLotacao lot where lot.orgaoUsuario.idOrgaoUsu = org.idOrgaoUsu and lot.dataFimLotacao is null)  "
+							+ " from CpOrgaoUsuario org "
 							+ " where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))"
 							+ " and (exists (select 1 from CpOrgaoUsuario oAux where oAux.idOrgaoUsuIni = org.idOrgaoUsuIni"
 							+ "			group by oAux.idOrgaoUsuIni having max(oAux.hisDtIni) = org.hisDtIni) "
@@ -713,18 +715,31 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
-	public List<DpPessoa> consultarPessoasComFuncaoConfianca(Long idFuncao) {
-		final Query query = em().createNamedQuery("consultarPessoasComFuncaoConfianca");
-		query.setParameter("idFuncaoConfianca", idFuncao);
-		return query.getResultList();
-	}
+    public List<DpPessoa> consultarPessoasComFuncaoConfianca(Long idFuncao) {
+        final Query query = em().createNamedQuery("consultarPessoasComFuncaoConfianca");
+        query.setParameter("idFuncaoConfianca", idFuncao);
+        return query.getResultList();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<DpPessoa> consultarPessoasComCargo(Long idCargo) {
-		final Query query = em().createNamedQuery("consultarPessoasComCargo");
-		query.setParameter("idCargo", idCargo);
-		return query.getResultList();
-	}
+    public List<DpPessoa> consultarPessoasPorIdInicialDeFuncaoConfianca(Long idFuncao) {
+        final Query query = em().createNamedQuery("consultarPessoasPorIdInicialDeFuncaoConfianca");
+        query.setParameter("idFuncaoConfiancaIni", idFuncao);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<DpPessoa> consultarPessoasComCargo(Long idCargo) {
+        final Query query = em().createNamedQuery("consultarPessoasComCargo");
+        query.setParameter("idCargo", idCargo);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<DpPessoa> consultarPessoasPorIdInicialDeCargo(Long idCargoIni) {
+        final Query query = em().createNamedQuery("consultarPessoasPorIdInicialDeCargo");
+        query.setParameter("idCargoIni", idCargoIni);
+        return query.getResultList();
+    }
 
 	public List<DpLotacao> consultarPorFiltro(final DpLotacaoDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);

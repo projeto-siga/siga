@@ -1,3 +1,189 @@
+[#--
+
+A macro campo representa um campo que será utilizado dentro da entrevista para colher dados.
+
+Atenção programadores: não incluir parâmtros novos nesta macro sem antes haver consenso. Está
+macro foi criada para ser simples e padronizada.
+
+Os parâmetros da macro "campo" serão responsáveis por configurar seu funcionamento. Veja abaixo a
+lista de parâmetros e seus significados:
+
+var: 			indica o nome da variável que receberá o valor fornecido. O nome da variável pode
+     			ser utilizado para inferir o tipo. Por exemplo, se o nome for "cpf" ou "cpf_servidor" ou 
+     			"cpfServidor" será automaticamente atribuído o tipo "cpf".
+
+tipo: 			indica o tipo do campo, conforme padrão HTML. Vide tabela abaixo:
+
+				Tipo		Prefixo		Descrição
+				----------- ----------- -------------------------------------------------------
+				texto					Campo de texto padrão
+				cpf			cpf			Campo de texto para entrada de CPF
+				cnpj		cnpj		Campo de texto para entrada de CNPJ
+				oculto					Campo do tipo "hidden" do HTML
+				editor					Campo de edição de HTML
+				selecao					Campo do tipo "select" do HTML
+				memo		memo		Campo do tipo "textarea" do HTML
+				data		data		Campo de texto para entrada de data
+				hora		hora		Campo de texto para entrada de hora
+				numero		numero		Campo de texto para entrada de número inteiro
+				valor		valor		Campo de texto para entrada de valor monetário
+				checkbox	chk			Campo do tipo "checkbox" do HTML
+				radio		rad			Campo do tipo "radio" do HTML
+				pessoa		pessoa		Campo de seleção de pessoa
+				lotacao		lotacao		Campo de seleção de lotação
+				cossignatario			Campo para seleção de cossignatário (será automaticamente 
+										incluído na lista de cossignatários do documento)
+				funcao		funcao		Campo para seleção de função gratificada
+				
+				Quando o tipo não é informado e nenhum prefixo é reconhecido, se for
+				informado o parâmetro "opcoes" será assumido o tipo "selecao", caso o
+				contrário, será assumido o tipo "texto"
+
+largura:		indica a largura do campo, conforme estilo "width" do HTML
+
+colunas:		indica a quantidade de colunas, apenas no tipo "memo"
+
+linhas:			indica a quantidade de linhas, apenas no tipo "memo"
+
+maxcaracteres: 	indica o número máximo de caracteres dos campos de texto
+
+reler:			indica se, ao alterar o conteúdo do campo, a página deve ser recarregada.
+				Isto é especialmente útil quando existem outros campos que só serão exibidos
+				para determinados valores do campo atual. Por default, o valor de reler é
+				"false", o que significa que a alteração no campo não provoca o recarregamento
+				da página. Se for informado "true", toda a página será recarregada. Ainda existe
+				a opção de se informar uma string e, nesse caso, será feita uma recarga parcial:
+				apenas o trechos da página que estiverem dentro de uma tag "grupo" com um parâmetro
+				"depende" igual à string informada serão recarregados.
+			
+obrigatorio:	indica se o preechimento do campo é obrigatório e impede a gravação do documento quando ele não é informado
+
+valor:			indica o valor que deve ser persistido no caso do tipo "oculto" ou o valor que deve ser selecionado no
+				caso dos tipos "checkbox" e "radio"
+
+default:		indica o valor inicial do campo
+
+opcoes:			indica quais são as opções de um campo do tipo selecao. Forneça uma string contento opções separadas por ponto-e-vírgula
+
+buscarFechadas: inclui itens que já estão inativos na busca dos campos do tipo "pessoa", "lotacao" e "pessoaOuLotacao"
+
+atts:			permite customizar o elemento HTML com atributos adicionais
+
+id:				inclui um atributo "id" no elemento HTML
+
+Exemplos de utilização:
+
+[@campo var="text" /]
+[@campo var="cpf" /]
+[@campo var="cpfServidor"  /]
+[@campo tipo="cpf" var="cpf" titulo="CPF" /]
+[@campo tipo="cnpj" var="cnpj" titulo="CNPJ" /]
+[@campo tipo="oculto" var="campooculto" valor="valor oculto" /]
+[@campo tipo="editor" var="campoeditavel" titulo="Editor de Texto" default="Começa vazio" /]
+[@campo tipo="selecao" var="camposelecionavel" titulo="Escolha na lista" opcoes="primeiro;segundo;terceiro" /]
+[@campo tipo="memo" var="campomemo" titulo="Campo Memo" colunas=100 linhas=4 /]
+[@campo tipo="data" var="campodata" titulo="Campo de Data" /]
+[@campo tipo="hora" var="campohhmm" titulo="Campo de Hora e Minuto" /]
+[@campo var="numeroDePessoas" titulo="Campo de Número Inteiro" /]
+[@campo var="valorTotal" titulo="Campo de Valor em Reais" /]
+[@campo tipo="pessoaOuLotacao" var="peslot" titulo="Campo de Pessoa ou Lotação" /]
+[@campo var="pessoaServidor" titulo="Campo de Pessoa" /]
+[@campo var="lotacaoServidor" titulo="Campo de Lotacao" /]
+[@campo tipo="cossignatario" var="cossignatarioServidor" titulo="Campo de Cossignatario" /]
+[@campo var="funcaoServidor" titulo="Campo de Função Gratificada" /]
+[@campo tipo="checkbox" var="ligado" reler="chk" /]
+[@campo var="chkAdiantamento" titulo="Adiantamento" reler="chk" /]
+[@campo var="chkAtividade" titulo="Ativo" valor="Ativo" default="Inativo" reler="chk" /]
+[@grupo depende="chk"]${ligado} ${chkAdiantamento} ${chkAtividade}[/@grupo]
+[@campo tipo="radio" var="radNumeral" valor="Primeiro" default="Sim" reler="rad" /]
+[@campo tipo="radio" var="radNumeral" titulo="Segundo" valor="Segundo" reler="rad" /]
+[@campo tipo="radio" var="radNumeral" titulo="Terceiro" valor="Terceiro" reler="rad" /]
+[@grupo depende="rad"]${radNumeral!}[/@grupo]
+
+--]
+[#macro campo var titulo=var tipo="" largura="" colunas=80 linhas=3 maxcaracteres="" reler=false obrigatorio=false valor="" default="" opcoes="" buscarFechadas=false atts={} alterado="" id="" ]
+   	[#local idAjax = "" /]
+   	[#local relerString = "" /]
+	[#if reler?is_string]
+    	[#local idAjax = reler /]
+    	[#local relerString = "ajax" /]
+    	[#local reler = true /]
+    [#elseif reler == true]
+    	[#local relerString = "sim" /]
+    [/#if]
+
+	[#-- tenta identificar automaticamente o tipo pelo nome da variável --]
+	[#if tipo == ""]
+    	[#if var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "cpf" /]
+    	[#elseif var?matches("^cnpj([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "cnpj" /]
+    	[#elseif var?matches("^memo([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "memo" /]
+    	[#elseif var?matches("^data([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "data" /]
+    	[#elseif var?matches("^hora([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "hora" /]
+    	[#elseif var?matches("^numero([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "numero" /]
+    	[#elseif var?matches("^valor([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "valor" /]
+    	[#elseif var?matches("^chk([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "checkbox" /]
+    	[#elseif var?matches("^rad([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "radio" /]
+    	[#elseif var?matches("^pessoa([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "pessoa" /]
+    	[#elseif var?matches("^lotacao([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "lotacao" /]
+    	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "funcao" /]
+	    [#elseif opcoes?has_content]
+	    	[#local tipo = "selecao" /]
+        [#else]
+    		[#local tipo = "texto" /]
+	    [/#if]
+    [/#if]
+
+	[#if tipo == "texto"]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=false /]
+    [#elseif tipo == "cpf"]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=true isCnpj=false /]
+    [#elseif tipo == "cnpj"]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=true /]
+    [#elseif tipo == "oculto"]
+		[@oculto var=var valor=valor default=default /]
+    [#elseif tipo == "checkbox"]
+        [@checkbox var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id /]
+    [#elseif tipo == "radio"]
+        [@radio var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id /]
+    [#elseif tipo == "editor"]
+        [@editor var=var titulo=titulo default=default /]
+    [#elseif tipo == "selecao"]
+		[@selecao var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio atts=atts opcoes=opcoes /]
+    [#elseif tipo == "memo"]
+		[@memo var=var titulo=titulo reler=reler colunas=colunas linhas=linhas obrigatorio=obrigatorio default=default /]
+    [#elseif tipo == "data"]
+		[@data var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default atts=atts /]
+    [#elseif tipo == "hora"]
+		[@horaMinuto var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default /]
+    [#elseif tipo == "numero"]
+		[@numero var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default /]
+    [#elseif tipo == "valor"]
+		[@moeda var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default /]
+    [#elseif tipo == "pessoaOuLotacao"]
+	    [@pessoaLotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+    [#elseif tipo == "pessoa"]
+      	[@pessoa var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+    [#elseif tipo == "lotacao"]
+      	[@lotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+    [#elseif tipo == "cossignatario"]
+      	[@cosignatario var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+    [#elseif tipo == "funcao"]
+      	[@funcao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+	[/#if]
+[/#macro]
+
 [#macro parte id titulo depende="" responsavel="" bloquear=true esconder=false]
     [#if !esconder]
       [#if gerar_partes!false]
@@ -1140,7 +1326,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro checkbox var titulo="" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
+[#macro checkbox var titulo="" valor="Sim" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
@@ -1174,9 +1360,9 @@ LINHA  VARIÁVEL / CONTEÚDO
 	
 	    [#if !gerar_formulario!false]    	
 			<div class="form-check">
-		        <input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="Sim"
-		               [#if v=='Sim']checked[/#if] 
-		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '${default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
+		        <input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="${valor}"
+		               [#if v==valor]checked[/#if] 
+		               onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${valor}'; else document.getElementById('${var}').value = '${default}'; ${onclique!""}; ${jreler!""}" [#if id == ""]data-criar-id="true"[/#if]/> 
 		        <label title="campo: ${var}" class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${titulo!""}</label>
 		        [#if obrigatorio]
 					<div class="invalid-feedback  invalid-feedback-${var}_chk">Preenchimento obrigatório</div>
@@ -1570,6 +1756,7 @@ CKEDITOR.replace( '${var}',
 								});
 
 								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
+								CKEDITOR.config.disallowedContent = '*[data*]';
 								
 								window.onload = function() {
 								    $("textarea.editor").each(function(index) {

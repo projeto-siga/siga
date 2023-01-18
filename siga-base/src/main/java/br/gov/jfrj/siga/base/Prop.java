@@ -290,9 +290,9 @@ public class Prop {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
-			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
 			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", "10737418240"); //10GB
-			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", get("/siga.armazenamento.arquivo.url"));
 		}
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");
@@ -338,6 +338,11 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 
+		/* Permite realizar o upload das extensões declaradas */
+		provider.addPublicProperty("/sigagc.todos.extensoes.anexo.permitidas", "jpg,bmp,png,doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+		provider.addPublicProperty("/sigagc.imagem.extensoes.anexo.permitidas", "jpg,bmp,png");
+		provider.addPublicProperty("/sigagc.documento.extensoes.anexo.permitidas", "doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+	
 		/* Permite inativar lotação com determinadas marcações*/
 		/* Trocado de Bool para List String que deve conter as chaves de marcadores permitidas separadas por virgula no padrao do getList() */
 		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", null);
@@ -349,6 +354,6 @@ public class Prop {
 		/* Permite Alterar a lotação da Pessoa com determinadas marcações*/
 		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.marcadores.permitidos", get("/siga.lotacao.inativacao.marcadores.permitidos"));
 		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos", get("/siga.lotacao.inativacao.grupo.marcadores.permitidos"));
-		
+
 	}
 }

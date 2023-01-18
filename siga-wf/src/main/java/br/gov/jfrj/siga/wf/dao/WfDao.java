@@ -24,7 +24,6 @@
 package br.gov.jfrj.siga.wf.dao;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -41,18 +40,17 @@ import javax.persistence.criteria.Root;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
-import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.CpOrgaoDaoFiltro;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+import br.gov.jfrj.siga.wf.bl.WfMarcaBL;
 import br.gov.jfrj.siga.wf.model.WfConfiguracao;
 import br.gov.jfrj.siga.wf.model.WfConhecimento;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeProcedimento;
@@ -102,12 +100,12 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		CriteriaQuery<WfDefinicaoDeProcedimento> q = cb().createQuery(WfDefinicaoDeProcedimento.class);
 		Root<WfDefinicaoDeProcedimento> c = q.from(WfDefinicaoDeProcedimento.class);
 		q.select(c);
-		
+
 		if (nome != null)
 			nome = nome.replace(' ', '%');
 		else
 			nome = "";
-		
+
 		q.where(cb().like(c.get("nome"), "%" + nome + "%"), cb().equal(c.get("hisAtivo"), 1));
 		try {
 			return em().createQuery(q).getResultList();
@@ -200,6 +198,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 
 	@Override
 	public void persist(WfProcedimento pi) {
+		WfMarcaBL.atualizarMarcas(pi);
 		gravarInstanciaDeProcedimento((WfProcedimento) pi);
 	}
 

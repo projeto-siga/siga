@@ -119,6 +119,12 @@
 			</c:catch>
 			<c:catch>
 				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;DEFLOTE:Definir Acomanhamento em Lote')}"> 
+						<li><a class="dropdown-item" href="/sigaex/app/expediente/mov/vincularPapelLote">Definir Acomanhamento em Lote</a></li>
+				</c:if>
+			</c:catch>
+			<c:catch>
+				<c:if
 					test="${f:testaCompetencia('atenderPedidoPublicacaoNoDiario',titular,lotaTitular,null)}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/atender_pedido_publicacao">Gerenciar

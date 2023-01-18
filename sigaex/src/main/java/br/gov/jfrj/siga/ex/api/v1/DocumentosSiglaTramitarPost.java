@@ -80,6 +80,12 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 			lot.setSigla(req.lotacao);
 			lot = ExDao.getInstance().consultarPorSigla(lot);
 		}
+		 
+		if (Objects.isNull(orgaoExterno) && Objects.isNull(lot)){
+			DpPessoa pes = getResponsavel(req, null);
+			lot = pes.getLotacao();
+		}
+		
 		return lot;
 	}
 

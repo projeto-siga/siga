@@ -3,10 +3,6 @@ package br.gov.jfrj.siga.sr.api.v1;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -31,7 +27,7 @@ public class SrApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 	public void initialize(ServletConfig config) throws ServletException {
 		setAPI(ISrApiV1.class);
 
-		setActionPackage("br.gov.jfrj.siga.api.v1");
+		setActionPackage("br.gov.jfrj.siga.sr.api.v1");
 
 		Prop.setProvider(this);
 		Prop.defineGlobalProperties();
@@ -103,7 +99,8 @@ public class SrApiV1Servlet extends SwaggerServlet implements IPropertyProvider 
 
 			@Override
 			public boolean test() throws Exception {
-				try (ApiContext ctx = new ApiContext(true)) {
+				try (SrApiV1Context ctx = new SrApiV1Context()) {
+					ctx.init(null);
 					return CpDao.getInstance().dt() != null;
 				}
 			}

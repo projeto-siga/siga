@@ -8,19 +8,20 @@
 
 <fmt:message key="documento.transferencia.lote" var="titulo"/>
 <siga:pagina titulo="${titulo}">
-    
-    <c:set var="thead_color" value="${thead_color}" scope="session" />
-    
+
+    <c:set var="thead_color" value="${thead_color}" scope="session"/>
+
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
                 <h5>${titulo}</h5>
             </div>
             <div class="card-body">
-                <form name="frm" id="frm">
-                    <input type="hidden" name="postback" value="1"/>
-                    <input type="hidden" name="paramoffset" value="0"/>
-                    <input type="hidden" name="p.offset" value="0"/>
+                <form name="frm" id="frm" class="form" method="post" action="listar_docs_tramitados" theme="simple">
+                    <input type="hidden" id="siglasDocumentosTramitados" name="siglasDocumentosTramitados"
+                           value=""/>
+                    <input type="hidden" id="siglasDocumentosNaoTramitados" name="siglasDocumentosNaoTramitados"
+                           value=""/>
 
                     <div class="row campo-orgao-externo" style="display: none;">
                         <div class="col-sm">
@@ -38,7 +39,9 @@
                                 <select class="custom-select" id="tipoResponsavel" name="tipoResponsavel"
                                         value="${tipoResponsavel}" onchange="updateTipoResponsavel()">
                                     <c:forEach var="item" items="${listaTipoResp}">
-                                        <option value="${item.key}">${item.value}</option>
+                                        <option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
+                                                ${item.value}
+                                        </option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -47,16 +50,15 @@
                             <div class="form-group">
                                 <label>&nbsp;</label>
                                 <span id="lotaResponsavel">
-									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"
-                                                  onchange="updateResponsavelSelecionado('formulario_lotaResponsavelSel_sigla')"/>
+									<siga:selecao propriedade="lotaResponsavel" tema="simple"
+                                                  modulo="siga" urlAcao="buscar"/>
 								</span>
                                 <span id="responsavel" style="display: none;">
-                                    <siga:selecao propriedade="responsavel" tema="simple" modulo="siga"
-                                                  onchange="updateResponsavelSelecionado('formulario_responsavelSel_sigla')"/>
+                                    <siga:selecao propriedade="responsavel" tema="simple"
+                                                  modulo="siga" urlAcao="buscar"/>
 								</span>
                                 <span id="cpOrgao" style="display: none;">
-                                    <siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"
-                                                  onchange="updateResponsavelSelecionado('formulario_cpOrgaoSel_sigla')"/>
+                                    <siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga" urlAcao="buscar"/>
 								</span>
                             </div>
                         </div>
@@ -66,7 +68,7 @@
                             <div class="form-group">
                                 <label>Data da devolução</label>
                                 <input type="text" name="dtDevolucaoMovString"
-                                       onblur="verifica_data(this,0)" value="${dtDevolucaoMovString}"
+                                       onblur="verifica_data(this,0,false,false)" value="${dtDevolucaoMovString}"
                                        class="form-control"/>
                                 <small class="form-text text-muted">Atenção: somente preencher
                                     a data de devolução se a intenção for, realmente, que o
@@ -84,7 +86,6 @@
                                     </label>
                                 </div>
                             </div>
-
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group campo-orgao-externo" style="display: none;">
@@ -94,14 +95,14 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-1">
-                            <button type="button" id="btnOk" class="btn btn-primary" onclick="validar();">
-                                <fmt:message key="documento.transferir"/>
-                            </button>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <button type="button" id="btnOk" class="btn btn-primary" onclick="validar();">
+                                    <fmt:message key="documento.transferir"/>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <h5>Destinatário: <span id="responsavelSelecionado"></span></h5>
                     <div id="documentos">
                     </div>
                 </form>
@@ -110,7 +111,8 @@
         <siga:siga-modal id="confirmacaoModal" exibirRodape="false"
                          tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
             <div class="modal-body">
-                Todos os documentos selecionados ser&atilde;o Tramitados. Deseja, confirmar?
+                Os documentos selecionados ser&atilde;o tramitados para <span id="responsavelSelecionado"></span>.
+                Deseja, confirmar?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
@@ -153,7 +155,7 @@
             });
         }
 
-        function responsavelSelecionado() {
+        function getResponsavelSelecionado() {
             let tipoResponsavelSelecionado = document.getElementById('tipoResponsavel');
 
             let elementoResponsavelSelecionado = document.getElementById('lotaResponsavel');
@@ -169,15 +171,17 @@
             return elementoResponsavelSelecionado;
         }
 
+        function getSiglaResponsavelSelecionado() {
+            let elementoResponsavelSelecionado = getResponsavelSelecionado();
+            let idFormularioResponsavelSelSigla = 'formulario_' + elementoResponsavelSelecionado.id + 'Sel_sigla';
+            return document.getElementById(idFormularioResponsavelSelSigla).value;
+        }
+
         function updateTipoResponsavel() {
-            document.getElementById('lotaResponsavel').style.display = 'none';
-            document.getElementById('responsavel').style.display = 'none';
-            document.getElementById('cpOrgao').style.display = 'none';
-            Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = 'none');
 
             limparSelecao();
 
-            let elementoResponsavelSelecionado = responsavelSelecionado();
+            let elementoResponsavelSelecionado = getResponsavelSelecionado();
             elementoResponsavelSelecionado.style.display = '';
 
             if (elementoResponsavelSelecionado.id === 'cpOrgao') {
@@ -185,8 +189,8 @@
             }
         }
 
-        function updateResponsavelSelecionado(id) {
-            document.getElementById('responsavelSelecionado').innerHTML = document.getElementById(id).value;
+        function updateResponsavelSelecionado() {
+            document.getElementById('responsavelSelecionado').innerHTML = getSiglaResponsavelSelecionado();
         }
 
         function limparSelecao() {
@@ -206,36 +210,63 @@
             document.getElementById('cpOrgaoSelSpan').innerHTML = "";
 
             document.getElementById('responsavelSelecionado').innerHTML = "";
-        }
 
-        function limparCampos() {
-            limparSelecao();
-
-            document.getElementById('checkall').checked = false;
-
-            document.getElementsByName('dtDevolucaoMovString')[0].value = "";
-            document.getElementById('obsOrgao').value = "";
+            document.getElementById('lotaResponsavel').style.display = 'none';
+            document.getElementById('responsavel').style.display = 'none';
+            document.getElementById('cpOrgao').style.display = 'none';
+            Array.from(document.getElementsByClassName('campo-orgao-externo')).forEach(el => el.style.display = 'none');
         }
 
         function validar() {
-            let lotaResponsavelSelSpan = document.getElementById('lotaResponsavelSelSpan');
-            let responsavelSelSpan = document.getElementById('responsavelSelSpan');
-            let cpOrgaoSelSpan = document.getElementById('cpOrgaoSelSpan');
+            let elementoResponsavelSelecionado = getResponsavelSelecionado();
+            let siglaResponsavelSelecionado = getSiglaResponsavelSelecionado();
 
-            if (cpOrgaoSelSpan.textContent.trim() === ''
-                && responsavelSelSpan.textContent.trim() === ''
-                && lotaResponsavelSelSpan.textContent.trim() === '') {
-
+            if (siglaResponsavelSelecionado.trim() === '') {
                 sigaModal.alerta('Selecione o destinatário da tramitação');
                 return;
+            }
+
+            if (elementoResponsavelSelecionado.id !== 'cpOrgao') {
+                let lotacaoIsSupensa;
+
+                if (elementoResponsavelSelecionado.id === 'lotaResponsavel') {
+                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa(siglaResponsavelSelecionado, '');
+                } else if (elementoResponsavelSelecionado.id === 'responsavel') {
+                    let matriculaResponsavel = siglaResponsavelSelecionado;
+                    lotacaoIsSupensa = verificarSeLotacaoEstaSuspensa('', matriculaResponsavel);
+                }
+
+                if (lotacaoIsSupensa == 1) {
+                    sigaModal.alerta('Lotação suspensa para tramitação');
+                    return;
+                } else if (lotacaoIsSupensa != 0) {
+                    sigaModal.alerta('Não foi possível obter a lotação para tramitação');
+                    return;
+                }
             }
 
             let checkedElements = $("input[name='documentosSelecionados']:checked");
             if (checkedElements.length === 0) {
                 sigaModal.alerta('Selecione pelo menos um documento');
             } else {
+                updateResponsavelSelecionado();
                 sigaModal.abrir('confirmacaoModal');
             }
+        }
+
+        function verificarSeLotacaoEstaSuspensa(sigla, matricula) {
+            let jqXHR = $.ajax({
+                url: '/siga/app/lotacao/isSuspensa?sigla=' + sigla + '&matricula=' + matricula,
+                type: 'GET',
+                async: false,
+                success: function (result) {
+                },
+                error: function (result) {
+                    console.log(result);
+                }
+            });
+
+            return jqXHR.responseText;
         }
 
         let siglasDocumentosTramitados = [];
@@ -250,7 +281,7 @@
         function enviarParaTramitacaoLote() {
 
             let lotacaoDestinoSelSigla = document.getElementById('formulario_lotaResponsavelSel_sigla').value;
-            lotacaoDestinoSelSigla = lotacaoDestinoSelSigla.replaceAll('-', '');
+            lotacaoDestinoSelSigla = lotacaoDestinoSelSigla.replace('-', '');
 
             let usuarioDestinoSelSigla = document.getElementById('formulario_responsavelSel_sigla').value;
             let orgaoDestinoSelSigla = document.getElementById('formulario_cpOrgaoSel_sigla').value;
@@ -271,8 +302,8 @@
             Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
                 chk => {
                     process.push(function () {
-                        return ExecutarPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
-                         orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
+                        return tramitarDocumentoPost(chk.value, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
+                            orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao);
 
                     });
                     process.push(function () {
@@ -284,22 +315,19 @@
             process.push(function () {
                 sigaModal.fechar('progressModal');
                 sigaSpinner.mostrar();
-                limparCampos();
-
-                let url = '${pageContext.request.contextPath}/app/expediente/mov/listar_docs_tramitados';
-                location.href = url + '?siglasDocumentosTramitados=' + siglasDocumentosTramitados
-                    + '&siglasDocumentosNaoTramitados=' + siglasDocumentosNaoTramitados;
+                enviarParaListagemDocumentosTramitados();
             });
 
             process.run();
 
         }
 
-        function ExecutarPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
-                              orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao) {
+        function tramitarDocumentoPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,
+                                       orgaoDestinoSelSigla, dtDevolucaoMovString, obsOrgao) {
             $.ajax({
                 url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/tramitar',
                 type: 'POST',
+                async: false,
                 data: {
                     sigla: documentoSelSigla,
                     lotacao: lotacaoDestinoSelSigla,
@@ -313,8 +341,17 @@
                 },
                 error: function (textStatus, errorThrown) {
                     siglasDocumentosNaoTramitados.push(documentoSelSigla);
+                    console.error(
+                        "Ocorreu um erro na tramitação: " + textStatus, errorThrown
+                    );
                 }
             });
+        }
+
+        function enviarParaListagemDocumentosTramitados() {
+            document.getElementsByName('siglasDocumentosTramitados')[0].value = siglasDocumentosTramitados;
+            document.getElementsByName('siglasDocumentosNaoTramitados')[0].value = siglasDocumentosNaoTramitados;
+            document.frm.submit();
         }
 
         let process = {
@@ -335,7 +372,6 @@
                 this.nextStep();
             },
             finalize: function () {
-                this.dialogo.dialog('destroy');
             },
             nextStep: function () {
                 if (typeof this.steps[this.index] == 'string')

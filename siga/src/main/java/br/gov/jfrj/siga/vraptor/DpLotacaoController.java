@@ -213,6 +213,26 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		return resultado;
 	}
 
+	@Get
+	@Path("/app/lotacao/isSuspensa")
+	public void isSuspensa(String sigla, String matricula) {
+		if (matricula != null && !matricula.isEmpty()) {
+			DpPessoa pessoa = CpDao.getInstance().getPessoaFromSigla(matricula);
+			if (pessoa != null)
+				sigla = pessoa.getLotacao().getSiglaCompleta();
+		}
+
+		super.aSelecionar(sigla);
+		if (getSel() != null) {
+			try {
+				String isSuspensa = ( (DpLotacao) getSel() ).getIsSuspensa().toString();
+				result.use(Results.http()).body(isSuspensa);
+			} catch (Exception e) {
+				result.use(Results.status()).forbidden(e.getMessage());
+			}
+		}
+	}
+
 	@Get("app/lotacao/exibir")
 	public void exibi(String sigla) throws Exception {
 		StringBuilder sb = new StringBuilder();

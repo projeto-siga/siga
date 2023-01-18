@@ -14,7 +14,7 @@
         <input type="hidden" name="isTransf" value="true"/>
 
         <!-- main content bootstrap -->
-        <div class="container-fluid">
+        <c class="container-fluid">
             <div class="card bg-light mb-3">
                 <div class="card-header">
                     <h5><fmt:message key='protocolo.transferencia'/></h5>
@@ -28,11 +28,11 @@
                             <input type="hidden" name="sigla" id="pessoa" value="${cadastrante.sigla}"/>
                         </tr>
                         <td>Para</td>
-                        <td>${mov.respString}</td>
+                        <td>${movIni.respString}</td>
                         </tr>
                         <tr>
                             <td>Data</td>
-                            <td colspan="2">${mov.dtRegMovDDMMYYYYHHMMSS}</td>
+                            <td colspan="2">${movIni.dtRegMovDDMMYYYYHHMMSS}</td>
                             <input type="hidden" name="dtIni" value="${dtIni}"/>
                             <input type="hidden" name="dtFim" value="${dtFim}"/>
                         </tr>
@@ -40,6 +40,8 @@
 
                 </div>
             </div>
+            
+            <c:if test="${not empty movsDocumentosNaoTramitados}">
             <div class="card bg-light mb-3">
                 <div class="card-header">
                     <h5><fmt:message key='documentos.nao.transferidos'/></h5>
@@ -57,25 +59,25 @@
                             <th>Descrição</th>
                         </tr>
                         </thead>
-                        <c:forEach var="mob" items="${mobisDocumentosNaoTramitados}">
+                        <c:forEach var="mov" items="${movsDocumentosNaoTramitados}">
                             <tr>
                                 <td align="center">
-                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}">
-                                            ${mob.codigo}
+                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mov.mob.sigla}">
+                                            ${mov.mob.codigo}
                                     </a>
                                 <td align="center">
-                                    <siga:selecionado sigla="${mob.doc.lotaSubscritor.sigla}"
-                                                      descricao="${mob.doc.lotaSubscritor.descricao}"/>
+                                    <siga:selecionado sigla="${mov.mob.doc.lotaSubscritor.sigla}"
+                                                      descricao="${mov.mob.doc.lotaSubscritor.descricao}"/>
                                 </td>
                                 <td align="center">
-                                    <siga:selecionado sigla="${mob}" descricao="${mob}"/>
+                                    <siga:selecionado sigla="${mov.mob}" descricao="${mov.mob}"/>
                                 </td>
                             </tr>
                         </c:forEach>
                     </table>
                 </div>
             </div>
-
+            </c:if>
 
             <c:if test="${not empty mobisDocumentosTramitados}">
             <div class="card bg-light mb-3">

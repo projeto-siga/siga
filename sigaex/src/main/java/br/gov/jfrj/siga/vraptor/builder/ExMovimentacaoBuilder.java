@@ -51,6 +51,7 @@ public final class ExMovimentacaoBuilder {
 	private Long idMarcador;
 	private String contentType;
 	private String fileName;
+	private String mensagemResultadoMovimentacao;
 
 	private ExMovimentacaoBuilder() {
 		substituicao = false;
@@ -323,6 +324,10 @@ public final class ExMovimentacaoBuilder {
 		return fileName;
 	}
 
+	public String getMensagemResultadoMovimentacao() {
+		return mensagemResultadoMovimentacao;
+	}
+
 	public ExMovimentacaoBuilder setLotaTitular(DpLotacao lotaTitular) {
 		this.lotaTitular = lotaTitular;
 		return this;
@@ -455,6 +460,11 @@ public final class ExMovimentacaoBuilder {
 
 	public ExMovimentacaoBuilder setFileName(String fileName) {
 		this.fileName = fileName;
+		return this;
+	}
+	
+	public ExMovimentacaoBuilder setMensagemResultadoMovimentacao(String mensagemResultadoMovimentacao){
+		this.mensagemResultadoMovimentacao = mensagemResultadoMovimentacao;
 		return this;
 	}
 

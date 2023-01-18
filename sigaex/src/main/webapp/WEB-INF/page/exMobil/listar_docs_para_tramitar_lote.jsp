@@ -33,7 +33,7 @@
                 </thead>
                 <tbody class="table-bordered">
 
-                <siga:paginador maxItens="200" maxIndices="200"
+                <siga:paginador maxItens="200" maxIndices="50"
                                 totalItens="${tamanho}" itens="${itens}" var="documento">
 
                     <c:set var="chk" scope="request">process_chk_${documento.id}</c:set>

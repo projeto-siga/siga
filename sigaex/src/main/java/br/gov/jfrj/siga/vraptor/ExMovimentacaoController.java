@@ -192,6 +192,7 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
+import org.json.JSONObject;
 
 @Controller
 public class ExMovimentacaoController extends ExController {
@@ -5664,16 +5665,8 @@ public class ExMovimentacaoController extends ExController {
 									   final String siglasDocumentosNaoTramitados,
 									   final DpLotacaoSelecao lotaResponsavelSel,
 									   final DpPessoaSelecao responsavelSel,
-									   final CpOrgaoSelecao cpOrgaoSel) throws Exception {
-
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia();
-		movimentacaoBuilder.setLotaResponsavelSel(lotaResponsavelSel)
-				.setResponsavelSel(responsavelSel)
-				.setCpOrgaoSel(cpOrgaoSel)
-				.setCadastrante(getCadastrante());
-		ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
+									   final CpOrgaoSelecao cpOrgaoSel,
+									   final String errosDocumentosNaoTramitadosJson) throws Exception {
 
 		String[] arraySiglasDocumentosTramitados = { };
 		if (siglasDocumentosTramitados != null) {
@@ -5686,7 +5679,6 @@ public class ExMovimentacaoController extends ExController {
 		}
 		
 		final List<ExMobil> mobisDocumentosTramitados = new ArrayList<ExMobil>();
-		final List<ExMobil> mobisDocumentosNaoTramitados = new ArrayList<ExMobil>();
 
 		BuscaDocumentoBuilder documentoBuilder;
 				
@@ -5697,18 +5689,27 @@ public class ExMovimentacaoController extends ExController {
 			mobisDocumentosTramitados.add(mob);
 		}
 
-		for(String sigla : arraySiglasDocumentosNaoTramitados){
-			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-			buscarDocumento(documentoBuilder);
-			ExMobil mob = documentoBuilder.getMob();
-			mobisDocumentosNaoTramitados.add(mob);
-		}
+        List<ExMovimentacao> listaMovimentacaoDocumentosNaoTramitados =
+                montarListaResultadosMovimentacaoEmLote(lotaResponsavelSel,
+                        responsavelSel,
+                        cpOrgaoSel,
+                        errosDocumentosNaoTramitadosJson);
+
+        if (( mobisDocumentosTramitados == null 
+                || mobisDocumentosTramitados.isEmpty() ) 
+                && listaMovimentacaoDocumentosNaoTramitados == null 
+                || listaMovimentacaoDocumentosNaoTramitados.isEmpty()) {
+
+            throw new AplicacaoException("Não foi possível tramitar em lote");
+        }
 
 		ExMobil mobIni = mobisDocumentosTramitados.isEmpty() ? null : mobisDocumentosTramitados.get(0);
 		ExMovimentacao movIni = null;
-		if(mobIni != null){
-			movIni = mobIni.getUltimaMovimentacao();
-		}
+        if (mobIni != null) {
+            movIni = mobIni.getUltimaMovimentacao();
+        } else {
+            movIni = listaMovimentacaoDocumentosNaoTramitados.get(0);
+        }
 
 		ExMobil mobFim = mobisDocumentosTramitados.isEmpty() ? null :
 				mobisDocumentosTramitados.get(mobisDocumentosTramitados.size() - 1);
@@ -5718,8 +5719,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		result.include("mobisDocumentosTramitados", mobisDocumentosTramitados);
-		result.include("mobisDocumentosNaoTramitados", mobisDocumentosNaoTramitados);
-
+		result.include("movsDocumentosNaoTramitados", listaMovimentacaoDocumentosNaoTramitados);
 
 		result.include("lotaTitular", getLotaTitular());
 		result.include("movIni", movIni);
@@ -5729,7 +5729,38 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.include("dtIni", dtIni);
 		result.include("dtFim", dtFim);
-		result.include("mov", mov);
+	}
+	
+	private List<ExMovimentacao> montarListaResultadosMovimentacaoEmLote(final DpLotacaoSelecao lotaResponsavelSel,
+                                                                         final DpPessoaSelecao responsavelSel,
+                                                                         final CpOrgaoSelecao cpOrgaoSel,
+                                                                         final String resultadosMovimentacaoMapJson){
+        
+		List<ExMovimentacao> listaResultadosMovimentacaoEmLote = null;
+
+		JSONObject jsonObject = new JSONObject(resultadosMovimentacaoMapJson);
+		
+		jsonObject.keys().forEachRemaining(key -> {
+            BuscaDocumentoBuilder documentoBuilder;
+            documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(key);
+            buscarDocumento(documentoBuilder);
+            ExMobil mob = documentoBuilder.getMob();
+            String mensagemResultadoMovimentacao = jsonObject.get(key).toString();
+                
+            final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
+            movimentacaoBuilder.setLotaResponsavelSel(lotaResponsavelSel)
+                    .setResponsavelSel(responsavelSel)
+                    .setCpOrgaoSel(cpOrgaoSel)
+                    .setCadastrante(getCadastrante())
+                    .setMob(mob)
+                    .setMensagemResultadoMovimentacao(mensagemResultadoMovimentacao);
+            ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+            mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
+
+            listaResultadosMovimentacaoEmLote.add(mov);
+		});
+		
+		return listaResultadosMovimentacaoEmLote;
 	}
 	
 }

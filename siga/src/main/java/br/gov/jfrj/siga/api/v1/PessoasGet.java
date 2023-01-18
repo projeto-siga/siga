@@ -15,6 +15,7 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -49,6 +50,11 @@ public class PessoasGet implements IPessoasGet {
 
 		if (req.idPessoaIni != null && !req.idPessoaIni.isEmpty()) {
 			resp.list = pesquisarPessoaAtualPorIdIni(req, resp, exibirDadosSensiveis);
+			return;
+		}
+
+		if (req.emailQuery != null && !req.emailQuery.isEmpty()) {
+			resp.list = pesquisarPorEmail(req, resp, exibirDadosSensiveis);
 			return;
 		}
 
@@ -108,6 +114,25 @@ public class PessoasGet implements IPessoasGet {
 		return resultado;
 	}
 
+	private List<Pessoa> pesquisarPorEmail(Request req, Response resp, Boolean exibirDadosSensiveis) throws Exception {
+		String email = req.emailQuery;
+		try {
+			if (Utils.isEmailValido(email)) {			
+				List<DpPessoa> l = new CpDao().listarPorEmail(email);
+				if (l.isEmpty())
+					throw new SwaggerException("Nenhuma pessoa foi encontrada para o e-mail informado.", 404, null, req,
+								resp, null);
+
+					return l.stream().map(pessoa -> this.pessoaToResultadoPesquisa(pessoa, exibirDadosSensiveis)).collect(Collectors.toList());
+			} else {
+				throw new SwaggerException("E-mail inválido.", 400, null, req, resp, null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+	
 	private Pessoa identidadeToResultadoPesquisa(CpIdentidade identidade, Boolean exibirDadosSensiveis) {
 		DpPessoa p = identidade.getPessoaAtual();
 		return pessoaToResultadoPesquisa(p, exibirDadosSensiveis);

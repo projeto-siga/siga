@@ -230,9 +230,10 @@ public interface ISigaApiV1 {
 
     public interface IPessoasGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
-            public String idPessoaIni;
-            public String texto;
-            public String cpf;
+			public String idPessoaIni;
+			public String texto;
+			public String cpf;
+			public String emailQuery;
         }
 
         public static class Response implements ISwaggerResponse {

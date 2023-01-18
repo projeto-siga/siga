@@ -1178,6 +1178,9 @@ definitions:
       nome:
         type: string
         description: Nome da lotação
+      idLocalidade:
+        type: string
+        description: Id da localidade da lotação
       orgao:
         $ref: "#/definitions/Orgao"
 

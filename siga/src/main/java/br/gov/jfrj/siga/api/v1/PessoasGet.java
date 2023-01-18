@@ -142,6 +142,7 @@ public class PessoasGet implements IPessoasGet {
 		lotacao.idLotacaoIni = l.getIdLotacaoIni().toString();
 		lotacao.nome = l.getNomeLotacao();
 		lotacao.sigla = l.getSigla();
+		lotacao.idLocalidade = l.getLocalidade().getIdLocalidade().toString();
 		lotacao.orgao = orgao;
 
 		// Cargo Pessoa

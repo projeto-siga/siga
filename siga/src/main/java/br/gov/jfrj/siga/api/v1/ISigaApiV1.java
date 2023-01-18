@@ -43,14 +43,15 @@ public interface ISigaApiV1 {
         public String nome;
     }
 
-    public static class Lotacao implements ISwaggerModel {
-        public String idLotacao;
-        public String idLotacaoIni;
-        public String sigla;
-        public String siglaLotacao;
-        public String nome;
-        public Orgao orgao;
-    }
+	public static class Lotacao implements ISwaggerModel {
+		public String idLotacao;
+		public String idLotacaoIni;
+		public String sigla;
+		public String siglaLotacao;
+		public String nome;
+		public String idLocalidade;
+		public Orgao orgao;
+	}
 
     public static class LotacaoAtual implements ISwaggerModel {
         public String idLotacao;

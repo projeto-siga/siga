@@ -19,7 +19,6 @@
             <div class="card-body">
                 <form name="frm" id="frm" class="form" method="post" action="listar_docs_tramitados" theme="simple">
                     <input type="hidden" name="siglasDocumentosTramitados" value=""/>
-                    <input type="hidden" name="siglasDocumentosNaoTramitados" value=""/>
                     <input type="hidden" name="errosDocumentosNaoTramitadosJson" value=""/>
 
                     <div class="row campo-orgao-externo" style="display: none;">

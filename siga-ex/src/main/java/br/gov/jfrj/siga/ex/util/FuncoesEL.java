@@ -1020,13 +1020,12 @@ public class FuncoesEL {
 	}
 
 	public static Boolean podeAutenticarComSenha(
-			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
+			DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc)
 			throws Exception {
 		return Ex
 				.getInstance()
 				.getComp()
-				.pode(ExPodeAutenticarComSenha.class, titular, lotaTitular,
-						mob);
+				.pode(ExPodeAutenticarComSenha.class, titular, lotaTitular, doc);
 	}
 	
 	public static Boolean deveAutenticarComSenha(

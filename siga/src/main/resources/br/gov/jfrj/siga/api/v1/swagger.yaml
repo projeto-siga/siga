@@ -395,7 +395,7 @@ paths:
   /pessoas:
     get:
       summary: "Pesquisa de pessoas"
-      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com os parâmetros informados (não são combinados entre si, assume só o primeiro): 
+      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com um dos parâmetros informados: 
         <ul>
         <li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
         <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>

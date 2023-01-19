@@ -347,7 +347,6 @@
 
         function enviarParaListagemDocumentosTramitados() {
             document.getElementsByName('siglasDocumentosTramitados')[0].value = siglasDocumentosTramitados;
-            document.getElementsByName('siglasDocumentosNaoTramitados')[0].value = siglasDocumentosNaoTramitados;
 
             let errosDocumentosNaoTramitadosJson = JSON.stringify(Object.fromEntries(errosDocumentosNaoTramitadosMap));
             document.getElementsByName('errosDocumentosNaoTramitadosJson')[0].value = errosDocumentosNaoTramitadosJson;

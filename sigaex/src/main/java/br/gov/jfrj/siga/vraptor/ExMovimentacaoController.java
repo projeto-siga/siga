@@ -5662,7 +5662,6 @@ public class ExMovimentacaoController extends ExController {
 
 	@Post("/app/expediente/mov/listar_docs_tramitados")
 	public void listar_docs_tramitados(final String siglasDocumentosTramitados, 
-									   final String siglasDocumentosNaoTramitados,
 									   final DpLotacaoSelecao lotaResponsavelSel,
 									   final DpPessoaSelecao responsavelSel,
 									   final CpOrgaoSelecao cpOrgaoSel,
@@ -5671,11 +5670,6 @@ public class ExMovimentacaoController extends ExController {
 		String[] arraySiglasDocumentosTramitados = { };
 		if (siglasDocumentosTramitados != null) {
 			arraySiglasDocumentosTramitados = siglasDocumentosTramitados.split(",");
-		}
-		
-		String[] arraySiglasDocumentosNaoTramitados = { };
-		if (siglasDocumentosNaoTramitados != null) {
-			arraySiglasDocumentosNaoTramitados = siglasDocumentosNaoTramitados.split(",");
 		}
 		
 		final List<ExMobil> mobisDocumentosTramitados = new ArrayList<ExMobil>();
@@ -5697,8 +5691,8 @@ public class ExMovimentacaoController extends ExController {
 
         if (( mobisDocumentosTramitados == null 
                 || mobisDocumentosTramitados.isEmpty() ) 
-                && listaMovimentacaoDocumentosNaoTramitados == null 
-                || listaMovimentacaoDocumentosNaoTramitados.isEmpty()) {
+                && (listaMovimentacaoDocumentosNaoTramitados == null 
+                || listaMovimentacaoDocumentosNaoTramitados.isEmpty())) {
 
             throw new AplicacaoException("Não foi possível tramitar em lote");
         }
@@ -5736,12 +5730,14 @@ public class ExMovimentacaoController extends ExController {
                                                                          final CpOrgaoSelecao cpOrgaoSel,
                                                                          final String resultadosMovimentacaoMapJson){
         
-		List<ExMovimentacao> listaResultadosMovimentacaoEmLote = null;
+		List<ExMovimentacao> listaResultadosMovimentacaoEmLote = new ArrayList<>();
 
 		JSONObject jsonObject = new JSONObject(resultadosMovimentacaoMapJson);
-		
-		jsonObject.keys().forEachRemaining(key -> {
-            BuscaDocumentoBuilder documentoBuilder;
+
+		for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+			String key = it.next();
+			
+			BuscaDocumentoBuilder documentoBuilder;
             documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(key);
             buscarDocumento(documentoBuilder);
             ExMobil mob = documentoBuilder.getMob();
@@ -5753,12 +5749,12 @@ public class ExMovimentacaoController extends ExController {
                     .setCpOrgaoSel(cpOrgaoSel)
                     .setCadastrante(getCadastrante())
                     .setMob(mob)
-                    .setMensagemResultadoMovimentacao(mensagemResultadoMovimentacao);
+                    .setDescrMov(mensagemResultadoMovimentacao);
             ExMovimentacao mov = movimentacaoBuilder.construir(dao());
             mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
 
             listaResultadosMovimentacaoEmLote.add(mov);
-		});
+		}
 		
 		return listaResultadosMovimentacaoEmLote;
 	}

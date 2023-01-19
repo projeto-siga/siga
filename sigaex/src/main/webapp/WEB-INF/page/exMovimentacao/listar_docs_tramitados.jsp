@@ -49,29 +49,32 @@
 
                 <div class="card-body">
                     <table class="table table-hover table-striped">
+                        <col width="20%"/>
+                        <col width="10%"/>
                         <col width="30%"/>
-                        <col width="16%"/>
-                        <col width="54%"/>
+                        <col width="40%"/>
                         <thead class="${thead_color} align-middle text-center">
                         <tr>
                             <th>Documento</th>
                             <th>Lotação</th>
                             <th>Descrição</th>
+                            <th>Mensagem</th>
                         </tr>
                         </thead>
                         <c:forEach var="mov" items="${movsDocumentosNaoTramitados}">
                             <tr>
                                 <td align="center">
-                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mov.mob.sigla}">
-                                            ${mov.mob.codigo}
+                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mov.exMobil.sigla}">
+                                            ${mov.exMobil.codigo}
                                     </a>
                                 <td align="center">
-                                    <siga:selecionado sigla="${mov.mob.doc.lotaSubscritor.sigla}"
-                                                      descricao="${mov.mob.doc.lotaSubscritor.descricao}"/>
+                                    <siga:selecionado sigla="${mov.exMobil.exDocumento.lotaSubscritor.sigla}"
+                                                      descricao="${mov.exMobil.exDocumento.lotaSubscritor.descricao}"/>
                                 </td>
                                 <td align="center">
-                                    <siga:selecionado sigla="${mov.mob}" descricao="${mov.mob}"/>
+                                    <siga:selecionado sigla="${mov.exMobil}" descricao="${mov.exMobil}"/>
                                 </td>
+                                <td class="text-left">${mov.descrMov}</td>
                             </tr>
                         </c:forEach>
                     </table>

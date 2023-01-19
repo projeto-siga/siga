@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -203,6 +202,8 @@ public class ExMovimentacaoController extends ExController {
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
+
+	protected List<String> erros = new ArrayList<String>();
 	
 	private static final int TAMANHO_MAX_CARACTER = 500;
 	
@@ -2868,7 +2869,30 @@ public class ExMovimentacaoController extends ExController {
 			
 		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
 	}
-
+	
+	private void validaCamposObrigatorioTransferenciaDocsArquivados(DpLotacaoSelecao lotacaoDestinatarioSel, List<Long> documentosSelecionados, String motivoTransferencia){
+		if (lotacaoDestinatarioSel.getObjeto() == null) {
+			erros.add("Necessário adicionar uma unidade de DESTINO para realizar a transferência.");
+			return;
+		}
+		
+		if (documentosSelecionados == null || documentosSelecionados.isEmpty()) {
+			erros.add("Necessário selecionar pelo menos 1 documento para realizar a transferência.");
+			return;
+		}
+		
+		if(StringUtils.isEmpty(motivoTransferencia)) {
+			erros.add("O campo MOTIVO é obrigatório!");
+			return;
+		}
+		
+		if(StringUtils.isNotEmpty(motivoTransferencia) && motivoTransferencia.length() > TAMANHO_MAX_CARACTER) {
+			erros.add("O texto MOTIVO ultrapassou o limite máximo de caracteres de " + TAMANHO_MAX_CARACTER);
+			return;
+		}
+		
+	}
+	
 	@Transacional
 	@Post("app/expediente/mov/transferir_lote_documentos_arquivados")
 	public void aTransferirLoteDocArquivado(
@@ -2876,40 +2900,18 @@ public class ExMovimentacaoController extends ExController {
 			final String protocolo, final Long tpdall,
 			final String txtall, final List<Long> documentosSelecionados, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
 			throws Exception {
+	
+		validaCamposObrigatorioTransferenciaDocsArquivados(lotacaoDestinatarioSel, documentosSelecionados, motivoTransferencia);
 		
-		if (documentosSelecionados == null || documentosSelecionados.isEmpty()) {
+		if(!erros.isEmpty()) {
 			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Necessário selecionar pelo menos 1 documento para realizar a transferência.");
+			result.include("mensagemCabec", erros.get(0));
 			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
 			return;
 		}
 		
-		if(StringUtils.isEmpty(motivoTransferencia)) {
-			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "O campo MOTIVO é obrigatório!");
-			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
-			return;
-		}
-		
-		if(StringUtils.isNotEmpty(motivoTransferencia) && motivoTransferencia.length() > TAMANHO_MAX_CARACTER) {
-			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "O texto MOTIVO ultrapassou o limite máximo de caracteres de " + TAMANHO_MAX_CARACTER);
-			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
-			return;
-		}
-		
-		/*if((lotaResponsavelSel != null && lotaResponsavelSel.getObjeto() != null && lotaResponsavelSel.getObjeto().getIsSuspensa() != null && lotaResponsavelSel.getObjeto().getIsSuspensa().equals(1)) 
-				|| (responsavelSel != null && responsavelSel.getObjeto() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa() != null && responsavelSel.getObjeto().getLotacao().getIsSuspensa().equals(1))) {			
-			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "A " + SigaMessages.getMessage("usuario.lotacao") + " informada está Suspensa.");
-			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
-			return;
-		}*/
-
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
-		builder//.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao)
-				//.setTitularSel(titularSel).setNmFuncaoSubscritor(nmFuncaoSubscritor)
-				.setCadastrante(getCadastrante())
+		builder.setCadastrante(getCadastrante())
 				.setLotaResponsavelSel(lotaResponsavelSel)
 				.setResponsavelSel(responsavelSel)
 				.setLotaDestinoFinalSel(lotacaoDestinatarioSel);

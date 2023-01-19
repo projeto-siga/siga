@@ -400,7 +400,7 @@ paths:
         <li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
         <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
         <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li>
-        <li><b>email=</b> Pesquisa as Pessoas cadastradas com determinado e-mail</li></ul>"
+        <li><b>email=</b> Pesquisa as Pessoas cadastradas com determinado e-mail (pesquisa por palavra. Ex.: 'silva gmail' traz joaodasilva10@gmail.com)</li></ul>"
       tags: [cadastro]
       security:
         - Bearer: []
@@ -424,7 +424,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
         404:
-          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados. (ou Nenhum e-mail foi encontrado contendo as palavras informadas.)
           schema:
             $ref: "#/definitions/Error"                
         500:

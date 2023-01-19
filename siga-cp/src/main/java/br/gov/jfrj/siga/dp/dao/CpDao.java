@@ -1064,14 +1064,6 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 
-	public List<DpPessoa> listarPorEmail(final String email) {
-
-		final Query qry = em().createNamedQuery("consultarPorEmail");
-		qry.setParameter("emailPessoa", email);
-		final List<DpPessoa> l = qry.getResultList();
-		return l;
-	}
-
 	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf, final Long idPessoaIni) {
 		final Query qry = em().createNamedQuery("consultarPorEmailIgualCpfDiferente");
 		qry.setParameter("emailPessoa", email);

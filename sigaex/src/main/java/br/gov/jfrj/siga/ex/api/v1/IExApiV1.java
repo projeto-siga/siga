@@ -180,6 +180,7 @@ public interface IExApiV1 {
 
     public static class ModeloItem implements ISwaggerModel {
         public String idModelo;
+        public String idModeloInicial;
         public String nome;
         public String descr;
     }
@@ -192,6 +193,7 @@ public interface IExApiV1 {
 
     public static class ModeloListaHierarquicaItem implements ISwaggerModel {
         public String idModelo;
+        public String idModeloInicial;
         public String nome;
         public String descr;
         public Long level;
@@ -286,6 +288,7 @@ public interface IExApiV1 {
 
         public static class Response implements ISwaggerResponse {
             public String idModelo;
+            public String idModeloInicial;
             public String nome;
             public String descr;
             public String especie;
@@ -301,6 +304,30 @@ public interface IExApiV1 {
 
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
     }
+
+	public interface IModelosIdAtivoGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public String id;
+		}
+
+		public static class Response implements ISwaggerResponse {
+			public String idModelo;
+			public String idModeloInicial;
+			public String nome;
+			public String descr;
+			public String especie;
+			public String nivelDeAcesso;
+			public String classificacao;
+			public String classificacaoParaCriacaoDeVias;
+			public String tipoDeSubscritor;
+			public String tipoDeDestinatario;
+			public String tipoDeConteudo;
+			public String tipoDeDocumento;
+			public String conteudo;
+		}
+
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
 
     public interface IModelosIdProcessarEntrevistaPost extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {

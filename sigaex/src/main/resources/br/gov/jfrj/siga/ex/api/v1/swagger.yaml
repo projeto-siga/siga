@@ -682,6 +682,54 @@ paths:
             properties:
               idModelo:
                 type: string
+              idModeloInicial:
+                type: string
+              nome:
+                type: string
+              descr:
+                type: string
+              especie:
+                type: string
+              nivelDeAcesso:
+                type: string
+              classificacao:
+                type: string
+              classificacaoParaCriacaoDeVias:
+                type: string
+              tipoDeSubscritor:
+                type: string
+              tipoDeDestinatario:
+                type: string
+              tipoDeConteudo:
+                type: string
+              tipoDeDocumento:
+                type: string
+              conteudo:
+                type: string
+        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/ativo:
+    get:
+      summary: Obtem o modelo ativo (versão corrente atual) de um modelo específico. O id pode ser de qualquer versão do modelo, ativo ou não.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idModelo:
+                type: string
+              idModeloInicial:
+                type: string
               nome:
                 type: string
               descr:
@@ -3222,6 +3270,8 @@ definitions:
     properties:
       idModelo:
         type: string
+      idModeloInicial:
+        type: string
       nome:
         type: string
       descr:
@@ -3243,6 +3293,8 @@ definitions:
     type: object
     properties:        
       idModelo:
+        type: string
+      idModeloInicial:
         type: string
       nome:
         type: string

@@ -11,7 +11,7 @@ public class ListaHierarquica {
 	List<String> groups = new ArrayList<String>();
 	List<ListaHierarquicaItem> l = new ArrayList<ListaHierarquicaItem>();
 
-	public void add(String text, Long value, boolean selected) {
+	public void add(String idInicial, String text, Long value, boolean selected) {
 		if (text == null || value == null)
 			return;
 		String as[] = text.split(DIVIDER);
@@ -25,14 +25,14 @@ public class ListaHierarquica {
 				groups = groups.subList(0, i);
 				groups.add(s);
 				boolean group = i < as.length - 1;
-				l.add(new ListaHierarquicaItem(i + 1, s, group ? null : Texto.removeAcentoMaiusculas(text),
+				l.add(new ListaHierarquicaItem(i + 1, (group ? null : idInicial), s, group ? null : Texto.removeAcentoMaiusculas(text),
 						group ? null : value, group, group ? false : selected));
 			}
 		}
 	}
 	
 	/* Com Busca complementar*/
-	public void add(String text, String keywords, Long value, boolean selected) {
+	public void add(String idInicial, String text, String keywords, Long value, boolean selected) {
 		if (text == null || value == null)
 			return;
 		String as[] = text.split(DIVIDER);
@@ -46,7 +46,7 @@ public class ListaHierarquica {
 				groups = groups.subList(0, i);
 				groups.add(s);
 				boolean group = i < as.length - 1;
-				l.add(new ListaHierarquicaItem(i + 1, s, group ? null : Texto.removeAcentoMaiusculas(text.concat(" - " + keywords)), keywords,
+				l.add(new ListaHierarquicaItem(i + 1, (group ? null : idInicial), s, group ? null : Texto.removeAcentoMaiusculas(text.concat(" - " + keywords)), keywords,
 						group ? null : value, group, group ? false : selected));
 			}
 		}

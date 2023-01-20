@@ -286,7 +286,11 @@
             let usuarioDestinoSelSigla = document.getElementById('formulario_responsavelSel_sigla').value;
             let orgaoDestinoSelSigla = document.getElementById('formulario_cpOrgaoSel_sigla').value;
 
-            let dtDevolucaoMovString = formataDataString(document.getElementsByName('dtDevolucaoMovString')[0].value);
+            let dtDevolucaoMovString = document.getElementsByName('dtDevolucaoMovString')[0].value;
+            if(dtDevolucaoMovString.trim() !== ""){
+                dtDevolucaoMovString = formataDataString(dtDevolucaoMovString);        
+            }
+            
             let obsOrgao = document.getElementById('obsOrgao').value;
 
 

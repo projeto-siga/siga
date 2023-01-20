@@ -2684,7 +2684,7 @@ public class ExBL extends CpBL {
 				ExMovimentacao mov = mob.getUltimaMovimentacaoNaoCancelada();
 				if (mov == null)
 					break;
-				cancelarMovimentacao(cadastrante, lotaCadastrante, mob);
+				cancelarMovimentacao(cadastrante, lotaCadastrante, mob, motivo);
 			}
 		}
 	}

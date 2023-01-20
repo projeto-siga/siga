@@ -85,17 +85,6 @@
 					<li><a class="dropdown-item" href="/sigawf/app/ativos">Workflow</a></li>
 				</c:if>
 
-				<c:if																         
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SECC: Módulo serviço de compra e contratação')}"> 
-					<li class="dropdown-submenu"><a href="javascript:void(0);"
-							class="dropdown-item dropdown-toggle">Compras e Contratações</a>
-							<ul class="dropdown-menu">
-								<li><a class="dropdown-item"
-									href="/siga/app/secc/acesso">Memorando de aquisição</a></li>
-							</ul>
-					</li>
-				</c:if>
-
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
 					<li><a class="dropdown-item" href="/sigasr/">Serviços</a></li>
@@ -227,6 +216,17 @@
 								</c:if>
 							</ul></li>
 					</c:if>
+				</c:if>
+				
+				<c:if																         
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SECC: Módulo serviço de compra e contratação')}"> 
+					<li class="dropdown-submenu"><a href="javascript:void(0);"
+							class="dropdown-item dropdown-toggle">Compras e Contratações</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item"
+									href="/siga/app/secc/acesso">Memorando de aquisição</a></li>
+							</ul>
+					</li>
 				</c:if>
 
 			</ul></li>

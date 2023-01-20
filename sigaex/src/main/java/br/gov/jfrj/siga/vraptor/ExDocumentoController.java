@@ -2117,30 +2117,20 @@ public class ExDocumentoController extends ExController {
 		result.include("doc", exDocumentoDto.getDoc());
 	}
 	
-	@Transacional
 	@Get("/app/expediente/doc/cancelarDocumento")
-	public void cancelarDocumento(final String sigla) throws Exception {
+	public void cancelarDocumento(final String sigla, final String descrMov) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
 		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
 		
-		try {
-			Ex.getInstance()
-			.getBL()
-			.cancelarDocumento(exDocumentoDto.getMob().doc().getTitular(),
-					exDocumentoDto.getMob().doc().getLotaTitular(), exDocumentoDto.getMob().doc());		
-		} catch (RegraNegocioException re) {
-			result.include(SigaModal.ALERTA, SigaModal.mensagem(re.getMessage()));
-		}
 		result.include("sigla", sigla);
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("titularSel", new DpPessoaSelecao());
-		result.include("descrMov", exDocumentoDto.getDescrMov());
+		result.include("descrMov", descrMov);
 		result.include("doc", exDocumentoDto.getDoc());
-		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 	
 	@Transacional
@@ -2211,6 +2201,30 @@ public class ExDocumentoController extends ExController {
 		}		
 	}
 
+	@Transacional
+	@Post("/app/expediente/doc/cancelarDocumentoGravar")
+	public void cancelarDocumentoGravar(final String sigla, final String descrMov) throws Exception {
+		assertAcesso("");
+		try {
+			if (descrMov == null || descrMov.trim().length() == 0) {
+				throw new RegraNegocioException("Favor informar o motivo");
+			}
+
+			final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+			exDocumentoDto.setSigla(sigla);
+			buscarDocumento(Boolean.FALSE, exDocumentoDto);
+
+			Ex.getInstance()
+					.getBL()
+					.cancelarDocumento(getCadastrante(),getLotaCadastrante(), exDocumentoDto.getDoc(), descrMov);
+
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
+		} catch (final RegraNegocioException e) {
+			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
+			result.forwardTo(this).cancelarDocumento(sigla, descrMov);
+		}
+	}
+	
 	private void carregarBeans(final ExDocumentoDTO exDocumentoDTO,
 			final ExMobilSelecao mobilPaiSel) {
 		setPar(getRequest().getParameterMap());

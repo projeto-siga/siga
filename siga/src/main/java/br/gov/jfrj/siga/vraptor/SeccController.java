@@ -35,7 +35,6 @@ public class SeccController extends SigaController {
 	@Get("app/secc/acesso")
 	public void modulo() {
 		String cookieDomain = Prop.get("/siga.jwt.cookie.domain");
-		
 		final JWTSigner signer = new JWTSigner(Prop.get("/secc.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 		final long iat = System.currentTimeMillis() / 1000L;

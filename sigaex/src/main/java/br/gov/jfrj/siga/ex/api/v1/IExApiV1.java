@@ -231,16 +231,19 @@ public interface IExApiV1 {
         public String referenciaPDFCompletoDocPrincipal;
     }
 
-    public interface IModelosGet extends ISwaggerMethod {
-        public static class Request implements ISwaggerRequest {
-        }
+	public interface IModelosGet extends ISwaggerMethod {
+		public static class Request implements ISwaggerRequest {
+			public Boolean permitidos;
+			public String nomemodelo;
+		}
 
-        public static class Response implements ISwaggerResponse {
-            public List<ModeloItem> list = new ArrayList<>();
-        }
+		public static class Response implements ISwaggerResponse {
+			public List<ModeloItem> list = new ArrayList<>();
+		}
 
-        public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
-    }
+		public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+	}
+
 
     public interface IModelosListaHierarquicaGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {

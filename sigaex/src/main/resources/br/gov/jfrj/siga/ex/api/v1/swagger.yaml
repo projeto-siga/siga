@@ -90,6 +90,19 @@ parameters:
     description: Sigla do mobil do documento a ser vinculado
     type: string
     required: true
+  nomemodelo:
+    name: nomemodelo
+    in: query
+    description: String contida no nome do modelo a ser pesquisado
+    type: string
+    required: false
+  permitidos:
+    name: permitidos
+    in: query
+    description: Informar true se deseja trazer somente os permitidos para o usuário logado
+    required: false
+    default: true
+    type: boolean    
   completo:
     name: completo
     in: query
@@ -574,11 +587,13 @@ parameters:
 paths:
   /modelos:
     get:
-      summary: Obtem a lista de modelos que o usuário pode criar.
+      summary: Obtem a lista de modelos ativos que o usuário pode criar (permitidos) ou de todos modelos.
       tags: [modelo]
       security:
         - Bearer: []
-      parameters: [] 
+      parameters: 
+        - $ref: "#/parameters/permitidos"
+        - $ref: "#/parameters/nomemodelo"
       responses:
         200:
           description: Successful response

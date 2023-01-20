@@ -2644,7 +2644,13 @@ public class ExBL extends CpBL {
 
 	}
 
-	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
+	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc) 
+			throws Exception {
+		
+		cancelarDocumento(cadastrante, lotaCadastrante, doc, null);
+	}
+	
+	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc, String motivo)
 			throws Exception {
 		if (Prop.isGovSP() && doc.getMobilDefaultParaReceberJuntada().temDocumentosJuntados()) {
 			throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento possui documento(s) juntado(s)");
@@ -2654,7 +2660,7 @@ public class ExBL extends CpBL {
 			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
 				getExConsTempDocCompleto().removerCossigsSubscritorVisTempDocsComplFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
 			}
-			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
+			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc, motivo);
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
@@ -2663,8 +2669,14 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	private void cancelarMovimentacoes(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
+	private void cancelarMovimentacoes(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc) 
 			throws Exception {
+
+		cancelarMovimentacoes(cadastrante, lotaCadastrante, doc, null);
+	}
+
+	private void cancelarMovimentacoes(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
+									   String motivo) throws Exception {
 		// Cancelar todas as criações
 		//
 		for (ExMobil mob : doc.getExMobilSet()) {
@@ -2866,6 +2878,11 @@ public class ExBL extends CpBL {
 	}
 
 	public void cancelarMovimentacao(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob) {
+		cancelarMovimentacao(cadastrante, lotaCadastrante, mob, null);
+	}
+	
+	public void cancelarMovimentacao(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+									 final String motivo) {
 		try {
 			boolean indexar = false;
 			SortedSet<ExMobil> set = null;
@@ -2913,6 +2930,7 @@ public class ExBL extends CpBL {
 						ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, cadastrante, lotaCadastrante,
 						m, null, null, null, null, null, null);
 
+				mov.setDescrMov(motivo);
 				gravarMovimentacao(mov);
 
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);

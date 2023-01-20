@@ -285,6 +285,10 @@
             let orgaoDestinoSelSigla = document.getElementById('formulario_cpOrgaoSel_sigla').value;
 
             let dtDevolucaoMovString = document.getElementsByName('dtDevolucaoMovString')[0].value;
+            if(dtDevolucaoMovString.trim() !== ""){
+                dtDevolucaoMovString = formataDataString(dtDevolucaoMovString);        
+            }
+            
             let obsOrgao = document.getElementById('obsOrgao').value;
 
 
@@ -318,6 +322,18 @@
 
             process.run();
 
+        }
+
+        function formataDataString(data) {
+            data = data.replaceAll('/', '');
+
+            let dia = data.substring(0, 2);
+            let mes = data.substring(2, 4);
+            let ano = data.substring(4, data.length);
+            
+            const dataFormatada = new Date(ano, mes-1, dia).toISOString().split('T')[0];
+            
+            return dataFormatada;
         }
 
         function tramitarDocumentoPost(documentoSelSigla, lotacaoDestinoSelSigla, usuarioDestinoSelSigla,

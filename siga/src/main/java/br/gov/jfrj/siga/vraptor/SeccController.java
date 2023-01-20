@@ -35,7 +35,6 @@ public class SeccController extends SigaController {
 	@Get("app/secc/acesso")
 	public void modulo() {
 		String cookieDomain = Prop.get("/siga.jwt.cookie.domain");
-		String modulo = Prop.get("/secc.jwt.secret");
 		
 		final JWTSigner signer = new JWTSigner(Prop.get("/secc.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
@@ -47,8 +46,6 @@ public class SeccController extends SigaController {
 		claims.put("aud", cookieDomain);
 		claims.put("nbf", iat);
 		claims.put("lota", getLotaTitular().getSigla());
-		claims.put("mod", modulo);
-		claims.put("iss", modulo);
 		claims.put("exp", exp);
 		claims.put("iat", iat);
 		String token = signer.sign(claims);

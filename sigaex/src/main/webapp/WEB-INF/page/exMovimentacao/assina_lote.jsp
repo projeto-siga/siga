@@ -24,6 +24,19 @@
 	</script>
 
 	<script type="text/javascript" language="Javascript1.1">
+	
+		function sbmt(offset) {
+			if (offset == null) {
+				offset = 0;
+			}
+			let form = document.forms['frm'];
+			form ["paramoffset"].value = offset;
+			form.action = "assinar_lote";
+			form.method = "GET";
+			form ["p.offset"].value = offset;
+	
+			form.submit();
+		}
 		function checkUncheckAll(theElement) {
 			var theForm = theElement.form, z = 0;
 			for (z = 0; z < theForm.length; z++) {
@@ -85,6 +98,8 @@
 	<div class="container-fluid">
 		<form name="frm" id="frm" cssClass="form" theme="simple">
 			<input type="hidden" name="postback" value="1" />
+			<input type="hidden" name="paramoffset" value="0" />
+			<input type="hidden" name="p.offset" value="0" />
 			<div class="card bg-light mb-3">
 				<div class="card-header">
 					<h5>Assinatura em Lote</h5>
@@ -149,7 +164,9 @@
 							</tr>
 						</thead>
 						<tbody class="table-bordered">
-							<c:forEach var="doc" items="${itensSolicitados}">
+<%-- 							<c:forEach var="doc" items="${itensSolicitados}"> --%>
+							<siga:paginador maxItens="${maxItems}" maxIndices="10"
+										totalItens="${tamanho}" itens="${itensSolicitados}" var="documento">
 								<c:set var="x" scope="request">ad_chk_${doc.idDoc}</c:set>
 								<c:remove var="x_checked" scope="request" />
 								<c:if test="${param[x] == 'true'}">
@@ -190,7 +207,8 @@
 								<input type="hidden" name="ad_kind_${doc.idDoc}"
 									value="${doc.descrFormaDoc}" />
 							
-							</c:forEach>
+<%-- 							</c:forEach> --%>
+							</siga:paginador>
 						</tbody>
 					</table>
 				</div>

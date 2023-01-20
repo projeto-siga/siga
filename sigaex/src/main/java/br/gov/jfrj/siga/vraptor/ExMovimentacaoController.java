@@ -3005,9 +3005,21 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/expediente/mov/assinar_lote")
-	public void assina_lote() throws Exception {
+	public void assina_lote(Integer paramoffset) throws Exception {
 		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
-		final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
+		
+		Long tamanho = dao().listarQuantidadeDocPendenteAssinatura(getTitular());
+		
+		int offset = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+						: paramoffset) : 0;
+		
+		final List<ExDocumento> itensComoSubscritor = (tamanho <= MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+				? dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura, null, null)
+				: dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura, offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		
+		
+		//final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
 		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
 
 		for (final ExDocumento doc : itensComoSubscritor) {
@@ -3039,6 +3051,10 @@ public class ExMovimentacaoController extends ExController {
 				podeAssinarComCertDigital);
 		result.include("itensSolicitados", itensFinalizados);
 		result.include("request", getRequest());
+		
+		result.include("maxItems", MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		result.include("tamanho", tamanho);
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE + 1));
 	}
 
 	@Get("/app/expediente/mov/assinar_tudo")

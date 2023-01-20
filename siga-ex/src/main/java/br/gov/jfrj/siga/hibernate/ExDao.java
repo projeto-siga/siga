@@ -1701,14 +1701,31 @@ public class ExDao extends CpDao {
 			return null;
 		}
 	}
-
+	
 	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
+		return listarDocPendenteAssinatura(pessoa, apenasComSolicitacaoDeAssinatura, null, null);
+	}
+
+	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, 
+											boolean apenasComSolicitacaoDeAssinatura, Integer offset, Integer tamPagina) {
 		final Query query = em().createNamedQuery(
 				"listarDocPendenteAssinatura" + (apenasComSolicitacaoDeAssinatura ? "ERevisado" : ""));
 		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
 		return query.getResultList();
 	}
-
+	
+	public Long listarQuantidadeDocPendenteAssinatura(DpPessoa pessoa) {
+		return (Long) em().createNamedQuery("listarQuantidadeDocPendenteAssinatura", Long.class)
+								.setParameter("idPessoaIni", pessoa.getIdPessoaIni())
+								.getSingleResult();
+	}
+	
 	public List<ExMovimentacao> listarAnexoPendenteAssinatura(DpPessoa pessoa) {
 		final Query query = em().createNamedQuery(
 				"listarAnexoPendenteAssinatura");

@@ -2482,18 +2482,18 @@ public class ExMovimentacaoController extends ExController {
 	
 	@Get("/app/expediente/mov/vincularPapelLote")
 	public void aVincularPapelLote(final String sigla, final DpPessoaSelecao responsavelSel,
-			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel, Integer paramoffset) {
+			final DpLotacaoSelecao lotaResponsavelSel, final int tipoResponsavel, final Long idPapel, boolean chkGestorInteressado, Integer paramoffset) {
 
 		final List<ExPapel> papeis = this.obterApenasPapeisParaVinculo();
-		Long tamanho = dao().consultarQuantidadeParaAcompanhamentoEmLote(getTitular());
+		Long tamanho = dao().consultarQuantidadeParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado);
 
 		int offset = Objects.nonNull(paramoffset)
 				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
 						: paramoffset) : 0;
 
 		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
-				? dao().consultarParaAcompanhamentoEmLote(getTitular(), null, null)
-				: dao().consultarParaAcompanhamentoEmLote(getTitular(), offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+				? dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, null, null)
+				: dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
 		
 		result.include("sigla", sigla);
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
@@ -2502,6 +2502,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaResponsavelSel", lotaResponsavelSel != null ? lotaResponsavelSel : new DpLotacaoSelecao());
 		result.include("tipoResponsavel", tipoResponsavel);
 		result.include("idPapel", idPapel);
+		result.include("chkGestorInteressado", chkGestorInteressado);
 		
 		result.include("itens", provItens);
 		result.include("maxItems", MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);

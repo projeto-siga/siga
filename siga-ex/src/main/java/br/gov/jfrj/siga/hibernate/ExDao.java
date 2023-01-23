@@ -1480,9 +1480,16 @@ public class ExDao extends CpDao {
 				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId()).getSingleResult() ).intValue();
 	}
 	
-	public List<ExMobil> consultarParaAcompanhamentoEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
-		final Query query = em().createNamedQuery("consultarParaAcompanhamentoEmLote")
-				.setParameter("pessoaIni", pes.getIdPessoaIni());
+	public List<ExMobil> consultarParaAcompanhamentoEmLote(DpPessoa pes, boolean chkGestorInteressado, Integer offset, Integer tamPagina) {
+		StringBuilder sb = new StringBuilder("select mob from ExMobil mob join mob.exMarcaSet mar ");
+		sb.append(" where (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) ");
+		sb.append(chkGestorInteressado ? "	and (mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_GESTOR.getId() 
+										+ "or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+		sb.append(" order by mob.idMobil desc ");
+		
+		final Query query = em().createQuery(sb.toString())
+									.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId())
+									.setParameter("pessoaIni", pes.getIdPessoaIni());
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
 		}
@@ -1492,10 +1499,18 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public Long consultarQuantidadeParaAcompanhamentoEmLote(DpPessoa pes) {
-		return (Long) em().createNamedQuery("consultarQuantidadeParaAcompanhamentoEmLote", Long.class)
-				.setParameter("pessoaIni", pes.getIdPessoaIni())
-				.getSingleResult();
+	public Long consultarQuantidadeParaAcompanhamentoEmLote(DpPessoa pes, boolean chkGestorInteressado) {
+		
+		StringBuilder sb = new StringBuilder("select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar ");
+		sb.append(" where (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) ");
+		sb.append(chkGestorInteressado ? "	and (mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_GESTOR.getId() 
+										+ "or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+		sb.append(" order by mob.idMobil desc ");
+		
+		return (Long) em().createQuery(sb.toString(), Long.class)
+							.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId())
+							.setParameter("pessoaIni", pes.getIdPessoaIni())
+							.getSingleResult();
 	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {

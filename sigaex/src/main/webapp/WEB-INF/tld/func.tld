@@ -445,7 +445,7 @@
  <function>
   <name>podeAutenticarComSenha</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
-  <function-signature>java.lang.Boolean podeAutenticarComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
+  <function-signature>java.lang.Boolean podeAutenticarComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
  </function>
  <function>
   <name>deveAutenticarComSenha</name>

@@ -424,7 +424,7 @@
 			value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
 			
 		<c:set var="podeAssinarComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
-		<c:set var="podeAutenticarComSenha" value="${f:podeAutenticarComSenha(titular,lotaTitular,mob)}" />
+		<c:set var="podeAutenticarComSenha" value="${f:podeAutenticarComSenha(titular,lotaTitular,mob.doc)}" />
 		<c:set var="defaultAssinarComSenha" value="${f:deveAssinarComSenha(titular,lotaTitular,mob) }" />
 		<c:set var="defaultAutenticarComSenha" value="${f:deveAutenticarComSenha(titular,lotaTitular,mob) }" />
 		

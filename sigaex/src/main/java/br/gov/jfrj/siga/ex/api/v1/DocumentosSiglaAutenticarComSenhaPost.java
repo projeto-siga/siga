@@ -34,7 +34,7 @@ public class DocumentosSiglaAutenticarComSenhaPost extends DocumentosSiglaAssina
 
 		// Usuário pode Autenticar o documento?
 		Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser autenticado com senha por "
-				+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), ExPodeAutenticarComSenha.class, titular, lotaTitular, mob);
+				+ titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), ExPodeAutenticarComSenha.class, titular, lotaTitular, mob.getDoc());
 	}
 
 	@Override

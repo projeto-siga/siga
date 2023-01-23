@@ -91,12 +91,6 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                and (mar.cpMarcador.idMarcador=3"
 				+ "                or mar.cpMarcador.idMarcador=14)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		@NamedQuery(name = "consultarParaAcompanhamentoEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpPessoaIni.idPessoa=:pessoaIni)"
-				+ "                order by mob.idMobil desc"),
-		@NamedQuery(name = "consultarQuantidadeParaAcompanhamentoEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpPessoaIni.idPessoa=:pessoaIni)"
-				+ "                order by mob.idMobil desc"),
 		// Somente os "em andamento", "Transferido para Órgão Externo"
 		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"

@@ -40,7 +40,9 @@
 									value="${tipoResponsavel}"
 									onchange="javascript:updateTipoResponsavel();">
 									<c:forEach var="item" items="${listaTipoRespOrigem}">
-										<option value="${item.key}">${item.value}</option>
+										<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
+											${item.value}
+										</option>
 									</c:forEach>
 								</select>
 							</div>
@@ -48,13 +50,22 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>&nbsp;</label> 
-									 <span id="lotaResponsavel" style="display:">
-										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga" 
-											/>
-									</span> 
-									<span id="responsavel" style="display: none;"> 
+								<c:if test="${tipoResponsavel == 1}">
+									 <div id="lotaResponsavel" style="display:">
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+									</div> 
+									<div id="responsavel" style="display: none;"> 
 										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
-									</span>
+									</div>
+								</c:if>
+								<c:if test="${tipoResponsavel == 2}">
+									<div id="lotaResponsavel" style="display: none">
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+									</div> 
+									<div id="responsavel" style="display:"> 
+										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+									</div>
+								</c:if>
 							</div>
 						</div>
 					</div>
@@ -89,7 +100,7 @@
 							<div class="row">
 								<div class="col-sm-9">
 									<h4>Motivo da Transferência:</h4>
-		                            <div class="form-group campo-orgao-externo">
+		                            <div class="form-group">
 		                                <input type="text" size="30" name="motivoTransferencia" id="motivoTransferencia" class="form-control"/>
 		                            </div>
 		                        </div>
@@ -114,7 +125,6 @@
 					</c:choose>
 					<div class="gt-content-box gt-for-table">
 						<br />
-						<h5>Destinatário: <span id="responsavelSelecionado"></span></h5>
 						<div>
 							<table class="table table-hover table-striped">
 								<thead class="${thead_color} align-middle text-center">
@@ -235,6 +245,8 @@
 		form.submit();
 	}*/
 
+		
+	
 		function checkUncheckAll(theElement) {
 			let isChecked = theElement.checked;
 			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
@@ -242,21 +254,21 @@
 
 		function displaySel(chk, el) {
 			document.getElementById("checkall").checked = 
-				Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
+			Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
 		}
-
-		function updateResponsavelSelecionado(id) {
-            document.getElementById('responsavelSelecionado').innerHTML = document.getElementById(id).value;
-        }
+		
+		function tipoOrigemSelecionado(){
+			return document.getElementById("tipoResponsavel");
+		}
 		
 		function updateTipoResponsavel() {			
 			document.getElementById("lotaResponsavel").style.display = 'none';
 			document.getElementById("responsavel").style.display = 'none';
-			//document.getElementById("selecaoCpOrgao").style.display = 'none';
-			//Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = 'none'); 
-
-			var objSelecionado = document.getElementById("tipoResponsavel");
-			console.log(objSelecionado.value);
+			
+			limparSelecao();
+			
+			var objSelecionado = tipoOrigemSelecionado();
+			
 			switch (parseInt(objSelecionado.value)) {
 			case 1:
 				document.getElementById("lotaResponsavel").style.display = '';
@@ -264,12 +276,21 @@
 			case 2:
 				document.getElementById("responsavel").style.display = '';
 				break;
-			/*case 3:
-				document.getElementById("selecaoCpOrgao").style.display = '';
-				Array.from(document.getElementsByClassName("campo-orgao-externo")).forEach(el => el.style.display = ''); 
-				break;*/
 			}
 		}
+		
+		function limparSelecao() {
+            document.getElementById('formulario_lotaResponsavelSel_id').value = "";
+            document.getElementById('formulario_lotaResponsavelSel_sigla').value = "";
+            document.getElementById('formulario_lotaResponsavelSel_descricao').value = "";
+            document.getElementById('lotaResponsavelSelSpan').innerHTML = "";
+
+            document.getElementById('formulario_responsavelSel_id').value = "";
+            document.getElementById('formulario_responsavelSel_sigla').value = "";
+            document.getElementById('formulario_responsavelSel_descricao').value = "";
+            document.getElementById('responsavelSelSpan').innerHTML = "";
+		}
+		
 	</script>
 	
 </siga:pagina>

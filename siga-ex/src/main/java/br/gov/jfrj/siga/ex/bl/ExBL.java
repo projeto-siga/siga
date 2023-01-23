@@ -177,6 +177,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPorPorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComCertificadoDigital;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelar;
@@ -1744,7 +1745,7 @@ public class ExBL extends CpBL {
 				}
 				
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 			}
@@ -1771,7 +1772,7 @@ public class ExBL extends CpBL {
 					}
 
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 				

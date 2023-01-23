@@ -166,7 +166,7 @@
 						<tbody class="table-bordered">
 <%-- 							<c:forEach var="doc" items="${itensSolicitados}"> --%>
 							<siga:paginador maxItens="${maxItems}" maxIndices="10"
-										totalItens="${tamanho}" itens="${itensSolicitados}" var="documento">
+										totalItens="${tamanho}" itens="${itensSolicitados}" var="doc">
 								<c:set var="x" scope="request">ad_chk_${doc.idDoc}</c:set>
 								<c:remove var="x_checked" scope="request" />
 								<c:if test="${param[x] == 'true'}">
@@ -176,7 +176,7 @@
 									<td width="3%" align="center">
 										<input type="checkbox" name="${x}" value="true" ${x_checked} />
 									</td>
-									<td width="13%" align="left"><a
+									<td width="17%" align="left"><a
 										href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
 									</td>
 									<td width="5%" align="center">${doc.dtDocDDMMYY}</td>

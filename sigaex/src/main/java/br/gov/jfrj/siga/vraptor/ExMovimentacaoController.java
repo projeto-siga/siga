@@ -203,7 +203,8 @@ public class ExMovimentacaoController extends ExController {
 			.getLogger(ExMovimentacaoController.class);
 	
 	
-	private static final int MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE = 30;
+	private static final int MAX_ITENS_PAGINA_TRINTA = 30;
+	private static final int MAX_ITENS_PAGINA_DUZENTOS = 200;
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -2484,12 +2485,12 @@ public class ExMovimentacaoController extends ExController {
 		Long tamanho = dao().consultarQuantidadeParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado);
 
 		int offset = Objects.nonNull(paramoffset)
-				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_TRINTA - 1) * MAX_ITENS_PAGINA_TRINTA)
 						: paramoffset) : 0;
 
-		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_TRINTA)
 				? dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, null, null)
-				: dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+				: dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, offset, MAX_ITENS_PAGINA_TRINTA);
 		
 		result.include("sigla", sigla);
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
@@ -2501,9 +2502,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("chkGestorInteressado", chkGestorInteressado);
 		
 		result.include("itens", provItens);
-		result.include("maxItems", MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		result.include("maxItems", MAX_ITENS_PAGINA_TRINTA);
 		result.include("tamanho", tamanho);
-		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE + 1));
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_TRINTA + 1));
 	}
 	
 	private List<ExPapel> obterApenasPapeisParaVinculo(){
@@ -3009,25 +3010,15 @@ public class ExMovimentacaoController extends ExController {
 	public void assina_lote(Integer paramoffset) throws Exception {
 		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
 		
-		Long tamanho = dao().listarQuantidadeDocPendenteAssinatura(getTitular());
-		
+		Long tamanho = dao().listarQuantidadeDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
 		int offset = Objects.nonNull(paramoffset)
-				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_DUZENTOS - 1) * MAX_ITENS_PAGINA_DUZENTOS)
 						: paramoffset) : 0;
 		
-		final List<ExDocumento> itensComoSubscritor = (tamanho <= MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+		final List<ExDocumento> itensFinalizados = (tamanho <= MAX_ITENS_PAGINA_DUZENTOS)
 				? dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura, null, null)
-				: dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura, offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+				: dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura, offset, MAX_ITENS_PAGINA_DUZENTOS);
 		
-		
-		//final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
-		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
-
-		for (final ExDocumento doc : itensComoSubscritor) {
-
-			if (doc.isFinalizado())
-				itensFinalizados.add(doc);
-		}
 		final List<ExDocumento> documentosQuePodemSerAssinadosComSenha = new ArrayList<ExDocumento>();
 		Boolean podeAssinarComCertDigital = false;
 
@@ -3053,9 +3044,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("itensSolicitados", itensFinalizados);
 		result.include("request", getRequest());
 		
-		result.include("maxItems", MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		result.include("maxItems", MAX_ITENS_PAGINA_DUZENTOS);
 		result.include("tamanho", tamanho);
-		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE + 1));
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_DUZENTOS + 1));
 	}
 
 	@Get("/app/expediente/mov/assinar_tudo")

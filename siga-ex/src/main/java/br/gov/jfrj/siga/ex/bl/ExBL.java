@@ -1111,9 +1111,7 @@ public class ExBL extends CpBL {
 			}
 		} else {
 			ExMovimentacao exMov = ExDao.getInstance().consultar(mov.getIdDoc(), ExMovimentacao.class, false);
-			byte[] texto = exMov.getConteudoBlobMov2();
-			if (texto != null)
-				html =  StringEscapeUtils.escapeHtml4(new String(texto, "ISO-8859-1"));
+			html = new String(exMov.getConteudoBlobMov());
 		}
 		return html;
 	}

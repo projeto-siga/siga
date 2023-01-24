@@ -107,7 +107,7 @@
 				<div class="card-body">
 					<div id="dados-assinatura" style="visible: hidden">
 						<input type="hidden" name="ad_url_base" value="" /> <input
-								type="hidden" name="ad_url_next" value="/siga/app/principal" />
+								type="hidden" name="ad_url_next" value="/sigaex/app/expediente/mov/assinar_lote" />
 						<c:set var="botao" value="" />
 							<c:if test="${autenticando}">
 								<c:set var="botao" value="autenticando" />
@@ -139,6 +139,7 @@
 			</div>
 			<c:if test="${(not empty itensSolicitados)}">
 				<h5>Documentos pendentes de assinatura: <fmt:message key="tela.assina.lote.subscritor" /></h5>
+				<h5>Atenção: Na Assinatura em Lote – Permitido até 200 documentos por operação.</h5>
 				<div>
 					<table class="table table-hover table-striped">
 						<thead class="${thead_color} align-middle text-center">
@@ -164,7 +165,6 @@
 							</tr>
 						</thead>
 						<tbody class="table-bordered">
-<%-- 							<c:forEach var="doc" items="${itensSolicitados}"> --%>
 							<siga:paginador maxItens="${maxItems}" maxIndices="10"
 										totalItens="${tamanho}" itens="${itensSolicitados}" var="doc">
 								<c:set var="x" scope="request">ad_chk_${doc.idDoc}</c:set>
@@ -207,7 +207,6 @@
 								<input type="hidden" name="ad_kind_${doc.idDoc}"
 									value="${doc.descrFormaDoc}" />
 							
-<%-- 							</c:forEach> --%>
 							</siga:paginador>
 						</tbody>
 					</table>

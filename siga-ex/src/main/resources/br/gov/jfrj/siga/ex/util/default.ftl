@@ -1757,14 +1757,8 @@ CKEDITOR.replace( '${var}',
 
 								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
 								CKEDITOR.config.disallowedContent = '*[data*]';
-								
-								window.onload = function() {
-								    $("textarea.editor").each(function(index) {
-								        CKEDITOR.replace(this, {
-								            toolbar: 'SigaToolbar'
-								        });
-								    });
-								}
+
+                                CKEDITOR.replace('${var}', {toolbar: 'SigaToolbar'});
 
                             </script>
                             

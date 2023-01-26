@@ -25,7 +25,7 @@
 <c:forEach var="idTpFormaDoc" items="${listIdTpFormaDoc}">
 
 	<div class="card bg-light mb-3">
-		<div class="card-header"><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim&idTipoFormaDoc=${idTpFormaDoc}">${idTpFormaDoc == 1 ? "Expedientes" : "Processos Administrativos"} </a></div>
+		<div class="card-header"><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim&idTipoFormaDoc=${idTpFormaDoc}&mostrarFiltros=false">${idTpFormaDoc == 1 ? "Expedientes" : "Processos Administrativos"} </a></div>
 		<div class="card-body">
 	
 			<c:if test="${idTpFormaDoc == 1}">
@@ -153,7 +153,7 @@
 										<c:choose>
 											<c:when test="${listEstado[2]>0}">
 												<siga:monolink titulo="${titulo2}" texto="${listEstado[2]}"
-												href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovRespSel.id=${titular.idPessoa}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
+												href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovRespSel.id=${titular.idPessoa}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}&mostrarFiltros=false" />
 											</c:when>
 											<c:otherwise>
 												 ${listEstado[2]} 
@@ -163,7 +163,7 @@
 										<c:choose>
 											<c:when test="${listEstado[3]>0}">
 												<siga:monolink titulo="${titulo3}" texto="${listEstado[3]}"
-												href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
+												href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}&mostrarFiltros=false" />
 											</c:when>
 											<c:otherwise>
 												 ${listEstado[3]} 

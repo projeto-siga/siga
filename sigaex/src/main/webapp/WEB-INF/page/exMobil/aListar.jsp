@@ -90,7 +90,7 @@
 	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 	
 	<div id="inicio" class="container-fluid content mb-3">
-		<h5 id="pesqTitle">Pesquisar Documentos</h5>
+		<h5 id="pesqTitle">${mostrarFiltros ? "Pesquisar Documentos" : "Resultado da Pesquisa"}</h5>
 		<c:set var="formOrigem" value="lista" scope="request"/>
 		<c:if
 			test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1)) and !pesquisaLimitadaPorData}">
@@ -111,13 +111,15 @@
 			<input type="hidden" name="paramoffset" value="0" /> 
 			<input type="hidden" name="p.offset" value="0" /> 
 			<input type="hidden" id="limiteDias" name="limiteDias" value="${f:resource('/siga.pesquisa.limite.dias')}" />
+			<input type="hidden" name="mostrarFiltros" value="${mostrarFiltros}" /> 
 			
 			<c:if test="${ehPublicoExterno}">
 				<input type="hidden" name="ultMovIdEstadoDoc" name="ultMovIdEstadoDoc" value="${ultMovIdEstadoDoc}" />
 			</c:if>
 			
 			<c:if test="${not ehPublicoExterno}">
-				<div class="card bg-light ${pesquisaLimitadaPorData? 'sticky-top':''}">
+			<div class="card bg-light ${pesquisaLimitadaPorData? 'sticky-top':''}">
+				<div class=" ${mostrarFiltros? '' : 'd-none'}">
 					<jsp:include page="./headerMeses.jsp"/>
 					<div id="pesqFiltros" class="card-body collapse show">
 						<div class="tab-content" id="nav-tabContent">
@@ -474,20 +476,20 @@
 							</div>
 						</div>				
 					</div>
+				</div>
 		<!-- 		</div> -->
-		<!-- 	</div> -->
 				<c:if
 					test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1)) and pesquisaLimitadaPorData}">
 					<div id="pesqResult" class="mx-3">
 						<jsp:include page="./listaSP.jsp"/>
 						<script>
-			 				$('html, body').animate({scrollTop: $('#pesqResult').offset().top - 30 }, 'slow');	 				
+			 				$('html, body').animate({scrollTop: $('#pesqResult').offset().top - 40 }, 'slow');	 				
 						</script>
 					</div>
 				</c:if>
 			</div>
-		</c:if>
-	</form>
+			</c:if>
+		</form>
 	</div>
 	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>

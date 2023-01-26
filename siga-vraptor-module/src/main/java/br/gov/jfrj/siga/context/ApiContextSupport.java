@@ -236,21 +236,16 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	        		if (!"".equals(dirtyParam) && RequestParamsCheck.hasHTMLTags(dirtyParam)) {
 	        			
 						//Ajusta saída do Clean
-						OutputSettings outputSettings = new OutputSettings();
-						outputSettings.prettyPrint(false);
+	        			OutputSettings outputSettings = RequestParamsCheck.buildOutputSettings();
 	
 						//Preserve Comments
-						dirtyParam = dirtyParam
-							.replaceAll("<!--", "<commenttag>")
-							.replaceAll("-->", "</commenttag>");	
+	        			dirtyParam = RequestParamsCheck.replaceCommentTag(dirtyParam);	
 						
 						/*URLs permissivas aplica apenas o Clean de acordo com a SafeList */
 						String cleanParam = Jsoup.clean(dirtyParam, "", SafeListCustom.relaxedCustom(),outputSettings);
 						
 						//Restore Comments
-						cleanParam = cleanParam
-								.replaceAll("<commenttag>", "<!--")
-								.replaceAll("</commenttag>", "-->");
+						cleanParam = RequestParamsCheck.replaceCommentTag(cleanParam);	
 						
 						//Devolve param safe
 						campo.set(getCtx().getReq(),cleanParam);

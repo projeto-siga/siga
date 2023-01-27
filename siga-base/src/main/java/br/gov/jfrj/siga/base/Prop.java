@@ -357,7 +357,7 @@ public class Prop {
 
 		/* Properties para ativação do Módulo de compra e contratações.*/
 		provider.addPrivateProperty("/secc.jwt.secret", null);
-		provider.addPrivateProperty("/secc.ui.url", null);
+		provider.addPrivateProperty("/secc.api.url", null);
 		
 	}
 }

@@ -11,7 +11,10 @@ import com.auth0.jwt.JWTSigner;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.HttpResult;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Controller
@@ -33,7 +36,12 @@ public class SeccController extends SigaController {
 	}
 	
 	@Get("app/secc/acesso")
-	public void modulo() {
+	public void modulo() {       
+		assertAcesso("SECC: Módulo serviço de compra e contratação");
+		final SigaHTTP http = new SigaHTTP();
+		String url = Prop.get("/secc.api.url");
+		String contentType = "application/json";
+		
 		String cookieDomain = Prop.get("/siga.jwt.cookie.domain");
 		final JWTSigner signer = new JWTSigner(Prop.get("/secc.jwt.secret"));
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
@@ -42,14 +50,20 @@ public class SeccController extends SigaController {
 		final long exp = iat + (60 * 60L); 
 		claims.put("sub", getTitular().getSigla());
 		claims.put("nome", getTitular().getNomePessoa());
-		claims.put("aud", cookieDomain);
+		claims.put("aud", cookieDomain); 
 		claims.put("nbf", iat);
 		claims.put("lota", getLotaTitular().getSigla());
 		claims.put("exp", exp);
 		claims.put("iat", iat);
 		String token = signer.sign(claims);
 		
-		result.redirectTo(Prop.get("/secc.ui.url") + token); 
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("Authorization", "Bearer " + token);
+		String response = http.getNaWeb(url, headers, 60000, null);
+
+		HttpResult httpr = result.use(Results.http());
+		httpr.addHeader("Content-Type", contentType);
+		httpr.body(response).setStatusCode(200);
 		
 	}
 	

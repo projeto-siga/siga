@@ -1725,6 +1725,37 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
+	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, 
+											boolean apenasComSolicitacaoDeAssinatura, Integer offset, Integer tamPagina) {
+		final Query query = em().createQuery(getHqlListarDocPendenteAssinatura(apenasComSolicitacaoDeAssinatura, Boolean.FALSE))
+								.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+		return query.getResultList();
+	}
+	
+	public Long listarQuantidadeDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
+		return (Long) em().createQuery(getHqlListarDocPendenteAssinatura(apenasComSolicitacaoDeAssinatura, Boolean.TRUE), Long.class)
+								.setParameter("idPessoaIni", pessoa.getIdPessoaIni())
+								.getSingleResult();
+	}
+	
+	private String getHqlListarDocPendenteAssinatura(boolean apenasComSolicitacaoDeAssinatura, boolean queryContar) {
+		StringBuilder sb = new StringBuilder("select  " + (queryContar ? " COUNT(doc) " : " doc "));
+		sb.append("	from ExDocumento doc where doc.idDoc in (");
+		sb.append("				select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in (");
+		sb.append("						select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = ");
+		sb.append(apenasComSolicitacaoDeAssinatura ? CpMarcadorEnum.PRONTO_PARA_ASSINAR.getId() : CpMarcadorEnum.COMO_SUBSCRITOR.getId());
+		sb.append("						and label.dpPessoaIni.idPessoa = :idPessoaIni)) ");
+		sb.append(" and dtFinalizacao is not null ");
+		sb.append(" order by doc.dtDoc desc  ");
+		return sb.toString();
+	}
+	
 	public List<ExMovimentacao> listarAnexoPendenteAssinatura(DpPessoa pessoa) {
 		final Query query = em().createNamedQuery(
 				"listarAnexoPendenteAssinatura");

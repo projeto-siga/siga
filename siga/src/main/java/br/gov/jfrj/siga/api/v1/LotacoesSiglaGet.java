@@ -36,6 +36,7 @@ public class LotacoesSiglaGet implements ILotacoesSiglaGet {
 		rp.idLotacaoIni = lota.getIdLotacaoIni().toString();
 		rp.nome = lota.getNomeLotacao();
 		rp.sigla = lota.getSiglaCompleta();
+		rp.idLocalidade = lota.getLocalidade().getIdLocalidade().toString();
 		// Orgao Pessoa
 		CpOrgaoUsuario o = lota.getOrgaoUsuario();
 		orgao.idOrgao = o.getId().toString();

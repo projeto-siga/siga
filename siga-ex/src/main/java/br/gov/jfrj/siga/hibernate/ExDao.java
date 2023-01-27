@@ -44,6 +44,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -2007,17 +2008,46 @@ public class ExDao extends CpDao {
 		Root<ExModelo> c = q.from(ExModelo.class);
 		q.select(c);
 		List<Predicate> whereList = new LinkedList<Predicate>();
-		if(flt.getSigla() != null) {
+		if(flt.getSigla() != null || flt.getNome() != null) {
 			Expression<String> path = c.get("nmMod");
 			path = cb().upper(path);
-			whereList.add(cb().like(path, "%" + flt.getSigla() + "%"));
-			whereList.add(cb().equal(c.get("hisAtivo"), 1));
+			whereList.add(cb().like(path, "%" 
+					+ (flt.getSigla() != null ? flt.getSigla().toUpperCase().replaceAll(" ", "%") + "%" : "") 
+					+ (flt.getNome() != null ? flt.getNome().toUpperCase().replaceAll(" ", "%") + "%" : "")));
 		}
+
+		if(flt.getDescricao() != null) {
+			Expression<String> path = c.get("descMod");
+			path = cb().upper(path);
+			whereList.add(cb().like(path, "%" + flt.getDescricao().toUpperCase().replaceAll(" ", "%") + "%"));
+		}
+
+		if (flt.getExFormaDocumento() != null)
+			whereList.add(cb().equal(c.get("exFormaDocumento"), flt.getExFormaDocumento()));
+
+		if (flt.getExClassificacao() != null)
+			whereList.add(cb().equal(c.get("exClassificacao"), flt.getExClassificacao()));
+
+		if (flt.getExNivelAcesso() != null)
+			whereList.add(cb().equal(c.get("exNivelAcesso"), flt.getExNivelAcesso()));
+		
+		if(flt.getAtivos() == null || flt.getAtivos()) 
+			whereList.add(cb().equal(c.get("hisAtivo"), 1));
+
 		Predicate[] whereArray = new Predicate[whereList.size()];
 		whereList.toArray(whereArray);
 		q.where(whereArray);
-			q.orderBy(cb().desc(c.get("nmMod")));
-		return em().createQuery(q).getResultList();
+		q.orderBy(cb().desc(c.get("nmMod")));
+		
+		TypedQuery<ExModelo> query = em().createQuery(q);
+		
+		if (offset > 0) 
+			query.setFirstResult(offset);
+
+		if (itemPagina > 0) 
+			query.setMaxResults(itemPagina);
+		
+		return query.getResultList();
 	}
 
 	public int consultarQuantidade(final ExModeloDaoFiltro flt) {

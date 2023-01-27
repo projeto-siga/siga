@@ -32,6 +32,7 @@ public class DocumentosSiglaModelosParaIncluirGet implements IDocumentosSiglaMod
 		for (ExModelo m : modelos) {
 			ModeloItem mi = new ModeloItem();
 			mi.idModelo = m.getId().toString();
+			mi.idModeloInicial = m.getIdInicial().toString();
 			mi.nome = m.getNmMod();
 			mi.descr = m.getDescMod();
 			resp.list.add(mi);

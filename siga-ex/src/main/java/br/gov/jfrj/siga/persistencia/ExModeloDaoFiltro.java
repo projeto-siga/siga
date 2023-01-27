@@ -18,10 +18,18 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.persistencia;
 
+import br.gov.jfrj.siga.ex.ExClassificacao;
+import br.gov.jfrj.siga.ex.ExFormaDocumento;
+import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class ExModeloDaoFiltro extends DaoFiltroSelecionavel {
 	private String nome;
+	private String descricao;
+	private ExFormaDocumento exFormaDocumento;
+	private ExNivelAcesso exNivelAcesso;
+	private ExClassificacao exClassificacao;
+	private Boolean ativos;
 
 	public String getNome() {
 		return nome;
@@ -30,4 +38,45 @@ public class ExModeloDaoFiltro extends DaoFiltroSelecionavel {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
+	public ExFormaDocumento getExFormaDocumento() {
+		return exFormaDocumento;
+	}
+
+	public void setExFormaDocumento(ExFormaDocumento exFormaDocumento) {
+		this.exFormaDocumento = exFormaDocumento;
+	}
+
+	public ExNivelAcesso getExNivelAcesso() {
+		return exNivelAcesso;
+	}
+
+	public void setExNivelAcesso(ExNivelAcesso exNivelAcesso) {
+		this.exNivelAcesso = exNivelAcesso;
+	}
+
+	public ExClassificacao getExClassificacao() {
+		return exClassificacao;
+	}
+
+	public void setExClassificacao(ExClassificacao exClassificacao) {
+		this.exClassificacao = exClassificacao;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public Boolean getAtivos() {
+		return ativos;
+	}
+
+	public void setAtivo(Boolean ativos) {
+		this.ativos = ativos;
+	}
+	
 }

@@ -12,7 +12,7 @@
 	<artifactId>siga-ex</artifactId>
 	
 	<properties>
-		<openhtml.version>1.0.8</openhtml.version>
+		<openhtml.version>1.0.10</openhtml.version>
 	    <maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>

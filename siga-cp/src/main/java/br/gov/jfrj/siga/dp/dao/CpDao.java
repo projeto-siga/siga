@@ -116,6 +116,7 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_QUERY_CONFIGURACAO = "queryConfiguracao";
 	public static final String CACHE_QUERY_SECONDS = "querySeconds";
 	public static final String CACHE_QUERY_HOURS = "queryHours";
+	public static final String CACHE_QUERY_CORPORATIVO = "queryCorporativo";
 	public static final String CACHE_CORPORATIVO = "corporativo";
 	public static final String CACHE_HOURS = "hours";
 	public static final String CACHE_SECONDS = "seconds";
@@ -359,7 +360,7 @@ public class CpDao extends ModeloDao {
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);
 
 			final List<CpOrgaoUsuario> l = query.getResultList();
 			return l;
@@ -396,7 +397,7 @@ public class CpDao extends ModeloDao {
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);
 
 			final List<CpOrgaoUsuario> l = query.getResultList();
 			return l;
@@ -411,7 +412,7 @@ public class CpDao extends ModeloDao {
 		query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 
 		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);
 
 		final List<CpOrgaoUsuario> l = query.getResultList();
 		if (l.size() != 1)
@@ -456,7 +457,7 @@ public class CpDao extends ModeloDao {
 		query.setParameter("nome", o.getNmOrgaoUsu());
 
 		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);
 
 		final List<CpOrgaoUsuario> l = query.getResultList();
 		if (l.size() < 1)
@@ -481,7 +482,7 @@ public class CpDao extends ModeloDao {
 			query.setParameter("nome", s);
 
 			query.setHint("org.hibernate.cacheable", true);
-			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);
 
 			final int l = ((Long) query.getSingleResult()).intValue();
 			return l;
@@ -2186,10 +2187,8 @@ public class CpDao extends ModeloDao {
 	public List<CpOrgaoUsuario> consultaCpOrgaoUsuario() {
 		final Query qry = em().createNamedQuery("consultarCpOrgaoUsuario");
 
-		// Renato: Alterei para fazer cache. Nao vejo porque nao possamos fazer
-		// cache dessa consulta.
 		qry.setHint("org.hibernate.cacheable", true);
-		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);
 
 		final List<CpOrgaoUsuario> lista = qry.getResultList();
 		return lista;
@@ -2333,9 +2332,8 @@ public class CpDao extends ModeloDao {
 		
         Query query = em().createNamedQuery("consultarCpOrgaoUsuario")        	
         		.setHint("org.hibernate.cacheable", true)
-        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);                
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);             
         return (List<CpOrgaoUsuario>) query.getResultList();
-//		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -2343,9 +2341,8 @@ public class CpDao extends ModeloDao {
 		
         Query query = em().createNamedQuery("consultarCpOrgaoUsuarioTodos")        	
         		.setHint("org.hibernate.cacheable", true)
-        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);                
+        		.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CORPORATIVO);    
         return (List<CpOrgaoUsuario>) query.getResultList();
-//		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
 	
 	@SuppressWarnings("unchecked")

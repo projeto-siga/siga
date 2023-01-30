@@ -24,6 +24,19 @@
 	</script>
 
 	<script type="text/javascript" language="Javascript1.1">
+	
+		function sbmt(offset) {
+			if (offset == null) {
+				offset = 0;
+			}
+			let form = document.forms['frm'];
+			form ["paramoffset"].value = offset;
+			form.action = "assinar_lote";
+			form.method = "GET";
+			form ["p.offset"].value = offset;
+	
+			form.submit();
+		}
 		function checkUncheckAll(theElement) {
 			var theForm = theElement.form, z = 0;
 			for (z = 0; z < theForm.length; z++) {
@@ -85,6 +98,8 @@
 	<div class="container-fluid">
 		<form name="frm" id="frm" cssClass="form" theme="simple">
 			<input type="hidden" name="postback" value="1" />
+			<input type="hidden" name="paramoffset" value="0" />
+			<input type="hidden" name="p.offset" value="0" />
 			<div class="card bg-light mb-3">
 				<div class="card-header">
 					<h5>Assinatura em Lote</h5>
@@ -92,7 +107,7 @@
 				<div class="card-body">
 					<div id="dados-assinatura" style="visible: hidden">
 						<input type="hidden" name="ad_url_base" value="" /> <input
-								type="hidden" name="ad_url_next" value="/siga/app/principal" />
+								type="hidden" name="ad_url_next" value="/sigaex/app/expediente/mov/assinar_lote" />
 						<c:set var="botao" value="" />
 							<c:if test="${autenticando}">
 								<c:set var="botao" value="autenticando" />
@@ -124,6 +139,7 @@
 			</div>
 			<c:if test="${(not empty itensSolicitados)}">
 				<h5>Documentos pendentes de assinatura: <fmt:message key="tela.assina.lote.subscritor" /></h5>
+				<h5>Atenção: Na Assinatura em Lote – Permitido até 200 documentos por operação.</h5>
 				<div>
 					<table class="table table-hover table-striped">
 						<thead class="${thead_color} align-middle text-center">
@@ -149,7 +165,8 @@
 							</tr>
 						</thead>
 						<tbody class="table-bordered">
-							<c:forEach var="doc" items="${itensSolicitados}">
+							<siga:paginador maxItens="${maxItems}" maxIndices="10"
+										totalItens="${tamanho}" itens="${itensSolicitados}" var="doc">
 								<c:set var="x" scope="request">ad_chk_${doc.idDoc}</c:set>
 								<c:remove var="x_checked" scope="request" />
 								<c:if test="${param[x] == 'true'}">
@@ -159,7 +176,7 @@
 									<td width="3%" align="center">
 										<input type="checkbox" name="${x}" value="true" ${x_checked} />
 									</td>
-									<td width="13%" align="left"><a
+									<td width="17%" align="left"><a
 										href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
 									</td>
 									<td width="5%" align="center">${doc.dtDocDDMMYY}</td>
@@ -190,7 +207,7 @@
 								<input type="hidden" name="ad_kind_${doc.idDoc}"
 									value="${doc.descrFormaDoc}" />
 							
-							</c:forEach>
+							</siga:paginador>
 						</tbody>
 					</table>
 				</div>

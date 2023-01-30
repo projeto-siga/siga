@@ -8495,8 +8495,11 @@ public class ExBL extends CpBL {
 		 *getNmFuncaoSubscritor = [0] - personalizarFuncao [1] - personalizarUnidade [2] - personalizarLocalidade [3] - personalizarNome
 		 */
 		
-		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA && movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO) {
-			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura.");
+		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA 
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO) {
+			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura ou autenticação.");
 		}
 		
 		SortedSet<ExMovimentacao> listaMovimentacoes = movimentacao.mob().getExMovimentacaoSet();

@@ -85,11 +85,7 @@ public class ExPodeJuntar extends CompositeExpressionSupport {
 
 						new ExPodeMovimentar(mob, titular, lotaTitular)),
 
-				Or.of(
-
-						Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
-
-						new ExEInternoCapturado(mob.doc())),
+				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
 
 				Not.of(new ExEstaJuntado(mob)),
 

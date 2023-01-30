@@ -18,10 +18,8 @@
             </div>
             <div class="card-body">
                 <form name="frm" id="frm" class="form" method="post" action="listar_docs_tramitados" theme="simple">
-                    <input type="hidden" id="siglasDocumentosTramitados" name="siglasDocumentosTramitados"
-                           value=""/>
-                    <input type="hidden" id="siglasDocumentosNaoTramitados" name="siglasDocumentosNaoTramitados"
-                           value=""/>
+                    <input type="hidden" name="siglasDocumentosTramitados" value=""/>
+                    <input type="hidden" name="errosDocumentosNaoTramitadosJson" value=""/>
 
                     <div class="row campo-orgao-externo" style="display: none;">
                         <div class="col-sm">
@@ -270,7 +268,7 @@
         }
 
         let siglasDocumentosTramitados = [];
-        let siglasDocumentosNaoTramitados = [];
+        let errosDocumentosNaoTramitadosMap = new Map();
 
         function confirmar() {
             document.getElementById('btnOk').disabled = true;
@@ -352,21 +350,22 @@
                     observacao: obsOrgao,
                     dataDevolucao: dtDevolucaoMovString
                 },
+                dataType: 'json',
                 success: function () {
                     siglasDocumentosTramitados.push(documentoSelSigla);
                 },
-                error: function (textStatus, errorThrown) {
-                    siglasDocumentosNaoTramitados.push(documentoSelSigla);
-                    console.error(
-                        "Ocorreu um erro na tramitação: " + textStatus, errorThrown
-                    );
+                error: function (response) {
+                    errosDocumentosNaoTramitadosMap.set(documentoSelSigla, response.responseJSON.errormsg);
                 }
             });
         }
 
         function enviarParaListagemDocumentosTramitados() {
             document.getElementsByName('siglasDocumentosTramitados')[0].value = siglasDocumentosTramitados;
-            document.getElementsByName('siglasDocumentosNaoTramitados')[0].value = siglasDocumentosNaoTramitados;
+
+            let errosDocumentosNaoTramitadosJson = JSON.stringify(Object.fromEntries(errosDocumentosNaoTramitadosMap));
+            document.getElementsByName('errosDocumentosNaoTramitadosJson')[0].value = errosDocumentosNaoTramitadosJson;
+
             document.frm.submit();
         }
 

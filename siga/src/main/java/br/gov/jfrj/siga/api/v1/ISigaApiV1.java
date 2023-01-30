@@ -49,7 +49,7 @@ public interface ISigaApiV1 {
 		public String sigla;
 		public String siglaLotacao;
 		public String nome;
-		public String idLocalidade;
+		public Localidade localidade;
 		public Orgao orgao;
 	}
 

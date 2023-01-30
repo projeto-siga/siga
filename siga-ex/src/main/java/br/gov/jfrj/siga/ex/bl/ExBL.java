@@ -2170,7 +2170,7 @@ public class ExBL extends CpBL {
 			}
 		} else {
 			if (fSubstituindoSubscritor) { 
-				assinante = titular; 
+				assinante = titular.getPessoaAtual();
 			} else {
 				assinante = cosignatario;	
 			}

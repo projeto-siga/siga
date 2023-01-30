@@ -10,14 +10,17 @@ import com.crivano.swaggerservlet.SwaggerException;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasGet;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.Uf;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -142,6 +145,7 @@ public class PessoasGet implements IPessoasGet {
 		Pessoa pessoa = new Pessoa();
 		Orgao orgao = new Orgao();
 		Lotacao lotacao = new Lotacao();
+		Localidade localidade = new Localidade();
 		Cargo cargo = new Cargo();
 		FuncaoConfianca funcao = new FuncaoConfianca();
 		// Pessoa
@@ -167,8 +171,19 @@ public class PessoasGet implements IPessoasGet {
 		lotacao.idLotacaoIni = l.getIdLotacaoIni().toString();
 		lotacao.nome = l.getNomeLotacao();
 		lotacao.sigla = l.getSigla();
-		lotacao.idLocalidade = (l.getLocalidade() != null ? l.getLocalidade().getIdLocalidade().toString() 
-				: "Localidade inexistente (id - " + lotacao.idLocalidade + ")");
+		
+		// Localidade
+		CpLocalidade loc = l.getLocalidade();
+		if (loc != null) {
+			localidade.idLocalidade = loc.getId().toString();
+			localidade.nome = loc.getNmLocalidade();
+			Uf uf = new Uf();
+			uf.idUf = loc.getUF().getIdUF().toString();
+			uf.nomeUf = loc.getUF().getNmUF();
+			localidade.uf = uf;
+			lotacao.localidade = localidade;
+		}
+		
 		lotacao.orgao = orgao;
 
 		// Cargo Pessoa

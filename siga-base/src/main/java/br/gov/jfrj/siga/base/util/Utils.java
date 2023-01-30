@@ -41,6 +41,14 @@ public class Utils {
 			s = "0" + s;
 		return s;
 	}
+	
+   public static String sorn(String s) {
+        if (s == null)
+            return null;
+        if (s.trim().length() == 0)
+            return null;
+        return s.trim();
+    }
 
 	public static boolean empty(String s) {
 		return s == null || s.trim().length() == 0;

@@ -3,14 +3,11 @@ package br.gov.jfrj.siga.ex.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -18,27 +15,21 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
 import br.gov.jfrj.siga.base.util.FreemarkerIndent;
+import br.gov.jfrj.siga.base.util.Utils;
 
 public class ModeloMarkdown {
 
     public static String markdownToFreemarker(String input) {
 
         String mdWithCommandsInFreemarker = processCommands(input, (cmd) -> {
-            String comando = cmd.get("comando").getAsString();
+            String comando = cmd.command;
             if (comando == null)
                 return "COMANDO_DESCONHECIDO";
             StringBuilder sb = new StringBuilder();
             sb.append("[@");
             sb.append(comando);
-            for (Entry<String, JsonElement> entry : cmd.entrySet()) {
-                if (entry.getKey().equals("comando"))
-                    continue;
-                sb.append(" ");
-                sb.append(entry.getKey());
-                sb.append("='");
-                sb.append(entry.getValue().getAsString());
-                sb.append("'");
-            }
+            sb.append(" ");
+            sb.append(cmd.params);
             sb.append(" /]");
             return sb.toString();
         });
@@ -93,42 +84,107 @@ public class ModeloMarkdown {
         return html;
     }
 
-    private static JsonObject interpretCommand(String command) {
+    private static class Command {
+        String command;
+        String expr;
+        String var;
+        String params;
+
+        public Command(String s) {
+            Pattern pattern = Pattern.compile(
+                    "\\{(?<command>(?>campo |escrever |se |/se))?(?<expr>.*?)(?<params>\\s*[a-zA-Z0-9_]+\\s*=\\s*[^=].*)?\\}$");
+            Matcher m = pattern.matcher(s);
+            if (m.find()) {
+                command = Utils.sorn(m.group("command"));
+                expr = Utils.sorn(m.group("expr"));
+                params = Utils.sorn(m.group("params"));
+            }
+
+            if (command == null && expr != null && params == null) {
+                if (expr.matches("^[a-zA-Z][a-zA-Z0-9_]*$")) {
+                    // A single variable identifier should be mapped to a "campo" command
+                    command = "campo";
+                    var = expr;
+                    params = "var='" + this.var + "'";
+                } else {
+                    // A single expression should be mapped to a "escrever" command
+                    command = "escrever";
+                    params = "valor=" + expr;
+                }
+            }
+
+        }
+
+        public Command(String command, String var, String params) {
+            this.command = command;
+            this.var = var;
+            this.params = params;
+        }
+
+        public Command(String command, String params) {
+            this.command = command;
+            this.var = extractVar(params);
+            this.params = params;
+        }
+
+        private String extractExpression(String s) {
+            Pattern pattern = Pattern.compile("^(\\s*+.*?\\s*)(?>$|\\s+[a-zA-Z0-9_]+\\s*=\\s*[^=])");
+            Matcher m = pattern.matcher(s);
+            if (m.find()) {
+                MatchResult matches = m.toMatchResult();
+                if (matches.group(1) != null) {
+                    return matches.group(1);
+                }
+            }
+            return null;
+        }
+
+        private String extractVar(String s) {
+            Pattern pattern = Pattern.compile("(?>^|\\s+)var\\s*=\\s*(.*?)(?>$|\\s+[a-zA-Z0-9_]+\\s*=\\s*[^=])");
+            Matcher m = pattern.matcher(s);
+            if (m.find()) {
+                MatchResult matches = m.toMatchResult();
+                if (matches.group(1) != null) {
+                    return matches.group(1);
+                }
+            }
+            return null;
+        }
+    }
+
+    private static Command interpretCommand(String command) {
         Gson gson = new Gson();
         Pattern pattern = Pattern.compile("\\{(\\w+)(?: ([^\\}]+))\\}|\\{([a-zA-Z0-9\\$_\\[\\]]+)\\}");
         Matcher m = pattern.matcher(command);
         if (m.find()) {
             MatchResult matches = m.toMatchResult();
             if (matches.group(1) != null) {
-                String ss = "{comando:\"" + matches.group(1) + "\", " +
-                        matches.group(2) + '}';
-                ss = ss.replaceAll("([{, ])([a-z]+):\"", "$1\"$2\":\"");
-                return gson.fromJson(ss, JsonObject.class);
+                Command cmd = new Command(matches.group(1), matches.group(2));
+//                String ss = "{comando:\"" + matches.group(1) + "\", " +
+//                        matches.group(2) + '}';
+//                ss = ss.replaceAll("([{, ])([a-z]+):\"", "$1\"$2\":\"");
+//                return gson.fromJson(ss, JsonObject.class);
+                return cmd;
             }
 
             // Variables
             if (matches.group(3) != null) {
-                JsonObject obj = new JsonObject();
-                obj.addProperty("comando", "campo");
-                obj.addProperty("var", matches.group(3));
-                return obj;
+//                JsonObject obj = new JsonObject();
+//                obj.addProperty("comando", "campo");
+//                obj.addProperty("var", matches.group(3));
+//                return obj;
+                Command cmd = new Command("campo", matches.group(3), "var='" + matches.group(3) + "'");
+                return cmd;
             }
 
         } else {
-            if (command.charAt(1) == '"') {
-                return gson.fromJson(command, JsonObject.class);
-            } else {
-                JsonObject obj = new JsonObject();
-                obj.addProperty("comando", "escrever");
-                obj.addProperty("valor", command.substring(2, command.length() - 2));
-                return obj;
-            }
+            Command cmd = new Command("escrever", null, "valor='" + command.substring(2, command.length() - 2) + "'");
         }
         return null;
     }
 
     public interface ProcessCommandFunction {
-        String modifyCommand(JsonObject cmd);
+        String modifyCommand(Command cmd);
     }
 
     private static Integer readCommand(String block, int startIndex) {
@@ -191,7 +247,7 @@ public class ModeloMarkdown {
                 break;
             }
             String command = template.substring(start, end);
-            JsonObject cmd = interpretCommand(command);
+            Command cmd = interpretCommand(command);
             String r = func.modifyCommand(cmd);
             if (r != null)
                 s += r;

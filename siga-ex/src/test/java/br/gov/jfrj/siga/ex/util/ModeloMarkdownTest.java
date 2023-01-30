@@ -50,7 +50,7 @@ public class ModeloMarkdownTest extends TestCase {
     }
 
     public void testGeraModeloComDefinicaoDeMacro() throws Exception {
-        String s = ModeloMarkdown.markdownToFreemarker("Olá {campo var:\"nome\", opcoes:\"Fulano;Beltrano\"}");
+        String s = ModeloMarkdown.markdownToFreemarker("Olá {campo var='nome' opcoes='Fulano;Beltrano'}");
         assertEquals(""
                 + "[@entrevista]\n"
                 + "  [@campo var='nome' opcoes='Fulano;Beltrano' /]\n"
@@ -58,6 +58,38 @@ public class ModeloMarkdownTest extends TestCase {
                 + "\n"
                 + "[@documento]\n"
                 + "<p>Olá [@valor var='nome' opcoes='Fulano;Beltrano' /]</p>\n"
+                + "[/@documento]", s);
+    }
+
+    public void testDoisCampos() throws Exception {
+        String s = ModeloMarkdown.markdownToFreemarker(""
+                + "País: {campo var='pais' opcoes='Brasil;Argentina' reler='pais'}\n"
+                + "Estado: {campo var='estado' opcoes='Rio de Janeiro;São Paulo'}\n");
+        assertEquals(""
+                + "[@entrevista]\n"
+                + "  [@campo var='pais' opcoes='Brasil;Argentina' reler='pais' /]\n"
+                + "  [@campo var='estado' opcoes='Rio de Janeiro;São Paulo' /]\n"
+                + "[/@entrevista]\n"
+                + "\n"
+                + "[@documento]\n"
+                + "<p>País: [@valor var='pais' opcoes='Brasil;Argentina' reler='pais' /]\n"
+                + "Estado: [@valor var='estado' opcoes='Rio de Janeiro;São Paulo' /]</p>\n"
+                + "[/@documento]", s);
+    }
+
+    public void testCampoCondicional() throws Exception {
+        String s = ModeloMarkdown.markdownToFreemarker(""
+                + "País: {campo var='pais' opcoes='Brasil;Argentina' reler='pais'}\n"
+                + "{se pais == 'Brasil' depende='pais'}Estado: {campo var='estado' opcoes='Rio de Janeiro;São Paulo'}{/se}\n");
+        assertEquals(""
+                + "[@entrevista]\n"
+                + "  [@campo var='pais' opcoes='Brasil;Argentina' reler='pais' /]\n"
+                + "  [@campo var='estado' opcoes='Rio de Janeiro;São Paulo' /]\n"
+                + "[/@entrevista]\n"
+                + "\n"
+                + "[@documento]\n"
+                + "<p>País: [@valor var='pais' opcoes='Brasil;Argentina' reler='pais' /]\n"
+                + "Estado: [@valor var='estado' opcoes='Rio de Janeiro;São Paulo' /]</p>\n"
                 + "[/@documento]", s);
     }
 

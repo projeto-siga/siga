@@ -5613,7 +5613,7 @@ public class ExMovimentacaoController extends ExController {
 										  final DpPessoaSelecao subscritorSel, 
 										  final ExClassificacaoSelecao classificacaoAtualSel, 
 										  final ExClassificacaoSelecao classificacaoNovaSel, 
-										  final List<Long> documentosSelecionados, 
+										  final String siglasDocumentosSelecionados, 
 										  final int offset) throws Exception {
 		
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
@@ -5637,7 +5637,12 @@ public class ExMovimentacaoController extends ExController {
 			return;
 		}
 
-		if(documentosSelecionados.isEmpty()){
+		String[] arraySiglasDocumentosSelecionados = { };
+		if (siglasDocumentosSelecionados != null) {
+			arraySiglasDocumentosSelecionados = siglasDocumentosSelecionados.split(",");
+		}
+		
+		if(arraySiglasDocumentosSelecionados.length == 0){
 			result.include("msgCabecClass", "alert-danger");
 			result.include("mensagemCabec", "Não foram selecionados documentos para a reclassificação");
 			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
@@ -5652,8 +5657,8 @@ public class ExMovimentacaoController extends ExController {
 		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
 		
 		try {
-			for (Long idDocumento : documentosSelecionados) {
-				final ExMobil mob = dao().consultar(idDocumento, ExDocumento.class, false).getMobilGeral();
+			for (String idDocumento : arraySiglasDocumentosSelecionados) {
+				final ExMobil mob = dao().consultar(Long.valueOf(idDocumento), ExDocumento.class, false).getMobilGeral();
 
 				if (Ex.getInstance().getComp().pode(ExPodeReclassificar.class, getTitular(), getLotaTitular(), mob)) {
 

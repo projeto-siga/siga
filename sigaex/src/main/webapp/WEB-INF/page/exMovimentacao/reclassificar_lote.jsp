@@ -13,6 +13,8 @@
             </div>
             <div class="card-body">
                 <form name="frm" id="frm" class="form" method="post" action="reclassificar_lote_gravar" theme="simple">
+                    <input type="hidden" name="siglasDocumentosSelecionados" value=""/>
+                    
                     <div class="row">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -54,7 +56,7 @@
                                 <siga:selecao titulo="Classifica&ccedil;&atilde;o Atual"
                                               propriedade="classificacaoAtual"
                                               modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
-                                <a href="javascript: listarDocumentosParaReclassificarEmLote()"
+                                <a href="javascript: listarDocumentosParaReclassificarEmLote();limparDocumentosSelecionados();"
                                    class="btn btn-cancel btn-primary">Buscar Documentos</a>
                             </div>
                         </div>
@@ -127,6 +129,25 @@
             });
         }
 
+        let checkedElements = [];
+
+        function atualizaDocumentoSelecionado(el){
+            
+            const indexId = checkedElements.indexOf(el.id);
+            if(indexId < 0 && el.checked)
+                checkedElements.push(el.id);
+            else if(indexId >= 0 && !el.checked)
+                checkedElements.splice(indexId, 1);
+        }
+
+        function obtemDocumentosSelecionados(){
+            return checkedElements;
+        }
+        
+        function limparDocumentosSelecionados(){
+            checkedElements = [];
+        }
+        
         function validar() {
             let classificacaoAtualSelSpan = document.getElementById('classificacaoAtualSelSpan');
             if (classificacaoAtualSelSpan.textContent.trim() === '') {
@@ -154,8 +175,8 @@
                 return;
             }
 
-            let checkedElements = $("input[name='documentosSelecionados']:checked");
-            if (checkedElements.length == 0) {
+            let checkedElements = obtemDocumentosSelecionados();
+            if (checkedElements.length === 0) {
                 sigaModal.alerta('Selecione pelo menos um documento');
             } else {
                 sigaModal.abrir('confirmacaoModal');
@@ -166,6 +187,8 @@
             sigaSpinner.mostrar();
             document.getElementById("btnOk").disabled = true;
             sigaModal.fechar('confirmacaoModal');
+            
+            document.getElementsByName('siglasDocumentosSelecionados')[0].value = obtemDocumentosSelecionados();
             document.frm.submit();
         }
 

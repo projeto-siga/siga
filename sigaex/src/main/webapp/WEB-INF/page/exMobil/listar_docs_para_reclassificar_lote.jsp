@@ -23,13 +23,10 @@
 
             <siga:paginador maxItens="50" maxIndices="50" totalItens="${tamanho}"
                             itens="${itens}" var="documento">
-                <c:set var="x" scope="request">
-                    chk_${documento.idDoc}
-                </c:set>
                 <tr class="even">
                     <td width="3%" align="center">
-                        <input type="checkbox" name="documentosSelecionados"
-                               value="${documento.idDoc}" id="${x}" class="chkDocumento" onclick="displaySel()"/>
+                        <input type="checkbox" id="${documento.idDoc}" class="chkDocumento"
+                               onclick="atualizaDocumentoSelecionado(this)"/>
                     </td>
                     <td width="13%" align="right">${documento.sigla}</td>
                     <td width="5%" align="center">${documento.classificacaoSigla}</td>
@@ -48,13 +45,19 @@
         listarDocumentosParaReclassificarEmLote(offset);
     }
 
-    function checkUncheckAll(theElement) {
-        let isChecked = theElement.checked;
-        Array.from(document.getElementsByClassName('chkDocumento')).forEach(chk => chk.checked = isChecked);
+    function checkUncheckAll(el) {
+
+        Array.from(document.getElementsByClassName('chkDocumento'))
+            .forEach(chk => {
+                chk.checked = el.checked;
+                atualizaDocumentoSelecionado(el);
+            });
     }
 
-    function displaySel() {
-        document.getElementById('checkall').checked =
-            Array.from(document.getElementsByClassName('chkDocumento')).every(chk => chk.checked);
-    }
+    Array.from(obtemDocumentosSelecionados())
+        .forEach(sel => {
+            if (document.getElementById(sel))
+                document.getElementById(sel).checked = true;
+        });
+
 </script>

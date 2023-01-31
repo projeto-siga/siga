@@ -5645,8 +5645,8 @@ public class ExMovimentacaoController extends ExController {
 			return;
 		}
 
-		final ExMovimentacao mov = ExMovimentacaoBuilder
-				.novaInstancia().setDescrMov(motivo).setDtMovString(dtMovString).setObsOrgao(obsOrgao)
+		final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+				.setDescrMov(motivo).setDtMovString(dtMovString).setObsOrgao(obsOrgao).setCadastrante(getCadastrante())
 				.setSubstituicao(substituicao).setTitularSel(titularSel).setSubscritorSel(subscritorSel)
 				.setClassificacaoSel(classificacaoNovaSel).construir(dao());
 		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
@@ -5657,7 +5657,7 @@ public class ExMovimentacaoController extends ExController {
 
 				if (Ex.getInstance().getComp().pode(ExPodeReclassificar.class, getTitular(), getLotaTitular(), mob)) {
 
-					Ex.getInstance().getBL().avaliarReclassificar(mov.getTitular(), mov.getLotaTitular(), mob,
+					Ex.getInstance().getBL().avaliarReclassificar(mov.getCadastrante(), mov.getLotaCadastrante(), mob,
 							mov.getDtMov(), mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);
 				}
 			}

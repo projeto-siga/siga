@@ -14,7 +14,7 @@
             <div class="card-body">
                 <form name="frm" id="frm" class="form" method="post" action="reclassificar_lote_gravar" theme="simple">
                     <input type="hidden" name="siglasDocumentosSelecionados" value=""/>
-                    
+
                     <div class="row">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -107,6 +107,10 @@
         </siga:siga-modal>
     </div>
     <script type="text/javascript">
+        window.onload = function(){
+            limparDocumentosSelecionados();    
+        }
+        
         function listarDocumentosParaReclassificarEmLote(offset) {
             sigaSpinner.mostrar();
 
@@ -129,25 +133,30 @@
             });
         }
 
-        let checkedElements = [];
+        let checkedElements = [200];
 
-        function atualizaDocumentoSelecionado(el){
-            
+        function atualizaDocumentoSelecionado(el) {
             const indexId = checkedElements.indexOf(el.id);
-            if(indexId < 0 && el.checked)
+            if (indexId < 0 && el.checked && checkedElements.length < 200) {
                 checkedElements.push(el.id);
-            else if(indexId >= 0 && !el.checked)
+            } else if (indexId >= 0 && !el.checked) {
                 checkedElements.splice(indexId, 1);
+            } else {
+                el.checked = false;
+                sigaModal.alerta('Na Reclassificação em Lote – Permitido até 200 documentos por operação.');
+            }
+            
+            document.getElementById('qtdDocumentosSelecionados').innerHTML = checkedElements.length.toString();
         }
 
-        function obtemDocumentosSelecionados(){
+        function obtemDocumentosSelecionados() {
             return checkedElements;
         }
-        
-        function limparDocumentosSelecionados(){
+
+        function limparDocumentosSelecionados() {
             checkedElements = [];
         }
-        
+
         function validar() {
             let classificacaoAtualSelSpan = document.getElementById('classificacaoAtualSelSpan');
             if (classificacaoAtualSelSpan.textContent.trim() === '') {
@@ -187,7 +196,7 @@
             sigaSpinner.mostrar();
             document.getElementById("btnOk").disabled = true;
             sigaModal.fechar('confirmacaoModal');
-            
+
             document.getElementsByName('siglasDocumentosSelecionados')[0].value = obtemDocumentosSelecionados();
             document.frm.submit();
         }

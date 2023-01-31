@@ -5,6 +5,8 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
 
 <c:if test="${not empty itens}">
+    <p>Atenção: Na Reclassificação em Lote – Permitido até 200 documentos por operação.</p>
+    <p>Quantidade de documentos selecionados: <span id="qtdDocumentosSelecionados"></span></p>
     <div class="gt-content-box gt-for-table">
         <table class="table table-hover table-striped">
             <thead class="thead-dark align-middle text-center">
@@ -50,14 +52,15 @@
         Array.from(document.getElementsByClassName('chkDocumento'))
             .forEach(chk => {
                 chk.checked = el.checked;
-                atualizaDocumentoSelecionado(el);
+                atualizaDocumentoSelecionado(chk);
             });
     }
 
     Array.from(obtemDocumentosSelecionados())
         .forEach(sel => {
-            if (document.getElementById(sel))
-                document.getElementById(sel).checked = true;
+            if (document.getElementById(sel.toString()))
+                document.getElementById(sel.toString()).checked = true;
         });
+    document.getElementById('qtdDocumentosSelecionados').innerHTML = obtemDocumentosSelecionados().length.toString();
 
 </script>

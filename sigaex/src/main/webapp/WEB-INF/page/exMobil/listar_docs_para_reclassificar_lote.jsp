@@ -21,7 +21,7 @@
             </thead>
             <tbody class="table-bordered">
 
-            <siga:paginador maxItens="50" maxIndices="50" totalItens="${tamanho}"
+            <siga:paginador maxItens="200" maxIndices="50" totalItens="${tamanho}"
                             itens="${itens}" var="documento">
                 <tr class="even">
                     <td width="3%" align="center">

@@ -5,6 +5,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
 
 <c:if test="${not empty itens}">
+    <p>Atenção: Na Reclassificação em Lote – Permitido até 200 documentos por operação.</p>
     <div class="gt-content-box gt-for-table">
         <table class="table table-hover table-striped">
             <thead class="thead-dark align-middle text-center">

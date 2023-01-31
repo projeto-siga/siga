@@ -1998,6 +1998,15 @@ public class CpDao extends ModeloDao {
 		// query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return query.getResultList();
 	}
+	
+	public List<CpConfiguracao> consultarCpConfiguracaoPorOrgao(final CpConfiguracao exemplo) {
+		Query query = em().createNamedQuery("consultarCpConfiguracoesPorOrgao");
+
+		query.setParameter("idTpConfiguracao", exemplo.getCpTipoConfiguracao());
+		query.setParameter("idOrgaoUsu", exemplo.getOrgaoUsuario().getId());
+
+		return query.getResultList();
+	}
 
 	public List<CpConfiguracaoCache> consultarCacheDeConfiguracoesAtivas() {
 		Query query = em().createNamedQuery("consultarCacheDeConfiguracoesAtivas");

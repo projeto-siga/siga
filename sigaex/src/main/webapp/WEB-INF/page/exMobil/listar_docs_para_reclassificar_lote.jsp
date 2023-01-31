@@ -21,7 +21,7 @@
             </thead>
             <tbody class="table-bordered">
 
-            <siga:paginador maxItens="50" maxIndices="50" totalItens="${tamanho}"
+            <siga:paginador maxItens="200" maxIndices="50" totalItens="${tamanho}"
                             itens="${itens}" var="documento">
                 <c:set var="x" scope="request">
                     chk_${documento.idDoc}

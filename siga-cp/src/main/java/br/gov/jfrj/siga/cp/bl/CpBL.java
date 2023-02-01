@@ -1950,8 +1950,8 @@ public class CpBL {
 			throw new RegraNegocioException("PIN deve conter apenas dígitos númericos (0-9).");
 		}
 		
-		if (pin.length() != CpIdentidade.pinLength) {
-			throw new RegraNegocioException("PIN deve ter "+String.valueOf(CpIdentidade.pinLength)+" dígitos numéricos.");
+		if (pin.length() != CpIdentidade.PIN_LENGTH) {
+			throw new RegraNegocioException("PIN deve ter "+String.valueOf(CpIdentidade.PIN_LENGTH)+" dígitos numéricos.");
 		}	
 				
 		formatoPinIsValido = true;
@@ -3028,5 +3028,19 @@ public class CpBL {
 		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação;INATIVA_LOTE:Inativar Lotação em Lote";
 		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, titular.getLotacao(), servico);
 		
+	}
+	
+	public void resetContagemTentativasMalsucedidasPin(CpIdentidade identidade) {
+		identidade.setPinContadorTentativa(INTEGER_ZERO);
+		dao().gravar(identidade);	
+	}
+	
+	public void incrementarContagemTentativasMalsucedidasPin(CpIdentidade identidade) {
+		identidade.setPinContadorTentativa(identidade.getPinContadorTentativa() + INTEGER_ONE);
+		dao().gravar(identidade);	
+	}
+	
+	public boolean hasBloqueioPinPorTentativa(CpIdentidade identidade) {
+		return Integer.valueOf(identidade.getPinContadorTentativa()) == CpIdentidade.PIN_NUM_MAX_TENTATIVAS;
 	}
 }

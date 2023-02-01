@@ -147,7 +147,10 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	
 	@Column(name = "PIN_IDENTIDADE")
 	private String pinIdentidade;
-
+	
+	@Column(name = "PIN_CONTADOR_TENTATIVA")
+	@Desconsiderar
+	private Integer pinContadorTentativa;
 
 	/*
 	 * (non-Javadoc)
@@ -423,4 +426,17 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	public void setPinIdentidade(String pinIdentidade) {
 		this.pinIdentidade = pinIdentidade;
 	}
+	
+	public Integer getPinContadorTentativa() {
+		return pinContadorTentativa;
+	}
+
+	/**
+	 * @param pinContadorTentativa
+	 *        Contador de tentativas malsucedidas e consecutivas de match com o PIN da identidade
+	 */
+	public void setPinContadorTentativa(Integer pinContadorTentativa) {
+		this.pinContadorTentativa = pinContadorTentativa;
+	}
+
 }

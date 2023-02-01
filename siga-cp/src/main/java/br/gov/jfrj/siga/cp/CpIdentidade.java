@@ -49,7 +49,8 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "corporativo.cp_identidade")
 public class CpIdentidade extends AbstractCpIdentidade {
 
-	public static final long pinLength = 8L;
+	public static final long PIN_LENGTH = 8L;
+	public static final int PIN_NUM_MAX_TENTATIVAS = 5;
 	
 
 	public DpPessoa getPessoaAtual() {

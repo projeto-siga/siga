@@ -955,6 +955,30 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /classificacoes-aplicar-mascara:
+    get:
+      summary: "Aplicar máscara em sigla de classificação documental"
+      tags: [classificacao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                type: string
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
 
   /documentos/{sigla}/arquivo/produzir:

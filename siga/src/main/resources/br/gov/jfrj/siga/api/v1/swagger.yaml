@@ -529,6 +529,28 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
+  /pin/validar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/pin"
+      summary: Validação de PIN informado do Usuário Autenticado para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              isValido:
+                type: boolean
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /pin/trocar:
     post:
       consumes: ["application/x-www-form-urlencoded"]

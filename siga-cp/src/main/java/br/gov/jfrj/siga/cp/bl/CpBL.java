@@ -1977,26 +1977,21 @@ public class CpBL {
 		return formatoSenhaValido;
 	}
 	
-	public Boolean validaHashPin(String pin, CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
-		String hashPinAValidar = null;
-		boolean hashPinIsValido = false;
-		
-		if (identidadeCadastrante == null) {
-			throw new RegraNegocioException("Não é possível validar PIN: Identidade não informada.");
-		}
-
-		hashPinAValidar = GeraMessageDigest.calcSha256(pin);	
-		hashPinIsValido = hashPinAValidar.equals(identidadeCadastrante.getPinIdentidade());
-		
-		return hashPinIsValido;
-	}
-	
-	public Boolean validaPinIdentidade(String pin,CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
+	public Boolean validaPinIdentidade(String pin,CpIdentidade identidadeCadastrante) throws Exception {
 		
 		boolean pinValido = false;
+		
+		if (!Cp.getInstance().getComp().podeSegundoFatorPin(identidadeCadastrante.getDpPessoa(), identidadeCadastrante.getDpPessoa().getLotacao())) {
+			throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+		}
 				
 		if (identidadeCadastrante.getPinIdentidade() == null) {
 			throw new RegraNegocioException("Não é possível validar PIN: Não existe chave cadastrada.");
+		}
+		
+		if (hasBloqueioPinPorTentativa(identidadeCadastrante)) {
+			throw new RegraNegocioException("Seu PIN está <b>bloqueado</b> por tentativas malsucedidas. "
+					+ "Efetue a recuperação do PIN em <b><a href='/siga/app/pin/reset'>Esqueci meu PIN</a></b>.");
 		}
 		
 		consisteFormatoPin(pin);
@@ -2005,7 +2000,7 @@ public class CpBL {
 		if (!pinValido) {
 			incrementarContagemTentativasMalsucedidasPin(identidadeCadastrante);
 			
-			if (hasBloqueioPinPorTentativa(identidadeCadastrante)) {
+			if (hasBloqueioPinPorTentativa(identidadeCadastrante)) { 
 				throw new RegraNegocioException("Seu PIN foi <b>bloqueado</b> por tentativas malsucedidas. "
 						+ "Efetue a recuperação do PIN em <b><a href='/siga/app/pin/reset'>Esqueci meu PIN</a></b>.");
 			} else {
@@ -2022,6 +2017,21 @@ public class CpBL {
 		}
 	
 		return pinValido;
+	}
+	
+
+	private Boolean validaHashPin(String pin, CpIdentidade identidade) throws RegraNegocioException, NoSuchAlgorithmException {
+		String hashPinAValidar = null;
+		boolean hashPinIsValido = false;
+		
+		if (identidade == null) {
+			throw new RegraNegocioException("Não é possível validar PIN: Identidade não informada.");
+		}
+
+		hashPinAValidar = GeraMessageDigest.calcSha256(pin);	
+		hashPinIsValido = hashPinAValidar.equals(identidade.getPinIdentidade());
+		
+		return hashPinIsValido;
 	}
 	
 	

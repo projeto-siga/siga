@@ -168,7 +168,7 @@ public class ProcessadorHtml {
 			add(myTags, "p", "align=left,right,center,justify;class", styleP,
 					true);
 			add(myTags, "ol", "class", "list-style-type=roman", true);
-			add(myTags, "ul", "class", null, true);
+			add(myTags, "ul", "class", styleP, true);
 			add(myTags, "li", "class;data-footnote-id;id", null, true);
 
 			add(myTags, "hr", "class", null, false);
@@ -180,7 +180,8 @@ public class ProcessadorHtml {
 					+ ",61%,62%,63%,64%,65%,66%,67%,68%,69%,70%,71%,72%,73%,74%,75%,76%,77%,78%,79%,80%"
 					+ ",81%,82%,83%,84%,85%,86%,87%,88%,89%,90%,91%,92%,93%,94%,95%,96%,97%,98%,99%,100%";
 
-			String styleT = "border;border-style=solid;border-color;border-width;border-collapse=collapse;float=none;clear=both;width;";
+			String styleT = "border;border-style=solid;border-color;border-width;border-collapse=collapse;"
+					+ "border-bottom;border-left;border-top;border-right;float=none;clear=both;width;";
 
 			add(myTags,
 					"table",
@@ -201,7 +202,7 @@ public class ProcessadorHtml {
 			add(myTags,
 					"td",
 					"width;class;align=left,right,center,justify;valign=bottom,top,middle;bgcolor;headers;colspan;rowspan;"
-							+ sWidth, styleP, true);
+							+ sWidth, styleT, true);
 			add(myTags, "thead", null, null, true);
 			add(myTags, "tfoot", null, null, true);
 

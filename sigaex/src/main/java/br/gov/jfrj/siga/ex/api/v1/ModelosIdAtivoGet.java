@@ -4,14 +4,15 @@ import java.nio.charset.StandardCharsets;
 
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IModelosIdGet;
+import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IModelosIdAtivoGet;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-public class ModelosIdGet implements IModelosIdGet {
+public class ModelosIdAtivoGet implements IModelosIdAtivoGet {
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-		ExModelo mod = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
+		ExModelo modBase = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
+		ExModelo mod = ExDao.getInstance().consultarModeloAtual(modBase);
 		resp.idModelo = mod.getId().toString();
 		resp.idModeloInicial = mod.getIdInicial().toString();
 		resp.nome = mod.getNmMod();

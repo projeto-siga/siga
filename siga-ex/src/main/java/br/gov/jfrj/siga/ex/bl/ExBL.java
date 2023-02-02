@@ -177,6 +177,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPorPorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComCertificadoDigital;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelar;
@@ -1110,9 +1111,7 @@ public class ExBL extends CpBL {
 			}
 		} else {
 			ExMovimentacao exMov = ExDao.getInstance().consultar(mov.getIdDoc(), ExMovimentacao.class, false);
-			byte[] texto = exMov.getConteudoBlobMov2();
-			if (texto != null)
-				html =  StringEscapeUtils.escapeHtml4(new String(texto, "ISO-8859-1"));
+			html = new String(exMov.getConteudoBlobMov());
 		}
 		return html;
 	}
@@ -1744,7 +1743,7 @@ public class ExBL extends CpBL {
 				}
 				
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 			}
@@ -1771,7 +1770,7 @@ public class ExBL extends CpBL {
 					}
 
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 				
@@ -2171,7 +2170,7 @@ public class ExBL extends CpBL {
 			}
 		} else {
 			if (fSubstituindoSubscritor) { 
-				assinante = titular; 
+				assinante = titular.getPessoaAtual();
 			} else {
 				assinante = cosignatario;	
 			}
@@ -8496,8 +8495,11 @@ public class ExBL extends CpBL {
 		 *getNmFuncaoSubscritor = [0] - personalizarFuncao [1] - personalizarUnidade [2] - personalizarLocalidade [3] - personalizarNome
 		 */
 		
-		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA && movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO) {
-			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura.");
+		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA 
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO) {
+			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura ou autenticação.");
 		}
 		
 		SortedSet<ExMovimentacao> listaMovimentacoes = movimentacao.mob().getExMovimentacaoSet();

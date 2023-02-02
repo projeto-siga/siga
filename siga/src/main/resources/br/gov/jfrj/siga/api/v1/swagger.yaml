@@ -143,6 +143,12 @@ parameters:
     description: Identificador da Pessoa (id)
     required: false
     type: string    
+  emailQuery:
+    name: emailQuery
+    in: query
+    description: E-mail da pessoa
+    required: false
+    type: string    
   idLotacao:
     name: idLotacao
     in: query
@@ -389,11 +395,12 @@ paths:
   /pessoas:
     get:
       summary: "Pesquisa de pessoas"
-      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com os parâmetros informados: 
+      description: "Retorna uma lista de pessoas. A pesquisa será feita de acordo com um dos parâmetros informados: 
         <ul>
         <li><b>id=</b> Pesquisa a Pessoa atual da Pessoa com determinado id inicial.</li>
         <li><b>texto=</b> Pesquisa as Pessoas cuja Matrícula ou nome contém uma determinada palavra.</li>
-        <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li></ul>"
+        <li><b>cpf=</b> Pesquisa as Pessoas cadastradas com determinado CPF</li>
+        <li><b>email=</b> Pesquisa as Pessoas cadastradas com determinado e-mail (pesquisa por palavra. Ex.: 'silva gmail' traz joaodasilva10@gmail.com)</li></ul>"
       tags: [cadastro]
       security:
         - Bearer: []
@@ -401,6 +408,7 @@ paths:
         - $ref: "#/parameters/idPessoaIni"
         - $ref: "#/parameters/texto"
         - $ref: "#/parameters/cpf"
+        - $ref: "#/parameters/emailQuery"
       responses:
         200:
           description: Successful response
@@ -416,7 +424,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
         404:
-          description: Nenhuma Pessoa foi encontrada para os parâmetros informados.
+          description: Nenhuma Pessoa foi encontrada para os parâmetros informados. (ou Nenhum e-mail foi encontrado contendo as palavras informadas.)
           schema:
             $ref: "#/definitions/Error"                
         500:
@@ -1178,6 +1186,8 @@ definitions:
       nome:
         type: string
         description: Nome da lotação
+      localidade:
+        $ref: "#/definitions/Localidade"
       orgao:
         $ref: "#/definitions/Orgao"
 

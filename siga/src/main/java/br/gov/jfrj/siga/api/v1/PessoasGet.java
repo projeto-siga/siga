@@ -10,13 +10,17 @@ import com.crivano.swaggerservlet.SwaggerException;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasGet;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.Uf;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -28,7 +32,8 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 public class PessoasGet implements IPessoasGet {
 	@Override
 	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
-		if (((req.cpf != null ? 1 : 0) + (req.texto != null ? 1 : 0) + (req.idPessoaIni != null ? 1 : 0)) > 1) {
+		if (((req.cpf != null ? 1 : 0) + (req.texto != null ? 1 : 0) 
+				+ (req.idPessoaIni != null ? 1 : 0) + (req.emailQuery != null ? 1 : 0)) > 1) {
 			throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 		}
 		
@@ -49,6 +54,11 @@ public class PessoasGet implements IPessoasGet {
 
 		if (req.idPessoaIni != null && !req.idPessoaIni.isEmpty()) {
 			resp.list = pesquisarPessoaAtualPorIdIni(req, resp, exibirDadosSensiveis);
+			return;
+		}
+
+		if (req.emailQuery != null && !req.emailQuery.isEmpty()) {
+			resp.list = pesquisarPorEmail(req, resp, exibirDadosSensiveis);
 			return;
 		}
 
@@ -108,6 +118,24 @@ public class PessoasGet implements IPessoasGet {
 		return resultado;
 	}
 
+	private List<Pessoa> pesquisarPorEmail(Request req, Response resp, Boolean exibirDadosSensiveis) throws Exception {
+		String email = req.emailQuery;
+		try {
+			DpPessoaDaoFiltro dpPessoaFiltro = new DpPessoaDaoFiltro();
+			dpPessoaFiltro.setNome("");
+			dpPessoaFiltro.setEmail(email);
+			List<DpPessoa> l = new CpDao().consultarPorFiltro(dpPessoaFiltro);
+			if (l.isEmpty())
+				throw new SwaggerException("Nenhum e-mail foi encontrado contendo as palavras informadas.", 404, null, req,
+							resp, null);
+
+			return l.stream().map(pessoa -> this.pessoaToResultadoPesquisa(pessoa, exibirDadosSensiveis)).collect(Collectors.toList());
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+	
 	private Pessoa identidadeToResultadoPesquisa(CpIdentidade identidade, Boolean exibirDadosSensiveis) {
 		DpPessoa p = identidade.getPessoaAtual();
 		return pessoaToResultadoPesquisa(p, exibirDadosSensiveis);
@@ -117,6 +145,7 @@ public class PessoasGet implements IPessoasGet {
 		Pessoa pessoa = new Pessoa();
 		Orgao orgao = new Orgao();
 		Lotacao lotacao = new Lotacao();
+		Localidade localidade = new Localidade();
 		Cargo cargo = new Cargo();
 		FuncaoConfianca funcao = new FuncaoConfianca();
 		// Pessoa
@@ -142,6 +171,19 @@ public class PessoasGet implements IPessoasGet {
 		lotacao.idLotacaoIni = l.getIdLotacaoIni().toString();
 		lotacao.nome = l.getNomeLotacao();
 		lotacao.sigla = l.getSigla();
+		
+		// Localidade
+		CpLocalidade loc = l.getLocalidade();
+		if (loc != null) {
+			localidade.idLocalidade = loc.getId().toString();
+			localidade.nome = loc.getNmLocalidade();
+			Uf uf = new Uf();
+			uf.idUf = loc.getUF().getIdUF().toString();
+			uf.nomeUf = loc.getUF().getNmUF();
+			localidade.uf = uf;
+			lotacao.localidade = localidade;
+		}
+		
 		lotacao.orgao = orgao;
 
 		// Cargo Pessoa

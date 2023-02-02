@@ -1,0 +1,5 @@
+-- Correção do Tipo do Date dos campos do Órgão Usuário
+
+ALTER TABLE corporativo.cp_orgao_usuario
+CHANGE COLUMN HIS_DT_INI HIS_DT_INI DATETIME NULL DEFAULT NULL,
+CHANGE COLUMN HIS_DT_FIM HIS_DT_FIM DATETIME NULL DEFAULT NULL;

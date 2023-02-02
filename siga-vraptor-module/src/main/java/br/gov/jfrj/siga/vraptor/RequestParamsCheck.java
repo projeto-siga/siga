@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.safety.Safelist;
 
 import br.gov.jfrj.siga.uteis.SafeListCustom;
@@ -43,6 +44,28 @@ public class RequestParamsCheck {
     	String bodyHtml = dirty.body().html(); //extrai body para checagem 
 
     	return Jsoup.isValid(bodyHtml, safelist);
+    }
+    
+    public static OutputSettings buildOutputSettings() {
+		OutputSettings outputSettings = new OutputSettings();
+		outputSettings.charset("ISO-8859-1");
+		outputSettings.prettyPrint(false);
+		
+		return outputSettings;
+    }
+    
+    public static String replaceCommentTag(String dirtyParam){
+		//Preserve Comments
+		return dirtyParam
+				.replaceAll("<!--", "<commenttag>")
+				.replaceAll("-->", "</commenttag>");	
+    }
+    
+    public static String restoreCommentTag(String cleanParam){
+		//Restore Comments
+		return cleanParam
+				.replaceAll("<commenttag>", "<!--")
+				.replaceAll("</commenttag>", "-->");
     }
     
 

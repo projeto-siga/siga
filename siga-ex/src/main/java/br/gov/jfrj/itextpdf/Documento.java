@@ -191,7 +191,9 @@ public class Documento {
 				/*** Exibe para Documentos Capturados a Funcao / Unidade ***/
 				if (movAssinatura.getExDocumento().isInternoCapturado()
 						&& (movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
-								|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO)) {
+							|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+							|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA
+							|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO)) {
 					/* Interno Exibe Personalização se realizada */
 					s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura,true));
 				} else if (movAssinatura.getExDocumento().isExternoCapturado()

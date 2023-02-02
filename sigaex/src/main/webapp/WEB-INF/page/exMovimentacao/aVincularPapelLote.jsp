@@ -451,15 +451,13 @@
 							</table>
 						</div>
 					</div>
-<!-- 					<div class="row"> -->
-<!-- 						<div class="col-sm-6 mt-5 text-left"> -->
-<!-- 							<input type="checkbox" name="chkGestorInteressado" value="" onclick="javascript:checkUncheckGestorInter(this);"> -->
-<!-- 							<label class="form-check-label" for="substituicao">Mostrar apenas Documentos que estou como Interessado/Gestor</label>  -->
-<!-- 						</div> -->
-<!-- 					</div> -->
+					<div class="row">
+						<div class="col-sm-6 mt-5 text-left">
+							<input type="checkbox" name="chkGestorInteressado" value="${chkGestorInteressado}"  ${chkGestorInteressado ? 'checked' : ''} onclick="javascript:checkUncheckGestorInter(this);">
+							<label class="form-check-label" for="substituicao">Mostrar apenas Documentos que estou como Interessado/Gestor</label> 
+						</div>
+					</div>
 					<div class="gt-content-box gt-for-table mt-2">
-						<br />
-						<br />
 						<div>
 							<table class="table table-hover table-striped" id="idTableDocumento">
 								<thead class="${thead_color} align-middle text-center">

@@ -1683,6 +1683,21 @@ public class CpBL {
 				}
 			});
 			
+			CpConfiguracao conf = new CpConfiguracao();
+			conf.setOrgaoUsuario(orgaoAntigo);
+			conf.setCpTipoConfiguracao(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
+			List<CpConfiguracao> listaConf = CpDao.getInstance().consultarCpConfiguracaoPorOrgao(conf);
+			
+			for (CpConfiguracao cpConfiguracao : listaConf) {
+				CpConfiguracao confNovo = new CpConfiguracao();
+				PropertyUtils.copyProperties(confNovo, cpConfiguracao); 
+				confNovo.setId(null);
+				confNovo.setHisDtFim(null);
+				confNovo.setHisIdcFim(null);
+				confNovo.setOrgaoUsuario(orgaoNovo);
+				confNovo.setConfiguracoesPosteriores(null);
+				CpDao.getInstance().gravarComHistorico(confNovo, cpConfiguracao, null, identidadeCadastrante);
+			}
 		}
 	}
 	

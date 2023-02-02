@@ -1929,6 +1929,7 @@ public class CpBL {
 					i.setIdIdentidade(null);
 					i.setDtCriacaoIdentidade(dt);
 					i.setPinIdentidade(pinHash);
+					i.setPinContadorTentativa(INTEGER_ZERO);
 					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
 				}
 			} else {
@@ -1993,7 +1994,7 @@ public class CpBL {
 	public Boolean validaPinIdentidade(String pin,CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
 		
 		boolean pinValido = false;
-		
+				
 		if (identidadeCadastrante.getPinIdentidade() == null) {
 			throw new RegraNegocioException("Não é possível validar PIN: Não existe chave cadastrada.");
 		}
@@ -2002,8 +2003,23 @@ public class CpBL {
 		pinValido = validaHashPin(pin,identidadeCadastrante);
 
 		if (!pinValido) {
-			throw new RegraNegocioException("PIN atual informado não coincide com o cadastrado.");
-		}	
+			incrementarContagemTentativasMalsucedidasPin(identidadeCadastrante);
+			
+			if (hasBloqueioPinPorTentativa(identidadeCadastrante)) {
+				throw new RegraNegocioException("Seu PIN foi <b>bloqueado</b> por tentativas malsucedidas. "
+						+ "Efetue a recuperação do PIN em <b><a href='/siga/app/pin/reset'>Esqueci meu PIN</a></b>.");
+			} else {
+				throw new RegraNegocioException(
+						String.format("PIN informado não coincide com o cadastrado.<br />"
+							+ "Você tem mais <b>%s tentativa%s</b> antes que seu PIN seja bloqueado por segurança.",
+								quantidadeTentativasRestantes(identidadeCadastrante),
+								quantidadeTentativasRestantes(identidadeCadastrante) < 2 ? "" : "s")
+						);
+			}
+
+		} else if (identidadeCadastrante.getPinContadorTentativa().intValue() != INTEGER_ZERO) {
+			resetContagemTentativasMalsucedidasPin(identidadeCadastrante);
+		}
 	
 		return pinValido;
 	}
@@ -3033,14 +3049,22 @@ public class CpBL {
 	public void resetContagemTentativasMalsucedidasPin(CpIdentidade identidade) {
 		identidade.setPinContadorTentativa(INTEGER_ZERO);
 		dao().gravar(identidade);	
+		dao().descarregar();
 	}
 	
 	public void incrementarContagemTentativasMalsucedidasPin(CpIdentidade identidade) {
-		identidade.setPinContadorTentativa(identidade.getPinContadorTentativa() + INTEGER_ONE);
-		dao().gravar(identidade);	
+		if (!hasBloqueioPinPorTentativa(identidade)) {
+			identidade.setPinContadorTentativa(identidade.getPinContadorTentativa() + INTEGER_ONE);
+			dao().gravar(identidade);	
+			dao().descarregar();
+		}
 	}
 	
 	public boolean hasBloqueioPinPorTentativa(CpIdentidade identidade) {
-		return Integer.valueOf(identidade.getPinContadorTentativa()) == CpIdentidade.PIN_NUM_MAX_TENTATIVAS;
+		return identidade.getPinContadorTentativa().intValue() == CpIdentidade.PIN_NUM_MAX_TENTATIVAS;
+	}
+	
+	public int quantidadeTentativasRestantes(CpIdentidade identidade) {
+		return CpIdentidade.PIN_NUM_MAX_TENTATIVAS - identidade.getPinContadorTentativa().intValue();
 	}
 }

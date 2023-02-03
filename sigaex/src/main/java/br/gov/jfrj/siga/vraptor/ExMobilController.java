@@ -93,7 +93,7 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
 
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
-	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 50;
+	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
 	/**
 	 * @deprecated CDI eyes only
 	 */

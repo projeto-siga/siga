@@ -293,7 +293,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset, final Boolean mostrarFiltros) throws UnsupportedEncodingException {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String fromQuadro) throws UnsupportedEncodingException {
 			
 		
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -453,7 +453,7 @@ public class ExMobilController extends
 
 		} catch (final RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
-			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset, mostrarFiltros);
+			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset, fromQuadro);
 		}
 		return null;	
 	}
@@ -467,7 +467,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset, final Boolean mostrarFiltros) {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String fromQuadro) {
 		
 		assertAcesso("PESQ:Pesquisar");
 		if (getCadastrante().isUsuarioExterno() && Prop.isGovSP()) {
@@ -479,11 +479,8 @@ public class ExMobilController extends
 
 		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
 
-		boolean pesquisaLimitadaPorData = false;
-		if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
-				SIGA_DOC_PESQ_DTLIMITADA )) 
-    		pesquisaLimitadaPorData = true;
-
+		boolean pesquisaLimitadaPorData = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+				SIGA_DOC_PESQ_DTLIMITADA); 
 		result.include("pesquisaLimitadaPorData", pesquisaLimitadaPorData);
 		
 		getP().setOffset(paramoffset);
@@ -583,7 +580,7 @@ public class ExMobilController extends
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);	
 		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());
-		result.include("mostrarFiltros", (mostrarFiltros != null? mostrarFiltros : true));	
+		result.include("fromQuadro", (fromQuadro != null? fromQuadro : "false"));	
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();

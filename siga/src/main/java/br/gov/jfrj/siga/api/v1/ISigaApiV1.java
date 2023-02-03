@@ -295,11 +295,10 @@ public interface ISigaApiV1 {
     
     public interface IPinValidarPost extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
-            public String pin;
+            public String pinBasicAuth;
         }
 
         public static class Response implements ISwaggerResponse {
-            public Boolean isValido;
         }
 
         public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;

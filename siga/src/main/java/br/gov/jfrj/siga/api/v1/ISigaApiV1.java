@@ -292,6 +292,17 @@ public interface ISigaApiV1 {
 
         public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
     }
+    
+    public interface IPinValidarPost extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String pinBasicAuth;
+        }
+
+        public static class Response implements ISwaggerResponse {
+        }
+
+        public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+    }
 
     public interface IPinTrocarPost extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {

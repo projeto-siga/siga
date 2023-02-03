@@ -32,7 +32,7 @@
 			let form = document.forms['frm'];
 			form ["paramoffset"].value = offset;
 			form.action = "assinar_lote";
-			form.method = "GET";
+			form.method = "POST";
 			form ["p.offset"].value = offset;
 	
 			form.submit();

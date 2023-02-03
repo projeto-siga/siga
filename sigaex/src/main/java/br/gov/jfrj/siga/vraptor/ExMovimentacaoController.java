@@ -3007,6 +3007,7 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/mov/arquivar_permanente_lote");
 	}
 
+	@Post("/app/expediente/mov/assinar_lote")
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote(Integer paramoffset) throws Exception {
 		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);

@@ -2011,8 +2011,7 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException("Não há um PIN cadastrado para registrar assinatura. Utilize outra forma ou cadastre um PIN se disponível clicando <a href='/siga/app/pin/cadastro'>aqui</a>.");
 				}
 				
-				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
-				senhaValida = id.getPinIdentidade().equals(hashAtual);
+				senhaValida = Cp.getInstance().getBL().validaPinIdentidade(senhaSubscritor, id);
 			} else {
 				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
 				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);

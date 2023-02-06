@@ -93,7 +93,7 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
 
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
-	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 50;
+	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -293,7 +293,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) throws UnsupportedEncodingException {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String fromQuadro) throws UnsupportedEncodingException {
 			
 		
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -453,7 +453,7 @@ public class ExMobilController extends
 
 		} catch (final RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
-			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset);
+			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset, fromQuadro);
 		}
 		return null;	
 	}
@@ -467,7 +467,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String fromQuadro) {
 		
 		assertAcesso("PESQ:Pesquisar");
 		if (getCadastrante().isUsuarioExterno() && Prop.isGovSP()) {
@@ -477,7 +477,11 @@ public class ExMobilController extends
 		if (Prop.getBool("atualiza.anotacao.pesquisa"))
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 
-    Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
+		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
+
+		boolean pesquisaLimitadaPorData = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+				SIGA_DOC_PESQ_DTLIMITADA); 
+		result.include("pesquisaLimitadaPorData", pesquisaLimitadaPorData);
 		
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);
@@ -511,8 +515,7 @@ public class ExMobilController extends
 				result.include("msgPesqErro", e.getMessage());
 			}
 		} else {
-			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
-					SIGA_DOC_PESQ_DTLIMITADA )) {
+			if( pesquisaLimitadaPorData ) {
         		result.include("msgCabecClass", "alert-warning");
         		result.include("mensagemCabec", "ATENÇÃO: Para os órgãos com grande demanda de documentos, a pesquisa deve ser limitada com uma range de datas de no máximo "
         				+ maxDiasPesquisa.toString() + " dias. Será assumida uma data inicial "
@@ -576,8 +579,8 @@ public class ExMobilController extends
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);	
-		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());	
-		
+		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());
+		result.include("fromQuadro", (fromQuadro != null? fromQuadro : "false"));	
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();

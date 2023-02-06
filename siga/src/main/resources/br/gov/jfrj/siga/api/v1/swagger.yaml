@@ -89,6 +89,12 @@ parameters:
     description: PIN Atual para Confirmação da Troca de PIN
     required: true
     type: string
+  pinBasicAuth:
+    name: pinBasicAuth
+    in: query
+    description: PIN para validação no formato Basic Auth - Base64(CPF:PIN)
+    required: true
+    type: string   
   tokenPin:
     name: tokenPin
     in: query
@@ -524,6 +530,24 @@ paths:
             properties:
               mensagem:
                 type: string
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /pin/validar:
+    post:
+      consumes: ["application/x-www-form-urlencoded"]
+      tags: [PIN]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/pinBasicAuth"
+      summary: Validação de PIN informado do Usuário Autenticado para Assinatura e Autenticação de Documentos e Segundo Fator de Autenticação.
+      description: Para realizar a verificação é necessário Enviar o Token de Autenticação do Usuário e no parâmetro pinBasicAuth enviar o [CPF do Usuario Autenticado]:[PIN informado] em Base64
+      responses:
+        200:
+          description: Successful response
         500:
           description: Error ocurred
           schema:

@@ -81,7 +81,7 @@ public class RequestParamsCheckInterceptor {
 					String cleanParam = Jsoup.clean(dirtyParam, "", SafeListCustom.relaxedCustom(),outputSettings);
 					
 					//Restore Comments
-					cleanParam = RequestParamsCheck.replaceCommentTag(cleanParam);
+					cleanParam = RequestParamsCheck.restoreCommentTag(cleanParam);
 					
 					value[0] = cleanParam;	
 					

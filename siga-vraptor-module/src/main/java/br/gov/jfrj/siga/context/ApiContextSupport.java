@@ -245,7 +245,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 						String cleanParam = Jsoup.clean(dirtyParam, "", SafeListCustom.relaxedCustom(),outputSettings);
 						
 						//Restore Comments
-						cleanParam = RequestParamsCheck.replaceCommentTag(cleanParam);	
+						cleanParam = RequestParamsCheck.restoreCommentTag(cleanParam);	
 						
 						//Devolve param safe
 						campo.set(getCtx().getReq(),cleanParam);

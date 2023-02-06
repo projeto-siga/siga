@@ -1754,9 +1754,12 @@ CKEDITOR.replace( '${var}',
                                 }
 
 								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
-								CKEDITOR.config.disallowedContent = '*[data*]';
 
-                                CKEDITOR.replace('${var}', {toolbar: 'SigaToolbar'});
+                                CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
+                                    
+                                CKEDITOR.replace('${var}', {
+                                    toolbar: 'SigaToolbar'
+                                });
 
                             </script>
                             

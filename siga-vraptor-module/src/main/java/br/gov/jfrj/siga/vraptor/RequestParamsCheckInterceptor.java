@@ -74,11 +74,9 @@ public class RequestParamsCheckInterceptor {
 					//Ajusta saída do Clean
 					OutputSettings outputSettings = RequestParamsCheck.buildOutputSettings();
 					
-					//Preserve Comments
-					dirtyParam = RequestParamsCheck.replaceCommentTag(dirtyParam);
-					
 					/*URLs permissivas aplica apenas o Clean de acordo com a SafeList */
-					String cleanParam = Jsoup.clean(dirtyParam, "", SafeListCustom.relaxedCustom(),outputSettings);
+					//Preserve Comments
+					String cleanParam = Jsoup.clean(RequestParamsCheck.replaceCommentTag(dirtyParam), "", SafeListCustom.relaxedCustom(),outputSettings);
 					
 					//Restore Comments
 					cleanParam = RequestParamsCheck.restoreCommentTag(cleanParam);
@@ -89,6 +87,7 @@ public class RequestParamsCheckInterceptor {
 					if (!Jsoup.parseBodyFragment(dirtyParam, "").outputSettings(outputSettings).body().html().equals(cleanParam)) {
 						log(dirtyParam,permissiveCheckControl); 
 					}
+					cleanParam = null;
 				}				
 			} else {
 				if (!RequestParamsCheck.checkParameter(dirtyParam,permissiveCheckControl)) {
@@ -97,7 +96,7 @@ public class RequestParamsCheckInterceptor {
 				}				
 			}
 			
-			dirtyParam= null;
+			dirtyParam = null;
 			
 		});
 		

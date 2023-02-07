@@ -115,7 +115,7 @@ function aplicarMascara(input){
 		$.getScript("/siga/javascript/jquery.maskedinput.min.js", function(){
 				jQuery(function($){
 					for(e in elementosComMascara){
-					   $(elementosComMascara[e]).mask(getMascaraJs());
+					   $(elementosComMascara[e]).mask(getMascaraJs(), {autoclear: false});
 					   
 					   $(elementosComMascara[e]).blur(function(){
 						   aplicarMascara(this);

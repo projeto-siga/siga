@@ -29,14 +29,14 @@
 			if (offset == null) {
 				offset = 0;
 			}
-			let form = document.forms['frm'];
-			form ["paramoffset"].value = offset;
-			form.action = "assinar_lote";
-			form.method = "POST";
-			form ["p.offset"].value = offset;
-	
-			form.submit();
+			//Tratativa para exceco de envio de parametros http no submit da pagina
+			$("#frm").remove();
+			let frm = $('<form id="frm" action="assinar_lote" method="POST"></form>');
+			frm.append('<input type="hidden" name="paramoffset" value="' + offset + '" /> ');
+			frm.append('<input type="hidden" name="p.offset" value="' + offset + '" /> ');
+			frm.appendTo(document.body).submit();
 		}
+		
 		function checkUncheckAll(theElement) {
 			var theForm = theElement.form, z = 0;
 			for (z = 0; z < theForm.length; z++) {

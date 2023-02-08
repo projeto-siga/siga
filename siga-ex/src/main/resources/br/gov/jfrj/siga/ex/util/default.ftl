@@ -2793,11 +2793,13 @@ Pede deferimento.</span><br/><br/><br/>
                 	${pessoaVO.nmFuncao}
 	            [#elseif (pessoaVO.titular.funcaoConfianca.nomeFuncao)??]
 	                ${pessoaVO.titular.funcaoConfianca.nomeFuncao}
-	                [#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)! || substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
-            		[#elseif (pessoaVO.subscritor.funcaoConfianca.nomeFuncao)??]
-                		${pessoaVO.subscritor.funcaoConfianca.nomeFuncao}
-            		[#else]
-                		${(pessoaVO.subscritor.cargo.nomeCargo)!}
+	                [#if ((doc.titular.idPessoa)! != (doc.subscritor.idPessoa)!) && (pessoaVO.subscritor.idPessoa == doc.subscritor.idPessoa)]
+                        EM EXERCÍCIO
+                    [/#if]
+                [#elseif (pessoaVO.subscritor.funcaoConfianca.nomeFuncao)??]
+                    ${pessoaVO.subscritor.funcaoConfianca.nomeFuncao}
+                [#else]
+                    ${(pessoaVO.subscritor.cargo.nomeCargo)!}
             	[/#if]
         	[/#if]
 

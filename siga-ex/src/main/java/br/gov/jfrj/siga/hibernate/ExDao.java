@@ -1393,6 +1393,11 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
+	public int consultarQuantidadeParaArquivarCorrenteEmLote(DpLotacao lot) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaArquivarCorrenteEmLote", Long.class)
+				.setParameter("lotaIni", lot.getIdLotacaoIni()).getSingleResult() ).intValue();
+	}
+
 	public List<ExItemDestinacao> consultarParaArquivarIntermediarioEmLote(
 			DpLotacao lot, int offset) {
 		final Query query = em().createNamedQuery(

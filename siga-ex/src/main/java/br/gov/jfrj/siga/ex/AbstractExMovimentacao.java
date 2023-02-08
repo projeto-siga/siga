@@ -96,6 +96,10 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=11)"
 				+ "                ) order by mar.dtIniMarca desc"),
+		@NamedQuery(name = "consultarQuantidadeParaArquivarCorrenteEmLote", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
+				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
+				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=11)"
+				+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os "a recolher para arquivo intermediário"
 		@NamedQuery(name = "consultarParaArquivarIntermediarioEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "

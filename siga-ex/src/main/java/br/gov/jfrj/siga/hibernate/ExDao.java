@@ -1385,11 +1385,12 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMobil> consultarParaArquivarCorrenteEmLote(DpLotacao lot) {
-		final Query query = em().createNamedQuery(
-
-		"consultarParaArquivarCorrenteEmLote");
-		query.setParameter("lotaIni", lot.getIdLotacaoIni());
+	public List<ExMobil> consultarParaArquivarCorrenteEmLote(final DpLotacao lot, final int offset, final int tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaArquivarCorrenteEmLote")
+				.setParameter("lotaIni", lot.getIdLotacaoIni())
+				.setFirstResult(offset)
+				.setMaxResults(tamPagina);
+		
 		return query.getResultList();
 	}
 

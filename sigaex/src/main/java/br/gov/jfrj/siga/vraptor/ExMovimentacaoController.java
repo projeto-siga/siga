@@ -1577,22 +1577,8 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/arquivar_corrente_lote")
 	public void aArquivarCorrenteLote() {
-		final List<ExMobil> provItens = dao()
-				.consultarParaArquivarCorrenteEmLote(getLotaTitular());
-
-		List<ExMobil> itens = new ArrayList<ExMobil>();
-
-		for (ExMobil m : provItens) {
-			if (!m.isApensado()
-					&& Ex.getInstance()
-							.getComp()
-							.pode(ExPodeAcessarDocumento.class, getTitular(),
-									getLotaTitular(), m)) {
-				itens.add(m.isVolume() ? m.doc().getMobilGeral() : m);
-			}
-		}
-
-		result.include("itens", itens);
+		assertAcesso("ARQLOTE:Arquivar em Lote");
+		
 	}
 
 	@Transacional

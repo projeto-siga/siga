@@ -94,6 +94,7 @@ public class ExMobilController extends
 
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
+	private static final int MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE = 200;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1129,4 +1130,27 @@ public class ExMobilController extends
 
         }
     }
+
+	@Get("/app/expediente/doc/listar_docs_para_arquivar_corrent_lote")
+	public void listar_docs_para_arquivar_corrent_lote(final int offset) {
+		assertAcesso("ARQLOTE:Arquivar em Lote");
+		
+		Integer tamanho = dao().consultarQuantidadeParaArquivarCorrenteEmLote(getLotaTitular());
+
+		if (Objects.nonNull(tamanho)) {
+			final List<ExMobil> itens = dao().consultarParaArquivarCorrenteEmLote(getLotaTitular(), offset,
+					MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+
+			getP().setOffset(offset);
+			setItemPagina(MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+			setItens(itens);
+			setTamanho(tamanho);
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+
+		}
+	}
 }

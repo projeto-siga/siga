@@ -148,9 +148,9 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	@Column(name = "PIN_IDENTIDADE")
 	private String pinIdentidade;
 	
-	@Column(name = "PIN_CONTADOR_TENTATIVA")
+	@Column(name = "PIN_CONTADOR_TENTATIVA", columnDefinition = "int default 0", insertable = false, updatable = true)
 	@Desconsiderar
-	private Integer pinContadorTentativa;
+	private Integer pinContadorTentativa = 0;
 
 	/*
 	 * (non-Javadoc)

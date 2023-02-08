@@ -2430,16 +2430,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
 			return criacao.getCadastrante();
-		else
+		else if (doc().getCadastrante() != null)
 			return doc().getCadastrante();
+		else
+		    return doc().getSubscritor();
 	}
 	
 	public DpLotacao getLotaTitular() {
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
 			return criacao.getLotaCadastrante();
-		else
+		else if (doc().getLotaCadastrante() != null)
 			return doc().getLotaCadastrante();
+		else
+		    return doc().getLotaSubscritor();
 	}
 	
 	public boolean isEmTramiteParalelo() {

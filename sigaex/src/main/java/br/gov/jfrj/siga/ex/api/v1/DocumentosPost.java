@@ -175,7 +175,7 @@ public class DocumentosPost implements IDocumentosPost {
 			doc.setLotaCadastrante(ctx.getLotaTitular());
 		}
 
-		if (doc.getLotaCadastrante() == null) {
+		if (doc.getLotaCadastrante() == null && doc.getCadastrante() != null) {
 			doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 		}
 

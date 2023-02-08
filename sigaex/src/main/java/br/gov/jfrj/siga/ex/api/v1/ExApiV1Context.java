@@ -83,8 +83,8 @@ public class ExApiV1Context extends ApiContextSupport {
 			}
 
 			if (mob.doc().isSemEfeito()) {
-				if (!mob.doc().getCadastrante().equals(titular) && !mob.doc().getSubscritor().equals(titular)
-						&& !isInteressado) {
+				if (mob.doc().getCadastrante() == null || (!mob.doc().getCadastrante().equals(titular) && !mob.doc().getSubscritor().equals(titular)
+						&& !isInteressado)) {
 					throw new AplicacaoException("Documento " + mob.getSigla() + " cancelado ");
 				}
 			} else {

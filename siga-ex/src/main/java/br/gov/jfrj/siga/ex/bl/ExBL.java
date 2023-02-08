@@ -1725,7 +1725,7 @@ public class ExBL extends CpBL {
 					fValido = true;
 					usuarioDoToken = doc.getSubscritor();
 				}
-				if (!fValido) {
+				if (!fValido && doc.getCadastrante() != null) {
 					fValido = (lMatricula.equals(doc.getCadastrante().getMatricula())) && (doc.getExTipoDocumento()
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
@@ -1753,7 +1753,7 @@ public class ExBL extends CpBL {
 					fValido = true;
 					usuarioDoToken = doc.getSubscritor();
 				}
-				if (!fValido) {
+				if (!fValido && doc.getCadastrante() != null) {
 					fValido = (lCPF.equals(doc.getCadastrante().getCpfPessoa())) && (doc.getExTipoDocumento()
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
@@ -2054,7 +2054,7 @@ public class ExBL extends CpBL {
 						if (doc.getSubscritor() != null && subscritor.equivale(doc.getSubscritor())) {
 							fValido = true;
 						}
-						if (!fValido) {
+						if (!fValido && doc.getCadastrante() != null) {
 							fValido = (subscritor.equivale(doc.getCadastrante())) && (doc.getExTipoDocumento()
 									.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 						}
@@ -3376,7 +3376,7 @@ public class ExBL extends CpBL {
 			dao().gravar(doc);
 			
 			if (doc.getSubscritor() != null) {
-				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
+				if ((doc.getCadastrante() == null || !doc.getCadastrante().equivale(doc.getSubscritor())) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
 					enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
 				}
 			}	
@@ -3835,7 +3835,7 @@ public class ExBL extends CpBL {
 				doc.setCadastrante(cadastrante);
 			if (doc.getLotaCadastrante() == null) {
 				doc.setLotaCadastrante(lotaTitular);
-				if (doc.getLotaCadastrante() == null)
+				if (doc.getLotaCadastrante() == null && doc.getCadastrante() != null)
 					doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 			}
 			if (doc.getDtRegDoc() == null) {

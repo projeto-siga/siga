@@ -1131,8 +1131,8 @@ public class ExMobilController extends
         }
     }
 
-	@Get("/app/expediente/doc/listar_docs_para_arquivar_corrent_lote")
-	public void listar_docs_para_arquivar_corrent_lote(final int offset) {
+	@Get("/app/expediente/doc/listar_docs_para_arquivar_corrente_lote")
+	public void listar_docs_para_arquivar_corrente_lote(final int offset) {
 		assertAcesso("ARQLOTE:Arquivar em Lote");
 		
 		Integer tamanho = dao().consultarQuantidadeParaArquivarCorrenteEmLote(getLotaTitular());

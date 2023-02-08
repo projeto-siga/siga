@@ -7,6 +7,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f" %>
 
 <siga:pagina titulo="Arquivamento em Lote">
+    <c:set var="thead_color" value="${thead_color}" scope="session"/>
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -52,7 +53,7 @@
 
             offset = offset == null ? 0 : offset;
 
-            let url = '/sigaex/app/expediente/doc/listar_docs_para_arquivar_corrent_lote?&offset=' + offset;
+            let url = '/sigaex/app/expediente/doc/listar_docs_para_arquivar_corrente_lote?&offset=' + offset;
 
             $.ajax({
                 url: url,

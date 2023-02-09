@@ -1175,4 +1175,9 @@ public class FuncoesEL {
 				.pode(ExPodeTransferir.class, titular, lotaTitular, mob);
 	}
 
+	public static Boolean podeArquivarCorrente(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp()
+				.pode(ExPodeArquivarCorrente.class, titular, lotaTitular, mob);
+	}
+
 }

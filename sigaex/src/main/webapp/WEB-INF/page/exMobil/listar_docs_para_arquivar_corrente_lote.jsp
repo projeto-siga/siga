@@ -34,72 +34,74 @@
                 <tbody class="table-bordered">
 
                 <siga:paginador maxItens="200" maxIndices="50"
-                                totalItens="${tamanho}" itens="${itens}" var="documento">
-
-                    <tr class="even">
-                        <td align="center" class="align-middle text-center">
-                            <input type="checkbox" name="documentosSelecionados" value="${documento.codigoCompacto}"
-                                   id="${documento.id}" class="chkDocumento"/>
-                        </td>
-                        <td class="text-right">
-                            <c:choose>
-                                <c:when test='${param.popup!="true"}'>
-                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
-                                            ${documento.sigla}
-                                    </a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="javascript:opener.retorna_${param.propriedade}('${documento.id}','${documento.sigla}','');">
-                                            ${documento.sigla}
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <c:if test="${not documento.geral}">
-                            <td width="2%"
-                                align="center">${f:destinacaoPorNumeroVia(documento.doc, documento.numSequencia)}</td>
-                            <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.lotaSubscritor.sigla}"
-                                                  descricao="${documento.doc.lotaSubscritor.descricao}"/>
+                                totalItens="${tamanho}" itens="${itens}" var="mobil">
+                    
+                    <c:if test="${f:podeArquivarCorrente(titular, lotaTitular, mobil)}">
+                        <tr class="even">
+                            <td align="center" class="align-middle text-center">
+                                <input type="checkbox" name="documentosSelecionados" value="${mobil.codigoCompacto}"
+                                       id="${mobil.id}" class="chkMobil"/>
                             </td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.subscritor.iniciais}"
-                                                  descricao="${documento.doc.subscritor.descricao}"/></td>
-                            <td class="text-center">${documento.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-                                                  descricao="${documento.ultimaMovimentacaoNaoCancelada.resp.descricao}"/>
+                            <td class="text-right">
+                                <c:choose>
+                                    <c:when test='${param.popup!="true"}'>
+                                        <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobil.sigla}">
+                                                ${mobil.sigla}
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="javascript:opener.retorna_${param.propriedade}('${mobil.id}','${mobil.sigla}','');">
+                                                ${mobil.sigla}
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
-                        </c:if>
-                        <c:if test="${documento.geral}">
-                            <td align="center"></td>
-                            <td class="text-center">${documento.doc.dtDocDDMMYY}</td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.subscritor.iniciais}"
-                                                  descricao="${documento.doc.subscritor.descricao}"/></td>
-                            <td class="text-center">
-                                <siga:selecionado isVraptor="true"
-                                                  sigla="${documento.doc.lotaSubscritor.sigla}"
-                                                  descricao="${documento.doc.lotaSubscritor.descricao}"/></td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                        </c:if>
-                        <td>
-                            <c:choose>
-                                <c:when test="${siga_cliente == 'GOVSP'}">
-                                    ${documento.doc.descrDocumento}
-                                </c:when>
-                                <c:otherwise>
-                                    ${f:descricaoConfidencial(documento.doc, lotaTitular)}
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
+                            <c:if test="${not mobil.geral}">
+                                <td width="2%"
+                                    align="center">${f:destinacaoPorNumeroVia(mobil.doc, mobil.numSequencia)}</td>
+                                <td class="text-center">${mobil.doc.dtDocDDMMYY}</td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${mobil.doc.lotaSubscritor.sigla}"
+                                                      descricao="${mobil.doc.lotaSubscritor.descricao}"/>
+                                </td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${mobil.doc.subscritor.iniciais}"
+                                                      descricao="${mobil.doc.subscritor.descricao}"/></td>
+                                <td class="text-center">${mobil.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${mobil.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
+                                                      descricao="${mobil.ultimaMovimentacaoNaoCancelada.resp.descricao}"/>
+                                </td>
+                            </c:if>
+                            <c:if test="${mobil.geral}">
+                                <td align="center"></td>
+                                <td class="text-center">${mobil.doc.dtDocDDMMYY}</td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${mobil.doc.subscritor.iniciais}"
+                                                      descricao="${mobil.doc.subscritor.descricao}"/></td>
+                                <td class="text-center">
+                                    <siga:selecionado isVraptor="true"
+                                                      sigla="${mobil.doc.lotaSubscritor.sigla}"
+                                                      descricao="${mobil.doc.lotaSubscritor.descricao}"/></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
+                            </c:if>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${siga_cliente == 'GOVSP'}">
+                                        ${mobil.doc.descrDocumento}
+                                    </c:when>
+                                    <c:otherwise>
+                                        ${f:descricaoConfidencial(mobil.doc, lotaTitular)}
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:if>
                 </siga:paginador>
                 </tbody>
             </table>
@@ -114,12 +116,12 @@
 
         function checkUncheckAll(theElement) {
             let isChecked = theElement.checked;
-            Array.from(document.getElementsByClassName('chkDocumento')).forEach(chk => chk.checked = isChecked);
+            Array.from(document.getElementsByClassName('chkMobil')).forEach(chk => chk.checked = isChecked);
         }
 
         function displaySel() {
             document.getElementById('checkall').checked =
-                Array.from(document.getElementsByClassName('chkDocumento')).every(chk => chk.checked);
+                Array.from(document.getElementsByClassName('chkMobil')).every(chk => chk.checked);
         }
     </script>
 </siga:pagina>

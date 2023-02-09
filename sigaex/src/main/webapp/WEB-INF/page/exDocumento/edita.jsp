@@ -617,7 +617,7 @@
 												<div class="custom-file">
 													<input type="file" class="custom-file-input" id="arquivo"
 														name="arquivo" accept="application/pdf"
-														onchange="testpdf(this.form)" title="arquivo"> <label
+														onchange="testpdf(this.form, ${tamanhoMaximoArquivo})" title="arquivo"> <label
 														class="custom-file-label" for="arquivo"><i
 														class="far fa-file-pdf"></i>&nbsp;&nbsp;<fmt:message
 															key="usuario.novodocumento.arquivo" /> (limite de ${tamanhoMaximoArquivo/1024/1024}MB)</label>

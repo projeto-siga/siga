@@ -130,7 +130,7 @@ public class GcInformacaoFiltro {
 					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > :dbDatetime)";
 		} 
 		
-		else if (situacao.getIdMarcador() == null) {
+		else if (situacao != null && situacao.getIdMarcador() == null) {
 			parametro = true;
 			subquery += " and situacao.cpMarcador.idMarcador <> 10 "
 					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > :dbDatetime)";

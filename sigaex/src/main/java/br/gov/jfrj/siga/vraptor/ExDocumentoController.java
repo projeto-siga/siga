@@ -1822,8 +1822,6 @@ public class ExDocumentoController extends ExController {
 					}
 					numBytes = baArquivo.length;
 					Long tamMax = TAMANHO_MAXIMO_CAPTURADO;
-					if (d.getOrgaoUsuario().podeGravarHcp()) 
-						tamMax = TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE;
 					
 					if (numBytes > tamMax) {
 						throw new AplicacaoException(

@@ -16,8 +16,30 @@
             <div class="card-body">
                 <form name="frm" action="arquivar_corrente_lote_gravar" method="post" theme="simple">
                     <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Atendente</label>
+                                <select class="form-control siga-select2" id="selectAtendente">
+                                    <option value="${cadastrante.id}">${cadastrante.nomePessoa}</option>
+                                    <option value="${cadastrante.lotacao.id}">
+                                            ${cadastrante.lotacao.siglaCompleta} / ${cadastrante.lotacao.nomeLotacao}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <br/>
+                                <a href="javascript: listarDocumentosParaArquivarCorrenteEmLote()"
+                                   class="btn btn-primary"><i class="fas fa-search"></i> Pesquisar Documentos</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-2">
                             <div class="form-group">
+                                <br/>
+                                <br/>
                                 <button type="button" id="btnOk" class="btn btn-primary" onclick="validar();">
                                     Arquivar
                                 </button>
@@ -44,10 +66,7 @@
         </siga:siga-modal>
     </div>
     <script type="text/javascript">
-        window.onload = function () {
-            listarDocumentosParaArquivarCorrenteEmLote();
-        }
-        
+
         function listarDocumentosParaArquivarCorrenteEmLote(offset) {
             sigaSpinner.mostrar();
 

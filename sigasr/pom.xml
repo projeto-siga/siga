@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>net.objectlab.kit</groupId>
 			<artifactId>datecalc-joda</artifactId>
-			<version>1.2.0</version>
+			<version>1.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId>de.jollyday</groupId>

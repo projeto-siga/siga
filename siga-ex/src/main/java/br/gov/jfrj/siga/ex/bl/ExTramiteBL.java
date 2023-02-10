@@ -129,14 +129,14 @@ public class ExTramiteBL {
             if ((t == ExTipoDeMovimentacao.TRANSFERENCIA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
                     || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
                     || t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA)
-                    && (Utils.equivale(mov.getCadastrante(), mobil.doc().getCadastrante())
-                            || Utils.equivale(mov.getLotaCadastrante(), mobil.doc().getLotaCadastrante())
-                            || Utils.equivale(mov.getTitular(), mobil.doc().getCadastrante())
-                            || Utils.equivale(mov.getLotaTitular(), mobil.doc().getLotaCadastrante())
-                            || Utils.equivale(mov.getCadastrante(), mobil.getTitular())
-                            || Utils.equivale(mov.getLotaCadastrante(), mobil.getLotaTitular())
-                            || Utils.equivale(mov.getTitular(), mobil.getTitular())
-                            || Utils.equivale(mov.getLotaTitular(), mobil.getLotaTitular())))
+                    && (Utils.equivaleENaoENulo(mov.getCadastrante(), mobil.doc().getCadastrante())
+                            || Utils.equivaleENaoENulo(mov.getLotaCadastrante(), mobil.doc().getLotaCadastrante())
+                            || Utils.equivaleENaoENulo(mov.getTitular(), mobil.doc().getCadastrante())
+                            || Utils.equivaleENaoENulo(mov.getLotaTitular(), mobil.doc().getLotaCadastrante())
+                            || Utils.equivaleENaoENulo(mov.getCadastrante(), mobil.getTitular())
+                            || Utils.equivaleENaoENulo(mov.getLotaCadastrante(), mobil.getLotaTitular())
+                            || Utils.equivaleENaoENulo(mov.getTitular(), mobil.getTitular())
+                            || Utils.equivaleENaoENulo(mov.getLotaTitular(), mobil.getLotaTitular())))
                 p.fIncluirCadastrante = false;
         }
 

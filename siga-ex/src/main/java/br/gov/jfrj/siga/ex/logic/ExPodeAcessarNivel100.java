@@ -5,6 +5,7 @@ import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.cp.logic.CpEquivale;
+import br.gov.jfrj.siga.cp.logic.CpEquivaleENaoENulo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -42,10 +43,10 @@ public class ExPodeAcessarNivel100 extends CompositeExpressionSupport {
 
 	@Override
 	protected Expression create() {
-		return Or.of(new CpEquivale(mob.doc().getCadastrante(), "cadastrante", titular, "titular"),
-				new CpEquivale(mob.doc().getSubscritor(), "subscritor", titular, "titular"),
-				new CpEquivale(mob.doc().getTitular(), "titular do documento", titular, "titular"),
-				new CpEquivale(mob.doc().getDestinatario(), "destinatário", titular, "titular"),
+		return Or.of(new CpEquivaleENaoENulo(mob.doc().getCadastrante(), "cadastrante", titular, "titular"),
+				new CpEquivaleENaoENulo(mob.doc().getSubscritor(), "subscritor", titular, "titular"),
+				new CpEquivaleENaoENulo(mob.doc().getTitular(), "titular do documento", titular, "titular"),
+				new CpEquivaleENaoENulo(mob.doc().getDestinatario(), "destinatário", titular, "titular"),
 				new ExJaEsteveComAPessoa(mob.doc(), titular, lotaTitular));
 	}
 }

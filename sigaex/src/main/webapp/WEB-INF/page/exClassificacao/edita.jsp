@@ -89,7 +89,7 @@
 </script>
 
 	<input id="mask_in" type="hidden" value="${mascaraEntrada}" />
-	<input id="mask_out" type="hidden" value="${mascaraSaida}">
+	<input id="mask_out" type="hidden" value="<c:out value="${mascaraSaida}"/>">
 	<input id="mask_js" type="hidden" value="${mascaraJavascript}">
 
 	<c:choose>

@@ -224,7 +224,7 @@
 							class="dropdown-item dropdown-toggle">Compras e Contratações</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a href="<c:set var="timeoutMod" scope="session" value="${f:resource('/secc.ui.url')}" />">Secc</a>
+									<a class="dropdown-item" href="${f:resource('/secc.ui.url')}">Memorando de aquisição</a>
 								</li>
 							</ul>
 					</li>

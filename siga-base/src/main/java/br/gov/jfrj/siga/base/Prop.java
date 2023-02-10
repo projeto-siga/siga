@@ -356,7 +356,6 @@ public class Prop {
 		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos", get("/siga.lotacao.inativacao.grupo.marcadores.permitidos"));
 
 		/* Properties para ativação do Módulo de compra e contratações.*/
-		provider.addPrivateProperty("/secc.jwt.secret", null);
 		provider.addPrivateProperty("/secc.ui.url", null);
 		
 	}

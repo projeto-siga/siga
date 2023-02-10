@@ -6,15 +6,18 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg" %>
 <%@ taglib uri="http://localhost/functiontag" prefix="f" %>
 
-<siga:pagina titulo="Arquivamento em Lote">
+<siga:pagina titulo="Arquivar em Lote">
     <c:set var="thead_color" value="${thead_color}" scope="session"/>
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
-                <h5>Arquivamento</h5>
+                <h5>Arquivar em Lote</h5>
             </div>
             <div class="card-body">
-                <form name="frm" action="arquivar_corrente_lote_gravar" method="post" theme="simple">
+                <form name="frm" id="frm" class="form" method="post" action="listar_docs_arquivados_corrente" theme="simple">
+                    <input type="hidden" name="siglasDocumentosArquivadosCorrente" value=""/>
+                    <input type="hidden" name="errosDocumentosNaoArquivadosCorrenteJson" value=""/>
+                    
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -65,6 +68,12 @@
                     Sim</a>
             </div>
         </siga:siga-modal>
+        <siga:siga-modal id="progressModal" exibirRodape="false" centralizar="true" tamanhoGrande="true"
+                         tituloADireita="Arquivamento em lote" linkBotaoDeAcao="#" botaoFecharNoCabecalho="false">
+            <div class="modal-body">
+                <div id="progressbar-ad"></div>
+            </div>
+        </siga:siga-modal>
     </div>
     <script type="text/javascript">
 
@@ -72,7 +81,7 @@
             sigaSpinner.mostrar();
 
             offset = offset == null ? 0 : offset;
-            
+
             let selectAtendenteElement = document.getElementById('selectAtendente');
             let selectAtendenteValue = selectAtendenteElement.value;
             let selectAtendenteIndex = selectAtendenteElement.selectedIndex;
@@ -105,12 +114,113 @@
             }
         }
 
+        let siglasDocumentosArquivadosCorrente = [];
+        let errosDocumentosNaoArquivadosCorrenteMap = new Map();
+
         function confirmar() {
             sigaSpinner.mostrar();
             document.getElementById("btnOk").disabled = true;
             sigaModal.fechar('confirmacaoModal');
+            enviarParaArquivarCorrenteLote();
+        }
+
+        function enviarParaArquivarCorrenteLote() {
+
+            process.push(function () {
+                $('#progressModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
+
+            Array.from($(".chkMobil:checkbox").filter(":checked")).forEach(
+                chk => {
+                    process.push(function () {
+                        return arquivarCorrentePost(chk.value);
+                    });
+                    process.push(function () {
+                        chk.checked = false;
+                    });
+                }
+            );
+
+            process.push(function () {
+                sigaModal.fechar('progressModal');
+                sigaSpinner.mostrar();
+                enviarParaListagemDocumentosArquivadosCorrente();
+            });
+
+            process.run();
+        }
+
+        function arquivarCorrentePost(documentoSelSigla) {
+            $.ajax({
+                url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/arquivar-corrente',
+                type: 'POST',
+                async: false,
+                data: {sigla: documentoSelSigla},
+                dataType: 'json',
+                success: function () {
+                    siglasDocumentosArquivadosCorrente.push(documentoSelSigla);
+                },
+                error: function (response) {
+                    errosDocumentosNaoArquivadosCorrenteMap.set(documentoSelSigla, response.responseJSON.errormsg);
+                }
+            });
+        }
+
+        function enviarParaListagemDocumentosArquivadosCorrente() {
+            document.getElementsByName('siglasDocumentosArquivadosCorrente')[0].value = siglasDocumentosTramitados;
+
+            let errosDocumentosNaoArquivadosCorrenteJson = JSON.stringify(Object.fromEntries(errosDocumentosNaoArquivadosCorrenteMap));
+            document.getElementsByName('errosDocumentosNaoArquivadosCorrenteJson')[0].value = errosDocumentosNaoArquivadosCorrenteJson;
+
             document.frm.submit();
         }
+
+        let process = {
+            steps: [],
+            index: 0,
+            title: "Executando o arquivar em lote dos documentos selecionados",
+            errormsg: "Não foi possível completar a operação",
+            urlRedirect: null,
+            reset: function () {
+                this.steps = [];
+                this.index = 0;
+            },
+            push: function (x) {
+                this.steps.push(x);
+            },
+            run: function () {
+                this.progressbar = $('#progressbar-ad').progressbar();
+                this.nextStep();
+            },
+            finalize: function () {
+            },
+            nextStep: function () {
+                if (typeof this.steps[this.index] == 'string')
+                    eval(this.steps[this.index++]);
+                else {
+                    let ret = this.steps[this.index++]();
+                    if ((typeof ret == 'string') && ret != "OK") {
+                        this.finalize();
+                        return;
+                    }
+                }
+
+                this.progressbar.progressbar("value",
+                    100 * (this.index / this.steps.length));
+
+                if (this.index != this.steps.length) {
+                    let me = this;
+                    window.setTimeout(function () {
+                        me.nextStep();
+                    }, 100);
+                } else {
+                    this.finalize();
+                }
+            }
+        };
 
     </script>
 </siga:pagina>

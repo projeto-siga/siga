@@ -5753,5 +5753,66 @@ public class ExMovimentacaoController extends ExController {
 		
 		return listaResultadosMovimentacaoEmLote;
 	}
+
+    @Post("/app/expediente/mov/listar_docs_arquivados_corrente")
+    public void listar_docs_arquivados_corrente(final String siglasDocumentosArquivadosCorrente,
+                                       final String errosDocumentosNaoArquivadosCorrenteJson) throws Exception {
+
+        String[] arraySiglasDocumentosArquivadosCorrente = { };
+        if (siglasDocumentosArquivadosCorrente != null) {
+            arraySiglasDocumentosArquivadosCorrente = siglasDocumentosArquivadosCorrente.split(",");
+        }
+
+        final List<ExMobil> mobisDocumentosArquivadosCorrente = new ArrayList<ExMobil>();
+
+        BuscaDocumentoBuilder documentoBuilder;
+
+        for(String sigla : arraySiglasDocumentosArquivadosCorrente){
+            documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+            buscarDocumento(documentoBuilder);
+            ExMobil mob = documentoBuilder.getMob();
+            mobisDocumentosArquivadosCorrente.add(mob);
+        }
+
+        List<ExMovimentacao> listaMovimentacaoDocumentosNaoArquivadosCorrente =
+                montarListaResultadosMovimentacaoEmLote(null, null, null, 
+                        errosDocumentosNaoArquivadosCorrenteJson);
+
+        if (( mobisDocumentosArquivadosCorrente == null
+                || mobisDocumentosArquivadosCorrente.isEmpty() )
+                && (listaMovimentacaoDocumentosNaoArquivadosCorrente == null
+                || listaMovimentacaoDocumentosNaoArquivadosCorrente.isEmpty())) {
+
+            throw new AplicacaoException("Não foi possível arquivar corrente em lote");
+        }
+
+        ExMobil mobIni = mobisDocumentosArquivadosCorrente.isEmpty() ? null : mobisDocumentosArquivadosCorrente.get(0);
+        ExMovimentacao movIni = null;
+        if (mobIni != null) {
+            movIni = mobIni.getUltimaMovimentacao();
+        } else {
+            movIni = listaMovimentacaoDocumentosNaoArquivadosCorrente.get(0);
+        }
+
+        ExMobil mobFim = mobisDocumentosArquivadosCorrente.isEmpty() ? null :
+                mobisDocumentosArquivadosCorrente.get(mobisDocumentosArquivadosCorrente.size() - 1);
+        ExMovimentacao movFim = null;
+        if (mobFim != null) {
+            movFim = mobFim.getUltimaMovimentacao();
+        }
+
+        result.include("mobisDocumentosArquivadosCorrente", mobisDocumentosArquivadosCorrente);
+        result.include("movsDocumentosNaoArquivadosCorrente", listaMovimentacaoDocumentosNaoArquivadosCorrente);
+
+        result.include("lotaTitular", getLotaTitular());
+        result.include("movIni", movIni);
+
+        String dtIni = movIni != null ? movIni.getDtRegMovDDMMYYYYHHMMSS() : null;
+        String dtFim = movFim != null ? movFim.getDtRegMovDDMMYYYYHHMMSS() : null;
+
+        result.include("dtIni", dtIni);
+        result.include("dtFim", dtFim);
+    }
+    
 	
 }

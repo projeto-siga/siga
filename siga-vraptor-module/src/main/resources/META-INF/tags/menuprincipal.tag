@@ -223,8 +223,9 @@
 					<li class="dropdown-submenu"><a href="javascript:void(0);"
 							class="dropdown-item dropdown-toggle">Compras e Contratações</a>
 							<ul class="dropdown-menu">
-								<li><a class="dropdown-item"
-									href="/siga/app/secc/acesso">Memorando de aquisição</a></li>
+								<li>
+									<a href="<c:set var="timeoutMod" scope="session" value="${f:resource('/secc.ui.url')}" />">Secc</a>
+								</li>
 							</ul>
 					</li>
 				</c:if>

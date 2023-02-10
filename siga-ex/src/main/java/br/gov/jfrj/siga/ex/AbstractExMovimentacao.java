@@ -94,7 +94,8 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		// Somente os mobis possíveis para o arquivamento em lote
 		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", 
 				query = "select mob from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
-				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
 				+ "                and (doc.dtFinalizacao != null)" // doc está finalizado
 				+ "                and (mob.exTipoMobil.idTipoMobil = 2 " // é via ou é geral de processo
 				+ "                		or (mob.exTipoMobil.idTipoMobil = 1 and doc.exFormaDocumento.idFormaDoc != 1))" 
@@ -108,17 +109,18 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                ) order by mar.dtIniMarca desc"),
 		@NamedQuery(name = "consultarQuantidadeParaArquivarCorrenteEmLote",
 				query = "select count(*) from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
-						+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
-						+ "                and (doc.dtFinalizacao != null)" // doc está finalizado
-						+ "                and (mob.exTipoMobil.idTipoMobil = 2 " // é via ou é geral de processo
-						+ "                		or (mob.exTipoMobil.idTipoMobil = 1 and doc.exFormaDocumento.idFormaDoc != 1))"
-						+ "                and (mar.cpMarcador.idMarcador != 32)" // não está sem efeito
-						+ "                and (mar.cpMarcador.idMarcador != 15)"	//	não está pendente de assinatura
-						+ "                and (mar.cpMarcador.idMarcador != 6" //	não está arquivado
-						+ "    					or mar.cpMarcador.idMarcador != 12"
-						+ "    					or mar.cpMarcador.idMarcador != 13)"
-						+ "                and (mar.cpMarcador.idMarcador != 11)" //	não está transito externo
-						+ "                and (mar.cpMarcador.idMarcador = 2))"),
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+				+ "                and (doc.dtFinalizacao != null)"
+				+ "                and (mob.exTipoMobil.idTipoMobil = 2 "
+				+ "                		or (mob.exTipoMobil.idTipoMobil = 1 and doc.exFormaDocumento.idFormaDoc != 1))"
+				+ "                and (mar.cpMarcador.idMarcador != 32)"
+				+ "                and (mar.cpMarcador.idMarcador != 15)"
+				+ "                and (mar.cpMarcador.idMarcador != 6"
+				+ "    					or mar.cpMarcador.idMarcador != 12"
+				+ "    					or mar.cpMarcador.idMarcador != 13)"
+				+ "                and (mar.cpMarcador.idMarcador != 11)"
+				+ "                and (mar.cpMarcador.idMarcador = 2))"),
 		// Somente os "a recolher para arquivo intermediário"
 		@NamedQuery(name = "consultarParaArquivarIntermediarioEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "

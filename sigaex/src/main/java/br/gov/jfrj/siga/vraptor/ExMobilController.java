@@ -1132,14 +1132,29 @@ public class ExMobilController extends
     }
 
 	@Get("/app/expediente/doc/listar_docs_para_arquivar_corrente_lote")
-	public void listar_docs_para_arquivar_corrente_lote(final int offset) {
+	public void listar_docs_para_arquivar_corrente_lote(final String atendente, final int offset) {
+
 		assertAcesso("ARQLOTE:Arquivar em Lote");
+
+		Long pessoaId = null;
+		Long lotacaoId = null;
 		
-		Integer tamanho = dao().consultarQuantidadeParaArquivarCorrenteEmLote(getLotaTitular());
+		switch (atendente){
+			case "pessoa":
+				pessoaId = getCadastrante().getIdPessoa();
+				break;
+			case "lotacao":
+				lotacaoId = getLotaCadastrante().getIdLotacaoIni();
+				break;
+			default:
+				throw new AplicacaoException("Atendente deve ser informado");
+		}
+		
+		Integer tamanho = dao().consultarQuantidadeParaArquivarCorrenteEmLote(pessoaId, lotacaoId);
 
 		if (Objects.nonNull(tamanho)) {
-			final List<ExMobil> itens = dao().consultarParaArquivarCorrenteEmLote(getLotaTitular(), offset,
-					MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+			final List<ExMobil> itens = dao().consultarParaArquivarCorrenteEmLote(pessoaId, lotacaoId, 
+					offset, MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
 
 			getP().setOffset(offset);
 			setItemPagina(MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);

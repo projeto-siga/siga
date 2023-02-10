@@ -1385,18 +1385,23 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMobil> consultarParaArquivarCorrenteEmLote(final DpLotacao lot, final int offset, final int tamPagina) {
+	public List<ExMobil> consultarParaArquivarCorrenteEmLote(final Long idPessoaIni, final Long idLotacaoIni,
+															 final int offset, final int tamPagina) {
+			
 		final Query query = em().createNamedQuery("consultarParaArquivarCorrenteEmLote")
-				.setParameter("lotaIni", lot.getIdLotacaoIni())
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("idLotacaoIni", idLotacaoIni)
 				.setFirstResult(offset)
 				.setMaxResults(tamPagina);
 		
 		return query.getResultList();
 	}
 
-	public int consultarQuantidadeParaArquivarCorrenteEmLote(DpLotacao lot) {
+	public int consultarQuantidadeParaArquivarCorrenteEmLote(final Long idPessoaIni, final Long idLotacaoIni) {
 		return ( (Long) em().createNamedQuery("consultarQuantidadeParaArquivarCorrenteEmLote", Long.class)
-				.setParameter("lotaIni", lot.getIdLotacaoIni()).getSingleResult() ).intValue();
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("idLotacaoIni", idLotacaoIni)
+				.getSingleResult() ).intValue();
 	}
 
 	public List<ExItemDestinacao> consultarParaArquivarIntermediarioEmLote(

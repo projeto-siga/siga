@@ -145,7 +145,7 @@
 		<dependency>
 			<groupId>net.sf.oval</groupId>
 			<artifactId>oval</artifactId>
-			<version>1.84</version>
+			<version>1.90</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.maven-play-plugin.org.apache.commons</groupId>

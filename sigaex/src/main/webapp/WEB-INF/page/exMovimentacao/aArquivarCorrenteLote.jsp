@@ -20,8 +20,9 @@
                             <div class="form-group">
                                 <label>Atendente</label>
                                 <select class="form-control siga-select2" id="selectAtendente">
-                                    <option value="${cadastrante.id}">${cadastrante.nomePessoa}</option>
-                                    <option value="${cadastrante.lotacao.id}">
+                                    <option value="pessoa" data-id="${cadastrante.id}"
+                                            selected>${cadastrante.nomePessoa}</option>
+                                    <option value="lotacao" data-id="${cadastrante.lotacao.id}">
                                             ${cadastrante.lotacao.siglaCompleta} / ${cadastrante.lotacao.nomeLotacao}
                                     </option>
                                 </select>
@@ -71,8 +72,16 @@
             sigaSpinner.mostrar();
 
             offset = offset == null ? 0 : offset;
+            
+            let selectAtendenteElement = document.getElementById('selectAtendente');
+            let selectAtendenteValue = selectAtendenteElement.value;
+            let selectAtendenteIndex = selectAtendenteElement.selectedIndex;
+            let selectAtendenteId = selectAtendenteElement.options[selectAtendenteIndex].dataset.id;
 
-            let url = '/sigaex/app/expediente/doc/listar_docs_para_arquivar_corrente_lote?&offset=' + offset;
+            let url = '/sigaex/app/expediente/doc/listar_docs_para_arquivar_corrente_lote'
+                + '?atendente=' + selectAtendenteValue
+                + '&atendenteId=' + selectAtendenteId
+                + '&offset=' + offset;
 
             $.ajax({
                 url: url,

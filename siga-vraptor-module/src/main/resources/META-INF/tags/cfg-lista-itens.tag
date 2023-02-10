@@ -27,7 +27,7 @@
 		<td style="${tipoDeConfiguracao.style('FUNCAO')}"><c:if
 				test="${not empty cfg.funcaoConfianca}">${cfg.funcaoConfianca.nomeFuncao}</c:if></td>
 		<td style="${tipoDeConfiguracao.style('ORGAO')}"><c:if
-				test="${not empty cfg.orgaoUsuario}">${cfg.orgaoUsuario.acronimoOrgaoUsu}</c:if></td>
+				test="${not empty cfg.orgaoUsuario}">${cfg.orgaoUsuario.orgaoUsuarioAtual.acronimoOrgaoUsu}</c:if></td>
 		<td style="${tipoDeConfiguracao.style('SERVICO')}"><c:if
 				test="${not empty cfg.cpServico}">${cfg.cpServico.dscServico}</c:if></td>
 
@@ -46,7 +46,7 @@
 		<td style="${tipoDeConfiguracao.style('FUNCAO_OBJETO')}"><c:if
 				test="${not empty cfg.funcaoConfiancaObjeto}">${cfg.funcaoConfiancaObjeto.nomeFuncao}</c:if></td>
 		<td style="${tipoDeConfiguracao.style('ORGAO_OBJETO')}"><c:if
-				test="${not empty cfg.orgaoObjeto}">${cfg.orgaoObjeto.acronimoOrgaoUsu}</c:if></td>
+				test="${not empty cfg.orgaoObjeto}">${cfg.orgaoObjeto.orgaoUsuarioAtual.acronimoOrgaoUsu}</c:if></td>
 
 		<jsp:doBody />
 

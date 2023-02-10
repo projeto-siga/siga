@@ -79,7 +79,6 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 				+ "	and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorServico", query = "from CpConfiguracao cpcfg where  (cpcfg.cpServico.idServico = :idServico) and hisDtFim is null"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorPessoa", query = "from CpConfiguracao cpcfg where (cpcfg.dpPessoa.idPessoa = :idPessoa) and hisDtFim is null"),
-		@NamedQuery(name = "consultarCpConfiguracoesPorOrgao", query = "from CpConfiguracao cpcfg where hisDtFim is null and cpcfg.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and cpcfg.cpTipoConfiguracao = :idTpConfiguracao"),
 		@NamedQuery(name = "consultarCpConfiguracoesHistoricasPorPessoa", query = "from CpConfiguracao cpcfg where (cpcfg.dpPessoa.idPessoa = :idPessoa) order by cpcfg.cpServico.idServico, cpcfg.hisDtIni"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorPeriodo", query = "from CpConfiguracao cpcfg"
 				+ "	where (cpcfg.hisDtIni >= :dtInicioVigenciaIni)"

@@ -211,6 +211,8 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	}
 
 	public void substituirPorObjetoInicial() {
+		setOrgaoUsuario(inicial(getOrgaoUsuario()));
+		setOrgaoObjeto(inicial(getOrgaoObjeto()));
 		setLotacao(inicial(getLotacao()));
 		setCargo(inicial(getCargo()));
 		setFuncaoConfianca(inicial(getFuncaoConfianca()));

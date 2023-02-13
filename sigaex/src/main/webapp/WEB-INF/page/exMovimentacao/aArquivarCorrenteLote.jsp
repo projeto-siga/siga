@@ -170,7 +170,7 @@
         }
 
         function enviarParaListagemDocumentosArquivadosCorrente() {
-            document.getElementsByName('siglasDocumentosArquivadosCorrente')[0].value = siglasDocumentosTramitados;
+            document.getElementsByName('siglasDocumentosArquivadosCorrente')[0].value = siglasDocumentosArquivadosCorrente;
 
             let errosDocumentosNaoArquivadosCorrenteJson = JSON.stringify(Object.fromEntries(errosDocumentosNaoArquivadosCorrenteMap));
             document.getElementsByName('errosDocumentosNaoArquivadosCorrenteJson')[0].value = errosDocumentosNaoArquivadosCorrenteJson;

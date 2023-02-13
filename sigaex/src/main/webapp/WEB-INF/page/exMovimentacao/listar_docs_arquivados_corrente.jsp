@@ -167,6 +167,6 @@
             </div>
 
         </c:if>
-        <a href="/sigaex/app/expediente/mov/tramitar_lote" class="btn btn-cancel btn-primary">Voltar</a>
+        <a href="/sigaex/app/expediente/mov/arquivar_corrente_lote" class="btn btn-cancel btn-primary">Voltar</a>
     </div>
 </siga:pagina>

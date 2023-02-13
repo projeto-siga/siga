@@ -118,7 +118,6 @@
         let errosDocumentosNaoArquivadosCorrenteMap = new Map();
 
         function confirmar() {
-            sigaSpinner.mostrar();
             document.getElementById("btnOk").disabled = true;
             sigaModal.fechar('confirmacaoModal');
             enviarParaArquivarCorrenteLote();

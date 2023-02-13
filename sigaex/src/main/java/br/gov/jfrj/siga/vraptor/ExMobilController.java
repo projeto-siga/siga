@@ -1141,10 +1141,10 @@ public class ExMobilController extends
 		
 		switch (atendente){
 			case "pessoa":
-				pessoaId = getCadastrante().getIdPessoa();
+				pessoaId = getTitular().getPessoaInicial().getId();
 				break;
 			case "lotacao":
-				lotacaoId = getLotaCadastrante().getIdLotacaoIni();
+				lotacaoId = getLotaTitular().getLotacaoInicial().getId();
 				break;
 			default:
 				throw new AplicacaoException("Atendente deve ser informado");

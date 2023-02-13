@@ -247,7 +247,7 @@ public class AcessoController extends GiControllerSupport {
 		} else if (perfilSel != null && perfilSel.getId() != null) {
 			perfil = dao().consultar(perfilSel.getId(), CpPerfil.class,false);
 		} else if (idOrgaoUsuSel != null && idOrgaoUsuSel != null) {
-			orgao = dao().consultar(idOrgaoUsuSel,CpOrgaoUsuario.class, false);
+			orgao = dao().consultar(idOrgaoUsuSel,CpOrgaoUsuario.class, false).getOrgaoUsuarioInicial();
 		} else {
 			throw new AplicacaoException(
 					"Não foi informada pessoa, lotação ou órgão usuário.");
@@ -328,7 +328,7 @@ public class AcessoController extends GiControllerSupport {
 			sb.append(" - origem: <a  style=\"color:gray;\" href=\"?idAbrangencia=1&idOrgaoUsu="
 							+ ac.getOrgao().getId()
 							+ "\">"
-							+ ac.getOrgao().getSigla() + "</a>");
+							+ ac.getOrgao().getOrgaoUsuarioAtual().getSigla() + "</a>");
 		
 		if (ac.getPerfil() != null)
 			sb.append(" - origem: <a  style=\"color:gray;\" href=\"?idAbrangencia=4&perfilSel.id="

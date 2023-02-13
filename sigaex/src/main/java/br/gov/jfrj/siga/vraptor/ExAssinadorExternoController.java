@@ -669,7 +669,8 @@ public class ExAssinadorExternoController extends ExController {
 	private String docSecret(ExDocumento doc) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(dateSecret(doc.getDtRegDoc()));
-		sb.append(doc.getCadastrante().getId());
+		if (doc.getCadastrante() != null)
+		    sb.append(doc.getCadastrante().getId());
 		return sb.toString();
 	}
 

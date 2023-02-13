@@ -229,7 +229,8 @@ public class Mesa2Ant {
 				if (ultMov != null && ultMov.getCadastrante() != null) {
 					r.nomePessoaPosse = ultMov.getCadastrante().getNomePessoa(); 
 				} else {
-					r.nomePessoaPosse = mobil.getDoc().getCadastrante().getNomePessoa();
+				    if (mobil.getDoc().getCadastrante() != null)
+				        r.nomePessoaPosse = mobil.getDoc().getCadastrante().getNomePessoa();
 				}
 				if (ultMov != null && ultMov.getCadastrante() != null) {
 					r.lotaPosse = ultMov.getCadastrante().getLotacao().getSigla();

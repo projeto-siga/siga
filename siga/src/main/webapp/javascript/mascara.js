@@ -67,6 +67,21 @@ function aplicarMascara(input){
 				return;
 			}
 			gruposRegEx = mask_in.exec(input.value);
+			
+			if (mask_out.charAt(0) === '(') {
+				$.ajax({
+				        url: "/sigaex/api/v1/classificacoes-aplicar-mascara?sigla=" + (input.value),
+				        dataType: 'json',
+				        success: function(result){
+							input.value = result.sigla
+				        },
+						error: function(result){	
+				        	console.log(result.errormsg);
+				        },
+				   });
+				return;
+			}
+				
 			gruposRegEx[0] = mask_out;
 			
 			for(i=0;i<gruposRegEx.length;i++){
@@ -100,7 +115,7 @@ function aplicarMascara(input){
 		$.getScript("/siga/javascript/jquery.maskedinput.min.js", function(){
 				jQuery(function($){
 					for(e in elementosComMascara){
-					   $(elementosComMascara[e]).mask(getMascaraJs());
+					   $(elementosComMascara[e]).mask(getMascaraJs(), {autoclear: false});
 					   
 					   $(elementosComMascara[e]).blur(function(){
 						   aplicarMascara(this);

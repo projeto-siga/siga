@@ -31,7 +31,7 @@ public class CpConfiguracaoHelper {
 		DpCargoSelecao cargoObjetoSelecao = new DpCargoSelecao();
 
 		if (c.getOrgaoUsuario() != null)
-			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
+			result.include("idOrgaoUsu", c.getOrgaoUsuario().getOrgaoUsuarioAtual().getIdOrgaoUsu());
 
 		if (c.getCpSituacaoConfiguracao() != null)
 			result.include("idSituacao", c.getCpSituacaoConfiguracao().getId());
@@ -43,31 +43,31 @@ public class CpConfiguracaoHelper {
 			result.include("idTpLotacao", c.getCpTipoLotacao().getIdTpLotacao());
 
 		if (c.getDpPessoa() != null)
-			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
+			pessoaSelecao.buscarPorObjeto(c.getDpPessoa().getPessoaAtual());
 
 		if (c.getLotacao() != null)
-			lotacaoSelecao.buscarPorObjeto(c.getLotacao());
+			lotacaoSelecao.buscarPorObjeto(c.getLotacao().getLotacaoAtual());
 
 		if (c.getCargo() != null)
-			cargoSelecao.buscarPorObjeto(c.getCargo());
+			cargoSelecao.buscarPorObjeto(c.getCargo().getCargoAtual());
 
 		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca());
+			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca().getFuncaoConfiancaAtual());
 
 		if (c.getPessoaObjeto() != null)
-			pessoaObjetoSelecao.buscarPorObjeto(c.getPessoaObjeto());
+			pessoaObjetoSelecao.buscarPorObjeto(c.getPessoaObjeto().getPessoaAtual());
 
 		if (c.getLotacaoObjeto() != null)
-			lotacaoObjetoSelecao.buscarPorObjeto(c.getLotacaoObjeto());
+			lotacaoObjetoSelecao.buscarPorObjeto(c.getLotacaoObjeto().getLotacaoAtual());
 
 		if (c.getCargoObjeto() != null)
-			cargoObjetoSelecao.buscarPorObjeto(c.getCargoObjeto());
+			cargoObjetoSelecao.buscarPorObjeto(c.getCargoObjeto().getCargoAtual());
 
 		if (c.getFuncaoConfianca() != null)
-			funcaoConfiancaObjetoSelecao.buscarPorObjeto(c.getFuncaoConfiancaObjeto());
+			funcaoConfiancaObjetoSelecao.buscarPorObjeto(c.getFuncaoConfiancaObjeto().getFuncaoConfiancaAtual());
 
 		if (c.getOrgaoObjeto() != null)
-			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
+			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getOrgaoUsuarioAtual().getIdOrgaoUsu());
 
 		result.include("pessoaSel", pessoaSelecao);
 		result.include("lotacaoSel", lotacaoSelecao);

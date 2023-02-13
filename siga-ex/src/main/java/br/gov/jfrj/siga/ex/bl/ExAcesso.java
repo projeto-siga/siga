@@ -34,6 +34,9 @@ public class ExAcesso {
 	private Set<Object> acessos = null;
 
 	private void add(Object o) {
+	    if (o == null)
+	        return;
+	    
 		if (acessos.contains(XjusUtils.ACESSO_PUBLICO)) {
 			return;
 		}

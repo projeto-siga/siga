@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -47,9 +48,8 @@ public class AcessoConsulta {
 	
 	public boolean podeAcessarPublicoExterno(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
 		
-		if (doc.getSubscritor() != null && doc.getSubscritor().equivale(titular)) return true;
-		
-		if (doc.getCadastrante().equivale(titular)) return true;
+        if (Utils.equivaleENaoENulo(titular, doc.getSubscritor())) return true;
+        if (Utils.equivaleENaoENulo(titular, doc.getCadastrante())) return true;
 		
 		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao mov : doc.getMobilGeral()

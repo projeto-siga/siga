@@ -1,0 +1,1 @@
+ALTER TABLE siga.ex_documento MODIFY (ID_CADASTRANTE NULL);

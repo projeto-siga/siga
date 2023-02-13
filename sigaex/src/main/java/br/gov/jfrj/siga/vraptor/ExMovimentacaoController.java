@@ -5673,7 +5673,7 @@ public class ExMovimentacaoController extends ExController {
 				
 		for(String sigla : arraySiglasDocumentosTramitados){
 			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-			buscarDocumento(documentoBuilder);
+			buscarDocumento(documentoBuilder, false);
 			ExMobil mob = documentoBuilder.getMob();
 			mobisDocumentosTramitados.add(mob);
 		}
@@ -5734,7 +5734,7 @@ public class ExMovimentacaoController extends ExController {
 			
 			BuscaDocumentoBuilder documentoBuilder;
             documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(key);
-            buscarDocumento(documentoBuilder);
+            buscarDocumento(documentoBuilder, false);
             ExMobil mob = documentoBuilder.getMob();
             String mensagemResultadoMovimentacao = jsonObject.get(key).toString();
                 

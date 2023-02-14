@@ -11,6 +11,7 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
 
 public class SrConfiguracaoBL extends CpConfiguracaoBL {
 
@@ -60,7 +61,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
        
         	SrConfiguracaoCache conf = (SrConfiguracaoCache) cfg;
         	SrConfiguracaoCache filtro = (SrConfiguracaoCache) cfgFiltro;
-
+        	
             if (!atributosDesconsiderados.contains(ACAO) && conf.acoesSet != null && conf.acoesSet.size() > 0 && filtro.getAcaoFiltro() != null) {
                 boolean acaoAtende = false;
                 for (SrAcao item : conf.acoesSet) {
@@ -90,6 +91,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
                     && (filtro.listaPrioridade == 0 || (filtro.listaPrioridade != 0 && conf.listaPrioridade != filtro.listaPrioridade)))
                 return false;
 
+            if (filtro.cpTipoConfiguracao == SrTipoDeConfiguracao.ASSOCIACAO_TIPO_ATRIBUTO && conf.atributo == 0)
+                return false;
+            
             if (!atributosDesconsiderados.contains(TIPO_ATRIBUTO) && conf.atributo != 0
                     && (filtro.atributo == 0 || (filtro.atributo != 0 && conf.atributo != filtro.atributo)))
                 return false;

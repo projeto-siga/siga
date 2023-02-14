@@ -746,6 +746,10 @@ public class SolicitacaoController extends SrController {
 		} catch (LazyInitializationException lie) {
 			// Edson: se é um postback, não recarregar os acordos
 		}
+		
+		// Isso precisa ser chamado aqui para garantir que no caso de haver uma única ação possível,
+		// ela será automaticamente selecionada.
+		solicitacao.getAcoesEAtendentes();
 
 		incluirListasEdicaoSolicitacao(solicitacao);
 

@@ -550,8 +550,14 @@
 		else if (ifr.attachEvent)
 			ifr.detachEvent("onload", resize); // Bug fix line
 
-			if ('${siga_cliente}' == 'GOVSP') {
+		if ('${siga_cliente}' == 'GOVSP') {
 			// Para GOVSP com link buttons
+			
+			if ($('#radioPDFSemMarcas').hasClass('active') || $('#radioPDF').hasClass('active')){
+				if(arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
+					sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
+				}
+			}
 
 			var refSiglaDocPrincipal = '&sigla=${sigla}';
 			
@@ -672,6 +678,29 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	}
 	
+	function verificarTamanhoDocComplMB(refPDF){
+		$.ajax({
+			  url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivos?arquivo='+refPDF,
+			  type: 'GET',
+			  async: false,
+			  success: function(data) {
+				  try {
+					  var tamanhoArquivos = JSON.parse(data);
+					  localStorage.setItem('tamanhoArquivos', JSON.stringify(tamanhoArquivos));
+				  } catch(err){
+					  sigaSpinner.ocultar();
+				  }
+			  }	
+		});
+		return false;
+	}
+	
+	function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
+		verificarTamanhoDocComplMB(refPDF);
+		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+		return data != null ? data['excedeuMB'] : false;
+	}
+	
 </script>
 <script>
 	$('#radioBtnXXXX a').on('click', function(){
@@ -681,7 +710,11 @@
 	    
 	    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-	})
+	});
+	
+	window.onload = function () { 
+		localStorage.removeItem('tamanhoArquivos');
+	} 
 </script>
 <c:if test="${mob.doc.podeReordenar()}"> 
 	<script src="/siga/javascript/documento.reordenar-doc.js"></script>

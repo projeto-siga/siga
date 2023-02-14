@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -44,6 +45,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -167,7 +169,7 @@ public class ExArquivoController extends ExController {
 				return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM,
 						mov.getNmArqMov().replaceAll(",", "").replaceAll(";", ""));
 			}
-
+			
 			if ((isPdf || isHtml) && completo && mob != null && mov == null) {
 				DocumentosSiglaArquivoGet act = new DocumentosSiglaArquivoGet();
 				DocumentosSiglaArquivoGet.Request req = new DocumentosSiglaArquivoGet.Request();
@@ -186,7 +188,7 @@ public class ExArquivoController extends ExController {
 						+ resp.jwt + "/" + filename);
 				return null;
 			}
-
+			
 			if (isPdf) {
 				if (mov != null && !completo && !estampar && hash == null) {
 					ab = mov.getConteudoBlobpdf();
@@ -278,6 +280,13 @@ public class ExArquivoController extends ExController {
 		result.include("uuid", uuid);
 		result.include("jwt", jwt);
 		result.include("filename", filename);
+	}
+	
+	@Get("/public/app/arquivo/obterTamanhoArquivos")
+	public void obterTamanhoArquivos(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
+		String json = Documento.obterTamanhoArquivos(arquivo, completo, volumes, Boolean.TRUE);
+		setMensagem(json);
+		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 	}
 	
 	@Get("/public/app/arquivo/obterDownloadDocumento")

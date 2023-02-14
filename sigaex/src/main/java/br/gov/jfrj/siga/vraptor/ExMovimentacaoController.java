@@ -5769,7 +5769,7 @@ public class ExMovimentacaoController extends ExController {
 
         for(String sigla : arraySiglasDocumentosArquivadosCorrente){
             documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-            buscarDocumento(documentoBuilder);
+            buscarDocumento(documentoBuilder, false);
             ExMobil mob = documentoBuilder.getMob();
             mobisDocumentosArquivadosCorrente.add(mob);
         }

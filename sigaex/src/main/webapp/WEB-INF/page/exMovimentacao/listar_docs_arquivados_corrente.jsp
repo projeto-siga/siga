@@ -2,7 +2,6 @@
 <%@ page contentType="text/html; charset=UTF-8"
          buffer="64kb" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://localhost/customtag" prefix="tags" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg" %>
@@ -25,10 +24,6 @@
 
                 <div class="card-body">
                     <table class="table table-hover table-striped">
-                        <col width="20%"/>
-                        <col width="10%"/>
-                        <col width="30%"/>
-                        <col width="40%"/>
                         <thead class="${thead_color} align-middle text-center">
                         <tr>
                             <th>Documento</th>
@@ -66,22 +61,12 @@
 
                 <div class="card-body">
                     <table class="table table-hover table-striped">
-                        <col width="22%"/>
-                        <col width="5%"/>
-                        <col width="4%"/>
-                        <col width="4%"/>
-                        <col width="5%"/>
-                        <col width="4%"/>
-                        <col width="4%"/>
-                        <col width="4%"/>
-                        <col width="4%"/>
-                        <col width="44%"/>
                         <thead class="${thead_color} align-middle text-center">
                         <tr>
-                            <th rowspan="2" class="text-right">Número</th>
+                            <th rowspan="2" align="center">Número</th>
+                            <th rowspan="2" align="center">Destinação da via</th>
                             <th colspan="3">Documento</th>
-                            <th colspan="3">Última Movimentação</th>
-                            <th colspan="2"><fmt:message key="tela.tramitarLote.tipoResponsavel"/></th>
+                            <th colspan="2">Última Movimentação</th>
                             <th rowspan="2" class="text-left">Descrição</th>
                         </tr>
                         <tr>
@@ -89,79 +74,61 @@
                             <th>Lotação</th>
                             <th>Pessoa</th>
                             <th>Data</th>
-                            <th>Lotação</th>
-                            <th>Pessoa</th>
-                            <th>Lotação</th>
                             <th>Pessoa</th>
                         </tr>
                         </thead>
-                        <c:forEach var="mob" items="${mobisDocumentosArquivadosCorrente}">
+                        <tbody class="table-bordered">
+                        <c:forEach var="mobil" items="${mobisDocumentosArquivadosCorrente}">
                             <tr>
                                 <td class="text-right">
-                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}">
-                                            ${mob.codigo}
+                                    <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobil.sigla}">
+                                            ${mobil.codigo}
                                     </a>
-                                    <c:if test="${not mob.geral}">
-                                <td>
-                                        ${mob.doc.dtDocDDMMYY}
                                 </td>
-                                <td>
-                                    <siga:selecionado sigla="${mob.doc.lotaSubscritor.sigla}"
-                                                      descricao="${mob.doc.lotaSubscritor.descricao}"/>
-                                </td>
-                                <td>
-                                    <siga:selecionado sigla="${mob.doc.subscritor.iniciais}"
-                                                      descricao="${mob.doc.subscritor.descricao}"/>
-                                </td>
-                                <td>
-                                        ${movIni.dtMovDDMMYY}
-                                </td>
-                                <td>
-                                    <siga:selecionado sigla="${movIni.lotaSubscritor.sigla}"
-                                                      descricao="${movIni.lotaSubscritor.descricao}"/>
-                                </td>
-                                <td>
-                                    <siga:selecionado sigla="${movIni.subscritor.iniciais}"
-                                                      descricao="${movIni.subscritor.descricao}"/>
-                                </td>
-                                <td>
-                                    <siga:selecionado sigla="${movIni.lotaResp.sigla}"
-                                                      descricao="${movIni.lotaResp.descricao}"/>
-                                </td>
-                                <td>
-                                    <siga:selecionado sigla="${movIni.resp.iniciais}"
-                                                      descricao="${movIni.resp.descricao}"/>
-                                </td>
+                                <c:if test="${not mobil.geral}">
+                                    <td width="2%" class="${classDisabled}"
+                                        align="center">${f:destinacaoPorNumeroVia(mobil.doc, mobil.numSequencia)}</td>
+                                    <td class="text-center">${mobil.doc.dtDocDDMMYY}</td>
+                                    <td class="text-center">
+                                        <siga:selecionado sigla="${mobil.doc.lotaSubscritor.sigla}"
+                                                          descricao="${mobil.doc.lotaSubscritor.descricao}"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <siga:selecionado sigla="${mobil.doc.subscritor.iniciais}"
+                                                          descricao="${mobil.doc.subscritor.descricao}"/>
+                                    </td>
+                                    <td class="text-center">${mobil.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+                                    <td class="text-center">
+                                        <siga:selecionado sigla="${mobil.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
+                                                          descricao="${mobil.ultimaMovimentacaoNaoCancelada.resp.descricao}"/>
+                                    </td>
                                 </c:if>
-                                <c:if test="${mob.geral}">
-                                    <td>
-                                            ${mob.doc.dtDocDDMMYY}
+                                <c:if test="${mobil.geral}">
+                                    <td align="center"></td>
+                                    <td class="text-center">${mobil.doc.dtDocDDMMYY}</td>
+                                    <td class="text-center">
+                                        <siga:selecionado sigla="${mobil.subscritor.iniciais}"
+                                                          descricao="${mobil.subscritor.descricao}"/>
                                     </td>
-                                    <td>
-                                        <siga:selecionado sigla="${mob.subscritor.iniciais}"
-                                                          descricao="${mob.subscritor.descricao}"/>
-                                    </td>
-                                    <td>
-                                        <siga:selecionado sigla="${mob.lotaSubscritor.sigla}"
-                                                          descricao="${mob.lotaSubscritor.descricao}"/>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="text-center ${classDisabled}">
+                                        <siga:selecionado sigla="${mobil.doc.lotaSubscritor.sigla}"
+                                                          descricao="${mobil.doc.lotaSubscritor.descricao}"/></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
                                 </c:if>
                                 <td class="text-left">
                                     <c:choose>
                                         <c:when test="${siga_cliente == 'GOVSP'}">
-                                            ${mob.doc.descrDocumento}
+                                            ${mobil.doc.descrDocumento}
                                         </c:when>
                                         <c:otherwise>
-                                            ${f:descricaoConfidencial(mob, lotaTitular)}
+                                            ${f:descricaoConfidencial(mobil, lotaTitular)}
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
                             </tr>
                         </c:forEach>
+                        </tbody>
                     </table>
                 </div>
             </div>

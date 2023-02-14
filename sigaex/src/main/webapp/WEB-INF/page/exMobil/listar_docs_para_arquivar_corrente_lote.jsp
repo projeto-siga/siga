@@ -17,7 +17,7 @@
                     <th rowspan="2" align="center">
                         <input type="checkbox" id="checkall" onclick="checkUncheckAll(this)"/>
                     </th>
-                    <th rowspan="2" align="right">Número</th>
+                    <th rowspan="2" align="center">Número</th>
                     <th rowspan="2" align="center">Destinação da via</th>
                     <th colspan="3" align="center">Documento</th>
                     <th colspan="2" align="center">Última Movimentação</th>

@@ -10,7 +10,7 @@ public class ModelosIdPessoasIdPessoaPreenchimentosGet implements IModelosIdPess
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExDao dao = ExDao.getInstance();
 		DpPessoa pes = dao.consultar(Long.parseLong(req.idPessoa), DpPessoa.class, false);
-		resp.list = ModelosIdLotacoesIdLotacaoPreenchimentosGet.listarPreenchimentos(Long.parseLong(req.id), pes.getId());
+		resp.list = ModelosIdLotacoesIdLotacaoPreenchimentosGet.listarPreenchimentos(Long.parseLong(req.id), pes.getLotacao().getLotacaoAtual().getId());
 	}
 
 	@Override

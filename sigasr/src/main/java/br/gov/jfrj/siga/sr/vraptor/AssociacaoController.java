@@ -69,12 +69,19 @@ public class AssociacaoController extends SrController {
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacao, DpPessoaSelecao dpPessoa, DpFuncaoConfiancaSelecao funcaoConfianca, DpCargoSelecao cargo, CpPerfilSelecao cpGrupo, SrPesquisa pesquisaSatisfacao) throws Exception {
-		if (associacao == null || associacao.getIdConfiguracao() == null)
+	    boolean attrObrigatorio = false;
+	    if (associacao != null)
+	        attrObrigatorio = associacao.isAtributoObrigatorio();
+
+	    if (associacao == null || associacao.getIdConfiguracao() == null)
 			associacao = new SrConfiguracao();
 		itemConfiguracaoSet = setupItemConfiguracao(itemConfiguracaoSet);
 		acoesSet = setupAcao(acoesSet);
 		
 		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacao, dpPessoa, funcaoConfianca, cargo, cpGrupo, pesquisaSatisfacao);
+		
+		associacao.setAtributoObrigatorio(attrObrigatorio);
+		
 		associacao.salvarComoAssociacaoAtributo();
 		result.use(Results.http()).body(associacao.toVO().toJson());
 	}

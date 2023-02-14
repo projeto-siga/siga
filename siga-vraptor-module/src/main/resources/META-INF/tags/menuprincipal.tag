@@ -195,7 +195,7 @@
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD:Módulo de Cadastro')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('/siga.sgp.recad')}">Recadastramento</a></li>
+										href="${f:getURLSistema('/siga.sgp.recad')}">Recadastramento de Acúmulo de Cargos</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TCU:Módulo de Dados para o TCU')}">

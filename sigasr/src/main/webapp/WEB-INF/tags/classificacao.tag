@@ -69,8 +69,8 @@
 			<div class="form-group">
 				<label>A&ccedil;&atilde;o</label>	
 				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();" class="form-control">
-					<c:if test="${metodo == 'editar'}">
-						<option value=""></option>
+					<c:if test="${metodo == 'editar' && empty solicitacao.acao.idAcao}">
+						<option hidden disabled selected value=""></option>
 					</c:if>	
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">

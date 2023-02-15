@@ -196,7 +196,7 @@ public class CpBL {
 				CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
 				if (confCacheOld != null) 
 					confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
-				if (confOld.getCpIdentidade() == null)
+				if (confOld == null || confOld.getCpIdentidade() == null)
 					confOld = null;
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -184,76 +184,83 @@ public class CpBL {
 
 	public void bloquearIdentidade(CpIdentidade ident, CpIdentidade identidadeCadastrante, boolean fBloquear)
 			throws Exception {
-		CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
-		Date dt = dao().consultarDataEHoraDoServidor();
-
-		CpConfiguracao confOld = null;
-		try {
-			CpConfiguracao confFiltro = new CpConfiguracao();
-			confFiltro.setCpIdentidade(ident);
-			confFiltro.setCpTipoConfiguracao(tpConf);
-			CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
-			if (confCacheOld != null) 
-				confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
-			if (confOld.getCpIdentidade() == null)
-				confOld = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		CpConfiguracao conf = new CpConfiguracao();
-		conf.setCpIdentidade(ident);
-		conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
-						: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
-		conf.setCpTipoConfiguracao(tpConf);
-		conf.setHisDtIni(dt);
-
-		dao().iniciarTransacao();
-		fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
-		dao().gravarComHistorico(conf, identidadeCadastrante);
-		dao().commitTransacao();
-		comp.getConfiguracaoBL().limparCacheSeNecessario();
-	}
-
-	public void bloquearPessoa(DpPessoa pes, CpIdentidade identidadeCadastrante, boolean fBloquear) throws Exception {
-
-		try {
-			dao().iniciarTransacao();
-
+		if (ident != null) {
 			CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
 			Date dt = dao().consultarDataEHoraDoServidor();
-
+	
 			CpConfiguracao confOld = null;
 			try {
 				CpConfiguracao confFiltro = new CpConfiguracao();
-				confFiltro.setDpPessoa(pes);
+				confFiltro.setCpIdentidade(ident);
 				confFiltro.setCpTipoConfiguracao(tpConf);
 				CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
 				if (confCacheOld != null) 
 					confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
+				if (confOld.getCpIdentidade() == null)
+					confOld = null;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
+	
 			CpConfiguracao conf = new CpConfiguracao();
-			conf.setDpPessoa(pes);
+			conf.setCpIdentidade(ident);
 			conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
 							: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
-
+	
+			dao().iniciarTransacao();
 			fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
 			dao().gravarComHistorico(conf, identidadeCadastrante);
-
-			for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
-				if (fBloquear && ident.isBloqueada() == false)
-					bloquearIdentidade(ident, identidadeCadastrante, true);
-			}
-			comp.getConfiguracaoBL().limparCacheSeNecessario();
 			dao().commitTransacao();
-		} catch (Exception e) {
-			dao().rollbackTransacao();
-			throw e;
+			comp.getConfiguracaoBL().limparCacheSeNecessario();
+		} else {
+			throw new AplicacaoException("Não é possível efetuar o Bloqueio. Identidade não localizada.");
+		}
+	}
+
+	public void bloquearPessoa(DpPessoa pes, CpIdentidade identidadeCadastrante, boolean fBloquear) throws Exception {
+		if (pes != null) {
+			try {
+				dao().iniciarTransacao();
+	
+				CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.FAZER_LOGIN;
+				Date dt = dao().consultarDataEHoraDoServidor();
+	
+				CpConfiguracao confOld = null;
+				try {
+					CpConfiguracao confFiltro = new CpConfiguracao();
+					confFiltro.setDpPessoa(pes);
+					confFiltro.setCpTipoConfiguracao(tpConf);
+					CpConfiguracaoCache confCacheOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro, new int[] { 0 }, null);
+					if (confCacheOld != null) 
+						confOld = dao().consultar(confCacheOld.idConfiguracao, CpConfiguracao.class, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	
+				CpConfiguracao conf = new CpConfiguracao();
+				conf.setDpPessoa(pes);
+				conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
+								: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
+				conf.setCpTipoConfiguracao(tpConf);
+				conf.setHisDtIni(dt);
+	
+				fecharAntigaConfiguracao(confOld, identidadeCadastrante, dt);
+				dao().gravarComHistorico(conf, identidadeCadastrante);
+	
+				for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
+					if (fBloquear && ident.isBloqueada() == false)
+						bloquearIdentidade(ident, identidadeCadastrante, true);
+				}
+				comp.getConfiguracaoBL().limparCacheSeNecessario();
+				dao().commitTransacao();
+			} catch (Exception e) {
+				dao().rollbackTransacao();
+				throw e;
+			}
+		} else {
+			throw new AplicacaoException("Não é possível efetuar o Bloqueio. Pessoa não localizada.");
 		}
 	}
 

@@ -3052,6 +3052,8 @@ public class ExBL extends CpBL {
 			ExPodeCancelarMarcacao.afirmar(movCancelar, titular, lotaTitular);
 		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA) {
 			getComp().afirmar("não é possível cancelar vinculação de documento", ExPodeCancelarVinculacao.class, titular, lotaTitular, movCancelar);
+		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.RESTRINGIR_ACESSO) {
+			getComp().afirmar("não é possível cancelar Restrição de Acesso de documento", ExPodeRestringirAcesso.class, titular, lotaTitular, mob);
 		} else if (!forcar && movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA

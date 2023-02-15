@@ -105,8 +105,41 @@
 						</div>
 					</div>	
 					<div class='row bg-light' id="divUsuarios">
-						<!-- Pessoas selecionadas -->						
-					</div>										
+						<!-- Pessoas selecionadas -->		
+						<div class='col-sm-12 mt-3 mb-1'><label><b>Pessoas Selecionadas</b></label></div>				
+					</div>				
+											
+					
+					
+					<div class="table-responsive">
+						<table border="0" class="table table-sm table-striped">
+							<thead class="thead-dark">
+								<tr>
+									<th align="left" width="10%">Matrícula</th>
+									<th align="left">Nome</th>						
+									<th align="left"><fmt:message key="usuario.lotacao"/></th>
+									<th align="left">Função</th>
+									<th align="left"><c:if test="${siga_cliente != 'GOVSP'}">Localidade</c:if></th>
+									<th align="left" width="5%">Excluir</th>					
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="mov" items="${listaAcessoRestrito}">
+									<tr>
+										<td>${mov.subscritor }</td>
+										<td>${mov.subscritor.nomePessoa }</td>
+										<td>${mov.nmLotacao }</td>
+										<td>${mov.nmFuncao }</td>
+										<td><c:if test="${siga_cliente != 'GOVSP'}">${mov.nmLocalidade}</c:if></td>
+										<td><input type="button" value="Excluir" 
+											onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/cancelar_restricao_acesso?id=${mov.idMov}&redirectURL=/app/expediente/mov/restringir_acesso?sigla=${sigla}'" class="btn btn-danger"/>					
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+					
 					
 					<div class="row">
 						<div class="col-sm mt-3">

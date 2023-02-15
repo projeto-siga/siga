@@ -864,6 +864,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("nivelAcesso", doc.getExNivelAcessoAtual().getIdNivelAcesso());
 		result.include("subscritorSel", subscritorSel);
 		result.include("titularSel", titularSel);
+		result.include("listaAcessoRestrito", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, Boolean.TRUE));
 	}
 	
 	@Transacional
@@ -5766,6 +5767,44 @@ public class ExMovimentacaoController extends ExController {
 		}
 		
 		return listaResultadosMovimentacaoEmLote;
+	}
+	
+	
+	
+	@Transacional
+	@Get("/app/expediente/mov/cancelar_restricao_acesso")
+	public void aCancelarRestricaoAcesso(final Long id, String redirectURL)
+			throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setId(id);
+		buscarDocumento(builder);
+		final ExMobil mob = builder.getMob();
+
+		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class,
+				false);
+
+		if (mov == null 
+				|| !mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.RESTRINGIR_ACESSO) 
+				|| mov.isCancelada()) {
+			throw new AplicacaoException("Não existe a Restrição de Acesso a ser cancelada.");
+		}
+		
+		try {
+			Ex.getInstance()
+			.getBL()
+			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+					mov, null, null, null,
+					"Restrição: " + mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		if (redirectURL != null) {
+			result.redirectTo(redirectURL);
+		} else {
+			ExDocumentoController
+			.redirecionarParaExibir(result, mob.getSigla());
+		}
 	}
 	
 }

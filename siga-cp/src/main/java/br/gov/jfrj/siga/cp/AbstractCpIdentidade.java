@@ -154,6 +154,12 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	@Column(name = "PIN_CONTADOR_TENTATIVA")
 	@Desconsiderar
 	private Integer pinContadorTentativa;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	@Desconsiderar
+	private CpIdentidade identidadeInicial;
+	
 
 	/*
 	 * (non-Javadoc)
@@ -447,6 +453,11 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 		if (pinContadorTentativa == null) {
 			pinContadorTentativa = INTEGER_ZERO;
 		}
+	}
+	
+
+	public CpIdentidade getIdentidadeInicial() {
+		return identidadeInicial;
 	}
 
 }

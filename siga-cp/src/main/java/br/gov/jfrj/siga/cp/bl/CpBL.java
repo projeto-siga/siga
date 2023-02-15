@@ -203,7 +203,7 @@ public class CpBL {
 			}
 	
 			CpConfiguracao conf = new CpConfiguracao();
-			conf.setCpIdentidade(ident);
+			conf.setCpIdentidade(ident.getIdentidadeInicial());
 			conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
 							: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 			conf.setCpTipoConfiguracao(tpConf);
@@ -240,7 +240,7 @@ public class CpBL {
 				}
 	
 				CpConfiguracao conf = new CpConfiguracao();
-				conf.setDpPessoa(pes);
+				conf.setDpPessoa(pes.getPessoaInicial());
 				conf.setCpSituacaoConfiguracao(fBloquear ? CpSituacaoDeConfiguracaoEnum.NAO_PODE
 								: CpSituacaoDeConfiguracaoEnum.IGNORAR_CONFIGURACAO_ANTERIOR);
 				conf.setCpTipoConfiguracao(tpConf);

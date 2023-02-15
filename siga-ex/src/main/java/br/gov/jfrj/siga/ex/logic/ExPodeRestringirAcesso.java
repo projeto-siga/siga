@@ -45,6 +45,8 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
 						.withExTpMov(ExTipoDeMovimentacao.RESTRINGIR_ACESSO),
+						
+				new ExPodeMovimentar(mob, titular, lotaTitular),
 
 				Or.of(
 

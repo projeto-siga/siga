@@ -173,8 +173,6 @@ public class ExMarcadorBL {
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
 				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado()) {
 			calcularMarcadoresDeTramite();
-		} else if (mob.isArquivado() && mob.isMovimentacaoTransferenciaDocumentoArquivado()) {
-			calcularMarcadoresDeTramite();
 		}
 		calcularMarcadoresDeNotificacao();
 
@@ -770,7 +768,9 @@ public class ExMarcadorBL {
 		}
 
 		if (nivelMDest > 0) {
-			acrescentarMarca(mDest[nivelMDest], movDest[nivelMDest].getDtIniMov(), movDest[nivelMDest].getResp(),
+			acrescentarMarca(mDest[nivelMDest], 
+					(movDest[nivelMDest].getExMovimentacaoRef() != null && movDest[nivelMDest].getExMovimentacaoRef().getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) ?
+					movDest[nivelMDest].getExMovimentacaoRef().getDtIniMov() : movDest[nivelMDest].getDtIniMov(), movDest[nivelMDest].getResp(),
 					movDest[nivelMDest].getLotaResp());
 			calcularMarcadoresFuturosTemporalidade(movDest[nivelMDest], mDest[nivelMDest]);
 		}
@@ -788,7 +788,12 @@ public class ExMarcadorBL {
 		ExTemporalidade tmpIntermed = mob.getTemporalidadeIntermediarioEfetiva();
 		ExTipoDestinacao destinacao = mob.getExDestinacaoFinalEfetiva();
 
-		Date dtIniMarca = mov.getDtIniMov();
+		Date dtIniMarca = null;
+		if (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
+			dtIniMarca = mov.getExMovimentacaoRef().getDtIniMov();
+		else
+			dtIniMarca = mov.getDtIniMov();
+		
 		Long marcadorFuturo = 0L;
 
 		if (marcador == CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()) {

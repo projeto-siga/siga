@@ -205,8 +205,6 @@ public class ExMovimentacaoController extends ExController {
 
 	protected List<String> erros = new ArrayList<String>();
 	
-	private static final int TAMANHO_MAX_CARACTER = 500;
-	
 	private static final int MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE = 30;
 	
 	/**
@@ -2871,45 +2869,12 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
 	}
 	
-	private void validaCamposObrigatorioTransferenciaDocsArquivados(DpLotacaoSelecao lotacaoDestinatarioSel, List<Long> documentosSelecionados, String motivoTransferencia){
-		if (lotacaoDestinatarioSel.getObjeto() == null) {
-			erros.add("Necessário adicionar uma unidade de DESTINO para realizar a transferência.");
-			return;
-		}
-		
-		if (documentosSelecionados == null || documentosSelecionados.isEmpty()) {
-			erros.add("Necessário selecionar pelo menos 1 documento para realizar a transferência.");
-			return;
-		}
-		
-		if(StringUtils.isEmpty(motivoTransferencia)) {
-			erros.add("O campo MOTIVO é obrigatório!");
-			return;
-		}
-		
-		if(StringUtils.isNotEmpty(motivoTransferencia) && motivoTransferencia.length() > TAMANHO_MAX_CARACTER) {
-			erros.add("O texto MOTIVO ultrapassou o limite máximo de caracteres de " + TAMANHO_MAX_CARACTER);
-			return;
-		}
-		
-	}
-	
 	@Transacional
-	@Post("app/expediente/mov/transferir_lote_documentos_arquivados")
+	@Post("app/expediente/mov/transferirLoteDocumentosArquivados")
 	public void aTransferirLoteDocArquivado(
 			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
-			final String protocolo, final Long tpdall,
-			final String txtall, final List<Long> documentosSelecionados, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
+			final List<Long> documentosSelecionados, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
 			throws Exception {
-	
-		validaCamposObrigatorioTransferenciaDocsArquivados(lotacaoDestinatarioSel, documentosSelecionados, motivoTransferencia);
-		
-		if(!erros.isEmpty()) {
-			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", erros.get(0));
-			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
-			return;
-		}
 		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
 		builder.setCadastrante(getCadastrante())
@@ -2919,18 +2884,10 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacao mov = builder.construir(dao());
 
-		boolean despaUnico = false;
 		final Date dt = dao().dt();
 		mov.setDtIniMov(dt);
 		ExMobil nmobil = new ExMobil();
 		final HashMap<ExMobil, AplicacaoException> MapMensagens = new HashMap<ExMobil, AplicacaoException>();
-		final List<ExMobil> mobeis = new ArrayList<ExMobil>();
-		final List<ExMobil> mobilSucesso = new ArrayList<ExMobil>();
-
-		if (Objects.isNull(mov.getResp()) && Objects.isNull(mov.getLotaResp())
-				&& Objects.isNull(mov.getOrgaoExterno())) {
-			throw new AplicacaoException("Não foi definido o destino da transferência.");
-		}
 		
 		AplicacaoException msgErroNivelAcessoso = null;
 
@@ -2938,7 +2895,6 @@ public class ExMovimentacaoController extends ExController {
 			try {
 			
 				final ExMobil mobil = dao().consultar(idDocumento, ExMobil.class, false);
-				mobil.setMovimentacaoTransferenciaDocumentoArquivado(true);
 				if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mobil)) {
 					if (msgErroNivelAcessoso == null) {
 						msgErroNivelAcessoso = new AplicacaoException(
@@ -2948,27 +2904,17 @@ public class ExMovimentacaoController extends ExController {
 						MapMensagens.put(mobil, msgErroNivelAcessoso);
 					}
 				} else {
-					//String txt = despaUnico ? (StringUtils.isEmpty(txtall) ? null : txtall) : null;
-
 					nmobil = new ExMobil();
 					nmobil = mobil;
-					mobeis.add(mobil);
-					PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(responsavelSel.getSigla());
-					//PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(des);
+					
+					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
+					listaMovimentacao.addAll(mobil.getExMovimentacaoSet());
 					
 					Ex.getInstance()
-							.getBL()
-							.transferir(null, null, getCadastrante(),
-									getLotaCadastrante(), mobil, 
-									mov.getDtMov(), dt, mov.getDtFimMov(),
-									mov.getLotaDestinoFinal(), mov.getDestinoFinal(), 
-									null, // Ainda falta implementar a notificação de grupo de email
-									null,
-									null, 
-									mov.getSubscritor(), cadastranteParser.getPessoa(),
-									null, false, null, null,
-									mov.getNmFuncaoSubscritor(), false,
-									false, ExTipoDeMovimentacao.TRANSFERENCIA);
+					.getBL()
+					.reestruturacaoDocsArquivado(mobil, listaMovimentacao, getCadastrante(), getLotaCadastrante(), 
+							mov.getLotaDestinoFinal(), motivoTransferencia);
+
 				}
 			} catch (AplicacaoException e) {
 				MapMensagens.put(nmobil, e);

@@ -4271,10 +4271,9 @@ public class ExBL extends CpBL {
 		mov.getExMobil().getExMovimentacaoSet().add(mov);
 		
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
-			if (!mov.getExMobil().isMovimentacaoTransferenciaDocumentoArquivado()) {
-				mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
-				mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(mov.getDtIniMov());
-			}
+			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
+			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(mov.getDtIniMov());
+			
 			dao().gravar(mov.getExMobil());
 		} else {
 			ExMovimentacao movUlt = mov.getExMobil()
@@ -5467,19 +5466,17 @@ public class ExBL extends CpBL {
 						if (lotaResponsavel.isFechada())
 							throw new AplicacaoException("não é permitido tramitar documento para lotação fechada");
 
-						if (!mob.isMovimentacaoTransferenciaDocumentoArquivado()) {
-							if (forcarTransferencia) {
-								if (!new ExPodeSerTransferido(mob).eval())
-									throw new AplicacaoException("Trâmite não pode ser realizado (" + m.getSigla()
-											+ " ID_MOBIL: " + m.getId() + ")");
-							} else {
-								if (tipoTramite == ExTipoDeMovimentacao.NOTIFICACAO) {
-									if (!Ex.getInstance().getComp().pode(ExPodeNotificar.class, cadastrante, lotaCadastrante, m)) 
-										throw new AplicacaoException("Não é possível notificar");			
-								} else 
-									getComp().afirmar("Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")", 
-											ExPodeTransferir.class, cadastrante, lotaCadastrante, m);
-							}
+						if (forcarTransferencia) {
+							if (!new ExPodeSerTransferido(mob).eval())
+								throw new AplicacaoException("Trâmite não pode ser realizado (" + m.getSigla()
+										+ " ID_MOBIL: " + m.getId() + ")");
+						} else {
+							if (tipoTramite == ExTipoDeMovimentacao.NOTIFICACAO) {
+								if (!Ex.getInstance().getComp().pode(ExPodeNotificar.class, cadastrante, lotaCadastrante, m)) 
+									throw new AplicacaoException("Não é possível notificar");			
+							} else 
+								getComp().afirmar("Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")", 
+										ExPodeTransferir.class, cadastrante, lotaCadastrante, m);
 						}
 					
 						if (m.getExDocumento().isPendenteDeAssinatura()
@@ -8931,6 +8928,45 @@ public class ExBL extends CpBL {
 			}
 		}
 	}
+	
+	/*
+	 * 
+	 * Cancela um documento de ORIGEM que esteja arquivado e arquiva novamente na Lotação de DESTINO sem mudar
+	 * sua data de temporalidade.
+	 * 
+	 * */
+	public void reestruturacaoDocsArquivado(ExMobil mob, List<ExMovimentacao> movs, DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+			final DpLotacao lotaDestinoFinal, String descrMov) throws Exception {
+		
+		try {
+			iniciarAlteracao();
+			ExMovimentacao movArquivamentoNova = null;
+			ExMovimentacao movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
 
+			movArquivadaACancelar.setDescrMov(descrMov);
+			
+			movArquivamentoNova = criarNovaMovimentacao(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, cadastrante,
+					lotaCadastrante, mob, null, null, lotaDestinoFinal, null, null, null);
+			
+			movArquivamentoNova.setExMovimentacaoRef(movArquivadaACancelar);
+			movArquivamentoNova.setLotaResp(lotaDestinoFinal);
+			movArquivamentoNova.setResp(null);
+			movArquivamentoNova.setSubscritor(null);
+			movArquivamentoNova.setLotaSubscritor(null);
+			
+			//movArquivamentoNova.setDtIniMov(movArquivadaACancelar.getDtIniMov());
+			movArquivamentoNova.setLotaDestinoFinal(lotaDestinoFinal);
+			movArquivamentoNova.setLotaTitular(lotaDestinoFinal);
+			
+			gravarMovimentacaoCancelamento(movArquivamentoNova, movArquivadaACancelar);
+					
+			concluirAlteracaoDocComRecalculoAcesso(movArquivamentoNova);			
+			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao arquivar documento em DESTINO.", e);
+		}
+		
+	}
 }
 

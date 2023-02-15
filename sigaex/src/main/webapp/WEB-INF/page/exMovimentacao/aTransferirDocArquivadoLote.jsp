@@ -19,7 +19,7 @@
 			<div class="card-body">
 				<c:choose>
 					<c:when test="${not empty itens}">
-						<form name="frm" action="transferir_lote_documentos_arquivados" method="POST">
+						<form name="frm">
 					</c:when>
 					<c:otherwise>	
 						<form name="frm" action="pesquisa_documentos_arquivados_transferencia" method="get">
@@ -108,7 +108,8 @@
 		                    
 		                    <div class="row">
 								<div class="col-sm-1">
-									<button type="submit" class="btn btn-primary">Transfererir</button>
+									<button type="button" id="btnTransferirArquivadosLote" class="btn btn-primary"
+									onclick="javascript:validaCampos();" role="button">Transfererir</button>
 								</div>
 								<div class="col-sm-1 ml-3 my-2 my-sm-0">
 		                    		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
@@ -229,6 +230,24 @@
 			</div>
 		</div>
 	</div>
+	<siga:siga-modal id="confirmacaoModalTransferencia" exibirRodape="false" tituloADireita="Confirma&ccedil;&atilde;o">
+		<div class="modal-body">
+	      		<div class="form-group row">
+				<div class="col-12">
+					<p><strong>Transferência De:</strong></p>
+					<p><span id="origem">X</span></p>
+					<p><strong>Para:</strong></p>
+					<p><span id="destino"></span></p>
+					
+					<p><strong>Quant. de Documentos:</strong> <span id="qtnDocumentosSelecionados"></span></p>
+				</div>
+			</div>
+	    	</div>
+	    	<div class="modal-footer">
+	      		<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>		        
+	      		<a href="#" class="btn btn-success btn-confirmacao-transferencia-cadastro" role="button" aria-pressed="true" onclick="confirmaTransferencia();">Sim</a>
+		</div>
+	</siga:siga-modal>
 	
 		<script type="text/javascript" language="Javascript1.1">
 	/*function sbmt(offset) {
@@ -291,6 +310,124 @@
             document.getElementById('responsavelSelSpan').innerHTML = "";
 		}
 		
+		function getDestinoSelecionado(){
+			var lotaDestinoSelDescr = document.querySelector("#formulario_lotacaoDestinatarioSel_descricao");
+			console.log(lotaDestinoSelDescr.value);
+			document.getElementById("destino").textContent = lotaDestinoSelDescr;
+		}
+		
+		function getIdDocumentosSelecionados() {
+			var els = document.getElementsByName("documentosSelecionados");
+			var selecionados = new Array();
+			for (var i = 0; i < els.length; i++) {
+			  if (els[i].checked) {
+				  selecionados.push(els[i].value);
+			  }
+			}
+			return selecionados;
+		}
+		
+		function atualizarUrlDeTransferenciaArquivados(url){	
+			$('.btn-confirmacao-transferencia-cadastro').attr("href", url);		
+		}
+		
+		function getOrigemSelecionado(){
+			let responsavelSel = document.getElementById("formulario_responsavelSel_descricao").value;
+			document.getElementById("origem").textContent = responsavelSel;
+		}
+		
+		function getDestinoSelecionado(){
+			let lotacaoDestinatarioSel = document.getElementById("formulario_lotacaoDestinatarioSel_descricao").value;
+			document.getElementById("destino").textContent = lotacaoDestinatarioSel;
+		}
+		
+		function qntDocumentosSelecionados(){
+			let checkedElements = $("input[name='documentosSelecionados']:checked");
+			document.getElementById("qtnDocumentosSelecionados").textContent = checkedElements.length;
+			return checkedElements.length;
+		}
+		
+		function validaCampos() {
+			getOrigemSelecionado();
+			getDestinoSelecionado();
+			var motivo = document.getElementById("motivoTransferencia").value;
+			var lotaDestinoSelId = document.getElementById("formulario_lotacaoDestinatarioSel_id").value;
+			
+			if (!motivo) {
+				sigaModal.alerta('O campo MOTIVO é obrigatório!');
+				return false;
+			}
+			
+			if (motivo.length > 500) {
+				sigaModal.alerta('Motivo da Transferência com mais de 500 caracteres');
+				return false;
+			}
+			
+			if (lotaDestinoSelId == "") {
+				sigaModal.alerta('Necessário adicionar uma unidade de DESTINO para realizar a transferência.');
+				return false;
+			}
+			
+			if (qntDocumentosSelecionados() === 0) {
+				sigaModal.alerta('Necessário selecionar pelo menos 1 documento para realizar a transferência.');
+				return false;
+			}
+			
+			sigaModal.abrir('confirmacaoModalTransferencia');
+			return true;
+		}
+		
+		function confirmaTransferencia(){
+			atualizarUrlDeTransferenciaArquivados(transfereDocumentosSelecionados(getIdDocumentosSelecionados()));
+		}
+		
+		function transfereDocumentosSelecionados(listaIdDocumentosSelecionados) {
+			motivo = document.getElementById('motivoTransferencia').value;
+
+			var responsavelSelId = document.getElementById("formulario_responsavelSel_id").value;
+			var responsavelSelDescr = document.getElementById("formulario_responsavelSel_descricao").value;
+			var responsavelSelSigla = document.getElementById("formulario_responsavelSel_sigla").value;
+			
+			var lotaResponsavelSelId = document.getElementById("formulario_lotaResponsavelSel_id").value;
+			var lotaResponsavelSelDescr = document.getElementById("formulario_lotaResponsavelSel_descricao").value;
+			var lotaResponsavelSelSigla = document.getElementById("formulario_lotaResponsavelSel_sigla").value;
+			
+			var lotaDestinoSelId = document.getElementById("formulario_lotacaoDestinatarioSel_id").value;
+			var lotaDestinoSelDescr = document.getElementById("formulario_lotacaoDestinatarioSel_descricao").value;
+			var lotaDestinoSelSigla = document.getElementById("formulario_lotacaoDestinatarioSel_sigla").value;
+			
+			$.ajax({
+				method:'POST',
+				async: false,
+				url: '/sigaex/app/expediente/mov/transferirLoteDocumentosArquivados',
+				data: {
+					'lotaResponsavelSel.id': lotaResponsavelSelId,
+				    'lotaResponsavelSel.descricao': lotaResponsavelSelDescr,
+				    'lotaResponsavelSel.sigla': lotaResponsavelSelSigla,
+					'responsavelSel.id': responsavelSelId,
+			   		'responsavelSel.descricao': responsavelSelDescr,
+			      	'responsavelSel.sigla': responsavelSelSigla,
+			      	'lotacaoDestinatarioSel.id': lotaDestinoSelId,
+			   		'lotacaoDestinatarioSel.descricao': lotaDestinoSelDescr,
+			      	'lotacaoDestinatarioSel.sigla': lotaDestinoSelSigla,
+					'documentosSelecionados':listaIdDocumentosSelecionados,
+					'motivoTransferencia':motivo},
+				beforeSend: function(result){
+					console.log('carregando..');
+					sigaSpinner.mostrar();
+					sigaModal.fechar('confirmacaoModalTransferencia');
+		        },
+				success: function(result){	
+					location.reload();
+		        },
+		        error: function(err){
+		            console.log(err);
+		         },
+		        complete: function(result){	
+		        	sigaSpinner.ocultar();
+		        }
+			});
+		}
 	</script>
 	
 </siga:pagina>

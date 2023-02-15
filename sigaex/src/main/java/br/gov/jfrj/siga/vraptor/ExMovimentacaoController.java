@@ -2815,6 +2815,8 @@ public class ExMovimentacaoController extends ExController {
 	public void aTransferirDocArquivadoLote(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
 			int tipoResponsavel) {
 
+		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
+		
 		result.include("listaTipoRespOrigem", this.getListaTipoRespPerfilOrigem());
 		result.include("listaTipoRespDestino", this.getListaTipoRespPerfilDestino());
 		result.include("itens", docArquivadosParaTransferir);
@@ -2832,6 +2834,8 @@ public class ExMovimentacaoController extends ExController {
 	@Get("app/expediente/mov/pesquisa_documentos_arquivados_transferencia")   
 	public void pesquisaDocArquivadosParaTransferir(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, int tipoResponsavel) {
+		
+		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
 		
 		DpPessoa pessoa = new DpPessoa();
 		DpLotacao lotacao = new DpLotacao();
@@ -2877,6 +2881,8 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
 			final List<Long> documentosSelecionados, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
 			throws Exception {
+		
+		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
 		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
 		builder.setCadastrante(getCadastrante())

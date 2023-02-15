@@ -188,7 +188,7 @@
 		});
 
 		$("#dataEspecifica").mask("99/99/9999");
-		$(".hora").mask("99:99");
+		/* $(".hora").mask("99:99");
 		$("#horaIni").rules("add", {
 			hora : ""
 		});
@@ -200,7 +200,7 @@
 		});
 		$("#interFim").rules("add", {
 			hora : ""
-		});
+		}); */
 	});
 
 	function modalExcecaoAbrir() {

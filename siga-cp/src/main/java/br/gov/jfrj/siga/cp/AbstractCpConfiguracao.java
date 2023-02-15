@@ -102,7 +102,6 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
-	@NaoRecursivo
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@ManyToOne(fetch = FetchType.LAZY)

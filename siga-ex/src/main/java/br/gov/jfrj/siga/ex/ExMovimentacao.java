@@ -95,6 +95,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA,
 			ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA
 		};
+
 	/**
 	 * Simple constructor of ExMovimentacao instances.
 	 */

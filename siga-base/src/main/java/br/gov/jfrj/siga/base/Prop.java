@@ -284,16 +284,16 @@ public class Prop {
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
-			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", null);
-			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", null);
+			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", get("/siga.armazenamento.arquivo.tamanhomax"));
 		} else {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
 			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", "10737418240"); //10GB
-			provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", get("/siga.armazenamento.arquivo.url"));
 		}
+		provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", get("/siga.armazenamento.arquivo.url"));
+		
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");
 		
@@ -355,5 +355,8 @@ public class Prop {
 		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.marcadores.permitidos", get("/siga.lotacao.inativacao.marcadores.permitidos"));
 		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos", get("/siga.lotacao.inativacao.grupo.marcadores.permitidos"));
 
+		/* Properties para ativação do Módulo de compra e contratações.*/
+		provider.addPrivateProperty("/secc.ui.url", null);
+		
 	}
 }

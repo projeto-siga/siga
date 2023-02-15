@@ -40,6 +40,7 @@ public class ModelosListaHierarquicaGet implements IModelosListaHierarquicaGet {
 		for (ListaHierarquicaItem m : getListaHierarquica(modelos).getList()) {
 			ModeloListaHierarquicaItem mi = new ModeloListaHierarquicaItem();
 			mi.idModelo = (m.getValue() != null ? m.getValue().toString() : "");
+			mi.idModeloInicial = (m.getIdInicial() != null ? m.getIdInicial().toString() : "");
 			mi.nome = m.getText();
 			mi.descr = m.getSearchText();
 			mi.level = (long) m.getLevel();
@@ -53,7 +54,7 @@ public class ModelosListaHierarquicaGet implements IModelosListaHierarquicaGet {
 	private ListaHierarquica getListaHierarquica(List<ExModelo> modelos) {
 		ListaHierarquica lh = new ListaHierarquica();
 		for (ExModelo m : modelos) {
-			lh.add(m.getNmMod(), m.getDescMod(), m.getId(), false);
+			lh.add(m.getIdInicial().toString(), m.getNmMod(), m.getDescMod(), m.getId(), false);
 		}
 		return lh;
 	}

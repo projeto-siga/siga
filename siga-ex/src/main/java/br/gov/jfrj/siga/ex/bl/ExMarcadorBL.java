@@ -365,7 +365,7 @@ public class ExMarcadorBL {
 							mob.doc().getLotaCadastrante(), null, mob.doc().getExModelo().getExFormaDocumento(), null,
 							ExTipoDeConfiguracao.TMP_PARA_LOTACAO) ? mob.doc().getLotaCadastrante() : null));
 			if (mob.getExDocumento().getSubscritor() != null && !(Prop.getBool("/siga.mesa.nao.revisar.temporarios")
-					&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) && !mob.doc().isFinalizado())) {
+					&& (mob.doc().getCadastrante() == null || !mob.doc().getCadastrante().equals(mob.doc().getSubscritor())) && !mob.doc().isFinalizado())) {
 				acrescentarMarca(CpMarcadorEnum.REVISAR.getId(), mob.doc().getDtRegDoc(),
 						mob.getExDocumento().getSubscritor(), null);
 			}
@@ -467,7 +467,7 @@ public class ExMarcadorBL {
 				if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
 						&& (!new ExEstaOrdenadoAssinatura(mob.getDoc()).eval() || new ExEAssinanteAtual(mob.getDoc(), mob.getDoc().getSubscritor()).eval())
 						&& !(Prop.getBool("/siga.mesa.nao.revisar.temporarios")
-								&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor())
+								&& (mob.doc().getCadastrante() == null || !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()))
 								&& !mob.doc().isFinalizado())) {
 					acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mob.doc().getDtRegDoc(),
 							mob.getExDocumento().getSubscritor(), null, dtPrazo);

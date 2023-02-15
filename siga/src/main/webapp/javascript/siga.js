@@ -1,14 +1,18 @@
 var newwindow = '';
 
-function testpdf(x) {
+function testpdf(x, tamanhoMaximo) {
 	var inputFile = $('#arquivo');
 	var tamanhoArquivo = parseInt(inputFile[0].files[0].size);
 	
 	inputFile.parent().find('label[for=arquivo]').html('<i class="far fa-file-pdf"></i>&nbsp;&nbsp;'.concat(inputFile[0].files[0].name));
 	inputFile.attr('title', 'arquivo selecionado: '.concat(inputFile[0].files[0].name));
 	
-    if(tamanhoArquivo > 10485760){
-    	var mensagem = 'Tamanho do arquivo excede o permitido (10MB)';
+	var tamMax = 10485760;
+	if (tamanhoMaximo)
+		tamMax = tamanhoMaximo;
+	
+    if(tamanhoArquivo > tamMax){
+    	var mensagem = 'Tamanho do arquivo excede o permitido (' + Math.round(tamMax/1024/1024) + 'MB)';
     	aplicarErro(inputFile, mensagem);    	    	
         sigaModal.alerta(mensagem).focus(document.getElementById("arquivo"));
         return false;

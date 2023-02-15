@@ -177,6 +177,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPorPorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComCertificadoDigital;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelar;
@@ -1110,9 +1111,7 @@ public class ExBL extends CpBL {
 			}
 		} else {
 			ExMovimentacao exMov = ExDao.getInstance().consultar(mov.getIdDoc(), ExMovimentacao.class, false);
-			byte[] texto = exMov.getConteudoBlobMov2();
-			if (texto != null)
-				html =  StringEscapeUtils.escapeHtml4(new String(texto, "ISO-8859-1"));
+			html = new String(exMov.getConteudoBlobMov());
 		}
 		return html;
 	}
@@ -1726,7 +1725,7 @@ public class ExBL extends CpBL {
 					fValido = true;
 					usuarioDoToken = doc.getSubscritor();
 				}
-				if (!fValido) {
+				if (!fValido && doc.getCadastrante() != null) {
 					fValido = (lMatricula.equals(doc.getCadastrante().getMatricula())) && (doc.getExTipoDocumento()
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
@@ -1744,7 +1743,7 @@ public class ExBL extends CpBL {
 				}
 				
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 			}
@@ -1754,7 +1753,7 @@ public class ExBL extends CpBL {
 					fValido = true;
 					usuarioDoToken = doc.getSubscritor();
 				}
-				if (!fValido) {
+				if (!fValido && doc.getCadastrante() != null) {
 					fValido = (lCPF.equals(doc.getCadastrante().getCpfPessoa())) && (doc.getExTipoDocumento()
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
@@ -1771,7 +1770,7 @@ public class ExBL extends CpBL {
 					}
 
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 				
@@ -2012,8 +2011,7 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException("Não há um PIN cadastrado para registrar assinatura. Utilize outra forma ou cadastre um PIN se disponível clicando <a href='/siga/app/pin/cadastro'>aqui</a>.");
 				}
 				
-				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
-				senhaValida = id.getPinIdentidade().equals(hashAtual);
+				senhaValida = Cp.getInstance().getBL().validaPinIdentidade(senhaSubscritor, id);
 			} else {
 				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
 				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
@@ -2056,7 +2054,7 @@ public class ExBL extends CpBL {
 						if (doc.getSubscritor() != null && subscritor.equivale(doc.getSubscritor())) {
 							fValido = true;
 						}
-						if (!fValido) {
+						if (!fValido && doc.getCadastrante() != null) {
 							fValido = (subscritor.equivale(doc.getCadastrante())) && (doc.getExTipoDocumento()
 									.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 						}
@@ -2171,7 +2169,7 @@ public class ExBL extends CpBL {
 			}
 		} else {
 			if (fSubstituindoSubscritor) { 
-				assinante = titular; 
+				assinante = titular.getPessoaAtual();
 			} else {
 				assinante = cosignatario;	
 			}
@@ -3378,7 +3376,7 @@ public class ExBL extends CpBL {
 			dao().gravar(doc);
 			
 			if (doc.getSubscritor() != null) {
-				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
+				if ((doc.getCadastrante() == null || !doc.getCadastrante().equivale(doc.getSubscritor())) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
 					enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
 				}
 			}	
@@ -3837,7 +3835,7 @@ public class ExBL extends CpBL {
 				doc.setCadastrante(cadastrante);
 			if (doc.getLotaCadastrante() == null) {
 				doc.setLotaCadastrante(lotaTitular);
-				if (doc.getLotaCadastrante() == null)
+				if (doc.getLotaCadastrante() == null && doc.getCadastrante() != null)
 					doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 			}
 			if (doc.getDtRegDoc() == null) {
@@ -8498,8 +8496,11 @@ public class ExBL extends CpBL {
 		 *getNmFuncaoSubscritor = [0] - personalizarFuncao [1] - personalizarUnidade [2] - personalizarLocalidade [3] - personalizarNome
 		 */
 		
-		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA && movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO) {
-			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura.");
+		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA 
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO) {
+			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura ou autenticação.");
 		}
 		
 		SortedSet<ExMovimentacao> listaMovimentacoes = movimentacao.mob().getExMovimentacaoSet();

@@ -90,6 +90,19 @@ parameters:
     description: Sigla do mobil do documento a ser vinculado
     type: string
     required: true
+  nomemodelo:
+    name: nomemodelo
+    in: query
+    description: String contida no nome do modelo a ser pesquisado
+    type: string
+    required: false
+  permitidos:
+    name: permitidos
+    in: query
+    description: Informar true se deseja trazer somente os permitidos para o usuário logado
+    required: false
+    default: true
+    type: boolean    
   completo:
     name: completo
     in: query
@@ -574,11 +587,13 @@ parameters:
 paths:
   /modelos:
     get:
-      summary: Obtem a lista de modelos que o usuário pode criar.
+      summary: Obtem a lista de modelos ativos que o usuário pode criar (permitidos) ou de todos modelos.
       tags: [modelo]
       security:
         - Bearer: []
-      parameters: [] 
+      parameters: 
+        - $ref: "#/parameters/permitidos"
+        - $ref: "#/parameters/nomemodelo"
       responses:
         200:
           description: Successful response
@@ -681,6 +696,54 @@ paths:
             type: object
             properties:
               idModelo:
+                type: string
+              idModeloInicial:
+                type: string
+              nome:
+                type: string
+              descr:
+                type: string
+              especie:
+                type: string
+              nivelDeAcesso:
+                type: string
+              classificacao:
+                type: string
+              classificacaoParaCriacaoDeVias:
+                type: string
+              tipoDeSubscritor:
+                type: string
+              tipoDeDestinatario:
+                type: string
+              tipoDeConteudo:
+                type: string
+              tipoDeDocumento:
+                type: string
+              conteudo:
+                type: string
+        
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /modelos/{id}/ativo:
+    get:
+      summary: Obtem o modelo ativo (versão corrente atual) de um modelo específico. O id pode ser de qualquer versão do modelo, ativo ou não.
+      tags: [modelo]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idModelo:
+                type: string
+              idModeloInicial:
                 type: string
               nome:
                 type: string
@@ -892,6 +955,30 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /classificacoes-aplicar-mascara:
+    get:
+      summary: "Aplicar máscara em sigla de classificação documental"
+      tags: [classificacao]
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/sigla"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              sigla:
+                type: string
+        403:
+          description: Acesso não permitido
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
 
 
   /documentos/{sigla}/arquivo/produzir:
@@ -3222,6 +3309,8 @@ definitions:
     properties:
       idModelo:
         type: string
+      idModeloInicial:
+        type: string
       nome:
         type: string
       descr:
@@ -3243,6 +3332,8 @@ definitions:
     type: object
     properties:        
       idModelo:
+        type: string
+      idModeloInicial:
         type: string
       nome:
         type: string

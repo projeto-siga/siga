@@ -603,7 +603,7 @@
 		if (document.getElementById('formulario_classificacaoSel_id').value != "")
 			count++;	
 
-		if (document.getElementById('descrDocumento').value != "")
+		if (document.getElementById('descrDocumento') && document.getElementById('descrDocumento').value != "")
 			count++;	
 			
 		if (document.getElementById('fullText') !== null && document.getElementById('fullText').value != "")

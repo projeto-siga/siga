@@ -13,6 +13,7 @@ public class ModelosIdGet implements IModelosIdGet {
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		ExModelo mod = ExDao.getInstance().consultar(Long.parseLong(req.id), ExModelo.class, false);
 		resp.idModelo = mod.getId().toString();
+		resp.idModeloInicial = mod.getIdInicial().toString();
 		resp.nome = mod.getNmMod();
 		resp.descr = mod.getDescMod();
 		resp.especie = mod.getExFormaDocumento().getSigla();

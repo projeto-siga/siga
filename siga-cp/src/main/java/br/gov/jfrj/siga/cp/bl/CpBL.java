@@ -1682,7 +1682,6 @@ public class CpBL {
 					CpDao.getInstance().gravarComHistorico(value, key, null, identidadeCadastrante);
 				}
 			});
-			
 		}
 	}
 	
@@ -1914,6 +1913,7 @@ public class CpBL {
 					i.setIdIdentidade(null);
 					i.setDtCriacaoIdentidade(dt);
 					i.setPinIdentidade(pinHash);
+					i.setPinContadorTentativa(INTEGER_ZERO);
 					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
 				}
 			} else {
@@ -1935,8 +1935,8 @@ public class CpBL {
 			throw new RegraNegocioException("PIN deve conter apenas dígitos númericos (0-9).");
 		}
 		
-		if (pin.length() != CpIdentidade.pinLength) {
-			throw new RegraNegocioException("PIN deve ter "+String.valueOf(CpIdentidade.pinLength)+" dígitos numéricos.");
+		if (pin.length() != CpIdentidade.PIN_LENGTH) {
+			throw new RegraNegocioException("PIN deve ter "+String.valueOf(CpIdentidade.PIN_LENGTH)+" dígitos numéricos.");
 		}	
 				
 		formatoPinIsValido = true;
@@ -1961,36 +1961,61 @@ public class CpBL {
 		return formatoSenhaValido;
 	}
 	
-	public Boolean validaHashPin(String pin, CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
-		String hashPinAValidar = null;
-		boolean hashPinIsValido = false;
-		
-		if (identidadeCadastrante == null) {
-			throw new RegraNegocioException("Não é possível validar PIN: Identidade não informada.");
-		}
-
-		hashPinAValidar = GeraMessageDigest.calcSha256(pin);	
-		hashPinIsValido = hashPinAValidar.equals(identidadeCadastrante.getPinIdentidade());
-		
-		return hashPinIsValido;
-	}
-	
-	public Boolean validaPinIdentidade(String pin,CpIdentidade identidadeCadastrante) throws RegraNegocioException, NoSuchAlgorithmException {
+	public Boolean validaPinIdentidade(String pin,CpIdentidade identidadeCadastrante) throws Exception {
 		
 		boolean pinValido = false;
 		
+		if (!Cp.getInstance().getComp().podeSegundoFatorPin(identidadeCadastrante.getDpPessoa(), identidadeCadastrante.getDpPessoa().getLotacao())) {
+			throw new RegraNegocioException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
+		}
+				
 		if (identidadeCadastrante.getPinIdentidade() == null) {
 			throw new RegraNegocioException("Não é possível validar PIN: Não existe chave cadastrada.");
+		}
+		
+		if (hasBloqueioPinPorTentativa(identidadeCadastrante)) {
+			throw new RegraNegocioException("Seu PIN está <b>bloqueado</b> por tentativas malsucedidas. "
+					+ "Efetue a recuperação do PIN em <b><a href='/siga/app/pin/reset'>Esqueci meu PIN</a></b>.");
 		}
 		
 		consisteFormatoPin(pin);
 		pinValido = validaHashPin(pin,identidadeCadastrante);
 
 		if (!pinValido) {
-			throw new RegraNegocioException("PIN atual informado não coincide com o cadastrado.");
-		}	
+			incrementarContagemTentativasMalsucedidasPin(identidadeCadastrante);
+			
+			if (hasBloqueioPinPorTentativa(identidadeCadastrante)) { 
+				throw new RegraNegocioException("Seu PIN foi <b>bloqueado</b> por tentativas malsucedidas. "
+						+ "Efetue a recuperação do PIN em <b><a href='/siga/app/pin/reset'>Esqueci meu PIN</a></b>.");
+			} else {
+				throw new RegraNegocioException(
+						String.format("PIN informado não coincide com o cadastrado.<br />"
+							+ "Você tem mais <b>%s tentativa%s</b> antes que seu PIN seja bloqueado por segurança.",
+								quantidadeTentativasRestantes(identidadeCadastrante),
+								quantidadeTentativasRestantes(identidadeCadastrante) < 2 ? "" : "s")
+						);
+			}
+
+		} else if (identidadeCadastrante.getPinContadorTentativa().intValue() != INTEGER_ZERO) {
+			resetContagemTentativasMalsucedidasPin(identidadeCadastrante);
+		}
 	
 		return pinValido;
+	}
+	
+
+	private Boolean validaHashPin(String pin, CpIdentidade identidade) throws RegraNegocioException, NoSuchAlgorithmException {
+		String hashPinAValidar = null;
+		boolean hashPinIsValido = false;
+		
+		if (identidade == null) {
+			throw new RegraNegocioException("Não é possível validar PIN: Identidade não informada.");
+		}
+
+		hashPinAValidar = GeraMessageDigest.calcSha256(pin);	
+		hashPinIsValido = hashPinAValidar.equals(identidade.getPinIdentidade());
+		
+		return hashPinIsValido;
 	}
 	
 	
@@ -3013,5 +3038,27 @@ public class CpBL {
 		final String servico = "SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_LOTACAO:Cadastrar Lotação;INATIVA_LOTE:Inativar Lotação em Lote";
 		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular, titular.getLotacao(), servico);
 		
+	}
+	
+	public void resetContagemTentativasMalsucedidasPin(CpIdentidade identidade) {
+		identidade.setPinContadorTentativa(INTEGER_ZERO);
+		dao().gravar(identidade);	
+		dao().descarregar();
+	}
+	
+	public void incrementarContagemTentativasMalsucedidasPin(CpIdentidade identidade) {
+		if (!hasBloqueioPinPorTentativa(identidade)) {
+			identidade.setPinContadorTentativa(identidade.getPinContadorTentativa() + INTEGER_ONE);
+			dao().gravar(identidade);	
+			dao().descarregar();
+		}
+	}
+	
+	public boolean hasBloqueioPinPorTentativa(CpIdentidade identidade) {
+		return identidade.getPinContadorTentativa().intValue() == CpIdentidade.PIN_NUM_MAX_TENTATIVAS;
+	}
+	
+	public int quantidadeTentativasRestantes(CpIdentidade identidade) {
+		return CpIdentidade.PIN_NUM_MAX_TENTATIVAS - identidade.getPinContadorTentativa().intValue();
 	}
 }

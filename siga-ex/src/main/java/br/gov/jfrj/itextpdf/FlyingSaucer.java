@@ -43,12 +43,20 @@ import com.crivano.swaggerservlet.SwaggerUtils;
 import com.openhtmltopdf.extend.FSStream;
 import com.openhtmltopdf.extend.FSStreamFactory;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import com.openhtmltopdf.util.XRLog;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaHTTP;
 
 public class FlyingSaucer implements ConversorHtml {
+
+
 	private static Logger logger = Logger.getLogger(FlyingSaucer.class.getCanonicalName());
+	
+	public FlyingSaucer() {
+		super();
+		XRLog.setLoggingEnabled(false);
+	}
 
 	private String cleanHtml(String data) throws UnsupportedEncodingException {
 		logger.fine("transformando HTML em XHTML");

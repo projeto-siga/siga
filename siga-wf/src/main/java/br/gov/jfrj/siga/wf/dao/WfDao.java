@@ -325,7 +325,7 @@ public class WfDao extends CpDao implements com.crivano.jflow.Dao<WfProcedimento
 		String sql = "select p from WfProcedimento p inner join p.definicaoDeProcedimento pd "
 				+ " where (:hisIdIni is null or pd.hisIdIni = :hisIdIni) "
 				+ " and ((:ativos is null) or (:ativos = TRUE and p.hisDtFim is null) or (:ativos = FALSE and p.hisDtFim is not null)) "
-				+ " order by p.hisDtIni";
+				+ " order by p.eventoData, p.hisDtIni";
 
 		for (String i : new String[] {"LISTA", "TOTAL"}) {
 			if ("TOTAL".equals(i))

@@ -2430,16 +2430,20 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
 			return criacao.getCadastrante();
-		else
+		else if (doc().getCadastrante() != null)
 			return doc().getCadastrante();
+		else
+		    return doc().getSubscritor();
 	}
 	
 	public DpLotacao getLotaTitular() {
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
 			return criacao.getLotaCadastrante();
-		else
+		else if (doc().getLotaCadastrante() != null)
 			return doc().getLotaCadastrante();
+		else
+		    return doc().getLotaSubscritor();
 	}
 	
 	public boolean isEmTramiteParalelo() {
@@ -2518,54 +2522,6 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	public ExRef getRef() {
 		return new ExRef(this);
-	}
-
-	/**
-	 * Devolve as movimentações duplicadas realizadas no intervalo de milisegundos especificado
-	 * @param intervalo
-	 * @return Set de movimentações duplicadas
-	 */
-	public java.util.Set<ExMovimentacao> getMovsDuplicadas(long intervalo, ITipoDeMovimentacao[] tpMovs) {
-		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
-
-		if (getExMovimentacaoSet() == null)
-			return set;
-		
-		Set<ExMovimentacao> movs = this.getExMovimentacaoSet();
-		movs.addAll(this.getExMovimentacaoReferenciaSet());
-
-		for (ExMovimentacao m : movs) {
-			if (m.getExMovimentacaoCanceladora() != null )
-				continue;
-			
-			for (ExMovimentacao m2 : movs) {
-				long mResp = (m.getResp() != null? m.getResp().getId():0);
-				long m2Resp = (m2.getResp() != null? m2.getResp().getId():0);
-				long mLotaResp = (m.getLotaResp() != null? m.getLotaResp().getId():0);
-				long m2LotaResp = (m2.getLotaResp() != null? m2.getLotaResp().getId():0);
-				long mExMobilRef = (m.getExMobilRef() != null? m.getExMobilRef().getId():0);
-				long m2ExMobilRef = (m2.getExMobilRef() != null? m2.getExMobilRef().getId():0);
-				
-				if (!m.equals(m2) 
-						&& m2.getExMovimentacaoCanceladora() == null
-						&& Math.abs(m.getDtTimestamp().getTime() - m2.getDtTimestamp().getTime()) < intervalo 
-						&& m.getExTipoMovimentacao().equals(m2.getExTipoMovimentacao())
-						&& m.getCadastrante().equals(m2.getCadastrante())
-						&& m.getLotaCadastrante().equals(m2.getLotaCadastrante())
-						&& mResp == m2Resp
-						&& mLotaResp == m2LotaResp
-						&& m.getExMobil().equals(m2.getExMobil())
-						&& mExMobilRef == m2ExMobilRef) {
-					for (ITipoDeMovimentacao t : tpMovs) {
-						if (m.getExTipoMovimentacao() == t) {
-							set.add(m);
-							break;
-						}
-					}
-				}
-			}
-		}
-		return set;
 	}
 
 }

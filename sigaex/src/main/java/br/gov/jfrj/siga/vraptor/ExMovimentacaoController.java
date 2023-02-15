@@ -193,6 +193,7 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
+import org.json.JSONObject;
 
 @Controller
 public class ExMovimentacaoController extends ExController {
@@ -205,7 +206,8 @@ public class ExMovimentacaoController extends ExController {
 
 	protected List<String> erros = new ArrayList<String>();
 	
-	private static final int MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE = 30;
+	private static final int MAX_ITENS_PAGINA_TRINTA = 30;
+	private static final int MAX_ITENS_PAGINA_DUZENTOS = 200;
 	
 	/**
 	 * @deprecated CDI eyes only
@@ -2486,12 +2488,12 @@ public class ExMovimentacaoController extends ExController {
 		Long tamanho = dao().consultarQuantidadeParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado);
 
 		int offset = Objects.nonNull(paramoffset)
-				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE - 1) * MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_TRINTA - 1) * MAX_ITENS_PAGINA_TRINTA)
 						: paramoffset) : 0;
 
-		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE)
+		final List<ExMobil> provItens = (tamanho <= MAX_ITENS_PAGINA_TRINTA)
 				? dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, null, null)
-				: dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, offset, MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+				: dao().consultarParaAcompanhamentoEmLote(getTitular(), chkGestorInteressado, offset, MAX_ITENS_PAGINA_TRINTA);
 		
 		result.include("sigla", sigla);
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
@@ -2503,9 +2505,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("chkGestorInteressado", chkGestorInteressado);
 		
 		result.include("itens", provItens);
-		result.include("maxItems", MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE);
+		result.include("maxItems", MAX_ITENS_PAGINA_TRINTA);
 		result.include("tamanho", tamanho);
-		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_ACOMPANHAMENTO_LOTE + 1));
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_TRINTA + 1));
 	}
 	
 	private List<ExPapel> obterApenasPapeisParaVinculo(){
@@ -3132,17 +3134,20 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/mov/arquivar_permanente_lote");
 	}
 
+	@Post("/app/expediente/mov/assinar_lote")
 	@Get("/app/expediente/mov/assinar_lote")
-	public void assina_lote() throws Exception {
+	public void assina_lote(Integer paramoffset) throws Exception {
 		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
-		final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
-		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
-
-		for (final ExDocumento doc : itensComoSubscritor) {
-
-			if (doc.isFinalizado())
-				itensFinalizados.add(doc);
-		}
+		
+		Long tamanho = dao().listarQuantidadeDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura);
+		int offset = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_DUZENTOS - 1) * MAX_ITENS_PAGINA_DUZENTOS)
+						: paramoffset) : 0;
+		
+		final List<ExDocumento> itensFinalizados = (tamanho <= MAX_ITENS_PAGINA_DUZENTOS)
+				? dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura, null, null)
+				: dao().listarDocPendenteAssinatura(getTitular(), apenasComSolicitacaoDeAssinatura, offset, MAX_ITENS_PAGINA_DUZENTOS);
+		
 		final List<ExDocumento> documentosQuePodemSerAssinadosComSenha = new ArrayList<ExDocumento>();
 		Boolean podeAssinarComCertDigital = false;
 
@@ -3167,6 +3172,10 @@ public class ExMovimentacaoController extends ExController {
 				podeAssinarComCertDigital);
 		result.include("itensSolicitados", itensFinalizados);
 		result.include("request", getRequest());
+		
+		result.include("maxItems", MAX_ITENS_PAGINA_DUZENTOS);
+		result.include("tamanho", tamanho);
+		result.include("currentPageNumber", (offset / MAX_ITENS_PAGINA_DUZENTOS + 1));
 	}
 
 	@Get("/app/expediente/mov/assinar_tudo")
@@ -5777,8 +5786,8 @@ public class ExMovimentacaoController extends ExController {
 			return;
 		}
 
-		final ExMovimentacao mov = ExMovimentacaoBuilder
-				.novaInstancia().setDescrMov(motivo).setDtMovString(dtMovString).setObsOrgao(obsOrgao)
+		final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+				.setDescrMov(motivo).setDtMovString(dtMovString).setObsOrgao(obsOrgao).setCadastrante(getCadastrante())
 				.setSubstituicao(substituicao).setTitularSel(titularSel).setSubscritorSel(subscritorSel)
 				.setClassificacaoSel(classificacaoNovaSel).construir(dao());
 		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
@@ -5789,7 +5798,7 @@ public class ExMovimentacaoController extends ExController {
 
 				if (Ex.getInstance().getComp().pode(ExPodeReclassificar.class, getTitular(), getLotaTitular(), mob)) {
 
-					Ex.getInstance().getBL().avaliarReclassificar(mov.getTitular(), mov.getLotaTitular(), mob,
+					Ex.getInstance().getBL().avaliarReclassificar(mov.getCadastrante(), mov.getLotaCadastrante(), mob,
 							mov.getDtMov(), mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);
 				}
 			}
@@ -5802,32 +5811,17 @@ public class ExMovimentacaoController extends ExController {
 
 	@Post("/app/expediente/mov/listar_docs_tramitados")
 	public void listar_docs_tramitados(final String siglasDocumentosTramitados, 
-									   final String siglasDocumentosNaoTramitados,
 									   final DpLotacaoSelecao lotaResponsavelSel,
 									   final DpPessoaSelecao responsavelSel,
-									   final CpOrgaoSelecao cpOrgaoSel) throws Exception {
-
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia();
-		movimentacaoBuilder.setLotaResponsavelSel(lotaResponsavelSel)
-				.setResponsavelSel(responsavelSel)
-				.setCpOrgaoSel(cpOrgaoSel)
-				.setCadastrante(getCadastrante());
-		ExMovimentacao mov = movimentacaoBuilder.construir(dao());
-		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
+									   final CpOrgaoSelecao cpOrgaoSel,
+									   final String errosDocumentosNaoTramitadosJson) throws Exception {
 
 		String[] arraySiglasDocumentosTramitados = { };
 		if (siglasDocumentosTramitados != null) {
 			arraySiglasDocumentosTramitados = siglasDocumentosTramitados.split(",");
 		}
 		
-		String[] arraySiglasDocumentosNaoTramitados = { };
-		if (siglasDocumentosNaoTramitados != null) {
-			arraySiglasDocumentosNaoTramitados = siglasDocumentosNaoTramitados.split(",");
-		}
-		
 		final List<ExMobil> mobisDocumentosTramitados = new ArrayList<ExMobil>();
-		final List<ExMobil> mobisDocumentosNaoTramitados = new ArrayList<ExMobil>();
 
 		BuscaDocumentoBuilder documentoBuilder;
 				
@@ -5838,18 +5832,27 @@ public class ExMovimentacaoController extends ExController {
 			mobisDocumentosTramitados.add(mob);
 		}
 
-		for(String sigla : arraySiglasDocumentosNaoTramitados){
-			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-			buscarDocumento(documentoBuilder);
-			ExMobil mob = documentoBuilder.getMob();
-			mobisDocumentosNaoTramitados.add(mob);
-		}
+        List<ExMovimentacao> listaMovimentacaoDocumentosNaoTramitados =
+                montarListaResultadosMovimentacaoEmLote(lotaResponsavelSel,
+                        responsavelSel,
+                        cpOrgaoSel,
+                        errosDocumentosNaoTramitadosJson);
+
+        if (( mobisDocumentosTramitados == null 
+                || mobisDocumentosTramitados.isEmpty() ) 
+                && (listaMovimentacaoDocumentosNaoTramitados == null 
+                || listaMovimentacaoDocumentosNaoTramitados.isEmpty())) {
+
+            throw new AplicacaoException("Não foi possível tramitar em lote");
+        }
 
 		ExMobil mobIni = mobisDocumentosTramitados.isEmpty() ? null : mobisDocumentosTramitados.get(0);
 		ExMovimentacao movIni = null;
-		if(mobIni != null){
-			movIni = mobIni.getUltimaMovimentacao();
-		}
+        if (mobIni != null) {
+            movIni = mobIni.getUltimaMovimentacao();
+        } else {
+            movIni = listaMovimentacaoDocumentosNaoTramitados.get(0);
+        }
 
 		ExMobil mobFim = mobisDocumentosTramitados.isEmpty() ? null :
 				mobisDocumentosTramitados.get(mobisDocumentosTramitados.size() - 1);
@@ -5859,8 +5862,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		result.include("mobisDocumentosTramitados", mobisDocumentosTramitados);
-		result.include("mobisDocumentosNaoTramitados", mobisDocumentosNaoTramitados);
-
+		result.include("movsDocumentosNaoTramitados", listaMovimentacaoDocumentosNaoTramitados);
 
 		result.include("lotaTitular", getLotaTitular());
 		result.include("movIni", movIni);
@@ -5870,7 +5872,40 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.include("dtIni", dtIni);
 		result.include("dtFim", dtFim);
-		result.include("mov", mov);
+	}
+	
+	private List<ExMovimentacao> montarListaResultadosMovimentacaoEmLote(final DpLotacaoSelecao lotaResponsavelSel,
+                                                                         final DpPessoaSelecao responsavelSel,
+                                                                         final CpOrgaoSelecao cpOrgaoSel,
+                                                                         final String resultadosMovimentacaoMapJson){
+        
+		List<ExMovimentacao> listaResultadosMovimentacaoEmLote = new ArrayList<>();
+
+		JSONObject jsonObject = new JSONObject(resultadosMovimentacaoMapJson);
+
+		for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+			String key = it.next();
+			
+			BuscaDocumentoBuilder documentoBuilder;
+            documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(key);
+            buscarDocumento(documentoBuilder);
+            ExMobil mob = documentoBuilder.getMob();
+            String mensagemResultadoMovimentacao = jsonObject.get(key).toString();
+                
+            final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
+            movimentacaoBuilder.setLotaResponsavelSel(lotaResponsavelSel)
+                    .setResponsavelSel(responsavelSel)
+                    .setCpOrgaoSel(cpOrgaoSel)
+                    .setCadastrante(getCadastrante())
+                    .setMob(mob)
+                    .setDescrMov(mensagemResultadoMovimentacao);
+            ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+            mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
+
+            listaResultadosMovimentacaoEmLote.add(mov);
+		}
+		
+		return listaResultadosMovimentacaoEmLote;
 	}
 	
 }

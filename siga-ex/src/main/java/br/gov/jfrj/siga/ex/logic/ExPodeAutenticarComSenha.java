@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.ex.logic;
 import com.crivano.jlogic.And;
 import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
+import com.crivano.jlogic.Not;
+import com.crivano.jlogic.Or;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -29,10 +31,36 @@ public class ExPodeAutenticarComSenha extends CompositeExpressionSupport {
 	protected Expression create() {
 		return And.of(
 
+				new ExEEletronico(doc),
+				
 				new ExECapturado(doc),
 
+				Not.of(new ExEstaAutenticadoComTokenOuSenha(doc)),
+
 				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(doc.getExModelo())
-						.withExFormaDoc(doc.getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
-						.withExTpMov(ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA));
+					.withExFormaDoc(doc.getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+					.withExTpMov(ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA),
+
+				Or.of(
+
+						Not.of(new ExEGovSP()),
+
+						new ExEExternoCapturado(doc),            				
+						
+						new ExEInternoCapturado(doc)),
+
+				Or.of(
+
+						new ExEExternoCapturado(doc),
+
+						new ExEInternoCapturado(doc),
+
+						new ExEstaAssinadoComSenha(doc)
+
+				)
+
+		);
+
 	}
+
 }

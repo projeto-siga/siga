@@ -2506,7 +2506,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 	
 	public DpPessoa getSubscritorDiffTitularDoc() {
-		if (getSubscritor() != null && !this.getCadastrante().equivale(getSubscritor())) 
+		if (getSubscritor() != null && !getSubscritor().equivale(getCadastrante())) 
 			return getSubscritor();
 		return null;
 	}

@@ -43,14 +43,15 @@ public interface ISigaApiV1 {
         public String nome;
     }
 
-    public static class Lotacao implements ISwaggerModel {
-        public String idLotacao;
-        public String idLotacaoIni;
-        public String sigla;
-        public String siglaLotacao;
-        public String nome;
-        public Orgao orgao;
-    }
+	public static class Lotacao implements ISwaggerModel {
+		public String idLotacao;
+		public String idLotacaoIni;
+		public String sigla;
+		public String siglaLotacao;
+		public String nome;
+		public Localidade localidade;
+		public Orgao orgao;
+	}
 
     public static class LotacaoAtual implements ISwaggerModel {
         public String idLotacao;
@@ -229,9 +230,10 @@ public interface ISigaApiV1 {
 
     public interface IPessoasGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
-            public String idPessoaIni;
-            public String texto;
-            public String cpf;
+			public String idPessoaIni;
+			public String texto;
+			public String cpf;
+			public String emailQuery;
         }
 
         public static class Response implements ISwaggerResponse {
@@ -286,6 +288,17 @@ public interface ISigaApiV1 {
 
         public static class Response implements ISwaggerResponse {
             public String mensagem;
+        }
+
+        public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+    }
+    
+    public interface IPinValidarPost extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String pinBasicAuth;
+        }
+
+        public static class Response implements ISwaggerResponse {
         }
 
         public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;

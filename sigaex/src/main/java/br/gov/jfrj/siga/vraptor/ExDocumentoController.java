@@ -1029,8 +1029,8 @@ public class ExDocumentoController extends ExController {
 			}
 
 			if (exDocumentoDTO.getMob().doc().isSemEfeito()) {
-				if (!exDocumentoDTO.getMob().doc().getCadastrante().equals(getTitular())
-						&& !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
+				if (exDocumentoDTO.getMob().doc().getCadastrante() == null || (!exDocumentoDTO.getMob().doc().getCadastrante().equals(getTitular())
+						&& !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado)) {
 					throw new AplicacaoException("Documento " + exDocumentoDTO.getMob().getSigla() + " cancelado ");
 				}
 			} else if (exibeNomeAcesso) {
@@ -1056,7 +1056,9 @@ public class ExDocumentoController extends ExController {
 		ExMobil mobArq, mobUlt = null; /* mobil a ser arquivado / ultimo mobil */
 
 		if (!mob.doc().isFinalizado()) { /* doc temporário só tem o geral */
-			dest = mob.doc().getCadastrante().getPessoaAtual();
+			dest = mob.doc().getCadastrante();
+			if (dest != null)
+			    dest = dest.getPessoaAtual();
 			lotaDest = mob.doc().getLotaCadastrante().getLotacaoAtual();
 			mobArq = mob; /*
 						 * mobil a ser arquivado (excluido) sempre vai ser o
@@ -1822,8 +1824,6 @@ public class ExDocumentoController extends ExController {
 					}
 					numBytes = baArquivo.length;
 					Long tamMax = TAMANHO_MAXIMO_CAPTURADO;
-					if (d.getOrgaoUsuario().podeGravarHcp()) 
-						tamMax = TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE;
 					
 					if (numBytes > tamMax) {
 						throw new AplicacaoException(

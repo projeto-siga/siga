@@ -68,7 +68,7 @@ public class IdentidadeController extends GiControllerSupport {
 		CpIdentidade ident = daoId(id);
 		Cp.getInstance().getBL().alterarIdentidade(ident, dataExpiracao, getIdentidadeCadastrante());
 		
-		result.forwardTo(this).lista(pessoaSel);
+		result.redirectTo(this).lista(pessoaSel);
 	}
 
 	@Transacional
@@ -81,7 +81,7 @@ public class IdentidadeController extends GiControllerSupport {
 		CpIdentidade ident = daoId(id);
 		Cp.getInstance().getBL().cancelarIdentidade(ident, getIdentidadeCadastrante());
 		
-		result.forwardTo(this).lista(pessoaSel);
+		result.redirectTo(this).lista(pessoaSel);
 	}
 
 	@Transacional
@@ -91,7 +91,7 @@ public class IdentidadeController extends GiControllerSupport {
 		if (id != null) {
 			CpIdentidade ident = daoId(id);
 			Cp.getInstance().getBL().bloquearIdentidade(ident, getIdentidadeCadastrante(), true);
-			result.forwardTo(this).lista(pessoaSel);
+			result.redirectTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada id");
 	}
@@ -103,7 +103,7 @@ public class IdentidadeController extends GiControllerSupport {
 		if (id != null) {
 			CpIdentidade ident = daoId(id);
 			Cp.getInstance().getBL().bloquearIdentidade(ident,getIdentidadeCadastrante(), false);
-			result.forwardTo(this).lista(pessoaSel);
+			result.redirectTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada id");
 	}
@@ -116,7 +116,7 @@ public class IdentidadeController extends GiControllerSupport {
 
 		if (pes != null) {
 			Cp.getInstance().getBL().bloquearPessoa(pes,getIdentidadeCadastrante(), true);
-			result.forwardTo(this).lista(pessoaSel);
+			result.redirectTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada a pessoa");
 	}
@@ -129,7 +129,7 @@ public class IdentidadeController extends GiControllerSupport {
 
 		if (pes != null) {
 			Cp.getInstance().getBL().bloquearPessoa(pes,getIdentidadeCadastrante(), false);
-			result.forwardTo(this).lista(pessoaSel);
+			result.redirectTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada a pessoa");
 	}

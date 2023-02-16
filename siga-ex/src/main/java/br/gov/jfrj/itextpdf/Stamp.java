@@ -66,80 +66,93 @@ public class Stamp {
 		}
 
 	}
-
+	
+	//Default Com Redimensionamento para folha A4
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
 			List<Long> idsAssinantes) throws DocumentException, IOException {
 
+		return stamp(abPdf, sigla, rascunho, copia, cancelado, semEfeito, internoProduzido, qrCode, mensagem,
+				paginaInicial, paginaFinal, cOmitirNumeracao, instancia, orgaoUsu, marcaDaguaDoModelo, idsAssinantes,
+				false);
+	}
+
+	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
+			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
+			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
+			List<Long> idsAssinantes, boolean tamanhoOriginal) throws DocumentException, IOException {
+			
 		if (idsAssinantes != null && idsAssinantes.size() > 0 && Prop.getBool("assinatura.estampar"))
 			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
 
 		PdfReader pdfIn = new PdfReader(abPdf);
-		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
-
-		try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
-
-			PdfWriter writer = PdfWriter.getInstance(doc, boA4);
-			doc.open();
-			PdfContentByte cb = writer.getDirectContent();
-
-			// Resize every page to A4 size
-			for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
-				int rot = pdfIn.getPageRotation(i);
-				float left = pdfIn.getPageSize(i).getLeft();
-				float bottom = pdfIn.getPageSize(i).getBottom();
-				float top = pdfIn.getPageSize(i).getTop();
-				float right = pdfIn.getPageSize(i).getRight();
-
-				PdfImportedPage page = writer.getImportedPage(pdfIn, i);
-				float w = page.getWidth();
-				float h = page.getHeight();
-
-				doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate() : PageSize.A4);
-				doc.newPage();
-
-				cb.saveState();
-
-				if (rot != 0 && rot != 180) {
-					float swap = w;
-					w = h;
-					h = swap;
-				}
-
-				float pw = doc.getPageSize().getWidth();
-				float ph = doc.getPageSize().getHeight();
-				double scale = Math.min(pw / w, ph / h);
-
-				// do my transformations :
-				cb.transform(AffineTransform.getScaleInstance(scale, scale));
-
-				if (!internoProduzido) {
-					cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
-					cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
-				}
-
-				if (rot != 0) {
-					double theta = -rot * (Math.PI / 180);
-					if (rot == 180) {
-						cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
-					} else {
-						cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+		
+		if (!tamanhoOriginal) { 
+			Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
+			try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
+	
+				PdfWriter writer = PdfWriter.getInstance(doc, boA4);
+				doc.open();
+				PdfContentByte cb = writer.getDirectContent();
+				
+				// Resize every page to A4 size
+				for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
+					int rot = pdfIn.getPageRotation(i);
+					float left = pdfIn.getPageSize(i).getLeft();
+					float bottom = pdfIn.getPageSize(i).getBottom();
+					float top = pdfIn.getPageSize(i).getTop();
+					float right = pdfIn.getPageSize(i).getRight();
+	
+					PdfImportedPage page = writer.getImportedPage(pdfIn, i);
+					float w = page.getWidth();
+					float h = page.getHeight();
+	
+					doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate() : PageSize.A4);
+					doc.newPage();
+	
+					cb.saveState();
+	
+					if (rot != 0 && rot != 180) {
+						float swap = w;
+						w = h;
+						h = swap;
 					}
-					if (rot == 90) {
-						cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
-					} else if (rot == 270) {
-						cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+	
+					float pw = doc.getPageSize().getWidth();
+					float ph = doc.getPageSize().getHeight();
+					double scale = Math.min(pw / w, ph / h);
+	
+					// do my transformations :
+					cb.transform(AffineTransform.getScaleInstance(scale, scale));
+	
+					if (!internoProduzido) {
+						cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
+						cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
 					}
+	
+					if (rot != 0) {
+						double theta = -rot * (Math.PI / 180);
+						if (rot == 180) {
+							cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
+						} else {
+							cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+						}
+						if (rot == 90) {
+							cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
+						} else if (rot == 270) {
+							cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+						}
+					}
+	
+					// put the page
+					cb.addTemplate(page, 0, 0);
+					cb.restoreState();
 				}
-
-				// put the page
-				cb.addTemplate(page, 0, 0);
-				cb.restoreState();
+				doc.close();
+	
+				abPdf = boA4.toByteArray();
 			}
-			doc.close();
-
-			abPdf = boA4.toByteArray();
 		}
 
 		try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {

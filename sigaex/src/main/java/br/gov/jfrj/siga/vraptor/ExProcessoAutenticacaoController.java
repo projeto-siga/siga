@@ -155,7 +155,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 
 	@Get("/public/app/processoArquivoAutenticado_stream")
 	public Download processoArquivoAutenticado_stream(final boolean assinado, final Long idMov,
-			final String certificadoB64, final String sigla) throws Exception {
+			final String certificadoB64, final String sigla, final boolean tamanhoOriginal) throws Exception {
 		String jwt = Utils.getCookieValue(request, "jwt-prot");
 		if (jwt == null) {
 			setDefaultResults();
@@ -194,7 +194,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null);
+			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null, tamanhoOriginal);
 			bytes = baos.toByteArray();
 		} else {			
 			if (idMov != null && idMov != 0) {

@@ -250,19 +250,19 @@
 	</siga:siga-modal>
 	
 		<script type="text/javascript" language="Javascript1.1">
-	/*function sbmt(offset) {
-		if (offset == null) {
-			offset = 0;
+		function sbmt(offset) {
+			if (offset == null) {
+				offset = 0;
+			}
+	
+			let form = document.forms['frm'];
+			form ["paramoffset"].value = offset;
+			form.action = "pesquisa_documentos_arquivados_transferencia";
+			form.method = "GET";
+			form ["p.offset"].value = offset;
+	
+			form.submit();
 		}
-
-		let form = document.forms['frm'];
-		form ["paramoffset"].value = offset;
-		form.action = "transferir_lote";
-		form.method = "GET";
-		form ["p.offset"].value = offset;
-
-		form.submit();
-	}*/
 
 		
 	

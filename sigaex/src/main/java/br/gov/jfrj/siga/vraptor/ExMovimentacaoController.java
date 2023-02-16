@@ -2820,6 +2820,7 @@ public class ExMovimentacaoController extends ExController {
 	
 	private static List<ExDocumento> docArquivadosParaTransferir;
 	private static int offsetTransferencia;
+	private static Long tamanho = 0L;;
 	@Get("app/expediente/mov/transferir_doc_arquivado_lote")
 	public void aTransferirDocArquivadoLote(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
 			int tipoResponsavel) {
@@ -2833,9 +2834,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("responsavelSel", Objects.isNull(responsavelSel) ? new DpPessoaSelecao() : responsavelSel);
 		result.include("lotacaoDestinatarioSel", Objects.isNull(lotacaoDestinatarioSel) ? new DpPessoaSelecao() : lotacaoDestinatarioSel);
 		result.include("tipoResponsavel", tipoResponsavel == 0 ? 1 : tipoResponsavel);
-		result.include("maxItems", 200);
-		result.include("tamanho", null);
-		result.include("currentPageNumber", (offsetTransferencia / 200 + 1));
+		result.include("maxItems", MAX_ITENS_PAGINA_DUZENTOS);
+		result.include("tamanho", tamanho);
+		result.include("currentPageNumber", (offsetTransferencia / MAX_ITENS_PAGINA_DUZENTOS + 1));
 		
 		docArquivadosParaTransferir = new ArrayList<ExDocumento>();
 	}
@@ -2853,7 +2854,6 @@ public class ExMovimentacaoController extends ExController {
 		marcadores.add(CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());
 		marcadores.add(CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId());
 		
-		Long tamanho = 0L;
 		if(responsavelSel.getId() != null) {
 			pessoa = CpDao.getInstance().consultar(responsavelSel.getId(), DpPessoa.class, false).getPessoaAtual();
 			tamanho = CpDao.getInstance().quantidadeMarcasPorPessoaMarcadores(pessoa, marcadores, true);
@@ -2867,12 +2867,12 @@ public class ExMovimentacaoController extends ExController {
 			return;
 		}
 		
-		/*offsetTransferencia = Objects.nonNull(paramoffset)
-				? ((paramoffset >= tamanho) ? ((paramoffset / 200 - 1) * 200)
+		offsetTransferencia = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_DUZENTOS - 1) * MAX_ITENS_PAGINA_DUZENTOS)
 						: paramoffset)
-				: 0;*/
+				: 0;
 
-		docArquivadosParaTransferir = dao().consultarArquivadosParaTransferirEmLote(pessoa.getIdInicial(), lotacao.getIdInicial(), null, null);
+		docArquivadosParaTransferir = dao().consultarArquivadosParaTransferirEmLote(pessoa.getIdInicial(), lotacao.getIdInicial(), offsetTransferencia, MAX_ITENS_PAGINA_DUZENTOS);
 		
 		if (docArquivadosParaTransferir	== null || docArquivadosParaTransferir.isEmpty()) {
 			result.include("msgCabecClass", "alert-danger");

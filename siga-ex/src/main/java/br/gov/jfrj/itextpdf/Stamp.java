@@ -77,22 +77,14 @@ public class Stamp {
 
 		PdfReader pdfIn = new PdfReader(abPdf);
 		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
-		// final SimpleDateFormat sdf = new SimpleDateFormat(
-		// "EEE MMM dd HH:mm:ss zzz yyyy");
-		// doc.add(new Meta("creationdate", sdf.format(new Date(0L))));
+
 		try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
-			/*-- Alterado de PdfWriter p/ PdfCopy(Essa classe permite manter os "stamps" originais do arquivo importado) 
-			por Marcos(CMSP) em 21/02/19 --*/
-			// PdfCopy writer = new PdfCopy(doc, boA4);
-			/*-- Alerado de volta pois ficou desabilitado o redimensionamento do PDF de modo
-			 *   a que os códigos de barra 2D e 3D não ficassem por cima do texto. Por Renato em 25/04/2019 --*/
+
 			PdfWriter writer = PdfWriter.getInstance(doc, boA4);
 			doc.open();
 			PdfContentByte cb = writer.getDirectContent();
 
 			// Resize every page to A4 size
-			//
-			// double thetaRotation = 0.0;
 			for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
 				int rot = pdfIn.getPageRotation(i);
 				float left = pdfIn.getPageSize(i).getLeft();
@@ -103,9 +95,6 @@ public class Stamp {
 				PdfImportedPage page = writer.getImportedPage(pdfIn, i);
 				float w = page.getWidth();
 				float h = page.getHeight();
-
-				// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
-				// + ", " + h);
 
 				doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate() : PageSize.A4);
 				doc.newPage();
@@ -144,28 +133,8 @@ public class Stamp {
 					}
 				}
 
-				// Logger.getRootLogger().error(
-				// "----- dimensoes: " + rot + ", " + w + ", " + h);
-				// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
-
-				// cb.transform(AffineTransform.getTranslateInstance(
-				// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
-
 				// put the page
 				cb.addTemplate(page, 0, 0);
-				/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
-				// writer.addPage(page);
-
-				// draw a red rectangle at the page borders
-				//
-				// cb.saveState();
-				// cb.setColorStroke(Color.red);
-				// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
-				// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
-				// .getPageSize(i).getTop());
-				// cb.stroke();
-				// cb.restoreState();
-
 				cb.restoreState();
 			}
 			doc.close();
@@ -239,7 +208,7 @@ public class Stamp {
 				if (stream != null) {
 					byte[] ab = IOUtils.toByteArray(stream);
 					final Image logo = Image.getInstance(ab);
-//				
+			
 					logo.scaleToFit(image39.getHeight(), image39.getHeight());
 					logo.setAbsolutePosition(
 							r.getWidth() - image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
@@ -268,8 +237,6 @@ public class Stamp {
 						over.addImage(logo);
 					}
 				}
-				// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
-				// mask.getScaledHeight() * 8, 100, 450);
 
 				if (qrCode != null) {
 					java.awt.Image imgQRCode = createQRCodeImage(qrCode);

@@ -136,7 +136,8 @@ public class ExMarcadorBL {
 			if (t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
 				// Quando é desentranhado, a marca deve ficar com o cadastrante da movimentação 
 				// em vez do cadastrante do documento
-				acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), dt, mov.getCadastrante(), mov.getLotaCadastrante());
+				acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), mov.getDtIniMov(),
+						mov.getCadastrante(), mov.getLotaCadastrante());
 			}
 //			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 //					|| t == ExTipoDeMovimentacao.TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {

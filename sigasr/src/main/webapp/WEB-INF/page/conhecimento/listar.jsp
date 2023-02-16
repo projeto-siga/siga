@@ -5,9 +5,10 @@
 <siga:pagina titulo="Edição de Conhecimento">
 	<jsp:include page="../main.jsp"></jsp:include>
 	<div class="gt-bd gt-cols clearfix">
-	    <div class="gt-content">
+	    <div class="container-fluid mb-2">
         	<h2>Cadastro de Conhecimento</h2>
-            <div class="gt-form gt-content-box">
+        	
+        	<div class="card card-body mb-2">
             	<form enctype="multipart/form-data">
                		<div class="gt-form-row">
 						<label>Item de Configuração</label> 

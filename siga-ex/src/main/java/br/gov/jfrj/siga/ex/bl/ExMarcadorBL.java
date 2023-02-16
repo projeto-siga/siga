@@ -133,6 +133,11 @@ public class ExMarcadorBL {
 				// com o cadastrante e sua lotação, em vez do responsável
 				acrescentarMarca(m, dt, mov.getCadastrante(), mov.getLotaCadastrante());
 			}
+			if (t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
+				// Quando é desentranhado, a marca deve ficar com o cadastrante da movimentação 
+				// em vez do cadastrante do documento
+				acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), dt, mov.getCadastrante(), mov.getLotaCadastrante());
+			}
 //			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 //					|| t == ExTipoDeMovimentacao.TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {
 //				m = CpMarcadorEnum.CAIXA_DE_ENTRADA.getId();
@@ -146,7 +151,6 @@ public class ExMarcadorBL {
 					|| t == ExTipoDeMovimentacao.DESOBRESTAR
 					|| t == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
 					|| t == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
-					|| t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
 					|| t == ExTipoDeMovimentacao.DESAPENSACAO) {
 				m = 0L;
 			}

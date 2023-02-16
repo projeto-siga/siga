@@ -443,6 +443,11 @@
 					</button>
 				</div>
 			</c:if>
+			<div id="panelPagPdfs" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
+				<a href="foo.html?page=1" target="painel">Page 1</a>
+				<a href="foo.html?page=2" target="painel">Page 2</a>
+				<a href="foo.html?page=3" target="painel">Page 3</a>
+			</div>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
 				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();verificarMensagem(this.src)" frameborder="0" scrolling="no"></iframe>
 			</div>
@@ -552,13 +557,6 @@
 
 		if ('${siga_cliente}' == 'GOVSP') {
 			// Para GOVSP com link buttons
-			
-			if ($('#radioPDFSemMarcas').hasClass('active') || $('#radioPDF').hasClass('active')){
-				if(arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
-					sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
-				}
-			}
-
 			var refSiglaDocPrincipal = '&sigla=${sigla}';
 			
 			if ($('#radioHTML').hasClass('active') && refHTML != '') {
@@ -572,6 +570,10 @@
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
 			} else {
+				if(arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
+					sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
+					criarLinksPaginacaoPdf();
+				}
 				if ($('#radioPDFSemMarcas').hasClass('active')) {
 					$('#pdfsemmarcaslink').removeClass('d-none');
 					$('#pdflink').addClass('d-none');
@@ -679,26 +681,60 @@
 	}
 	
 	function verificarTamanhoDocComplMB(refPDF){
+		sigaSpinner.mostrar();
 		$.ajax({
-			  url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivos?arquivo='+refPDF,
-			  type: 'GET',
-			  async: false,
-			  success: function(data) {
-				  try {
-					  var tamanhoArquivos = JSON.parse(data);
-					  localStorage.setItem('tamanhoArquivos', JSON.stringify(tamanhoArquivos));
-				  } catch(err){
-					  sigaSpinner.ocultar();
-				  }
-			  }	
+			url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivos?arquivo='+refPDF,
+			type: 'GET',
+			async: false,
+			success: function(data) {
+				 try {
+				  var tamanhoArquivos = JSON.parse(data);
+				  localStorage.setItem('tamanhoArquivos', JSON.stringify(tamanhoArquivos));
+				 } catch(err){
+				  sigaSpinner.ocultar();
+				 }
+			}	
 		});
+		sigaSpinner.ocultar();
 		return false;
 	}
 	
 	function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
-		verificarTamanhoDocComplMB(refPDF);
+		
 		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+		if (data == null || data ==''){
+			verificarTamanhoDocComplMB(refPDF);
+			data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+		}
 		return data != null ? data['excedeuMB'] : false;
+	}
+	
+	function criarLinksPaginacaoPdf(){
+		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+// 		var pagination = {
+// 				 total: result.length,
+// 				 per_page: itemsPerPage,    
+// 				 current_page: currentPage, 
+// 				 last_page: Math.ceil(result.length / itemsPerPage),
+// 				 from: ((currentPage -1) * itemsPerPage) + 1,
+// 				 to: currentPage  * itemsPerPage
+// 				};
+		if (data != null){
+			var quantTotalArquivos = data['quantTotalArquivos'];
+			var perLink = 4;
+			var lastLinkPage = Math.ceil(quantTotalArquivos / perLink);//6/4=2
+			var qtdLimiteLinkPage = 10;
+			
+			var strLinks = '';
+			for (let i = 1, cont = 0; i <= lastLinkPage; i++) {
+				strLinks = strLinks + ' <a href="foo.html?page=' + i + '" target="painel">Page ' + i + '</a> ';
+				if(++cont >= qtdLimiteLinkPage)
+					break;
+			}
+			
+			document.getElementById('panelPagPdfs').innerHTML = strLinks;
+		}
+		
 	}
 	
 </script>

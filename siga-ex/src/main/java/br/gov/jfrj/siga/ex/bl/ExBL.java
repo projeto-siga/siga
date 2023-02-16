@@ -8886,6 +8886,8 @@ public class ExBL extends CpBL {
 					cod
 			);
 
+			concluirAlteracao(mov);
+			
 			return mov;
 			
 		} catch (final Exception e) {

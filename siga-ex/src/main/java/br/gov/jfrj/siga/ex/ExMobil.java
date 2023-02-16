@@ -764,6 +764,29 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public ExMovimentacao getUltimaMovimentacaoNaoCancelada(ITipoDeMovimentacao tpMov, ITipoDeMovimentacao tpMovReversao) {
 		return getUltimaMovimentacao(tpMov != null ? new ITipoDeMovimentacao[] { tpMov } : new ITipoDeMovimentacao[] {}, tpMovReversao != null ? new ITipoDeMovimentacao[] { tpMovReversao } : new ITipoDeMovimentacao[] {}, this, false, null, false);
 	}
+	
+	public java.util.Date getDtUltimaMovimentacaoNaoCanceladaENaoCanceladora() {
+		
+		java.util.Date dtMov = null;
+		Set<ExMovimentacao> movSet = super.getExMovimentacaoSet();
+		
+		if (movSet == null || movSet.size() == 0)
+			return null;
+		
+		for (ExMovimentacao exMovimentacao : movSet) {
+			
+			if (exMovimentacao.isCancelada() && exMovimentacao.isCanceladora())
+				continue;
+			
+			if(exMovimentacao != null
+					&& exMovimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANOTACAO
+						&& exMovimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.APENSACAO
+							&& exMovimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.DESAPENSACAO)
+				dtMov = exMovimentacao.getData();
+		}
+				 
+		return dtMov;
+	}
 
 	/**
 	 * Retorna a última movimentação não cancelada que o móbil recebeu, com base

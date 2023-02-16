@@ -395,7 +395,15 @@ function sbmtDoc() {
 											pessoaParam="${mov.parte.resp.sigla}"/>
 									</td>
 									
-									<td class="${mov.disabled}">
+									
+									<c:choose>
+										<c:when test="${mov.exTipoMovimentacao == 'ARQUIVAMENTO_CORRENTE'}">
+										<td class="">
+										</c:when>
+										<c:otherwise>
+										<td class="${mov.disabled}">
+										</c:otherwise>
+									</c:choose>
 										${mov.descricao}
 										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}

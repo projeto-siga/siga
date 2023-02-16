@@ -1178,6 +1178,15 @@ public class ExMovimentacaoController extends ExController {
 			}
 	}
 
+	@Get
+	@Path("app/expediente/mov/abrir_Popup")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void abrirPopup(boolean popup, String motivo) throws Exception {
+		
+			result.include("motivo", motivo);
+			
+	}
+	
 	@Get("app/expediente/mov/juntar")
 	public void juntar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder

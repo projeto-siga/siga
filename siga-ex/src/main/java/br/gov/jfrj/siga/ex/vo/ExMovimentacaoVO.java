@@ -131,11 +131,14 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov,false);
 		}
 
+		if(mov.getExMovimentacaoCanceladora() != null && mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
+			descricao = "";
+		
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 
 		calcularClasse(mov);
 
-		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.MARCACAO) && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.RECEBIMENTO))
+		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.MARCACAO) && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.RECEBIMENTO) && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE))
 				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getExTipoMovimentacao() == (ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO);
 		
@@ -505,6 +508,10 @@ public class ExMovimentacaoVO extends ExVO {
 			if (!mov.isCancelada())
 				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
 						.params("dtIni", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false")
+						.exp(new CpPodeSempre()).build());
+			if (mov.isCancelada())
+				addAcao(AcaoVO.builder().nome("Motivo").nameSpace("/app/expediente/mov").acao("abrir_Popup")
+						.params("popup", "true").params("motivo", mov.getDescrMov())
 						.exp(new CpPodeSempre()).build());
 		}
 

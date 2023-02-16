@@ -695,7 +695,7 @@ public class Documento {
 						&& an.getArquivo().getMensagem().trim().length() > 0) {
 					sb.append("</td></tr><tr><td>");
 					sb.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
-					sb.append(an.getArquivo().getMensagem());
+					sb.append(an.getArquivo().getMensagem(true));
 					sb.append("</div>");
 				}
 				sb.append("</td></tr></table></div>");

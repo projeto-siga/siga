@@ -1,12 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -133,12 +127,6 @@ public class ExMarcadorBL {
 				// com o cadastrante e sua lotação, em vez do responsável
 				acrescentarMarca(m, dt, mov.getCadastrante(), mov.getLotaCadastrante());
 			}
-			if (t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
-				// Quando é desentranhado, a marca deve ficar com o cadastrante da movimentação 
-				// em vez do cadastrante do documento
-				acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), mov.getDtIniMov(),
-						mov.getCadastrante(), mov.getLotaCadastrante());
-			}
 //			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 //					|| t == ExTipoDeMovimentacao.TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {
 //				m = CpMarcadorEnum.CAIXA_DE_ENTRADA.getId();
@@ -152,6 +140,7 @@ public class ExMarcadorBL {
 					|| t == ExTipoDeMovimentacao.DESOBRESTAR
 					|| t == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
 					|| t == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
+					|| t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
 					|| t == ExTipoDeMovimentacao.DESAPENSACAO) {
 				m = 0L;
 			}
@@ -206,6 +195,8 @@ public class ExMarcadorBL {
 				}
 			}
 		}
+
+		acrescentarMarcadorEmAndamentoParaDesentranhamento();
 
 		return;
 	}
@@ -882,6 +873,21 @@ public class ExMarcadorBL {
 			}
 		}
 		return movRetorno;
+	}
+	
+	public void acrescentarMarcadorEmAndamentoParaDesentranhamento(){
+		ExMovimentacao ultimaMovimentacaoDesentranhamento = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
+
+		if (Objects.isNull(ultimaMovimentacaoDesentranhamento) 
+				|| Objects.isNull(ultimaMovimentacaoDesentranhamento.getExMovimentacaoRef())) {
+
+			return;
+		}
+			
+		acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), 
+				ultimaMovimentacaoDesentranhamento.getDtIniMov(),
+				ultimaMovimentacaoDesentranhamento.getCadastrante(),
+				ultimaMovimentacaoDesentranhamento.getLotaCadastrante());
 	}
 
 }

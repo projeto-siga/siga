@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -391,9 +392,15 @@ public class Documento {
 		getDocumento(baos, null, mob, mov, false, true, false, null, null);
 		return baos.toByteArray();
 	}
-
+	
 	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
 			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado)
+			throws Exception {
+		return getDocumento(os, uuid, mob, mov, completo, estampar, volumes, hash, certificado, null);
+	}
+
+	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
+			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado, Integer paramoffset)
 			throws Exception {
 		PdfReader reader;
 		int n;
@@ -431,7 +438,17 @@ public class Documento {
 
 		int f = 0;
 		long bytes = 0;
-		long garbage = 0;
+		long garbage = 0;		
+		
+		paramoffset = Objects.nonNull(paramoffset) ? (
+				(paramoffset >= ans.size()) ? ((paramoffset / 3 - 1) * 3): paramoffset -1) : 0;
+		
+		
+		//(paramoffset / MAX_ITENS_PAGINA_TRINTA - 1) * MAX_ITENS_PAGINA_TRINTA
+		Integer paramoffsetFim =  Objects.nonNull(paramoffset) ? (
+					paramoffset + 3 > ans.size() ? ans.size() - 1 : + paramoffset + 3) : ans.size() - 1;
+		ans = ans.subList(paramoffset, paramoffsetFim);
+		
 		int ansSize = ans.size();
 		try {
 			while (ans.size() > 0) {
@@ -446,27 +463,6 @@ public class Documento {
 				// an
 				// .getPaginaInicial(), an.getPaginaFinal(), request);
 
-//				String sigla = mob.getSigla();
-//				if (an.getArquivo() instanceof ExMovimentacao) {
-//					ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-//					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-//						sigla = m.getExMobil().getSigla();
-//				} else {
-//					sigla = an.getMobil().getSigla();
-//				}
-//
-//				byte[] ab = !estampar ? an.getArquivo().getPdf() : Stamp.stamp(an
-//						.getArquivo().getPdf(), sigla, an.getArquivo()
-//						.isRascunho(), an.isCopia(), an.getArquivo().isCancelado(), an
-//						.getArquivo().isSemEfeito(), an.getArquivo()
-//						.isInternoProduzido(), an.getArquivo().getQRCode(), an
-//						.getArquivo().getMensagem(), an.getPaginaInicial(),
-//						an.getPaginaFinal(), an.getOmitirNumeracao(),
-//						Prop.get("carimbo.texto.superior"), 
-//						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
-//						mob.getExDocumento().getMarcaDagua(), 
-//						an.getMobil().getDoc().getIdsDeAssinantes());	
-				
 				byte[] ab = obterBytesDocumento(mob, estampar, an);
 				bytes += ab.length;
 

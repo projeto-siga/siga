@@ -443,11 +443,7 @@
 					</button>
 				</div>
 			</c:if>
-			<div id="panelPagPdfs" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
-				<a href="foo.html?page=1" target="painel">Page 1</a>
-				<a href="foo.html?page=2" target="painel">Page 2</a>
-				<a href="foo.html?page=3" target="painel">Page 3</a>
-			</div>
+			<div id="panelPagPdfs" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;"></div>
 			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
 				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();verificarMensagem(this.src)" frameborder="0" scrolling="no"></iframe>
 			</div>
@@ -543,7 +539,7 @@
 	}
 
 	//Nato: convem remover as outras maneiras de chamar o resize() e deixar apenas o jquery.
-	function exibir(refHTML, refPDF, semMarcas) {
+	function exibir(refHTML, refPDF, semMarcas, paramoffset) {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
 		if('${excedeuTamanhoMax}' === 'true' && !($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked)) {
@@ -569,19 +565,31 @@
 					ifr.addEventListener("load", resize, false);
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
+				//Limpar links docs grandes volumes
+				document.getElementById('panelPagPdfs').innerHTML = "";
 			} else {
 				if(arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
-					sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
-					criarLinksPaginacaoPdf();
+					if(paramoffset == null){
+						sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
+						//Primeiro Carregamento Link
+						paramoffset = '&paramoffset=1';
+					}
+					criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset);
 				}
+				paramoffset = paramoffset != null ? paramoffset : ""
+				
 				if ($('#radioPDFSemMarcas').hasClass('active')) {
-					$('#pdfsemmarcaslink').removeClass('d-none');
+					//Remocao de link download completo
+					if(paramoffset == null)
+						$('#pdfsemmarcaslink').removeClass('d-none');
 					$('#pdflink').addClass('d-none');
-					ifr.src = path + refPDF + "&semmarcas=1";
+					ifr.src = path + refPDF + "&semmarcas=1" + paramoffset ; 
 				} else {
-					$('#pdflink').removeClass('d-none');
+					//Remocao de link download completo
+					if(paramoffset == null)
+						$('#pdflink').removeClass('d-none');
 					$('#pdfsemmarcaslink').addClass('d-none');
-					ifr.src = path + refPDF + refSiglaDocPrincipal;
+					ifr.src = path + refPDF + refSiglaDocPrincipal + paramoffset;
 				}
 				
 				if(!refPDF.includes("completo=1")) {
@@ -709,7 +717,7 @@
 		return data != null ? data['excedeuMB'] : false;
 	}
 	
-	function criarLinksPaginacaoPdf(){
+	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
 		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
 // 		var pagination = {
 // 				 total: result.length,
@@ -721,18 +729,23 @@
 // 				};
 		if (data != null){
 			var quantTotalArquivos = data['quantTotalArquivos'];
-			var perLink = 4;
+			var perLink = 3;
 			var lastLinkPage = Math.ceil(quantTotalArquivos / perLink);//6/4=2
 			var qtdLimiteLinkPage = 10;
-			
+			var to = 1;
+			var strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
 			var strLinks = '';
+			var numOffsetAtual = paramoffset.match(/\d+/)[0]; 
+			
 			for (let i = 1, cont = 0; i <= lastLinkPage; i++) {
-				strLinks = strLinks + ' <a href="foo.html?page=' + i + '" target="painel">Page ' + i + '</a> ';
+				let docFinal = to  * perLink > quantTotalArquivos ? quantTotalArquivos : to * perLink; 
+				strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual==to ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", to, "`);'>", to, " de ", docFinal,"</a> ");
+				to = to  * perLink;
 				if(++cont >= qtdLimiteLinkPage)
 					break;
 			}
 			
-			document.getElementById('panelPagPdfs').innerHTML = strLinks;
+			document.getElementById('panelPagPdfs').innerHTML = strInnerHtml.concat(strLinks);
 		}
 		
 	}

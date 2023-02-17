@@ -98,7 +98,7 @@ public class ExArquivoController extends ExController {
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
 			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, 
-							boolean iframe, final String nomeAcao) throws Exception {
+							boolean iframe, final String nomeAcao, final Integer paramoffset) throws Exception {
 		try {						
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();
@@ -183,7 +183,7 @@ public class ExArquivoController extends ExController {
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
-						filename, contextpath, servernameport);
+						filename, contextpath, servernameport, paramoffset);
 				result.redirectTo("/app/arquivo/status/" + mob.getCodigoCompacto() + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);
 				return null;

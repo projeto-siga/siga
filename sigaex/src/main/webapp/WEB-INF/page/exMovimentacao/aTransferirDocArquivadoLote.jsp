@@ -34,7 +34,7 @@
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="form-group">
-								<label for="tipoResponsavel">usuário/unidade</label> 
+								<label for="tipoResponsavel">Usuário/<fmt:message key="usuario.lotacao"/></label> 
 								<select class="custom-select"
 									id="tipoResponsavel" name="tipoResponsavel"
 									value="${tipoResponsavel}"
@@ -79,7 +79,7 @@
 							<div class="row ">
 								<div class="col-sm-3">
 									<div class="form-group">
-										<label for="tipoDestinatario">Unidade</label> 
+										<label for="tipoDestinatario"><fmt:message key="usuario.lotacao"/></label> 
 										 <select class="custom-select"
 											id="tipoDestinatario" name="tipoDestinatario"
 											value="${tipoDestinatario}"
@@ -203,8 +203,6 @@
 														isVraptor="true"
 														sigla="${documento.doc.lotaSubscritor.sigla}"
 														descricao="${documento.doc.lotaSubscritor.descricao}" /></td>
-												<td class="text-center"></td>
-												<td class="text-center"></td>
 												<td class="text-center"></td>
 												<td class="text-center"></td>
 											</c:if>
@@ -364,7 +362,7 @@
 			}
 			
 			if (lotaDestinoSelId == "") {
-				sigaModal.alerta('Necessário adicionar uma unidade de DESTINO para realizar a transferência.');
+				sigaModal.alerta('Necessário adicionar uma <fmt:message key="usuario.lotacao"/> de DESTINO para realizar a transferência.');
 				return false;
 			}
 			

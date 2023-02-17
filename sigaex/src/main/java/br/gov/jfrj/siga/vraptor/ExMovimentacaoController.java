@@ -2818,12 +2818,9 @@ public class ExMovimentacaoController extends ExController {
 
 	}
 	
-	private static List<ExDocumento> docArquivadosParaTransferir;
-	private static int offsetTransferencia;
-	private static Long tamanho = 0L;;
 	@Get("app/expediente/mov/transferir_doc_arquivado_lote")
 	public void aTransferirDocArquivadoLote(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
-			int tipoResponsavel) {
+			Long tamanho, int offsetTransferencia, List<ExDocumento> docArquivadosParaTransferir, int tipoResponsavel) {
 
 		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
 		
@@ -2846,7 +2843,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotacaoDestinatarioSel, int tipoResponsavel) {
 		
 		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
-		
+		List<ExDocumento> docArquivadosParaTransferir = null;
 		DpPessoa pessoa = new DpPessoa();
 		DpLotacao lotacao = new DpLotacao();
 		List<Long> marcadores = new ArrayList<Long>();
@@ -2854,6 +2851,8 @@ public class ExMovimentacaoController extends ExController {
 		marcadores.add(CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());
 		marcadores.add(CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId());
 		
+		Long tamanho = 0L;
+		int offsetTransferencia = 0;
 		if(responsavelSel.getId() != null) {
 			pessoa = CpDao.getInstance().consultar(responsavelSel.getId(), DpPessoa.class, false).getPessoaAtual();
 			tamanho = CpDao.getInstance().quantidadeMarcasPorPessoaMarcadores(pessoa, marcadores, true);
@@ -2862,8 +2861,9 @@ public class ExMovimentacaoController extends ExController {
 			tamanho = CpDao.getInstance().quantidadeMarcasPorLotacaoMarcadores(lotacao, marcadores, true);
 		} else {
 			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Necessario selecionar um usuário/unidade de origem.");
-			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
+			result.include("mensagemCabec", "Necessario selecionar um usuário/" +SigaMessages.getMessage("usuario.lotacao") + " de origem.");
+			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+					tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
 			return;
 		}
 		
@@ -2877,11 +2877,13 @@ public class ExMovimentacaoController extends ExController {
 		if (docArquivadosParaTransferir	== null || docArquivadosParaTransferir.isEmpty()) {
 			result.include("msgCabecClass", "alert-danger");
 			result.include("mensagemCabec", "Nenhum documento encontrado para o usuário " + responsavelSel.getDescricao());
-			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
+			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+					tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
 			return;
 		}
 			
-		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
+		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+				tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
 	}
 	
 	@Transacional
@@ -2942,11 +2944,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("itens", null);
 		result.include("lotaTitular", getLotaTitular());
-		//result.include("lotaResponsavelSel", lotaResponsavelSel);
-//		result.include("substituicao", substituicao);
-		//result.include("responsavelSel", responsavelSel);
 		
-		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, tipoResponsavel);
+		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+				0L, 0, null, tipoResponsavel);
 	}
 	
 	@Get("app/expediente/mov/arquivar_intermediario_lote")

@@ -8861,7 +8861,7 @@ public class ExBL extends CpBL {
 	public ExMovimentacao enviarParaVisualizacaoExterna(final String nmPessoa, final String email, ExDocumento doc,
 											  final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 											  final String cod, final String url) throws AplicacaoException {
-
+		
 
 		final Date dt = ExDao.getInstance().dt();
 		final String dest = "Destinatário: " + nmPessoa + ". " + "e-mail: " + email;
@@ -8875,7 +8875,7 @@ public class ExBL extends CpBL {
 
 			ExMovimentacao mov = gravarNovaMovimentacao(
 					ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
-					cadastrante, lotaCadastrante, doc.getMobilGeral(), dt, null, null,
+					cadastrante, lotaCadastrante, doc.getPrimeiroMobil(), dt, null, null,
 					null, null, null, descrMov);
 
 			Cp.getInstance().getBL().gravarNovoToken(

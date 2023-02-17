@@ -325,7 +325,6 @@ public class ExMarcadorBL {
 	}
 
 	protected void calcularMarcasGeral() {
-		acrescentarMarcadoresEmAndamento();
 		acrescentarMarcadoresElaboracao();
 
 		// Todas as outras só fazem sentido quando existem movimentações
@@ -369,14 +368,6 @@ public class ExMarcadorBL {
 				acrescentarMarca(CpMarcadorEnum.REVISAR.getId(), mob.doc().getDtRegDoc(),
 						mob.getExDocumento().getSubscritor(), null);
 			}
-		}
-	}
-	
-	protected void acrescentarMarcadoresEmAndamento() {
-		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA)) {
-			acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), mov.getDtIniMov(), mov.getCadastrante(),
-					mov.getLotaCadastrante());
-			return;
 		}
 	}
 

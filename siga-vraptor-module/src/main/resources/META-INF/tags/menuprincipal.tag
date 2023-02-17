@@ -195,7 +195,7 @@
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD:Módulo de Cadastro')}">
 									<li><a class="dropdown-item"
-										href="${f:getURLSistema('/siga.sgp.recad')}">Recadastramento</a></li>
+										href="${f:getURLSistema('/siga.sgp.recad')}">Recadastramento de Acúmulo de Cargos</a></li>
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TCU:Módulo de Dados para o TCU')}">
@@ -216,6 +216,18 @@
 								</c:if>
 							</ul></li>
 					</c:if>
+				</c:if>
+				
+				<c:if																         
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SECC: Módulo serviço de compra e contratação')}"> 
+					<li class="dropdown-submenu"><a href="javascript:void(0);"
+							class="dropdown-item dropdown-toggle">Compras e Contratações</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a class="dropdown-item" href="${f:resource('/secc.ui.url')}">Memorando de aquisição</a>
+								</li>
+							</ul>
+					</li>
 				</c:if>
 
 			</ul></li>

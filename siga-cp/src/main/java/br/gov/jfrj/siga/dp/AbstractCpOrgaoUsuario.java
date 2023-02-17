@@ -147,6 +147,11 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 
 	@Column(name = "HIS_ATIVO")
 	private Integer hisAtivo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU_INICIAL", insertable = false, updatable = false)
+	@Desconsiderar
+	private CpOrgaoUsuario orgaoUsuarioInicial;
 
 	public Integer getIsExternoOrgaoUsu() {
 		return isExternoOrgaoUsu;
@@ -174,6 +179,14 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 		}
 		return false;
 
+	}
+
+	public CpOrgaoUsuario getOrgaoUsuarioInicial() {
+		return orgaoUsuarioInicial;
+	}
+
+	public void setOrgaoUsuarioInicial(CpOrgaoUsuario orgaoUsuarioInicial) {
+		this.orgaoUsuarioInicial = orgaoUsuarioInicial;
 	}
 
 	public String getBairroOrgaoUsu() {

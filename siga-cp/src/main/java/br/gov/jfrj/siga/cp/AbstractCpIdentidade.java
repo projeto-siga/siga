@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,6 +38,8 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
+
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ZERO;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
@@ -147,7 +150,16 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	
 	@Column(name = "PIN_IDENTIDADE")
 	private String pinIdentidade;
-
+	
+	@Column(name = "PIN_CONTADOR_TENTATIVA")
+	@Desconsiderar
+	private Integer pinContadorTentativa;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	@Desconsiderar
+	private CpIdentidade identidadeInicial;
+	
 
 	/*
 	 * (non-Javadoc)
@@ -423,4 +435,29 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	public void setPinIdentidade(String pinIdentidade) {
 		this.pinIdentidade = pinIdentidade;
 	}
+	
+	public Integer getPinContadorTentativa() {
+		return pinContadorTentativa;
+	}
+
+	/**
+	 * @param pinContadorTentativa
+	 *        Contador de tentativas malsucedidas e consecutivas de match com o PIN da identidade
+	 */
+	public void setPinContadorTentativa(Integer pinContadorTentativa) {
+		this.pinContadorTentativa = pinContadorTentativa;
+	}
+	
+	@PrePersist
+	private void aplicaDefaultPinContadorTentativa() {
+		if (pinContadorTentativa == null) {
+			pinContadorTentativa = INTEGER_ZERO;
+		}
+	}
+	
+
+	public CpIdentidade getIdentidadeInicial() {
+		return identidadeInicial;
+	}
+
 }

@@ -30,7 +30,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -60,6 +62,7 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.logging.Logger;
@@ -70,6 +73,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import com.auth0.jwt.JWTSigner;
 import com.crivano.swaggerservlet.ISwaggerRequest;
@@ -106,6 +110,7 @@ import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.base.util.SetUtils;
+import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
@@ -172,6 +177,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPorPorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComCertificadoDigital;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelar;
@@ -1071,8 +1077,15 @@ public class ExBL extends CpBL {
 		String html = new String();
 	
 		if(mov == null) {
+			String nomeModelo = "";
+			nomeModelo = doc.getExModelo().getNmMod();
+			if(nomeModelo.contains(":")) {
+				nomeModelo = StringEscapeUtils.escapeHtml4(nomeModelo.substring(nomeModelo.indexOf(":")+1, nomeModelo.length()).trim());
+			}
+			
 			html = doc.getConteudoBlobHtmlString();
-			html = html.substring(html.indexOf("FIM TITULO -->")+14, html.indexOf("<!-- INICIO ASSINATURA -->"));
+			html = html.substring(html.toLowerCase().indexOf(nomeModelo.toLowerCase())+nomeModelo.length(), html.indexOf("<!-- INICIO ASSINATURA -->"));
+			html = html.replace(" <strong>Assunto:</strong> ", "");
 			
 			Integer posicao = -1;
 			Integer posicaoFinal = -1;
@@ -1089,19 +1102,16 @@ public class ExBL extends CpBL {
 			}
 			if(posicaoFinal != -1)
 				html = palavraFinal.getGerundio() + ":\n"+ HtmlToPlainText.getText(html.substring(posicaoFinal + palavraFinal.getImperativo().length()));
-			else 
-				html = HtmlToPlainText.getText(html);
+			else {
+				
+				html = new HtmlToPlainText().getPlainText(Jsoup.parse(html), 0);
+
+				html = Texto.removerQuebraDeLinhasExtras(html);
+				html = html.substring(0, html.lastIndexOf("\n"));
+			}
 		} else {
 			ExMovimentacao exMov = ExDao.getInstance().consultar(mov.getIdDoc(), ExMovimentacao.class, false);
-			try {
-				byte[] texto = exMov.getConteudoBlobMov2();
-				if (texto != null)
-					html =  new String(texto, "ISO-8859-1");
-				
-			} catch (UnsupportedEncodingException e) {
-				throw new AplicacaoException(
-						"Não foi possível recuperar o agendamento já cadastrado");
-			}
+			html = new String(exMov.getConteudoBlobMov());
 		}
 		return html;
 	}
@@ -1715,7 +1725,7 @@ public class ExBL extends CpBL {
 					fValido = true;
 					usuarioDoToken = doc.getSubscritor();
 				}
-				if (!fValido) {
+				if (!fValido && doc.getCadastrante() != null) {
 					fValido = (lMatricula.equals(doc.getCadastrante().getMatricula())) && (doc.getExTipoDocumento()
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
@@ -1733,7 +1743,7 @@ public class ExBL extends CpBL {
 				}
 				
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 			}
@@ -1743,7 +1753,7 @@ public class ExBL extends CpBL {
 					fValido = true;
 					usuarioDoToken = doc.getSubscritor();
 				}
-				if (!fValido) {
+				if (!fValido && doc.getCadastrante() != null) {
 					fValido = (lCPF.equals(doc.getCadastrante().getCpfPessoa())) && (doc.getExTipoDocumento()
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
@@ -1760,7 +1770,7 @@ public class ExBL extends CpBL {
 					}
 
 				if (!fValido && tpMovAssinatura == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
-						&& Ex.getInstance().getComp().pode(ExPodeAutenticarDocumento.class, cadastrante, lotaCadastrante, doc)) {
+						&& Ex.getInstance().getComp().pode(ExPodeAutenticarComCertificadoDigital.class, cadastrante, lotaCadastrante, doc)) {
 					fValido = true;
 				}
 				
@@ -2001,8 +2011,7 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException("Não há um PIN cadastrado para registrar assinatura. Utilize outra forma ou cadastre um PIN se disponível clicando <a href='/siga/app/pin/cadastro'>aqui</a>.");
 				}
 				
-				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
-				senhaValida = id.getPinIdentidade().equals(hashAtual);
+				senhaValida = Cp.getInstance().getBL().validaPinIdentidade(senhaSubscritor, id);
 			} else {
 				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
 				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
@@ -2045,7 +2054,7 @@ public class ExBL extends CpBL {
 						if (doc.getSubscritor() != null && subscritor.equivale(doc.getSubscritor())) {
 							fValido = true;
 						}
-						if (!fValido) {
+						if (!fValido && doc.getCadastrante() != null) {
 							fValido = (subscritor.equivale(doc.getCadastrante())) && (doc.getExTipoDocumento()
 									.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 						}
@@ -2160,7 +2169,7 @@ public class ExBL extends CpBL {
 			}
 		} else {
 			if (fSubstituindoSubscritor) { 
-				assinante = titular; 
+				assinante = titular.getPessoaAtual();
 			} else {
 				assinante = cosignatario;	
 			}
@@ -2633,7 +2642,13 @@ public class ExBL extends CpBL {
 
 	}
 
-	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
+	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc) 
+			throws Exception {
+		
+		cancelarDocumento(cadastrante, lotaCadastrante, doc, null);
+	}
+	
+	public void cancelarDocumento(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc, String motivo)
 			throws Exception {
 		if (Prop.isGovSP() && doc.getMobilDefaultParaReceberJuntada().temDocumentosJuntados()) {
 			throw new RegraNegocioException("Não é possível efetuar o cancelamento, pois o documento possui documento(s) juntado(s)");
@@ -2643,7 +2658,7 @@ public class ExBL extends CpBL {
 			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
 				getExConsTempDocCompleto().removerCossigsSubscritorVisTempDocsComplFluxosRefazerCancelarExcluirDoc(cadastrante, lotaCadastrante, doc);
 			}
-			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
+			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc, motivo);
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
@@ -2652,8 +2667,14 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	private void cancelarMovimentacoes(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
+	private void cancelarMovimentacoes(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc) 
 			throws Exception {
+
+		cancelarMovimentacoes(cadastrante, lotaCadastrante, doc, null);
+	}
+
+	private void cancelarMovimentacoes(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc,
+									   String motivo) throws Exception {
 		// Cancelar todas as criações
 		//
 		for (ExMobil mob : doc.getExMobilSet()) {
@@ -2661,7 +2682,7 @@ public class ExBL extends CpBL {
 				ExMovimentacao mov = mob.getUltimaMovimentacaoNaoCancelada();
 				if (mov == null)
 					break;
-				cancelarMovimentacao(cadastrante, lotaCadastrante, mob);
+				cancelarMovimentacao(cadastrante, lotaCadastrante, mob, motivo);
 			}
 		}
 	}
@@ -2855,6 +2876,11 @@ public class ExBL extends CpBL {
 	}
 
 	public void cancelarMovimentacao(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob) {
+		cancelarMovimentacao(cadastrante, lotaCadastrante, mob, null);
+	}
+	
+	public void cancelarMovimentacao(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+									 final String motivo) {
 		try {
 			boolean indexar = false;
 			SortedSet<ExMobil> set = null;
@@ -2902,6 +2928,7 @@ public class ExBL extends CpBL {
 						ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, cadastrante, lotaCadastrante,
 						m, null, null, null, null, null, null);
 
+				mov.setDescrMov(motivo);
 				gravarMovimentacao(mov);
 
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
@@ -3349,7 +3376,7 @@ public class ExBL extends CpBL {
 			dao().gravar(doc);
 			
 			if (doc.getSubscritor() != null) {
-				if (!doc.getCadastrante().equivale(doc.getSubscritor()) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
+				if ((doc.getCadastrante() == null || !doc.getCadastrante().equivale(doc.getSubscritor())) && usuarioExternoTemQueAssinar(doc, doc.getSubscritor())) {
 					enviarEmailParaUsuarioExternoAssinarDocumento(doc, doc.getSubscritor());
 				}
 			}	
@@ -3808,7 +3835,7 @@ public class ExBL extends CpBL {
 				doc.setCadastrante(cadastrante);
 			if (doc.getLotaCadastrante() == null) {
 				doc.setLotaCadastrante(lotaTitular);
-				if (doc.getLotaCadastrante() == null)
+				if (doc.getLotaCadastrante() == null && doc.getCadastrante() != null)
 					doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 			}
 			if (doc.getDtRegDoc() == null) {
@@ -5724,16 +5751,18 @@ public class ExBL extends CpBL {
 		List<ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.VINCULACAO_PAPEL, true);
 		StringBuilder msg = new StringBuilder();
 		movs.forEach(m -> {
-			if(responsavel != null && responsavel.equals(m.getSubscritor()) && papel.equals(m.getExPapel())) {
-				msg.append("Usuário ").append(m.getSubscritor().getNomePessoa()).append(" já foi definido");
-			} else {
-				if(responsavel == null && m.getSubscritor() == null && lotaResponsavel.equals(m.getLotaSubscritor()) && papel.equals(m.getExPapel())) {
-					msg.append("Unidade ").append(m.getLotaSubscritor().getNomeLotacao()).append(" já foi definida");
+			if(papel !=null && m.getExPapel() !=null) {
+				if(responsavel != null && responsavel.equals(m.getSubscritor()) && papel.getIdPapel().equals(m.getExPapel().getIdPapel())) {
+					msg.append("Usuário ").append(m.getSubscritor().getNomePessoa()).append(" já foi definido");
+				} else {
+					if(responsavel == null && m.getSubscritor() == null && lotaResponsavel.equals(m.getLotaSubscritor()) && papel.getIdPapel().equals(m.getExPapel().getIdPapel())) {
+						msg.append("Unidade ").append(m.getLotaSubscritor().getNomeLotacao()).append(" já foi definida");
+					}
 				}
-			}
-			if (msg.length() > 0 ) {
-				msg.append(" como ").append(papel.getDescPapel()).append(" no acompanhamento do documento ").append(mob.getDnmSigla());
-				throw new AplicacaoException(msg.toString());
+				if (msg.length() > 0 ) {
+					msg.append(" como ").append(papel.getDescPapel()).append(" no acompanhamento do documento ").append(mob.getDnmSigla());
+					throw new AplicacaoException(msg.toString());
+				}
 			}
 		});
 		vincularPapel(cadastrante, lotaCadastrante, mob, dtMov, lotaResponsavel, 
@@ -8465,8 +8494,11 @@ public class ExBL extends CpBL {
 		 *getNmFuncaoSubscritor = [0] - personalizarFuncao [1] - personalizarUnidade [2] - personalizarLocalidade [3] - personalizarNome
 		 */
 		
-		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA && movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO) {
-			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura.");
+		if (movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_COM_SENHA 
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA
+				&& movimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO) {
+			throw new RuntimeException("Não é possível extrair personalização de movimentações que não são de assinatura ou autenticação.");
 		}
 		
 		SortedSet<ExMovimentacao> listaMovimentacoes = movimentacao.mob().getExMovimentacaoSet();

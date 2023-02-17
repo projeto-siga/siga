@@ -8,6 +8,7 @@ import br.com.caelum.vraptor.interceptor.SimpleInterceptorStack;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.uteis.SafeListCustom;
 
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document.OutputSettings;
 
 
 /**
@@ -34,7 +37,8 @@ import org.apache.logging.log4j.Logger;
  * 			Para Requests que podem conter scripts como a criação de modelos</li>
  *	 <li><b>Checagem Restritiva</b>: <i>(Default)</i></li>
  *   <li><b>Checagem Permissiva</b>: Adicionar ao método do Controller a anotação RequestParamsPermissiveCheck. 
- * 			Para Request que devem conter body HTML</li>
+ * 			Para Request que devem conter body HTML. 
+ * 			Nesse caso é aplicado apenas o Clean.</li>
  * </ul>
  * 
  *
@@ -58,12 +62,42 @@ public class RequestParamsCheckInterceptor {
 	@AroundCall
     public void intercept(SimpleInterceptorStack stack) {
     	
+    	boolean permissiveCheckControl = method.containsAnnotation(RequestParamsPermissiveCheck.class);
+    	
     	parameters = request.getParameterMap();
 		parameters.forEach((key, value) -> {
-			if (!RequestParamsCheck.checkParameter(value[0],method.containsAnnotation(RequestParamsPermissiveCheck.class))) {
-				log(value[0]);
-				throw new AplicacaoException("Conteúdo inválido. Por favor, revise os valores fornecidos.");
+			
+			String dirtyParam = value[0];
+			
+			if (permissiveCheckControl) {
+				if (!"".equals(dirtyParam) && RequestParamsCheck.hasHTMLTags(dirtyParam)) {
+					//Ajusta saída do Clean
+					OutputSettings outputSettings = RequestParamsCheck.buildOutputSettings();
+					
+					/*URLs permissivas aplica apenas o Clean de acordo com a SafeList */
+					//Preserve Comments
+					String cleanParam = Jsoup.clean(RequestParamsCheck.replaceCommentTag(dirtyParam), "", SafeListCustom.relaxedCustom(),outputSettings);
+					
+					//Restore Comments
+					cleanParam = RequestParamsCheck.restoreCommentTag(cleanParam);
+					
+					value[0] = cleanParam;	
+					
+					//Por hora, registra alterações para verificar possíveis ajustes na Safelist e CKEDITOR.config.disallowedContent
+					if (!Jsoup.parseBodyFragment(dirtyParam, "").outputSettings(outputSettings).body().html().equals(cleanParam)) {
+						log(dirtyParam,permissiveCheckControl); 
+					}
+					cleanParam = null;
+				}				
+			} else {
+				if (!RequestParamsCheck.checkParameter(dirtyParam,permissiveCheckControl)) {
+					log(dirtyParam,permissiveCheckControl);
+					throw new AplicacaoException("Conteúdo inválido. Por favor, revise os valores fornecidos.");
+				}				
 			}
+			
+			dirtyParam = null;
+			
 		});
 		
 		stack.next();
@@ -74,7 +108,7 @@ public class RequestParamsCheckInterceptor {
         return !method.containsAnnotation(RequestParamsNotCheck.class);
     }
     
-    private void log(String param) {
+    private void log(String param, boolean permissive) {
     	String siglaCadastrante;
     	DpPessoa cadastrante;
     	
@@ -87,7 +121,7 @@ public class RequestParamsCheckInterceptor {
 			siglaCadastrante = "Não identificado";
 		}
     	
-    	logger.log(BLAME, "[Detectado XSS] - Request: {}; Param XSS: {}; IP de Origem: {}; Usuário: {};", 
+    	logger.log(BLAME, (permissive ? "[Clean Param]" : "[Detectado XSS]") + " - Request: {}; Param XSS: {}; IP de Origem: {}; Usuário: {};", 
     			request, 
     			param, 
     			HttpRequestUtils.getIpAudit(request), 

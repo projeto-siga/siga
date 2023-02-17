@@ -5,9 +5,10 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
 
 <c:if test="${not empty itens}">
+    <p>Atenção: Na Reclassificação em Lote – Permitido até 200 documentos por operação.</p>
     <div class="gt-content-box gt-for-table">
         <table class="table table-hover table-striped">
-            <thead class="${thead_color} align-middle text-center">
+            <thead class="thead-dark align-middle text-center">
             <tr>
                 <th width="3%" align="center">
                     <input type="checkbox" id="checkall" onclick="checkUncheckAll(this)"/>
@@ -21,7 +22,7 @@
             </thead>
             <tbody class="table-bordered">
 
-            <siga:paginador maxItens="50" maxIndices="50" totalItens="${tamanho}"
+            <siga:paginador maxItens="200" maxIndices="50" totalItens="${tamanho}"
                             itens="${itens}" var="documento">
                 <c:set var="x" scope="request">
                     chk_${documento.idDoc}

@@ -30,7 +30,7 @@ td.tramitacoes.fa-fw>a.disabled {
 		frm.method = "GET";
 	}
 </script>
-<div class="row mb-3">
+<div class="row mb-3 mt-2">
 	<div class="col">		
 		<button type="button" class="btn btn-outline-success" id="exportar" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
 	</div>

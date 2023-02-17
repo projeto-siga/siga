@@ -623,21 +623,9 @@ public class ExServiceImpl implements ExService {
 				cadastrante = cadastranteParser.getPessoa();
 				lotaCadastrante = cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa();
 
-				if (cadastrante == null && lotaCadastrante != null) {
-					if (subscritor != null)
-						cadastrante = subscritor;
-					else {
-						List<DpPessoa> pessoas = dao().pessoasPorLotacao(lotaCadastrante.getId(), false, false);
-						if (pessoas == null || pessoas.size() == 0)
-							throw new AplicacaoException(
-									"Não foi possível eleger um cadastrante para a lotação informada.");
-						cadastrante = pessoas.get(0);
-					}
-				}
-
-				if (cadastrante == null || lotaCadastrante == null)
+				if (lotaCadastrante == null)
 					throw new AplicacaoException(
-							"Não foi possível encontrar um cadastrante ou uma lotação cadastrante com a matrícula informada.");
+							"Não foi possível encontrar uma lotação cadastrante com a matrícula informada.");
 
 				if (cadastrante != null && cadastrante.isFechada())
 					throw new AplicacaoException("O cadastrante não está mais ativo.");
@@ -841,6 +829,8 @@ public class ExServiceImpl implements ExService {
 	public String cadastrante(String codigoDocumentoVia) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
+			if (mob.doc().getCadastrante() == null)
+			    return null;
 			return SiglaParser.makeSigla(mob.doc().getCadastrante(), mob.doc().getLotaCadastrante());
 		}
 	}

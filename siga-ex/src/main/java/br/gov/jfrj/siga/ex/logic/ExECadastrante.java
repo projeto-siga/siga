@@ -30,7 +30,7 @@ public class ExECadastrante implements Expression {
 
 	@Override
 	public boolean eval() {
-		return Utils.equivale(doc.getCadastrante(), titular) || Utils.equivale(doc.getLotaCadastrante(), lotaTitular);
+		return Utils.equivaleENaoENulo(doc.getCadastrante(), titular) || Utils.equivaleENaoENulo(doc.getLotaCadastrante(), lotaTitular);
 	}
 
 	@Override

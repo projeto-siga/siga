@@ -34,7 +34,7 @@ public class ExEAssinanteAtual implements Expression {
 		
 		String[] siglas = mov.getDescrMov().split(";");
 		
-		if(doc.getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty()) {
+		if(doc.getAssinaturasComTokenOuSenha().isEmpty()) {
 			//primeiro a assinar
 			if(siglas[0].equals(subscritor.getSigla())) {
 				retorno = true;

@@ -350,6 +350,9 @@ function sbmtDoc() {
 									<th style="width: 4%" class="text-center" rowspan="2">IdMov</th>
 									<th style="width: 4%" class="text-center" rowspan="2">IdMovCancel</th>
 									<th style="width: 4%" class="text-center" rowspan="2">IdMovRef</th>
+									<c:if test="${podeCancelarMov}">
+										<th style="width: 4%" class="text-center" rowspan="2">Cancelar</th>
+									</c:if>
 								</tr>
 								<tr>
 									<th class="text-left">
@@ -367,32 +370,32 @@ function sbmtDoc() {
 								</tr>
 							</thead>
 							<c:forEach var="mov" items="${m.movs}">
-								<tr class="${mov.classe} ${mov.disabled}">
+								<tr class="${mov.classe}">
 									<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
-									<td class="text-center">${dt}</td>
-									<td>${mov.exTipoMovimentacao} - ${mov.descrTipoMovimentacao}</td>
-									<td class="text-left">
+									<td class="text-center ${mov.disabled}">${dt}</td>
+									<td class="${mov.disabled}">${mov.exTipoMovimentacao} - ${mov.descrTipoMovimentacao}</td>
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}"
  											descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}" 
  											lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" /> 
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.cadastrante.nomeAbreviado}"
  											descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" 
  											pessoaParam="${mov.parte.cadastrante.sigla}" /> 
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}"
 											descricao="${mov.parte.lotaResp.descricaoAmpliada}" 
 											lotacaoParam="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}" />
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.resp.nomeAbreviado}"
 											descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" 
 											pessoaParam="${mov.parte.resp.sigla}"/>
 									</td>
 									
-									<td>
+									<td class="${mov.disabled}">
 										${mov.descricao}
 										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
@@ -417,15 +420,28 @@ function sbmtDoc() {
 											</c:forEach>
 										</siga:links>
 									</td>
-									<td class="text-center bg-white" title="${mov.mov.dtTimestamp}">
+									<td class="text-center bg-white ${mov.disabled}" title="${mov.mov.dtTimestamp}">
 										${mov.idMov}
 									</td>
-									<td class="text-center bg-white">
+									<td class="text-center bg-white ${mov.disabled}">
 										${mov.mov.exMovimentacaoCanceladora.idMov}
 									</td>
-									<td class="text-center bg-white">
+									<td class="text-center bg-white ${mov.disabled}">
 										${mov.mov.exMovimentacaoRef.idMov}
 									</td>
+									<c:if test="${podeCancelarMov}">
+										<td class="text-center bg-white ">
+											<c:if test="${!mov.cancelada && (mov.mov.exTipoMovimentacao == 'TRANSFERENCIA' || mov.exTipoMovimentacao == 'RECEBIMENTO' ||
+												mov.exTipoMovimentacao == 'TRAMITE_PARALELO' || mov.exTipoMovimentacao == 'NOTIFICACAO' || 
+												mov.exTipoMovimentacao == 'JUNTADA' || mov.exTipoMovimentacao == 'MARCACAO' )}">
+												<a id="btn-cancelaMov"
+													class="btn btn-outline-secondary btn-sm p-1 m-1 float-right"
+													href="cancelaMov?idMov=${mov.idMov}&documentoRefSel.sigla=${documentoRefSel.sigla}" title="Cancela Movimentação">
+													<i class="far fa-trash-alt"></i>
+												</a>
+											</c:if>
+										</td>
+									</c:if>
 								</tr>
 							</c:forEach>
 						</table>

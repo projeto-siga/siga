@@ -52,6 +52,9 @@ public class CpTipoMarca extends AbstractCpTipoMarca {
 			case "SIGA_GC":
 				cpTipoMarca = CpDao.getInstance().consultar(3L, CpTipoMarca.class, false);
 				break;
+			case "SIGA_WF":
+				cpTipoMarca = CpDao.getInstance().consultar(4L, CpTipoMarca.class, false);
+				break;
 			}
 		return cpTipoMarca;
 	}

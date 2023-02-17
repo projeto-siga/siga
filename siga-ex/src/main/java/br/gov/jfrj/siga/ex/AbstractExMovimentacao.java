@@ -71,17 +71,17 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		+ "                inner join fetch mob.exDocumento doc" + "                where ("
 		+ "                mob.numSequencia=:numSequencia"
 		+ "                and mob.exTipoMobil.idTipoMobil=:idTipoMobil"
-		+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+		+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsuIni = :idOrgaoUsu)"
 		+ "                and doc.idDoc=mob.exDocumento.idDoc" + "                and doc.anoEmissao=:anoEmissao"
 		+ "                and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
 		+ "                and doc.numExpediente=:numExpediente)"),
 		// Somente os "2 - em andamento" ou "75 - Assinado (Equivalente a primeiro aguardando andamento)"
 	    // (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) devido a nível de acesso add pessoa Inicial também
-		@NamedQuery(name = "consultarParaTransferirEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
+		@NamedQuery(name = "consultarParaTramitarEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		@NamedQuery(name = "consultarQuantidadeParaTransferirEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
+		@NamedQuery(name = "consultarQuantidadeParaTramitarEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
@@ -176,9 +176,9 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		// Voltar todas as movimentacoes realizadas por uma determinada pessoa
 		// em um exato momento. Usado principalmente para gerar segunda-via de
 		// protocolos. 
-		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
-				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov= :data"
-				+ "                order by mov.dtTimestamp"), 
+		@NamedQuery(name = "consultarMovimentacoesPorCadastranteEntreDatas", query = "from ExMovimentacao mov"
+				+ "                where mov.cadastrante.idPessoaIni = :pessoaIni " 
+				+ "                and mov.dtIniMov between :dtIni and :dtFim"), 
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY),
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
 })

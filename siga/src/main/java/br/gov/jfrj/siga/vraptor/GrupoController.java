@@ -162,8 +162,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				throw new AplicacaoException(
 						"Grupo antigo não pode ser editado. Favor atualizar a página da lista de grupos antes de selecionar um grupo para edição.");
 			}
-			dscGrupo = grp.getDscGrupo();
+			dscGrupo = grp.getDscGrupo();		
 			siglaGrupo = grp.getSiglaGrupo();
+			
 			
 			// Nato: o cast direto não funciona por causa do proxy do Hibernate, então precisei fazer o deproxy antes.
 			CpGrupo cpGrupoPai = grp.getCpGrupoPai();
@@ -267,6 +268,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 		if (siglaGrupo == null) {
 			throw new AplicacaoException("A sigla do grupo deve ser definida!");
+		}
+		
+		if (siglaGrupo.length() > 20 ) {
+			throw new AplicacaoException("A sigla do grupo deve conter no máximo 20 caracteres!");
 		}
 
 		idConfiguracao = Optional.fromNullable(idConfiguracao).or(

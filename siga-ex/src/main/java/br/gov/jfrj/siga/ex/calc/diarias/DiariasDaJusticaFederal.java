@@ -418,7 +418,6 @@ public class DiariasDaJusticaFederal {
 				r.totalDeDescontoDeAuxilioAlimentacao += dia.descontoDeAuxilioAlimentacao;
 				r.totalDeDescontoDeAuxilioTransporte += dia.descontoDeAuxilioTransporte;
 				r.subtotalBruto += dia.subtotalBruto;
-				r.totalDeDescontoDeTeto += dia.descontoDeTeto;
 				r.subtotalLiquido += dia.subtotalLiquido;
 				r.totalDeDescontoDeTeto += dia.descontoDeTeto;
 				r.total += dia.subtotalLiquido;
@@ -426,7 +425,6 @@ public class DiariasDaJusticaFederal {
 		} catch (AplicacaoException ex) {
 			r.mensagemDeErro = ex.getMessage();
 		}
-		r.total = r.total;
 		if (prorrogacao && valorJaRecebido > 0.001) {
 			r.total = r.total - valorJaRecebido;
 			r.valorJaRecebido = valorJaRecebido;

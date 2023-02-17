@@ -442,7 +442,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-3" id="div1" style="display: none;">
+						<!-- <div class="col-sm-3" id="div1" style="display: none;">
 							<div class="form-group">
 								<label>Resolução/Data (1ª linha)</label>
 								<input type="text" id="linha1" name="linha1" value="" maxlength="60" class="form-control"/>
@@ -453,7 +453,7 @@
 								<label>Tipo de Ato (2ª linha)</label>
 								<input type="text" id="linha2" name="linha2" value="" maxlength="60" class="form-control"/>
 							</div>
-						</div>
+						</div> -->
 					</div>
 					<c:if test="${(not empty listMov)}">
 						<table border="0" class="table table-sm table-striped">
@@ -476,7 +476,7 @@
 								</c:url>
 							
 						    	<tr class="even">
-									 <td class="text-center align-middle"><input type="checkbox" name="movSelecionados" id="${x}" class="chk" value="${mov.idMov}" ${x_checked} onclick="atualizarTipoAto(this)"/></td>
+									 <td class="text-center align-middle"><input type="checkbox" name="movSelecionados" id="${x}" class="chk" value="${mov.idMov}" ${x_checked}/></td>
      			        			 <td class="text-left align-middle">
      			        			 	<span data-toggle="tooltip" data-placement="bottom" title="${mov.exMobil.exDocumento.descrDocumento}">
      			        			 		<a href="/sigaex/app/arquivo/exibir?id=${mov.idMov}&arquivo=${mov.exMobil.exDocumento.sigla}:${mov.idMov}&sigla=${mov.exMobil.exDocumento.sigla}">${mov.exMobil.exDocumento.sigla}.txt</a>
@@ -564,10 +564,10 @@
 		var select = frm.idModelo;
 		var option = select.children[select.selectedIndex];
 		var texto = option.textContent;
-		if(texto.indexOf("Resolução") != -1) {
+		/*if(texto.indexOf("Resolução") != -1) {
 			document.getElementById("div1").style.display = "block";
 		    document.getElementById("div2").style.display = "block";
-		}
+		}*/
 		carregarAnunciante(${listaPermissoes});
 	} 
 	
@@ -579,7 +579,7 @@
 	      } else if ($(this).is(".down")) {
 	         row.insertAfter(row.next());
 	      }
-	      atualizarTipoAto();
+	      //atualizarTipoAto();
 	   });
 	});
 	

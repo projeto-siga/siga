@@ -39,6 +39,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -5597,10 +5598,15 @@ public class ExMovimentacaoController extends ExController {
 		
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
-
+		DpLotacaoDaoFiltro dpLotacaoDaoFiltro = new DpLotacaoDaoFiltro();
+		dpLotacaoDaoFiltro.setIdOrgaoUsu(getCadastrante().getOrgaoUsuario().getId());
+        
+		List<DpLotacao> listaLotacao = CpDao.getInstance().consultarPorFiltro(dpLotacaoDaoFiltro);
+        
 		result.include("substituicao", substituicao ? substituicao : Boolean.FALSE);
 		result.include("titularSel", Objects.isNull(titularSel) ? new DpPessoaSelecao() : titularSel);
 		result.include("subscritorSel", Objects.isNull(subscritorSel) ? new DpPessoaSelecao() : subscritorSel);
+		result.include("listaLotacao", listaLotacao);
 		result.include("classificacaoAtualSel", Objects.isNull(classificacaoAtualSel) ? new ExClassificacaoSelecao() :
 				classificacaoAtualSel);
 		result.include("classificacaoNovaSel", Objects.isNull(classificacaoNovaSel) ? new ExClassificacaoSelecao() :

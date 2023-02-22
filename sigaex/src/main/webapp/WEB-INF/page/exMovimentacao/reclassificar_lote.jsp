@@ -1,11 +1,14 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page contentType="text/html; charset=UTF-8" buffer="64kb" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/customtag" prefix="tags" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Reclassifica&ccedil;&atilde;o em Lote">
-
+    <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+    
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -30,10 +33,12 @@
                         </div>
                         <div class="col-sm-2">
                             <div class="form-group">
-                                <div class="form-check form-check-inline mt-4">
-                                    <label class="form-check-label" for="substituto">Substituto</label>
+                                <br/>
+                                <div class="form-check form-check-inline">
                                     <input type="checkbox" id="substituto" name="substituto"
+                                           class="form-check-input"
                                            onclick="displayTitular(this);"/>
+                                    <label class="form-check-label" for="substituto">Substituto</label>
                                 </div>
                             </div>
                         </div>
@@ -45,6 +50,20 @@
                                 <label>Titular</label>
                                 <input type="hidden" name="campos" value="titularSel.id"/>
                                 <siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group" id="LotacaoSelecao">
+                                <label for="idLotacaoSelecao"><fmt:message key="usuario.lotacao"/></label>
+                                <select class="form-control siga-select2" id="idLotacaoSelecao" name="idLotacaoSelecao">
+                                    <c:forEach items="${listaLotacao}" var="item">
+                                        <option value="${item.idLotacao}" ${item.idLotacao == idLotacaoSelecao ? 'selected' : ''}>
+                                            <c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
+                                        </option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -170,4 +189,7 @@
         }
 
     </script>
+    <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+    <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 </siga:pagina>

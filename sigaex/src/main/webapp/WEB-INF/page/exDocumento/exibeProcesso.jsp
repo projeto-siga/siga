@@ -515,6 +515,7 @@
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
 	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
 	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&iframe=true';
+	var numOffsetProx = 0;
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			
@@ -719,30 +720,37 @@
 	
 	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
 		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
-// 		var pagination = {
-// 				 total: result.length,
-// 				 per_page: itemsPerPage,    
-// 				 current_page: currentPage, 
-// 				 last_page: Math.ceil(result.length / itemsPerPage),
-// 				 from: ((currentPage -1) * itemsPerPage) + 1,
-// 				 to: currentPage  * itemsPerPage
-// 				};
+
 		if (data != null){
+			//info json
 			var quantTotalArquivos = data['quantTotalArquivos'];
-			var perLink = 3;
-			var lastLinkPage = Math.ceil(quantTotalArquivos / perLink);//6/4=2
-			var qtdLimiteLinkPage = 10;
-			var to = 1;
-			var strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
-			var strLinks = '';
-			var numOffsetAtual = paramoffset.match(/\d+/)[0]; 
+			var qtdPorLink = 2;
+			var ultimoLinkPag = Math.ceil(quantTotalArquivos / qtdPorLink);
+			var qtdLimiteLinkPage = 2; //Limite deve ser 8 para não quebrar a pagina
 			
-			for (let i = 1, cont = 0; i <= lastLinkPage; i++) {
-				let docFinal = to  * perLink > quantTotalArquivos ? quantTotalArquivos : to * perLink; 
-				strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual==to ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", to, "`);'>", to, " de ", docFinal,"</a> ");
-				to = to  * perLink;
-				if(++cont >= qtdLimiteLinkPage)
+			let numOffsetAtual = paramoffset.match(/\d+/)[0]; 			
+			let docInicial = numOffsetProx == numOffsetAtual ? numOffsetProx : 1;//Lógica para caso ultimo link passe do limite((numOffsetAtual -1) * qtdPorLink) + 1;
+			let docFinal = numOffsetProx == numOffsetAtual ? numOffsetProx + qtdPorLink - 1 : 1 * qtdPorLink; //numOffsetAtual * qtdPorLink;
+			numOffsetProx = 0;
+			let strLinks = '';
+			let strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
+			
+			for (let i = 1, cont = 0; i <= ultimoLinkPag; i++) {
+				//Cricacao de botoes para fragmentacao de PDF completo
+				strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == docInicial ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docInicial, "`);'>", docInicial, " a ", docFinal,"</a> ");
+
+				//Calculo para gerar novos botoes
+				docInicial = docInicial + qtdPorLink;
+				let somaFinal = docFinal + qtdPorLink;
+				docFinal = somaFinal > quantTotalArquivos ? quantTotalArquivos : somaFinal;
+				if(docInicial >= docFinal){
 					break;
+				}
+				if(++cont >= qtdLimiteLinkPage){
+					numOffsetProx = docInicial;
+					strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docInicial, "`);'>", " >> ","</a> ");
+					break;
+				}
 			}
 			
 			document.getElementById('panelPagPdfs').innerHTML = strInnerHtml.concat(strLinks);

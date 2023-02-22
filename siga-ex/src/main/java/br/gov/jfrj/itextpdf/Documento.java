@@ -441,12 +441,12 @@ public class Documento {
 		long garbage = 0;		
 		
 		paramoffset = Objects.nonNull(paramoffset) ? (
-				(paramoffset >= ans.size()) ? ((paramoffset / 3 - 1) * 3): paramoffset -1) : 0;
+				(paramoffset >= ans.size()) ? ((paramoffset / 2 - 1) * 2): paramoffset -1) : 0;
 		
 		
 		//(paramoffset / MAX_ITENS_PAGINA_TRINTA - 1) * MAX_ITENS_PAGINA_TRINTA
 		Integer paramoffsetFim =  Objects.nonNull(paramoffset) ? (
-					paramoffset + 3 > ans.size() ? ans.size() - 1 : + paramoffset + 3) : ans.size() - 1;
+					paramoffset + 2 > ans.size() ? ans.size() - 1 : + paramoffset + 2) : ans.size() - 1;
 		ans = ans.subList(paramoffset, paramoffsetFim);
 		
 		int ansSize = ans.size();

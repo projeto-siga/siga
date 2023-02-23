@@ -3,12 +3,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/customtag" prefix="tags" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <siga:pagina titulo="Reclassifica&ccedil;&atilde;o em Lote">
-    <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
-    <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
-    
+    <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css"
+          media="screen, projection"/>
+
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -44,7 +45,7 @@
                         </div>
                     </div>
                     <div class="row" id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
-                        <div class="col-12">
+                        <div class="col-md-8">
                             <input type="hidden" name="campos" value="titularSel.id"/>
                             <div class="form-group">
                                 <label>Titular</label>
@@ -54,10 +55,12 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12">
-                            <div class="form-group" id="LotacaoSelecao">
+                        <div class="col-sm-8">
+                            <div class="form-group">
                                 <label for="idLotacaoSelecao"><fmt:message key="usuario.lotacao"/></label>
-                                <select class="form-control siga-select2" id="idLotacaoSelecao" name="idLotacaoSelecao">
+                                <select class="form-control siga-select2" style="width: 100%"
+                                        id="idLotacaoSelecao" name="idLotacaoSelecao">
+                                    <option value="">Selecione uma <fmt:message key="usuario.lotacao"/></option>
                                     <c:forEach items="${listaLotacao}" var="item">
                                         <option value="${item.idLotacao}" ${item.idLotacao == idLotacaoSelecao ? 'selected' : ''}>
                                             <c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
@@ -68,7 +71,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-sm-8">
                             <div class="form-group">
                                 <siga:selecao titulo="Classifica&ccedil;&atilde;o Atual"
                                               propriedade="classificacaoAtual"
@@ -79,17 +82,18 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-sm-8">
                             <div class="form-group">
                                 <siga:selecao titulo="Nova Classifica&ccedil;&atilde;o" propriedade="classificacaoNova"
                                               modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
                             </div>
                         </div>
-                        <div class="col-12">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8">
                             <div class="form-group">
-                                <label>Motivo
-                                    <input type="text" id="motivo" name="motivo" maxLength="128" class="form-control"/>
-                                </label>
+                                <label for="motivo">Motivo</label>
+                                <input type="text" id="motivo" name="motivo" maxLength="128" class="form-control"/>
                             </div>
                         </div>
                     </div>

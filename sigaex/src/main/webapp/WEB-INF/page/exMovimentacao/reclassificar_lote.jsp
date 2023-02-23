@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css"
           media="screen, projection"/>
 
+    <c:set var="thead_color" value="${thead_color}" scope="session"/>
+    
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">

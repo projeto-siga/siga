@@ -117,7 +117,9 @@
         <siga:siga-modal id="confirmacaoModal" exibirRodape="false"
                          tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
             <div class="modal-body">
-                Todos os documentos ser&atilde;o Reclassificados. Deseja, confirmar?
+                Os documentos selecionados ser&atilde;o reclassificados de
+                <span id="classificacaoAtualSelecionada"></span> para <span id="classificacaoNovaSelecionada"></span>.
+                Deseja, confirmar?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
@@ -134,10 +136,10 @@
             let selectIdLotacao = document.getElementById('selectLotacao').value;
             let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
             offset = offset == null ? 0 : offset;
-            
+
             let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?siglaClassificacao='
                 + siglaClassificacaoAtual + '&dpLotacaoSelecao=' + selectIdLotacao + '&offset=' + offset;
-            
+
             $.ajax({
                 url: url,
                 success: function (data) {
@@ -152,6 +154,12 @@
         }
 
         function validar() {
+            let subscritorSelSpan = document.getElementById('subscritorSelSpan');
+            if (subscritorSelSpan.textContent.trim() === '') {
+                sigaModal.alerta('Selecione responsável');
+                return;
+            }
+
             let classificacaoAtualSelSpan = document.getElementById('classificacaoAtualSelSpan');
             if (classificacaoAtualSelSpan.textContent.trim() === '') {
                 sigaModal.alerta('Selecione classificação atual');
@@ -182,8 +190,14 @@
             if (checkedElements.length == 0) {
                 sigaModal.alerta('Selecione pelo menos um documento');
             } else {
+                updateClassificacoesSelecionadas(siglaClassificacaoAtual.value, siglaClassificacaoNova.value);
                 sigaModal.abrir('confirmacaoModal');
             }
+        }
+
+        function updateClassificacoesSelecionadas(classificacaoAtualSelecionada, classificacaoNovaSelecionada) {
+            document.getElementById('classificacaoAtualSelecionada').innerHTML = classificacaoAtualSelecionada;
+            document.getElementById('classificacaoNovaSelecionada').innerHTML = classificacaoNovaSelecionada;
         }
 
         function confirmar() {

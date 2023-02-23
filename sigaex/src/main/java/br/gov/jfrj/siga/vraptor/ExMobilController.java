@@ -1074,15 +1074,19 @@ public class ExMobilController extends
 
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
-        Long idDpLotacaoSelecao = Objects.nonNull(dpLotacaoSelecao) ? Long.valueOf(dpLotacaoSelecao) : null;
+        Long idDpLotacaoSelecao = 0L;
+		if(Objects.nonNull(dpLotacaoSelecao) && !dpLotacaoSelecao.isEmpty()){
+			idDpLotacaoSelecao = Long.valueOf(dpLotacaoSelecao);	
+		}
 		
         Integer tamanho = null;
-		if (Objects.nonNull(siglaClassificacao)) {
+		if (Objects.nonNull(siglaClassificacao) && !siglaClassificacao.isEmpty()) {
 			tamanho = ExDao.getInstance()
 					.consultarQuantidadeParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
                             idDpLotacaoSelecao, siglaClassificacao);
 
 		}
+		
 		if (Objects.nonNull(tamanho)) {
 			List<ExDocumentoVO> documentosPorCodificacaoClassificacao =
 					ExDao.getInstance().consultarParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),

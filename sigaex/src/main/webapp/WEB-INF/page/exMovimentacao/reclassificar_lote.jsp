@@ -57,13 +57,13 @@
                     <div class="row">
                         <div class="col-sm-8">
                             <div class="form-group">
-                                <label for="idLotacaoSelecao"><fmt:message key="usuario.lotacao"/></label>
+                                <label for="selectLotacao"><fmt:message key="usuario.lotacao"/></label>
                                 <select class="form-control siga-select2" style="width: 100%"
-                                        id="idLotacaoSelecao" name="idLotacaoSelecao">
+                                        id="selectLotacao" name="selectLotacao">
                                     <option value="">Selecione uma <fmt:message key="usuario.lotacao"/></option>
                                     <c:forEach items="${listaLotacao}" var="item">
-                                        <option value="${item.idLotacao}" ${item.idLotacao == idLotacaoSelecao ? 'selected' : ''}>
-                                            <c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
+                                        <option value="${item.idLotacao}" ${item.idLotacao == selectLotacao ? 'selected' : ''}>
+                                                ${item.orgaoUsuario.iniciais}-${item.siglaLotacao} / ${item.nomeLotacao}
                                         </option>
                                     </c:forEach>
                                 </select>
@@ -131,12 +131,13 @@
         function listarDocumentosParaReclassificarEmLote(offset) {
             sigaSpinner.mostrar();
 
-            offset = offset == null ? 0 : offset;
-
+            let selectIdLotacao = document.getElementById('selectLotacao').value;
             let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
+            offset = offset == null ? 0 : offset;
+            
             let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?siglaClassificacao='
-                + siglaClassificacaoAtual + '&offset=' + offset;
-
+                + siglaClassificacaoAtual + '&dpLotacaoSelecao=' + selectIdLotacao + '&offset=' + offset;
+            
             $.ajax({
                 url: url,
                 success: function (data) {

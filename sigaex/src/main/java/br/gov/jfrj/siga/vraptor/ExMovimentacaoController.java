@@ -2834,8 +2834,13 @@ public class ExMovimentacaoController extends ExController {
 		result.include("maxItems", MAX_ITENS_PAGINA_DUZENTOS);
 		result.include("tamanho", tamanho);
 		result.include("currentPageNumber", (offsetTransferencia / MAX_ITENS_PAGINA_DUZENTOS + 1));
+		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
 		
 		docArquivadosParaTransferir = new ArrayList<ExDocumento>();
+	}
+	
+	private boolean temPermissaoParaExportarDados() {
+		return Boolean.valueOf(Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getTitular().getLotacao(),"SIGA;DOC;REL;RELTRANSFERENCIA"));
 	}
 	
 	@Get("app/expediente/mov/pesquisa_documentos_arquivados_transferencia")   

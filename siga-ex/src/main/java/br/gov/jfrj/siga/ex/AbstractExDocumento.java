@@ -228,6 +228,13 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "                where ((marca.dpPessoaIni.idPessoa=:pessoaIni or marca.dpLotacaoIni.idLotacao=:lotaIni)"
 				+ "                and (marca.cpMarcador.idMarcador=6 or marca.cpMarcador.idMarcador=12 or marca.cpMarcador.idMarcador=13)"
 				+ "                ) order by marca.dtIniMarca desc"),
+		@NamedQuery(name = "consultarDocumentosArquivadosJaTransferido", query = "select mob, em from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
+				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"
+				+ " 			   JOIN ExMovimentacao em on (em.idMov = mob.ultimaMovimentacaoNaoCancelada and em.exMovimentacaoRef is not null)"		
+				+ "                where ("
+				+ " 			   marca.dpLotacaoIni.idLotacao=:lotaDestinoIni "		
+				+ "                and (marca.cpMarcador.idMarcador=6 or marca.cpMarcador.idMarcador=12 or marca.cpMarcador.idMarcador=13)"
+				+ "                ) order by marca.dtIniMarca desc"),
 		@NamedQuery(name = "consultarDocumentosFinalizadosEntreDatas", query = "select doc from ExDocumento doc where "
 				+ "					doc.exTipoDocumento.idTpDoc = :idTipoDocumento"
 				+ "					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial"

@@ -27,6 +27,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -55,7 +56,9 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
@@ -63,6 +66,8 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
@@ -114,6 +119,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_TRAMESP = "TRAMESP: Tempo Médio de Tramitação Por Espécie Documental";
 	private static final String ACESSO_VOLTRAMMOD = "VOLTRAMMOD: Volume de Tramitação Por Nome do Documento";
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
+;	private static final String ACESSO_RELTRANSFERENCIA_DOCS = "RELTRANSFERENCIA: Relatório de Transferência de Documentos";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	/**
@@ -2056,6 +2062,73 @@ public class ExRelatorioController extends ExController {
 				rel.getRelatorioPDF());
 		return new InputStreamDownload(inputStream, APPLICATION_PDF,
 				"relDocumentosPorVolumeDetalhes");
+	}
+	
+	@Post
+	@Path("app/expediente/rel/exportarDocsArquivadosTransferidoCsv")
+	public Download exportarDocsArquivadosTransferidoCsv(Long idOrgaoUsu, final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, 
+			final DpLotacaoSelecao lotacaoDestinatarioSel) throws UnsupportedEncodingException {
+
+		assertAcesso(ACESSO_RELTRANSFERENCIA_DOCS);
+
+		if (lotaResponsavelSel.getId() == null && responsavelSel.getId() == null) {
+			throw new AplicacaoException("Necessário informar um Usuário/" + SigaMessages.getMessage("usuario.lotacao") + " de ORIGEM.");
+		}
+		
+		if (lotacaoDestinatarioSel.getId() == null) {
+			throw new AplicacaoException("Necessário informar uma " + SigaMessages.getMessage("usuario.lotacao") + " de DESTINO.");
+		}
+		
+		DpPessoa pessoa = new DpPessoa();
+		DpLotacao lotacao = new DpLotacao();
+		DpLotacao lotacaoDestino = new DpLotacao();
+		if(responsavelSel.getId() != null) {
+			pessoa = CpDao.getInstance().consultar(responsavelSel.getId(), DpPessoa.class, false).getPessoaAtual();
+		} else if (lotaResponsavelSel.getId() != null) {
+			lotacao = CpDao.getInstance().consultar(lotaResponsavelSel.getId(), DpLotacao.class, false).getLotacaoAtual();
+		}
+		
+		lotacaoDestino = CpDao.getInstance().consultar(lotacaoDestinatarioSel.getId(), DpLotacao.class, false).getLotacaoAtual();
+		List<Object[]> listDocsArquivadosJaTransferidos = dao().consultarDocsArquivadosJaTransferidos(pessoa.getIdInicial(), lotacao.getIdInicial(), lotacaoDestino.getIdInicial());
+		
+		if (listDocsArquivadosJaTransferidos.isEmpty()) {
+			result.include("msgCabecClass", "alert-warning");
+    		result.include("mensagemCabec", "Não foram encontrados resultados para essa busca");
+    		result.redirectTo(ExMovimentacaoController.class).aTransferirDocArquivadoLote(0, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+    				0L, 0, null, 0);
+		} else {
+			InputStream inputStream = null;
+			StringBuffer texto = new StringBuffer();
+			texto.append(
+					"Número do Documento;Tipo;Data e Hora;Órgão;Usuário/" + SigaMessages.getMessage("usuario.lotacao") + " de Origem;Matrícula do Administrador;Usuário Administrador;" + SigaMessages.getMessage("usuario.lotacao") + " de Destino;Motivo"
+							+ System.lineSeparator());
+
+			for (Object[] d : listDocsArquivadosJaTransferidos) {
+				
+				ExMobil mob = new ExMobil();
+				mob = (ExMobil) d[0];
+				
+				ExMovimentacao mov = new ExMovimentacao();
+				mov = (ExMovimentacao) d[1];
+
+				texto.append(mob.getDnmSigla() + ";");
+				texto.append(mov.getExTipoMovimentacao() + ";");
+				texto.append(mob.getDnmDataUltimaMovimentacaoNaoCancelada() + ";");
+				texto.append(mob.getDoc().getOrgaoUsuario().getNmOrgaoUsu() + ";");
+				texto.append(mob.getDoc().getLotaCadastrante().getNomeLotacao() + ";");
+				texto.append(mov.getCadastrante().getSigla() + ";");
+				texto.append(mov.getCadastrante().getNomePessoa() + ";");
+				texto.append(mov.getLotaDestinoFinal().getNomeLotacao() + ";");
+				texto.append(mov.getDescrMov() == null ? "" : mov.getDescrMov() + ";");
+				texto.append(System.lineSeparator());
+			}
+
+			inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
+
+			return new InputStreamDownload(inputStream, "text/csv", "docsTransferidos.csv");
+		
+		}
+		return null;
 	}
 
 	protected void assertAcesso(final String pathServico) {

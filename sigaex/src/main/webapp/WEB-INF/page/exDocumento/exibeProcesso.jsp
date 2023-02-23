@@ -444,7 +444,7 @@
 				</div>
 			</c:if>
 			<div id="panelPagPdfs" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;"></div>
-			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
+			<div id="paipainel" style="margin: 5px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
 				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();verificarMensagem(this.src)" frameborder="0" scrolling="no"></iframe>
 			</div>
 		</div>
@@ -540,7 +540,7 @@
 	}
 
 	//Nato: convem remover as outras maneiras de chamar o resize() e deixar apenas o jquery.
-	function exibir(refHTML, refPDF, semMarcas, paramoffset) {
+	async function exibir(refHTML, refPDF, semMarcas, paramoffset) {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
 		if('${excedeuTamanhoMax}' === 'true' && !($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked)) {
@@ -569,7 +569,7 @@
 				//Limpar links docs grandes volumes
 				document.getElementById('panelPagPdfs').innerHTML = "";
 			} else {
-				if(arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
+				if(await arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
 					if(paramoffset == null){
 						sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
 						//Primeiro Carregamento Link
@@ -689,31 +689,33 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	}
 	
-	function verificarTamanhoDocComplMB(refPDF){
-		sigaSpinner.mostrar();
-		$.ajax({
+	async function verificarTamanhoDocComplMB(refPDF){
+		await $.ajax({
 			url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivos?arquivo='+refPDF,
 			type: 'GET',
-			async: false,
+			//async: false,
+			beforeSend: function() {
+				sigaSpinner.mostrar();    
+            },
 			success: function(data) {
 				 try {
 				  var tamanhoArquivos = JSON.parse(data);
-				  localStorage.setItem('tamanhoArquivos', JSON.stringify(tamanhoArquivos));
+				  localStorage.setItem('tamanhoArquivos', JSON.stringify(tamanhoArquivos))
 				 } catch(err){
 				  sigaSpinner.ocultar();
 				 }
 			}	
 		});
-		sigaSpinner.ocultar();
-		return false;
 	}
 	
-	function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
+	async function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
 		
 		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
 		if (data == null || data ==''){
-			verificarTamanhoDocComplMB(refPDF);
+			sigaSpinner.mostrar();
+			await verificarTamanhoDocComplMB(refPDF);
 			data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+			sigaSpinner.ocultar();
 		}
 		return data != null ? data['excedeuMB'] : false;
 	}
@@ -728,7 +730,8 @@
 			var ultimoLinkPag = Math.ceil(quantTotalArquivos / qtdPorLink);
 			var qtdLimiteLinkPage = 2; //Limite deve ser 8 para não quebrar a pagina
 			
-			let numOffsetAtual = paramoffset.match(/\d+/)[0]; 			
+			let numOffsetAtual = paramoffset.match(/\d+/)[0]; 
+			let docAnterior = numOffsetProx == numOffsetAtual ? numOffsetProx - qtdPorLink : null;
 			let docInicial = numOffsetProx == numOffsetAtual ? numOffsetProx : 1;//Lógica para caso ultimo link passe do limite((numOffsetAtual -1) * qtdPorLink) + 1;
 			let docFinal = numOffsetProx == numOffsetAtual ? numOffsetProx + qtdPorLink - 1 : 1 * qtdPorLink; //numOffsetAtual * qtdPorLink;
 			numOffsetProx = 0;
@@ -736,6 +739,10 @@
 			let strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
 			
 			for (let i = 1, cont = 0; i <= ultimoLinkPag; i++) {
+				if(docAnterior != null){
+					strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docAnterior, "`);'>", " &laquo; ","</a> ");
+				}
+				
 				//Cricacao de botoes para fragmentacao de PDF completo
 				strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == docInicial ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docInicial, "`);'>", docInicial, " a ", docFinal,"</a> ");
 
@@ -748,7 +755,7 @@
 				}
 				if(++cont >= qtdLimiteLinkPage){
 					numOffsetProx = docInicial;
-					strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docInicial, "`);'>", " >> ","</a> ");
+					strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docInicial, "`);'>", " &raquo; ","</a> ");
 					break;
 				}
 			}

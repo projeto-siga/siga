@@ -2872,7 +2872,9 @@ public class ExMovimentacaoController extends ExController {
 						: paramoffset)
 				: 0;
 
-		docArquivadosParaTransferir = dao().consultarArquivadosParaTransferirEmLote(pessoa.getIdInicial(), lotacao.getIdInicial(), offsetTransferencia, MAX_ITENS_PAGINA_DUZENTOS);
+		docArquivadosParaTransferir = (tamanho <= MAX_ITENS_PAGINA_DUZENTOS)
+				? dao().consultarArquivadosParaTransferirEmLote(pessoa.getIdInicial(), lotacao.getIdInicial(), null, null)
+				: dao().consultarArquivadosParaTransferirEmLote(pessoa.getIdInicial(), lotacao.getIdInicial(), offsetTransferencia, MAX_ITENS_PAGINA_DUZENTOS);
 		
 		if (docArquivadosParaTransferir	== null || docArquivadosParaTransferir.isEmpty()) {
 			result.include("msgCabecClass", "alert-danger");

@@ -94,6 +94,7 @@ public class ExMobilController extends
 
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
+	private static final int MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE = 200;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1129,4 +1130,42 @@ public class ExMobilController extends
 
         }
     }
+
+	@Get("/app/expediente/doc/listar_docs_para_arquivar_corrente_lote")
+	public void listar_docs_para_arquivar_corrente_lote(final String atendente, final int offset) {
+
+		assertAcesso("ARQLOTE:Arquivar em Lote");
+
+		Long pessoaId = null;
+		Long lotacaoId = null;
+		
+		switch (atendente){
+			case "pessoa":
+				pessoaId = getTitular().getPessoaInicial().getId();
+				break;
+			case "lotacao":
+				lotacaoId = getLotaTitular().getLotacaoInicial().getId();
+				break;
+			default:
+				throw new AplicacaoException("Atendente deve ser informado");
+		}
+		
+		Integer tamanho = dao().consultarQuantidadeParaArquivarCorrenteEmLote(pessoaId, lotacaoId);
+
+		if (Objects.nonNull(tamanho)) {
+			final List<ExMobil> itens = dao().consultarParaArquivarCorrenteEmLote(pessoaId, lotacaoId, 
+					offset, MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+
+			getP().setOffset(offset);
+			setItemPagina(MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+			setItens(itens);
+			setTamanho(tamanho);
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+
+		}
+	}
 }

@@ -437,11 +437,11 @@ public class ExMobilVO extends ExVO {
 					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		} else {
 			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add")
-					.msgConfirmacao("Anotações cadastradas não constituem o documento,"
+					.msgConfirmacao("ATENÇÃO: Anotações cadastradas não constituem o documento,"
 							+ " são apenas  lembretes ou avisos " 
 							+ "	para os usuários com acesso ao documento, podendo ser "
 							+ "	excluídas a qualquer tempo.")
-					.acao("/app/expediente/mov/anotar")
+					.nameSpace("/app/expediente/mov").acao("anotar")
 					.descr("Insere uma pequena observação ao documento. A anotação será exibida nas movimentações do documento, podendo ser excluída a qualquer tempo pela pessoa que a criou.")
 					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular))
 					.build());

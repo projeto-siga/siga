@@ -154,15 +154,27 @@ public abstract class ExArquivo extends Objeto {
 	 * um código gerado.
 	 * 
 	 */
-	public String getMensagem() {
+	public String getMensagem(boolean comLink) {
 		String sMensagem = "";
 		sMensagem += getVinculosCompleto();
 		if (isAssinadoDigitalmente()) {
+			
 			sMensagem += getAssinantesCompleto();
 			sMensagem += "Documento Nº: " + getSiglaAssinatura()
-					+ " - consulta à autenticidade em " + getQRCode();
+					+ " - consulta à autenticidade em ";
+			
+			if (comLink) 
+				sMensagem += "<a href='"+ getQRCode() +"' target='_Blank'>" + getQRCode() + "</a>";
+			else
+				sMensagem += getQRCode();
+			
+
 		}
 		return sMensagem;
+	}
+	
+	public String getMensagem() {
+		return getMensagem(false);
 	}
 
 	/**

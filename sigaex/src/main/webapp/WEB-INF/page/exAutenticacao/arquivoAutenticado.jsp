@@ -39,14 +39,13 @@
 					<c:if test="${podeVisualizarExternamente}">
 						<div class="card-body">
 							<div>
-								<input type="hidden" id="visualizador"
-									   value="${f:resource('/sigaex.pdf.visualizador') }"/>
-								<c:url var='pdfAssinado'
-									   value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true'/>
-								<c:url var='pdf'
-									   value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false'/>
-								<iframe id="frameDoc" width="100%" height="600"
-										align="center" style="margin-top: 10px;"></iframe>
+								<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
+								
+								<c:url var='pdfAssinado' value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true&tamanhoOriginal=false'/>
+								<c:url var='pdf' value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false&redimensionarParaA4=false'/>
+								<c:url var='pdfTamanhoOriginal' value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true&tamanhoOriginal=true'/>
+								
+								<iframe id="frameDoc" width="100%" height="600" align="center" style="margin-top: 10px;"></iframe>
 							</div>
 						</div>
 					</c:if>
@@ -64,7 +63,11 @@
 								</div>
 								<div class="card-body">
 									<i class="fa fa-angle-double-right"></i> <a href="" id="linkDoc" target="_blank">PDF
-									do documento</a>
+									do documento Original (Sem Marcas)</a>
+								</div>
+								<div class="card-body">
+									<i class="fa fa-angle-double-right"></i> <a href="" id="linkDocTamanhoOriginal" target="_blank">PDF
+									do documento Original (Com Marcas)</a>
 								</div>
 							</div>
 						</c:if>
@@ -274,6 +277,7 @@
 	window.onload = function () { 
 		document.getElementById('frameDoc').src = montarUrlDocPDF('${pdfAssinado }',document.getElementById('visualizador').value); 
 		document.getElementById('linkDoc').href = montarUrlDocPDF('${pdf}', document.getElementById('visualizador').value);
+		document.getElementById('linkDocTamanhoOriginal').href = montarUrlDocPDF('${pdfTamanhoOriginal}', document.getElementById('visualizador').value);
 	} 
 </script>
 </siga:pagina>

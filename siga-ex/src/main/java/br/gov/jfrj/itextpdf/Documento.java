@@ -440,13 +440,9 @@ public class Documento {
 		long bytes = 0;
 		long garbage = 0;		
 		
-		paramoffset = Objects.nonNull(paramoffset) ? (
-				(paramoffset >= ans.size()) ? ((paramoffset / 2 - 1) * 2): paramoffset -1) : 0;
-		
-		
-		//(paramoffset / MAX_ITENS_PAGINA_TRINTA - 1) * MAX_ITENS_PAGINA_TRINTA
-		Integer paramoffsetFim =  Objects.nonNull(paramoffset) ? (
-					paramoffset + 2 > ans.size() ? ans.size() - 1 : + paramoffset + 2) : ans.size() - 1;
+//		paramoffset = Objects.nonNull(paramoffset) && paramoffset <= ans.size() ? paramoffset - 1 : 0;
+//
+		Integer paramoffsetFim =  Objects.nonNull(paramoffset) ? paramoffset + 2 : ans.size();
 		ans = ans.subList(paramoffset, paramoffsetFim);
 		
 		int ansSize = ans.size();

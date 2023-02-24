@@ -131,6 +131,13 @@ parameters:
     required: false
     default: false
     type: boolean
+  tamanhoOriginal:
+    name: tamanhoOriginal
+    in: query
+    description: Informar true se deseja receber o PDF no tamanho orginal não redimensionado para A4
+    required: false
+    default: false
+    type: boolean
   volumes:
     name: volumes
     in: query
@@ -994,6 +1001,7 @@ paths:
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/volumes"
         - $ref: "#/parameters/exibirReordenacao"
+        - $ref: "#/parameters/tamanhoOriginal"
       responses:
         200:
           description: Successful response
@@ -1027,6 +1035,7 @@ paths:
         - $ref: "#/parameters/completo"
         - $ref: "#/parameters/volumes"
         - $ref: "#/parameters/exibirReordenacao"
+        - $ref: "#/parameters/tamanhoOriginal"
       responses:
         200:
           description: Successful response

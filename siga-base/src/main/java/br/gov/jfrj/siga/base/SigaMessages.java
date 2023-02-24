@@ -4,24 +4,26 @@ import java.util.ResourceBundle;
 
 public class SigaMessages {
 	public static ResourceBundle bundle;
-
-//	private static void changeLocale(final String local) {
-//		if (SigaBaseProperties.getString("siga.local") == "TRF2") {
-//			// TO DO 
-//		} else {
-//			// TO DO
-//		}
-//	}
+	private final static String MESSAGES_DEFAULT = "messages_SIGA";
 
 	public static String getMessage(String key) {
 		try {
-	    	if (bundle == null) {
+			
+	    	if (bundle == null) 
 		    	bundle = getBundle();
-	    	}
+
 		    String message = bundle.getString(key);
 			return message;
+			
 		} catch (Exception e) {
-			return "???." + key + ".???";
+			try {
+				//Tenta carregar do messages DEFAULT messages_SIGA
+				bundle = ResourceBundle.getBundle(MESSAGES_DEFAULT);
+				String message = bundle.getString(key);
+				return message;
+			} catch (Exception ex) {
+				return "???." + key + ".???";
+			}
 		}
 	}
 

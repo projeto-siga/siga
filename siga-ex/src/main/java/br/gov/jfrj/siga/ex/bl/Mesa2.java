@@ -136,7 +136,7 @@ public class Mesa2 {
 				r.codigo = mobil.getCodigoCompacto();
 				Date datahora = null;
 				ExMovimentacao ultimaMov = mobil.getUltimaMovimentacaoNaoCanceladaENaoCanceladora();
-				datahora = mobil.getDtUltimaMovimentacaoNaoCanceladaENaoCanceladora();
+				datahora = Ex.getInstance().getBL().dataParaApresentacaoNaMesa(mobil.getExMovimentacaoSet());
 				if (datahora == null)
 					datahora = mobil.getDoc().getDtAltDoc();
 				r.datahora = datahora;

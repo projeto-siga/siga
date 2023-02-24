@@ -8929,6 +8929,29 @@ public class ExBL extends CpBL {
 			}
 		}
 	}
+	
+	public java.util.Date dataParaApresentacaoNaMesa(SortedSet<ExMovimentacao> movimentacoes) {
+		
+		java.util.Date dtMov = null;
+		Set<ExMovimentacao> movSet = movimentacoes;
+		
+		if (movSet == null || movSet.size() == 0)
+			return null;
+		
+		for (ExMovimentacao exMovimentacao : movSet) {
+			
+			if (exMovimentacao.isCancelada() && exMovimentacao.isCanceladora())
+				continue;
+			
+			if(exMovimentacao != null
+					&& exMovimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.ANOTACAO
+						&& exMovimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.APENSACAO
+							&& exMovimentacao.getExTipoMovimentacao() != ExTipoDeMovimentacao.DESAPENSACAO)
+				dtMov = exMovimentacao.getData();
+		}
+				 
+		return dtMov;
+	}
 
 }
 

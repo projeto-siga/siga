@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,6 +46,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.gson.Gson;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PRAcroForm;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -390,12 +394,12 @@ public class Documento {
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov, boolean tamanhoOriginal)
 			throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		getDocumento(baos, null, mob, mov, false, true, false, null, null,tamanhoOriginal);
+		getDocumento(baos, null, mob, mov, false, true, false, null, null, tamanhoOriginal, null);
 		return baos.toByteArray();
 	}
 
 	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado,boolean tamanhoOriginal)
+			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado, boolean tamanhoOriginal, Integer paramoffset)
 			throws Exception {
 		PdfReader reader;
 		int n;
@@ -434,6 +438,12 @@ public class Documento {
 		int f = 0;
 		long bytes = 0;
 		long garbage = 0;
+		
+		Integer paramoffsetFim =  Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 + 2 : null;
+		paramoffset = Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 : 0;
+		if(Objects.nonNull(paramoffsetFim))
+			ans = ans.subList(paramoffset, paramoffsetFim);
+		
 		int ansSize = ans.size();
 		try {
 			while (ans.size() > 0) {
@@ -448,27 +458,7 @@ public class Documento {
 				// an
 				// .getPaginaInicial(), an.getPaginaFinal(), request);
 
-				String sigla = mob.getSigla();
-				if (an.getArquivo() instanceof ExMovimentacao) {
-					ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-						sigla = m.getExMobil().getSigla();
-				} else {
-					sigla = an.getMobil().getSigla();
-				}
-
-				byte[] ab = !estampar ? an.getArquivo().getPdf() : Stamp.stamp(an
-						.getArquivo().getPdf(), sigla, an.getArquivo()
-						.isRascunho(), an.isCopia(), an.getArquivo().isCancelado(), an
-						.getArquivo().isSemEfeito(), an.getArquivo()
-						.isInternoProduzido(), an.getArquivo().getQRCode(), an
-						.getArquivo().getMensagem(), an.getPaginaInicial(),
-						an.getPaginaFinal(), an.getOmitirNumeracao(),
-						Prop.get("carimbo.texto.superior"), 
-						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
-						mob.getExDocumento().getMarcaDagua(), 
-						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal);	
-				
+				byte[] ab = obterBytesDocumento(mob, estampar, an);
 
 				bytes += ab.length;
 
@@ -573,6 +563,58 @@ public class Documento {
 			throw new RuntimeException(ex);
 		}
 		return true;
+	}
+	
+
+	private static byte[] obterBytesDocumento(ExMobil mob, boolean estampar, ExArquivoNumerado an) 
+			throws DocumentException, IOException {
+		
+		String sigla = mob.getSigla();
+		if (an.getArquivo() instanceof ExMovimentacao) {
+			ExMovimentacao m = (ExMovimentacao) an.getArquivo();
+			if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+				sigla = m.getExMobil().getSigla();
+		} else {
+			sigla = an.getMobil().getSigla();
+		}
+		
+		byte[] ab = !estampar ? an.getArquivo().getPdf() : Stamp.stamp(an
+				.getArquivo().getPdf(), sigla, an.getArquivo()
+				.isRascunho(), an.isCopia(), an.getArquivo().isCancelado(), an
+				.getArquivo().isSemEfeito(), an.getArquivo()
+				.isInternoProduzido(), an.getArquivo().getQRCode(), an
+				.getArquivo().getMensagem(), an.getPaginaInicial(),
+				an.getPaginaFinal(), an.getOmitirNumeracao(),
+				Prop.get("carimbo.texto.superior"), 
+				mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
+				mob.getExDocumento().getMarcaDagua(), 
+				an.getMobil().getDoc().getIdsDeAssinantes());
+		
+		return ab;
+	}
+	
+	public static String obterTamanhoArquivos(final String arquivo, boolean completo, final boolean volumes, final boolean semmarcas)  throws Exception {
+		final ExMobil mob = Documento.getMobil(arquivo);
+		final ExMovimentacao mov = Documento.getMov(mob, arquivo);
+		boolean excedeuMB = Boolean.FALSE;
+		boolean estampar = !semmarcas;
+		List<ExArquivoNumerado> ans = Documento.getArquivosNumerados(mob, mov, null, completo, volumes);
+		long bytes = 0;
+		for (ExArquivoNumerado an : ans) {
+			byte[] ab = obterBytesDocumento(mob, estampar, an);
+			bytes += ab.length;
+			if(bytes >= 44*1024*1024) {//Conversao MB para Bytes
+				excedeuMB = Boolean.TRUE;
+				break;
+			}
+		}
+		Map<String,Object> map = new HashMap<>();
+		map.put("tamanhoByte", bytes);
+		map.put("quantTotalArquivos", ans.size());
+		map.put("excedeuMB", excedeuMB);
+		Gson gson = new Gson(); 
+		String json = gson.toJson(map); 
+		return json;
 	}
 
 	private static List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob, ExMovimentacao mov, String uuid, boolean completo, boolean volumes) throws Exception {

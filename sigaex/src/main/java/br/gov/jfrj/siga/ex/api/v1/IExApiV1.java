@@ -639,6 +639,7 @@ public interface IExApiV1 {
             public Boolean volumes;
             public Boolean exibirReordenacao;
             public Boolean tamanhoOriginal;
+            public Integer paramoffset;
         }
 
         public static class Response implements ISwaggerResponse {

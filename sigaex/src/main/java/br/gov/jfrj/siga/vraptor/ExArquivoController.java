@@ -44,6 +44,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -96,7 +97,7 @@ public class ExArquivoController extends ExController {
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
 			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, 
-							boolean iframe, final String nomeAcao, boolean tamanhoOriginal) throws Exception {
+							boolean iframe, final String nomeAcao, boolean tamanhoOriginal, final Integer paramoffset) throws Exception {
 		try {						
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();
@@ -179,6 +180,8 @@ public class ExArquivoController extends ExController {
 				req.volumes = volumes;
 				req.exibirReordenacao = exibirReordenacao;
 				req.tamanhoOriginal = tamanhoOriginal;
+				req.paramoffset = paramoffset;
+				
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
@@ -193,7 +196,7 @@ public class ExArquivoController extends ExController {
 					ab = mov.getConteudoBlobpdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					Documento.getDocumento(baos, null, mob, mov, completo, estampar, volumes, hash, null, tamanhoOriginal);
+					Documento.getDocumento(baos, null, mob, mov, completo, estampar, volumes, hash, null, tamanhoOriginal, null);
 					ab = baos.toByteArray();
 				}
 				if (ab == null) {
@@ -281,6 +284,14 @@ public class ExArquivoController extends ExController {
 		result.include("filename", filename);
 	}
 	
+	@Get("/public/app/arquivo/obterTamanhoArquivos")
+	public void obterTamanhoArquivos(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
+		boolean semmarcas = Boolean.TRUE;
+		String json = Documento.obterTamanhoArquivos(arquivo, completo, volumes, semmarcas);
+		setMensagem(json);
+		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
+	}
+	
 	@Get("/public/app/arquivo/obterDownloadDocumento")
 	public Download aObterDownloadDocumento(final String t, boolean completo, final boolean semmarcas, final boolean volumes, final String mime, final boolean tamanhoOriginal) throws Exception  {
 		try {
@@ -335,7 +346,7 @@ public class ExArquivoController extends ExController {
 	
 			if (isPdf) {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				Documento.getDocumento(baos, null, mob, null, completo, semmarcas, volumes, null, null, tamanhoOriginal);
+				Documento.getDocumento(baos, null, mob, null, completo, semmarcas, volumes, null, null, tamanhoOriginal, null);
 				ab = baos.toByteArray();
 				
 				if (ab == null) {

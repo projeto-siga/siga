@@ -453,7 +453,8 @@
 					</button>
 				</div>
 			</c:if>
-			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
+			<div id="panelPagPdfs" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;"></div>
+			<div id="paipainel" style="margin: 5px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
 				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();verificarMensagem(this.src)" frameborder="0" scrolling="no"></iframe>
 			</div>
 		</div>
@@ -525,6 +526,7 @@
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
 	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
 	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&iframe=true';
+	var numOffsetProx = 0;
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			
@@ -558,7 +560,7 @@
 	}
 
 	//Nato: convem remover as outras maneiras de chamar o resize() e deixar apenas o jquery.
-	function exibir(refHTML, refPDF, semMarcas) {
+	async function exibir(refHTML, refPDF, semMarcas, paramoffset) {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
 		if('${excedeuTamanhoMax}' === 'true' && !($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked)) {
@@ -588,28 +590,47 @@
 					ifr.addEventListener("load", resize, false);
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
+				
+				//Limpar links docs grandes volumes
+				document.getElementById('panelPagPdfs').innerHTML = "";
 			} else {
+				//Para exbicao PDFs Grandes Volumes
+				if(await arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
+					if(paramoffset == null){
+						sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
+						//Primeiro Carregamento Link
+						paramoffset = '&paramoffset=1';
+					}
+					criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset);
+				}
+				paramoffset = paramoffset != null ? paramoffset : "";
+						
 				if ($('#radioPDFSemMarcas').hasClass('active')) {
-					$('#pdfsemmarcaslink').removeClass('d-none');
+					//Remocao de link download completo
+					if(paramoffset == null)
+						$('#pdfsemmarcaslink').removeClass('d-none');
 					
 					$('#pdflink').addClass('d-none');
 					$('#pdftamanhooriginallink').addClass('d-none');
 
-					ifr.src = path + refPDF + "&semmarcas=1";
+					ifr.src = path + refPDF + paramoffset + "&semmarcas=1";
 				} else if ($('#radioPDFTamanhoOriginal').hasClass('active')) {
-						$('#pdftamanhooriginallink').removeClass('d-none');
+						//Remocao de link download completo
+						if(paramoffset == null)
+							$('#pdftamanhooriginallink').removeClass('d-none');
 						
 						$('#pdflink').addClass('d-none');
 						$('#pdfsemmarcaslink').addClass('d-none');
 
-						ifr.src = path + refPDF + "&tamanhoOriginal=true";
+						ifr.src = path + refPDF + paramoffset + "&tamanhoOriginal=true";
 				} else {
-					$('#pdflink').removeClass('d-none');
+					if(paramoffset == null)
+						$('#pdflink').removeClass('d-none');
 					
 					$('#pdfsemmarcaslink').addClass('d-none');
 					$('#pdftamanhooriginallink').addClass('d-none');
 					
-					ifr.src = path + refPDF + refSiglaDocPrincipal;
+					ifr.src = path + refPDF + paramoffset + refSiglaDocPrincipal;
 				}
 				
 				if(!refPDF.includes("completo=1")) {
@@ -710,6 +731,97 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	}
 	
+	async function verificarTamanhoDocComplMB(refPDF){
+		await $.ajax({
+			url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivos?arquivo='+refPDF,
+			type: 'GET',
+			success: function(data) {
+				try {
+					var tamanhoArquivos = JSON.parse(data);
+				  	localStorage.setItem('tamanhoArquivos', JSON.stringify(tamanhoArquivos))
+				} catch(err){
+				  	sigaSpinner.ocultar();
+				}
+			}	
+		});
+	}
+	
+	async function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
+		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+		if (data == null || data ==''){
+			sigaSpinner.mostrar();
+			await verificarTamanhoDocComplMB(refPDF);
+			data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+			sigaSpinner.ocultar();
+		}
+		return data != null ? data['excedeuMB'] : false;
+	}
+	
+	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
+		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+
+		if (data != null){
+			var quantTotalArquivos = data['quantTotalArquivos'];
+			var qtdPorLink = 2;
+			//Ultimo botão na pagina
+			var ultimoLinkPag = Math.ceil(quantTotalArquivos / qtdPorLink);
+			//Limite de botoes por pagina
+			var qtdLimiteBtLinkPage = 5;
+			
+			let numOffsetAtual = paramoffset.match(/\d+/)[0];
+			
+			const paginate = (items, per) =>
+			  Array .from ({length: Math .ceil (items / per)}, (_, i) => ({
+			    page: i + 1,
+			    offset: i * per + 1, //+ 1 para tratar na chamada
+			    range: [i * per + 1, Math .min ((i + 1) * per, items)],
+			    total: Math .min ((i + 1) * per, items) - (i * per)
+			 }));
+			  
+			 //console .log (paginate (99, 8));
+			 
+			let strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
+			let strLinks = ''; 
+			let pag = paginate(quantTotalArquivos, qtdPorLink);
+			
+			pag.forEach(item => { 
+				//console.log(item.offset)};
+				strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == item.offset ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", item.range[0], " a ", item.range[1],"</a> ");
+			});
+			
+// 			let numOffsetAtual = paramoffset.match(/\d+/)[0]; 
+// 			let docAnterior = numOffsetProx == numOffsetAtual ? numOffsetProx - qtdPorLink : null;
+// 			let docInicial = numOffsetProx == numOffsetAtual ? numOffsetProx : 1;
+// 			let docFinal = numOffsetProx == numOffsetAtual ? numOffsetProx + qtdPorLink - 1 : 1 * qtdPorLink; 
+// 			numOffsetProx = 0;
+// 			let strLinks = '';
+// 			let strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
+			
+// 			for (let i = 1, cont = 0; i <= ultimoLinkPag; i++) {
+// 				if(docAnterior != null){
+// 					strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docAnterior, "`);'>", " &laquo; ","</a> ");
+// 				}
+// 				//Cricacao de botoes para fragmentacao de PDF completo
+// 				strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == docInicial ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docInicial, "`);'>", docInicial, " a ", docFinal,"</a> ");
+
+// 				//Calculo para gerar novos botoes
+// 				let isUltimoBt = docInicial == docFinal ? true : false;
+// 				docInicial = isUltimoBt ? docInicial + 1 : docInicial + qtdPorLink;
+// 				let somaFinal = docFinal + qtdPorLink;
+// 				docFinal = somaFinal > quantTotalArquivos ? quantTotalArquivos : somaFinal;
+				
+// 				if(docInicial > docFinal || ++cont >= qtdLimiteBtLinkPage){
+// 					if(++cont >= qtdLimiteBtLinkPage && !isUltimoBt){
+// 						numOffsetProx = docInicial;
+// 						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", docInicial, "`);'>", " &raquo; ","</a> ");
+// 					}
+// 					break;
+// 				}
+// 			}
+			document.getElementById('panelPagPdfs').innerHTML = strInnerHtml.concat(strLinks);
+		}
+	}
+	
 </script>
 <script>
 	$('#radioBtnXXXX a').on('click', function(){
@@ -719,7 +831,11 @@
 	    
 	    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-	})
+	});
+	
+	window.onload = function () { 
+		localStorage.removeItem('tamanhoArquivos');
+	} 
 </script>
 <c:if test="${mob.doc.podeReordenar()}"> 
 	<script src="/siga/javascript/documento.reordenar-doc.js"></script>

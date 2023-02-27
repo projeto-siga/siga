@@ -11,16 +11,13 @@ public class SigaMessages {
 			
 	    	if (bundle == null) 
 		    	bundle = getBundle();
-
-		    String message = bundle.getString(key);
-			return message;
+			
+	    	return bundle.getString(key);	
 			
 		} catch (Exception e) {
 			try {
 				//Tenta carregar do messages DEFAULT messages_SIGA
-				bundle = ResourceBundle.getBundle(MESSAGES_DEFAULT);
-				String message = bundle.getString(key);
-				return message;
+				return ResourceBundle.getBundle(MESSAGES_DEFAULT).getString(key);
 			} catch (Exception ex) {
 				return "???." + key + ".???";
 			}

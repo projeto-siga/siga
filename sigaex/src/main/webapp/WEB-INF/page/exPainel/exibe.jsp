@@ -376,12 +376,12 @@ function sbmtDoc() {
 									<td class="${mov.disabled}">${mov.exTipoMovimentacao} - ${mov.descrTipoMovimentacao}</td>
 									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}"
- 											descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}" 
+ 											descricao="${mov.parte.lotaCadastrante.descricaoAmpliada} ${mov.parte.lotaTitular != null? '- Titular: '.concat(mov.parte.lotaTitular.descricaoAmpliada) : ''}" 
  											lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" /> 
 									</td>
 									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.cadastrante.nomeAbreviado}"
- 											descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" 
+ 											descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla} ${mov.parte.titular != null?  '- Titular: '.concat(mov.parte.titular.descricaoAmpliada).concat(mov.parte.titular.sigla) : ''}" 
  											pessoaParam="${mov.parte.cadastrante.sigla}" /> 
 									</td>
 									<td class="text-left ${mov.disabled}">

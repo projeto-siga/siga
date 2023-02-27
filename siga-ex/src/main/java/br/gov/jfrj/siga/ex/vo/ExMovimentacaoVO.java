@@ -113,6 +113,10 @@ public class ExMovimentacaoVO extends ExVO {
 			parte.put("lotaCadastrante", new ExParteVO(mov.getLotaCadastrante()));
 		if (mov.getCadastrante() != null)
 			parte.put("cadastrante", new ExParteVO(mov.getCadastrante()));
+		if (mov.getLotaTitular() != null)
+			parte.put("lotaTitular", new ExParteVO(mov.getLotaTitular()));
+		if (mov.getTitular() != null)
+			parte.put("titular", new ExParteVO(mov.getTitular()));
 		if (mov.getLotaSubscritor() != null)
 			parte.put("lotaSubscritor", new ExParteVO(mov.getLotaSubscritor()));
 		if (mov.getSubscritor() != null)

@@ -2033,7 +2033,7 @@ public class ExBL extends CpBL {
 				if (!Utils.empty(tipoSequencia)) {
 					throw new AplicacaoException("Documentos com numerações automáticas necessitam de ser finalizados antes de assinar. Favor finalizar o documento e depois assinar.");
 				}
-				finalizar(cadastrante, lotaCadastrante, doc);
+				finalizar(cadastrante, lotaCadastrante, null, null, doc);
 			}
 			
 			boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
@@ -3114,12 +3114,14 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void criarVia(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc) {
-		criarVia(cadastrante, lotaCadastrante, doc, null);
+	public void criarVia(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final DpPessoa titular, final DpLotacao lotaTitular, final ExDocumento doc) {
+		criarVia(cadastrante, lotaCadastrante, titular, lotaTitular, doc, null);
 		return;
 	}
 
-	public void criarVia(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
+	public void criarVia(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final DpPessoa titular, final DpLotacao lotaTitular, final ExDocumento doc,
 			Integer numVia) {
 		try {
 			int numSequencia = numVia == null ? (int) dao().obterProximoNumeroVia(doc) : numVia;
@@ -3139,7 +3141,7 @@ public class ExBL extends CpBL {
 			mob = dao().gravar(mob);
 
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.CRIACAO, cadastrante,
-					lotaCadastrante, mob, null, null, null, null, null, null);
+					lotaCadastrante, mob, null, null, null, titular, lotaTitular, null);
 
 			gravarMovimentacao(mov);
 
@@ -3265,10 +3267,11 @@ public class ExBL extends CpBL {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String finalizar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExDocumento doc)
+	public String finalizar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+				DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc)
 			throws AplicacaoException {
 		
-		verificaDocumento(cadastrante, lotaCadastrante, doc);
+		verificaDocumento(titular, lotaTitular, doc);
 
 		if (doc.isFisico() && Utils.empty(doc.getDescrDocumento()))
 			throw new AplicacaoException(
@@ -3389,10 +3392,10 @@ public class ExBL extends CpBL {
 					if (numVia == null) {
 						numVia = 1;
 					}
-					criarVia(cadastrante, lotaCadastrante, doc, numVia);
+					criarVia(cadastrante, lotaCadastrante, titular, lotaTitular, doc, numVia);
 				}
 			} else {
-				criarVolume(cadastrante, lotaCadastrante, doc);
+				criarVolume(cadastrante, lotaCadastrante, titular, lotaTitular, doc);
 			}
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
@@ -3405,7 +3408,7 @@ public class ExBL extends CpBL {
 			}
 
 			if (setVias == null || setVias.size() == 0)
-				criarVia(cadastrante, lotaCadastrante, doc, null);
+				criarVia(cadastrante, lotaCadastrante, titular, lotaTitular, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
 			
@@ -3535,6 +3538,7 @@ public class ExBL extends CpBL {
 	}
 	
 	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			DpPessoa titular, DpLotacao lotaTitular,
 			ExDocumento doc) throws AplicacaoException {
 		try {
 			iniciarAlteracao();
@@ -3550,7 +3554,7 @@ public class ExBL extends CpBL {
 			mob = dao().gravar(mob);
 
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.CRIACAO, cadastrante,
-					lotaCadastrante, mob, null, null, null, null, null, null);
+					lotaCadastrante, mob, null, null, null, titular, lotaTitular, null);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov);
@@ -3930,7 +3934,7 @@ public class ExBL extends CpBL {
 			
 			// Finaliza o documento automaticamente se ele for coloborativo
 			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico() && !doc.isFinalizado()) {
-				finalizar(cadastrante, lotaTitular, doc);
+				finalizar(cadastrante, cadastrante.getLotacao(), titular, lotaTitular, doc);
 			}
 			
 			// doc.armazenar();
@@ -6438,7 +6442,8 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public void registrarCiencia(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+	public void registrarCiencia(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, 
+			final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob,
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel, final DpPessoa subscritor,
 			final String descrMov) throws AplicacaoException {
 		
@@ -6454,7 +6459,7 @@ public class ExBL extends CpBL {
 		try {
 			iniciarAlteracao();
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.CIENCIA, cadastrante,
-					lotaCadastrante, mob, dtMov, cadastrante, null, null, null, null);
+					lotaCadastrante, mob, dtMov, cadastrante, null, titular, lotaTitular, null);
 
 			mov.setDescrMov(descrMov);
 
@@ -8413,10 +8418,12 @@ public class ExBL extends CpBL {
 					numVia = 1;
 				}
 				if (!mobs.contains(numVia))
-					criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, numVia);
+					criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), 
+							doc.getTitular(), doc.getLotaTitular(), doc, numVia);
 			}
 		} else {
-			criarVolume(doc.getCadastrante(), doc.getLotaCadastrante(), doc);
+			criarVolume(doc.getCadastrante(), doc.getLotaCadastrante(), 
+					doc.getTitular(), doc.getLotaTitular(), doc);
 		}
 	
 		concluirAlteracaoDocComRecalculoAcesso(doc);
@@ -8424,7 +8431,8 @@ public class ExBL extends CpBL {
 		ContextoPersistencia.flushTransaction();
 	
 		if (setVias == null || setVias.size() == 0)
-			criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), doc, null);
+			criarVia(doc.getCadastrante(), doc.getLotaCadastrante(), 
+					doc.getTitular(), doc.getLotaTitular(), doc, null);
 		return;
 	}
 	

@@ -18,7 +18,8 @@ public class DocumentosSiglaFinalizarPost implements IDocumentosSiglaFinalizarPo
 
 		ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
-		Ex.getInstance().getBL().finalizar(ctx.getCadastrante(), ctx.getLotaCadastrante(), mob.doc());
+		Ex.getInstance().getBL().finalizar(ctx.getCadastrante(), ctx.getLotaCadastrante(),  
+				ctx.getTitular(), ctx.getLotaTitular(), mob.doc());
 
 		resp.sigla = mob.doc().getCodigo();
 		resp.status = "OK";

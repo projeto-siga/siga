@@ -443,7 +443,7 @@ public class ExDocumentoController extends ExController {
 		
 		Ex.getInstance()
 				.getBL()
-				.criarVia(getCadastrante(), getLotaTitular(),
+				.criarVia(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
@@ -463,6 +463,7 @@ public class ExDocumentoController extends ExController {
 		Ex.getInstance()
 				.getBL()
 				.criarVolume(getCadastrante(), getLotaTitular(),
+						getTitular(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 		ExDocumentoController.redirecionarParaExibir(result,
 				exDocumentoDTO.getSigla());
@@ -1617,9 +1618,9 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDto.setMsg(Ex
 					.getInstance()
 					.getBL()
-					.finalizar(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getDoc()));
-
+					.finalizar(getCadastrante(), getLotaCadastrante(),  
+							getTitular(), getLotaTitular(), exDocumentoDto.getDoc()));
+			
 			if (exDocumentoDto.getDoc().getForm() != null) {
 				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null
 						&& exDocumentoDto.getDoc().getForm()
@@ -1898,8 +1899,8 @@ public class ExDocumentoController extends ExController {
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& exDocumentoDTO.isCapturado() && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
-				exBL.finalizar(getCadastrante(), getLotaTitular(),
-						exDocumentoDTO.getDoc());
+				exBL.finalizar(getCadastrante(), getLotaCadastrante(),
+						getTitular(), getLotaTitular(), exDocumentoDTO.getDoc());
 
 			lerEntrevista(exDocumentoDTO);
 

@@ -323,7 +323,8 @@ public class ExMovimentacaoController extends ExController {
 				
 				if (mob.isVolumeEncerrado()) {
 					//DpPessoa cadastrante, DpLotacao lotaCadastrante,		ExDocumento doc
-					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaTitular(), mob.doc());
+					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaCadastrante(), 
+							getTitular(), getLotaTitular(), mob.doc());
 					
 					mob = mob.doc().getUltimoVolume();
 				}
@@ -5317,7 +5318,8 @@ public class ExMovimentacaoController extends ExController {
 		try {	
 			Ex.getInstance()
 					.getBL()
-					.registrarCiencia(getCadastrante(), getLotaTitular(),
+					.registrarCiencia(getCadastrante(), getLotaCadastrante(), 
+							getTitular(), getLotaTitular(),
 							documentoBuilder.getMob(), mov.getDtMov(),
 							mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
 							mov.getDescrMov());

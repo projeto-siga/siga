@@ -381,16 +381,21 @@ public class Documento {
 			new PdfOutline(cb.getRootOutline(), destination, "teste ");
 		}
 	}
-
+	
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov)
 			throws Exception {
+		return getDocumento(mob, mov, false);
+	}
+
+	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov, boolean tamanhoOriginal)
+			throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		getDocumento(baos, null, mob, mov, false, true, false, null, null);
+		getDocumento(baos, null, mob, mov, false, true, false, null, null,tamanhoOriginal);
 		return baos.toByteArray();
 	}
 
 	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado)
+			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado,boolean tamanhoOriginal)
 			throws Exception {
 		PdfReader reader;
 		int n;
@@ -462,7 +467,7 @@ public class Documento {
 						Prop.get("carimbo.texto.superior"), 
 						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
 						mob.getExDocumento().getMarcaDagua(), 
-						an.getMobil().getDoc().getIdsDeAssinantes());	
+						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal);	
 				
 
 				bytes += ab.length;
@@ -695,7 +700,7 @@ public class Documento {
 						&& an.getArquivo().getMensagem().trim().length() > 0) {
 					sb.append("</td></tr><tr><td>");
 					sb.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
-					sb.append(an.getArquivo().getMensagem());
+					sb.append(an.getArquivo().getMensagem(true));
 					sb.append("</div>");
 				}
 				sb.append("</td></tr></table></div>");

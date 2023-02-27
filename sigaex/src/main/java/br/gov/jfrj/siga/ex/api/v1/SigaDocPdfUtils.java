@@ -40,7 +40,7 @@ public class SigaDocPdfUtils {
 			final String certificadoB64, boolean completo,
 			final boolean semmarcas, DpPessoa titular, DpLotacao lotaTitular,
 			Date dataEHoraDoServidor, HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, boolean tamanhoOriginal) {
 		try {
 			final String servernameport = request.getServerName() + ":"
 					+ request.getServerPort();
@@ -107,7 +107,7 @@ public class SigaDocPdfUtils {
 					ab = mov.getConteudoBlobpdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					Documento.getDocumento(baos, null, mob, null, completo, semmarcas, false, null, null);
+					Documento.getDocumento(baos, null, mob, null, completo, semmarcas, false, null, null, tamanhoOriginal);
 					ab = baos.toByteArray();
 				}
 				if (ab == null) {

@@ -1385,12 +1385,23 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMobil> consultarParaArquivarCorrenteEmLote(DpLotacao lot) {
-		final Query query = em().createNamedQuery(
-
-		"consultarParaArquivarCorrenteEmLote");
-		query.setParameter("lotaIni", lot.getIdLotacaoIni());
+	public List<ExMobil> consultarParaArquivarCorrenteEmLote(final Long idPessoaIni, final Long idLotacaoIni,
+															 final int offset, final int tamPagina) {
+			
+		final Query query = em().createNamedQuery("consultarParaArquivarCorrenteEmLote")
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("idLotacaoIni", idLotacaoIni)
+				.setFirstResult(offset)
+				.setMaxResults(tamPagina);
+		
 		return query.getResultList();
+	}
+
+	public int consultarQuantidadeParaArquivarCorrenteEmLote(final Long idPessoaIni, final Long idLotacaoIni) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaArquivarCorrenteEmLote", Long.class)
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("idLotacaoIni", idLotacaoIni)
+				.getSingleResult() ).intValue();
 	}
 
 	public List<ExItemDestinacao> consultarParaArquivarIntermediarioEmLote(
@@ -2741,7 +2752,7 @@ public class ExDao extends CpDao {
 	}
 	
 
-	public List<ExDocumentoVO> consultarParaReclassificarEmLote(final DpPessoa titular,
+	public List<ExDocumentoVO> consultarParaReclassificarEmLote(final Long idOrgaoTitular, final Long idLotacaoTitular,
 																final String classificacaoSigla, 
 																final int offset, final int itemPagina) {
 		
@@ -2773,9 +2784,11 @@ public class ExDao extends CpDao {
 				+ "    pessoa.id_pessoa = doc.id_titular" 
 				+ " where"
 				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.id_mob_pai is null" //somente documento pai (documentos filhos não deverão ser apresentados)
 				+ "    and doc.dt_finalizacao is not null" 
 				+ "    and doc.dt_primeiraassinatura is not null" 
-				+ "    and doc.id_orgao_usu = :orgaoUsuarioLogado"
+				+ "    and doc.id_orgao_usu = :idOrgaoTitular"
+				+ "    and (:idLotacaoTitular is null or :idLotacaoTitular = 0 or doc.id_lota_cadastrante = :idLotacaoTitular)"
 				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
 				+ "        or (classific_mov.codificacao is not null"
 				+ "            and mov.id_mov = ("
@@ -2792,7 +2805,8 @@ public class ExDao extends CpDao {
 		
 		Query query = em().createNativeQuery(sql, "DocumentosPorCodificacaoClassificacao");
 
-		query.setParameter("orgaoUsuarioLogado", titular.getOrgaoUsuario().getId());
+		query.setParameter("idOrgaoTitular", idOrgaoTitular);
+		query.setParameter("idLotacaoTitular", idLotacaoTitular);
 		query.setParameter("mascara", classificacaoSigla);
 		query.setParameter("enumList", Arrays.asList(
 				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
@@ -2803,7 +2817,7 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public int consultarQuantidadeParaReclassificarEmLote(final DpPessoa titular,
+	public int consultarQuantidadeParaReclassificarEmLote(final Long idOrgaoTitular, final Long idLotacaoTitular,
 														   final String classificacaoSigla) {
 
 		/* Query para obter a quantidade Documentos e Movimentações com Classificação
@@ -2827,9 +2841,11 @@ public class ExDao extends CpDao {
 				+ "    pessoa.id_pessoa = doc.id_titular"
 				+ " where"
 				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.id_mob_pai is null" //somente documento pai (documentos filhos não deverão ser apresentados)
 				+ "    and doc.dt_finalizacao is not null"
 				+ "    and doc.dt_primeiraassinatura is not null"
-				+ "    and doc.id_orgao_usu = :orgaoUsuarioLogado"
+				+ "    and doc.id_orgao_usu = :idOrgaoTitular"
+				+ "    and (:idLotacaoTitular is null or :idLotacaoTitular = 0 or doc.id_lota_cadastrante = :idLotacaoTitular)"
 				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
 				+ "        or (classific_mov.codificacao is not null"
 				+ "            and mov.id_mov = ("
@@ -2846,7 +2862,8 @@ public class ExDao extends CpDao {
 
 		Query query = em().createNativeQuery(sql);
 
-		query.setParameter("orgaoUsuarioLogado", titular.getOrgaoUsuario().getId());
+		query.setParameter("idOrgaoTitular", idOrgaoTitular);
+		query.setParameter("idLotacaoTitular", idLotacaoTitular);
 		query.setParameter("mascara", classificacaoSigla);
 		query.setParameter("enumList", Arrays.asList(
 				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),

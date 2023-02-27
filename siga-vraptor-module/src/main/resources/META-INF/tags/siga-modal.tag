@@ -26,11 +26,11 @@
 	description="Texto para o botão de ação, caso não informado, será exibido por padrão o texto 'Ok' Somente será exibido se modal tiver para exibir o rodapé 
 		padrão e também tiver sido adicionado um link através do atributo 'linkBotaoDeAcao'"%>				
 <%@ attribute name="classBotaoDeAcao"
-	description=""%>
+	description="Classe bootstrap para botão de ação da confirmação."%>
 <%@ attribute name="classBotaoDeFechar" 
-	description=""%>	
+	description="Classe bootstrap para botão de Fechar/Cancelar a operação."%>	
 <%@ attribute name="inverterOrdemBotoes"
-	description=""%>					
+	description="Inverter a ordem de apresentação dos botões. Default: Fechar/Confirmar Invertido: Confirmar/Fechar."%>					
 
 <div class="modal  fade" id="${id}" tabindex="-1" role="dialog">
  	<div class="modal-dialog${centralizar ? '  modal-dialog-centered' : ''}${tamanhoGrande ? '  modal-lg' : ''}" role="document">
@@ -58,7 +58,6 @@
       		<jsp:doBody />      		   				     
      		<c:if test="${exibirRodape}">
 	     		<div class="modal-footer">	
-	     			
 	     			<div class="${inverterOrdemBotoes ? 'order-last pl-2' : ''}">      	
 			        	<button type="button" class="btn ${empty classBotaoDeFechar ? 'btn-secondary' : classBotaoDeFechar} siga-modal__btn-fechar-rodape" data-dismiss="modal">${empty descricaoBotaoFechaModalDoRodape ? 'Fechar' : descricaoBotaoFechaModalDoRodape}</button>
 			        </div>	

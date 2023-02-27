@@ -24,7 +24,13 @@
 		do botão será 'Ok', caso deseje uma descrição diferente, basta informar através do atributo 'descricaoBotaoDeAcao'"%>
 <%@ attribute name="descricaoBotaoDeAcao"
 	description="Texto para o botão de ação, caso não informado, será exibido por padrão o texto 'Ok' Somente será exibido se modal tiver para exibir o rodapé 
-		padrão e também tiver sido adicionado um link através do atributo 'linkBotaoDeAcao'"%>							
+		padrão e também tiver sido adicionado um link através do atributo 'linkBotaoDeAcao'"%>				
+<%@ attribute name="classBotaoDeAcao"
+	description=""%>
+<%@ attribute name="classBotaoDeFechar" 
+	description=""%>	
+<%@ attribute name="inverterOrdemBotoes"
+	description=""%>					
 
 <div class="modal  fade" id="${id}" tabindex="-1" role="dialog">
  	<div class="modal-dialog${centralizar ? '  modal-dialog-centered' : ''}${tamanhoGrande ? '  modal-lg' : ''}" role="document">
@@ -51,12 +57,17 @@
       		</div>
       		<jsp:doBody />      		   				     
      		<c:if test="${exibirRodape}">
-	     		<div class="modal-footer">			      	
-			        <button type="button" class="btn btn-secondary  siga-modal__btn-fechar-rodape" data-dismiss="modal">${empty descricaoBotaoFechaModalDoRodape ? 'Fechar' : descricaoBotaoFechaModalDoRodape}</button>
-			        <c:if test="${not empty linkBotaoDeAcao}">		        
-			        	<a href="${linkBotaoDeAcao}" class="btn btn-primary  siga-modal__btn-acao" role="button" aria-pressed="true">
-			        		${empty descricaoBotaoDeAcao ? 'Ok' : descricaoBotaoDeAcao}
-			        	</a>
+	     		<div class="modal-footer">	
+	     			
+	     			<div class="${inverterOrdemBotoes ? 'order-last pl-2' : ''}">      	
+			        	<button type="button" class="btn ${empty classBotaoDeFechar ? 'btn-secondary' : classBotaoDeFechar} siga-modal__btn-fechar-rodape" data-dismiss="modal">${empty descricaoBotaoFechaModalDoRodape ? 'Fechar' : descricaoBotaoFechaModalDoRodape}</button>
+			        </div>	
+			        <c:if test="${not empty linkBotaoDeAcao}">	
+			        	<div>	        
+				        	<a href="${linkBotaoDeAcao}" class="btn ${empty classBotaoDeAcao ? 'btn-primary' : classBotaoDeAcao} siga-modal__btn-acao" role="button" aria-pressed="true">
+				        		${empty descricaoBotaoDeAcao ? 'Ok' : descricaoBotaoDeAcao}
+				        	</a>
+				        </div>
 			        </c:if>				        
 		      </div>
 			</c:if>      

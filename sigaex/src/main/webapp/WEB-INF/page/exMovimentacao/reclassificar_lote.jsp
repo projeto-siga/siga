@@ -1,11 +1,17 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page contentType="text/html; charset=UTF-8" buffer="64kb" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/customtag" prefix="tags" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <siga:pagina titulo="Reclassifica&ccedil;&atilde;o em Lote">
+    <link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css"
+          media="screen, projection"/>
 
+    <c:set var="thead_color" value="${thead_color}" scope="session"/>
+    
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
@@ -30,16 +36,18 @@
                         </div>
                         <div class="col-sm-2">
                             <div class="form-group">
-                                <div class="form-check form-check-inline mt-4">
-                                    <label class="form-check-label" for="substituto">Substituto</label>
+                                <br/>
+                                <div class="form-check form-check-inline">
                                     <input type="checkbox" id="substituto" name="substituto"
+                                           class="form-check-input"
                                            onclick="displayTitular(this);"/>
+                                    <label class="form-check-label" for="substituto">Substituto</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
-                        <div class="col-12">
+                        <div class="col-md-8">
                             <input type="hidden" name="campos" value="titularSel.id"/>
                             <div class="form-group">
                                 <label>Titular</label>
@@ -49,7 +57,23 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                <label for="selectLotacao"><fmt:message key="usuario.lotacao"/></label>
+                                <select class="form-control siga-select2" style="width: 100%"
+                                        id="selectLotacao" name="selectLotacao">
+                                    <option value="">Selecione uma <fmt:message key="usuario.lotacao"/></option>
+                                    <c:forEach items="${listaLotacao}" var="item">
+                                        <option value="${item.idLotacao}" ${item.idLotacao == selectLotacao ? 'selected' : ''}>
+                                                ${item.orgaoUsuario.iniciais}-${item.siglaLotacao} / ${item.nomeLotacao}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8">
                             <div class="form-group">
                                 <siga:selecao titulo="Classifica&ccedil;&atilde;o Atual"
                                               propriedade="classificacaoAtual"
@@ -60,17 +84,18 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-sm-8">
                             <div class="form-group">
                                 <siga:selecao titulo="Nova Classifica&ccedil;&atilde;o" propriedade="classificacaoNova"
                                               modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
                             </div>
                         </div>
-                        <div class="col-12">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8">
                             <div class="form-group">
-                                <label>Motivo
-                                    <input type="text" id="motivo" name="motivo" maxLength="128" class="form-control"/>
-                                </label>
+                                <label for="motivo">Motivo</label>
+                                <input type="text" id="motivo" name="motivo" maxLength="128" class="form-control"/>
                             </div>
                         </div>
                     </div>
@@ -94,7 +119,9 @@
         <siga:siga-modal id="confirmacaoModal" exibirRodape="false"
                          tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
             <div class="modal-body">
-                Todos os documentos ser&atilde;o Reclassificados. Deseja, confirmar?
+                Os documentos selecionados ser&atilde;o reclassificados de
+                <span id="classificacaoAtualSelecionada"></span> para <span id="classificacaoNovaSelecionada"></span>.
+                Deseja, confirmar?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
@@ -108,11 +135,12 @@
         function listarDocumentosParaReclassificarEmLote(offset) {
             sigaSpinner.mostrar();
 
+            let selectIdLotacao = document.getElementById('selectLotacao').value;
+            let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
             offset = offset == null ? 0 : offset;
 
-            let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
             let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?siglaClassificacao='
-                + siglaClassificacaoAtual + '&offset=' + offset;
+                + siglaClassificacaoAtual + '&dpLotacaoSelecao=' + selectIdLotacao + '&offset=' + offset;
 
             $.ajax({
                 url: url,
@@ -128,6 +156,12 @@
         }
 
         function validar() {
+            let subscritorSelSpan = document.getElementById('subscritorSelSpan');
+            if (subscritorSelSpan.textContent.trim() === '') {
+                sigaModal.alerta('Selecione responsável');
+                return;
+            }
+
             let classificacaoAtualSelSpan = document.getElementById('classificacaoAtualSelSpan');
             if (classificacaoAtualSelSpan.textContent.trim() === '') {
                 sigaModal.alerta('Selecione classificação atual');
@@ -158,8 +192,14 @@
             if (checkedElements.length == 0) {
                 sigaModal.alerta('Selecione pelo menos um documento');
             } else {
+                updateClassificacoesSelecionadas(siglaClassificacaoAtual.value, siglaClassificacaoNova.value);
                 sigaModal.abrir('confirmacaoModal');
             }
+        }
+
+        function updateClassificacoesSelecionadas(classificacaoAtualSelecionada, classificacaoNovaSelecionada) {
+            document.getElementById('classificacaoAtualSelecionada').innerHTML = classificacaoAtualSelecionada;
+            document.getElementById('classificacaoNovaSelecionada').innerHTML = classificacaoNovaSelecionada;
         }
 
         function confirmar() {
@@ -170,4 +210,7 @@
         }
 
     </script>
+    <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+    <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
 </siga:pagina>

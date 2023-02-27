@@ -436,9 +436,15 @@ public class ExMobilVO extends ExVO {
 			addAcao(AcaoVO.builder().nome("_Anotar").descr("Acrescentar uma movimentação de anotação ao documento. As anotações podem ser excluídas a qualquer momento.").icone("note_add").acao("/app/expediente/mov/anotar")
 					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		} else {
-			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotacaoObservacaoModal")
+			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add")
+					.msgConfirmacao("ATENÇÃO: Anotações cadastradas não constituem o documento,"
+							+ " são apenas  lembretes ou avisos " 
+							+ "	para os usuários com acesso ao documento, podendo ser "
+							+ "	excluídas a qualquer tempo.")
+					.nameSpace("/app/expediente/mov").acao("anotar")
 					.descr("Insere uma pequena observação ao documento. A anotação será exibida nas movimentações do documento, podendo ser excluída a qualquer tempo pela pessoa que a criou.")
-					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular))
+					.build());
 		}
 
 		addAcao(AcaoVO.builder().nome("Definir " + SigaMessages.getMessage("documento.marca")).descr("Marcar o documento com um dos marcadores disponíveis para facilitar a localização futura.").icone("folder_star").modal("definirMarcaModal")
@@ -473,9 +479,14 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("Avaliar").descr("Alterar a classificação documental por efeito de uma avaliação.").icone("table").nameSpace("/app/expediente/mov").acao("avaliar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAvaliar(mob, titular, lotaTitular)).build());
 
-		addAcao(AcaoVO.builder().nome("So_brestar").descr("Deixar o documento em estado de sobrestamento, enquando aguarda algum evento.").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("sobrestar_gravar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSobrestar(mob, titular, lotaTitular)).classe("once").build());
-
+		if (!Prop.isGovSP()) {
+			addAcao(AcaoVO.builder().nome("So_brestar").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("sobrestar_gravar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSobrestar(mob, titular, lotaTitular)).classe("once").build());
+		} else {
+			addAcao(AcaoVO.builder().nome("So_brestar").msgConfirmacao("Você deseja SOBRESTAR este documento?").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("sobrestar_gravar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSobrestar(mob, titular, lotaTitular)).classe("once").build());
+		}
+		
 		addAcao(AcaoVO.builder().nome("Recolher ao Arq. Permanente").descr("Recolhe o documento ao Arquivo Permanente.").icone("building_add").nameSpace("/app/expediente/mov").acao("arquivar_permanente_gravar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeExibirBotaoDeArquivarPermanente(mob, titular, lotaTitular)).classe("once").build());
 
@@ -488,7 +499,7 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("Desarq. Intermediário").descr("Desarquiva o documento do Arquivo Intermediário.").icone("package_delete").nameSpace("/app/expediente/mov").acao("desarquivar_intermediario_gravar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeExibirBotaoDeDesarquivarIntermediario(mob, titular, lotaTitular)).classe("once").build());
 
-		addAcao(AcaoVO.builder().nome("Deso_brestar").descr("Cancela o estado de sobrestamento do documento, retomando o trâmite.").icone("hourglass_delete").nameSpace("/app/expediente/mov").acao("desobrestar_gravar")
+		addAcao(AcaoVO.builder().nome("Desso_brestar").descr("Cancela o estado de sobrestamento do documento, retomando o trâmite.").icone("hourglass_delete").nameSpace("/app/expediente/mov").acao("desobrestar_gravar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDessobrestar(mob, titular, lotaTitular)).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("_Juntar").descr("Junta o documento a um documento pai, formando ou complementando um dossiê.").icone("page_white_go").nameSpace("/app/expediente/mov").acao("juntar")

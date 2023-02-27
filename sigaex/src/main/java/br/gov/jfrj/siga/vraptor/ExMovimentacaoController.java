@@ -39,6 +39,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -1578,22 +1579,8 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/arquivar_corrente_lote")
 	public void aArquivarCorrenteLote() {
-		final List<ExMobil> provItens = dao()
-				.consultarParaArquivarCorrenteEmLote(getLotaTitular());
-
-		List<ExMobil> itens = new ArrayList<ExMobil>();
-
-		for (ExMobil m : provItens) {
-			if (!m.isApensado()
-					&& Ex.getInstance()
-							.getComp()
-							.pode(ExPodeAcessarDocumento.class, getTitular(),
-									getLotaTitular(), m)) {
-				itens.add(m.isVolume() ? m.doc().getMobilGeral() : m);
-			}
-		}
-
-		result.include("itens", itens);
+		assertAcesso("ARQLOTE:Arquivar em Lote");
+		
 	}
 
 	@Transacional
@@ -5605,10 +5592,15 @@ public class ExMovimentacaoController extends ExController {
 		
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
-
+		DpLotacaoDaoFiltro dpLotacaoDaoFiltro = new DpLotacaoDaoFiltro();
+		dpLotacaoDaoFiltro.setIdOrgaoUsu(getCadastrante().getOrgaoUsuario().getId());
+        
+		List<DpLotacao> listaLotacao = CpDao.getInstance().consultarPorFiltro(dpLotacaoDaoFiltro);
+        
 		result.include("substituicao", substituicao ? substituicao : Boolean.FALSE);
 		result.include("titularSel", Objects.isNull(titularSel) ? new DpPessoaSelecao() : titularSel);
 		result.include("subscritorSel", Objects.isNull(subscritorSel) ? new DpPessoaSelecao() : subscritorSel);
+		result.include("listaLotacao", listaLotacao);
 		result.include("classificacaoAtualSel", Objects.isNull(classificacaoAtualSel) ? new ExClassificacaoSelecao() :
 				classificacaoAtualSel);
 		result.include("classificacaoNovaSel", Objects.isNull(classificacaoNovaSel) ? new ExClassificacaoSelecao() :
@@ -5695,7 +5687,7 @@ public class ExMovimentacaoController extends ExController {
 				
 		for(String sigla : arraySiglasDocumentosTramitados){
 			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-			buscarDocumento(documentoBuilder);
+			buscarDocumento(documentoBuilder, false);
 			ExMobil mob = documentoBuilder.getMob();
 			mobisDocumentosTramitados.add(mob);
 		}
@@ -5756,7 +5748,7 @@ public class ExMovimentacaoController extends ExController {
 			
 			BuscaDocumentoBuilder documentoBuilder;
             documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(key);
-            buscarDocumento(documentoBuilder);
+            buscarDocumento(documentoBuilder, false);
             ExMobil mob = documentoBuilder.getMob();
             String mensagemResultadoMovimentacao = jsonObject.get(key).toString();
                 
@@ -5775,5 +5767,66 @@ public class ExMovimentacaoController extends ExController {
 		
 		return listaResultadosMovimentacaoEmLote;
 	}
+
+    @Post("/app/expediente/mov/listar_docs_arquivados_corrente")
+    public void listar_docs_arquivados_corrente(final String siglasDocumentosArquivadosCorrente,
+                                       final String errosDocumentosNaoArquivadosCorrenteJson) throws Exception {
+
+        String[] arraySiglasDocumentosArquivadosCorrente = { };
+        if (siglasDocumentosArquivadosCorrente != null) {
+            arraySiglasDocumentosArquivadosCorrente = siglasDocumentosArquivadosCorrente.split(",");
+        }
+
+        final List<ExMobil> mobisDocumentosArquivadosCorrente = new ArrayList<ExMobil>();
+
+        BuscaDocumentoBuilder documentoBuilder;
+
+        for(String sigla : arraySiglasDocumentosArquivadosCorrente){
+            documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+            buscarDocumento(documentoBuilder, false);
+            ExMobil mob = documentoBuilder.getMob();
+            mobisDocumentosArquivadosCorrente.add(mob);
+        }
+
+        List<ExMovimentacao> listaMovimentacaoDocumentosNaoArquivadosCorrente =
+                montarListaResultadosMovimentacaoEmLote(null, null, null, 
+                        errosDocumentosNaoArquivadosCorrenteJson);
+
+        if (( mobisDocumentosArquivadosCorrente == null
+                || mobisDocumentosArquivadosCorrente.isEmpty() )
+                && (listaMovimentacaoDocumentosNaoArquivadosCorrente == null
+                || listaMovimentacaoDocumentosNaoArquivadosCorrente.isEmpty())) {
+
+            throw new AplicacaoException("Não foi possível arquivar corrente em lote");
+        }
+
+        ExMobil mobIni = mobisDocumentosArquivadosCorrente.isEmpty() ? null : mobisDocumentosArquivadosCorrente.get(0);
+        ExMovimentacao movIni = null;
+        if (mobIni != null) {
+            movIni = mobIni.getUltimaMovimentacao();
+        } else {
+            movIni = listaMovimentacaoDocumentosNaoArquivadosCorrente.get(0);
+        }
+
+        ExMobil mobFim = mobisDocumentosArquivadosCorrente.isEmpty() ? null :
+                mobisDocumentosArquivadosCorrente.get(mobisDocumentosArquivadosCorrente.size() - 1);
+        ExMovimentacao movFim = null;
+        if (mobFim != null) {
+            movFim = mobFim.getUltimaMovimentacao();
+        }
+
+        result.include("mobisDocumentosArquivadosCorrente", mobisDocumentosArquivadosCorrente);
+        result.include("movsDocumentosNaoArquivadosCorrente", listaMovimentacaoDocumentosNaoArquivadosCorrente);
+
+        result.include("lotaTitular", getLotaTitular());
+        result.include("movIni", movIni);
+
+        String dtIni = movIni != null ? movIni.getDtRegMovDDMMYYYYHHMMSS() : null;
+        String dtFim = movFim != null ? movFim.getDtRegMovDDMMYYYYHHMMSS() : null;
+
+        result.include("dtIni", dtIni);
+        result.include("dtFim", dtFim);
+    }
+    
 	
 }

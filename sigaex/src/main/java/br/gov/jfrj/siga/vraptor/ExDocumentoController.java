@@ -648,7 +648,7 @@ public class ExDocumentoController extends ExController {
 		} else {
 			exDocumentoDTO.setDoc(daoDoc(exDocumentoDTO.getId()));
 
-			Ex.getInstance()
+			Ex.getInstance() 
 					.getComp()
 					.afirmar("Não é permitido editar documento fechado", ExPodeEditar.class, getTitular(), getLotaTitular(),
 							exDocumentoDTO.getMob());
@@ -1587,6 +1587,9 @@ public class ExDocumentoController extends ExController {
 			final String id = param("exDocumentoDto.id");
 			if (id != null && id.length() != 0) {
 				exDocumentoDto.setDoc(daoDoc(Long.parseLong(id)));
+			} else {
+				if (exDocumentoDto.getId() != null)
+					exDocumentoDto.setDoc(daoDoc(exDocumentoDto.getId()));
 			}
 		}
 		if (exDocumentoDto.getDoc() != null && exDocumentoDto.getMob() == null) {
